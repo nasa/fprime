@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="Ping" namespace="Svc">
+    <comment>
+    Port for pinging active components
+    </comment>
+    <args>
+        <arg name="key" type="U32">
+            <comment>Value to return to pinger</comment>
+        </arg>
+    </args>
+</interface>
+

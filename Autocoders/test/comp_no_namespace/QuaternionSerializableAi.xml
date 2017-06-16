@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<serializable name="Quaternion">
+    <comment>
+    This is an optional comment describing the serializable class.
+    </comment>
+    <members>
+        <member name="Q1" type="F32"/>
+        <member name="Q2" type="F32" comment="An optional single line comment"/>
+        <member name="Q3" type="F32"/>
+        <member name="Q4" type="F32"/>
+    </members>
+</serializable>
+

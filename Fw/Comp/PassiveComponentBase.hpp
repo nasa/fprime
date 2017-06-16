@@ -1,0 +1,41 @@
+#ifndef FW_COMP_BASE_HPP
+#define FW_COMP_BASE_HPP
+
+#include <Fw/Obj/ObjBase.hpp>
+#include <Fw/Types/Serializable.hpp>
+#include <Fw/Cfg/Config.hpp>
+
+namespace Fw {
+
+    class PassiveComponentBase : public Fw::ObjBase {
+        public:
+            //! Set the ID base
+            void setIdBase(
+                const U32 //< The new ID base
+            );
+            //! Get the ID base
+            //! \return The ID base
+            U32 getIdBase(void) const;
+            
+        PROTECTED:
+#if FW_OBJECT_NAMES == 1        
+            PassiveComponentBase(const char* name); //!< Named constructor
+#else
+            PassiveComponentBase(); //!< Unnamed constructor
+#endif
+            virtual ~PassiveComponentBase(); //!< Destructor
+            void init(NATIVE_INT_TYPE instance); //!< Initialization function
+            NATIVE_INT_TYPE getInstance(void) const;
+#if FW_OBJECT_TO_STRING == 1
+            virtual void toString(char* str, NATIVE_INT_TYPE size); //!< returns string description of component
+#endif
+        PRIVATE:
+            U32 m_idBase; //!< ID base for opcodes etc.
+            NATIVE_INT_TYPE m_instance; //!< instance of component object
+
+
+    };
+
+}
+
+#endif

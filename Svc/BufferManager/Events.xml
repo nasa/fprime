@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  BufferManager
+  Events
+
+======================================================================-->
+
+<events
+  event_base="$BufferManagerIdBase"
+>
+
+  <event
+    id="0"
+    name="BufferManager_AllocationQueueEmpty"
+    severity="WARNING_HI"
+    format_string="Allocation queue empty"
+  >
+    <comment>The Buffer Manager received a request to deallocate a buffer when the allocation queue was empty</comment>
+  </event>
+
+  <event
+    id="1"
+    name="BufferManager_AllocationQueueFull"
+    severity="WARNING_HI"
+    format_string="Allocation queue full"
+  >
+    <comment>The Buffer Manager received an allocation request that, if granted, would cause the allocation queue to overflow</comment>
+  </event>
+
+  <event
+    id="2"
+    name="BufferManager_IDMismatch"
+    severity="WARNING_HI"
+    format_string="Mismatched deallocation ID: expected %d, saw %d"
+  >
+    <comment>The Buffer Manager received a deallocation request whose ID did not match the ID at the end of the allocation queue</comment>
+    <args>
+      <arg
+        name="expected"
+        type="U32"      >
+        <comment>The expected ID value</comment>
+      </arg>
+      <arg
+        name="saw"
+        type="U32"      >
+        <comment>The ID value seen</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event
+    id="3"
+    name="BufferManager_StoreSizeExceeded"
+    severity="WARNING_HI"
+    format_string="Store size exceeded"
+  >
+    <comment>The Buffer Manager received an allocation request that, if granted, would exceed the store size</comment>
+  </event>
+
+</events>

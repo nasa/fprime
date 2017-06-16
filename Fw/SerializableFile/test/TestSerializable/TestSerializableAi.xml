@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Fw
+  Serializable Type: Test
+
+======================================================================-->
+
+<serializable namespace="Fw" name="Test">
+  <comment>
+  Test struct
+  </comment>
+  <members>
+    <member 
+      name="element1" 
+      type="U32" 
+      comment="Element 1"
+    />
+    <member 
+      name="element2" 
+      type="I8" 
+      comment="Element 2"
+    />
+    <member 
+      name="element3" 
+      type="F64" 
+      comment="Element 3"
+    />
+  </members>
+</serializable>

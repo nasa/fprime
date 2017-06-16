@@ -1,0 +1,2 @@
+SUBDIRS = ut \
+	  TestSerializable

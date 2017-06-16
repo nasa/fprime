@@ -1,0 +1,30 @@
+    <internal_interfaces>
+        <internal_interface name="loqQueue" priority="1" full="drop">
+            <comment>
+            internal interface to send log messages to component thread
+            </comment>
+            <args>
+                <arg name="id" type="FwEventIdType">
+                    <comment>Log ID</comment>
+                </arg>
+                <arg name="timeTag" type="Fw::Time" pass_by="reference">
+                    <comment>Time Tag</comment>
+                </arg>
+                <arg name="severity" type="ENUM">
+                    <enum name="QueueLogSeverity">
+                        <item name="QUEUE_LOG_FATAL" value="1" comment="A fatal non-recoverable event"/>
+                        <item name="QUEUE_LOG_WARNING_HI" value="2" comment="A serious but recoverable event"/>
+                        <item name="QUEUE_LOG_WARNING_LO" value="3" comment="A less serious but recoverable event"/>
+                        <item name="QUEUE_LOG_COMMAND" value="4" comment="An activity related to commanding"/>
+                        <item name="QUEUE_LOG_ACTIVITY_HI" value="5" comment="Important informational events"/>           
+                        <item name="QUEUE_LOG_ACTIVITY_LO" value="6" comment="Less important informational events"/>           
+                        <item name="QUEUE_LOG_DIAGNOSTIC" value="7" comment="Software diagnostic events"/>           
+                    </enum>
+                    <comment>The severity argument</comment>
+                </arg>
+                <arg name="args" type="Fw::LogBuffer" pass_by="reference">
+                    <comment>Buffer containing serialized log entry</comment>
+                </arg>
+            </args>
+        </internal_interface>
+    </internal_interfaces>    

@@ -1,0 +1,14 @@
+<DUMMY>
+    <SOMEVALS
+        var1 = "foo"
+        var2 = "home=$(HOME)"
+    />
+        
+    <SOMEVALS
+        var3 = "bar-$(SOMEVALS_var1)"
+    />
+
+    <MOREVALS
+        var4 = "bat-$(SOMEVALS_var3)"
+    />
+</DUMMY>    

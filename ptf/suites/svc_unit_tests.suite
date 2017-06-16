@@ -1,0 +1,10 @@
+"Svc/PrmDb Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/PrmDb)
+"Svc/TlmChan Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/TlmChan)
+"Svc/ActiveLogger Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/ActiveLogger)
+"Svc/CmdDispatcher Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/CmdDispatcher)
+"Svc/CmdSequencer Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/CmdSequencer)
+"Svc/ActiveRateGroup Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/ActiveRateGroup)
+"Svc/RateGroupDriver Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/RateGroupDriver)
+"Svc/PolyDb Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/PolyDb)
+"Svc/CmdSequencer Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/CmdSequencer)
+

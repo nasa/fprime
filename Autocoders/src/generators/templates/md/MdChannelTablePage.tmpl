@@ -1,0 +1,24 @@
+<title>${name} Component Dictionary</title>
+\#\# ${name} Component Dictionary
+
+#if $has_telemetry
+
+\#\# Telemetry Channels: ${name}
+
+|Channel Name|ID|Type|Description|
+|---|---|---|---|
+#for $id, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
+    ##
+    #if len($id) == 1:
+       #set $id = $id[0]
+       #if "x" in $id:
+         #set $id = int($id, 16) + $base_id
+       #else
+         #set $id = int($id) + $base_id
+       #end if
+       #set $hexid = hex($id)
+    #end if
+|$tlmname|$id ($hexid)|$type|$comment|
+#end for
+#end if
+

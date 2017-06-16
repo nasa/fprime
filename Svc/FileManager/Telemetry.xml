@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  ISF
+  FileManager
+  Telemetry
+
+======================================================================-->
+
+<telemetry telemetry_base="0x00">
+
+  <channel id="0x00" name="CommandsExecuted" data_type="U32">
+    <comment>The total number of commands successfully executed</comment>
+  </channel>
+
+  <channel id="0x01" name="Errors" data_type="U32">
+    <comment>The total number of errors</comment>
+  </channel>
+
+</telemetry>

@@ -1,0 +1,5 @@
+#!/bin/sh
+cd ${BUILD_ROOT}/Svc/LinuxTime/test/ut
+echo "Running ${BUILD_ROOT}/Svc/LinuxTime/test/ut/$1/test_ut"
+${BUILD_ROOT}/Svc/LinuxTime/test/ut/$1/test_ut
+

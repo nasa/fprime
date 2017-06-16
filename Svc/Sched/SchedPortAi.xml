@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="Sched" namespace="Svc">
+    <comment>
+    Scheduler Port with order argument
+    </comment>
+    <args>
+        <arg name="context" type="NATIVE_UINT_TYPE">
+            <comment>The call order</comment>
+        </arg>
+    </args>
+</interface>
+

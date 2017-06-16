@@ -1,0 +1,3 @@
+Commands.xml
+Telemetry.xml
+Events.xml

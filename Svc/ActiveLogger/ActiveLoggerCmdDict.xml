@@ -1,0 +1,82 @@
+    <commands opcode_base = "$ActiveLoggerOpcodeBase">
+        <command kind="sync" opcode="0" mnemonic="ALOG_SET_EVENT_REPORT_FILTER">
+            <comment>
+            Set filter for reporting events. Events are not stored in component. 
+            </comment>
+            <args>
+                <arg name="FilterLevel" type="ENUM">
+                    <enum name="InputFilterLevel">
+                        <item name="INPUT_WARNING_HI"/>
+                        <item name="INPUT_WARNING_LO"/>
+                        <item name="INPUT_COMMAND"/>
+                        <item name="INPUT_ACTIVITY_HI"/>
+                        <item name="INPUT_ACTIVITY_LO"/>
+                        <item name="INPUT_DIAGNOSTIC"/>
+                    </enum>
+                    <comment>Filter level</comment>
+                </arg>          
+                <arg name="FilterEnable" type="ENUM">
+                    <enum name="InputFilterEnabled">
+                        <item name="INPUT_ENABLED"/>
+                        <item name="INPUT_DISABLED"/>
+                    </enum>
+                    <comment>Filter state</comment>
+                </arg>
+             </args>
+        </command>
+        <command kind="sync" opcode="1" mnemonic="ALOG_SET_EVENT_SEND_FILTER">
+            <comment>
+            Set filter for sending events. Event will not be sent as a buffer. 
+            </comment>
+            <args>
+                <arg name="FilterLevel" type="ENUM">
+                    <enum name="SendFilterLevel">
+                        <item name="SEND_WARNING_HI"/>
+                        <item name="SEND_WARNING_LO"/>
+                        <item name="SEND_COMMAND"/>
+                        <item name="SEND_ACTIVITY_HI"/>
+                        <item name="SEND_ACTIVITY_LO"/>
+                        <item name="SEND_DIAGNOSTIC"/>
+                    </enum>
+                    <comment>Filter level</comment>
+                </arg>          
+                <arg name="FilterEnable" type="ENUM">
+                    <enum name="SendFilterEnabled">
+                        <item name="SEND_ENABLED"/>
+                        <item name="SEND_DISABLED"/>
+                    </enum>
+                    <comment>Severity filter state</comment>
+                </arg>
+             </args>
+        </command>
+        <command kind="async" opcode="2" mnemonic="ALOG_DUMP_EVENT_LOG">
+            <comment>
+            Dump circular buffers of events to a file 
+            </comment>
+            <args>
+                <arg name="filename" type="string" size="40">
+                </arg>
+            </args>
+        </command>
+        <command kind="async" opcode="3" mnemonic="ALOG_SET_ID_FILTER">
+            <comment>
+            Filter a particular ID 
+            </comment>
+            <args>
+                <arg name="ID" type="U32" comment="ID to filter">
+                </arg>
+                <arg name="IdFilterEnable" type="ENUM">
+                    <enum name="IdFilterEnabled">
+                        <item name="ID_ENABLED"/>
+                        <item name="ID_DISABLED"/>
+                    </enum>
+                    <comment>ID filter state</comment>
+                </arg>
+            </args>
+        </command>
+        <command kind="async" opcode="4" mnemonic="ALOG_DUMP_FILTER_STATE">
+            <comment>
+            Dump the filter states via events
+            </comment>
+        </command>
+    </commands>

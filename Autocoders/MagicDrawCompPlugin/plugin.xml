@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+	id="gov.nasa.jpl.magicdraw.componentAutocoder"
+	name="MagicDraw Component Plugin"
+	version="4.4"
+	ownClassloader="true"
+	provider-name="NASA Jet Propulsion Laboratory, California Institute of Technology"
+	class="gov.nasa.jpl.componentaction.IsfXmlAutocoderAction">
+
+	<requires>
+	   <api version="1.0"/>
+	</requires>
+
+	<runtime>
+	   <library name="MyPlugin.jar"/>
+	</runtime>
+</plugin>

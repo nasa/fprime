@@ -1,0 +1,7 @@
+This component takes a primary clock tick in the system and divides it down to drive output ports. 
+Constructor arguments define the divisors for each port. The output ports are meant to be connected 
+to the input ports of rate groups to drive them at the correct rate.
+
+RateGroupDriverComponentAi.xml - XML definition of rate group driver component
+RateGroupDriverImpl.hpp(.cpp) - Implementation for rate group driver 
+RateGroupDriverModule.mdxml - MagicDraw project file that describes rate group driver component

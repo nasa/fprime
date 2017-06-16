@@ -1,0 +1,50 @@
+# Each file represents the information for a single event
+# These module variables are used to instance the channel object within the Gse
+
+#if $ser_import != None:
+import $ser_import
+#end if
+
+COMPONENT = "${component}"
+
+NAME = "${name}"
+ID  = ${id}
+CHANNEL_DESCRIPTION = "${description}"
+TYPE = ${type}
+#if $format_string == None
+FORMAT_STRING = None
+#else
+FORMAT_STRING = "${format_string}"
+#end if
+
+#if $low_red == None
+LOW_RED = None
+#else
+LOW_RED = $low_red
+#end if
+#if $low_orange == None
+LOW_ORANGE = None
+#else
+LOW_ORANGE = $low_orange
+#end if
+#if $low_yellow == None
+LOW_YELLOW = None
+#else
+LOW_YELLOW = $low_yellow
+#end if
+#if $high_yellow == None
+HIGH_YELLOW = None
+#else
+HIGH_YELLOW = $high_yellow
+#end if
+#if $high_orange == None
+HIGH_ORANGE = None
+#else
+HIGH_ORANGE = $high_orange
+#end if
+#if $high_red == None
+HIGH_RED = None
+#else
+HIGH_RED = $high_red
+#end if
+

@@ -1,0 +1,3 @@
+<MYHOME
+    env = "home is here: $(HOME) but not here: $(TERM) at all."
+/>

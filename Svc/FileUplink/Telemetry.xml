@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  FileUplink
+  Telemetry
+
+======================================================================-->
+
+<telemetry
+  telemetry_base="$FileUplinkIdBase"
+>
+
+  <channel
+    id="0"
+    name="FileUplink_FilesReceived"
+    data_type="U32"
+    abbrev="T003-1000"
+  >
+    <comment>The total number of complete files received</comment>
+  </channel>
+
+  <channel
+    id="1"
+    name="FileUplink_PacketsReceived"
+    data_type="U32"
+    abbrev="T003-1100"
+  >
+    <comment>The total number of packets received</comment>
+  </channel>
+
+  <channel
+    id="2"
+    name="FileUplink_Warnings"
+    data_type="U32"
+    abbrev="T003-1200"
+  >
+    <comment>The total number of warnings issued</comment>
+  </channel>
+
+</telemetry>

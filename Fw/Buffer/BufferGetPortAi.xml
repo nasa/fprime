@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/interface_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<interface name="BufferGet" namespace="Fw">
+    <include_header>Fw/Buffer/BufferSerializableAc.hpp</include_header>
+    <args>
+        <arg name="size" type="U32" pass_by="value">
+        </arg>
+    </args>
+    <return  type="Fw::Buffer"  pass_by="value"></return>
+</interface>

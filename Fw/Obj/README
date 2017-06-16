@@ -1,0 +1,4 @@
+File Contents:
+
+ObjBase.hpp,.cpp - ISF Object/Object Registry base class declaration
+SimpleObjRegistry.hpp,.cpp - Declaration for a very basic object registry

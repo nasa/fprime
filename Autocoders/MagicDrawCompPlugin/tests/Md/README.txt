@@ -1,0 +1,1 @@
+This folder holds the ISF MagicDraw UML profile. It was developed as part of a component modeling R&TD task, but needs to be eventually updated to newer releases of ISF.

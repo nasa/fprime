@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/command_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<!--============ CmdSequencer Commands =================================== -->
+
+<commands opcode_base="$CmdSequencerOpcodeBase">
+	<command kind="async" opcode="0" mnemonic="CS_Run">
+		<comment>Run a command sequence file</comment>
+		<args>
+			<arg type="string" name="fileName" size="240">
+				<comment>The name of the sequence file</comment>
+			</arg>
+		</args>
+	</command>
+    <command kind="async" opcode="1" mnemonic="CS_Validate">
+        <comment>Validate a command sequence file</comment>
+        <args>
+            <arg type="string" name="fileName" size="240">
+                <comment>The name of the sequence file</comment>
+            </arg>
+        </args>
+    </command>
+	<command kind="async" opcode="2" mnemonic="CS_Cancel">
+		<comment>Cancel a command sequence</comment>
+	</command>
+	<command kind="async" opcode="3" mnemonic="CS_Start">
+		<comment>Start running a command sequence</comment>
+	</command>
+	<command kind="async" opcode="4" mnemonic="CS_Step">
+		<comment>Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.</comment>
+	</command>
+	<command kind="async" opcode="5" mnemonic="CS_Auto">
+		<comment>Set the run mode to AUTO.</comment>
+	</command>
+	<command kind="async" opcode="6" mnemonic="CS_Manual">
+		<comment>Set the run mode to MANUAL.</comment>
+	</command>
+</commands>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  FileDownlink
+  Commands
+
+======================================================================-->
+
+<commands
+  opcode_base="$FileDownlinkIdBase"
+>
+
+  <command
+    kind="async"
+    opcode="0"
+    mnemonic="FileDownlink_SendFile"
+  >
+    <comment>Read a named file off the disk. Divide it into packets and send the packets for transmission to the ground.</comment>
+    <args>
+      <arg
+        name="sourceFileName"
+        type="string"
+        size="60"
+      >
+        <comment>The name of the on-board file to send</comment>
+      </arg>
+      <arg
+        name="destFileName"
+        type="string"
+        size="60"
+      >
+        <comment>The name of the destination file on the ground</comment>
+      </arg>
+    </args>
+  </command>
+
+  <command
+    kind="sync"
+    opcode="1"
+    mnemonic="FileDownlink_Cancel"
+  >
+    <comment>Cancel the downlink in progress, if any</comment>
+  </command>
+
+</commands>

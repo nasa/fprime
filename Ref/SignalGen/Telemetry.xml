@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  SequenceFileLoader
+  Telemetry
+
+======================================================================-->
+
+<telemetry telemetry_base="$SignalGenIdBase">
+  <channel id="0" name="SignalGen_Output" data_type="F32" abbrev="T001-300">
+    <comment>SignalGen Output</comment>
+  </channel>
+</telemetry>
