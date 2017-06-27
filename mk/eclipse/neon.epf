@@ -7,7 +7,6 @@
 /configuration/org.eclipse.epp.logging.aeri.ide/reporterEmail=
 /configuration/org.eclipse.epp.logging.aeri.ide/reporterName=
 /configuration/org.eclipse.ui.ide/MAX_RECENT_WORKSPACES=10
-/configuration/org.eclipse.ui.ide/RECENT_WORKSPACES=C\:\\data\\source\nC\:\\data\\isf\nC\:\\data\\leonardo-fsw\nC\:\\data\\WxPythonProjects\nC\:\\Users\\tim\\source\\leonardo-fsw\nC\:\\cygwin\\home\\tim\\source\\isf\nC\:\\Users\\tim\\source\\isf\nC\:\\cygwin\\home\\tim\\source\\leonardo-fsw\nC\:\\cygwin\\home\\tim\\source\nC\:\\cygwin\\home\\tim\\source\\codesnippets
 /configuration/org.eclipse.ui.ide/RECENT_WORKSPACES_PROTOCOL=3
 /configuration/org.eclipse.ui.ide/SHOW_RECENT_WORKSPACES=false
 /configuration/org.eclipse.ui.ide/SHOW_WORKSPACE_SELECTION_DIALOG=true
@@ -319,8 +318,6 @@
 /instance/org.eclipse.e4.ui.css.swt.theme/themeid=org.eclipse.e4.ui.css.theme.e4_default6.0,6.1,6.2,6.3,10.0
 /instance/org.eclipse.e4.ui.workbench.renderers.swt/enableMRU=true
 /instance/org.eclipse.e4.ui.workbench.renderers.swt/themeEnabled=true
-/instance/org.eclipse.egit.core/GitRepositoriesView.GitDirectories=C\:\\data\\source\\fprime-sw\\.git;
-/instance/org.eclipse.egit.core/GitRepositoriesView.GitDirectories.relative=fprime-sw\\.git;
 /instance/org.eclipse.epp.logging.aeri.ide/anonymizeMessages=false
 /instance/org.eclipse.epp.logging.aeri.ide/anonymizeStackTraces=true
 /instance/org.eclipse.epp.logging.aeri.ide/debugEnabled=false
