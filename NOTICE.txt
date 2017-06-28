@@ -15,7 +15,9 @@ Day, Leonard
 Dinkel, Jack
 Dinkel, Kevin
 Gandhi, Gorang
+Gangianpour, Mehran
 Hofman, James
+Huynh, Tom
 Kooi, David
 Klemm, Rogers
 Kubiak, Gerak
@@ -25,6 +27,7 @@ Merewether, Eugene
 Nicolich, Eric
 Nowicki, Robert
 Ortega, Kevin
+Oyake, Amalaye
 Pandian, Prashanth 
 Reder, Leonard
 Rizvi, Aadil
@@ -35,6 +38,6 @@ Perez, Joseph
 Shenker, Boris
 Tuszynski, Marek
 Uchenik, Igor
-Watney, Garth
 Wang, Eric
+Watney, Garth
 Wong, Vincent
