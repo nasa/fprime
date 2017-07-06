@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  BufferManager
+  Telemetry
+
+======================================================================-->
+
+<telemetry
+  telemetry_base="$BufferManagerIdBase"
+>
+
+  <channel
+    id="0"
+    name="BufferManager_NumAllocatedBuffers"
+    data_type="U32"
+    abbrev="T005-100"
+  >
+    <comment>The number of buffers currently allocated</comment>
+  </channel>
+
+  <channel
+    id="1"
+    name="BufferManager_AllocatedSize"
+    data_type="U32"
+    abbrev="T005-110"
+  >
+    <comment>The total size of all allocated buffers</comment>
+  </channel>
+
+</telemetry>

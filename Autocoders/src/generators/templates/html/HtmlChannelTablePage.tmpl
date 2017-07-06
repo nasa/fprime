@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>${name} Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+#if $has_telemetry
+<h1><b>Telemetry Channels: ${name}</b></h1>
+<table>
+  <tr>
+     <th>Channel Name</th>
+     <th>ID</th>
+     <th>Type</th>
+     <th>Description</th>
+ </tr>
+
+#for $id, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
+    ##
+    #if len($id) == 1:
+       #set $id = $id[0]
+       #if "x" in $id:
+         #set $id = int($id, 16) + $base_id
+       #else
+         #set $id = int($id) + $base_id
+       #end if
+       #set $hexid = hex($id)
+    #end if
+ <tr>
+    <td>$tlmname</td>
+    <td>$id ($hexid)</td>
+    <td>$type</td>
+    <td>$comment</td>
+ </tr>
+#end for
+</table>
+#end if
+</body>
+</html>

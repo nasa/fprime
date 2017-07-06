@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  FileDownlink
+  Telemetry
+
+======================================================================-->
+
+<telemetry
+  telemetry_base="$FileDownlinkIdBase"
+>
+
+  <channel
+    id="0"
+    name="FileDownlink_FilesSent"
+    data_type="U32"
+    abbrev="T004-1000"
+  >
+    <comment>The total number of files sent</comment>
+  </channel>
+
+  <channel
+    id="1"
+    name="FileDownlink_PacketsSent"
+    data_type="U32"
+    abbrev="T004-1100"
+  >
+    <comment>The total number of packets sent</comment>
+  </channel>
+
+  <channel
+    id="2"
+    name="FileDownlink_Warnings"
+    data_type="U32"
+    abbrev="T004-1200"
+  >
+    <comment>The total number of warnings</comment>
+  </channel>
+
+</telemetry>

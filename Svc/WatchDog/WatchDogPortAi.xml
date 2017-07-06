@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="WatchDog" namespace="Svc">
+    <comment>
+    Port for stroking a watchdog timer
+    </comment>
+    <args>
+        <arg name="code" type="U32">
+            <comment>Watchdog stroke code</comment>
+        </arg>
+    </args>
+</interface>
+

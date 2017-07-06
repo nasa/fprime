@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/interface_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<interface name="Time" namespace="Fw">
+    <include_header>Fw/Time/Time.hpp</include_header>
+    <comment>
+        Time port
+    </comment>
+    <args>
+        <arg name="time" type="Fw::Time" pass_by="reference">
+            <comment>The U32 cmd argument</comment>
+        </arg>
+    </args>
+</interface>

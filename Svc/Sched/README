@@ -1,0 +1,4 @@
+This directory contains the definition of a scheduler port. This port is used to invoke rate groups and their members.
+
+SchedPortAi.xml - Defines the scheduler port
+SchedModule.mdxml - MagicDraw project file that describes scheduler port

@@ -1,0 +1,6 @@
+This directory contains the definition of a FATAL event port.
+This port will be invoked by ActiveLogger when a FATAL happens.
+It can be connected to a component that will decide what to do with
+the FATAL.
+
+FatalAnnouncePortAi.xml - Defines the FATAL port

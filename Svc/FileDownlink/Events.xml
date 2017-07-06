@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  FileDownlink
+  Events
+
+======================================================================-->
+
+<events
+  event_base="$FileDownlinkIdBase"
+>
+
+  <event
+    id="0"
+    name="FileDownlink_FileOpenError"
+    severity="WARNING_HI"
+    format_string="Could not open file %s"
+  >
+    <comment>An error occurred opening a file</comment>
+    <args>
+      <arg
+        name="fileName"
+        type="string"
+        size="60"
+      >
+        <comment>The name of the file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event
+    id="1"
+    name="FileDownlink_FileReadError"
+    severity="WARNING_HI"
+    format_string="Could not read file %s"
+  >
+    <comment>An error occurred reading a file</comment>
+    <args>
+      <arg
+        name="fileName"
+        type="string"
+        size="60"
+      >
+        <comment>The name of the file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event
+    id="2"
+    name="FileDownlink_FileSent"
+    severity="ACTIVITY_HI"
+    format_string="Sent file %s to file %s"
+  >
+    <comment>The File Downlink component successfully sent a file</comment>
+    <args>
+      <arg
+        name="sourceFileName"
+        type="string"
+        size="60"
+      >
+        <comment>The source file name</comment>
+      </arg>
+      <arg
+        name="destFileName"
+        type="string"
+        size="60"
+      >
+        <comment>The destination file name</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event
+    id="3"
+    name="FileDownlink_DownlinkCanceled"
+    severity="ACTIVITY_HI"
+    format_string="Canceled downlink of file %s to file %s"
+  >
+    <comment>The File Downlink component canceled downlink of a file</comment>
+    <args>
+      <arg
+        name="sourceFileName"
+        type="string"
+        size="60"
+      >
+        <comment>The source file name</comment>
+      </arg>
+      <arg
+        name="destFileName"
+        type="string"
+        size="60"
+      >
+        <comment>The destination file name</comment>
+      </arg>
+    </args>
+  </event>
+
+</events>

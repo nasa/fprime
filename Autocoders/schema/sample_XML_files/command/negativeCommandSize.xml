@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/command_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<commands opcode_base="$OPCODEBASE">
+    <command kind="async" opcode="0" mnemonic="Flight Command Zero" size = "-10">
+        <comment>Flight Command Zero excecutes very simple command.</comment>
+    </command>
+    <command kind = "sync"  opcode="1" mnemonic="Flight Command One">
+        <comment>Flight Command One excecutes complex command.</comment>
+        <args>
+            <arg name="Throttle" type="I8" size="8" pass_by="reference" comment="Throttle Value">
+                <comment>Controles the throttle value.</comment>
+            </arg>
+            <arg name="Rotation" type = "ENUM">
+                <enum name="RotationValues">
+                    <item name="Yaw" value="-1"></item>
+                    <item name="Pitch" value = "0" comment = "Around y."/>
+                    <item name = "Role" comment = "Around z."></item>
+                </enum>
+            </arg>
+            <arg name="Display" type="string" size="15">
+                <comment>Message to pop up onto onboard flight 8 bit display.</comment>
+            </arg>
+        </args>
+    </command>
+    <command kind="async" opcode="2" mnemonic="Flight Command Two"></command>
+</commands>

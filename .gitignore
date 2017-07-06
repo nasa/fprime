@@ -1,29 +1,55 @@
-# Compiled Object files
-*.slo
-*.lo
+AutoXML/
+test_harness/src/test_harness-C/application.out
+/.project
+/.cproject
+*.pyc
 *.o
-*.obj
+*Ac.*
+*ComponentReport.txt
+lib*.a
+*-bin
+ac_dep
+yacgen.log
+.accurev
+.acignore
+*~
+.metadata
+RemoteSystemsTempFiles
+*.py.bak
+~*
+*.hash
+.DS_Store
+*.stackdump
+Dict
+*.core
 
-# Precompiled Headers
-*.gch
-*.pch
+*.gcov
+!**/test/ut/output/*.gcov
+GTestBase.*
+TesterBase.*
+Tester.*
+!**/test/ut/GTestBase.*
+!**/test/ut/TesterBase.*
+!**/test/ut/Tester.*
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+*.mdxml.bak
+*.sconsign.dblite
+*.class
+.classpath
+doxygen
+.scrub*
+.coverity*
+coverity.out
+#*#
+.#*
 
-# Fortran module files
-*.mod
-*.smod
+**/docs/*.html
+*-template
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+logs
 
-# Executables
-*.exe
-*.out
-*.app
+test_harness/.autotools
+core
+
+.swp
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  Svc
+  SequenceFileLoader
+  Events
+
+======================================================================-->
+
+<events event_base="$SignalGenIdBase">
+  <event
+    id="0"
+    name="SignalGen_SettingsChanged"
+    severity="ACTIVITY_LO"
+    format_string="Set Frequency(Hz) %s, Amplitude %s, Phase %s">
+      <comment>Signal Generator Settings Changed</comment>
+      <args>
+      <arg 
+        type="U32" 
+        name="Frequency">
+      </arg>
+      <arg
+        type="U32"
+        name="Amplitude">
+      </arg>
+      <arg
+        type="U32"
+        name="Phase">
+      </arg>
+      </args>
+  </event>
+</events>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/parameters_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<parameters opcode_base="$testBase" parameter_base="0x10">
+    <parameter id="0" set_opcode="0x1" save_opcode="0x2" name="ParamA" data_type="F32" default="32.1">
+        <comment>Float Parameter</comment>
+    </parameter>
+    <parameter id="1" set_opcode="0x3" save_opcode="0x4" name="ParamB" data_type="NATIVE_INT_TYPE" default="10">
+        <comment>Native Int Type</comment>
+    </parameter>
+    <parameter id="2" set_opcode="x5" save_opcode="x6" name="ParamC" data_type="U8" default="1">
+        <comment>Unsigned 8 bit</comment>
+    </parameter>
+    <parameter id="3" set_opcode="7" save_opcode="8" name="ParamD" data_type="string" size="10" default="def">
+        <comment>string</comment>
+    </parameter>
+    <parameter id="4" set_opcode="9" save_opcode="10" name="ParamE" data_type="boolean" default="true">
+        <comment>boolean</comment>
+    </parameter>
+</parameters>

@@ -1,0 +1,2 @@
+This is a demonstration component for a simple device driver. It takes a buffer as input and loops it back to the output. 
+It also generates a timing "interrupt" to drive the rate groups.

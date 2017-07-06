@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  ISFA
+  FileManagerm
+  Events
+
+======================================================================-->
+
+<events event_base="0x00">
+
+  <event id="0x00" name="DirectoryCreateError" severity="WARNING_HI" format_string="Could not create directory %s, returned status %d">
+    <comment>An error occurred while attempting to create a directory</comment>
+    <args>
+      <arg name="dirName" type="string" size="256">
+        <comment>The name of the directory</comment>
+      </arg>
+      <arg name="status" type="U32" size="256">
+        <comment>The error status</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x01" name="DirectoryRemoveError" severity="WARNING_HI" format_string="Could not remove directory %s, returned status %d">
+    <comment>An error occurred while attempting to remove a directory</comment>
+    <args>
+      <arg name="dirName" type="string" size="256">
+        <comment>The name of the directory</comment>
+      </arg>
+      <arg name="status" type="U32" size="256">
+        <comment>The error status</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x02" name="FileMoveError" severity="WARNING_HI" format_string="Could not move file %s to file %s, returned status %d">
+    <comment>An error occurred while attempting to move a file</comment>
+    <args>
+      <arg name="sourceFileName" type="string" size="256">
+        <comment>The name of the source file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+      <arg name="status" type="U32" size="256">
+        <comment>The error status</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x03" name="FileRemoveError" severity="WARNING_HI" format_string="Could not remove file %s, returned status %d">
+    <comment>An error occurred while attempting to remove a file</comment>
+    <args>
+      <arg name="fileName" type="string" size="256">
+        <comment>The name of the file</comment>
+      </arg>
+      <arg name="status" type="U32" size="256">
+        <comment>The error status</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x04" name="ShellCommandFailed" severity="WARNING_HI" format_string="Shell command %s failed with status %d">
+    <comment>The File System component executed a shell command that returned status non-zero</comment>
+    <args>
+      <arg name="command" type="string" size="256">
+        <comment>The command string</comment>
+      </arg>
+      <arg name="status" type="U32" size="256">
+        <comment>The status code</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x05" name="ShellCommandSucceeded" severity="ACTIVITY_HI" format_string="Shell command %s succeeded">
+    <comment>The File System component executed a shell command that returned status zero</comment>
+    <args>
+      <arg name="command" type="string" size="256">
+        <comment>The command string</comment>
+      </arg>
+    </args>
+  </event>
+
+</events>

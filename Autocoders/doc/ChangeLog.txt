@@ -1,0 +1,8 @@
+ChangeLog File for Autocoders
+=============================
+8 August 2013
+This file is manually maintained and intended to capture changes
+with the Autocoders module over time.
+
+8 August 2013
+Promoted changes for new design pattern generation upstream to ISF_Development.

@@ -1,0 +1,88 @@
+/*
+ * ActiveLoggerImplTester.hpp
+ *
+ *  Created on: Mar 18, 2015
+ *      Author: tcanham
+ */
+
+#ifndef ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
+#define ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
+
+#include <Svc/ActiveLogger/test/ut/GTestBase.hpp>
+#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <Os/File.hpp>
+
+namespace Svc {
+
+    class ActiveLoggerImplTester: public Svc::ActiveLoggerGTestBase {
+        public:
+            ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst);
+            virtual ~ActiveLoggerImplTester();
+
+            void init(NATIVE_INT_TYPE instance = 0);
+
+            void runEventNominal(void);
+            void runFilterEventNominal(void);
+            void runFilterIdNominal(void);
+            void runFilterDump(void);
+            void runFilterInvalidCommands(void);
+            void runEventFatal(void);
+            void runFileDump(void);
+            void runFileDumpErrors(void);
+
+        private:
+
+            void from_PktSend_handler(
+                    const NATIVE_INT_TYPE portNum, //!< The port number
+                    Fw::ComBuffer &data, //!< Buffer containing packet data
+                    U32 context //!< context (not used)
+                );
+            void from_FatalAnnounce_handler(
+                      const NATIVE_INT_TYPE portNum, //!< The port number
+                      FwEventIdType Id //!< The ID of the FATAL event
+                  );
+
+            Svc::ActiveLoggerImpl& m_impl;
+
+            bool m_receivedPacket;
+            Fw::ComBuffer m_sentPacket;
+
+            bool m_receivedFatalEvent;
+            FwEventIdType m_fatalID;
+
+            void runWithFilters(Fw::LogSeverity filter);
+
+            void writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value);
+            void readEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value, Os::File& file);
+
+            // open call modifiers
+
+            static bool OpenIntercepter(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
+            Os::File::Status m_testOpenStatus;
+
+            // write call modifiers
+
+            static bool WriteIntercepter(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
+            Os::File::Status m_testWriteStatus;
+            // How many read calls to let pass before modifying
+            NATIVE_INT_TYPE m_writesToWait;
+            // enumeration to tell what kind of error to inject
+            typedef enum {
+                FILE_WRITE_WRITE_ERROR, // return a bad read status
+                FILE_WRITE_SIZE_ERROR, // return a bad size
+            } FileWriteTestType;
+            FileWriteTestType m_writeTestType;
+            NATIVE_INT_TYPE m_writeSize;
+
+            void textLogIn(const FwEventIdType id, //!< The event ID
+                      Fw::Time& timeTag, //!< The time
+                      const Fw::TextLogSeverity severity, //!< The severity
+                      const Fw::TextLogString& text //!< The event string
+                      );
+
+
+    };
+
+} /* namespace Svc */
+
+#endif /* ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_ */

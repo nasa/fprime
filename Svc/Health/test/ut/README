@@ -1,0 +1,13 @@
+This describes how to run the Health unit tests and where the various output files are located. To be certain that there are no leftover Gtest files, do the following in '/isf/Svc/Health/.':
+> make ut_clean
+
+Then in the Health directory, you may build the tests as follows:
+> make ut
+
+Finally, in the Health directory, type the following command to run the unit tests:
+> make run_ut
+
+This will run the tests and print the results to stdout. To generate the code coverage files, do the following in the Health directory:
+> make cov
+
+The coverage files (*.gcov) can be found in the Health directory for the .cpp and .hpp files. The full coverage report can be found in the <target>-ut-bin directory named SvcHealth_gcov.txt. 

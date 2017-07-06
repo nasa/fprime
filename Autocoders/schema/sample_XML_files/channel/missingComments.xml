@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/channel_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<telemetry telemetry_base="x1">
+    <channel id="0x0" name="ChanOne" update="always" data_type="I8" high_orange="30">
+    </channel>
+    <channel id = "x1" name = "ChanTwo" update="on_change" data_type="ENUM">
+        <comment>Channel Two Coordinates</comment>
+        <enum name="coor">
+            <item name="x" comment="x coor"></item>
+            <item name="y"/>
+        </enum>
+    </channel>
+    <channel id="2" name="ChanThree" data_type="string">
+        <comment>Channel Three</comment>
+    </channel>
+</telemetry>

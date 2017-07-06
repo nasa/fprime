@@ -1,0 +1,10 @@
+\#include <Fw/Types/BasicTypes.hpp>
+\#include <Fw/Types/Serializable.hpp>
+\#if FW_SERIALIZABLE_TO_STRING
+\#include <Fw/Types/StringType.hpp>
+\#include <stdio.h> // snprintf
+\#ifdef BUILD_UT
+\#include <iostream>
+\#include <Fw/Types/EightyCharString.hpp>
+\#endif
+\#endif
