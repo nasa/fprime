@@ -7,7 +7,7 @@ JPL Contributors to the F` Software Framework:
 * Chase, Matthew
 * Chen, Victor
 * Day, Leonard
-* Dinkle, Kevin
+* Dinkel, Kevin
 * Gandhi, Gorang
 * Hofman, James
 * Kooi, David
