@@ -1,0 +1,34 @@
+JPL Contributors to the F` Software Framework:
+
+* Adams, Derek
+* Bocchino, Robert
+* Campuzano, Brian
+* Canham, Timothy
+* Chase, Matthew
+* Chen, Victor
+* Day, Leonard
+* Dinkle, Kevin
+* Gandhi, Gorang
+* Hofman, James
+* Kooi, David
+* Klemm, Rogers
+* Kubiak, Gerak
+* Levison, Jeffrey
+* Manglapus, Lloyd
+* Merewether, Eugene
+* Nicolich, Eric
+* Nowicki, Robert
+* Ortega, Kevin
+* Pandian, Prashanth 
+* Reder, Leonard
+* Rizvi, Aadil
+* Roche, Michael
+* Sinha, Sanchit
+* Starch, Michael
+* Perez, Joseph
+* Shenker, Boris
+* Tuszynski, Marek
+* Uchenik, Igor
+* Watney, Garth
+* Wang, Eric
+* Wong, Vincent
