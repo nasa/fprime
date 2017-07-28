@@ -38,9 +38,6 @@ class StatusUpdater(observer.Observable):
     status in the common text widget area of the panels.
 
     Also every update is saved in a default log file
-    of the name:
-
-    ${HOME}/gse/gse_YYYYMMDD_Time.log
 
     @todo: Future implementations will utilize ConfigManager
     making it possible to override the path and filename.
