@@ -212,7 +212,7 @@ class FilePanel(object):
         self.__uplink_shell.spawn(host=self.__opts.addr, port=self.__opts.port, src_path=src_path, dest_path=dest_path)
 
 
-    def update(self, observer):
+    def update(self, observer, arg):
         """
         Updated by file listener.
         """

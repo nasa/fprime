@@ -165,3 +165,10 @@ class ChannelLoader(object):
 
     def getChDictByName(self):
         return self.__dict_channels_by_name
+
+if __name__ == '__main__':
+    evl = ChannelLoader()
+    print "Set of events found:"
+    ch_dict = evl.getChDict()
+    for m in ch_dict.keys():
+        print "%s (%s) %s %s\n" % (ch_dict[m].getName(), m, ch_dict[m].getChDesc(), ch_dict[m].getType())

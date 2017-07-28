@@ -10,11 +10,13 @@ import tkFileDialog
 import Pmw
 import os
 
-def telemetryFilterDialog(parent, channels, selected_channels=[]):
+from controllers import channel_loader
+
+def telemetryFilterDialog(parent, inactive_channels, selected_channels=[]):
     """
     Wrapper call for TelemetryFilterPanel class to operate as a dialog.
     """
-    t = TelemetryFilterPanel(parent, channels, selected_channels)
+    t = TelemetryFilterPanel(parent, inactive_channels, selected_channels)
     return t.get()
 
 
@@ -24,23 +26,28 @@ class TelemetryFilterPanel(object):
     viewable telemetry channels.
     '''
 
-    def __init__(self, parent, channels, selected_channels=[]):
+    def __init__(self, parent, inactive_channels, selected_channels=[]):
         '''
         Constructor
         '''
-        channels_local = channels
-        channels_local.sort()
+        self.__inactive_channels = inactive_channels
+        self.__inactive_channels.sort()
+        selected_channels.sort()
 
-        # Update channels_local if channels were selected earlier
+        ch_loader = channel_loader.ChannelLoader.getInstance()
+        self.__channel_names_list = ch_loader.getNameDict().values()
+        self.__channel_names_list.sort()
+
+        # Update inactive_channels if channels were selected earlier
         # Use the fact that empty sequences (lists, etc...) are False (PEP 8)
         if not selected_channels:
             for c in selected_channels:
                 try:
-                    channels_local.remove(c)
+                    self.__inactive_channels.remove(c)
                 except ValueError:
                     pass
 
-        self.__channels_local = channels_local
+        self.__inactive_channels = inactive_channels
 
         top = Tkinter.Toplevel(parent)
         top.title("F Prime Channel Telemetry Filter Selection")
@@ -50,11 +57,12 @@ class TelemetryFilterPanel(object):
         top.minsize(600,400)
         top.lift()
         self.__top = top
-        #
+
         # Container Frame
         #
         f = Tkinter.Frame(top)
         f.pack(side=Tkinter.TOP, anchor=Tkinter.N, fill=Tkinter.BOTH, expand=1)
+
         #
         f2 = Tkinter.Frame(top)
         f2.pack(side=Tkinter.TOP, anchor=Tkinter.N, fill=Tkinter.BOTH, expand=1)
@@ -72,13 +80,15 @@ class TelemetryFilterPanel(object):
                                   listbox_height=15,
                                   selectioncommand=self.__selectionCommandToSelected,
                                   dblclickcommand=self.__selectionCommandToSelected,
-                                  items=tuple(channels_local))
+                                  items=tuple(self.__inactive_channels))
         self.__list_box_channels.pack(side=Tkinter.LEFT, anchor=Tkinter.NW, fill=Tkinter.BOTH, expand=1, padx=5, pady=5)
         #
         bbox = Pmw.ButtonBox(f2, orient=Tkinter.VERTICAL)
         bbox.pack(side=Tkinter.LEFT)
-        bbox.add("==>", command=self.__selectChannels)
-        bbox.add("<==", command=self.__deselectChannels)
+        bbox.add(">", command=self.__selectChannels)
+        bbox.add("<", command=self.__deselectChannels)
+        bbox.add('>>', command=self.__add_all)
+        bbox.add('<<', command=self.__clear_all)
         #
         ff2 = Tkinter.LabelFrame(f2, text="Channels Selected:", relief=Tkinter.GROOVE, borderwidth=2, padx=5, pady=5)
         ff2.pack(side=Tkinter.LEFT, anchor=Tkinter.NW, fill=Tkinter.BOTH, expand=1,padx=10,pady=10)
@@ -96,13 +106,13 @@ class TelemetryFilterPanel(object):
         #
         buttonBox = Pmw.ButtonBox(f3, labelpos='nw', label_text='Channel Selection Commands:')
         buttonBox.pack(side=Tkinter.BOTTOM, fill=Tkinter.BOTH, expand=1, padx=10, pady=10)
-        buttonBox.add('Reset', command=self.__reset)
+
         buttonBox.add('Save', command=self.__save)
         buttonBox.add('Load', command=self.__load)
         buttonBox.add('Cancel', command=self.__cancel)
         buttonBox.add('Ok', command=self.__ok)
         #
-        self.__all_channels_selected = channels_local
+        self.__all_channels_selected = inactive_channels
         self.__channels_selected = selected_channels
         self.__active_filter_selected = None
         # Mouse selection lists for each ScrolledListbox
@@ -116,19 +126,11 @@ class TelemetryFilterPanel(object):
         self.__select_to_selected  = self.__list_box_channels.getcurselection()
         if len(self.__select_to_selected) == 0:
             self.__select_to_selected = []
-            #print 'No selection'
-#        else:
-            #print 'Selection:', self.__select_to_selected
-
 
     def __selectionCommandToAvaliable(self):
         self.__select_to_avaliable  = self.__list_box_selected.getcurselection()
         if len(self.__select_to_avaliable) == 0:
             self.__select_to_avaliable = []
-#            print 'No selection'
-#         else:
-#             print 'Selection:', self.__select_to_avaliable
-
 
     def refresh(self, event=None):
         pass
@@ -137,7 +139,7 @@ class TelemetryFilterPanel(object):
     # Button callbacks here...
     def __selectChannels(self):
         """
-        Selects channels for filter.
+       Selects channels for filter.
         """
         self.__active_filter_selected = 'User Selected Channels'
         if len(self.__select_to_selected) > 0:
@@ -150,7 +152,7 @@ class TelemetryFilterPanel(object):
             [self.__list_box_channels.insert(Tkinter.END, i) for i in items]
         # Get selected
         self.__channels_selected = list(self.__list_box_selected.get(0, Tkinter.END))
-        self.__channels_local    = list(self.__list_box_channels.get(0, Tkinter.END))
+        self.__inactive_channels    = list(self.__list_box_channels.get(0, Tkinter.END))
         self.__select_to_avaliable = ()
         self.__select_to_selected = ()
 
@@ -175,26 +177,35 @@ class TelemetryFilterPanel(object):
             [self.__list_box_selected.insert(Tkinter.END,i) for i in items]
         # Get selected
         self.__channels_selected = list(self.__list_box_selected.get(0, Tkinter.END))
-        self.__channels_local = list(self.__list_box_channels.get(0, Tkinter.END))
+        self.__inactive_channels = list(self.__list_box_channels.get(0, Tkinter.END))
         self.__select_to_avaliable = ()
         self.__select_to_selected = ()
 
 
-    def __reset(self):
+    def __add_all(self):
         """
         Resets the filter to all channels selected state.
         """
         self.__active_filter_selected = 'Reset'
-        self.__channels_selected = self.__all_channels_selected
+        self.__channels_selected = self.__channel_names_list
+        self.__inactive_channels = []
         self.__list_box_channels.delete(0,Tkinter.END)
         [self.__list_box_selected.insert(Tkinter.END,i) for i in  self.__channels_selected]
 
+    def __clear_all(self):
+      """
+      Resets the filter to clear all channels.
+      """
+      self.__active_filter_selected = 'Clear'
+      self.__channels_selected = []
+      self.__inactive_channels = self.__channel_names_list
+      self.__list_box_selected.delete(0,Tkinter.END)
+      [self.__list_box_channels.insert(Tkinter.END,i) for i in  self.__inactive_channels]
 
     def __save(self):
         """
         Saves a filter configuration in an ascii file.
         """
-
         p = "."
         #
         # Various file save as dialogs and save method calls.
@@ -214,7 +225,6 @@ class TelemetryFilterPanel(object):
         """
         Loads a filter configuration from an ascii file.
         """
-
         p = "."
         #
         # Various file save as dialogs and save method calls.
@@ -225,24 +235,24 @@ class TelemetryFilterPanel(object):
         if f:
             self.__active_filter_selected = f
             f = open(f,"r")
-            ch = f.readlines()
+            loaded_channels = f.readlines()
             f.close()
-            ch = map(lambda x: x[:-1],ch)
+            loaded_channels = map(lambda x: x[:-1],loaded_channels)
 
             # Move all selected into available
             [self.__list_box_channels.insert(Tkinter.END, i) for i in self.__channels_selected]
 
             # Insert into selected list
             self.__list_box_selected.delete(0,Tkinter.END)
-            [self.__list_box_selected.insert(Tkinter.END,i) for i in ch]
-            self.__channels_selected = ch
+            [self.__list_box_selected.insert(Tkinter.END,i) for i in loaded_channels]
+            self.__channels_selected = loaded_channels
 
             # Remove from avaliable list
             items = list(self.__list_box_channels.get(0, Tkinter.END))
             self.__list_box_channels.delete(0,Tkinter.END)
-            [items.remove(i) for i in ch if i in items]
+            [items.remove(i) for i in loaded_channels if i in items]
             [self.__list_box_channels.insert(Tkinter.END, i) for i in items]
-            self.__channels_local = items
+            self.__inactive_channels = items
 
 
     def __cancel(self):
@@ -265,7 +275,7 @@ class TelemetryFilterPanel(object):
         """
         Returns the current list of channels selected.
         """
-        return (self.__active_filter_selected, self.__channels_selected, self.__list_box_channels, self.__channels_local)
+        return (self.__active_filter_selected, self.__channels_selected, self.__list_box_channels, self.__inactive_channels)
 
 
 if __name__ == "__main__":

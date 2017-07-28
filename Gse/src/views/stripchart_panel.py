@@ -25,6 +25,7 @@ from controllers import status_updater
 from controllers import event_listener
 from controllers import stripchart_listener
 from controllers import status_bar_updater
+from controllers import observer
 
 from utils import ConfigManager
 from utils import gse_misc
@@ -46,7 +47,7 @@ class ScalingException(StripPanelException):
         super(StripPanelException,self).__init__("Scaling Exception: %s !" % str(val))
 
 
-class StripChartPanel(object):
+class StripChartPanel(observer.Observer):
     '''
     Panel object. Display stripcharts
     '''
@@ -111,7 +112,7 @@ class StripChartPanel(object):
         self.__grid_configure()
 
         # Row and column counters
-        self.__row = 0  
+        self.__row = 0
         self.__col = 0
 
         ## Panel Settings
@@ -134,8 +135,8 @@ class StripChartPanel(object):
             command = self.__execute_panel_settings)
         self.__settings_dialog.withdraw()
 
-        p = self.__settings_dialog.interior() # Parent 
-        
+        p = self.__settings_dialog.interior() # Parent
+
         default_height = self.__config.get('strippanel', 'plot_height')
         self.__plot_height_var.set(default_height)
         plot_height_entry = Pmw.EntryField(p, labelpos='w', label_text='Plot Heights(Inches)')
@@ -202,13 +203,13 @@ class StripChartPanel(object):
         Add an empty graph to the graph container frame.
         @param FrameObject: An AxesFrame object
         """
-        # Starting a row so create the row 
+        # Starting a row so create the row
 
 
         m = self.__graph_container_frame
         label_text = "Chart {}".format(self.__num_plots)
 
-        # Create a_frame 
+        # Create a_frame
         a_frame = FrameObject(master=m, parent=self.__parent, panel=self, id=self.__num_plots, label_text=label_text)
         a_frame.default_axis_format()
 
@@ -231,11 +232,8 @@ class StripChartPanel(object):
         for refresh_call in self.__refresh_calls.values():
             refresh_call()
 
-        update_rate = self.__config.get('performance', 'stripchart_update_rate')
-        id = self.__root.after(update_rate, self.refresh)
-        self.__after_id = id
-
-        #print time.time() - start
+        update_period = self.__config.get('performance', 'stripchart_update_period')
+        self.__after_id = self.__root.after(update_period, self.refresh)
 
     def refresh_cancel(self):
         self.__root.after_cancel(self.__after_id)
@@ -253,7 +251,7 @@ class StripChartPanel(object):
         Reset grid or regrid as nessecary.
         """
         self.__axes_dict.pop(id, None)
-        self.__num_plots -= 1 
+        self.__num_plots -= 1
         if self.__num_plots == 0:
             self.__reset_grid()
             return
@@ -273,12 +271,12 @@ class StripChartPanel(object):
             self.__axes_dict[self.__num_plots] = a_frame
             a_frame.grid(row=self.__row, column=self.__col, sticky="nsew")
             self.__increment_grid()
-    
+
     def __increment_grid(self):
         """
         Update plot number, rows, and columns
         """
-        self.__num_plots += 1 
+        self.__num_plots += 1
         self.__col += 1
         if self.__col == int(self.__config.get('strippanel','max_columns')):
             self.__col  = 0
@@ -294,7 +292,7 @@ class StripChartPanel(object):
     def unregister_refresh(self, id):
         self.__refresh_calls.pop(id, None)
 
-    def update(self, observer):
+    def update(self, observable, arg):
         """
         Listener update.
         Called from StripchartListener
@@ -302,9 +300,9 @@ class StripChartPanel(object):
         Only update a_frame if item is not None AND is an active item within the a_frame.
         """
         #now = time.time()
-        tlm = observer.get_tlm()
-        event_name = observer.get_event_name()
-        severity = observer.get_severity()
+        tlm = observable.get_tlm()
+        event_name = observable.get_event_name()
+        severity = observable.get_severity()
 
         for a_frame in self.__axes_dict.values():
 
@@ -326,7 +324,7 @@ class StripChartPanel(object):
             a_frame.__del__()
             a_frame.destroy()
 
-        self.__sc_listener.observer_discard(self)
+        self.__sc_listener.deleteObserver(self)
         del self.__axes_dict
 
 
@@ -345,7 +343,7 @@ class StripMode(object):
 
     def gen_x_scale(self, instance):
         """
-        Generate dialog for x scale. 
+        Generate dialog for x scale.
         """
         f1 = Tkinter.Frame(instance._StripFrame__scale_dialog.interior())
         f1.pack(side=Tkinter.BOTTOM)
@@ -360,7 +358,7 @@ class StripMode(object):
 
     def gen_y_scale(self, instance):
         """
-        Generate dialog for y scale. 
+        Generate dialog for y scale.
         """
         self.gen_dialog(instance, axis='Y')
 
@@ -429,7 +427,7 @@ class StripMode(object):
             window_stop = md.num2date(t_data.getHead())
         except ValueError, e:
             window_stop = datetime.datetime.now()
-        
+
         window_start = window_stop - datetime.timedelta(seconds=window_width_s, microseconds=window_width_us)
         #print "WINDOW WIDTH: %d"%window_width_s
 
@@ -442,7 +440,7 @@ class StripMode(object):
 
     def execute_y_scale(self, instance, max, min):
         """
-        Setup y scale. 
+        Setup y scale.
         """
         instance.set_yscale_toggle(1)
         instance.autoscale_y(False) # Custom scale disables autoscale
@@ -479,7 +477,7 @@ class StripMode(object):
 
 class AxesFrame(Tkinter.LabelFrame):
     """
-    Base class for graph frames. 
+    Base class for graph frames.
     """
 
     def __init__(self, master, parent, panel, id, label_text):
@@ -501,7 +499,7 @@ class AxesFrame(Tkinter.LabelFrame):
 
         # Create figure and axes
         self._fig, self._axes = plt.subplots()
-        
+
         self._set_default_plot_margins()
         #plt.tight_layout(pad=.6, w_pad=0.5, h_pad=1.0)
 
@@ -514,7 +512,7 @@ class AxesFrame(Tkinter.LabelFrame):
         # Channel config
         self._channel_loader = channel_loader.ChannelLoader.getInstance()
         self._available_channels_list = self._channel_loader.getNameDict().values()
-        
+
         self._active_channels_list = []
         self._active_event_list = []
         self._active_severity_list = []
@@ -579,7 +577,7 @@ class AxesFrame(Tkinter.LabelFrame):
 
     def __execute_settings(self, button):
         """
-        Executed by settings dialog. 
+        Executed by settings dialog.
         """
         if button == 'Cancel':
             return
@@ -604,7 +602,7 @@ class AxesFrame(Tkinter.LabelFrame):
 
     def _set_default_plot_margins(self):
         """
-        Set plot margins from .ini settings. 
+        Set plot margins from .ini settings.
         """
         b = float(self._config.get("strippanel", "plot_bottom_margin"))
         l = float(self._config.get("strippanel", "plot_left_margin"))
@@ -620,13 +618,13 @@ class AxesFrame(Tkinter.LabelFrame):
         except Exception, e:
             pass
 
-    
+
     def get_active_ch_list(self):
         return self._active_channels_list
 
     def get_active_event_list(self):
         return self._active_event_list
-    
+
     def get_active_severity_list(self):
         return self._active_severity_list
 
@@ -668,7 +666,7 @@ class AxesFrame(Tkinter.LabelFrame):
         return self._fig
 
     def draw_canvas(self):
-    
+
         self._fig.canvas.draw()
         self._fig.canvas.flush_events()
         self._parent.update_idletasks()
@@ -759,11 +757,11 @@ class HistFrame(AxesFrame):
         self._axes.set_xlabel("Bins")
         self._axes.set_ylabel("")
         self._axes.set_title("")
-        
+
         self._set_default_plot_margins()
         self._axes.xaxis.set_ticks([])
 
-        
+
     def clear_axes_frame(self):
         """
         Reset all counters and clear axes.
@@ -862,7 +860,7 @@ class HistFrame(AxesFrame):
     def update_increment(self, name):
         """
         Increment a dictionary entry.
-        Return is entry not found. 
+        Return is entry not found.
         """
         try:
             self.__all_active[name] = self.__all_active[name] + 1
@@ -902,7 +900,7 @@ class HistFrame(AxesFrame):
         for idx, rec in enumerate(rects):
             height = rec.get_height()
             self._axes.text(rec.get_x() + rec.get_width()/2., 1.05*height, "{}".format(self.__all_active.values()[idx]))
-        
+
         self.draw_canvas()
 
 
@@ -978,7 +976,7 @@ class StripFrame(AxesFrame):
         self.__do_spectrum     = False  # Graph spectrum or not
         self.__last_spectrum_update = 0 # Time of last spectrum update. Used to limit how fast spectrum updates.
         self.__spectrum_label       = "(Spectrum)"
-            
+
 
         self.__stop = False # Stop/Start refresh
         self.__inital_run = True
@@ -1034,12 +1032,12 @@ class StripFrame(AxesFrame):
         self.__yscale_button_toggle.set(0)
         self.__scroll_var.set(0)
         self.hide_scroll()
-        
-        self.__stop = False          
+
+        self.__stop = False
         self.__inital_run = True
 
         self._set_default_plot_margins()
-        self._axes.cla()    
+        self._axes.cla()
         self.default_axis_format()
         self._axes.xaxis.set_ticks([])
         self.draw_canvas()
@@ -1124,8 +1122,8 @@ class StripFrame(AxesFrame):
 
     def __handle_scroll(self, position):
         """
-        Connected to scroll bar. 
-        Move time window based off scroll bar position. 
+        Connected to scroll bar.
+        Move time window based off scroll bar position.
         @param position: Relative position of scrollbar 0.0 to 1.0
         """
         line_data, t_data, y_data = self.__channel_lines.itervalues().next()
@@ -1213,7 +1211,7 @@ class StripFrame(AxesFrame):
 
     def add_channel(self, ch_name):
         """
-        Add channel to axes. 
+        Add channel to axes.
         Set a unique line color.
         Also set max and min channel limit lines based off of gse.ini.
         @param ch_name: String channel name
@@ -1280,9 +1278,9 @@ class StripFrame(AxesFrame):
                     spec_line.set_ydata(spec)
 
 
-        # Do startup 
+        # Do startup
         if self.__inital_run:
-            
+
             self._panel.register_refresh(self._id, self.refresh_plot)
             self.__SCALE_MODE.execute_default_scale(self)
             self.__inital_run = False
@@ -1292,7 +1290,7 @@ class StripFrame(AxesFrame):
     def refresh_plot(self):
         """
         Refresh method registered to StripchartPanel.
-        """       
+        """
 
         # Do not update the plot if stop button is pressed.
         if self.__stop:
@@ -1303,7 +1301,7 @@ class StripFrame(AxesFrame):
             for line_data, t_data, y_data in self.__channel_lines.values():
                 line_data.set_xdata(t_data.asArray())
                 line_data.set_ydata(y_data.asArray())
-        
+
         try:
             self.__handle_scaling()
         except ScalingException, e:
@@ -1448,7 +1446,7 @@ class StripFrame(AxesFrame):
 
     def set_yscale_toggle(self, val):
         self.__user_yscale.set(val)
-        
+
     def get_channel_lines_dict(self):
         return self.__channel_lines
 
@@ -1457,4 +1455,3 @@ class StripFrame(AxesFrame):
 
     def hide_scroll(self):
         self.__scroll_frame.pack_forget()
-

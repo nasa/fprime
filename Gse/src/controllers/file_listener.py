@@ -10,7 +10,7 @@ from controllers import file_downlink_client
 from controllers import status_updater
 
 
-class FileListener(observer.Observed):
+class FileListener(observer.Observable):
     """
     Listens for Uplink and Downlink
     data. Updates file panel.
@@ -59,7 +59,7 @@ class FileListener(observer.Observed):
         self.__UPLK = UPLK
     def set_downlink(self, DNLK):
         self.__DNLK = DNLK
-    
+
     def get_uplink_data(self):
         return self.__uplink_data
 
@@ -93,15 +93,15 @@ class FileListener(observer.Observed):
                 except Queue.Empty, e:
                     # It is okay if we don't get data
                     self.__uplink_data = {}
-            
 
-                
+
+
         # Start new uplink if there is one in uplink_client queue
         else:
             self.__UPLK = self.__uplink_client.startNext()
-            
+
             # Subprocess started. Start listen thread
-            if self.__UPLK: 
+            if self.__UPLK:
                 self.__uplink_finished.clear()
                 self.__uplink_listen = threading.Thread(target=monitor_uplink, args=(self.__UPLK, self.__uplink_queue, self.__uplink_finished, self.__thread_stop))
                 self.__uplink_listen.start()
@@ -128,19 +128,19 @@ class FileListener(observer.Observed):
             self.__DNLK = self.__downlink_client.start()
 
             # Subprocess started. Start listen thread
-            if self.__DNLK: 
+            if self.__DNLK:
                 self.__downlink_listen = threading.Thread(target=monitor_downlink, args=(self.__DNLK, self.__downlink_queue, self.__downlink_finished, self.__thread_stop))
                 self.__downlink_listen.start()
 
 
-        self.observers_notify()
+        self.notifyObservers()
         self.__after_id = self.__root.after(time_period, self.update_task)
 
 
     def __uplink_finish(self):
         """
         If success set progress bar to end.
-        Else set to 0. 
+        Else set to 0.
 
         Also display status update.
         """
@@ -158,7 +158,7 @@ class FileListener(observer.Observed):
 
     def __downlink_finish(self):
         """
-        Set progress bar to end. 
+        Set progress bar to end.
         Display status update.
         """
         self.__status_updater.update("Downlink Completed")
@@ -181,7 +181,7 @@ class FileListener(observer.Observed):
         except Exception, e:
             # Process is already killed
             pass
-            
+
 
     def update_task_cancel(self):
         """
@@ -205,7 +205,7 @@ class FileListener(observer.Observed):
 
 def clean_up_process(subprocess):
     """
-    Kill subprocess. 
+    Kill subprocess.
     """
     try:
         os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
@@ -218,7 +218,7 @@ def clean_up_process(subprocess):
 def monitor_uplink(subprocess, queue, uplink_finished_flag, exit):
     """
     Monitor uplink subprocess thread.
-    
+
     Runs until completion for every file uplink.
     """
 
@@ -230,13 +230,13 @@ def monitor_uplink(subprocess, queue, uplink_finished_flag, exit):
         data = {}
 
         # Subprocess is running
-        if subprocess.poll() is None: 
+        if subprocess.poll() is None:
             line = subprocess.stdout.readline()
             data = process_line(line)
             queue.put_nowait(data)
 
         # Subprocess has completed. Put rest of output on queue then break.
-        else: 
+        else:
             stdout, stderr = subprocess.communicate()
             stdout = stdout.split('\n')
             for line in stdout:
@@ -252,7 +252,7 @@ def monitor_uplink(subprocess, queue, uplink_finished_flag, exit):
 
 def monitor_downlink(subprocess, queue, downlink_finished, exit):
     """
-    Monitor downlink subprocess thread. 
+    Monitor downlink subprocess thread.
 
     Continuously runs.
     """
@@ -262,16 +262,16 @@ def monitor_downlink(subprocess, queue, downlink_finished, exit):
     while(True):
 
         if exit.is_set():
-            break 
+            break
 
         line = subprocess.stdout.readline()
 
         # Downlink subprocess is returning empty lines
-        # For some reason...Using check to skip 
+        # For some reason...Using check to skip
         if line == '':
             continue
 
-        data = process_line(line) 
+        data = process_line(line)
 
         if data['totalsent']:
             downlink_finished.set()
@@ -305,7 +305,7 @@ def process_line(l):
         if tokens[0] == 's':
             data['filesize'] = tokens[1]
             data['filename'] = tokens[2]
-        
+
         # Data
         elif tokens[0] == 'd':
             data['progress'] = tokens[1] # Progress

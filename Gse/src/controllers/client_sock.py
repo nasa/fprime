@@ -107,7 +107,8 @@ class ClientSocket:
 def main():
     port = 60002
 
-    s = ClientSocket("192.168.1.100", port)
+    s=ClientSocket("137.78.79.64",port)
+    #s = ClientSocket("192.168.1.100", port)
     i = 0
     while 1:
         try:
