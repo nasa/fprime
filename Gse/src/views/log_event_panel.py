@@ -329,11 +329,9 @@ class LogEventPanel(observer.Observer):
       # Check scroll selection
       if self.__scroll.get() == 1:
         self.__table.setSelectedRow(self.__next_row-1)
-        last_visible_row = self.__table.visiblerows[-1]-4):
-        #print "last vis: " + str(last_visible_row)
-        if self.__next_row > last_visible_row
+        last_visible_row = self.__table.visiblerows[-1]-4
+        if self.__next_row > last_visible_row:
           fraction = float(self.__next_row-5)/float(self.__table_row_max)
-          # print "Row fraction: " + str(fraction)
           self.__table.set_yviews('moveto', fraction)
 
       # Refresh the table
