@@ -155,7 +155,7 @@ class LogEventPanel(observer.Observer):
         self.__filtered_table_data = None
 
         # Current row index
-        self.__table_row = 0
+        self.__next_row = 0
 
         top.root().update()
 
@@ -210,13 +210,13 @@ class LogEventPanel(observer.Observer):
         for idx, evr_data in enumerate(msg_obj):
           # Handle Severity
             if isinstance(evr_data, Severity):
-              self.__table.model.setValueAt(evr_data.name, self.__table_row, idx)
+              self.__table.model.setValueAt(evr_data.name, self.__next_row, idx)
               color = self.__severity_color[evr_data.name.lower()]
-              self.__table.model.setColorAt(self.__table_row, idx, color, key='bg')
+              self.__table.model.setColorAt(self.__next_row, idx, color, key='bg')
             else:
-              self.__table.model.setValueAt(evr_data, self.__table_row, idx)
+              self.__table.model.setValueAt(evr_data, self.__next_row, idx)
 
-        self.__table_row += 1
+        self.__next_row += 1
 
     def selectionCommand(self):
         sels = self.__list_box.getcurselection()
@@ -234,7 +234,7 @@ class LogEventPanel(observer.Observer):
         self.__table.clearData()
 
         self.__table_row_max = 100
-        self.__table_row = 0
+        self.__next_row = 0
 
         self.__table.model.deleteRows()
         self.__table.model.autoAddRows(100)
@@ -319,7 +319,7 @@ class LogEventPanel(observer.Observer):
 
     def refresh(self):
       # Check row bounds and increase if close to end
-      if self.__table_row >= (self.__table_row_max-25):
+      if self.__next_row >= (self.__table_row_max-25):
         self.__table.model.autoAddRows(100)
         self.__table_row_max += 100
 
@@ -328,9 +328,13 @@ class LogEventPanel(observer.Observer):
 
       # Check scroll selection
       if self.__scroll.get() == 1:
-        self.__table.setSelectedRow(self.__table_row-1)
-        if self.__table_row > (self.__table.visiblerows[-1]):
-          self.__table.movetoSelectedRow(recname=self.__table.model.getRecName(self.__table_row))
+        self.__table.setSelectedRow(self.__next_row-1)
+        last_visible_row = self.__table.visiblerows[-1]-4):
+        #print "last vis: " + str(last_visible_row)
+        if self.__next_row > last_visible_row
+          fraction = float(self.__next_row-5)/float(self.__table_row_max)
+          # print "Row fraction: " + str(fraction)
+          self.__table.set_yviews('moveto', fraction)
 
       # Refresh the table
       self.__table.redrawTable()
