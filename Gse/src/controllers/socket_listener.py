@@ -2,22 +2,16 @@
 #===============================================================================
 # NAME: SocketListener.py
 #
-# DESCRIPTION: This module is the event listener class that is a thread
-#              which listens for incomming log event messages. When a
+# DESCRIPTION: This module is the socket listener class that is a thread
+#              which listens for incomming fprime messages. When a
 #              message is received first the descriptor and size are
-#              decoded.  Then the event id is decoded.  The event id
-#              looks up a specific Event class instance that describes
-#              the event id type and can deserilize it.
+#              decoded.  The message is then placed on the appropriate
+#              listener's queue.
 #
-#              The event logging panel and other panels act as
-#              observers and update when new data from the listen
-#              thread is avaliable.
+# AUTHOR: Brian Campuzano
+# DATE CREATED: July 10, 2017
 #
-# AUTHOR: reder
-# EMAIL:  reder@jpl.nasa.gov
-# DATE CREATED: Feb 9, 2014
-#
-# Copyright 2015, California Institute of Technology.
+# Copyright 2017, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 #
@@ -261,7 +255,3 @@ class SocketListener:
             t = time.strftime("%Y-%m-%d %H:%M:%S:", time.gmtime())
 
         self.__logger.info("%s %s" % (t,s[0]))
-
-
-if __name__ == "__main__":
-    pass

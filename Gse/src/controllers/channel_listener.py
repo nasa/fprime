@@ -8,7 +8,7 @@
 #
 #              When a message is received first the descriptor and size are
 #              decoded.  Then the channel id is decoded.  The channel id
-#              looks up a specific  data classes that describes
+#              looks up a specific data classes that describes
 #              the channel telemetry value and deserilize the value.
 #
 #              The channel telemetry panel and other panels act as
@@ -56,7 +56,7 @@ class ChannelListener(consumer.Consumer):
 
     def __init__(self):
         """
-        Cons!tructor.
+        Constructor.
         WARNING: After the first instantiation setupLogging must be executed.
         """
         super(ChannelListener, self).__init__()

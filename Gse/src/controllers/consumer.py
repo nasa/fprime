@@ -3,18 +3,11 @@
 # NAME: consumer.py
 #
 # DESCRIPTION: This module is the consumer class. Class contains a thread
-#              which blocks on a queue and
-#              which listens for incomming log event messages. When a
-#              message is received first the descriptor and size are
-#              decoded.  Then the event id is decoded.  The event id
-#              looks up a specific Event class instance that describes
-#              the event id type and can deserilize it.
+#              which blocks on a queue for messages. The thread then
+#              executes conext specific data processing, and notifies
+#              observers with the processed data.
 #
-#              The event logging panel and other panels act as
-#              observers and update when new data from the listen
-#              thread is avaliable.
-#
-# AUTHOR: reder
+# AUTHOR: Brian Campuzano
 # DATE CREATED: July 10, 2017
 #
 # Copyright 2017, California Institute of Technology.

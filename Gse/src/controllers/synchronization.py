@@ -1,7 +1,10 @@
 # From http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Observer.html
 
-'''Simple emulation of Java's 'synchronized'
-keyword, from Peter Norvig.'''
+'''
+Simple emulation of Java's 'synchronized'
+keyword, from Peter Norvig.
+'''
+
 import threading
 
 def synchronized(method):

@@ -34,7 +34,7 @@ class StatusBarUpdater(consumer.Consumer):
 
 
     def getInstance():
-        """c
+        """
         Return instance of singleton.
         """
         if(StatusBarUpdater.__instance is None):
