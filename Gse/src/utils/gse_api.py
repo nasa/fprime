@@ -23,9 +23,10 @@ import subprocess
 from subprocess import PIPE, STDOUT
 
 from utils import Logger
+from utils import command_args
 from checksum import *
 from models.serialize.u32_type import *
-from views import command_args_factory
+
 from controllers import command_loader
 from controllers import commander
 from controllers import event_loader
@@ -133,7 +134,7 @@ class GseApi(object):
         self._events.create(generated_path + os.sep + "events")
         self._channels = channel_loader.ChannelLoader.getInstance()
         self._channels.create(generated_path + os.sep + "channels")
-        self.__args_factory = command_args_factory.CommandArgsFactory()
+        self.__cmd_args = command_args.CommandArgs()
         self._ev_listener = event_listener.EventListener.getInstance()
         self._ev_listener.setupLogging()
         self._ch_listener = channel_listener.ChannelListener.getInstance()
@@ -294,7 +295,7 @@ class GseApi(object):
         if args is not None:
            for i in range(len(args)):
                arg_name, arg_desc, arg_type = cmd_obj.getArgs()[i]
-               arg_obj = self.__args_factory.create_arg_type(arg_name, arg_type, args[i])
+               arg_obj = self.__cmd_args.create_arg_type(arg_name, arg_type, args[i])
                cmd_obj.setArg(arg_name, arg_obj)
         #print "Command serialized: %s (0x%x)" % (cmd_obj.getMnemonic(), cmd_obj.getOpCode())
         data = cmd_obj.serialize()

@@ -30,35 +30,13 @@ import Pmw
 from controllers import command_loader
 from controllers import commander
 
-# Import the types this way so they do not need prefixing for execution.
-from models.serialize.type_exceptions import *
-from models.serialize.type_base import *
-
-from models.serialize.bool_type import *
-from models.serialize.enum_type import *
-from models.serialize.f32_type import *
-from models.serialize.f64_type import *
-
-from models.serialize.u8_type import *
-from models.serialize.u16_type import *
-from models.serialize.u32_type import *
-from models.serialize.u64_type import *
-
-from models.serialize.i8_type import *
-from models.serialize.i16_type import *
-from models.serialize.i32_type import *
-from models.serialize.i64_type import *
-
-from models.serialize.string_type import *
-from models.serialize.serializable_type import *
-
 from utils import gse_misc
 
 # Global logger init. below.
 PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
 
-class CommandArgsFactory:
+class CommandArgsFrame:
     """
     This is a concrete factory method object used to create the
     main UI panel instances for sets of arguments contained
@@ -74,9 +52,6 @@ class CommandArgsFactory:
         self.__parsed   = None
         self.__instance = None
 
-        # Setup command dictionary of objects here.
-        self.__cmds = command_loader.CommandLoader().getInstance()
-        self.__cmds_dict = self.__cmds.getCommandDict()
         # Scrolled frame widget initialize (never actually used)
         self.__sf = Tkinter.Frame() # TKC - overwritten in create(), doesn't allow text running of command scripts
 
@@ -192,45 +167,3 @@ class CommandArgsFactory:
         """
         self.__sf.destroy()
         self.__sf = Tkinter.Frame()
-
-
-    def create_arg_type(self, arg_name, arg_type, arg_value):
-        """
-        Returns a new instance of a specific type object
-        with value set in it.
-        """
-        if type(arg_type) == type(BoolType()):
-            if arg_value == "False":
-                arg_value = False
-            else:
-                arg_value = True
-            new_obj = BoolType(arg_value)
-        elif type(arg_type) == type(EnumType()):
-            new_obj = EnumType(arg_type.typename(), arg_type.enum_dict(), arg_value)
-        elif type(arg_type) == type(F64Type()):
-            new_obj = F64Type(float(arg_value))
-        elif type(arg_type) == type(F32Type()):
-            new_obj = F32Type(float(arg_value))
-        elif type(arg_type) == type(I64Type()):
-            new_obj = I64Type(int(arg_value))
-        elif type(arg_type) == type(I32Type()):
-            new_obj = I32Type(int(arg_value))
-        elif type(arg_type) == type(I16Type()):
-            new_obj = I16Type(int(arg_value))
-        elif type(arg_type) == type(I8Type()):
-            new_obj = I8Type(int(arg_value))
-        elif type(arg_type) == type(U64Type()):
-            new_obj = U64Type(int(arg_value))
-        elif type(arg_type) == type(U32Type()):
-            new_obj = U32Type(int(arg_value))
-        elif type(arg_type) == type(U16Type()):
-            new_obj = U16Type(int(arg_value))
-        elif type(arg_type) == type(U8Type()):
-            new_obj = U8Type(int(arg_value))
-        elif type(arg_type) == type(StringType()):
-            new_obj = StringType(arg_value)
-        elif type(arg_type) == type(SerializableType()):
-            pass
-        else:
-            raise exceptions.TypeError
-        return new_obj
