@@ -66,8 +66,14 @@ def ModuleLoader(Class):
             module_list.append(m)
 
         attr_list = []
+        id_list = [] # to look for duplicates
         for m in module_list:
-            attr_list.append((eval("%s.%s" % (m,attr1)),eval("%s.%s" % (m,attr2))))
+            id = eval("%s.%s" % (m,attr1))
+            if id in id_list:
+                print "duplicate id %d found"%id
+            else:
+                id_list.append(id)
+            attr_list.append((id,eval("%s.%s" % (m,attr2))))
 
 
         return attr_list

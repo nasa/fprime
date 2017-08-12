@@ -1,63 +1,49 @@
-#!/usr/bin/env python3
-# Copyright 2012-13 Qtrac Ltd. All rights reserved.
-# This program or module is free software: you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version. It is provided for
-# educational purposes and is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
+# From http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Observer.html
 
-import datetime
-import itertools
-import sys
-import time
+# Class support for "observer" pattern.
+from synchronization import *
 
+class Observer(object):
+    def update(self, observable, arg):
+        '''Called when the observed object is
+        modified. You call an Observable object's
+        notifyObservers method to notify all the
+        object's observers of the change.'''
+        pass
 
-class Observed(object):
-
+class Observable(Synchronization):
     def __init__(self):
-        self.__observers = set()
+        super(Observable, self).__init__()
 
+        self.obs = []
 
-    def observers_add(self, observer, *observers):
-        for observer in itertools.chain((observer,), observers):
-            self.__observers.add(observer)
-            observer.update(self)
+    def addObserver(self, observer):
+        if observer not in self.obs:
+            self.obs.append(observer)
 
+    def deleteObserver(self, observer):
+        self.obs.remove(observer)
 
-    def observer_discard(self, observer):
-        self.__observers.discard(observer)
+    def notifyObservers(self, arg = None):
+        '''Notify all its observers. Each observer
+        has its update() called with two
+        arguments: this observable object and the
+        generic 'arg'.'''
 
+        self.mutex.acquire()
+        try:
+            # Make a local copy in case of synchronous
+            # additions of observers:
+            localArray = self.obs[:]
+        finally:
+            self.mutex.release()
+        # Updating is not required to be synchronized:
+        for observer in localArray:
+            observer.update(self, arg)
 
-    def observers_notify(self):
-        for observer in self.__observers:
-            observer.update(self)
+    def deleteObservers(self): self.obs = []
+    def countObservers(self): return len(self.obs)
 
-
-class SliderModel(Observed):
-
-    def __init__(self, minimum, value, maximum):
-        super(SliderModel, self).__init__()
-        # These must exist before using their property setters
-        self.__minimum = self.__value = self.__maximum = None
-        self.minimum = minimum
-        self.value = value
-        self.maximum = maximum
-
-
-    @property
-    def value(self):
-        return self.__value
-
-
-    @value.setter
-    def value(self, value):
-        if self.__value != value:
-            self.__value = value
-            self.observers_notify()
-
-
-if __name__ == "__main__":
-    pass
+synchronize(Observable,
+  "addObserver deleteObserver deleteObservers " +
+  "countObservers")

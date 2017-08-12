@@ -31,20 +31,21 @@ import os
 import struct
 import logging
 import time
+
 #@todo Add logging to disk of log events via the Logger module.
 from controllers import stripchart_listener
-from controllers import observer
+from controllers import consumer
 from controllers import channel_loader
+from controllers import status_bar_updater
+
 from models.serialize import type_base
 from models.serialize import u32_type
 from models.serialize import u16_type
 from models.serialize import u8_type
-#from views import main_panel
+
 from utils import Logger
 
-
-
-class ChannelListener(observer.Observed):
+class ChannelListener(consumer.Consumer):
     """
     An channel listener class that reads incomming channel telemetry,
     decodes into values, and updates channel telemetry panels
@@ -59,17 +60,18 @@ class ChannelListener(observer.Observed):
         WARNING: After the first instantiation setupLogging must be executed.
         """
         super(ChannelListener, self).__init__()
-        #
-        # Instance the channel loader here
-        #
-        self.__channel_loader = channel_loader.ChannelLoader.getInstance()
-        self.__ch_obj_dict = self.__channel_loader.getChDict()
-        #
+
+        # Get dictionary
+        ch_loader = channel_loader.ChannelLoader.getInstance()
+        self.__ch_obj_dict = ch_loader.getChDict()
+
         self.__stripchart_listener = stripchart_listener.StripChartListener.getInstance()
+
+        # Instance of status bar updater
+        self.__status_bar_updater = status_bar_updater.StatusBarUpdater.getInstance()
 
         self.__current_ch_msg = None
         self.__opt = None
-
 
     def getInstance():
         """
@@ -89,7 +91,7 @@ class ChannelListener(observer.Observed):
         """
 
         if opt == None:
-            p = os.environ['HOME'] + os.sep + 'fprime_logs' + os.sep + "channel"
+            p = os.environ['HOME'] + os.sep + 'logs' + os.sep + "channel"
         else:
             p = opt.log_file_path + os.sep + opt.log_file_prefix + os.sep + "channel"
         #
@@ -105,6 +107,14 @@ class ChannelListener(observer.Observed):
         self.__logger.info("User: %s" % os.environ['USER'])
 
 
+    def process_data(self, data):
+      self.decode_ch(data)
+      self.__log_info(self.getCurrentChannelTelemetryItem())
+
+      # (Bytes received, bytes sent)
+      # Descriptor and length of message have already been decoded
+      self.__status_bar_updater.put_data((8 + len(data), 0))
+
     def decode_ch(self, msg):
         """
         Decode channel telemetry item using Channel object dictionary.
@@ -112,19 +122,6 @@ class ChannelListener(observer.Observed):
         #type_base.showBytes(msg)
         #
         ptr = 0
-        # Decode size here...
-        u32_obj = u32_type.U32Type()
-        u32_obj.deserialize(msg, ptr)
-        size = u32_obj.val
-        ptr += u32_obj.getSize()
-        #print "Size = 0x%x" % size
-
-        # Decode descriptor part of message
-        u32_obj = u32_type.U32Type()
-        u32_obj.deserialize(msg, ptr)
-        desc = u32_obj.val
-        ptr += u32_obj.getSize()
-        #print "Desc = 0x%x" % desc
 
         # Decode channel ID here...
         u32_obj = u32_type.U32Type()
@@ -193,6 +190,7 @@ class ChannelListener(observer.Observed):
         else:
             self.__current_ch_msg = ("Not_Defined", i, "", ("", "", "", ""), "Not_Defined","Not_Defined","NoLowRed","NoLowOrange","NoLowYellow","NoHighYellow","NoHighOrange","NoHighRed")
 
+
     def decode_ch_api(self, msg):
         """
         Decode channel telemetry item using Channel object dictionary.
@@ -200,25 +198,12 @@ class ChannelListener(observer.Observed):
         #type_base.showBytes(msg)
         #
         ptr = 0
-        # Decode size here...
-        u32_obj = u32_type.U32Type()
-        u32_obj.deserialize(msg, 0)
-        size = u32_obj.val
-        ptr += u32_obj.getSize()
-        #print "Size = 0x%x" % size
-
-        # Decode descriptor part of message
-        u32_obj = u32_type.U32Type()
-        u32_obj.deserialize(msg, ptr)
-        desc = u32_obj.val
-        ptr += u32_obj.getSize()
-        #print "Desc = 0x%x" % desc
 
         # Decode log channel ID here...
         u32_obj = u32_type.U32Type()
         u32_obj.deserialize(msg, ptr)
         ptr += u32_obj.getSize()
-        i = u32_obj.val
+        tlm_id = u32_obj.val
         #print "ID: %d" % i
 
         # Decode time...
@@ -248,47 +233,38 @@ class ChannelListener(observer.Observed):
         time_usecs = u32_obj.val
         #print "Time MicroSeconds: %d" % time_usecs
 
-        val = []
         # Decode value here...
         # Look up correct Channel channel telemetry instance object for decoding
-        if i in self.__ch_obj_dict:
-            ch_obj = self.__ch_obj_dict[i]
-            #
-            # Set time here...
-            ch_obj.setTime(time_base,time_context, time_secs,time_usecs)
-            #
-            # Deserialize to a tuple to stringify
-            ch_value = ch_obj.deserialize(msg, ptr)
-            #print "Value: %s" % ch_value
-            #
-            # Package NAME, ID, CH. Desc., time, and Value into tuple for views update.
-            # '(Name, id, ch. desc., time_sec, time_usec, value)'
-            name = ch_obj.getName()
-            i    = ch_obj.getId()
-            ch   = ch_obj.getChDesc()
-            t    = ch_obj.getTime()
-            f    = ch_obj.getFormatString()
-            lr   = ch_obj.getLowRed()
-            lo   = ch_obj.getLowOrange()
-            ly   = ch_obj.getLowYellow()
-            hy   = ch_obj.getHighYellow()
-            ho   = ch_obj.getHighOrange()
-            hr   = ch_obj.getHighRed()
-
-            self.__current_ch_msg = (name, i, ch, t, ch_value,f,lr,lo,ly,hy,ho,hr)
-
-            #print self.__current_ch_msg
+        if tlm_id in self.__ch_obj_dict:
+          ch_obj = self.__ch_obj_dict[tlm_id]
+          # Deserialize to a tuple to stringify
+          ch_value = ch_obj.deserialize(msg, ptr)
+          return (tlm_id, ch_value)
         else:
-            self.__current_ch_msg = ("Not_Defined", i, "", ("","",""), "Not_Defined","NoLowRed","NoLowOrange","NoLowYellow","NoHighYellow","NoHighOrange","NoHighRed")
-        return ch_value
+          return None
+
+
+    def get_channel(self):
+      # Get item off queue
+      try:
+        msg = self.__queue.get_nowait()
+      except Queue.Empty:
+        # No Telemetry to get
+        return None
+
+      return self.decode_ch_api(msg)
+
 
     def getCurrentChannelTelemetryItem(self):
         """
         Used by channel telemetry panel update() to get the channel telemetry to update.
         """
         return self.__current_ch_msg
+
+
     def getCurrentChannelTelemetryType(self):
         return self.__current_ch_type
+
 
     def __log_info(self, s):
         """
@@ -310,24 +286,6 @@ class ChannelListener(observer.Observed):
             except:
                 sys.stderr.write ("%s (%d) Channel decode error\n"%(channel_name,channel_id))
         self.__logger.info("%s %s %s (%s(%s)-%s:%s) %s" % (t,channel_name, channel_id, time_base, time_context, time_seconds, time_usec, valString))
-
-
-    def update(self, serial_ch_telm):
-        """
-        Update channel telemetry here...
-        1. Receive channel telemetry packet from thread.
-        2. Decode channel values into object.
-        3. Generate updates for all channel telemetry instances.
-        """
-        #
-        # Observer update will be generated here...
-        #
-        if len(serial_ch_telm) > 0:
-            self.decode_ch(serial_ch_telm)
-            self.observers_notify()
-            #print self.getCurrentChannelTelemetryItem()
-            self.__log_info(self.getCurrentChannelTelemetryItem())
-        return
 
 
 if __name__ == "__main__":

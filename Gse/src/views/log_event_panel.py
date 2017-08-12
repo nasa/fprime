@@ -13,15 +13,15 @@ from tkintertable.TableModels import TableModel
 from tkintertable.Filtering import FilterFrame
 
 from models.common.event import Severity
+
 from controllers import status_updater
+from controllers import observer
+
 from utils import ConfigManager
 from utils import gse_misc
 from utils import gse_persist
-from _sqlite3 import Row
 
-
-@gse_persist.PanelMementoOriginator
-class LogEventPanel(object):
+class LogEventPanel(observer.Observer):
     '''
     A class that receives log event messages and displays them
     in a scrolled list.  Within the model log messages are
@@ -32,11 +32,15 @@ class LogEventPanel(object):
         '''
         Constructor
         '''
-        self._top = top
-        self._parent = parent
+        super(LogEventPanel, self).__init__()
+
+        self.__top = top
+        self.__parent = parent
         self.__opt = opt
 
-        self.__config = ConfigManager.ConfigManager.getInstance()
+        # Get periodicity of event panel refresh
+        config = ConfigManager.ConfigManager.getInstance()
+        self.__update_period = config.get('performance', 'event_table_update_period')
 
         #
         # Status updater singleton
@@ -48,6 +52,8 @@ class LogEventPanel(object):
         f = Tkinter.Frame(parent)
         f.pack(side=Tkinter.TOP, anchor=Tkinter.N, fill=Tkinter.BOTH, expand=1)
 
+        # Id for UI refresh loop
+        self.__after_id = None
 
         #
         ## Filter updates to listbox view this entry and refresh.
@@ -80,8 +86,6 @@ class LogEventPanel(object):
         self.__apply_button = Tkinter.Button(f2, text="Apply Filter", command=self.__filter_apply)
         self.__apply_button.pack(side=Tkinter.RIGHT)
         self.__filterframe = None
-        #
-        #self.test()
 
         f3 = Tkinter.Frame(f, relief=Tkinter.FLAT, borderwidth=1, padx=1, pady=1)
         f3.pack(side=Tkinter.BOTTOM, anchor=Tkinter.N, fill=Tkinter.BOTH, expand=1,padx=6,pady=3)
@@ -102,13 +106,21 @@ class LogEventPanel(object):
         f1.pack(side=Tkinter.TOP, anchor=Tkinter.N, fill=Tkinter.BOTH, expand=1,padx=10,pady=10)
 
         #
-        ## Create a model and connect it to a table on a canvas
+        ## Canvas table
         #
-        self.__model = TableModel()
-        self.__table = TableCanvas(f1, model=self.__model, width=1200, height=800)
+        self.__column_list = ['TIME', 'NAME', 'ID', 'SEVERITY', 'MESSAGE']
+        self.__table_row_max = 100
+
+        self.__table = TableCanvas(
+          f1,
+          rows= self.__table_row_max,
+          cols= len(self.__column_list),
+          width=1200,
+          height=800
+        )
         # Set font sizes
-        font = self.__config.get('tables', 'font')
-        font_size = self.__config.get('tables', 'font_size')
+        font = config.get('tables', 'font')
+        font_size = config.get('tables', 'font_size')
         self.__table.thefont = (font, font_size)
         self.__table.rowheight= int(font_size) + 5
         #
@@ -127,27 +139,24 @@ class LogEventPanel(object):
         self.__table.tablecolheader.unbind('<ButtonRelease-1>')
         self.__table.tablecolheader.bind('<ButtonRelease-1>', self.__handle_column_release)
 
-        #
-        # Add columns
-        self.__column_list = ('TIME', 'NAME', 'ID', 'SEVERITY', 'MESSAGE')
-        for column in self.__column_list:
-            self.__table.addColumn(column)
+        # Make table read only
+        self.__table.editable = False
+
+        # Update column names
+        for idx, column in enumerate(self.__column_list):
+          self.__table.model.relabel_Column(idx, column)
         self.__table.redrawTable()
 
-        #
         # Colors for severity
-        self.__severity_color = dict(self.__config.items('severity_colors'))
+        self.__severity_color = dict(config.items('severity_colors'))
         #
         # Data container for filtering
         self.__all_table_data = None
         self.__filtered_table_data = None
 
-        self.__table_row = 0
-        #
+        # Current row index
+        self.__next_row = 0
 
-        self.__placeholder_entry = True     # First entry is a place holder. Overwritten by first real entry.
-        self.insertLogMsg(("","","","","")) # Insert placeholder event to initalize table
-        self.__table.redrawTable()
         top.root().update()
 
 
@@ -165,32 +174,6 @@ class LogEventPanel(object):
             self.__table.tablecolheader.handle_left_release(event)
         except Exception, e:
             pass
-
-
-    def test(self):
-        """
-        Insert hardwired log event strings for testing filter.
-        """
-        e1 = "SomeEvent1 (100) Severity.INFO: My Event 1 2.3 4.5 6.7 8.9 10.11"
-        e2 = "SomeEvent2 (101) Severity.INFO: My Event 1 2.0 3"
-        e3 = "SomeStringEvent (102) Severity.INFO: My Event 1 Two is a string 255"
-        e4 = "SomeEnumEvent (103) Severity.INFO: My Event 1 MEMB2 3"
-        e5 = "SomeBoolEvent (104) Severity.INFO: My Event 1 True 255"
-        e6 = "SomeEnumEvent (103) Severity.INFO: My Event 2 MEMB3 4"
-        e7 = "SomeBoolEvent (104) Severity.INFO: My Event 2 False 255"
-        e8 = "SomeEnumEvent (103) Severity.INFO: My Event 3 MEMB1 255"
-        e9 = "SomeEvent2 (101) Severity.INFO: My Event 4 5.0 6"
-        e10 = "SomeStringEvent (102) Severity.INFO: My Event 2 Three is a string 255"
-        msgs = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10]
-        for m in msgs:
-            self.insertLogMsg(m)
-
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        pass
 
     # copied from tkintertable since scale seems to be off
     def adjustColumnWidths(self):
@@ -224,56 +207,23 @@ class LogEventPanel(object):
         """
         Insert log message at top of table widget.
         """
-        # Temporarily reset filter so we can add entry
-        self.__table.showAll()
-
-        row = "%s" % self.__table_row
-        # Skip row creation so first real entry can overwrite placeholder
-        if not self.__placeholder_entry and row == '0':
-            pass
-        else:
-            self.__table.addRow(row)
-
         for idx, evr_data in enumerate(msg_obj):
-            # print "idx = %s, evr_data = %s" % (idx, evr_data)
-            # Handle Severity
+          # Handle Severity
             if isinstance(evr_data, Severity):
-                self.__table.model.data[row][self.__column_list[idx]] = evr_data.name
-                color = self.__severity_color[evr_data.name.lower()]
-                self.__table.model.setColorAt(self.__table_row, idx, color, key='bg')
+              self.__table.model.setValueAt(evr_data.name, self.__next_row, idx)
+              color = self.__severity_color[evr_data.name.lower()]
+              self.__table.model.setColorAt(self.__next_row, idx, color, key='bg')
             else:
-                self.__table.model.data[row][self.__column_list[idx]] = evr_data
+              self.__table.model.setValueAt(evr_data, self.__next_row, idx)
 
-        # Reapply filter
-        self.__filter_apply()
-
-        if self.__scroll:
-            # Having difficulty making auto scroll work
-            # properly. Currently scrolls to bottom. But scroll
-            # bar is not updated.
-            self.__table.yview_scroll(1, "pages")
-
-            # This should move the scrollbar!
-            # Something might be happening in the TkinterTable TableCanvas class.
-            # See: https://github.com/dmnfarrell/tkintertable/blob/master/tkintertable/Tables.py
-            #
-            self.__table.Yscrollbar.set(1.0, 1.0)
-
-
-        self.adjustColumnWidths()
-
-        if self.__placeholder_entry:
-            self.__placeholder_entry = False
-        else:
-            self.__table_row += 1
-
+        self.__next_row += 1
 
     def selectionCommand(self):
         sels = self.__list_box.getcurselection()
-#         if len(sels) == 0:
-#             print 'No selection'
-#         else:
-#             print 'Selection:', sels[0]
+        if len(sels) == 0:
+            print 'No selection'
+        else:
+            print 'Selection:', sels[0]
 
 
     def __clear_log(self):
@@ -283,11 +233,13 @@ class LogEventPanel(object):
         self.__table.select_All()
         self.__table.clearData()
 
+        self.__table_row_max = 100
+        self.__next_row = 0
+
         self.__table.model.deleteRows()
+        self.__table.model.autoAddRows(100)
 
         self.__table.redrawTable()
-        self.__placeholder_entry = True
-        self.__table_row = 0
 
 
     def __filter_severity(self, entry):
@@ -356,45 +308,43 @@ class LogEventPanel(object):
         self.__severity_select.selectitem(0, setentry=1)
         self.__filter_severity(self.__severity_select.get(0))
 
-    def update(self, e):
+    def update(self, observable, arg):
         """
         Update the panel list widget with new log events
-        @param e: this is set by observer to the LogEventListener.
+        @param e: this is set by observable to the LogEventListener.
         """
-        msg_tup = e.getCurrentEventLogMsg()
-        #print msg_tup
+        msg_tup = observable.getCurrentEventLogMsg()
         if msg_tup:
             self.insertLogMsg(msg_tup[1])
-            # LJR added fix 4 May 2017
-            self.__table.redrawTable()
-        #print "update test", e, self._top
 
-    def set_memento(self, m):
-        """
-        Get saved state and restore components.
-        """
-        state = m.getState()
-        severity = state['selected_severity']
-        self.__selected_severity = severity
-        self.__severity_select.component('entry').setentry(severity)
-        self.__filter_apply()
+    def refresh(self):
+      # Check row bounds and increase if close to end
+      if self.__next_row >= (self.__table_row_max-25):
+        self.__table.model.autoAddRows(100)
+        self.__table_row_max += 100
 
-    def create_memento(self):
-        """
-        Must return (memento, wid, panel_name).
-        """
-        wid = self._top.id()
-        panel_name = self.get_name()
-        state = {'selected_severity':self.__selected_severity}
-        m = gse_persist.Memento(state)
+      # Make sure data fits in columns
+      self.__table.adjustColumnWidths()
 
-        return m, wid, panel_name
+      # Check scroll selection
+      if self.__scroll.get() == 1:
+        self.__table.setSelectedRow(self.__next_row-1)
+        last_visible_row = self.__table.visiblerows[-1]-4
+        if self.__next_row > last_visible_row:
+          fraction = float(self.__next_row-5)/float(self.__table_row_max)
+          self.__table.set_yviews('moveto', fraction)
 
+      # Refresh the table
+      self.__table.redrawTable()
+
+      # Rerun after delay period
+      self.__after_id = self.__top.root().after(self.__update_period, self.refresh)
+
+    def refresh_cancel(self):
+        self.__top.root().after_cancel(self.__after_id)
 
     def get_name(self):
      return "log_event_panel"
-
-
 
 def main_window_start():
     """

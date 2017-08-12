@@ -23,9 +23,10 @@ import subprocess
 from subprocess import PIPE, STDOUT
 
 from utils import Logger
+from utils import command_args
 from checksum import *
 from models.serialize.u32_type import *
-from views import command_args_factory
+
 from controllers import command_loader
 from controllers import commander
 from controllers import event_loader
@@ -33,6 +34,7 @@ from controllers import event_listener
 from controllers import channel_loader
 from controllers import channel_listener
 from controllers import client_sock
+from controllers import socket_listener
 from controllers import file_uplink_client
 from controllers import file_downlink_client
 from controllers.file_downlink_client import DownlinkStatus
@@ -132,9 +134,11 @@ class GseApi(object):
         self._events.create(generated_path + os.sep + "events")
         self._channels = channel_loader.ChannelLoader.getInstance()
         self._channels.create(generated_path + os.sep + "channels")
-        self.__args_factory = command_args_factory.CommandArgsFactory()
+        self.__cmd_args = command_args.CommandArgs()
         self._ev_listener = event_listener.EventListener.getInstance()
         self._ev_listener.setupLogging()
+        self._ch_listener = channel_listener.ChannelListener.getInstance()
+        self.__sock_listener = socket_listener.SocketListener.getInstance()
         self.__logger = logger
 
         self.__server_addr = server_addr
@@ -151,7 +155,7 @@ class GseApi(object):
         try:
           self.__sock = client_sock.ClientSocket(server_addr, port)
           self.__sock.send("Register GUI\n")
-          self._ev_listener.connect(self.__sock)
+          self.__sock_listener.connect(self.__sock)
         except IOError:
           self.__sock = None
 
@@ -197,12 +201,12 @@ class GseApi(object):
             if tlm:
               tlm_list.append(tlm)
               (recv_id, _) = tlm
-              if id == recv_id and type == "ch":
+              if type == "ch" and id == recv_id:
                 notFound = False
             if evr:
               evr_list.append(evr)
               (recv_id, _) = evr
-              if id == recv_id and type == "evr":
+              if type == "evr" and id == recv_id:
                 notFound = False
       except TimeoutException:
         print 'Timeout reached, unable to find', type, 'ID', id
@@ -213,19 +217,12 @@ class GseApi(object):
 
     def _pop_queue(self):
       """
-      Grabs one thing off of the queue and passes a tuple of (tlm,evr)
+      Grabs one event/telemetry from queue
       """
-      (desc, recv_id, args) = self._ev_listener.update_task_api()
-      if desc and recv_id:
-        recv_type = ''
-        recv_type = 'ch' if desc == 0x1 else recv_type
-        recv_type = 'evr' if desc == 0x2 else recv_type
+      evr = self._ev_listener.get_event()
+      tlm = self._ch_listener.get_channel()
 
-        if recv_type == 'evr':
-            return None, (recv_id, args)
-        if recv_type == 'ch':
-            return (recv_id, args), None
-      return None, None
+      return tlm, evr
 
     def receive(self):
       """
@@ -298,7 +295,7 @@ class GseApi(object):
         if args is not None:
            for i in range(len(args)):
                arg_name, arg_desc, arg_type = cmd_obj.getArgs()[i]
-               arg_obj = self.__args_factory.create_arg_type(arg_name, arg_type, args[i])
+               arg_obj = self.__cmd_args.create_arg_type(arg_name, arg_type, args[i])
                cmd_obj.setArg(arg_name, arg_obj)
         #print "Command serialized: %s (0x%x)" % (cmd_obj.getMnemonic(), cmd_obj.getOpCode())
         data = cmd_obj.serialize()
