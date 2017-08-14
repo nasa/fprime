@@ -134,7 +134,6 @@ class GseApi(object):
         self._events.create(generated_path + os.sep + "events")
         self._channels = channel_loader.ChannelLoader.getInstance()
         self._channels.create(generated_path + os.sep + "channels")
-        self.__cmd_args = command_args.CommandArgs()
         self._ev_listener = event_listener.EventListener.getInstance()
         self._ev_listener.setupLogging()
         self._ch_listener = channel_listener.ChannelListener.getInstance()
@@ -295,7 +294,7 @@ class GseApi(object):
         if args is not None:
            for i in range(len(args)):
                arg_name, arg_desc, arg_type = cmd_obj.getArgs()[i]
-               arg_obj = self.__cmd_args.create_arg_type(arg_name, arg_type, args[i])
+               arg_obj = command_args.create_arg_type(arg_name, arg_type, args[i])
                cmd_obj.setArg(arg_name, arg_obj)
         #print "Command serialized: %s (0x%x)" % (cmd_obj.getMnemonic(), cmd_obj.getOpCode())
         data = cmd_obj.serialize()

@@ -12,7 +12,7 @@ from controllers import command_loader
 from models.common import command
 import exceptions
 
-import command_args_factory
+import command_args_frame
 
 from models.serialize.i32_type import *
 from models.serialize.u64_type import *
@@ -22,6 +22,8 @@ from models.serialize.u8_type import *
 from models.serialize.time_type import *
 
 from utils import gse_misc
+from utils import command_args
+
 import zlib
 
 
@@ -49,9 +51,9 @@ class SeqPanel(object):
         #
         self.__seq_cmds_list = []
         #
-        # Create an args factory here to generate the entries for each command.
+        # Create an args frame here to generate the entries for each command.
         #
-        self.__args_factory = command_args_factory.CommandArgsFactory()
+        self.__args_frame = command_args_frame.CommandArgsFrame()
         #
         # Status updater singleton
         #
@@ -181,9 +183,9 @@ class SeqPanel(object):
         """
         Update the arguments UI entries for a command mnemonic.
         """
-        self.__args_factory.destroy()
+        self.__args_frame.destroy()
         self.__parent.update()
-        self.__args_ui_panel_dict = self.__args_factory.create(mnemonic, self.__args_pane)
+        self.__args_ui_panel_dict = self.__args_frame.create(mnemonic, self.__args_pane)
         self.__parent.update()
 
 
@@ -301,7 +303,7 @@ class SeqPanel(object):
 
     def __create_args(self, cmd_obj):
         """
-        Command interface to command_args_factory to instance
+        Command interface to command_args_frame to instance
         entries for commands.
         """
         for arg in cmd_obj.getArgs():
@@ -309,7 +311,7 @@ class SeqPanel(object):
             e = self.__args_ui_panel_dict[arg_name]
             v = e.component('entry').get()
             #print arg_name, arg_type, arg_type.val, v
-            new_obj = self.__args_factory.create_arg_type(arg_name, arg_type, v)
+            new_obj = command_args.create_arg_type(arg_name, arg_type, v)
             #print "New obj: ", new_obj
             cmd_obj.setArg(arg_name, new_obj)
         #
@@ -391,7 +393,7 @@ class SeqPanel(object):
                 self.__search_index = 0
             i = search_ids[self.__search_index]
             #
-            self.__args_factory.destroy()
+            self.__args_frame.destroy()
             self.__combobox.selectitem(mnemonic_target)
             self.__list_box.component('listbox').selection_clear(0, Tkinter.END)
             #
