@@ -30,6 +30,28 @@ import Pmw
 from controllers import command_loader
 from controllers import commander
 
+# Import the types this way so they do not need prefixing for execution.
+from models.serialize.type_exceptions import *
+from models.serialize.type_base import *
+
+from models.serialize.bool_type import *
+from models.serialize.enum_type import *
+from models.serialize.f32_type import *
+from models.serialize.f64_type import *
+
+from models.serialize.u8_type import *
+from models.serialize.u16_type import *
+from models.serialize.u32_type import *
+from models.serialize.u64_type import *
+
+from models.serialize.i8_type import *
+from models.serialize.i16_type import *
+from models.serialize.i32_type import *
+from models.serialize.i64_type import *
+
+from models.serialize.string_type import *
+from models.serialize.serializable_type import *
+
 from utils import gse_misc
 
 # Global logger init. below.
@@ -51,6 +73,8 @@ class CommandArgsFrame:
         """
         self.__parsed   = None
         self.__instance = None
+
+        self.__cmds = command_loader.CommandLoader().getInstance()
 
         # Scrolled frame widget initialize (never actually used)
         self.__sf = Tkinter.Frame() # TKC - overwritten in create(), doesn't allow text running of command scripts
