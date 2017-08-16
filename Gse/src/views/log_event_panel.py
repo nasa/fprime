@@ -129,7 +129,7 @@ class LogEventPanel(observer.Observer):
         # Remove Row and cell highlight color
         self.__table.rowselectedcolor  = None
         self.__table.selectedcolor = None
-        self.__table.maxcellwidth = 500
+        self.__table.maxcellwidth = 1000
         # Mouse movement causes flyover text. This is not needed.
         # Unbind the appropriate event handler
         self.__table.unbind('<Motion>')
@@ -199,6 +199,7 @@ class LogEventPanel(observer.Observer):
                 continue
             #print col, size, self.cellwidth
             if size >= self.__table.maxcellwidth:
+                print "Width %f is greater than max: %f" % (size, self.__table.maxcellwidth)
                 size = self.__table.maxcellwidth
             self.__table.model.columnwidths[colname] = size + float(fontsize)/12*6
         return
@@ -315,8 +316,6 @@ class LogEventPanel(observer.Observer):
             self.insertLogMsg(msg_tup[1])
 
     def refresh(self):
-      # Make sure data fits in columns
-      self.__table.adjustColumnWidths()
 
       # Check scroll selection
       if self.__scroll.get() == 1:
@@ -330,6 +329,7 @@ class LogEventPanel(observer.Observer):
 
       # Refresh the table
       self.__table.redrawTable()
+      self.adjustColumnWidths()
 
       # Rerun after delay period
       self.__after_id = self.__top.root().after(self.__update_period, self.refresh)
