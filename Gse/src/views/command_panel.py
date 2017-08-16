@@ -14,6 +14,7 @@ from controllers import commander
 
 from models.common import command
 from utils import gse_misc
+from utils import command_args
 
 import exceptions
 import command_args_frame
@@ -314,7 +315,7 @@ class CommandPanel(object):
                 v = int(v, 16)
 
             try:
-               new_obj = self.__args_frame.create_arg_type(arg_name, arg_type, v)
+               new_obj = command_args.create_arg_type(arg_name, arg_type, v)
                if isinstance(new_obj.val, str) and len(new_obj.val) == 0:
                    #self.__status_update.clear()
                    self.__status_update.update('No input provided for command argument %d'%arg_num, 'red')
