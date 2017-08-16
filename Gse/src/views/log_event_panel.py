@@ -208,22 +208,19 @@ class LogEventPanel(observer.Observer):
         Insert log message at top of table widget.
         """
         for idx, evr_data in enumerate(msg_obj):
-          # Handle Severity
+            # Handle Severity
             if isinstance(evr_data, Severity):
-              self.__table.model.setValueAt(evr_data.name, self.__next_row, idx)
-              color = self.__severity_color[evr_data.name.lower()]
-              self.__table.model.setColorAt(self.__next_row, idx, color, key='bg')
+                self.__table.model.setValueAt(evr_data.name, self.__next_row, idx)
+                color = self.__severity_color[evr_data.name.lower()]
+                self.__table.model.setColorAt(self.__next_row, idx, color, key='bg')
             else:
-              self.__table.model.setValueAt(evr_data, self.__next_row, idx)
+                self.__table.model.setValueAt(evr_data, self.__next_row, idx)
 
         self.__next_row += 1
-
-    def selectionCommand(self):
-        sels = self.__list_box.getcurselection()
-        if len(sels) == 0:
-            print 'No selection'
-        else:
-            print 'Selection:', sels[0]
+        # Check row bounds and increase if close to end
+        if self.__next_row + 1 >= (self.__table_row_max-25):
+            self.__table.model.autoAddRows(100)
+            self.__table_row_max += 100
 
 
     def __clear_log(self):
@@ -318,11 +315,6 @@ class LogEventPanel(observer.Observer):
             self.insertLogMsg(msg_tup[1])
 
     def refresh(self):
-      # Check row bounds and increase if close to end
-      if self.__next_row >= (self.__table_row_max-25):
-        self.__table.model.autoAddRows(100)
-        self.__table_row_max += 100
-
       # Make sure data fits in columns
       self.__table.adjustColumnWidths()
 
@@ -330,6 +322,8 @@ class LogEventPanel(observer.Observer):
       if self.__scroll.get() == 1:
         self.__table.setSelectedRow(self.__next_row-1)
         last_visible_row = self.__table.visiblerows[-1]-4
+
+        # If close to end of visible rows move table to current row
         if self.__next_row > last_visible_row:
           fraction = float(self.__next_row-5)/float(self.__table_row_max)
           self.__table.set_yviews('moveto', fraction)
