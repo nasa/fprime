@@ -199,7 +199,6 @@ class LogEventPanel(observer.Observer):
                 continue
             #print col, size, self.cellwidth
             if size >= self.__table.maxcellwidth:
-                print "Width %f is greater than max: %f" % (size, self.__table.maxcellwidth)
                 size = self.__table.maxcellwidth
             self.__table.model.columnwidths[colname] = size + float(fontsize)/12*6
         return
