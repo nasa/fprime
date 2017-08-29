@@ -30,7 +30,7 @@ class Consumer(observer.Observable):
       super(Consumer, self).__init__()
 
       # Create Queue for events here
-      self.__queue = Queue.Queue()
+      self._queue = Queue.Queue()
 
       # Run flag
       self.__run = False
@@ -40,7 +40,7 @@ class Consumer(observer.Observable):
 
 
     def put_data(self, data):
-      self.__queue.put(data)
+      self._queue.put(data)
 
 
     def start_thread(self):
@@ -48,7 +48,7 @@ class Consumer(observer.Observable):
       self.__run = True
 
       # create background event thread
-      self.__thread = threading.Thread(target=self.service_queue, args=[self.__queue])
+      self.__thread = threading.Thread(target=self.service_queue, args=[self._queue])
 
       # state event thread here
       self.__thread.start()
