@@ -207,7 +207,7 @@ class GseApi(object):
               (recv_id, _) = evr
               if type == "evr" and id == recv_id:
                 notFound = False
-      except TimeoutException:
+      except self.TimeoutException:
         print 'Timeout reached, unable to find', type, 'ID', id
 
       if timeout:

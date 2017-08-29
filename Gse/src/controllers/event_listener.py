@@ -255,7 +255,7 @@ class EventListener(consumer.Consumer):
     def get_event(self):
       # Get item off queue
       try:
-        msg = self.__queue.get_nowait()
+        msg = self._queue.get_nowait()
       except Queue.Empty:
         # No Events to get
         return None
