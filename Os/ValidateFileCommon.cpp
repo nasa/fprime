@@ -138,7 +138,10 @@ namespace Os {
                         return ValidateFile::OTHER_ERROR;
                     case File::OTHER_ERROR:
                         return ValidateFile::OTHER_ERROR;
+                    default:
+                        FW_ASSERT(0, status);
                 }
+                break;
             case HashFileType:
                 switch (status) {
                     case File::OP_OK:
@@ -155,7 +158,12 @@ namespace Os {
                         return ValidateFile::OTHER_ERROR;
                     case File::OTHER_ERROR:
                         return ValidateFile::OTHER_ERROR;
+                    default:
+                        FW_ASSERT(0, status);
                 }
+                break;
+            default:
+                FW_ASSERT(0, type);
         }
 
         return ValidateFile::OTHER_ERROR;
