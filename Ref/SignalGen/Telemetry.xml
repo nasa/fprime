@@ -9,7 +9,7 @@
 
 ======================================================================-->
 
-<telemetry >
+<telemetry>
   <channel id="0" name="SignalGen_Output" data_type="F32" abbrev="T001-300">
     <comment>SignalGen Output</comment>
   </channel>
