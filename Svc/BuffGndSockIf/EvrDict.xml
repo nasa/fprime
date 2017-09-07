@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
-<events event_base="$BuffGndSockIfEventsBase">
+<events>
 	<event id="0" name="BuffGndSockIf_NoConnectionToServer" severity="WARNING_LO" format_string = "Unable to connect to the socket server on port %d" >
         <comment>
         The thread will try to re-connect until a connection is made

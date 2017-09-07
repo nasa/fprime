@@ -1,4 +1,4 @@
-    <events event_base="$GndIfEventsBase">
+    <events>
         <event id="0" name="NoConnectionToServer" severity="WARNING_LO" format_string = "Unable to connect to the socket server on port %d" >
             <comment>
             The thread will try to re-connect until a connection is made

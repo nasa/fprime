@@ -45,7 +45,7 @@
             </comment>
         </port>
     </ports>
-    <commands opcode_base="$CmdDispatcherOpcodeBase">
+    <commands>
         <!-- NO-OP command -->
         <command kind="async" opcode="0" mnemonic="CMD_NO_OP" >
             <comment>
@@ -86,7 +86,7 @@
             </comment>
         </command>
     </commands>
-    <events event_base="$CmdDispatcherEventsBase">
+    <events>
         <event id="0" name="OpCodeRegistered" severity="DIAGNOSTIC" format_string = "Opcode 0x%04X registered to port %d slot %d" >
             <comment>
             Op code registered event
@@ -218,7 +218,7 @@
            </args>       
         </event>
     </events>
-    <telemetry telemetry_base="$CmdDispatcherTelemetryBase">
+    <telemetry>
         <channel id="0" name="CommandsDispatched" data_type="U32" update="on_change" abbrev="T002-1100">
             <comment>
             Number of commands dispatched
