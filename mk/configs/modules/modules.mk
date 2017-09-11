@@ -67,6 +67,9 @@ SVC_MODULES := \
     Svc/AssertFatalAdapter \
     Svc/FatalHandler \
 	Svc/FileManager
+	
+AMPCS_MODULES := \
+	fprime-ampcs/AmpcsSeq
 
 DRV_MODULES := \
 	Drv/DataTypes \
@@ -78,7 +81,8 @@ REF_MODULES := \
 	Ref/RecvBuffApp \
 	Ref/SendBuffApp \
 	Ref/SignalGen \
-	Ref/PingReceiver
+	Ref/PingReceiver \
+	$(AMPCS_MODULES)
 	
 Ref_MODULES := \
 	\
