@@ -17,9 +17,9 @@
 // countries or providing access to foreign persons.
 // ====================================================================== 
 
-#include "ASTERIA/Components/BufferLogger/BufferLogger.hpp"
+#include "Svc/BufferLogger/BufferLogger.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction 
@@ -111,26 +111,6 @@ namespace ASTERIA {
   }
 
   void BufferLogger ::
-    SetSaveState_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        OnOff state
-    )
-  {
-    if (state.e == OnOff::OFF) {
-      this->file.closeAndEmitEvent();
-    }
-    this->state.set(state.e);
-    const NonVolatileU8::Status::t status = this->state.save();
-    if (status == NonVolatileU8::Status::SUCCESS) {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
-    }
-    else {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
-    }
-  }
-
-  void BufferLogger ::
   SetVolatileState_cmdHandler(
     const FwOpcodeType opCode,
     const U32 cmdSeq,
@@ -151,21 +131,6 @@ namespace ASTERIA {
   )
   {
     const NonVolatileU8::Status::t status = this->state.save();
-    if (status == NonVolatileU8::Status::SUCCESS) {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
-    }
-    else {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
-    }
-  }
-        
-  void BufferLogger ::
-  LoadState_cmdHandler(
-    const FwOpcodeType opCode,
-    const U32 cmdSeq
-  )
-  {
-    const NonVolatileU8::Status::t status = this->state.load();
     if (status == NonVolatileU8::Status::SUCCESS) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
     }

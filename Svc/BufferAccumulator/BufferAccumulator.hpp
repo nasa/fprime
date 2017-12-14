@@ -17,13 +17,13 @@
 // countries or providing access to foreign persons.
 // ====================================================================== 
 
-#ifndef ASTERIA_BufferAccumulator_HPP
-#define ASTERIA_BufferAccumulator_HPP
+#ifndef Svc_BufferAccumulator_HPP
+#define Svc_BufferAccumulator_HPP
 
-#include "ASTERIA/Components/BufferAccumulator/BufferAccumulatorComponentAc.hpp"
-#include "ASTERIA/Types/Queue/ArrayFIFOBuffer.hpp"
+#include "Svc/BufferAccumulator/BufferAccumulatorComponentAc.hpp"
+#include "Os/Queue.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   class BufferAccumulator :
     public BufferAccumulatorComponentBase
@@ -38,7 +38,9 @@ namespace ASTERIA {
       //! Construct BufferAccumulator instance
       //!
       BufferAccumulator(
-          const char *const compName, //!< The component name
+#if FW_OBJECT_NAMES == 1
+          const char *const compName, /*!< The component name*/
+#endif
           const U32 maxNumBuffers //!< The maximum number of buffers
       );
 
@@ -46,7 +48,7 @@ namespace ASTERIA {
       //!
       void init(
           const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
+          const NATIVE_INT_TYPE instance = 0 //!< The instance number
       );
 
       //! Destroy BufferAccumulator instance
@@ -91,7 +93,7 @@ namespace ASTERIA {
       void SetMode_cmdHandler(
           const FwOpcodeType opCode, //!< The opcode
           const U32 cmdSeq, //!< The command sequence number
-          BufferAccumulatorMode mode //!< The mode
+          OpState mode //!< The mode
       );
     PRIVATE:
 
@@ -109,7 +111,7 @@ namespace ASTERIA {
       // ----------------------------------------------------------------------
 
       //! The mode
-      BufferAccumulatorMode mode;
+      OpState mode;
 
       //! Memory for the buffer array
       Fw::Buffer *const bufferMemory;

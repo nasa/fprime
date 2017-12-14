@@ -3,7 +3,6 @@
 
 <!--====================================================================== 
 
-  ASTERIA
   BufferLogger
   Events
 
@@ -11,7 +10,7 @@
 
 <events>
 
-  <event id="0x00" name="LogFileClosed" severity="DIAGNOSTIC" format_string="File %s closed">
+  <event id="0x00" name="BL_LogFileClosed" severity="DIAGNOSTIC" format_string="File %s closed">
     <comment>The Buffer Logger closed a log file</comment>
     <args>
       <arg name="file" type="string" size="256">
@@ -20,7 +19,7 @@
     </args>
   </event>
 
-  <event id="0x01" name="LogFileOpenError" severity="WARNING_HI" format_string="Error %d opening file %s">
+  <event id="0x01" name="BL_LogFileOpenError" severity="WARNING_HI" format_string="Error %d opening file %s">
     <comment>The Buffer Logger encountered an error opening a log file</comment>
     <args>
       <arg name="errornum" type="U32">
@@ -32,7 +31,7 @@
     </args>
   </event>
 
-  <event id="0x02" name="LogFileValidationError" severity="WARNING_HI" format_string="Failed creating validation file %s with status %d">
+  <event id="0x02" name="BL_LogFileValidationError" severity="WARNING_HI" format_string="Failed creating validation file %s with status %d">
     <comment>The Buffer Logger encountered an error writing a validation file</comment>
     <args>
       <arg name="validationFile" type="string" size="256">
@@ -44,7 +43,7 @@
     </args>
   </event>
 
-  <event id="0x03" name="LogFileWriteError" severity="WARNING_HI" format_string="Error %d while writing %d of %d bytes to %s">
+  <event id="0x03" name="BL_LogFileWriteError" severity="WARNING_HI" format_string="Error %d while writing %d of %d bytes to %s">
     <comment>The Buffer Logger encountered an error writing to a log file</comment>
     <args>
       <arg name="errornum" type="U32">
@@ -62,30 +61,11 @@
     </args>
   </event>
 
-  <event id="0x04" name="NonVolatileReadError" severity="WARNING_HI" format_string="">
-    <comment>The Buffer Logger failed to read the non-volatile logging state from the disk</comment>
+  <event id="0x04" name="BL_Activated" severity="ACTIVITY_LO" format_string="Buffer logger was activated">
+    <comment>Buffer logger was activated</comment>
   </event>
 
-  <event id="0x05" name="NonVolatileWriteError" severity="WARNING_HI" format_string="">
-    <comment>The Buffer Logger failed to write the non-volatile logging state to the disk</comment>
+  <event id="0x05" name="BL_Deativated" severity="ACTIVITY_LO" format_string="Buffer logger was deactivated">
+    <comment>Buffer logger was deactivated</comment>
   </event>
-
-  <event id="0x06" name="SetState" severity="ACTIVITY_LO" format_string="Logging state was set to %s">
-    <comment>The volatile logging state of the Buffer Logger changed</comment>
-    <args>
-      <arg name="state" type="OnOff">
-        <comment>The logging state set</comment>
-      </arg>
-    </args>
-  </event>
-
-  <event id="0x07" name="LoadState" severity="ACTIVITY_LO" format_string="Logging state loaded from disk: %s">
-    <comment>Loaded logging state from disk</comment>
-    <args>
-      <arg name="state" type="OnOff">
-        <comment>The logging state loaded</comment>
-      </arg>
-    </args>
-  </event>
-
 </events>

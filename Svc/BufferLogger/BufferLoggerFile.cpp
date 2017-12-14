@@ -17,9 +17,9 @@
 // countries or providing access to foreign persons.
 // ====================================================================== 
 
-#include "ASTERIA/Components/BufferLogger/BufferLogger.hpp"
+#include "Svc/BufferLogger/BufferLogger.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   // ----------------------------------------------------------------------
   // OpenErrors
@@ -196,7 +196,7 @@ namespace ASTERIA {
         this->suffix.toChar()
     );
 
-    const Os::File::Status status = this->asteriaFile.open(
+    const Os::File::Status status = this->osFile.open(
         this->name.toChar(),
         Os::File::OPEN_WRITE
     );
@@ -250,7 +250,7 @@ namespace ASTERIA {
     )
   {
     U32 size = length;
-    const Os::File::Status fileStatus = this->asteriaFile.write(data, size);
+    const Os::File::Status fileStatus = this->osFile.write(data, size);
     bool status;
     if (fileStatus == Os::File::OP_OK && size == length) {
       this->writeErrors.clear();
@@ -287,7 +287,7 @@ namespace ASTERIA {
     bool status = true;
     if(this->mode == File::Mode::OPEN)
     {
-      const Os::File::Status fileStatus = this->asteriaFile.flush();
+      const Os::File::Status fileStatus = this->osFile.flush();
       if(fileStatus == Os::File::OP_OK)
       {
         status = true;
@@ -305,7 +305,7 @@ namespace ASTERIA {
   {
     if (this->mode == File::Mode::OPEN) {
       // Close file
-      this->asteriaFile.close();
+      this->osFile.close();
       // Write out the hash file to disk
       this->writeHashFile();
       // Update mode

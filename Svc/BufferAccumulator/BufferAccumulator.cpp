@@ -17,10 +17,10 @@
 // countries or providing access to foreign persons.
 // ====================================================================== 
 
-#include "ASTERIA/Components/BufferAccumulator/BufferAccumulator.hpp"
+#include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction 
@@ -32,7 +32,7 @@ namespace ASTERIA {
         const U32 maxNumBuffers
     ) :
       BufferAccumulatorComponentBase(compName),
-      mode(BufferAccumulatorMode::DRAIN),
+      mode(DRAIN),
       bufferMemory(new Fw::Buffer[maxNumBuffers]),
       bufferArray(this->bufferMemory, maxNumBuffers),
       bufferQueue(this->bufferArray),
@@ -113,11 +113,11 @@ namespace ASTERIA {
     SetMode_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        BufferAccumulatorMode mode
+        OpState mode
     )
   {
     this->mode = mode;
-    if (mode == BufferAccumulatorMode::DRAIN) {
+    if (mode == DRAIN) {
       this->send = true;
       this->sendStoredBuffer();
     }

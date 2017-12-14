@@ -17,19 +17,17 @@
 // countries or providing access to foreign persons.
 // ====================================================================== 
 
-#ifndef ASTERIA_BufferLogger_HPP
-#define ASTERIA_BufferLogger_HPP
+#ifndef Svc_BufferLogger_HPP
+#define Svc_BufferLogger_HPP
 
-#include "ASTERIA/Components/BufferLogger/BufferLoggerComponentAc.hpp"
-#include "ASTERIA/Types/Files/File.hpp"
-#include "ASTERIA/Types/Files/ValidatedFile.hpp"
-#include "ASTERIA/Types/NonVolatile/NonVolatileU8.hpp"
-#include "ASTERIA/Types/String/String.hpp"
+#include "Svc/BufferLogger/BufferLoggerComponentAc.hpp"
+#include "Os/File.hpp"
+#include "Fw/Types/EightyCharString.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/Mutex.hpp"
 #include "Utils/Hash/Hash.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   class BufferLogger :
     public BufferLoggerComponentBase
@@ -252,8 +250,8 @@ namespace ASTERIA {
           // The current mode
           Mode::t mode;
 
-          //! The underlying ASTERIA::File representation
-          ASTERIA::File asteriaFile;
+          //! The underlying Os::File representation
+          Os::File osFile;
 
           //! The number of bytes written to the current file
           U32 bytesWritten;

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
-<component name="BufferAccumulator" kind="active" namespace="ASTERIA" modeler="true">
-
-  <include_header>ASTERIA/Components/BufferAccumulator/BufferAccumulatorMode/BufferAccumulatorMode.hpp</include_header>
+<component name="BufferAccumulator" kind="active" namespace="Svc" modeler="true">
 
   <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
   <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
@@ -13,8 +11,8 @@
   <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
   <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
 
-  <import_dictionary>ASTERIA/Components/BufferAccumulator/Commands.xml</import_dictionary>
-  <import_dictionary>ASTERIA/Components/BufferAccumulator/Events.xml</import_dictionary>
+  <import_dictionary>Svc/BufferAccumulator/Commands.xml</import_dictionary>
+  <import_dictionary>Svc/BufferAccumulator/Events.xml</import_dictionary>
 
   <ports>
     <port name="bufferSendInFill" kind="async_input" data_type="Fw::BufferSend" max_number="1"></port>
