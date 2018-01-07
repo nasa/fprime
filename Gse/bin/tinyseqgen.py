@@ -127,8 +127,12 @@ def __parse(seqfile):
           # See if it translates to an integer:
           return int(arg)
         except ValueError:
-          # Otherwise it is an enum type:
-          return str(arg)
+          try:
+            # See if it translates to a float:
+            return float(arg)
+          except ValueError:
+            # Otherwise it is an enum type:
+            return str(arg)
     return map(parseArg, args)
 
   def parseTime(lineNumber, time):
