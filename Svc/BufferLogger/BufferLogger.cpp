@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BufferLogger.cpp
 // \author bocchino, dinkel
 // \brief  ASTERIA BufferLogger implementation
@@ -8,21 +8,21 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include "Svc/BufferLogger/BufferLogger.hpp"
 
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   BufferLogger ::
@@ -34,26 +34,20 @@ namespace Svc {
         const U32 maxFileSize,
         const U8 sizeOfSize
     ) :
-      BufferLoggerComponentBase(compName), 
+      BufferLoggerComponentBase(compName),
       state(*this, stateFilePath),
       file(*this, logFilePrefix, logFileSuffix, maxFileSize, sizeOfSize)
   {
 
   }
 
-  void BufferLogger :: 
+  void BufferLogger ::
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
     )
   {
     BufferLoggerComponentBase::init(queueDepth, instance);
-  }
-
-  void BufferLogger ::
-    setup(void)
-  {
-    this->state.load();
   }
 
   // ----------------------------------------------------------------------
@@ -66,8 +60,7 @@ namespace Svc {
         Fw::Buffer fwBuffer
     )
   {
-    const OnOff::t state = this->state.get();
-    if (state == OnOff::ON) {
+    if (m_state == LOGGING_ON) {
       const U8 *const addr = reinterpret_cast<U8*>(fwBuffer.getdata());
       const U32 size = fwBuffer.getsize();
       this->file.logBuffer(addr, size);
@@ -82,8 +75,7 @@ namespace Svc {
         U32 context
     )
   {
-    const OnOff::t state = this->state.get();
-    if (state == OnOff::ON) {
+    if (m_state == LOGGING_ON) {
       const U8 *const addr = data.getBuffAddr();
       const U32 size = data.getBuffLength();
       this->file.logBuffer(addr, size);
@@ -97,11 +89,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Command handler implementations 
+  // Command handler implementations
   // ----------------------------------------------------------------------
 
-  void BufferLogger :: 
-    CloseFile_cmdHandler(
+  void BufferLogger ::
+    BL_OpenFile_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq
     )
@@ -111,32 +103,27 @@ namespace Svc {
   }
 
   void BufferLogger ::
-  SetVolatileState_cmdHandler(
-    const FwOpcodeType opCode,
-    const U32 cmdSeq,
-    OnOff state
-  )
+    BL_CloseFile_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
   {
-    if (state.e == OnOff::OFF) {
-      this->file.closeAndEmitEvent();
-    }
-    this->state.set(state.e);
+    this->file.closeAndEmitEvent();
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 
   void BufferLogger ::
-  SaveState_cmdHandler(
-    const FwOpcodeType opCode,
-    const U32 cmdSeq
+    BL_SetLogging_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        LogState state
   )
   {
-    const NonVolatileU8::Status::t status = this->state.save();
-    if (status == NonVolatileU8::Status::SUCCESS) {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    m_state = state;
+    if (state == LOGGING_OFF) {
+      this->file.closeAndEmitEvent();
     }
-    else {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
-    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 
   void BufferLogger ::

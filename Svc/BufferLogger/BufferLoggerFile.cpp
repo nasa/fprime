@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  File.cpp
 // \author bocchino, dinkel
 // \brief  Implementation for ASTERIA::BufferLogger::File
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include "Svc/BufferLogger/BufferLogger.hpp"
 
@@ -30,7 +30,7 @@ namespace Svc {
       bufferLogger(bufferLogger),
       errorOccurred(false)
   {
-  
+
   }
 
   void BufferLogger::File::OpenErrors ::
@@ -40,7 +40,7 @@ namespace Svc {
     )
   {
     if (!this->errorOccurred) {
-      this->bufferLogger.log_WARNING_HI_LogFileOpenError(
+      this->bufferLogger.log_WARNING_HI_BL_LogFileOpenError(
           status,
           fileName
       );
@@ -63,7 +63,7 @@ namespace Svc {
       bufferLogger(bufferLogger),
       errorOccurred(false)
   {
-  
+
   }
 
   void BufferLogger::File::WriteErrors ::
@@ -75,8 +75,8 @@ namespace Svc {
     )
   {
     if (!this->errorOccurred) {
-      this->bufferLogger.log_WARNING_HI_LogFileWriteError(
-          status, 
+      this->bufferLogger.log_WARNING_HI_BL_LogFileWriteError(
+          status,
           bytesWritten,
           bytesAttempted,
           fileName
@@ -124,7 +124,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Public functions 
+  // Public functions
   // ----------------------------------------------------------------------
 
   void BufferLogger::File ::
@@ -151,7 +151,7 @@ namespace Svc {
   {
     // Close the file if it will be too big
     if (this->mode == File::Mode::OPEN) {
-      const U32 projectedByteCount = 
+      const U32 projectedByteCount =
         this->bytesWritten + this->sizeOfSize + size;
       if (projectedByteCount > this->maxSize) {
         this->closeAndEmitEvent();
@@ -173,12 +173,12 @@ namespace Svc {
     if (this->mode == File::Mode::OPEN) {
       this->close();
       Fw::LogStringArg logStringArg(this->name.toChar());
-      this->bufferLogger.log_DIAGNOSTIC_LogFileClosed(logStringArg);
+      this->bufferLogger.log_DIAGNOSTIC_BL_LogFileClosed(logStringArg);
     }
   }
 
   // ----------------------------------------------------------------------
-  // Private functions 
+  // Private functions
   // ----------------------------------------------------------------------
 
   void BufferLogger::File ::
@@ -206,12 +206,12 @@ namespace Svc {
       // Reset bytes written
       this->bytesWritten = 0;
       // Set mode
-      this->mode = File::Mode::OPEN; 
+      this->mode = File::Mode::OPEN;
     }
     else {
       Fw::LogStringArg string(this->name.toChar());
       this->openErrors.emit(status, string);
-    }    
+    }
   }
 
   bool BufferLogger::File ::
@@ -265,7 +265,7 @@ namespace Svc {
     return status;
   }
 
-  void BufferLogger::File :: 
+  void BufferLogger::File ::
     writeHashFile(void)
   {
     ValidatedFile validatedFile(this->name.toChar());
@@ -274,7 +274,7 @@ namespace Svc {
     if (status !=  Os::ValidateFile::VALIDATION_OK) {
       const String &hashFileName = validatedFile.getHashFileName();
       Fw::LogStringArg logStringArg(hashFileName.toChar());
-      this->bufferLogger.log_WARNING_HI_LogFileValidationError(
+      this->bufferLogger.log_WARNING_HI_BL_LogFileValidationError(
           logStringArg,
           status
       );

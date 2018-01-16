@@ -2,12 +2,15 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <commands>
+  <command kind="async" opcode="0x00" mnemonic="BL_OpenFile">
+    <comment>Open a new log file with specified name</comment>
+  </command>
 
-  <command kind="async" opcode="0x00" mnemonic="BL_CloseFile">
+  <command kind="async" opcode="0x01" mnemonic="BL_CloseFile">
     <comment>Close the currently open log file, if any</comment>
   </command>
 
-  <command kind="async" opcode="0x01" mnemonic="BL_SetLogging">
+  <command kind="async" opcode="0x02" mnemonic="BL_SetLogging">
     <comment>Sets the volatile logging state</comment>
     <args>
       <arg name="state" type="ENUM">
@@ -19,8 +22,8 @@
     </args>
   </command>
 
-  <command kind="async" opcode="0x02" mnemonic="BL_FlushFile">
-    <comment>Flushes the current open log file to disk</comment>
+  <command kind="async" opcode="0x03" mnemonic="BL_FlushFile">
+    <comment>Flushes the current open log file to disk; currently a no-op</comment>
   </command>
 
 </commands>

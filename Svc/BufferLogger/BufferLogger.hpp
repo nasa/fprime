@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BufferLogger.hpp
 // \author bocchino, dinkel
 // \brief  ASTERIA Buffer Logger interface
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef Svc_BufferLogger_HPP
 #define Svc_BufferLogger_HPP
@@ -34,131 +34,22 @@ namespace Svc {
   {
 
     PRIVATE:
-     
+
       // ----------------------------------------------------------------------
-      // Types 
+      // Types
       // ----------------------------------------------------------------------
-
-      //! The logging state
-      class State {
-
-        public:
-
-          //! Construct a State object
-          State(
-              BufferLogger& bufferLogger, //!< The enclosing BufferLogger instance
-              const char *const filePath //!< The file path for storing the non-volatile state
-          );
-
-        public:
-
-          //! Get the volatile state
-          //! \return The state
-          OnOff::t get(void) const;
-
-          //! Set the volatile state
-          void set(
-              const OnOff::t state //!< The state
-          );
-
-          //! Save the non-volatile state to the disk
-          //! \return The status
-          NonVolatileU8::Status::t save(void);
-
-          //! Load the non-volatile state from the disk
-          //! \return The status
-          NonVolatileU8::Status::t load(void);
-
-        PRIVATE:
-
-          //! The enclosing BufferLogger instance
-          BufferLogger& bufferLogger;
-
-          //! The volatile state
-          OnOff::t volatileState;
-
-          //! The non-volatile state
-          NonVolatileU8 nonVolatileState;
-
-      };
 
       //! A BufferLogger file
       class File {
 
         public:
-      
+
           //! The file mode
           struct Mode {
             typedef enum {
               CLOSED = 0,
               OPEN = 1
             } t;
-          };
-
-        public:
-
-          //! Open errors
-          class OpenErrors {
-
-            public:
-
-              //! Construct an OpenErrors object
-              OpenErrors(
-                  BufferLogger& bufferLogger //!< The enclosing BufferLogger instance
-              );
-
-            public:
-
-              //! Emit a write error
-              void emit(
-                  const U32 status, //!< The status returned from the open operation
-                  Fw::LogStringArg& fileName //!< The file name
-              );
-
-              //! Clear the error state
-              void clear(void);
-
-            PRIVATE:
-
-              //! The enclosing BufferLogger instance
-              BufferLogger& bufferLogger;
-
-              //! Whether a write error has occurred
-              bool errorOccurred;
-
-          };
-
-          //! Write errors
-          class WriteErrors {
-
-            public:
-
-              //! Construct a WriteErrors object
-              WriteErrors(
-                  BufferLogger& bufferLogger //!< The enclosing BufferLogger instance
-              );
-
-            public:
-
-              //! Emit a write error
-              void emit(
-                  const U32 status, //!< The status returned from the write operation
-                  const U32 bytesWritten, //!< The number of bytes successfully written
-                  const U32 bytesAttempted, //!< The number of bytes in the write attempt
-                  Fw::LogStringArg& fileName //!< The file name
-              );
-
-              //! Clear the error state
-              void clear(void);
-
-            PRIVATE:
-
-              //! The enclosing BufferLogger instance
-              BufferLogger& bufferLogger;
-
-              //! Whether a write error has occurred
-              bool errorOccurred;
-
           };
 
         public:
@@ -195,7 +86,7 @@ namespace Svc {
 
           //! Flush the file
           bool flush(void);
-        
+
         PRIVATE:
 
           //! Open the file
@@ -246,7 +137,7 @@ namespace Svc {
 
           //! The name of the currently open file
           String name;
-          
+
           // The current mode
           Mode::t mode;
 
@@ -299,7 +190,7 @@ namespace Svc {
       //!
       void bufferSendIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer fwBuffer 
+          Fw::Buffer fwBuffer
       );
 
       //! Handler implementation for comIn
@@ -320,7 +211,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for CloseFile command handler
@@ -331,7 +222,7 @@ namespace Svc {
       );
 
       //! Handler for command SetSaveState
-      //! Sets the volatile logging state and saves the state to non-volatile memory 
+      //! Sets the volatile logging state and saves the state to non-volatile memory
       void SetSaveState_cmdHandler(
         const FwOpcodeType opCode, //!< The opcode
         const U32 cmdSeq, //!< The command sequence number
@@ -339,7 +230,7 @@ namespace Svc {
       );
 
       //! Handler for command SetState
-      //! Sets the volatile logging state 
+      //! Sets the volatile logging state
       void SetVolatileState_cmdHandler(
         const FwOpcodeType opCode, //!< The opcode
         const U32 cmdSeq, //!< The command sequence number
@@ -347,21 +238,21 @@ namespace Svc {
       );
 
       //! Handler for command SaveState
-      //! Saves the current volatile logging state to non-volatile memory 
+      //! Saves the current volatile logging state to non-volatile memory
       void SaveState_cmdHandler(
         const FwOpcodeType opCode, //!< The opcode
         const U32 cmdSeq //!< The command sequence number
       );
 
       //! Handler for command LoadState
-      //! Loads the non-volatile logging state 
+      //! Loads the non-volatile logging state
       void LoadState_cmdHandler(
         const FwOpcodeType opCode, //!< The opcode
         const U32 cmdSeq //!< The command sequence number
       );
 
       //! Handler for command Flush
-      //! Flushes the current open log file to disk 
+      //! Flushes the current open log file to disk
       void Flush_cmdHandler(
         const FwOpcodeType opCode, //!< The opcode
         const U32 cmdSeq //!< The command sequence number
@@ -374,10 +265,10 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The logging state
-      State state;
+      LogState m_state;
 
       //! The file
-      File file;
+      File m_file;
 
   };
 

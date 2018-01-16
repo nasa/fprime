@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BufferAccumulator.hpp
 // \author bocchino
 // \brief  BufferAccumulator interface
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef Svc_BufferAccumulator_HPP
 #define Svc_BufferAccumulator_HPP
@@ -28,6 +28,67 @@ namespace Svc {
   class BufferAccumulator :
     public BufferAccumulatorComponentBase
   {
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Types
+      // ----------------------------------------------------------------------
+
+      //! A BufferLogger file
+      class ArrayFIFOBuffer {
+
+        public:
+            //! Construct an ArrayFIFOBuffer object
+            ArrayFIFOBuffer(Fw::Buffer *const elements, //!< The array elements
+                            const NATIVE_UINT_TYPE capacity //!< The capacity
+            );
+
+            //! Destroy an ArrayFIFOBuffer File object
+            ~ArrayFIFOBuffer(void);
+
+            //! Enqueue an index.
+            //! Fails if the queue is full.
+            //! \return Whether the operation succeeded
+            bool enqueue(
+                const Fw::Buffer& e //!< The element to enqueue
+            );
+
+            //! Dequeue an index.
+            //! Fails if the queue is empty.
+            bool dequeue(
+                Fw::Buffer& e //!< The dequeued element
+            );
+
+            //! Get the size of the queue
+            //! \return The size
+            U32 getSize(void) const;
+
+            //! Get the capacity of the queue
+            //! \return The capacity
+            U32 getCapacity(void) const;
+
+        PRIVATE:
+
+          // ----------------------------------------------------------------------
+          // Private member variables
+          // ----------------------------------------------------------------------
+
+          //! The memory for the elements
+          Fw::Buffer *const elements;
+
+          //! The capacity of the queue
+          const NATIVE_UINT_TYPE capacity;
+
+          //! The enqueue index
+          NATIVE_UINT_TYPE enqueueIndex;
+
+          //! The dequeue index
+          NATIVE_UINT_TYPE dequeueIndex;
+
+          //! The size of the queue
+          NATIVE_UINT_TYPE size;
+      }; //class ArrayFIFOBuffer
 
     public:
 
@@ -65,14 +126,14 @@ namespace Svc {
       //!
       void bufferSendInFill_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer buffer
       );
 
       //! Handler implementation for bufferSendInReturn
       //!
       void bufferSendInReturn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer buffer
       );
 
       //! Handler implementation for pingIn
@@ -85,7 +146,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for SetMode command handler
@@ -98,7 +159,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Private helper methods 
+      // Private helper methods
       // ----------------------------------------------------------------------
 
       //! Send a stored buffer
@@ -107,7 +168,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The mode
@@ -115,9 +176,6 @@ namespace Svc {
 
       //! Memory for the buffer array
       Fw::Buffer *const bufferMemory;
-
-      //! An array of buffers for the queue
-      VariableSizeArrayBuffer bufferArray;
 
       //! The FIFO queue of buffers
       ArrayFIFOBuffer bufferQueue;
