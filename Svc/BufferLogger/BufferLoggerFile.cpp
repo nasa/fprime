@@ -18,78 +18,10 @@
 // ======================================================================
 
 #include "Svc/BufferLogger/BufferLogger.hpp"
+#include "Os/ValidateFile.hpp"
+#include "Os/ValidatedFile.hpp"
 
 namespace Svc {
-
-  // ----------------------------------------------------------------------
-  // OpenErrors
-  // ----------------------------------------------------------------------
-
-  BufferLogger::File::OpenErrors ::
-    OpenErrors(BufferLogger& bufferLogger) :
-      bufferLogger(bufferLogger),
-      errorOccurred(false)
-  {
-
-  }
-
-  void BufferLogger::File::OpenErrors ::
-    emit(
-        const U32 status,
-        Fw::LogStringArg& fileName
-    )
-  {
-    if (!this->errorOccurred) {
-      this->bufferLogger.log_WARNING_HI_BL_LogFileOpenError(
-          status,
-          fileName
-      );
-    }
-    this->errorOccurred = true;
-  }
-
-  void BufferLogger::File::OpenErrors ::
-    clear(void)
-  {
-    this->errorOccurred = false;
-  }
-
-  // ----------------------------------------------------------------------
-  // WriteErrors
-  // ----------------------------------------------------------------------
-
-  BufferLogger::File::WriteErrors ::
-    WriteErrors(BufferLogger& bufferLogger) :
-      bufferLogger(bufferLogger),
-      errorOccurred(false)
-  {
-
-  }
-
-  void BufferLogger::File::WriteErrors ::
-    emit(
-        const U32 status,
-        const U32 bytesWritten,
-        const U32 bytesAttempted,
-        Fw::LogStringArg& fileName
-    )
-  {
-    if (!this->errorOccurred) {
-      this->bufferLogger.log_WARNING_HI_BL_LogFileWriteError(
-          status,
-          bytesWritten,
-          bytesAttempted,
-          fileName
-      );
-    }
-    this->errorOccurred = true;
-  }
-
-  void BufferLogger::File::WriteErrors ::
-    clear(void)
-  {
-    this->errorOccurred = false;
-  }
 
   // ----------------------------------------------------------------------
   // Constructors and destructors
@@ -109,9 +41,7 @@ namespace Svc {
       maxSize(maxSize),
       sizeOfSize(sizeOfSize),
       mode(Mode::CLOSED),
-      bytesWritten(0),
-      openErrors(bufferLogger),
-      writeErrors(bufferLogger)
+      bytesWritten(0)
   {
     FW_ASSERT(sizeOfSize <= sizeof(U32), sizeOfSize);
     FW_ASSERT(maxSize > sizeOfSize, maxSize);
@@ -126,22 +56,6 @@ namespace Svc {
   // ----------------------------------------------------------------------
   // Public functions
   // ----------------------------------------------------------------------
-
-  void BufferLogger::File ::
-    formatName(
-        String& name,
-        const Fw::Time& time
-    )
-  {
-    name.format(
-        "%s_%d_%d_%06d%s",
-        this->prefix.toChar(),
-        time.getTimeBase(),
-        time.getSeconds(),
-        time.getUSeconds(),
-        this->suffix.toChar()
-    );
-  }
 
   void BufferLogger::File ::
     logBuffer(
@@ -186,6 +100,7 @@ namespace Svc {
   {
     FW_ASSERT(this->mode == File::Mode::CLOSED);
 
+    // TODO(mereweth) - check that file path has been set; change to deterministic path
     Fw::Time timestamp = this->bufferLogger.getTime();
     this->name.format(
         "%s_%d_%d_%06d%s",
@@ -201,8 +116,6 @@ namespace Svc {
         Os::File::OPEN_WRITE
     );
     if (status == Os::File::OP_OK) {
-      // Clear open errors state
-      this->openErrors.clear();
       // Reset bytes written
       this->bytesWritten = 0;
       // Set mode
@@ -210,7 +123,7 @@ namespace Svc {
     }
     else {
       Fw::LogStringArg string(this->name.toChar());
-      this->openErrors.emit(status, string);
+      this->bufferLogger.log_WARNING_HI_BL_LogFileOpenError(status, string);
     }
   }
 
@@ -246,20 +159,21 @@ namespace Svc {
   bool BufferLogger::File ::
     writeBytes(
         const void *const data,
-        const U32 length
+        const NATIVE_UINT_TYPE length
     )
   {
-    U32 size = length;
+    FW_ASSERT(length > 0, length);
+    NATIVE_INT_TYPE size = length;
     const Os::File::Status fileStatus = this->osFile.write(data, size);
     bool status;
-    if (fileStatus == Os::File::OP_OK && size == length) {
-      this->writeErrors.clear();
+    if (fileStatus == Os::File::OP_OK && size == static_cast<NATIVE_INT_TYPE>(length)) {
       this->bytesWritten += length;
       status = true;
     }
     else {
       Fw::LogStringArg string(this->name.toChar());
-      this->writeErrors.emit(fileStatus, size, length, string);
+
+      this->bufferLogger.log_WARNING_HI_BL_LogFileWriteError(fileStatus, size, length, string);
       status = false;
     }
     return status;
@@ -268,11 +182,11 @@ namespace Svc {
   void BufferLogger::File ::
     writeHashFile(void)
   {
-    ValidatedFile validatedFile(this->name.toChar());
+    Os::ValidatedFile validatedFile(this->name.toChar());
     const Os::ValidateFile::Status status =
       validatedFile.createHashFile();
     if (status !=  Os::ValidateFile::VALIDATION_OK) {
-      const String &hashFileName = validatedFile.getHashFileName();
+      const Fw::EightyCharString &hashFileName = validatedFile.getHashFileName();
       Fw::LogStringArg logStringArg(hashFileName.toChar());
       this->bufferLogger.log_WARNING_HI_BL_LogFileValidationError(
           logStringArg,
@@ -284,7 +198,9 @@ namespace Svc {
   bool BufferLogger::File ::
   flush(void)
   {
-    bool status = true;
+    return true;
+    // NOTE(if your fprime uses buffered file I/O, re-enable this)
+    /*bool status = true;
     if(this->mode == File::Mode::OPEN)
     {
       const Os::File::Status fileStatus = this->osFile.flush();
@@ -297,7 +213,7 @@ namespace Svc {
         status = false;
       }
     }
-    return status;
+    return status;*/
   }
 
   void BufferLogger::File ::

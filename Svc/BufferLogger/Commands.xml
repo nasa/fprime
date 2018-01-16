@@ -3,7 +3,10 @@
 
 <commands>
   <command kind="async" opcode="0x00" mnemonic="BL_OpenFile">
-    <comment>Open a new log file with specified name</comment>
+    <comment>Open a new log file with specified name; required before activating logging</comment>
+    <args>
+      <arg name="file" type="string" size = "40"/>
+    </args>
   </command>
 
   <command kind="async" opcode="0x01" mnemonic="BL_CloseFile">
@@ -23,7 +26,7 @@
   </command>
 
   <command kind="async" opcode="0x03" mnemonic="BL_FlushFile">
-    <comment>Flushes the current open log file to disk; currently a no-op</comment>
+    <comment>Flushes the current open log file to disk; a no-op with fprime's unbuffered file I/O, so always returns success</comment>
   </command>
 
 </commands>

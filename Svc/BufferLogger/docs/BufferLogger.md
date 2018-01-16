@@ -6,10 +6,12 @@
 
 |Mnemonic|ID|Description|Arg Name|Arg Type|Comment
 |---|---|---|---|---|---|
-|BL_CloseFile|0 (0x0)|Close the currently open log file, if any| | |   
-|BL_SetLogging|1 (0x1)|Sets the volatile logging state| | |   
+|BL_OpenFile|0 (0x0)|Open a new log file with specified name; required before activating logging| | |   
+| | | |file|Fw::CmdStringArg||                    
+|BL_CloseFile|1 (0x1)|Close the currently open log file, if any| | |   
+|BL_SetLogging|2 (0x2)|Sets the volatile logging state| | |   
 | | | |state|LogState||                    
-|BL_FlushFile|2 (0x2)|Flushes the current open log file to disk| | |   
+|BL_FlushFile|3 (0x3)|Flushes the current open log file to disk; a no-op with fprime's unbuffered file I/O, so always returns success| | |   
 
 
 ## Event List

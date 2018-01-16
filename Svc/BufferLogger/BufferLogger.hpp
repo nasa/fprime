@@ -68,13 +68,6 @@ namespace Svc {
 
         public:
 
-          //! Format a file name using the stored prefix,
-          //! the time, and the stored suffix
-          void formatName(
-              String& name, //!< The name to format
-              const Fw::Time& time //!< The time stamp
-          );
-
           //! Log a buffer
           void logBuffer(
               const U8 *const data, //!< The buffer data
@@ -124,10 +117,10 @@ namespace Svc {
           BufferLogger& bufferLogger;
 
           //! The prefix to use for file names
-          const String prefix;
+          const Fw::EightyCharString prefix;
 
           //! The suffix to use for file names
-          const String suffix;
+          const Fw::EightyCharString suffix;
 
           //! The maximum file size
           const U32 maxSize;
@@ -136,7 +129,7 @@ namespace Svc {
           const U8 sizeOfSize;
 
           //! The name of the currently open file
-          String name;
+          Fw::EightyCharString name;
 
           // The current mode
           Mode::t mode;
@@ -147,13 +140,7 @@ namespace Svc {
           //! The number of bytes written to the current file
           U32 bytesWritten;
 
-          //! Open errors
-          OpenErrors openErrors;
-
-          //! Write errors
-          WriteErrors writeErrors;
-
-      };
+      }; // class File
 
     public:
 
@@ -164,7 +151,6 @@ namespace Svc {
       //! Create a BufferLogger object
       BufferLogger(
           const char *const compName, //!< The component name
-          const char *const stateFilePath, //!< The path to the file for storing the non-volatile on/off state
           const char *const logFilePrefix, //!< The log file name prefix
           const char *const logFileSuffix, //!< The log file name suffix
           const U32 maxFileSize, //!< The maximum file size
@@ -176,9 +162,6 @@ namespace Svc {
           const NATIVE_INT_TYPE queueDepth, //!< The queue depth
           const NATIVE_INT_TYPE instance //!< The instance number
       );
-
-      //! Call this after topology construction
-      void setup(void);
 
     PRIVATE:
 
@@ -214,48 +197,34 @@ namespace Svc {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for CloseFile command handler
+      //! Implementation for BL_OpenFile command handler
+      //! Open a new log file with specified name; required before activating logging
+      void BL_OpenFile_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          const Fw::CmdStringArg& file
+      );
+
+      //! Implementation for BL_CloseFile command handler
       //! Close the currently open log file, if any
-      void CloseFile_cmdHandler(
-          const FwOpcodeType opCode, //!< The opcode
-          const U32 cmdSeq //!< The command sequence number
+      void BL_CloseFile_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      //! Handler for command SetSaveState
-      //! Sets the volatile logging state and saves the state to non-volatile memory
-      void SetSaveState_cmdHandler(
-        const FwOpcodeType opCode, //!< The opcode
-        const U32 cmdSeq, //!< The command sequence number
-        OnOff state //!< The state
-      );
-
-      //! Handler for command SetState
+      //! Implementation for BL_SetLogging command handler
       //! Sets the volatile logging state
-      void SetVolatileState_cmdHandler(
-        const FwOpcodeType opCode, //!< The opcode
-        const U32 cmdSeq, //!< The command sequence number
-        OnOff state //!< The state
+      void BL_SetLogging_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          LogState state
       );
 
-      //! Handler for command SaveState
-      //! Saves the current volatile logging state to non-volatile memory
-      void SaveState_cmdHandler(
-        const FwOpcodeType opCode, //!< The opcode
-        const U32 cmdSeq //!< The command sequence number
-      );
-
-      //! Handler for command LoadState
-      //! Loads the non-volatile logging state
-      void LoadState_cmdHandler(
-        const FwOpcodeType opCode, //!< The opcode
-        const U32 cmdSeq //!< The command sequence number
-      );
-
-      //! Handler for command Flush
+      //! Implementation for BL_FlushFile command handler
       //! Flushes the current open log file to disk
-      void Flush_cmdHandler(
-        const FwOpcodeType opCode, //!< The opcode
-        const U32 cmdSeq //!< The command sequence number
+      void BL_FlushFile_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
       );
 
   PRIVATE:

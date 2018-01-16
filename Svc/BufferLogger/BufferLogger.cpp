@@ -28,15 +28,14 @@ namespace Svc {
   BufferLogger ::
     BufferLogger(
         const char *const compName,
-        const char *const stateFilePath,
         const char *const logFilePrefix,
         const char *const logFileSuffix,
         const U32 maxFileSize,
         const U8 sizeOfSize
     ) :
       BufferLoggerComponentBase(compName),
-      state(*this, stateFilePath),
-      file(*this, logFilePrefix, logFileSuffix, maxFileSize, sizeOfSize)
+      m_state(LOGGING_OFF),
+      m_file(*this, logFilePrefix, logFileSuffix, maxFileSize, sizeOfSize)
   {
 
   }
@@ -63,7 +62,7 @@ namespace Svc {
     if (m_state == LOGGING_ON) {
       const U8 *const addr = reinterpret_cast<U8*>(fwBuffer.getdata());
       const U32 size = fwBuffer.getsize();
-      this->file.logBuffer(addr, size);
+      m_file.logBuffer(addr, size);
     }
     this->bufferSendOut_out(0, fwBuffer);
   }
@@ -78,7 +77,7 @@ namespace Svc {
     if (m_state == LOGGING_ON) {
       const U8 *const addr = data.getBuffAddr();
       const U32 size = data.getBuffLength();
-      this->file.logBuffer(addr, size);
+      m_file.logBuffer(addr, size);
     }
   }
 
@@ -95,10 +94,11 @@ namespace Svc {
   void BufferLogger ::
     BL_OpenFile_cmdHandler(
         const FwOpcodeType opCode,
-        const U32 cmdSeq
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& file
     )
   {
-    this->file.closeAndEmitEvent();
+    m_file.closeAndEmitEvent();
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 
@@ -108,7 +108,7 @@ namespace Svc {
         const U32 cmdSeq
     )
   {
-    this->file.closeAndEmitEvent();
+    m_file.closeAndEmitEvent();
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 
@@ -121,18 +121,18 @@ namespace Svc {
   {
     m_state = state;
     if (state == LOGGING_OFF) {
-      this->file.closeAndEmitEvent();
+      m_file.closeAndEmitEvent();
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 
   void BufferLogger ::
-  Flush_cmdHandler(
-    const FwOpcodeType opCode,
-    const U32 cmdSeq
-  )
+    BL_FlushFile_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
   {
-    const bool status = this->file.flush();
+    const bool status = m_file.flush();
     if(status)
     {
       this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
