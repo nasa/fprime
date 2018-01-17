@@ -100,6 +100,15 @@ namespace Svc {
     this->pingOut_out(0, key);
   }
 
+  void BufferLogger ::
+    schedIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        NATIVE_UINT_TYPE context
+    )
+  {
+    // TODO
+  }
+
   // ----------------------------------------------------------------------
   // Command handler implementations
   // ----------------------------------------------------------------------
