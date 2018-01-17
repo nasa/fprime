@@ -22,6 +22,7 @@
 
 #include "Svc/BufferAccumulator/BufferAccumulatorComponentAc.hpp"
 #include "Os/Queue.hpp"
+#include <Fw/Types/MemAllocator.hpp>
 
 namespace Svc {
 
@@ -40,12 +41,14 @@ namespace Svc {
 
         public:
             //! Construct an ArrayFIFOBuffer object
-            ArrayFIFOBuffer(Fw::Buffer *const elements, //!< The array elements
-                            const NATIVE_UINT_TYPE capacity //!< The capacity
-            );
+            ArrayFIFOBuffer();
 
             //! Destroy an ArrayFIFOBuffer File object
             ~ArrayFIFOBuffer(void);
+
+            void init(Fw::Buffer *const elements, //!< The array elements
+                      NATIVE_UINT_TYPE capacity //!< The capacity
+            );
 
             //! Enqueue an index.
             //! Fails if the queue is full.
@@ -75,10 +78,10 @@ namespace Svc {
           // ----------------------------------------------------------------------
 
           //! The memory for the elements
-          Fw::Buffer *const elements;
+          Fw::Buffer * elements;
 
           //! The capacity of the queue
-          const NATIVE_UINT_TYPE capacity;
+          NATIVE_UINT_TYPE capacity;
 
           //! The enqueue index
           NATIVE_UINT_TYPE enqueueIndex;
@@ -100,9 +103,8 @@ namespace Svc {
       //!
       BufferAccumulator(
 #if FW_OBJECT_NAMES == 1
-          const char *const compName, /*!< The component name*/
+          const char *const compName /*!< The component name*/
 #endif
-          const U32 maxNumBuffers //!< The maximum number of buffers
       );
 
       //! Initialize BufferAccumulator instance
@@ -115,6 +117,23 @@ namespace Svc {
       //! Destroy BufferAccumulator instance
       //!
       ~BufferAccumulator(void);
+      
+      // ----------------------------------------------------------------------
+      // Public methods
+      // ----------------------------------------------------------------------
+
+      //! Give the class a memory buffer. Should be called after constructor
+      //! and init, but before task is spawned.
+      void allocateQueue(
+          NATIVE_INT_TYPE identifier,
+          Fw::MemAllocator& allocator,
+          NATIVE_UINT_TYPE bytesPerBuffer, //!< Storage for each Fw::Buffer
+          U32 maxNumBuffers //!< The maximum number of buffers
+      );
+
+      //! Return allocated buffer. Should be done during shutdown
+      void deallocateBuffer(Fw::MemAllocator& allocator);
+
 
     PRIVATE:
 
@@ -151,7 +170,7 @@ namespace Svc {
 
       //! Implementation for SetMode command handler
       //! Set the mode
-      void SetMode_cmdHandler(
+      void BA_SetMode_cmdHandler(
           const FwOpcodeType opCode, //!< The opcode
           const U32 cmdSeq, //!< The command sequence number
           OpState mode //!< The mode
@@ -185,6 +204,9 @@ namespace Svc {
 
       //! The number of QueueFull warnings sent since the last successful enqueue operation
       U32 numWarnings;
+
+      //! The allocator ID
+      NATIVE_INT_TYPE allocatorId;
 
   };
 

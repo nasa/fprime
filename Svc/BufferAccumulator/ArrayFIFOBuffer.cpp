@@ -29,10 +29,9 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferAccumulator::ArrayFIFOBuffer ::
-    ArrayFIFOBuffer(Fw::Buffer *const elements,
-                    const NATIVE_UINT_TYPE capacity) :
-      elements(elements),
-      capacity(capacity),
+    ArrayFIFOBuffer() :
+      elements(NULL),
+      capacity(NULL),
       enqueueIndex(0),
       dequeueIndex(0),
       size(0)
@@ -43,6 +42,13 @@ namespace Svc {
   // ----------------------------------------------------------------------
   // Public functions
   // ----------------------------------------------------------------------
+
+  bool BufferAccumulator::ArrayFIFOBuffer ::
+    init(Fw::Buffer *const elements, NATIVE_UINT_TYPE capacity)
+  {
+    this->elements = elements;
+    this->capacity = capacity;
+  }
 
   bool BufferAccumulator::ArrayFIFOBuffer ::
     enqueue(const Fw::Buffer& e)

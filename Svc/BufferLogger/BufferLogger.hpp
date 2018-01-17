@@ -56,17 +56,21 @@ namespace Svc {
 
           //! Construct a File object
           File(
-              BufferLogger& bufferLogger, //!< The enclosing BufferLogger instance
-              const char* prefix, //!< The file name prefix
-              const char* suffix, //!< The file name suffix
-              const U32 maxSize, //!< The maximum file size
-              const U8 sizeOfSize //!< The number of bytes to use when storing the size field and the start of each buffer
+              BufferLogger& bufferLogger //!< The enclosing BufferLogger instance
           );
 
           //! Destroy a File object
           ~File(void);
 
         public:
+
+          //! Set File object parameters
+          void init(
+              const char *const prefix, //!< The file name prefix
+              const char *const suffix, //!< The file name suffix
+              const U32 maxSize, //!< The maximum file size
+              const U8 sizeOfSize //!< The number of bytes to use when storing the size field and the start of each buffer)
+          );
 
           //! Log a buffer
           void logBuffer(
@@ -150,17 +154,27 @@ namespace Svc {
 
       //! Create a BufferLogger object
       BufferLogger(
-          const char *const compName, //!< The component name
-          const char *const logFilePrefix, //!< The log file name prefix
-          const char *const logFileSuffix, //!< The log file name suffix
-          const U32 maxFileSize, //!< The maximum file size
-          const U8 sizeOfSize //!< The number of bytes to use when storing the size field at the start of each buffer
+#if FW_OBJECT_NAMES == 1
+          const char *const compName /*!< The component name*/
+#endif
       );
 
       //! Initialize a BufferLogger object
       void init(
           const NATIVE_INT_TYPE queueDepth, //!< The queue depth
           const NATIVE_INT_TYPE instance //!< The instance number
+      );
+
+      // ----------------------------------------------------------------------
+      // Public methods
+      // ----------------------------------------------------------------------
+
+      //! Set up log file parameters
+      void initLog(
+          const char *const logFilePrefix, //!< The log file name prefix
+          const char *const logFileSuffix, //!< The log file name suffix
+          const U32 maxFileSize, //!< The maximum file size
+          const U8 sizeOfSize //!< The number of bytes to use when storing the size field at the start of each buffer
       );
 
     PRIVATE:

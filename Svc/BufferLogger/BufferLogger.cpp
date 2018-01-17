@@ -26,16 +26,14 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferLogger ::
-    BufferLogger(
-        const char *const compName,
-        const char *const logFilePrefix,
-        const char *const logFileSuffix,
-        const U32 maxFileSize,
-        const U8 sizeOfSize
-    ) :
-      BufferLoggerComponentBase(compName),
+#if FW_OBJECT_NAMES == 1
+      BufferLogger(const char *const compName) :
+          BufferLoggerComponentBase(compName), //!< The component name
+#else
+      BufferLogger() : BufferLoggerComponentBase(),
+#endif
       m_state(LOGGING_OFF),
-      m_file(*this, logFilePrefix, logFileSuffix, maxFileSize, sizeOfSize)
+      m_file(*this)
   {
 
   }
@@ -47,6 +45,21 @@ namespace Svc {
     )
   {
     BufferLoggerComponentBase::init(queueDepth, instance);
+  }
+
+  // ----------------------------------------------------------------------
+  // Public methods
+  // ----------------------------------------------------------------------
+
+  void BufferLogger ::
+    initLog(
+        const char *const logFilePrefix,
+        const char *const logFileSuffix,
+        const U32 maxFileSize,
+        const U8 sizeOfSize
+    )
+  {
+      m_file.init(logFilePrefix, logFileSuffix, maxFileSize, sizeOfSize);
   }
 
   // ----------------------------------------------------------------------

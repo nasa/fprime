@@ -29,17 +29,13 @@ namespace Svc {
 
   BufferLogger::File ::
     File(
-        BufferLogger& bufferLogger,
-        const char *const prefix,
-        const char *const suffix,
-        const U32 maxSize,
-        const U8 sizeOfSize
+        BufferLogger& bufferLogger
     ) :
       bufferLogger(bufferLogger),
-      prefix(prefix),
-      suffix(suffix),
-      maxSize(maxSize),
-      sizeOfSize(sizeOfSize),
+      prefix(""),
+      suffix(""),
+      maxSize(0),
+      sizeOfSize(4),
       mode(Mode::CLOSED),
       bytesWritten(0)
   {
@@ -56,6 +52,20 @@ namespace Svc {
   // ----------------------------------------------------------------------
   // Public functions
   // ----------------------------------------------------------------------
+
+  void BufferLogger::File ::
+    init(
+        const char *const logFilePrefix,
+        const char *const logFileSuffix,
+        const U32 maxFileSize,
+        const U8 sizeOfSize
+    )
+  {
+      this->prefix = logFilePrefix;
+      this->suffix = logFileSuffix;
+      this->maxSize = maxFileSize;
+      this->sizeOfSize = sizeOfSize;
+  }
 
   void BufferLogger::File ::
     logBuffer(

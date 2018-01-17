@@ -27,14 +27,15 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferAccumulator ::
-    BufferAccumulator(
-        const char *const compName,
-        const U32 maxNumBuffers
-    ) :
-      BufferAccumulatorComponentBase(compName),
+#if FW_OBJECT_NAMES == 1
+      BufferAccumulator(const char *const compName) :
+          BufferAccumulatorComponentBase(compName), //!< The component name
+#else
+      BufferAccumulator() : BufferAccumulatorComponentBase(),
+#endif
       mode(DRAIN),
-      bufferMemory(new Fw::Buffer[maxNumBuffers]),
-      bufferQueue(this->bufferMemory, maxNumBuffers),
+      bufferMemory(NULL),
+      bufferQueue(),
       send(true),
       numWarnings(0)
   {
@@ -53,7 +54,30 @@ namespace Svc {
   BufferAccumulator ::
     ~BufferAccumulator(void)
   {
-    delete[] this->bufferMemory;
+  }
+  
+  // ----------------------------------------------------------------------
+  // Public methods
+  // ----------------------------------------------------------------------
+
+  void BufferAccumulator ::
+    allocateQueue(
+      NATIVE_INT_TYPE identifier,
+      Fw::MemAllocator& allocator,
+      NATIVE_UINT_TYPE bytesPerBuffer, //!< Storage for each Fw::Buffer
+      U32 maxNumBuffers //!< The maximum number of buffers
+    )
+  {
+      this->allocatorId = identifier;
+      this->bufferMemory =  static_cast<Fw::Buffer*>(
+          allocator.allocate(identifier, bytesPerBuffer * maxNumBuffers));
+      bufferQueue.init(this->bufferMemory, maxNumBuffers);
+  }
+
+  void BufferAccumulator ::
+    deallocateQueue(Fw::MemAllocator& allocator)
+  {
+      allocator.deallocate(this->allocatorId, (void*)this->bufferMemory);
   }
 
   // ----------------------------------------------------------------------
@@ -109,7 +133,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void BufferAccumulator ::
-    SetMode_cmdHandler(
+    BA_SetMode_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         OpState mode
