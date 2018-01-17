@@ -117,7 +117,7 @@ namespace Svc {
       //! Destroy BufferAccumulator instance
       //!
       ~BufferAccumulator(void);
-      
+
       // ----------------------------------------------------------------------
       // Public methods
       // ----------------------------------------------------------------------
@@ -131,8 +131,8 @@ namespace Svc {
           U32 maxNumBuffers //!< The maximum number of buffers
       );
 
-      //! Return allocated buffer. Should be done during shutdown
-      void deallocateBuffer(Fw::MemAllocator& allocator);
+      //! Return allocated queue. Should be done during shutdown
+      void deallocateQueue(Fw::MemAllocator& allocator);
 
 
     PRIVATE:
@@ -194,7 +194,7 @@ namespace Svc {
       OpState mode;
 
       //! Memory for the buffer array
-      Fw::Buffer *const bufferMemory;
+      Fw::Buffer * bufferMemory;
 
       //! The FIFO queue of buffers
       ArrayFIFOBuffer bufferQueue;

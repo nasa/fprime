@@ -121,16 +121,16 @@ namespace Svc {
           BufferLogger& bufferLogger;
 
           //! The prefix to use for file names
-          const Fw::EightyCharString prefix;
+          Fw::EightyCharString prefix;
 
           //! The suffix to use for file names
-          const Fw::EightyCharString suffix;
+          Fw::EightyCharString suffix;
 
           //! The maximum file size
-          const U32 maxSize;
+          U32 maxSize;
 
           //! The number of bytes to use when storing the size field at the start of each buffer
-          const U8 sizeOfSize;
+          U8 sizeOfSize;
 
           //! The name of the currently open file
           Fw::EightyCharString name;

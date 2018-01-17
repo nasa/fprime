@@ -31,7 +31,7 @@ namespace Svc {
   BufferAccumulator::ArrayFIFOBuffer ::
     ArrayFIFOBuffer() :
       elements(NULL),
-      capacity(NULL),
+      capacity(0),
       enqueueIndex(0),
       dequeueIndex(0),
       size(0)
@@ -43,7 +43,7 @@ namespace Svc {
   // Public functions
   // ----------------------------------------------------------------------
 
-  bool BufferAccumulator::ArrayFIFOBuffer ::
+  void BufferAccumulator::ArrayFIFOBuffer ::
     init(Fw::Buffer *const elements, NATIVE_UINT_TYPE capacity)
   {
     this->elements = elements;
@@ -53,6 +53,9 @@ namespace Svc {
   bool BufferAccumulator::ArrayFIFOBuffer ::
     enqueue(const Fw::Buffer& e)
   {
+    if (this->elements == NULL) {
+      return false;
+    }
     bool status;
     if (this->size < this->capacity) {
       // NOTE(mereweth) enqueueIndex is unsigned, no need to compare with 0
@@ -71,6 +74,10 @@ namespace Svc {
   bool BufferAccumulator::ArrayFIFOBuffer ::
     dequeue(Fw::Buffer& e)
   {
+    if (this->elements == NULL) {
+      return false;
+    }
+    FW_ASSERT(this->elements);
     bool status;
     if (this->size > 0) {
       // NOTE(mereweth) dequeueIndex is unsigned, no need to compare with 0
