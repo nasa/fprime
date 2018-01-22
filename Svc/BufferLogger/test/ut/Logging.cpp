@@ -1,6 +1,6 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Logging.cpp
-// \author bocchino
+// \author bocchino, mereweth
 // \brief  Implementation for Buffer Logger logging tests
 //
 // \copyright
@@ -8,19 +8,19 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include "Logging.hpp"
 #include "Os/FileSystem.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   namespace Logging {
 
@@ -34,7 +34,7 @@ namespace ASTERIA {
           Fw::Time testTime = this->generateTestTime(0);
           this->setTestTime(testTime);
         }
-      
+
       private:
 
         //! Send close file commands
@@ -43,7 +43,7 @@ namespace ASTERIA {
           this->clearHistory();
 
           for (U32 i = 0; i < n; ++i) {
-            this->sendCmd_CloseFile(0, i);
+            this->sendCmd_BL_CloseFile(0, i);
             this->dispatchOne();
             ASSERT_CMD_RESPONSE(
                 i,
@@ -59,7 +59,7 @@ namespace ASTERIA {
 
         //! Check that files exist
         void checkFilesExist(void) {
-          const String& fileName = this->component.file.name;
+          const Fw::EightyCharString& fileName = this->component.m_file.name;
           this->checkFileExists(fileName);
           this->checkHashFileExists(fileName);
         }
@@ -72,15 +72,15 @@ namespace ASTERIA {
           this->sendComBuffers(3);
           this->sendCloseFileCommands(3);
           ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_LogFileClosed_SIZE(1);
-          ASSERT_EVENTS_LogFileClosed(0, component.file.name.toChar());
+          ASSERT_EVENTS_BL_LogFileClosed_SIZE(1);
+          ASSERT_EVENTS_BL_LogFileClosed(0, component.m_file.name.toChar());
           this->checkFilesExist();
         }
 
     };
 
     void Tester ::
-      CloseFile(void) 
+      CloseFile(void)
     {
       CloseFileTester tester;
       tester.test();
@@ -108,8 +108,8 @@ namespace ASTERIA {
             // Create current time
             const Fw::Time currentTime = this->generateTestTime(i);
             // Create file name
-            String currentFileName;
-            this->component.file.formatName(currentFileName, currentTime);
+            Fw::EightyCharString currentFileName;
+            this->component.m_file.formatName(currentFileName, currentTime);
             // Set test time
             this->setTestTime(currentTime);
             // Write data to the file
@@ -123,15 +123,15 @@ namespace ASTERIA {
             // This should open a new file with the updated time
             this->sendBuffers(1);
             // Assert file state
-            ASSERT_EQ(BufferLogger::File::Mode::OPEN, component.file.mode);
-            ASSERT_EQ(currentFileName, this->component.file.name);
+            ASSERT_EQ(BufferLogger::File::Mode::OPEN, component.m_file.mode);
+            ASSERT_EQ(currentFileName, this->component.m_file.name);
             // Assert events
             ASSERT_EVENTS_SIZE(i);
-            ASSERT_EVENTS_LogFileClosed_SIZE(i);
+            ASSERT_EVENTS_BL_LogFileClosed_SIZE(i);
           }
 
           // Close the last file
-          this->sendCmd_CloseFile(0, 0);
+          this->sendCmd_BL_CloseFile(0, 0);
           this->dispatchOne();
 
           // Check files
@@ -139,10 +139,10 @@ namespace ASTERIA {
             // Create time
             const Fw::Time time = this->generateTestTime(i);
             // Create file name
-            String fileName;
-            this->component.file.formatName(fileName, time);
+            Fw::EightyCharString fileName;
+            this->component.m_file.formatName(fileName, time);
             // Check events
-            ASSERT_EVENTS_LogFileClosed(i, fileName.toChar());
+            ASSERT_EVENTS_BL_LogFileClosed(i, fileName.toChar());
             // Check file integrity
             this->checkLogFileIntegrity(
                 fileName.toChar(),
@@ -215,10 +215,10 @@ namespace ASTERIA {
 
         //! Set the state
         void setState(
-            const OnOff::t state //!< The state
+            const LogState state //!< The state
         ) {
           this->clearHistory();
-          this->sendCmd_SetSaveState(0, 0, state);
+          this->sendCmd_BL_SetLogging(0, 0, state);
           this->dispatchOne();
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(
@@ -232,9 +232,9 @@ namespace ASTERIA {
         //! Test logging on
         void testLoggingOn(void) {
           this->sendData();
-          this->setState(OnOff::OFF);
+          this->setState(LOGGING_OFF);
           this->checkLogFileIntegrity(
-              this->component.file.name.toChar(),
+              this->component.m_file.name.toChar(),
               MAX_BYTES_PER_FILE,
               MAX_ENTRIES_PER_FILE
           );
@@ -243,9 +243,9 @@ namespace ASTERIA {
         //! Test logging off
         void testLoggingOff(void) {
           this->sendData();
-          String command;
+          Fw::EightyCharString command;
           ASSERT_EVENTS_SIZE(0);
-          this->setState(OnOff::ON);
+          this->setState(LOGGING_ON);
         }
 
     };

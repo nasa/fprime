@@ -1,54 +1,87 @@
-// ====================================================================== 
-// \title  Tester.cpp
-// \author bocchino
-// \brief  BufferLogger test harness implementation
+// ======================================================================
+// \title  BufferLogger.hpp
+// \author bocchino, mereweth
+// \brief  cpp file for BufferLogger test harness implementation class
 //
 // \copyright
-// Copyright 2015-2017, by the California Institute of Technology.
+// Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
-#include <stdlib.h>
-
-#include "Os/FileSystem.hpp"
 #include "Tester.hpp"
+#include "Fw/Types/SerialBuffer.hpp"
+#include "Os/ValidatedFile.hpp"
+#include "Os/FileSystem.hpp"
 
-namespace ASTERIA {
+#define INSTANCE 0
+#define MAX_HISTORY_SIZE 30
+#define QUEUE_DEPTH 10
+
+#define MAX_ENTRIES_PER_FILE 5
+#define SIZE_TYPE U32
+#define MAX_BYTES_PER_FILE \
+  (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH + MAX_ENTRIES_PER_FILE*sizeof(SIZE_TYPE))
+
+namespace Svc {
+
+  // ----------------------------------------------------------------------
+  // Instance variables
+  // ----------------------------------------------------------------------
+
+    const U8 Tester::data[COM_BUFFER_LENGTH] = { 0xDE, 0xAD, 0xBE, 0xEF };
+
+  // ----------------------------------------------------------------------
+  // Construction and destruction
+  // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(
-        const U32 maxBytesPerFile,
-        const U8 sizeOfSize
-    ) : 
-      BufferLoggerGTestBase("Tester", 30),
-      component(
-          "Tester",
-          "state.bin",
-          "buf/log", 
-          ".buf",
-          maxBytesPerFile,
-          sizeOfSize
-      )
+    Tester(bool doInitLog) :
+#if FW_OBJECT_NAMES == 1
+      BufferLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("BufferLogger")
+#else
+      BufferLoggerGTestBase(MAX_HISTORY_SIZE),
+      component()
+#endif
   {
     (void) system("rm -rf buf");
     (void) system("mkdir buf");
-    this->connectPorts();
     this->initComponents();
+    this->connectPorts();
+
+    if (doInitLog) {
+        this->component.initLog(
+            "buf/log",
+            ".buf",
+            static_cast<U32>(MAX_BYTES_PER_FILE),
+            sizeof(SIZE_TYPE)
+        );
+    }
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester(void)
   {
-    
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    LogNoInit(void)
+  {
+    // TODO
   }
 
   // ----------------------------------------------------------------------
@@ -68,13 +101,13 @@ namespace ASTERIA {
     from_pingOut_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key
-    ) 
+    )
   {
     this->pushFromPortEntry_pingOut(key);
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -105,64 +138,69 @@ namespace ASTERIA {
         this->component.get_pingIn_InputPort(0)
     );
 
+    // schedIn
+    this->connect_to_schedIn(
+        0,
+        this->component.get_schedIn_InputPort(0)
+    );
+
     // bufferSendOut
     this->component.set_bufferSendOut_OutputPort(
-        0, 
+        0,
         this->get_from_bufferSendOut(0)
     );
 
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdRegOut(0)
     );
 
     // cmdResponseOut
     this->component.set_cmdResponseOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdResponseOut(0)
     );
 
     // eventOut
     this->component.set_eventOut_OutputPort(
-        0, 
+        0,
         this->get_from_eventOut(0)
+    );
+
+    // eventOutText
+    this->component.set_eventOutText_OutputPort(
+        0,
+        this->get_from_eventOutText(0)
     );
 
     // pingOut
     this->component.set_pingOut_OutputPort(
-        0, 
+        0,
         this->get_from_pingOut(0)
     );
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(
-        0, 
+        0,
         this->get_from_timeCaller(0)
     );
 
-    // LogText
-    this->component.set_LogText_OutputPort(
-        0, 
-        this->get_from_LogText(0)
+    // tlmOut
+    this->component.set_tlmOut_OutputPort(
+        0,
+        this->get_from_tlmOut(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents(void)
   {
     this->init();
-    this->component.init(QUEUE_DEPTH, 0);
-    this->component.setup();
-
-    // Setup will attempt to load state and issue EVR. Clear history.
-    if(this->eventHistory_LoadState->size() == 1)
-    {
-      this->eventHistory_LoadState->clear();
-      this->eventsSize--;
-    }
-    
+    this->component.init(
+        QUEUE_DEPTH, INSTANCE
+    );
   }
 
   void Tester ::
@@ -170,7 +208,7 @@ namespace ASTERIA {
   {
     this->component.doDispatch();
   }
-  
+
   void Tester ::
     dispatchAll(void)
   {
@@ -218,19 +256,19 @@ namespace ASTERIA {
   }
 
   void Tester ::
-    checkFileExists(const String& fileName)
+    checkFileExists(const Fw::EightyCharString& fileName)
   {
-    String command;
+    Fw::EightyCharString command;
     command.format("test -f %s", fileName.toChar());
     const int status = system(command.toChar());
     ASSERT_EQ(0, status);
   }
 
   void Tester ::
-    checkHashFileExists(const String& fileName)
+    checkHashFileExists(const Fw::EightyCharString& fileName)
   {
-    ValidatedFile validatedFile(fileName.toChar());
-    const String& hashFileName = validatedFile.getHashFileName();
+    Os::ValidatedFile validatedFile(fileName.toChar());
+    const Fw::EightyCharString& hashFileName = validatedFile.getHashFileName();
     this->checkFileExists(hashFileName);
   }
 
@@ -245,16 +283,16 @@ namespace ASTERIA {
     {
       // Make sure the file size is within bounds
       U64 actualSize = 0;
-      const Os::FileSystem::Status status = 
+      const Os::FileSystem::Status status =
         Os::FileSystem::getFileSize(fileName, actualSize);
       ASSERT_EQ(Os::FileSystem::OP_OK, status);
       ASSERT_LE(expectedSize, actualSize);
     }
 
     // Open the file
-    ASTERIA::File file;
+    Os::File file;
     {
-      const Os::File::Status status = 
+      const Os::File::Status status =
         file.open(fileName, Os::File::OPEN_READ);
       ASSERT_EQ(Os::File::OP_OK, status);
     }
@@ -270,7 +308,7 @@ namespace ASTERIA {
       Fw::SerialBuffer comBuffLength(buf, length);
       comBuffLength.fill();
       SIZE_TYPE bufferSize;
-      const Fw::SerializeStatus serializeStatus = 
+      const Fw::SerializeStatus serializeStatus =
         comBuffLength.deserialize(bufferSize);
       ASSERT_EQ(Fw::FW_SERIALIZE_OK, serializeStatus);
       ASSERT_EQ(sizeof(data), bufferSize);
@@ -295,15 +333,9 @@ namespace ASTERIA {
   void Tester ::
     checkFileValidation(const char *const fileName)
   {
-    ValidatedFile validatedFile(fileName);
+    Os::ValidatedFile validatedFile(fileName);
     const Os::ValidateFile::Status status = validatedFile.validate();
     ASSERT_EQ(Os::ValidateFile::VALIDATION_OK, status);
   }
 
-  // ----------------------------------------------------------------------
-  // Instance variables 
-  // ----------------------------------------------------------------------
-
-  const U8 Tester::data[COM_BUFFER_LENGTH] = { 0xDE, 0xAD, 0xBE, 0xEF };
-
-};
+} // end namespace Svc
