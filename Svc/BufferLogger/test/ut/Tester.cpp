@@ -26,11 +26,6 @@
 #define MAX_HISTORY_SIZE 30
 #define QUEUE_DEPTH 10
 
-#define MAX_ENTRIES_PER_FILE 5
-#define SIZE_TYPE U32
-#define MAX_BYTES_PER_FILE \
-  (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH + MAX_ENTRIES_PER_FILE*sizeof(SIZE_TYPE))
-
 namespace Svc {
 
   // ----------------------------------------------------------------------
@@ -219,7 +214,7 @@ namespace Svc {
   Fw::Time Tester ::
     generateTestTime(const U32 seconds)
   {
-    Fw::Time time(1, 234567, seconds);
+    Fw::Time time(TB_DONT_CARE, FW_CONTEXT_DONT_CARE, 234567, seconds);
     return time;
   }
 
@@ -301,7 +296,7 @@ namespace Svc {
     U8 buf[expectedSize];
     for (U32 i = 0; i < expectedNumBuffers; ++i) {
       // Get length of buffer to read
-      U32 length = sizeof(SIZE_TYPE);
+      NATIVE_INT_TYPE length = sizeof(SIZE_TYPE);
       Os::File::Status status = file.read(&buf, length);
       ASSERT_EQ(Os::File::OP_OK, status);
       ASSERT_EQ(sizeof(SIZE_TYPE), static_cast<U32>(length));
@@ -322,10 +317,10 @@ namespace Svc {
 
     // Make sure we reached the end of the file
     {
-      U32 length = 10;
+      NATIVE_INT_TYPE length = 10;
       const Os::File::Status status = file.read(&buf, length);
       ASSERT_EQ(Os::File::OP_OK, status);
-      ASSERT_EQ(0U, length);
+      ASSERT_EQ(0, length);
     }
 
   }

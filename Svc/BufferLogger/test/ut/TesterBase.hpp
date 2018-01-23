@@ -778,6 +778,53 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
+      // Telemetry dispatch
+      // ----------------------------------------------------------------------
+
+      //! Dispatch telemetry
+      //!
+      void dispatchTlm(
+          const FwChanIdType id, /*!< The channel ID*/
+          const Fw::Time& timeTag, /*!< The time*/
+          Fw::TlmBuffer& val /*!< The channel value*/
+      );
+
+      //! Clear telemetry history
+      //!
+      void clearTlm(void);
+
+      //! The total number of telemetry inputs seen
+      //!
+      U32 tlmSize;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Channel: BufferLogger_NumLoggedBuffers
+      // ----------------------------------------------------------------------
+
+      //! Handle channel BufferLogger_NumLoggedBuffers
+      //!
+      virtual void tlmInput_BufferLogger_NumLoggedBuffers(
+          const Fw::Time& timeTag, /*!< The time*/
+          const U32& val /*!< The channel value*/
+      );
+
+      //! A telemetry entry for channel BufferLogger_NumLoggedBuffers
+      //!
+      typedef struct {
+        Fw::Time timeTag;
+        U32 arg;
+      } TlmEntry_BufferLogger_NumLoggedBuffers;
+
+      //! The history of BufferLogger_NumLoggedBuffers values
+      //!
+      History<TlmEntry_BufferLogger_NumLoggedBuffers> 
+        *tlmHistory_BufferLogger_NumLoggedBuffers;
+
+    protected:
+
+      // ----------------------------------------------------------------------
       // Test time
       // ----------------------------------------------------------------------
 

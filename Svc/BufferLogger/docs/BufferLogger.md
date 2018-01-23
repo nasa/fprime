@@ -6,13 +6,18 @@
 
 |Mnemonic|ID|Description|Arg Name|Arg Type|Comment
 |---|---|---|---|---|---|
-|BL_OpenFile|0 (0x0)|Open a new log file with specified name; required before activating logging| | |   
+|BL_OpenFile|0 (0x0)|Open a new log file with specified name; also resets unique file counter to 0| | |   
 | | | |file|Fw::CmdStringArg||                    
 |BL_CloseFile|1 (0x1)|Close the currently open log file, if any| | |   
 |BL_SetLogging|2 (0x2)|Sets the volatile logging state| | |   
 | | | |state|LogState||                    
 |BL_FlushFile|3 (0x3)|Flushes the current open log file to disk; a no-op with fprime's unbuffered file I/O, so always returns success| | |   
 
+## Telemetry Channel List
+
+|Channel Name|ID|Type|Description|
+|---|---|---|---|
+|BufferLogger_NumLoggedBuffers|0 (0x0)|U32|The number of buffers logged|
 
 ## Event List
 

@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  File.cpp
-// \author bocchino, dinkel
-// \brief  Implementation for ASTERIA::BufferLogger::File
+// \title  BufferLoggerFile.cpp
+// \author bocchino, dinkel, mereweth
+// \brief  Implementation for Svc::BufferLogger::BufferLoggerFile
 //
 // \copyright
 // Copyright (C) 2015-2017 California Institute of Technology.
@@ -34,7 +34,9 @@ namespace Svc {
       bufferLogger(bufferLogger),
       prefix(""),
       suffix(""),
-      maxSize(0),
+      baseName(""),
+      fileCounter(0),
+      maxSize(8),
       sizeOfSize(4),
       mode(Mode::CLOSED),
       bytesWritten(0)
@@ -65,6 +67,15 @@ namespace Svc {
       this->suffix = logFileSuffix;
       this->maxSize = maxFileSize;
       this->sizeOfSize = sizeOfSize;
+  }
+
+  void BufferLogger::File ::
+    setBaseName(
+        const Fw::EightyCharString& baseName
+    )
+  {
+      this->baseName = baseName;
+      this->fileCounter = 0;
   }
 
   void BufferLogger::File ::
@@ -110,16 +121,26 @@ namespace Svc {
   {
     FW_ASSERT(this->mode == File::Mode::CLOSED);
 
-    // TODO(mereweth) - check that file path has been set; change to deterministic path
-    Fw::Time timestamp = this->bufferLogger.getTime();
-    this->name.format(
-        "%s_%d_%d_%06d%s",
-        this->prefix.toChar(),
-        timestamp.getTimeBase(),
-        timestamp.getSeconds(),
-        timestamp.getUSeconds(),
-        this->suffix.toChar()
-    );
+    // TODO(mereweth) - check that file path has been set
+    if (this->fileCounter == 0) {
+        this->name.format(
+            "%s%s%s",
+            this->prefix.toChar(),
+            this->baseName.toChar(),
+            this->suffix.toChar()
+        );
+    }
+    else {
+        this->name.format(
+            "%s%s%d%s",
+            this->prefix.toChar(),
+            this->baseName.toChar(),
+            this->fileCounter,
+            this->suffix.toChar()
+        );
+    }
+
+    this->fileCounter++;
 
     const Os::File::Status status = this->osFile.open(
         this->name.toChar(),

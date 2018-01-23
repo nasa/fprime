@@ -51,6 +51,7 @@ namespace Svc {
   // Public methods
   // ----------------------------------------------------------------------
 
+  //TODO(mereweth) - only allow calling this once?
   void BufferLogger ::
     initLog(
         const char *const logFilePrefix,
@@ -113,6 +114,7 @@ namespace Svc {
   // Command handler implementations
   // ----------------------------------------------------------------------
 
+  // TODO(mereweth) - should this command only set the base name?
   void BufferLogger ::
     BL_OpenFile_cmdHandler(
         const FwOpcodeType opCode,
@@ -120,7 +122,7 @@ namespace Svc {
         const Fw::CmdStringArg& file
     )
   {
-    m_file.closeAndEmitEvent();
+    m_file.setBaseName(file);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 

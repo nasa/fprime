@@ -44,6 +44,9 @@ namespace Svc {
   {
     // Initialize command history
     this->cmdResponseHistory = new History<CmdResponse>(maxHistorySize);
+    // Initialize telemetry histories
+    this->tlmHistory_BufferLogger_NumLoggedBuffers = 
+      new History<TlmEntry_BufferLogger_NumLoggedBuffers>(maxHistorySize);
     // Initialize event histories
 #if FW_ENABLE_TEXT_LOGGING
     this->textLogHistory = new History<TextLogEntry>(maxHistorySize);
@@ -70,6 +73,8 @@ namespace Svc {
   {
     // Destroy command history
     delete this->cmdResponseHistory;
+    // Destroy telemetry histories
+    delete this->tlmHistory_BufferLogger_NumLoggedBuffers;
     // Destroy event histories
 #if FW_ENABLE_TEXT_LOGGING
     delete this->textLogHistory;
@@ -776,6 +781,20 @@ namespace Svc {
   }
 
   void BufferLoggerTesterBase ::
+    from_tlmOut_static(
+        Fw::PassiveComponentBase *const component,
+        NATIVE_INT_TYPE portNum,
+        FwChanIdType id,
+        Fw::Time &timeTag,
+        Fw::TlmBuffer &val
+    )
+  {
+    BufferLoggerTesterBase* _testerBase =
+      static_cast<BufferLoggerTesterBase*>(component);
+    _testerBase->dispatchTlm(id, timeTag, val);
+  }
+
+  void BufferLoggerTesterBase ::
     from_eventOut_static(
         Fw::PassiveComponentBase *const component,
         const NATIVE_INT_TYPE portNum,
@@ -1079,6 +1098,7 @@ namespace Svc {
     clearHistory()
   {
     this->cmdResponseHistory->clear();
+    this->clearTlm();
     this->textLogHistory->clear();
     this->clearEvents();
     this->clearFromPortHistory();
@@ -1092,6 +1112,68 @@ namespace Svc {
     setTestTime(const Fw::Time& time)
   {
     this->m_testTime = time;
+  }
+
+  // ----------------------------------------------------------------------
+  // Telemetry dispatch
+  // ----------------------------------------------------------------------
+
+  void BufferLoggerTesterBase ::
+    dispatchTlm(
+        const FwChanIdType id,
+        const Fw::Time &timeTag,
+        Fw::TlmBuffer &val
+    )
+  {
+
+    val.resetDeser();
+
+    const U32 idBase = this->getIdBase();
+    FW_ASSERT(id >= idBase, id, idBase);
+
+    switch (id - idBase) {
+
+      case BufferLoggerComponentBase::CHANNELID_BUFFERLOGGER_NUMLOGGEDBUFFERS:
+      {
+        U32 arg;
+        const Fw::SerializeStatus _status = val.deserialize(arg);
+        if (_status != Fw::FW_SERIALIZE_OK) {
+          printf("Error deserializing BufferLogger_NumLoggedBuffers: %d\n", _status);
+          return;
+        }
+        this->tlmInput_BufferLogger_NumLoggedBuffers(timeTag, arg);
+        break;
+      }
+
+      default: {
+        FW_ASSERT(0, id);
+        break;
+      }
+
+    }
+
+  }
+
+  void BufferLoggerTesterBase ::
+    clearTlm(void)
+  {
+    this->tlmSize = 0;
+    this->tlmHistory_BufferLogger_NumLoggedBuffers->clear();
+  }
+
+  // ---------------------------------------------------------------------- 
+  // Channel: BufferLogger_NumLoggedBuffers
+  // ---------------------------------------------------------------------- 
+
+  void BufferLoggerTesterBase ::
+    tlmInput_BufferLogger_NumLoggedBuffers(
+        const Fw::Time& timeTag,
+        const U32& val
+    )
+  {
+    TlmEntry_BufferLogger_NumLoggedBuffers e = { timeTag, val };
+    this->tlmHistory_BufferLogger_NumLoggedBuffers->push_back(e);
+    ++this->tlmSize;
   }
 
   // ----------------------------------------------------------------------

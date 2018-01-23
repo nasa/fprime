@@ -47,7 +47,7 @@ namespace Svc {
             this->dispatchOne();
             ASSERT_CMD_RESPONSE(
                 i,
-                BufferLogger::OPCODE_CLOSEFILE,
+                BufferLogger::OPCODE_BL_CLOSEFILE,
                 i,
                 Fw::COMMAND_OK
             );
@@ -101,27 +101,32 @@ namespace Svc {
 
         //! Run a test
         void test(
-            const U32 numFiles //!< The number of files to create
+            const U32 numFiles, //!< The number of files to create
+            const char *const baseName //!< The baseName to use
         ) {
-
+          this->sendCmd_BL_OpenFile(0, 0, baseName);
+          // Create file name
+          Fw::EightyCharString currentFileName;
+          currentFileName.format(
+              "%s%s%s",
+              this->component.m_file.prefix.toChar(),
+              baseName,
+              this->component.m_file.suffix.toChar()
+          );
+          ASSERT_EQ(currentFileName, this->component.m_file.name);
           for (U32 i = 0; i < numFiles; ++i) {
-            // Create current time
-            const Fw::Time currentTime = this->generateTestTime(i);
-            // Create file name
-            Fw::EightyCharString currentFileName;
-            this->component.m_file.formatName(currentFileName, currentTime);
-            // Set test time
-            this->setTestTime(currentTime);
             // Write data to the file
             this->sendBuffers(MAX_ENTRIES_PER_FILE-1);
-            // Update the test time
-            {
-              const Fw::Time nextTime = this->generateTestTime(i+1);
-              this->setTestTime(nextTime);
-            }
             // Send more data
-            // This should open a new file with the updated time
+            // This should open a new file with the updated counter
             this->sendBuffers(1);
+            currentFileName.format(
+                "%s%s%d%s",
+                this->component.m_file.prefix.toChar(),
+                baseName,
+                i+1,
+                this->component.m_file.suffix.toChar()
+            );
             // Assert file state
             ASSERT_EQ(BufferLogger::File::Mode::OPEN, component.m_file.mode);
             ASSERT_EQ(currentFileName, this->component.m_file.name);
@@ -136,11 +141,25 @@ namespace Svc {
 
           // Check files
           for (U32 i = 0; i < numFiles; ++i) {
-            // Create time
-            const Fw::Time time = this->generateTestTime(i);
             // Create file name
             Fw::EightyCharString fileName;
-            this->component.m_file.formatName(fileName, time);
+            if (i == 0) {
+                fileName.format(
+                    "%s%s%s",
+                    this->component.m_file.prefix.toChar(),
+                    baseName,
+                    this->component.m_file.suffix.toChar()
+                );
+            }
+            else {
+                fileName.format(
+                    "%s%s%d%s",
+                    this->component.m_file.prefix.toChar(),
+                    baseName,
+                    i+1,
+                    this->component.m_file.suffix.toChar()
+                );
+            }
             // Check events
             ASSERT_EVENTS_BL_LogFileClosed(i, fileName.toChar());
             // Check file integrity
@@ -171,7 +190,7 @@ namespace Svc {
       ComIn(void)
     {
       ComInTester tester;
-      tester.test(3);
+      tester.test(3, "ComIn");
     }
 
     class BufferSendInTester :
@@ -188,7 +207,7 @@ namespace Svc {
       BufferSendIn(void)
     {
       BufferSendInTester tester;
-      tester.test(3);
+      tester.test(3, "BufferSendIn");
     }
 
     class OnOffTester :
@@ -215,7 +234,7 @@ namespace Svc {
 
         //! Set the state
         void setState(
-            const LogState state //!< The state
+            const BufferLogger::LogState state //!< The state
         ) {
           this->clearHistory();
           this->sendCmd_BL_SetLogging(0, 0, state);
@@ -223,7 +242,7 @@ namespace Svc {
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(
               0,
-              BufferLogger::OPCODE_SETSAVESTATE,
+              BufferLogger::OPCODE_BL_SETLOGGING,
               0,
               Fw::COMMAND_OK
           );
@@ -232,7 +251,7 @@ namespace Svc {
         //! Test logging on
         void testLoggingOn(void) {
           this->sendData();
-          this->setState(LOGGING_OFF);
+          this->setState(BufferLogger::LOGGING_OFF);
           this->checkLogFileIntegrity(
               this->component.m_file.name.toChar(),
               MAX_BYTES_PER_FILE,
@@ -245,7 +264,7 @@ namespace Svc {
           this->sendData();
           Fw::EightyCharString command;
           ASSERT_EVENTS_SIZE(0);
-          this->setState(LOGGING_ON);
+          this->setState(BufferLogger::LOGGING_ON);
         }
 
     };

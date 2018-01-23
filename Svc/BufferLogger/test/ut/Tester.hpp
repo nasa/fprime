@@ -24,6 +24,10 @@
 #include "Svc/BufferLogger/BufferLogger.hpp"
 
 #define COM_BUFFER_LENGTH 4
+#define MAX_ENTRIES_PER_FILE 5
+#define SIZE_TYPE U32
+#define MAX_BYTES_PER_FILE \
+  (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH + MAX_ENTRIES_PER_FILE*sizeof(SIZE_TYPE))
 
 namespace Svc {
 

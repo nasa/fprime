@@ -120,6 +120,76 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
+  // Telemetry
+  // ----------------------------------------------------------------------
+
+  void BufferLoggerGTestBase ::
+    assertTlm_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(size, this->tlmSize)
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Total size of all telemetry histories\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->tlmSize << "\n";
+  }
+
+  // ----------------------------------------------------------------------
+  // Channel: BufferLogger_NumLoggedBuffers
+  // ----------------------------------------------------------------------
+
+  void BufferLoggerGTestBase ::
+    assertTlm_BufferLogger_NumLoggedBuffers_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(this->tlmHistory_BufferLogger_NumLoggedBuffers->size(), size)
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Size of history for telemetry channel BufferLogger_NumLoggedBuffers\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->tlmHistory_BufferLogger_NumLoggedBuffers->size() << "\n";
+  }
+
+  void BufferLoggerGTestBase ::
+    assertTlm_BufferLogger_NumLoggedBuffers(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 index,
+        const U32& val
+    )
+    const
+  {
+    ASSERT_LT(index, this->tlmHistory_BufferLogger_NumLoggedBuffers->size())
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Index into history of telemetry channel BufferLogger_NumLoggedBuffers\n"
+      << "  Expected: Less than size of history (" 
+      << this->tlmHistory_BufferLogger_NumLoggedBuffers->size() << ")\n"
+      << "  Actual:   " << index << "\n";
+    const TlmEntry_BufferLogger_NumLoggedBuffers& e =
+      this->tlmHistory_BufferLogger_NumLoggedBuffers->at(index);
+    ASSERT_EQ(val, e.arg)
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Value at index "
+      << index
+      << " on telmetry channel BufferLogger_NumLoggedBuffers\n"
+      << "  Expected: " << val << "\n"
+      << "  Actual:   " << e.arg << "\n";
+  }
+
+  // ----------------------------------------------------------------------
   // Events
   // ----------------------------------------------------------------------
 

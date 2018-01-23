@@ -13,5 +13,5 @@ TEST_SRC=TesterBase.cpp \
 TEST_MODS=Svc/BufferLogger \
 					Fw/Buffer Fw/Cmd Fw/Comp Fw/Port Fw/Time \
 					Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com \
-					Svc/Ping Svc/Sched \
+					Svc/Ping Svc/Sched Utils/Hash \
 					gtest

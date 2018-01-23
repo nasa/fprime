@@ -17,6 +17,7 @@
 
   <import_dictionary>Svc/BufferLogger/Commands.xml</import_dictionary>
   <import_dictionary>Svc/BufferLogger/Events.xml</import_dictionary>
+  <import_dictionary>Svc/BufferLogger/Telemetry.xml</import_dictionary>
 
   <ports>
     <port name="bufferSendIn" kind="async_input" data_type="Fw::BufferSend" max_number="1"></port>

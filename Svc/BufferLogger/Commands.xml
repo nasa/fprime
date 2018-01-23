@@ -3,7 +3,7 @@
 
 <commands>
   <command kind="async" opcode="0x00" mnemonic="BL_OpenFile">
-    <comment>Open a new log file with specified name; required before activating logging</comment>
+    <comment>Open a new log file with specified name; also resets unique file counter to 0</comment>
     <args>
       <arg name="file" type="string" size = "40"/>
     </args>

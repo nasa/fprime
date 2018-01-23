@@ -34,6 +34,19 @@
   this->assertCmdResponse(__FILE__, __LINE__, index, opCode, cmdSeq, response)
 
 // ----------------------------------------------------------------------
+// Macros for telemetry history assertions
+// ----------------------------------------------------------------------
+
+#define ASSERT_TLM_SIZE(size) \
+  this->assertTlm_size(__FILE__, __LINE__, size)
+
+#define ASSERT_TLM_BufferLogger_NumLoggedBuffers_SIZE(size) \
+  this->assertTlm_BufferLogger_NumLoggedBuffers_size(__FILE__, __LINE__, size)
+
+#define ASSERT_TLM_BufferLogger_NumLoggedBuffers(index, value) \
+  this->assertTlm_BufferLogger_NumLoggedBuffers(__FILE__, __LINE__, index, value)
+
+// ----------------------------------------------------------------------
 // Macros for event history assertions 
 // ----------------------------------------------------------------------
 
@@ -182,6 +195,41 @@ namespace Svc {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CommandResponse response /*!< The command response*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Telemetry
+      // ----------------------------------------------------------------------
+
+      //! Assert size of telemetry history
+      //!
+      void assertTlm_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Channel: BufferLogger_NumLoggedBuffers
+      // ----------------------------------------------------------------------
+
+      //! Assert telemetry value in history at index
+      //!
+      void assertTlm_BufferLogger_NumLoggedBuffers_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+      void assertTlm_BufferLogger_NumLoggedBuffers(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 index, /*!< The index*/
+          const U32& val /*!< The channel value*/
       ) const;
 
     protected:

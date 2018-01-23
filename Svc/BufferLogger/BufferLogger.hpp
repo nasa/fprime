@@ -72,6 +72,11 @@ namespace Svc {
               const U8 sizeOfSize //!< The number of bytes to use when storing the size field and the start of each buffer)
           );
 
+          //! Set base file name
+          void setBaseName(
+              const Fw::EightyCharString& baseName //!< The base file name; used with prefix, unique counter value, and suffix
+          );
+
           //! Log a buffer
           void logBuffer(
               const U8 *const data, //!< The buffer data
@@ -125,6 +130,12 @@ namespace Svc {
 
           //! The suffix to use for file names
           Fw::EightyCharString suffix;
+
+          //! The file name base
+          Fw::EightyCharString baseName;
+
+          //! The counter to use for the same file name
+          NATIVE_UINT_TYPE fileCounter;
 
           //! The maximum file size
           U32 maxSize;
