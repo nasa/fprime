@@ -32,7 +32,7 @@ namespace Svc {
 #else
       BufferLogger() : BufferLoggerComponentBase(),
 #endif
-      m_state(LOGGING_OFF),
+      m_state(LOGGING_ON),
       m_file(*this)
   {
 

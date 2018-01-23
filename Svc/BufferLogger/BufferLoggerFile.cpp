@@ -140,13 +140,12 @@ namespace Svc {
         );
     }
 
-    this->fileCounter++;
-
     const Os::File::Status status = this->osFile.open(
         this->name.toChar(),
         Os::File::OPEN_WRITE
     );
     if (status == Os::File::OP_OK) {
+      this->fileCounter++;
       // Reset bytes written
       this->bytesWritten = 0;
       // Set mode

@@ -40,14 +40,16 @@ namespace Svc {
       this->sendComBuffers(3);
 
       // Check events
-      // We expect only one because of the throttle
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_BL_LogFileOpenError_SIZE(1);
-      ASSERT_EVENTS_BL_LogFileOpenError(
-        0,
-        Os::File::DOESNT_EXIST,
-        this->component.m_file.name.toChar()
-      );
+      // NOTE(mereweth) - not throttled
+      ASSERT_EVENTS_SIZE(3);
+      ASSERT_EVENTS_BL_LogFileOpenError_SIZE(3);
+      for (int i = 0; i < 3; i++) {
+        ASSERT_EVENTS_BL_LogFileOpenError(
+          i,
+          Os::File::DOESNT_EXIST,
+          this->component.m_file.name.toChar()
+        );
+      }
 
       // Create buf directory and try again
       (void) system("mkdir buf");
@@ -57,9 +59,9 @@ namespace Svc {
       this->sendComBuffers(3);
 
       // Check events
-      // We expect only one because of the throttle
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_BL_LogFileOpenError_SIZE(1);
+      // NOTE(mereweth) - should have no more events than we did before
+      ASSERT_EVENTS_SIZE(3);
+      ASSERT_EVENTS_BL_LogFileOpenError_SIZE(3);
       this->component.m_file.close();
 
       // Remove buf directory and try again
@@ -70,9 +72,16 @@ namespace Svc {
       this->sendComBuffers(3);
 
       // Check events
-      // We expect only one more because of the throttle
-      ASSERT_EVENTS_SIZE(2);
-      ASSERT_EVENTS_BL_LogFileOpenError_SIZE(2);
+      // We expect 3 more; not throttled
+      ASSERT_EVENTS_SIZE(6);
+      ASSERT_EVENTS_BL_LogFileOpenError_SIZE(6);
+      for (int i = 3; i < 6; i++) {
+        ASSERT_EVENTS_BL_LogFileOpenError(
+          i,
+          Os::File::DOESNT_EXIST,
+          this->component.m_file.name.toChar()
+        );
+      }
 
     }
 
@@ -101,7 +110,7 @@ namespace Svc {
       );
 
       // Check events
-      // We should see one event because write errors are throttled
+      // NOTE(mereweth) - not throttled
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_BL_LogFileWriteError_SIZE(1);
       ASSERT_EVENTS_BL_LogFileWriteError(
@@ -115,6 +124,15 @@ namespace Svc {
       // Make comlogger open a new file:
       this->component.m_file.mode = BufferLogger::File::Mode::CLOSED;
       this->component.m_file.open();
+
+      // NOTE(mereweth) - new file; counter has incremented
+      fileName.format(
+          "%s%s%d%s",
+          this->component.m_file.prefix.toChar(),
+          this->component.m_file.baseName.toChar(),
+          1,
+          this->component.m_file.suffix.toChar()
+      );
 
       // Try to write and make sure it succeeds
       // Send data
@@ -131,16 +149,18 @@ namespace Svc {
       this->sendComBuffers(3);
 
       // Check events
-      // We should see one event because write errors are throttled
-      ASSERT_EVENTS_SIZE(2);
-      ASSERT_EVENTS_BL_LogFileWriteError_SIZE(2);
-      ASSERT_EVENTS_BL_LogFileWriteError(
-          1,
-          Os::File::NOT_OPENED,
-          sizeof(SIZE_TYPE),
-          sizeof(SIZE_TYPE),
-          fileName.toChar()
-      );
+      // NOTE(mereweth) - not throttled; 3 more events
+      ASSERT_EVENTS_SIZE(4);
+      ASSERT_EVENTS_BL_LogFileWriteError_SIZE(4);
+      for (int i = 1; i < 4; i++) {
+          ASSERT_EVENTS_BL_LogFileWriteError(
+              i,
+              Os::File::NOT_OPENED,
+              sizeof(SIZE_TYPE),
+              sizeof(SIZE_TYPE),
+              fileName.toChar()
+          );
+      }
 
     }
 

@@ -105,6 +105,7 @@ namespace Svc {
             const char *const baseName //!< The baseName to use
         ) {
           this->sendCmd_BL_OpenFile(0, 0, baseName);
+          this->dispatchOne();
           // Create file name
           Fw::EightyCharString currentFileName;
           currentFileName.format(
@@ -113,10 +114,15 @@ namespace Svc {
               baseName,
               this->component.m_file.suffix.toChar()
           );
-          ASSERT_EQ(currentFileName, this->component.m_file.name);
-          for (U32 i = 0; i < numFiles; ++i) {
+          this->sendBuffers(1);
+          // 0th event has already happended (file open)
+          for (U32 i = 1; i < numFiles+1; ++i) {
+            // File was just created and name set
+            ASSERT_EQ(currentFileName, this->component.m_file.name);
             // Write data to the file
             this->sendBuffers(MAX_ENTRIES_PER_FILE-1);
+            // File still should have same name
+            ASSERT_EQ(currentFileName, this->component.m_file.name);
             // Send more data
             // This should open a new file with the updated counter
             this->sendBuffers(1);
@@ -124,7 +130,7 @@ namespace Svc {
                 "%s%s%d%s",
                 this->component.m_file.prefix.toChar(),
                 baseName,
-                i+1,
+                i,
                 this->component.m_file.suffix.toChar()
             );
             // Assert file state
@@ -156,7 +162,7 @@ namespace Svc {
                     "%s%s%d%s",
                     this->component.m_file.prefix.toChar(),
                     baseName,
-                    i+1,
+                    i,
                     this->component.m_file.suffix.toChar()
                 );
             }
