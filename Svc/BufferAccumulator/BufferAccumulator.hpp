@@ -127,8 +127,7 @@ namespace Svc {
       void allocateQueue(
           NATIVE_INT_TYPE identifier,
           Fw::MemAllocator& allocator,
-          NATIVE_UINT_TYPE bytesPerBuffer, //!< Storage for each Fw::Buffer
-          U32 maxNumBuffers //!< The maximum number of buffers
+          NATIVE_UINT_TYPE maxNumBuffers //!< The maximum number of buffers
       );
 
       //! Return allocated queue. Should be done during shutdown

@@ -76,7 +76,7 @@ namespace Svc {
   void Tester ::
     LogNoInit(void)
   {
-    // TODO
+    // TODO (mereweth) - make something sensible happen when no-one sets us up
   }
 
   // ----------------------------------------------------------------------

@@ -1,6 +1,6 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Errors.hpp
-// \author bocchino
+// \author bocchino, mereweth
 // \brief  Test errors
 //
 // \copyright
@@ -8,23 +8,23 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include "Errors.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   namespace Errors {
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
@@ -34,10 +34,10 @@ namespace ASTERIA {
       Fw::Buffer buffer;
 
       // Go to Accumulate mode
-      ASSERT_EQ(BufferAccumulatorMode::DRAIN, this->component.mode.e);
-      this->sendCmd_SetMode(0, 0, BufferAccumulatorMode::ACCUMULATE);
+      ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
+      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::ACCUMULATE);
       this->component.doDispatch();
-      ASSERT_EQ(BufferAccumulatorMode::ACCUMULATE, this->component.mode.e);
+      ASSERT_EQ(BufferAccumulator::ACCUMULATE, this->component.mode);
       ASSERT_FROM_PORT_HISTORY_SIZE(0);
 
       // Fill up the buffer queue
@@ -51,7 +51,7 @@ namespace ASTERIA {
       this->invoke_to_bufferSendInFill(0, buffer);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_QueueFull_SIZE(1);
+      ASSERT_EVENTS_BA_QueueFull_SIZE(1);
 
       // Send another buffer and expect no new event
       this->invoke_to_bufferSendInFill(0, buffer);
@@ -59,7 +59,7 @@ namespace ASTERIA {
       ASSERT_EVENTS_SIZE(1);
 
       // Drain one buffer
-      this->sendCmd_SetMode(0, 0, BufferAccumulatorMode::DRAIN);
+      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::DRAIN);
       this->component.doDispatch();
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       ASSERT_from_bufferSendOutDrain_SIZE(1);
@@ -69,10 +69,10 @@ namespace ASTERIA {
       this->invoke_to_bufferSendInFill(0, buffer);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(2);
-      ASSERT_EVENTS_BufferAccepted_SIZE(1);
+      ASSERT_EVENTS_BA_BufferAccepted_SIZE(1);
 
       // Drain one buffer
-      this->sendCmd_SetMode(0, 0, BufferAccumulatorMode::DRAIN);
+      this->sendCmd_BA_SetMode(0, 0, BufferAccumulator::DRAIN);
       this->component.doDispatch();
       ASSERT_FROM_PORT_HISTORY_SIZE(2);
       ASSERT_from_bufferSendOutDrain_SIZE(2);
@@ -82,13 +82,13 @@ namespace ASTERIA {
       this->invoke_to_bufferSendInFill(0, buffer);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(2);
-      ASSERT_EVENTS_BufferAccepted_SIZE(1);
+      ASSERT_EVENTS_BA_BufferAccepted_SIZE(1);
 
       // Send another buffer and expect an event
       this->invoke_to_bufferSendInFill(0, buffer);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(3);
-      ASSERT_EVENTS_QueueFull_SIZE(2);
+      ASSERT_EVENTS_BA_QueueFull_SIZE(2);
 
     }
 

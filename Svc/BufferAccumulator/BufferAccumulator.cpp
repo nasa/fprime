@@ -64,13 +64,12 @@ namespace Svc {
     allocateQueue(
       NATIVE_INT_TYPE identifier,
       Fw::MemAllocator& allocator,
-      NATIVE_UINT_TYPE bytesPerBuffer, //!< Storage for each Fw::Buffer
-      U32 maxNumBuffers //!< The maximum number of buffers
+      NATIVE_UINT_TYPE maxNumBuffers //!< The maximum number of buffers
     )
   {
       this->allocatorId = identifier;
       this->bufferMemory =  static_cast<Fw::Buffer*>(
-          allocator.allocate(identifier, bytesPerBuffer * maxNumBuffers));
+          allocator.allocate(identifier, sizeof(Fw::Buffer) * maxNumBuffers));
       bufferQueue.init(this->bufferMemory, maxNumBuffers);
   }
 

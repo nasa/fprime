@@ -1,6 +1,6 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Drain.hpp
-// \author bocchino
+// \author bocchino, mereweth
 // \brief  Test drain mode
 //
 // \copyright
@@ -8,31 +8,31 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include <string.h>
 
 #include "Drain.hpp"
 
-namespace ASTERIA {
+namespace Svc {
 
   namespace Drain {
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
       OK(void)
     {
-      ASSERT_EQ(BufferAccumulatorMode::DRAIN, this->component.mode.e);
+      ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
       Fw::Buffer buffers[MAX_NUM_BUFFERS];
       const U32 managerID = 42;
       const U64 data = 0;

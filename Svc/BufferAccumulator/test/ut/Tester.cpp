@@ -1,6 +1,6 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Tester.hpp
-// \author bocchino
+// \author bocchino, mereweth
 // \brief  BufferAccumulator test harness implementation
 //
 // \copyright
@@ -8,44 +8,66 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include "Tester.hpp"
+#include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/MallocAllocator.hpp"
 
 #define INSTANCE 0
-#define ID_BASE 256
 #define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
 
-namespace ASTERIA {
+namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(const U32 maxNumBuffers) : 
+    Tester(bool doAllocateQueue) :
+#if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
-      component(
-          "BufferAccumulator",
-          maxNumBuffers
-      )
+      component("BufferAccumulator"),
+#else
+      BufferAccumulatorGTestBase(MAX_HISTORY_SIZE),
+      component(),
+#endif
+      doAllocateQueue(doAllocateQueue)
   {
     this->initComponents();
     this->connectPorts();
+
+    if (this->doAllocateQueue) {
+      Fw::MallocAllocator buffAccumMallocator;
+      this->component.allocateQueue(0,buffAccumMallocator,MAX_NUM_BUFFERS);
+    }
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester(void)
   {
-    
+    if (this->doAllocateQueue) {
+      Fw::MallocAllocator buffAccumMallocator;
+      this->component.deallocateQueue(buffAccumMallocator);
+    }
+  }
+
+  // ----------------------------------------------------------------------
+  // Tests
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    AccumNoAllocate(void)
+  {
+    // TODO (mereweth) - make something sensible happen when no-one sets us up
   }
 
   // ----------------------------------------------------------------------
@@ -80,11 +102,11 @@ namespace ASTERIA {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts(void)
   {
 
     // bufferSendInFill
@@ -111,63 +133,74 @@ namespace ASTERIA {
         this->component.get_pingIn_InputPort(0)
     );
 
+    // schedIn
+    this->connect_to_schedIn(
+        0,
+        this->component.get_schedIn_InputPort(0)
+    );
     // bufferSendOutDrain
     this->component.set_bufferSendOutDrain_OutputPort(
-        0, 
+        0,
         this->get_from_bufferSendOutDrain(0)
     );
 
     // bufferSendOutReturn
     this->component.set_bufferSendOutReturn_OutputPort(
-        0, 
+        0,
         this->get_from_bufferSendOutReturn(0)
     );
 
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdRegOut(0)
     );
 
     // cmdResponseOut
     this->component.set_cmdResponseOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdResponseOut(0)
     );
 
     // eventOut
     this->component.set_eventOut_OutputPort(
-        0, 
+        0,
         this->get_from_eventOut(0)
     );
 
+    // eventOutText
+    this->component.set_eventOutText_OutputPort(
+        0,
+        this->get_from_eventOutText(0)
+    );
     // pingOut
     this->component.set_pingOut_OutputPort(
-        0, 
+        0,
         this->get_from_pingOut(0)
     );
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(
-        0, 
+        0,
         this->get_from_timeCaller(0)
     );
 
-    // LogText
-    this->component.set_LogText_OutputPort(
-        0, 
-        this->get_from_LogText(0)
+    // tlmOut
+    this->component.set_tlmOut_OutputPort(
+        0,
+        this->get_from_tlmOut(0)
     );
+
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents(void)
   {
     this->init();
-    this->setIdBase(ID_BASE);
-    this->component.setIdBase(ID_BASE);
-    this->component.init(QUEUE_DEPTH, INSTANCE);
+    this->component.init(
+        QUEUE_DEPTH, INSTANCE
+    );
   }
 
-}
+} // end namespace Svc

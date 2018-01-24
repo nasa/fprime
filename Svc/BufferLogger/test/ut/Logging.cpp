@@ -278,7 +278,6 @@ namespace Svc {
     void Tester ::
       OnOff(void)
     {
-      system("rm -f state.bin");
       for (U32 i = 0; i < 10; ++i) {
         {
           OnOffTester tester(2*i);
@@ -289,7 +288,6 @@ namespace Svc {
           tester.testLoggingOff();
         }
       }
-      system("rm state.bin");
     }
 
   }

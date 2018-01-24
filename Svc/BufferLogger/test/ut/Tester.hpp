@@ -43,7 +43,9 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(bool doInitLog = true);
+      Tester(
+          bool doInitLog = true
+      );
 
       //! Destroy object Tester
       //!

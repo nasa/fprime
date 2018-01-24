@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  BufferLogger.cpp
-// \author bocchino, dinkel
-// \brief  ASTERIA BufferLogger implementation
+// \author bocchino, dinkel, mereweth
+// \brief  Svc BufferLogger implementation
 //
 // \copyright
 // Copyright (C) 2015-2017 California Institute of Technology.

@@ -16,6 +16,7 @@
 
   <import_dictionary>Svc/BufferAccumulator/Commands.xml</import_dictionary>
   <import_dictionary>Svc/BufferAccumulator/Events.xml</import_dictionary>
+  <import_dictionary>Svc/BufferAccumulator/Telemetry.xml</import_dictionary>
 
   <ports>
     <port name="bufferSendInFill" kind="async_input" data_type="Fw::BufferSend" max_number="1"></port>

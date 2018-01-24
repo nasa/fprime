@@ -4,55 +4,40 @@
 
 #include "Tester.hpp"
 #include "Errors.hpp"
-#include "Logging.hpp"
+#include "Accumulate.hpp"
+#include "Drain.hpp"
 #include "Health.hpp"
 
-TEST(Test, LogNoInit) {
-  Svc::Tester tester(false); // don't call initLog for the user
-  tester.LogNoInit();
+TEST(Test, AccumNoAllocate) {
+  Svc::Tester tester(false); // don't call allocateQueue for the user
+  tester.AccumNoAllocate();
 }
 
 // ----------------------------------------------------------------------
 // Test Errors
 // ----------------------------------------------------------------------
 
-TEST(TestErrors, LogFileOpen) {
+TEST(TestErrors, QueueFull) {
   Svc::Errors::Tester tester;
-  tester.LogFileOpen();
-}
-
-TEST(TestErrors, LogFileWrite) {
-  Svc::Errors::Tester tester;
-  tester.LogFileWrite();
-}
-
-TEST(TestErrors, LogFileValidation) {
-  Svc::Errors::Tester tester;
-  tester.LogFileValidation();
+  tester.QueueFull();
 }
 
 // ----------------------------------------------------------------------
-// Test Logging
+// Test Accumulate
 // ----------------------------------------------------------------------
 
-TEST(TestLogging, BufferSendIn) {
-  Svc::Logging::Tester tester;
-  tester.BufferSendIn();
+TEST(TestAccumulate, OK) {
+  Svc::Accumulate::Tester tester;
+  tester.OK();
 }
 
-TEST(TestLogging, CloseFile) {
-  Svc::Logging::Tester tester;
-  tester.CloseFile();
-}
+// ----------------------------------------------------------------------
+// Test Drain
+// ----------------------------------------------------------------------
 
-TEST(TestLogging, ComIn) {
-  Svc::Logging::Tester tester;
-  tester.ComIn();
-}
-
-TEST(TestLogging, OnOff) {
-  Svc::Logging::Tester tester;
-  tester.OnOff();
+TEST(TestDrain, OK) {
+  Svc::Drain::Tester tester;
+  tester.OK();
 }
 
 // ----------------------------------------------------------------------

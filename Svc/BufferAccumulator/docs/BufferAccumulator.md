@@ -9,6 +9,11 @@
 |BA_SetMode|0 (0x0)|Set the mode| | |   
 | | | |mode|OpState||                    
 
+## Telemetry Channel List
+
+|Channel Name|ID|Type|Description|
+|---|---|---|---|
+|BufferAccumulator_NumQueuedBuffers|0 (0x0)|U32|The number of buffers queued|
 
 ## Event List
 
