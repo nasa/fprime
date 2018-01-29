@@ -38,4 +38,4 @@
 | | | |file|Fw::LogStringArg&|256|The file|    
 |BL_Activated|4 (0x4)|Buffer logger was activated| | | | |
 |BL_Deativated|5 (0x5)|Buffer logger was deactivated| | | | |
-|BL_NoLogFileOpenCmdError|6 (0x6)|No log file open command was received by BufferLogger| | | | |
+|BL_NoLogFileOpenInitError|6 (0x6)|No log file open command was received by BufferLogger| | | | |

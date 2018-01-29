@@ -778,18 +778,18 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BL_NoLogFileOpenCmdError
+      // Event: BL_NoLogFileOpenInitError
       // ----------------------------------------------------------------------
 
-      //! Handle event BL_NoLogFileOpenCmdError
+      //! Handle event BL_NoLogFileOpenInitError
       //!
-      virtual void logIn_WARNING_HI_BL_NoLogFileOpenCmdError(
+      virtual void logIn_WARNING_HI_BL_NoLogFileOpenInitError(
           void
       );
 
-      //! Size of history for event BL_NoLogFileOpenCmdError
+      //! Size of history for event BL_NoLogFileOpenInitError
       //!
-      U32 eventsSize_BL_NoLogFileOpenCmdError;
+      U32 eventsSize_BL_NoLogFileOpenInitError;
 
     protected:
 

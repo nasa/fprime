@@ -1444,7 +1444,7 @@ namespace Svc {
 
       }
 
-      case BufferLoggerComponentBase::EVENTID_BL_NOLOGFILEOPENCMDERROR: 
+      case BufferLoggerComponentBase::EVENTID_BL_NOLOGFILEOPENINITERROR: 
       {
 
 #if FW_AMPCS_COMPATIBLE
@@ -1457,7 +1457,7 @@ namespace Svc {
             static_cast<AssertArg>(_zero_status)
         );
 #endif    
-        this->logIn_WARNING_HI_BL_NoLogFileOpenCmdError();
+        this->logIn_WARNING_HI_BL_NoLogFileOpenInitError();
 
         break;
 
@@ -1482,7 +1482,7 @@ namespace Svc {
     this->eventHistory_BL_LogFileWriteError->clear();
     this->eventsSize_BL_Activated = 0;
     this->eventsSize_BL_Deativated = 0;
-    this->eventsSize_BL_NoLogFileOpenCmdError = 0;
+    this->eventsSize_BL_NoLogFileOpenInitError = 0;
   }
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -1659,15 +1659,15 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: BL_NoLogFileOpenCmdError 
+  // Event: BL_NoLogFileOpenInitError 
   // ----------------------------------------------------------------------
 
   void BufferLoggerTesterBase ::
-    logIn_WARNING_HI_BL_NoLogFileOpenCmdError(
+    logIn_WARNING_HI_BL_NoLogFileOpenInitError(
         void
     )
   {
-    ++this->eventsSize_BL_NoLogFileOpenCmdError;
+    ++this->eventsSize_BL_NoLogFileOpenInitError;
     ++this->eventsSize;
   }
 

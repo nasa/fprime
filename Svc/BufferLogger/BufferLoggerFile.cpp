@@ -36,13 +36,11 @@ namespace Svc {
       suffix(""),
       baseName(""),
       fileCounter(0),
-      maxSize(8),
-      sizeOfSize(4),
+      maxSize(0),
+      sizeOfSize(0),
       mode(Mode::CLOSED),
       bytesWritten(0)
   {
-    FW_ASSERT(sizeOfSize <= sizeof(U32), sizeOfSize);
-    FW_ASSERT(maxSize > sizeOfSize, maxSize);
   }
 
   BufferLogger::File ::
@@ -63,10 +61,16 @@ namespace Svc {
         const U8 sizeOfSize
     )
   {
+      //NOTE(mereweth) - only call this before opening the file
+      FW_ASSERT(this->mode == File::Mode::CLOSED);
+
       this->prefix = logFilePrefix;
       this->suffix = logFileSuffix;
       this->maxSize = maxFileSize;
       this->sizeOfSize = sizeOfSize;
+
+      FW_ASSERT(sizeOfSize <= sizeof(U32), sizeOfSize);
+      FW_ASSERT(maxSize > sizeOfSize, maxSize);
   }
 
   void BufferLogger::File ::
@@ -121,9 +125,12 @@ namespace Svc {
   {
     FW_ASSERT(this->mode == File::Mode::CLOSED);
 
-    // NOTE(mereweth) - check that file path has been set
-    if (this->baseName.toChar()[0] == '\0') {
-        this->bufferLogger.log_WARNING_HI_BL_NoLogFileOpenCmdError();
+    // NOTE(mereweth) - check that file path has been set and that initLog has been called
+    if ((this->baseName.toChar()[0] == '\0') ||
+        (this->sizeOfSize > sizeof(U32)) ||
+        (this->maxSize <= this->sizeOfSize)) {
+        this->bufferLogger.log_WARNING_HI_BL_NoLogFileOpenInitError();
+        return;
     }
 
     if (this->fileCounter == 0) {

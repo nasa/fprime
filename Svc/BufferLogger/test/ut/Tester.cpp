@@ -76,7 +76,12 @@ namespace Svc {
   void Tester ::
     LogNoInit(void)
   {
-    // TODO (mereweth) - make something sensible happen when no-one sets us up
+    this->component.m_file.baseName = Fw::EightyCharString("LogNoInit");
+    // NOTE (mereweth) - make something sensible happen when no-one calls initLog()
+    // Send data
+    this->sendComBuffers(3);
+    ASSERT_EVENTS_SIZE(3);
+    ASSERT_EVENTS_BL_NoLogFileOpenInitError_SIZE(3);
   }
 
   // ----------------------------------------------------------------------
