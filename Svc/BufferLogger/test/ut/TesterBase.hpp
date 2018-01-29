@@ -778,6 +778,22 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
+      // Event: BL_NoLogFileOpenCmdError
+      // ----------------------------------------------------------------------
+
+      //! Handle event BL_NoLogFileOpenCmdError
+      //!
+      virtual void logIn_WARNING_HI_BL_NoLogFileOpenCmdError(
+          void
+      );
+
+      //! Size of history for event BL_NoLogFileOpenCmdError
+      //!
+      U32 eventsSize_BL_NoLogFileOpenCmdError;
+
+    protected:
+
+      // ----------------------------------------------------------------------
       // Telemetry dispatch
       // ----------------------------------------------------------------------
 

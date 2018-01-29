@@ -32,6 +32,8 @@ namespace Svc {
       // Remove buf directory
       (void) system("rm -rf buf");
 
+      this->component.m_file.baseName = Fw::EightyCharString("LogFileOpen");
+
       // Check initial state
       ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
       ASSERT_EVENTS_SIZE(0);
@@ -90,6 +92,8 @@ namespace Svc {
     {
       ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
       ASSERT_EVENTS_SIZE(0);
+
+      this->component.m_file.baseName = Fw::EightyCharString("LogFileWrite");
 
       // Send data
       this->sendComBuffers(1);
@@ -167,6 +171,8 @@ namespace Svc {
     void Tester ::
       LogFileValidation(void)
     {
+      this->component.m_file.baseName = Fw::EightyCharString("LogFileValidation");
+
       // Send data
       this->sendComBuffers(1);
       // Remove permission to buf directory

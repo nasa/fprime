@@ -121,7 +121,11 @@ namespace Svc {
   {
     FW_ASSERT(this->mode == File::Mode::CLOSED);
 
-    // TODO(mereweth) - check that file path has been set
+    // NOTE(mereweth) - check that file path has been set
+    if (this->baseName.toChar()[0] == '\0') {
+        this->bufferLogger.log_WARNING_HI_BL_NoLogFileOpenCmdError();
+    }
+
     if (this->fileCounter == 0) {
         this->name.format(
             "%s%s%s",

@@ -115,7 +115,7 @@ namespace Svc {
               this->component.m_file.suffix.toChar()
           );
           this->sendBuffers(1);
-          // 0th event has already happended (file open)
+          // 0th event has already happened (file open)
           for (U32 i = 1; i < numFiles+1; ++i) {
             // File was just created and name set
             ASSERT_EQ(currentFileName, this->component.m_file.name);
@@ -219,16 +219,6 @@ namespace Svc {
     class OnOffTester :
       Logging::Tester
     {
-
-      public:
-
-        //! Construct an OnOff tester
-        OnOffTester(
-            const U32 seconds //!< Seconds value of test time
-        ) {
-          this->setTestTimeSeconds(seconds);
-        }
-
       private:
 
         //! Send data
@@ -256,6 +246,7 @@ namespace Svc {
 
         //! Test logging on
         void testLoggingOn(void) {
+          this->component.m_file.baseName = Fw::EightyCharString("OnOffTester");
           this->sendData();
           this->setState(BufferLogger::LOGGING_OFF);
           this->checkLogFileIntegrity(
@@ -267,8 +258,8 @@ namespace Svc {
 
         //! Test logging off
         void testLoggingOff(void) {
+          this->setState(BufferLogger::LOGGING_OFF);
           this->sendData();
-          Fw::EightyCharString command;
           ASSERT_EVENTS_SIZE(0);
           this->setState(BufferLogger::LOGGING_ON);
         }
@@ -278,15 +269,13 @@ namespace Svc {
     void Tester ::
       OnOff(void)
     {
-      for (U32 i = 0; i < 10; ++i) {
-        {
-          OnOffTester tester(2*i);
+      {
+          OnOffTester tester;
           tester.testLoggingOn();
-        }
-        {
-          OnOffTester tester(2*i+1);
+      }
+      {
+          OnOffTester tester;
           tester.testLoggingOff();
-        }
       }
     }
 

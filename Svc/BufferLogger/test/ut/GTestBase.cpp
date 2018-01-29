@@ -496,6 +496,26 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
+  // Event: BL_NoLogFileOpenCmdError
+  // ----------------------------------------------------------------------
+
+  void BufferLoggerGTestBase ::
+    assertEvents_BL_NoLogFileOpenCmdError_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(size, this->eventsSize_BL_NoLogFileOpenCmdError)
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Size of history for event BL_NoLogFileOpenCmdError\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->eventsSize_BL_NoLogFileOpenCmdError << "\n";
+  }
+
+  // ----------------------------------------------------------------------
   // From ports
   // ----------------------------------------------------------------------
 

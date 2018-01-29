@@ -83,6 +83,9 @@
 #define ASSERT_EVENTS_BL_Deativated_SIZE(size) \
   this->assertEvents_BL_Deativated_size(__FILE__, __LINE__, size)
 
+#define ASSERT_EVENTS_BL_NoLogFileOpenCmdError_SIZE(size) \
+  this->assertEvents_BL_NoLogFileOpenCmdError_size(__FILE__, __LINE__, size)
+
 // ----------------------------------------------------------------------
 // Macros for typed user from port history assertions
 // ----------------------------------------------------------------------
@@ -344,6 +347,18 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_BL_Deativated_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Event: BL_NoLogFileOpenCmdError
+      // ----------------------------------------------------------------------
+
+      void assertEvents_BL_NoLogFileOpenCmdError_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/

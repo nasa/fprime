@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
-<!--====================================================================== 
+<!--======================================================================
 
   BufferLogger
   Events
@@ -67,5 +67,9 @@
 
   <event id="0x05" name="BL_Deativated" severity="ACTIVITY_LO" format_string="Buffer logger was deactivated">
     <comment>Buffer logger was deactivated</comment>
+  </event>
+
+  <event id="0x06" name="BL_NoLogFileOpenCmdError" severity="WARNING_HI" format_string="No log file open command">
+    <comment>No log file open command was received by BufferLogger</comment>
   </event>
 </events>

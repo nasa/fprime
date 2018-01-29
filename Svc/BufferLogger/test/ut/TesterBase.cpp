@@ -1444,6 +1444,25 @@ namespace Svc {
 
       }
 
+      case BufferLoggerComponentBase::EVENTID_BL_NOLOGFILEOPENCMDERROR: 
+      {
+
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
+        this->logIn_WARNING_HI_BL_NoLogFileOpenCmdError();
+
+        break;
+
+      }
+
       default: {
         FW_ASSERT(0, id);
         break;
@@ -1463,6 +1482,7 @@ namespace Svc {
     this->eventHistory_BL_LogFileWriteError->clear();
     this->eventsSize_BL_Activated = 0;
     this->eventsSize_BL_Deativated = 0;
+    this->eventsSize_BL_NoLogFileOpenCmdError = 0;
   }
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -1635,6 +1655,19 @@ namespace Svc {
     )
   {
     ++this->eventsSize_BL_Deativated;
+    ++this->eventsSize;
+  }
+
+  // ----------------------------------------------------------------------
+  // Event: BL_NoLogFileOpenCmdError 
+  // ----------------------------------------------------------------------
+
+  void BufferLoggerTesterBase ::
+    logIn_WARNING_HI_BL_NoLogFileOpenCmdError(
+        void
+    )
+  {
+    ++this->eventsSize_BL_NoLogFileOpenCmdError;
     ++this->eventsSize;
   }
 
