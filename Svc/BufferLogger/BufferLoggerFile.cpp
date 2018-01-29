@@ -78,8 +78,12 @@ namespace Svc {
         const Fw::EightyCharString& baseName
     )
   {
+      if (this->mode == File::Mode::OPEN) {
+          this->closeAndEmitEvent();
+      }
       this->baseName = baseName;
       this->fileCounter = 0;
+      this->open();
   }
 
   void BufferLogger::File ::

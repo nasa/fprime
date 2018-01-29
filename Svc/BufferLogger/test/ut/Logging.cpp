@@ -67,6 +67,7 @@ namespace Svc {
       public:
 
         void test(void) {
+          this->component.m_file.baseName = Fw::EightyCharString("CloseFileTester");
           ASSERT_EVENTS_SIZE(0);
           this->sendCloseFileCommands(3);
           this->sendComBuffers(3);
