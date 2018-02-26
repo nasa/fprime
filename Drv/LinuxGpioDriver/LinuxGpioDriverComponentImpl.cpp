@@ -60,6 +60,11 @@ namespace Drv {
         (void) write(fd, buf, len); // TODO check return value
         (void) close(fd);
 
+	/* NOTE(mereweth) - this is to allow systemd udev to make
+	 * necessary filesystem changes after exporting
+	 */
+	usleep(100 * 1000);
+	
         return 0;
     }
 
@@ -81,6 +86,12 @@ namespace Drv {
         len = snprintf(buf, sizeof(buf), "%d", gpio);
         (void) write(fd, buf, len); // TODO check return value
         (void) close(fd);
+
+	/* NOTE(mereweth) - this is to allow systemd udev to make
+	 * necessary filesystem changes after unexporting
+	 */
+	usleep(100 * 1000);
+	
         return 0;
     }
 

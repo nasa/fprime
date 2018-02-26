@@ -96,10 +96,10 @@ namespace Drv {
       //!
       void readBufferSend_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer
+          Fw::Buffer fwBuffer
       );
 
-      NATIVE_INT_TYPE m_fd; //!< file descriptor returned for DSP I/O device
+      NATIVE_INT_TYPE m_fd; //!< file descriptor returned for I/O device
       const char* m_device; //!< original device path
 
       //! This method will be called by the new thread to wait for input on the serial port.
