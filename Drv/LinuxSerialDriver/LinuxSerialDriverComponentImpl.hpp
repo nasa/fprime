@@ -54,8 +54,13 @@ namespace Drv {
 
       //! Configure UART parameters
       typedef enum BAUD_RATE {
+          BAUD_9600,
+          BAUD_19200,
+          BAUD_38400,
+          BAUD_57600,
           BAUD_115K,
           BAUD_230K,
+          BAUD_460K,
           BAUD_921K
       } UartBaudRate ;
 
@@ -64,8 +69,14 @@ namespace Drv {
           HW_FLOW
       } UartFlowControl;
 
+      typedef enum PARITY  {
+          PARITY_NONE,
+          PARITY_ODD,
+          PARITY_EVEN
+      } UartParity;
+
       // Open device with specified baud and flow control.
-      void open(const char* const device, UartBaudRate baud, UartFlowControl fc, bool block);
+      void open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block);
 
       //! start the serial poll thread.
       //! buffSize is the max receive buffer size

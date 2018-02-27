@@ -41,7 +41,7 @@ namespace Drv {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  void LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, bool block) {
+  void LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
 
       /*
        Their config:
@@ -155,11 +155,26 @@ namespace Drv {
       NATIVE_INT_TYPE relayRate = B0;
       switch (baud) {
           // TODO add more as needed
+          case BAUD_9600:
+              relayRate = B9600;
+              break;
+          case BAUD_19200:
+              relayRate = B19200;
+              break;
+          case BAUD_38400:
+              relayRate = B38400;
+              break;
+          case BAUD_57600:
+              relayRate = B57600;
+              break;
           case BAUD_115K:
               relayRate = B115200;
               break;
           case BAUD_230K:
               relayRate = B230400;
+              break;
+          case BAUD_460K:
+              relayRate = B460800;
               break;
           case BAUD_921K:
               relayRate = B921600;
@@ -198,6 +213,21 @@ namespace Drv {
        */
       newtio.c_cflag = CS8 | CLOCAL | CREAD;
 
+      switch (parity) {
+          case PARITY_ODD:
+              newtio.c_cflag |= (PARENB | PARODD) ;
+              break;
+          case PARITY_EVEN:
+              newtio.c_cflag |= PARENB ;
+              break;
+          case PARITY_NONE:
+              newtio.c_cflag &= ~PARENB ;
+              break;
+          default:
+              FW_ASSERT(0,parity);
+              break;
+      }
+
       // Set baud rate:
       stat = cfsetispeed(&newtio, relayRate);
       stat = cfsetospeed(&newtio, relayRate);
@@ -209,8 +239,8 @@ namespace Drv {
       newtio.c_lflag = 0;
 
       // TODO if parity, then do input parity too
-      //options.c_iflag |= (INPCK | ISTRIP);
-      newtio.c_iflag = 0;
+      //options.c_iflag |=INPCK;
+      newtio.c_iflag |= INPCK;
 
       // Flush old data:
       (void) tcflush(fd, TCIFLUSH);
