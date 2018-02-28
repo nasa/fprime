@@ -240,7 +240,7 @@ namespace Drv {
 
       // TODO if parity, then do input parity too
       //options.c_iflag |=INPCK;
-      newtio.c_iflag |= INPCK;
+      newtio.c_iflag = INPCK;
 
       // Flush old data:
       (void) tcflush(fd, TCIFLUSH);
