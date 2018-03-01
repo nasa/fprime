@@ -157,6 +157,24 @@ ACDEVTEST_MODULES := \
     \
 	Autocoders/templates
 	
+RPI_MODULES := \
+	\
+	$(REF_MODULES) \
+	\
+	$(SVC_MODULES) \
+	\
+	$(DRV_MODULES) \
+	\
+	$(FW_MODULES) \
+	\
+	$(OS_MODULES) \
+	\
+	$(CFDP_MODULES) \
+  	\
+  	$(UTILS_MODULES)
+		
+	
+	
 acdev_MODULES := \
 	$(FW_MODULES) \
 	\
@@ -174,7 +192,7 @@ OTHER_MODULES := \
 
 # List deployments
 
-DEPLOYMENTS := Ref acdev
+DEPLOYMENTS := Ref acdev RPI
 
 # Location of ground/gse software. Autocoded dictionary elements are copied here.
 GDS_MODULE := Gse
