@@ -42,7 +42,7 @@ namespace Os {
     }
   
     MaxHeap::~MaxHeap() {
-      delete this->heap;
+      delete [] this->heap;
       this->heap = NULL;
     }
 
@@ -51,7 +51,7 @@ namespace Os {
       // The heap has already been created.. so delete
       // it and try again.
       if( NULL != this->heap ) {
-        delete this->heap;
+        delete [] this->heap;
         this->heap = NULL;
       }
 
