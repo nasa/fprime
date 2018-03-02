@@ -33,7 +33,8 @@ namespace Drv {
 
   Tester ::
     Tester(const char* const device, NATIVE_INT_TYPE numReadBuffers, NATIVE_INT_TYPE bufferSize,
-           LinuxSerialDriverComponentImpl::UartFlowControl flow) :
+           LinuxSerialDriverComponentImpl::UartFlowControl flow,
+           LinuxSerialDriverComponentImpl::UartParity parity) :
 #if FW_OBJECT_NAMES == 1
     LinuxSerialDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxSerialDriver")
@@ -60,7 +61,7 @@ namespace Drv {
     }
 
     // configure port
-    this->component.open(device,LinuxSerialDriverComponentImpl::BAUD_921K,flow,true);
+    this->component.open(device,LinuxSerialDriverComponentImpl::BAUD_921K,flow,parity,true);
 
     // spawn driver thread
     this->component.startReadThread(90,20*1024);

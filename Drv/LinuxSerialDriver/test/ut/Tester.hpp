@@ -42,7 +42,9 @@ namespace Drv {
 
       //! Construct object Tester
       //!
-      Tester(const char* const device, NATIVE_INT_TYPE numReadBuffers, NATIVE_INT_TYPE bufferSize,  LinuxSerialDriverComponentImpl::UartFlowControl flow);
+      Tester(const char* const device, NATIVE_INT_TYPE numReadBuffers, NATIVE_INT_TYPE bufferSize,
+             LinuxSerialDriverComponentImpl::UartFlowControl flow,
+             LinuxSerialDriverComponentImpl::UartParity parity);
 
       //! Destroy object Tester
       //!
