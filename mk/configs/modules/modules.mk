@@ -68,9 +68,11 @@ SVC_MODULES := \
     Svc/FatalHandler \
 	Svc/FileManager
 
-DRV_MODULES := \
+DEMO_DRV_MODULES := \
 	Drv/DataTypes \
-	Drv/BlockDriver \
+	Drv/BlockDriver
+	
+LINUX_DRV_MODULES := \
 	Drv/GpioDriverPorts \
 	Drv/LinuxGpioDriver \
 	Drv/LinuxSerialDriver \
@@ -91,7 +93,7 @@ Ref_MODULES := \
 	\
 	$(SVC_MODULES) \
 	\
-	$(DRV_MODULES) \
+	$(DEMO_DRV_MODULES) \
 	\
 	$(FW_MODULES) \
 	\
@@ -162,20 +164,21 @@ ACDEVTEST_MODULES := \
     \
 	Autocoders/templates
 	
+RPI_APP_MODULES := \
+	RPI/Top
+	
 RPI_MODULES := \
 	\
 	$(REF_MODULES) \
 	\
 	$(SVC_MODULES) \
 	\
-	$(DRV_MODULES) \
+	$(LINUX_DRV_MODULES) \
 	\
 	$(FW_MODULES) \
 	\
 	$(OS_MODULES) \
 	\
-	$(CFDP_MODULES) \
-  	\
   	$(UTILS_MODULES)
 		
 	
