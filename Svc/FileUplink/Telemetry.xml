@@ -9,9 +9,7 @@
 
 ======================================================================-->
 
-<telemetry
-  telemetry_base="$FileUplinkIdBase"
->
+<telemetry>
 
   <channel
     id="0"

@@ -3,7 +3,7 @@
 
 <!--====== Svc/CmdSequencer Telemetry =====-->
 
-<telemetry telemetry_base="$CmdSequencerTelemetryBase">
+<telemetry>
   <channel id="0" name="CS_LoadCommands" data_type="U32" abbrev="T001-1234">
     <comment>The number of Load commands executed</comment>
   </channel>

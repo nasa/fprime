@@ -1,4 +1,4 @@
-    <commands opcode_base = "$ActiveLoggerOpcodeBase">
+    <commands>
         <command kind="sync" opcode="0" mnemonic="ALOG_SET_EVENT_REPORT_FILTER">
             <comment>
             Set filter for reporting events. Events are not stored in component. 

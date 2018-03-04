@@ -9,7 +9,7 @@
 
 ======================================================================-->
 
-<commands opcode_base="$SignalGenIdBase">
+<commands>
   <command kind="async" opcode="0x00" mnemonic="SignalGen_Settings">
     <comment>Signal Generator Settings</comment>
     <args>

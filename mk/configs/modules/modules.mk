@@ -54,6 +54,7 @@ SVC_MODULES := \
 	Svc/Time \
 	Svc/Cycle \
 	Svc/LinuxTime \
+	Svc/LinuxTimer \
 	Svc/ActiveLogger \
 	Svc/Fatal \
 	Svc/PolyIf \
@@ -73,12 +74,13 @@ DEMO_DRV_MODULES := \
 	Drv/BlockDriver
 	
 LINUX_DRV_MODULES := \
-	Drv/GpioDriverPorts \
 	Drv/LinuxGpioDriver \
 	Drv/LinuxSerialDriver \
 	Drv/LinuxSpiDriver \
 	Drv/SerialDriverPorts \
-	Drv/SpiDriverPorts
+	Drv/SpiDriverPorts \
+	Drv/GpioDriverPorts
+	
 
 REF_MODULES := \
 	Ref/Top \
@@ -169,20 +171,20 @@ RPI_APP_MODULES := \
 	
 RPI_MODULES := \
 	\
-	$(REF_MODULES) \
+	$(RPI_APP_MODULES) \
 	\
 	$(SVC_MODULES) \
 	\
 	$(LINUX_DRV_MODULES) \
 	\
+	$(CFDP_MODULES) \
+  	\
 	$(FW_MODULES) \
 	\
 	$(OS_MODULES) \
 	\
   	$(UTILS_MODULES)
-		
-	
-	
+
 acdev_MODULES := \
 	$(FW_MODULES) \
 	\

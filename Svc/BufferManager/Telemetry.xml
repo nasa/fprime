@@ -9,9 +9,7 @@
 
 ======================================================================-->
 
-<telemetry
-  telemetry_base="$BufferManagerIdBase"
->
+<telemetry>
 
   <channel
     id="0"

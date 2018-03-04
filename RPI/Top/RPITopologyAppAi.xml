@@ -6,37 +6,29 @@
 
    <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-   <import_component_type>Ref/PingReceiver/PingReceiverComponentAi.xml</import_component_type>
    <import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
-   <import_component_type>Ref/SendBuffApp/SendBuffComponentAi.xml</import_component_type>
-   <import_component_type>Ref/RecvBuffApp/RecvBuffComponentAi.xml</import_component_type>
    <import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
    <import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
    <import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
-   <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-   <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-   <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
    <import_component_type>Svc/FileUplink/FileUplinkComponentAi.xml</import_component_type>
-   <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
-   <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
    <import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
    <import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
    <import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
+   <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
    <import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
    <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
-   <import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
    <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
    <import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
-    <import_component_type>Drv/LinuxGpioDriver/LinuxGpioDriverComponentAi.xml</import_component_type>
-    <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
-    <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
+   <import_component_type>Drv/LinuxGpioDriver/LinuxGpioDriverComponentAi.xml</import_component_type>
+   <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
+   <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
 
-    <!-- Declare component instances - must match names in Components.hpp -->
+   <!-- Declare component instances - must match names in Components.hpp -->
 
    <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="100"  base_id_window="20" />
    
@@ -68,17 +60,19 @@
    
    <instance namespace="Svc" name="linuxTime" type="Time" base_id="1500"  base_id_window="20" />
    
-   <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="1600"  base_id_window="20" />
+   <instance namespace="Svc" name="linuxTimer" type="LinuxTimer" base_id="1600"  base_id_window="20" />
+
+   <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="1700"  base_id_window="20" />
    
-   <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="1700"  base_id_window="20" />
+   <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="1800"  base_id_window="20" />
    
-   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="1800"  base_id_window="20" />
+   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="1900"  base_id_window="20" />
    
-   <instance namespace="Drv" name="uartDrv" type="LinuxSerialDriver" base_id="1900"  base_id_window="20" />
+   <instance namespace="Drv" name="uartDrv" type="LinuxSerialDriver" base_id="2000"  base_id_window="20" />
    
-   <instance namespace="Drv" name="gpioDrv" type="LinuxGpioDriver" base_id="2000"  base_id_window="20" />
+   <instance namespace="Drv" name="gpioDrv" type="LinuxGpioDriver" base_id="2100"  base_id_window="20" />
    
-   <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2100"  base_id_window="20" />
+   <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2200"  base_id_window="20" />
 
 
    <!-- Command Registration/Dispatch/Reply Connections -->
@@ -180,7 +174,7 @@
    
    <connection name = "SockGndIfLog">
        <source component = "sockGndIf" port = "Log" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
    <connection name = "PrmDbLog">
        <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
@@ -269,7 +263,6 @@
        <source component = "cmdDisp" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
-
 
    <!-- Telemetry Connections -->
 
@@ -367,6 +360,12 @@
    </connection>
 
    <!-- Rate Group Connections -->
+   
+   <!-- Linux Timer Connection -->
+   <connection name = "LinuxTimer">
+       <source component = "linuxTimer" port = "CycleOut" type = "Cycle" num = "0"/>
+        <target component = "rateGroupDriverComp" port = "CycleIn" type = "Cycle" num = "0"/>
+   </connection>
 
    <!-- 10Hz Rate Group -->
    <connection name = "rateGroupDriverComp10Hz">
@@ -392,13 +391,14 @@
    
    <!-- The PingSend output port number should match the PingReturn input port number -->
    <!-- Each port number pair must be unique -->
+   <!-- This order must match the table in Topology.cpp -->
 
    <connection name = "rateGroup10HzCompPingIn">
        <source component = "health" port = "PingSend" type = "Ping" num = "0"/>
         <target component = "rateGroup10HzComp" port = "PingIn" type = "Ping" num = "0"/>
    </connection>
    <connection name = "rateGroup10HzCompPingOut">
-       <source component = "rateGroup10HzComp" port = "pingOut" type = "Ping" num = "0"/>
+       <source component = "rateGroup10HzComp" port = "PingOut" type = "Ping" num = "0"/>
         <target component = "health" port = "PingReturn" type = "Ping" num = "0"/>
    </connection>
 
@@ -407,7 +407,7 @@
         <target component = "rateGroup1HzComp" port = "PingIn" type = "Ping" num = "0"/>
    </connection>
    <connection name = "rateGroup1HzCompPingOut">
-       <source component = "rateGroup1HzComp" port = "pingOut" type = "Ping" num = "0"/>
+       <source component = "rateGroup1HzComp" port = "PingOut" type = "Ping" num = "0"/>
         <target component = "health" port = "PingReturn" type = "Ping" num = "1"/>
    </connection>
    

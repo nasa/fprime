@@ -3,6 +3,7 @@
 
 void constructRPIArchitecture(void);
 void exitTasks(void);
+void constructApp(int port_number, char* hostname);
 
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
@@ -12,6 +13,7 @@ void exitTasks(void);
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Svc/LinuxTime/LinuxTimeImpl.hpp>
+#include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
@@ -39,6 +41,7 @@ extern Svc::SocketGndIfImpl sockGndIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
+extern Svc::LinuxTimerComponentImpl linuxTimer;
 extern Svc::TlmChanImpl chanTlm;
 extern Svc::CommandDispatcherImpl cmdDisp;
 extern Svc::PrmDbImpl prmDb;

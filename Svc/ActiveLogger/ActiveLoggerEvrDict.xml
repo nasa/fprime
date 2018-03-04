@@ -1,5 +1,4 @@
-    <events event_base = "$ActiveLoggerEventsBase">
-        <!-- A test event -->
+    <events>
         <event id="0" name="ALOG_FILE_WRITE_ERR" severity="WARNING_HI" format_string = "Event buffer write failed in stage %d with error %d" >
             <comment>
             Failed to write circular buffer

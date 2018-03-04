@@ -1,18 +1,10 @@
 #include <Components.hpp>
 
-
 #include <Fw/Types/Assert.hpp>
 #include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
-
-#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <getopt.h>
-#include <stdlib.h>
-#include <ctype.h>
-#endif
-// List of context IDs
 
 enum {
     DOWNLINK_PACKET_SIZE = 500,
@@ -22,229 +14,75 @@ enum {
     UPLINK_BUFFER_QUEUE_SIZE = 30
 };
 
-enum {
-        ACTIVE_COMP_1HZ_RG,
-        ACTIVE_COMP_P5HZ_RG,
-        ACTIVE_COMP_P25HZ_RG,
-        ACTIVE_COMP_CMD_DISP,
-        ACTIVE_COMP_CMD_SEQ,
-        ACTIVE_COMP_LOGGER,
-        ACTIVE_COMP_TLM,
-        ACTIVE_COMP_PRMDB,
-        ACTIVE_COMP_FILE_DOWNLINK,
-        ACTIVE_COMP_FILE_UPLINK,
+// Component instances
 
-        ACTIVE_COMP_BLKDRV,
-        ACTIVE_COMP_PING_RECEIVER,
+// Rate Group Dividers for 10Hz and 1Hz
 
-        CYCLER_TASK,
-        NUM_ACTIVE_COMPS
-};
+static NATIVE_INT_TYPE rgDivs[] = {1,10,0};
+Svc::RateGroupDriverImpl rateGroupDriverComp("RGDRV",rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
-// Registry
-#if FW_OBJECT_REGISTRATION == 1
-static Fw::SimpleObjRegistry simpleReg;
-#endif
+// Context array variables are passed to rate group members if needed to distinuish one call from another
+static NATIVE_UINT_TYPE rg10HzContext[] = {0,0,0,0,0,0,0,0,0,0};
+Svc::ActiveRateGroupImpl rateGroup10HzComp("RG10Hz",rg10HzContext,FW_NUM_ARRAY_ELEMENTS(rg10HzContext));
 
-// Component instance pointers
-static NATIVE_INT_TYPE rgDivs[] = {1,2,4};
-Svc::RateGroupDriverImpl rateGroupDriverComp(
-#if FW_OBJECT_NAMES == 1
-                    "RGDvr",
-#endif
-                    rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,0,0,0,0,0,0,0,0};
 
-static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup1Comp
-#if FW_OBJECT_NAMES == 1
-                    ("RG1",rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
-#else
-                    (rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
-#endif
-;
-
-static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup2Comp
-#if FW_OBJECT_NAMES == 1
-                    ("RG2",rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
-#else
-                    (rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
-#endif
-;
-
-static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup3Comp
-#if FW_OBJECT_NAMES == 1
-                    ("RG3",rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
-#else
-                    (rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
-#endif
-;
+Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 
 // Command Components
-Svc::SocketGndIfImpl sockGndIf
-#if FW_OBJECT_NAMES == 1
-                    ("SGIF")
-#endif
-;
-
-// Driver Component
-Drv::BlockDriverImpl blockDrv
-#if FW_OBJECT_NAMES == 1
-                    ("BDRV")
-#endif
-;
-
-// Reference Implementation Components
-
-Ref::RecvBuffImpl recvBuffComp
-#if FW_OBJECT_NAMES == 1
-                    ("RBC")
-#endif
-;
-
-Ref::SendBuffImpl sendBuffComp
-#if FW_OBJECT_NAMES == 1
-                    ("SBC")
-#endif
-;
+Svc::SocketGndIfImpl sockGndIf("SGIF");
 
 #if FW_ENABLE_TEXT_LOGGING
-Svc::ConsoleTextLoggerImpl textLogger
-#if FW_OBJECT_NAMES == 1
-                    ("TLOG")
-#endif
-;
+Svc::ConsoleTextLoggerImpl textLogger("TLOG");
 #endif
 
-Svc::ActiveLoggerImpl eventLogger
-#if FW_OBJECT_NAMES == 1
-                    ("ELOG")
-#endif
-;
+Svc::ActiveLoggerImpl eventLogger("ELOG");
 
-Svc::LinuxTimeImpl linuxTime
-#if FW_OBJECT_NAMES == 1
-                    ("LTIME")
-#endif
-;
+Svc::LinuxTimeImpl linuxTime("LTIME");
 
-Svc::TlmChanImpl chanTlm
-#if FW_OBJECT_NAMES == 1
-                    ("TLM")
-#endif
-;
+Svc::LinuxTimerComponentImpl linuxTimer("LTIMER");
 
-Svc::CommandDispatcherImpl cmdDisp
-#if FW_OBJECT_NAMES == 1
-                    ("CMDDISP")
-#endif
-;
+Svc::TlmChanImpl chanTlm("TLM");
 
+Svc::CommandDispatcherImpl cmdDisp("CMDDISP");
+
+// This needs to be statically allocated
 Fw::MallocAllocator seqMallocator;
-Svc::CmdSequencerComponentImpl cmdSeq
-#if FW_OBJECT_NAMES == 1
-                    ("CMDSEQ")
-#endif
-;
 
-Svc::PrmDbImpl prmDb
-#if FW_OBJECT_NAMES == 1
-                    ("PRM","PrmDb.dat")
-#else
-                    ("PrmDb.dat")
-#endif
-;
+Svc::CmdSequencerComponentImpl cmdSeq("CMDSEQ");
 
-Ref::PingReceiverComponentImpl pingRcvr
-#if FW_OBJECT_NAMES == 1
-                    ("PngRecv")
-#endif
-;
+Svc::PrmDbImpl prmDb("PRM","PrmDb.dat");
 
-Svc::FileUplink fileUplink ("fileUplink");
+Svc::FileUplink fileUplink("fileUplink");
+
 Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
+
 Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
+
 Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
-Ref::SignalGen SG1("signalGen1");
+
 Svc::HealthImpl health("health");
 
-Ref::SignalGen SG2
-#if FW_OBJECT_NAMES == 1
-("signalGen2")
-#endif
-;
+Svc::AssertFatalAdapterComponentImpl fatalAdapter("fatalAdapter");
 
-Ref::SignalGen SG3
-#if FW_OBJECT_NAMES == 1
-("signalGen3")
-#endif
-;
+Svc::FatalHandlerComponentImpl fatalHandler("fatalHandler");
 
-Ref::SignalGen SG4
-#if FW_OBJECT_NAMES == 1
-("signalGen4")
-#endif
-;
+Drv::LinuxSerialDriverComponentImpl uartDrv("uartDrv");
 
-Ref::SignalGen SG5
-#if FW_OBJECT_NAMES == 1
-("signalGen5")
-#endif
-;
+Drv::LinuxSpiDriverComponentImpl spiDrv("spiDrv");
 
-Svc::AssertFatalAdapterComponentImpl fatalAdapter
-#if FW_OBJECT_NAMES == 1
-("fatalAdapter")
-#endif
-;
+Drv::LinuxGpioDriverComponentImpl gpioDrv("gpioDrv");
 
-Svc::FatalHandlerComponentImpl fatalHandler
-#if FW_OBJECT_NAMES == 1
-("fatalHandler")
-#endif
-;
-
-
-#if FW_OBJECT_REGISTRATION == 1
-
-void dumparch(void) {
-    simpleReg.dump();
-}
-
-#if FW_OBJECT_NAMES == 1
-void dumpobj(const char* objName) {
-    simpleReg.dump(objName);
-}
-#endif
-
-#endif
 
 void constructApp(int port_number, char* hostname) {
-
-    localTargetInit();
-
-#if FW_PORT_TRACING
-    Fw::PortBase::setTrace(false);
-#endif    
 
     // Initialize rate group driver
     rateGroupDriverComp.init();
 
     // Initialize the rate groups
-    rateGroup1Comp.init(10,0);
+    rateGroup10HzComp.init(10,0);
+    rateGroup1HzComp.init(10,1);
     
-    rateGroup2Comp.init(10,1);
-    
-    rateGroup3Comp.init(10,2);
-
-    // Initialize block driver
-    blockDrv.init(10);
-
-    // Send/Receive example hardware components
-    recvBuffComp.init();
-    sendBuffComp.init(10);
-
 #if FW_ENABLE_TEXT_LOGGING
     textLogger.init();
 #endif
@@ -252,6 +90,8 @@ void constructApp(int port_number, char* hostname) {
     eventLogger.init(10,0);
 
     linuxTime.init(0);
+
+    linuxTimer.init(0);
 
     chanTlm.init(10,0);
 
@@ -268,53 +108,42 @@ void constructApp(int port_number, char* hostname) {
     fileDownlink.init(30, 0);
     fileUplinkBufferManager.init(0);
     fileDownlinkBufferManager.init(1);
-    SG1.init(10,0);
-	SG2.init(10,1);
-	SG3.init(10,2);
-	SG4.init(10,3);
-	SG5.init(10,4);
 	fatalAdapter.init(0);
+
 	fatalHandler.init(0);
 	health.init(25,0);
-	pingRcvr.init(10);
-    // Connect rate groups to rate group driver
-    constructRefArchitecture();
+
+	uartDrv.init(0);
+	spiDrv.init(0);
+	gpioDrv.init(0);
+
+	constructRPIArchitecture();
 
     /* Register commands */
-    sendBuffComp.regCommands();
-    recvBuffComp.regCommands();
     cmdSeq.regCommands();
     cmdDisp.regCommands();
     eventLogger.regCommands();
     prmDb.regCommands();
     fileDownlink.regCommands();
-    SG1.regCommands();
-    SG2.regCommands();
-    SG3.regCommands();
-    SG4.regCommands();
-	SG5.regCommands();
 	health.regCommands();
-	pingRcvr.regCommands();
 
     // read parameters
     prmDb.readParamFile();
-    recvBuffComp.loadParameters();
-    sendBuffComp.loadParameters();
 
     // set health ping entries
 
+    // This list has to match the connections in RPITopologyAppAi.xml
+
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,rateGroup1Comp.getObjName()}, // 0
-        {3,5,rateGroup2Comp.getObjName()}, // 1
-        {3,5,rateGroup3Comp.getObjName()}, // 2
-        {3,5,cmdDisp.getObjName()}, // 3
-        {3,5,eventLogger.getObjName()}, // 4
-        {3,5,cmdSeq.getObjName()}, // 5
-        {3,5,chanTlm.getObjName()}, // 6
-        {3,5,fileUplink.getObjName()}, // 7
-        {3,5,blockDrv.getObjName()}, // 8
-        {3,5,fileDownlink.getObjName()}, // 9
-        {3,5,pingRcvr.getObjName()}, // 10
+        {3,5,rateGroup10HzComp.getObjName()}, // 0
+        {3,5,rateGroup1HzComp.getObjName()}, // 1
+        {3,5,cmdDisp.getObjName()}, // 2
+        {3,5,cmdSeq.getObjName()}, // 3
+        {3,5,chanTlm.getObjName()}, // 4
+        {3,5,eventLogger.getObjName()}, // 5
+        {3,5,prmDb.getObjName()}, // 6
+        {3,5,fileDownlink.getObjName()}, // 7
+        {3,5,fileUplink.getObjName()}, // 8
     };
 
     // register ping table
@@ -322,68 +151,42 @@ void constructApp(int port_number, char* hostname) {
 
     // Active component startup
     // start rate groups
-    rateGroup1Comp.start(ACTIVE_COMP_1HZ_RG, 120,10 * 1024);
-    rateGroup2Comp.start(ACTIVE_COMP_P5HZ_RG, 119,10 * 1024);
-    rateGroup3Comp.start(ACTIVE_COMP_P25HZ_RG, 118,10 * 1024);
-    // start driver
-    blockDrv.start(ACTIVE_COMP_BLKDRV,140,10*1024);
+    rateGroup10HzComp.start(0, 120,10 * 1024);
+    rateGroup1HzComp.start(0, 119,10 * 1024);
     // start dispatcher
-    cmdDisp.start(ACTIVE_COMP_CMD_DISP,101,10*1024);
+    cmdDisp.start(0,101,10*1024);
     // start sequencer
-    cmdSeq.start(ACTIVE_COMP_CMD_SEQ,100,10*1024);
+    cmdSeq.start(0,100,10*1024);
     // start telemetry
-    eventLogger.start(ACTIVE_COMP_LOGGER,98,10*1024);
-    chanTlm.start(ACTIVE_COMP_TLM,97,10*1024);
-    prmDb.start(ACTIVE_COMP_PRMDB,96,10*1024);
+    eventLogger.start(0,98,10*1024);
+    chanTlm.start(0,97,10*1024);
+    prmDb.start(0,96,10*1024);
 
-    fileDownlink.start(ACTIVE_COMP_FILE_DOWNLINK, 100, 10*1024);
-    fileUplink.start(ACTIVE_COMP_FILE_UPLINK, 100, 10*1024);
+    fileDownlink.start(0, 100, 10*1024);
+    fileUplink.start(0, 100, 10*1024);
 
-    pingRcvr.start(ACTIVE_COMP_PING_RECEIVER, 100, 10*1024);
+//    uartDrv.open("/dev/null",
+//            Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
+//            Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+//            Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+//            true);
+
+    //uartDrv.startReadThread(100,10*1024,-1);
+
+    spiDrv.open(0,0,
+            Drv::SPI_FREQUENCY_1MHZ);
+
+    gpioDrv.open(1,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);
 
-#if FW_OBJECT_REGISTRATION == 1
-    //simpleReg.dump();
-#endif
-
-}
-
-//void run1cycle(void) {
-//    // get timer to call rate group driver
-//    Svc::TimerVal timer;
-//    timer.take();
-//    rateGroupDriverComp.get_CycleIn_InputPort(0)->invoke(timer);
-//    Os::Task::TaskStatus delayStat = Os::Task::delay(1000);
-//    FW_ASSERT(Os::Task::TASK_OK == delayStat,delayStat);
-//}
-
-
-void run1cycle(void) {
-    // call interrupt to emulate a clock
-    blockDrv.callIsr();
-    Os::Task::delay(1000); //10Hz
-}
-
-void runcycles(NATIVE_INT_TYPE cycles) {
-    if (cycles == -1) {
-        while (true) {
-            run1cycle();
-        }
-    }
-
-    for (NATIVE_INT_TYPE cycle = 0; cycle < cycles; cycle++) {
-        run1cycle();
-    }
-
 }
 
 void exitTasks(void) {
-    rateGroup1Comp.exit();
-    rateGroup2Comp.exit();
-    rateGroup3Comp.exit();
-    blockDrv.exit();
+    linuxTimer.quit();
+    rateGroup1HzComp.exit();
+    rateGroup10HzComp.exit();
     cmdDisp.exit();
     eventLogger.exit();
     chanTlm.exit();
@@ -393,71 +196,3 @@ void exitTasks(void) {
     cmdSeq.exit();
 }
 
-void print_usage() {
-	(void) printf("Usage: ./Ref [options]\n-p\tport_number\n-a\thostname/IP address\n");
-}
-
-
-#include <signal.h>
-#include <stdio.h>
-
-volatile sig_atomic_t terminate = 0;
-
-static void sighandler(int signum) {
-	terminate = 1;
-}
-
-int main(int argc, char* argv[]) {
-	U32 port_number;
-	I32 option;
-	char *hostname;
-	port_number = 0;
-	option = 0;
-	hostname = NULL;
-
-	while ((option = getopt(argc, argv, "hp:a:")) != -1){
-		switch(option) {
-			case 'h':
-				print_usage();
-				return 0;
-				break;
-			case 'p':
-				port_number = atoi(optarg);
-				break;
-			case 'a':
-				hostname = optarg;
-				break;
-			case '?':
-				return 1;
-			default:
-				print_usage();
-				return 1;
-		}
-	}
-
-	(void) printf("Hit Ctrl-C to quit\n");
-
-    constructApp(port_number, hostname);
-    //dumparch();
-
-    signal(SIGINT,sighandler);
-    signal(SIGTERM,sighandler);
-
-    int cycle = 0;
-
-    while (!terminate) {
-//        (void) printf("Cycle %d\n",cycle);
-        runcycles(1);
-        cycle++;
-    }
-
-    // stop tasks
-    exitTasks();
-    // Give time for threads to exit
-    (void) printf("Waiting for threads...\n");
-    Os::Task::delay(1000);
-
-    (void) printf("Exiting...\n");
-
-    return 0;
-}

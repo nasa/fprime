@@ -181,7 +181,7 @@ namespace Drv {
      * gpio_set_edge
      ****************************************************************/
 
-    int gpio_set_edge(unsigned int gpio, char *edge)
+    int gpio_set_edge(unsigned int gpio, const char *edge)
     {
         int fd, len;
         char buf[MAX_BUF];

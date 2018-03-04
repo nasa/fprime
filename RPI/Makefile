@@ -6,7 +6,7 @@ export BUILD_ROOT
 
 default: RASPIAN dict_install
 
-rebuild: gen_make RASPIAN_clean RASPIAN dict_install
+rebuild_rpi: gen_make RASPIAN_clean RASPIAN dict_install
 
 include $(BUILD_ROOT)/mk/makefiles/deployment_makefile.mk
 
