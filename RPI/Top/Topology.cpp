@@ -5,6 +5,7 @@
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+#include <RPI/Top/RpiSchedContexts.hpp>
 
 enum {
     DOWNLINK_PACKET_SIZE = 500,
@@ -21,11 +22,12 @@ enum {
 static NATIVE_INT_TYPE rgDivs[] = {1,10,0};
 Svc::RateGroupDriverImpl rateGroupDriverComp("RGDRV",rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
-// Context array variables are passed to rate group members if needed to distinuish one call from another
-static NATIVE_UINT_TYPE rg10HzContext[] = {0,0,0,0,0,0,0,0,0,0};
+// Context array variables are passed to rate group members if needed to distinguish one call from another
+// These context must match the rate group members connected in RPITopologyAi.xml
+static NATIVE_UINT_TYPE rg10HzContext[] = {Rpi::CONTEXT_RPI_DEMO_10Hz,0,0,0,0,0,0,0,0,0};
 Svc::ActiveRateGroupImpl rateGroup10HzComp("RG10Hz",rg10HzContext,FW_NUM_ARRAY_ELEMENTS(rg10HzContext));
 
-static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,0,0,0,0,0,0,0,0};
+static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,0,Rpi::CONTEXT_RPI_DEMO_1Hz,0,0,0,0,0,0};
 
 Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 

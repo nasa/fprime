@@ -167,7 +167,8 @@ ACDEVTEST_MODULES := \
 	Autocoders/templates
 	
 RPI_APP_MODULES := \
-	RPI/Top
+	RPI/Top \
+	RPI/RpiDemo
 	
 RPI_MODULES := \
 	\

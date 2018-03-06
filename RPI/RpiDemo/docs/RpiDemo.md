@@ -1,0 +1,44 @@
+<title>RpiDemo Component Dictionary</title>
+# RpiDemo Component Dictionary
+
+
+## Command List
+
+|Mnemonic|ID|Description|Arg Name|Arg Type|Comment
+|---|---|---|---|---|---|
+|RD_SendString|0 (0x0)|Command to send a string to the UART| | |   
+| | | |text|Fw::CmdStringArg|String to send|                    
+|RD_SetGpio|1 (0x1)|Sets a GPIO port value| | |   
+| | | |output|U32|Output line number|                    
+| | | |value|GpioOutVal|GPIO value|                    
+|RD_GetGpio|2 (0x2)|Gets a GPIO port value| | |   
+| | | |output|U32|Output line number|                    
+| | | |value|GpioInVal|GPIO value|                    
+|RD_SendSpi|3 (0x3)|Sends SPI data, prints read data| | |   
+| | | |data|Fw::CmdStringArg|data to send|                    
+
+## Telemetry Channel List
+
+|Channel Name|ID|Type|Description|
+|---|---|---|---|
+|RD_UartSentBytes|0 (0x0)|U32|Number of bytes sent on the UART|
+|RD_UartRecvBytes|1 (0x1)|U32|Number of bytes sent on the UART|
+|RD_LastMsg|2 (0x2)|string|Last received UART text message|
+|RD_SpiBytes|3 (0x3)|U32|Number of bytes sent on SPI|
+
+## Event List
+
+|Event Name|ID|Description|Arg Name|Arg Type|Arg Size|Description
+|---|---|---|---|---|---|---|
+|RD_UartMsgOut|0 (0x0)|Message sent on UART| | | | |
+| | | |msg|Fw::LogStringArg&|40|The message|    
+|RD_UartMsgIn|1 (0x1)|Message received on UART| | | | |
+| | | |msg|Fw::LogStringArg&|40|The message|    
+|RD_GpioSetVal|2 (0x2)|GPIO set| | | | |
+| | | |output|U32||The output number|    
+| | | |value|GpioOutValEv||GPIO value|    
+|RD_GpioGetVal|3 (0x3)|GPIO get| | | | |
+| | | |output|U32||The output number|    
+| | | |value|GpioInValEv||GPIO value|    
+|RD_SpiMsgIn|4 (0x4)|Message received on UART| | | | |
+| | | |msg|Fw::LogStringArg&|40|The message bytes as text|    
