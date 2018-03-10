@@ -117,6 +117,23 @@ namespace Rpi {
           const Fw::CmdStringArg& data /*!< data to send*/
       );
 
+      //! Implementation for RD_SetLed command handler
+      //! Sets LED state
+      void RD_SetLed_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          LedState value /*!< GPIO value*/
+      );
+
+      //! Implementation for RD_SetLedDivider command handler
+      //! Sets the divided rate of the LED
+      void RD_SetLedDivider_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U32 divider /*!< Divide 10Hz by this number*/
+      );
+
+
       void preamble(void);
 
       // telemetry values
@@ -128,6 +145,12 @@ namespace Rpi {
       // serial buffers
       Fw::Buffer m_recvBuffers[NUM_RPI_UART_BUFFERS];
       BYTE m_uartBuffers[NUM_RPI_UART_BUFFERS][RPI_UART_READ_BUFF_SIZE];
+      // toggle LED divider
+      U32 m_ledDivider;
+      // 10Hz ticks
+      U32 m_1HzTicks;
+      // 10Hz ticks
+      U32 m_10HzTicks;
 
     };
 

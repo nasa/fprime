@@ -4,6 +4,7 @@
 #include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
+#include <Os/File.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <RPI/Top/RpiSchedContexts.hpp>
 
@@ -73,8 +74,13 @@ Drv::LinuxSerialDriverComponentImpl uartDrv("uartDrv");
 
 Drv::LinuxSpiDriverComponentImpl spiDrv("spiDrv");
 
-Drv::LinuxGpioDriverComponentImpl gpioDrv("gpioDrv");
+Drv::LinuxGpioDriverComponentImpl ledDrv("ledDrv");
+Drv::LinuxGpioDriverComponentImpl gpio23Drv("gpio23Drv");
+Drv::LinuxGpioDriverComponentImpl gpio24Drv("gpio24Drv");
+Drv::LinuxGpioDriverComponentImpl gpio25Drv("gpio25Drv");
+Drv::LinuxGpioDriverComponentImpl gpio8Drv("gpio8Drv");
 
+Rpi::RpiDemoComponentImpl rpiDemo("rpiDemo");
 
 void constructApp(int port_number, char* hostname) {
 
@@ -110,14 +116,22 @@ void constructApp(int port_number, char* hostname) {
     fileDownlink.init(30, 0);
     fileUplinkBufferManager.init(0);
     fileDownlinkBufferManager.init(1);
-	fatalAdapter.init(0);
 
+	fatalAdapter.init(0);
 	fatalHandler.init(0);
 	health.init(25,0);
 
 	uartDrv.init(0);
+
 	spiDrv.init(0);
-	gpioDrv.init(0);
+
+	ledDrv.init(0);
+	gpio23Drv.init(0);
+	gpio24Drv.init(0);
+	gpio25Drv.init(0);
+	gpio8Drv.init(0);
+
+	rpiDemo.init(10,0);
 
 	constructRPIArchitecture();
 
@@ -166,6 +180,7 @@ void constructApp(int port_number, char* hostname) {
 
     fileDownlink.start(0, 100, 10*1024);
     fileUplink.start(0, 100, 10*1024);
+    rpiDemo.start(0, 100, 10*1024);
 
 //    uartDrv.open("/dev/null",
 //            Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
@@ -175,10 +190,21 @@ void constructApp(int port_number, char* hostname) {
 
     //uartDrv.startReadThread(100,10*1024,-1);
 
-    spiDrv.open(0,0,
-            Drv::SPI_FREQUENCY_1MHZ);
+    // from here: https://www.raspberrypi.org/forums/viewtopic.php?t=12530
+    // disconnect OK LED from MMC
+    Os::File ledTrigger;
+    ledTrigger.open("/sys/class/leds/led0/trigger",Os::File::OPEN_WRITE);
+    NATIVE_INT_TYPE writeSize = 4;
+    ledTrigger.write("none",writeSize,true);
+    ledTrigger.close();
 
-    gpioDrv.open(1,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    spiDrv.open(0,0,Drv::SPI_FREQUENCY_1MHZ);
+
+    ledDrv.open(16,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
+    gpio8Drv.open(18,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);

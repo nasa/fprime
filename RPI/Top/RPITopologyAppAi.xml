@@ -28,6 +28,8 @@
    <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
    <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
 
+   <import_component_type>RPI/RpiDemo/RpiDemoComponentAi.xml</import_component_type>
+
    <!-- Declare component instances - must match names in Components.hpp -->
 
    <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="100"  base_id_window="20" />
@@ -70,9 +72,14 @@
    
    <instance namespace="Drv" name="uartDrv" type="LinuxSerialDriver" base_id="2000"  base_id_window="20" />
    
-   <instance namespace="Drv" name="gpioDrv" type="LinuxGpioDriver" base_id="2100"  base_id_window="20" />
-   
+   <instance namespace="Drv" name="ledDrv" type="LinuxGpioDriver" base_id="2100"  base_id_window="1" />
+   <instance namespace="Drv" name="gpio23Drv" type="LinuxGpioDriver" base_id="2101"  base_id_window="1" />
+   <instance namespace="Drv" name="gpio24Drv" type="LinuxGpioDriver" base_id="2102"  base_id_window="1" />
+   <instance namespace="Drv" name="gpio25Drv" type="LinuxGpioDriver" base_id="2103"  base_id_window="1" />
+   <instance namespace="Drv" name="gpio8Drv" type="LinuxGpioDriver" base_id="2104"  base_id_window="1" />
    <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2200"  base_id_window="20" />
+
+   <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2300"  base_id_window="20" />
 
 
    <!-- Command Registration/Dispatch/Reply Connections -->
@@ -522,11 +529,12 @@
         <target component = "sockGndIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
    </connection>
    
-   
    <!-- Fault Connectionss -->
    <connection name = "eventLoggerFatalOut">
        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
    </connection>
+   
+   <!-- Driver connections -->
 
 </assembly>

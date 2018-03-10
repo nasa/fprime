@@ -16,17 +16,17 @@
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <comment>An RPI demonstrator component</comment>
     <ports>
-        <port name="Run" data_type="Svc::Sched" kind="async_input" max_number="1">
+        <port name="Run" data_type="Svc::Sched" kind="async_input">
             <comment>
             Input Scheduler port - called at 1Hz and 10Hz
             </comment>
         </port>
-        <port name="GpioWrite" data_type="Drv::GpioWrite" kind="output">
+        <port name="GpioWrite" data_type="Drv::GpioWrite" kind="output"  max_number="3">
             <comment>
             Output Port for writing GPIO values
             </comment>
         </port>
-        <port name="GpioRead" data_type="Drv::GpioRead" kind="output">
+        <port name="GpioRead" data_type="Drv::GpioRead" kind="output"  max_number="2">
             <comment>
             Output Port for reading GPIO values
             </comment>
@@ -65,7 +65,31 @@
                 </arg>          
              </args>
         </command>
-        <command kind="async" opcode="1" mnemonic="RD_SetGpio" >
+        <command kind="async" opcode="1" mnemonic="RD_SetLed" >
+            <comment>
+            Sets LED state
+            </comment>
+            <args>
+                <arg name="value" type="ENUM">
+                    <enum name="LedState">
+                        <item name="LED_STATE_BLINKING"/>
+                        <item name="LED_STATE_OFF"/>
+                    </enum>
+                    <comment>GPIO value</comment>
+                </arg>
+             </args>
+        </command>
+        <command kind="async" opcode="2" mnemonic="RD_SetLedDivider" >
+            <comment>
+            Sets the divided rate of the LED
+            </comment>
+            <args>
+                <arg name="divider" type="U32">
+                    <comment>Divide 10Hz by this number</comment>
+                </arg>          
+             </args>
+        </command>
+        <command kind="async" opcode="3" mnemonic="RD_SetGpio" >
             <comment>
             Sets a GPIO port value
             </comment>
@@ -82,7 +106,7 @@
                 </arg>
              </args>
         </command>
-        <command kind="async" opcode="2" mnemonic="RD_GetGpio" >
+        <command kind="async" opcode="4" mnemonic="RD_GetGpio" >
             <comment>
             Gets a GPIO port value
             </comment>
@@ -98,8 +122,8 @@
                     <comment>GPIO value</comment>
                 </arg>
              </args>
-        </command>
-        <command kind="async" opcode="3" mnemonic="RD_SendSpi" >
+        </command>        
+        <command kind="async" opcode="5" mnemonic="RD_SendSpi" >
             <comment>
             Sends SPI data, prints read data
             </comment>
@@ -129,6 +153,16 @@
         <channel id="3" name="RD_SpiBytes" data_type="U32">
             <comment>
             Number of bytes sent on SPI
+            </comment>
+        </channel>
+        <channel id="4" name="RD_1HzTicks" data_type="U32">
+            <comment>
+            Ticks at 1Hz
+            </comment>
+        </channel>
+        <channel id="5" name="RD_10HzTicks" data_type="U32">
+            <comment>
+            Ticks at 10Hz
             </comment>
         </channel>
     </telemetry>
@@ -194,6 +228,16 @@
             <args>
                 <arg name="msg" type="string" size="40">
                     <comment>The message bytes as text</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="5" name="RD_InvalidGpio" severity="WARNING_HI" format_string = "Invalid GPIO %d requested"  >
+            <comment>
+            Message received on UART
+            </comment>
+            <args>
+                <arg name="msg" type="U32">
+                    <comment>The bad GPIO number</comment>
                 </arg>          
             </args>
         </event>

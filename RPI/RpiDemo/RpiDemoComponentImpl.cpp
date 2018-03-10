@@ -42,6 +42,9 @@ namespace Rpi {
     ,m_uartReadBytes(0)
     ,m_spiBytes(0)
     ,m_currLedVal(GPIO_OUT_CLEAR)
+    ,m_ledDivider(1)
+    ,m_1HzTicks(0)
+    ,m_10HzTicks(0)
   {
 
 
@@ -90,16 +93,22 @@ namespace Rpi {
               this->tlmWrite_RD_UartRecvBytes(this->m_uartReadBytes);
               this->tlmWrite_RD_UartSentBytes(this->m_uartWriteBytes);
               this->tlmWrite_RD_SpiBytes(this->m_spiBytes);
+              this->tlmWrite_RD_1HzTicks(this->m_1HzTicks);
+              this->tlmWrite_RD_10HzTicks(this->m_10HzTicks);
+              this->m_1HzTicks++;
               break;
           case Rpi::CONTEXT_RPI_DEMO_10Hz:
               // Toggle LED value
-              this->GpioWrite_out(0,(this->m_currLedVal == GPIO_OUT_SET)?true:false);
-              this->m_currLedVal = (this->m_currLedVal == GPIO_OUT_SET)?GPIO_OUT_CLEAR:GPIO_OUT_SET;
+              if (this->m_10HzTicks++%this->m_ledDivider == 0) {
+                  this->GpioWrite_out(0,(this->m_currLedVal == GPIO_OUT_SET)?true:false);
+                  this->m_currLedVal = (this->m_currLedVal == GPIO_OUT_SET)?GPIO_OUT_CLEAR:GPIO_OUT_SET;
+              }
               break;
           default:
               FW_ASSERT(0,context);
               break; // for the code checkers
       }
+
   }
 
   void RpiDemoComponentImpl ::
@@ -139,8 +148,11 @@ namespace Rpi {
         const Fw::CmdStringArg& text
     )
   {
-      // Copy string to UART buffer
-
+      Fw::Buffer txt;
+      txt.setsize(text.length());
+      txt.setdata((U64)text.toChar());
+      this->UartWrite_out(0,txt);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
   void RpiDemoComponentImpl ::
@@ -151,8 +163,16 @@ namespace Rpi {
         GpioOutVal value
     )
   {
+      // make sure in range
+      if (output >= (U32)this->getNum_GpioWrite_OutputPorts()) {
+          this->log_WARNING_HI_RD_InvalidGpio(output);
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+          return;
+      }
       // set value of GPIO
-
+      this->GpioWrite_out(output,GPIO_OUT_SET == value?true:false);
+      this->log_ACTIVITY_HI_RD_GpioSetVal(output,value?GPIO_OUT_SET_EV:GPIO_OUT_CLEAR_EV);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
   void RpiDemoComponentImpl ::
@@ -163,7 +183,17 @@ namespace Rpi {
         GpioInVal value
     )
   {
+      // make sure in range
+      if (output >= (U32)this->getNum_GpioRead_OutputPorts()) {
+          this->log_WARNING_HI_RD_InvalidGpio(output);
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+          return;
+      }
       // get value of GPIO input
+      bool val;
+      this->GpioRead_out(output,val);
+      this->log_ACTIVITY_HI_RD_GpioSetVal(output,val?GPIO_OUT_SET_EV:GPIO_OUT_CLEAR_EV);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
   void RpiDemoComponentImpl ::
@@ -174,6 +204,42 @@ namespace Rpi {
     )
   {
       // copy data from string to output buffer
+      char inBuf[data.length()+1];
+      Fw::Buffer in;
+      in.setdata((U64)inBuf);
+      in.setsize(sizeof(inBuf));
+
+      Fw::Buffer out;
+      out.setdata((U64)data.toChar());
+      out.setsize(data.length());
+      this->SpiReadWrite_out(0,out,in);
+      // write reply to event
+      inBuf[sizeof(inBuf)-1] = 0;
+      Fw::LogStringArg arg = inBuf;
+      this->log_ACTIVITY_HI_RD_SpiMsgIn(arg);
+
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
+
+  void RpiDemoComponentImpl ::
+    RD_SetLed_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        LedState value
+    )
+  {
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
+
+  void RpiDemoComponentImpl ::
+    RD_SetLedDivider_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        U32 divider
+    )
+  {
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
+
 
 } // end namespace Rpi

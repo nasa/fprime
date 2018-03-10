@@ -8,13 +8,17 @@
 |---|---|---|---|---|---|
 |RD_SendString|0 (0x0)|Command to send a string to the UART| | |   
 | | | |text|Fw::CmdStringArg|String to send|                    
-|RD_SetGpio|1 (0x1)|Sets a GPIO port value| | |   
+|RD_SetLed|1 (0x1)|Sets LED state| | |   
+| | | |value|LedState|GPIO value|                    
+|RD_SetLedDivider|2 (0x2)|Sets the divided rate of the LED| | |   
+| | | |divider|U32|Divide 10Hz by this number|                    
+|RD_SetGpio|3 (0x3)|Sets a GPIO port value| | |   
 | | | |output|U32|Output line number|                    
 | | | |value|GpioOutVal|GPIO value|                    
-|RD_GetGpio|2 (0x2)|Gets a GPIO port value| | |   
+|RD_GetGpio|4 (0x4)|Gets a GPIO port value| | |   
 | | | |output|U32|Output line number|                    
 | | | |value|GpioInVal|GPIO value|                    
-|RD_SendSpi|3 (0x3)|Sends SPI data, prints read data| | |   
+|RD_SendSpi|5 (0x5)|Sends SPI data, prints read data| | |   
 | | | |data|Fw::CmdStringArg|data to send|                    
 
 ## Telemetry Channel List
@@ -25,6 +29,8 @@
 |RD_UartRecvBytes|1 (0x1)|U32|Number of bytes sent on the UART|
 |RD_LastMsg|2 (0x2)|string|Last received UART text message|
 |RD_SpiBytes|3 (0x3)|U32|Number of bytes sent on SPI|
+|RD_1HzTicks|4 (0x4)|U32|Ticks at 1Hz|
+|RD_10HzTicks|5 (0x5)|U32|Ticks at 10Hz|
 
 ## Event List
 
@@ -42,3 +48,5 @@
 | | | |value|GpioInValEv||GPIO value|    
 |RD_SpiMsgIn|4 (0x4)|Message received on UART| | | | |
 | | | |msg|Fw::LogStringArg&|40|The message bytes as text|    
+|RD_InvalidGpio|5 (0x5)|Message received on UART| | | | |
+| | | |msg|U32||The bad GPIO number|    

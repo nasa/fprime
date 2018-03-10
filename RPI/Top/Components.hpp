@@ -33,6 +33,9 @@ void constructApp(int port_number, char* hostname);
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
 
+// Main app
+#include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
+
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup10HzComp;
 extern Svc::ActiveRateGroupImpl rateGroup1HzComp;
@@ -55,6 +58,14 @@ extern Svc::HealthImpl health;
 
 extern Drv::LinuxSerialDriverComponentImpl uartDrv;
 extern Drv::LinuxSpiDriverComponentImpl spiDrv;
-extern Drv::LinuxGpioDriverComponentImpl gpioDrv;
+extern Drv::LinuxGpioDriverComponentImpl ledDrv;
+extern Drv::LinuxGpioDriverComponentImpl gpio23Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio24Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio25Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio8Drv;
+
+extern Rpi::RpiDemoComponentImpl rpiDemo;
+
+
 
 #endif
