@@ -46,7 +46,9 @@
 |RD_GpioGetVal|3 (0x3)|GPIO get| | | | |
 | | | |output|U32||The output number|    
 | | | |value|GpioInValEv||GPIO value|    
-|RD_SpiMsgIn|4 (0x4)|Message received on UART| | | | |
+|RD_SpiMsgIn|4 (0x4)|Message received on SPI| | | | |
 | | | |msg|Fw::LogStringArg&|40|The message bytes as text|    
-|RD_InvalidGpio|5 (0x5)|Message received on UART| | | | |
-| | | |msg|U32||The bad GPIO number|    
+|RD_InvalidGpio|5 (0x5)|Invalid GPIO requested| | | | |
+| | | |val|U32||The bad GPIO number|    
+|RD_InvalidDivider|6 (0x6)|Message received on UART| | | | |
+| | | |val|U32||The bad divider value|    

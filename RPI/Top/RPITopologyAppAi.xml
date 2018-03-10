@@ -536,5 +536,45 @@
    </connection>
    
    <!-- Driver connections -->
+   
+   <!-- GPIO connections -->
+   <connection name = "gpioLed">
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "0"/>
+        <target component = "ledDrv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
+   </connection>
+   <connection name = "gpio23">
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "1"/>
+        <target component = "gpio23Drv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
+   </connection>
+   <connection name = "gpio24">
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "2"/>
+        <target component = "gpio24Drv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
+   </connection>
+   <connection name = "gpioLed">
+       <source component = "rpiDemo" port = "GpioRead" type = "GpioRead" num = "0"/>
+        <target component = "gpio25Drv" port = "gpioRead" type = "GpioRead" num = "0"/>
+   </connection>
+   <connection name = "gpioLed">
+       <source component = "rpiDemo" port = "GpioRead" type = "GpioRead" num = "1"/>
+        <target component = "gpio8Drv" port = "gpioRead" type = "GpioRead" num = "0"/>
+   </connection>
+   
+   <!-- UART connection -->
+   
+   <connection name = "uartOut">
+       <source component = "rpiDemo" port = "UartWrite" type = "SerialWrite" num = "0"/>
+        <target component = "uartDrv" port = "serialSend" type = "SerialWrite" num = "0"/>
+   </connection>
+   <connection name = "uartIn">
+        <source component = "uartDrv" port = "serialRecv" type = "SerialRead" num = "0"/>
+       <target component = "rpiDemo" port = "UartRead" type = "SerialRead" num = "0"/>
+   </connection>
+   
+   <!-- SPI connection -->
+
+   <connection name = "spi">
+       <source component = "rpiDemo" port = "SpiReadWrite" type = "SpiReadWrite" num = "0"/>
+        <target component = "spiDrv" port = "SpiReadWrite" type = "SpiReadWrite" num = "0"/>
+   </connection>
 
 </assembly>

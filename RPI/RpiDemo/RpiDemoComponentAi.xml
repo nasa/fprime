@@ -223,7 +223,7 @@
         </event>
         <event id="4" name="RD_SpiMsgIn" severity="ACTIVITY_HI" format_string = "Received msg %s on SPI"  >
             <comment>
-            Message received on UART
+            Message received on SPI
             </comment>
             <args>
                 <arg name="msg" type="string" size="40">
@@ -233,11 +233,21 @@
         </event>
         <event id="5" name="RD_InvalidGpio" severity="WARNING_HI" format_string = "Invalid GPIO %d requested"  >
             <comment>
+            Invalid GPIO requested
+            </comment>
+            <args>
+                <arg name="val" type="U32">
+                    <comment>The bad GPIO number</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="6" name="RD_InvalidDivider" severity="WARNING_HI" format_string = "Invalid divider %d requested"  >
+            <comment>
             Message received on UART
             </comment>
             <args>
-                <arg name="msg" type="U32">
-                    <comment>The bad GPIO number</comment>
+                <arg name="val" type="U32">
+                    <comment>The bad divider value</comment>
                 </arg>          
             </args>
         </event>

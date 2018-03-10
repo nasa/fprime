@@ -182,13 +182,16 @@ void constructApp(int port_number, char* hostname) {
     fileUplink.start(0, 100, 10*1024);
     rpiDemo.start(0, 100, 10*1024);
 
-//    uartDrv.open("/dev/null",
-//            Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
-//            Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-//            Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
-//            true);
+    // Use the mini-UART for our serial connection
+    // https://www.raspberrypi.org/documentation/configuration/uart.md
 
-    //uartDrv.startReadThread(100,10*1024,-1);
+    uartDrv.open("/dev/ttyS0",
+            Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
+            Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+            Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+            true);
+
+    uartDrv.startReadThread(100,10*1024,-1);
 
     // from here: https://www.raspberrypi.org/forums/viewtopic.php?t=12530
     // disconnect OK LED from MMC

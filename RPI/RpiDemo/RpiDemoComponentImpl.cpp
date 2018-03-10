@@ -42,6 +42,7 @@ namespace Rpi {
     ,m_uartReadBytes(0)
     ,m_spiBytes(0)
     ,m_currLedVal(GPIO_OUT_CLEAR)
+    ,m_ledOn(true)
     ,m_ledDivider(1)
     ,m_1HzTicks(0)
     ,m_10HzTicks(0)
@@ -99,7 +100,7 @@ namespace Rpi {
               break;
           case Rpi::CONTEXT_RPI_DEMO_10Hz:
               // Toggle LED value
-              if (this->m_10HzTicks++%this->m_ledDivider == 0) {
+              if ( (this->m_10HzTicks++%this->m_ledDivider == 0) and this->m_ledOn) {
                   this->GpioWrite_out(0,(this->m_currLedVal == GPIO_OUT_SET)?true:false);
                   this->m_currLedVal = (this->m_currLedVal == GPIO_OUT_SET)?GPIO_OUT_CLEAR:GPIO_OUT_SET;
               }
@@ -166,7 +167,7 @@ namespace Rpi {
       // make sure in range
       if (output >= (U32)this->getNum_GpioWrite_OutputPorts()) {
           this->log_WARNING_HI_RD_InvalidGpio(output);
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
           return;
       }
       // set value of GPIO
@@ -186,7 +187,7 @@ namespace Rpi {
       // make sure in range
       if (output >= (U32)this->getNum_GpioRead_OutputPorts()) {
           this->log_WARNING_HI_RD_InvalidGpio(output);
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
           return;
       }
       // get value of GPIO input
@@ -228,6 +229,7 @@ namespace Rpi {
         LedState value
     )
   {
+      this->m_ledOn = LED_STATE_BLINKING == value?true:false;
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
@@ -238,6 +240,11 @@ namespace Rpi {
         U32 divider
     )
   {
+      if (divider < 1) {
+          this->log_WARNING_HI_RD_InvalidDivider(divider);
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+      }
+      this->m_ledDivider = divider;
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
