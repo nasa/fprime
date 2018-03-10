@@ -185,7 +185,7 @@ void constructApp(int port_number, char* hostname) {
     // Use the mini-UART for our serial connection
     // https://www.raspberrypi.org/documentation/configuration/uart.md
 
-    uartDrv.open("/dev/ttyS0",
+    uartDrv.open("/dev/serial0",
             Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
             Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
             Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
