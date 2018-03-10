@@ -379,6 +379,10 @@
        <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "0"/>
         <target component = "rateGroup10HzComp" port = "CycleIn" type = "Cycle" num = "0"/>
    </connection>
+   <connection name = "rpiDemo10Hz">
+       <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+        <target component = "rpiDemo" port = "Run" type = "Sched" num = "0"/>
+   </connection>
 
    <!-- 1Hz Rate Group -->
    <connection name = "rateGroupDriverCompRg1Hz">
@@ -392,6 +396,10 @@
    <connection name = "healthRg">
        <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
         <target component = "health" port = "Run" type = "Sched" num = "0"/>
+   </connection>
+   <connection name = "rpiDemo1Hz">
+       <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+        <target component = "rpiDemo" port = "Run" type = "Sched" num = "0"/>
    </connection>
    
    <!-- Health Connections -->
@@ -568,6 +576,10 @@
    <connection name = "uartIn">
         <source component = "uartDrv" port = "serialRecv" type = "SerialRead" num = "0"/>
        <target component = "rpiDemo" port = "UartRead" type = "SerialRead" num = "0"/>
+   </connection>
+   <connection name = "uartBuff">
+       <source component = "rpiDemo" port = "UartBuffers" type = "BufferSend" num = "0"/>
+        <target component = "uartDrv" port = "readBufferSend" type = "BufferSend" num = "0"/>
    </connection>
    
    <!-- SPI connection -->
