@@ -117,23 +117,23 @@ void constructApp(int port_number, char* hostname) {
     fileUplinkBufferManager.init(0);
     fileDownlinkBufferManager.init(1);
 
-	fatalAdapter.init(0);
-	fatalHandler.init(0);
-	health.init(25,0);
+    fatalAdapter.init(0);
+    fatalHandler.init(0);
+    health.init(25,0);
 
-	uartDrv.init(0);
+    uartDrv.init(0);
 
-	spiDrv.init(0);
+    spiDrv.init(0);
 
-	ledDrv.init(0);
-	gpio23Drv.init(0);
-	gpio24Drv.init(0);
-	gpio25Drv.init(0);
-	gpio8Drv.init(0);
+    ledDrv.init(0);
+    gpio23Drv.init(0);
+    gpio24Drv.init(0);
+    gpio25Drv.init(0);
+    gpio8Drv.init(0);
 
-	rpiDemo.init(10,0);
+    rpiDemo.init(10,0);
 
-	constructRPIArchitecture();
+    constructRPIArchitecture();
 
     /* Register commands */
     cmdSeq.regCommands();
@@ -141,7 +141,7 @@ void constructApp(int port_number, char* hostname) {
     eventLogger.regCommands();
     prmDb.regCommands();
     fileDownlink.regCommands();
-	health.regCommands();
+    health.regCommands();
     rpiDemo.regCommands();
 
     // read parameters

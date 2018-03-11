@@ -142,7 +142,7 @@
         <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
    </connection>
    <connection name = "RpiDemoDisp">
-        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
         <target component = "rpiDemo" port = "CmdDisp" type = "Cmd" num = "0"/>
    </connection>
    
@@ -177,7 +177,7 @@
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
    </connection>
 
-   <!-- Sequencer Connections - should not conflict with upling port -->
+   <!-- Sequencer Connections - should not conflict with uplink port -->
 
    <connection name = "SeqCompStatus">
        <source component = "cmdDisp" port = "seqCmdStatus" type = "CmdResponse" num = "1"/>
