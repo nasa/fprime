@@ -142,6 +142,7 @@ void constructApp(int port_number, char* hostname) {
     prmDb.regCommands();
     fileDownlink.regCommands();
 	health.regCommands();
+    rpiDemo.regCommands();
 
     // read parameters
     prmDb.readParamFile();
