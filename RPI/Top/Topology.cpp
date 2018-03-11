@@ -28,7 +28,7 @@ Svc::RateGroupDriverImpl rateGroupDriverComp("RGDRV",rgDivs,FW_NUM_ARRAY_ELEMENT
 static NATIVE_UINT_TYPE rg10HzContext[] = {Rpi::CONTEXT_RPI_DEMO_10Hz,0,0,0,0,0,0,0,0,0};
 Svc::ActiveRateGroupImpl rateGroup10HzComp("RG10Hz",rg10HzContext,FW_NUM_ARRAY_ELEMENTS(rg10HzContext));
 
-static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,0,Rpi::CONTEXT_RPI_DEMO_1Hz,0,0,0,0,0,0};
+static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,Rpi::CONTEXT_RPI_DEMO_1Hz,0,0,0,0,0,0,0};
 
 Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 

@@ -380,7 +380,7 @@
         <target component = "rateGroup10HzComp" port = "CycleIn" type = "Cycle" num = "0"/>
    </connection>
    <connection name = "rpiDemo10Hz">
-       <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+       <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
         <target component = "rpiDemo" port = "Run" type = "Sched" num = "0"/>
    </connection>
 
