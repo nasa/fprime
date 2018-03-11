@@ -131,6 +131,7 @@ namespace Rpi {
       Fw::LogStringArg evrMsg(uMsg);
       this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
       this->m_lastUartMsg = uMsg;
+      this->m_uartReadBytes += serBuffer.getsize();
 
       // reset buffer size
       serBuffer.setsize(RPI_UART_READ_BUFF_SIZE);
@@ -153,6 +154,7 @@ namespace Rpi {
       txt.setsize(text.length());
       txt.setdata((U64)text.toChar());
       this->UartWrite_out(0,txt);
+      this->m_uartWriteBytes += text.length();
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
@@ -218,6 +220,7 @@ namespace Rpi {
       inBuf[sizeof(inBuf)-1] = 0;
       Fw::LogStringArg arg = inBuf;
       this->log_ACTIVITY_HI_RD_SpiMsgIn(arg);
+      this->m_spiBytes += data.length();
 
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
