@@ -208,7 +208,7 @@ void constructApp(int port_number, char* hostname) {
     gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-    gpio8Drv.open(18,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
+    gpio8Drv.open(4,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);
