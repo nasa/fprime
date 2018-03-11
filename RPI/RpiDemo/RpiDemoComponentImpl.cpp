@@ -43,7 +43,7 @@ namespace Rpi {
     ,m_spiBytes(0)
     ,m_currLedVal(GPIO_OUT_CLEAR)
     ,m_ledOn(true)
-    ,m_ledDivider(1)
+    ,m_ledDivider(10) // start at 1Hz
     ,m_1HzTicks(0)
     ,m_10HzTicks(0)
   {
@@ -216,8 +216,11 @@ namespace Rpi {
       out.setdata((U64)data.toChar());
       out.setsize(data.length());
       this->SpiReadWrite_out(0,out,in);
-      // write reply to event
+      for (NATIVE_UINT_TYPE byte = 0; byte < sizeof(inBuf); byte++) {
+          inBuf[byte] = isalpha(inBuf[byte])?inBuf[byte]:'*';
+      }
       inBuf[sizeof(inBuf)-1] = 0;
+      // write reply to event
       Fw::LogStringArg arg = inBuf;
       this->log_ACTIVITY_HI_RD_SpiMsgIn(arg);
       this->m_spiBytes += data.length();
