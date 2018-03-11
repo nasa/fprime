@@ -204,7 +204,7 @@ void constructApp(int port_number, char* hostname) {
 
     spiDrv.open(0,0,Drv::SPI_FREQUENCY_1MHZ);
 
-    //ledDrv.open(16,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    ledDrv.open(5,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio23Drv.open(0,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio24Drv.open(2,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio25Drv.open(3,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
