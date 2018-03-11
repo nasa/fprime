@@ -120,10 +120,10 @@ namespace Rpi {
     )
   {
       // convert incoming data to string. If it is not printable, set character to '*'
-      char uMsg[serBuffer.getsize()];
+      char uMsg[serBuffer.getsize()+1];
       char* bPtr = (char*)serBuffer.getdata();
 
-      for (NATIVE_UINT_TYPE byte = 0; byte < sizeof(uMsg); byte++) {
+      for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getsize(); byte++) {
           uMsg[byte] = isalpha(bPtr[byte])?bPtr[byte]:'*';
       }
       uMsg[sizeof(uMsg)-1] = 0;
