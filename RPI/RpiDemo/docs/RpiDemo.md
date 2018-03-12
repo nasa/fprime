@@ -17,7 +17,6 @@
 | | | |value|GpioOutVal|GPIO value|                    
 |RD_GetGpio|4 (0x4)|Gets a GPIO port value| | |   
 | | | |output|U32|Output line number|                    
-| | | |value|GpioInVal|GPIO value|                    
 |RD_SendSpi|5 (0x5)|Sends SPI data, prints read data| | |   
 | | | |data|Fw::CmdStringArg|data to send|                    
 

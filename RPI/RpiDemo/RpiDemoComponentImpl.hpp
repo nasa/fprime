@@ -105,8 +105,7 @@ namespace Rpi {
       void RD_GetGpio_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U32 output, /*!< Output line number*/
-          GpioInVal value /*!< GPIO value*/
+          U32 output /*!< Output line number*/
       );
 
       //! Implementation for RD_SendSpi command handler

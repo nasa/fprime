@@ -101,7 +101,7 @@ namespace Rpi {
           case Rpi::CONTEXT_RPI_DEMO_10Hz:
               // Toggle LED value
               if ( (this->m_10HzTicks++%this->m_ledDivider == 0) and this->m_ledOn) {
-                  this->GpioWrite_out(0,(this->m_currLedVal == GPIO_OUT_SET)?true:false);
+                  this->GpioWrite_out(2,(this->m_currLedVal == GPIO_OUT_SET)?true:false);
                   this->m_currLedVal = (this->m_currLedVal == GPIO_OUT_SET)?GPIO_OUT_CLEAR:GPIO_OUT_SET;
               }
               break;
@@ -182,8 +182,7 @@ namespace Rpi {
     RD_GetGpio_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        U32 output,
-        GpioInVal value
+        U32 output
     )
   {
       // make sure in range

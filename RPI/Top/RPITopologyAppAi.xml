@@ -666,17 +666,17 @@
    <!-- Driver connections -->
    
    <!-- GPIO connections -->
-   <connection name = "gpioLed">
-       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "0"/>
-        <target component = "ledDrv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
-   </connection>
    <connection name = "gpio23">
-       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "1"/>
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "0"/>
         <target component = "gpio23Drv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
    </connection>
    <connection name = "gpio24">
-       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "2"/>
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "1"/>
         <target component = "gpio24Drv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
+   </connection>
+   <connection name = "gpioLed">
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "2"/>
+        <target component = "ledDrv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
    </connection>
    <connection name = "gpioLed">
        <source component = "rpiDemo" port = "GpioRead" type = "GpioRead" num = "0"/>

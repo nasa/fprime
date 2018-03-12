@@ -114,13 +114,6 @@
                 <arg name="output" type="U32">
                     <comment>Output line number</comment>
                 </arg>          
-                <arg name="value" type="ENUM">
-                    <enum name="GpioInVal">
-                        <item name="GPIO_IN_SET"/>
-                        <item name="GPIO_IN_CLEAR"/>
-                    </enum>
-                    <comment>GPIO value</comment>
-                </arg>
              </args>
         </command>        
         <command kind="async" opcode="5" mnemonic="RD_SendSpi" >
