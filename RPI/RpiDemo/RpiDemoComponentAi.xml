@@ -99,8 +99,8 @@
                 </arg>          
                 <arg name="value" type="ENUM">
                     <enum name="GpioOutVal">
-                        <item name="GPIO_OUT_SET"/>
                         <item name="GPIO_OUT_CLEAR"/>
+                        <item name="GPIO_OUT_SET"/>
                     </enum>
                     <comment>GPIO value</comment>
                 </arg>
@@ -190,8 +190,8 @@
                 </arg>          
                 <arg name="value" type="ENUM">
                     <enum name="GpioOutValEv">
-                        <item name="GPIO_OUT_SET_EV"/>
                         <item name="GPIO_OUT_CLEAR_EV"/>
+                        <item name="GPIO_OUT_SET_EV"/>
                     </enum>
                     <comment>GPIO value</comment>
                 </arg>
@@ -207,8 +207,8 @@
                 </arg>          
                 <arg name="value" type="ENUM">
                     <enum name="GpioInValEv">
-                        <item name="GPIO_IN_SET_EV"/>
                         <item name="GPIO_IN_CLEAR_EV"/>
+                        <item name="GPIO_IN_SET_EV"/>
                     </enum>
                     <comment>GPIO value</comment>
                 </arg>

@@ -174,7 +174,7 @@ namespace Rpi {
       }
       // set value of GPIO
       this->GpioWrite_out(output,GPIO_OUT_SET == value?true:false);
-      this->log_ACTIVITY_HI_RD_GpioSetVal(output,value?GPIO_OUT_SET_EV:GPIO_OUT_CLEAR_EV);
+      this->log_ACTIVITY_HI_RD_GpioSetVal(output,GPIO_OUT_SET == value?GPIO_OUT_SET_EV:GPIO_OUT_CLEAR_EV);
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
@@ -194,7 +194,7 @@ namespace Rpi {
       // get value of GPIO input
       bool val;
       this->GpioRead_out(output,val);
-      this->log_ACTIVITY_HI_RD_GpioSetVal(output,val?GPIO_OUT_SET_EV:GPIO_OUT_CLEAR_EV);
+      this->log_ACTIVITY_HI_RD_GpioGetVal(output,val?GPIO_IN_SET_EV:GPIO_IN_CLEAR_EV);
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
