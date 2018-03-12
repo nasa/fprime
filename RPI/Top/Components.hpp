@@ -62,7 +62,7 @@ extern Drv::LinuxGpioDriverComponentImpl ledDrv;
 extern Drv::LinuxGpioDriverComponentImpl gpio23Drv;
 extern Drv::LinuxGpioDriverComponentImpl gpio24Drv;
 extern Drv::LinuxGpioDriverComponentImpl gpio25Drv;
-extern Drv::LinuxGpioDriverComponentImpl gpio8Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio17Drv;
 
 extern Rpi::RpiDemoComponentImpl rpiDemo;
 

@@ -76,7 +76,7 @@
    <instance namespace="Drv" name="gpio23Drv" type="LinuxGpioDriver" base_id="2101"  base_id_window="1" />
    <instance namespace="Drv" name="gpio24Drv" type="LinuxGpioDriver" base_id="2102"  base_id_window="1" />
    <instance namespace="Drv" name="gpio25Drv" type="LinuxGpioDriver" base_id="2103"  base_id_window="1" />
-   <instance namespace="Drv" name="gpio8Drv" type="LinuxGpioDriver" base_id="2104"  base_id_window="1" />
+   <instance namespace="Drv" name="gpio17Drv" type="LinuxGpioDriver" base_id="2104"  base_id_window="1" />
    <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2200"  base_id_window="20" />
 
    <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2300"  base_id_window="20" />
@@ -272,7 +272,7 @@
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
    <connection name = "gpio8Log">
-       <source component = "gpio8Drv" port = "Log" type = "Log" num = "0"/>
+       <source component = "gpio17Drv" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
    
@@ -343,7 +343,7 @@
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
    <connection name = "gpio8TextLog">
-       <source component = "gpio8Drv" port = "LogText" type = "LogText" num = "0"/>
+       <source component = "gpio17Drv" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
 
@@ -481,8 +481,8 @@
        <source component = "gpio25Drv" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
-   <connection name = "Gpio8DrvTime">
-       <source component = "gpio8Drv" port = "Time" type = "Time" num = "0"/>
+   <connection name = "Gpio17DrvTime">
+       <source component = "gpio17Drv" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
 
@@ -666,6 +666,10 @@
    <!-- Driver connections -->
    
    <!-- GPIO connections -->
+   <connection name = "gpioLed">
+       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "2"/>
+        <target component = "ledDrv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
+   </connection>
    <connection name = "gpio23">
        <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "0"/>
         <target component = "gpio23Drv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
@@ -674,17 +678,13 @@
        <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "1"/>
         <target component = "gpio24Drv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
    </connection>
-   <connection name = "gpioLed">
-       <source component = "rpiDemo" port = "GpioWrite" type = "GpioWrite" num = "2"/>
-        <target component = "ledDrv" port = "gpioWrite" type = "GpioWrite" num = "0"/>
-   </connection>
-   <connection name = "gpioLed">
+   <connection name = "gpio25">
        <source component = "rpiDemo" port = "GpioRead" type = "GpioRead" num = "0"/>
         <target component = "gpio25Drv" port = "gpioRead" type = "GpioRead" num = "0"/>
    </connection>
-   <connection name = "gpioLed">
+   <connection name = "gpio17">
        <source component = "rpiDemo" port = "GpioRead" type = "GpioRead" num = "1"/>
-        <target component = "gpio8Drv" port = "gpioRead" type = "GpioRead" num = "0"/>
+        <target component = "gpio17Drv" port = "gpioRead" type = "GpioRead" num = "0"/>
    </connection>
    
    <!-- UART connection -->

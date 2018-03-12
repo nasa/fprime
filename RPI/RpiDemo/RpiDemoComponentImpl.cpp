@@ -166,14 +166,22 @@ namespace Rpi {
         GpioOutVal value
     )
   {
-      // make sure in range
-      if (output >= (U32)this->getNum_GpioWrite_OutputPorts()) {
-          this->log_WARNING_HI_RD_InvalidGpio(output);
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
-          return;
+      NATIVE_INT_TYPE port;
+      // convert to connected ports
+      switch (output) {
+          case 23:
+              port = 0;
+              break;
+          case 24:
+              port = 1;
+              break; // good values
+          default: // bad values
+              this->log_WARNING_HI_RD_InvalidGpio(output);
+              this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+              return;
       }
       // set value of GPIO
-      this->GpioWrite_out(output,GPIO_OUT_SET == value?true:false);
+      this->GpioWrite_out(port,GPIO_OUT_SET == value?true:false);
       this->log_ACTIVITY_HI_RD_GpioSetVal(output,GPIO_OUT_SET == value?GPIO_OUT_SET_EV:GPIO_OUT_CLEAR_EV);
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
@@ -185,15 +193,23 @@ namespace Rpi {
         U32 output
     )
   {
-      // make sure in range
-      if (output >= (U32)this->getNum_GpioRead_OutputPorts()) {
-          this->log_WARNING_HI_RD_InvalidGpio(output);
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
-          return;
+      NATIVE_INT_TYPE port;
+      // convert to connected ports
+      switch (output) {
+          case 25:
+              port = 0;
+              break;
+          case 17:
+              port = 1;
+              break; // good values
+          default: // bad values
+              this->log_WARNING_HI_RD_InvalidGpio(output);
+              this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+              return;
       }
       // get value of GPIO input
       bool val;
-      this->GpioRead_out(output,val);
+      this->GpioRead_out(port,val);
       this->log_ACTIVITY_HI_RD_GpioGetVal(output,val?GPIO_IN_SET_EV:GPIO_IN_CLEAR_EV);
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }

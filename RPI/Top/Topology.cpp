@@ -78,7 +78,7 @@ Drv::LinuxGpioDriverComponentImpl ledDrv("ledDrv");
 Drv::LinuxGpioDriverComponentImpl gpio23Drv("gpio23Drv");
 Drv::LinuxGpioDriverComponentImpl gpio24Drv("gpio24Drv");
 Drv::LinuxGpioDriverComponentImpl gpio25Drv("gpio25Drv");
-Drv::LinuxGpioDriverComponentImpl gpio8Drv("gpio8Drv");
+Drv::LinuxGpioDriverComponentImpl gpio17Drv("gpio17Drv");
 
 Rpi::RpiDemoComponentImpl rpiDemo("rpiDemo");
 
@@ -129,7 +129,7 @@ void constructApp(int port_number, char* hostname) {
     gpio23Drv.init(0);
     gpio24Drv.init(0);
     gpio25Drv.init(0);
-    gpio8Drv.init(0);
+    gpio17Drv.init(0);
 
     rpiDemo.init(10,0);
 
@@ -208,7 +208,7 @@ void constructApp(int port_number, char* hostname) {
     gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-    gpio8Drv.open(17,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
+    gpio17Drv.open(17,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);
