@@ -133,6 +133,7 @@ namespace Rpi {
       );
 
 
+      // This will be called once when task starts up
       void preamble(void);
 
       // telemetry values

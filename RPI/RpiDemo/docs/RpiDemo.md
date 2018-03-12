@@ -51,3 +51,5 @@
 | | | |val|U32||The bad GPIO number|    
 |RD_InvalidDivider|6 (0x6)|Message received on UART| | | | |
 | | | |val|U32||The bad divider value|    
+|RD_LedBlinkState|7 (0x7)|Blink state set to new value| | | | |
+| | | |val|LedStatePrmEv||The blink state|    

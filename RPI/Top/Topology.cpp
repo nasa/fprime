@@ -166,6 +166,9 @@ void constructApp(int port_number, char* hostname) {
     // register ping table
     health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
 
+    // load parameters
+    rpiDemo.loadParameters();
+
     // Active component startup
     // start rate groups
     rateGroup10HzComp.start(0, 120,10 * 1024);

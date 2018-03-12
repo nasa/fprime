@@ -74,6 +74,21 @@ namespace Rpi {
           this->m_recvBuffers[buffer].setsize(RPI_UART_READ_BUFF_SIZE);
           this->UartBuffers_out(0,this->m_recvBuffers[buffer]);
       }
+      // check initial state parameter
+      Fw::ParamValid valid;
+      LedStatePrm initState = paramGet_RD_PrmLedInitState(valid);
+      // check status
+      switch (valid) {
+          // if default or valid, use stored value
+          case Fw::PARAM_DEFAULT:
+          case Fw::PARAM_VALID:
+              this->m_ledOn = (LED_STATE_BLINKING_PRM == initState)?true:false;
+              this->log_ACTIVITY_HI_RD_LedBlinkState(this->m_ledOn?LED_STATE_BLINKING_EV:LED_STATE_OFF_EV);
+              break;
+          default:
+              // use constructor default
+              break;
+      }
   }
 
   // ----------------------------------------------------------------------
@@ -251,6 +266,7 @@ namespace Rpi {
     )
   {
       this->m_ledOn = LED_STATE_BLINKING == value?true:false;
+      this->log_ACTIVITY_HI_RD_LedBlinkState(this->m_ledOn?LED_STATE_BLINKING_EV:LED_STATE_OFF_EV);
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 

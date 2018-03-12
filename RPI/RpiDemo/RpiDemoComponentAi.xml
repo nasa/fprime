@@ -244,11 +244,29 @@
                 </arg>          
             </args>
         </event>
+        <event id="7" name="RD_LedBlinkState" severity="ACTIVITY_HI" format_string = "LED blink state set to %d"  >
+            <comment>
+            Blink state set to new value
+            </comment>
+            <args>
+                <arg name="val" type="ENUM">
+		            <enum name="LedStatePrmEv">
+		                <item name="LED_STATE_BLINKING_EV"/>
+		                <item name="LED_STATE_OFF_EV"/>
+		            </enum>
+                    <comment>The blink state</comment>
+                </arg>          
+            </args>
+        </event>
     </events>
     <parameters>
-        <parameter id="0" name="RD_PrmLedDivide" data_type="U32" default="10" set_opcode="10" save_opcode="11">
+        <parameter id="0" name="RD_PrmLedInitState" data_type="ENUM" default="LED_STATE_BLINKING_PRM" set_opcode="10" save_opcode="11">
+            <enum name="LedStatePrm">
+                <item name="LED_STATE_BLINKING_PRM"/>
+                <item name="LED_STATE_OFF_PRM"/>
+            </enum>
             <comment>
-            Parameter to determine divisor of blinking LED
+            Parameter to determine intial state of blinking LED
             </comment>
         </parameter>
     </parameters>

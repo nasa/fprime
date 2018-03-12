@@ -396,12 +396,14 @@
 
    <!-- Parameter Connections -->
    
-   <!-- 
-   <connection name = "Connection10">
-       <source component = "recvBuffComp" port = "ParamGet" type = "PrmGet" num = "0"/>
+   <connection name = "RpiPrmGet">
+       <source component = "rpiDemo" port = "ParamGet" type = "PrmGet" num = "0"/>
         <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
    </connection>
-    -->
+   <connection name = "RpiPrmSet">
+       <source component = "rpiDemo" port = "ParamSet" type = "PrmSet" num = "0"/>
+        <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
+   </connection>
 
    <!-- Time Connections -->
 
