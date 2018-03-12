@@ -194,17 +194,9 @@ void constructApp(int port_number, char* hostname) {
 
     uartDrv.startReadThread(100,10*1024,-1);
 
-    // from here: https://www.raspberrypi.org/forums/viewtopic.php?t=12530
-    // disconnect OK LED from MMC
-    Os::File ledTrigger;
-    ledTrigger.open("/sys/class/leds/led0/trigger",Os::File::OPEN_WRITE);
-    NATIVE_INT_TYPE writeSize = 4;
-    ledTrigger.write("none",writeSize,true);
-    ledTrigger.close();
-
     spiDrv.open(0,0,Drv::SPI_FREQUENCY_1MHZ);
 
-    ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    ledDrv.open(16,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
@@ -216,6 +208,7 @@ void constructApp(int port_number, char* hostname) {
 }
 
 void exitTasks(void) {
+    uartDrv.quitReadThread();
     linuxTimer.quit();
     rateGroup1HzComp.exit();
     rateGroup10HzComp.exit();
@@ -226,5 +219,6 @@ void exitTasks(void) {
     fileUplink.exit();
     fileDownlink.exit();
     cmdSeq.exit();
+    rpiDemo.exit();
 }
 
