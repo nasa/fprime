@@ -288,11 +288,15 @@ namespace Drv {
       // Configure:
       stat = gpio_export(gpio);
       if (-1 == stat) {
-          this->log_WARNING_HI_GP_OpenError(gpio,this->m_fd);
+          Fw::LogStringArg arg = strerror(errno);
+          this->log_WARNING_HI_GP_OpenError(gpio,stat,arg);
+          return false;
       }
       stat = gpio_set_dir(gpio, direction == GPIO_OUT ? 1 : 0);
       if (-1 == stat) {
-          this->log_WARNING_HI_GP_OpenError(gpio,this->m_fd);
+          Fw::LogStringArg arg = strerror(errno);
+          this->log_WARNING_HI_GP_OpenError(gpio,stat,arg);
+          return false;
       }
 
       // If needed, set edge to rising in intTaskEntry()
@@ -300,7 +304,8 @@ namespace Drv {
       // Open:
       this->m_fd = gpio_fd_open(gpio);
       if (-1 == this->m_fd) {
-          this->log_WARNING_HI_GP_OpenError(gpio,this->m_fd);
+          Fw::LogStringArg arg = strerror(errno);
+          this->log_WARNING_HI_GP_OpenError(gpio,errno,arg);
       } else {
           this->m_gpio = gpio;
       }
