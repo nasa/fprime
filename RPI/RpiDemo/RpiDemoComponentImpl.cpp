@@ -280,6 +280,7 @@ namespace Rpi {
       if (divider < 1) {
           this->log_WARNING_HI_RD_InvalidDivider(divider);
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+          return;
       }
       this->m_ledDivider = divider;
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
