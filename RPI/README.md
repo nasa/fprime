@@ -100,6 +100,10 @@ The demo consists of a single component along with all the infrastructure compon
 
 12. Some tips:
 
+ * You can script a set of commands through the ground system. For an example, run from the RPI directory:
+ ```
+ ./run_pi_cmds.sh scripts/tests/RPI_cmds.txt
+ ```
  * If you would like to add your own components, read the User's manual on how to add new directories to the build.
  * If you have defined some component XML, you can generate an empty implementation class by typing `make impl`. 
  * If you would like to know how many lines of code you have, you can type `make sloc` in the component directory or `make RASPIAN_sloc` in the `RPI` deployment directory.
