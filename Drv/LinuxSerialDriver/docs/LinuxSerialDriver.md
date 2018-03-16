@@ -16,6 +16,7 @@
 |DR_OpenError|0 (0x0)|UART open error| | | | |
 | | | |device|Fw::LogStringArg&|40|The device|    
 | | | |error|I32||The error code|    
+| | | |name|Fw::LogStringArg&|40|error string|    
 |DR_ConfigError|1 (0x1)|UART config error| | | | |
 | | | |device|Fw::LogStringArg&|40|The device|    
 | | | |error|I32||The error code|    

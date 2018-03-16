@@ -78,7 +78,8 @@ namespace Drv {
       if (fd == -1) {
           DEBUG_PRINT("open UART device %s failed.\n", device);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,this->m_fd);
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,this->m_fd,_err);
           return false;
       } else {
           DEBUG_PRINT("Successfully opened UART device %s fd %d\n", device, fd);
@@ -94,7 +95,8 @@ namespace Drv {
           DEBUG_PRINT("tcgetattr failed: (%d): %s\n",stat,strerror(errno));
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
           return false;
       } else {
           DEBUG_PRINT("tcgetattr passed.\n");
@@ -119,7 +121,8 @@ namespace Drv {
           DEBUG_PRINT("tcsetattr failed: (%d): %s\n",stat,strerror(errno));
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
           return false;
       } else {
           DEBUG_PRINT("tcsetattr passed.\n");
@@ -135,7 +138,8 @@ namespace Drv {
               DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
               close(fd);
               Fw::LogStringArg _arg = device;
-              this->log_WARNING_HI_DR_OpenError(_arg,fd);
+              Fw::LogStringArg _err = strerror(errno);
+              this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
               return false;
           }
 
@@ -147,7 +151,8 @@ namespace Drv {
               DEBUG_PRINT("tcsetattr UART fd %d failed\n", fd);
               close(fd);
               Fw::LogStringArg _arg = device;
-              this->log_WARNING_HI_DR_OpenError(_arg,fd);
+              Fw::LogStringArg _err = strerror(errno);
+              this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
               return false;
           }
       }
@@ -191,7 +196,8 @@ namespace Drv {
           DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
           return false;
       }
 
@@ -251,7 +257,8 @@ namespace Drv {
           DEBUG_PRINT("tcsetattr UART fd %d failed\n", fd);
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
           return false;
       }
 
