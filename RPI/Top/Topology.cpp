@@ -197,8 +197,6 @@ void constructApp(int port_number, char* hostname) {
         return;
     }
 
-    uartDrv.startReadThread(100,10*1024,-1);
-
     if (not spiDrv.open(0,0,Drv::SPI_FREQUENCY_1MHZ)) {
         return;
     }
@@ -222,6 +220,8 @@ void constructApp(int port_number, char* hostname) {
     if (not gpio17Drv.open(17,Drv::LinuxGpioDriverComponentImpl::GPIO_IN)) {
         return;
     }
+
+    uartDrv.startReadThread(100,10*1024,-1);
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);
