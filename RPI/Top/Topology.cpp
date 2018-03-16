@@ -206,10 +206,22 @@ void constructApp(int port_number, char* hostname) {
     if (not ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
         return;
     }
-    gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-    gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-    gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-    gpio17Drv.open(17,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
+
+    if (not gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+        return;
+    }
+
+    if (not gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+        return;
+    }
+
+    if (not gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN)) {
+        return;
+    }
+
+    if (not gpio17Drv.open(17,Drv::LinuxGpioDriverComponentImpl::GPIO_IN)) {
+        return;
+    }
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);
