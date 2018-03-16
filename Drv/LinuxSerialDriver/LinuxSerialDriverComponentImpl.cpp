@@ -41,7 +41,7 @@ namespace Drv {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  void LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
+  bool LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
 
       /*
        Their config:
@@ -79,7 +79,7 @@ namespace Drv {
           DEBUG_PRINT("open UART device %s failed.\n", device);
           Fw::LogStringArg _arg = device;
           this->log_WARNING_HI_DR_OpenError(_arg,this->m_fd);
-          return;
+          return false;
       } else {
           DEBUG_PRINT("Successfully opened UART device %s fd %d\n", device, fd);
       }
@@ -95,7 +95,7 @@ namespace Drv {
           close(fd);
           Fw::LogStringArg _arg = device;
           this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          return false;
       } else {
           DEBUG_PRINT("tcgetattr passed.\n");
       }
@@ -120,7 +120,7 @@ namespace Drv {
           close(fd);
           Fw::LogStringArg _arg = device;
           this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          return false;
       } else {
           DEBUG_PRINT("tcsetattr passed.\n");
       }
@@ -136,7 +136,7 @@ namespace Drv {
               close(fd);
               Fw::LogStringArg _arg = device;
               this->log_WARNING_HI_DR_OpenError(_arg,fd);
-              return;
+              return false;
           }
 
           // modify flow control flags
@@ -148,7 +148,7 @@ namespace Drv {
               close(fd);
               Fw::LogStringArg _arg = device;
               this->log_WARNING_HI_DR_OpenError(_arg,fd);
-              return;
+              return false;
           }
       }
 
@@ -192,7 +192,7 @@ namespace Drv {
           close(fd);
           Fw::LogStringArg _arg = device;
           this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          return false;
       }
 
       // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Reciever
@@ -252,12 +252,13 @@ namespace Drv {
           close(fd);
           Fw::LogStringArg _arg = device;
           this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          return false;
       }
 
       // All done!
       Fw::LogStringArg _arg = device;
       this->log_ACTIVITY_HI_DR_PortOpened(_arg);
+      return true;
 
   }
 

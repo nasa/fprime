@@ -76,7 +76,7 @@ namespace Drv {
       } UartParity;
 
       // Open device with specified baud and flow control.
-      void open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block);
+      bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block);
 
       //! start the serial poll thread.
       //! buffSize is the max receive buffer size
