@@ -15,3 +15,7 @@ Documentation for the Reference example can be found [here.](Ref/docs/sdd.md)
 Release 1.01
 
 Updated contributor list. No code changes. 
+
+Release 1.1
+
+Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
