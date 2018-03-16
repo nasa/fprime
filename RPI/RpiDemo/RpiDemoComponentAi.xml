@@ -94,8 +94,12 @@
             Sets a GPIO port value
             </comment>
             <args>
-                <arg name="output" type="U32">
-                    <comment>Output line number</comment>
+                <arg name="output" type="ENUM">
+                    <enum name="GpioOutNum">
+                        <item name="GPIO_OUT_23"/>
+                        <item name="GPIO_OUT_24"/>
+                    </enum>
+                    <comment>Output GPIO</comment>
                 </arg>          
                 <arg name="value" type="ENUM">
                     <enum name="GpioOutVal">
@@ -111,8 +115,12 @@
             Gets a GPIO port value
             </comment>
             <args>
-                <arg name="output" type="U32">
-                    <comment>Output line number</comment>
+                <arg name="input" type="ENUM">
+                    <enum name="GpioInNum">
+                        <item name="GPIO_IN_25"/>
+                        <item name="GPIO_IN_17"/>
+                    </enum>
+                    <comment>Input GPIO</comment>
                 </arg>          
              </args>
         </command>        

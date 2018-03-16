@@ -13,10 +13,10 @@
 |RD_SetLedDivider|2 (0x2)|Sets the divided rate of the LED| | |   
 | | | |divider|U32|Divide 10Hz by this number|                    
 |RD_SetGpio|3 (0x3)|Sets a GPIO port value| | |   
-| | | |output|U32|Output line number|                    
+| | | |output|GpioOutNum|Output GPIO|                    
 | | | |value|GpioOutVal|GPIO value|                    
 |RD_GetGpio|4 (0x4)|Gets a GPIO port value| | |   
-| | | |output|U32|Output line number|                    
+| | | |input|GpioInNum|Input GPIO|                    
 |RD_SendSpi|5 (0x5)|Sends SPI data, prints read data| | |   
 | | | |data|Fw::CmdStringArg|data to send|                    
 

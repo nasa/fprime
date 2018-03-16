@@ -189,17 +189,23 @@ void constructApp(int port_number, char* hostname) {
     // Use the mini-UART for our serial connection
     // https://www.raspberrypi.org/documentation/configuration/uart.md
 
-    uartDrv.open("/dev/serial0",
+    if (not uartDrv.open("/dev/serial0",
             Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
             Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
             Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
-            true);
+            true)) {
+        return;
+    }
 
     uartDrv.startReadThread(100,10*1024,-1);
 
-    spiDrv.open(0,0,Drv::SPI_FREQUENCY_1MHZ);
+    if (not spiDrv.open(0,0,Drv::SPI_FREQUENCY_1MHZ)) {
+        return;
+    }
 
-    ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+    if (not ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+        return;
+    }
     gpio23Drv.open(23,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio24Drv.open(24,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
     gpio25Drv.open(25,Drv::LinuxGpioDriverComponentImpl::GPIO_IN);

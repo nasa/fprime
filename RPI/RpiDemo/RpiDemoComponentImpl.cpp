@@ -177,17 +177,17 @@ namespace Rpi {
     RD_SetGpio_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        U32 output,
+        GpioOutNum output, /*!< Output GPIO*/
         GpioOutVal value
     )
   {
       NATIVE_INT_TYPE port;
       // convert to connected ports
       switch (output) {
-          case 23:
+          case GPIO_OUT_23:
               port = 0;
               break;
-          case 24:
+          case GPIO_OUT_24:
               port = 1;
               break; // good values
           default: // bad values
@@ -205,27 +205,27 @@ namespace Rpi {
     RD_GetGpio_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        U32 output
+        GpioInNum input /*!< Input GPIO*/
     )
   {
       NATIVE_INT_TYPE port;
       // convert to connected ports
-      switch (output) {
-          case 25:
+      switch (input) {
+          case GPIO_IN_25:
               port = 0;
               break;
-          case 17:
+          case GPIO_IN_17:
               port = 1;
               break; // good values
           default: // bad values
-              this->log_WARNING_HI_RD_InvalidGpio(output);
+              this->log_WARNING_HI_RD_InvalidGpio(input);
               this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
               return;
       }
       // get value of GPIO input
       bool val;
       this->GpioRead_out(port,val);
-      this->log_ACTIVITY_HI_RD_GpioGetVal(output,val?GPIO_IN_SET_EV:GPIO_IN_CLEAR_EV);
+      this->log_ACTIVITY_HI_RD_GpioGetVal(input,val?GPIO_IN_SET_EV:GPIO_IN_CLEAR_EV);
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
