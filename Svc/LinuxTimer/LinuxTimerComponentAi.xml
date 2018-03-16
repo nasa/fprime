@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="LinuxTimer" kind="passive" namespace="Svc">
+    <import_port_type>Svc/Cycle/CyclePortAi.xml</import_port_type>
+    <comment>A Linux interval timer</comment>
+    <ports>
+        <!-- Output Timer Tick Port -->
+        <port name="CycleOut" data_type="Cycle" kind="output">
+            <comment>
+            Cycle output
+            </comment>
+        </port>
+    </ports>
+</component>
+

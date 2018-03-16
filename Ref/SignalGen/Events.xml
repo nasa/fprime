@@ -9,7 +9,7 @@
 
 ======================================================================-->
 
-<events event_base="$SignalGenIdBase">
+<events>
   <event
     id="0"
     name="SignalGen_SettingsChanged"

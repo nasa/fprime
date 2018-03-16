@@ -27,7 +27,7 @@
             </comment>
         </port>
     </ports>
-    <commands opcode_base="$HealthOpcodeBase">
+    <commands>
         <command kind="async" opcode="0x0" mnemonic="HLTH_ENABLE">
             <comment>
             A command to enable or disable health checks
@@ -76,14 +76,14 @@
              </args>
         </command>
     </commands>
-    <telemetry telemetry_base="$HealthTelemetryBase">
+    <telemetry>
         <channel id="0x0" name="PingLateWarnings" data_type="U32" abbrev="T001-1234">
             <comment>
             Number of overrun warnings
             </comment>
         </channel>
     </telemetry>
-    <events event_base="$HealthEventsBase">
+    <events>
         <event id="0x0" name="HLTH_PING_WARN" severity="WARNING_HI" format_string = "Ping entry %s late warning" >
             <comment>
             Warn that a ping target is longer than the warning value

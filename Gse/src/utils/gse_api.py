@@ -311,7 +311,7 @@ class GseApi(object):
         desc_type = U32Type(0)
 
         data_len = U32Type( len(data) + desc_type.getSize() )
-        cmd = "A5A5 " + "" + desc.serialize() + data_len.serialize() + desc_type.serialize() + data
+        cmd = "A5A5 " + "FSW " + desc.serialize() + data_len.serialize() + desc_type.serialize() + data
         #type_base.showBytes(cmd)
         if self.__sock == None:
             print "Command %s not sent: No socket connection" % cmd_name

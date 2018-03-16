@@ -1,0 +1,89 @@
+<events>
+    <!-- Open error -->
+    <event id="0" name="GP_OpenError" severity="WARNING_HI" format_string = "Error opening GPIO device %d: %d (%s)" >
+        <comment>
+        Open error
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+            <arg name="error" type="I32">
+                <comment>The error code</comment>
+            </arg>          
+            <arg name="msg" type="string" size="40">
+                <comment>The error string</comment>
+            </arg>          
+        </args>
+    </event>
+    <!-- Open error -->
+    <event id="1" name="GP_ConfigError" severity="WARNING_HI" format_string = "Error configuring GPIO device %d: %d" >
+        <comment>
+        GPIO configure error
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+            <arg name="error" type="I32">
+                <comment>The error code</comment>
+            </arg>          
+        </args>
+    </event>
+    <event id="2" name="GP_WriteError" severity="WARNING_HI" format_string = "Error writing GPIO device %d: %d"  throttle = "5">
+        <comment>
+        GPIO write error
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+            <arg name="error" type="I32">
+                <comment>The error code</comment>
+            </arg>          
+        </args>
+    </event>
+    <event id="3" name="GP_ReadError" severity="WARNING_HI" format_string = "Error reading GPIO device %d: %d" throttle = "5">
+        <comment>
+        GPIO read error
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+            <arg name="error" type="I32">
+                <comment>The error code</comment>
+            </arg>          
+        </args>
+    </event>
+    <event id="4" name="GP_PortOpened" severity="ACTIVITY_HI" format_string = "GPIO Device %d configured" >
+        <comment>
+        GPIO opened notification
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+        </args>
+    </event>
+    <event id="5" name="GP_IntStartError" severity="WARNING_HI" format_string = "GPIO Device %d interrupt start error" >
+        <comment>
+        GPIO interrupt start error notification
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+        </args>
+    </event>
+    <event id="6" name="GP_IntWaitError" severity="WARNING_HI" format_string = "GPIO Device %d interrupt wait error" >
+        <comment>
+        GPIO interrupt wait error notification
+        </comment>
+        <args>
+            <arg name="gpio" type="I32">
+                <comment>The device</comment>
+            </arg>          
+        </args>
+    </event>
+</events>

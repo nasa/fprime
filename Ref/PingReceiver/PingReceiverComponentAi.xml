@@ -17,21 +17,21 @@
             </comment>
         </port>
     </ports>
-    <commands opcode_base = "$PingReceiverOpcodeBase">
+    <commands>
         <command kind="async" opcode="0" mnemonic="PR_StopPings">
             <comment>
             Command to disable ping response
             </comment>
         </command>
     </commands>
-    <telemetry telemetry_base = "$PingReceiverTelemetryBase">
+    <telemetry>
         <channel id="0" name="PR_NumPings" data_type="U32">
             <comment>
             Number of pings received
             </comment>
         </channel>
     </telemetry>
-    <events event_base = "$PingReceiverEventsBase">
+    <events>
         <event id="0" name="PR_PingsDisabled" severity="ACTIVITY_HI" format_string = "PingReceiver ping responsed disabled" >
             <comment>
             Disabled ping responses
