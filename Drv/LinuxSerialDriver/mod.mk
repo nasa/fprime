@@ -21,6 +21,8 @@ SRC_CYGWIN = LinuxSerialDriverComponentImpl.cpp
 
 SRC_DARWIN = LinuxSerialDriverComponentImplStub.cpp
 
+SRC_RASPIAN = LinuxSerialDriverComponentImpl.cpp
+
 HDR = LinuxSerialDriverComponentImpl.hpp
 
 SUBDIRS = test

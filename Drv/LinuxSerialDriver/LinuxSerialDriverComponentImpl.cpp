@@ -41,7 +41,7 @@ namespace Drv {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  void LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
+  bool LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
 
       /*
        Their config:
@@ -78,8 +78,9 @@ namespace Drv {
       if (fd == -1) {
           DEBUG_PRINT("open UART device %s failed.\n", device);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,this->m_fd);
-          return;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,this->m_fd,_err);
+          return false;
       } else {
           DEBUG_PRINT("Successfully opened UART device %s fd %d\n", device, fd);
       }
@@ -94,8 +95,9 @@ namespace Drv {
           DEBUG_PRINT("tcgetattr failed: (%d): %s\n",stat,strerror(errno));
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
       } else {
           DEBUG_PRINT("tcgetattr passed.\n");
       }
@@ -119,8 +121,9 @@ namespace Drv {
           DEBUG_PRINT("tcsetattr failed: (%d): %s\n",stat,strerror(errno));
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
       } else {
           DEBUG_PRINT("tcsetattr passed.\n");
       }
@@ -135,8 +138,9 @@ namespace Drv {
               DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
               close(fd);
               Fw::LogStringArg _arg = device;
-              this->log_WARNING_HI_DR_OpenError(_arg,fd);
-              return;
+              Fw::LogStringArg _err = strerror(errno);
+              this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+              return false;
           }
 
           // modify flow control flags
@@ -147,8 +151,9 @@ namespace Drv {
               DEBUG_PRINT("tcsetattr UART fd %d failed\n", fd);
               close(fd);
               Fw::LogStringArg _arg = device;
-              this->log_WARNING_HI_DR_OpenError(_arg,fd);
-              return;
+              Fw::LogStringArg _err = strerror(errno);
+              this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+              return false;
           }
       }
 
@@ -191,8 +196,9 @@ namespace Drv {
           DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
       }
 
       // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Reciever
@@ -251,13 +257,15 @@ namespace Drv {
           DEBUG_PRINT("tcsetattr UART fd %d failed\n", fd);
           close(fd);
           Fw::LogStringArg _arg = device;
-          this->log_WARNING_HI_DR_OpenError(_arg,fd);
-          return;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
       }
 
       // All done!
       Fw::LogStringArg _arg = device;
       this->log_ACTIVITY_HI_DR_PortOpened(_arg);
+      return true;
 
   }
 

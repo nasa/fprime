@@ -3,7 +3,7 @@
 
 <!--============ CmdSequencer Commands =================================== -->
 
-<commands opcode_base="$CmdSequencerOpcodeBase">
+<commands>
 	<command kind="async" opcode="0" mnemonic="CS_Run">
 		<comment>Run a command sequence file</comment>
 		<args>

@@ -21,6 +21,8 @@ SRC_CYGWIN = LinuxSpiDriverComponentImpl.cpp
 
 SRC_DARWIN =  LinuxSpiDriverComponentImplStub.cpp
 
+SRC_RASPIAN =  LinuxSpiDriverComponentImpl.cpp
+
 HDR = LinuxSpiDriverComponentImpl.hpp
 
 SUBDIRS = test

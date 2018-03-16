@@ -11,7 +11,7 @@
             </comment>
         </port>
     </ports>
-    <telemetry telemetry_base = "$RecvBuffTelemetryBase">
+    <telemetry>
         <channel id="0" name="NumPkts" data_type="U32" format_string="%d" abbrev="R002-1000">
             <comment>
             Number of packets received
@@ -43,7 +43,7 @@
             </comment>
         </channel>
     </telemetry>
-    <events event_base = "$RecvBuffEventsBase">
+    <events>
         <event id="0" name="FirstPacketReceived" severity="ACTIVITY_LO" format_string = "First packet ID %d received" >
             <comment>
             First packet received
@@ -75,7 +75,7 @@
             </args>
         </event>
     </events>
-    <parameters parameter_base = "$RecvBuffParamsBase" opcode_base = "$RecvBuffOpcodeBase">
+    <parameters>
         <parameter id="0" set_opcode="0" save_opcode="1" name="parameter1" data_type="U32" default="10">
             <comment>
             A test parameter
