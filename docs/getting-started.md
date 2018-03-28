@@ -1,6 +1,8 @@
 ---
 title: Getting Started
+layout: default
 ---
+# Getting Started with F'
 
 In this guide, we will cover the basics of working with F'. To start with, we will grab the code, build the reference application, and verify
 that the reference application will run. After that we will create a custom F' component and build it into out own application. Along the way
