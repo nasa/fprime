@@ -1,5 +1,6 @@
 ---
 title: F' - A Component-Base Flight Software Framework
+layout: default
 ---
 ## F'- A component-based Flight Software Framework
 
