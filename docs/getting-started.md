@@ -2,7 +2,7 @@
 title: Getting Started
 layout: default
 ---
-## Getting Started with F'
+# Getting Started with F'
 
 The first step to running F' is to ensure that the required build tools are available on your system. At its most basic, F' requires
 two tools to be installed: Git, GNU make, and python w/ cheetah. Make is available on most systems, and cheetah can be installed in python
