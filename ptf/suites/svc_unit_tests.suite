@@ -7,4 +7,7 @@
 "Svc/RateGroupDriver Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/RateGroupDriver)
 "Svc/PolyDb Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/PolyDb)
 "Svc/CmdSequencer Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/CmdSequencer)
+"Svc/BufferAccumulator Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/BufferAccumulator)
+"Svc/BufferLogger Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/BufferLogger)
+"Svc/FileUplink Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/FileUplink)
 

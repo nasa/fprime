@@ -569,7 +569,7 @@ namespace Svc {
   void BufferLoggerTesterBase ::
     invoke_to_bufferSendIn(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
@@ -728,7 +728,7 @@ namespace Svc {
     from_bufferSendOut_static(
         Fw::PassiveComponentBase *const callComp,
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(callComp);
@@ -856,7 +856,7 @@ namespace Svc {
 
   void BufferLoggerTesterBase ::
     pushFromPortEntry_bufferSendOut(
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FromPortEntry_bufferSendOut _e = {
@@ -889,7 +889,7 @@ namespace Svc {
   void BufferLoggerTesterBase ::
     from_bufferSendOut_handlerBase(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_from_bufferSendOut(),static_cast<AssertArg>(portNum));

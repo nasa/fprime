@@ -144,14 +144,14 @@ namespace Svc {
       //!
       void bufferSendInFill_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer
+          Fw::Buffer& buffer
       );
 
       //! Handler implementation for bufferSendInReturn
       //!
       void bufferSendInReturn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer
+          Fw::Buffer& buffer
       );
 
       //! Handler implementation for pingIn
