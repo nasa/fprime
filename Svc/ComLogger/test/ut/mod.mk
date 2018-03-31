@@ -8,6 +8,7 @@ TEST_SRC=TesterBase.cpp \
 				 Main.cpp 
 
 TEST_MODS=Svc/ComLogger \
+			Svc/Ping \
 					Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time \
 					Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com \
 					Utils/Hash \
