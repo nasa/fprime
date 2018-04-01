@@ -258,7 +258,7 @@ namespace Svc {
       //!
       void bufferSendIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer& buffer
       );
 
     PRIVATE:

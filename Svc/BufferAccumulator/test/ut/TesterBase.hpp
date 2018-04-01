@@ -281,28 +281,28 @@ namespace Svc {
       //!
       virtual void from_bufferSendOutDrain_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       ) = 0;
 
       //! Handler base function for from_bufferSendOutDrain
       //!
       void from_bufferSendOutDrain_handlerBase(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Handler prototype for from_bufferSendOutReturn
       //!
       virtual void from_bufferSendOutReturn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       ) = 0;
 
       //! Handler base function for from_bufferSendOutReturn
       //!
       void from_bufferSendOutReturn_handlerBase(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Handler prototype for from_pingOut
@@ -335,7 +335,7 @@ namespace Svc {
 
       //! Push an entry on the history for from_bufferSendOutDrain
       void pushFromPortEntry_bufferSendOutDrain(
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! A history entry for from_bufferSendOutDrain
@@ -351,7 +351,7 @@ namespace Svc {
 
       //! Push an entry on the history for from_bufferSendOutReturn
       void pushFromPortEntry_bufferSendOutReturn(
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! A history entry for from_bufferSendOutReturn
@@ -391,14 +391,14 @@ namespace Svc {
       //!
       void invoke_to_bufferSendInFill(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Invoke the to port connected to bufferSendInReturn
       //!
       void invoke_to_bufferSendInReturn(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Invoke the to port connected to pingIn
@@ -834,7 +834,7 @@ namespace Svc {
       static void from_bufferSendOutDrain_static(
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Static function for port from_bufferSendOutReturn
@@ -842,7 +842,7 @@ namespace Svc {
       static void from_bufferSendOutReturn_static(
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Static function for port from_cmdRegOut

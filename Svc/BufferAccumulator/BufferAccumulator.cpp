@@ -86,7 +86,7 @@ namespace Svc {
   void BufferAccumulator ::
     bufferSendInFill_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     const bool status = this->bufferQueue.enqueue(buffer);
@@ -110,7 +110,7 @@ namespace Svc {
   void BufferAccumulator ::
     bufferSendInReturn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     this->bufferSendOutReturn_out(0, buffer);

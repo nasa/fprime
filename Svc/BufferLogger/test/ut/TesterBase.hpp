@@ -273,14 +273,14 @@ namespace Svc {
       //!
       virtual void from_bufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       ) = 0;
 
       //! Handler base function for from_bufferSendOut
       //!
       void from_bufferSendOut_handlerBase(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Handler prototype for from_pingOut
@@ -313,7 +313,7 @@ namespace Svc {
 
       //! Push an entry on the history for from_bufferSendOut
       void pushFromPortEntry_bufferSendOut(
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! A history entry for from_bufferSendOut
@@ -353,7 +353,7 @@ namespace Svc {
       //!
       void invoke_to_bufferSendIn(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Invoke the to port connected to comIn
@@ -927,7 +927,7 @@ namespace Svc {
       static void from_bufferSendOut_static(
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Static function for port from_cmdRegOut

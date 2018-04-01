@@ -56,15 +56,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->tlmSize)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Total size of all telemetry histories\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmSize << "\n";
@@ -76,15 +76,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_FileUplink_FilesReceived_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(this->tlmHistory_FileUplink_FilesReceived->size(), size)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for telemetry channel FileUplink_FilesReceived\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmHistory_FileUplink_FilesReceived->size() << "\n";
@@ -92,8 +92,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_FileUplink_FilesReceived(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32& val
     )
@@ -101,8 +101,8 @@ namespace Svc {
   {
     ASSERT_LT(index, this->tlmHistory_FileUplink_FilesReceived->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel FileUplink_FilesReceived\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_FileUplink_FilesReceived->size() << ")\n"
@@ -111,8 +111,8 @@ namespace Svc {
       this->tlmHistory_FileUplink_FilesReceived->at(index);
     ASSERT_EQ(val, e.arg)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
       << " on telmetry channel FileUplink_FilesReceived\n"
@@ -126,15 +126,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_FileUplink_PacketsReceived_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(this->tlmHistory_FileUplink_PacketsReceived->size(), size)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for telemetry channel FileUplink_PacketsReceived\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmHistory_FileUplink_PacketsReceived->size() << "\n";
@@ -142,8 +142,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_FileUplink_PacketsReceived(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32& val
     )
@@ -151,8 +151,8 @@ namespace Svc {
   {
     ASSERT_LT(index, this->tlmHistory_FileUplink_PacketsReceived->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel FileUplink_PacketsReceived\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_FileUplink_PacketsReceived->size() << ")\n"
@@ -161,8 +161,8 @@ namespace Svc {
       this->tlmHistory_FileUplink_PacketsReceived->at(index);
     ASSERT_EQ(val, e.arg)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
       << " on telmetry channel FileUplink_PacketsReceived\n"
@@ -176,15 +176,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_FileUplink_Warnings_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(this->tlmHistory_FileUplink_Warnings->size(), size)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for telemetry channel FileUplink_Warnings\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmHistory_FileUplink_Warnings->size() << "\n";
@@ -192,8 +192,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertTlm_FileUplink_Warnings(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32& val
     )
@@ -201,8 +201,8 @@ namespace Svc {
   {
     ASSERT_LT(index, this->tlmHistory_FileUplink_Warnings->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel FileUplink_Warnings\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_FileUplink_Warnings->size() << ")\n"
@@ -211,8 +211,8 @@ namespace Svc {
       this->tlmHistory_FileUplink_Warnings->at(index);
     ASSERT_EQ(val, e.arg)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
       << " on telmetry channel FileUplink_Warnings\n"
@@ -226,15 +226,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventsSize)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Total size of all event histories\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventsSize << "\n";
@@ -246,15 +246,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_BadChecksum_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_BadChecksum->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_BadChecksum\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_BadChecksum->size() << "\n";
@@ -262,8 +262,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_BadChecksum(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const char *const fileName,
         const U32 computed,
@@ -272,8 +272,8 @@ namespace Svc {
   {
     ASSERT_GT(this->eventHistory_FileUplink_BadChecksum->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_BadChecksum\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_BadChecksum->size() << ")\n"
@@ -282,8 +282,8 @@ namespace Svc {
       this->eventHistory_FileUplink_BadChecksum->at(index);
     ASSERT_STREQ(fileName, e.fileName.toChar())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument fileName at index "
       << index
       << " in history of event FileUplink_BadChecksum\n"
@@ -291,8 +291,8 @@ namespace Svc {
       << "  Actual:   " << e.fileName.toChar() << "\n";
     ASSERT_EQ(computed, e.computed)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument computed at index "
       << index
       << " in history of event FileUplink_BadChecksum\n"
@@ -300,8 +300,8 @@ namespace Svc {
       << "  Actual:   " << e.computed << "\n";
     ASSERT_EQ(read, e.read)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument read at index "
       << index
       << " in history of event FileUplink_BadChecksum\n"
@@ -315,15 +315,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_FileOpenError_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_FileOpenError->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_FileOpenError\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_FileOpenError->size() << "\n";
@@ -331,16 +331,16 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_FileOpenError(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const char *const fileName
     ) const
   {
     ASSERT_GT(this->eventHistory_FileUplink_FileOpenError->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_FileOpenError\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_FileOpenError->size() << ")\n"
@@ -349,8 +349,8 @@ namespace Svc {
       this->eventHistory_FileUplink_FileOpenError->at(index);
     ASSERT_STREQ(fileName, e.fileName.toChar())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument fileName at index "
       << index
       << " in history of event FileUplink_FileOpenError\n"
@@ -364,15 +364,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_FileReceived_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_FileReceived->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_FileReceived\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_FileReceived->size() << "\n";
@@ -380,16 +380,16 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_FileReceived(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const char *const fileName
     ) const
   {
     ASSERT_GT(this->eventHistory_FileUplink_FileReceived->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_FileReceived\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_FileReceived->size() << ")\n"
@@ -398,8 +398,8 @@ namespace Svc {
       this->eventHistory_FileUplink_FileReceived->at(index);
     ASSERT_STREQ(fileName, e.fileName.toChar())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument fileName at index "
       << index
       << " in history of event FileUplink_FileReceived\n"
@@ -413,15 +413,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_FileWriteError_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_FileWriteError->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_FileWriteError\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_FileWriteError->size() << "\n";
@@ -429,16 +429,16 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_FileWriteError(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const char *const fileName
     ) const
   {
     ASSERT_GT(this->eventHistory_FileUplink_FileWriteError->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_FileWriteError\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_FileWriteError->size() << ")\n"
@@ -447,8 +447,8 @@ namespace Svc {
       this->eventHistory_FileUplink_FileWriteError->at(index);
     ASSERT_STREQ(fileName, e.fileName.toChar())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument fileName at index "
       << index
       << " in history of event FileUplink_FileWriteError\n"
@@ -462,15 +462,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_InvalidReceiveMode_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_InvalidReceiveMode->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_InvalidReceiveMode\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_InvalidReceiveMode->size() << "\n";
@@ -478,8 +478,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_InvalidReceiveMode(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32 packetType,
         const U32 mode
@@ -487,8 +487,8 @@ namespace Svc {
   {
     ASSERT_GT(this->eventHistory_FileUplink_InvalidReceiveMode->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_InvalidReceiveMode\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_InvalidReceiveMode->size() << ")\n"
@@ -497,8 +497,8 @@ namespace Svc {
       this->eventHistory_FileUplink_InvalidReceiveMode->at(index);
     ASSERT_EQ(packetType, e.packetType)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument packetType at index "
       << index
       << " in history of event FileUplink_InvalidReceiveMode\n"
@@ -506,8 +506,8 @@ namespace Svc {
       << "  Actual:   " << e.packetType << "\n";
     ASSERT_EQ(mode, e.mode)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument mode at index "
       << index
       << " in history of event FileUplink_InvalidReceiveMode\n"
@@ -521,15 +521,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_PacketOutOfBounds_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_PacketOutOfBounds->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_PacketOutOfBounds\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_PacketOutOfBounds->size() << "\n";
@@ -537,8 +537,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_PacketOutOfBounds(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32 packetIndex,
         const char *const fileName
@@ -546,8 +546,8 @@ namespace Svc {
   {
     ASSERT_GT(this->eventHistory_FileUplink_PacketOutOfBounds->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_PacketOutOfBounds\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_PacketOutOfBounds->size() << ")\n"
@@ -556,8 +556,8 @@ namespace Svc {
       this->eventHistory_FileUplink_PacketOutOfBounds->at(index);
     ASSERT_EQ(packetIndex, e.packetIndex)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument packetIndex at index "
       << index
       << " in history of event FileUplink_PacketOutOfBounds\n"
@@ -565,8 +565,8 @@ namespace Svc {
       << "  Actual:   " << e.packetIndex << "\n";
     ASSERT_STREQ(fileName, e.fileName.toChar())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument fileName at index "
       << index
       << " in history of event FileUplink_PacketOutOfBounds\n"
@@ -580,15 +580,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_PacketOutOfOrder_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_FileUplink_PacketOutOfOrder->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_PacketOutOfOrder\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_FileUplink_PacketOutOfOrder->size() << "\n";
@@ -596,8 +596,8 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_PacketOutOfOrder(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32 packetIndex,
         const U32 lastPacketIndex
@@ -605,8 +605,8 @@ namespace Svc {
   {
     ASSERT_GT(this->eventHistory_FileUplink_PacketOutOfOrder->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event FileUplink_PacketOutOfOrder\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_FileUplink_PacketOutOfOrder->size() << ")\n"
@@ -615,8 +615,8 @@ namespace Svc {
       this->eventHistory_FileUplink_PacketOutOfOrder->at(index);
     ASSERT_EQ(packetIndex, e.packetIndex)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument packetIndex at index "
       << index
       << " in history of event FileUplink_PacketOutOfOrder\n"
@@ -624,8 +624,8 @@ namespace Svc {
       << "  Actual:   " << e.packetIndex << "\n";
     ASSERT_EQ(lastPacketIndex, e.lastPacketIndex)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument lastPacketIndex at index "
       << index
       << " in history of event FileUplink_PacketOutOfOrder\n"
@@ -639,15 +639,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertEvents_FileUplink_UplinkCanceled_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventsSize_FileUplink_UplinkCanceled)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event FileUplink_UplinkCanceled\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventsSize_FileUplink_UplinkCanceled << "\n";
@@ -659,15 +659,15 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assertFromPortHistory_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->fromPortHistorySize)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Total size of all from port histories\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->fromPortHistorySize << "\n";
@@ -679,18 +679,38 @@ namespace Svc {
 
   void FileUplinkGTestBase ::
     assert_from_bufferSendOut_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->fromPortHistory_bufferSendOut->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for from_bufferSendOut\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->fromPortHistory_bufferSendOut->size() << "\n";
+  }
+
+  // ----------------------------------------------------------------------
+  // From port: pingOut
+  // ----------------------------------------------------------------------
+
+  void FileUplinkGTestBase ::
+    assert_from_pingOut_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(size, this->fromPortHistory_pingOut->size())
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Size of history for from_pingOut\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->fromPortHistory_pingOut->size() << "\n";
   }
 
 } // end namespace Svc

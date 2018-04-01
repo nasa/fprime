@@ -70,7 +70,7 @@ namespace Svc {
   void BufferLogger ::
     bufferSendIn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer& fwBuffer
     )
   {
     if (m_state == LOGGING_ON) {

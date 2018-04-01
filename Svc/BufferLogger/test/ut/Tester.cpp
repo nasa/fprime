@@ -91,7 +91,7 @@ namespace Svc {
   void Tester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer& fwBuffer
     )
   {
     this->pushFromPortEntry_bufferSendOut(fwBuffer);

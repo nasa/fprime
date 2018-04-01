@@ -11,6 +11,7 @@ TEST_SRC= \
 
 TEST_MODS= \
 	Svc/FileDownlink \
+	Svc/Ping \
 	Fw/Tlm \
 	Fw/Log \
 	Fw/Time \

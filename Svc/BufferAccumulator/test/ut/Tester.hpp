@@ -65,14 +65,14 @@ namespace Svc {
       //!
       void from_bufferSendOutDrain_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer fwBuffer
+          Fw::Buffer& fwBuffer
       );
 
       //! Handler for from_bufferSendOutReturn
       //!
       void from_bufferSendOutReturn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer fwBuffer
+          Fw::Buffer& fwBuffer
       );
 
       //! Handler for from_pingOut

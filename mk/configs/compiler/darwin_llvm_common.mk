@@ -24,7 +24,7 @@ LINK_BIN_FLAGS :=  $(LIBS) #$(BUILD_32BIT)
 FILE_SIZE := $(LS) $(LS_SIZE)
 LOAD_SIZE := $(SIZE)
 
-LINK_LIBS := -ldl -lpthread -lm -lc++ -lssl -lcrypto
+LINK_LIBS := -ldl -lpthread -lm -lc++
 
 OPT_SPEED := -Os
 DEBUG := -g3

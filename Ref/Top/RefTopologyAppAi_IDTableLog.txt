@@ -18,7 +18,7 @@ fileUplinkBufferManager |  301 (0x12d)  |          20           |             20
           SG4           |  321 (0x141)  |          20           |             20             |               3               |         3        
      fatalAdapter       |  341 (0x155)  |          20           |             20             |               8               |         8        
         health          |  361 (0x169)  |          20           |             20             |               8               |         8        
-       sockGndIf        |  381 (0x17d)  |          20           |             20             |               3               |         3        
+       sockGndIf        |  381 (0x17d)  |          20           |             20             |               4               |         4        
 fileDownlinkBufferManag |  401 (0x191)  |          20           |             20             |               4               |         4        
           er            |               |                       |                            |                               |                  
       eventLogger       |  421 (0x1a5)  |          20           |             20             |               7               |         7        

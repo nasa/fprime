@@ -9,6 +9,7 @@ TEST_SRC=TesterBase.cpp \
 
 TEST_MODS= \
 	CFDP/Checksum \
+	Svc/Ping \
 	Fw/Buffer \
 	Fw/Comp \
 	Fw/FilePacket \

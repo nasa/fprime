@@ -333,7 +333,7 @@ namespace Svc {
   void BufferManagerTesterBase ::
     invoke_to_bufferSendIn(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
@@ -591,6 +591,16 @@ namespace Svc {
       case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_ALLOCATIONQUEUEEMPTY: 
       {
 
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
         this->logIn_WARNING_HI_BufferManager_AllocationQueueEmpty();
 
         break;
@@ -600,6 +610,16 @@ namespace Svc {
       case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_ALLOCATIONQUEUEFULL: 
       {
 
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
         this->logIn_WARNING_HI_BufferManager_AllocationQueueFull();
 
         break;
@@ -609,8 +629,32 @@ namespace Svc {
       case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_IDMISMATCH: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 2,_numArgs,2);
+        
+#endif    
         U32 expected;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(expected);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -618,6 +662,18 @@ namespace Svc {
         );
 
         U32 saw;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(saw);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -633,6 +689,16 @@ namespace Svc {
       case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_STORESIZEEXCEEDED: 
       {
 
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
         this->logIn_WARNING_HI_BufferManager_StoreSizeExceeded();
 
         break;

@@ -77,7 +77,7 @@ namespace Svc {
   void Tester ::
     from_bufferSendOutDrain_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer& fwBuffer
     )
   {
     this->pushFromPortEntry_bufferSendOutDrain(fwBuffer);
@@ -86,7 +86,7 @@ namespace Svc {
   void Tester ::
     from_bufferSendOutReturn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer& fwBuffer
     )
   {
     this->pushFromPortEntry_bufferSendOutReturn(fwBuffer);

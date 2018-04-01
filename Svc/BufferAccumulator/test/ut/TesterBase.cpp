@@ -594,7 +594,7 @@ namespace Svc {
   void BufferAccumulatorTesterBase ::
     invoke_to_bufferSendInFill(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendInFill(),static_cast<AssertArg>(portNum));
@@ -607,7 +607,7 @@ namespace Svc {
   void BufferAccumulatorTesterBase ::
     invoke_to_bufferSendInReturn(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendInReturn(),static_cast<AssertArg>(portNum));
@@ -759,7 +759,7 @@ namespace Svc {
     from_bufferSendOutDrain_static(
         Fw::PassiveComponentBase *const callComp,
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(callComp);
@@ -775,7 +775,7 @@ namespace Svc {
     from_bufferSendOutReturn_static(
         Fw::PassiveComponentBase *const callComp,
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(callComp);
@@ -904,7 +904,7 @@ namespace Svc {
 
   void BufferAccumulatorTesterBase ::
     pushFromPortEntry_bufferSendOutDrain(
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FromPortEntry_bufferSendOutDrain _e = {
@@ -920,7 +920,7 @@ namespace Svc {
 
   void BufferAccumulatorTesterBase ::
     pushFromPortEntry_bufferSendOutReturn(
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FromPortEntry_bufferSendOutReturn _e = {
@@ -953,7 +953,7 @@ namespace Svc {
   void BufferAccumulatorTesterBase ::
     from_bufferSendOutDrain_handlerBase(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_from_bufferSendOutDrain(),static_cast<AssertArg>(portNum));
@@ -966,7 +966,7 @@ namespace Svc {
   void BufferAccumulatorTesterBase ::
     from_bufferSendOutReturn_handlerBase(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_from_bufferSendOutReturn(),static_cast<AssertArg>(portNum));
