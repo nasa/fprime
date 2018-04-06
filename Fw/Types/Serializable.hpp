@@ -30,6 +30,11 @@ namespace Fw {
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
             virtual void toString(StringBase& text) const; //!< generate text from serializable
 #endif
+
+#ifdef BUILD_UT
+            friend std::ostream& operator<<(std::ostream& os, const Serializable& val);
+#endif
+
         protected:
             Serializable(); //!< Default constructor
             virtual ~Serializable(); //!< destructor
