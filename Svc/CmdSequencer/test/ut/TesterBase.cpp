@@ -4,7 +4,7 @@
 // \brief  cpp file for CmdSequencer component test harness base class
 //
 // \copyright
-// Copyright 2009-2016, by the California Institute of Technology.
+// Copyright 2009-2017, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
@@ -1091,11 +1091,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Run
+  // Command: CS_RUN
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Run(
+    sendCmd_CS_RUN(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq,
         const Fw::CmdStringArg& fileName
@@ -1129,11 +1129,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Validate
+  // Command: CS_VALIDATE
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Validate(
+    sendCmd_CS_VALIDATE(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq,
         const Fw::CmdStringArg& fileName
@@ -1167,11 +1167,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Cancel
+  // Command: CS_CANCEL
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Cancel(
+    sendCmd_CS_CANCEL(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq
     )
@@ -1201,11 +1201,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Start
+  // Command: CS_START
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Start(
+    sendCmd_CS_START(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq
     )
@@ -1235,11 +1235,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Step
+  // Command: CS_STEP
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Step(
+    sendCmd_CS_STEP(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq
     )
@@ -1269,11 +1269,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Auto
+  // Command: CS_AUTO
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Auto(
+    sendCmd_CS_AUTO(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq
     )
@@ -1303,11 +1303,11 @@ namespace Svc {
   }
 
   // ---------------------------------------------------------------------- 
-  // Command: CS_Manual
+  // Command: CS_MANUAL
   // ---------------------------------------------------------------------- 
 
   void CmdSequencerTesterBase ::
-    sendCmd_CS_Manual(
+    sendCmd_CS_MANUAL(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq
     )

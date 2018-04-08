@@ -6,15 +6,15 @@
 
 |Mnemonic|ID|Description|Arg Name|Arg Type|Comment
 |---|---|---|---|---|---|
-|CS_Run|0 (0x0)|Run a command sequence file| | |   
+|CS_RUN|0 (0x0)|Run a command sequence file| | |   
 | | | |fileName|Fw::CmdStringArg|The name of the sequence file|                    
-|CS_Validate|1 (0x1)|Validate a command sequence file| | |   
+|CS_VALIDATE|1 (0x1)|Validate a command sequence file| | |   
 | | | |fileName|Fw::CmdStringArg|The name of the sequence file|                    
-|CS_Cancel|2 (0x2)|Cancel a command sequence| | |   
-|CS_Start|3 (0x3)|Start running a command sequence| | |   
-|CS_Step|4 (0x4)|Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.| | |   
-|CS_Auto|5 (0x5)|Set the run mode to AUTO.| | |   
-|CS_Manual|6 (0x6)|Set the run mode to MANUAL.| | |   
+|CS_CANCEL|2 (0x2)|Cancel a command sequence| | |   
+|CS_START|3 (0x3)|Start running a command sequence| | |   
+|CS_STEP|4 (0x4)|Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.| | |   
+|CS_AUTO|5 (0x5)|Set the run mode to AUTO.| | |   
+|CS_MANUAL|6 (0x6)|Set the run mode to MANUAL.| | |   
 
 ## Telemetry Channel List
 
