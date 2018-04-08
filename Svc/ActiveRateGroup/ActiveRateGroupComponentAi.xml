@@ -34,7 +34,7 @@
         </port>
 
     </ports>
-    <telemetry telemetry_base="$ActiveRateGroupTelemetryBase">
+    <telemetry>
         <channel id="0" name="RgMaxTime" data_type="U32" abbrev="S001-000" update="on_change" format_string = "%u us">
             <comment>
             Max execution time rate group
@@ -46,7 +46,7 @@
             </comment>
         </channel>
     </telemetry>
-    <events event_base="$ActiveRateGroupEventsBase">
+    <events>
         <event id="0" name="RateGroupStarted" severity="DIAGNOSTIC" format_string = "Rate group started." >
             <comment>
             Informational event that rate group has started

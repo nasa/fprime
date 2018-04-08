@@ -60,11 +60,11 @@ class ClientSocket:
         """
         l=1024
         msg = ''
-        
+
         msg = self.sock.recv(l/2)
         if len(msg) < l/2:
             return msg
-        
+
         while len(msg) < l:
             chunk = self.sock.recv(l-len(msg))
             print chunk
@@ -72,7 +72,7 @@ class ClientSocket:
                 raise RuntimeError("socket connection broken")
             msg = msg + chunk
         return msg
-    
+
     def recv(self, l):
         """
         Read l bytes from socket.
@@ -82,7 +82,7 @@ class ClientSocket:
         n = 0
         while l > n:
             if self.exit_flag:
-                raise Exception("Exiting receive loop") 
+                raise Exception("Exiting receive loop")
 
             # Check if the socket is ready to read
             fd = select.select([self.sock], [], [], .25)

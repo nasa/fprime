@@ -37,6 +37,8 @@ UTILS_MODULES := \
 	Utils/Hash
         
 SVC_MODULES := \
+	Svc/BufferAccumulator \
+	Svc/BufferLogger \
 	Svc/BufferManager \
 	Svc/CmdDispatcher \
 	Svc/CmdSequencer \

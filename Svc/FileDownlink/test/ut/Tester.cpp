@@ -207,10 +207,19 @@ namespace Svc {
   void Tester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     pushFromPortEntry_bufferSendOut(buffer);
+  }
+
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
   }
 
   // ----------------------------------------------------------------------
@@ -273,6 +282,18 @@ namespace Svc {
     this->component.set_LogText_OutputPort(
         0, 
         this->get_from_LogText(0)
+    );
+
+    // pingIn
+    this->connect_to_pingIn(
+        0,
+        this->component.get_pingIn_InputPort(0)
+    );
+
+    // pingOut
+    this->component.set_pingOut_OutputPort(
+        0,
+        this->get_from_pingOut(0)
     );
 
   }

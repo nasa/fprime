@@ -14,9 +14,10 @@ from controllers import commander
 
 from models.common import command
 from utils import gse_misc
+from utils import command_args
 
 import exceptions
-import command_args_factory
+import command_args_frame
 from models.serialize.i32_type import *
 
 
@@ -44,9 +45,9 @@ class CommandPanel(object):
         #
         self.__cmds_history_list = []
         #
-        # Create an args factory here to generate the entries for each command.
+        # Create an args frame here to generate the entries for each command.
         #
-        self.__args_factory = command_args_factory.CommandArgsFactory()
+        self.__args_frame = command_args_frame.CommandArgsFrame()
         #
         # Status updater and status bar updater singletons
         #
@@ -167,9 +168,9 @@ class CommandPanel(object):
         """
         Update the arguments UI entries for a command mnemonic.
         """
-        self.__args_factory.destroy()
+        self.__args_frame.destroy()
         #self.__parent.update()
-        self.__args_ui_panel_dict = self.__args_factory.create(mnemonic, self.__args_pane)
+        self.__args_ui_panel_dict = self.__args_frame.create(mnemonic, self.__args_pane)
         self.__parent.update()
 
     def _singleClick_handler(self):
@@ -301,7 +302,7 @@ class CommandPanel(object):
 
     def _create_args(self, cmd_obj):
         """
-        Command interfact to command_args_factory to instance
+        Command interfact to command_args_frame to instance
         entries for commands.
         """
         arg_num = 1
@@ -314,7 +315,7 @@ class CommandPanel(object):
                 v = int(v, 16)
 
             try:
-               new_obj = self.__args_factory.create_arg_type(arg_name, arg_type, v)
+               new_obj = command_args.create_arg_type(arg_name, arg_type, v)
                if isinstance(new_obj.val, str) and len(new_obj.val) == 0:
                    #self.__status_update.clear()
                    self.__status_update.update('No input provided for command argument %d'%arg_num, 'red')
@@ -372,7 +373,7 @@ class CommandPanel(object):
                 self.__search_index = 0
             i = search_ids[self.__search_index]
             #
-            self.__args_factory.destroy()
+            self.__args_frame.destroy()
             self.__combobox.selectitem(mnemonic_target)
             self.__list_box.component('listbox').selection_clear(0, Tkinter.END)
             #

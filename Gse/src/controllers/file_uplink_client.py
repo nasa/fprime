@@ -203,7 +203,7 @@ class UplinkShell(object):
     def __init__(self):
         """
         Constructor
-        @param build_root: Top level directory
+        @param build_root: Top level fsw directory
         @param log_path: Path to uplink log folder
         @param log_name: Name of log file
 
@@ -247,7 +247,7 @@ class UplinkShell(object):
         @param port: TCP Server port
         @param src_path: Filepath to upload
         @param dest_path: File destination path on target system
-        @param build_root: Top level directory
+        @param build_root: Top level fsw directory
         """
 
         offset = 0

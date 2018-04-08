@@ -36,7 +36,7 @@
             </comment>
         </port>
     </ports>
-    <commands opcode_base = "$ActiveLoggerOpcodeBase">
+    <commands>
         <command kind="sync" opcode="0" mnemonic="ALOG_SET_EVENT_REPORT_FILTER">
             <comment>
             Set filter for reporting events. Events are not stored in component. 
@@ -118,7 +118,7 @@
             </comment>
         </command>
     </commands>
-    <events event_base = "$ActiveLoggerEventsBase">
+    <events>
         <!-- A test event -->
         <event id="0" name="ALOG_FILE_WRITE_ERR" severity="WARNING_HI" format_string = "Event buffer write failed in stage %d with error %d" >
             <comment>

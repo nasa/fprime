@@ -2,8 +2,8 @@
 
 # start socket server and GUI
 python $BUILD_ROOT/Gse/bin/ThreadedTCPServer.py -p 50000 &
-python $BUILD_ROOT/Gse/bin/gse.py -d ~/dieb/isf/Gse/generated/Ref -p 50000 -c &
-sleep 5 
+python $BUILD_ROOT/Gse/bin/gse.py -d $BUILD_ROOT/Gse/generated/Ref -p 50000 -c &
+sleep 5
 
 # kill GUI
 PID=`ps -ef | grep gse.py | head -n 1 | cut -f 2 -d ' '`

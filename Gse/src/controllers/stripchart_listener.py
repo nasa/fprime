@@ -5,11 +5,11 @@ import datetime
 
 from controllers import observer
 
-class StripChartListener(observer.Observed):
+class StripChartListener(observer.Observable):
     """
     Provides a common interface for the stripchart panel and
-    channel listener. DataMediator relays channel telemetry to 
-    the correct locations.  
+    channel listener. DataMediator relays channel telemetry to
+    the correct locations.
     """
     __instance = None
 
@@ -45,8 +45,8 @@ class StripChartListener(observer.Observed):
 
         self.__tlm = {'ch_name':name , 'ch_value':ch_value, 'datetime_object':dt_object}
 
-        self.observers_notify()
-            
+        self.notifyObservers(self.__tlm)
+
         self.__tlm = None
 
     def update_severity(self, severity):
@@ -54,9 +54,9 @@ class StripChartListener(observer.Observed):
         Called from event listener.
         Gives mediator an event severity to give to stripchart panel.
         """
-        
+
         self.__severity = severity
-        self.observers_notify()
+        self.notifyObservers(self.__severity)
 
         self.__severity = None
     def update_events(self, event_name):
@@ -65,7 +65,7 @@ class StripChartListener(observer.Observed):
         Gives mediator an event name to give to stripchart panel.
         """
         self.__event_name = event_name
-        self.observers_notify()
+        self.notifyObservers(self.__event_name)
 
         self.__event_name = None
 
@@ -76,7 +76,7 @@ class StripChartListener(observer.Observed):
     def get_severity(self):
         return self.__severity
 
-    
+
     def getInstance():
         """
         Return instance of singleton.
@@ -87,6 +87,3 @@ class StripChartListener(observer.Observed):
 
     #define static method
     getInstance = staticmethod(getInstance)
-
-
-

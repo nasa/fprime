@@ -133,12 +133,15 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['gui']['window_min_y']    = 600
         self.__prop['gui']['window_offset_x'] = 10
         self.__prop['gui']['window_offset_y'] = 10
-        #
+
         self.__prop['performance'] = dict()
-        self.__prop['performance']['stripchart_update_rate']  = 500 # Milliseconds
-        self.__prop['performance']['telem_table_update_rate'] = 500 # Milliseconds
+        self.__prop['performance']['stripchart_update_period']  = 500 # Milliseconds
+        self.__prop['performance']['telem_table_update_period'] = 500 # Milliseconds
+        self.__prop['performance']['event_table_update_period'] = 200 # Milliseconds
+        self.__prop['performance']['status_bar_update_period']  = 1000 # Milliseconds
+        self.__prop['performance']['stripchart_update_period']  = 500 # Milliseconds
         self.__prop['performance']['status_light_deadband'] = 3 # Seconds
-        #
+
         self.__prop['severity_colors']=dict()
         self.__prop['severity_colors'][Severity.COMMAND.name]    = "lightblue"
         self.__prop['severity_colors'][Severity.DIAGNOSTIC.name] = ""

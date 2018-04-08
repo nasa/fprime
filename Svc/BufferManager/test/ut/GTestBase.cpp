@@ -56,15 +56,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertTlm_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->tlmSize)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Total size of all telemetry histories\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmSize << "\n";
@@ -76,15 +76,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertTlm_BufferManager_NumAllocatedBuffers_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(this->tlmHistory_BufferManager_NumAllocatedBuffers->size(), size)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for telemetry channel BufferManager_NumAllocatedBuffers\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmHistory_BufferManager_NumAllocatedBuffers->size() << "\n";
@@ -92,8 +92,8 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertTlm_BufferManager_NumAllocatedBuffers(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32& val
     )
@@ -101,8 +101,8 @@ namespace Svc {
   {
     ASSERT_LT(index, this->tlmHistory_BufferManager_NumAllocatedBuffers->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel BufferManager_NumAllocatedBuffers\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_BufferManager_NumAllocatedBuffers->size() << ")\n"
@@ -111,8 +111,8 @@ namespace Svc {
       this->tlmHistory_BufferManager_NumAllocatedBuffers->at(index);
     ASSERT_EQ(val, e.arg)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
       << " on telmetry channel BufferManager_NumAllocatedBuffers\n"
@@ -126,15 +126,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertTlm_BufferManager_AllocatedSize_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(this->tlmHistory_BufferManager_AllocatedSize->size(), size)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for telemetry channel BufferManager_AllocatedSize\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->tlmHistory_BufferManager_AllocatedSize->size() << "\n";
@@ -142,8 +142,8 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertTlm_BufferManager_AllocatedSize(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32& val
     )
@@ -151,8 +151,8 @@ namespace Svc {
   {
     ASSERT_LT(index, this->tlmHistory_BufferManager_AllocatedSize->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel BufferManager_AllocatedSize\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_BufferManager_AllocatedSize->size() << ")\n"
@@ -161,8 +161,8 @@ namespace Svc {
       this->tlmHistory_BufferManager_AllocatedSize->at(index);
     ASSERT_EQ(val, e.arg)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
       << " on telmetry channel BufferManager_AllocatedSize\n"
@@ -176,15 +176,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertEvents_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventsSize)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Total size of all event histories\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventsSize << "\n";
@@ -196,15 +196,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertEvents_BufferManager_AllocationQueueEmpty_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventsSize_BufferManager_AllocationQueueEmpty)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event BufferManager_AllocationQueueEmpty\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventsSize_BufferManager_AllocationQueueEmpty << "\n";
@@ -216,15 +216,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertEvents_BufferManager_AllocationQueueFull_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventsSize_BufferManager_AllocationQueueFull)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event BufferManager_AllocationQueueFull\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventsSize_BufferManager_AllocationQueueFull << "\n";
@@ -236,15 +236,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertEvents_BufferManager_IDMismatch_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventHistory_BufferManager_IDMismatch->size())
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event BufferManager_IDMismatch\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventHistory_BufferManager_IDMismatch->size() << "\n";
@@ -252,8 +252,8 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertEvents_BufferManager_IDMismatch(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 index,
         const U32 expected,
         const U32 saw
@@ -261,8 +261,8 @@ namespace Svc {
   {
     ASSERT_GT(this->eventHistory_BufferManager_IDMismatch->size(), index)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event BufferManager_IDMismatch\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_BufferManager_IDMismatch->size() << ")\n"
@@ -271,8 +271,8 @@ namespace Svc {
       this->eventHistory_BufferManager_IDMismatch->at(index);
     ASSERT_EQ(expected, e.expected)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument expected at index "
       << index
       << " in history of event BufferManager_IDMismatch\n"
@@ -280,8 +280,8 @@ namespace Svc {
       << "  Actual:   " << e.expected << "\n";
     ASSERT_EQ(saw, e.saw)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument saw at index "
       << index
       << " in history of event BufferManager_IDMismatch\n"
@@ -295,15 +295,15 @@ namespace Svc {
 
   void BufferManagerGTestBase ::
     assertEvents_BufferManager_StoreSizeExceeded_size(
-        const char *const __ISF_callSiteFileName,
-        const U32 __ISF_callSiteLineNumber,
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
     ASSERT_EQ(size, this->eventsSize_BufferManager_StoreSizeExceeded)
       << "\n"
-      << "  File:     " << __ISF_callSiteFileName << "\n"
-      << "  Line:     " << __ISF_callSiteLineNumber << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Size of history for event BufferManager_StoreSizeExceeded\n"
       << "  Expected: " << size << "\n"
       << "  Actual:   " << this->eventsSize_BufferManager_StoreSizeExceeded << "\n";

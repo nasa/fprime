@@ -30,7 +30,7 @@ from models.serialize import type_base
 from models.serialize import u32_type
 from utils import Logger
 
-class StatusUpdater(observer.Observed):
+class StatusUpdater(observer.Observable):
     """
     A singleton class that will update all text widgets
     on all active instances of UI windows.  All the various
@@ -38,9 +38,6 @@ class StatusUpdater(observer.Observed):
     status in the common text widget area of the panels.
 
     Also every update is saved in a default log file
-    of the name:
-
-    ${HOME}/fprime_logs/gse_YYYYMMDD_Time.log
 
     @todo: Future implementations will utilize ConfigManager
     making it possible to override the path and filename.
@@ -87,7 +84,7 @@ class StatusUpdater(observer.Observed):
         """
 
         if opt == None:
-            p = os.environ['HOME'] + os.sep + 'fprime_logs' + os.sep + "status"
+            p = os.environ['HOME'] + os.sep + 'logs' + os.sep + "status"
         else:
             p = opt.log_file_path + os.sep + opt.log_file_prefix + os.sep + "status"
         #
@@ -121,11 +118,9 @@ class StatusUpdater(observer.Observed):
         self.text_color = color
         self.status_string = text
         self.update_mode = 'Update'
-        self.observers_notify()
+        self.notifyObservers(self.update_mode)
 
         self.__status_bar_updater.update_message(text, color=color)
-
-
         self.__log_info(text)
 
 
@@ -136,8 +131,7 @@ class StatusUpdater(observer.Observed):
         self.text_color = 'black'
         self.status_string = ""
         self.update_mode = 'Clear'
-        self.observers_notify()
-
+        self.notifyObservers(self.update_mode)
 
     def setText(self, text):
         """
@@ -147,7 +141,7 @@ class StatusUpdater(observer.Observed):
         self.text_color = 'black'
         self.status_string = text
         self.update_mode = "Text"
-        self.observers_notify()
+        self.notifyObservers(self.update_mode)
         self.__log_info(text)
     #
     # Interfaces for observer update method to utilize

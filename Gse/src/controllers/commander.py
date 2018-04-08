@@ -104,7 +104,8 @@ class Commander:
         #type_base.showBytes(cmd)
         sock = self.__the_main_panel.getSock()
         if sock != None:
-            self.__status_bar_updater.update_data(num_recv=0, num_sent=len(cmd))
+            # Format (data_recv, data_sent)
+            self.__status_bar_updater.put_data((0, len(cmd)))
             sock.send(cmd)
         else:
             self.__the_main_panel.statusUpdate("No socket connection for FSW commands", "red")

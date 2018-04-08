@@ -313,8 +313,113 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                     SERVER.dest_obj[dest_elem].put(data)
                 LOCK.release()
         else:
-            raise RuntimeError("Command missing A5A5 header so nothing sent...")
+            raise RuntimeError("Packet missing A5A5 header")
 
+class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
+    """
+    Derived from original Stable demo during R&TD and adapted
+    for use in new FSW gse.py applicaiton.
+
+    TCP socket server for commands, log events, and telemetry data.
+    Later this will handle other things such as sequence files and parameters.
+
+    Handle is instanced in own thread for each client.
+
+    Registration is done by sending the string "Register <name>".
+    Sending a message to destination <name> is done as
+    "A5A5 <name> <data>" Note only <data> is sent.
+    Any client that sends a "List" comment makes the server display all
+    registered clients.
+    """
+    SocketServer.BaseRequestHandler.allow_reuse_address = True
+
+    def handle(self):                           # on each packet
+        """
+        The function that is invoked when a packet is received.  This function listens
+        for data on the socket.  Packets for now are assumed to be separated
+        by a newline.  For each packet, call processPkt.
+        """
+
+        self.getNewMsg(self.request[0])
+        
+
+    #################################################
+    # New Routines to process the command messages
+    #################################################
+    def getNewMsg(self,packet):
+        """
+        After registration wait for an incoming message
+        The first part must always be an "A5A5 " or a "List "
+        """
+
+        # Read the header data from the socket either A5A5 or List
+        (header,packet) = self.readHeader(packet)
+
+        #If the received header is an empty string, connection closed, exit loop
+        if not header:
+            return
+
+        # Got the header data so read the data of the message here...
+        data = self.readData(header,packet)
+
+        # Process and send the packet of the message here...
+        self.processNewPkt(header, data)
+
+
+    def readHeader(self, packet):
+        """
+        Read the 9 byte header (e.g. "A5A5 GUI " or "A5A5 FSW "),
+        or just read the "List\n" command.
+        """
+        header = packet[:4]
+        header2 = packet[4:9]
+        packet = packet[9:]
+        return (header + header2,packet)
+
+    def readData(self,header,packet):
+        """
+        Read the data part of the message sent to either GUI or FSW.
+        GUI receives telemetry.
+        FSW receives commands of various lengths.
+        """
+        data = ""
+        dst = header.split(" ")[1].strip(" ")
+        # Read telemetry data here...
+        tlm_packet_size = packet[:4]
+        size = struct.unpack(">I", tlm_packet_size)[0]
+        data = tlm_packet_size + packet[4:4+size]
+
+        return data
+
+
+    def processNewPkt(self,header,data):
+        """
+        Process a single command here header and data here.
+        The command must always start with A5A5 except if it is a List.
+        Once the entire header string is processed send it on queue.
+        If something goes wrong report and shutdown server.
+        """
+        dest_list = []
+        # Process data here...
+        head, dst = header.strip(" ").split(" ")
+        if head == 'A5A5':  # Packet Header
+            #print "Received Packet: %s %s...\n" % (head,dst)
+            if data == '':
+                print " Data is empty, returning."
+            if 'GUI' in dst:
+                dest_list = GUI_clients
+            else:
+                print "dest? %s"%dst
+            for dest_elem in dest_list:
+                LOCK.acquire()
+                if dest_elem in SERVER.dest_obj.keys():
+                    # Send the message here....
+                    #print "Sending msg to ", dest_elem
+
+                    SERVER.dest_obj[dest_elem].put(data)
+                LOCK.release()
+        else:
+            raise RuntimeError("Telemetry missing A5A5 header")
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """
@@ -325,6 +430,11 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """
     dest_obj = dict()
     lock_obj = threading.Lock()
+
+class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
+    """
+    UDP Socket server.
+    """
 
 
 class DestObj:
@@ -383,6 +493,7 @@ def main(argv=None):
             HOST = opts.host
             PORT = opts.port
             server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
+            udp_server = ThreadedUDPServer((HOST, PORT), ThreadedUDPRequestHandler)
             # Hopefully this will allow address reuse and server to restart immediately
             server.allow_reuse_address = True
             SERVER = server
@@ -393,17 +504,24 @@ def main(argv=None):
             # Start a thread with the server -- that thread will then start one
             # more thread for each request
             server_thread = threading.Thread(target=server.serve_forever)
+            udp_server_thread = threading.Thread(target=udp_server.serve_forever)
             signal.signal(signal.SIGINT, signal_handler)
             server_thread.daemon = False
             server_thread.start()
+            udp_server_thread.daemon = False
+            udp_server_thread.start()
             p = os.getpid()
             #print "Process ID: %s" % p
 
             while not shutdown_event.is_set():
                server_thread.join(timeout = 1.0)
+               udp_server_thread.join(timeout = 1.0)
 
             SERVER.shutdown()
             SERVER.server_close()
+            udp_server.shutdown()
+            udp_server.server_close()
+            
             time.sleep(1)
 
         except Exception, e:

@@ -3,9 +3,9 @@ import Tkinter
 import Pmw
 
 from controllers import exceptions
+from controllers import observer
 
-
-class StatusPanel(object):
+class StatusPanel(observer.Observer):
     '''
     A class that instances and communicates with a sequencer
     panel that is used to create sequences of commands for
@@ -69,7 +69,7 @@ class StatusPanel(object):
         """
         self.__display.clear()
 
-    
+
     def statusSetText(self, str):
         """
         Reset the text in the status text widget.
@@ -80,22 +80,18 @@ class StatusPanel(object):
 
 
     # Interface for updating status text via observer singleton
-    def update(self, observer):
+    def update(self, observable, arg):
         """
         Update the status text widget for each
         instanced main panel.  This is only called
-        from the status_updater singleton observer
+        from the status_updater singleton observable
         class.
         """
-        if observer.update_mode == "Update":
-            self.statusUpdate(observer.status_string, observer.text_color)
-        elif observer.update_mode == "Clear":
+        if observable.update_mode == "Update":
+            self.statusUpdate(observable.status_string, observable.text_color)
+        elif observable.update_mode == "Clear":
             self.statusClear()
-        elif observer.update_mode == "Text":
-            self.statusSetText(observer.status_string)
+        elif observable.update_mode == "Text":
+            self.statusSetText(observable.status_string)
         else:
-            raise exceptions.GseControllerStutasUpdateException(observer.update_mode)
-        
-
-
-
+            raise exceptions.GseControllerStutasUpdateException(observable.update_mode)

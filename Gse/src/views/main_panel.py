@@ -35,6 +35,7 @@ import status_bar
 import file_panel
 
 from controllers import client_sock
+from controllers import socket_listener
 from controllers import event_listener
 from controllers import channel_listener
 from controllers import exceptions
@@ -42,7 +43,7 @@ from controllers import status_updater
 from controllers import status_bar_updater
 from controllers import file_listener
 
-from utils import ConfigManager 
+from utils import ConfigManager
 from utils.gse_persist import WindowMementoOriginator, MementoCaretaker
 
 from Canvas import Line
@@ -89,18 +90,30 @@ class TopPanel(object):
         self.__panels = []
         #
         self.__refreshable_panels = []
+
+        # Socket listener
+        self.__socket_listen = socket_listener.SocketListener.getInstance()
+
         # Event listener singleton with observer
         self.__event_listen = event_listener.EventListener.getInstance()
-        #
+        # Start listener thread
+        self.__event_listen.start_thread()
+
+        # Channel listener singleton with observer
         self.__ch_listen = channel_listener.ChannelListener.getInstance()
-        #
-        self.__stat_bar_updater = status_bar_updater.StatusBarUpdater.getInstance()
-        #
+        # Start listener thread
+        self.__ch_listen.start_thread()
+
         # Status updater singleton
+        self.__stat_bar_updater = status_bar_updater.StatusBarUpdater.getInstance()
+        # Start updater thread
+        self.__stat_bar_updater.start_thread()
+
         self.__status_update = status_updater.StatusUpdater.getInstance()
+
         # File listener singleton
         self.__file_listener = file_listener.FileListener.getInstance()
-        #
+
         # When window is closed handle the event with exit stuff
         self._parent.protocol("WM_DELETE_WINDOW", self.exit)
         #
@@ -109,7 +122,7 @@ class TopPanel(object):
 
     def root(self):
         return self._parent
-        
+
     def register_panel(self,p):
         self.__panels.append(p)
 
@@ -120,7 +133,7 @@ class TopPanel(object):
         """
         Configure title and geometry
         """
-        base = 'F\' Ground Software'
+        base = 'F Prime Ground Software'
         if self.__id > 0:
             base = base + '(%d)' % self.__id
 
@@ -155,13 +168,13 @@ class TopPanel(object):
         menuBar.addmenuitem('File', 'command', 'Program Information.',
                     font=('StingerLight', 14), label='About...', command=self.about)
         menuBar.addmenuitem('File', 'command', 'Save Window Configuration...',
-                label='Save Window Configuration', font=('StingerLight', 14), command=self.save_window_configuration)        
+                label='Save Window Configuration', font=('StingerLight', 14), command=self.save_window_configuration)
         menuBar.addmenuitem('File', 'command', 'Restore Windows...',
                     label='Restore Windows', font=('StingerLight', 14), command=self.restore_windows)
         menuBar.addmenuitem('File', 'separator')
         menuBar.addmenuitem('File', 'command',
                     'Exit the application', label='Exit', command=self.exit)
-        
+
         if self.__top == True:
             m2=menuBar.addmenu('TCP Server', 'Launch..., Connect..., Kill..')
             menuBar.addmenuitem('TCP Server', 'command', 'Start a TCP Threaded Socket Server in terminal',
@@ -174,7 +187,7 @@ class TopPanel(object):
     # Menu callbacks
     def new(self):
         """
-        Create new window. 
+        Create new window.
         - Break from event listener
         - Let remaining tasks finish then create new window
         """
@@ -194,10 +207,10 @@ class TopPanel(object):
         self.restart_update_tasks()
 
     def about(self):
-        
+
         a = Pmw.AboutDialog(self._parent, applicationname=self.__config.get('about_info', 'app_name'))
         a.show()
-    
+
     def restore_windows(self):
         """
         Tell caretaker to restore windows.
@@ -217,7 +230,7 @@ class TopPanel(object):
             #        panel.create_memento()
             #    except AttributeError, e:
             #        pass
-                
+
 
         self.__memento_caretaker.save_to_file()
 
@@ -264,35 +277,36 @@ class TopPanel(object):
 
     def break_update_tasks(self):
         """
-        - Break and cancel file and event listener's update_task
+        - Break and cancel file update_task
         """
         self.__file_listener.update_task_cancel()
-
-        self.__event_listen.update_break = True
-        self.__event_listen.update_task_cancel()
 
     def restart_update_tasks(self):
         """
         Start new update_task call
         """
-        id = self._parent.after(100, self.__event_listen.update_task)
-        self.__event_listen.set_after_id(id)
-        self.__event_listen.update_break = False
-
-        id = self._parent.after(100, self.__file_listener.update_task)
-        self.__file_listener.set_after_id(id)
+        after_id = self._parent.after(100, self.__file_listener.update_task)
+        self.__file_listener.set_after_id(after_id)
 
     def exit(self):
         """
-        Exit window. 
+        Exit window.
         - Break from event listener's update_task
         - Cancel the next update_task call
         - Let remaining tasks finish then proceed to exit
         """
+
         for panel in self.__refreshable_panels:
             panel.refresh_cancel()
-        
+
         self.break_update_tasks()
+
+        # If top level thread kill consumers
+        if self.__top:
+          self.__stat_bar_updater.stop_thread()
+          self.__event_listen.stop_thread()
+          self.__ch_listen.stop_thread()
+
         self._parent.after(500, self.__handle_exit)
 
 
@@ -308,30 +322,29 @@ class TopPanel(object):
                process_str = ["ps", "-ef", "|", "grep " + self.__opts.exec_app]
                p = subprocess.check_output(process_str, shell=True)
                p = p.split('\n')
-               fprime_pid = ''
+               pid = ''
 
                for line in p:
                   if((self.__opts.exec_app) in line) and not ('gse.py' in line):
-                     fprime_pid = line
-               fprime_pid = fprime_pid.split()[0]
-               os.kill(int(fprime_pid), signal.SIGINT)
+                     pid = line
+               pid = pid.split()[0]
+               os.kill(int(pid), signal.SIGINT)
             else:
                process_str = ["ps","-ef"]
                p = subprocess.Popen(process_str, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                o, e = p.communicate()
-               fprime_pid = ''
+               pid = ''
                lines = o.split('\n')
                for l in lines:
-                   if (user in l) and ('Ref' in l) and ('tee' in l): 
-                      fprime_pid = l.split()[1]
-               os.kill(int(fprime_pid), signal.SIGINT)
+                   if (user in l) and ('Ref' in l) and ('tee' in l):
+                      pid = l.split()[1]
+               os.kill(int(pid), signal.SIGINT)
 
         # Only close bin logfile and quit socket connection if top
         if self.__top:
-            if self.__event_listen.get_bin_logfile() != None:
-                self.__event_listen.close_bin_logfile()
+            self.__socket_listen.close_bin_logfile()
             # Cancel next update task
-            self.__event_listen.update_task_cancel()
+            self.break_update_tasks()
 
             if self.__opts.connect == True or self.__opts.exec_app != None:
                 if self.__sock != None:
@@ -342,38 +355,35 @@ class TopPanel(object):
 
         for p in self.__panels:
             if isinstance(p, log_event_panel.LogEventPanel):
-                self.__event_listen.observer_discard(p)
+                self.__event_listen.deleteObserver(p)
             elif isinstance(p, command_panel.CommandPanel):
                 #@todo: mediator clean up needed here.
                 pass
                 #p.create_memento("command_panel")
             elif isinstance(p, telemetry_panel.TelemetryPanel):
-                self.__ch_listen.observer_discard(p)
+                self.__ch_listen.deleteObserver(p)
             elif isinstance(p, status_panel.StatusPanel):
-                self.__status_update.observer_discard(p)
+                self.__status_update.deleteObserver(p)
             elif isinstance(p, status_bar.StatusBar):
                 self.__stat_bar_updater.notify_exit()
-                self.__stat_bar_updater.observer_discard(p)
             elif isinstance(p, file_panel.FilePanel):
-                self.__file_listener.observer_discard(p)
+                self.__file_listener.deleteObserver(p)
                 self.__file_listener.exit()
             else:
                 p.__del__()
-        
+
 
         #self.create_memento(self.__id)
 
         #
         self.__main_panel_factory.childClosing()
         #
-        self.__status_update.observer_discard(self)
-        #
         self._parent.destroy()
-        
+
         # If window is not root restart event listener update task
         if not self.__top:
             self.restart_update_tasks()
-    
+
     # TCP Server menu callbacks
     def startTCP(self):
         """
@@ -384,7 +394,7 @@ class TopPanel(object):
         # Setup log file name here...
         #
         if self.__opts == None:
-            p = os.environ['HOME'] + os.sep + 'fprime_logs' + os.sep + "threaded_tcp_server"
+            p = os.environ['HOME'] + os.sep + 'logs' + os.sep + "threaded_tcp_server"
         else:
             p = self.__opts.log_file_path + os.sep + "threaded_tcp_server"
         #
@@ -395,7 +405,7 @@ class TopPanel(object):
         #
         op_sys = os.uname()[0]
         if 'BUILD_ROOT' in os.environ:
-            fprime_root_path = os.environ['BUILD_ROOT']
+            root_path = os.environ['BUILD_ROOT']
         else:
             print "EXCEPTIONS:  BUILD_ROOT Environment Variable not found!"
             raise exceptions.EnvironmentError
@@ -403,14 +413,14 @@ class TopPanel(object):
         if op_sys == 'Darwin':
             app_script = '/usr/bin/osascript '
             app_args   = '-e \'tell application \"Terminal" to do script '
-            app_cmd    = "\"cd %s/Gse/bin; ./ThreadedTCPServer.py -p %s | tee -a %s; exit\"" % (fprime_root_path, self.__opts.port, logfile)
+            app_cmd    = "\"cd %s/Gse/bin; ./ThreadedTCPServer.py -p %s | tee -a %s; exit\"" % (root_path, self.__opts.port, logfile)
             # Note the exit is so Mac Terminal.app window will exit when process killed...
             cmd = app_script + app_args + app_cmd + '\''
             os.system(cmd)
         else:
             app_script = "/usr/bin/gnome-terminal"
             app_args   = " -x bash -c "
-            app_cmd    = "\"source ~/.bashrc; cd %s/Gse/bin; ./ThreadedTCPServer.py -p %s | tee -a %s; exit\"" % (fprime_root_path, self.__opts.port, logfile)
+            app_cmd    = "\"source ~/.bashrc; cd %s/Gse/bin; ./ThreadedTCPServer.py -p %s | tee -a %s; exit\"" % (root_path, self.__opts.port, logfile)
             # Note the .bashrc must be sourced.
             cmd = app_script + app_args + app_cmd
             my_env = os.environ
@@ -441,17 +451,17 @@ class TopPanel(object):
             self.__sock.send("Register GUI\n")
             #self.lock.release()
             #
-            # Register the socket with the event_listener and
+            # Register the socket with the socket_listener and
             # Spawn the listener thread here....
-            self.__event_listen.connect(self.__sock)
+            self.__socket_listen.connect(self.__sock)
         except IOError:
             del(self.__sock)
             self.__sock = None
             s = "EXCEPTION: Could not connect to socket at host addr %s, port %s" % (server, port)
             print s
             self.__status_update.update(s,color='red')
-    
-    
+
+
     def getSock(self):
         """
         Return socket client object handle.
@@ -481,8 +491,6 @@ class TopPanel(object):
         self.__p2 = nb.add('Log Events')
         self.__p3 = nb.add('Channel Telemetry')
         self.__p4 = nb.add('Sequences')
-        # self.__p5 = nb.add('Parameters')
-        #self.__p6 = nb.add('Topology')
         self.__p7 = nb.add('Stripchart')
         self.__p10= nb.add('File Management')
         self.__p8 = nb.add('Status')
@@ -512,7 +520,7 @@ class TopPanel(object):
 
     def p8(self):
         return self.__p8
-        
+
     def p9(self):
         return self.__p9
 
@@ -534,7 +542,7 @@ def main_window_start():
     """
     root = Tkinter.Tk()
     #root.option_readfile('optionDB')
-    root.title('F\' Ground Software')
+    root.title('F Prime Ground Support Equipment')
     Pmw.initialise()
     t=TopPanel(root)
     c=command_panel.CommandPanel(t.p1())

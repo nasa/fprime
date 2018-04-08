@@ -266,7 +266,7 @@ namespace Svc {
   void BufferManager ::
     bufferSendIn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     const U32 instance = static_cast<U32>(this->getInstance());
