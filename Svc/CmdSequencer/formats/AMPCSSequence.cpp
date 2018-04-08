@@ -3,7 +3,7 @@
 // \brief  AMPCSSequence implementation
 //
 // \copyright
-// Copyright (C) 2009-2017 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.

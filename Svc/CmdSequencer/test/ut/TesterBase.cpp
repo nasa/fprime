@@ -4,7 +4,7 @@
 // \brief  cpp file for CmdSequencer component test harness base class
 //
 // \copyright
-// Copyright 2009-2017, by the California Institute of Technology.
+// Copyright 2009-2018, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
