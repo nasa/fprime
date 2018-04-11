@@ -39,7 +39,6 @@ namespace Fw {
             bool operator<(const Time& other) const;
             bool operator>=(const Time& other) const;
             bool operator<=(const Time& other) const;
-            const Time& operator=(const Time& other);
 
             // Static methods:
             //! The type of a comparison result
