@@ -52,6 +52,43 @@ TEST(TimeTestNominal,MathTest) {
 
 }
 
+TEST(TimeTestNominal,CopyTest) {
+
+    Fw::Time time0;
+
+    // make time that's guaranteed to be different from default
+    Fw::Time time1(
+        (time0.getTimeBase() != TB_NONE ? TB_NONE : TB_PROC_TIME),
+        time0.getContext()+1,
+        time0.getSeconds()+1,
+        time0.getUSeconds()+1
+    );
+
+    // copy construction
+    Fw::Time time2 = time1;
+    ASSERT_EQ(time1.getSeconds(), time2.getSeconds());
+    ASSERT_EQ(time1.getUSeconds(), time2.getUSeconds());
+    ASSERT_EQ(time1.getTimeBase(), time2.getTimeBase());
+    ASSERT_EQ(time1.getContext(), time2.getContext());
+
+    // assignment operator
+    Fw::Time time3;
+    time3 = time1;
+    ASSERT_EQ(time1.getSeconds(), time3.getSeconds());
+    ASSERT_EQ(time1.getUSeconds(), time3.getUSeconds());
+    ASSERT_EQ(time1.getTimeBase(), time3.getTimeBase());
+    ASSERT_EQ(time1.getContext(), time3.getContext());
+
+    // set method
+    Fw::Time time4;
+    time4.set(time1.getTimeBase(), time1.getContext(), time1.getSeconds(), time1.getUSeconds());
+    ASSERT_EQ(time1.getSeconds(), time3.getSeconds());
+    ASSERT_EQ(time1.getUSeconds(), time3.getUSeconds());
+    ASSERT_EQ(time1.getTimeBase(), time3.getTimeBase());
+    ASSERT_EQ(time1.getContext(), time3.getContext());
+
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
