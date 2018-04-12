@@ -40,15 +40,6 @@ namespace Fw {
         this->m_seconds = seconds;
     }
 
-    const Time& Time::operator=(const Time& other) {
-        this->m_timeBase = other.m_timeBase;
-        this->m_timeContext = other.m_timeContext;
-        this->m_useconds = other.m_useconds;
-        this->m_seconds = other.m_seconds;
-
-        return other;
-    }
-
     bool Time::operator==(const Time& other) const {
         return (Time::compare(*this,other) == EQ);
     }
@@ -223,15 +214,13 @@ namespace Fw {
       FW_ASSERT(minuend > subtrahend);
 
       U32 seconds = minuend.getSeconds() - subtrahend.getSeconds();
-      I64 uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
-
-      // Handle if subtrahend's uSecs was larger than minuend's
-      if(uSeconds < 0)
-      {
-        seconds--;
-        uSeconds += 1000000; // microseconds in a second.
+      U32 uSeconds;
+      if (subtrahend.getUSeconds() > minuend.getUSeconds()) {
+          seconds--;
+          uSeconds = minuend.getUSeconds() + 1000000 - subtrahend.getUSeconds();
+      } else {
+          uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
       }
-      FW_ASSERT(uSeconds >= 0, uSeconds);
       return Time(minuend.getTimeBase(), minuend.getContext(), seconds, static_cast<U32>(uSeconds));
     }
 
