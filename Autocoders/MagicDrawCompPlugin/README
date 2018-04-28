@@ -4,7 +4,7 @@ To install this plugin:
  - copy the files 'MyPlugin.jar' and 'plugin.xml' found in this directory into the MagicDraw installation plugin directory:
 ie /Applications/MagicDraw_UML_17.2/plugins/gov.nasa.jpl.magicdraw.componentAutocoder.
 
-To generate a new plugin:
+To generate a new plugin in MagicDraw:
 - Close MagicDraw
 - Open the project in Eclipse
 - Move the existing .jar file out of the way (in ISF/isf/Autocoders/MagicDrawPlugin)
@@ -13,6 +13,10 @@ To generate a new plugin:
 - Select 'JAR File'
 - Select the export destination to this directory
 - Update the version number in plugin.xml
+
+To rebuild the plugin from the command line:
+- Run 'make' in this directory. This will generate or re-generate a file 'plugin.jar' that contains the plugin.
+- Copy 'plugin.jar' to 'MyPlugin.jar' as described above.
 
 To run the plugin in MagicDraw:
 - Run MagicDraw - you should see a 'Component Autocoder' tab next to the 'Help' tab
