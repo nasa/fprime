@@ -2,7 +2,7 @@
 <plugin
 	id="gov.nasa.jpl.magicdraw.componentAutocoder"
 	name="MagicDraw Component Plugin"
-	version="4.4"
+	version="4.5"
 	ownClassloader="true"
 	provider-name="NASA Jet Propulsion Laboratory, California Institute of Technology"
 	class="gov.nasa.jpl.componentaction.IsfXmlAutocoderAction">
@@ -12,6 +12,6 @@
 	</requires>
 
 	<runtime>
-	   <library name="MyPlugin.jar"/>
+	   <library name="FpCompAuto.jar"/>
 	</runtime>
 </plugin>
