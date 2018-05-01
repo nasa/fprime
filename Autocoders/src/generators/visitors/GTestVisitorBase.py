@@ -81,7 +81,7 @@ class GTestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
             "The line number of the call site", ""
         )
         c.param_size = ("size", "const U32", "The asserted size", "")
-        c.param_index = ("index", "const U32", "The index", "")
+        c.param_index = ("__index", "const U32", "The index", "")
         c.params_assert_size = [ c.param_fileName, c.param_lineNumber, c.param_size ]
         c.params_assert_cmd_response = [ 
             c.param_fileName, 

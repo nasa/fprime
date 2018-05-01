@@ -76,31 +76,31 @@ $emit_cpp_params($params_assert_cmd_response)
     )
     const
   {
-    ASSERT_LT(index, this->cmdResponseHistory->size())
+    ASSERT_LT(__index, this->cmdResponseHistory->size())
       $failure_message
       $LTLT "  Value:    Index into command response history\n"
       $LTLT "  Expected: Less than size of command response history (" 
       $LTLT this->cmdResponseHistory->size() $LTLT ")\n"
-      $LTLT "  Actual:   " $LTLT index $LTLT "\n";
-    const CmdResponse& e = this->cmdResponseHistory->at(index);
+      $LTLT "  Actual:   " $LTLT __index $LTLT "\n";
+    const CmdResponse& e = this->cmdResponseHistory->at(__index);
     ASSERT_EQ(opCode, e.opCode)
       $failure_message
       $LTLT "  Value:    Opcode at index "
-      $LTLT index
+      $LTLT __index
       $LTLT " in command response history\n"
       $LTLT "  Expected: " $LTLT opCode $LTLT "\n"
       $LTLT "  Actual:   " $LTLT e.opCode $LTLT "\n";
     ASSERT_EQ(cmdSeq, e.cmdSeq)
       $failure_message
       $LTLT "  Value:    Command sequence number at index "
-      $LTLT index
+      $LTLT __index
       $LTLT " in command response history\n"
       $LTLT "  Expected: " $LTLT cmdSeq $LTLT "\n"
       $LTLT "  Actual:   " $LTLT e.cmdSeq $LTLT "\n";
     ASSERT_EQ(response, e.response)
       $failure_message
       $LTLT "  Value:    Command response at index "
-      $LTLT index
+      $LTLT __index
       $LTLT " in command resopnse history\n"
       $LTLT "  Expected: " $LTLT response $LTLT "\n"
       $LTLT "  Actual:   " $LTLT e.response $LTLT "\n";
@@ -148,14 +148,14 @@ $emit_cpp_params([ $param_fileName, $param_lineNumber, $param_index, $param_val 
     )
     const
   {
-    ASSERT_LT(index, this->tlmHistory_${channel_name}->size())
+    ASSERT_LT(__index, this->tlmHistory_${channel_name}->size())
       $failure_message
       $LTLT "  Value:    Index into history of telemetry channel ${channel_name}\n"
       $LTLT "  Expected: Less than size of history (" 
       $LTLT this->tlmHistory_${channel_name}->size() $LTLT ")\n"
-      $LTLT "  Actual:   " $LTLT index $LTLT "\n";
+      $LTLT "  Actual:   " $LTLT __index $LTLT "\n";
     const TlmEntry_${channel_name}& e =
-      this->tlmHistory_${channel_name}->at(index);
+      this->tlmHistory_${channel_name}->at(__index);
     #if $type == "string":
     ASSERT_STREQ(val, e.arg.toChar())
     #else
@@ -163,7 +163,7 @@ $emit_cpp_params([ $param_fileName, $param_lineNumber, $param_index, $param_val 
     #end if
       $failure_message
       $LTLT "  Value:    Value at index "
-      $LTLT index
+      $LTLT __index
       $LTLT " on telmetry channel ${channel_name}\n"
       $LTLT "  Expected: " $LTLT val $LTLT "\n"
       $LTLT "  Actual:   " $LTLT e.arg $LTLT "\n";
@@ -220,14 +220,14 @@ $emit_cpp_params($params_assert_size)
 $emit_cpp_params($params_assert_event + $params)
     ) const
   {
-    ASSERT_GT(this->eventHistory_${event_name}->size(), index)
+    ASSERT_GT(this->eventHistory_${event_name}->size(), __index)
       $failure_message
       $LTLT "  Value:    Index into history of event ${event_name}\n"
       $LTLT "  Expected: Less than size of history (" 
       $LTLT this->eventHistory_${event_name}->size() $LTLT ")\n"
-      $LTLT "  Actual:   " $LTLT index $LTLT "\n";
+      $LTLT "  Actual:   " $LTLT __index $LTLT "\n";
     const EventEntry_${event_name}& e =
-      this->eventHistory_${event_name}->at(index);
+      this->eventHistory_${event_name}->at(__index);
       #for $param_name, $param_type, $param_comment, $param_typeinfo in $params
         #if $param_typeinfo == "string":
     ASSERT_STREQ(${param_name}, e.${param_name}.toChar())
@@ -236,7 +236,7 @@ $emit_cpp_params($params_assert_event + $params)
         #end if
       $failure_message
       $LTLT "  Value:    Value of argument $param_name at index "
-      $LTLT index
+      $LTLT __index
       $LTLT " in history of event ${event_name}\n"
       $LTLT "  Expected: " $LTLT $param_name $LTLT "\n"
         #if $param_typeinfo == "string":
