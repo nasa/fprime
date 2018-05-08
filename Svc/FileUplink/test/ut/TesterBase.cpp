@@ -70,6 +70,8 @@ namespace Svc {
     // Initialize histories for typed user output ports
     this->fromPortHistory_bufferSendOut =
       new History<FromPortEntry_bufferSendOut>(maxHistorySize);
+    this->fromPortHistory_pingOut =
+      new History<FromPortEntry_pingOut>(maxHistorySize);
     // Clear history
     this->clearHistory();
   }
@@ -220,6 +222,35 @@ namespace Svc {
 
     }
 
+    // Attach input port pingOut
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_from_pingOut();
+        ++_port
+    ) {
+
+      this->m_from_pingOut[_port].init();
+      this->m_from_pingOut[_port].addCallComp(
+          this,
+          from_pingOut_static
+      );
+      this->m_from_pingOut[_port].setPortNum(_port);
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      (void) snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_from_pingOut[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_from_pingOut[_port].setObjName(_portName);
+#endif
+
+    }
+
     // Attach input port LogText
 
 #if FW_ENABLE_TEXT_LOGGING == 1
@@ -274,6 +305,29 @@ namespace Svc {
 
     }
 
+    // Initialize output port pingIn
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_to_pingIn();
+        ++_port
+    ) {
+      this->m_to_pingIn[_port].init();
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_to_pingIn[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_to_pingIn[_port].setObjName(_portName);
+#endif
+
+    }
+
   }
 
   // ----------------------------------------------------------------------
@@ -310,6 +364,18 @@ namespace Svc {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_eventOut);
   }
 
+  NATIVE_INT_TYPE FileUplinkTesterBase ::
+    getNum_to_pingIn(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_pingIn);
+  }
+
+  NATIVE_INT_TYPE FileUplinkTesterBase ::
+    getNum_from_pingOut(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_pingOut);
+  }
+
 #if FW_ENABLE_TEXT_LOGGING == 1
   NATIVE_INT_TYPE FileUplinkTesterBase ::
     getNum_from_LogText(void) const
@@ -332,6 +398,16 @@ namespace Svc {
     this->m_to_bufferSendIn[portNum].addCallPort(bufferSendIn);
   }
 
+  void FileUplinkTesterBase ::
+    connect_to_pingIn(
+        const NATIVE_INT_TYPE portNum,
+        Svc::InputPingPort *const pingIn
+    ) 
+  {
+    FW_ASSERT(portNum < this->getNum_to_pingIn(),static_cast<AssertArg>(portNum));
+    this->m_to_pingIn[portNum].addCallPort(pingIn);
+  }
+
 
   // ----------------------------------------------------------------------
   // Invocation functions for to ports
@@ -340,13 +416,26 @@ namespace Svc {
   void FileUplinkTesterBase ::
     invoke_to_bufferSendIn(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
     FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
     this->m_to_bufferSendIn[portNum].invoke(
         fwBuffer
+    );
+  }
+
+  void FileUplinkTesterBase ::
+    invoke_to_pingIn(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_pingIn(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_pingIn(),static_cast<AssertArg>(portNum));
+    this->m_to_pingIn[portNum].invoke(
+        key
     );
   }
 
@@ -359,6 +448,13 @@ namespace Svc {
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendIn(), static_cast<AssertArg>(portNum));
     return this->m_to_bufferSendIn[portNum].isConnected();
+  }
+
+  bool FileUplinkTesterBase ::
+    isConnected_to_pingIn(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_pingIn(), static_cast<AssertArg>(portNum));
+    return this->m_to_pingIn[portNum].isConnected();
   }
 
   // ----------------------------------------------------------------------
@@ -393,6 +489,13 @@ namespace Svc {
     return &this->m_from_eventOut[portNum];
   }
 
+  Svc::InputPingPort *FileUplinkTesterBase ::
+    get_from_pingOut(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_from_pingOut(),static_cast<AssertArg>(portNum));
+    return &this->m_from_pingOut[portNum];
+  }
+
 #if FW_ENABLE_TEXT_LOGGING == 1
   Fw::InputLogTextPort *FileUplinkTesterBase ::
     get_from_LogText(const NATIVE_INT_TYPE portNum)
@@ -410,7 +513,7 @@ namespace Svc {
     from_bufferSendOut_static(
         Fw::PassiveComponentBase *const callComp,
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(callComp);
@@ -419,6 +522,22 @@ namespace Svc {
     _testerBase->from_bufferSendOut_handlerBase(
         portNum,
         fwBuffer
+    );
+  }
+
+  void FileUplinkTesterBase ::
+    from_pingOut_static(
+        Fw::PassiveComponentBase *const callComp,
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    FW_ASSERT(callComp);
+    FileUplinkTesterBase* _testerBase = 
+      static_cast<FileUplinkTesterBase*>(callComp);
+    _testerBase->from_pingOut_handlerBase(
+        portNum,
+        key
     );
   }
 
@@ -489,6 +608,7 @@ namespace Svc {
   {
     this->fromPortHistorySize = 0;
     this->fromPortHistory_bufferSendOut->clear();
+    this->fromPortHistory_pingOut->clear();
   }
 
   // ---------------------------------------------------------------------- 
@@ -497,13 +617,29 @@ namespace Svc {
 
   void FileUplinkTesterBase ::
     pushFromPortEntry_bufferSendOut(
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FromPortEntry_bufferSendOut _e = {
       fwBuffer
     };
     this->fromPortHistory_bufferSendOut->push_back(_e);
+    ++this->fromPortHistorySize;
+  }
+
+  // ---------------------------------------------------------------------- 
+  // From port: pingOut
+  // ---------------------------------------------------------------------- 
+
+  void FileUplinkTesterBase ::
+    pushFromPortEntry_pingOut(
+        U32 key
+    )
+  {
+    FromPortEntry_pingOut _e = {
+      key
+    };
+    this->fromPortHistory_pingOut->push_back(_e);
     ++this->fromPortHistorySize;
   }
 
@@ -514,13 +650,26 @@ namespace Svc {
   void FileUplinkTesterBase ::
     from_bufferSendOut_handlerBase(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
+        Fw::Buffer &fwBuffer
     )
   {
     FW_ASSERT(portNum < this->getNum_from_bufferSendOut(),static_cast<AssertArg>(portNum));
     this->from_bufferSendOut_handler(
         portNum,
         fwBuffer
+    );
+  }
+
+  void FileUplinkTesterBase ::
+    from_pingOut_handlerBase(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_from_pingOut(),static_cast<AssertArg>(portNum));
+    this->from_pingOut_handler(
+        portNum,
+        key
     );
   }
 
@@ -687,7 +836,19 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_BADCHECKSUM: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 3,_numArgs,3);
+        
+#endif    
         Fw::LogStringArg fileName;
         _status = args.deserialize(fileName);
         FW_ASSERT(
@@ -696,6 +857,18 @@ namespace Svc {
         );
 
         U32 computed;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(computed);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -703,6 +876,18 @@ namespace Svc {
         );
 
         U32 read;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(read);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -718,7 +903,19 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_FILEOPENERROR: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 1,_numArgs,1);
+        
+#endif    
         Fw::LogStringArg fileName;
         _status = args.deserialize(fileName);
         FW_ASSERT(
@@ -735,7 +932,19 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_FILERECEIVED: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 1,_numArgs,1);
+        
+#endif    
         Fw::LogStringArg fileName;
         _status = args.deserialize(fileName);
         FW_ASSERT(
@@ -752,7 +961,19 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_FILEWRITEERROR: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 1,_numArgs,1);
+        
+#endif    
         Fw::LogStringArg fileName;
         _status = args.deserialize(fileName);
         FW_ASSERT(
@@ -769,8 +990,32 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_INVALIDRECEIVEMODE: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 2,_numArgs,2);
+        
+#endif    
         U32 packetType;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(packetType);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -778,6 +1023,18 @@ namespace Svc {
         );
 
         U32 mode;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(mode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -793,8 +1050,32 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_PACKETOUTOFBOUNDS: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 2,_numArgs,2);
+        
+#endif    
         U32 packetIndex;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(packetIndex);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -817,8 +1098,32 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_PACKETOUTOFORDER: 
       {
 
-        Fw::SerializeStatus _status;
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 2,_numArgs,2);
+        
+#endif    
         U32 packetIndex;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(packetIndex);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -826,6 +1131,18 @@ namespace Svc {
         );
 
         U32 lastPacketIndex;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif      
         _status = args.deserialize(lastPacketIndex);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -841,6 +1158,16 @@ namespace Svc {
       case FileUplinkComponentBase::EVENTID_FILEUPLINK_UPLINKCANCELED: 
       {
 
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
         this->logIn_ACTIVITY_HI_FileUplink_UplinkCanceled();
 
         break;

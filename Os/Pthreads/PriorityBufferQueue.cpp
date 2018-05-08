@@ -115,12 +115,12 @@ namespace Os {
       }
       U8* data = pQueue->data;
       if (NULL != data) {
-        delete data; 
+        delete [] data; 
       }
       NATIVE_UINT_TYPE* indexes = pQueue->indexes;
       if (NULL != indexes)
       {
-        delete indexes; 
+        delete [] indexes; 
       }
       delete pQueue; 
     }

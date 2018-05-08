@@ -61,7 +61,7 @@ namespace Os {
     {
       U8* data = fQueue->data;
       if (NULL != data) {
-        delete data;
+        delete [] data;
       }
       delete fQueue; 
     }

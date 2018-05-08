@@ -63,10 +63,12 @@ namespace Os {
                     stat = OTHER_ERROR;
                     break;
             }
+
+        } else {
+          this->m_mode = mode;
+          this->m_fd = fd;
         }
 
-        this->m_mode = mode;
-        this->m_fd = fd;
         return stat;
     }
 

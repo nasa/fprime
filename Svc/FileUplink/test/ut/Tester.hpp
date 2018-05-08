@@ -105,8 +105,17 @@ namespace Svc {
       //!
       void from_bufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer& buffer
       );
+
+      //! Handler for from_pingOut
+      //!
+      void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
+      );
+
+
 
     private:
 

@@ -17,7 +17,8 @@ SRC = 			TaskCommon.cpp \
 				QueueString.cpp \
 				SimpleQueueRegistry.cpp \
 				MemCommon.cpp \
-				ValidateFileCommon.cpp 
+				ValidateFileCommon.cpp \
+				ValidatedFile.cpp 
 
 HDR = 			Queue.hpp \
 				QueueString.hpp \
@@ -30,6 +31,7 @@ HDR = 			Queue.hpp \
 				Mutex.hpp \
 				File.hpp \
 				ValidateFile.hpp \
+				ValidatedFile.hpp \
 				FileSystem.hpp
 
 SRC_LINUX=      Pthreads/Queue.cpp \

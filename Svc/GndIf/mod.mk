@@ -19,6 +19,6 @@
 
 # There are some standard files that are included for reference
 
-SRC = GndIfComponentAi.xml
+SRC = GndIfComponentAi.xml GetConnectedPortAi.xml
 
 HDR = 

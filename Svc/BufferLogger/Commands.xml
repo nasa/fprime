@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<commands>
+  <command kind="async" opcode="0x00" mnemonic="BL_OpenFile">
+    <comment>Open a new log file with specified name; also resets unique file counter to 0</comment>
+    <args>
+      <arg name="file" type="string" size = "40"/>
+    </args>
+  </command>
+
+  <command kind="async" opcode="0x01" mnemonic="BL_CloseFile">
+    <comment>Close the currently open log file, if any</comment>
+  </command>
+
+  <command kind="async" opcode="0x02" mnemonic="BL_SetLogging">
+    <comment>Sets the volatile logging state</comment>
+    <args>
+      <arg name="state" type="ENUM">
+        <enum name="LogState">
+          <item name="LOGGING_ON"/>
+          <item name="LOGGING_OFF"/>
+        </enum>
+      </arg>
+    </args>
+  </command>
+
+  <command kind="async" opcode="0x03" mnemonic="BL_FlushFile">
+    <comment>Flushes the current open log file to disk; a no-op with fprime's unbuffered file I/O, so always returns success</comment>
+  </command>
+
+</commands>

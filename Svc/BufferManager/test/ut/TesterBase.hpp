@@ -227,7 +227,7 @@ namespace Svc {
       //!
       void invoke_to_bufferSendIn(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
     public:

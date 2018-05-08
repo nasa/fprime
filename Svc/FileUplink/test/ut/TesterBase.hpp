@@ -61,6 +61,13 @@ namespace Svc {
           Fw::InputBufferSendPort *const bufferSendIn /*!< The port*/
       );
 
+      //! Connect pingIn to to_pingIn[portNum]
+      //!
+      void connect_to_pingIn(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Svc::InputPingPort *const pingIn /*!< The port*/
+      );
+
     public:
 
       // ----------------------------------------------------------------------
@@ -97,6 +104,14 @@ namespace Svc {
       //! \return from_eventOut[portNum]
       //!
       Fw::InputLogPort* get_from_eventOut(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
+      //! Get the port that receives input from pingOut
+      //!
+      //! \return from_pingOut[portNum]
+      //!
+      Svc::InputPingPort* get_from_pingOut(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -221,14 +236,28 @@ namespace Svc {
       //!
       virtual void from_bufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       ) = 0;
 
       //! Handler base function for from_bufferSendOut
       //!
       void from_bufferSendOut_handlerBase(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
+      );
+
+      //! Handler prototype for from_pingOut
+      //!
+      virtual void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
+      ) = 0;
+
+      //! Handler base function for from_pingOut
+      //!
+      void from_pingOut_handlerBase(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
       );
 
     protected:
@@ -247,7 +276,7 @@ namespace Svc {
 
       //! Push an entry on the history for from_bufferSendOut
       void pushFromPortEntry_bufferSendOut(
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! A history entry for from_bufferSendOut
@@ -261,6 +290,22 @@ namespace Svc {
       History<FromPortEntry_bufferSendOut> 
         *fromPortHistory_bufferSendOut;
 
+      //! Push an entry on the history for from_pingOut
+      void pushFromPortEntry_pingOut(
+          U32 key /*!< Value to return to pinger*/
+      );
+
+      //! A history entry for from_pingOut
+      //!
+      typedef struct {
+        U32 key;
+      } FromPortEntry_pingOut;
+
+      //! The history for from_pingOut
+      //!
+      History<FromPortEntry_pingOut> 
+        *fromPortHistory_pingOut;
+
     protected:
 
       // ----------------------------------------------------------------------
@@ -271,7 +316,14 @@ namespace Svc {
       //!
       void invoke_to_bufferSendIn(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
+      );
+
+      //! Invoke the to port connected to pingIn
+      //!
+      void invoke_to_pingIn(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
       );
 
     public:
@@ -310,6 +362,18 @@ namespace Svc {
       //!
       NATIVE_INT_TYPE getNum_from_eventOut(void) const;
 
+      //! Get the number of to_pingIn ports
+      //!
+      //! \return The number of to_pingIn ports
+      //!
+      NATIVE_INT_TYPE getNum_to_pingIn(void) const;
+
+      //! Get the number of from_pingOut ports
+      //!
+      //! \return The number of from_pingOut ports
+      //!
+      NATIVE_INT_TYPE getNum_from_pingOut(void) const;
+
 #if FW_ENABLE_TEXT_LOGGING == 1
       //! Get the number of from_LogText ports
       //!
@@ -329,6 +393,14 @@ namespace Svc {
       //! Whether to_bufferSendIn[portNum] is connected
       //!
       bool isConnected_to_bufferSendIn(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
+      //! Check whether port is connected
+      //!
+      //! Whether to_pingIn[portNum] is connected
+      //!
+      bool isConnected_to_pingIn(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -704,6 +776,10 @@ namespace Svc {
       //!
       Fw::OutputBufferSendPort m_to_bufferSendIn[1];
 
+      //! To port connected to pingIn
+      //!
+      Svc::OutputPingPort m_to_pingIn[1];
+
     private:
 
       // ----------------------------------------------------------------------
@@ -725,6 +801,10 @@ namespace Svc {
       //! From port connected to eventOut
       //!
       Fw::InputLogPort m_from_eventOut[1];
+
+      //! From port connected to pingOut
+      //!
+      Svc::InputPingPort m_from_pingOut[1];
 
 #if FW_ENABLE_TEXT_LOGGING == 1
       //! From port connected to LogText
@@ -751,7 +831,7 @@ namespace Svc {
       static void from_bufferSendOut_static(
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
+          Fw::Buffer &fwBuffer 
       );
 
       //! Static function for port from_tlmOut
@@ -773,6 +853,14 @@ namespace Svc {
           Fw::Time &timeTag, /*!< Time Tag*/
           Fw::LogSeverity severity, /*!< The severity argument*/
           Fw::LogBuffer &args /*!< Buffer containing serialized log entry*/
+      );
+
+      //! Static function for port from_pingOut
+      //!
+      static void from_pingOut_static(
+          Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
       );
 
 #if FW_ENABLE_TEXT_LOGGING == 1

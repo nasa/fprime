@@ -28,9 +28,9 @@ import signal
 import socket
 
 class bcolors:
-    RED = '\033[.31m'
-    ENDC = '\033[0m'
-    GREEN = '\033[.32m'
+    RED = u"\u001b[31m"
+    ENDC = u"\u001b[0m"
+    GREEN = u"\u001b[32m"
 
 # check arguments
 
