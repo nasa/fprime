@@ -12,7 +12,7 @@ new components and topologies.
 ## Getting Started with F' and the Reference Application
 
 The first step to running F' is to ensure that the required build tools are available on your system. At its most basic, F' requires
-two tools to be installed: Git, GNU make, and python w/ cheetah. Make is available on most systems, and cheetah can be installed in python
+three tools to be installed: Git, GNU make, and python w/ cheetah. Make is available on most systems, and cheetah can be installed in python
 with the following command:
 
 ```
@@ -38,7 +38,7 @@ make
 ```
 
 If the build progresses to success, the reference application has been successfully built. The binary outputs can be found in a new directory named with
-the architecture for which you built the reference application. *i.e. darwin-darwin-x86-debug-llvm-bin*
+the architecture for which you built the reference application. i.e. *darwin-darwin-x86-debug-llvm-bin* or *linux-linux-x86-debug-gnu-bin*
 
 ### Running the Reference Application
 
@@ -46,12 +46,31 @@ In order to run the reference application, one needs to run the binary named *Re
 show that the reference application was successfully built and runnable. Replace *darwin-darwin-x86-debug-llvm-bin* in the below commands by the target
 used in building the reference application
 
+**On OS X**:
 ```
 cd fprime/Ref/darwin-darwin-x86-debug-llvm-bin
 ./Ref
 ```
 
-Success!!!
+**On Linux**:
+```
+cd fprime/Ref/linux-linux-x86-debug-gnu-bin
+./Ref
+```
+
+Success!!! We have now successfully run the reference application, showing that the build tools work. We are ready to proceed to a custom application.
+
+## Custom Application Goals
+
+In the DIY electronics community there is an abundace of cheap GPS receivers based around the NEMA protocol. These receivers often suport a USB interface
+pretending to be am ACM device for basic serial communication. The messages these receivers send are NEMA formatted text.
+
+TODO: add photo here
+
+This quick-start guide will show how to integrate one of these GPS receivers with the F' framework by wrapping it in a Component and defining commands,
+telemetry, and log events. Finnaly, we will modify the reference Topology to include this new component such that we can downlink our telemetry to
+the F' supplied ground station (GSE).
+
 
 ## Creating a Custom F' Component
 
@@ -62,9 +81,11 @@ and finish up by adding an event to report GPS lock status and a command to repo
 
 Currently, F' designs are stored in XML files that feed the auto-coding system. An XML file represents a signle component including the ports it uses
 to communicate with other components as well as references to the dictonaries that define events/log messages, telmetry, and commands. Further discussion
-of components, ports, events, telemetry, and commands can be found in the F' user guide. [User Guide].
+of components, ports, events, telemetry, and commands can be found in the F' user guide. [User Guide](docs/UsersGuide/FprimeUserGuide.pdf). *Side note:* 
+Ports are also defined with XML, however; this application does not need any customized ports and thus we need not elaborate here.
 
-We will make a custom directory to hold our components, and a component directory:
+The first step to making a compnent is to make a project directory to hold our project's components, and a component directory for our GPS. This is do
+as follows:
 
 ```
 cd fprime
@@ -72,7 +93,8 @@ mkdir -p GpsApp/Gps
 cd GpsApp/Gps
 ```
 
-Next in this directory, we will create a file called *GpsComponentAi.xml* filled with the following text. As can be seen, we are creating our component
+Next, in this directory, we will create a file called *GpsComponentAi.xml* filled with the below text. This represents our Components design by defining
+the ports it uses to connect with other components and the files used to specify commands, telemetry, and events. As can be seen, we are creating our component
 to have 5 ports:
 
 #. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component's commands with the command dispatcher
@@ -125,9 +147,16 @@ file should look like this:
 </component>
 ```
 
+Connecting these components together is done at the system level, enabling the individual components to be reused in different applications. We will
+see this step later.
+
 ## Creating Commands.xml, Events.xml and Telemetry.xml Dictionaries
 
-First we will create a command dictionary. The purpose of the command is to report the lock status of the GPS unit. This command will trigger an event
+These three XML dictionaries define the structure of commands, events, and telemetry that our component uses. This allows the auto-coding system
+to automatically generate the needed code to process commands, and emit events and telemetry. This save the developer for writing the specific code
+to drive the component.
+
+First we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This command will trigger an event
 which will report if the GPS is locked or not. Command.xml should look like the following:
 
 ```
@@ -155,11 +184,12 @@ which will report if the GPS is locked or not. Command.xml should look like the 
 </commands>
 ```
 
-**Note:** opcode_base is auto-filled by the auto-coder giving out component's opcodes a unique offset so all our opcode values can be numbered starting
-at zero.
+**Note:** opcode_base is auto-filled by the auto-coder giving out component's opcodes a unique offset so that we need not worry about what op-codes are
+defined outside this component. We can just number them within the component, and expect the auto-coder to resolve collisions by prefixing the op-codes
+with a defined offset.
 
 Next we will create an Events.xml dictionary that setup the events our component can log. In this case we have two events, GPS locked and GPS lock lost.
-Here again we have and ID base allowing us to fill in the offsets later. The Events.xml file should look like:
+Here again we have and ID base allowing us to fill in the event offsets later. The Events.xml file should look like:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -252,7 +282,8 @@ satellites visible to the GPS unit. These are all standard fields emitted by a U
 </telemetry>
 ```
 
-Now our dictionaries are setup. Before we can continue, we need to add *GpsIdBase* into the auto-coder constants file located at *fprime/Fw/Cfg/AcConstants.ini*. The end of this file should look like the following:
+Now our dictionaries are setup. Before we can continue, we need to add *GpsIdBase* into the auto-coder constants file located at *fprime/Fw/Cfg/AcConstants.ini*. The end of this file should look like the following. This is the offset we disscussed earlier. In order to prevent collisions, it should be unique for other base ids set in
+this file.
 
 ```
 ...
@@ -271,7 +302,7 @@ GpsIdEventsBase                     =       %(GpsIdBase)s            ; Starting 
 
 ## Setting Up the Build System for Gps and GpsApp
 
-The make system is configured to used *fprime/mk/configs/modules/modules.mk* as a place for specifying builds and various deployments. If we look
+The make system is configured to use *fprime/mk/configs/modules/modules.mk* as a place for specifying builds and various deployments. If we look
 into this file, we can see REF_ and Ref_ setups for the Reference applications. We can replicate this for our GpsApp by adding the following lines
 to the file right before the Autocoder sections.
 
@@ -298,6 +329,9 @@ GpsApp_MODULES := \
     $(UTILS_MODULES)
 ...
 ```
+This adds our (future) topology to the make system as well as the component we just created. This allows us to generate make files, and make our component. In
+addition, we will be able to build our project's topology one we add that. *Note:* since we already added a folder for our Topology to the make system we'll need
+to create a placeholder folder (below) before we can build.
 
 In addition, the line defining *DEPLOYMENTS :=* should be modified to add GpsApp like the following:
 
@@ -307,11 +341,12 @@ DEPLOYMENTS := Ref GpsApp acdev
 
 Given that we have already defined our *Topology* folder in the *GpsApp/Top* line above, we will need to add a placeholder for the Topology of our
 GpsApp, which we will fill later. Make the folder *fprime/GpsApp/Top* and add an empty file *mod.mk*. We will fill this folder and mod.mk file
-later. Now our make system should be ready for us to build our new module, and take advantage of the code-generation that is available.
+lateri, but creating it here enables us to build our component. Now our make system should be ready for us to build our new module, and take advantage of
+ the code-generation that is available.
 
 ## Setting Up Module Make Files and Code
 
-The first thing to do is to setup the module's make files. Each module has two files: a Makefile and a mod.mk file. The makefile contains the module name and little else. The mod.mk file contains a list of all the files and submodules that makeup the module. We should now create the two file, *Makefile* and *mod.mk* using the following content.
+The first thing to do is to setup the Gps components's make files. Each module (component, port, topology) has two files: a Makefile and a mod.mk file. The makefile contains the module name and little else. The mod.mk file contains a list of all the files and submodules that makeup this module. We should now create the two file, *Makefile* and *mod.mk* using the following content in the *fprime/GpsApp/Gps* folder.
 
 The makefile, called *Makefile*, looks like:
 ```
@@ -370,10 +405,12 @@ don't already have implementations we can safely rename the template files).
 make impl
 mv GpsComponentImpl.cpp-tmpl GpsComponentImpl.cpp
 mv GpsComponentImpl.hpp-tmpl GpsComponentImpl.hpp
-
 ```
 
-The file contents are in the following sections.
+*Note:* if the developer previously created the implementation .cpp and .hpp files for out component, then moving the templates in place could
+be dangerous.
+
+These template file contents are in the following sections.
 
 ### GpsComponentImpl.hpp
 ```
@@ -519,13 +556,13 @@ namespace GpsApp {
 
 ### Implementation
 
-Here it can be seen that we have two actions to do. First we will need to implement a function called *schedIn_handler* and
+Here it can be seen that we have two actions "TODO". First we will need to implement a function called *schedIn_handler* and
 the second is to implement a command handler for *Gps_ReportLockStatus_cmdHandler*. Both are port calls that will be made
 into our component. Ports are found in the GpsComponentAi.xml, however; only our *schedIn* port is used directly. The 
 rest are called as part of telemetry, event logging, or command processing and thus have helpful wrappers (seen below).
 schedIn represents a call from a rate group driver. It is called a a set rate, e.g. 10Hz based on the rate group to which it 
-is connected. We will use this schedIn call to read the UART interface at a set rate. *Gps_ReportLockStatus_cmdHandler* is a 
-handler that implements the function for the command we defined in Command.xml. We also have the following out port calls, 
+is connected. We will use this schedIn call to read the UART interface at a set rate of 1HZ. *Gps_ReportLockStatus_cmdHandler* is a 
+handler that implements the function for the command we defined in Command.xml. We also have the following out-going port calls, 
 and events that can be used as part of our code. 
 
 #. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
@@ -538,7 +575,8 @@ and events that can be used as part of our code.
 
 In order to make a GPS processor, we need to take the following steps:
 
-1. Initialize the UART in the first call to schedIn
+0. Implement the schedIn function (called at 1HZ)
+1. (Re)initialize the UART in the call to schedIn
 2. Read UART in schedIn
 3. Parse UART data in schedIn
 4. Downlink telmetry in schedIn
@@ -548,13 +586,289 @@ In order to make a GPS processor, we need to take the following steps:
 8. Downlink a *LockLost* EVR in commandHandler, if lock is not currently held
 9. Respond from commandHandler with a sendCommandResponse call
 
-Final, implementation found in the following sections
+These steps are called out in the following implementations of these two files. Since the purpose of the getting-started tutorial is not to demonstrate
+how to write each line of code, the steps above are called out in comments in the code.
 
-### GpsComponentImpl.cpp (Final)
+### GpsComponentImpl.cpp (Sample)
 ```
+#include <GpsApp/Gps/GpsComponentImpl.hpp>
+#include "Fw/Types/BasicTypes.hpp"
+
+//File path to UART device on UNIX system
+#define UART_FILE_PATH "/dev/ttyACM0"
+#include <cstring>
+#include <iostream>
+//POSIX includes for UART communication
+extern "C" {
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <termios.h>
+}
+
+namespace GpsApp {
+
+  // ----------------------------------------------------------------------
+  // Construction, initialization, and destruction 
+  // ----------------------------------------------------------------------
+
+  GpsComponentImpl ::
+#if FW_OBJECT_NAMES == 1
+    GpsComponentImpl(
+        const char *const compName
+    ) :
+      GpsComponentBase(compName),
+#else
+      GpsComponentBase(void),
+#endif
+      m_setup(false),
+      m_locked(false),
+      m_fh(-1)
+  {
+
+  }
+
+  void GpsComponentImpl ::
+    init(
+        const NATIVE_INT_TYPE queueDepth,
+        const NATIVE_INT_TYPE instance
+    ) 
+  {
+    GpsComponentBase::init(queueDepth, instance);
+  }
+
+  GpsComponentImpl ::
+    ~GpsComponentImpl(void)
+  {
+
+  }
+
+  //Step 1: setup
+  //
+  // Each second, we should ensure that the UART is initialized
+  // and if not, we should try to initialize it again.
+  void GpsComponentImpl ::
+    setup(void)
+  {
+      if (m_setup) {
+          return;
+      }
+      //Open the GPS, and configure it for a raw-socket in read-only mode
+      m_fh = open(UART_FILE_PATH, O_RDONLY);
+      if (m_fh < 0) {
+          std::cout << "[ERROR] Failed to open file: " << UART_FILE_PATH << std::endl;
+          return;
+      }
+      //Setup the struct for termios configuration
+      struct termios options;
+      std::memset(&options, 0, sizeof(options));
+      //Set to raw socket, remove modem control, allow input
+      cfmakeraw(&options);
+      options.c_cflag |= (CLOCAL | CREAD);
+      //Set to 9600 baud
+      cfsetispeed(&options, B9600);
+      //Make the above options stick
+      NATIVE_INT_TYPE status = tcsetattr(m_fh, TCSANOW, &options);
+      if (status != 0) {
+          std::cout << "[ERROR] Failed to setup UART options" << std::endl;
+          return;
+      }
+      m_setup = true;
+  }
+  // ----------------------------------------------------------------------
+  // Handler implementations for user-defined typed input ports
+  // ----------------------------------------------------------------------
+
+  // Step 0: schedIn
+  //
+  //  By implementing this "handler" we can respond to the 1HZ call allowing
+  //  us to read the GPS UART every 1 second.
+  void GpsComponentImpl ::
+    schedIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        NATIVE_UINT_TYPE context
+    )
+  {
+      int status = 0;
+      float lat = 0.0f, lon = 0.0f;
+      GpsPacket packet;
+      char buffer[1024];
+      char* pointer = buffer;
+      //During each cycle, attempt to setup if not setup
+      //Step 1: setup
+      // Each second, we should ensure that the UART is initialized
+      // and if not, we should try to initialize it again.
+      setup();
+      if (!m_setup) {
+          return;
+      }
+      //Then receive data from the GPS. Should block until available
+      //and thus, this module should not be driven at a rate faster than 1HZ
+      //Step 2: read the UART
+      // Read the GPS message from the UART
+      ssize_t size = read(m_fh, buffer, sizeof(buffer));
+      if (size <= 0) {
+          std::cout << "[ERROR] Failed to read from UART with: " << size << std::endl;
+          return;
+      }
+      //Look for a recognized GPS location packet and parse it
+      //Step 3:
+      // Parse the GPS message from the UART (looking for $GPPA messages)
+      for (U32 i = 0; i < sizeof(buffer) - 6; i++) {
+          status = sscanf(pointer, "$GPGGA,%f,%f,%c,%f,%c,%u,%u,%f,%f",
+              &packet.utcTime, &packet.dmNS, &packet.northSouth,
+              &packet.dmEW, &packet.eastWest, &packet.lock,
+              &packet.count, &packet.filler2, &packet.altitude);
+          //Break when all GPS items are found
+          if (status == 9) {
+              break;
+          }
+          pointer = pointer + 1;
+      }
+      //If we failed to find the packet, or failed to extract data then return
+      if (status != 9) {
+          std::cout << "[ERROR] GPS parsing failed: " << status << std::endl;
+          return;
+      }
+      //GPS packet locations are of the form: dd.mmmm
+      //We will convert to lat/lon in degrees only before downlinking
+      lat = ((packet.northSouth == 'N') ? 1 : -1) *
+            ((packet.dmNS - (U32)packet.dmNS)/60.0 + (U32)packet.dmNS);
+      lon = ((packet.eastWest == 'E') ? 1 : -1) *
+            ((packet.dmEW - (U32)packet.dmEW)/60.0 + (U32)packet.dmEW);
+      //Step 4: downlink
+      // Call the downlink functions to send down data
+      tlmWrite_Gps_Latitude(lat);
+      tlmWrite_Gps_Longitude(lon);
+      tlmWrite_Gps_Altitude(packet.altitude);
+      tlmWrite_Gps_Count(packet.count);
+      //Lock status update only if changed
+      //Step 7,8: note changed lock status
+      // Emit an event if the lock has been aquired, or lost
+      if (packet.lock == 0 && m_locked) {
+          m_locked = false;
+          log_WARNING_HI_Gps_LockLost();
+      } else if (packet.lock == 1 && !m_locked) {
+          m_locked = true;
+          log_ACTIVITY_HI_Gps_LockAquired();
+      }
+  }
+
+  // ----------------------------------------------------------------------
+  // Command handler implementations 
+  // ----------------------------------------------------------------------
+  //Step 9: respond to status command
+  //
+  // When a status command is received, respond by emitting the 
+  // current lock status as an Event.
+  void GpsComponentImpl ::
+    Gps_ReportLockStatus_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
+  {
+    //Locked-force print
+    if (m_locked) {
+        log_ACTIVITY_HI_Gps_LockAquired();
+    } else {
+        log_WARNING_HI_Gps_LockLost();
+    }
+  }
+} // end namespace GpsApp
 ```
-### GpsComponentImpl.hpp (Final)
+### GpsComponentImpl.hpp (Sample)
 ```
+#ifndef Gps_HPP
+#define Gps_HPP
+
+#include "GpsApp/Gps/GpsComponentAc.hpp"
+
+namespace GpsApp {
+
+  class GpsComponentImpl :
+    public GpsComponentBase
+  {
+      /**
+       * GpsPacket:
+       *   A structure containing the information in the GPS location pacaket
+       * received via the NEMA GPS receiver.
+       */
+      struct GpsPacket {
+          float utcTime;
+          float dmNS;
+          char northSouth;
+          float dmEW;
+          char eastWest;
+          unsigned int lock;
+          unsigned int count;
+          float filler;
+          float altitude;
+      };
+    public:
+
+      // ----------------------------------------------------------------------
+      // Construction, initialization, and destruction
+      // ----------------------------------------------------------------------
+
+      //! Construct object Gps
+      //!
+      GpsComponentImpl(
+#if FW_OBJECT_NAMES == 1
+          const char *const compName /*!< The component name*/
+#else
+          void
+#endif
+      );
+
+      //! Initialize object Gps
+      //!
+      void init(
+          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
+          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+      );
+
+      //! Destroy object Gps
+      //!
+      ~GpsComponentImpl(void);
+
+    PRIVATE:
+      //! Setup the UART interface for taking with the GPS module. Note: this
+      //! is currently implemented using standard Unix /dev/tty* devices.
+      //!
+      void setup(void);
+      // ----------------------------------------------------------------------
+      // Handler implementations for user-defined typed input ports
+      // ----------------------------------------------------------------------
+
+      //! Handler implementation for schedIn
+      //!
+      void schedIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          NATIVE_UINT_TYPE context /*!< The call order*/
+      );
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Command handler implementations 
+      // ----------------------------------------------------------------------
+
+      //! Implementation for Gps_ReportLockStatus command handler
+      //! A command to force an EVR reporting lock status.
+      void Gps_ReportLockStatus_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+      //!< Is the GPS UART setup
+      bool m_setup;
+      //!< Has the device acquired GPS lock?
+      bool m_locked;
+      //!< File handle of UART
+      NATIVE_INT_TYPE m_fh;
+    };
+
+} // end namespace GpsApp
+
+#endif
 ```
 
 Finally, regenerate the makefiles, clean, and build. We will use this pattern a lot.
@@ -572,7 +886,7 @@ We are finally ready to build our topology to connect the GPS module up to the r
 if this will work. Generally, this process is done with a design tool like MagicDraw, but because the user may or may not
 have access to this tool, the topology Ai is provided below. The user may then edit it to make changes.
 
-First the Reference topology is copied into the *Top* folder of *GpsApp* application and we'll grab the deployment makefile 
+First, the Reference application's topology is copied into the *Top* folder of *GpsApp* application and we'll grab the deployment makefile 
 too.
 
 ```
@@ -580,7 +894,7 @@ cp -r fprime/Ref/Top fprime/GpsApp/Top
 cp fprime/Ref/Makefile fprimt/GpsApp
 ```
 
-Then update *fprime/GpsApp/Makefile* to set the following line to our deployment name *GpsApp*.
+Then update *fprime/GpsApp/Makefile* to set the following line to our deployment's name *GpsApp*.
 
 ```
 DEPLOYMENT := GpsApp
