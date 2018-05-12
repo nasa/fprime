@@ -62,15 +62,16 @@ Success!!! We have now successfully run the reference application, showing that 
 
 ## Custom Application Goals
 
-In the DIY electronics community there is an abundace of cheap GPS receivers based around the NEMA protocol. These receivers often suport a USB interface
-pretending to be am ACM device for basic serial communication. The messages these receivers send are NEMA formatted text.
+In the DIY electronics community there is an abundace of cheap GPS receivers based around the NMEA protocol. These receivers often suport a USB interface
+pretending to be am ACM device for basic serial communication. The messages these receivers send are NMEA formatted text.
 
-TODO: add photo here
+![USB GPS Hardware](img/usb-gps.jpg)
 
 This quick-start guide will show how to integrate one of these GPS receivers with the F' framework by wrapping it in a Component and defining commands,
 telemetry, and log events. Finnaly, we will modify the reference Topology to include this new component such that we can downlink our telemetry to
 the F' supplied ground station (GSE).
 
+**Note:** all the sample files, and a working deployment are available at [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application).
 
 ## Creating a Custom F' Component
 
@@ -717,7 +718,7 @@ namespace GpsApp {
           status = sscanf(pointer, "$GPGGA,%f,%f,%c,%f,%c,%u,%u,%f,%f",
               &packet.utcTime, &packet.dmNS, &packet.northSouth,
               &packet.dmEW, &packet.eastWest, &packet.lock,
-              &packet.count, &packet.filler2, &packet.altitude);
+              &packet.count, &packet.filler, &packet.altitude);
           //Break when all GPS items are found
           if (status == 9) {
               break;
@@ -729,14 +730,19 @@ namespace GpsApp {
           std::cout << "[ERROR] GPS parsing failed: " << status << std::endl;
           return;
       }
-      //GPS packet locations are of the form: dd.mmmm
+      //GPS packet locations are of the form: ddmm.mmmm
       //We will convert to lat/lon in degrees only before downlinking
-      lat = ((packet.northSouth == 'N') ? 1 : -1) *
-            ((packet.dmNS - (U32)packet.dmNS)/60.0 + (U32)packet.dmNS);
-      lon = ((packet.eastWest == 'E') ? 1 : -1) *
-            ((packet.dmEW - (U32)packet.dmEW)/60.0 + (U32)packet.dmEW);
+      //Latitude degrees, add on minutes (converted to degrees), multiply by direction
+      lat = (U32)(packet.dmNS/100.0f);
+      lat = lat + (packet.dmNS - (lat * 100.0f))/60.0f;
+      lat = lat * ((packet.northSouth == 'N') ? 1 : -1);
+      //Longitude degrees, add on minutes (converted to degrees), multiply by direction
+      lon = (U32)(packet.dmEW/100.0f);
+      lon = lon + (packet.dmEW - (lon * 100.0f))/60.f;
+      lon = lon * ((packet.eastWest == 'E') ? 1 : -1);
       //Step 4: downlink
       // Call the downlink functions to send down data
+      std::cout << "[INFO] Current lat, lon: (" << lat << "," << lon << ")" << std::endl;
       tlmWrite_Gps_Latitude(lat);
       tlmWrite_Gps_Longitude(lon);
       tlmWrite_Gps_Altitude(packet.altitude);
@@ -790,7 +796,7 @@ namespace GpsApp {
       /**
        * GpsPacket:
        *   A structure containing the information in the GPS location pacaket
-       * received via the NEMA GPS receiver.
+       * received via the NMEA GPS receiver.
        */
       struct GpsPacket {
           float utcTime;
@@ -900,12 +906,1048 @@ Then update *fprime/GpsApp/Makefile* to set the following line to our deployment
 DEPLOYMENT := GpsApp
 ```
 
+After this adjustment to the make system, we need to add 3 custom files that represent our Topology.  These files are the following:
+
+#. **RefTopologyAppAi.xml**: the design file showing the list of components, and the connections between components.
+#. **Components.hpp**: the header file declaring in code the same components as listed in the topology ai XML, along with includes
+of the headers that define them.
+#. **Topology.cpp**: top level code, main function, and initialization of the components, threads, and registration of commands.
+
+Essentially, RefTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology is the implementation code. All of these
+files are referenced by the make files we inherited from the reference app. Building the distribution (fprime/GpsApp) will include the 
+topology (fprime/GpsApp/Top) as its entry-point creating a single application, which represents our software.
+
+Sample versions of these files are provided below, and are annotated with comments representing the changes
+made to support the Gps Application. **Note:** these files are available in a working repository at:
+[https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application) in case the user prefer a direct checkout of working code.
+
+Once these files have been added to the *fprime/GpsApp/Top* folder, we have a complete project. The project can be built 
+by changing directory to the deployment directory, issuing our build commands and then running the executable.
+
+```
+cd fprime/GpsApp
+make gen_make
+make clean
+make
+./linux-linux-x86-debug-gnu-bin/GpsApp
+```
+
+If you see output similar to the following, when running with the UART GPS you have successfully, completed the tutorial. If running without the GPS, you should see GPS setup errors every 1 second.
+
+#### Successful Output
+```
+[INFO] Current lat, lon: (41.758,-72.6492)
+[INFO] Current lat, lon: (41.758,-72.6492)
+[INFO] Current lat, lon: (41.758,-72.6492)
+[INFO] Current lat, lon: (41.758,-72.6492)
+
+-- or --
+
+[ERROR] Failed to open file: /dev/ttyACM0
+[ERROR] Failed to open file: /dev/ttyACM0
+[ERROR] Failed to open file: /dev/ttyACM0
+[ERROR] Failed to open file: /dev/ttyACM0
+```
+
+That is it. In the next tutorial (comming soon), we'll cover how to connect this reference application to the
+GSE environment in order to read the telemetry we are downlinking.
+
+### Topology.cpp (Sample)
+```
+#include <Components.hpp>
+
+
+#include <Fw/Types/Assert.hpp>
+#include <Ref/Top/TargetInit.hpp>
+#include <Os/Task.hpp>
+#include <Os/Log.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#include <getopt.h>
+#include <stdlib.h>
+#include <ctype.h>
+#endif
+// List of context IDs
+
+// GPS Application:
+//  For GPS application specific items, look for GPS-- comments below
+enum {
+    DOWNLINK_PACKET_SIZE = 500,
+    DOWNLINK_BUFFER_STORE_SIZE = 2500,
+    DOWNLINK_BUFFER_QUEUE_SIZE = 5,
+    UPLINK_BUFFER_STORE_SIZE = 3000,
+    UPLINK_BUFFER_QUEUE_SIZE = 30
+};
+
+enum {
+        ACTIVE_COMP_1HZ_RG,
+        ACTIVE_COMP_P5HZ_RG,
+        ACTIVE_COMP_P25HZ_RG,
+        ACTIVE_COMP_CMD_DISP,
+        ACTIVE_COMP_CMD_SEQ,
+        ACTIVE_COMP_LOGGER,
+        ACTIVE_COMP_TLM,
+        ACTIVE_COMP_PRMDB,
+        ACTIVE_COMP_FILE_DOWNLINK,
+        ACTIVE_COMP_FILE_UPLINK,
+
+        ACTIVE_COMP_BLKDRV,
+        ACTIVE_COMP_PING_RECEIVER,
+        // GPS-- our component is an active component, thus it needs a thread-id. Thread IDs come from this
+        // enumeration to keep them unique.
+        ACTIVE_COMP_GPS,
+
+        CYCLER_TASK,
+        NUM_ACTIVE_COMPS
+};
+
+// Registry
+#if FW_OBJECT_REGISTRATION == 1
+static Fw::SimpleObjRegistry simpleReg;
+#endif
+
+// Component instance pointers
+static NATIVE_INT_TYPE rgDivs[] = {1,2,4};
+Svc::RateGroupDriverImpl rateGroupDriverComp(
+#if FW_OBJECT_NAMES == 1
+                    "RGDvr",
+#endif
+                    rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+
+static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
+Svc::ActiveRateGroupImpl rateGroup1Comp
+#if FW_OBJECT_NAMES == 1
+                    ("RG1",rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
+#else
+                    (rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
+#endif
+;
+
+static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
+Svc::ActiveRateGroupImpl rateGroup2Comp
+#if FW_OBJECT_NAMES == 1
+                    ("RG2",rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
+#else
+                    (rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
+#endif
+;
+
+static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
+Svc::ActiveRateGroupImpl rateGroup3Comp
+#if FW_OBJECT_NAMES == 1
+                    ("RG3",rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
+#else
+                    (rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
+#endif
+;
+
+// Command Components
+Svc::SocketGndIfImpl sockGndIf
+#if FW_OBJECT_NAMES == 1
+                    ("SGIF")
+#endif
+;
+
+//GPS-- GPS Component construction, notice if compiled with names, a name should be given.
+GpsApp::GpsComponentImpl gpsImpl
+#if FW_OBJECT_NAMES == 1
+                    ("GPS")
+#endif
+;
+
+#if FW_ENABLE_TEXT_LOGGING
+Svc::ConsoleTextLoggerImpl textLogger
+#if FW_OBJECT_NAMES == 1
+                    ("TLOG")
+#endif
+;
+#endif
+
+Svc::ActiveLoggerImpl eventLogger
+#if FW_OBJECT_NAMES == 1
+                    ("ELOG")
+#endif
+;
+
+Svc::LinuxTimeImpl linuxTime
+#if FW_OBJECT_NAMES == 1
+                    ("LTIME")
+#endif
+;
+
+Svc::TlmChanImpl chanTlm
+#if FW_OBJECT_NAMES == 1
+                    ("TLM")
+#endif
+;
+
+Svc::CommandDispatcherImpl cmdDisp
+#if FW_OBJECT_NAMES == 1
+                    ("CMDDISP")
+#endif
+;
+
+Fw::MallocAllocator seqMallocator;
+Svc::CmdSequencerComponentImpl cmdSeq
+#if FW_OBJECT_NAMES == 1
+                    ("CMDSEQ")
+#endif
+;
+
+Svc::PrmDbImpl prmDb
+#if FW_OBJECT_NAMES == 1
+                    ("PRM","PrmDb.dat")
+#else
+                    ("PrmDb.dat")
+#endif
+;
+
+
+Svc::FileUplink fileUplink ("fileUplink");
+Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
+Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
+Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
+Svc::HealthImpl health("health");
+
+Svc::AssertFatalAdapterComponentImpl fatalAdapter
+#if FW_OBJECT_NAMES == 1
+("fatalAdapter")
+#endif
+;
+
+Svc::FatalHandlerComponentImpl fatalHandler
+#if FW_OBJECT_NAMES == 1
+("fatalHandler")
+#endif
+;
+
+
+#if FW_OBJECT_REGISTRATION == 1
+
+void dumparch(void) {
+    simpleReg.dump();
+}
+
+#if FW_OBJECT_NAMES == 1
+void dumpobj(const char* objName) {
+    simpleReg.dump(objName);
+}
+#endif
+
+#endif
+
+void constructApp(int port_number, char* hostname) {
+
+    localTargetInit();
+
+#if FW_PORT_TRACING
+    Fw::PortBase::setTrace(false);
+#endif    
+
+    // Initialize rate group driver
+    rateGroupDriverComp.init();
+
+    // Initialize the rate groups
+    rateGroup1Comp.init(10,0);
+    
+    rateGroup2Comp.init(10,1);
+    
+    rateGroup3Comp.init(10,2);
+    //GPS-- Here we initialize the component with a queue size, and instance number. The queue size governs how
+    //      many waiting port calls can queue up before the system asserts, and the instance number is a unique
+    //      number given to every instance of a given type.
+    gpsImpl.init(10, 1);
+#if FW_ENABLE_TEXT_LOGGING
+    textLogger.init();
+#endif
+
+    eventLogger.init(10,0);
+
+    linuxTime.init(0);
+
+    chanTlm.init(10,0);
+
+    cmdDisp.init(20,0);
+
+    cmdSeq.init(10,0);
+    cmdSeq.allocateBuffer(0,seqMallocator,5*1024);
+
+    prmDb.init(10,0);
+
+    sockGndIf.init(0);
+
+    fileUplink.init(30, 0);
+    fileDownlink.init(30, 0);
+    fileUplinkBufferManager.init(0);
+    fileDownlinkBufferManager.init(1);
+    fatalAdapter.init(0);
+    fatalHandler.init(0);
+    health.init(25,0);
+    // Connect rate groups to rate group driver
+    constructRefArchitecture();
+
+    /* Register commands */
+    cmdSeq.regCommands();
+    cmdDisp.regCommands();
+    eventLogger.regCommands();
+    prmDb.regCommands();
+    fileDownlink.regCommands();
+    health.regCommands();
+
+    // read parameters
+    prmDb.readParamFile();
+
+    // set health ping entries
+
+    Svc::HealthImpl::PingEntry pingEntries[] = {
+        {3,5,rateGroup1Comp.getObjName()}, // 0
+        {3,5,rateGroup2Comp.getObjName()}, // 1
+        {3,5,rateGroup3Comp.getObjName()}, // 2
+        {3,5,cmdDisp.getObjName()}, // 3
+        {3,5,eventLogger.getObjName()}, // 4
+        {3,5,cmdSeq.getObjName()}, // 5
+        {3,5,chanTlm.getObjName()}, // 6
+        {3,5,fileUplink.getObjName()}, // 7
+        {3,5,fileDownlink.getObjName()}, // 8
+    };
+
+    // register ping table
+    health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
+
+    // Active component startup
+    // start rate groups
+    rateGroup1Comp.start(ACTIVE_COMP_1HZ_RG, 120,10 * 1024);
+    rateGroup2Comp.start(ACTIVE_COMP_P5HZ_RG, 119,10 * 1024);
+    rateGroup3Comp.start(ACTIVE_COMP_P25HZ_RG, 118,10 * 1024);
+    // start dispatcher
+    cmdDisp.start(ACTIVE_COMP_CMD_DISP,101,10*1024);
+    // start sequencer
+    cmdSeq.start(ACTIVE_COMP_CMD_SEQ,100,10*1024);
+    // start telemetry
+    eventLogger.start(ACTIVE_COMP_LOGGER,98,10*1024);
+    chanTlm.start(ACTIVE_COMP_TLM,97,10*1024);
+    prmDb.start(ACTIVE_COMP_PRMDB,96,10*1024);
+    //GPS-- GPS thread starting. The GPS component is active, so its governing thread must be started
+    //      with the unique id, defined above, a priority 256 (highest) - 0 (lowest) set here to 99, and
+    //      a stack size for the thread, here 10KB is used.
+    gpsImpl.start(ACTIVE_COMP_GPS, 99, 10*1024);
+
+    fileDownlink.start(ACTIVE_COMP_FILE_DOWNLINK, 100, 10*1024);
+    fileUplink.start(ACTIVE_COMP_FILE_UPLINK, 100, 10*1024);
+
+    // Initialize socket server
+    sockGndIf.startSocketTask(100, port_number, hostname);
+
+}
+//GPS-- Given the application's lack of a specific timing element, we
+//      force a call to the rate group driver every second here.
+//      More complex applications may drive this from a system oscillator.
+void run1cycle(void) {
+    // get timer to call rate group driver
+    Svc::TimerVal timer;
+    timer.take();
+    rateGroupDriverComp.get_CycleIn_InputPort(0)->invoke(timer);
+    Os::Task::TaskStatus delayStat = Os::Task::delay(1000);
+    FW_ASSERT(Os::Task::TASK_OK == delayStat,delayStat);
+}
 
 
 
+void runcycles(NATIVE_INT_TYPE cycles) {
+    if (cycles == -1) {
+        while (true) {
+            run1cycle();
+        }
+    }
+
+    for (NATIVE_INT_TYPE cycle = 0; cycle < cycles; cycle++) {
+        run1cycle();
+    }
+
+}
+
+void exitTasks(void) {
+    rateGroup1Comp.exit();
+    rateGroup2Comp.exit();
+    rateGroup3Comp.exit();
+    cmdDisp.exit();
+    eventLogger.exit();
+    chanTlm.exit();
+    prmDb.exit();
+    fileUplink.exit();
+    fileDownlink.exit();
+    cmdSeq.exit();
+}
+
+void print_usage() {
+	(void) printf("Usage: ./Ref [options]\n-p\tport_number\n-a\thostname/IP address\n");
+}
 
 
+#include <signal.h>
+#include <stdio.h>
 
+volatile sig_atomic_t terminate = 0;
 
+static void sighandler(int signum) {
+	terminate = 1;
+}
 
+int main(int argc, char* argv[]) {
+	U32 port_number;
+	I32 option;
+	char *hostname;
+	port_number = 0;
+	option = 0;
+	hostname = NULL;
 
+	while ((option = getopt(argc, argv, "hp:a:")) != -1){
+		switch(option) {
+			case 'h':
+				print_usage();
+				return 0;
+				break;
+			case 'p':
+				port_number = atoi(optarg);
+				break;
+			case 'a':
+				hostname = optarg;
+				break;
+			case '?':
+				return 1;
+			default:
+				print_usage();
+				return 1;
+		}
+	}
+
+	(void) printf("Hit Ctrl-C to quit\n");
+
+    constructApp(port_number, hostname);
+    //dumparch();
+
+    signal(SIGINT,sighandler);
+    signal(SIGTERM,sighandler);
+
+    int cycle = 0;
+
+    while (!terminate) {
+//        (void) printf("Cycle %d\n",cycle);
+        runcycles(1);
+        cycle++;
+    }
+
+    // stop tasks
+    exitTasks();
+    // Give time for threads to exit
+    (void) printf("Waiting for threads...\n");
+    Os::Task::delay(1000);
+
+    (void) printf("Exiting...\n");
+
+    return 0;
+}
+```
+
+### Components.hpp (Sample)
+```
+#ifndef __LITS_COMPONENTS_HEADER__
+#define __LITS_COMPONENTS_HEADER__
+void constructRefArchitecture(void);
+void exitTasks(void);
+
+#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
+#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
+
+#include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
+#include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
+#include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
+#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <Svc/LinuxTime/LinuxTimeImpl.hpp>
+#include <Svc/TlmChan/TlmChanImpl.hpp>
+#include <Svc/PrmDb/PrmDbImpl.hpp>
+#include <Fw/Obj/SimpleObjRegistry.hpp>
+#include <Svc/FileUplink/FileUplink.hpp>
+#include <Svc/FileDownlink/FileDownlink.hpp>
+#include <Svc/BufferManager/BufferManager.hpp>
+#include <Svc/Health/HealthComponentImpl.hpp>
+
+#include <Svc/SocketGndIf/SvcSocketGndIfImpl.hpp>
+
+#include <GpsApp/Top/TargetInit.hpp>
+#include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
+#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
+
+//Gps Inclusion:
+// Here we include the header definition of our GPS component, not the GPS is declared
+// further down in the file.
+#include <GpsApp/Gps/GpsComponentImpl.hpp>
+
+extern Svc::RateGroupDriverImpl rateGroupDriverComp;
+extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
+extern Svc::CmdSequencerComponentImpl cmdSeq;
+extern Svc::SocketGndIfImpl sockGndIf;
+extern Svc::ConsoleTextLoggerImpl textLogger;
+extern Svc::ActiveLoggerImpl eventLogger;
+extern Svc::LinuxTimeImpl linuxTime;
+extern Svc::TlmChanImpl chanTlm;
+extern Svc::CommandDispatcherImpl cmdDisp;
+extern Svc::PrmDbImpl prmDb;
+extern Svc::FileUplink fileUplink;
+extern Svc::FileDownlink fileDownlink;
+extern Svc::BufferManager fileDownlinkBufferManager;
+extern Svc::BufferManager fileUplinkBufferManager;
+extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
+extern Svc::FatalHandlerComponentImpl fatalHandler;
+extern Svc::HealthImpl health;
+//Our new GPS Driver
+extern GpsApp::GpsComponentImpl gpsImpl;
+#endif
+```
+
+### RefTopologyAppAi.xml (Sample)
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+Topology Ai:
+
+The topology Ai.xml file consists of three parts:
+
+1. Importation of individual modules and components
+2. Declaration of used components
+3. Port connections between components
+
+Note: in most cases this file is auto-generated using magic draw.
+-->
+<assembly name = "Ref">
+	<!-- 
+        Component XML includes:
+
+        Here the various components used in our Topology are included via their *Ai.xml file.  This links
+        those design files with this top-level make file.
+        -->
+	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
+	<import_component_type>Svc/FileUplink/FileUplinkComponentAi.xml</import_component_type>
+	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
+	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
+	<import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
+	<import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
+	<import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
+	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
+	<import_component_type>GpsApp/Gps/GpsComponentAi.xml</import_component_type>
+	<import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
+	<import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
+	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
+	<import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
+	<import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
+	<import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
+	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+   <!--
+   Instance declarations:
+
+   Define the components that make up the topology, this includes the namespace of the compnent, and the type of the component.
+   These values should match the component Ai XML that was imported.
+
+   In addition, the component should have a name, which will be used in the Components.hpp, and Topology.cpp files. 
+   -->
+   <instance namespace="Svc" name="rateGroup3Comp" type="ActiveRateGroup" base_id="241"  base_id_window="20" />
+
+   <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
+
+   <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
+
+   <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
+
+   <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
+
+   <instance namespace="Svc" name="rateGroup1Comp" type="ActiveRateGroup" base_id="21"  base_id_window="20" />
+
+   <instance namespace="Svc" name="chanTlm" type="TlmChan" base_id="61"  base_id_window="20" />
+
+   <instance namespace="Svc" name="health" type="Health" base_id="361"  base_id_window="20" />
+
+   <instance namespace="Svc" name="sockGndIf" type="GndIf" base_id="381"  base_id_window="20" />
+
+   <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
+
+   <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="421"  base_id_window="20" />
+
+   <instance namespace="Svc" name="linuxTime" type="Time" base_id="441"  base_id_window="20" />
+
+   <instance namespace="GpsApp" name="gpsImpl" type="Gps"/>
+
+   <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
+
+   <instance namespace="Svc" name="prmDb" type="PrmDb" base_id="141"  base_id_window="20" />
+
+   <instance namespace="Svc" name="rateGroup2Comp" type="ActiveRateGroup" base_id="161"  base_id_window="20" />
+
+   <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="461"  base_id_window="20" />
+
+   <instance namespace="Svc" name="cmdSeq" type="CmdSequencer" base_id="541"  base_id_window="23" />
+
+   <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
+
+   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
+
+<!--
+Connection definitions:
+
+This section defines the connections between components. The source component, and source component port name
+should be declared, and matched to the target component, and port. The type of the port is also specified.
+Finally, the port number on the source and target is defined, in the case that the named port has a multiplicity
+meaning that it is an array of ports under the same name.
+-->
+<connection name = "Connection1">
+	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "1"/>
+ 	 <target component = "rateGroup2Comp" port = "CycleIn" type = "Cycle" num = "0"/>
+</connection>
+<connection name = "Connection2">
+	 <source component = "sockGndIf" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection3">
+	 <source component = "sockGndIf" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection4">
+	 <source component = "sockGndIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
+ 	 <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
+</connection>
+<connection name = "Connection5">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "5"/>
+ 	 <target component = "fileUplink" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection6">
+	 <source component = "prmDb" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "6"/>
+</connection>
+<connection name = "Connection7">
+	 <source component = "eventLogger" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection8">
+	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+ 	 <target component = "gpsImpl" port = "schedIn" type = "Sched" num = "0"/>
+</connection>
+<connection name = "Connection10">
+	 <source component = "fileDownlink" port = "tlmOut" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection11">
+	 <source component = "fileUplinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection12">
+	 <source component = "cmdSeq" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection13">
+	 <source component = "gpsImpl" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection14">
+	 <source component = "rateGroup3Comp" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection15">
+	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+ 	 <target component = "gpsImpl" port = "schedIn" type = "Sched" num = "0"/>
+</connection>
+<connection name = "Connection16">
+	 <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection17">
+	 <source component = "prmDb" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection19">
+	 <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection20">
+	 <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+ 	 <target component = "health" port = "Run" type = "Sched" num = "0"/>
+</connection>
+<connection name = "Connection21">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "8"/>
+ 	 <target component = "rateGroup2Comp" port = "PingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection22">
+	 <source component = "rateGroup2Comp" port = "Tlm" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection23">
+	 <source component = "rateGroup2Comp" port = "PingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "8"/>
+</connection>
+<connection name = "Connection24">
+	 <source component = "rateGroup1Comp" port = "PingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "7"/>
+</connection>
+<connection name = "Connection25">
+	 <source component = "cmdSeq" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection26">
+	 <source component = "eventLogger" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection27">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "0"/>
+ 	 <target component = "chanTlm" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection28">
+	 <source component = "fileUplink" port = "eventOut" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection29">
+	 <source component = "rateGroup3Comp" port = "Tlm" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection30">
+	 <source component = "eventLogger" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection31">
+	 <source component = "eventLogger" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection32">
+	 <source component = "rateGroup2Comp" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection33">
+	 <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+ 	 <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+</connection>
+<connection name = "Connection34">
+	 <source component = "health" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection35">
+	 <source component = "fileUplinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection36">
+	 <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection37">
+	 <source component = "cmdSeq" port = "tlmOut" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection38">
+	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+ 	 <target component = "chanTlm" port = "Run" type = "Sched" num = "0"/>
+</connection>
+<connection name = "Connection39">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "1"/>
+ 	 <target component = "cmdDisp" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection40">
+	 <source component = "prmDb" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection41">
+	 <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection42">
+	 <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection43">
+	 <source component = "eventLogger" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "3"/>
+</connection>
+<connection name = "Connection45">
+	 <source component = "rateGroup2Comp" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection46">
+	 <source component = "rateGroup3Comp" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection47">
+	 <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection48">
+	 <source component = "sockGndIf" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection49">
+	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "2"/>
+ 	 <target component = "rateGroup3Comp" port = "CycleIn" type = "Cycle" num = "0"/>
+</connection>
+<connection name = "Connection50">
+	 <source component = "gpsImpl" port = "tlmOut" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection51">
+	 <source component = "rateGroup1Comp" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection52">
+	 <source component = "fileDownlink" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection53">
+	 <source component = "fatalAdapter" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection54">
+	 <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+ 	 <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
+</connection>
+<connection name = "Connection56">
+	 <source component = "fatalAdapter" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection57">
+	 <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection58">
+	 <source component = "fileDownlink" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "4"/>
+</connection>
+<connection name = "Connection59">
+	 <source component = "cmdSeq" port = "timeCaller" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection60">
+	 <source component = "rateGroup1Comp" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection61">
+	 <source component = "prmDb" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection62">
+	 <source component = "gpsImpl" port = "eventOut" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection63">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "7"/>
+ 	 <target component = "rateGroup1Comp" port = "PingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection64">
+	 <source component = "cmdDisp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection65">
+	 <source component = "cmdSeq" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "2"/>
+</connection>
+<connection name = "Connection66">
+	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "0"/>
+ 	 <target component = "rateGroup1Comp" port = "CycleIn" type = "Cycle" num = "0"/>
+</connection>
+<connection name = "Connection67">
+	 <source component = "health" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection68">
+	 <source component = "cmdDisp" port = "LogText" type = "LogText" num = "0"/>
+ 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+</connection>
+<connection name = "Connection69">
+	 <source component = "health" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection70">
+	 <source component = "fileUplinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection71">
+	 <source component = "cmdDisp" port = "Tlm" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection72">
+	 <source component = "rateGroup1Comp" port = "Tlm" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection73">
+	 <source component = "chanTlm" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection74">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "3"/>
+ 	 <target component = "eventLogger" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection75">
+	 <source component = "rateGroup3Comp" port = "PingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
+</connection>
+<connection name = "Connection76">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "2"/>
+ 	 <target component = "cmdSeq" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection77">
+	 <source component = "health" port = "Tlm" type = "Tlm" num = "0"/>
+ 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+</connection>
+<connection name = "Connection78">
+	 <source component = "cmdDisp" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "1"/>
+</connection>
+<connection name = "Connection79">
+	 <source component = "fileUplink" port = "pingOut" type = "Ping" num = "0"/>
+ 	 <target component = "health" port = "PingReturn" type = "Ping" num = "5"/>
+</connection>
+<connection name = "Connection80">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "9"/>
+ 	 <target component = "rateGroup3Comp" port = "PingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection81">
+	 <source component = "fileDownlink" port = "eventOut" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection83">
+	 <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
+ 	 <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
+</connection>
+<connection name = "Connection84">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "6"/>
+ 	 <target component = "prmDb" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection85">
+	 <source component = "cmdDisp" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection86">
+	 <source component = "fileUplink" port = "timeCaller" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection87">
+	 <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
+ 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
+</connection>
+<connection name = "Connection88">
+	 <source component = "sockGndIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
+ 	 <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+</connection>
+<connection name = "Connection90">
+	 <source component = "rateGroup3Comp" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection91">
+	 <source component = "fileDownlink" port = "timeCaller" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection92">
+	 <source component = "health" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection93">
+	 <source component = "rateGroup2Comp" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection94">
+	 <source component = "sockGndIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
+ 	 <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+</connection>
+<connection name = "Connection95">
+	 <source component = "rateGroup1Comp" port = "Log" type = "Log" num = "0"/>
+ 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+</connection>
+<connection name = "Connection96">
+	 <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+ 	 <target component = "sockGndIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
+</connection>
+<connection name = "Connection97">
+	 <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
+ 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+</connection>
+<connection name = "Connection98">
+	 <source component = "health" port = "PingSend" type = "Ping" num = "4"/>
+ 	 <target component = "fileDownlink" port = "pingIn" type = "Ping" num = "0"/>
+</connection>
+<connection name = "Connection99">
+	 <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
+ 	 <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
+</connection>
+<connection name = "Connection100">
+	 <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
+ 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
+</connection>
+<connection name = "Connection101">
+	 <source component = "eventLogger" port = "CmdReg" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "0"/>
+</connection>
+<connection name = "Connection102">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "0"/>
+ 	 <target component = "eventLogger" port = "CmdDisp" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection103">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
+ 	 <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection104">
+	 <source component = "fileDownlink" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "1"/>
+</connection>
+<connection name = "Connection105">
+	 <source component = "cmdDisp" port = "seqCmdStatus" type = "CmdResponse" num = "0"/>
+ 	 <target component = "cmdSeq" port = "cmdResponseIn" type = "CmdResponse" num = "0"/>
+</connection>
+<connection name = "Connection106">
+	 <source component = "cmdSeq" port = "comCmdOut" type = "Com" num = "0"/>
+ 	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
+</connection>
+<connection name = "Connection107">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "2"/>
+ 	 <target component = "cmdDisp" port = "CmdDisp" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection108">
+	 <source component = "cmdDisp" port = "CmdReg" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "2"/>
+</connection>
+<connection name = "Connection109">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "3"/>
+ 	 <target component = "gpsImpl" port = "cmdIn" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection110">
+	 <source component = "gpsImpl" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "3"/>
+</connection>
+<connection name = "Connection111">
+	 <source component = "health" port = "CmdReg" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "4"/>
+</connection>
+<connection name = "Connection112">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "4"/>
+ 	 <target component = "health" port = "CmdDisp" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection113">
+	 <source component = "sockGndIf" port = "uplinkPort" type = "Com" num = "0"/>
+ 	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "1"/>
+</connection>
+<connection name = "Connection114">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "5"/>
+ 	 <target component = "prmDb" port = "CmdDisp" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection115">
+	 <source component = "prmDb" port = "CmdReg" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
+</connection>
+<connection name = "Connection116">
+	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
+ 	 <target component = "cmdSeq" port = "cmdIn" type = "Cmd" num = "0"/>
+</connection>
+<connection name = "Connection117">
+	 <source component = "cmdSeq" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+ 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
+</connection>
+</assembly>
+```
