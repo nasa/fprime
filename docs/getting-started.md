@@ -98,11 +98,11 @@ Next, in this directory, we will create a file called *GpsComponentAi.xml* fille
 the ports it uses to connect with other components and the files used to specify commands, telemetry, and events. As can be seen, we are creating our component
 to have 5 ports:
 
-#. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component's commands with the command dispatcher
-#. **eventOut**: an output port of *Fw::Log* type used to log events
-#. **cmdIn**: an input port of *Fw::Cmd* type used to process commands sent to this component
-#. **tlmOut**: an output port of *Fw::Tlm* type used to send out telemetry items
-#. **cmdResponseOut**: an output port of *Fw::CmdResponse* type used to signal a command has finished
+1. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component's commands with the command dispatcher
+2. **eventOut**: an output port of *Fw::Log* type used to log events
+3. **cmdIn**: an input port of *Fw::Cmd* type used to process commands sent to this component
+4. **tlmOut**: an output port of *Fw::Tlm* type used to send out telemetry items
+5. **cmdResponseOut**: an output port of *Fw::CmdResponse* type used to signal a command has finished
 
 
 In addition, our component imports the above port types, and imports 3 dictionaries: Commands.xml, Events.xml, and Telemetry.xml. The GpsComponentAi.xml
@@ -566,13 +566,13 @@ is connected. We will use this schedIn call to read the UART interface at a set 
 handler that implements the function for the command we defined in Command.xml. We also have the following out-going port calls, 
 and events that can be used as part of our code. 
 
-#. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
-#. log_WARNING_HI_Gps_LockLost: used to emit the event *Gps_LockLost* as defined in Events.xml
-#. tlmWrite_Gps_Latitude: used to send down *Latitude* telemetry as defined in Telemetry.xml
-#. tlmWrite_Gps_Longitude: used to send down *Longitude* telemetry as defined in Telemetry.xml
-#. tlmWrite_Gps_Altitude: used to send down *Altitude* telemetry as defined in Telemetry.xml
-#. tlmWrite_Gps_Count: used to send down *Count* telemetry as defined in Telemetry.xml
-#. sendCommandResponse: used to respond to a sent command. Call this in the above cmdHandler.
+1. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
+2. log_WARNING_HI_Gps_LockLost: used to emit the event *Gps_LockLost* as defined in Events.xml
+3. tlmWrite_Gps_Latitude: used to send down *Latitude* telemetry as defined in Telemetry.xml
+4. tlmWrite_Gps_Longitude: used to send down *Longitude* telemetry as defined in Telemetry.xml
+5. tlmWrite_Gps_Altitude: used to send down *Altitude* telemetry as defined in Telemetry.xml
+6. tlmWrite_Gps_Count: used to send down *Count* telemetry as defined in Telemetry.xml
+7. sendCommandResponse: used to respond to a sent command. Call this in the above cmdHandler.
 
 In order to make a GPS processor, we need to take the following steps:
 
@@ -908,10 +908,10 @@ DEPLOYMENT := GpsApp
 
 After this adjustment to the make system, we need to add 3 custom files that represent our Topology.  These files are the following:
 
-#. **RefTopologyAppAi.xml**: the design file showing the list of components, and the connections between components.
-#. **Components.hpp**: the header file declaring in code the same components as listed in the topology ai XML, along with includes
+1. **RefTopologyAppAi.xml**: the design file showing the list of components, and the connections between components.
+2. **Components.hpp**: the header file declaring in code the same components as listed in the topology ai XML, along with includes
 of the headers that define them.
-#. **Topology.cpp**: top level code, main function, and initialization of the components, threads, and registration of commands.
+3. **Topology.cpp**: top level code, main function, and initialization of the components, threads, and registration of commands.
 
 Essentially, RefTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology is the implementation code. All of these
 files are referenced by the make files we inherited from the reference app. Building the distribution (fprime/GpsApp) will include the 
