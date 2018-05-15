@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+
+<interface name="SpiReadWrite" namespace="Drv">
+  <import_serializable_type>Fw/Buffer/BufferSerializableAi.xml</import_serializable_type>
+    <args>
+        <arg name="writeBuffer" type="Fw::Buffer" pass_by="reference">
+        </arg>
+        <arg name="readBuffer" type="Fw::Buffer" pass_by="reference">
+        </arg>
+    </args>
+</interface>
