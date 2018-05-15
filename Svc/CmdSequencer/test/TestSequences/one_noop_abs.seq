@@ -1,7 +1,0 @@
-;--------------------------------------------------------------------
-; NO-OP sequence file
-; Note: that anything after a ';' is a comment
-;--------------------------------------------------------------------
-
-A2017-055T04:30:17 CMD_NO_OP ; Modify to your absolute time
-
