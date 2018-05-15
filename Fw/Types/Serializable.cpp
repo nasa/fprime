@@ -6,6 +6,7 @@
 
 #ifdef BUILD_UT
 #include <iomanip>
+#include <Fw/Types/EightyCharString.hpp>
 #endif
 
 // Some macros/functions to optimize for architectures
@@ -24,6 +25,17 @@ namespace Fw {
         text = "NOSPEC"; // set to not specified.
     }
 
+#endif
+
+#ifdef BUILD_UT
+    std::ostream& operator<<(std::ostream& os, const Serializable& val) {
+        Fw::EightyCharString out;
+        val.toString(out);
+
+        os << out;
+
+        return os;
+    }
 #endif
 
     SerializeBufferBase::SerializeBufferBase() :
