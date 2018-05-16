@@ -31,6 +31,9 @@ install:
 	mkdir -p $(MD_INSTALL_LOC)/plugins/gov.nasa.jpl.magicdraw.componentAutocoder
 	cp FpCompAuto.jar $(MD_INSTALL_LOC)/plugins/gov.nasa.jpl.magicdraw.componentAutocoder
 	cp plugin.xml $(MD_INSTALL_LOC)/plugins/gov.nasa.jpl.magicdraw.componentAutocoder
+	
+#install: FpCompAuto.jar
+#	cp FpCompAuto.jar /Users/bocchino/Downloads/MagicDraw/plugins/gov.nasa.jpl.magicdraw.componentAutocoder/FpCompAuto.jar
 
 .PHONY:
 	update_build

@@ -183,9 +183,7 @@ public class ProcessISFTopology {
 						throw new ConnectorException("Filename is not specified. Please add the stereotype 'Top' to the top level subsystem or only use one subsystem in the diagram.");
 					}
 					
-					// TKC - bypass broken autonumbering code
-					// physicalConnectionList = indexChecking(physicalConnectionSet);
-					physicalConnectionList = physicalConnectionSet;
+					physicalConnectionList = indexChecking(physicalConnectionSet);
 					
 					ISFSubsystem.topologyModel topModel = new ISFSubsystem.topologyModel(componentMap, physicalConnectionList);
 					topModel.baseID = ISFSubsystem.getBaseId(root);
