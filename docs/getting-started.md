@@ -12,12 +12,16 @@ new components and topologies.
 ## Getting Started with F' and the Reference Application
 
 The first step to running F' is to ensure that the required build tools are available on your system. At its most basic, F' requires
-three tools to be installed: Git, GNU make, and python w/ cheetah. Make is available on most systems, and cheetah can be installed in python
-with the following command:
+several tools to be installed: Git, GNU make, lxml, and python w/ cheetah. In order, to run the ground-system several more packages are required (see: Gse/bin/required.txt). Make is available on most systems, as well as git and lxml.
 
+To install the packages in ubuntu, you can run the following commands:
+
+#### Ubuntu Installation
 ```
-pip install cheetah
+sh fprime/mk/os-pkg/ubuntu-packages.sh
+pip install -r fprime/Gse/bin/required.txt
 ```
+*Note:* other installation and setup instructions are availabe in the [user guide.](https://github.com/nasa/fprime/blob/master/docs/UsersGuide/FprimeUserGuide.pdf)
 
 ### Cloning the Software and Building the Reference Application
 
