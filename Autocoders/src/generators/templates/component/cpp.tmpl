@@ -1,5 +1,5 @@
 // ====================================================================== 
-// \title  ${name}ComponentAc.hpp
+// \title  ${name}ComponentAc.cpp
 // \author Auto-generated
 // \brief  cpp file for ${name} component base class
 //
@@ -559,6 +559,9 @@ namespace ${namespace} {
   #set $return_type = $port_return_type_strs[$instance]
   #set $void_params = $params == "void"
   #set $void_return = $return_type[:4] == "void"
+  #if $type == "Serial":
+    #set $return_type = "Fw::SerializeStatus "
+  #end if
   ${return_type}${class_name} ::
   #if $type == "Serial":
     ${instance}_out(
@@ -567,7 +570,7 @@ namespace ${namespace} {
     )
   {
     FW_ASSERT(portNum < this->getNum_${instance}_OutputPorts(),static_cast<AssertArg>(portNum));
-    this->m_${instance}_OutputPort[portNum].invokeSerial(Buffer);
+    return this->m_${instance}_OutputPort[portNum].invokeSerial(Buffer);
   }
   #else
     #if $void_params:
@@ -1118,6 +1121,7 @@ namespace ${namespace} {
     this->m_paramLock.lock();
     this->m_${prmname} = _local_val;
     #end if
+    this->m_param_${prmname}_valid = Fw::PARAM_VALID;
     this->m_paramLock.unLock();
 
     // Call notifier
