@@ -460,7 +460,7 @@ $emit_port_params(8, $params)
   #for $instance, $sync, $priority, $max_num in $serial_invocation_functions:
     //! Invoke output port $instance
     //!
-    void ${instance}_out(
+    Fw::SerializeStatus ${instance}_out(
         NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
         Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
     );
