@@ -1,0 +1,33 @@
+[DEFAULT]
+
+github_base_url =
+# github_api_key =
+github_repo_list =
+# github_branch =
+github_issue_parameters = state:all
+
+# github_label_mappings =
+# included_labels =
+# excluded_labels =
+
+metrics_make_deployment =
+metrics_make_location =
+# metrics_components_list =
+
+metrics_build_prefix =
+# metrics_sloc_estimation =
+# metrics_sloc_types =
+# metrics_comp_types =
+# metrics_periods =
+
+metrics_sloc_history =
+metrics_comp_history =
+metrics_ev_plan_files =
+
+# metrics_report_filename =
+metrics_report_dir =
+metrics_report_artifact_dir =
+metrics_report_sections = line_plot_issue_labels_trend, line_plot_ev_plan, bar_chart_active_tasks, table_task_list,
+    table_issue_label_summary, table_issue_label_diffs,
+    split_bar_plot_sloc, table_sloc_summary, table_sloc_diffs,
+    split_bar_plot_comp, table_comp_summary, table_comp_diffs
