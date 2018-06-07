@@ -20,21 +20,17 @@ class PlanValidator:
     END = "Scheduled End"
     GATE = "Gates"
     GHE = "GitHub Issue URL"
-    DIFF = "Fields that differ from GHE"
 
     def __init__(self, plan_file_list):
         self.primary_plan = ""
         self.plans = {}
         self.tasks = {}
-        self.gates = {}
-        self.releases = {}
         for index, plan_file in enumerate(plan_file_list):
             plan_key = self.generate_plan_file_key(plan_file)
+            if index == 0:
+                self.primary_plan = plan_key
             try:
-                self.plans[plan_key], self.tasks[plan_key], self.gates[plan_key], self.releases[plan_key] = \
-                    self._generate_plan_data(plan_file)
-                if not self.primary_plan:
-                    self.primary_plan = plan_key
+                self.plans[plan_key], self.tasks[plan_key] = self._generate_plan_data(plan_file)
             except IOError as err:
                 print("WARN: Unable to open {}. Error: {}".format(plan_file, err.message))
                 continue
@@ -70,9 +66,6 @@ class PlanValidator:
         # if we can't open it, warn and continue onto others
 
         plan = {}
-        gates = {}
-        releases = {}
-        # tasks list is just to retain file ordering
         tasks = []
 
         headers = data[0]
@@ -101,23 +94,16 @@ class PlanValidator:
             if line[t] in plan:
                 raise Exception("Non-unique task name \"{}\" found in \"{}\". Aborting plan generation."
                                 .format(line[t], plan_file))
-            gates_line = line[g:]
-            if not gates_line:
-                gates_line = ["", '1.']
-            if len(gates_line) % 2 != 0:
-                gates_line.append('1.')
+            gates = line[g:]
+            if not gates:
+                gates = ["", '1.']
+            if len(gates) % 2 != 0:
+                gates.append('1.')
 
             plan[line[t]] = self._process_plan_task(line[t], line[n], line[r], float(line[v]),
-                                                    start_date, end_date, gates_line)
+                                                    start_date, end_date, gates)
             tasks.append(line[t])
-
-            for gate in plan[line[t]][self.GATE].keys():
-                if gate:
-                    gates[gate] = {}
-
-            releases[line[r]] = {}
-
-        return plan, tasks, gates, releases
+        return plan, tasks
 
     def _process_plan_task(self, task, engineer, release, task_ev, start_date, end_date, gates):
         """Generates a task dict object based on the decomposed task line information.
@@ -174,33 +160,6 @@ class PlanValidator:
                                           }
         return task_dict
 
-    def validate_github_milestones_against_plan(self, ghe_conn, repo_name, plan_key=None, show_found=False, strict=False):
-        if plan_key is None:
-            plan_key = self.primary_plan
-        # get all of the issues
-        ghe_milestones = ghe_conn.get_milestones(repo_name, events=False)
-        ghe_milestone_names = []
-        for ghe_milestone in ghe_milestones:
-            ghe_milestone_names += ghe_milestone["title"]
-        for release in self.releases[plan_key]:
-            if release not in ghe_milestone_names:
-                print("Unable to find milestone \"{}\" in GitHub repo {}. Issue may not exist."
-                      .format(release, repo_name))
-        if show_found or strict:
-            print("-" * 20)
-            for task in self.tasks[plan_key]:
-                gates = sorted(self.plans[plan_key][task][self.GATE].keys())
-                for gate in gates:
-                    if self.GHE in self.plans[plan_key][task][self.GATE][gate].keys():
-                        print("Found task \"{}\" with gate \"{}\" in GitHub repo {} at url {}."
-                              .format(task, gate, repo_name, self.plans[plan_key][task][self.GATE][gate][self.GHE]))
-                        if strict:
-                            print("\tThe following sections do not match between representations: {}"
-                                  .format(", ".join(self.plans[plan_key][task][self.DIFF])))
-
-    def validate_github_labels_against_plam(self, ghe_conn, repo_name, plan_key=None, show_found=False, strict=False):
-        pass
-
     def validate_github_issues_against_plan(self, ghe_conn, repo_name, plan_key=None, show_found=False, strict=False):
         """ Retrieves all issues from a given GHE repo using the supplied ghe_connector, matches them against a plan
         in order to determine which plan tasks and gates do not have an equivalent GHE issue. Outputs results to
@@ -217,7 +176,7 @@ class PlanValidator:
         if plan_key is None:
             plan_key = self.primary_plan
         # get all of the issues
-        issues = ghe_conn.get_issues(repo_name, events=False)
+        issues = ghe_conn.get_repo_issues(repo_name, events=False)
         # check each of the issues to see if it matches against
         for issue_number in issues.keys():
             self.find_issue_in_plan(issues[issue_number], plan_key=plan_key)
@@ -233,11 +192,12 @@ class PlanValidator:
                 gates = sorted(self.plans[plan_key][task][self.GATE].keys())
                 for gate in gates:
                     if self.GHE in self.plans[plan_key][task][self.GATE][gate].keys():
-                        print("Found task \"{}\" with gate \"{}\" in GitHub repo {} at url {}."
-                              .format(task, gate, repo_name, self.plans[plan_key][task][self.GATE][gate][self.GHE]))
+                        if show_found:
+                            print("Found task \"{}\" with gate \"{}\" in GitHub repo {} at url {}."
+                                  .format(task, gate, repo_name, self.plans[plan_key][task][self.GATE][gate][self.GHE]))
                         if strict:
-                            print("\tThe following sections do not match between representations: {}"
-                                  .format(", ".join(self.plans[plan_key][task][self.DIFF])))
+                            # TODO validate assignee and release in found issues
+                            raise NotImplementedError()
 
     def find_issue_in_plan(self, issue_json, plan_key=None):
         """ Takes issue json from GHE v3 API, infers a task and gate from it per the double label or title and label
@@ -288,15 +248,6 @@ class PlanValidator:
         if task and gate:
             self.plans[plan_key][task][self.GATE][gate][self.GHE] = issue_json.get("url")
             contribution = self.plans[plan_key][task][self.GATE][gate][self.EV]
-            self.plans[plan_key][task][self.DIFF] = []
-            for local_key, ghe_upper_key, ghe_lower_key in [(self.ENG, "assignee", "login"),
-                                                            (self.REL, "milestone", "title")]:
-                if issue_json[ghe_upper_key] is None:
-                    ghe_value = ""
-                else:
-                    ghe_value = issue_json[ghe_upper_key][ghe_lower_key]
-                if self.plans[plan_key][task][local_key] != ghe_value:
-                    self.plans[plan_key][task][self.DIFF].append(local_key)
 
         return task, gate, contribution
 

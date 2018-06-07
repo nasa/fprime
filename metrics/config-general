@@ -1,7 +1,7 @@
 [DEFAULT]
 
 github_base_url = https://github.jpl.nasa.gov
-github_api_key = 
+github_api_key = 93cf066bbd852d9d428e19e6fcc95f1fe6764cad
 github_repo_list = ablack/fprime-sw
 github_branch = metrics
 github_issue_parameters = state:all
