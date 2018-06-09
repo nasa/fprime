@@ -1,0 +1,3 @@
+SRC = 	MathSenderComponentAi.xml
+
+		
