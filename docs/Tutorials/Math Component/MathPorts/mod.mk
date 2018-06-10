@@ -1,4 +1,4 @@
-SRC = 	MathInPortAi.xml \
-		MathOutPortAi.xml
+SRC = 	MathOpPortAi.xml \
+		MathResultPortAi.xml
 
 		

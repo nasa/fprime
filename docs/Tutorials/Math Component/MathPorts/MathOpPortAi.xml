@@ -1,4 +1,4 @@
-<interface name="MathIn" namespace="Ref">
+<interface name="MathOp" namespace="Ref">
     <comment>
     Port to perform an operation on two numbers
     </comment>

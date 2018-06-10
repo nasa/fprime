@@ -1,4 +1,4 @@
-<interface name="MathOut" namespace="Ref">
+<interface name="MathResult" namespace="Ref">
     <comment>
     Port to return the result of a math operation
     </comment>

@@ -83,10 +83,10 @@ There are two ports to define in order to perform the operation between the comp
 
 ### MathInPort
 
-`MathInPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in a new directory `Ref/MathPorts` with the name `MathInPortAi.mxl`. The XML for the port is as follows:
+`MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in a new directory `Ref/MathPorts` with the name `MathOpPortAi.mxl`. The XML for the port is as follows:
 
 ```xml
-<interface name="MathIn" namespace="Ref">
+<interface name="MathOp" namespace="Ref">
     <comment>
     Port to perform an operation on two numbers
     </comment>
@@ -111,7 +111,7 @@ There are two ports to define in order to perform the operation between the comp
 #### Port Name Specification
 
 ```xml
-<interface name="MathIn" namespace="Ref">
+<interface name="MathOp" namespace="Ref">
     <comment>
     Port to perform an operation on two numbers
     </comment>
@@ -183,7 +183,7 @@ REF_MODULES := \
 Create a file named `mod.mk` in the `MathPorts` directory. This file tells the build system that a new file needs to be added to the build. Here are the contents:
 
 ```make
-SRC = 	MathInPortAi.xml 
+SRC = 	MathOpPortAi.xml 
 ```
 
 A second make file is needed to build the code in the local `MathPorts` directory. It should be named `Makefile` and have the following contents:
@@ -228,17 +228,17 @@ Build Time: 0:03.49
 The code generation from the XML produces two files:
 
 ```
- MathInPortAc.cpp
- MathInPortAc.hpp 
+ MathOpPortAc.cpp
+ MathOpPortAc.hpp 
 ```
 These contain the C++ classes that implement the port functionality. The build system will automatically compile them when it is aware of the port XML file.
 
-### MathOutPort
+### MathResultPort
 
-`MathInPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in the `Ref/MathPorts` directory with the name `MathInPortAi.xml`. The XML for the port is as follows:
+`MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in the `Ref/MathPorts` directory with the name `MathResultPortAi.xml`. The XML for the port is as follows:
 
 ```xml
-<interface name="MathOut" namespace="Ref">
+<interface name="MathResult" namespace="Ref">
     <comment>
     Port to return the result of a math operation
     </comment>
@@ -254,8 +254,8 @@ These contain the C++ classes that implement the port functionality. The build s
 This file can be added to the `mod.mk` in the `Ref/MathPorts` directory:
 
 ```make
-SRC = 	MathInPortAi.xml \
-		MathOutPortAi.xml
+SRC = 	MathOpPortAi.xml \
+		MathResultPortAi.xml
 ```
 
 Running `make gen_make` and 'make' as before will make the build system aware of the new port XML file and compile it.
@@ -340,20 +340,20 @@ REF_MODULES := \
 
 ### MathSender Component
 
-The `MathSender` component XML definition is as follows:
+The `MathSender` component XML definition is as follows. The XML should be placed in a file `Ref/MathSender/MathSenderComponentAi.xml`
 
 ```xml
 <component name="MathSender" kind="active" namespace="Ref">
-    <import_port_type>Ref/MathPorts/MathInPortAi.xml</import_port_type>
-    <import_port_type>Ref/MathPorts/MathOutPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathOpPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathResultPortAi.xml</import_port_type>
     <comment>Component sending a math operation</comment>
     <ports>
-        <port name="mathOut" data_type="Ref::MathIn" kind="output">
+        <port name="mathOut" data_type="Ref::MathOp" kind="output">
             <comment>
             Port for sending the math operation
             </comment>
         </port>
-        <port name="mathIn" data_type="Ref::MathOut" kind="async_input">
+        <port name="mathIn" data_type="Ref::MathResult" kind="async_input">
             <comment>
             Port for returning the math result
             </comment>
@@ -448,4 +448,337 @@ The `MathSender` component XML definition is as follows:
 </component>
 ```
 
+#### Component Name Specification
+
+The component name is specified in the opening tag of the XML:
+
+```xml
+<component name="MathSender" kind="active" namespace="Ref">
+...
+</component>
+```
+
+The attributes of the tag are as follows:
+
+|Attribute|Description|
+|---|---|
+|name|The component name|
+|kind|What the threading/queuing model of the component is. Can be `passive`, `queued`, or `active`|
+|namespace|The C++ namespace the component will be defined in|
+
+#### Port importing
+
+The ports needed for the component are imported using `import_port_type` tags:
+
+```xml
+    <import_port_type>Ref/MathPorts/MathOpPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathResultPortAi.xml</import_port_type>
+```
+
+The path in the port import statement is relative to the root of the repository. There are a number of ports automatically included by the code generator when commands, telemetry, events or parameters are defined. They are:
+
+|Facility|Ports|
+|---|---|
+|Commands|`Fw/Command/CmdPortAi.xml`,`Fw/Command/CmdResponsePortAi.xml`,`Fw/Command/CmdRegPortAi.xml`|
+|Events|`Fw/Log/LogPortAi.xml`,`Fw/Log/LogTextPortAi.xml`|
+|Telemetry|`Fw/Tlm/TlmPortAi.xml`|
+|Parameters|`Fw/PrmGetPortAi.xml`,`Fw/PrmSetPortAi.xml`|
+
+#### Port Declarations
+
+Ports and their attributes are declared once the port definitions are included. 
+
+```xml
+    <ports>
+        <port name="mathOut" data_type="Ref::MathOp" kind="output">
+            <comment>
+            Port for sending the math operation
+            </comment>
+        </port>
+        <port name="mathIn" data_type="Ref::MathResult" kind="async_input">
+            <comment>
+            Port for returning the math result
+            </comment>
+        </port>
+    </ports>
+```
+
+The port attributes are:
+
+|Attribute|Description|
+|---|---|
+|name|The port name|
+|data_type|The type of the port as defined in the included port definitions, in the form `namepace::name`|
+|kind|The kind of port. Can be `sync_input`,`async_input`,`output`|
+
+For `MathSender`, the request for the operation will be sent on the `mathOut` output port, and the result will be returned on the `mathIn` asynchronous port. Because the component is active and the result input port is asynchronous, the port handler will execute on the thread of `MathSender`.
+
+#### Command Declarations
+
+The commands defined for the component are:
+
+```xml
+    <commands>
+        <command kind="async" opcode="0" mnemonic="MS_DO_MATH">
+            <comment>
+            Do a math operation
+            </comment>
+            <args>
+                <arg name="val1" type="F32">
+                    <comment>The first value</comment>
+                </arg>          
+                <arg name="val2" type="F32">
+                    <comment>The second value</comment>
+                </arg>          
+                <arg name="operation" type="ENUM">
+                    <enum name="MathOp">
+                        <item name="ADD"/>
+                        <item name="SUBTRACT"/>
+                        <item name="MULTIPLY"/>           
+                        <item name="DIVIDE"/>           
+                    </enum>
+                    <comment>The operation to perform</comment>
+                </arg>
+             </args>
+        </command>
+    </commands>
+```
+
+The `<command>` tag starts the section containing commands for `MathSender`. For each command, the following attributes are defined:
+
+|Attribute|Description|
+|---|---|
+|mnemonic|A text version of the command name, used in sequences and the ground tool|
+|opcode|A numeric value for the command. The value is relative to a base value set when the component is added to a topology|
+|kind|The kind of command. Can be `sync_input`,`async_input`,`output`|
+
+#### Telemetry
+
+The telemetry XML is as follows:
+
+```xml
+    <telemetry>
+        <channel id="0" name="MS_VAL1" data_type="F32">
+            <comment>
+            The first value
+            </comment>
+        </channel>
+        <channel id="1" name="MS_VAL2" data_type="F32">
+            <comment>
+            The second value
+            </comment>
+        </channel>
+        <channel id="2" name="MS_OP" data_type="ENUM">
+            <enum name="MathOpTlm">
+                <item name="ADD_TLM"/>
+                <item name="SUB_TLM"/>
+                <item name="MULT_TLM"/>           
+                <item name="DIV_TLM"/>           
+            </enum>
+            <comment>
+            The operation
+            </comment>
+        </channel>
+        <channel id="3" name="MS_RES" data_type="F32">
+            <comment>
+            The result
+            </comment>
+        </channel>
+    </telemetry>
+```
+
+The `<telemetry>` tag starts the section containing telemetry channels for `MathSender`. For each channel, the following attributes are defined:
+
+|Attribute|Description|
+|---|---|
+|name|The channel name|
+|id|A numeric value for the channel. The value is relative to a base value set when the component is added to a topology|
+|data_type|The data type of the channel. Can be a built-in type, an enumeration or an externally defined serializable type|
+
+#### Events
+
+The XML for the defined events is as follows:
+
+```xml
+    <events>
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string = "Math Cmd Recvd: %f %d %f"  >
+            <comment>
+            Math command received
+            </comment>
+            <args>
+                <arg name="val1" type="F32">
+                    <comment>The val1 argument</comment>
+                </arg>          
+                <arg name="val2" type="F32">
+                    <comment>The val1 argument</comment>
+                </arg>          
+                <arg name="op" type="ENUM">
+                    <comment>The requested operation</comment>
+                <enum name="MathOpEv">
+                    <item name="ADD_EV"/>
+                    <item name="SUB_EV"/>
+                    <item name="MULT_EV"/>           
+                    <item name="DIV_EV"/>           
+                </enum>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="MD_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
+            <comment>
+            Received math result
+            </comment>
+            <args>
+                <arg name="result" type="F32">
+                    <comment>The math result</comment>
+                </arg>          
+            </args>
+        </event>
+    </events>
+```
+
+The `<events>` tag starts the section containing events for `MathSender`. For each event, the following attributes are defined:
+
+|Attribute|Description|
+|---|---|
+|name|The event name|
+|id|A numeric value for the event. The value is relative to a base value set when the component is added to a topology|
+|format_string|A C-style format string for displaying the event and the argument values.|
+
+The directory containing the component XML can be added to the list of modules in `/mk/configs/modules/modules.mk`:
+
+```make
+REF_MODULES := \
+	Ref/Top \
+	Ref/RecvBuffApp \
+	Ref/SendBuffApp \
+	Ref/SignalGen \
+	Ref/PingReceiver \
+	Ref/MathPorts \
+	Ref/MathTypes \
+	Ref/MathSender
+```
+
+Create a `mod.mk` file in `Ref/MathSender` and add `MathSender`. 
+
+Once it is added, add the directory to the build and build the component by typing `make rebuild`.
+
+## Component Implementation
+
+The component implementation consists of writing a class that is derived from the code-generated base class and filling in member functions that implement the port calls. 
+
+### Stub generation
+
+There is a make target that will generate stubs that the developer can fill in. The command to generate the stubs is: `make impl`. This will generate two files:
+
+```
+MathSenderComponentImpl.hpp-template
+MathSenderComponentImpl.cpp-template
+```
+
+Rename the files by removing the `-template` from the end of the file names.
+
+```
+MathSenderComponentImpl.hpp
+MathSenderComponentImpl.cpp
+```
+
+Add the new files to the `mod.mk` file:
+
+```make
+SRC = MathSenderComponentAi.xml MathSenderComponentImpl.cpp
+
+HDR = MathSenderComponentImpl.hpp
+```
+
+Make the build system aware of the new files and build:
+
+```
+make rebuild
+```
+
+The stub files should sucessfully compile.
+
+### Handler implementation
+
+The next step is to fill in the handler with implementation. 
+
+First, find the empty command handler:
+
+```c++
+  void MathSenderComponentImpl ::
+    MS_DO_MATH_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        F32 val1,
+        F32 val2,
+        MathOp operation
+    )
+  {
+    // TODO
+  }
+```
+Then, fill in the function with the code to perform the functions described at the beginning of the tutorial:
+
+```c++
+  void MathSenderComponentImpl ::
+    MS_DO_MATH_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        F32 val1,
+        F32 val2,
+        MathOp operation
+    )
+  {
+    MathOpTlm opTlm;
+    MathOperation opPort;
+    MathOpEv opEv;
+    switch (operation) {
+      case ADD:
+          opTlm = ADD_TLM;
+          opPort = MATH_ADD;
+          opEv = ADD_EV;
+          break;
+      case SUBTRACT:
+          opTlm = SUB_TLM;
+          opPort = MATH_SUB;
+          opEv = SUB_EV;
+          break;
+      case MULTIPLY:
+          opTlm = MULT_TLM;
+          opPort = MATH_MULTIPY;
+          opEv = MULT_EV;
+          break;
+      case DIVIDE:
+          opTlm = DIV_TLM;
+          opPort = MATH_DIVIDE;
+          opEv = DIV_EV;
+          break;
+      default:
+          FW_ASSERT(0,operation);
+          break;
+    }
+
+    this->tlmWrite_MS_OP(opTlm);
+    this->tlmWrite_MS_VAL1(val1);
+    this->tlmWrite_MS_VAL2(val2);
+    this->log_ACTIVITY_LO_MS_COMMAND_RECV(val1,val2,opEv);
+    this->mathOut_out(0,val1,val2,opPort);
+    // reply with completion status
+    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
+
+```
+
+Find the empty result handler:
+
+```c++
+  void MathSenderComponentImpl ::
+    mathIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        F32 result
+    )
+  {
+    // TODO
+  }
+```
 

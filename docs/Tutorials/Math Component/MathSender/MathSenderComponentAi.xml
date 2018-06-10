@@ -1,14 +1,14 @@
 <component name="MathSender" kind="active" namespace="Ref">
-    <import_port_type>Ref/MathPorts/MathInPortAi.xml</import_port_type>
-    <import_port_type>Ref/MathPorts/MathOutPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathOpPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathResultPortAi.xml</import_port_type>
     <comment>Component sending a math operation</comment>
     <ports>
-        <port name="mathOut" data_type="Ref::MathIn" kind="output">
+        <port name="mathOut" data_type="Ref::MathOp" kind="output">
             <comment>
             Port for sending the math operation
             </comment>
         </port>
-        <port name="mathIn" data_type="Ref::MathOut" kind="async_input">
+        <port name="mathIn" data_type="Ref::MathResult" kind="async_input">
             <comment>
             Port for returning the math result
             </comment>
