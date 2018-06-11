@@ -1121,6 +1121,25 @@ The hander to clear the throttle is as follows:
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 ```
+##### Scheduler Call
+
+The port invoked by the scheduler retrieves the messages from the message queue and dispatches them:
+
+```
+  void MathReceiverComponentImpl ::
+    SchedIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        NATIVE_UINT_TYPE context
+    )
+  {
+      QueuedComponentBase::MsgDispatchStatus stat = QueuedComponentBase::MSG_DISPATCH_OK;
+      // empty message queue
+      while (stat != MSG_DISPATCH_EMPTY) {
+          stat = this->doDispatch();
+      }
+  }
+
+```
 
 ##### Parameter Updates
 
@@ -1136,3 +1155,252 @@ The developer can optionally receive a notification that a parameter has been up
       this->log_ACTIVITY_HI_MR_UPDATED_FACTOR2(val);
   }
 ```
+
+## Topology
+
+Now that the two components are defined and implemented, they need to be added to the `Ref` topology.
+
+### Define instances
+
+The first step is to include the implementation files in the topology source code.
+
+#### Components.hpp
+
+There is a C++ header file that declares all the component instances as externals for use by the initialization code and the generated code that interconnects the components. The two new components can be added to this file:
+
+`Ref/Top/Components.hpp`
+
+```c++
+#include <Ref/MathSender/MathSenderComponentImpl.hpp>
+#include <Ref/MathReceiver/MathReceiverComponentImpl.hpp>
+...
+extern Ref::MathSenderComponentImpl mathSender;
+extern Ref::MathReceiverComponentImpl mathReceiver;
+```
+
+The `Top` module can be built by typing `make` at the command line.
+
+#### Topology.cpp
+
+The initialization file must have instances of the all the components. The components are initialized and interconnected in this file.
+
+Put these declarations at the end of the declarations for the other `Ref` components:
+
+```c++
+Ref::MathSenderComponentImpl mathSender
+#if FW_OBJECT_NAMES == 1
+    ("mathSender")
+#endif
+;
+
+Ref::MathReceiverComponentImpl mathReceiver
+#if FW_OBJECT_NAMES == 1
+    ("mathReceiver")
+#endif
+;
+```
+
+Where the other components are initialzed, add `MathSender` and `MathReceiver`:
+
+```
+    mathSender.init(10,0);
+    mathReceiver.init(10,0);
+    // Connect rate groups to rate group driver
+    constructRefArchitecture();
+```
+
+The `constructRefArchitecture()` call interconnects the components and it has be called after the components have been initialized.
+
+Next, the components commands are registered:
+
+```
+    health.regCommands();
+    pingRcvr.regCommands();
+
+    mathSender.regCommands();
+    mathReceiver.regCommands();
+```
+
+The parameters are retrieved:
+
+```
+...
+    sendBuffComp.loadParameters();
+    mathReceiver.loadParameters();
+
+```
+
+The threads for the active components need to be started (and later stopped):
+
+```
+    mathSender.start(0,100,10*1024);
+```
+In the `exitTasks()` called when the process is shut down:
+
+```
+    mathSender.exit();
+```
+
+#### RefTopologyAppAi.xml
+
+The `RefTopologyAppAi.xml` XML file defines the connections between components. Parts of it are code generated using the MagicDraw tool, but for this exercise new entries will be added by hand at the end.
+
+##### Component Imports
+
+The component XML definitions are imported into the topology file:
+
+```
+    <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
+    <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
+
+```
+
+
+
+##### Command connections
+
+```xml
+   <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
+
+   <connection name = "MathSenderReg">
+        <source component = "mathSender" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "20"/>
+   </connection>
+   <connection name = "MathReceiverReg">
+        <source component = "mathReceiver" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "21"/>
+   </connection>
+   
+    <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
+
+   <connection name = "MathSenderDisp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "20"/>
+        <target component = "mathSender" port = "CmdDisp" type = "Cmd" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverDisp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "21"/>
+        <target component = "mathReceiver" port = "CmdDisp" type = "Cmd" num = "0"/>
+   </connection>
+   
+    <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
+
+   <connection name = "MathSenderReply">
+      <source component = "mathSender" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+      <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverReply">
+      <source component = "mathReceiver" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+      <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+   </connection>
+```
+
+The command registration and command dispatch have to follow the rule that the port number used to register the commands in `cmdDisp` is the port number that must be used to dispatch commands to the component.
+
+##### Event Connections
+
+```xml
+   <!-- Event Logger Binary Connections -->
+   
+   <connection name = "MathSenderLog">
+       <source component = "mathSender" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverLog">
+       <source component = "mathReceiver" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+
+   <!-- Event Logger Text Connections -->
+   
+   <connection name = "MathSenderTextLog">
+       <source component = "mathSender" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverTextLog">
+       <source component = "mathReceiver" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+```
+
+There are two kinds of connections for logging: One for a binary form that will be sent to the ground system, and a text version for displaying on the text console.
+
+##### Telemetry Connections
+
+```xml
+   <!-- Telemetry Connections -->
+
+   <connection name = "MathSenderTextTlm">
+       <source component = "mathSender" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverTextTlm">
+       <source component = "mathReceiver" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+   
+```   
+There is one port to sent binary telemetry updates to the ground software.
+
+##### Parameter Connections
+
+```xml
+   <!-- Parameter Connections -->
+   
+   <connection name = "MathReceiverPrmGet">
+       <source component = "mathReceiver" port = "ParamGet" type = "PrmGet" num = "0"/>
+        <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverPrmSet">
+       <source component = "mathReceiver" port = "ParamSet" type = "PrmSet" num = "0"/>
+        <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
+   </connection>
+```
+
+There are two connections when a component has parameters: One to get the current value during initialization and one to send an updated value back to the parameter database.
+
+##### Time Connections
+
+```xml
+   <!-- Time Connections -->
+
+   <connection name = "MathSenderTime">
+       <source component = "mathSender" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+   <connection name = "MathReceiverTime">
+       <source component = "mathReceiver" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+```
+
+The components need a time connection to time tag events and channelized telemetry.
+
+###### The Math Connection
+
+```xml
+
+   <!-- Math Connection -->
+   <connection name = "MathOpConnection">
+       <source component = "mathSender" port = "mathOut" type = "Ref::MathOp" num = "0"/>
+        <target component = "mathReceiver" port = "mathIn" type = "Ref::MathOp" num = "0"/>
+   </connection>
+   <connection name = "MathResultConnection">
+       <source component = "mathReceiver" port = "mathOut" type = "Ref::MathResult" num = "0"/>
+        <target component = "mathSender" port = "mathIn" type = "Ref::MathResult" num = "0"/>
+   </connection>
+   
+```
+
+There is a connection to perform the math operation.
+
+###### Scheduler Connection
+
+```xml
+   <!-- Scheduler Connection -->
+    <connection name = "MathReceiverRG">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <target component = "mathReceiver" port = "SchedIn" type = "Sched" num = "0"/>
+    </connection>
+```
+
+The scheduler connection is connected to the 1Hz rate group to allow the queued component to pull any messages of its message queue.
