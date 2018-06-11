@@ -2,7 +2,8 @@
 
 The following example shows the steps to implement a simple pair of components connected by a pair of ports. The first, `MathSender`, will invoke the second, `MathReceiver`, to perform a math operation and return the result. Here is a description of the components:
 
-## MathSender - `MathSender` must do the following:
+## MathSender
+`MathSender` must do the following:
 
 ### Commands
 
@@ -769,6 +770,8 @@ Then, fill in the function with the code to perform the functions described at t
 
 ```
 
+The handler will send the appropriate events and telemetry values, then invoke the output math operation port to request the operation. Note that each channel and event argument that has an enumeration has a unique type declaration. Finally, note that the output command response port must be called with a command status in order to let the framework components know that the command is complete. If the completion status isn't sent, it will stall any sequences the command was part of. There are command error status along with successfull completions. Most commands return this status at the end of the handler, but component implementations can store the `opCode` and `cmdSeq` values to return later, but those specific values must be returned in order to match the status with the command originally sent.
+
 Find the empty result handler:
 
 ```c++
@@ -782,3 +785,354 @@ Find the empty result handler:
   }
 ```
 
+Fill in the result handler with code that reports telemetry and an event:
+
+```
+  void MathSenderComponentImpl ::
+    mathIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        F32 result
+    )
+  {
+      this->tlmWrite_MS_RES(result);
+      this->log_ACTIVITY_HI_MD_RESULT(result);
+  }
+
+```
+
+This handler reports the result via a telemetry channel and an event.
+
+### MathReceiver Component
+
+#### Component Specification
+
+The `MathReceiver` component XML is as follows:
+
+```xml
+<component name="MathReceiver" kind="queued" namespace="Ref">
+    <import_port_type>Ref/MathPorts/MathOpPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathResultPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
+    <comment>Component sending a math operation</comment>
+    <ports>
+        <port name="mathIn" data_type="Ref::MathOp" kind="async_input">
+            <comment>
+            Port for receiving the math operation
+            </comment>
+        </port>
+        <port name="mathOut" data_type="Ref::MathResult" kind="output">
+            <comment>
+            Port for returning the math result
+            </comment>
+        </port>
+        <port name="SchedIn" data_type="Sched" kind="sync_input">
+            <comment>
+            The rate group scheduler input
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="MR_SET_FACTOR1">
+            <comment>
+            Set operation multiplication factor1
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The first factor</comment>
+                </arg>          
+             </args>
+        </command>
+        <command kind="async" opcode="1" mnemonic="MR_CLEAR_EVENT_THROTTLE">
+            <comment>Clear the event throttle
+            </comment>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="MR_OPERATION" data_type="Ref::MathOp">
+            <comment>
+            The operation
+            </comment>
+        </channel>
+        <channel id="1" name="MR_FACTOR1S" data_type="U32">
+            <comment>
+            The number of MR_SET_FACTOR1 commands
+            </comment>
+        </channel>
+        <channel id="2" name="MR_FACTOR1" data_type="F32">
+            <comment>
+            Factor 1 value
+            </comment>
+        </channel>
+        <channel id="3" name="MR_FACTOR2" data_type="F32">
+            <comment>
+            Factor 2 value
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
+            <comment>
+            Operation factor 1
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The factor value</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="MR_UPDATED_FACTOR2" severity="ACTIVITY_HI" format_string = "Factor 2 updated to: %f" >
+            <comment>
+            Updated factor 2
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The factor value</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="2" name="MR_OPERATION_PERFORMED" severity="ACTIVITY_HI" format_string = "Operation performed: %s" >
+            <comment>
+            Math operation performed
+            </comment>
+            <args>
+                <arg name="val" type="Ref::MathOp">
+                    <comment>The operation</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="3" name="MR_THROTTLE_CLEARED" severity="ACTIVITY_HI" format_string = "Event throttle cleared" >
+            <comment>
+            Event throttle cleared
+            </comment>
+        </event>
+    </events>
+    <parameters>
+        <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
+            <comment>
+            A test parameter
+            </comment>
+        </parameter>
+    </parameters>
+    
+</component>
+```
+
+Many of the elements are the same as described in `MathSender`, so this section will highlight the differences.
+
+#### Queued component
+
+The `MathReceiver` component is queued, which means it can receive port invocations as messages, but needs an external thread to dequeue them.
+
+#### Importing the serializable type
+
+The telemetry channels and events use a serializable type, `Ref::MathOp` to illustrate the use of those types. The following line specifies the import for this type:
+
+```
+<import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
+```
+
+This type is then available for events and channels, but are not available for parameters and command arguments.
+
+#### Scheduler port
+
+The queued component has a scheduler port that is `sync_input`. That means the port invocation is not put on a message queue, but calls the handler on the thread of the caller of the port:
+
+```
+        <port name="SchedIn" data_type="Sched" kind="sync_input">
+            <comment>
+            The rate group scheduler input
+            </comment>
+        </port>
+
+```
+
+This synchronous call allows the caller to pull any pending messages of the message queue on the thread of the component invoking the `SchedIn` port.
+
+#### Throttled Event
+
+The `MR_SET_FACTOR1` event has a new argument `throttle = "3"` that specifies how many events will be emitted before the event is throttled so no more appear.
+
+```
+        <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
+            <comment>
+            Operation factor 1
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The factor value</comment>
+                </arg>          
+            </args>
+        </event>
+```
+
+#### Parameter
+
+The `MathReceiver` component has a declaration for a parameter:
+
+```
+    <parameters>
+        <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
+            <comment>
+            A test parameter
+            </comment>
+        </parameter>
+    </parameters>
+
+```
+
+The `parameter` attributes are as follows:
+
+|Attribute|Description|
+|---|---|
+|id|The unique parameter ID. Relative to base ID set for the component in the topology|
+|name|The parameter name|
+|data_type|The data type of the parameter. Must be a built-in type|
+|default|Default value assigned to the parameter if there is an error retrieving it.|
+|set_opcode|The opcode of the command to set the parameter. Must not overlap with any of the commands|
+|save_opcode|The opcode of the command to save the parameter. Must not overlap with any of the commands|
+
+#### Component Implementation
+
+As before, a stub can be generated:
+
+```
+make impl
+cp MathReceiverComponentImpl.cpp-template MathReceiverComponentImpl.cpp
+cp MathReceiverComponentImpl.hpp-template MathReceiverComponentImpl.hpp
+```
+
+Add the stub files to `mod.mk`:
+
+```make
+SRC = MathReceiverComponentAi.xml MathReceiverComponentImpl.cpp
+
+HDR = MathReceiverComponentImpl.hpp
+
+```
+
+Add the files and compile them: `make rebuild`
+
+##### Port handler
+
+Look for the empty port hander in the sub class:
+
+```
+  void MathReceiverComponentImpl ::
+    mathIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        F32 val1,
+        F32 val2,
+        MathOperation operation
+    )
+  {
+    // TODO
+  }
+```
+
+Fill the handler in with the computation of the result. The handler will also update telemetry and events:
+
+```
+  void MathReceiverComponentImpl ::
+    mathIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        F32 val1,
+        F32 val2,
+        MathOperation operation
+    )
+  {
+      // declare result serializable
+      Ref::MathOp op;
+      F32 res = 0.0;
+      switch (operation) {
+          case MATH_ADD:
+              op.setop(ADD);
+              res = (val1 + val2)*this->m_factor1;
+              break;
+          case MATH_SUB:
+              op.setop(SUB);
+              res = (val1 - val2)*this->m_factor1;
+              break;
+          case MATH_MULTIPY:
+              op.setop(MULT);
+              res = (val1 * val2)*this->m_factor1;
+              break;
+          case MATH_DIVIDE:
+              op.setop(DIVIDE);
+              res = (val1 / val2)*this->m_factor1;
+              break;
+          default:
+              FW_ASSERT(0,operation);
+              break;
+      }
+      Fw::ParamValid valid;
+      res = res/paramGet_factor2(valid);
+
+      op.setval1(val1);
+      op.setval2(val2);
+      op.setresult(res);
+      this->log_ACTIVITY_HI_MR_OPERATION_PERFORMED(op);
+      this->tlmWrite_MR_OPERATION(op);
+      this->mathOut_out(0,res);
+  }
+
+```
+
+In this handler, the operation is done based on the port arguments from `MathSender`. The `op` structure is populated for the event and telemetry calls, and the `mathOut` port is called to send the result back to `MathSender`. The parameter value is retrieved during initialization and is returned via the `paramGet_factor2()` call. The commands to set and save the commands run entirely in the code generated base classes.
+
+##### Commands
+
+The command handler to update the value of `factor1` is as follows:
+
+```
+  void MathReceiverComponentImpl ::
+    MR_SET_FACTOR1_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        F32 val
+    )
+  {
+      this->m_factor1 = val;
+      this->log_ACTIVITY_HI_MR_SET_FACTOR1(val);
+      this->tlmWrite_MR_FACTOR1(val);
+      this->tlmWrite_MR_FACTOR1S(++this->m_factor1s);
+      // reply with completion status
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
+
+```
+
+The telemetry and log values are sent, and the command is responded to. Note that after three calls to the handler, the `this->log_ACTIVITY_HI_MR_SET_FACTOR1(val)` call will not actually send any events until the throttle is cleared.
+
+The hander to clear the throttle is as follows:
+
+```
+  void MathReceiverComponentImpl ::
+    MR_CLEAR_EVENT_THROTTLE_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
+  {
+      // clear throttle
+      this->log_ACTIVITY_HI_MR_SET_FACTOR1_ThrottleClear();
+      // send event that throttle is cleared
+      this->log_ACTIVITY_HI_MR_THROTTLE_CLEARED();
+      // reply with completion status
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
+```
+
+##### Parameter Updates
+
+The developer can optionally receive a notification that a parameter has been updates by overriding a virtual function in the code generated base class:
+
+```     
+  void MathReceiverComponentImpl ::
+     parameterUpdated(
+      FwPrmIdType id /*!< The parameter ID*/
+  ) {
+      Fw::ParamValid valid;
+      F32 val = this->paramGet_factor2(valid);
+      this->log_ACTIVITY_HI_MR_UPDATED_FACTOR2(val);
+  }
+```
