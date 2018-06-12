@@ -25,7 +25,7 @@ MathSender should have four channels:
 ### Parameters
 MathSender will have no parameters.
 
-`MathSender` should be an active (i.e. threaded) component, so it will proces the commands immediately. The command will be *asynchronous*, which means the handler will be executed on the thread of the active component. It will delegate the operation to `MathReceiver`.
+`MathSender` should be an active (i.e. threaded) component, so it will process the commands immediately. The command will be *asynchronous*, which means the handler will be executed on the thread of the active component. It will delegate the operation to `MathReceiver`.
 
 ## MathReceiver 
 
@@ -82,7 +82,7 @@ The implementation of the component will will have the following steps:
 
 There are two ports to define in order to perform the operation between the components. The XML for the ports will be first shown in their entirety, and then the individual parts will be described.
 
-### MathInPort
+### MathOpPort
 
 `MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in a new directory `Ref/MathPorts` with the name `MathOpPortAi.mxl`. The XML for the port is as follows:
 
@@ -121,10 +121,11 @@ There are two ports to define in order to perform the operation between the comp
 ```
 
 The `interface` tag specifies that a port is being defined. The attributes are as follows:
+
 |Attribute|Description|
 |---|---|
 |name|The name of the component type. Becomes the C++ class name|
-|namespace|The namespace of the component. The C++ namespace the component class will appear in.  
+|namespace|The namespace of the component. The C++ namespace the where the component class will appear| 
 
 #### Port Argument Specification
 
@@ -802,6 +803,282 @@ Fill in the result handler with code that reports telemetry and an event:
 
 This handler reports the result via a telemetry channel and an event.
 
+#### Unit Tests
+
+The code generator will also generate test components that can be connected to the component to enable a set of unit tests to check functionality and to get coverage of all the code. To generate a set of files for testing, type:
+
+```shell
+make testcomp
+```
+
+The files that are generated are:
+
+```
+Tester.hpp
+Tester.cpp
+TesterBase.hpp
+TesterBase.cpp
+GTestBase.hpp
+GTestBase.cpp
+```
+
+The function of the files is:
+
+|File|Function|
+|---|---|
+|TesterBase.*|Base class for test class. Defines necessary handlers as well as helper functions
+|GTestBase.*|Helper class derived from TesterBase that has macros that use Google Test to test interfaces|
+|Tester.*|Derived tester class that inherits from GTestBase. Includes instance of the component and helpers to connect ports|
+
+Unit tests are built in subdirectories of the module, so the unit test file must be copied there. The build system supports a standard subdirectory of `test/ut` below the module being tested. While in the MathSender directory, create the `test/ut` directory:
+
+```
+mkdir -p test/ut
+```
+
+Move the above set of files into that subdirectory.
+
+The new unit test files have to be registered with the build system, so modifications to the `mod.mk` files are necessary. Here are the steps:
+
+1) Add the following entry to the `mod.mk` file in `Ref/MathSender`:
+
+```
+SUBDIRS = test
+```
+
+2) Add a `mod.mk` file to the new `test` subdirectory:
+
+```
+SUBDIRS = ut
+```
+
+3) Finally, add a `mod.mk` file to the `test/ut` directory:
+
+```make
+TEST_SRC=       main.cpp \
+                Tester.cpp \
+                GTestBase.cpp \
+                TesterBase.cpp
+
+TEST_MODS=          Ref/MathSender \
+                    Ref/MathPorts \
+                    Fw/Cmd \
+                    Fw/Comp \
+                    Fw/Port \
+                    Fw/Prm \
+                    Fw/Time \
+                    Fw/Tlm \
+                    Fw/Types \
+                    Fw/Log \
+                    Fw/Obj \
+                    Fw/Com \
+                    Os \
+                    Utils/Hash \
+                    gtest
+```
+
+The `main.cpp` file must be added. To start, it can look like this:
+
+```c++
+#include "Tester.hpp"
+
+TEST(Nominal, InitTest) {
+    Ref::Tester tester;
+}
+
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+```
+
+This is a minimum test that uses the Google Test Framework. For more information about the Google Test Framework see here:
+
+```
+https://github.com/google/googletest
+```
+
+To build the unit test, type:
+
+```
+make gen_make
+make ut
+```
+
+The build system looks for a script with a specific name to run the unit test when requested. The script has the form `runtest_<build>`, where `<build>` is the local build. For Linux, the unit test will run natively so the script would be `runtest_LINUX`. 
+
+The basic `runtest_LINUX` script looks like the following:
+
+```shell
+#!/bin/sh
+LOC=${BUILD_ROOT}/Ref/MathSender/test/ut
+cd ${LOC}
+echo "Running ${LOC}/$1/test_ut"
+${LOC}/$1/test_ut
+
+```
+
+The `$1` variable is the path to the test binary that is built for the local target. The build system calls the script rather than the binary directly so developers who are writing unit tests can do any necessary setup for the test like generating files, executing other scripts, etc.
+
+Once the files and scripts are in place, the unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
+
+```
+make ut run_ut
+
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from Nominal
+[ RUN      ] Nominal.InitTest
+[       OK ] Nominal.InitTest (0 ms)
+[----------] 1 test from Nominal (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+
+```
+
+The unit test does not do anything at this point except instantiate the test component.
+
+The next step is to add the specific test cases to the unit test class. It is important to note that the unit tests are single-threaded. The active components do not have their threads started, so any messages to asynchronous ports are manually retrieved from the queue and dispatched to handlers. This makes testing more easier since the execution of the thread in reponse to port calls or commands does not need to be managed. Examples of this will be seen in the test code.
+
+The first test case will be to test the `MS_DO_MATH` command. The `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telmetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as required. The steps to write the test case are as follows:
+
+1) Add a public method to the tester class in `Tester.hpp` with a name signifying the test case:
+
+```c++
+namespace Ref {
+
+  class Tester :
+    public MathSenderGTestBase
+  {
+
+      // ----------------------------------------------------------------------
+      // Construction and destruction
+      // ----------------------------------------------------------------------
+
+    public:
+
+      //! Construct object Tester
+      //!
+      Tester(void);
+
+      //! Destroy object Tester
+      //!
+      ~Tester(void);
+
+    public:
+
+      // ---------------------------------------------------------------------- 
+      // Tests
+      //    ---------------------------------------------------------------------- 
+
+      //! Test operation command
+      //!
+      void testOperationCommand(void);
+
+```
+
+Add a test function to the implementation class in `Tester.cpp` to implement the function:
+
+```c++
+  // ----------------------------------------------------------------------
+  // Tests 
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    testOperationCommand(void)
+  {
+      // send MS_DO_MATH command
+      this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
+      // retrieve the message from the message queue and dispatch
+      this->component.doDispatch();
+      // verify that the output port was called
+      ASSERT_FROM_PORT_HISTORY_SIZE(1);
+      ASSERT_from_mathOut_SIZE(1);
+      ASSERT_from_mathOut(0,1.0,2.0,MATH_ADD);
+      // verify telemetry - 3 channels were written
+      ASSERT_TLM_SIZE(3);
+      ASSERT_TLM_MS_VAL1_SIZE(1);
+      ASSERT_TLM_MS_VAL1(0,1.0);
+      ASSERT_TLM_MS_VAL2_SIZE(1);
+      ASSERT_TLM_MS_VAL2(0,2.0);
+      ASSERT_TLM_MS_OP_SIZE(1);
+      ASSERT_TLM_MS_OP(0,MathSenderComponentBase::ADD_TLM);
+      // verify events were sent
+      ASSERT_EVENTS_SIZE(1);
+      ASSERT_EVENTS_MS_COMMAND_RECV(0,1.0,2.0,MathSenderComponentBase::ADD_EV);
+      // verify command response was sent
+      ASSERT_CMD_RESPONSE_SIZE(1);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+  }
+
+```
+
+Some highlights are:
+
+Send the `MS_DO_MATH` command:
+
+```c++
+      // send MS_DO_MATH command
+      this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
+      // retrieve the message from the message queue and dispatch
+      this->component.doDispatch();
+```
+
+Verify that the operation port was called as expected:
+
+```c++
+      ASSERT_FROM_PORT_HISTORY_SIZE(1);
+      ASSERT_from_mathOut_SIZE(1);
+      ASSERT_from_mathOut(0,1.0,2.0,MATH_ADD);
+```
+The first call verifies that one and only one port call was made. This can be used to confirm that only the correct port was called and that no other ports were erroneously called.
+
+The second call verifies that the port call that was made was the expected one.
+
+The third call looks at a stored history of calls to this port and verifies the expected call arguments were made. The history can store multiple calls, so the first argument looks in the first entry in the history.
+
+Verify that the telemetry channels were written:
+
+```c++
+      // verify telemetry - 3 channels were written
+      ASSERT_TLM_SIZE(3);
+      ASSERT_TLM_MS_VAL1_SIZE(1);
+      ASSERT_TLM_MS_VAL1(0,1.0);
+      ASSERT_TLM_MS_VAL2_SIZE(1);
+      ASSERT_TLM_MS_VAL2(0,2.0);
+      ASSERT_TLM_MS_OP_SIZE(1);
+      ASSERT_TLM_MS_OP(0,MathSenderComponentBase::ADD_TLM);
+```
+
+The first statement verifies that three channels were written as expected. The following statements verify that the channels were written with the expected values.
+
+Verify that event for the command was sent:
+
+```c++
+      ASSERT_EVENTS_SIZE(1);
+      ASSERT_EVENTS_MS_COMMAND_RECV(0,1.0,2.0,MathSenderComponentBase::ADD_EV);
+
+```
+
+Finally, verify that the correct response to the command was sent:
+
+```c++
+// verify command response was sent
+      ASSERT_CMD_RESPONSE_SIZE(1);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+```
+
+Once the test code is complete, the test can be run with coverage checking enabled:
+
+```
+make ut run_ut cov
+```
+
+The test should pass, and the file `Ref/MathSender/MathSenderComponentImpl.cpp.gcov` can be examined to test for coverage. This example unit test does not cover all the code as can be seen in the coverage output. The code that has not been covered can be seen with `#####` at the beginning of the line.
+
 ### MathReceiver Component
 
 #### Component Specification
@@ -1254,9 +1531,6 @@ The component XML definitions are imported into the topology file:
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
 
 ```
-
-
-
 ##### Command connections
 
 ```xml
@@ -1338,7 +1612,7 @@ There are two kinds of connections for logging: One for a binary form that will 
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
    </connection>
    
-```   
+```
 There is one port to sent binary telemetry updates to the ground software.
 
 ##### Parameter Connections
