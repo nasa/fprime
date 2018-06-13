@@ -113,5 +113,10 @@ The demo consists of a single component along with all the infrastructure compon
  ```
  EXCEPTION: Could not connect to socket at host addr localhost, port 50000
  ```
- This means that the GUI was restarted before the socket was released by Linux. Wait a minute or so and try again.
+This means that the GUI was restarted before the socket was released by Linux. Wait a minute or so and try again.
+ 
+Sometimes the GUI can be sluggish on older RPI models. In this case, connect the RPI to a network and run the GUI on another host such as an Ubuntu Linux machine configured for development as described earlier.
+
+The `runRPI.sh` and `runGui.sh` scripts can be modified to the address of the Linux machine running the GUI as a server. To run in this mode, first run `runGui.sh` on the Linux host, and then start `runRPI.sh` on the Raspberry Pi.
+
  
