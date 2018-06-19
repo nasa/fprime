@@ -59,8 +59,8 @@ namespace Ref {
 #endif
     this->eventHistory_MS_COMMAND_RECV =
       new History<EventEntry_MS_COMMAND_RECV>(maxHistorySize);
-    this->eventHistory_MD_RESULT =
-      new History<EventEntry_MD_RESULT>(maxHistorySize);
+    this->eventHistory_MS_RESULT =
+      new History<EventEntry_MS_RESULT>(maxHistorySize);
     // Initialize histories for typed user output ports
     this->fromPortHistory_mathOut =
       new History<FromPortEntry_mathOut>(maxHistorySize);
@@ -83,7 +83,7 @@ namespace Ref {
     delete this->textLogHistory;
 #endif
     delete this->eventHistory_MS_COMMAND_RECV;
-    delete this->eventHistory_MD_RESULT;
+    delete this->eventHistory_MS_RESULT;
   }
 
   void MathSenderTesterBase ::
@@ -1002,7 +1002,7 @@ namespace Ref {
 
       }
 
-      case MathSenderComponentBase::EVENTID_MD_RESULT: 
+      case MathSenderComponentBase::EVENTID_MS_RESULT: 
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1037,7 +1037,7 @@ namespace Ref {
             static_cast<AssertArg>(_status)
         );
 
-        this->logIn_ACTIVITY_HI_MD_RESULT(result);
+        this->logIn_ACTIVITY_HI_MS_RESULT(result);
 
         break;
 
@@ -1057,7 +1057,7 @@ namespace Ref {
   {
     this->eventsSize = 0;
     this->eventHistory_MS_COMMAND_RECV->clear();
-    this->eventHistory_MD_RESULT->clear();
+    this->eventHistory_MS_RESULT->clear();
   }
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -1157,18 +1157,18 @@ namespace Ref {
   }
 
   // ----------------------------------------------------------------------
-  // Event: MD_RESULT 
+  // Event: MS_RESULT 
   // ----------------------------------------------------------------------
 
   void MathSenderTesterBase ::
-    logIn_ACTIVITY_HI_MD_RESULT(
+    logIn_ACTIVITY_HI_MS_RESULT(
         F32 result
     )
   {
-    EventEntry_MD_RESULT e = {
+    EventEntry_MS_RESULT e = {
       result
     };
-    eventHistory_MD_RESULT->push_back(e);
+    eventHistory_MS_RESULT->push_back(e);
     ++this->eventsSize;
   }
 

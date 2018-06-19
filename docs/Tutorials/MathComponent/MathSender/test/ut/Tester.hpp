@@ -51,7 +51,10 @@ namespace Ref {
 
       //! Test operation command
       //!
-      void testOperationCommand(void);
+      void testAddCommand(void);
+      void testSubCommand(void);
+      void testMultCommand(void);
+      void testDivCommand(void);
 
     private:
 

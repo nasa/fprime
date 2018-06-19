@@ -66,7 +66,7 @@ namespace Ref {
     )
   {
       this->tlmWrite_MS_RES(result);
-      this->log_ACTIVITY_HI_MD_RESULT(result);
+      this->log_ACTIVITY_HI_MS_RESULT(result);
   }
 
   // ----------------------------------------------------------------------
@@ -98,7 +98,7 @@ namespace Ref {
           break;
       case MULTIPLY:
           opTlm = MULT_TLM;
-          opPort = MATH_MULTIPY;
+          opPort = MATH_MULTIPLY;
           opEv = MULT_EV;
           break;
       case DIVIDE:

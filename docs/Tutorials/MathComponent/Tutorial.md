@@ -2,42 +2,42 @@
 
 The following example shows the steps to implement a simple pair of components connected by a pair of ports. The first, `MathSender`, will invoke the second, `MathReceiver`, to perform a math operation and return the result. Here is a description of the components:
 
-## MathSender
+## 1. MathSender
 `MathSender` must do the following:
 
-### Commands
+### 1.1 Commands
 
 `MathSender` should implement a `MS_DO_MATH` command. This command will have three arguments:
 1) A first value in the operation
 2) A second value in the operation
 3) An enumerated argument specifying the operation to perform
 
-### Events
+### 1.2 Events
 `MathSender` should emit an event telling that a command was received to perform the operation. It should also emit an event when the result is received back from `MathReceiver`.
 
-### Telemetry Channels
+### 1.3 Telemetry Channels
 MathSender should have four channels:
 1) The first value
 2) The second value
 3) The operation
 4) The result
 
-### Parameters
+### 1.4 Parameters
 MathSender will have no parameters.
 
 `MathSender` should be an active (i.e. threaded) component, so it will process the commands immediately. The command will be *asynchronous*, which means the handler will be executed on the thread of the active component. It will delegate the operation to `MathReceiver`.
 
-## MathReceiver 
+## 2. MathReceiver 
 
 `MathReceiver` will be a queued component that performs the requested operation and returns the result. `MathReceiver` will be connected to the 1Hz rate group that is part of the reference example. The simple operation in this component could have just as easily been done in a passive or active component; it is done here as a queued component to illustrate how to implement one.
 
-### Commands
+### 2.1 Commands
 
 `MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multipled by this factor. It should default to 1 if the command is never invoked.
 
 `MathReceiver` should also implement a MR_CLEAR_EVENT_THROTTLE command to clear the throttled MR_SET_FACTOR1 event (see below).
 
-### Events
+### 2.2 Events
 
 `MathReceiver` should have the following events:
 
@@ -46,7 +46,7 @@ MathSender will have no parameters.
 3) MR_OPERATION_PERFORMED event. When the component receives a request to perform the operation, it should emit an EVR with the arguments and operation.
 4) MR_THROTTLE_CLEARED in response to the MR_CLEAR_EVENT_THROTTLE command above.
 
-### Channels
+### 2.3 Channels
 
 `MathReceiver` should have the following channels:
 
@@ -54,17 +54,17 @@ MathSender will have no parameters.
 2) A channel that counts the number of MR_SET_FACTOR1 commands received, so that a count can be known past the throttled event.
 3) A channel for each of the factors used in the operation.
 
-### Parameters
+### 2.4 Parameters
 
 `MathReceiver` will have one parameter, a second factor used in the operation.
 
-### Operation
+### 2. Operation
 
 `MathReceiver` will perform the following operation when requested by `MathSender`:
 
 result = (value1 operation value2)*factor1/factor2
 
-# Implementation
+# 2.1 Implementation
 
 The implementation of the component will will have the following steps:
 
@@ -78,11 +78,11 @@ The implementation of the component will will have the following steps:
 8) Connect the classes to the `Ref` topology.
 9) Run the ground system and exercise the commands and view the telemetry and events in the GUI.
 
-## Port definition
+## 2.2 Port definition
 
 There are two ports to define in order to perform the operation between the components. The XML for the ports will be first shown in their entirety, and then the individual parts will be described.
 
-### MathOpPort
+### 2.2.1 MathOpPort
 
 `MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in a new directory `Ref/MathPorts` with the name `MathOpPortAi.mxl`. The XML for the port is as follows:
 
@@ -109,7 +109,7 @@ There are two ports to define in order to perform the operation between the comp
 </interface>
 ```
 
-#### Port Name Specification
+#### 2.2.1.1 Port Name Specification
 
 ```xml
 <interface name="MathOp" namespace="Ref">
@@ -127,7 +127,7 @@ The `interface` tag specifies that a port is being defined. The attributes are a
 |name|The name of the component type. Becomes the C++ class name|
 |namespace|The namespace of the component. The C++ namespace the where the component class will appear| 
 
-#### Port Argument Specification
+#### 2.2.1.2 Port Argument Specification
 
 The port arguments are what are passed from component to component when they are connected. The port argument XML is as follows:
 
@@ -166,7 +166,7 @@ The enumerations are a special type of argument. When `type="ENUM"` is an attrib
                 <item name="MATH_DIVIDE"/>
             </enum>
  ```
-#### Adding the port to the build
+#### 2.2.1.3 Adding the port to the build
 
 The build system needs to be made aware of the port XML. To do this, edit the file `/mk/configs/modules/modules.mk`.  
 
@@ -235,7 +235,7 @@ The code generation from the XML produces two files:
 ```
 These contain the C++ classes that implement the port functionality. The build system will automatically compile them when it is aware of the port XML file.
 
-### MathResultPort
+### 2.2.2 MathResultPort
 
 `MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in the `Ref/MathPorts` directory with the name `MathResultPortAi.xml`. The XML for the port is as follows:
 
@@ -264,11 +264,11 @@ Running `make gen_make` and 'make' as before will make the build system aware of
 
 The code generated to implement ports is complete. Developers do not need to add any implmentation code of their own.
 
-## Serializable Definition
+## 2.3 Serializable Definition
 
 A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of a object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the neccessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground sysmtem needs an XML definition to decode them.
 
-### MathOp
+### 2.3.1 MathOp
 
 The `MathOp` serializable structure is needed by `MathReceiver` for a telemetry channel that gives the values of the operation. A new directory named `Ref/MathTypes` should be created for the structure, and the file should be named `MathOpSerializableAi.xml`. The XML is as follows:
 
@@ -293,7 +293,7 @@ The `MathOp` serializable structure is needed by `MathReceiver` for a telemetry 
 </serializable>
 ```
 
-#### Serializable Name Specification
+#### 2.3.1.1 Serializable Name Specification
 
 The opening tag of the XML specifies the type name and namespace of the structure:
 
@@ -303,7 +303,7 @@ The opening tag of the XML specifies the type name and namespace of the structur
 </serializable>
 ```
 
-#### Serializable Members
+#### 2.3.1.2 Serializable Members
 
 The `members` tag starts the section of the XML that specifies the members of the structure:
 
@@ -338,9 +338,11 @@ REF_MODULES := \
     Ref/MathTypes
 ```
 
-## Component Definition
+This XML defined structure compiles to a C++ class that has accessors for the members of the structure.
 
-### MathSender Component
+## 2.4 Component Definition
+
+### 2.4.1 MathSender Component
 
 The `MathSender` component XML definition is as follows. The XML should be placed in a file `Ref/MathSender/MathSenderComponentAi.xml`
 
@@ -450,7 +452,7 @@ The `MathSender` component XML definition is as follows. The XML should be place
 </component>
 ```
 
-#### Component Name Specification
+#### 2.4.1.1 Component Name Specification
 
 The component name is specified in the opening tag of the XML:
 
@@ -468,7 +470,7 @@ The attributes of the tag are as follows:
 |kind|What the threading/queuing model of the component is. Can be `passive`, `queued`, or `active`|
 |namespace|The C++ namespace the component will be defined in|
 
-#### Port importing
+#### 2.4.1.2 Port Imports
 
 The ports needed for the component are imported using `import_port_type` tags:
 
@@ -486,7 +488,7 @@ The path in the port import statement is relative to the root of the repository.
 |Telemetry|`Fw/Tlm/TlmPortAi.xml`|
 |Parameters|`Fw/PrmGetPortAi.xml`,`Fw/PrmSetPortAi.xml`|
 
-#### Port Declarations
+#### 2.4.1.3 Port Declarations
 
 Ports and their attributes are declared once the port definitions are included. 
 
@@ -515,7 +517,7 @@ The port attributes are:
 
 For `MathSender`, the request for the operation will be sent on the `mathOut` output port, and the result will be returned on the `mathIn` asynchronous port. Because the component is active and the result input port is asynchronous, the port handler will execute on the thread of `MathSender`.
 
-#### Command Declarations
+#### 2.4.1.4 Command Declarations
 
 The commands defined for the component are:
 
@@ -554,7 +556,7 @@ The `<command>` tag starts the section containing commands for `MathSender`. For
 |opcode|A numeric value for the command. The value is relative to a base value set when the component is added to a topology|
 |kind|The kind of command. Can be `sync_input`,`async_input`,`output`|
 
-#### Telemetry
+#### 2.4.1.5 Telemetry
 
 The telemetry XML is as follows:
 
@@ -597,7 +599,7 @@ The `<telemetry>` tag starts the section containing telemetry channels for `Math
 |id|A numeric value for the channel. The value is relative to a base value set when the component is added to a topology|
 |data_type|The data type of the channel. Can be a built-in type, an enumeration or an externally defined serializable type|
 
-#### Events
+#### 2.4.1.6 Events
 
 The XML for the defined events is as follows:
 
@@ -664,11 +666,204 @@ Create a `mod.mk` file in `Ref/MathSender` and add `MathSender`.
 
 Once it is added, add the directory to the build and build the component by typing `make rebuild`.
 
-## Component Implementation
+### 2.4.2 MathReceiver Component
+
+#### Component Specification
+
+The `MathReceiver` component XML is as follows:
+
+```xml
+<component name="MathReceiver" kind="queued" namespace="Ref">
+    <import_port_type>Ref/MathPorts/MathOpPortAi.xml</import_port_type>
+    <import_port_type>Ref/MathPorts/MathResultPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
+    <comment>Component sending a math operation</comment>
+    <ports>
+        <port name="mathIn" data_type="Ref::MathOp" kind="async_input">
+            <comment>
+            Port for receiving the math operation
+            </comment>
+        </port>
+        <port name="mathOut" data_type="Ref::MathResult" kind="output">
+            <comment>
+            Port for returning the math result
+            </comment>
+        </port>
+        <port name="SchedIn" data_type="Sched" kind="sync_input">
+            <comment>
+            The rate group scheduler input
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="MR_SET_FACTOR1">
+            <comment>
+            Set operation multiplication factor1
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The first factor</comment>
+                </arg>          
+             </args>
+        </command>
+        <command kind="async" opcode="1" mnemonic="MR_CLEAR_EVENT_THROTTLE">
+            <comment>Clear the event throttle
+            </comment>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="MR_OPERATION" data_type="Ref::MathOp">
+            <comment>
+            The operation
+            </comment>
+        </channel>
+        <channel id="1" name="MR_FACTOR1S" data_type="U32">
+            <comment>
+            The number of MR_SET_FACTOR1 commands
+            </comment>
+        </channel>
+        <channel id="2" name="MR_FACTOR1" data_type="F32">
+            <comment>
+            Factor 1 value
+            </comment>
+        </channel>
+        <channel id="3" name="MR_FACTOR2" data_type="F32">
+            <comment>
+            Factor 2 value
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
+            <comment>
+            Operation factor 1
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The factor value</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="MR_UPDATED_FACTOR2" severity="ACTIVITY_HI" format_string = "Factor 2 updated to: %f" >
+            <comment>
+            Updated factor 2
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The factor value</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="2" name="MR_OPERATION_PERFORMED" severity="ACTIVITY_HI" format_string = "Operation performed: %s" >
+            <comment>
+            Math operation performed
+            </comment>
+            <args>
+                <arg name="val" type="Ref::MathOp">
+                    <comment>The operation</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="3" name="MR_THROTTLE_CLEARED" severity="ACTIVITY_HI" format_string = "Event throttle cleared" >
+            <comment>
+            Event throttle cleared
+            </comment>
+        </event>
+    </events>
+    <parameters>
+        <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
+            <comment>
+            A test parameter
+            </comment>
+        </parameter>
+    </parameters>
+    
+</component>
+```
+
+Many of the elements are the same as described in `MathSender`, so this section will highlight the differences.
+
+#### 2.4.2.1 Queued component
+
+The `MathReceiver` component is queued, which means it can receive port invocations as messages, but needs an external thread to dequeue them.
+
+#### Importing the serializable type
+
+The telemetry channels and events use a serializable type, `Ref::MathOp` to illustrate the use of those types. The following line specifies the import for this type:
+
+```
+<import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
+```
+
+This type is then available for events and channels, but are not available for parameters and command arguments.
+
+#### 2.4.2.2 Scheduler port
+
+The queued component has a scheduler port that is `sync_input`. That means the port invocation is not put on a message queue, but calls the handler on the thread of the caller of the port:
+
+```
+        <port name="SchedIn" data_type="Sched" kind="sync_input">
+            <comment>
+            The rate group scheduler input
+            </comment>
+        </port>
+
+```
+
+This synchronous call allows the caller to pull any pending messages of the message queue on the thread of the component invoking the `SchedIn` port.
+
+#### 2.4.2.3 Throttled Event
+
+The `MR_SET_FACTOR1` event has a new argument `throttle = "3"` that specifies how many events will be emitted before the event is throttled so no more appear.
+
+```
+        <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
+            <comment>
+            Operation factor 1
+            </comment>
+            <args>
+                <arg name="val" type="F32">
+                    <comment>The factor value</comment>
+                </arg>          
+            </args>
+        </event>
+```
+
+#### 2.4.2.4 Parameter
+
+The `MathReceiver` component has a declaration for a parameter:
+
+```
+    <parameters>
+        <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
+            <comment>
+            A test parameter
+            </comment>
+        </parameter>
+    </parameters>
+
+```
+
+The `parameter` attributes are as follows:
+
+|Attribute|Description|
+|---|---|
+|id|The unique parameter ID. Relative to base ID set for the component in the topology|
+|name|The parameter name|
+|data_type|The data type of the parameter. Must be a built-in type|
+|default|Default value assigned to the parameter if there is an error retrieving it.|
+|set_opcode|The opcode of the command to set the parameter. Must not overlap with any of the commands|
+|save_opcode|The opcode of the command to save the parameter. Must not overlap with any of the commands|
+
+
+## 2.5 Component Implementation
 
 The component implementation consists of writing a class that is derived from the code-generated base class and filling in member functions that implement the port calls. 
 
-### Stub generation
+### 2.5.1 MathSender Implementation
+
+#### 2.5.1.1 Stub Generation
 
 There is a make target that will generate stubs that the developer can fill in. The command to generate the stubs is: `make impl`. This will generate two files:
 
@@ -700,9 +895,9 @@ make rebuild
 
 The stub files should sucessfully compile.
 
-### Handler implementation
+#### 2.5.1.2 Handler implementation
 
-The next step is to fill in the handler with implementation. 
+The next step is to fill in the handler with implementation code. 
 
 First, find the empty command handler:
 
@@ -796,16 +991,20 @@ Fill in the result handler with code that reports telemetry and an event:
     )
   {
       this->tlmWrite_MS_RES(result);
-      this->log_ACTIVITY_HI_MD_RESULT(result);
+      this->log_ACTIVITY_HI_MS_RESULT(result);
   }
 
 ```
 
 This handler reports the result via a telemetry channel and an event.
 
-#### Unit Tests
+#### 2.5.1.3 Unit Tests
 
-The code generator will also generate test components that can be connected to the component to enable a set of unit tests to check functionality and to get coverage of all the code. To generate a set of files for testing, type:
+Unit Tests are used to exercise the component's functions by invoking input ports and commands and checking the values of output ports, telemetry and events.
+
+##### 2.5.1.3.1 Test Code Generation
+
+The code generator will generate test components that can be connected to the component to enable a set of unit tests to check functionality and to get coverage of all the code. To generate a set of files for testing, from the module directory type:
 
 ```shell
 make testcomp
@@ -822,7 +1021,7 @@ GTestBase.hpp
 GTestBase.cpp
 ```
 
-The function of the files is:
+The functions of the files are:
 
 |File|Function|
 |---|---|
@@ -855,12 +1054,12 @@ SUBDIRS = ut
 3) Finally, add a `mod.mk` file to the `test/ut` directory:
 
 ```make
-TEST_SRC=       main.cpp \
+TEST_SRC =       main.cpp \
                 Tester.cpp \
                 GTestBase.cpp \
                 TesterBase.cpp
 
-TEST_MODS=          Ref/MathSender \
+TEST_MODS =          Ref/MathSender \
                     Ref/MathPorts \
                     Fw/Cmd \
                     Fw/Comp \
@@ -877,6 +1076,10 @@ TEST_MODS=          Ref/MathSender \
                     gtest
 ```
 
+The `TEST_SRC` variable includes any source code needed to run the test. It usually only includes the generated test code and a `main.cpp`, but it can include any code the user needs to test.
+
+The `TEST_MODS` variable must have all the modules that the component depends on, including itself. The test binary links against the modules in the list.
+
 The `main.cpp` file must be added. To start, it can look like this:
 
 ```c++
@@ -892,6 +1095,35 @@ int main(int argc, char **argv) {
   return RUN_ALL_TESTS();
 }
 ```
+
+In the Google Test framework, the following lines of code are standard:
+
+```c++
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+```
+
+For each test, there is a Google Test macro defined:
+
+```c++
+TEST(Name1, Name2) {
+    // run some code
+}
+```
+
+The code in each of the macros defined this way will automatically be run be the framework.
+
+In this case, the test is defined as follows:
+
+```c++
+TEST(Nominal, InitTest) {
+    Ref::Tester tester;
+}
+```
+
+
 
 This is a minimum test that uses the Google Test Framework. For more information about the Google Test Framework see here:
 
@@ -1079,195 +1311,6 @@ make ut run_ut cov
 
 The test should pass, and the file `Ref/MathSender/MathSenderComponentImpl.cpp.gcov` can be examined to test for coverage. This example unit test does not cover all the code as can be seen in the coverage output. The code that has not been covered can be seen with `#####` at the beginning of the line.
 
-### MathReceiver Component
-
-#### Component Specification
-
-The `MathReceiver` component XML is as follows:
-
-```xml
-<component name="MathReceiver" kind="queued" namespace="Ref">
-    <import_port_type>Ref/MathPorts/MathOpPortAi.xml</import_port_type>
-    <import_port_type>Ref/MathPorts/MathResultPortAi.xml</import_port_type>
-    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
-    <import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
-    <comment>Component sending a math operation</comment>
-    <ports>
-        <port name="mathIn" data_type="Ref::MathOp" kind="async_input">
-            <comment>
-            Port for receiving the math operation
-            </comment>
-        </port>
-        <port name="mathOut" data_type="Ref::MathResult" kind="output">
-            <comment>
-            Port for returning the math result
-            </comment>
-        </port>
-        <port name="SchedIn" data_type="Sched" kind="sync_input">
-            <comment>
-            The rate group scheduler input
-            </comment>
-        </port>
-    </ports>
-    <commands>
-        <command kind="async" opcode="0" mnemonic="MR_SET_FACTOR1">
-            <comment>
-            Set operation multiplication factor1
-            </comment>
-            <args>
-                <arg name="val" type="F32">
-                    <comment>The first factor</comment>
-                </arg>          
-             </args>
-        </command>
-        <command kind="async" opcode="1" mnemonic="MR_CLEAR_EVENT_THROTTLE">
-            <comment>Clear the event throttle
-            </comment>
-        </command>
-    </commands>
-    <telemetry>
-        <channel id="0" name="MR_OPERATION" data_type="Ref::MathOp">
-            <comment>
-            The operation
-            </comment>
-        </channel>
-        <channel id="1" name="MR_FACTOR1S" data_type="U32">
-            <comment>
-            The number of MR_SET_FACTOR1 commands
-            </comment>
-        </channel>
-        <channel id="2" name="MR_FACTOR1" data_type="F32">
-            <comment>
-            Factor 1 value
-            </comment>
-        </channel>
-        <channel id="3" name="MR_FACTOR2" data_type="F32">
-            <comment>
-            Factor 2 value
-            </comment>
-        </channel>
-    </telemetry>
-    <events>
-        <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
-            <comment>
-            Operation factor 1
-            </comment>
-            <args>
-                <arg name="val" type="F32">
-                    <comment>The factor value</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="1" name="MR_UPDATED_FACTOR2" severity="ACTIVITY_HI" format_string = "Factor 2 updated to: %f" >
-            <comment>
-            Updated factor 2
-            </comment>
-            <args>
-                <arg name="val" type="F32">
-                    <comment>The factor value</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="2" name="MR_OPERATION_PERFORMED" severity="ACTIVITY_HI" format_string = "Operation performed: %s" >
-            <comment>
-            Math operation performed
-            </comment>
-            <args>
-                <arg name="val" type="Ref::MathOp">
-                    <comment>The operation</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="3" name="MR_THROTTLE_CLEARED" severity="ACTIVITY_HI" format_string = "Event throttle cleared" >
-            <comment>
-            Event throttle cleared
-            </comment>
-        </event>
-    </events>
-    <parameters>
-        <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
-            <comment>
-            A test parameter
-            </comment>
-        </parameter>
-    </parameters>
-    
-</component>
-```
-
-Many of the elements are the same as described in `MathSender`, so this section will highlight the differences.
-
-#### Queued component
-
-The `MathReceiver` component is queued, which means it can receive port invocations as messages, but needs an external thread to dequeue them.
-
-#### Importing the serializable type
-
-The telemetry channels and events use a serializable type, `Ref::MathOp` to illustrate the use of those types. The following line specifies the import for this type:
-
-```
-<import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
-```
-
-This type is then available for events and channels, but are not available for parameters and command arguments.
-
-#### Scheduler port
-
-The queued component has a scheduler port that is `sync_input`. That means the port invocation is not put on a message queue, but calls the handler on the thread of the caller of the port:
-
-```
-        <port name="SchedIn" data_type="Sched" kind="sync_input">
-            <comment>
-            The rate group scheduler input
-            </comment>
-        </port>
-
-```
-
-This synchronous call allows the caller to pull any pending messages of the message queue on the thread of the component invoking the `SchedIn` port.
-
-#### Throttled Event
-
-The `MR_SET_FACTOR1` event has a new argument `throttle = "3"` that specifies how many events will be emitted before the event is throttled so no more appear.
-
-```
-        <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
-            <comment>
-            Operation factor 1
-            </comment>
-            <args>
-                <arg name="val" type="F32">
-                    <comment>The factor value</comment>
-                </arg>          
-            </args>
-        </event>
-```
-
-#### Parameter
-
-The `MathReceiver` component has a declaration for a parameter:
-
-```
-    <parameters>
-        <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
-            <comment>
-            A test parameter
-            </comment>
-        </parameter>
-    </parameters>
-
-```
-
-The `parameter` attributes are as follows:
-
-|Attribute|Description|
-|---|---|
-|id|The unique parameter ID. Relative to base ID set for the component in the topology|
-|name|The parameter name|
-|data_type|The data type of the parameter. Must be a built-in type|
-|default|Default value assigned to the parameter if there is an error retrieving it.|
-|set_opcode|The opcode of the command to set the parameter. Must not overlap with any of the commands|
-|save_opcode|The opcode of the command to save the parameter. Must not overlap with any of the commands|
 
 #### Component Implementation
 

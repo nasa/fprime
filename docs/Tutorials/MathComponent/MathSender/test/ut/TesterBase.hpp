@@ -530,25 +530,25 @@ namespace Ref {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: MD_RESULT
+      // Event: MS_RESULT
       // ----------------------------------------------------------------------
 
-      //! Handle event MD_RESULT
+      //! Handle event MS_RESULT
       //!
-      virtual void logIn_ACTIVITY_HI_MD_RESULT(
+      virtual void logIn_ACTIVITY_HI_MS_RESULT(
           F32 result /*!< The math result*/
       );
 
-      //! A history entry for event MD_RESULT
+      //! A history entry for event MS_RESULT
       //!
       typedef struct {
         F32 result;
-      } EventEntry_MD_RESULT;
+      } EventEntry_MS_RESULT;
 
-      //! The history of MD_RESULT events
+      //! The history of MS_RESULT events
       //!
-      History<EventEntry_MD_RESULT> 
-        *eventHistory_MD_RESULT;
+      History<EventEntry_MS_RESULT> 
+        *eventHistory_MS_RESULT;
 
     protected:
 

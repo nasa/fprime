@@ -429,50 +429,50 @@ namespace Ref {
   }
 
   // ----------------------------------------------------------------------
-  // Event: MD_RESULT
+  // Event: MS_RESULT
   // ----------------------------------------------------------------------
 
   void MathSenderGTestBase ::
-    assertEvents_MD_RESULT_size(
+    assertEvents_MS_RESULT_size(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
-    ASSERT_EQ(size, this->eventHistory_MD_RESULT->size())
+    ASSERT_EQ(size, this->eventHistory_MS_RESULT->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Size of history for event MD_RESULT\n"
+      << "  Value:    Size of history for event MS_RESULT\n"
       << "  Expected: " << size << "\n"
-      << "  Actual:   " << this->eventHistory_MD_RESULT->size() << "\n";
+      << "  Actual:   " << this->eventHistory_MS_RESULT->size() << "\n";
   }
 
   void MathSenderGTestBase ::
-    assertEvents_MD_RESULT(
+    assertEvents_MS_RESULT(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 index,
         const F32 result
     ) const
   {
-    ASSERT_GT(this->eventHistory_MD_RESULT->size(), index)
+    ASSERT_GT(this->eventHistory_MS_RESULT->size(), index)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Index into history of event MD_RESULT\n"
+      << "  Value:    Index into history of event MS_RESULT\n"
       << "  Expected: Less than size of history (" 
-      << this->eventHistory_MD_RESULT->size() << ")\n"
+      << this->eventHistory_MS_RESULT->size() << ")\n"
       << "  Actual:   " << index << "\n";
-    const EventEntry_MD_RESULT& e =
-      this->eventHistory_MD_RESULT->at(index);
+    const EventEntry_MS_RESULT& e =
+      this->eventHistory_MS_RESULT->at(index);
     ASSERT_EQ(result, e.result)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument result at index "
       << index
-      << " in history of event MD_RESULT\n"
+      << " in history of event MS_RESULT\n"
       << "  Expected: " << result << "\n"
       << "  Actual:   " << e.result << "\n";
   }

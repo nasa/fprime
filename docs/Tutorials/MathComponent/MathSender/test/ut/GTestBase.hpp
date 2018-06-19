@@ -77,11 +77,11 @@
 #define ASSERT_EVENTS_MS_COMMAND_RECV(index, _val1, _val2, _op) \
   this->assertEvents_MS_COMMAND_RECV(__FILE__, __LINE__, index, _val1, _val2, _op)
 
-#define ASSERT_EVENTS_MD_RESULT_SIZE(size) \
-  this->assertEvents_MD_RESULT_size(__FILE__, __LINE__, size)
+#define ASSERT_EVENTS_MS_RESULT_SIZE(size) \
+  this->assertEvents_MS_RESULT_size(__FILE__, __LINE__, size)
 
-#define ASSERT_EVENTS_MD_RESULT(index, _result) \
-  this->assertEvents_MD_RESULT(__FILE__, __LINE__, index, _result)
+#define ASSERT_EVENTS_MS_RESULT(index, _result) \
+  this->assertEvents_MS_RESULT(__FILE__, __LINE__, index, _result)
 
 // ----------------------------------------------------------------------
 // Macros for typed user from port history assertions
@@ -323,16 +323,16 @@ namespace Ref {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: MD_RESULT
+      // Event: MS_RESULT
       // ----------------------------------------------------------------------
 
-      void assertEvents_MD_RESULT_size(
+      void assertEvents_MS_RESULT_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
-      void assertEvents_MD_RESULT(
+      void assertEvents_MS_RESULT(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 index, /*!< The index*/

@@ -2,12 +2,12 @@
 # mod.mk 
 # ----------------------------------------------------------------------
 
-TEST_SRC=       main.cpp \
+TEST_SRC =       main.cpp \
 				Tester.cpp \
 				GTestBase.cpp \
 				TesterBase.cpp
 
-TEST_MODS=          Ref/MathSender \
+TEST_MODS =          Ref/MathSender \
 					Ref/MathPorts \
 					Fw/Cmd \
 					Fw/Comp \

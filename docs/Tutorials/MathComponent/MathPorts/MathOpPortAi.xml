@@ -11,7 +11,7 @@
             <enum name="MathOperation">
                 <item name="MATH_ADD"/>
                 <item name="MATH_SUB"/>
-                <item name="MATH_MULTIPY"/>
+                <item name="MATH_MULTIPLY"/>
                 <item name="MATH_DIVIDE"/>
             </enum>
             <comment>operation argument</comment>

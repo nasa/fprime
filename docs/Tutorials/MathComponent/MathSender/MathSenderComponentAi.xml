@@ -89,7 +89,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="1" name="MD_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
+        <event id="1" name="MS_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
             <comment>
             Received math result
             </comment>
