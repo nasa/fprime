@@ -28,5 +28,5 @@
 | | | |val1|F32||The val1 argument|    
 | | | |val2|F32||The val1 argument|    
 | | | |op|MathOpEv||The requested operation|    
-|MD_RESULT|1 (0x1)|Received math result| | | | |
+|MS_RESULT|1 (0x1)|Received math result| | | | |
 | | | |result|F32||The math result|    
