@@ -81,7 +81,7 @@ namespace Ref {
               op.setop(SUB);
               res = (val1 - val2)*this->m_factor1;
               break;
-          case MATH_MULTIPY:
+          case MATH_MULTIPLY:
               op.setop(MULT);
               res = (val1 * val2)*this->m_factor1;
               break;
@@ -110,7 +110,12 @@ namespace Ref {
         NATIVE_UINT_TYPE context
     )
   {
-    // TODO
+      QueuedComponentBase::MsgDispatchStatus stat = QueuedComponentBase::MSG_DISPATCH_OK;
+      // empty message queue
+      while (stat != MSG_DISPATCH_EMPTY) {
+          stat = this->doDispatch();
+      }
+      
   }
 
   // ----------------------------------------------------------------------
@@ -150,9 +155,11 @@ namespace Ref {
      parameterUpdated(
       FwPrmIdType id /*!< The parameter ID*/
   ) {
-      Fw::ParamValid valid;
-      F32 val = this->paramGet_factor2(valid);
-      this->log_ACTIVITY_HI_MR_UPDATED_FACTOR2(val);
+      if (id == PARAMID_FACTOR2) {
+        Fw::ParamValid valid;
+        F32 val = this->paramGet_factor2(valid);
+        this->log_ACTIVITY_HI_MR_UPDATED_FACTOR2(val);
+      }
   }
 
 
