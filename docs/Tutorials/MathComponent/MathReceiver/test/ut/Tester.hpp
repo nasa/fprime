@@ -55,6 +55,7 @@ namespace Ref {
       void testSubCommand(void);
       void testMultCommand(void);
       void testDivCommand(void);
+      void testThrottle(void);
 
     private:
 

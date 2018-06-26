@@ -24,6 +24,11 @@ TEST(Nominal, DivideOperationTest) {
     tester.testDivCommand();
 }
 
+TEST(Nominal, ThrottleTest) {
+    Ref::Tester tester;
+    tester.testThrottle();
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
