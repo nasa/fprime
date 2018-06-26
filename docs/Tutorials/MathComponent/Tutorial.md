@@ -1617,17 +1617,83 @@ See section `2.4.1.3.1` for directions on how to generate unit test stubs and co
 
 ##### 2.4.2.2.1 Test Code Implementation
 
+The full unit test code for the `MathReceiver` component can be found in the `docs/Tutorials/MathComponent/MathReceiver/test/ut` directory. Many of the patterns are the same. Following are some highlights:
+
+##### 2.4.2.2.2 Parameter Initialization
+
+`Tester.cpp`, line 60:
+
+```c++
+  void Tester ::
+    testAddCommand(void) 
+  {
+      // load parameters
+      this->component.loadParameters();
+      ...
+```
+
+The `loadParameters()` call will attempt to load any parameters that the component needs. The `this->paramSet_*` functions in the `*TesterBase` base classes allow the developer to set parameter and status values prior to the `loadParameters()` With no manually set parameter values preceding the call, in this test case the parameter value is set to the default value. It is a way to test default settings for parameters.
+
+`Tester.cpp`, line 206:
+
+```c++
+  void Tester ::
+    testSubCommand(void) 
+  {
+      // set the test value for the parameter before loading - it will be initialized to this value
+      this->paramSet_factor2(5.0,Fw::PARAM_VALID);
+
+      // load parameters
+      this->component.loadParameters();
+
+```
+
+In this test case, the parameter value was set prior to the `loadParameters()` call. A `Fw::PARAM_VALID` status is also set, which allows the component consider the value valid and use it.
+
+##### 2.4.2.2.3 Serializable Usage
+
+`Tester.cpp`, line 78:
+
+```c++
+      ...
+      // verify the result of the operation was returned
+      F32 result = (2.0-3.0)*2.0/5.0;
+      // the event and telemetry channel use the Ref::MathOp type for values
+      Ref::MathOp checkOp(2.0,3.0,Ref::SUB,result);
+      ...
+```
+
+The `Ref::Mathop` class is the C++ implementation of the serializable type defined in `2.2.1`. When checking event and telemetry histories against the expected values, simply instantiate the serializable class in the test code and use it for comparisons.
+
+##### 2.4.2.2.4 Event Throttling
+
+`Tester.cpp`, line 395:
+
+```c++
+  void Tester ::
+    testThrottle(void) 
+  {
+```
+
+This unit test demonstrates how event throttling works. The event is repeatedly issued until it reaches the throttle count and then is suppressed from then on. The throttle is reset by the `MR_CLEAR_EVENT_THROTTLE` command:
+
+`Tester.cpp`, line 446:
+
+```c++
+      // send the command to clear the throttle
+      this->sendCmd_MR_CLEAR_EVENT_THROTTLE(0,10);
+```
 
 
-## Topology
+# 3 Topology
 
-Now that the two components are defined and implemented, they need to be added to the `Ref` topology.
+Now that the two components are defined, implemented, and unit tested they need to be added to the `Ref` topology. The topology is the interconnection of all the components in the system in order to operate the system to meet the project objectives. They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F` repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. The `Ref` topology has already been developed as an example. The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
 
-### Define instances
+## 3.1 Define Component Instances
 
 The first step is to include the implementation files in the topology source code.
 
-#### Components.hpp
+### 3.1.1 Components.hpp
 
 There is a C++ header file that declares all the component instances as externals for use by the initialization code and the generated code that interconnects the components. The two new components can be added to this file:
 
