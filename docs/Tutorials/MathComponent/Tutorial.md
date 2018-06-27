@@ -1687,31 +1687,43 @@ This unit test demonstrates how event throttling works. The event is repeatedly 
 
 # 3 Topology
 
-Now that the two components are defined, implemented, and unit tested they need to be added to the `Ref` topology. The topology is the interconnection of all the components in the system in order to operate the system to meet the project objectives. They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F` repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. The `Ref` topology has already been developed as an example. The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
+Now that the two components are defined, implemented, and unit tested they can to be added to the `Ref` topology. The topology is the interconnection of all the components in the system in order to operate the system to meet the project objectives. They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F` repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. The `Ref` topology has already been developed as an example. The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
 
-## 3.1 Define Component Instances
+## 3.1 Define C++ Component Instances
 
 The first step is to include the implementation files in the topology source code.
 
 ### 3.1.1 Components.hpp
 
-There is a C++ header file that declares all the component instances as externals for use by the initialization code and the generated code that interconnects the components. The two new components can be added to this file:
+There is a C++ header file that declares all the component instances as externals for use by the initialization code and the generated code that interconnects the components. The two new components can be added to this file. First, include the header files for the implementation classes:
 
-`Ref/Top/Components.hpp`
+`Ref/Top/Components.hpp`, line 32:
 
 ```c++
+#include <Drv/BlockDriver/BlockDriverImpl.hpp>
+
 #include <Ref/MathSender/MathSenderComponentImpl.hpp>
 #include <Ref/MathReceiver/MathReceiverComponentImpl.hpp>
-...
+```
+
+`extern` declarations need to be made in this header file for use by the topology connection file that is discussed later as well as initialization code.
+
+`Ref/Top/Components.hpp`, line 61:
+
+```c++
+extern Ref::PingReceiverComponentImpl pingRcvr;
+
 extern Ref::MathSenderComponentImpl mathSender;
 extern Ref::MathReceiverComponentImpl mathReceiver;
 ```
 
-#### Topology.cpp
+### 3.1.2 Topology.cpp
 
-The initialization file must have instances of the all the components. The components are initialized and interconnected in this file.
+The initialization file is where the instances of the all the components are declared. The components are initialized in this file, and the generated topology connection function is called.
 
 Put these declarations at the end of the declarations for the other `Ref` components:
+
+`Ref/Top/Topology.cpp`, line 187:
 
 ```c++
 Ref::MathSenderComponentImpl mathSender
@@ -1729,18 +1741,28 @@ Ref::MathReceiverComponentImpl mathReceiver
 
 Where the other components are initialzed, add `MathSender` and `MathReceiver`:
 
-```
+`Ref/Top/Topology.cpp`, line 269:
+
+```c++
+	pingRcvr.init(10);
+
     mathSender.init(10,0);
     mathReceiver.init(10,0);
-    // Connect rate groups to rate group driver
+```
+
+After all the components are initialized, the generated function `constructRefArchitecture()` (see `RefTopologyAppAc.cpp`) can be called to connect the components together. How this function is generated will be seen later in the tutorial.
+
+```c++
+    // call generated function to connect components
     constructRefArchitecture();
-```
-
-The `constructRefArchitecture()` call interconnects the components and it has be called after the components have been initialized.
-
-Next, the components commands are registered:
 
 ```
+
+Next, the components commands are registered.
+
+`Ref/Top/Topology.cpp`, line 288:
+
+```c++
     health.regCommands();
     pingRcvr.regCommands();
 
@@ -1748,13 +1770,23 @@ Next, the components commands are registered:
     mathReceiver.regCommands();
 ```
 
-The parameters are retrieved:
+Component parameters are retrieved from disk by `prmDb` prior to the components requesting them:
 
+`Ref/Top/Topology.cpp`, line 292:
+
+```c++
+    // read parameters
+    prmDb.readParamFile();
 ```
-...
-    sendBuffComp.loadParameters();
-    mathReceiver.loadParameters();
 
+Once the parameters are read by `prmDb`, the components can request them:
+
+`Ref/Top/Topology.cpp`, line 297:
+
+```c++
+    sendBuffComp.loadParameters();
+
+    mathReceiver.loadParameters();
 ```
 
 The threads for the active components need to be started (and later stopped):
