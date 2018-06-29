@@ -37,6 +37,5 @@ echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 #setenv PYTHON_BASE /proj/dieb/fsw/tools/python
 
 setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
-setenv PYTHONPATH ${BUILD_ROOT}/Gse/src
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Ref/scripts/run_ref.py $*
-
+setenv PYTHONPATH ${BUILD_ROOT}/Gds
+${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Ref/scripts/run_ref_gds.py $*

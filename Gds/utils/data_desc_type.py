@@ -1,8 +1,9 @@
 '''
 TODO Add documentation
 '''
+from enum import Enum
 
-ComPacketType = Enum("ComPacketType",
+DataDescType = Enum("DataDescType",
                       # Command packet type - incoming
                      {"FW_PACKET_COMMAND": 0,
                       # Telemetry packet type - outgoing

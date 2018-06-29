@@ -32,6 +32,7 @@ def ModuleLoader(Class):
         @param attr2: module attribute used as value to list
         @return: a list of (key, value) tuples from the modules   
         """
+        
         #
         # First add modules target directory to python path
         if not os.path.isdir(module_path):
@@ -57,12 +58,16 @@ def ModuleLoader(Class):
         #
         # Import the modules here
         #
-        loaded_modules = sys.modules.keys()
+        
+        print pkg
+        print file_list
+
         module_list = []
         for m in file_list:
             m = m[:-3]
             # Use package name qualifier so that modules of same name get reloaded by unique path
             exec "from %s import %s" % (pkg, m) in globals()
+            print "from %s import %s" % (pkg, m)
             module_list.append(m)
 
         attr_list = []

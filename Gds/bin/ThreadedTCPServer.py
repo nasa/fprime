@@ -16,6 +16,8 @@ import errno
 import time
 import logging
 
+import binascii
+
 from utils import Logger
 from models.serialize.type_base import *
 from optparse import OptionParser
@@ -220,6 +222,8 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                     print "Socket error " + str(err.errno) + " (Connection reset by peer) occurred on recv()."
                 else:
                     print "Socket error " + str(err.errno) + " occurred on recv()."
+        
+        print msg
         return msg
 
 
@@ -400,22 +404,25 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
         If something goes wrong report and shutdown server.
         """
         dest_list = []
+        print (binascii.hexlify(header))
+        print(binascii.hexlify(data))
         # Process data here...
         head, dst = header.strip(" ").split(" ")
         if head == 'A5A5':  # Packet Header
-            #print "Received Packet: %s %s...\n" % (head,dst)
+            print "Received Packet: %s %s...\n" % (head,dst)
             if data == '':
                 print " Data is empty, returning."
+
             if 'GUI' in dst:
                 dest_list = GUI_clients
             else:
                 print "dest? %s"%dst
+
             for dest_elem in dest_list:
                 LOCK.acquire()
                 if dest_elem in SERVER.dest_obj.keys():
                     # Send the message here....
                     #print "Sending msg to ", dest_elem
-
                     SERVER.dest_obj[dest_elem].put(data)
                 LOCK.release()
         else:
@@ -453,10 +460,10 @@ class DestObj:
         """
         Write out the message to the destination socket
         """
-
+        print "Message to client %s"% msg
         try:
            #print "about to send data to " + self.name
-           self.socket.send(msg);
+           self.socket.send(msg)
         except socket.error, err:
            print "Socket error " + str(err.errno) + " occurred on send()."
 
