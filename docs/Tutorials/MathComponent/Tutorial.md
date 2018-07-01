@@ -1789,31 +1789,83 @@ Once the parameters are read by `prmDb`, the components can request them:
     mathReceiver.loadParameters();
 ```
 
-The threads for the active components need to be started (and later stopped):
+The thread for the active `MathSender` component needs to be started:
 
-```
+`Ref/Top/Topology.cpp`, line 337:
+
+```c++
+    pingRcvr.start(0, 100, 10*1024);
+
     mathSender.start(0,100,10*1024);
 ```
-In the `exitTasks()` called when the process is shut down:
+The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later. It does not need to to have a thread started.
 
-```
+The `exitTasks()` is called when the process is shut down. It contains `exit()` calls to all the active components. These functions internally send a message to the component's thread to shut down.
+
+`Ref/Top/Topology.cpp`, line 391:
+
+```c++
+    cmdSeq.exit();
+
     mathSender.exit();
 ```
+## 3.2 Define Component Connections
 
-#### RefTopologyAppAi.xml
+Components need to be connected to invoke each other via ports. The connections are specified via a topology XML file. The file for the Ref example is located in `Ref/Top/RefTopologyAi.xml` The connections for the new components will be added to the existing connections.
 
-The `RefTopologyAppAi.xml` XML file defines the connections between components. Parts of it are code generated using the MagicDraw tool, but for this exercise new entries will be added by hand at the end.
+### 3.2.1 Component Imports
 
-##### Component Imports
+The component XML definitions must be imported into the topology file:
 
-The component XML definitions are imported into the topology file:
+`Ref/Top/RefTopologyAi.xml`, line 32:
 
-```
+```xml
+	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+
     <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
-
 ```
-##### Command connections
+
+### 3.2.2 Component Instances
+
+The Component instances must be declared.
+
+`Ref/Top/RefTopologyAi.xml`, line 92:
+
+```xml
+   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
+
+   <instance namespace="Ref" name="mathSender" type="MathSender" base_id="1000"  base_id_window="20" />
+   <instance namespace="Ref" name="mathReceiver" type="MathReceiver" base_id="1100"  base_id_window="20" />
+```
+
+The name in the `name=` attribute must match the one declared previously in `Ref/Top/Components.hpp`. For example:
+
+```c++
+extern Ref::MathSenderComponentImpl mathSender;
+```
+
+The type must match the type declared in the component XML:
+
+`Ref/MathSender/MathSenderComponentAi.xml`:
+
+```xml
+<component name="MathSender" kind="active" namespace="Ref">
+```
+
+The `base_id` attribute specifies the beginning range of the assigned IDs for commands, telemetry, events, and parameters. The values declared in the component XML are added to this base address. This allows multiple instances of components to be declared with unique ID ranges. The `base_id_window` attribute is used to set a limit on ID ranges for spacing the base IDs sufficiently apart. If the IDs exceed the limit, the code generator will issue a warning.
+
+### 3.2.3 Command connections
+
+The command connections should follow these rules:
+
+1. The port number of the command registration port on the `cmdDisp` component connection from the commanded components must be unique for all components.
+2. The port number of the command dispatch port connection from the `cmdDisp` component to the commanded component must match the registration port number.
+3. The command status from the components can go to port 0 of the command status port of the `cmdDisp` component.
+
+The following XML shows the command connection for the tutorial components.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 817:
 
 ```xml
    <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
@@ -1850,9 +1902,11 @@ The component XML definitions are imported into the topology file:
    </connection>
 ```
 
-The command registration and command dispatch have to follow the rule that the port number used to register the commands in `cmdDisp` is the port number that must be used to dispatch commands to the component.
+### 3.2.4 Event Connections
 
-##### Event Connections
+The output connections for ports are connected to the `eventLogger` component.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 861:
 
 ```xml
    <!-- Event Logger Binary Connections -->
@@ -1878,9 +1932,13 @@ The command registration and command dispatch have to follow the rule that the p
    </connection>
 ```
 
-There are two kinds of connections for logging: One for a binary form that will be sent to the ground system, and a text version for displaying on the text console.
+There are two kinds of connections for logging: One for a binary form that will be sent to the ground system, and a text version for displaying on standard output of the target machine.
 
-##### Telemetry Connections
+### 3.2.5 Telemetry Connections
+
+The telemetry output ports are connected to the `chanTlm` component.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 872:
 
 ```xml
    <!-- Telemetry Connections -->
@@ -1895,9 +1953,12 @@ There are two kinds of connections for logging: One for a binary form that will 
    </connection>
    
 ```
-There is one port to sent binary telemetry updates to the ground software.
 
-##### Parameter Connections
+### 3.2.6 Parameter Connections
+
+There are two parameter connections, a `PrmGet` connection for reading parameters during software initialization and a `PrmSet` for updating parameters in the component managing parameter values. F' has a basic parameter storage component `prmDb` that stores parameters in files. Upon bootup, they are read from a file specified in the constructor and stored in memory. Subsequent to this, components request their parameters via the `PrmGet` connection. If they are updated by command, they can be saved to storage by issuing a command to call the `PrmSet` with the new value and issuing the `PRM_SAVE_FILE` command.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 883:
 
 ```xml
    <!-- Parameter Connections -->
@@ -1912,9 +1973,11 @@ There is one port to sent binary telemetry updates to the ground software.
    </connection>
 ```
 
-There are two connections when a component has parameters: One to get the current value during initialization and one to send an updated value back to the parameter database.
+### 3.2.7 Time Connections
 
-##### Time Connections
+Components that have telemetry or events need to be able to time stamp the events. The time connections connect the components to a time source to provide the time stamps.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 894:
 
 ```xml
    <!-- Time Connections -->
@@ -1929,9 +1992,25 @@ There are two connections when a component has parameters: One to get the curren
    </connection>
 ```
 
-The components need a time connection to time tag events and channelized telemetry.
+### 3.2.8 Scheduler Connection
 
-###### The Math Connection
+The `MathReceiver` component does not have a thread of its own, but relies on the thread of another component to drive it via the `SchedIn` port. The `SchedIn` port is connected to the 1Hz rate group component that is part of the `Ref` example. This means that every second the component gets a call and can unload messages from its message queue and dispatch them to handlers.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 894:
+
+```xml
+   <!-- Scheduler Connection -->
+    <connection name = "MathReceiverRG">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <target component = "mathReceiver" port = "SchedIn" type = "Sched" num = "0"/>
+    </connection>
+```
+
+### 3.2.9 The Math Operation Connection
+
+The final connection is the connection that performs the math operation. It goes from `MathSender` to `MathReceiver`.
+
+`Ref/MathSender/MathSenderComponentAi.xml`, line 911:
 
 ```xml
 
@@ -1947,19 +2026,9 @@ The components need a time connection to time tag events and channelized telemet
    
 ```
 
-There is a connection to perform the math operation.
+Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the module directory.
 
-###### Scheduler Connection
+# Executing the Example
 
-```xml
-   <!-- Scheduler Connection -->
-    <connection name = "MathReceiverRG">
-         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
-         <target component = "mathReceiver" port = "SchedIn" type = "Sched" num = "0"/>
-    </connection>
-```
 
-The scheduler connection is connected to the 1Hz rate group to allow the queued component to pull any messages of its message queue.
-
-The `Top` module can be built by typing `make` at the command line.
 
