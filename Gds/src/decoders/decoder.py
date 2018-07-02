@@ -31,7 +31,7 @@ class Decoder(object):
             An initialized decoder object.
         '''
         # List of consumers to be notified of new data
-        self.consumers = []
+        self.__consumers = []
 
 
     def data_callback(self, data):
@@ -56,7 +56,7 @@ class Decoder(object):
             consumer_obj: Object to regiser to the decoder. Must implement a
                           data_callback function.
         '''
-        self.consumers.append(consumer_obj)
+        self.__consumers.append(consumer_obj)
 
 
     def decode_api(self, data):
@@ -85,7 +85,7 @@ class Decoder(object):
         Args:
             parsed_data: object to send to all registered consumers
         '''
-        for obj in self.consumers:
+        for obj in self.__consumers:
             obj.data_callback(parsed_data)
 
 

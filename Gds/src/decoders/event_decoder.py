@@ -16,17 +16,23 @@ Example data structure:
 '''
 
 class EventDecoder(decoder.Decoder):
-    '''Base class for all decoder classes. Defines the interface for decoders'''
+    '''Decoder class for event data'''
 
-    def __init__(self):
+    def __init__(self, event_dict):
         '''
-        Decoder class constructor
+        EventDecoder class constructor
+
+        Args:
+            event_dict: Event dictionary. Event IDs should be keys and
+                        event_template objects should be values
 
         Returns:
-            An initialized decoder object.
+            An initialized EventDecoder object.
         '''
+        self.__dict = event_dict
+
         # List of consumers to be notified of new data
-        self.consumers = []
+        self.__consumers = []
 
 
     def data_callback(self, data):
@@ -36,7 +42,7 @@ class EventDecoder(decoder.Decoder):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
-        self.send_to_all(data)
+        self.send_to_all(self.decode_api(data))
 
 
     def register(self, consumer_obj):
@@ -51,7 +57,7 @@ class EventDecoder(decoder.Decoder):
             consumer_obj: Object to regiser to the decoder. Must implement a
                           data_callback function.
         '''
-        self.consumers.append(consumer_obj)
+        self.__consumers.append(consumer_obj)
 
 
     def decode_api(self, data):
@@ -67,8 +73,23 @@ class EventDecoder(decoder.Decoder):
         Returns:
             Parsed version of the argument data
         '''
-        # Base class just acts as a data passthrough:
-        return data
+        ptr = 0
+
+        # Decode log event ID here...
+        id_obj = u32_type.U32Type()
+        id_obj.deserialize(data, ptr)
+        ptr += id_obj.getSize()
+        event_id = id_obj.val
+
+        # Decode time...
+        event_time = time_type.TimeType()
+        event_time.deserialize(data, ptr)
+        ptr += event_time.getSize()
+
+        if event_id in self.__dict:
+            event_template = self.__dict[event_id]
+
+            #TODO finish
 
 
     def send_to_all(self, parsed_data):
@@ -80,7 +101,7 @@ class EventDecoder(decoder.Decoder):
         Args:
             parsed_data: object to send to all registered consumers
         '''
-        for obj in self.consumers:
+        for obj in self.__consumers:
             obj.data_callback(parsed_data)
 
 
