@@ -20,8 +20,8 @@ import os
 import sys
 
 from controllers import exceptions
-from models.common import command
-from models.serialize import enum_type
+from serializable import command
+from serializable import enum_type
 
 class CommandLoader(object):
     '''
