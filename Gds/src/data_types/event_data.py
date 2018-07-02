@@ -32,23 +32,12 @@ class EventData(sys_data.SysData):
         self.time = event_time
         self.template = event_temp
 
-    def get_args(self):
-        '''
-        Return the event's argument values
 
-        Returns:
-            The event's argument values
-        '''
+    def get_args(self):
         return self.args
 
 
     def __str__(self):
-        '''
-        Convert the event data to a string
-
-        Returns:
-            String version of the event
-        '''
         time_str = self.time.to_readable()
         name = self.template.get_name()
         format_str = self.template.get_format_str()

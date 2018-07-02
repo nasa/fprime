@@ -92,19 +92,6 @@ class EventDecoder(decoder.Decoder):
             #TODO finish
 
 
-    def send_to_all(self, parsed_data):
-        '''
-        Sends the parsed_data object to all registered consumers
-
-        This function is not intended to be called from outside a decoder class
-
-        Args:
-            parsed_data: object to send to all registered consumers
-        '''
-        for obj in self.__consumers:
-            obj.data_callback(parsed_data)
-
-
 if __name__ == "__main__":
     # Unit tests
     # (don't check functionality, just test code path's for exceptions)
