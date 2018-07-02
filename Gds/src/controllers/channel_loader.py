@@ -22,7 +22,7 @@ import collections
 from collections import OrderedDict
 
 from controllers import exceptions
-from models.common import channel_telemetry
+from serializable import channel_telemetry
 from controllers import module_loader
 
 # Add the loadModules method using this decorator

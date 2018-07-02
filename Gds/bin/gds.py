@@ -30,7 +30,7 @@ from controllers import channel_loader
 import controllers.exceptions
 import traceback
 
-import distributor
+from distributor import distributor
 
 import wx
 from gui import GDSMainFrameImpl
@@ -154,7 +154,7 @@ def main(argv=None):
 
 	
 	distrib = distributor.Distributor()
-	sleep(2)
+	sleep(5)
 	distrib.connect(args[0].addr, args[0].port)
 	sleep(1)
 	distrib.send("Register GUI\n")

@@ -21,7 +21,7 @@ import sys
 import collections
 
 from controllers import exceptions
-from models.common import event
+from serializable import event
 from controllers import module_loader
 
 # Add the loadModules method using this decorator

@@ -19,7 +19,7 @@ import logging
 import binascii
 
 from utils import Logger
-from models.serialize.type_base import *
+from serializable.type_base import *
 from optparse import OptionParser
 
 __version__ = 0.1
@@ -404,7 +404,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
         If something goes wrong report and shutdown server.
         """
         dest_list = []
-        print (binascii.hexlify(header))
+        #print(binascii.hexlify(header))
         print(binascii.hexlify(data))
         # Process data here...
         head, dst = header.strip(" ").split(" ")

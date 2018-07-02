@@ -5,26 +5,26 @@ Created on Feb. 9, 2015
 '''
 
 # Import the types this way so they do not need prefixing for execution.
-from models.serialize.type_exceptions import *
-from models.serialize.type_base import *
+from type_exceptions import *
+from type_base import *
 
-from models.serialize.bool_type import *
-from models.serialize.enum_type import *
-from models.serialize.f32_type import *
-from models.serialize.f64_type import *
+from bool_type import *
+from enum_type import *
+from f32_type import *
+from f64_type import *
 
-from models.serialize.u8_type import *
-from models.serialize.u16_type import *
-from models.serialize.u32_type import *
-from models.serialize.u64_type import *
+from u8_type import *
+from u16_type import *
+from u32_type import *
+from u64_type import *
 
-from models.serialize.i8_type import *
-from models.serialize.i16_type import *
-from models.serialize.i32_type import *
-from models.serialize.i64_type import *
+from i8_type import *
+from i16_type import *
+from i32_type import *
+from i64_type import *
 
-from models.serialize.string_type import *
-from models.serialize.serializable_type import *
+from string_type import *
+from serializable_type import *
 
 import struct
 from enum import Enum

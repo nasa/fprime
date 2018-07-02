@@ -25,7 +25,8 @@ import sys
 import glob
 import ConfigParser
 
-from models.common.event import Severity
+from serializable.event import Severity
+
 import gse_misc
 
 class ConfigManager(ConfigParser.SafeConfigParser):
