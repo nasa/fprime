@@ -2,7 +2,7 @@
 
 The following example shows the steps to implement a simple pair of components connected by a pair of ports. The first, `MathSender`, will invoke the second, `MathReceiver`, via  a `MathOp` port to perform a math operation and return the result via a `MathResult` port. 
 
-![`Component` Diagram](Comp.jpg "Component Pair")
+![`Component` Diagram](img/Comp.jpg "Component Pair")
 
 All the code in this tutorial can be found in this directory. The actual location of the components will be in the `Ref` directory, where a demonstration reference application is located. Here is a description of the components:
 
@@ -1721,6 +1721,8 @@ extern Ref::MathReceiverComponentImpl mathReceiver;
 
 The initialization file is where the instances of the all the components are declared. The components are initialized in this file, and the generated topology connection function is called.
 
+#### 3.1.2.1 Component Instantiation
+
 Put these declarations at the end of the declarations for the other `Ref` components:
 
 `Ref/Top/Topology.cpp`, line 187:
@@ -1750,7 +1752,11 @@ Where the other components are initialzed, add `MathSender` and `MathReceiver`:
     mathReceiver.init(10,0);
 ```
 
+The first argument is the queue message depth. This is the number of messages that can be pending while other messages are being dispatched. This number is 
+
 After all the components are initialized, the generated function `constructRefArchitecture()` (see `RefTopologyAppAc.cpp`) can be called to connect the components together. How this function is generated will be seen later in the tutorial.
+
+`Ref/Top/Topology.cpp`, line 273:
 
 ```c++
     // call generated function to connect components
@@ -1760,7 +1766,7 @@ After all the components are initialized, the generated function `constructRefAr
 
 Next, the components commands are registered.
 
-`Ref/Top/Topology.cpp`, line 288:
+`Ref/Top/Topology.cpp`, line 291:
 
 ```c++
     health.regCommands();
@@ -1772,7 +1778,7 @@ Next, the components commands are registered.
 
 Component parameters are retrieved from disk by `prmDb` prior to the components requesting them:
 
-`Ref/Top/Topology.cpp`, line 292:
+`Ref/Top/Topology.cpp`, line 295:
 
 ```c++
     // read parameters
@@ -1781,7 +1787,7 @@ Component parameters are retrieved from disk by `prmDb` prior to the components 
 
 Once the parameters are read by `prmDb`, the components can request them:
 
-`Ref/Top/Topology.cpp`, line 297:
+`Ref/Top/Topology.cpp`, line 300:
 
 ```c++
     sendBuffComp.loadParameters();
@@ -1791,7 +1797,7 @@ Once the parameters are read by `prmDb`, the components can request them:
 
 The thread for the active `MathSender` component needs to be started:
 
-`Ref/Top/Topology.cpp`, line 337:
+`Ref/Top/Topology.cpp`, line 340:
 
 ```c++
     pingRcvr.start(0, 100, 10*1024);
@@ -1802,7 +1808,7 @@ The `MathReceiver` queued component will execute on the thread of the 1Hz rate g
 
 The `exitTasks()` is called when the process is shut down. It contains `exit()` calls to all the active components. These functions internally send a message to the component's thread to shut down.
 
-`Ref/Top/Topology.cpp`, line 391:
+`Ref/Top/Topology.cpp`, line 396:
 
 ```c++
     cmdSeq.exit();
@@ -2026,9 +2032,11 @@ The final connection is the connection that performs the math operation. It goes
    
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the module directory.
+Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the `Ref/Top` directory. If the updates were correct, the module should compile with no errors. The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `make`.
 
 # Executing the Example
+
+Once the `Ref` example has successfully built, the ground system and executable can be run by typing `./scripts/run_ref.sh`. The ground system GUI should appear:
 
 
 
