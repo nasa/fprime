@@ -1,37 +1,42 @@
 '''
-@brief Base class for all decoders. Defines the Decoder interface.
+@brief Channel Decoder class used to parse binary channel telemetry data
 
 Decoders are responsible for taking in serialized data and parsing it into
 objects. Decoders receive serialized data (that had a specific descriptor) from
 a distributer that it has been registered to. The distributer will send the
 binary data after removing any length and descriptor headers.
 
-Example data that would be sent to a decoder that parses events or channels:
+Example data that would be sent to a decoder that parses channels:
     +-------------------+---------------------+------------ - - -
     | Lenghth (4 bytes) | Time Tag (11 bytes) | Data....
     +-------------------+---------------------+------------ - - -
 
-This base class does not do any parsing, but instead acts as a pass through to
-allow consumers to receive raw data.
-
-@date Created June 29, 2018
+@date Created July 2, 2018
 @author R. Joseph Paetz
 
 @bug No known bugs
 '''
 
-class Decoder(object):
-    '''Base class for all decoder classes. Defines the interface for decoders'''
+import decoder
 
-    def __init__(self):
+
+class ChDecoder(decoder.Decoder):
+    '''Decoder class for Channel data'''
+
+    def __init__(self, ch_dict):
         '''
-        Decoder class constructor
+        ChDecoder class constructor
+
+        Args:
+            ch_dict: Channel telemetry dictionary. Channel IDs should be keys
+                     and ChTemplate objects should be values
 
         Returns:
-            An initialized decoder object.
+            An initialized channel decoder object.
         '''
-        # List of consumers to be notified of new data
-        self.consumers = []
+        super(ChDecoder, self).__init__()
+
+        self.__dict = ch_dict
 
 
     def data_callback(self, data):
@@ -41,22 +46,7 @@ class Decoder(object):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
-        self.send_to_all(data)
-
-
-    def register(self, consumer_obj):
-        '''
-        Function called to register a consumer to this decoder
-
-        For each data item passed to and parsed by the decoder, the parsed data
-        will be passed as an argument to the data_callback function of each
-        registered consumer.
-
-        Args:
-            consumer_obj: Object to regiser to the decoder. Must implement a
-                          data_callback function.
-        '''
-        self.consumers.append(consumer_obj)
+        self.send_to_all(self.decode_api(data))
 
 
     def decode_api(self, data):
@@ -70,42 +60,53 @@ class Decoder(object):
             data: Binary data to decode
 
         Returns:
-            Parsed version of the argument data
+            Parsed version of the channel telemetry data in the form of a
+            ChData object or None if the data is not decodable
         '''
-        # Base class just acts as a data passthrough:
-        return data
+        ptr = 0
+
+        # Decode Ch ID here...
+        id_obj = u32_type.u32Type()
+        id_obj.deserialize(data, ptr)
+        ptr += id_obj.getSize()
+        ch_id = id_obj.val
+
+        # Decode time...
+        ch_time = time_type.TimeType()
+        ch_time.deserialize(data, ptr)
+        ptr += ch_time.getSize()
+
+        if ch_id in self.__dict:
+            # Retrieve the template instance for this channel
+            ch_temp = self.__dict[ch_id]
+
+            (size, val) = self.decode_ch_val(data, ptr, ch_temp)
+
+            return ch_data.ChData(val, ch_time, ch_temp)
+        else:
+            print("Channel decode error: id %d not in dictionary"%ch_id)
+            return None
 
 
-    def send_to_all(self, parsed_data):
+    def decode_ch_val(self, val_data, offset, template):
         '''
-        Sends the parsed_data object to all registered consumers
-
-        This function is not intended to be called from outside a decoder class
+        Decodes the given channel's value from the given data
 
         Args:
-            parsed_data: object to send to all registered consumers
+            val_data: Data to parse the value out of
+            offset: Location in val_data to start the parsing
+            template: Channel Template object for the channel
+
+        Returns:
+            A tuple of the form (len, val) where len is the size in bytes of
+            the channel's value and val is the channel's value.
         '''
-        for obj in self.consumers:
-            obj.data_callback(parsed_data)
+        type_obj = template.get_type_obj()
+        type_obj.deserialize(val_data, offset)
+
+        return (type_obj.getSize(), type_obj.val)
 
 
 if __name__ == "__main__":
-    # Unit tests
-    # (don't check functionality, just test code path's for exceptions)
+    pass
 
-    try:
-        decoder1 = Decoder()
-        decoder2 = Decoder()
-        decoder3 = Decoder()
-
-        decoder1.register(decoder2)
-        decoder1.register(decoder3)
-
-        decoder1.data_callback("hello")
-
-        if (decoder1.decode_api("hello") != "hello"):
-            print("Decoder Unit tests failed")
-        else:
-            print("Decoder Unit tests passed")
-    except:
-        print("Decoder Unit tests failed")

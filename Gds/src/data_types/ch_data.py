@@ -20,7 +20,7 @@ class ChData(sys_data.SysData):
         Constructor.
 
         Args:
-            ch_val: The channel's value at the given time
+            ch_val: The channel's value at the given time.
             ch_temp: Channel template instance for this channel
             ch_time: Time the reading was made
 
@@ -54,9 +54,9 @@ class ChData(sys_data.SysData):
         ch_name = self.template.get_name()
         fmt_str = self.__dict_entry.get_format_str()
         if (fmt_str):
-            ch_val = fmt_str%self.__val
+            ch_val = fmt_str%self.val
         else:
-            ch_val = str(self.__val)
+            ch_val = str(self.val)
 
         return ("%s: %s %d %s %s"%(time_str_nice, ch_name, self.id, time_str,
                                    ch_val))
