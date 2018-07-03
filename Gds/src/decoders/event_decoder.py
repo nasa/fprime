@@ -15,6 +15,9 @@ Example data structure:
 @bug No known bugs
 '''
 
+import decoder
+import serializable
+
 class EventDecoder(decoder.Decoder):
     '''Decoder class for event data'''
 
@@ -24,15 +27,14 @@ class EventDecoder(decoder.Decoder):
 
         Args:
             event_dict: Event dictionary. Event IDs should be keys and
-                        event_template objects should be values
+                        EventTemplate objects should be values
 
         Returns:
             An initialized EventDecoder object.
         '''
-        self.__dict = event_dict
+        super(EventDecoder, self).__init__()
 
-        # List of consumers to be notified of new data
-        self.__consumers = []
+        self.__dict = event_dict
 
 
     def data_callback(self, data):
@@ -43,21 +45,6 @@ class EventDecoder(decoder.Decoder):
             data: Binary data to decode and pass to registered consumers
         '''
         self.send_to_all(self.decode_api(data))
-
-
-    def register(self, consumer_obj):
-        '''
-        Function called to register a consumer to this decoder
-
-        For each data item passed to and parsed by the decoder, the parsed data
-        will be passed as an argument to the data_callback function of each
-        registered consumer.
-
-        Args:
-            consumer_obj: Object to regiser to the decoder. Must implement a
-                          data_callback function.
-        '''
-        self.__consumers.append(consumer_obj)
 
 
     def decode_api(self, data):
@@ -71,11 +58,12 @@ class EventDecoder(decoder.Decoder):
             data: Binary data to decode
 
         Returns:
-            Parsed version of the argument data
+            Parsed version of the event data in the form of a EventData object
+            or None if the data is not decodable
         '''
         ptr = 0
 
-        # Decode log event ID here...
+        # Decode event ID here...
         id_obj = u32_type.U32Type()
         id_obj.deserialize(data, ptr)
         ptr += id_obj.getSize()
@@ -87,28 +75,52 @@ class EventDecoder(decoder.Decoder):
         ptr += event_time.getSize()
 
         if event_id in self.__dict:
-            event_template = self.__dict[event_id]
+            event_temp = self.__dict[event_id]
 
-            #TODO finish
+            arg_vals = self.decode_args(data, ptr, event_temp)
+
+            return EventData(arg_vals, event_time, event_temp)
+        else:
+            print("Event decode error: id %d not in dictionary"%event_id)
+            return None
+
+
+    def decode_args(self, arg_data, offset, template):
+        '''
+        Decodes the serialized event arguments
+
+        The event arguments are each serialized and then appended to each other.
+        Parse that section of the data into the individual arguments.
+
+        Args:
+            arg_data: Serialized argument data to parse
+            offset: Offset into the arg_data where parsing should start
+            template: EventTemplate object that describes the type of event the
+                      arg_data goes to.
+
+        Returns:
+            Parsed arguments in a tuple (order the same as they were parsed in)
+        '''
+        arg_vals = []
+        args = template.get_args()
+
+        # For each argument, use the arg_obj deserialize method to get the value
+        for arg in args:
+            (arg_name, arg_desc, arg_obj) = arg
+
+            try:
+                arg_obj.deserialize(data, offset)
+                arg_vals.append(arg_obj.val)
+            except TypeException as e:
+                print("Event decode exception %s"%(e.getMsg()))
+                traceback.print_exc()
+                arg_vals.append("ERR")
+
+            offset = offset + arg_obj.getSize()
+
+        return arg_vals
 
 
 if __name__ == "__main__":
-    # Unit tests
-    # (don't check functionality, just test code path's for exceptions)
+    pass
 
-    try:
-        decoder1 = Decoder()
-        decoder2 = Decoder()
-        decoder3 = Decoder()
-
-        decoder1.register(decoder2)
-        decoder1.register(decoder3)
-
-        decoder1.data_callback("hello")
-
-        if (decoder1.decode_api("hello") != "hello"):
-            print("Decoder Unit tests failed")
-        else:
-            print("Decoder Unit tests passed")
-    except:
-        print("Decoder Unit tests failed")

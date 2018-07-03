@@ -32,8 +32,8 @@ class EventTemplate(data_template.DataTemplate):
             format_str: Format string for the event's arguments
             description: Event Description
             args: List of arguments in tuple form. Each tuple should be:
-                  (arg name, arg description, arg type). Where arg type is a
-                  class derived from the class BaseType
+                  (arg name, arg description, arg obj). Where arg obj is an
+                  object of a type derived from the class Base Type.
         '''
 
         # Make sure correct types are passed
@@ -82,6 +82,14 @@ class EventTemplate(data_template.DataTemplate):
         self.event_description
 
     def get_args(self):
+        '''
+        Returns a list of argument information
+
+        Returns:
+            A list of tuples where each tuple represents an argument. Each tuple
+            in the form: (arg name, arg description, arg obj). Where arg obj is
+            an object of a type derived from the class Base Type.
+        '''
         return self.arguments
 
 
