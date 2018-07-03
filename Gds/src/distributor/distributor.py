@@ -1,6 +1,3 @@
-import threading
-import socket
-import select
 import binascii
 
 from serializable import u32_type
@@ -21,28 +18,6 @@ class Distributor(object):
 		"""
 
 		self.__decoders = {key.name: [] for key in list(data_desc_type.DataDescType)}
-		self.__threaded_socket_client = ThreadedTCPSocketClient(self)
-		self.__data_recv_thread = None
-		
-	
-	def disconnect(self):
-		"""Stops the threaded client socket by joining its thread.
-		"""
-
-		self.__threaded_socket_client.stop_event.set()
-		self.__data_recv_thread.join()
-
-	def connect(self, host, port):
-		"""Connect the internal socket client to the server
-		
-		Arguments:
-			host {string} -- host IP address
-			port {int} -- host port
-		"""
-
-		self.__threaded_socket_client.connect(host, port)
-		self.__data_recv_thread = threading.Thread(target=self.__threaded_socket_client.recv)
-		self.__data_recv_thread.start()
 
 	# NOTE we could use either the type of the object or an enum as the type argument. It should indicate what the decoder decodes.
 	# TODO implement as an ENUM name as key
@@ -55,15 +30,6 @@ class Distributor(object):
 		"""
 
 		self.__decoders[typeof].append(obj)
-
-	def send(self, data):
-		"""Send data through the threaded socket client
-		
-		Arguments:
-			data {binary} -- The data to send to the server
-		"""
-
-		self.__threaded_socket_client.send(data)
 	
 	def on_recv(self, data):
 		"""Called by the internal socket client when data is recved from the socket client
@@ -97,52 +63,6 @@ class Distributor(object):
 		for d in self.__decoders[data_desc_key]:
 			d.data_callback(data_pass_thru)
 		
-class ThreadedTCPSocketClient(object):
 	
-	def __init__(self, distributor, sock=None):
-		if sock is None: 
-			self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		else:
-			self.sock = sock
-		
-		# NOTE can't do this b/c EINPROGRESS: self.sock.setblocking(0)
-
-		self.__distributor = distributor
-		self.__select_timeout = 1
-		self.stop_event = threading.Event()
-
-	def connect(self, host, port):
-		"""Connect to host at given port
-		
-		Arguments:
-			host {string} -- IP of the host server
-			port {int} -- Port of the host server
-		"""
-
-		self.sock.connect((host, port))
-
-	def send(self, data):
-		"""Send data to the server
-		
-		Arguments:
-			data {binary} -- The data to send
-		"""
-
-		self.sock.send(data)
-
-
-	def recv(self):
-		"""Method run constantly by the enclosing thread. Looks for data from the server.
-		"""
-
-
-		while not self.stop_event.is_set():
-			print "Running distributor client recv..."
-			ready = select.select([self.sock], [], [], self.__select_timeout)
-			if ready[0]:
-				chunk = self.sock.recv(1024)
-				self.__distributor.on_recv(chunk)
-				print(binascii.hexlify(chunk))
-
-	
-
+if __name__ == "__main__":
+	pass

@@ -31,6 +31,7 @@ import controllers.exceptions
 import traceback
 
 from distributor import distributor
+from client_socket import client_socket
 
 import wx
 from gui import GDSMainFrameImpl
@@ -154,17 +155,19 @@ def main(argv=None):
 
 	
 	distrib = distributor.Distributor()
+	cli = client_socket.ThreadedTCPSocketClient()
+	cli.register_distributor(distrib)
 	sleep(5)
-	distrib.connect(args[0].addr, args[0].port)
+	cli.connect(args[0].addr, args[0].port)
 	sleep(1)
-	distrib.send("Register GUI\n")
+	cli.send("Register GUI\n")
 	
 	#
 	# MAIN BODY #
 	app = main_window_start()
 	
 	
-	distrib.disconnect()
+	cli.disconnect()
 
 if __name__ == "__main__":
 	sys.exit(main())
