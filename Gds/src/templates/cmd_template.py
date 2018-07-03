@@ -8,3 +8,9 @@ Instances of this class describe a specific command type.
 
 @bug No known bugs
 '''
+
+import data_template
+class CommandTemplate(data_template.DataTemplate):
+
+    def __init__(self, parameter_list):
+        pass
