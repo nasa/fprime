@@ -26,7 +26,7 @@ import exceptions
 class PythonLoader(dict_loader.DictLoader):
     '''Class to help load python file based dictionaries'''
 
-    def read_dict(self, path, use_superpkg):
+    def read_dict(self, path, use_superpkg=False):
         '''
         Reads all python modules at the given path and constructs a dict list
 
@@ -94,9 +94,9 @@ class PythonLoader(dict_loader.DictLoader):
 
         # Make sure the directory we are importing from is in the python path
         if (use_superpkg):
-            sys.path.append(superpkg_path)
+            sys.path.append(rest_of_path)
         else:
-            sys.path.append(path)
+            sys.path.append(superpkg_path)
 
         # Compute a list of all files to import
         all_files = glob.glob(path + os.sep + '*.py')
