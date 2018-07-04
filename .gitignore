@@ -51,5 +51,5 @@ logs
 test_harness/.autotools
 core
 
-.swp
+*.swp
 
