@@ -14,6 +14,8 @@ from enum import Enum
 
 import data_template
 
+from models.serialize import type_base
+
 
 #TODO Move to enums file
 EventSeverity = Enum('Severity', 'COMMAND ACTIVITY_LO ACTIVITY_HI WARNING_LO WARNING_HI DIAGNOSTIC FATAL')
@@ -60,8 +62,8 @@ class EventTemplate(data_template.DataTemplate):
             if not type(arg_desc) == type(str()):
                 raise TypeMismatchException(type(str()),type(arg_desc))
 
-            if not issubclass(type(arg_type), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()),type(arg_type))
+            if not issubclass(type(arg_type), type(type_base.BaseType())):
+                raise TypeMismatchException(type(type_base.BaseType()),type(arg_type))
 
         # Initialize event internal variables
         self.id       = event_id
@@ -75,8 +77,8 @@ class EventTemplate(data_template.DataTemplate):
     def get_severity(self):
         return self.severity
 
-    def get_format_string(self):
-        return self.format_string
+    def get_format_str(self):
+        return self.format_str
 
     def get_description(self):
         self.event_description
@@ -90,7 +92,7 @@ class EventTemplate(data_template.DataTemplate):
             in the form: (arg name, arg description, arg obj). Where arg obj is
             an object of a type derived from the class Base Type.
         '''
-        return self.arguments
+        return self.args
 
 
 if __name__ == '__main__':

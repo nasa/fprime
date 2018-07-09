@@ -11,8 +11,21 @@
 import python_loader
 from templates import event_template
 
+# TODO remove, debugging
+from pprint import pprint
+
 class EventPyLoader(python_loader.PythonLoader):
     '''Class to load python based event dictionaries'''
+
+    # Field names used when constructing the event dicts. Placed here for
+    # convienient editing
+    ID_FIELD =       "ID"
+    NAME_FIELD =     "NAME"
+    SEVERITY_FIELD = "SEVERITY"
+    FMT_STR_FIELD =  "FORMAT_STRING"
+    DESC_FIELD =     "EVENT_DESCRIPTION"
+    ARGS_FIELD =     "ARGUMENTS"
+
 
     def __init__(self):
         '''
@@ -22,15 +35,6 @@ class EventPyLoader(python_loader.PythonLoader):
             An initialized loader object
         '''
         super(EventPyLoader, self).__init__()
-
-        # Field names used when constructing the event dicts. Placed here for
-        # convienient editing
-        ID_FIELD =       "ID"
-        NAME_FIELD =     "NAME"
-        SEVERITY_FIELD = "SEVERITY"
-        FMT_STR_FIELD =  "FORMAT_STRING"
-        DESC_FIELD =     "EVENT_DESCRIPTION"
-        ARGS_FIELD =     "ARGUMENTS"
 
 
 
@@ -58,28 +62,22 @@ class EventPyLoader(python_loader.PythonLoader):
             objects.
         '''
         # TODO currently we are always using the superpkg, is that OK?
-        module_dict = self.read_dict(path, use_superpkg=True)
+        module_dicts = self.read_dict(path, use_superpkg=True)
 
-        # TODO remove
-        print "module_dict=%s\n\n\n\n\n\n\n"%str(module_dict)
         id_dict = dict()
         name_dict = dict()
 
-        for event_id in module_dict:
-            print "event_id=%s"%str(event_id)
-            # TODO this is such a badly named variable
-            info = module_dict[event_id]
-
+        for event_dict in module_dicts:
             # Create an event template object
-            event_temp = event_template.EventTemplate(info[ID_FIELD],
-                                                      info[NAME_FIELD],
-                                                      info[SEVERITY_FIELD],
-                                                      info[FMT_STR_FIELD],
-                                                      info[DESC_FIELD],
-                                                      info[ARGS_FIELD])
+            event_temp = event_template.EventTemplate(event_dict[self.ID_FIELD],
+                                                      event_dict[self.NAME_FIELD],
+                                                      event_dict[self.SEVERITY_FIELD],
+                                                      event_dict[self.FMT_STR_FIELD],
+                                                      event_dict[self.DESC_FIELD],
+                                                      event_dict[self.ARGS_FIELD])
 
-            id_dict[event_id] = event_temp
-            name_dict[info[NAME_FIELD]] = event_temp
+            id_dict[event_dict[self.ID_FIELD]] = event_temp
+            name_dict[event_dict[self.NAME_FIELD]] = event_temp
 
         return (id_dict, name_dict)
 

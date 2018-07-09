@@ -109,7 +109,7 @@ def main_window_start():
 	frame.Show(True)
 
 	app.MainLoop()
-	return app
+	return frame
 
 
 def main(argv=None):
@@ -152,6 +152,13 @@ def main(argv=None):
 	# process options
 	args = parser.parse_args(argv)
 
+        app = wx.App(False)
+	frame = GDSMainFrameImpl.MainFrameImpl(None)
+	frame.Show(True)
+
+
+
+
 
 	distrib = distributor.Distributor()
 	cli = client_socket.ThreadedTCPSocketClient()
@@ -159,6 +166,8 @@ def main(argv=None):
 	ldr = event_py_loader.EventPyLoader()
 	id_dict, _ = ldr.construct_dict('/Users/rpaetz/Documents/Project/fprime-sw/Gse/generated/Ref/events')
 	dec = event_decoder.EventDecoder(id_dict)
+        dec.register(frame.event_pnl)
+        distrib.register("FW_PACKET_LOG", dec)
 
 	cli.register_distributor(distrib)
 	sleep(5)
@@ -167,11 +176,8 @@ def main(argv=None):
 	cli.send("Register GUI\n")
 
 
-	#
-	# MAIN BODY #
-	app = main_window_start()
 
-
+	app.MainLoop()
 	cli.disconnect()
 
 if __name__ == "__main__":

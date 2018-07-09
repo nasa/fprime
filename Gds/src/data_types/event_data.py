@@ -15,7 +15,7 @@ class EventData(sys_data.SysData):
     The EventData class stores a specific event message.
     '''
 
-    def __init__(self, event_args, event_time, event_template):
+    def __init__(self, event_args, event_time, event_temp):
         '''
         Constructor.
 
@@ -24,15 +24,15 @@ class EventData(sys_data.SysData):
                         the types of the arguments in the event_temp object.
                         Should be a tuple.
             event_time: The time the event occured (TimeType)
-            event_template: Event template instance for this event
+            event_temp: Event template instance for this event
 
         Returns:
             An initialized EventData object
         '''
-        self.id = ch_temp.get_id()
+        self.id = event_temp.get_id()
         self.args = event_args
         self.time = event_time
-        self.template = event_template
+        self.template = event_temp
 
 
     def get_args(self):
@@ -43,6 +43,7 @@ class EventData(sys_data.SysData):
         time_str = self.time.to_readable()
         name = self.template.get_name()
         format_str = self.template.get_format_str()
+        print(self.args)
         arg_str = format_str%self.args
 
         return ("%s: %s (%d) Severity.%s : %s"%(time_str, name, self.id,

@@ -28,8 +28,11 @@ class Distributor(object):
 			typeof {string} -- The name of the data descriptor that the decoder will decode
 			obj {decoder} -- The decoder object that will process the data
 		"""
-
+                #TODO check that typeof is a valid DataDescType Enum value
 		self.__decoders[typeof].append(obj)
+
+                # TODO remove
+                print("Decoders=%s"%self.__decoders)
 
 	def on_recv(self, data):
 		"""Called by the internal socket client when data is recved from the socket client
@@ -37,6 +40,9 @@ class Distributor(object):
 		Arguments:
 			data {binary} -- the data recved from the socket client
 		"""
+                # TODO remove
+                print("distributer on_recv method, data=%s"%list(data))
+
 
 		# NOTE make these selectable with a configuration later
 
@@ -59,6 +65,10 @@ class Distributor(object):
 		data_pass_thru = data[offset:] # This will get passed up to decoders
 		#print("Data to pass through: %s")%binascii.hexlify(data_pass_thru)
 		data_desc_key = data_desc_type.DataDescType(data_desc.val).name
+
+                # TODO remove
+                print("distributor: key=%s; decoders=%s"%(data_desc_key, self.__decoders[data_desc_key]))
+
 
 		for d in self.__decoders[data_desc_key]:
 			d.data_callback(data_pass_thru)

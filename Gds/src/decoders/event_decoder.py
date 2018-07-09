@@ -6,7 +6,7 @@ in event_data objects.
 
 Example data structure:
     +-------------------+---------------------+---------------------- - - -
-    | Lenghth (4 bytes) | Time Tag (11 bytes) | Event argument data....
+    | ID (4 bytes)      | Time Tag (11 bytes) | Event argument data....
     +-------------------+---------------------+---------------------- - - -
 
 @date Created June 29, 2018
@@ -16,8 +16,10 @@ Example data structure:
 '''
 
 import decoder
+from data_types import event_data
 from models.serialize import u32_type
 from models.serialize import time_type
+from models.serialize.type_exceptions import *
 
 class EventDecoder(decoder.Decoder):
     '''Decoder class for event data'''
@@ -45,6 +47,10 @@ class EventDecoder(decoder.Decoder):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
+        # TODO remove
+        print("event_decoder data_callback method (data=%s)"%list(data))
+
+
         self.send_to_all(self.decode_api(data))
 
 
@@ -69,18 +75,21 @@ class EventDecoder(decoder.Decoder):
         id_obj.deserialize(data, ptr)
         ptr += id_obj.getSize()
         event_id = id_obj.val
+        #TODO remove
+        print("id=%d"%event_id)
 
         # Decode time...
         event_time = time_type.TimeType()
         event_time.deserialize(data, ptr)
         ptr += event_time.getSize()
+        print("time=%s"%event_time)
 
         if event_id in self.__dict:
             event_temp = self.__dict[event_id]
 
             arg_vals = self.decode_args(data, ptr, event_temp)
 
-            return EventData(arg_vals, event_time, event_temp)
+            return event_data.EventData(arg_vals, event_time, event_temp)
         else:
             print("Event decode error: id %d not in dictionary"%event_id)
             return None
@@ -110,7 +119,7 @@ class EventDecoder(decoder.Decoder):
             (arg_name, arg_desc, arg_obj) = arg
 
             try:
-                arg_obj.deserialize(data, offset)
+                arg_obj.deserialize(arg_data, offset)
                 arg_vals.append(arg_obj.val)
             except TypeException as e:
                 print("Event decode exception %s"%(e.getMsg()))
@@ -119,7 +128,7 @@ class EventDecoder(decoder.Decoder):
 
             offset = offset + arg_obj.getSize()
 
-        return arg_vals
+        return tuple(arg_vals)
 
 
 if __name__ == "__main__":

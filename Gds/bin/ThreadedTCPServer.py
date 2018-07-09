@@ -19,7 +19,7 @@ import logging
 import binascii
 
 from utils import Logger
-from serializable.type_base import *
+from models.serialize.type_base import *
 from optparse import OptionParser
 
 __version__ = 0.1
@@ -222,7 +222,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                     print "Socket error " + str(err.errno) + " (Connection reset by peer) occurred on recv()."
                 else:
                     print "Socket error " + str(err.errno) + " occurred on recv()."
-        
+
         print msg
         return msg
 
@@ -345,7 +345,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
         """
 
         self.getNewMsg(self.request[0])
-        
+
 
     #################################################
     # New Routines to process the command messages
@@ -528,7 +528,7 @@ def main(argv=None):
             SERVER.server_close()
             udp_server.shutdown()
             udp_server.server_close()
-            
+
             time.sleep(1)
 
         except Exception, e:
