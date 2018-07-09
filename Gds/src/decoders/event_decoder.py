@@ -16,7 +16,8 @@ Example data structure:
 '''
 
 import decoder
-import serializable
+from models.serialize import u32_type
+from models.serialize import time_type
 
 class EventDecoder(decoder.Decoder):
     '''Decoder class for event data'''

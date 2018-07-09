@@ -1,14 +1,14 @@
 import binascii
 
-from serializable import u32_type
+from models.serialize import u32_type
 from utils import data_desc_type
 
 
 # NOTE decoder function to call is called data_callback(data)
 # TODO close the socket when you're done
 class Distributor(object):
-	"""A distributor contains a socket client that connects to a ThreadedTCPServer. 
-	It then sends and recvs data from a FPrime deployment. 
+	"""A distributor contains a socket client that connects to a ThreadedTCPServer.
+	It then sends and recvs data from a FPrime deployment.
 	Decoders can register with a distributor to recv packets of data of a certain description.
 	"""
 
@@ -23,17 +23,17 @@ class Distributor(object):
 	# TODO implement as an ENUM name as key
 	def register(self, typeof, obj):
 		"""Register a decoder with the distributor
-		
+
 		Arguments:
 			typeof {string} -- The name of the data descriptor that the decoder will decode
 			obj {decoder} -- The decoder object that will process the data
 		"""
 
 		self.__decoders[typeof].append(obj)
-	
+
 	def on_recv(self, data):
 		"""Called by the internal socket client when data is recved from the socket client
-		
+
 		Arguments:
 			data {binary} -- the data recved from the socket client
 		"""
@@ -62,7 +62,7 @@ class Distributor(object):
 
 		for d in self.__decoders[data_desc_key]:
 			d.data_callback(data_pass_thru)
-		
-	
+
+
 if __name__ == "__main__":
-	pass
+    pass

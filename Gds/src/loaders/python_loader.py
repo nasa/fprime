@@ -18,6 +18,7 @@ this class will be empty.
 import importlib
 import sys
 import os
+import glob
 
 # Custom Python Modules
 import dict_loader
@@ -91,7 +92,7 @@ class PythonLoader(dict_loader.DictLoader):
             raise exceptions.GseControllerUndefinedDirectoryException(path)
 
         # Compute package and superpackage names
-        (superpkg_path, pkg) = os.path.split(module_path)
+        (superpkg_path, pkg) = os.path.split(path)
         (rest_of_path, superpkg) = os.path.split(superpkg_path)
 
         # Make sure the directory we are importing from is in the python path

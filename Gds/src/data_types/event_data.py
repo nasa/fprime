@@ -8,7 +8,7 @@
 '''
 
 import sys_data
-from serializable import time_type
+from models.serialize import time_type
 
 class EventData(sys_data.SysData):
     '''

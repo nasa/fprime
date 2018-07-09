@@ -60,10 +60,13 @@ class EventPyLoader(python_loader.PythonLoader):
         # TODO currently we are always using the superpkg, is that OK?
         module_dict = self.read_dict(path, use_superpkg=True)
 
+        # TODO remove
+        print "module_dict=%s\n\n\n\n\n\n\n"%str(module_dict)
         id_dict = dict()
         name_dict = dict()
 
-        for event_id in module_data:
+        for event_id in module_dict:
+            print "event_id=%s"%str(event_id)
             # TODO this is such a badly named variable
             info = module_dict[event_id]
 

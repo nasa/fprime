@@ -25,7 +25,7 @@ import sys
 import glob
 import ConfigParser
 
-from serializable.event import Severity
+from templates.event_template import EventSeverity
 
 import gse_misc
 
@@ -144,13 +144,13 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['performance']['status_light_deadband'] = 3 # Seconds
 
         self.__prop['severity_colors']=dict()
-        self.__prop['severity_colors'][Severity.COMMAND.name]    = "lightblue"
-        self.__prop['severity_colors'][Severity.DIAGNOSTIC.name] = ""
-        self.__prop['severity_colors'][Severity.ACTIVITY_HI.name]= ""
-        self.__prop['severity_colors'][Severity.ACTIVITY_LO.name]= ""
-        self.__prop['severity_colors'][Severity.WARNING_LO.name] = "yellow"
-        self.__prop['severity_colors'][Severity.WARNING_HI.name] = "yellow"
-        self.__prop['severity_colors'][Severity.FATAL.name]      = "red"
+        self.__prop['severity_colors'][EventSeverity.COMMAND.name]    = "lightblue"
+        self.__prop['severity_colors'][EventSeverity.DIAGNOSTIC.name] = ""
+        self.__prop['severity_colors'][EventSeverity.ACTIVITY_HI.name]= ""
+        self.__prop['severity_colors'][EventSeverity.ACTIVITY_LO.name]= ""
+        self.__prop['severity_colors'][EventSeverity.WARNING_LO.name] = "yellow"
+        self.__prop['severity_colors'][EventSeverity.WARNING_HI.name] = "yellow"
+        self.__prop['severity_colors'][EventSeverity.FATAL.name]      = "red"
 
         self.__prop['about_info']=dict()
         self.__prop['about_info']['version_number'] = 'x.x'

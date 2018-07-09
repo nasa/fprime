@@ -23,9 +23,6 @@ import random
 from utils import Logger
 from utils import PortFinder
 from utils import ConfigManager
-from controllers import command_loader
-from controllers import event_loader
-from controllers import channel_loader
 
 import controllers.exceptions
 import traceback
@@ -140,7 +137,7 @@ def main(argv=None):
 	parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set threaded tcp socket server port [default: %default]", \
 						default=50007)
 						#default=PortFinder.old_getport(50000,[]))
-						
+
 	parser.add_option("-e", "--execute", dest="exec_app", action="store", type="string", help="Execute the specified fsw application after socket server and UI are up [default: %default]")
 	parser.add_option("-L", "--log-file-path", dest="log_file_path", action="store", type="string", help="Path to log files [default: %default]")
 	parser.add_option("-b", "--logbinary", dest="bin_logger_flag", action="store", type="int", help="Flag to log raw data from socket (1=ON, 0=OFF) [default: %default]", \
@@ -155,12 +152,12 @@ def main(argv=None):
 	# process options
 	args = parser.parse_args(argv)
 
-	
+
 	distrib = distributor.Distributor()
 	cli = client_socket.ThreadedTCPSocketClient()
-	
+
 	ldr = event_py_loader.EventPyLoader()
-	id_dict, _ = ldr.construct_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/events')
+	id_dict, _ = ldr.construct_dict('/Users/rpaetz/Documents/Project/fprime-sw/Gse/generated/Ref/events')
 	dec = event_decoder.EventDecoder(id_dict)
 
 	cli.register_distributor(distrib)
@@ -169,12 +166,12 @@ def main(argv=None):
 	sleep(1)
 	cli.send("Register GUI\n")
 
-	
+
 	#
 	# MAIN BODY #
 	app = main_window_start()
-	
-	
+
+
 	cli.disconnect()
 
 if __name__ == "__main__":
