@@ -21,7 +21,7 @@ import os
 
 # Custom Python Modules
 import dict_loader
-import exceptions
+from controllers import exceptions
 
 class PythonLoader(dict_loader.DictLoader):
     '''Class to help load python file based dictionaries'''
@@ -84,8 +84,10 @@ class PythonLoader(dict_loader.DictLoader):
         Returns:
             A list of module objects of all the newly imported modules
         '''
+
+        print path
         # Verify path is a directory
-        if not os.path.isdir(path)
+        if not os.path.isdir(path):
             raise exceptions.GseControllerUndefinedDirectoryException(path)
 
         # Compute package and superpackage names

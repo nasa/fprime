@@ -17,7 +17,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 	def data_callback(self, data):
 		#TODO find out in how the message portion of the event should be displayed.
 		if type(data) == event_data.EventData:
-			l = [data.time, data.template.name, data.template.id, data.template.severity, " "]
+			l = [data.time, data.template.name, data.template.id, data.template.severity, data.tempalte.format_str%data.args]
 			self.EventLogDataListCtl.Append(l)
 
 	# Override these handlers to implement functionality for GUI elements

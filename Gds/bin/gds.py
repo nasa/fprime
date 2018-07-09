@@ -32,6 +32,8 @@ import traceback
 
 from distributor import distributor
 from client_socket import client_socket
+from decoders import event_decoder
+from loaders import event_py_loader
 
 import wx
 from gui import GDSMainFrameImpl
@@ -156,11 +158,17 @@ def main(argv=None):
 	
 	distrib = distributor.Distributor()
 	cli = client_socket.ThreadedTCPSocketClient()
+	
+	ldr = event_py_loader.EventPyLoader()
+	id_dict, _ = ldr.construct_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/events')
+	dec = event_decoder.EventDecoder(id_dict)
+
 	cli.register_distributor(distrib)
 	sleep(5)
 	cli.connect(args[0].addr, args[0].port)
 	sleep(1)
 	cli.send("Register GUI\n")
+
 	
 	#
 	# MAIN BODY #
