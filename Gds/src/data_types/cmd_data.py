@@ -1,7 +1,8 @@
 '''
 @brief Command Data class
 
-Instances of this class define a specific instance of a command with specific argument values
+Instances of this class define a specific instance of a command with specific
+argument values.
 
 @data Created July 3, 2018
 @author Josef Biberstein
@@ -13,34 +14,42 @@ import sys_data
 from enum import Enum
 
 
-Descriptor = Enum(value='Descriptor', names='ABSOLUTE RELATIVE')
-class CommandData(sys_data.SysData):
+class CmdData(sys_data.SysData):
+    '''The CmdData class stores a specific command'''
 
-	def __init__(self, command_template, command_args, seconds=0, useconds=0, descriptor=Descriptor.RELATIVE):
-		self.command_template = command_template
-		self.command_args = command_args
+    def __init__(self, cmd_args, cmd_temp, cmd_time=None):
+        '''
+        Constructor.
 
-		if not type(seconds) == type(int()):
-			raise TypeMismatchException(type(int()),type(seconds))
-		if not type(useconds) == type(int()):
-			raise TypeMismatchException(type(int()),type(useconds))
-		if not type(descriptor) == type(Descriptor.ABSOLUTE):
-			raise TypeMismatchException(type(Descriptor.ABSOLUTE), type(descriptor))
+        Args:
+            cmd_args: The arguments for the event. Should match the types of the
+                      arguments in the cmd_temp object. Should be a tuple.
+            cmd_temp: Command Template instance for this command (this provides
+                      the opcode and argument types are stored)
+            cmd_time: The time the event should occur. This is for sequences.
+                      Should be a TimeType object with time base=TB_DONT_CARE
 
-		self.secs = seconds
-		self.usecs = useconds
-		self.desc = descriptor
+        Returns:
+            An initialized CmdData object
+        '''
+        self.template = cmd_template
+        self.args = cmd_args
 
-	def get_args(self):
-		return self.command_args
+        if (cmd_time):
+            self.time = cmd_time
+        else:
+            self.time = time_type.TimeType(time_type.TimeBase["TB_DONT_CARE"])
 
-	def __str__(self):
-		arg_str = ''
-		for (arg, _, arg_value) in self.command_args:
-			arg_str += ('	Arg %s with value %s\n')% arg, str(arg_value.val)
-		
-		arg_info = 'Command mneumonic %s\n'% self.command_template.mneumonic
+    def get_args(self):
+        return self.command_args
 
-		return arg_info + arg_str
+    def __str__(self):
+        arg_str = ''
+        for (arg, _, arg_value) in self.args:
+            arg_str += ('   Arg %s with value %s\n')% arg, str(arg_value.val)
+
+        arg_info = 'Command mneumonic %s\n'% self.template.mneumonic
+
+        return arg_info + arg_str
 
 

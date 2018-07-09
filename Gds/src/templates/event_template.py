@@ -39,7 +39,6 @@ class EventTemplate(data_template.DataTemplate):
         '''
 
         # Make sure correct types are passed
-        # TODO Is this necessary? It isn't anywhere else?
         if not type(event_id) == type(int()):
             raise TypeMismatchException(type(int()),type(event_id))
 
