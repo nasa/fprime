@@ -2084,7 +2084,7 @@ When the command is executed, the `Log Events` tab will show the event indicatin
 
 ![MR_SET_FACTOR1 Event](img/Gnd8.jpg)
 
-The `Channel Telemetry` tab shows the two channels related to the update. `MR_FACTOR1` shows the new value, while `MR_FACTOR1s` show how many times the value has been updated.s 
+The `Channel Telemetry` tab shows the two channels related to the update. `MR_FACTOR1` shows the new value, while `MR_FACTOR1S` show how many times the value has been updated.
 
 ![MR_SET_FACTOR1 Event](img/Gnd9.jpg)
 
@@ -2110,7 +2110,7 @@ Notice that the `MS_OP`, `MS_VAL1`, `MS_VAL2`, `MR_OPERATION`, and `MS_RESULT` a
 
 ### 4.1.8 Parameter Updates
 
-The tutorial defined a `factor2` parameter in the `MathReceiver` component. The code generator creates two commands for each parameter: `XXXX_PRM_SET` and `XXX_PRM_SAVE` where `XXX` is an upper case version of the parameter name. The `FACTOR2_PRM_SET` command will set the value in `MathReceiver`, while `FACTOR2_PRM_SAVE` will send it to `PrmDb` for storage. `PrmDb` is an F` infrastructure component that reads and writes parameters to storage. It is important to note that `PrmDb` does not immediately write the value to storage. There is an explicit `PRM_SAVE_FILE` command that will take all the parameter values currently in RAM and write them. 
+The tutorial defined a `factor2` parameter in the `MathReceiver` component. The code generator creates two commands for each parameter: `XXXX_PRM_SET` and `XXX_PRM_SAVE` where `XXX` is an upper case version of the parameter name. The `FACTOR2_PRM_SET` command will set the value in `MathReceiver`, while `FACTOR2_PRM_SAVE` will send the current value to `PrmDb` for storage. `PrmDb` is an F' infrastructure component that reads and writes parameters to storage. It is important to note that `PrmDb` does not immediately write the value to storage. There is an explicit `PRM_SAVE_FILE` command that will take all the parameter values currently in RAM and write them. 
 
 #### 4.1.8.1 Setting the Parameter Value
 
@@ -2160,7 +2160,7 @@ The ground system keeps logs of all received events and telemetry. They can be f
 
 ### 4.1.10 Ground System Scripting
 
-As an alternative to executing commands by selecting them from the GUI, users can write script files that contain the commands in text form. They run through the ground system and dispatch a specified set of commands. They are executing when the ground system is up and running. The syntax of the script file is as follows:
+As an alternative to executing commands by selecting them from the GUI, users can write script files that contain the commands in text form. They run through the ground system and dispatch a specified set of commands. They are executed when the ground system is up and running. The syntax of the script file is as follows:
 
 ```
 # Comment 
@@ -2179,9 +2179,7 @@ A line with a command starts with the command mnemonic. It is followed by a comm
 
 There is a one second delay between the execution of each command in the list. If a longer delay is desired, a special command `WAIT, <seconds>` can be added to the list.  
 
-A special command `WAIT` will pause the script.
-
-To recreate the set of commands run manually via the GUI, the script file would look like:
+To recreate the set of tutorial commands that were executed manually via the GUI (see `4.1.1`), the script file would look like:
 
 ```
 # Run this script to replicate the MathComponent tutorial
@@ -2196,7 +2194,7 @@ FACTOR2_PRM_SAVE # Save parameter
 PRM_SAVE_FILE # Save parameters to disk
 ```
 
-Save this file as `Ref/scripts/maht_scripts.txt", and then from the `Ref` directory, run:
+Save this file as `Ref/scripts/math_scripts.txt", and then from the `Ref` directory, run:
 
 ```
 ./scripts/run_ref_cmds.sh scripts/math_script.txt
@@ -2243,13 +2241,13 @@ R<Hours>:<Minutes>:<Seconds> <CMD_NAME> <ARG1>,<ARG2>,...<ARGN>
 
 Blank lines and any characters past the `;` token are ignored. 
 
-The `A` token denotes an absolute time to run the command on that line. If the time has not arrived, the sequencer will wait until the time arrives to execute the command. If the time has passed, the command will be run immediately. 
+The `A` token denotes an absolute time to run the command on that line. If the time has not arrived, the sequencer will wait until the time arrives to dispatch the command. If the time has passed, the command will dispatched immediately. 
 
-The `R` token denotes a relative time from the current time when the command will be executed. It is relative to the time the line in the script is processed rather than the start of the script, since there may have been other delays previous to the command. A value of `R00:00:00` means that the command will be run immediately.
+The `R` token specifies a relative time from the current time when the command will be dispatched. It is relative to the time the line in the sequence is processed rather than the start of the sequence. A value of `R00:00:00` means that the command will be dispactched immediately.
 
 The `<CMD_NAME>` and `<ARG>` fields are the command mnemonic and arguments.
 
-The sequence to execute the tutorial commans would be as follows.
+The sequence to execute the tutorial commands would be as follows:
 
 ```
 ; Run this sequence to replicate the MathComponent tutorial
@@ -2275,17 +2273,19 @@ The file can be compiled by executing the following from the `Ref` directory:
 The output should appear as follows:
 
 ```           
-BUILD_ROOT is: /mnt/c/data/source2/fprime
+BUILD_ROOT is: XXXXXX/fprime
 PYTHON_BASE: /usr
 Sequence is 191 bytes
 CRC: 3121812285 (0xBA13133D)
 ```
 
-The sequence compiler generates a file `Ref/sequences/math_sequence.bin` the is the binary version of the sequence.
+The sequence compiler generates a file `Ref/sequences/math_sequence.bin`, which is the binary form of the sequence.
 
 ### 4.2.3 Executing the Sequence
 
 Sequences are run by invoking the `CS_Run` command while the software is running. The F' `CmdSequencer` infrastructure component loads the sequence from the target's file system and executes it. Normally for a flight project there is a process of uplinking the file to the flight vehicle, but the `Ref` example can access the binary file directly.
+
+The sequence run command can be sent via the GUI:
 
 ![CS_RUN Command](img/Gnd30.jpg)
 
@@ -2293,7 +2293,7 @@ The `Log Events` panel will show the expected events from the tutorial example. 
 
 ![CS_RUN Events](img/Gnd31.jpg)
 
-Likewise, the `Channel Telemetry` tab shows the tutorial channel as well as channels updated by the sequencer:
+Likewise, the `Channel Telemetry` tab shows the tutorial channels as well as channels updated by the sequencer:
 
 ![CS_RUN Channels](img/Gnd32.jpg)
 
