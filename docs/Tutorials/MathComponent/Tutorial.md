@@ -2283,9 +2283,22 @@ CRC: 3121812285 (0xBA13133D)
 
 The sequence compiler generates a file `Ref/sequences/math_sequence.bin` the is the binary version of the sequence.
 
-### Execute the Sequence
+### 4.2.3 Executing the Sequence
 
 Sequences are run by invoking the `CS_Run` command while the software is running. The F' `CmdSequencer` infrastructure component loads the sequence from the target's file system and executes it. Normally for a flight project there is a process of uplinking the file to the flight vehicle, but the `Ref` example can access the binary file directly.
 
+![CS_RUN Command](img/Gnd30.jpg)
 
+The `Log Events` panel will show the expected events from the tutorial example. In addition, it shows the events sent by the sequencer as it executes each command in the sequence:
 
+![CS_RUN Events](img/Gnd31.jpg)
+
+Likewise, the `Channel Telemetry` tab shows the tutorial channel as well as channels updated by the sequencer:
+
+![CS_RUN Channels](img/Gnd32.jpg)
+
+# Conclusion
+
+This tutorial is an attempt to communicate the concepts and implementation. If there are aspects that are confusing, feel free to submit GitHub issues asking for clarification or to report errors:
+
+https://github.com/nasa/fprime/issues
