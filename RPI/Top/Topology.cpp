@@ -1,7 +1,6 @@
 #include <Components.hpp>
 
 #include <Fw/Types/Assert.hpp>
-#include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Os/File.hpp>
@@ -201,7 +200,7 @@ void constructApp(int port_number, char* hostname) {
         return;
     }
 
-    if (not ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+    if (not ledDrv.open(21,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
         return;
     }
 
