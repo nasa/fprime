@@ -1,7 +1,7 @@
 '''
 @brief Command Template class
 
-Instances of this class describe a specific command type. 
+Instances of this class describe a specific command type.
 
 @data Created July 2, 2018
 @author Josef Biberstein
@@ -16,8 +16,7 @@ import data_template
 class CommandTemplate(data_template.DataTemplate):
 
     def __init__(self, component, mnemonic, opcode, description, arguments):
-        ## Make sure correct types are passed
-
+        # Make sure correct types are passed
         if not type(component) == type(str()):
             raise TypeMismatchException(type(str()),type(component))
 

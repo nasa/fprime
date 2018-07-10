@@ -11,14 +11,10 @@
 import python_loader
 from templates import event_template
 
-# TODO remove, debugging
-from pprint import pprint
-
 class EventPyLoader(python_loader.PythonLoader):
     '''Class to load python based event dictionaries'''
 
-    # Field names used when constructing the event dicts. Placed here for
-    # convienient editing
+    # Field names in the python module file dictionaries
     ID_FIELD =       "ID"
     NAME_FIELD =     "NAME"
     SEVERITY_FIELD = "SEVERITY"
@@ -39,7 +35,7 @@ class EventPyLoader(python_loader.PythonLoader):
 
 
     # TODO does this strange interface where you actually only call functions
-    # defined in the loader nad not this very convinient looking function
+    # defined in the python loader and not this very convinient looking function
     # make things more confusing than they need to be?
     def construct_dict(self, path):
         '''
