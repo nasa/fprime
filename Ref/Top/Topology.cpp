@@ -1,8 +1,5 @@
 #include <Components.hpp>
-
-
 #include <Fw/Types/Assert.hpp>
-#include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
@@ -221,8 +218,6 @@ void dumpobj(const char* objName) {
 #endif
 
 void constructApp(int port_number, char* hostname) {
-
-    localTargetInit();
 
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
