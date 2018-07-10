@@ -24,7 +24,7 @@ from utils import Logger
 from utils import PortFinder
 from utils import ConfigManager
 
-import controllers.exceptions
+
 import traceback
 
 from distributor import distributor
@@ -152,30 +152,26 @@ def main(argv=None):
 	# process options
 	args = parser.parse_args(argv)
 
-        app = wx.App(False)
-	frame = GDSMainFrameImpl.MainFrameImpl(None)
-	frame.Show(True)
-
-
-
-
 
 	distrib = distributor.Distributor()
 	cli = client_socket.ThreadedTCPSocketClient()
 
+	# TODO remove cli from args
+	app = wx.App(False)
+	frame = GDSMainFrameImpl.MainFrameImpl(None, cli)
+	frame.Show(True)
+
 	ldr = event_py_loader.EventPyLoader()
-	id_dict, _ = ldr.construct_dict('/Users/rpaetz/Documents/Project/fprime-sw/Gse/generated/Ref/events')
+	id_dict, _ = ldr.construct_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/events')
 	dec = event_decoder.EventDecoder(id_dict)
-        dec.register(frame.event_pnl)
-        distrib.register("FW_PACKET_LOG", dec)
+	dec.register(frame.event_pnl)
+	distrib.register("FW_PACKET_LOG", dec)
 
 	cli.register_distributor(distrib)
 	sleep(5)
 	cli.connect(args[0].addr, args[0].port)
 	sleep(1)
 	cli.send("Register GUI\n")
-
-
 
 	app.MainLoop()
 	cli.disconnect()

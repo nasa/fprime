@@ -47,9 +47,6 @@ class EventDecoder(decoder.Decoder):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
-        # TODO remove
-        print("event_decoder data_callback method (data=%s)"%list(data))
-
 
         self.send_to_all(self.decode_api(data))
 

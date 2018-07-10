@@ -76,7 +76,6 @@ class LogEvents ( wx.Panel ):
 		self.Layout()
 		
 		# Connect Events
-		self.EventLogScrollCheckBox.Bind( wx.EVT_CHECKBOX, self.onEventLogScrollCheckBoxClick )
 		self.EventLogClearButton.Bind( wx.EVT_BUTTON, self.onEventLogClearButtonClick )
 		self.EventLogApplyFilterButton.Bind( wx.EVT_BUTTON, self.onEventLogApplyFilterButtonClick )
 		self.EventLogResetFilterButton.Bind( wx.EVT_BUTTON, self.onEventLogResetFilterButtonClick )
@@ -86,9 +85,7 @@ class LogEvents ( wx.Panel ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
-	def onEventLogScrollCheckBoxClick( self, event ):
-		event.Skip()
-	
+
 	def onEventLogClearButtonClick( self, event ):
 		event.Skip()
 	

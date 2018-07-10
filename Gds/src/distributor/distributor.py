@@ -40,8 +40,6 @@ class Distributor(object):
 		Arguments:
 			data {binary} -- the data recved from the socket client
 		"""
-                # TODO remove
-                print("distributer on_recv method, data=%s"%list(data))
 
 
 		# NOTE make these selectable with a configuration later
@@ -66,8 +64,6 @@ class Distributor(object):
 		#print("Data to pass through: %s")%binascii.hexlify(data_pass_thru)
 		data_desc_key = data_desc_type.DataDescType(data_desc.val).name
 
-                # TODO remove
-                print("distributor: key=%s; decoders=%s"%(data_desc_key, self.__decoders[data_desc_key]))
 
 
 		for d in self.__decoders[data_desc_key]:

@@ -92,7 +92,6 @@ class Decoder(object):
             #TODO remove
             print("Sending %s to %s"%(parsed_data, obj))
 
-
             obj.data_callback(parsed_data)
 
 

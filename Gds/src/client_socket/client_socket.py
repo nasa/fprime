@@ -20,9 +20,6 @@ class ThreadedTCPSocketClient(object):
 		self.__data_recv_thread = threading.Thread(target=self.recv)
 		self.stop_event = threading.Event()
 
-                # TODO remove, debugging
-                self.send_cmd = False
-
 	def register_distributor(self, distributor):
 		self.__distributors.append(distributor)
 
@@ -67,14 +64,6 @@ class ThreadedTCPSocketClient(object):
 					d.on_recv(chunk)
 				print(binascii.hexlify(chunk))
 
-                        # TODO remove, debugging
-                        if (not self.send_cmd):
-                                self.send_cmd = True
-                                op_code = u32_type.U32Type(0x79)
-                                cmd_data = op_code.serialize()
-                                desc = u32_type.U32Type(0x5A5A5A5A)
-                                desc_type = u32_type.U32Type(0)
-                                data_len = u32_type.U32Type(len(cmd_data) + desc_type.getSize())
-                                self.send("A5A5 FSW " + desc.serialize() + data_len.serialize() + desc_type.serialize() + cmd_data)
+                                
 
 

@@ -11,10 +11,12 @@ import GDSLogEventPanelImpl
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 	
-	def __init__( self, parent ):
+	# TODO remove client from args
+	def __init__( self, parent, client):
 		GDSMainFrameGUI.MainFrame.__init__ ( self, parent)
 		
-		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook)
+		# TODO remove client from args
+		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, client)
 		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
 		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook)
