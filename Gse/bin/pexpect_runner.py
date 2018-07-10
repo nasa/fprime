@@ -32,8 +32,11 @@ def process_poller():
         try:
             child.expect('\r\n',timeout=1)
             if exitThread:
-                child.kill(signal.SIGINT)
-                child.wait()
+                try:
+                   child.kill(signal.SIGINT)
+                   child.wait()
+                except:
+                   print("KILL")
                 break
             if len(child.before):
                 text_queue.put(child.before)
@@ -44,8 +47,11 @@ def process_poller():
             break
         except pexpect.TIMEOUT:
             if exitThread:
-                child.kill(signal.SIGINT)
-                child.wait()
+                try:
+                   child.kill(signal.SIGINT)
+                   child.wait()
+                except:
+                   print("KILL")
                 break
             if len(child.before):
                 text_queue.put(child.before)

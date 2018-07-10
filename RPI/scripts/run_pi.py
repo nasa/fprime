@@ -75,7 +75,7 @@ def main(argv=None):
     
     # run as root
     if not nobin:
-        REF_args = ["sudo",python_bin, "%s/Gse/bin/pexpect_runner.py"%build_root,"RPI.log","RPI Application",pi_bin,"-p","%d"%used_port,"-a",addr]
+        REF_args = [python_bin, "%s/Gse/bin/pexpect_runner.py"%build_root,"RPI.log","RPI Application","sudo",pi_bin,"-p","%d"%used_port,"-a",addr]
         REF = subprocess.Popen(REF_args)
     
     GUI.wait()
