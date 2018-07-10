@@ -40,6 +40,9 @@ class CmdData(sys_data.SysData):
         else:
             self.time = time_type.TimeType(time_type.TimeBase["TB_DONT_CARE"])
 
+    def get_template(self):
+        return self.template
+
     def get_args(self):
         return self.command_args
 

@@ -38,12 +38,15 @@ Serialized command format:
 '''
 
 import encoder
-from data_types import cmd_data
-from models.serialize import u32_type
-
+from data_types.cmd_data import CmdData
+from models.serialize.u32_type import u32Type
+from utils.data_desc_type import DataDescType
 
 class CmdEncoder(encoder.Encoder):
     '''Encoder class for command data'''
+
+    # Header for binary data output
+    HEADER = "A5A5 "
 
     def __init__(self, cmd_dict):
         '''
@@ -60,4 +63,45 @@ class CmdEncoder(encoder.Encoder):
 
         self.__dict = cmd_dict
 
-    def data_callback
+    def data_callback(self, data):
+        '''
+        Function called to pass data through the encoder.
+
+        Objects that the encoder is registered to will call this function to
+        pass data to the encoder.
+
+        Args:
+            data: CmdData object to encode into binary data.
+        '''
+        self.send_to_all(self.encode_api(data))
+
+    def encode_api(self, data):
+        '''
+        Encodes the given CmdData object as binary data and returns the result.
+
+        Args:
+            data: CmdData object to encode
+
+        Returns:
+            Encoded version of the data argument as binary data
+        '''
+        # TODO we should be able to handle multiple destinations, not just FSW
+        cmd_temp = data.get_template()
+
+        destination = "FSW "
+
+        descriptor = U32Type(DataDescType["FW_PACKET_COMMAND"].val).serialize()
+
+        op_code = U32Type(cmd_temp.get_op_code()).serialize()
+
+        arg_data = ""
+        for arg in data.get_args:
+            arg_data += arg.serialize()
+
+        length = U32Type(len(descriptor) + len(op_code) + len(arg_data)).serialize()
+
+        binary_data = (self.HEADER + destination + length + descriptor +
+                       op_code + arg_data)
+
+        return binary_data
+
