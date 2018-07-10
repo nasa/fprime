@@ -10,6 +10,7 @@ Instances of this class describe a specific command type.
 '''
 from enum import Enum
 import data_template
+from models.serialize.type_base import BaseType
 
 
 

@@ -3,6 +3,8 @@ import GDSCommandPanelGUI
 import GDSArgItemTextCtl
 import GDSArgItemComboBox
 from models.serialize import u32_type
+from models.serialize import bool_type, enum_type
+
 
 ###########################################################################
 ## Class CommandsImpl
@@ -11,21 +13,51 @@ from models.serialize import u32_type
 class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 	'''TODO remove client debugging''' 
-	def __init__( self, parent, client ):
+	def __init__( self, parent, client, cname_dict ):
 		GDSCommandPanelGUI.Commands.__init__ ( self, parent)
 
-		self.CmdArgsScrolledWindow.GetSizer().Add(GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), "hi"))
-		self.CmdArgsScrolledWindow.GetSizer().Add(GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), "hi"))
-		self.CmdArgsScrolledWindow.GetSizer().Add(GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], "combo breaker"))
-		self.CmdArgsScrolledWindow.GetSizer().Add(GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], "combo breaker"))
 		self.client = client
+		self.cname_dict = cname_dict
+		self.CmdsComboBox.AppendItems(sorted(self.cname_dict.keys()))
+
+		self.argname2arginput = dict()
 	def __del__( self ):
 		pass
 
 
 	# Override these handlers to implement functionality for GUI elements
 	def onCmdsComboBoxSelect( self, event ):
-		event.Skip()
+		self.argname2arginput = dict()
+		self.CmdArgsScrolledWindow.GetSizer().Clear(True)
+
+		s = self.CmdsComboBox.GetStringSelection()
+		temp = self.cname_dict[s]
+		width_total = 0
+		for (arg_name, _, arg_type) in temp.arguments:
+			if type(arg_type) == bool_type.BoolType:
+				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], arg_name)
+				self.argname2arginput[arg_name] = k
+				self.CmdArgsScrolledWindow.GetSizer().Add(k)
+				w, _ = k.GetSizer().GetMinSize()
+				width_total += w
+			elif type(arg_type) == enum_type.EnumType:
+				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, arg_type.keys(), arg_name)
+				self.argname2arginput[arg_name] = k
+				self.CmdArgsScrolledWindow.GetSizer().Add(k)
+				w, _ = k.GetSizer().GetMinSize()
+				width_total += w
+			else:
+				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), arg_name)
+				self.argname2arginput[arg_name] = k
+				self.CmdArgsScrolledWindow.GetSizer().Add(k)
+				w, _ = k.GetSizer().GetMinSize()
+				width_total += w
+		
+		
+		self.CmdArgsScrolledWindow.Layout()
+		self.CmdArgsScrolledWindow.SetVirtualSize((width_total, -1))
+		#self.CmdArgsScrolledWindow.GetSizer().Fit(self.CmdArgsScrolledWindow)
+		self.CmdArgsScrolledWindow.Refresh()
 
 	def onCmdSendButtonClick( self, event ):
 		# TODO remove debugging 

@@ -29,7 +29,7 @@ class CmdPyLoader(python_loader.PythonLoader):
         Returns:
             An initialized loader object
         '''
-        super(EventPyLoader, self).__init__()
+        super(CmdPyLoader, self).__init__()
 
 
     def construct_dict(self, path):
@@ -63,7 +63,7 @@ class CmdPyLoader(python_loader.PythonLoader):
 
         for cmd_dict in module_dicts:
             # Create a cmd template object
-            cmd_temp = cmd_tempalte.CmdTemplate(cmd_dict[self.COMPONENT_FIELD],
+            cmd_temp = cmd_template.CommandTemplate(cmd_dict[self.COMPONENT_FIELD],
                                                 cmd_dict[self.MNEMONIC_FIELD],
                                                 cmd_dict[self.OP_CODE_FIELD],
                                                 cmd_dict[self.DESC_FIELD],

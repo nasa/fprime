@@ -61,7 +61,7 @@ class DictLoader(object):
         if (path in self.__saved_dicts):
             (id_dict, name_dict) = self.__saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dicts(path)
+            (id_dict, name_dict) = self.construct_dict(path)
             self.__saved_dicts[path] = (id_dict, name_dict)
 
         return id_dict
@@ -86,7 +86,7 @@ class DictLoader(object):
         if (path in self.__saved_dicts):
             (id_dict, name_dict) = self.__saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dicts(path)
+            (id_dict, name_dict) = self.construct_dict(path)
             self.__saved_dicts[path] = (id_dict, name_dict)
 
         return name_dict

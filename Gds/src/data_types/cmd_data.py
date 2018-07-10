@@ -12,6 +12,7 @@ argument values.
 
 import sys_data
 from enum import Enum
+from copy import deepcopy
 
 
 class CmdData(sys_data.SysData):
@@ -35,6 +36,8 @@ class CmdData(sys_data.SysData):
         self.template = cmd_template
         self.args = cmd_args
 
+        self.arg_types = [deepcopy(c) for c in self.template.arguments]
+
         if (cmd_time):
             self.time = cmd_time
         else:
@@ -42,6 +45,13 @@ class CmdData(sys_data.SysData):
 
     def get_args(self):
         return self.command_args
+
+    def serialize_args(self):
+        data = b''
+        for val, typ in zip(self.args, self.arg_types):
+            typ.val(val)
+            data += typ.serialize()
+        return data
 
     def __str__(self):
         arg_str = ''

@@ -31,6 +31,9 @@ from distributor import distributor
 from client_socket import client_socket
 from decoders import event_decoder
 from loaders import event_py_loader
+from loaders import cmd_py_loader
+
+from pprint import pprint
 
 import wx
 from gui import GDSMainFrameImpl
@@ -151,19 +154,25 @@ def main(argv=None):
 
 	# process options
 	args = parser.parse_args(argv)
-
+	
+	app = wx.App(False)
 
 	distrib = distributor.Distributor()
 	cli = client_socket.ThreadedTCPSocketClient()
 
-	# TODO remove cli from args
-	app = wx.App(False)
-	frame = GDSMainFrameImpl.MainFrameImpl(None, cli)
-	frame.Show(True)
 
-	ldr = event_py_loader.EventPyLoader()
-	id_dict, _ = ldr.construct_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/events')
-	dec = event_decoder.EventDecoder(id_dict)
+	eldr = event_py_loader.EventPyLoader()
+	eid_dict = eldr.get_id_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/events')
+
+	cldr = cmd_py_loader.CmdPyLoader()
+	cname_dict = cldr.get_name_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/commands')
+
+	pprint(cname_dict)
+
+	# TODO remove cli from args
+	frame = GDSMainFrameImpl.MainFrameImpl(None, cli, cname_dict)
+
+	dec = event_decoder.EventDecoder(eid_dict)
 	dec.register(frame.event_pnl)
 	distrib.register("FW_PACKET_LOG", dec)
 
@@ -172,6 +181,10 @@ def main(argv=None):
 	cli.connect(args[0].addr, args[0].port)
 	sleep(1)
 	cli.send("Register GUI\n")
+
+
+
+	frame.Show(True)
 
 	app.MainLoop()
 	cli.disconnect()
