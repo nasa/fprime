@@ -105,22 +105,29 @@ class EventDecoder(decoder.Decoder):
                       arg_data goes to.
 
         Returns:
-            Parsed arguments in a tuple (order the same as they were parsed in)
+            Parsed arguments in a tuple (order the same as they were parsed in).
+            Each element in the tuple is an instance of the same class as the
+            corresponding arg_type object in the template parameter.
         '''
-        arg_vals = []
+        arg_results = []
         args = template.get_args()
 
         # For each argument, use the arg_obj deserialize method to get the value
         for arg in args:
-            (arg_name, arg_desc, arg_obj) = arg
+            (arg_name, arg_desc, template_arg_obj) = arg
+
+            # Create a new instance of the argument's type object so we don't
+            # use the template's object for deserialization and storage of the
+            # parsed argument value.
+            arg_obj = template_arg_obj.__class__()
 
             try:
                 arg_obj.deserialize(arg_data, offset)
-                arg_vals.append(arg_obj.val)
+                arg_results.append(arg_obj)
             except TypeException as e:
                 print("Event decode exception %s"%(e.getMsg()))
                 traceback.print_exc()
-                arg_vals.append("ERR")
+                arg_results.append)
 
             offset = offset + arg_obj.getSize()
 
