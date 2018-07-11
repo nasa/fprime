@@ -17,6 +17,18 @@ from models.serialize.type_base import BaseType
 class CommandTemplate(data_template.DataTemplate):
 
     def __init__(self, component, mnemonic, opcode, description, arguments):
+        '''
+        Constructor
+
+        Args:
+            component: The name of the component that produces the cmd (string)
+            mnemonic: The mnemonic used to refer to the cmd (string)
+            opcode: The cmd's opcode (integer)
+            description: Description of the cmd (string)
+            arguments: List of arguments in tuple form. Each tuple should be:
+                       (arg name, arg description, arg obj). Where arg obj is an
+                       object of a type derived from the class Base Type
+        '''
         # Make sure correct types are passed
         if not type(component) == type(str()):
             raise TypeMismatchException(type(str()),type(component))
