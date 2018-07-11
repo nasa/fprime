@@ -8,7 +8,7 @@
 '''
 
 import sys_data
-from serialize import time_type
+from models.serialize import time_type
 
 class ChData(sys_data.SysData):
     '''
@@ -54,7 +54,7 @@ class ChData(sys_data.SysData):
         time_str_nice = self.time.to_readable()
         time_str = str(self.time)
         ch_name = self.template.get_name()
-        fmt_str = self.__dict_entry.get_format_str()
+        fmt_str = self.template.get_format_str()
         if (fmt_str):
             ch_val = fmt_str%(self.val_obj.val)
         else:

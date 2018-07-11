@@ -30,8 +30,10 @@ import traceback
 from distributor import distributor
 from client_socket import client_socket
 from decoders import event_decoder
+from decoders import ch_decoder
 from loaders import event_py_loader
 from loaders import cmd_py_loader
+from loaders import ch_py_loader
 
 from pprint import pprint
 
@@ -153,8 +155,8 @@ def main(argv=None):
 						default=True)
 
 	# process options
-	args = parser.parse_args(argv)
-	
+	(opts, args) = parser.parse_args(argv)
+
 	app = wx.App(False)
 
 	distrib = distributor.Distributor()
@@ -162,10 +164,13 @@ def main(argv=None):
 
 
 	eldr = event_py_loader.EventPyLoader()
-	eid_dict = eldr.get_id_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/events')
+	eid_dict = eldr.get_id_dict(opts.generated_path + os.sep + "events")
 
 	cldr = cmd_py_loader.CmdPyLoader()
-	cname_dict = cldr.get_name_dict('/home/jbiberst/Documents/fprime-sw/Gse/generated/Ref/commands')
+	cname_dict = cldr.get_name_dict(opts.generated_path + os.sep + "commands")
+
+        ch_ldr = ch_py_loader.ChPyLoader()
+        ch_dict = ch_ldr.get_id_dict(opts.generated_path + os.sep + "channels")
 
 	pprint(cname_dict)
 
@@ -176,9 +181,13 @@ def main(argv=None):
 	dec.register(frame.event_pnl)
 	distrib.register("FW_PACKET_LOG", dec)
 
+        ch_dec = ch_decoder.ChDecoder(ch_dict)
+        ch_dec.register(frame.telem_pnl)
+        distrib.register("FW_PACKET_TELEM", ch_dec)
+
 	cli.register_distributor(distrib)
 	sleep(5)
-	cli.connect(args[0].addr, args[0].port)
+	cli.connect(opts.addr, opts.port)
 	sleep(1)
 	cli.send("Register GUI\n")
 

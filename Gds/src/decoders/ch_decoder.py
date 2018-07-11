@@ -69,13 +69,13 @@ class ChDecoder(Decoder):
         ptr = 0
 
         # Decode Ch ID here...
-        id_obj = u32_type.u32Type()
+        id_obj = U32Type()
         id_obj.deserialize(data, ptr)
         ptr += id_obj.getSize()
         ch_id = id_obj.val
 
         # Decode time...
-        ch_time = time_type.TimeType()
+        ch_time = TimeType()
         ch_time.deserialize(data, ptr)
         ptr += ch_time.getSize()
 
@@ -83,9 +83,9 @@ class ChDecoder(Decoder):
             # Retrieve the template instance for this channel
             ch_temp = self.__dict[ch_id]
 
-            (size, val_obj) = self.decode_ch_val(data, ptr, ch_temp)
+            val_obj = self.decode_ch_val(data, ptr, ch_temp)
 
-            return ch_data.ChData(val, ch_time, ch_temp)
+            return ChData(val_obj, ch_time, ch_temp)
         else:
             print("Channel decode error: id %d not in dictionary"%ch_id)
             return None
@@ -101,8 +101,10 @@ class ChDecoder(Decoder):
             template: Channel Template object for the channel
 
         Returns:
-            A tuple of the form (len, val) where len is the size in bytes of
-            the channel's value and val is the channel's value.
+            The channel's value as an instance of a class derived from
+            the BaseType class. The val_data has been deserialized using this
+            object, and so the channel value can be retrieved from the obj's
+            val field.
         '''
         # This line creates a new object of the same type as the template's
         # type_obj. This allows us to use the new object to deserialize and
@@ -114,7 +116,7 @@ class ChDecoder(Decoder):
 
         val_obj.deserialize(val_data, offset)
 
-        return (type_obj.getSize(), val_obj)
+        return val_obj
 
 
 if __name__ == "__main__":

@@ -12,10 +12,10 @@ reading)
 
 import data_template
 
-from serializable.base_type import *
+from models.serialize.type_base import *
 
 
-class Channel(data_template.DataTemplate):
+class ChTemplate(data_template.DataTemplate):
     '''Class for channel templates that describe specific telemetry channels'''
 
     def __init__(self, ch_id, ch_name, comp_name, ch_desc, ch_type_obj,
@@ -82,7 +82,7 @@ class Channel(data_template.DataTemplate):
     def get_type_obj(self):
         return self.ch_type_obj
 
-   def get_format_str(self):
+    def get_format_str(self):
         return self.format_str
 
     def get_low_red(self):
