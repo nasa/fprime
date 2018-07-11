@@ -1,7 +1,13 @@
 '''
-Created on Apr. 27, 2015
+@brief Channel Template class
 
-@author: reder
+Instances of this class describe a specific telemetry channel (but not a channel
+reading)
+
+@date Created July 11, 2018
+@author R. Joseph Paetz
+
+@bug No known bugs
 '''
 
 import data_template
@@ -10,14 +16,11 @@ from serializable.base_type import *
 
 
 class Channel(data_template.DataTemplate):
-    '''
-    Channel class is for deserialize channel telemetry value.
-    Really this is a container since the type will have it's own deserialize
-    implementation.
-    '''
+    '''Class for channel templates that describe specific telemetry channels'''
+
     def __init__(self, ch_id, ch_name, comp_name, ch_desc, ch_type_obj,
-                 ch_format_str, low_red, low_orange, low_yellow, high_yellow,
-                 high_orange, high_red):
+                 ch_format_str, low_red=None, low_orange=None, low_yellow=None,
+                 high_yellow=None, high_orange=None, high_red=None):
         '''
         Constructor
 
@@ -47,8 +50,8 @@ class Channel(data_template.DataTemplate):
         if not type(ch_desc) == type(str()):
             raise TypeMismatchException(type(str()), type(ch_desc))
 
-        if not issubclass(type(ch_type), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()),type(ch_type))
+        if not issubclass(type(ch_type_obj), type(BaseType())):
+            raise TypeMismatchException(type(BaseType()),type(ch_type_obj))
 
         # Initialize event internal variables
         self.id          = ch_id
@@ -64,6 +67,11 @@ class Channel(data_template.DataTemplate):
         self.high_orange = high_orange
         self.high_red    = high_red
 
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
 
     def get_comp_name(self):
         return self.comp_name
@@ -74,8 +82,8 @@ class Channel(data_template.DataTemplate):
     def get_type_obj(self):
         return self.ch_type_obj
 
-   def get_format_string(self):
-        return self.format_string
+   def get_format_str(self):
+        return self.format_str
 
     def get_low_red(self):
         return self.low_red
