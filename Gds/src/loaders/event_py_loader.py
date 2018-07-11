@@ -56,8 +56,8 @@ class EventPyLoader(python_loader.PythonLoader):
 
         Returns:
             A tuple with two event dictionaries (python type dict):
-            (id_dict, name_dict). They should have keys of the id and name
-            fields respectively and the values for both should be event_template
+            (id_dict, name_dict). The keys should be the events' id and name
+            fields respectively and the values should be EventTemplate
             objects.
         '''
         # TODO remove

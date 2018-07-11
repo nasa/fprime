@@ -11,16 +11,19 @@ Example data that would be sent to a decoder that parses channels:
     | Lenghth (4 bytes) | Time Tag (11 bytes) | Data....
     +-------------------+---------------------+------------ - - -
 
-@date Created July 2, 2018
+@date Created July 11, 2018
 @author R. Joseph Paetz
 
 @bug No known bugs
 '''
 
-import decoder
+from decoder import Decoder
+from data_types.ch_data import ChData
+from models.serialize.u32_type import U32Type
+from models.serialize.time_type import TimeType
+from models.serialize.type_exceptions import *
 
-
-class ChDecoder(decoder.Decoder):
+class ChDecoder(Decoder):
     '''Decoder class for Channel data'''
 
     def __init__(self, ch_dict):
@@ -57,7 +60,7 @@ class ChDecoder(decoder.Decoder):
         code as is used to parse data passed to the data_callback function.
 
         Args:
-            data: Binary data to decode
+            data: Binary telemetry channel data to decode
 
         Returns:
             Parsed version of the channel telemetry data in the form of a
@@ -80,7 +83,7 @@ class ChDecoder(decoder.Decoder):
             # Retrieve the template instance for this channel
             ch_temp = self.__dict[ch_id]
 
-            (size, val) = self.decode_ch_val(data, ptr, ch_temp)
+            (size, val_obj) = self.decode_ch_val(data, ptr, ch_temp)
 
             return ch_data.ChData(val, ch_time, ch_temp)
         else:
@@ -101,10 +104,17 @@ class ChDecoder(decoder.Decoder):
             A tuple of the form (len, val) where len is the size in bytes of
             the channel's value and val is the channel's value.
         '''
-        type_obj = template.get_type_obj()
-        type_obj.deserialize(val_data, offset)
+        # This line creates a new object of the same type as the template's
+        # type_obj. This allows us to use the new object to deserialize and
+        # store the data value. If we did not do this, the template's object
+        # would be used to deserialize multiple times and channel objects
+        # referencing the template's type object would seem to have their value
+        # changed randomly
+        val_obj = template.get_type_obj().__class__()
 
-        return (type_obj.getSize(), type_obj.val)
+        val_obj.deserialize(val_data, offset)
+
+        return (type_obj.getSize(), val_obj)
 
 
 if __name__ == "__main__":
