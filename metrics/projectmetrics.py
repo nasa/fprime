@@ -69,7 +69,7 @@ class ProjectMetrics:
             config_opts.git_api_key = git_api_key
         if zen_api_key:
             config_opts.zen_api_key = zen_api_key
-        self._ghe_conn = gheconnector.GitHubConnector(config_opts)
+        self._ghe_conn = gheconnector.GitHubConnector(config_options=config_opts)
         self.pv = planvalidator.PlanValidator(config_opts.metrics_ev_plan_files)
 
         self.metrics = self
@@ -90,7 +90,7 @@ class ProjectMetrics:
         self.comp_hist = []
         self.comp_totals = {}
 
-        self.task_list = []
+        self.plan_task_list = []
         self.plan_dict = {}
 
         self.task_gates = {}
@@ -122,14 +122,15 @@ class ProjectMetrics:
         for plan_index, plan_file in enumerate(config_opts.metrics_ev_plan_files):
             # if defined local file, get history from file
             plan_key = self.pv.generate_plan_file_key(plan_file)
-            self.plan_totals[plan_key] = self.generate_plan_metrics(self.pv.plans[plan_key], plan_index == 0)
+            self.plan_totals[plan_key] = self.generate_plan_metrics(self.pv.plans[plan_key][self.pv.TASK], plan_index == 0)
             if plan_index == 0:
-                self.plan_dict = self.pv.plans[plan_key]
-                self.task_list = self.pv.tasks[plan_key]
+                self.plan_dict = self.pv.plans[plan_key][self.pv.TASK]
+                self.plan_task_list = self.pv.plans[plan_key][self.pv.TASK_LIST]
                 self.task_gates = {task:
-                                   {gate: self.pv.plans[plan_key][task][self.pv.GATE][gate][self.pv.EV]
-                                    for gate in self.pv.plans[plan_key][task][self.pv.GATE].keys()}
-                                   for task in self.pv.plans[plan_key].keys()}
+                                   {gate: self.plan_dict[task][gate][self.pv.EV]
+                                    for gate in self.plan_dict[task][self.pv.GATE_LIST]}
+                                   for task in self.plan_task_list}
+                pass
 
     def generate_plan_metrics(self, plan_dict, primary):
         """
@@ -140,13 +141,13 @@ class ProjectMetrics:
         """
         plan_deltas = {}
         today = datetime.date.today()
-        for task_key in plan_dict:
+        for task in plan_dict:
             if primary:
-                plan_dict[task_key][self.XV] = 0.
-                plan_dict[task_key][self.CV] = 0.
-            for gate in plan_dict[task_key][self.pv.GATE]:
-                date = plan_dict[task_key][self.pv.GATE][gate][self.pv.END]
-                contribution = plan_dict[task_key][self.pv.GATE][gate][self.pv.EV]
+                plan_dict[task][self.XV] = 0.
+                plan_dict[task][self.CV] = 0.
+            for gate in plan_dict[task][self.pv.GATE_LIST]:
+                date = plan_dict[task][gate][self.pv.END]
+                contribution = plan_dict[task][gate][self.pv.EV]
                 if date not in plan_deltas:
                     plan_deltas[date] = contribution
                 else:
@@ -154,7 +155,7 @@ class ProjectMetrics:
                 if date + datetime.timedelta(-1) not in plan_deltas:
                     plan_deltas[date + datetime.timedelta(-1)] = 0.
                 if primary and today >= date:
-                    plan_dict[task_key][self.XV] += contribution
+                    plan_dict[task][self.XV] += contribution
         plan_trend = {self.DATE: sorted(plan_deltas.keys())}
         plan_trend[self.pv.EV] = [plan_deltas[day] for day in plan_trend[self.DATE]]
 
@@ -164,7 +165,7 @@ class ProjectMetrics:
             plan_trend[self.EV][index] += plan_trend[self.EV][index - 1]
         return plan_trend
 
-    def _retrieve_git_directory(self, target_dir, repo_name, ref='master', traverse_submodules=False):
+    def _retrieve_git_directory(self, repo_name, target_dir, ref='master', traverse_submodules=False):
         """ Retrieves a json representation of the indicated directory from the indicated git repo, from an optionally
         not master ref
 
@@ -173,13 +174,9 @@ class ProjectMetrics:
         :param ref: optional. defaults to 'master'.
         :return: GitHub response as list of content json blobs
         """
-        c, h, s = self._ghe_conn.get_repo_contents(repo_name, ref, target_dir, traverse_submodules)
-        if s != 200:
-            raise IOError("Unsuccessful retrieval of \'{}/{} on branch {}. Error code: {}. Content: {}"
-                          .format(repo_name, target_dir, ref, str(s), str(c)))
-        return c
+        return self._ghe_conn.get_contents(repo_name, path=target_dir, ref=ref, traverse_submodules=traverse_submodules)
 
-    def _retrieve_git_file(self, target_file, repo_name, ref='master', target_dir=None, alt_target_pattern=None,
+    def _retrieve_git_file(self, repo_name, target_file, ref='master', target_dir=None, alt_target_pattern=None,
                            traverse_submodules=False):
         """Retrieves a file's raw content from the indicated git repo, from an optionally not master ref. If the
         optional alt_target_pattern is specified, will use a file that matches the pattern if the primary specified
@@ -199,14 +196,14 @@ class ProjectMetrics:
             if target_file.rfind('/') <= -1:
                 target_dir = ''
             else:
-                target_dir = target_file[:target_file.rfind('/') + 1]
-        if target_dir and not target_dir.endswith('/'):
-            target_dir = target_dir + '/'
+                target_dir = target_file[:target_file.rfind('/')]
+        # if target_dir and not target_dir.endswith('/'):
+        #     target_dir = target_dir + '/'
         if not target_file.startswith(target_dir):
-            target_file = target_dir + target_file
+            target_file = target_dir + '/' + target_file
 
         # make sure the directory exists, find an appropriate file target_path for retrieval
-        contents = self._retrieve_git_directory(target_dir, repo_name, ref, traverse_submodules)
+        contents = self._retrieve_git_directory(repo_name, target_dir, ref, traverse_submodules)
         target_path = ""
         for item in contents:
             current_path = item.get("path")
@@ -225,12 +222,8 @@ class ProjectMetrics:
             print("INFO: Found alternate file for '{}' at '{}'".format(target_file, target_path))
 
         # grab the file we've decided on
-        c, h, s = self._ghe_conn.get_raw_file(repo_name, ref, target_path, traverse_submodules)
-        if s == 200:
-            return c.split("\n")
-        else:
-            raise IOError("Unsuccessful retrieval of file '{}/{}' on branch {}. Error code: {}. Content: {}"
-                          .format(repo_name, target_file, ref, str(s), str(c)))
+        body = self._ghe_conn.get_raw_file(repo_name, path=target_path, ref=ref, traverse_submodules=traverse_submodules)
+        return body.replace("\r", "").split("\n")
 
     @staticmethod
     def generate_make_target_dict(lines):
@@ -310,9 +303,11 @@ class ProjectMetrics:
         lines = ""
         for repo_name in config_opts.git_repo_list:
             try:
-                lines = self._retrieve_git_file(config_opts.metrics_make_location, repo_name, config_opts.git_branch,
+                lines = self._retrieve_git_file(repo_name, config_opts.metrics_make_location, config_opts.git_branch,
                                                 traverse_submodules=True)
                 # if successful, assume other repos aren't needed and break
+                print("INFO: Retrieved {}/{} on {}"
+                      .format(repo_name, config_opts.metrics_make_location, config_opts.git_branch))
                 break
             except IOError as err:
                 print("WARN: " + err.message)
@@ -345,7 +340,10 @@ class ProjectMetrics:
         # if we didn't just import data, iterate through issues to get data
         if self._issue_delta_timelines == {self.OV: {self.NEW: {}, self.DONE: {}}}:
             for repo_name in config_opts.git_repo_list:
-                issues = self._ghe_conn.get_repo_issues(repo_name)
+                try:
+                    issues = self._ghe_conn.get_issues(repo_name)
+                except BaseException as err:
+                    print("WARN: {}".format(err.message))
                 for issue_number in issues.keys():
                     # if issue_number % 100 == 0 or issue_number == 682:
                     #     pass
@@ -386,6 +384,8 @@ class ProjectMetrics:
             self.issue_totals[label] = {self.NEW: [], self.DONE: [], self.OPEN: []}
 
         # oldest applicable date is the oldest creation date, by definition
+        if not self._issue_delta_timelines[self.OV][self.NEW]:
+            return
         cur_date = sorted(self._issue_delta_timelines[self.OV][self.NEW].keys())[0]
         today = datetime.date.today()
         # build lists of dates, deltas, and totals
@@ -666,16 +666,20 @@ class ProjectMetrics:
                 if not self.sloc_data:
                     sloc_file = metrics_report_location + config_opts.metrics_build_prefix + self.SLOC_REP
                     try:
-                        lines = self._retrieve_git_file(sloc_file, repo_name, config_opts.git_branch, traverse_submodules=True)
+                        lines = self._retrieve_git_file(repo_name, sloc_file, config_opts.git_branch, traverse_submodules=True)
                         if lines:
+                            print("INFO: Retrieved {}/{} on {}"
+                                  .format(repo_name, sloc_file, config_opts.git_branch))
                             self.sloc_data = self.process_compiled_sloc(config_opts, lines)
                     except IOError as err:
                         print("WARN: " + err.message)
                 if not self.comp_data:
                     comp_file = metrics_report_location + self.COMP_REP
                     try:
-                        lines = self._retrieve_git_file(comp_file, repo_name, config_opts.git_branch, traverse_submodules=True)
+                        lines = self._retrieve_git_file(repo_name, comp_file, config_opts.git_branch, traverse_submodules=True)
                         if lines:
+                            print("INFO: Retrieved {}/{} on {}"
+                                  .format(repo_name, comp_file, config_opts.git_branch))
                             self.comp_data = self.process_compiled_comp(config_opts, lines)
                     except IOError as err:
                         print("WARN: " + err.message)
@@ -700,7 +704,7 @@ class ProjectMetrics:
         sloc_data = {}
         module_index = -1
         for line in lines:
-            if not line or line.startswith("make["):
+            if not line or line.startswith("make[") or line.startswith("/usr/bin/gcc"):
                 continue
             if line.startswith(self.SMOD):
                 headers = line.split(',')
@@ -813,7 +817,7 @@ class ProjectMetrics:
                     ref = config_opts.git_branch
                     target_dir = directory
                     try:
-                        lines = self._retrieve_git_file(sloc_file, repo_name, ref, target_dir=target_dir,
+                        lines = self._retrieve_git_file(repo_name, sloc_file, ref, target_dir=target_dir,
                                                         traverse_submodules=True)
                     except IOError as err:
                         if " directory " in err.message:
@@ -862,7 +866,7 @@ class ProjectMetrics:
                 ref = config_opts.git_branch
                 target_dir = directory
                 try:
-                    lines = self._retrieve_git_file(comp_file, repo_name, ref, target_dir=target_dir,
+                    lines = self._retrieve_git_file(repo_name, comp_file, ref, target_dir=target_dir,
                                                     alt_target_pattern=self.COMP_FILE,
                                                     traverse_submodules=True)
                 except IOError as err:
@@ -942,30 +946,15 @@ class ProjectMetrics:
         today = datetime.date.today()
 
         data = [[self.DATE] + sorted(totals.keys())]
-        # if not local generation, retrieve history from git
-        if config_opts.force_remote_history:
-            for repo_name in config_opts.git_repo_list:
-                c, h, s = self._ghe_conn.get_raw_file(repo_name, config_opts.git_branch, history_file)
-                if s == 200:
-                    file_ptr = c.replace("\r", "")
-                    file_ptr = file_ptr.split("\n")
-                    if file_ptr[-1] == "":
-                        del (file_ptr[-1])
-                    for i in range(len(file_ptr)):
-                        file_ptr[i] = file_ptr[i].split(',')
-                    data = file_ptr
-                    break
-        # else look for local history file
-        else:
-            # if defined local file, get history from file
-            if history_file is not None:
-                try:
-                    with open(history_file, 'rb') as file_ptr:
-                        comp_reader = csv.reader(file_ptr)
-                        data = list(comp_reader)
-                # if we can't open it, use default header data
-                except IOError as err:
-                    pass
+        # if defined local file, get history from file
+        if history_file is not None:
+            try:
+                with open(history_file, 'rb') as file_ptr:
+                    comp_reader = csv.reader(file_ptr)
+                    data = list(comp_reader)
+            # if we can't open it, use default header data
+            except IOError as err:
+                pass
 
         # delete today's entry, if there is one already, so we don't get extra
         if data[-1][0] == str(today):

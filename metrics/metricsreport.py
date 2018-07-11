@@ -434,9 +434,9 @@ def table_task_list(reporter, categories=None, period=None, show=False, director
 
     table_columns = metrics.task_items_header
     table_data = [[task] + [metrics.plan_dict[task][header] for header in metrics.task_items_header[1:]]
-                  for task in metrics.task_list]
+                  for task in metrics.plan_task_list]
     #
-    # table_data = [metrics.task_items[task] for task in metrics.task_list]
+    # table_data = [metrics.task_items[task] for task in metrics.plan_task_list]
 
     output_file = generate_table(table_columns, table_data, title, directory, show)
     return output_file
@@ -911,7 +911,7 @@ def bar_chart_active_tasks(reporter, categories=None, period=None, show=False, d
     task_progress = {xc: [], cc: []}
     categories = [xc, cc]
 
-    for task_key in metrics.task_list:
+    for task_key in metrics.plan_task_list:
         if metrics.plan_dict[task_key][metrics.pv.START] <= today or metrics.plan_dict[task_key][metrics.CV] > 0:
             active_tasks.append(metrics.plan_dict[task_key])
 
@@ -1024,9 +1024,7 @@ def main(args):
     if categories.get(C) is None:
         categories[C] = DEFAULT_COMP_TYPES
 
-    period = config_opts.metrics_periods
-    if period is None:
-        period = DEFAULT_TREND_RANGE
+    period = config_opts.metrics_periods or DEFAULT_TREND_RANGE
 
     show = config_opts.metrics_report_filename is None or ghereporter.show
     report_dir = config_opts.metrics_report_dir

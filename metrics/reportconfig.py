@@ -119,7 +119,7 @@ class ReportConfiguration:
             temp = parse_entry_list(options.get(section, "metrics_periods"))
             self.metrics_periods = [int(x) for x in temp]
         except configparser.NoOptionError as err:
-            self.metrics_periods = []
+            self.metrics_periods = [60, 30, 14, 7]
 
         # get the metrics issue labels
         # TODO re-evaluate how these are used to filter in the metrics reports

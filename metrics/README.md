@@ -72,20 +72,6 @@ using CI to automate the generation.
 * `--show` - Causes visualizations to be rendered on the screen rather than saved to a file. Will cause the report
 to be not generated, but history and other secondary artifacts may be updated. 
 
-## Plan Validator Execution
-
-The scripts are executed directly.
-
-`python path/to/planvalidator.py --config path/to/config/<config_file>`
-
-If your config file uses relative paths, this command should be executed from the common head of those paths. In the 
-directory example above, you would launch this command from the `deployment-metrics` directory.
-
-The following additional options are available for this command:
-* `--github-api-key <key>` - Used when you do not wish to store the api key in the config file. A good choice when
-using CI to automate the generation.
-* `--show_found` - Causes the validator to display matched issues as well as missing ones.
-
 ## Config File Options
 
 These fields are present in the config-general file stored with the scripts. Required and strongly recommended Optional
@@ -98,7 +84,7 @@ fields are uncommented. Additional comments can be added to the file by starting
 | github_repo_list | List of Strings with format "owner/repo" | Required | A list of the repos that contain the GitHub issues to be evaluated, as well as the the repo that contains the SlocReport and ComponentReport files. Submodules that do not contain desired issues do not need to be added; they submodule links will be traversed automatically.|
 | github_branch | String | Optional | Name of branch to query in repos. Will be used for all repos in above list. Defaults to "master". |
 | github_issue_parameters | List of Strings with format "parameter:value" | Optional | Used by the GitHub API to determine which issues should be returned. Recommended value is `state:all`, which causes open and closed issues to be included in the reporting. Defaults to open issues only. Additional information and options at `https://developer.github.com/v3/issues/`. |
-| github_label_mappings | List of String with format "OldLabelName:NewLabelName" | Optional | Mapping of original label names to current label names. Needed because GitHub doesn't update historical labeling events, and this can lead to name mismatches. | 
+| github_label_mappings | List of String with format "OldLabelName:NewLabelName" | Optional | Mapping of original label names to current label names. Needed because GitHub does not update historical labeling events, and this can lead to name mismatches. | 
 | included_labels | List of Strings | Optional | GitHub issue label names to be included in the reporting. A value of "*" causes all issues to be included unless they have a label whose name appears in the excluded_tags parameter. Defaults to "*". |
 | excluded_labels | List of Strings | Optional | GitHub issue label names to be excluded from the reporting. Issues with a label listed here will NOT be included in the metrics or planning report, even if other labels are present on the issue.|
 | metrics_make_deployment | String | Optional* | Name of deployment. Script will attempt to infer component directories from the make file if this name is specified. This is the preferred way of determining components to include in reporting. |
@@ -181,3 +167,51 @@ Percentages for the gates should be added as cumulative values, not individual c
 either integers going to 100 or as floats going to 1.0.
 
 The name for the plan file will be used in the legend of the plan charts.
+
+## Plan Validator
+
+The planvalidator.py script is used as part of the metrics process, but can also be executed as a standalone script. In
+standalone mode, it verifies that every task/gate combination in your plan has a corresponding GitHub issue. If
+additional flags are passed to the script, it can also create new GitHub objects to represent your plan, or update
+existing ones to reflect a new plan state.
+
+In the event that the config file specified multiple GitHub repos or multiple plans, the first of each is used for the 
+validation.
+
+### Execution  
+
+The script is executed directly.
+
+`python path/to/planvalidator.py --config path/to/config/<config_file>`
+
+If your config file uses relative paths, this command should be executed from the common head of those paths. In the 
+directory example above, you would launch this command from the `deployment-metrics` directory.
+
+The following additional options are available for this command:
+* `--github-api-key <key>` - Used when you do not wish to store the api key in the config file. A good choice when
+using CI to automate the generation.
+* `--show_found` - Causes the validator to display found issues, whether the details match or are different.
+*`--create` - Causes the validator to create GitHub objects for missing gates, releases, and tasks.
+*`--update` - Causes the validator to update GitHub objects such that they match their representation in the plan.
+*`--task-labels` - Used in conjunction with the `--create` option. Causes the validator to create a label for the task
+name as well as the gate.
+
+### Use cases
+
+The two primary use cases for this script are to create a new set of GitHub issues for a new plan, or to update a set 
+of GitHub issues for a revised plan. Both cases follow the same suggested flow:
+
+1. Create or modify a plan file, and save it as the first entry in the configuration file.
+1. Run `python path/to/planvalidator.py --config path/to/config/<config_file> --show-found` to verify the current
+state of the GitHub repository.
+    * If a label or release appears in the missing list that does not seem right, you likely have a typo in your plan
+    and should correct it so that an incorrect object isn't created.
+    * Double check that the missing and found items make sense. You can still manually adjust objects in the GitHub
+    repo if something was not found that should have been, or vice versa. 
+    * Rerun the above command if needed to verify.
+1. Run `python path/to/planvalidator.py --config path/to/config/<config_file> --show-found --create --update` to create
+and update the GitHub items.
+    * You can omit the `--create` to only update GitHub issues, but any issue that relies on a missing label or 
+    milestone will fail.
+    * If a creation fails because of a bad plan entry (i.e. not using the GitHub login for the assignee field), you may
+    correct the field and retry the above command to update the GitHub entry.  
