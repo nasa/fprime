@@ -11,16 +11,19 @@ Example data that would be sent to a decoder that parses channels:
     | Lenghth (4 bytes) | Time Tag (11 bytes) | Data....
     +-------------------+---------------------+------------ - - -
 
-@date Created July 2, 2018
+@date Created July 11, 2018
 @author R. Joseph Paetz
 
 @bug No known bugs
 '''
 
-import decoder
+from decoder import Decoder
+from data_types.ch_data import ChData
+from models.serialize.u32_type import U32Type
+from models.serialize.time_type import TimeType
+from models.serialize.type_exceptions import *
 
-
-class ChDecoder(decoder.Decoder):
+class ChDecoder(Decoder):
     '''Decoder class for Channel data'''
 
     def __init__(self, ch_dict):
@@ -57,7 +60,7 @@ class ChDecoder(decoder.Decoder):
         code as is used to parse data passed to the data_callback function.
 
         Args:
-            data: Binary data to decode
+            data: Binary telemetry channel data to decode
 
         Returns:
             Parsed version of the channel telemetry data in the form of a
@@ -66,13 +69,13 @@ class ChDecoder(decoder.Decoder):
         ptr = 0
 
         # Decode Ch ID here...
-        id_obj = u32_type.u32Type()
+        id_obj = U32Type()
         id_obj.deserialize(data, ptr)
         ptr += id_obj.getSize()
         ch_id = id_obj.val
 
         # Decode time...
-        ch_time = time_type.TimeType()
+        ch_time = TimeType()
         ch_time.deserialize(data, ptr)
         ptr += ch_time.getSize()
 
@@ -80,9 +83,9 @@ class ChDecoder(decoder.Decoder):
             # Retrieve the template instance for this channel
             ch_temp = self.__dict[ch_id]
 
-            (size, val) = self.decode_ch_val(data, ptr, ch_temp)
+            val_obj = self.decode_ch_val(data, ptr, ch_temp)
 
-            return ch_data.ChData(val, ch_time, ch_temp)
+            return ChData(val_obj, ch_time, ch_temp)
         else:
             print("Channel decode error: id %d not in dictionary"%ch_id)
             return None
@@ -98,13 +101,22 @@ class ChDecoder(decoder.Decoder):
             template: Channel Template object for the channel
 
         Returns:
-            A tuple of the form (len, val) where len is the size in bytes of
-            the channel's value and val is the channel's value.
+            The channel's value as an instance of a class derived from
+            the BaseType class. The val_data has been deserialized using this
+            object, and so the channel value can be retrieved from the obj's
+            val field.
         '''
-        type_obj = template.get_type_obj()
-        type_obj.deserialize(val_data, offset)
+        # This line creates a new object of the same type as the template's
+        # type_obj. This allows us to use the new object to deserialize and
+        # store the data value. If we did not do this, the template's object
+        # would be used to deserialize multiple times and channel objects
+        # referencing the template's type object would seem to have their value
+        # changed randomly
+        val_obj = template.get_type_obj().__class__()
 
-        return (type_obj.getSize(), type_obj.val)
+        val_obj.deserialize(val_data, offset)
+
+        return val_obj
 
 
 if __name__ == "__main__":

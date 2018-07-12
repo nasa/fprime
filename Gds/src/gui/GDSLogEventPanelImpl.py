@@ -32,10 +32,16 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 		Arguments:
 			data {Data Object} -- A Data Object containing the data passed from the decoder (e.g., an EventData object)
 		"""
-		
+
+		#TODO find out in how the message portion of the event should be displayed.
 		if type(data) == event_data.EventData:
-			pprint(data)
-			l = [data.time.to_readable(), data.template.name, str(data.template.id), data.template.severity, data.template.format_str%tuple([a.val for a in data.args])]
+                        arg_vals = tuple([arg.val for arg in data.args])
+			l = [data.time.to_readable(),
+                             data.template.name,
+                             str(data.template.id),
+                             data.template.severity,
+                             data.template.format_str%arg_vals]
+
 			self.EventLogDataListCtl.AppendItem(l)
 
 	def scrollEventLogToBottom(self):
@@ -47,7 +53,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 			self.EventLogDataListCtl.EnsureVisible(i)
 			self.EventLogDataListCtl.Refresh()
 		wx.CallLater(10, self.scrollEventLogToBottom)
-		
+
 	# Override these handlers to implement functionality for GUI elements
 	def onEventLogClearButtonClick( self, event ):
 		self.EventLogDataListCtl.DeleteAllItems()

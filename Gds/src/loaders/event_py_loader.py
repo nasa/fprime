@@ -11,6 +11,9 @@
 import python_loader
 from templates import event_template
 
+# TODO remove
+from pprint import pprint
+
 class EventPyLoader(python_loader.PythonLoader):
     '''Class to load python based event dictionaries'''
 
@@ -53,12 +56,19 @@ class EventPyLoader(python_loader.PythonLoader):
 
         Returns:
             A tuple with two event dictionaries (python type dict):
-            (id_dict, name_dict). They should have keys of the id and name
-            fields respectively and the values for both should be event_template
+            (id_dict, name_dict). The keys should be the events' id and name
+            fields respectively and the values should be EventTemplate
             objects.
         '''
+        # TODO remove
+        #print("in EventPyLoader.construct_dict, path=%s"%path)
+
+
         # TODO currently we are always using the superpkg, is that OK?
         module_dicts = self.read_dict(path, use_superpkg=True)
+        # TODO remove:
+        #pprint(module_dicts)
+
 
         id_dict = dict()
         name_dict = dict()

@@ -20,6 +20,9 @@ import sys
 import os
 import glob
 
+# TODO remove
+from pprint import pprint
+
 # Custom Python Modules
 import dict_loader
 from controllers import exceptions
@@ -53,6 +56,8 @@ class PythonLoader(dict_loader.DictLoader):
             has the values of those fields.
         '''
         modules = self.import_modules(path, use_superpkg)
+        # TODO remove
+        #pprint(modules)
 
         module_dicts = []
         for module in modules:
@@ -103,6 +108,11 @@ class PythonLoader(dict_loader.DictLoader):
 
         # Compute a list of all files to import
         all_files = glob.glob(path + os.sep + '*.py')
+        #TODO remove
+        #print("all_files=")
+        #pprint(all_files)
+
+
         module_files = []
         for py_file in all_files:
             (file_path, file_name) = os.path.split(py_file)

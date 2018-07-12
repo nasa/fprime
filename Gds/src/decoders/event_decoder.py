@@ -20,6 +20,7 @@ from data_types import event_data
 from models.serialize import u32_type
 from models.serialize import time_type
 from models.serialize.type_exceptions import *
+import traceback
 
 class EventDecoder(decoder.Decoder):
     '''Decoder class for event data'''
@@ -72,13 +73,13 @@ class EventDecoder(decoder.Decoder):
         ptr += id_obj.getSize()
         event_id = id_obj.val
         #TODO remove
-        print("id=%d"%event_id)
+        #print("id=%d"%event_id)
 
         # Decode time...
         event_time = time_type.TimeType()
         event_time.deserialize(data, ptr)
         ptr += event_time.getSize()
-        print("time=%s"%event_time)
+        #print("time=%s"%event_time)
 
         if event_id in self.__dict:
             event_temp = self.__dict[event_id]
@@ -107,7 +108,8 @@ class EventDecoder(decoder.Decoder):
         Returns:
             Parsed arguments in a tuple (order the same as they were parsed in).
             Each element in the tuple is an instance of the same class as the
-            corresponding arg_type object in the template parameter.
+            corresponding arg_type object in the template parameter. Returns
+            none if the arguments can't be parsed
         '''
         arg_results = []
         args = template.get_args()
@@ -127,7 +129,8 @@ class EventDecoder(decoder.Decoder):
             except TypeException as e:
                 print("Event decode exception %s"%(e.getMsg()))
                 traceback.print_exc()
-                
+                return None
+
 
             offset = offset + arg_obj.getSize()
 
