@@ -18,10 +18,15 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 		pass
 
 	def data_callback(self, data):
-        
+
 		#TODO find out in how the message portion of the event should be displayed.
 		if type(data) == event_data.EventData:
-			l = [data.time.to_readable(), data.template.name, str(data.template.id), data.template.severity, data.template.format_str%data.args]
+                        arg_vals = tuple([arg.val for arg in data.args])
+			l = [data.time.to_readable(),
+                             data.template.name,
+                             str(data.template.id),
+                             data.template.severity,
+                             data.template.format_str%arg_vals]
 			self.EventLogDataListCtl.AppendItem(l)
 
 	def scrollEventLogToBottom(self):
@@ -30,7 +35,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 			self.EventLogDataListCtl.EnsureVisible(i)
 			self.EventLogDataListCtl.Refresh()
 		wx.CallLater(10, self.scrollEventLogToBottom)
-		
+
 	# Override these handlers to implement functionality for GUI elements
 	def onEventLogClearButtonClick( self, event ):
 		self.EventLogDataListCtl.DeleteAllItems()
