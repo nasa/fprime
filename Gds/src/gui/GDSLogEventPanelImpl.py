@@ -8,23 +8,40 @@ from pprint import pprint
 ###########################################################################
 
 class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
+	'''Implementation class for LogEvents panel. Defines funcitonality.'''
+	
 
 	def __init__( self, parent ):
-		GDSLogEventPanelGUI.LogEvents.__init__ ( self, parent)
+		"""LogEventsImple constructor
+		
+		Arguments:
+			parent {wx.Window} -- The parrent for this GUI element
+		"""
 
+		
+		GDSLogEventPanelGUI.LogEvents.__init__ ( self, parent)
+		self.parent = parent
 		self.scrollEventLogToBottom()
 
 	def __del__( self ):
 		pass
 
 	def data_callback(self, data):
-        
-		#TODO find out in how the message portion of the event should be displayed.
+		"""Recieves data from decoders to which this consumer is registered
+		
+		Arguments:
+			data {Data Object} -- A Data Object containing the data passed from the decoder (e.g., an EventData object)
+		"""
+		
 		if type(data) == event_data.EventData:
-			l = [data.time.to_readable(), data.template.name, str(data.template.id), data.template.severity, data.template.format_str%data.args]
+			pprint(data)
+			l = [data.time.to_readable(), data.template.name, str(data.template.id), data.template.severity, data.template.format_str%tuple([a.val for a in data.args])]
 			self.EventLogDataListCtl.AppendItem(l)
 
 	def scrollEventLogToBottom(self):
+		"""Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
+		"""
+
 		if self.EventLogScrollCheckBox.GetValue() == True:
 			i = self.EventLogDataListCtl.RowToItem(int(self.EventLogDataListCtl.ItemCount - 1))
 			self.EventLogDataListCtl.EnsureVisible(i)

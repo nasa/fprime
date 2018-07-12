@@ -127,11 +127,11 @@ class EventDecoder(decoder.Decoder):
             except TypeException as e:
                 print("Event decode exception %s"%(e.getMsg()))
                 traceback.print_exc()
-                arg_results.append)
+                
 
             offset = offset + arg_obj.getSize()
 
-        return tuple(arg_vals)
+        return tuple(arg_results)
 
 
 if __name__ == "__main__":

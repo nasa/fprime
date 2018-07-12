@@ -3,11 +3,20 @@ import threading
 import binascii
 import select
 
+from pprint import pprint
+
 from models.serialize import u32_type
 
 class ThreadedTCPSocketClient(object):
+	'''Threaded TCP client that connects to teh socket server which serves packets from the helecopter'''
 
 	def __init__(self, sock=None):
+		"""Threaded client socket constructor
+		
+		Keyword Arguments:
+			sock {Socket} -- A socket for the client to use. Created own if None (default: {None})
+		"""
+
 		if sock is None:
 			self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		else:
@@ -21,6 +30,12 @@ class ThreadedTCPSocketClient(object):
 		self.stop_event = threading.Event()
 
 	def register_distributor(self, distributor):
+		"""Registers a distributor object with this socket
+		
+		Arguments:
+			distributor {Distributor} -- Distributor must implement data_callback
+		"""
+
 		self.__distributors.append(distributor)
 
 	def connect(self, host, port):
@@ -38,6 +53,9 @@ class ThreadedTCPSocketClient(object):
                         exit()
 
 	def disconnect(self):
+		"""Disconnect the socket client from the server and stop the internal thread.
+		"""
+
 		self.stop_event.set()
 		self.__data_recv_thread.join()
 		self.sock.close()
@@ -48,9 +66,10 @@ class ThreadedTCPSocketClient(object):
 		Arguments:
 			data {binary} -- The data to send
 		"""
+		pprint(data)
 		self.sock.send(data)
 
-
+	# TODO Find oUt why we are getting doubled packets
 	def recv(self):
 		"""Method run constantly by the enclosing thread. Looks for data from the server.
 		"""

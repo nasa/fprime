@@ -32,6 +32,7 @@ from client_socket import client_socket
 from decoders import event_decoder
 from loaders import event_py_loader
 from loaders import cmd_py_loader
+from encoders import cmd_encoder
 
 from pprint import pprint
 
@@ -169,15 +170,22 @@ def main(argv=None):
 
 	pprint(cname_dict)
 
-	# TODO remove cli from args
-	frame = GDSMainFrameImpl.MainFrameImpl(None, cli, cname_dict)
+	frame = GDSMainFrameImpl.MainFrameImpl(None, cname_dict)
 
 	dec = event_decoder.EventDecoder(eid_dict)
 	dec.register(frame.event_pnl)
+
+	cmd_enc = cmd_encoder.CmdEncoder(cname_dict)
+
+	frame.cmd_pnl.register_encoder(cmd_enc)
+
+	cmd_enc.register(cli)
+
+	
 	distrib.register("FW_PACKET_LOG", dec)
 
 	cli.register_distributor(distrib)
-	sleep(5)
+	sleep(1)
 	cli.connect(args[0].addr, args[0].port)
 	sleep(1)
 	cli.send("Register GUI\n")

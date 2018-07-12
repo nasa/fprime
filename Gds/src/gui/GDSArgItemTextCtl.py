@@ -1,6 +1,17 @@
 import wx
+
 class ArgItemTextCtl(wx.Panel):
+	'''Defines the GUI and funcitonality for the GUI element which accepts command arguments with a wx.TextCtrl'''
+
 	def __init__(self, parent, validator, label):
+		"""ArgItemTextCtl constructor
+		
+		Arguments:
+			parent {wx.Window} -- The parent window for this UI element
+			validator {wx.Validator} -- Validator object that will check if the TextCtrl entry is formated correctly
+			label {string} -- Label for this GUI element. Usually the name of the argument.
+		"""
+
 		wx.Panel.__init__( self, parent, id = wx.ID_ANY )
 
 		#self.m_panel = wx.Panel( parent, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
@@ -21,9 +32,16 @@ class ArgItemTextCtl(wx.Panel):
 		self.m_argWindow.Bind(wx.EVT_KILL_FOCUS, self.onLeaveTextCtlInput)
 
 	def onLeaveTextCtlInput(self, event):
+		"""Called when the user leaves the TextCtrl. Calls Validator to check input.
+		
+		Arguments:
+			event {wx.Event} -- wx object passed by callback
+		"""
+
 		self.Validate()
 		
 class HexIntegerValidator(wx.Validator):
+	'''Validator which checks for hex or integer formating of entry.'''
 
 	def __init__(self):
 		wx.Validator.__init__(self)
@@ -31,7 +49,15 @@ class HexIntegerValidator(wx.Validator):
 	def Clone(self):
 		return HexIntegerValidator()
 
-	def Validate(self):
+	def Validate(self, win):
+		"""Validates the text control contents as a hex or integer number
+		
+		Arguments:
+			win {wx.Window} -- Parent window. Passed in automoatically
+		
+		Returns:
+			bool -- True if correct format, False otherwise
+		"""
 		textCtrl = self.GetWindow()
 		text = textCtrl.GetValue()
 
@@ -57,6 +83,7 @@ class HexIntegerValidator(wx.Validator):
 		return True
 
 class RealValidator(wx.Validator):
+	'''Validator that checks for real number formating of input'''
 
 	def __init__(self):
 		wx.Validator.__init__(self)
@@ -65,6 +92,15 @@ class RealValidator(wx.Validator):
 		return RealValidator()
 
 	def Validate(self, win):
+		"""Validates the text control contents as a real number
+		
+		Arguments:
+			win {wx.Window} -- Parent window. Passed in automoatically
+		
+		Returns:
+			bool -- True if correct format, False otherwise
+		"""
+
 		textCtrl = self.GetWindow()
 		text = textCtrl.GetValue()
 

@@ -12,11 +12,15 @@ Serialized command format:
     | Destination = "GUI " or "FSW " |
     | (4 byte string)                |
     +--------------------------------+
+    | Command descriptor             |
+    | (0x5A5A5A5A)                   |
+    | (4 byte number)                |
+    +--------------------------------+
     | Length of descriptor, opcode,  |
     | and argument data              |
     | (4 bytes)                      |
     +--------------------------------+
-    | Descriptor = 0                 |
+    | Descriptor type = 0            |
     | (4 bytes)                      |
     +--------------------------------+
     | Op code                        |
@@ -39,7 +43,7 @@ Serialized command format:
 
 import encoder
 from data_types.cmd_data import CmdData
-from models.serialize.u32_type import u32Type
+from models.serialize.u32_type import U32Type
 from utils.data_desc_type import DataDescType
 
 class CmdEncoder(encoder.Encoder):
@@ -88,19 +92,21 @@ class CmdEncoder(encoder.Encoder):
         # TODO we should be able to handle multiple destinations, not just FSW
         cmd_temp = data.get_template()
 
+        desc = U32Type( 0x5A5A5A5A ).serialize()
+
         destination = "FSW "
 
-        descriptor = U32Type(DataDescType["FW_PACKET_COMMAND"].val).serialize()
+        descriptor = U32Type(DataDescType["FW_PACKET_COMMAND"].value).serialize()
 
         op_code = U32Type(cmd_temp.get_op_code()).serialize()
 
         arg_data = ""
-        for arg in data.get_args:
+        for arg in data.get_args():
             arg_data += arg.serialize()
 
         length = U32Type(len(descriptor) + len(op_code) + len(arg_data)).serialize()
 
-        binary_data = (self.HEADER + destination + length + descriptor +
+        binary_data = (self.HEADER + destination + desc + length + descriptor +
                        op_code + arg_data)
 
         return binary_data
