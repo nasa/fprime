@@ -106,6 +106,10 @@ class PythonLoader(dict_loader.DictLoader):
         else:
             sys.path.append(superpkg_path)
 
+        # Make sure serializeable directory is imported
+        # TODO is there a better place to do this?
+        sys.path.append(superpkg_path + os.sep + "serializable")
+
         # Compute a list of all files to import
         all_files = glob.glob(path + os.sep + '*.py')
         #TODO remove

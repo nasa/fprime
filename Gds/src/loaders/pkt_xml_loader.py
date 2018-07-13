@@ -52,11 +52,11 @@ class PktXmlLoader(DictLoader):
         Returns:
             The id dictionary associated with the given path
         '''
-        if (path in self.__saved_dicts):
-            (id_dict, name_dict) = self.__saved_dicts[path]
+        if (path in self.saved_dicts):
+            (id_dict, name_dict) = self.saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dict(path, ch_name_dict)
-            self.__saved_dicts[path] = (id_dict, name_dict)
+            (id_dict, name_dict) = self.construct_dicts(path, ch_name_dict)
+            self.saved_dicts[path] = (id_dict, name_dict)
 
         return id_dict
 
@@ -77,16 +77,16 @@ class PktXmlLoader(DictLoader):
         Returns:
             The name dictionary associated with the given path
         '''
-        if (path in self.__saved_dicts):
-            (id_dict, name_dict) = self.__saved_dicts[path]
+        if (path in self.saved_dicts):
+            (id_dict, name_dict) = self.saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dict(path, ch_name_dict)
-            self.__saved_dicts[path] = (id_dict, name_dict)
+            (id_dict, name_dict) = self.construct_dicts(path, ch_name_dict)
+            self.saved_dicts[path] = (id_dict, name_dict)
 
         return name_dict
 
 
-    def construct_dicts(self, path, ch_dict):
+    def construct_dicts(self, path, ch_name_dict):
         '''
         Constructs and returns python dictionaries keyed on id and name
 
@@ -130,12 +130,12 @@ class PktXmlLoader(DictLoader):
             if (packet.tag != self.PKT_TAG):
                 continue
 
-            pkt_name = packet.attrib[NAME_FIELD]
-            pkt_id = int(packet.attrib[ID_FIELD])
+            pkt_name = packet.attrib[self.NAME_FIELD]
+            pkt_id = int(packet.attrib[self.ID_FIELD])
 
             ch_list = []
             for ch in packet:
-                ch_name = ch.attrib[CH_NAME_FIELD]
+                ch_name = ch.attrib[self.CH_NAME_FIELD]
 
                 if ch_name not in ch_name_dict:
                     raise exceptions.GseControllerParseException(

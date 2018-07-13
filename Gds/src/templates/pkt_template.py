@@ -14,8 +14,9 @@ describe the packet with ID 5 and channels A, B, and C in that order.
 import data_template
 import ch_template
 
+from models.serialize.type_exceptions import *
 
-class PacketTemplate(data_template.DataTemplate):
+class PktTemplate(data_template.DataTemplate):
     '''Class to create packet templates to describe specific packet types'''
 
     def __init__(self, pkt_id, pkt_name, ch_temp_list):
@@ -40,8 +41,8 @@ class PacketTemplate(data_template.DataTemplate):
         if not type(ch_temp_list) == type(list()):
             raise TypeMismatchException(type(list()), type(ch_temp_list))
 
-        for ch in ch_list:
-            if not type(ch) == type(ch_template.ChTemplate):
+        for ch in ch_temp_list:
+            if not isinstance(ch, ch_template.ChTemplate):
                 raise TypeMismatchException(type(ch_template.ChTemplate),
                                             type(ch))
 

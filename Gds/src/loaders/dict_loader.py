@@ -39,7 +39,7 @@ class DictLoader(object):
         Returns:
             An initialized loader object
         '''
-        self.__saved_dicts = dict()
+        self.saved_dicts = dict()
 
 
     def get_id_dict(self, path):
@@ -58,11 +58,11 @@ class DictLoader(object):
         Returns:
             The id dictionary associated with the given path
         '''
-        if (path in self.__saved_dicts):
-            (id_dict, name_dict) = self.__saved_dicts[path]
+        if (path in self.saved_dicts):
+            (id_dict, name_dict) = self.saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dict(path)
-            self.__saved_dicts[path] = (id_dict, name_dict)
+            (id_dict, name_dict) = self.construct_dicts(path)
+            self.saved_dicts[path] = (id_dict, name_dict)
 
         return id_dict
 
@@ -84,11 +84,11 @@ class DictLoader(object):
         Returns:
             The name dictionary associated with the given path
         '''
-        if (path in self.__saved_dicts):
-            (id_dict, name_dict) = self.__saved_dicts[path]
+        if (path in self.saved_dicts):
+            (id_dict, name_dict) = self.saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dict(path)
-            self.__saved_dicts[path] = (id_dict, name_dict)
+            (id_dict, name_dict) = self.construct_dicts(path)
+            self.saved_dicts[path] = (id_dict, name_dict)
 
         return name_dict
 
