@@ -34,6 +34,9 @@ All of these objects are created and registered to other objects when the Gds is
 Thus, all of the structure of the Gds is created in one place, and can be easily modified.
 
 ## Classes
+The Gds back end is composed of several different data proecssing units. For most of the 
+units described below, a base class describes the interface, and then subclasses implement
+the interface for specific data types (such as events, channels, etc).
 
 ### TCP Client
 The TCP client is simply a passthrough for data coming from the TCP Server and the F'
@@ -72,13 +75,36 @@ Each instance of a type class also has a reference to the corresponding template
 that channel or event type.
 
 ### Loaders
+Loaders are used to construct dictionaries of channel and events. These dictionaries
+have template classes as values and ids or names as keys. 
 
+Each dictionary type has their own loader, but subclassing is used to prevent code 
+duplication. For example, there are loaders for channel and event python file 
+dicitonaries, but they both subclass the python loader class which provides helper
+functions for reading python file dictionaries. 
 
 ### Decoders
+Decoders are responsible for parsing the message data for a specific descriptor type. 
+
+Each decoder uses dictionaries produced by loaders to help with its parsing. These
+are given to the decoder's constructor.
+
+The knowledge for how to parse that descrptor type should stay within the decoder. 
+Each decoder type takes in the binary message data, parses it, and sends the resulting
+data object to all consumers registered to it. 
 
 ### Encoders
+Encoders are responsible for taking data objects from consumers (gui panels), converting
+them to binary data, and passing them to the TCP client to send to the F' deployment. 
+
+Like the decoders, encoders use dictionaries produced by loaders to help craft the 
+binary output.
 
 ### Consumers
+Consumers do not have a specific base class, but instead simply implement a data callback
+method that is called by decoders with parsed data objects as the argument. In the case of
+the Gds, the consumers are the GUI panels that display data. Consumers can also produce data
+that is sent to encoders and eventually on to the F' deployment. 
 
 ## Notes
  - Currently, the models/common directory has command.py, event.py, and
