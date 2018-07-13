@@ -20,7 +20,7 @@ are supported) to decoders registered for that type. The decoder is responsible 
 turning that data message into a data object which it passes along to all consumers 
 registered to it. These consumers could be anything, but in the Gds they are gui 
 panels that display the data. 
-
+![Example Gds incoming data layout](docs/ExampleIncomingDataLayout.png)
 
 For outgoing data, the structure is similar. Currently, only commands are supported for
 outgoing data. Command data objects are created in panels and then sent to all encoders
@@ -28,7 +28,7 @@ who are registered to that panel. The encoders take the data object and turn it 
 data that can be sent to the fprime deployment. The binary data is then passed to the 
 TCP client which is registered to the encoder. Finally, the TCP client send the data back
 to the TCP server and the F' deployment.
-
+![Example Gds outgoing data layout](docs/ExampleOutgoingDataLayout.png)
 
 All of these objects are created and registered to other objects when the Gds is initialized.
 Thus, all of the structure of the Gds is created in one place, and can be easily modified.
