@@ -5,4 +5,4 @@ Markdown
 multiprocess
 pexpect
 Pmw
-tkintertable
+wxPython
