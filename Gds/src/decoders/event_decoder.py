@@ -14,6 +14,7 @@ Example data structure:
 
 @bug No known bugs
 '''
+import copy
 
 import decoder
 from data_types import event_data
