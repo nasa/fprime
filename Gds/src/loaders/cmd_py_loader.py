@@ -32,7 +32,7 @@ class CmdPyLoader(python_loader.PythonLoader):
         super(CmdPyLoader, self).__init__()
 
 
-    def construct_dict(self, path):
+    def construct_dicts(self, path):
         '''
         Constructs and returns python dictionaries keyed on id and name
 

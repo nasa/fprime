@@ -18,6 +18,10 @@ class GseControllerUndefinedFileException(GseControllerException):
     def __init__(self, val):
         super(GseControllerUndefinedFileException,self).__init__("Path does not exist: %s !" % str(val))
 
+class GseControllerParsingException(GseControllerException):
+    def __init__(self, val):
+        super(GseControllerParsingException,self).__init__("Parsing error: %s !" % str(val))
+
 class GseControllerMnemonicMismatchException(GseControllerException):
     def __init__(self, val1, val2):
         super(GseControllerMnemonicMismatchException,self).__init__("ID mismatch (%s, %s) !" % (str(val1),str(val2)))

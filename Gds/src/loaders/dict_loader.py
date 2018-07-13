@@ -75,7 +75,8 @@ class DictLoader(object):
         the given path or will construct new dictionaries if the path has never
         been passed to the get_id_dict or the get_name_dict functions.
 
-        This function should not be overwritten by inheriting classes
+        This function should only be overwritten by inheritting classes if
+        more arguments are needed to construct the dictionaries.
 
         Args:
             path: Path to the file system dictionary to convert to a python dict
@@ -92,11 +93,12 @@ class DictLoader(object):
         return name_dict
 
 
-    def construct_dict(self, path):
+    def construct_dicts(self, path):
         '''
         Constructs and returns python dictionaries keyed on id and name.
 
-        This function should be overwritten by inheriting classes.
+        This function should only be overwritten by inheritting classes if
+        more arguments are needed to construct the dictionaries.
 
         Args:
             path: Path to the file system dictionary to convert to a python dict
