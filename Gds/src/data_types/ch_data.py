@@ -84,11 +84,13 @@ class ChData(sys_data.SysData):
             return "Time,Name,Value\n"
 
 
-    def get_str(self, verbose=False, csv=False):
+    def get_str(self, time_zone=None, verbose=False, csv=False):
         '''
         Convert the channel data to a string
 
         Args:
+            time_zone (tzinfo, default=None): Timezone to print time in. If
+                      time_zone=None, use local time.
             verbose (boolean, default=False): Prints extra fields if True
             csv (boolean, default=False): Prints each field with commas between
                                           if true
@@ -96,7 +98,7 @@ class ChData(sys_data.SysData):
         Returns:
             String version of the channel data
         '''
-        time_str_nice = self.time.to_readable()
+        time_str_nice = self.time.to_readable(time_zone)
         raw_time_str = str(self.time)
         ch_name = self.template.get_name()
         fmt_str = self.template.get_format_str()
