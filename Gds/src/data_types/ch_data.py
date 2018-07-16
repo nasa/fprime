@@ -33,6 +33,28 @@ class ChData(sys_data.SysData):
         self.val_obj = ch_val_obj
         self.time = ch_time
         self.template = ch_temp
+        self.pkt = None
+
+
+    def set_pkt(self, pkt):
+        '''
+        Set the packet object to which this channel belongs (can be None)
+
+        Args:
+            pkt: The packet object to which these channels were transmitted in
+        '''
+        self.pkt = pkt
+
+
+    def get_pkt(self):
+        '''
+        Return the packet object to which this channel belongs (could be None)
+
+        Returns:
+            The channel's packet
+        '''
+        return self.pkt
+
 
     def get_val(self):
         '''
@@ -56,9 +78,6 @@ class ChData(sys_data.SysData):
         Returns:
             Header for a csv file containing channel data
         '''
-        # TODO remove
-        print("\n\nIn ChData.get_csv_header. verbose=%d\n\n"%verbose)
-
         if verbose:
             return "Time,Raw Time,Name,ID,Value\n"
         else:

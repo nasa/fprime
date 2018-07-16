@@ -33,6 +33,10 @@ class PktData(SysData):
         self.time = pkt_time
         self.template = pkt_temp
 
+        # Set the packet of all the channels
+        for ch in self.chs:
+            ch.set_pkt(self)
+
 
     def get_chs(self):
         return self.chs
@@ -56,9 +60,6 @@ class PktData(SysData):
         Returns:
             String version of the channel data
         '''
-        # TODO remove
-        print("\n\nIn PktData.get_csv_header. verbose=%d\n\n"%verbose)
-
         # For csv output, all channels are just printed without regards to
         # packet information
         return ChData.get_csv_header(verbose)
