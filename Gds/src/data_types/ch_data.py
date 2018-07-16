@@ -41,7 +41,7 @@ class ChData(sys_data.SysData):
         Returns:
             The channel reading
         '''
-        return self.val
+        return self.val_obj.val
 
 
     def __str__(self):

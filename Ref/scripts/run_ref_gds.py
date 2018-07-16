@@ -19,8 +19,6 @@ def main(argv=None):
     addr = "127.0.0.1"
     nobin = False
 
-    pprint(sys.path)
-
     # Get a path to the python binary we are using to launch processes
     python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
 
@@ -71,6 +69,8 @@ def main(argv=None):
 
     ########################### Run the GUI for the GDS #############################
     GUI_args = [python_bin,"%s/Gds/bin/gds.py"%build_root,"--port","%d"%used_port,"--dictionary","%s/Gse/generated/Ref"%build_root,"--connect","--addr",addr,"-L","%s/Ref/logs"%build_root]
+    
+
     #print ("GUI: %s"%" ".join(GUI_args))
     GUI = subprocess.Popen(GUI_args)
 

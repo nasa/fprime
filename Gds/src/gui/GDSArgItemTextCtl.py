@@ -21,15 +21,26 @@ class ArgItemTextCtl(wx.Panel):
 		self.m_argStaticText.Wrap( -1 )
 		bSizer.Add( self.m_argStaticText, 0, wx.ALL, 5 )
 		
-		self.m_argWindow = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0, validator)
+		if validator is not None:
+			self.m_argWindow = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0, validator)
+		else:
+			self.m_argWindow = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+
 		bSizer.Add( self.m_argWindow, 0, wx.ALL, 5 )
-		
-		
 		self.SetSizer( bSizer )
 		self.Layout()
 		bSizer.Fit( self )
 
 		self.m_argWindow.Bind(wx.EVT_KILL_FOCUS, self.onLeaveTextCtlInput)
+
+	def getText(self):
+		"""Get the contents of this gui's text entry value
+		
+		Returns:
+			string --the contents of the text control in this gui element
+		"""
+
+		return self.m_argWindow.GetLineText(0)
 
 	def onLeaveTextCtlInput(self, event):
 		"""Called when the user leaves the TextCtrl. Calls Validator to check input.

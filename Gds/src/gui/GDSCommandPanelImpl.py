@@ -23,6 +23,8 @@ from models.serialize.serializable_type import *
 
 from data_types import cmd_data
 
+from pprint import pprint
+
 
 ###########################################################################
 ## Class CommandsImpl
@@ -114,15 +116,15 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		'''Gathers entered command arguments and sends them to all encoders'''
 		arglist = list()
 		for i in self.arginputs:
-			if type(i) == wx.TextCtrl:
-				arglist.append(i.GetLineText())
-			elif type (i) == wx.ComboBox:
-				arglist.append(i.GerStringSelection())
+			if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
+				arglist.append(i.getText())
+			elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
+				arglist.append(i.getSelection())
 
 		s = self.CmdsComboBox.GetStringSelection()
 		temp = self.cname_dict[s]
 		data_obj = cmd_data.CmdData(tuple(arglist), temp)
-
+		pprint([v.val for v in data_obj.get_args()])
 		for i in self._encoders:
 			i.data_callback(data_obj)
 

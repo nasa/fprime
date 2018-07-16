@@ -37,7 +37,7 @@ class Distributor(object):
         self.__decoders[typeof].append(obj)
 
         # TODO remove
-        print("Decoders=%s"%self.__decoders)
+        #print("Decoders=%s"%self.__decoders)
 
 
     def on_recv(self, data):
@@ -57,7 +57,7 @@ class Distributor(object):
         #       messages.
 
         # TODO remove
-        print("data=%s"%list(data))
+        #print("data=%s"%list(data))
 
 
         # Add new data to end of buffer
@@ -69,7 +69,7 @@ class Distributor(object):
             offset = 0
 
             # TODO remove
-            print("self.__buf=%s"%list(self.__buf))
+            #print("self.__buf=%s"%list(self.__buf))
 
 
             # 4 byte length header

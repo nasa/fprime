@@ -157,13 +157,13 @@ def main(argv=None):
 						default=True)
 
 	# process options
-	(opts, args) = parser.parse_args(argv)
+	(opts, args) = parser.parse_args(sys.argv)
+	pprint(opts)
 
 	app = wx.App(False)
 
 	distrib = distributor.Distributor()
 	cli = client_socket.ThreadedTCPSocketClient()
-
 
 	eldr = event_py_loader.EventPyLoader()
 	eid_dict = eldr.get_id_dict(opts.generated_path + os.sep + "events")
@@ -171,10 +171,8 @@ def main(argv=None):
 	cldr = cmd_py_loader.CmdPyLoader()
 	cname_dict = cldr.get_name_dict(opts.generated_path + os.sep + "commands")
 
-        ch_ldr = ch_py_loader.ChPyLoader()
-        ch_dict = ch_ldr.get_id_dict(opts.generated_path + os.sep + "channels")
-
-	pprint(cname_dict)
+	ch_ldr = ch_py_loader.ChPyLoader()
+	ch_dict = ch_ldr.get_id_dict(opts.generated_path + os.sep + "channels")
 
 	frame = GDSMainFrameImpl.MainFrameImpl(None, cname_dict)
 
@@ -190,14 +188,16 @@ def main(argv=None):
 	
 	distrib.register("FW_PACKET_LOG", dec)
 
-        ch_dec = ch_decoder.ChDecoder(ch_dict)
-        ch_dec.register(frame.telem_pnl)
-        distrib.register("FW_PACKET_TELEM", ch_dec)
+	ch_dec = ch_decoder.ChDecoder(ch_dict)
+	ch_dec.register(frame.telem_pnl)
+	distrib.register("FW_PACKET_TELEM", ch_dec)
+
+
+	pprint(opts)
 
 	cli.register_distributor(distrib)
 	sleep(1)
-	cli.connect(args[0].addr, args[0].port)
-
+	cli.connect(opts.addr, opts.port)
 	sleep(1)
 	cli.send("Register GUI\n")
 

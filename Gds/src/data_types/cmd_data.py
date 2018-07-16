@@ -33,6 +33,10 @@ from models.serialize.i64_type import *
 from models.serialize.string_type import *
 from models.serialize.serializable_type import *
 
+from copy import deepcopy
+
+from pprint import pprint
+
 class CmdData(sys_data.SysData):
     '''The CmdData class stores a specific command'''
 
@@ -54,7 +58,7 @@ class CmdData(sys_data.SysData):
         self.template = cmd_temp
         self.arg_vals = cmd_args
 
-        self.args = [typ.__class__() for (_, _, typ) in self.template.arguments]
+        self.args = [deepcopy(typ) for (_, _, typ) in self.template.arguments]
         self.arg_names = [name for (name, _, _) in self.template.arguments]
         
         if (cmd_time):
@@ -64,8 +68,7 @@ class CmdData(sys_data.SysData):
 
         for val, typ in zip(self.arg_vals, self.args):
             self.convert_arg_value(val, typ)
-            
-
+        
     def get_template(self):
         """Get the template class associate with this specific data object
         
@@ -84,7 +87,8 @@ class CmdData(sys_data.SysData):
 
         return self.args
 
-    def convert_arg_value(self, arg_val, arg_type):
+    def convert_arg_value(self, arg_val, arg_type): 
+        print(type(arg_type))
         if "0x" in arg_val:
             arg_val = int(arg_val, 16) 
 
@@ -93,31 +97,42 @@ class CmdData(sys_data.SysData):
                 av = False
             else:
                 av = True
-            arg_type = BoolType(av)
+            arg_type.val = av
         elif type(arg_type) == type(EnumType()):
-            arg_type = EnumType(arg_type.typename(), arg_type.enum_dict(), arg_val)
+            arg_type.val = arg_val
         elif type(arg_type) == type(F64Type()):
-            arg_type = F64Type(float(arg_val))
+            arg_type.val = float(arg_val)
+            
         elif type(arg_type) == type(F32Type()):
-            arg_type = F32Type(float(arg_val))
+            arg_type.val = float(arg_val)
+            
         elif type(arg_type) == type(I64Type()):
-            arg_type = I64Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(I32Type()):
-            arg_type = I32Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(I16Type()):
-            arg_type = I16Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(I8Type()):
-            arg_type = I8Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(U64Type()):
-            arg_type = U64Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(U32Type()):
-            arg_type = U32Type(int(arg_val))
+            arg_type.val = int(arg_val)
+
         elif type(arg_type) == type(U16Type()):
-            arg_type = U16Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(U8Type()):
-            arg_type = U8Type(int(arg_val))
+            arg_type.val = int(arg_val)
+            
         elif type(arg_type) == type(StringType()):
-            arg_type = StringType(arg_val)
+            arg_type.val = arg_val
+            
         elif type(arg_type) == type(SerializableType()):
             pass
         else:

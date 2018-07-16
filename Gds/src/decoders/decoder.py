@@ -57,7 +57,7 @@ class Decoder(object):
                           data_callback function.
         '''
         #TODO remove
-        print("registering %s to %s"%(consumer_obj, self))
+        #print("registering %s to %s"%(consumer_obj, self))
 
         self.__consumers.append(consumer_obj)
 
@@ -90,7 +90,7 @@ class Decoder(object):
         '''
         for obj in self.__consumers:
             #TODO remove
-            print("Sending %s to %s"%(parsed_data, obj))
+            #print("Sending %s to %s"%(parsed_data, obj))
 
             obj.data_callback(parsed_data)
 

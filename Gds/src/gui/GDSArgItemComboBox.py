@@ -27,3 +27,12 @@ class ArgItemComboBox(wx.Panel):
 		self.SetSizer( bSizer )
 		self.Layout()
 		bSizer.Fit( self )
+
+	def getSelection(self):
+		"""Get the current selection of the combobox in this gui element
+		
+		Returns:
+			string -- the current selection
+		"""
+
+		return self.m_argWindow.GetStringSelection()

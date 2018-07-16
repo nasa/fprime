@@ -66,7 +66,7 @@ class ThreadedTCPSocketClient(object):
 		Arguments:
 			data {binary} -- The data to send
 		"""
-		pprint(data)
+		#pprint(data)
 		self.sock.send(data)
 
 	# TODO Find oUt why we are getting doubled packets
@@ -75,13 +75,13 @@ class ThreadedTCPSocketClient(object):
 		"""
 
 		while not self.stop_event.is_set():
-			print "Running distributor client recv..."
+			#print "Running distributor client recv..."
 			ready = select.select([self.sock], [], [], self.__select_timeout)
 			if ready[0]:
 				chunk = self.sock.recv(1024)
 				for d in self.__distributors:
 					d.on_recv(chunk)
-				print(binascii.hexlify(chunk))
+				#print(binascii.hexlify(chunk))
 
                                 
 
