@@ -1,30 +1,53 @@
+'''
+@brief Implementation class for the channel telemetry panel
+
+@date Created July 16, 2018
+@author Josef X. Biberstein
+
+@bug No known bugs
+'''
+
 import wx
 import GDSChannelTelemetryPanelGUI
 from pprint import pprint
+import inspect
+
+from data_types.ch_data import *
+from data_types.pkt_data import *
+
 ###########################################################################
 ## Class ChannelTelemetryImpl
 ###########################################################################
 
 class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
-
-    #TODO Need to figure out the TreeCtrl, using ListCtrl now...
+    '''Implmentation class. Defines functionality of the channel telemetry panel.'''
+    
     def __init__( self, parent ):
+        """Constructor for the ChannelTelemetryImpl
+        
+        Arguments:
+            parent {wx.Window} -- The parent window for this panel
+        """
+
         GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
-        self.ChannelTelemDataViewTreeCtl.AppendTextColumn("Channel", 0, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
-        self.ChannelTelemDataViewTreeCtl.AppendTextColumn("ID", 1, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
-        self.ChannelTelemDataViewTreeCtl.AppendTextColumn("Time", 2, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
-        self.ChannelTelemDataViewTreeCtl.AppendTextColumn("Value", 3, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
 
-        #self.ChannelTelemDataViewTreeCtl.AppendContainer(wx.dataview.NullDataViewItem, 'Test Root', data='Test data')
+        self.dv_model = ChannelTelemDataViewModel([])
 
-        self._channel_items = dict()
+        self.ChannelTelemDataViewCtl.AssociateModel(self.dv_model)
+
+        self.dv_model.DecRef()
+
+        self.ChannelTelemDataViewCtl.AppendTextColumn("Channel", 0, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=250, align=wx.ALIGN_NOT)
+        self.ChannelTelemDataViewCtl.AppendTextColumn("ID", 1, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=50, align=wx.ALIGN_NOT)
+        self.ChannelTelemDataViewCtl.AppendTextColumn("Time", 2, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=150, align=wx.ALIGN_NOT)
+        self.ChannelTelemDataViewCtl.AppendTextColumn("Value", 3, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
 
     def __del__( self ):
         pass
 
     def data_callback(self, data):
-
-        print data
+        self.dv_model.UpdateModel(data)
+        
 
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
@@ -36,7 +59,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     def __init__(self, data):
-        dv.PyDataViewModel.__init__(self)
+        wx.dataview.PyDataViewModel.__init__(self)
         self.data = data
 
         # The PyDataViewModel derives from both DataViewModel and from
@@ -56,7 +79,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     def GetColumnType(self, col):
         mapper = { 0 : 'string',
                    1 : 'string',
-                   2 : 'datetime',
+                   2 : 'string',
                    3 : 'string', # the real value is an int, but the renderer should convert it okay
                    }
         return mapper[col]
@@ -68,60 +91,54 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # simply provides all items as children of this hidden root. A Tree
         # view adds additional items as children of the other items, as needed,
         # to provide the tree hierachy.
-        ##self.log.write("GetChildren\n")
 
         # If the parent item is invalid then it represents the hidden root
         # item, so we'll use the genre objects as its children and they will
         # end up being the collection of visible roots in our tree.
         if not parent:
-            for genre in self.data:
-                children.append(self.ObjectToItem(genre))
+            for obj in self.data:
+                children.append(self.ObjectToItem(obj))
             return len(self.data)
 
         # Otherwise we'll fetch the python object associated with the parent
         # item and make DV items for each of its child objects.
         node = self.ItemToObject(parent)
-        if isinstance(node, Genre):
-            for song in node.songs:
-                children.append(self.ObjectToItem(song))
-            return len(node.songs)
+        if isinstance(node, PktData):
+            for ch in node.chs:
+                children.append(self.ObjectToItem(ch))
+            return len(node.chs)
         return 0
 
 
     def IsContainer(self, item):
         # Return True if the item has children, False otherwise.
-        ##self.log.write("IsContainer\n")
 
         # The hidden root is a container
         if not item:
             return True
         # and in this model the genre objects are containers
         node = self.ItemToObject(item)
-        if isinstance(node, Genre):
+        if isinstance(node, PktData):
             return True
         # but everything else (the song objects) are not
         return False
 
 
-    #def HasContainerColumns(self, item):
-    #    self.log.write('HasContainerColumns\n')
-    #    return True
-
 
     def GetParent(self, item):
         # Return the item which is this item's parent.
-        ##self.log.write("GetParent\n")
 
         if not item:
-            return dv.NullDataViewItem
+            return wx.dataview.NullDataViewItem
 
         node = self.ItemToObject(item)
-        if isinstance(node, Genre):
-            return dv.NullDataViewItem
-        elif isinstance(node, Song):
-            for g in self.data:
-                if g.name == node.genre:
-                    return self.ObjectToItem(g)
+        if isinstance(node, PktData):
+            return wx.dataview.NullDataViewItem
+        elif isinstance(node, ChData):
+            if node.pkt is None:
+                return wx.dataview.NullDataViewItem
+            else:
+                return self.ObjectToItem(node.pkt)
 
 
     def GetValue(self, item, col):
@@ -132,26 +149,22 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # Fetch the data object for this item.
         node = self.ItemToObject(item)
 
-        if isinstance(node, Genre):
+        if isinstance(node, PktData):
             # We'll only use the first column for the Genre objects,
             # for the other columns lets just return empty values
-            mapper = { 0 : node.name,
-                       1 : "",
-                       2 : "",
-                       3 : "",
-                       4 : wx.DateTime.FromTimeT(0),  # TODO: There should be some way to indicate a null value...
-                       5 : False,
+            mapper = { 0 : str(node.template.name),
+                       1 : str(node.template.id),
+                       2 : str(node.time.get_datetime()),
+                       3 : ""
                        }
             return mapper[col]
 
 
-        elif isinstance(node, Song):
-            mapper = { 0 : node.genre,
-                       1 : node.artist,
-                       2 : node.title,
-                       3 : node.id,
-                       4 : node.date,
-                       5 : node.like,
+        elif isinstance(node, ChData):
+            mapper = { 0 : str(node.template.name),
+                       1 : str(node.template.id),
+                       2 : str(node.time.get_datetime()),
+                       3 : str(node.val_obj.val)
                        }
             return mapper[col]
 
@@ -161,31 +174,28 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def GetAttr(self, item, col, attr):
-        ##self.log.write('GetAttr')
         node = self.ItemToObject(item)
-        if isinstance(node, Genre):
+        if isinstance(node, PktData):
             attr.SetColour('blue')
             attr.SetBold(True)
             return True
         return False
 
+    def UpdateModel(self, new_data):
 
-    def SetValue(self, value, item, col):
-        self.log.write("SetValue: %s\n" % value)
+        match = [x for x in self.data if x.template == new_data.template]
 
-        # We're not allowing edits in column zero (see below) so we just need
-        # to deal with Song objects and cols 1 - 5
+        if len(match) == 0:
+            self.data.append(new_data)
+            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+        else:
+            old_data = match[0]
 
-        node = self.ItemToObject(item)
-        if isinstance(node, Song):
-            if col == 1:
-                node.artist = value
-            elif col == 2:
-                node.title = value
-            elif col == 3:
-                node.id = value
-            elif col == 4:
-                node.date = value
-            elif col == 5:
-                node.like = value
-        return True
+            #TODO Just a shallow copy and may not work for Packets because doesn't copy channels
+            old_data.__dict__ = new_data.__dict__.copy()
+
+            self.ItemChanged(self.ObjectToItem(old_data))
+
+
+
+
