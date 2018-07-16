@@ -8,7 +8,7 @@ binary data after removing any length and descriptor headers.
 
 Example data that would be sent to a decoder that parses channels:
     +-------------------+---------------------+------------ - - -
-    | Lenghth (4 bytes) | Time Tag (11 bytes) | Data....
+    | ID (4 bytes) | Time Tag (11 bytes) | Data....
     +-------------------+---------------------+------------ - - -
 
 @date Created July 11, 2018
@@ -16,6 +16,7 @@ Example data that would be sent to a decoder that parses channels:
 
 @bug No known bugs
 '''
+import copy
 
 from decoder import Decoder
 from data_types.ch_data import ChData
@@ -112,7 +113,7 @@ class ChDecoder(Decoder):
         # would be used to deserialize multiple times and channel objects
         # referencing the template's type object would seem to have their value
         # changed randomly
-        val_obj = template.get_type_obj().__class__()
+        val_obj = copy.deepcopy(template.get_type_obj())
 
         val_obj.deserialize(val_data, offset)
 

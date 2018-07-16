@@ -14,6 +14,7 @@ Example data structure:
 
 @bug No known bugs
 '''
+import copy
 
 import decoder
 from data_types import event_data
@@ -121,7 +122,7 @@ class EventDecoder(decoder.Decoder):
             # Create a new instance of the argument's type object so we don't
             # use the template's object for deserialization and storage of the
             # parsed argument value.
-            arg_obj = template_arg_obj.__class__()
+            arg_obj = copy.deepcopy(template_arg_obj)
 
             try:
                 arg_obj.deserialize(arg_data, offset)

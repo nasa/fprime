@@ -15,6 +15,7 @@ from enum import Enum
 import data_template
 
 from models.serialize import type_base
+from models.serialize.type_exceptions import *
 
 
 #TODO Move to enums file

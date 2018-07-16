@@ -8,7 +8,7 @@ binary data after removing any length and descriptor headers.
 
 Example data that would be sent to a decoder that parses events or channels:
     +-------------------+---------------------+------------ - - -
-    | Lenghth (4 bytes) | Time Tag (11 bytes) | Data....
+    | ID (4 bytes) | Time Tag (11 bytes) | Data....
     +-------------------+---------------------+------------ - - -
 
 This base class does not do any parsing, but instead acts as a pass through to

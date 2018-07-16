@@ -13,7 +13,7 @@ reading)
 import data_template
 
 from models.serialize.type_base import *
-
+from models.serialize.type_exceptions import *
 
 class ChTemplate(data_template.DataTemplate):
     '''Class for channel templates that describe specific telemetry channels'''

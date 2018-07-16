@@ -228,8 +228,7 @@ class TimeType(type_base.BaseType):
 
         # If we could convert to a valid datetime, use that, otherwise, format
         if (dt):
-            return ("%d-%02d-%02d %02d:%02d:%02d"%(dt.year, dt.month, dt.day,
-                                                   dt.hour, dt.minute, dt.second))
+            return str(dt)
         else:
             return ("%s: %d.%06ds, context=%d" %
                     (TimeBase(self.__timeBase.val).name,

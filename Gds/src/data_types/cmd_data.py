@@ -138,6 +138,7 @@ class CmdData(sys_data.SysData):
         else:
             raise Exception('Argument value could not be converted to type object')
 
+
     def __str__(self):
         arg_str = ''
         for name, typ in zip(self.arg_names, self.args):

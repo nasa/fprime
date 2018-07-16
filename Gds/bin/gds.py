@@ -20,9 +20,7 @@ import os
 import time
 import glob
 import random
-from utils import Logger
 from utils import PortFinder
-from utils import ConfigManager
 
 
 import traceback
@@ -147,8 +145,6 @@ def main(argv=None):
 
 	parser.add_option("-e", "--execute", dest="exec_app", action="store", type="string", help="Execute the specified fsw application after socket server and UI are up [default: %default]")
 	parser.add_option("-L", "--log-file-path", dest="log_file_path", action="store", type="string", help="Path to log files [default: %default]")
-	parser.add_option("-b", "--logbinary", dest="bin_logger_flag", action="store", type="int", help="Flag to log raw data from socket (1=ON, 0=OFF) [default: %default]", \
-						default=Logger.BIN_LOGGER_FLAG)
 	parser.add_option("-r", "--log-file-prefix", dest="log_file_prefix", action="store", type="string", help="Prefix in log file path for each run. [default: current date/time]", \
 						default=None)
 	parser.add_option("-l", "--log-time", dest="log_time", action="store", type="string", help="Time used for logging. (local, GMT)", \

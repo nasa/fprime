@@ -39,7 +39,7 @@ class DictLoader(object):
         Returns:
             An initialized loader object
         '''
-        self.__saved_dicts = dict()
+        self.saved_dicts = dict()
 
 
     def get_id_dict(self, path):
@@ -58,11 +58,11 @@ class DictLoader(object):
         Returns:
             The id dictionary associated with the given path
         '''
-        if (path in self.__saved_dicts):
-            (id_dict, name_dict) = self.__saved_dicts[path]
+        if (path in self.saved_dicts):
+            (id_dict, name_dict) = self.saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dict(path)
-            self.__saved_dicts[path] = (id_dict, name_dict)
+            (id_dict, name_dict) = self.construct_dicts(path)
+            self.saved_dicts[path] = (id_dict, name_dict)
 
         return id_dict
 
@@ -75,7 +75,8 @@ class DictLoader(object):
         the given path or will construct new dictionaries if the path has never
         been passed to the get_id_dict or the get_name_dict functions.
 
-        This function should not be overwritten by inheriting classes
+        This function should only be overwritten by inheritting classes if
+        more arguments are needed to construct the dictionaries.
 
         Args:
             path: Path to the file system dictionary to convert to a python dict
@@ -83,20 +84,21 @@ class DictLoader(object):
         Returns:
             The name dictionary associated with the given path
         '''
-        if (path in self.__saved_dicts):
-            (id_dict, name_dict) = self.__saved_dicts[path]
+        if (path in self.saved_dicts):
+            (id_dict, name_dict) = self.saved_dicts[path]
         else:
-            (id_dict, name_dict) = self.construct_dict(path)
-            self.__saved_dicts[path] = (id_dict, name_dict)
+            (id_dict, name_dict) = self.construct_dicts(path)
+            self.saved_dicts[path] = (id_dict, name_dict)
 
         return name_dict
 
 
-    def construct_dict(self, path):
+    def construct_dicts(self, path):
         '''
         Constructs and returns python dictionaries keyed on id and name.
 
-        This function should be overwritten by inheriting classes.
+        This function should only be overwritten by inheritting classes if
+        more arguments are needed to construct the dictionaries.
 
         Args:
             path: Path to the file system dictionary to convert to a python dict

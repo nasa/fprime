@@ -40,7 +40,7 @@ class EventPyLoader(python_loader.PythonLoader):
     # TODO does this strange interface where you actually only call functions
     # defined in the python loader and not this very convinient looking function
     # make things more confusing than they need to be?
-    def construct_dict(self, path):
+    def construct_dicts(self, path):
         '''
         Constructs and returns python dictionaries keyed on id and name
 
