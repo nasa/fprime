@@ -60,11 +60,13 @@ class EventData(sys_data.SysData):
             return "Time,Name,Severity,Args\n"
 
 
-    def get_str(self, verbose=False, csv=False):
+    def get_str(self, time_zone=None, verbose=False, csv=False):
         '''
         Convert the event data to a string
 
         Args:
+            time_zone (tzinfo, default=None): Timezone to print time in. If
+                      time_zone=None, use local time.
             verbose (boolean, default=False): Prints extra fields if True
             csv (boolean, default=False): Prints each field with commas between
                                           if true
@@ -72,7 +74,7 @@ class EventData(sys_data.SysData):
         Returns:
             String version of the channel data
         '''
-        time_str = self.time.to_readable()
+        time_str = self.time.to_readable(time_zone)
         raw_time_str = str(self.time)
         name = self.template.get_name()
         severity = self.template.get_severity()

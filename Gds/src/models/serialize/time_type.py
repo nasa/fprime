@@ -16,6 +16,7 @@ time tags sent with serialized data in the fprime architecture.
 
 import time
 from datetime import *
+from pytz import *
 from enum import Enum
 
 # Custom Python Modules
@@ -41,19 +42,26 @@ TimeBase = Enum("TimeBase",
 
 
 class TimeType(type_base.BaseType):
-    """
+    '''
     Representation of the time type
+
     Used to parse, store, and create human readable versions of the time tags
     included in serialized output from fprime systems
-    """
+    '''
     def __init__(self, time_base=0, time_context=0, seconds=0, useconds=0):
         '''
-        @brief Constructor
+        Constructor
 
-        @param time_base Time base index for the time tag. (see TimeBase Enum)
-        @param time_context Time context for the time tag
-        @param seconds Seconds elapsed since specified time base
-        @param useconds Microseconds since start of current second
+        Args
+            time_base (int): Time base index for the time tag. Must be a valid
+                             integer for a TimeBase Enum value.
+            time_context (int): Time context for the time tag
+            seconds (int): Seconds elapsed since specified time base
+            useconds (int): Microseconds since start of current second. Must
+                            be in range [0, 999999] inclusive
+
+        Returns:
+            An initialized TimeType object
         '''
         # Layout of time tag:
         #
@@ -73,20 +81,26 @@ class TimeType(type_base.BaseType):
 
     def _check_useconds(self, useconds):
         '''
-        @brief Checks if a given microsecond value is valid. Returns if valid,
-               raises TypeRangeException if not valid.
+        Checks if a given microsecond value is valid.
 
-        @param usecs The value to check
+        Args:
+            usecs (int): The value to check
+
+        Returns:
+            None if valid, raises TypeRangeException if not valid.
         '''
         if (useconds < 0) or (useconds > 999999):
             raise TypeRangeException(usecs)
 
     def _check_time_base(self, time_base):
         '''
-        @brief Checks if a given microsecond value is valid. Returns if valid,
-               raises TypeRangeException if not valid.
+        Checks if a given microsecond value is valid.
 
-        @param usecs The value to check
+        Args:
+            time_base (int): The value to check
+
+        Returns:
+            Returns if valid, raises TypeRangeException if not valid.
         '''
         # Construct list of possible values for TimeBase enum
         valid_vals = [member.value for member in list(TimeBase)]
@@ -96,7 +110,7 @@ class TimeType(type_base.BaseType):
 
     @property
     def timeBase(self):
-        return self.__timeBase.val
+        return TimeBase(self.__timeBase.val)
 
     @timeBase.setter
     def timeBase(self, val):
@@ -130,9 +144,10 @@ class TimeType(type_base.BaseType):
 
     def serialize(self):
         '''
-        @brief Serializes the time type
+        Serializes the time type
 
-        @returns byte array containing serialized time type
+        Returns:
+            Byte array containing serialized time type
         '''
         buf = ""
         buf += self.__timeBase.serialize()
@@ -143,11 +158,13 @@ class TimeType(type_base.BaseType):
 
     def deserialize(self, data, offset):
         '''
-        @brief Deserializes a serialized time type in data starting at offset.
-               Internal values to the object are updated.
+        Deserializes a serialized time type in data starting at offset.
 
-        @param data binary data containing the time tag (type = bytearray)
-        @param offset Index in data where time tag starts
+        Internal values to the object are updated.
+
+        Args:
+            data: binary data containing the time tag (type = bytearray)
+            offset: Index in data where time tag starts
         '''
 
         # Decode Time Base
@@ -169,9 +186,10 @@ class TimeType(type_base.BaseType):
 
     def getSize(self):
         '''
-        @brief Return the size of the time type object when serialized
+        Return the size of the time type object when serialized
 
-        @return The size of the time type object when serialized
+        Returns:
+            The size of the time type object when serialized
         '''
         return (self.__timeBase.getSize() +
                 self.__timeContext.getSize() +
@@ -181,12 +199,13 @@ class TimeType(type_base.BaseType):
     @staticmethod
     def compare(t1, t2):
         '''
-        @brief Compares two TimeType objects
+        Compares two TimeType objects
 
         This function sorts times in the order of: timeBase, secs, usecs, and
         then timeContext.
 
-        @return negative, 0, or positive for t1<t2, t1==t2, t1>t2 respectively
+        Returns:
+            Negative, 0, or positive for t1<t2, t1==t2, t1>t2 respectively
         '''
 
         # Compare Base
@@ -210,38 +229,49 @@ class TimeType(type_base.BaseType):
 
     def __str__(self):
         '''
-        @brief Formats the time type object for printing
+        Formats the time type object for printing
 
-        @return A string representing the time type object
+        Returns:
+            A string representing the time type object
         '''
         return ("(%d(%d)-%d:%d)"%(self.__timeBase.val, self.__timeContext.val,
                                   self.__secs.val, self.__usecs.val))
 
 
-    def to_readable(self):
+    def to_readable(self, time_zone=None):
         '''
-        @brief Returns a string of the time object in a human readable format
+        Returns a string of the time object in a human readable format
 
-        @return A human readable string reperesenting the time type object
+        Args:
+            time_zone (tzinfo, default=None): Time zone to convert the TimeType
+                      object to before printing. Timezone also displayed.
+                      If time_zone=None, local timezone is used.
+
+        Returns:
+            A human readable string reperesenting the time type object
         '''
-        dt = self.get_datetime()
+        dt = self.get_datetime(time_zone)
 
         # If we could convert to a valid datetime, use that, otherwise, format
+        # TODO use time_zone arg
         if (dt):
-            return str(dt)
+            return dt.strftime("%Y-%m-%d %H:%M:%S%z")
         else:
             return ("%s: %d.%06ds, context=%d" %
                     (TimeBase(self.__timeBase.val).name,
                      self.__secs.val, self.__usecs.val, self.__timeContext.val))
 
 
-    def get_datetime(self):
+    def get_datetime(self, tz=None):
         '''
-        @brief Returns the python datetime object corresponding to the time type
-               for UTC time
+        Returns the python datetime object for UTC time
 
-        @return datetime object for the time type or None if the time couldn't
-                be determined.
+        Args:
+            tz (tzinfo, default=None): timezone to create the datetime object
+               in. If tz=None, local time zone used.
+        Returns:
+            datetime object for the time type or None if the time couldn't
+            be determined.
         '''
 
         tb = TimeBase(self.__timeBase.val)
@@ -249,37 +279,36 @@ class TimeType(type_base.BaseType):
 
         if (tb == TimeBase["TB_WORKSTATION_TIME"] or
             tb == TimeBase["TB_SC_TIME"]):
-            # TODO this finds the local time corresponding to the timestamp,
-            # is that the desired behavior?
-            dt = datetime.fromtimestamp(self.__secs.val)
+
+            # This finds the local time corresponding to the timestamp and
+            # timezone object, or local time zone if tz=None
+            dt = datetime.fromtimestamp(self.__secs.val, tz)
+
             dt = dt.replace(microsecond=self.__usecs.val)
 
         return dt
 
-    def getNumFields(self):
-        '''
-        @brief Return the number of fields in the time type object
-
-        @return The number of fields in the time type object
-        '''
-        return 4
 
     def __repr__(self): return 'Time'
 
 
 def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
     '''
-    @brief This test function creates a time type object with the given
-           parameters and then serializes it and deserializes it. Also prints
-           it for visual inspection of the formatted output.
+    Test serialization/deserialization of TimeType objects.
 
-    @param t_base Time base for the new time type object
-    @param t_context Time context for the new time type object
-    @param secs Seconds value for the new time type object
-    @param usecs Seconds value for the new time type object
-    @param should_err True if error expected, else False
+    This test function creates a time type object with the given parameters and
+    then serializes it and deserializes it. Also prints it for visual inspection
+    of the formatted output.
 
-    @return True if test passed, False otherwise
+    Args:
+        t_base (int): Time base for the new time type object
+        t_context (int): Time context for the new time type object
+        secs (int): Seconds value for the new time type object
+        usecs (int): Seconds value for the new time type object
+        should_err (int): True if error expected, else False
+
+    Returns:
+        True if test passed, False otherwise
     '''
     print('\n')
 

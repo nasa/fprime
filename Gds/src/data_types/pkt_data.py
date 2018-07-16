@@ -65,11 +65,13 @@ class PktData(SysData):
         return ChData.get_csv_header(verbose)
 
 
-    def get_str(self, verbose=False, csv=False):
+    def get_str(self, time_zone=None, verbose=False, csv=False):
         '''
         Convert the packet data to a string
 
         Args:
+            time_zone (tzinfo, default=None): Timezone to print time in. If
+                      time_zone=None, use local time.
             verbose (boolean, default=False): Prints extra fields if True
             csv (boolean, default=False): Prints each field with commas between
                                           if true
@@ -80,12 +82,12 @@ class PktData(SysData):
         pkt_str = ""
 
         if not csv and verbose:
-            pkt_str += "%s: %s (%d) %s{\n"%(self.time.to_readable(),
+            pkt_str += "%s: %s (%d) %s{\n"%(self.time.to_readable(time_zone),
                                             self.template.get_name(),
                                             self.template.get_id(),
                                             str(self.time))
         elif not csv and not verbose:
-            pkt_str += "%s: %s {\n"%(self.time.to_readable(),
+            pkt_str += "%s: %s {\n"%(self.time.to_readable(time_zone),
                                      self.template.get_name())
 
         for i in range(len(self.chs)):
@@ -94,7 +96,7 @@ class PktData(SysData):
             if (not csv):
                 pkt_str += "\t"
 
-            pkt_str += ch.get_str(verbose, csv)
+            pkt_str += ch.get_str(time_zone, verbose, csv)
 
             # Only print newline if we have not just printed the last line
             if i < (len(self.chs) - 1):
