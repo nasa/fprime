@@ -44,15 +44,41 @@ class ChData(sys_data.SysData):
         return self.val
 
 
-    def __str__(self):
+    @staticmethod
+    def get_csv_header(verbose=False):
         '''
-        Convert the ch data to a string
+        Get the header for a csv file containing channel data
+
+        Args:
+            verbose (boolean, default=False): Indicates if header should be for
+                                              regular or verbose output
 
         Returns:
-            String version of the tlm data
+            Header for a csv file containing channel data
+        '''
+        # TODO remove
+        print("\n\nIn ChData.get_csv_header. verbose=%d\n\n"%verbose)
+
+        if verbose:
+            return "Time,Raw Time,Name,ID,Value\n"
+        else:
+            return "Time,Name,Value\n"
+
+
+    def get_str(self, verbose=False, csv=False):
+        '''
+        Convert the channel data to a string
+
+        Args:
+            verbose (boolean, default=False): Prints extra fields if True
+            csv (boolean, default=False): Prints each field with commas between
+                                          if true
+
+        Returns:
+            String version of the channel data
         '''
         time_str_nice = self.time.to_readable()
-        time_str = str(self.time)
+        raw_time_str = str(self.time)
         ch_name = self.template.get_name()
         fmt_str = self.template.get_format_str()
         if (fmt_str):
@@ -60,6 +86,24 @@ class ChData(sys_data.SysData):
         else:
             ch_val = str(self.val_obj.val)
 
-        return ("%s: %s %d %s %s"%(time_str_nice, ch_name, self.id, time_str,
-                                   ch_val))
+        if (verbose and csv):
+            return ("%s,%s,%s,%d,%s"%(time_str_nice, raw_time_str, ch_name,
+                                      self.id, ch_val))
+        elif (verbose and not csv):
+            return ("%s: %s (%d) %s %s"%(time_str_nice, ch_name, self.id,
+                                         raw_time_str, ch_val))
+        elif (not verbose and csv):
+            return ("%s,%s,%s"%(time_str_nice, ch_name, ch_val))
+        else:
+            return ("%s: %s = %s"%(time_str_nice, ch_name, ch_val))
 
+
+
+    def __str__(self):
+        '''
+        Convert the ch data to a string
+
+        Returns:
+            String version of the channel data
+        '''
+        return self.get_str()

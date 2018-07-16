@@ -8,6 +8,7 @@
 '''
 
 from sys_data import SysData
+from ch_data import ChData
 from models.serialize.time_type import TimeType
 
 class PktData(SysData):
@@ -43,6 +44,67 @@ class PktData(SysData):
         return self.template
 
 
+    @staticmethod
+    def get_csv_header(verbose=False):
+        '''
+        Get the header for a csv file containing packet data
+
+        Args:
+            verbose (boolean, default=False): Indicates if header should be for
+                                              regular or verbose output
+
+        Returns:
+            String version of the channel data
+        '''
+        # TODO remove
+        print("\n\nIn PktData.get_csv_header. verbose=%d\n\n"%verbose)
+
+        # For csv output, all channels are just printed without regards to
+        # packet information
+        return ChData.get_csv_header(verbose)
+
+
+    def get_str(self, verbose=False, csv=False):
+        '''
+        Convert the packet data to a string
+
+        Args:
+            verbose (boolean, default=False): Prints extra fields if True
+            csv (boolean, default=False): Prints each field with commas between
+                                          if true
+
+        Returns:
+            String version of the packet data
+        '''
+        pkt_str = ""
+
+        if not csv and verbose:
+            pkt_str += "%s: %s (%d) %s{\n"%(self.time.to_readable(),
+                                            self.template.get_name(),
+                                            self.template.get_id(),
+                                            str(self.time))
+        elif not csv and not verbose:
+            pkt_str += "%s: %s {\n"%(self.time.to_readable(),
+                                     self.template.get_name())
+
+        for i in range(len(self.chs)):
+            ch = self.chs[i]
+
+            if (not csv):
+                pkt_str += "\t"
+
+            pkt_str += ch.get_str(verbose, csv)
+
+            # Only print newline if we have not just printed the last line
+            if i < (len(self.chs) - 1):
+                pkt_str += "\n"
+
+        if not csv:
+            pkt_str += "\n}"
+
+        return pkt_str
+
+
     def __str__(self):
         '''
         Convert the pkt data to a human readable string
@@ -50,15 +112,5 @@ class PktData(SysData):
         Returns:
             String version of the packet data
         '''
-        pkt_str = "%s: %s (%d) {\n"%(self.time.to_readable(),
-                                     self.template.get_name(),
-                                     self.template.get_id())
-
-        for ch in self.chs:
-            pkt_str = pkt_str + "\t" + str(ch) + "\n"
-
-        pkt_str = pkt_str + "}"
-
-        return pkt_str
-
+        return self.get_str()
 

@@ -56,6 +56,7 @@ class CmdData(sys_data.SysData):
             data += typ.serialize()
         return data
 
+
     def __str__(self):
         arg_str = ''
         for (arg, _, arg_value) in self.args:
