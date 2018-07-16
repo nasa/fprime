@@ -154,7 +154,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             # for the other columns lets just return empty values
             mapper = { 0 : str(node.template.name),
                        1 : str(node.template.id),
-                       2 : str(node.time.get_datetime()),
+                       2 : str(node.time.to_readable()),
                        3 : ""
                        }
             return mapper[col]
@@ -163,7 +163,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         elif isinstance(node, ChData):
             mapper = { 0 : str(node.template.name),
                        1 : str(node.template.id),
-                       2 : str(node.time.get_datetime()),
+                       2 : str(node.time.to_readable()),
                        3 : str(node.val_obj.val)
                        }
             return mapper[col]
