@@ -32,10 +32,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
 
         self.dv_model = ChannelTelemDataViewModel([])
-
+    
         self.ChannelTelemDataViewCtl.AssociateModel(self.dv_model)
-
-        self.dv_model.DecRef()
 
         self.ChannelTelemDataViewCtl.AppendTextColumn("Channel", 0, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=250, align=wx.ALIGN_NOT)
         self.ChannelTelemDataViewCtl.AppendTextColumn("ID", 1, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=50, align=wx.ALIGN_NOT)
@@ -43,7 +41,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         self.ChannelTelemDataViewCtl.AppendTextColumn("Value", 3, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
 
     def __del__( self ):
-        pass
+        self.dv_model.DecRef()
 
     def data_callback(self, data):
         self.dv_model.UpdateModel(data)
@@ -68,7 +66,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # so any Python object can be used as data nodes. If the data nodes
         # are weak-referencable then the objmapper can use a
         # WeakValueDictionary instead.
-        self.UseWeakRefs(False)
+        self.UseWeakRefs(True)
 
 
     # Report how many columns this model provides data for.
@@ -189,10 +187,12 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             self.data.append(new_data)
             self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
         else:
+            pass
             old_data = match[0]
 
             #TODO Just a shallow copy and may not work for Packets because doesn't copy channels
             old_data.__dict__ = new_data.__dict__.copy()
+            #old_data.val_obj.val = new_data.val_obj.val
 
             self.ItemChanged(self.ObjectToItem(old_data))
 
