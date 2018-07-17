@@ -99,7 +99,7 @@ class TopoFactory:
         x = the_parsed_topology_xml
        
        
-        componentXMLNameToComponent = {} #Dictionary mapss XML names to processes component objects so redundant processing is avoided
+        componentXMLNameToComponent = {} #Dictionary maps XML names to processes component objects so redundant processing is avoided
         components = []
         for comp_xml_path in x.get_comp_type_file_header_dict():
             file_path = os.environ['BUILD_ROOT'] + '/' + comp_xml_path
@@ -129,8 +129,8 @@ class TopoFactory:
             instance_name_base_id_list = []
         
         # Iterate over all the model.Component classes and then...
-            # Iterate over all the connection sources and assigne output ports to each Component..
-            # For each output port you want to assign the connect comment, target component namem, target port and type...
+            # Iterate over all the connection sources and assigned output ports to each Component..
+            # For each output port you want to assign the connect comment, target component name, target port and type...
             #    (Requires adding to the model.Port class ether members or a memeber called of type TargetConnection)
         for component in components:
             port_obj_list = []
@@ -326,7 +326,7 @@ class TopoFactory:
         initial_comp_with_ID.sort(key=lambda x: x[1])
         initial_comp_without_ID.sort(key=lambda x: x[2])
         
-        # Pass 3 - Check with_ID list to ensure no base / window IDS collide
+        # Pass 3 - Check with_ID list to ensure no base / window IDs collide
         
         prev_id = 0
         prev_window = 0
@@ -519,7 +519,7 @@ class TopoFactory:
                 b = abs(int(inst.get_base_id()))
             PRINT.info("WARNING: %s instance reseting base id to %d" % (n,b))
         #
-        # set window size or overrid it on instance basis
+        # set window size or override it on instance basis
         
         component_calculated_window_range = self.__compute_component_base_id_range(comp)
         

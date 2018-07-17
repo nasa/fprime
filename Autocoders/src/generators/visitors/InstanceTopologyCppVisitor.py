@@ -95,7 +95,7 @@ class InstanceTopologyCppVisitor(AbstractVisitor.AbstractVisitor):
             #
             if (x[0][-l:] == s[0]) & (x[1] == s[1]):
                 filename = x[0].split(s[0])[0] + self.__config.get("assembly","TopologyCpp")
-                PRINT.info("Generating code filename: %s topology, using default XML filename prefix..." % filename)
+                DEBUG.info("Generating code filename: %s topology, using default XML filename prefix..." % filename)
             else:
                 msg = "XML file naming format not allowed (must be XXXAppAi.xml), Filename: %s" % xml_file
                 PRINT.info(msg)
