@@ -25,6 +25,7 @@ from data_types import cmd_data
 
 from pprint import pprint
 
+from itertools import cycle
 
 ###########################################################################
 ## Class CommandsImpl
@@ -50,6 +51,10 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 		self._encoders = list()
 
+		self._previous_search_term = None
+
+		self._search_index_pool = None
+
 	def __del__( self ):
 		pass
 
@@ -61,6 +66,13 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		"""
 
 		self._encoders.append(enc)
+
+	# Cancel scroll button check if you get a scroll event on the window
+	def updateCmdSearchPool(self):
+		if self._previous_search_term is not None:
+			itms = self.CmdHistListBox.Items
+			idxs = [i for i, v in enumerate(itms) if self._previous_search_term in v]
+			self._search_index_pool = cycle(idxs)
 
 	# Override these handlers to implement functionality for GUI elements
 	def onCmdsComboBoxSelect( self, event ):
@@ -124,21 +136,57 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		s = self.CmdsComboBox.GetStringSelection()
 		temp = self.cname_dict[s]
 		data_obj = cmd_data.CmdData(tuple(arglist), temp)
-		pprint([v.val for v in data_obj.get_args()])
+		
 		for i in self._encoders:
 			i.data_callback(data_obj)
 
+		self.CmdHistListBox.Append(str(data_obj), data_obj)
+		self.CmdHistListBox.EnsureVisible(self.CmdHistListBox.Count - 1)
+		self.updateCmdSearchPool()
 
+	
 	def onCmdHistSearchButtonClick( self, event ):
-		event.Skip()
+
+		if self.CmdHistSearchTextCtl.GetLineText(0) is not u'':
+			if self.CmdHistSearchTextCtl.GetLineText(0) != self._previous_search_term:
+				self._previous_search_term = self.CmdHistSearchTextCtl.GetLineText(0)
+				self.updateCmdSearchPool()
+				cidx = next(self._search_index_pool)
+				self.CmdHistListBox.SetSelection(cidx)
+			else:
+				cidx = next(self._search_index_pool)
+				self.CmdHistListBox.SetSelection(cidx)
 
 	def onCmdHistClearButtonClick( self, event ):
-		event.Skip()
+		self.CmdHistListBox.Clear()
 
 	def onQuickCmdClearButtonClick( self, event ):
-		event.Skip()
+		self.QuickCmdTextCtl.Clear()
+
+	def onListBoxItemSelect( self, event ):
+		itm_obj = self.CmdHistListBox.GetClientData(self.CmdHistListBox.GetSelection())
+		pprint(itm_obj)
+
+	def onQuickCmdTextCtrlEnterPressed( self, event ):
+		self.onQuickCmdSendButtonClick(event)
 
 	def onQuickCmdSendButtonClick( self, event ):
-		event.Skip()
+		cmds = self.QuickCmdTextCtl.GetLineText(0).split(",")
+
+		try:
+
+			temp = self.cname_dict[cmds[0]]
+			data_obj = cmd_data.CmdData(tuple(cmds[1:]), temp)
+
+			for i in self._encoders:
+				i.data_callback(data_obj)
+
+			self.CmdHistListBox.Append(str(data_obj), data_obj)
+			self.CmdHistListBox.EnsureVisible(self.CmdHistListBox.Count - 1)
+			self.updateCmdSearchPool()
+		except KeyError:
+			raise Exception("Command mneumonic is not valid")
+
+
 
 

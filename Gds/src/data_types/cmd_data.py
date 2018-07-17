@@ -142,10 +142,15 @@ class CmdData(sys_data.SysData):
     def __str__(self):
         arg_str = ''
         for name, typ in zip(self.arg_names, self.args):
-            arg_str += ('   Arg %s with value %s\n')% name, str(typ.val)
+            arg_str += ('%s : %s |')%(name, str(typ.val))
+        arg_str = 'w/ args | ' + arg_str
 
-        arg_info = 'Command mneumonic %s\n'% self.template.mneumonic
 
-        return arg_info + arg_str
+        arg_info = '%s '% self.template.mnemonic
+
+        if len(self.args) > 0:
+            return arg_info + arg_str
+        else:
+            return arg_info
 
 
