@@ -87,8 +87,10 @@ class Encoder(object):
         Args:
             binary_data: object to send to all registered senders
         '''
+        # TODO have a parameter passed to the encoder constructor for the dest
+        # of the data (FSW or GUI)
         for obj in self.__senders:
-            obj.send(binary_data)
+            obj.send(binary_data, "FSW")
 
 
 if __name__ == "__main__":
