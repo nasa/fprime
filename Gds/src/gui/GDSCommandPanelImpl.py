@@ -31,114 +31,114 @@ from pprint import pprint
 ###########################################################################
 
 class CommandsImpl (GDSCommandPanelGUI.Commands):
-	'''Implementation file for the Command Panel GUI element'''
+    '''Implementation file for the Command Panel GUI element'''
 
-	def __init__( self, parent, cname_dict ):
-		"""Constructor for the Command Panel implementation
-		
-		Arguments:
-			parent {wx.Window} -- Parent to this GUI element
-			cname_dict {dictionary} -- A dictionary mapping command mneumonic names to the corresponding CommandTemplate object.
-		"""
+    def __init__( self, parent, cname_dict ):
+        """Constructor for the Command Panel implementation
 
-		GDSCommandPanelGUI.Commands.__init__ ( self, parent)
+        Arguments:
+            parent {wx.Window} -- Parent to this GUI element
+            cname_dict {dictionary} -- A dictionary mapping command mneumonic names to the corresponding CommandTemplate object.
+        """
 
-		self.cname_dict = cname_dict
-		self.CmdsComboBox.AppendItems(sorted(self.cname_dict.keys()))
+        GDSCommandPanelGUI.Commands.__init__ ( self, parent)
 
-		self.arginputs = list()
+        self.cname_dict = cname_dict
+        self.CmdsComboBox.AppendItems(sorted(self.cname_dict.keys()))
 
-		self._encoders = list()
+        self.arginputs = list()
 
-	def __del__( self ):
-		pass
+        self._encoders = list()
 
-	def register_encoder(self, enc ):
-		"""Register an encoder object to this object. Encoder must implement data_callback(data)
-		
-		Arguments:
-			enc {Encoder} -- The encoder to register
-		"""
+    def __del__( self ):
+        pass
 
-		self._encoders.append(enc)
+    def register_encoder(self, enc ):
+        """Register an encoder object to this object. Encoder must implement data_callback(data)
 
-	# Override these handlers to implement functionality for GUI elements
-	def onCmdsComboBoxSelect( self, event ):
-		'''Set up the argument GUI elements for the command with the selected mneumonic'''
-		self.arginputs = list()
-		self.CmdArgsScrolledWindow.GetSizer().Clear(True)
+        Arguments:
+            enc {Encoder} -- The encoder to register
+        """
 
-		s = self.CmdsComboBox.GetStringSelection()
-		temp = self.cname_dict[s]
-		width_total = 0
-		
-		for (arg_name, _, arg_type) in temp.arguments:
-			if type(arg_type) == BoolType:
-				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], arg_name)
-			elif type(arg_type) == EnumType:
-				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, arg_type.keys(), arg_name)
-			elif type(arg_type) == type(F64Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), arg_name)
-			elif type(arg_type) == type(F32Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), arg_name)
-			elif type(arg_type) == type(I64Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(I32Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(I16Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(I8Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(U64Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(U32Type()):
-			   	k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(U16Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(U8Type()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
-			elif type(arg_type) == type(StringType()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, None, arg_name)
-			elif type(arg_type) == type(SerializableType()):
-				pass
-			
-			self.arginputs.append(k)
-			self.CmdArgsScrolledWindow.GetSizer().Add(k)
-			w, _ = k.GetSizer().GetMinSize()
-			width_total += w
-		
-		
-		self.CmdArgsScrolledWindow.Layout()
-		self.CmdArgsScrolledWindow.SetVirtualSize((width_total, -1))
-		self.CmdArgsScrolledWindow.Refresh()
+        self._encoders.append(enc)
 
-	def onCmdSendButtonClick( self, event ):
-		'''Gathers entered command arguments and sends them to all encoders'''
-		arglist = list()
-		for i in self.arginputs:
-			if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
-				arglist.append(i.getText())
-			elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
-				arglist.append(i.getSelection())
+    # Override these handlers to implement functionality for GUI elements
+    def onCmdsComboBoxSelect( self, event ):
+        '''Set up the argument GUI elements for the command with the selected mneumonic'''
+        self.arginputs = list()
+        self.CmdArgsScrolledWindow.GetSizer().Clear(True)
 
-		s = self.CmdsComboBox.GetStringSelection()
-		temp = self.cname_dict[s]
-		data_obj = cmd_data.CmdData(tuple(arglist), temp)
-		pprint([v.val for v in data_obj.get_args()])
-		for i in self._encoders:
-			i.data_callback(data_obj)
+        s = self.CmdsComboBox.GetStringSelection()
+        temp = self.cname_dict[s]
+        width_total = 0
+
+        for (arg_name, _, arg_type) in temp.arguments:
+            if type(arg_type) == BoolType:
+                k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], arg_name)
+            elif type(arg_type) == EnumType:
+                k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, arg_type.keys(), arg_name)
+            elif type(arg_type) == type(F64Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), arg_name)
+            elif type(arg_type) == type(F32Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), arg_name)
+            elif type(arg_type) == type(I64Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(I32Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(I16Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(I8Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(U64Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(U32Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(U16Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(U8Type()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
+            elif type(arg_type) == type(StringType()):
+                k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, None, arg_name)
+            elif type(arg_type) == type(SerializableType()):
+                pass
+
+            self.arginputs.append(k)
+            self.CmdArgsScrolledWindow.GetSizer().Add(k)
+            w, _ = k.GetSizer().GetMinSize()
+            width_total += w
 
 
-	def onCmdHistSearchButtonClick( self, event ):
-		event.Skip()
+        self.CmdArgsScrolledWindow.Layout()
+        self.CmdArgsScrolledWindow.SetVirtualSize((width_total, -1))
+        self.CmdArgsScrolledWindow.Refresh()
 
-	def onCmdHistClearButtonClick( self, event ):
-		event.Skip()
+    def onCmdSendButtonClick( self, event ):
+        '''Gathers entered command arguments and sends them to all encoders'''
+        arglist = list()
+        for i in self.arginputs:
+            if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
+                arglist.append(i.getText())
+            elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
+                arglist.append(i.getSelection())
 
-	def onQuickCmdClearButtonClick( self, event ):
-		event.Skip()
+        s = self.CmdsComboBox.GetStringSelection()
+        temp = self.cname_dict[s]
+        data_obj = cmd_data.CmdData(tuple(arglist), temp)
+        pprint([v.val for v in data_obj.get_args()])
+        for i in self._encoders:
+            i.data_callback(data_obj)
 
-	def onQuickCmdSendButtonClick( self, event ):
-		event.Skip()
+
+    def onCmdHistSearchButtonClick( self, event ):
+        event.Skip()
+
+    def onCmdHistClearButtonClick( self, event ):
+        event.Skip()
+
+    def onQuickCmdClearButtonClick( self, event ):
+        event.Skip()
+
+    def onQuickCmdSendButtonClick( self, event ):
+        event.Skip()
 
 

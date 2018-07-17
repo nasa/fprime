@@ -181,7 +181,7 @@ def main(argv=None):
 
 	cmd_enc.register(cli)
 
-	
+
 	distrib.register("FW_PACKET_LOG", dec)
 
 	ch_dec = ch_decoder.ChDecoder(ch_dict)
@@ -195,8 +195,7 @@ def main(argv=None):
 	sleep(1)
 	cli.connect(opts.addr, opts.port)
 	sleep(1)
-	cli.send("Register GUI\n")
-
+        cli.register_to_server(client_socket.GUI_TAG)
 
 
 	frame.Show(True)

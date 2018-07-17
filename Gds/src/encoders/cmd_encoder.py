@@ -49,9 +49,6 @@ from utils.data_desc_type import DataDescType
 class CmdEncoder(encoder.Encoder):
     '''Encoder class for command data'''
 
-    # Header for binary data output
-    HEADER = "A5A5 "
-
     def __init__(self, cmd_dict):
         '''
         CmdEncoder class constructor
@@ -94,8 +91,6 @@ class CmdEncoder(encoder.Encoder):
 
         desc = U32Type( 0x5A5A5A5A ).serialize()
 
-        destination = "FSW "
-
         descriptor = U32Type(DataDescType["FW_PACKET_COMMAND"].value).serialize()
 
         op_code = U32Type(cmd_temp.get_op_code()).serialize()
@@ -106,8 +101,7 @@ class CmdEncoder(encoder.Encoder):
 
         length = U32Type(len(descriptor) + len(op_code) + len(arg_data)).serialize()
 
-        binary_data = (self.HEADER + destination + desc + length + descriptor +
-                       op_code + arg_data)
+        binary_data = (desc + length + descriptor + op_code + arg_data)
 
         return binary_data
 
