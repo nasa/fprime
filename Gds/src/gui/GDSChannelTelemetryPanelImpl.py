@@ -42,9 +42,10 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
     def __del__( self ):
         self.dv_model.DecRef()
-
+        
     def data_callback(self, data):
-        self.dv_model.UpdateModel(data)
+        if self.dv_model.RefCount > 1:
+            self.dv_model.UpdateModel(data)
         
 
     # Override these handlers to implement functionality for GUI elements
@@ -187,7 +188,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             self.data.append(new_data)
             self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
         else:
-            pass
             old_data = match[0]
 
             #TODO Just a shallow copy and may not work for Packets because doesn't copy channels

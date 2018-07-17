@@ -20,6 +20,8 @@ allow consumers to receive raw data.
 @bug No known bugs
 '''
 
+import wx
+
 class Decoder(object):
     '''Base class for all decoder classes. Defines the interface for decoders'''
 
@@ -92,7 +94,8 @@ class Decoder(object):
             #TODO remove
             #print("Sending %s to %s"%(parsed_data, obj))
 
-            obj.data_callback(parsed_data)
+            # Need to use wx.CallAfter to avoid a race condition
+            wx.CallAfter(obj.data_callback, parsed_data)
 
 
 if __name__ == "__main__":
