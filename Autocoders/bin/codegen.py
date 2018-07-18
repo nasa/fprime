@@ -308,7 +308,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         topology_model.set_instance_xml_list(xml_list)
         
         if opt.xml_topology_dict:
-            topology_dict = etree.Element("Dictionary")
+            topology_dict = etree.Element("dictionary")
             topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
             # create a new XML tree for dictionary
             enum_list = etree.Element("enums")
@@ -324,6 +324,50 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 comp_id = int(comp.get_base_id())
                 PRINT.debug("Processing %s [%s] (%s)"%(comp_name,comp_type,hex(comp_id)))
                 
+                # check for commands
+                if (parsed_xml_dict[comp_type].get_commands() != None):
+                    for command in parsed_xml_dict[comp_type].get_commands():
+                        PRINT.debug("Processing Command %s"%command.get_mnemonic())
+                        command_elem = etree.Element("command")
+                        command_elem.attrib["component"] = comp_name
+                        command_elem.attrib["mnemonic"] = command.get_mnemonic()
+                        command_elem.attrib["opcode"] = "%s"%(hex(int(command.get_opcodes()[0],base=0) + comp_id))
+                        if ("comment" in command_elem.attrib.keys()):
+                            command_elem.attrib["description"] = command_elem.attrib["comment"]
+                        args_elem = etree.Element("args")
+                        for arg in command.get_args():
+                            arg_elem = etree.Element("arg")
+                            arg_elem.attrib["name"] = arg.get_name()
+                            arg_type = arg.get_type()
+                            if type(arg_type) == type(tuple()):
+                                enum_value = 0
+                                type_name = "%s::%s::%s"%(comp_type,arg.get_name(),arg_type[0][1])
+                                # Add enum entry
+                                enum_elem = etree.Element("enum")
+                                enum_elem.attrib["type"] = type_name
+                                # Add enum members
+                                for (membername,value,comment) in arg_type[1]:
+                                    enum_mem = etree.Element("item")
+                                    enum_mem.attrib["name"] = membername
+                                    # keep track of incrementing enum value
+                                    if value != None:
+                                        enum_value = int(value)
+                                      
+                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_value = enum_value + 1
+                                    if comment != None:
+                                        enum_mem.attrib["description"] = comment
+                                    enum_elem.append(enum_mem)
+                                enum_list.append(enum_elem)
+                            else:
+                                type_name = arg_type    
+                                if arg_type == "string":
+                                    arg_elem.attrib["len"] = arg.get_size()   
+                            arg_elem.attrib["type"] = type_name
+                            args_elem.append(arg_elem)
+                            command_elem.append(args_elem)
+                        command_list.append(command_elem)
+                
                 # check for channels
                 if (parsed_xml_dict[comp_type].get_channels() != None):
                     for chan in parsed_xml_dict[comp_type].get_channels():
@@ -332,12 +376,18 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         channel_elem.attrib["component"] = comp_name
                         channel_elem.attrib["name"] = chan.get_name()
                         channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
+                        if chan.get_format_string() != None:
+                            channel_elem.attrib["format_string"] = chan.get_format_string()
+                        if chan.get_comment() != None:
+                            channel_elem.attrib["description"] = chan.get_comment()
+    
+                        channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
                         if ("comment" in channel_elem.attrib.keys()):
                             channel_elem.attrib["description"] = channel_elem.attrib["comment"]
                         channel_type = chan.get_type()
                         if type(channel_type) == type(tuple()):
                             enum_value = 0
-                            type_name = "%s.%s.%s"%(comp_type,chan.get_name(),channel_type[0][1])
+                            type_name = "%s::%s::%s"%(comp_type,chan.get_name(),channel_type[0][1])
                             # Add enum entry
                             enum_elem = etree.Element("enum")
                             enum_elem.attrib["type"] = type_name
@@ -359,14 +409,27 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             type_name = channel_type 
                             if channel_type == "string":
                                 channel_elem.attrib["len"] = chan.get_size()   
-                        
+                        (lr,lo,ly,hy,ho,hr) = chan.get_limits()
+                        if (lr != None):
+                            channel_elem.attrib["low_red"] = lr
+                        if (lo != None):
+                            channel_elem.attrib["low_orange"] = lo
+                        if (ly != None):
+                            channel_elem.attrib["low_yellow"] = ly
+                        if (hy != None):
+                            channel_elem.attrib["high_yellow"] = hy
+                        if (ho != None):
+                            channel_elem.attrib["high_orange"] = ho
+                        if (hr != None):
+                            channel_elem.attrib["hight_red"] = hr
+                            
                         channel_elem.attrib["type"] = type_name
                         telemetry_list.append(channel_elem)
 
                 # check for events
                 if (parsed_xml_dict[comp_type].get_events() != None):
                     for event in parsed_xml_dict[comp_type].get_events():
-                        PRINT.debug("Processing Channel %s"%event.get_name())
+                        PRINT.debug("Processing Event %s"%event.get_name())
                         event_elem = etree.Element("event")
                         event_elem.attrib["component"] = comp_name
                         event_elem.attrib["name"] = event.get_name()
@@ -382,7 +445,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             arg_type = arg.get_type()
                             if type(arg_type) == type(tuple()):
                                 enum_value = 0
-                                type_name = "%s.%s.%s"%(comp_type,arg.get_name(),arg_type[0][1])
+                                type_name = "%s::%s::%s"%(comp_type,arg.get_name(),arg_type[0][1])
                                 # Add enum entry
                                 enum_elem = etree.Element("enum")
                                 enum_elem.attrib["type"] = type_name
@@ -409,6 +472,79 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             event_elem.append(args_elem)
                         event_list.append(event_elem)
         
+                # check for parameters
+                if (parsed_xml_dict[comp_type].get_parameters() != None):
+                    for parameter in parsed_xml_dict[comp_type].get_parameters():
+                        PRINT.debug("Processing Parameter %s"%chan.get_name())
+                        param_default = None
+                        command_elem_set = etree.Element("command")
+                        command_elem_set.attrib["component"] = comp_name
+                        command_elem_set.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SET"
+                        command_elem_set.attrib["opcode"] = "%s"%(hex(int(parameter.get_set_opcodes()[0],base=0) + comp_id))
+                        if ("comment" in command_elem.attrib.keys()):
+                            command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set" 
+                        else:
+                            command_elem_set.attrib["description"] = parameter.get_name() + " parameter set" 
+                            
+                        args_elem = etree.Element("args")
+                        arg_elem = etree.Element("arg")
+                        arg_elem.attrib["name"] = "val"
+                        arg_type = parameter.get_type()
+                        if type(arg_type) == type(tuple()):
+                            enum_value = 0
+                            type_name = "%s::%s::%s"%(comp_type,arg.get_name(),arg_type[0][1])
+                            # Add enum entry
+                            enum_elem = etree.Element("enum")
+                            enum_elem.attrib["type"] = type_name
+                            # Add enum members
+                            for (membername,value,comment) in arg_type[1]:
+                                enum_mem = etree.Element("item")
+                                enum_mem.attrib["name"] = membername
+                                # keep track of incrementing enum value
+                                if value != None:
+                                    enum_value = int(value)
+                                  
+                                enum_mem.attrib["value"] = "%d"%enum_value
+                                enum_value = enum_value + 1
+                                if comment != None:
+                                    enum_mem.attrib["description"] = comment
+                                enum_elem.append(enum_mem)
+                                # assign default to be first enum member
+                                if param_default == None:
+                                    param_default = membername
+                            enum_list.append(enum_elem)
+                        else:
+                            type_name = arg_type    
+                            if arg_type == "string":
+                                arg_elem.attrib["len"] = arg.get_size()
+                            else:
+                                param_default = "0"      
+                        arg_elem.attrib["type"] = type_name
+                        args_elem.append(arg_elem)
+                        command_elem_set.append(args_elem)
+                        command_list.append(command_elem_set)
+                        
+                        command_elem_save = etree.Element("command")
+                        command_elem_save.attrib["component"] = comp_name
+                        command_elem_save.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SAVE"
+                        command_elem_save.attrib["opcode"] = "%s"%(hex(int(parameter.get_save_opcodes()[0],base=0) + comp_id))
+                        if ("comment" in command_elem.attrib.keys()):
+                            command_elem_save.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
+                        else:
+                            command_elem_save.attrib["description"] = parameter.get_name() +  " parameter save"
+                            
+                        command_list.append(command_elem_save)
+                        
+                        param_elem = etree.Element("parameter")
+                        param_elem.attrib["component"] = comp_name
+                        param_elem.attrib["name"] = parameter.get_name()
+                        param_elem.attrib["id"] = "%s"%(hex(int(parameter.get_ids()[0],base=0) + comp_id))
+                        if parameter.get_default() != None:
+                            param_default = parameter.get_default()
+                        param_elem.attrib["default"] = param_default
+                            
+                        parameter_list.append(param_elem)
+
             topology_dict.append(enum_list)
             topology_dict.append(serializable_list)
             topology_dict.append(command_list)
