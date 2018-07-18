@@ -74,14 +74,10 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 			idxs = [i for i, v in enumerate(itms) if self._previous_search_term in v]
 			self._search_index_pool = cycle(idxs)
 
-	# Override these handlers to implement functionality for GUI elements
-	def onCmdsComboBoxSelect( self, event ):
-		'''Set up the argument GUI elements for the command with the selected mneumonic'''
+	def setupCommandArguments(self, temp):
 		self.arginputs = list()
 		self.CmdArgsScrolledWindow.GetSizer().Clear(True)
-
-		s = self.CmdsComboBox.GetStringSelection()
-		temp = self.cname_dict[s]
+	
 		width_total = 0
 		
 		for (arg_name, _, arg_type) in temp.arguments:
@@ -124,6 +120,14 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		self.CmdArgsScrolledWindow.SetVirtualSize((width_total, -1))
 		self.CmdArgsScrolledWindow.Refresh()
 
+	# Override these handlers to implement functionality for GUI elements
+	def onCmdsComboBoxSelect( self, event ):
+		'''Set up the argument GUI elements for the command with the selected mneumonic'''
+		s = self.CmdsComboBox.GetStringSelection()
+		temp = self.cname_dict[s]
+		self.setupCommandArguments(temp)
+
+
 	def onCmdSendButtonClick( self, event ):
 		'''Gathers entered command arguments and sends them to all encoders'''
 		arglist = list()
@@ -165,7 +169,8 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 	def onListBoxItemSelect( self, event ):
 		itm_obj = self.CmdHistListBox.GetClientData(self.CmdHistListBox.GetSelection())
-		pprint(itm_obj)
+		self.setupCommandArguments(itm_obj.template)
+		self.CmdsComboBox.SetSelection(self.CmdsComboBox.Items.index(itm_obj.template.mneumonic))
 
 	def onQuickCmdTextCtrlEnterPressed( self, event ):
 		self.onQuickCmdSendButtonClick(event)

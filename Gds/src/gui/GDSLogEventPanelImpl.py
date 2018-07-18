@@ -35,14 +35,15 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
 		#TODO find out in how the message portion of the event should be displayed.
 		if type(data) == event_data.EventData:
-                        arg_vals = tuple([arg.val for arg in data.args])
+			arg_vals = tuple([arg.val for arg in data.args])
 			l = [data.time.to_readable(),
-                             data.template.name,
-                             str(data.template.id),
-                             data.template.severity,
-                             data.template.format_str%arg_vals]
+							 data.template.name,
+							 str(data.template.id),
+							 data.template.severity,
+							 data.template.format_str%arg_vals]
 
 			self.EventLogDataListCtl.AppendItem(l)
+			pprint(self.EventLogDataListCtl.GetItemData(self.EventLogDataListCtl.RowToItem(self.EventLogDataListCtl.ItemCount - 1)))
 
 	def scrollEventLogToBottom(self):
 		"""Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
@@ -53,6 +54,19 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 			self.EventLogDataListCtl.EnsureVisible(i)
 			self.EventLogDataListCtl.Refresh()
 		wx.CallLater(10, self.scrollEventLogToBottom)
+
+	def getEventLogState(self):
+		r = list()
+		for i in range(self.EventLogDataListCtl.GetItemCount()):
+			c = list()
+			for j in range(5):
+				c.append(self.EventLogDataListCtl.GetTextValue(i, j))
+			r.append(c)
+		return r
+
+	def setEventLogState(self, state):
+		for r in state:
+			self.EventLogDataListCtl.AppendItem(r)
 
 	# Override these handlers to implement functionality for GUI elements
 	def onEventLogClearButtonClick( self, event ):

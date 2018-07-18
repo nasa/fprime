@@ -47,6 +47,11 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         if self.dv_model.RefCount > 1:
             self.dv_model.UpdateModel(data)
         
+    def getChannelTelemDataViewState(self):
+        return self.dv_model.GetData()
+    
+    def setChannelTelemDataViewState(self, data):
+        self.dv_model.SetData(data)
 
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
@@ -195,6 +200,15 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             #old_data.val_obj.val = new_data.val_obj.val
 
             self.ItemChanged(self.ObjectToItem(old_data))
+    
+    def SetData(self, data):
+        for d in data:
+            self.UpdateModel(d)
+        self.data = data
+
+
+    def GetData(self):
+        return self.data
 
 
 

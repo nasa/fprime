@@ -5,36 +5,41 @@ import GDSStatusPanelImpl
 import GDSCommandPanelImpl
 import GDSLogEventPanelImpl
 
+import os
+
 ###########################################################################
 ## Class MainFrameImpl
 ###########################################################################
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 	
+	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None):
+		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
-	def __init__( self, parent, cname_dict):
-		GDSMainFrameGUI.MainFrame.__init__ ( self, parent)
-
-		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, cname_dict)
+		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_ldr.get_name_dict(factory.opts.generated_path + os.sep + "commands"))
 		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
 		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook)
+
+		if evnt_pnl_state:
+			self.event_pnl.setEventLogState(evnt_pnl_state)
+
+		if tlm_pnl_state:
+			self.telem_pnl.setChannelTelemDataViewState(tlm_pnl_state)
 
 		self.TabNotebook.AddPage( self.cmd_pnl, u"Commands", False )
 		self.TabNotebook.AddPage( self.status_pnl, u"Status", False )
 		self.TabNotebook.AddPage( self.event_pnl, u"Log Events", False )
 		self.TabNotebook.AddPage( self.telem_pnl, u"Channel Telemetry", False )
 
-		self.child_main_instances = []
+		self.main_frame_factory = factory
 		
 	def __del__( self ):
 		pass
 	
 	# Override these handlers to implement functionality for GUI elements
 	def onNewMenuItemClick( self, event ):
-		frame = MainFrameImpl(self)
-		self.child_main_instances.append(frame)
-		frame.Show(True)
+		self.main_frame_factory.create_new_window()
 	
 	def onSaveMenuItemClick( self, event ):
 		event.Skip()
