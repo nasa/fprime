@@ -171,7 +171,7 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 	def onListBoxItemSelect( self, event ):
 		itm_obj = self.CmdHistListBox.GetClientData(self.CmdHistListBox.GetSelection())
 		self.setupCommandArguments(itm_obj.template)
-		self.CmdsComboBox.SetSelection(self.CmdsComboBox.Items.index(itm_obj.template.mneumonic))
+		self.CmdsComboBox.SetSelection(self.CmdsComboBox.Items.index(itm_obj.template.mnemonic))
 
 	def onQuickCmdTextCtrlEnterPressed( self, event ):
 		self.onQuickCmdSendButtonClick(event)
