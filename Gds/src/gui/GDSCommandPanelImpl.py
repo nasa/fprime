@@ -133,20 +133,21 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		arglist = list()
 		for i in self.arginputs:
 			if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
-				arglist.append(i.getText())
+				arglist.append(str(i.getText()))
 			elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
 				arglist.append(i.getSelection())
-
+		pprint(arglist)
 		s = self.CmdsComboBox.GetStringSelection()
-		temp = self.cname_dict[s]
-		data_obj = cmd_data.CmdData(tuple(arglist), temp)
-		
-		for i in self._encoders:
-			i.data_callback(data_obj)
+		if s is not u'':
+			temp = self.cname_dict[s]
+			data_obj = cmd_data.CmdData(tuple(arglist), temp)
+			
+			for i in self._encoders:
+				i.data_callback(data_obj)
 
-		self.CmdHistListBox.Append(str(data_obj), data_obj)
-		self.CmdHistListBox.EnsureVisible(self.CmdHistListBox.Count - 1)
-		self.updateCmdSearchPool()
+			self.CmdHistListBox.Append(str(data_obj), data_obj)
+			self.CmdHistListBox.EnsureVisible(self.CmdHistListBox.Count - 1)
+			self.updateCmdSearchPool()
 
 	
 	def onCmdHistSearchButtonClick( self, event ):

@@ -7,6 +7,8 @@ import GDSLogEventPanelImpl
 
 import os
 
+from pprint import pprint
+
 ###########################################################################
 ## Class MainFrameImpl
 ###########################################################################
@@ -38,6 +40,10 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		pass
 	
 	# Override these handlers to implement functionality for GUI elements
+	def onMainFrameClose(self, event ):
+		self.main_frame_factory.main_frame_instances.remove(self)
+		self.Destroy()
+
 	def onNewMenuItemClick( self, event ):
 		self.main_frame_factory.create_new_window()
 	
@@ -57,6 +63,6 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		event.Skip()
 	
 	def onExitMenuItemClick( self, event ):
-		event.Skip()
+		self.onMainFrameClose(event)
 	
 

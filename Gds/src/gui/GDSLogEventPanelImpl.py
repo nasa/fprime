@@ -43,7 +43,6 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 							 data.template.format_str%arg_vals]
 
 			self.EventLogDataListCtl.AppendItem(l)
-			pprint(self.EventLogDataListCtl.GetItemData(self.EventLogDataListCtl.RowToItem(self.EventLogDataListCtl.ItemCount - 1)))
 
 	def scrollEventLogToBottom(self):
 		"""Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
