@@ -113,32 +113,39 @@ class Commands ( wx.Panel ):
 		# Connect Events
 		self.CmdsComboBox.Bind( wx.EVT_COMBOBOX, self.onCmdsComboBoxSelect )
 		self.CmdSendButton.Bind( wx.EVT_BUTTON, self.onCmdSendButtonClick )
+		self.CmdHistListBox.Bind( wx.EVT_LISTBOX, self.onListBoxItemSelect )
 		self.CmdHistSearchButton.Bind( wx.EVT_BUTTON, self.onCmdHistSearchButtonClick )
 		self.CmdHistClearButton.Bind( wx.EVT_BUTTON, self.onCmdHistClearButtonClick )
+		self.QuickCmdTextCtl.Bind( wx.EVT_TEXT_ENTER, self.onQuickCmdTextCtrlEnterPressed )
 		self.QuickCmdClearButton.Bind( wx.EVT_BUTTON, self.onQuickCmdClearButtonClick )
 		self.QuickCmdSendButton.Bind( wx.EVT_BUTTON, self.onQuickCmdSendButtonClick )
-
+	
 	def __del__( self ):
 		pass
-
-
+	
+	
 	# Virtual event handlers, overide them in your derived class
 	def onCmdsComboBoxSelect( self, event ):
 		event.Skip()
-
+	
 	def onCmdSendButtonClick( self, event ):
 		event.Skip()
-
+	
+	def onListBoxItemSelect( self, event ):
+		event.Skip()
+	
 	def onCmdHistSearchButtonClick( self, event ):
 		event.Skip()
-
+	
 	def onCmdHistClearButtonClick( self, event ):
 		event.Skip()
-
+	
+	def onQuickCmdTextCtrlEnterPressed( self, event ):
+		event.Skip()
+	
 	def onQuickCmdClearButtonClick( self, event ):
 		event.Skip()
-
+	
 	def onQuickCmdSendButtonClick( self, event ):
 		event.Skip()
-
-
+	

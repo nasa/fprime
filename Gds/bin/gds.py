@@ -34,6 +34,7 @@ from loaders import cmd_py_loader
 from encoders import cmd_encoder
 from loaders import ch_py_loader
 
+from main_frame_facotry import MainFrameFactory
 
 from pprint import pprint
 
@@ -158,50 +159,21 @@ def main(argv=None):
 
 	app = wx.App(False)
 
-	distrib = distributor.Distributor()
-	cli = client_socket.ThreadedTCPSocketClient()
+	factory = MainFrameFactory(opts)
 
-	eldr = event_py_loader.EventPyLoader()
-	eid_dict = eldr.get_id_dict(opts.generated_path + os.sep + "events")
+	factory.setup_pipeline()
 
-	cldr = cmd_py_loader.CmdPyLoader()
-	cname_dict = cldr.get_name_dict(opts.generated_path + os.sep + "commands")
-
-	ch_ldr = ch_py_loader.ChPyLoader()
-	ch_dict = ch_ldr.get_id_dict(opts.generated_path + os.sep + "channels")
-
-	frame = GDSMainFrameImpl.MainFrameImpl(None, cname_dict)
-
-	dec = event_decoder.EventDecoder(eid_dict)
-	dec.register(frame.event_pnl)
-
-	cmd_enc = cmd_encoder.CmdEncoder(cname_dict)
-
-	frame.cmd_pnl.register_encoder(cmd_enc)
-
-	cmd_enc.register(cli)
-
-
-	distrib.register("FW_PACKET_LOG", dec)
-
-	ch_dec = ch_decoder.ChDecoder(ch_dict)
-	ch_dec.register(frame.telem_pnl)
-	distrib.register("FW_PACKET_TELEM", ch_dec)
-
-
-	pprint(opts)
-
-	cli.register_distributor(distrib)
 	sleep(1)
-	cli.connect(opts.addr, opts.port)
+
+	factory.client_socket.connect(opts.addr, opts.port)
+
 	sleep(1)
-        cli.register_to_server(client_socket.GUI_TAG)
 
-
-	frame.Show(True)
+	factory.client_socket.register_to_server(client_socket.GUI_TAG)
 
 	app.MainLoop()
-	cli.disconnect()
+
+	factory.client_socket.disconnect()
 
 if __name__ == "__main__":
 	sys.exit(main())
