@@ -136,6 +136,8 @@ def main(argv=None):
 	parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
 	parser.add_option("-d", "--dictionary", dest="generated_path", action="store", type="string", \
 						help="Set base path to generated command/telemetry definition files [default: %default]")
+        parser.add_option("-s", "--pkt-spec", dest="pkt_spec_path", action="store", type="string",
+                          help="Path to the packet specification file", default=None)
 	parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set threaded tcp socket server address [default: %default]", \
 						default="127.0.0.1")
 	parser.add_option("-c", "--connect", action="store_true", dest="connect", help="Launches the Threaded TCP Socket Server on startup and connect to it [default: %default]", \
