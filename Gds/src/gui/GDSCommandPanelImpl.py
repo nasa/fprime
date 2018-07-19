@@ -106,7 +106,7 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 			elif type(arg_type) == type(U8Type()):
 				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.HexIntegerValidator(), arg_name)
 			elif type(arg_type) == type(StringType()):
-				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, None, arg_name)
+				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.StringValidator(), arg_name)
 			elif type(arg_type) == type(SerializableType()):
 				pass
 			
@@ -133,10 +133,13 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		arglist = list()
 		for i in self.arginputs:
 			if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
+				if i.Validate() == False:
+					return False
 				arglist.append(str(i.getText()))
 			elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
 				arglist.append(i.getSelection())
-		pprint(arglist)
+
+		
 		s = self.CmdsComboBox.GetStringSelection()
 		if s is not u'':
 			temp = self.cname_dict[s]
@@ -148,6 +151,8 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 			self.CmdHistListBox.Append(str(data_obj), data_obj)
 			self.CmdHistListBox.EnsureVisible(self.CmdHistListBox.Count - 1)
 			self.updateCmdSearchPool()
+
+		return True
 
 	
 	def onCmdHistSearchButtonClick( self, event ):

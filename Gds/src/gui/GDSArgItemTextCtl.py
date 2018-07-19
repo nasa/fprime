@@ -132,3 +132,40 @@ class RealValidator(wx.Validator):
 	def TransferFromWindow(self):
 		return True
 
+class StringValidator(wx.Validator):
+	'''Validator that checks for string formating of input'''
+
+	def __init__(self):
+		wx.Validator.__init__(self)
+
+	def Clone(self):
+		return StringValidator()
+
+	def Validate(self, win):
+		"""Validates the text control contents as a string
+		
+		Arguments:
+			win {wx.Window} -- Parent window. Passed in automoatically
+		
+		Returns:
+			bool -- True if correct format, False otherwise
+		"""
+
+		textCtrl = self.GetWindow()
+		text = textCtrl.GetValue()
+
+
+		if text is not u'':
+			textCtrl.SetBackgroundColour("white")
+			return True
+		else:
+			wx.MessageBox("Need an value for string arg", "Error")
+			textCtrl.SetBackgroundColour("pink")
+			textCtrl.Refresh()
+			return False
+
+	def TransferToWindow(self):
+		return True
+
+	def TransferFromWindow(self):
+		return True
