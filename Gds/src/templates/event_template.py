@@ -16,10 +16,8 @@ import data_template
 
 from models.serialize import type_base
 from models.serialize.type_exceptions import *
+from utils.event_severity import EventSeverity
 
-
-#TODO Move to enums file
-EventSeverity = Enum('Severity', 'COMMAND ACTIVITY_LO ACTIVITY_HI WARNING_LO WARNING_HI DIAGNOSTIC FATAL')
 
 class EventTemplate(data_template.DataTemplate):
     '''Class to create event templates to describe specific event types'''

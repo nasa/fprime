@@ -53,11 +53,16 @@ def main(argv=None):
 
     ################## Run the ThreadedTCPServer.py #################################
     if twin:
-        TTS_args = [python_bin,"%s/Gds/bin/pexpect_runner.py"%build_root,"ThreadedTCP.log","Threaded TCP Server",python_bin,"%s/Gse/bin/ThreadedTCPServer.py"%build_root,"--port","%d"%used_port, "--host",addr]
+        TTS_args = [python_bin,"%s/Gds/bin/pexpect_runner.py"%build_root,
+                    "ThreadedTCP.log","Threaded TCP Server",
+                    python_bin,"%s/Gse/bin/ThreadedTCPServer.py"%build_root,
+                    "--port","%d"%used_port, "--host",addr]
         TTS = subprocess.Popen(TTS_args)
     else:
         tts_log = open("ThreadedTCP.log",'w')
-        TTS_args = [python_bin, "-u", "%s/Gds/bin/ThreadedTCPServer.py"%build_root,"--port","%d"%used_port, "--host",addr]
+        TTS_args = [python_bin, "-u",
+                    "%s/Gds/bin/ThreadedTCPServer.py"%build_root,
+                    "--port","%d"%used_port, "--host",addr]
         TTS = subprocess.Popen(TTS_args,stdout=tts_log,stderr=subprocess.STDOUT)
 
     #################################################################################
@@ -68,7 +73,11 @@ def main(argv=None):
 
 
     ########################### Run the GUI for the GDS #############################
-    GUI_args = [python_bin,"%s/Gds/bin/gds.py"%build_root,"--port","%d"%used_port,"--dictionary","%s/Gse/generated/Ref"%build_root,"--connect","--addr",addr,"-L","%s/Ref/logs"%build_root]
+    GUI_args = [python_bin,"%s/Gds/bin/gds.py"%build_root,
+                "--port","%d"%used_port,
+                "--xml-dict","%s/Ref/Top/RefTopologyAppDictionary.xml"%build_root,
+                "--dictionary","%s/Gse/generated/Ref"%build_root,
+                "--connect","--addr",addr,"-L","%s/Ref/logs"%build_root]
 
 
     #print ("GUI: %s"%" ".join(GUI_args))
@@ -83,7 +92,9 @@ def main(argv=None):
 
     if not nobin:
         print("running ref app\n\n\n\n")
-        REF_args = [python_bin,"%s/Gds/bin/pexpect_runner.py"%build_root,"Ref.log","Ref Application",ref_bin,"-p","%d"%used_port,"-a",addr]
+        REF_args = [python_bin,"%s/Gds/bin/pexpect_runner.py"%build_root,
+                    "Ref.log","Ref Application",ref_bin,"-p","%d"%used_port,
+                    "-a",addr]
         REF = subprocess.Popen(REF_args)
 
     #################################################################################

@@ -19,7 +19,7 @@ class ChTemplate(data_template.DataTemplate):
     '''Class for channel templates that describe specific telemetry channels'''
 
     def __init__(self, ch_id, ch_name, comp_name, ch_desc, ch_type_obj,
-                 ch_format_str, low_red=None, low_orange=None, low_yellow=None,
+                 ch_format_str=None, low_red=None, low_orange=None, low_yellow=None,
                  high_yellow=None, high_orange=None, high_red=None):
         '''
         Constructor
@@ -31,7 +31,7 @@ class ChTemplate(data_template.DataTemplate):
             ch_desc: Description of the channel
             ch_type_obj: The channel's type as an instance of a class derived
                          from BaseType
-            ch_format_str: The format string for the channel (may be None)
+            ch_format_str: (Optional) The format string for the channel
             low_red: (Optional) Below this the value will be in red alert
             low_orange: (Optional) Below this the value will be in orange alert
             low_yellow: (Optional) Below this the value will be in yellow alert
