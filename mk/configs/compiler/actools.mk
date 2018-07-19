@@ -7,7 +7,7 @@ DICT_GEN := "GLOBAL"
 
 #DICT_TYPE specifies what type of dictionary to generate, with the two arguments being "DEFAULT" or "AMPCS". 
 #"DEFAULT" is the default if the var is not set or is set to the wrong value. 
-DICT_TYPE := "DEFAULT"
+DICT_TYPE := "XML"
 
 # Python path addition for ACTOOLS
 
@@ -51,8 +51,13 @@ ifeq ($(DICT_TYPE) , "AMPCS")
 	AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root
 	AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only  --ampcs_topology_dict --dict_dir $(AMPCS_DICT_MODULE_SUBDIR)
 else
-	AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root --default_topology_dict --dict_dir $(DICT_MODULE_SUBDIR)
-	AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only  --default_topology_dict
+    ifeq ($(DICT_TYPE) , "XML")
+	   AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root
+	   AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only --xml_topology_dict
+	else
+	   AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root --default_topology_dict --dict_dir $(DICT_MODULE_SUBDIR)
+	   AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only  --default_topology_dict
+    endif	
 endif
 	
 else # local
