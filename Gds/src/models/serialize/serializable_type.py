@@ -22,7 +22,7 @@ class SerializableType(type_base.BaseType):
 
     @param param: typename = "SomeTypeName" string
     To preserve member order, the member argument is a list of members and their types:
-    @param param: mem_list = [ ("member",<ref to BaseType>), ... ]
+    @param param: mem_list = [ ("member",<ref to BaseType>, format string, description), ... ]
     """
     def __init__(self, typename, mem_list = None):
         """
@@ -43,7 +43,7 @@ class SerializableType(type_base.BaseType):
             raise TypeMismatchException(type(list()),type(mem_list))
 
         # scan the list to see if it has the correct types
-        for (memberName,memberVal,format_string) in mem_list:
+        for (memberName, memberVal, format_string, desc) in mem_list:
             # member name should be a string
             if not type(memberName) == type(str()):
                 raise TypeMismatchException(type(str()),type(memberName))
@@ -53,6 +53,9 @@ class SerializableType(type_base.BaseType):
             # format string should be string
             if not type(format_string) == type(str()):
                 raise TypeMismatchException(type(str()),type(format_string))
+            # Description should be a string
+            if not type(desc) == type(str()):
+                raise TypeMismatchException(type(str()),type(desc))
 
     @property
     def mem_list(self):
@@ -73,7 +76,7 @@ class SerializableType(type_base.BaseType):
 
         # iterate through members and serialize each one
         serStream = ""
-        for (memberName, memberVal, format_string) in self.mem_list:
+        for (memberName, memberVal, format_string, desc) in self.mem_list:
             serStream += memberVal.serialize()
 
         return serStream
@@ -81,7 +84,7 @@ class SerializableType(type_base.BaseType):
 
     def deserialize(self, data, offset):
         self.__val = []
-        for (memberName, memberVal, format_string) in self.mem_list:
+        for (memberName, memberVal, format_string, desc) in self.mem_list:
             memberVal.deserialize(data, offset)
             self.__val.append(memberVal.val)
             offset += memberVal.getSize()
@@ -92,7 +95,7 @@ class SerializableType(type_base.BaseType):
 
     def getSize(self):
         size = 0
-        for (memberName, memberVal, format_string) in self.mem_list:
+        for (memberName, memberVal, format_string, desc) in self.mem_list:
             size += memberVal.getSize()
         return size;
 
