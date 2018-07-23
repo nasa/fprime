@@ -74,7 +74,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # WeakValueDictionary instead.
         self.UseWeakRefs(True)
 
-
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
         return 4
@@ -169,12 +168,11 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                        1 : str(node.template.id),
                        2 : str(node.time.to_readable()),
                        3 : str(node.val_obj.val)
-                       }
+                       }                                                                                                                                                                                                        
             return mapper[col]
 
         else:
             raise RuntimeError("unknown node type")
-
 
 
     def GetAttr(self, item, col, attr):
@@ -186,7 +184,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         return False
 
     def UpdateModel(self, new_data):
-
         match = [x for x in self.data if x.template == new_data.template]
 
         if len(match) == 0:
@@ -204,7 +201,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     def SetData(self, data):
         for d in data:
             self.UpdateModel(d)
-        self.data = data
 
 
     def GetData(self):

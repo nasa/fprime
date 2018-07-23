@@ -36,6 +36,7 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
 		self.main_frame_factory = factory
 		
+
 	def __del__( self ):
 		pass
 	
@@ -54,7 +55,7 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		event.Skip()
 	
 	def onAboutMenuItemClick( self, event ):
-		event.Skip()
+		print(self.ID)
 	
 	def onSaveWinCfgMenuItemClick( self, event ):
 		event.Skip()

@@ -49,7 +49,6 @@ class MainFrameFactory(object):
 
         self.main_frame_instances = []
 
-
     def create_new_window(self):
         """Create a new instance of the GDS window
         
