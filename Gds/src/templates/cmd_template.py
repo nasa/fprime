@@ -15,7 +15,7 @@ from models.serialize.type_exceptions import *
 
 
 
-class CommandTemplate(data_template.DataTemplate):
+class CmdTemplate(data_template.DataTemplate):
 
     def __init__(self, opcode, mnemonic, component, arguments,
                  description=None):
@@ -42,7 +42,7 @@ class CommandTemplate(data_template.DataTemplate):
         if not type(opcode) == type(int()):
             raise TypeMismatchException(type(int()),type(opcode))
 
-        if not type(description) == type(str()):
+        if description != None and not type(description) == type(str()):
             raise TypeMismatchException(type(str()),type(description))
 
         if not type(arguments) == type(list()):

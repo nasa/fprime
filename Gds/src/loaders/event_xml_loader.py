@@ -17,7 +17,6 @@ class EventXmlLoader(XmlLoader):
     '''Class to load xml based event dictionaries'''
 
     EVENT_SECT = "events"
-    ARGS_SECT = "args"
 
     COMP_TAG = "component"
     NAME_TAG = "name"
@@ -25,9 +24,6 @@ class EventXmlLoader(XmlLoader):
     SEVERITY_TAG = "severity"
     FMT_STR_TAG = "format_string"
     DESC_TAG = "description"
-    ARG_NAME_TAG = "name"
-    ARG_DESC_TAG = "description"
-    ARG_TYPE_TAG = "type"
 
     def construct_dicts(self, path):
         '''
@@ -70,22 +66,7 @@ class EventXmlLoader(XmlLoader):
                 event_desc = event_dict[self.DESC_TAG]
 
             # Parse arguments
-            args = []
-            args_section = self.get_xml_section(self.ARGS_SECT, event)
-
-            if args_section != None:
-                for arg in args_section:
-                    arg_dict = arg.attrib
-
-                    arg_name = arg_dict[self.ARG_NAME_TAG]
-                    arg_type_name = arg_dict[self.ARG_TYPE_TAG]
-                    arg_typ_obj = self.parse_type(arg_type_name, arg, xml_tree)
-
-                    arg_desc = None
-                    if (self.ARG_DESC_TAG in arg_dict):
-                        arg_desc = arg_dict[self.ARG_DESC_TAG]
-
-                    args.append((arg_name, arg_desc, arg_typ_obj))
+            args = self.get_args_list(event, xml_tree)
 
             event_temp = EventTemplate(event_id, event_name, event_comp,
                                        args, event_severity, event_fmt_str,

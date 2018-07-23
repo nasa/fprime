@@ -11,10 +11,18 @@ an interface for creating additional GDS windows that use this pipeline
 '''
 
 # TODO break up these imports into one per line and only import one event loader
-from loaders import cmd_py_loader, event_py_loader, event_xml_loader, ch_xml_loader, pkt_xml_loader
+from loaders import ch_xml_loader
+from loaders import event_xml_loader
+from loaders import pkt_xml_loader
+from loaders import cmd_xml_loader
+
+from decoders import ch_decoder
+from decoders import event_decoder
+from decoders import pkt_decoder
 from encoders import cmd_encoder
-from decoders import ch_decoder, event_decoder, pkt_decoder
+
 from distributor import distributor
+
 from client_socket import client_socket
 
 from gui import GDSMainFrameImpl
@@ -66,8 +74,8 @@ class MainFrameFactory(object):
         self.evnt_ldr = event_xml_loader.EventXmlLoader()
         eid_dict = self.evnt_ldr.get_id_dict(self.opts.xml_dict_path)
 
-        self.cmd_ldr = cmd_py_loader.CmdPyLoader()
-        cname_dict = self.cmd_ldr.get_name_dict(self.opts.generated_path + os.sep + "commands")
+        self.cmd_ldr = cmd_xml_loader.CmdXmlLoader()
+        cname_dict = self.cmd_ldr.get_name_dict(self.opts.xml_dict_path)
 
         self.ch_ldr = ch_xml_loader.ChXmlLoader()
         ch_dict = self.ch_ldr.get_id_dict(self.opts.xml_dict_path)
