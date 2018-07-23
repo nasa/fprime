@@ -14,11 +14,11 @@ from pprint import pprint
 ###########################################################################
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
-	
+
 	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
-		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_ldr.get_name_dict(factory.opts.generated_path + os.sep + "commands"))
+		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_ldr.get_name_dict(factory.opts.xml_dict_path))
 		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
 		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook)
@@ -39,7 +39,7 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
 	def __del__( self ):
 		pass
-	
+
 	# Override these handlers to implement functionality for GUI elements
 	def onMainFrameClose(self, event ):
 		self.main_frame_factory.main_frame_instances.remove(self)
@@ -47,23 +47,23 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
 	def onNewMenuItemClick( self, event ):
 		self.main_frame_factory.create_new_window()
-	
+
 	def onSaveMenuItemClick( self, event ):
 		event.Skip()
-	
+
 	def onLoadMenuItemClick( self, event ):
 		event.Skip()
-	
+
 	def onAboutMenuItemClick( self, event ):
-		print(self.ID)
-	
+		event.Skip()
+
 	def onSaveWinCfgMenuItemClick( self, event ):
 		event.Skip()
-	
+
 	def onRestoreWinMenuItemClick( self, event ):
 		event.Skip()
-	
+
 	def onExitMenuItemClick( self, event ):
 		self.onMainFrameClose(event)
-	
+
 

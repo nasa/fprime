@@ -11,11 +11,11 @@ import os
 from lxml import etree
 
 # Custom python modules
-from dict_loader import DictLoader
+from loaders.xml_loader import XmlLoader
 from controllers import exceptions
 from templates.pkt_template import PktTemplate
 
-class PktXmlLoader(DictLoader):
+class PktXmlLoader(XmlLoader):
     '''Class to load xml packet dictionaries'''
 
     # Constants for use when parsing the xml
@@ -104,19 +104,7 @@ class PktXmlLoader(DictLoader):
             (id_dict, name_dict). The keys should be the packets' id and name
             fields respectively and the values should be PktTemplate objects.
         '''
-        # Check that dictionary path exists
-        if not os.path.isfile(path):
-            raise exceptions.GseControllerUndefinedFileException(path)
-
-        # Create xml parser
-        xml_parser = etree.XMLParser(remove_comments=True)
-
-        fd = open(path, 'r')
-
-        # Parse xml and get element tree object we can retrieve data from
-        element_tree = etree.parse(fd, parser=xml_parser)
-
-        packet_list = element_tree.getroot()
+        packet_list = self.get_xml_tree(path)
         if (packet_list.tag != self.PKT_LIST_TAG):
             raise exceptions.GseControllerParseException(
                     "expected packet list to have tag %s, but found %s"%

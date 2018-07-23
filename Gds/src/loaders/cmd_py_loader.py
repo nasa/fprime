@@ -63,11 +63,11 @@ class CmdPyLoader(python_loader.PythonLoader):
 
         for cmd_dict in module_dicts:
             # Create a cmd template object
-            cmd_temp = cmd_template.CommandTemplate(cmd_dict[self.COMPONENT_FIELD],
+            cmd_temp = cmd_template.CmdTemplate(cmd_dict[self.OP_CODE_FIELD],
                                                 cmd_dict[self.MNEMONIC_FIELD],
-                                                cmd_dict[self.OP_CODE_FIELD],
-                                                cmd_dict[self.DESC_FIELD],
-                                                cmd_dict[self.ARGS_FIELD])
+                                                cmd_dict[self.COMPONENT_FIELD],
+                                                cmd_dict[self.ARGS_FIELD],
+                                                cmd_dict[self.DESC_FIELD])
 
             id_dict[cmd_dict[self.OP_CODE_FIELD]] = cmd_temp
             name_dict[cmd_dict[self.MNEMONIC_FIELD]] = cmd_temp

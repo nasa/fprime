@@ -10,6 +10,7 @@
 # Custom Python Modules
 import python_loader
 from templates import event_template
+from utils.event_severity import EventSeverity
 
 # TODO remove
 from pprint import pprint
@@ -20,6 +21,7 @@ class EventPyLoader(python_loader.PythonLoader):
     # Field names in the python module file dictionaries
     ID_FIELD =       "ID"
     NAME_FIELD =     "NAME"
+    COMP_FIELD =     "COMPONENT"
     SEVERITY_FIELD = "SEVERITY"
     FMT_STR_FIELD =  "FORMAT_STRING"
     DESC_FIELD =     "EVENT_DESCRIPTION"
@@ -75,12 +77,14 @@ class EventPyLoader(python_loader.PythonLoader):
 
         for event_dict in module_dicts:
             # Create an event template object
-            event_temp = event_template.EventTemplate(event_dict[self.ID_FIELD],
-                                                      event_dict[self.NAME_FIELD],
-                                                      event_dict[self.SEVERITY_FIELD],
-                                                      event_dict[self.FMT_STR_FIELD],
-                                                      event_dict[self.DESC_FIELD],
-                                                      event_dict[self.ARGS_FIELD])
+            event_temp = event_template.EventTemplate(
+                                                event_dict[self.ID_FIELD],
+                                                event_dict[self.NAME_FIELD],
+                                                event_dict[self.COMP_FIELD],
+                                                event_dict[self.ARGS_FIELD],
+                                                EventSeverity[event_dict[self.SEVERITY_FIELD]],
+                                                event_dict[self.FMT_STR_FIELD],
+                                                event_dict[self.DESC_FIELD])
 
             id_dict[event_dict[self.ID_FIELD]] = event_temp
             name_dict[event_dict[self.NAME_FIELD]] = event_temp

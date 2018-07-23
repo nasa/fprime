@@ -18,7 +18,6 @@ import logging
 
 import binascii
 
-from utils import Logger
 from models.serialize.type_base import *
 from optparse import OptionParser
 
@@ -31,8 +30,6 @@ SERVER = None
 LOCK   = None
 shutdown_event = threading.Event()
 
-#f = "set logging file"
-#LOGGER = Logger.connectOutputLogger(file=f, logger_name=__name__, logger_level=logging.INFO)
 
 FSW_clients = []
 GUI_clients = []
