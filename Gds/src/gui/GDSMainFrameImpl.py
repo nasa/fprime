@@ -35,6 +35,7 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		self.TabNotebook.AddPage( self.telem_pnl, u"Channel Telemetry", False )
 
 		self.main_frame_factory = factory
+		
 
 	def __del__( self ):
 		pass

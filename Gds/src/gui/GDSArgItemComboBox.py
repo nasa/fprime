@@ -28,6 +28,14 @@ class ArgItemComboBox(wx.Panel):
 		self.Layout()
 		bSizer.Fit( self )
 
+	def setSelection(self, selection):
+		
+		for r in range(self.m_argWindow.Count):
+			t = self.m_argWindow.GetString(r)
+			if t == selection:
+				self.m_argWindow.SetSelection(r)
+				break
+
 	def getSelection(self):
 		"""Get the current selection of the combobox in this gui element
 		

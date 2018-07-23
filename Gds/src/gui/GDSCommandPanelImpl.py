@@ -178,6 +178,12 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		self.setupCommandArguments(itm_obj.template)
 		self.CmdsComboBox.SetSelection(self.CmdsComboBox.Items.index(itm_obj.template.mnemonic))
 
+		for k,v in zip(self.arginputs, itm_obj.get_args()):
+			if type(k) == GDSArgItemTextCtl.ArgItemTextCtl:
+				k.setText(v.val)
+			else:
+				k.setSelection(v.val)
+
 	def onQuickCmdTextCtrlEnterPressed( self, event ):
 		self.onQuickCmdSendButtonClick(event)
 
