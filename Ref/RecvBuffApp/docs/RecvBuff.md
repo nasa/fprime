@@ -6,12 +6,11 @@
 
 |Channel Name|ID|Type|Description|
 |---|---|---|---|
-|NumPkts|0 (0x0)|U32|Number of packets received|
-|NumErrPkts|1 (0x1)|U32|Number of packets received with errors|
-|Sensor1|2 (0x2)|F32|Value of Sensor1|
-|Sensor2|3 (0x3)|F32|Value of Sensor3|
-|Parameter1|4 (0x4)|U32|Readback of Parameter1|
-|Parameter2|5 (0x5)|I16|Readback of Parameter2|
+|PktState|0 (0x0)|Ref::PacketStat|Packet Statistics|
+|Sensor1|1 (0x1)|F32|Value of Sensor1|
+|Sensor2|2 (0x2)|F32|Value of Sensor3|
+|Parameter1|3 (0x3)|U32|Readback of Parameter1|
+|Parameter2|4 (0x4)|I16|Readback of Parameter2|
 
 ## Event List
 

@@ -4,6 +4,11 @@
       <item name="SEND_IDLE" value="0"/>
       <item name="SEND_ACTIVE" value="1"/>
     </enum>
+    <enum type="Ref::PacketStat::PacketStatus::PacketRecvStatus">
+      <item name="PACKET_STATE_NO_PACKETS" value="0"/>
+      <item name="PACKET_STATE_OK" value="1"/>
+      <item name="PACKET_STATE_ERRORS" value="3" description="Receiver has seen errors"/>
+    </enum>
     <enum type="CommandDispatcher::error::ErrorResponse">
       <item name="ERR_INVALID_OPCODE" value="0" description="Invalid opcode dispatched"/>
       <item name="ERR_VALIDATION_ERROR" value="1" description="Command failed validation"/>
@@ -133,11 +138,25 @@
       <item name="EVENT_FILTER_DIAGNOSTIC" value="5"/>
     </enum>
   </enums>
-  <serializables/>
+  <serializables>
+    <serializable type="Ref::PacketStat">
+      <members>
+        <member name="BuffRecv" format_specifier="%u" description="Number of buffers received" type="U32"/>
+        <member name="BuffErr" format_specifier="%u" description="Number of buffers received with errors" type="U32"/>
+        <member name="PacketStatus" format_specifier="%d" description="Packet Status" type="Ref::PacketStat::PacketStatus::PacketRecvStatus"/>
+      </members>
+    </serializable>
+  </serializables>
   <commands>
-    <command component="pingRcvr" mnemonic="PR_StopPings" opcode="0x29"/>
-    <command component="sendBuffComp" mnemonic="SB_START_PKTS" opcode="0x51"/>
-    <command component="sendBuffComp" mnemonic="SB_INJECT_PKT_ERROR" opcode="0x52"/>
+    <command component="pingRcvr" mnemonic="PR_StopPings" opcode="0x29">
+      <args/>
+    </command>
+    <command component="sendBuffComp" mnemonic="SB_START_PKTS" opcode="0x51">
+      <args/>
+    </command>
+    <command component="sendBuffComp" mnemonic="SB_INJECT_PKT_ERROR" opcode="0x52">
+      <args/>
+    </command>
     <command component="sendBuffComp" mnemonic="SB_GEN_FATAL" opcode="0x53">
       <args>
         <arg name="arg1" type="U32"/>
@@ -179,7 +198,9 @@
       </args>
     </command>
     <command component="recvBuffComp" mnemonic="parameter2_PRM_SAVE" opcode="0x68" description="parameter2 parameter save"/>
-    <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x79"/>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x79">
+      <args/>
+    </command>
     <command component="cmdDisp" mnemonic="CMD_NO_OP_STRING" opcode="0x7a">
       <args>
         <arg name="arg1" len="40" type="string"/>
@@ -192,8 +213,12 @@
         <arg name="arg3" type="U8"/>
       </args>
     </command>
-    <command component="cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x7c"/>
-    <command component="prmDb" mnemonic="PRM_SAVE_FILE" opcode="0x8d"/>
+    <command component="cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x7c">
+      <args/>
+    </command>
+    <command component="prmDb" mnemonic="PRM_SAVE_FILE" opcode="0x8d">
+      <args/>
+    </command>
     <command component="cmdSeq" mnemonic="CS_RUN" opcode="0x21d">
       <args>
         <arg name="fileName" len="240" type="string"/>
@@ -204,11 +229,21 @@
         <arg name="fileName" len="240" type="string"/>
       </args>
     </command>
-    <command component="cmdSeq" mnemonic="CS_CANCEL" opcode="0x21f"/>
-    <command component="cmdSeq" mnemonic="CS_START" opcode="0x220"/>
-    <command component="cmdSeq" mnemonic="CS_STEP" opcode="0x221"/>
-    <command component="cmdSeq" mnemonic="CS_AUTO" opcode="0x222"/>
-    <command component="cmdSeq" mnemonic="CS_MANUAL" opcode="0x223"/>
+    <command component="cmdSeq" mnemonic="CS_CANCEL" opcode="0x21f">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_START" opcode="0x220">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_STEP" opcode="0x221">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_AUTO" opcode="0x222">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_MANUAL" opcode="0x223">
+      <args/>
+    </command>
     <command component="SG1" mnemonic="SignalGen_Settings" opcode="0xb5">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -216,8 +251,12 @@
         <arg name="Phase" type="U32"/>
       </args>
     </command>
-    <command component="SG1" mnemonic="SignalGen_Toggle" opcode="0xb6"/>
-    <command component="SG1" mnemonic="SignalGen_Skip" opcode="0xb7"/>
+    <command component="SG1" mnemonic="SignalGen_Toggle" opcode="0xb6">
+      <args/>
+    </command>
+    <command component="SG1" mnemonic="SignalGen_Skip" opcode="0xb7">
+      <args/>
+    </command>
     <command component="SG3" mnemonic="SignalGen_Settings" opcode="0xc9">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -225,8 +264,12 @@
         <arg name="Phase" type="U32"/>
       </args>
     </command>
-    <command component="SG3" mnemonic="SignalGen_Toggle" opcode="0xca"/>
-    <command component="SG3" mnemonic="SignalGen_Skip" opcode="0xcb"/>
+    <command component="SG3" mnemonic="SignalGen_Toggle" opcode="0xca">
+      <args/>
+    </command>
+    <command component="SG3" mnemonic="SignalGen_Skip" opcode="0xcb">
+      <args/>
+    </command>
     <command component="SG2" mnemonic="SignalGen_Settings" opcode="0xdd">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -234,8 +277,12 @@
         <arg name="Phase" type="U32"/>
       </args>
     </command>
-    <command component="SG2" mnemonic="SignalGen_Toggle" opcode="0xde"/>
-    <command component="SG2" mnemonic="SignalGen_Skip" opcode="0xdf"/>
+    <command component="SG2" mnemonic="SignalGen_Toggle" opcode="0xde">
+      <args/>
+    </command>
+    <command component="SG2" mnemonic="SignalGen_Skip" opcode="0xdf">
+      <args/>
+    </command>
     <command component="SG5" mnemonic="SignalGen_Settings" opcode="0x119">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -243,8 +290,12 @@
         <arg name="Phase" type="U32"/>
       </args>
     </command>
-    <command component="SG5" mnemonic="SignalGen_Toggle" opcode="0x11a"/>
-    <command component="SG5" mnemonic="SignalGen_Skip" opcode="0x11b"/>
+    <command component="SG5" mnemonic="SignalGen_Toggle" opcode="0x11a">
+      <args/>
+    </command>
+    <command component="SG5" mnemonic="SignalGen_Skip" opcode="0x11b">
+      <args/>
+    </command>
     <command component="SG4" mnemonic="SignalGen_Settings" opcode="0x141">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -252,8 +303,12 @@
         <arg name="Phase" type="U32"/>
       </args>
     </command>
-    <command component="SG4" mnemonic="SignalGen_Toggle" opcode="0x142"/>
-    <command component="SG4" mnemonic="SignalGen_Skip" opcode="0x143"/>
+    <command component="SG4" mnemonic="SignalGen_Toggle" opcode="0x142">
+      <args/>
+    </command>
+    <command component="SG4" mnemonic="SignalGen_Skip" opcode="0x143">
+      <args/>
+    </command>
     <command component="health" mnemonic="HLTH_ENABLE" opcode="0x169">
       <args>
         <arg name="enable" type="Health::enable::HealthEnabled"/>
@@ -295,23 +350,31 @@
         <arg name="IdFilterEnable" type="ActiveLogger::IdFilterEnable::IdFilterEnabled"/>
       </args>
     </command>
-    <command component="eventLogger" mnemonic="ALOG_DUMP_FILTER_STATE" opcode="0x1a9"/>
+    <command component="eventLogger" mnemonic="ALOG_DUMP_FILTER_STATE" opcode="0x1a9">
+      <args/>
+    </command>
     <command component="fileDownlink" mnemonic="FileDownlink_SendFile" opcode="0x1f5">
       <args>
         <arg name="sourceFileName" len="60" type="string"/>
         <arg name="destFileName" len="60" type="string"/>
       </args>
     </command>
-    <command component="fileDownlink" mnemonic="FileDownlink_Cancel" opcode="0x1f6"/>
+    <command component="fileDownlink" mnemonic="FileDownlink_Cancel" opcode="0x1f6">
+      <args/>
+    </command>
   </commands>
   <events>
-    <event component="rateGroup1Comp" name="RateGroupStarted" id="0x15" severity="DIAGNOSTIC" format_string="Rate group started."/>
+    <event component="rateGroup1Comp" name="RateGroupStarted" id="0x15" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
     <event component="rateGroup1Comp" name="RateGroupCycleSlip" id="0x16" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
       <args>
         <arg name="cycle" type="U32"/>
       </args>
     </event>
-    <event component="pingRcvr" name="PR_PingsDisabled" id="0x29" severity="ACTIVITY_HI" format_string="PingReceiver ping responsed disabled"/>
+    <event component="pingRcvr" name="PR_PingsDisabled" id="0x29" severity="ACTIVITY_HI" format_string="PingReceiver ping responsed disabled">
+      <args/>
+    </event>
     <event component="pingRcvr" name="PR_PingReceived" id="0x2a" severity="DIAGNOSTIC" format_string="PingReceiver pinged with code %d">
       <args>
         <arg name="code" type="U32"/>
@@ -393,7 +456,9 @@
         <arg name="Opcode" type="U32"/>
       </args>
     </event>
-    <event component="cmdDisp" name="NoOpReceived" id="0x80" severity="COMMAND" format_string="ISF received a NO-OP command"/>
+    <event component="cmdDisp" name="NoOpReceived" id="0x80" severity="COMMAND" format_string="ISF received a NO-OP command">
+      <args/>
+    </event>
     <event component="cmdDisp" name="NoOpStringReceived" id="0x81" severity="COMMAND" format_string="ISF generated a NO-OP string, No_op_string=%s">
       <args>
         <arg name="No_op_string" len="40" type="string"/>
@@ -450,7 +515,9 @@
         <arg name="records" type="U32"/>
       </args>
     </event>
-    <event component="rateGroup2Comp" name="RateGroupStarted" id="0xa1" severity="DIAGNOSTIC" format_string="Rate group started."/>
+    <event component="rateGroup2Comp" name="RateGroupStarted" id="0xa1" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
     <event component="rateGroup2Comp" name="RateGroupCycleSlip" id="0xa2" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
       <args>
         <arg name="cycle" type="U32"/>
@@ -523,7 +590,9 @@
         <arg name="errorStatus" type="U32"/>
       </args>
     </event>
-    <event component="cmdSeq" name="CS_InvalidMode" id="0x228" severity="WARNING_HI" format_string="Invalid mode"/>
+    <event component="cmdSeq" name="CS_InvalidMode" id="0x228" severity="WARNING_HI" format_string="Invalid mode">
+      <args/>
+    </event>
     <event component="cmdSeq" name="CS_RecordMismatch" id="0x229" severity="WARNING_HI" format_string="Sequence file %s header records mismatch: %d in header, found %d extra bytes.">
       <args>
         <arg name="fileName" len="60" type="string"/>
@@ -560,7 +629,9 @@
         <arg name="mode" type="CmdSequencer::mode::SeqMode"/>
       </args>
     </event>
-    <event component="cmdSeq" name="CS_NoSequenceActive" id="0x22f" severity="WARNING_LO" format_string="No sequence active."/>
+    <event component="cmdSeq" name="CS_NoSequenceActive" id="0x22f" severity="WARNING_LO" format_string="No sequence active.">
+      <args/>
+    </event>
     <event component="cmdSeq" name="CS_SequenceValid" id="0x230" severity="ACTIVITY_HI" format_string="Sequence %s is valid.">
       <args>
         <arg name="filename" len="60" type="string"/>
@@ -604,7 +675,9 @@
         <arg name="Phase" type="U32"/>
       </args>
     </event>
-    <event component="rateGroup3Comp" name="RateGroupStarted" id="0xf1" severity="DIAGNOSTIC" format_string="Rate group started."/>
+    <event component="rateGroup3Comp" name="RateGroupStarted" id="0xf1" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
     <event component="rateGroup3Comp" name="RateGroupCycleSlip" id="0xf2" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
       <args>
         <arg name="cycle" type="U32"/>
@@ -650,7 +723,9 @@
         <arg name="lastPacketIndex" type="U32"/>
       </args>
     </event>
-    <event component="fileUplink" name="FileUplink_UplinkCanceled" id="0x10c" severity="ACTIVITY_HI" format_string="Received CANCEL packet"/>
+    <event component="fileUplink" name="FileUplink_UplinkCanceled" id="0x10c" severity="ACTIVITY_HI" format_string="Received CANCEL packet">
+      <args/>
+    </event>
     <event component="SG5" name="SignalGen_SettingsChanged" id="0x119" severity="ACTIVITY_LO" format_string="Set Frequency(Hz) %s, Amplitude %s, Phase %s">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -658,15 +733,21 @@
         <arg name="Phase" type="U32"/>
       </args>
     </event>
-    <event component="fileUplinkBufferManager" name="BufferManager_AllocationQueueEmpty" id="0x12d" severity="WARNING_HI" format_string="Allocation queue empty"/>
-    <event component="fileUplinkBufferManager" name="BufferManager_AllocationQueueFull" id="0x12e" severity="WARNING_HI" format_string="Allocation queue full"/>
+    <event component="fileUplinkBufferManager" name="BufferManager_AllocationQueueEmpty" id="0x12d" severity="WARNING_HI" format_string="Allocation queue empty">
+      <args/>
+    </event>
+    <event component="fileUplinkBufferManager" name="BufferManager_AllocationQueueFull" id="0x12e" severity="WARNING_HI" format_string="Allocation queue full">
+      <args/>
+    </event>
     <event component="fileUplinkBufferManager" name="BufferManager_IDMismatch" id="0x12f" severity="WARNING_HI" format_string="Mismatched deallocation ID: expected %d, saw %d">
       <args>
         <arg name="expected" type="U32"/>
         <arg name="saw" type="U32"/>
       </args>
     </event>
-    <event component="fileUplinkBufferManager" name="BufferManager_StoreSizeExceeded" id="0x130" severity="WARNING_HI" format_string="Store size exceeded"/>
+    <event component="fileUplinkBufferManager" name="BufferManager_StoreSizeExceeded" id="0x130" severity="WARNING_HI" format_string="Store size exceeded">
+      <args/>
+    </event>
     <event component="SG4" name="SignalGen_SettingsChanged" id="0x141" severity="ACTIVITY_LO" format_string="Set Frequency(Hz) %s, Amplitude %s, Phase %s">
       <args>
         <arg name="Frequency" type="U32"/>
@@ -811,15 +892,21 @@
         <arg name="PortNumber" type="U32"/>
       </args>
     </event>
-    <event component="fileDownlinkBufferManager" name="BufferManager_AllocationQueueEmpty" id="0x191" severity="WARNING_HI" format_string="Allocation queue empty"/>
-    <event component="fileDownlinkBufferManager" name="BufferManager_AllocationQueueFull" id="0x192" severity="WARNING_HI" format_string="Allocation queue full"/>
+    <event component="fileDownlinkBufferManager" name="BufferManager_AllocationQueueEmpty" id="0x191" severity="WARNING_HI" format_string="Allocation queue empty">
+      <args/>
+    </event>
+    <event component="fileDownlinkBufferManager" name="BufferManager_AllocationQueueFull" id="0x192" severity="WARNING_HI" format_string="Allocation queue full">
+      <args/>
+    </event>
     <event component="fileDownlinkBufferManager" name="BufferManager_IDMismatch" id="0x193" severity="WARNING_HI" format_string="Mismatched deallocation ID: expected %d, saw %d">
       <args>
         <arg name="expected" type="U32"/>
         <arg name="saw" type="U32"/>
       </args>
     </event>
-    <event component="fileDownlinkBufferManager" name="BufferManager_StoreSizeExceeded" id="0x194" severity="WARNING_HI" format_string="Store size exceeded"/>
+    <event component="fileDownlinkBufferManager" name="BufferManager_StoreSizeExceeded" id="0x194" severity="WARNING_HI" format_string="Store size exceeded">
+      <args/>
+    </event>
     <event component="eventLogger" name="ALOG_FILE_WRITE_ERR" id="0x1a5" severity="WARNING_HI" format_string="Event buffer write failed in stage %d with error %d">
       <args>
         <arg name="stage" type="ActiveLogger::stage::LogWriteError"/>
@@ -890,12 +977,11 @@
     <channel component="sendBuffComp" name="Parameter3" id="0x53" description="Readback of Parameter3" type="U8"/>
     <channel component="sendBuffComp" name="Parameter4" id="0x54" description="Readback of Parameter4" type="F32"/>
     <channel component="sendBuffComp" name="SendState" id="0x55" description="Readback of Parameter4" type="SendBuff::SendState::ActiveState"/>
-    <channel component="recvBuffComp" name="NumPkts" id="0x65" format_string="%d" description="Number of packets received" type="U32"/>
-    <channel component="recvBuffComp" name="NumErrPkts" id="0x66" description="Number of packets received with errors" high_yellow="1" hight_red="2" type="U32"/>
-    <channel component="recvBuffComp" name="Sensor1" id="0x67" description="Value of Sensor1" type="F32"/>
-    <channel component="recvBuffComp" name="Sensor2" id="0x68" description="Value of Sensor3" type="F32"/>
-    <channel component="recvBuffComp" name="Parameter1" id="0x69" description="Readback of Parameter1" type="U32"/>
-    <channel component="recvBuffComp" name="Parameter2" id="0x6a" description="Readback of Parameter2" low_red="-3" low_orange="-2" low_yellow="-1" high_yellow="1" high_orange="2" hight_red="3" type="I16"/>
+    <channel component="recvBuffComp" name="PktState" id="0x65" description="Packet Statistics" type="Ref::PacketStat"/>
+    <channel component="recvBuffComp" name="Sensor1" id="0x66" description="Value of Sensor1" type="F32"/>
+    <channel component="recvBuffComp" name="Sensor2" id="0x67" description="Value of Sensor3" type="F32"/>
+    <channel component="recvBuffComp" name="Parameter1" id="0x68" description="Readback of Parameter1" type="U32"/>
+    <channel component="recvBuffComp" name="Parameter2" id="0x69" description="Readback of Parameter2" low_red="-3" low_orange="-2" low_yellow="-1" high_yellow="1" high_orange="2" hight_red="3" type="I16"/>
     <channel component="cmdDisp" name="CommandsDispatched" id="0x79" description="Number of commands dispatched" type="U32"/>
     <channel component="cmdDisp" name="CommandErrors" id="0x7a" description="Number of command errors" type="U32"/>
     <channel component="rateGroup2Comp" name="RgMaxTime" id="0xa1" format_string="%u us" description="Max execution time rate group" type="U32"/>

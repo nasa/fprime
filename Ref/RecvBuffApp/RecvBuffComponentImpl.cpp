@@ -15,11 +15,12 @@ namespace Ref {
 #else
     RecvBuffImpl::RecvBuffImpl() {
 #endif
-        this->m_buffsReceived = 0;
         this->m_firstBuffReceived = 0;
-        this->m_errBuffs = 0;
         this->m_sensor1 = 1000.0;
         this->m_sensor2 = 10.0;
+        this->m_stats.setBuffRecv(0);
+        this->m_stats.setBuffErr(0);
+        this->m_stats.setPacketStatus(PACKET_STATE_NO_PACKETS);
     }
 
 
@@ -33,8 +34,7 @@ namespace Ref {
 
     void RecvBuffImpl::Data_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer &buff) {
 
-        this->m_buffsReceived++;
-        this->tlmWrite_NumPkts(this->m_buffsReceived);
+        this->m_stats.setBuffRecv(++this->m_buffsReceived);
         // reset deserialization of buffer
         buff.resetDeser();
         // deserialize packet ID
@@ -53,8 +53,8 @@ namespace Ref {
         // if first packet, send event
         if (not this->m_firstBuffReceived) {
             this->log_ACTIVITY_LO_FirstPacketReceived(id);
+            this->m_stats.setPacketStatus(PACKET_STATE_OK);
             this->m_firstBuffReceived = true;
-            this->tlmWrite_NumErrPkts(this->m_errBuffs);
         }
 
         // compute checksum
@@ -65,10 +65,11 @@ namespace Ref {
         // check checksum
         if (sum != csum) {
             // increment error count
-            this->m_errBuffs++;
-            this->tlmWrite_NumErrPkts(this->m_errBuffs);
+            this->m_stats.setBuffErr(++this->m_errBuffs);
             // send error event
             this->log_WARNING_HI_PacketChecksumError(id);
+            // update stats
+            this->m_stats.setPacketStatus(PACKET_STATE_ERRORS);
         }
         // update sensor values
         this->m_sensor1 += 5.0;
@@ -76,6 +77,7 @@ namespace Ref {
         // update channels
         this->tlmWrite_Sensor1(this->m_sensor1);
         this->tlmWrite_Sensor2(this->m_sensor2);
+        this->tlmWrite_PktState(this->m_stats);
 
     }
 
