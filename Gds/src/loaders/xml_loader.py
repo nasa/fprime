@@ -261,7 +261,7 @@ class XmlLoader(dict_loader.DictLoader):
         elif (type_name == "bool"):
             return BoolType()
         elif (type_name == "string"):
-            if self.STR_LEN_TAG not in xml_time.attrib:
+            if self.STR_LEN_TAG not in xml_item.attrib:
                 print("Trying to parse string type, but found %s field"%
                       self.STR_LEN_TAG)
                 return None

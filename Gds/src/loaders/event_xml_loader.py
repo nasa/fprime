@@ -11,7 +11,7 @@
 from xml_loader import XmlLoader
 from templates.event_template import EventTemplate
 from controllers import exceptions
-
+from utils.event_severity import EventSeverity
 
 class EventXmlLoader(XmlLoader):
     '''Class to load xml based event dictionaries'''
@@ -24,6 +24,7 @@ class EventXmlLoader(XmlLoader):
     ID_TAG = "id"
     SEVERITY_TAG = "severity"
     FMT_STR_TAG = "format_string"
+    DESC_TAG = "description"
     ARG_NAME_TAG = "name"
     ARG_DESC_TAG = "description"
     ARG_TYPE_TAG = "type"
@@ -56,9 +57,42 @@ class EventXmlLoader(XmlLoader):
         name_dict = dict()
 
         for event in event_section:
-            event_dict = ch.attrib
+            event_dict = event.attrib
 
             event_comp = event_dict[self.COMP_TAG]
             event_name = event_dict[self.NAME_TAG]
             event_id = int(event_dict[self.ID_TAG], base=16)
+            event_severity = EventSeverity[event_dict[self.SEVERITY_TAG]]
+            event_fmt_str = event_dict[self.FMT_STR_TAG]
+
+            event_desc = None
+            if (self.DESC_TAG in event_dict):
+                event_desc = event_dict[self.DESC_TAG]
+
+            # Parse arguments
+            args = []
+            args_section = self.get_xml_section(self.ARGS_SECT, event)
+
+            if args_section != None:
+                for arg in args_section:
+                    arg_dict = arg.attrib
+
+                    arg_name = arg_dict[self.ARG_NAME_TAG]
+                    arg_type_name = arg_dict[self.ARG_TYPE_TAG]
+                    arg_typ_obj = self.parse_type(arg_type_name, arg, xml_tree)
+
+                    arg_desc = None
+                    if (self.ARG_DESC_TAG in arg_dict):
+                        arg_desc = arg_dict[self.ARG_DESC_TAG]
+
+                    args.append((arg_name, arg_desc, arg_typ_obj))
+
+            event_temp = EventTemplate(event_id, event_name, event_comp,
+                                       args, event_severity, event_fmt_str,
+                                       event_desc)
+
+            id_dict[event_id] = event_temp
+            name_dict[event_name] = event_temp
+
+        return (id_dict, name_dict)
 
