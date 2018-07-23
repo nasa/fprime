@@ -313,7 +313,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             # create a new XML tree for dictionary
             enum_list = etree.Element("enums")
             serializable_list = etree.Element("serializables")
-            enum_list = etree.Element("enums")
             command_list = etree.Element("commands")
             event_list = etree.Element("events")
             telemetry_list = etree.Element("channels")
@@ -323,6 +322,53 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 comp_name = comp.get_name()
                 comp_id = int(comp.get_base_id())
                 PRINT.debug("Processing %s [%s] (%s)"%(comp_name,comp_type,hex(comp_id)))
+                
+                # check for included serializable XML
+                if (parsed_xml_dict[comp_type].get_serializable_type_files() != None):
+                    serializable_file_list = parsed_xml_dict[comp_type].get_serializable_type_files()
+                    for serializable_file in serializable_file_list:
+                        serializable_file = BUILD_ROOT + os.sep + serializable_file
+                        serializable_model = XmlSerializeParser.XmlSerializeParser(serializable_file)
+                        if (len(serializable_model.get_includes()) != 0):
+                            raise Exception("%s: Can only include one level of serializable for dictionaries"%serializable_file)
+                        serializable_elem = etree.Element("serializable")
+                        serializable_type = serializable_model.get_namespace() + "::" + serializable_model.get_name()
+                        serializable_elem.attrib["type"] = serializable_type
+                        members_elem = etree.Element("members")
+                        for (member_name, member_type, member_size, member_format_specifier, member_comment) in serializable_model.get_members():
+                            member_elem = etree.Element("member")
+                            member_elem.attrib["name"] = member_name
+                            member_elem.attrib["format_specifier"] = member_format_specifier
+                            member_elem.attrib["description"] = member_comment
+                            if type(member_type) == type(tuple()):
+                                enum_value = 0
+                                type_name = "%s::%s::%s"%(serializable_type,member_name,member_type[0][1])
+                                # Add enum entry
+                                enum_elem = etree.Element("enum")
+                                enum_elem.attrib["type"] = type_name
+                                # Add enum members
+                                for (membername,value,comment) in member_type[1]:
+                                    enum_mem = etree.Element("item")
+                                    enum_mem.attrib["name"] = membername
+                                    # keep track of incrementing enum value
+                                    if value != None:
+                                        enum_value = int(value)
+                                      
+                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_value = enum_value + 1
+                                    if comment != None:
+                                        enum_mem.attrib["description"] = comment
+                                    enum_elem.append(enum_mem)
+                                enum_list.append(enum_elem)
+                            else:
+                                type_name = member_type    
+                                if member_type == "string":
+                                    member_elem.attrib["len"] = member.get_size()   
+                            member_elem.attrib["type"] = type_name
+                            members_elem.append(member_elem)
+                        serializable_elem.append(members_elem)
+                        serializable_list.append(serializable_elem)
+
                 
                 # check for commands
                 if (parsed_xml_dict[comp_type].get_commands() != None):
@@ -365,7 +411,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     arg_elem.attrib["len"] = arg.get_size()   
                             arg_elem.attrib["type"] = type_name
                             args_elem.append(arg_elem)
-                            command_elem.append(args_elem)
+                        command_elem.append(args_elem)
                         command_list.append(command_elem)
                 
                 # check for channels
@@ -469,7 +515,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     arg_elem.attrib["len"] = arg.get_size()   
                             arg_elem.attrib["type"] = type_name
                             args_elem.append(arg_elem)
-                            event_elem.append(args_elem)
+                        event_elem.append(args_elem)
                         event_list.append(event_elem)
         
                 # check for parameters

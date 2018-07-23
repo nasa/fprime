@@ -103,12 +103,10 @@ class TopoFactory:
         components = []
         for comp_xml_path in x.get_comp_type_file_header_dict():
             file_path = os.environ['BUILD_ROOT'] + '/' + comp_xml_path
-            print file_path
+            #print file_path
             processedXML = XmlComponentParser.XmlComponentParser(file_path)
             comp_name = processedXML.get_component().get_name()
             componentXMLNameToComponent[comp_name] = processedXML
-            
-            
         
         for instance in x.get_instances():
             if instance.get_type() not in componentXMLNameToComponent.keys():
@@ -117,7 +115,6 @@ class TopoFactory:
                 instance.set_component_object(componentXMLNameToComponent[instance.get_type()]) 
             components.append(Component.Component(instance.get_namespace(), instance.get_name(), instance.get_type(), xml_filename= x.get_xml_filename(), kind2=instance.get_kind()))
     
-            
         #print "Assembly name: " + x.get_name(), x.get_base_id(), x.get_base_id_window()
         #for component in components:
         #    print component.get_name(), component.get_base_id(), component.get_base_id_window()
