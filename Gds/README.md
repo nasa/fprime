@@ -37,8 +37,8 @@ and can be easily modified.
 
 ## Classes
 The Gds back end is composed of several different data proecssing units. For 
-most of the units described below, a base class describes the interface, and 
-then subclasses implement the interface for specific data types (such as events,
+most of the units described below, a base class describes the interface and 
+subclasses implement the interface for specific data types (such as events,
 channels, etc).
 
 ### TCP Client
@@ -72,7 +72,7 @@ For each general data type (channel, event, etc) there is a type class.
 Instances of these classes hold information about a specific channel reading or 
 event. They contain the actual data parsed by the decoders. As such, they are 
 the data type returned by encoders. All of these classes have a time field are 
-derived of type SysData, which implements a compare function, allowing any list 
+derived from type SysData, which implements a compare function, allowing any list 
 of SysData objects to be sorted by time. Each inherited type should also 
 implement the __str__ method so the objects can be easily printed. 
 
@@ -113,6 +113,13 @@ callback method that is called by decoders with parsed data objects as the
 argument. In the case of the Gds, the consumers are the GUI panels that display 
 data. Consumers can also produce data that is sent to encoders and eventually on
 to the F' deployment. 
+
+### Main Panel Factory
+This class is responsible for setting up the pipeline of data between different 
+components in the publisher/subscriber interface - that is, it is 
+responsible for registering all of the various components that whish to share
+data. This class also supports the creation of multiple Gds GUI windows which 
+all share the same subscriptions and therefore recieve the same data. 
 
 ## Notes
  - Currently, the models/common directory has command.py, event.py, and

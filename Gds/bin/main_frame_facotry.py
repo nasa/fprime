@@ -23,8 +23,15 @@ import os
 
 # TODO document all methods
 class MainFrameFactory(object):
+    '''Factory that creates new windows for the GDS'''
 
     def __init__(self, opts):
+        """Constructor for the Main panel factory
+        
+        Arguments:
+            opts {options object} -- The options passed to the startup script (gds.py)
+        """
+
         self.opts = opts
 
         self.client_socket = None
@@ -44,6 +51,12 @@ class MainFrameFactory(object):
 
 
     def create_new_window(self):
+        """Create a new instance of the GDS window
+        
+        Raises:
+            Exception -- raised if the setup_pipline() method wasn't called before this method
+        """
+
         if len(self.main_frame_instances) > 0:
             frame = GDSMainFrameImpl.MainFrameImpl(None, self, \
                 evnt_pnl_state=self.main_frame_instances[0].event_pnl.getEventLogState(), \
@@ -58,6 +71,9 @@ class MainFrameFactory(object):
 
 
     def setup_pipeline(self):
+        """Setup the pipline of data from the client to the GUI. Creates one instance of main GDS window for you.
+        """
+
         # TODO comment this function to explain
 
         self.dist = distributor.Distributor()
