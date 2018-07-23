@@ -79,6 +79,7 @@ class LogEvents ( wx.Panel ):
 		self.EventLogClearButton.Bind( wx.EVT_BUTTON, self.onEventLogClearButtonClick )
 		self.EventLogApplyFilterButton.Bind( wx.EVT_BUTTON, self.onEventLogApplyFilterButtonClick )
 		self.EventLogResetFilterButton.Bind( wx.EVT_BUTTON, self.onEventLogResetFilterButtonClick )
+		self.EventLogDataListCtl.Bind( wx.EVT_MOUSEWHEEL, self.onEventLogDataListCtrlScroll )
 	
 	def __del__( self ):
 		pass
@@ -93,6 +94,9 @@ class LogEvents ( wx.Panel ):
 		event.Skip()
 	
 	def onEventLogResetFilterButtonClick( self, event ):
+		event.Skip()
+	
+	def onEventLogDataListCtrlScroll(self, event):
 		event.Skip()
 	
 

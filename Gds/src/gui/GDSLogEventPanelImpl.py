@@ -48,7 +48,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 		"""Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
 		"""
 
-		if self.EventLogScrollCheckBox.GetValue() == True:
+		if self.EventLogScrollCheckBox.GetValue() == True and self.EventLogDataListCtl.ItemCount > 0:
 			i = self.EventLogDataListCtl.RowToItem(int(self.EventLogDataListCtl.ItemCount - 1))
 			self.EventLogDataListCtl.EnsureVisible(i)
 			self.EventLogDataListCtl.Refresh()
@@ -75,6 +75,10 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 		event.Skip()
 
 	def onEventLogResetFilterButtonClick( self, event ):
+		event.Skip()
+
+	def onEventLogDataListCtrlScroll(self, event):
+		self.EventLogScrollCheckBox.Value = False
 		event.Skip()
 
 
