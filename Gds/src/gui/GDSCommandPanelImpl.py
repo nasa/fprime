@@ -36,10 +36,10 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 	def __init__( self, parent, cname_dict ):
 		"""Constructor for the Command Panel implementation
-		
+
 		Arguments:
 			parent {wx.Window} -- Parent to this GUI element
-			cname_dict {dictionary} -- A dictionary mapping command mneumonic names to the corresponding CommandTemplate object.
+			cname_dict {dictionary} -- A dictionary mapping command mneumonic names to the corresponding CmdTemplate object.
 		"""
 
 		GDSCommandPanelGUI.Commands.__init__ ( self, parent)
@@ -60,7 +60,7 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 	def register_encoder(self, enc ):
 		"""Register an encoder object to this object. Encoder must implement data_callback(data)
-		
+
 		Arguments:
 			enc {Encoder} -- The encoder to register
 		"""
@@ -77,9 +77,9 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 	def setupCommandArguments(self, temp):
 		self.arginputs = list()
 		self.CmdArgsScrolledWindow.GetSizer().Clear(True)
-	
+
 		width_total = 0
-		
+
 		for (arg_name, _, arg_type) in temp.arguments:
 			if type(arg_type) == BoolType:
 				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], arg_name)
@@ -109,13 +109,13 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.StringValidator(), arg_name)
 			elif type(arg_type) == type(SerializableType()):
 				pass
-			
+
 			self.arginputs.append(k)
 			self.CmdArgsScrolledWindow.GetSizer().Add(k)
 			w, _ = k.GetSizer().GetMinSize()
 			width_total += w
-		
-		
+
+
 		self.CmdArgsScrolledWindow.Layout()
 		self.CmdArgsScrolledWindow.SetVirtualSize((width_total, -1))
 		self.CmdArgsScrolledWindow.Refresh()
@@ -139,12 +139,12 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 			elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
 				arglist.append(i.getSelection())
 
-		
+
 		s = self.CmdsComboBox.GetStringSelection()
 		if s is not u'':
 			temp = self.cname_dict[s]
 			data_obj = cmd_data.CmdData(tuple(arglist), temp)
-			
+
 			for i in self._encoders:
 				i.data_callback(data_obj)
 
@@ -154,7 +154,7 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 		return True
 
-	
+
 	def onCmdHistSearchButtonClick( self, event ):
 
 		if self.CmdHistSearchTextCtl.GetLineText(0) is not u'':

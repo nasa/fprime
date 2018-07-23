@@ -69,6 +69,8 @@ class EventTemplate(data_template.DataTemplate):
         if description != None and not type(description) == type(str()):
             raise TypeMismatchException(type(str()), type(description))
 
+        if not isinstance(severity, EventSeverity):
+            raise TypeMismatchException("EventSeverity", type(severity))
 
         # Initialize event internal variables
         self.id       = event_id
@@ -80,6 +82,12 @@ class EventTemplate(data_template.DataTemplate):
 
 
     def get_severity(self):
+        '''
+        Returns the event's severity as an EventSeverity Enum.
+
+        Returns:
+            The event's severity as an EventSeverity Enum
+        '''
         return self.severity
 
     def get_format_str(self):

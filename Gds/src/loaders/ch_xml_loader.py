@@ -66,9 +66,9 @@ class ChXmlLoader(XmlLoader):
             ch_comp = ch_dict[self.COMP_TAG]
             ch_name = ch_dict[self.NAME_TAG]
             ch_id = int(ch_dict[self.ID_TAG], base=16)
-            ch_desc = ch_dict[self.DESC_TAG]
             ch_type_obj = self.parse_type(ch_dict[self.TYPE_TAG], ch, xml_tree)
 
+            ch_desc = None
             ch_fmt_str = None
             ch_low_red = None
             ch_low_orange = None
@@ -76,6 +76,9 @@ class ChXmlLoader(XmlLoader):
             ch_high_yellow = None
             ch_high_orange = None
             ch_high_red = None
+
+            if (self.DESC_TAG in ch_dict):
+                ch_desc = ch_dict[self.DESC_TAG]
 
             if (self.FMT_STR_TAG in ch_dict):
                 ch_fmt_str = ch_dict[self.FMT_STR_TAG]

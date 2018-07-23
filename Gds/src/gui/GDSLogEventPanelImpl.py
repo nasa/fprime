@@ -9,16 +9,16 @@ from pprint import pprint
 
 class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 	'''Implementation class for LogEvents panel. Defines funcitonality.'''
-	
+
 
 	def __init__( self, parent ):
 		"""LogEventsImple constructor
-		
+
 		Arguments:
 			parent {wx.Window} -- The parrent for this GUI element
 		"""
 
-		
+
 		GDSLogEventPanelGUI.LogEvents.__init__ ( self, parent)
 		self.parent = parent
 		self.scrollEventLogToBottom()
@@ -28,7 +28,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
 	def data_callback(self, data):
 		"""Recieves data from decoders to which this consumer is registered
-		
+
 		Arguments:
 			data {Data Object} -- A Data Object containing the data passed from the decoder (e.g., an EventData object)
 		"""
@@ -37,10 +37,10 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 		if type(data) == event_data.EventData:
 			arg_vals = tuple([arg.val for arg in data.args])
 			l = [data.time.to_readable(),
-							 data.template.name,
-							 str(data.template.id),
-							 data.template.severity,
-							 data.template.format_str%arg_vals]
+			     data.template.name,
+			     str(data.template.id),
+		    	     data.template.severity.name,
+			     data.template.format_str%arg_vals]
 
 			self.EventLogDataListCtl.AppendItem(l)
 

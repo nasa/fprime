@@ -62,6 +62,12 @@ class XmlLoader(dict_loader.DictLoader):
     SER_MEMB_DESC_TAG = "description"
     SER_MEMB_TYPE_TAG = "type"
 
+    # Xml sction names and tags for argument sections
+    ARGS_SECT = "args"
+    ARG_NAME_TAG = "name"
+    ARG_DESC_TAG = "description"
+    ARG_TYPE_TAG = "type"
+
     STR_LEN_TAG = "len"
 
     def __init__(self):
@@ -91,6 +97,7 @@ class XmlLoader(dict_loader.DictLoader):
         '''
         # Check that dictionary path exists
         if not os.path.isfile(path):
+            # TODO remove
             raise exceptions.GseControllerUndefinedFileException(path)
 
         # Create xml parser
@@ -120,6 +127,45 @@ class XmlLoader(dict_loader.DictLoader):
                 return section
 
         return None
+
+
+    def get_args_list(self, xml_obj, xml_tree):
+        '''
+        Parses and returns a standard xml dict arguments section:
+          Section name: "args"
+          Object tags: "arg"
+          Object fields: "name", "type", "description"(optional)
+
+        Args:
+            xml_obj (lxml etree root): xml object containing the args section
+                                       to parse.
+            xml_tree (lxml etree root): Main xml tree object containing info on
+                                        Enums and serializables.
+
+        Returns:
+            List of arguments where each argument is a tuple of the form:
+            (arg name [string], arg description [string or None], arg obj
+            [python object derived from TypeBase]). If there is no args section
+            or there are no arguments in the args section, [] is returned.
+        '''
+        args = []
+        args_section = self.get_xml_section(self.ARGS_SECT, xml_obj)
+
+        if args_section != None:
+            for arg in args_section:
+                arg_dict = arg.attrib
+
+                arg_name = arg_dict[self.ARG_NAME_TAG]
+                arg_type_name = arg_dict[self.ARG_TYPE_TAG]
+                arg_typ_obj = self.parse_type(arg_type_name, arg, xml_tree)
+
+                arg_desc = None
+                if (self.ARG_DESC_TAG in arg_dict):
+                    arg_desc = arg_dict[self.ARG_DESC_TAG]
+
+                args.append((arg_name, arg_desc, arg_typ_obj))
+
+        return args
 
 
     def get_enum_type(self, enum_name, xml_obj):
@@ -261,7 +307,7 @@ class XmlLoader(dict_loader.DictLoader):
         elif (type_name == "bool"):
             return BoolType()
         elif (type_name == "string"):
-            if self.STR_LEN_TAG not in xml_time.attrib:
+            if self.STR_LEN_TAG not in xml_item.attrib:
                 print("Trying to parse string type, but found %s field"%
                       self.STR_LEN_TAG)
                 return None

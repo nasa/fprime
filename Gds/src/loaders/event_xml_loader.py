@@ -11,22 +11,19 @@
 from xml_loader import XmlLoader
 from templates.event_template import EventTemplate
 from controllers import exceptions
-
+from utils.event_severity import EventSeverity
 
 class EventXmlLoader(XmlLoader):
     '''Class to load xml based event dictionaries'''
 
     EVENT_SECT = "events"
-    ARGS_SECT = "args"
 
     COMP_TAG = "component"
     NAME_TAG = "name"
     ID_TAG = "id"
     SEVERITY_TAG = "severity"
     FMT_STR_TAG = "format_string"
-    ARG_NAME_TAG = "name"
-    ARG_DESC_TAG = "description"
-    ARG_TYPE_TAG = "type"
+    DESC_TAG = "description"
 
     def construct_dicts(self, path):
         '''
@@ -56,9 +53,27 @@ class EventXmlLoader(XmlLoader):
         name_dict = dict()
 
         for event in event_section:
-            event_dict = ch.attrib
+            event_dict = event.attrib
 
             event_comp = event_dict[self.COMP_TAG]
             event_name = event_dict[self.NAME_TAG]
             event_id = int(event_dict[self.ID_TAG], base=16)
+            event_severity = EventSeverity[event_dict[self.SEVERITY_TAG]]
+            event_fmt_str = event_dict[self.FMT_STR_TAG]
+
+            event_desc = None
+            if (self.DESC_TAG in event_dict):
+                event_desc = event_dict[self.DESC_TAG]
+
+            # Parse arguments
+            args = self.get_args_list(event, xml_tree)
+
+            event_temp = EventTemplate(event_id, event_name, event_comp,
+                                       args, event_severity, event_fmt_str,
+                                       event_desc)
+
+            id_dict[event_id] = event_temp
+            name_dict[event_name] = event_temp
+
+        return (id_dict, name_dict)
 

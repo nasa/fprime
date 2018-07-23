@@ -10,6 +10,7 @@
 # Custom Python Modules
 import python_loader
 from templates import event_template
+from utils.event_severity import EventSeverity
 
 # TODO remove
 from pprint import pprint
@@ -81,7 +82,7 @@ class EventPyLoader(python_loader.PythonLoader):
                                                 event_dict[self.NAME_FIELD],
                                                 event_dict[self.COMP_FIELD],
                                                 event_dict[self.ARGS_FIELD],
-                                                event_dict[self.SEVERITY_FIELD],
+                                                EventSeverity[event_dict[self.SEVERITY_FIELD]],
                                                 event_dict[self.FMT_STR_FIELD],
                                                 event_dict[self.DESC_FIELD])
 
