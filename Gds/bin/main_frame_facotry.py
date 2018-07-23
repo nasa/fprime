@@ -11,10 +11,10 @@ an interface for creating additional GDS windows that use this pipeline
 '''
 
 # TODO break up these imports into one per line and only import one event loader
-from loaders import ch_xml_loader
-from loaders import event_xml_loader
+from loaders import ch_py_loader, ch_xml_loader
+from loaders import event_py_loader, event_xml_loader
 from loaders import pkt_xml_loader
-from loaders import cmd_xml_loader
+from loaders import cmd_py_loader, cmd_xml_loader
 
 from decoders import ch_decoder
 from decoders import event_decoder
@@ -35,7 +35,7 @@ class MainFrameFactory(object):
 
     def __init__(self, opts):
         """Constructor for the Main panel factory
-        
+
         Arguments:
             opts {options object} -- The options passed to the startup script (gds.py)
         """
@@ -55,12 +55,14 @@ class MainFrameFactory(object):
         self.ch_dec = None
         self.pkt_dec = None
 
+        self.cmd_name_dict = None
+
         self.main_frame_instances = []
 
 
     def create_new_window(self):
         """Create a new instance of the GDS window
-        
+
         Raises:
             Exception -- raised if the setup_pipline() method wasn't called before this method
         """
@@ -80,6 +82,9 @@ class MainFrameFactory(object):
 
     def setup_pipeline(self):
         """Setup the pipline of data from the client to the GUI. Creates one instance of main GDS window for you.
+
+        Raises:
+            Exception -- raised if no dictionary path passed in the opts object
         """
 
         # TODO comment this function to explain
@@ -87,17 +92,36 @@ class MainFrameFactory(object):
         self.dist = distributor.Distributor()
         self.client_socket = client_socket.ThreadedTCPSocketClient()
 
-        self.evnt_ldr = event_xml_loader.EventXmlLoader()
-        eid_dict = self.evnt_ldr.get_id_dict(self.opts.xml_dict_path)
+        if self.opts.generated_path != None:
+            use_py_dicts = True
+        elif self.opts.xml_dict_path != None:
+            use_py_dicts = False
+        else:
+            raise Exception("No Dictionary path passed in options")
 
-        self.cmd_ldr = cmd_xml_loader.CmdXmlLoader()
-        cname_dict = self.cmd_ldr.get_name_dict(self.opts.xml_dict_path)
+        if use_py_dicts:
+            self.evnt_ldr = event_py_loader.EventPyLoader()
+            eid_dict = self.evnt_ldr.get_id_dict(self.opts.generated_path + os.sep + "events")
 
-        self.ch_ldr = ch_xml_loader.ChXmlLoader()
-        ch_dict = self.ch_ldr.get_id_dict(self.opts.xml_dict_path)
-        ch_name_dict = self.ch_ldr.get_name_dict(self.opts.xml_dict_path)
+            self.cmd_ldr = cmd_py_loader.CmdPyLoader()
+            self.cmd_name_dict = self.cmd_ldr.get_name_dict(self.opts.generated_path + os.sep + "commands")
 
-        self.cmd_enc = cmd_encoder.CmdEncoder(cname_dict)
+            self.ch_ldr = ch_py_loader.ChPyLoader()
+            ch_dict = self.ch_ldr.get_id_dict(self.opts.generated_path + os.sep + "channels")
+            ch_name_dict = self.ch_ldr.get_name_dict(self.opts.generated_path + os.sep + "channels")
+        else:
+            self.evnt_ldr = event_xml_loader.EventXmlLoader()
+            eid_dict = self.evnt_ldr.get_id_dict(self.opts.xml_dict_path)
+
+            self.cmd_ldr = cmd_xml_loader.CmdXmlLoader()
+            self.cmd_name_dict = self.cmd_ldr.get_name_dict(self.opts.xml_dict_path)
+
+            self.ch_ldr = ch_xml_loader.ChXmlLoader()
+            ch_dict = self.ch_ldr.get_id_dict(self.opts.xml_dict_path)
+            ch_name_dict = self.ch_ldr.get_name_dict(self.opts.xml_dict_path)
+
+
+        self.cmd_enc = cmd_encoder.CmdEncoder(self.cmd_name_dict)
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
 
@@ -111,15 +135,10 @@ class MainFrameFactory(object):
 
         # TODO find a cleaner way to handle implementations without a packet spec
         if (self.opts.pkt_spec_path != None):
-            # TODO remove
-            print("packet spec found")
             self.pkt_ldr = pkt_xml_loader.PktXmlLoader()
             pkt_dict = self.pkt_ldr.get_id_dict(self.opts.pkt_spec_path, ch_name_dict)
             self.pkt_dec = pkt_decoder.PktDecoder(pkt_dict, ch_dict)
             self.dist.register("FW_PACKET_PACKETIZED_TLM", self.pkt_dec)
-        else:
-            # TODO remove
-            print("no packet spec found")
 
 
         frame = GDSMainFrameImpl.MainFrameImpl(None, self)
