@@ -19,7 +19,7 @@ from models.serialize.type_exceptions import *
 class PktTemplate(data_template.DataTemplate):
     '''Class to create packet templates to describe specific packet types'''
 
-    def __init__(self, pkt_id, pkt_name, ch_temp_list):
+    def __init__(self, pkt_id, pkt_name, pkt_comp, ch_temp_list):
         '''
         Constructor
 

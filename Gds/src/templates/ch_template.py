@@ -18,8 +18,8 @@ from models.serialize.type_exceptions import *
 class ChTemplate(data_template.DataTemplate):
     '''Class for channel templates that describe specific telemetry channels'''
 
-    def __init__(self, ch_id, ch_name, comp_name, ch_desc, ch_type_obj,
-                 ch_format_str=None, low_red=None, low_orange=None, low_yellow=None,
+    def __init__(self, ch_id, ch_name, comp_name, ch_type_obj, ch_fmt_str=None,
+                 ch_desc=None, low_red=None, low_orange=None, low_yellow=None,
                  high_yellow=None, high_orange=None, high_red=None):
         '''
         Constructor
@@ -28,10 +28,10 @@ class ChTemplate(data_template.DataTemplate):
             ch_id: The ID of the channel being described
             ch_name: The name of the channel
             comp_name: The name of the f-prime component that produces this ch
-            ch_desc: Description of the channel
             ch_type_obj: The channel's type as an instance of a class derived
                          from BaseType
-            ch_format_str: (Optional) The format string for the channel
+            ch_fmt_str: (Optional) The format string for the channel
+            ch_desc: (Optional) Description of the channel
             low_red: (Optional) Below this the value will be in red alert
             low_orange: (Optional) Below this the value will be in orange alert
             low_yellow: (Optional) Below this the value will be in yellow alert
@@ -47,11 +47,18 @@ class ChTemplate(data_template.DataTemplate):
         if not type(ch_name) == type(str()):
             raise TypeMismatchException(type(str()), type(ch_name))
 
-        if not type(ch_desc) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_desc))
+        if not type(comp_name) == type(str()):
+            raise TypeMismatchException(type(str()), type(comp_name))
 
         if not issubclass(type(ch_type_obj), type(BaseType())):
             raise TypeMismatchException(type(BaseType()),type(ch_type_obj))
+
+        if ch_fmt_str != None and not type(ch_fmt_str) == type(str()):
+            raise TypeMismatchException(type(str()), type(ch_fmt_str))
+
+        if ch_desc != None and not type(ch_desc) == type(str()):
+            raise TypeMismatchException(type(str()), type(ch_desc))
+
 
         # Initialize event internal variables
         self.id          = ch_id
@@ -59,7 +66,7 @@ class ChTemplate(data_template.DataTemplate):
         self.comp_name   = comp_name
         self.ch_desc     = ch_desc
         self.ch_type_obj = ch_type_obj
-        self.format_str  = ch_format_str
+        self.fmt_str     = ch_fmt_str
         self.low_red     = low_red
         self.low_orange  = low_orange
         self.low_yellow  = low_yellow

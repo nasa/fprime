@@ -101,8 +101,8 @@ class ChXmlLoader(XmlLoader):
                 ch_high_red = float(ch_dict[self.HIGH_R_TAG])
 
 
-            ch_temp = ChTemplate(ch_id, ch_name, ch_comp, ch_desc, ch_type_obj,
-                                 ch_fmt_str, ch_low_red, ch_low_orange,
+            ch_temp = ChTemplate(ch_id, ch_name, ch_comp, ch_type_obj,
+                                 ch_fmt_str, ch_desc, ch_low_red, ch_low_orange,
                                  ch_low_yellow, ch_high_yellow, ch_high_orange,
                                  ch_high_red)
 
