@@ -135,10 +135,10 @@ def main(argv=None):
 	# setup option parser
 	parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
 	parser.add_option("-d", "--dictionary", dest="generated_path", action="store", type="string", \
-						help="Set base path to generated command/telemetry definition files [default: %default]")
-	parser.add_option("-x", "--xml-dict", dest="xml_dict_path", action="store", type="string",
-                          help="Path to the xml dictionary")
-	parser.add_option("-s", "--pkt-spec", dest="pkt_spec_path", action="store", type="string",
+						help="Set base path to generated command/telemetry definition files", default=None)
+        parser.add_option("-x", "--xml-dict", dest="xml_dict_path", action="store", type="string",
+                          help="Path to the xml dictionary", default=None)
+        parser.add_option("-s", "--pkt-spec", dest="pkt_spec_path", action="store", type="string",
                           help="Path to the packet specification file", default=None)
 	parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set threaded tcp socket server address [default: %default]", \
 						default="127.0.0.1")

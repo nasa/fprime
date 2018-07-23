@@ -18,7 +18,7 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
-		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_ldr.get_name_dict(factory.opts.xml_dict_path))
+		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_name_dict)
 		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
 		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook)
