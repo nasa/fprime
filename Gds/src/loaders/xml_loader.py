@@ -53,7 +53,14 @@ class XmlLoader(dict_loader.DictLoader):
     ENUM_ELEM_VAL_TAG = "value"
     ENUM_ELEM_DESC_TAG = "description"
 
-    SERIALIZE_SECT = "serializables"
+    # Xml section names and tags for serializable types
+    SER_SECT = "serializables"
+    SER_TYPE_TAG = "type"
+    SER_MEMB_SECT = "members"
+    SER_MEMB_NAME_TAG = "name"
+    SER_MEMB_FMT_STR_TAG = "format_specifier"
+    SER_MEMB_DESC_TAG = "description"
+    SER_MEMB_TYPE_TAG = "type"
 
     STR_LEN_TAG = "len"
 
@@ -175,7 +182,41 @@ class XmlLoader(dict_loader.DictLoader):
             Otherwise, None is returned. The caller will hold the only reference
             to the object.
         '''
-        # Serializable Types are not yet in the xml dictionaries
+        # Check if there is already a parsed version of this serializable
+        if (type_name in self.serializable_types):
+            # Return a copy, so that the objects are not shared
+            return deepcopy(self.serializable_types[type_name])
+
+        # Check if the dictionary has an enum section
+        ser_section = self.get_xml_section(self.SER_SECT, xml_obj)
+        if (ser_section == None):
+            return None
+
+        for ser_type in ser_section:
+            # Check if this serializable matches the type name
+            if (ser_type.get(self.SER_TYPE_TAG) == type_name):
+                # Go through members
+                memb_section = self.get_xml_section(self.SER_MEMB_SECT, ser_type)
+
+                # If there is no member section, this type is invalid
+                if (memb_section == None):
+                    return None
+
+                members = []
+                for memb in memb_section:
+                    name = memb.get(self.SER_MEMB_NAME_TAG)
+                    fmt_str = memb.get(self.SER_MEMB_FMT_STR_TAG)
+                    desc = memb.get(self.SER_MEMB_DESC_TAG)
+                    memb_type_name = memb.get(self.SER_MEMB_TYPE_TAG)
+                    type_obj = self.parse_type(memb_type_name, memb, xml_obj)
+
+                    members.append((name, type_obj, fmt_str, desc))
+
+                ser_obj = SerializableType(type_name, members)
+
+                self.serializable_types[type_name] = ser_obj
+                return ser_obj
+
         return None
 
 
