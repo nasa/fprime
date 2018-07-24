@@ -46,6 +46,9 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     def data_callback(self, data):
         if self.dv_model.RefCount > 1:
             self.dv_model.UpdateModel(data)
+            c = list()
+            self.dv_model.GetChildren(self.dv_model.ObjectToItem(data), c)
+            pprint([self.dv_model.ItemToObject(x) for x in c])
         
     def getChannelTelemDataViewState(self):
         return self.dv_model.GetData()
@@ -72,7 +75,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # so any Python object can be used as data nodes. If the data nodes
         # are weak-referencable then the objmapper can use a
         # WeakValueDictionary instead.
-        self.UseWeakRefs(True)
+        self.UseWeakRefs(False)
 
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
@@ -88,6 +91,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         return mapper[col]
 
     def GetChildren(self, parent, children):
+        print('GetChildren...')
         # The view calls this method to find the children of any node in the
         # control. There is an implicit hidden root node, and the top level
         # item(s) should be reported as children of this node. A List view
@@ -129,10 +133,14 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def GetParent(self, item):
+        print('GetParent...')
         # Return the item which is this item's parent.
 
         if not item:
             return wx.dataview.NullDataViewItem
+
+        print(str(item))
+        pprint(self.ItemToObject(item))
 
         node = self.ItemToObject(item)
         if isinstance(node, PktData):
@@ -145,12 +153,15 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def GetValue(self, item, col):
+        print('GetValue at %d...'%(col))
+        
         # Return the value to be displayed for this item and column. For this
         # example we'll just pull the values from the data objects we
         # associated with the items in GetChildren.
 
         # Fetch the data object for this item.
         node = self.ItemToObject(item)
+        pprint(str(node))
 
         if isinstance(node, PktData):
             # We'll only use the first column for the Genre objects,
@@ -184,11 +195,29 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         return False
 
     def UpdateModel(self, new_data):
+        
+        print('UpdateModel...')
         match = [x for x in self.data if x.template == new_data.template]
 
         if len(match) == 0:
-            self.data.append(new_data)
-            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+            
+            if isinstance(new_data, PktData):
+                print('New pkt...')
+                pprint(new_data)
+                self.data.append(new_data)
+                self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                for c in new_data.get_chs():
+                    self.UpdateModel(c)
+            elif isinstance(new_data, ChData):
+                if new_data.get_pkt() is None:
+                    print('New single channel...')
+                    pprint(new_data)
+                    self.data.append(new_data)
+                    self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                else:
+                    print('New pkt member channel...')
+                    pprint(new_data)
+                    self.ItemAdded(self.ObjectToItem(new_data.get_pkt()), self.ObjectToItem(new_data))
         else:
             old_data = match[0]
 

@@ -23,6 +23,8 @@ class SerializableType(type_base.BaseType):
     @param param: typename = "SomeTypeName" string
     To preserve member order, the member argument is a list of members and their types:
     @param param: mem_list = [ ("member",<ref to BaseType>, format string, description), ... ]
+                  OR mem_list = [ ("member",<ref to BaseType>, format string), ... ].
+                  The member descriptions can be None
     """
     def __init__(self, typename, mem_list = None):
         """
@@ -34,13 +36,25 @@ class SerializableType(type_base.BaseType):
 
         self.__typename = typename
         setattr(self, "mem_list", None)
-        self.__mem_list = mem_list
 
-        if mem_list == None:
+        if mem_list == None or len(mem_list) == 0:
             return;
 
         if not type(mem_list) == type(list()):
             raise TypeMismatchException(type(list()),type(mem_list))
+
+        # Check if the member list contains a description or not
+        if len(mem_list[0]) == 3:
+            # TODO remove
+            print "adding descriptor to mem list items"
+            new_mem_list = []
+            for (memberName, memberVal, format_string) in mem_list:
+                new_mem_list.append((memberName, memberVal, format_string, None))
+
+            mem_list = new_mem_list
+
+        # TODO remove
+        print "mem_list=%s"%mem_list
 
         # scan the list to see if it has the correct types
         for (memberName, memberVal, format_string, desc) in mem_list:
@@ -54,8 +68,11 @@ class SerializableType(type_base.BaseType):
             if not type(format_string) == type(str()):
                 raise TypeMismatchException(type(str()),type(format_string))
             # Description should be a string
-            if not type(desc) == type(str()):
+            if desc != None and not type(desc) == type(str()):
                 raise TypeMismatchException(type(str()),type(desc))
+
+        self.__mem_list = mem_list
+
 
     @property
     def mem_list(self):
