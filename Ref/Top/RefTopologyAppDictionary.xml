@@ -435,7 +435,7 @@
         <arg name="Opcode" type="U32"/>
       </args>
     </event>
-    <event component="cmdDisp" name="OpCodeError" id="0x7c" severity="WARNING_HI" format_string="Opcode 0x%04X completes with error %d ">
+    <event component="cmdDisp" name="OpCodeError" id="0x7c" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %s ">
       <args>
         <arg name="Opcode" type="U32"/>
         <arg name="error" type="CommandDispatcher::error::ErrorResponse"/>
@@ -538,7 +538,7 @@
         <arg name="fileName" len="60" type="string"/>
       </args>
     </event>
-    <event component="cmdSeq" name="CS_FileInvalid" id="0x220" severity="WARNING_HI" format_string="Sequence file %s invalis. Stage: %d Error: %d">
+    <event component="cmdSeq" name="CS_FileInvalid" id="0x220" severity="WARNING_HI" format_string="Sequence file %s invalid. Stage: %s Error: %d">
       <args>
         <arg name="fileName" len="60" type="string"/>
         <arg name="stage" type="CmdSequencer::stage::FileReadStage"/>
