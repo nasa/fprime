@@ -435,13 +435,13 @@
         <arg name="Opcode" type="U32"/>
       </args>
     </event>
-    <event component="cmdDisp" name="OpCodeError" id="0x7c" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %d ">
+    <event component="cmdDisp" name="OpCodeError" id="0x7c" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %s ">
       <args>
         <arg name="Opcode" type="U32"/>
         <arg name="error" type="CommandDispatcher::error::ErrorResponse"/>
       </args>
     </event>
-    <event component="cmdDisp" name="MalformedCommand" id="0x7d" severity="WARNING_HI" format_string="Received malformed command packet. Status: %d">
+    <event component="cmdDisp" name="MalformedCommand" id="0x7d" severity="WARNING_HI" format_string="Received malformed command packet. Status: %s">
       <args>
         <arg name="Status" type="CommandDispatcher::Status::CmdSerError"/>
       </args>
@@ -491,7 +491,7 @@
         <arg name="Id" type="U32"/>
       </args>
     </event>
-    <event component="prmDb" name="PrmFileWriteError" id="0x91" severity="WARNING_HI" format_string="Parameter write failed in stage %d with record %d and error %d">
+    <event component="prmDb" name="PrmFileWriteError" id="0x91" severity="WARNING_HI" format_string="Parameter write failed in stage %s with record %d and error %d">
       <args>
         <arg name="stage" type="PrmDb::stage::PrmWriteError"/>
         <arg name="record" type="I32"/>
@@ -503,7 +503,7 @@
         <arg name="records" type="U32"/>
       </args>
     </event>
-    <event component="prmDb" name="PrmFileReadError" id="0x93" severity="WARNING_HI" format_string="Parameter file read failed in stage %d with record %d and error %d">
+    <event component="prmDb" name="PrmFileReadError" id="0x93" severity="WARNING_HI" format_string="Parameter file read failed in stage %s with record %d and error %d">
       <args>
         <arg name="stage" type="PrmDb::stage::PrmReadError"/>
         <arg name="record" type="I32"/>
@@ -538,7 +538,7 @@
         <arg name="fileName" len="60" type="string"/>
       </args>
     </event>
-    <event component="cmdSeq" name="CS_FileInvalid" id="0x220" severity="WARNING_HI" format_string="Sequence file %s invalid. Stage: %d Error: %d">
+    <event component="cmdSeq" name="CS_FileInvalid" id="0x220" severity="WARNING_HI" format_string="Sequence file %s invalid. Stage: %s Error: %d">
       <args>
         <arg name="fileName" len="60" type="string"/>
         <arg name="stage" type="CmdSequencer::stage::FileReadStage"/>
@@ -624,7 +624,7 @@
         <arg name="opcode" type="U32"/>
       </args>
     </event>
-    <event component="cmdSeq" name="CS_ModeSwitched" id="0x22e" severity="ACTIVITY_HI" format_string="Sequencer switched to %d step mode">
+    <event component="cmdSeq" name="CS_ModeSwitched" id="0x22e" severity="ACTIVITY_HI" format_string="Sequencer switched to %s step mode">
       <args>
         <arg name="mode" type="CmdSequencer::mode::SeqMode"/>
       </args>
@@ -841,12 +841,12 @@
         <arg name="badKey" type="U32"/>
       </args>
     </event>
-    <event component="health" name="HLTH_CHECK_ENABLE" id="0x16c" severity="ACTIVITY_HI" format_string="Health checking set to %d">
+    <event component="health" name="HLTH_CHECK_ENABLE" id="0x16c" severity="ACTIVITY_HI" format_string="Health checking set to %s">
       <args>
         <arg name="enabled" type="Health::enabled::HealthIsEnabled"/>
       </args>
     </event>
-    <event component="health" name="HLTH_CHECK_PING" id="0x16d" severity="ACTIVITY_HI" format_string="Health checking set to %d for %s">
+    <event component="health" name="HLTH_CHECK_PING" id="0x16d" severity="ACTIVITY_HI" format_string="Health checking set to %s for %s">
       <args>
         <arg name="enabled" type="Health::enabled::HealthPingIsEnabled"/>
         <arg name="entry" len="40" type="string"/>
@@ -886,7 +886,7 @@
         <arg name="PortNumber" type="U32"/>
       </args>
     </event>
-    <event component="sockGndIf" name="GNDIF_ReceiveError" id="0x180" severity="WARNING_HI" format_string="Error %d on port_number %d">
+    <event component="sockGndIf" name="GNDIF_ReceiveError" id="0x180" severity="WARNING_HI" format_string="Error %s on port_number %d">
       <args>
         <arg name="error" type="GndIf::error::GNDIF_RECEIVE_ERROR"/>
         <arg name="PortNumber" type="U32"/>
@@ -907,7 +907,7 @@
     <event component="fileDownlinkBufferManager" name="BufferManager_StoreSizeExceeded" id="0x194" severity="WARNING_HI" format_string="Store size exceeded">
       <args/>
     </event>
-    <event component="eventLogger" name="ALOG_FILE_WRITE_ERR" id="0x1a5" severity="WARNING_HI" format_string="Event buffer write failed in stage %d with error %d">
+    <event component="eventLogger" name="ALOG_FILE_WRITE_ERR" id="0x1a5" severity="WARNING_HI" format_string="Event buffer write failed in stage %s with error %d">
       <args>
         <arg name="stage" type="ActiveLogger::stage::LogWriteError"/>
         <arg name="error" type="I32"/>
@@ -918,7 +918,7 @@
         <arg name="records" type="U32"/>
       </args>
     </event>
-    <event component="eventLogger" name="ALOG_SEVERITY_FILTER_STATE" id="0x1a7" severity="ACTIVITY_LO" format_string="%d filter state. Recv: %d Send: %d">
+    <event component="eventLogger" name="ALOG_SEVERITY_FILTER_STATE" id="0x1a7" severity="ACTIVITY_LO" format_string="%s filter state. Recv: %d Send: %d">
       <args>
         <arg name="severity" type="ActiveLogger::severity::EventFilterState"/>
         <arg name="recvEnabled" type="bool"/>

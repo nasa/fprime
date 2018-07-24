@@ -18,6 +18,7 @@ from optparse import OptionParser
 
 from utils import Logger
 from utils import ConfigManager
+from utils import DictTypeConverter
 
 
 # Meta-model for Component only generation
@@ -481,10 +482,11 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         event_elem.attrib["name"] = event.get_name()
                         event_elem.attrib["id"] = "%s"%(hex(int(event.get_ids()[0],base=0) + comp_id))
                         event_elem.attrib["severity"] = event.get_severity()
-                        event_elem.attrib["format_string"] = event.get_format_string()
+                        format_string = event.get_format_string()
                         if ("comment" in event_elem.attrib.keys()):
                             event_elem.attrib["description"] = event_elem.attrib["comment"]
                         args_elem = etree.Element("args")
+                        arg_num = 0
                         for arg in event.get_args():
                             arg_elem = etree.Element("arg")
                             arg_elem.attrib["name"] = arg.get_name()
@@ -509,12 +511,16 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                         enum_mem.attrib["description"] = comment
                                     enum_elem.append(enum_mem)
                                 enum_list.append(enum_elem)
+                                # replace enum format string %d with %s for ground system
+                                format_string = DictTypeConverter.DictTypeConverter().format_replace(format_string,arg_num,'d','s')
                             else:
                                 type_name = arg_type    
                                 if arg_type == "string":
                                     arg_elem.attrib["len"] = arg.get_size()   
                             arg_elem.attrib["type"] = type_name
                             args_elem.append(arg_elem)
+                            arg_num += 1
+                        event_elem.attrib["format_string"] = format_string
                         event_elem.append(args_elem)
                         event_list.append(event_elem)
         
