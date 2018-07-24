@@ -76,7 +76,6 @@ def main(argv=None):
     GUI_args = [python_bin,"%s/Gds/bin/gds.py"%build_root,
                 "--port","%d"%used_port,
                 "--xml-dict","%s/Ref/Top/RefTopologyAppDictionary.xml"%build_root,
-                "--dictionary","%s/Gse/generated/Ref"%build_root,
                 "--connect","--addr",addr,"-L","%s/Ref/logs"%build_root]
 
 
