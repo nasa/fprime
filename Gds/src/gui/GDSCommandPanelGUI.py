@@ -68,7 +68,7 @@ class Commands ( wx.Panel ):
 		self.CmdHistPanel.SetSizer( sbSizer2 )
 		self.CmdHistPanel.Layout()
 		sbSizer2.Fit( self.CmdHistPanel )
-		CommandsMainBoxSizer.Add( self.CmdHistPanel, 5, wx.EXPAND |wx.ALL, 5 )
+		CommandsMainBoxSizer.Add( self.CmdHistPanel, 4, wx.EXPAND |wx.ALL, 5 )
 
 		self.CmdHistControlsPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self.CmdHistControlsPanel, wx.ID_ANY, u"Command History Controls" ), wx.HORIZONTAL )
