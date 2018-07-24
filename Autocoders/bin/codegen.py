@@ -519,7 +519,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     arg_elem.attrib["len"] = arg.get_size()   
                             arg_elem.attrib["type"] = type_name
                             args_elem.append(arg_elem)
-                            arg_num += arg_num
+                            arg_num += 1
                         event_elem.attrib["format_string"] = format_string
                         event_elem.append(args_elem)
                         event_list.append(event_elem)
