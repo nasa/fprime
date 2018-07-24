@@ -188,8 +188,8 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		self.onQuickCmdSendButtonClick(event)
 
 	def onQuickCmdSendButtonClick( self, event ):
-		cmds = self.QuickCmdTextCtl.GetLineText(0).split(",")
-
+		cmds = self.QuickCmdTextCtl.GetLineText(0).encode('ascii', 'ignore').replace(' ','').split(",")
+		
 		try:
 
 			temp = self.cname_dict[cmds[0]]

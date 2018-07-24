@@ -24,8 +24,8 @@ class MainFrame ( wx.Frame ):
 		MainSizer = wx.BoxSizer( wx.VERTICAL )
 		
 		self.TabNotebook = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.TabNotebook.SetForegroundColour( wx.Colour( 100, 100, 100 ) )
-		self.TabNotebook.SetBackgroundColour( wx.Colour( 184, 224, 216 ) )
+		self.TabNotebook.SetForegroundColour( wx.Colour( 232, 136, 4 ) )
+		self.TabNotebook.SetBackgroundColour( wx.Colour( 71, 67, 62 ) )
 		
 		
 		MainSizer.Add( self.TabNotebook, 1, wx.EXPAND |wx.ALL, 5 )

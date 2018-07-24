@@ -19,9 +19,9 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
 		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_name_dict)
-		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
 		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook)
+		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 
 		if evnt_pnl_state:
 			self.event_pnl.setEventLogState(evnt_pnl_state)
@@ -30,9 +30,9 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 			self.telem_pnl.setChannelTelemDataViewState(tlm_pnl_state)
 
 		self.TabNotebook.AddPage( self.cmd_pnl, u"Commands", False )
-		self.TabNotebook.AddPage( self.status_pnl, u"Status", False )
 		self.TabNotebook.AddPage( self.event_pnl, u"Log Events", False )
 		self.TabNotebook.AddPage( self.telem_pnl, u"Channel Telemetry", False )
+		self.TabNotebook.AddPage( self.status_pnl, u"Status", False )
 
 		self.main_frame_factory = factory
 		
