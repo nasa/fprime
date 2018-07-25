@@ -14,6 +14,7 @@ import inspect
 
 from data_types.ch_data import *
 from data_types.pkt_data import *
+from models.serialize.serializable_type import SerializableType
 
 ###########################################################################
 ## Class ChannelTelemetryImpl
@@ -187,16 +188,34 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         match = [x for x in self.data if x.template == new_data.template]
 
         if len(match) == 0:
-            self.data.append(new_data)
-            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+            
+            if isinstance(new_data, PktData):
+                self.data.append(new_data)
+                self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                for c in new_data.get_chs():
+                    self.UpdateModel(c)
+            elif isinstance(new_data, ChData):
+                if new_data.get_pkt() is None:
+                    self.data.append(new_data)
+                    self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                else:
+                    self.ItemAdded(self.ObjectToItem(new_data.get_pkt()), self.ObjectToItem(new_data))
+
         else:
+            
             old_data = match[0]
 
-            #TODO Just a shallow copy and may not work for Packets because doesn't copy channels
-            old_data.__dict__ = new_data.__dict__.copy()
-            #old_data.val_obj.val = new_data.val_obj.val
+            if isinstance(new_data, PktData):
+                for o, n in zip(old_data.chs, new_data.chs):
+                    o.val_obj.__dict__ = n.val_obj.__dict__.copy()
+                    o.time.__dict__ = n.time.__dict__.copy()
+                    self.ItemChanged(self.ObjectToItem(o))        
 
-            self.ItemChanged(self.ObjectToItem(old_data))
+            elif isinstance(new_data, ChData):
+                old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
+                old_data.time.__dict__ = new_data.time.__dict__.copy()
+                self.ItemChanged(self.ObjectToItem(old_data)) 
+
     
     def SetData(self, data):
         for d in data:
