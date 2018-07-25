@@ -65,6 +65,14 @@ class ChData(sys_data.SysData):
         '''
         return self.val_obj.val
 
+    def get_time(self):
+        '''
+        Return the channel sample's timestamp
+
+        Returns:
+            The channel timestamp
+        '''
+        return self.time
 
     @staticmethod
     def get_csv_header(verbose=False):

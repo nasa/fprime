@@ -29,6 +29,7 @@ class PktData(SysData):
         Returns:
             An initialized PktData object
         '''
+        self.id = pkt_temp.get_id()
         self.chs = pkt_chs
         self.time = pkt_time
         self.template = pkt_temp

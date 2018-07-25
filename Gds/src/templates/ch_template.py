@@ -90,7 +90,7 @@ class ChTemplate(data_template.DataTemplate):
         return self.ch_type_obj
 
     def get_format_str(self):
-        return self.format_str
+        return self.fmt_str
 
     def get_low_red(self):
         return self.low_red
