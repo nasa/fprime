@@ -33,6 +33,7 @@ from loaders import event_py_loader
 from loaders import cmd_py_loader
 from encoders import cmd_encoder
 from loaders import ch_py_loader
+from utils import config_manager
 
 from main_frame_facotry import MainFrameFactory
 
@@ -156,12 +157,26 @@ def main(argv=None):
 						default="local")
 	parser.add_option("-n", "--no-about", dest="no_about", action="store_true", help="Do not show about text screen on start", \
 						default=True)
+        parser.add_option("-C", "--config", dest="config_path", action="store", help="Path to the configuration file to read", \
+                          default=None)
 
 	# process options
 	(opts, args) = parser.parse_args(sys.argv)
 	pprint(opts)
 
 	app = wx.App(False)
+
+        # Setup the configuration file
+        config = config_manager.ConfigManager()
+        if (opts.config_path != None):
+            if (os.path.isfile(opts.config_path)):
+                config.set_configs(opts.config_path)
+            else:
+                raise Exception("Invalid Configuration file passed in options")
+        else:
+            print("No Configuration File in options, using defaults")
+
+
 
 	factory = MainFrameFactory(opts)
 
