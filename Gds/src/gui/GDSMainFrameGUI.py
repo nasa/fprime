@@ -31,7 +31,7 @@ class MainFrame ( wx.Frame ):
 		
 		self.SetSizer( MainSizer )
 		self.Layout()
-		self.GroundStationStatusBar = self.CreateStatusBar( 3, wx.STB_SIZEGRIP, wx.ID_ANY )
+		#self.GroundStationStatusBar = self.CreateStatusBar( 3, wx.STB_SIZEGRIP, wx.ID_ANY )
 		self.m_menubar1 = wx.MenuBar( 0 )
 		self.FileMenu = wx.Menu()
 		self.NewMenuItem = wx.MenuItem( self.FileMenu, wx.ID_ANY, u"New...", wx.EmptyString, wx.ITEM_NORMAL )

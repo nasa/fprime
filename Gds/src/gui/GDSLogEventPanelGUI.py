@@ -24,12 +24,12 @@ class LogEvents ( wx.Panel ):
 		
 		sbSizer61 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Event Log Messages" ), wx.VERTICAL )
 		
-		self.EventLogDataListCtl = wx.dataview.DataViewListCtrl( sbSizer61.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_MULTIPLE | wx.dataview.DV_VERT_RULES )
-		self.EventLogTimeListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Time" , width=150)
-		self.EventLogNameListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Name", width=150 )
-		self.EventLogIDListColumn = self.EventLogDataListCtl.AppendTextColumn( u"ID" )
-		self.EventLogSeverityListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Severity", width=110)
-		self.EventLogMesgListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Message" )
+		self.EventLogDataListCtl = wx.dataview.DataViewCtrl( sbSizer61.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_MULTIPLE | wx.dataview.DV_VERT_RULES )
+		#self.EventLogTimeListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Time" , width=150)
+		#self.EventLogNameListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Name", width=150 )
+		#self.EventLogIDListColumn = self.EventLogDataListCtl.AppendTextColumn( u"ID" )
+		#self.EventLogSeverityListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Severity", width=110)
+		#self.EventLogMesgListColumn = self.EventLogDataListCtl.AppendTextColumn( u"Message" )
 		sbSizer61.Add( self.EventLogDataListCtl, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		

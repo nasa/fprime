@@ -124,9 +124,8 @@ class MainFrameFactory(object):
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
 
-
         self.client_socket.register_distributor(self.dist)
-
+        
         self.cmd_enc.register(self.client_socket)
 
         self.dist.register("FW_PACKET_LOG", self.event_dec)
@@ -163,4 +162,7 @@ class MainFrameFactory(object):
             self.pkt_dec.register(frame.telem_pnl)
 
         frame.cmd_pnl.register_encoder(self.cmd_enc)
+
+        self.client_socket.register_distributor(frame)
+        self.cmd_enc.register(frame)
 
