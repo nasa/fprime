@@ -74,6 +74,15 @@ class ChTemplate(data_template.DataTemplate):
         self.high_orange = high_orange
         self.high_red    = high_red
 
+    def get_full_name(self):
+        '''
+        Get the full name of this channel
+
+        Returns:
+            The full name (component.channel) for this channel
+        '''
+        return ("%s.%s"%(self.comp_name, self.id))
+
     def get_id(self):
         return self.id
 

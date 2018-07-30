@@ -73,13 +73,32 @@ class EventTemplate(data_template.DataTemplate):
             raise TypeMismatchException("EventSeverity", type(severity))
 
         # Initialize event internal variables
-        self.id       = event_id
-        self.name     = name
-        self.severity = severity
-        self.format_str = format_str
+        self.id          = event_id
+        self.name        = name
+        self.comp_name   = component
+        self.args        = args
+        self.severity    = severity
+        self.format_str  = format_str
         self.description = description
-        self.args = args
 
+
+    def get_full_name(self):
+        '''
+        Get the full name of this event
+
+        Returns:
+            The full name (component.channel) for this event
+        '''
+        return ("%s.%s"%(self.comp_name, self.id))
+
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self.name
+
+    def get_comp_name(self):
+        return self.comp_name
 
     def get_severity(self):
         '''

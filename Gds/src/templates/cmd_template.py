@@ -60,14 +60,23 @@ class CmdTemplate(data_template.DataTemplate):
                 raise TypeMismatchException(type(BaseType()),type(argtype))
 
         # Initialize command internal variables
-        self.component = component
+        self.comp_name = component
         self.mnemonic = mnemonic
         self.opcode = opcode
         self.description = description
         self.arguments = arguments
 
 
-    def get_component(self):
+    def get_ful_name(self):
+        '''
+        Get the full name of this event
+
+        Returns:
+            The full name (component.channel) for this event
+        '''
+        return ("%s.%s"%(self.comp_name, self.id))
+
+    def get_comp_name(self):
         return self.component
 
     def get_mnemonic(self):
@@ -75,6 +84,28 @@ class CmdTemplate(data_template.DataTemplate):
 
     def get_op_code(self):
         return self.opcode
+
+    def get_id(self):
+        '''
+        Get the Command's id, which is its opcode.
+
+        This function is implemented to maintain the sys_data interface
+
+        Returns:
+            The command's opcode
+        '''
+        return self.opcode
+
+    def get_name(self):
+        '''
+        Get the Command's name, which is its mnemonic
+
+        This function is implemented to maintain the sys_data interface
+
+        Returns:
+            The command's mnemonic
+        '''
+        return self.mnemonic
 
     def get_description(self):
         return self.description

@@ -19,21 +19,17 @@ class DataTemplate(object):
         '''
         Constructor.
 
-        The only required fields are id and name
+        The only required fields for template classes are id and name
 
         Returns:
             Initialized Template object
         '''
-        # Check if the field is already initialized in case this constructor
-        # is getting called from a subclass constructor
-        if not self.id:
-            self.id = 0
-        if not self.name:
-            self.name = ""
-
+        # Initialize at least id and name here
+        pass
 
     def get_id(self):
-        return self.id
+        raise NotImplementedError
 
     def get_name(self):
-        return self.name
+        raise NotImplementedError
+
