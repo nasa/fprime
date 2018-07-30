@@ -1,8 +1,8 @@
 # F' (fprime)
 
-F' is a component-driven embedded framework originally developed at NASA's Jet Propulsion Laboratory. It enables developers to quickly design and deploy full embedded system architectures built around resuable components.
+F' is a component-driven embedded framework originally developed at NASA's Jet Propulsion Laboratory. It enables developers to quickly design and deploy full embedded system architectures built around reusable components.
 
-F' uses code generation and XML design files to enable developers to quickly create solutions in the embedded space, while minimizing the ammount of boiler plate code theat the developer must write.
+F' uses code generation and XML design files to enable developers to quickly create solutions in the embedded space, while minimizing the amount of boiler plate code that the developer must write.
 
 
 ## F' Resources
