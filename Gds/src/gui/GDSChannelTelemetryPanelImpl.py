@@ -36,10 +36,12 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     
         self.ChannelTelemDataViewCtl.AssociateModel(self.dv_model)
 
-        self.ChannelTelemDataViewCtl.AppendTextColumn("Channel", 0, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=250, align=wx.ALIGN_NOT)
+        self.ChannelTelemDataViewCtl.AppendTextColumn("Channel", 0, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=350, align=wx.ALIGN_NOT)
         self.ChannelTelemDataViewCtl.AppendTextColumn("ID", 1, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=50, align=wx.ALIGN_NOT)
         self.ChannelTelemDataViewCtl.AppendTextColumn("Time", 2, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=150, align=wx.ALIGN_NOT)
         self.ChannelTelemDataViewCtl.AppendTextColumn("Value", 3, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
+
+        self.ChannelTelemDataViewCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
 
     def __del__( self ):
         self.dv_model.DecRef()
@@ -47,12 +49,31 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     def data_callback(self, data):
         if self.dv_model.RefCount > 1:
             self.dv_model.UpdateModel(data)
-        
+
     def getChannelTelemDataViewState(self):
         return self.dv_model.GetData()
     
     def setChannelTelemDataViewState(self, data):
         self.dv_model.SetData(data)
+
+    def onCopyKeyPressed(self, event):
+        # Ctrl-C pressed
+        if event.ControlDown() and event.GetKeyCode() == 67:
+            rows = self.ChannelTelemDataViewCtl.GetSelections()
+            cpy_out = ""
+            for r in rows:
+                o = self.dv_model.ItemToObject(r)
+                cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+            
+            clipboard = wx.TextDataObject()
+            # Set data object value
+            clipboard.SetText(cpy_out)
+            # Put the data in the clipboard
+            if wx.TheClipboard.Open():
+                wx.TheClipboard.SetData(clipboard)
+                wx.TheClipboard.Close()
+        event.Skip()
+
 
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
@@ -156,7 +177,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         if isinstance(node, PktData):
             # We'll only use the first column for the Genre objects,
             # for the other columns lets just return empty values
-            mapper = { 0 : str(node.template.name),
+            mapper = { 0 : str(node.template.get_full_name()),
                        1 : str(node.template.id),
                        2 : str(node.time.to_readable()),
                        3 : ""
@@ -165,7 +186,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
         elif isinstance(node, ChData):
-            mapper = { 0 : str(node.template.name),
+            mapper = { 0 : str(node.template.get_full_name()),
                        1 : str(node.template.id),
                        2 : str(node.time.to_readable()),
                        3 : str(node.val_obj.val)
@@ -182,6 +203,17 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             attr.SetColour('blue')
             attr.SetBold(True)
             return True
+        if isinstance(node, ChData):
+            if node.val_obj.val < node.template.low_yellow or node.val_obj.val > node.template.high_yellow:
+                attr.SetColour('yellow')
+                attr.SetBold(True)
+            elif node.val_obj.val < node.template.low_orange or node.val_obj.val > node.template.high_orange:
+                attr.SetColour('orange')
+                attr.SetBold(True)
+            elif node.val_obj.val < node.template.low_red or node.val_obj.val > node.template.high_red:
+                attr.SetColour('red')
+                attr.SetBold(True)
+
         return False
 
     def UpdateModel(self, new_data):

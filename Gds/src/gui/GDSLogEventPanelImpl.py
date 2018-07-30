@@ -31,6 +31,8 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         self.EventLogDataListCtl.AppendTextColumn( "ID" ,2)
         self.EventLogDataListCtl.AppendTextColumn( "Severity", 3, width=110)
         self.EventLogDataListCtl.AppendTextColumn( u"Message" ,4)
+
+        self.EventLogDataListCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
         
         self.scrollEventLogToBottom()
     def __del__( self ):
@@ -63,6 +65,25 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
     def setEventLogState(self, state):
         for r in state:
             self.dv_model.UpdateModel(r)
+
+    def onCopyKeyPressed(self, event):
+        # Ctrl-C pressed
+        if event.ControlDown() and event.GetKeyCode() == 67:
+            rows = self.EventLogDataListCtl.GetSelections()
+            cpy_out = ""
+            for r in rows:
+                o = self.dv_model.ItemToObject(r)
+                cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+            
+            clipboard = wx.TextDataObject()
+            # Set data object value
+            clipboard.SetText(cpy_out)
+            # Put the data in the clipboard
+            if wx.TheClipboard.Open():
+                wx.TheClipboard.SetData(clipboard)
+                wx.TheClipboard.Close()
+        event.Skip()
+
 
     # Override these handlers to implement functionality for GUI elements
     def onEventLogClearButtonClick( self, event ):
@@ -151,7 +172,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         
         if isinstance(node, EventData):
             mapper = { 0 : str(node.time.to_readable()),
-                       1 : str(node.template.name),
+                       1 : str(node.template.get_full_name()),
                        2 : str(node.template.id),
                        3 : str(node.template.severity.name),
                        4 : str(node.template.format_str%arg_vals)

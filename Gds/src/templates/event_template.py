@@ -74,7 +74,7 @@ class EventTemplate(data_template.DataTemplate):
 
         # Initialize event internal variables
         self.id          = event_id
-        self.name        = name
+        self.name        = namel
         self.comp_name   = component
         self.args        = args
         self.severity    = severity
@@ -89,7 +89,7 @@ class EventTemplate(data_template.DataTemplate):
         Returns:
             The full name (component.channel) for this event
         '''
-        return ("%s.%s"%(self.comp_name, self.id))
+        return ("%s.%s"%(self.comp_name, self.name))
 
     def get_id(self):
         return self.id
