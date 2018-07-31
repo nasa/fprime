@@ -38,9 +38,9 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 ## F Prime Resources
 
-The Reference application is shipped as part of F'. Documentation for this reference application can be found [here.](Ref/docs/sdd.md).
+The Reference application is shipped as part of F'. Documentation for this reference application can be found [here.](Ref/docs/sdd.md)
 
-The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf).
+The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf)
 
 ## F' Release Notes
 Release 1.0: 
