@@ -74,7 +74,7 @@ class EventTemplate(data_template.DataTemplate):
 
         # Initialize event internal variables
         self.id          = event_id
-        self.name        = namel
+        self.name        = name
         self.comp_name   = component
         self.args        = args
         self.severity    = severity
