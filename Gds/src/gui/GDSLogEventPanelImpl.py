@@ -236,6 +236,12 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         pass
 
     def ApplyFilter(self, search_term, severity):
+        # Check if the last filter was None
+        if self.current_filter == (None, None):
+            last_filter_none = True
+        else:
+            last_filter_none = False
+
         if self.current_filter == (search_term, severity):
             # Do nothing - filter unchanged
             return
@@ -251,13 +257,21 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             self.data_filtered = list()
         else:     
             # Loop through data and remove those items which do not match the filter
+            if last_filter_none:
+                for o in self.data:
+                    self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
+            else:
+                for o in self.data_filtered:
+                    self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
+
+            self.data_filtered = list()
             for o in self.data:
                 if search_term is not None and search_term in o.get_str():
                     self.data_filtered.append(o)
+                    self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
                 elif o.template.severity == severity:
                     self.data_filtered.append(o)
-                else:
-                    self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o)) 
+                    self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
 
     def DeleteAllItems(self):
         for d in self.data:
