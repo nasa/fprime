@@ -576,53 +576,53 @@ namespace Svc {
       // send command buffers directly - used for intentional command encoding errors
       void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args); 
 
-      //! Send a CS_Run command
+      //! Send a CS_RUN command
       //!
-      void sendCmd_CS_Run(
+      void sendCmd_CS_RUN(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CmdStringArg& fileName /*!< The name of the sequence file*/
       );
 
-      //! Send a CS_Validate command
+      //! Send a CS_VALIDATE command
       //!
-      void sendCmd_CS_Validate(
+      void sendCmd_CS_VALIDATE(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CmdStringArg& fileName /*!< The name of the sequence file*/
       );
 
-      //! Send a CS_Cancel command
+      //! Send a CS_CANCEL command
       //!
-      void sendCmd_CS_Cancel(
+      void sendCmd_CS_CANCEL(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      //! Send a CS_Start command
+      //! Send a CS_START command
       //!
-      void sendCmd_CS_Start(
+      void sendCmd_CS_START(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      //! Send a CS_Step command
+      //! Send a CS_STEP command
       //!
-      void sendCmd_CS_Step(
+      void sendCmd_CS_STEP(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      //! Send a CS_Auto command
+      //! Send a CS_AUTO command
       //!
-      void sendCmd_CS_Auto(
+      void sendCmd_CS_AUTO(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      //! Send a CS_Manual command
+      //! Send a CS_MANUAL command
       //!
-      void sendCmd_CS_Manual(
+      void sendCmd_CS_MANUAL(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );

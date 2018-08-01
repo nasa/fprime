@@ -71,7 +71,9 @@ typedef unsigned int NATIVE_UINT_TYPE; //!< native unsigned integer type declara
 
 // compile-time assert
 #define COMPILE_TIME_ASSERT( condition, name )\
-    typedef char assert_failed_ ## name [ (condition) ? 1 : -1 ];
+  do { \
+   enum { assert_failed_ ## name = 1/(condition) }; \
+  } while(0)
 
 /*----------------------------------------------------------------------------*/
 typedef int8_t          I8; //!< 8-bit signed integer
