@@ -31,6 +31,11 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         self.EventLogDataListCtl.AppendTextColumn( "ID" ,2)
         self.EventLogDataListCtl.AppendTextColumn( "Severity", 3, width=110)
         self.EventLogDataListCtl.AppendTextColumn( u"Message" ,4)
+        self.EventLogSeverityComboBox.Append('')
+        for i in EventSeverity:
+            self.EventLogSeverityComboBox.Append(i.name)
+       
+        self.EventLogSeverityComboBox.SetSelection(0)
 
         self.EventLogDataListCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
         
@@ -52,9 +57,12 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         """
 
         l = self.dv_model.getDataLen()
-
         if self.EventLogScrollCheckBox.GetValue() == True and l > 0:
-            i = self.dv_model.ObjectToItem(self.dv_model.data[int(l - 1)])
+            if self.dv_model.current_filter != (None, None):
+                i = self.dv_model.ObjectToItem(self.dv_model.data_filtered[int(l - 1)])
+            else:
+                i = self.dv_model.ObjectToItem(self.dv_model.data[int(l - 1)])
+            
             self.EventLogDataListCtl.EnsureVisible(i)
             self.EventLogDataListCtl.Refresh()
         wx.CallLater(10, self.scrollEventLogToBottom)
@@ -90,10 +98,19 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         self.dv_model.DeleteAllItems()
 
     def onEventLogApplyFilterButtonClick( self, event ):
-        event.Skip()
+        search_term = self.EventLogSeachKeywordTextCtl.GetLineText(0)
+        if search_term == u'':
+            search_term = None
+        try:
+            severity = EventSeverity[self.EventLogSeverityComboBox.GetStringSelection()]
+        except KeyError:
+            severity = None
+
+        print((search_term, severity))
+        self.dv_model.ApplyFilter(search_term, severity)
 
     def onEventLogResetFilterButtonClick( self, event ):
-        event.Skip()
+        self.dv_model.ApplyFilter(None, None)
 
     def onEventLogDataListCtrlScroll(self, event):
         self.EventLogScrollCheckBox.Value = False
@@ -105,6 +122,10 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
     def __init__(self, data):
         wx.dataview.PyDataViewModel.__init__(self)
         self.data = data
+
+        self.data_filtered = list()
+
+        self.current_filter = (None, None)
 
         # The PyDataViewModel derives from both DataViewModel and from
         # DataViewItemObjectMapper, which has methods that help associate
@@ -198,8 +219,45 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
     def UpdateModel(self, new_data):
         self.data.append(new_data)
-        self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
-        print(len(self.data))
+
+        st, sev = self.current_filter
+
+        if st == None and sev == None:
+            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+            self.data_filtered = list()
+        elif st is not None and st in new_data.get_str():     
+            self.data_filtered.append(new_data)
+            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))  
+        elif new_data.template.severity == sev:
+            self.data_filtered.append(new_data)
+            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))  
+        
+    def ResetFilter(self):
+        pass
+
+    def ApplyFilter(self, search_term, severity):
+        if self.current_filter == (search_term, severity):
+            # Do nothing - filter unchanged
+            return
+        else:
+            self.current_filter = (search_term, severity)
+
+        if search_term == None and severity == None:
+            # No filter - restore all data to the control
+            for o in self.data_filtered:
+                self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
+            for o in self.data:
+                self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
+            self.data_filtered = list()
+        else:     
+            # Loop through data and remove those items which do not match the filter
+            for o in self.data:
+                if search_term is not None and search_term in o.get_str():
+                    self.data_filtered.append(o)
+                elif o.template.severity == severity:
+                    self.data_filtered.append(o)
+                else:
+                    self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o)) 
 
     def DeleteAllItems(self):
         for d in self.data:
@@ -207,5 +265,8 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         self.data = list()
 
     def getDataLen(self):
-        return len(self.data)
+        if self.current_filter == (None, None):
+            return len(self.data)
+        else:
+            return len(self.data_filtered)
     

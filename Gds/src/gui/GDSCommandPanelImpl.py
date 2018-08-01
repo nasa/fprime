@@ -190,11 +190,14 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		self.onQuickCmdSendButtonClick(event)
 
 	def onQuickCmdSendButtonClick( self, event ):
-		cmds = self.QuickCmdTextCtl.GetLineText(0).encode('ascii', 'ignore').replace(' ','').split(",")
-		
+		cmds = self.QuickCmdTextCtl.GetLineText(0).encode('ascii', 'ignore').split(",")
 		try:
 
-			temp = self.cname_dict[cmds[0]]
+			temp = self.cname_dict[cmds[0].strip()]
+			for a in cmds[1:]:
+				a.strip()
+				a.replace('\"\"', '')
+
 			data_obj = cmd_data.CmdData(tuple(cmds[1:]), temp)
 
 			for i in self._encoders:
@@ -205,6 +208,8 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 			self.updateCmdSearchPool()
 		except KeyError:
 			raise Exception("Command mneumonic is not valid")
+		except IndexError:
+			raise Exception("Malformed command string or some arguments not specified")
 
 
 
