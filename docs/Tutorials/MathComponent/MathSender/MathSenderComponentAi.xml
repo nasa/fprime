@@ -67,7 +67,7 @@
         </channel>
     </telemetry>
     <events>
-        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string = "Math Cmd Recvd: %f %f %d"  >
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string="Math Cmd Recvd: %f %f %d"  >
             <comment>
             Math command received
             </comment>
@@ -76,7 +76,7 @@
                     <comment>The val1 argument</comment>
                 </arg>          
                 <arg name="val2" type="F32">
-                    <comment>The val1 argument</comment>
+                    <comment>The val2 argument</comment>
                 </arg>          
                 <arg name="op" type="ENUM">
                     <comment>The requested operation</comment>

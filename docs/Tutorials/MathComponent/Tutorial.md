@@ -39,7 +39,7 @@ MathSender will have no parameters.
 
 ### 1.2.1 Commands
 
-`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multipled by this factor. It should default to 1 if the command is never invoked.
+`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multipled by this factor. It should default to 0 if the command is never invoked.
 
 `MathReceiver` should also implement a MR_CLEAR_EVENT_THROTTLE command to clear the throttled MR_SET_FACTOR1 event (see below).
 
@@ -49,7 +49,7 @@ MathSender will have no parameters.
 
 1) MR_SET_FACTOR1 command event. When the command is received, `MathReceiver` should emit an event with the updated factor. The event should be throttled (i.e. stop emitting) after three invocations. Normally, throttling is used to prevent event floods if there a endlessly repeating condition.
 2) MR_UPDATED_FACTOR2 event. When the factor2 parameter (see below) is updated, `MathReceiver` should emit an event with the updated value.
-3) MR_OPERATION_PERFORMED event. When the component receives a request to perform the operation, it should emit an EVR with the arguments and operation.
+3) MR_OPERATION_PERFORMED event. When the component receives a request to perform the operation, it should emit an event with the arguments and operation.
 4) MR_THROTTLE_CLEARED in response to the MR_CLEAR_EVENT_THROTTLE command above.
 
 ### 1.2.3 Channels
@@ -74,7 +74,7 @@ result = (value1 operation value2)*factor1/factor2
 
 The implementation of the component will will have the following steps:
 
-1) Define the `MathPort` port that is used between the components.
+1) Define the `MathOpPort` and 'MathResultPort' ports that are used between the components.
 2) Define the `MathSender` component in XML and compile it.
 3) Implement the `MathSender` derived implementation class. 
 4) Unit test the `MathSender` implementation component.
@@ -90,7 +90,7 @@ There are two ports to define in order to perform the operation between the comp
 
 ### 2.1.1 MathOpPort
 
-`MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in a new directory `Ref/MathPorts` with the name `MathOpPortAi.mxl`. The XML for the port is as follows:
+`MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in a new directory `Ref/MathPorts` with the name `MathOpPortAi.xml`. The XML for the port is as follows:
 
 ```xml
 <interface name="MathOp" namespace="Ref">
@@ -135,7 +135,7 @@ The `interface` tag specifies that a port is being defined. The attributes are a
 
 #### 2.1.1.2 Port Argument Specification
 
-The port arguments are what are passed from component to component when they are connected. The port argument XML is as follows:
+The port arguments are passed from component to component when they are connected. The port argument XML is as follows:
 
 ```xml
     <args>
@@ -243,7 +243,7 @@ These contain the C++ classes that implement the port functionality. The build s
 
 ### 2.1.2 MathResultPort
 
-`MathOpPort` is responsible for passing the invocation of the operation from `MathSender` to `MathReceiver`. The new XML file should be placed in the `Ref/MathPorts` directory with the name `MathResultPortAi.xml`. The XML for the port is as follows:
+`MathResultPort` is responsible for passing the result of the operation from `MathReceiver` to `MathSender`. The new XML file should be placed in the `Ref/MathPorts` directory with the name `MathResultPortAi.xml`. The XML for the port is as follows:
 
 ```xml
 <interface name="MathResult" namespace="Ref">
@@ -253,7 +253,7 @@ These contain the C++ classes that implement the port functionality. The build s
     <args>
         <arg name="result" type="F32">
             <comment>the result of the operation</comment>
-		</arg>
+        </arg>
     </args>
 </interface>
 
@@ -297,6 +297,12 @@ The `MathOp` serializable structure is needed by `MathReceiver` for a telemetry 
         <member name="result" type="F32"/>
     </members>
 </serializable>
+```
+
+Add a mod.mk file for the serializable:
+
+```make
+SRC = 	MathOpSerializableAi.xml
 ```
 
 #### 2.2.1.1 Serializable Name Specification
@@ -422,7 +428,7 @@ The `MathSender` component XML definition is as follows. The XML should be place
         </channel>
     </telemetry>
     <events>
-        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string = "Math Cmd Recvd: %f %d %f"  >
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string="Math Cmd Recvd: %f %d %f"  >
             <comment>
             Math command received
             </comment>
@@ -431,7 +437,7 @@ The `MathSender` component XML definition is as follows. The XML should be place
                     <comment>The val1 argument</comment>
                 </arg>          
                 <arg name="val2" type="F32">
-                    <comment>The val1 argument</comment>
+                    <comment>The val2 argument</comment>
                 </arg>          
                 <arg name="op" type="ENUM">
                     <comment>The requested operation</comment>
@@ -444,7 +450,7 @@ The `MathSender` component XML definition is as follows. The XML should be place
                 </arg>          
             </args>
         </event>
-        <event id="1" name="MD_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
+        <event id="1" name="MS_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
             <comment>
             Received math result
             </comment>
@@ -519,7 +525,7 @@ The port attributes are:
 |---|---|
 |name|The port name|
 |data_type|The type of the port as defined in the included port definitions, in the form `namepace::name`|
-|kind|The kind of port. Can be `sync_input`,`async_input`,`output`|
+|kind|The kind of port. Can be `sync_input`,`async_input`,`guarded_input`, or `output`|
 
 For `MathSender`, the request for the operation will be sent on the `mathOut` output port, and the result will be returned on the `mathIn` asynchronous port. Because the component is active and the result input port is asynchronous, the port handler will execute on the thread of `MathSender`.
 
@@ -560,7 +566,7 @@ The `<command>` tag starts the section containing commands for `MathSender`. For
 |---|---|
 |mnemonic|A text version of the command name, used in sequences and the ground tool|
 |opcode|A numeric value for the command. The value is relative to a base value set when the component is added to a topology|
-|kind|The kind of command. Can be `sync_input`,`async_input`,`output`|
+|kind|The kind of command. Can be `sync_input`,`async_input`,`guarded_input`, or `output`|
 
 #### 2.3.1.5 Telemetry
 
@@ -611,7 +617,7 @@ The XML for the defined events is as follows:
 
 ```xml
     <events>
-        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string = "Math Cmd Recvd: %f %d %f"  >
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string = "Math Cmd Recvd: %f %f %d"  >
             <comment>
             Math command received
             </comment>
@@ -633,7 +639,7 @@ The XML for the defined events is as follows:
                 </arg>          
             </args>
         </event>
-        <event id="1" name="MD_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
+        <event id="1" name="MS_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
             <comment>
             Received math result
             </comment>
@@ -651,6 +657,7 @@ The `<events>` tag starts the section containing events for `MathSender`. For ea
 |Attribute|Description|
 |---|---|
 |name|The event name|
+|severity|The severity of the event. Can be DIAGNOSTIC, ACTIVITY_LO, ACTIVITY_HI, WARNING_LO, WARNING_HI or FATAL.
 |id|A numeric value for the event. The value is relative to a base value set when the component is added to a topology|
 |format_string|A C-style format string for displaying the event and the argument values.|
 
@@ -668,7 +675,7 @@ REF_MODULES := \
 	Ref/MathSender
 ```
 
-Create a `mod.mk` file in `Ref/MathSender` and add `MathSender`. 
+Create a `mod.mk` file in `Ref/MathSender` and add `MathSenderComponentAi.xml`. 
 
 Once it is added, add the directory to the build and build the component by typing `make rebuild`.
 
@@ -787,19 +794,25 @@ The `MathReceiver` component XML is as follows:
     
 </component>
 ```
+The mod.mk file for this component is as follows:
+
+```make
+SRC = 	MathSenderComponentAi.xml 
+```
+
 
 Many of the elements are the same as described in `MathSender`, so this section will highlight the differences.
 
 #### 2.3.2.1 Queued component
 
-The `MathReceiver` component is queued, which means it can receive port invocations as messages, but needs an external thread to dequeue them.
+The `MathReceiver` component is queued, which means it can receive asynchronous port invocations as messages, but needs an external thread to dequeue them.
 
 #### 2.3.2.2 Importing the serializable type
 
 The telemetry channels and events use a serializable type, `Ref::MathOp` to illustrate the use of those types. The following line specifies the import for this type:
 
-```
-<import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
+```xml
+   <import_serializable_type>Ref/MathTypes/MathOpSerializableAi.xml</import_serializable_type>
 ```
 
 This type is then available for events and channels, but are not available for parameters and command arguments.
@@ -808,7 +821,7 @@ This type is then available for events and channels, but are not available for p
 
 The queued component has a scheduler port that is `sync_input`. That means the port invocation is not put on a message queue, but calls the handler on the thread of the caller of the port:
 
-```
+```xml
         <port name="SchedIn" data_type="Sched" kind="sync_input">
             <comment>
             The rate group scheduler input
@@ -817,13 +830,13 @@ The queued component has a scheduler port that is `sync_input`. That means the p
 
 ```
 
-This synchronous call allows the caller to pull any pending messages of the message queue on the thread of the component invoking the `SchedIn` port.
+This synchronous call allows the caller to pull any pending messages of the message queue using the thread of the component invoking the `SchedIn` port.
 
 #### 2.3.2.4 Throttled Event
 
 The `MR_SET_FACTOR1` event has a new argument `throttle = "3"` that specifies how many events will be emitted before the event is throttled so no more appear.
 
-```
+```xml
         <event id="0" name="MR_SET_FACTOR1" severity="ACTIVITY_HI" format_string = "Factor 1: %f"  throttle = "3"   >
             <comment>
             Operation factor 1
@@ -836,11 +849,11 @@ The `MR_SET_FACTOR1` event has a new argument `throttle = "3"` that specifies ho
         </event>
 ```
 
-#### 2.3.2.5 Parameter
+#### 2.3.2.5 Parameters
 
 The `MathReceiver` component has a declaration for a parameter:
 
-```
+```xml
     <parameters>
         <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
             <comment>
@@ -859,8 +872,9 @@ The `parameter` attributes are as follows:
 |name|The parameter name|
 |data_type|The data type of the parameter. Must be a built-in type|
 |default|Default value assigned to the parameter if there is an error retrieving it.|
-|set_opcode|The opcode of the command to set the parameter. Must not overlap with any of the commands|
-|save_opcode|The opcode of the command to save the parameter. Must not overlap with any of the commands|
+|set_opcode|The opcode of the command to set the parameter. Must not overlap with any of the command opcodes|
+|save_opcode|The opcode of the command to save the parameter. Must not overlap with any of the command opcodes|
+
 
 
 ## 2.4 Component Implementation
@@ -905,7 +919,7 @@ The stub files should sucessfully compile.
 
 The next step is to fill in the handler with implementation code. 
 
-First, find the empty command handler:
+First, find the empty command handler in the `MathSenderComponentImpl.cpp` file:
 
 ```c++
   void MathSenderComponentImpl ::
@@ -948,7 +962,7 @@ Then, fill in the function with the code to perform the functions described at t
           break;
       case MULTIPLY:
           opTlm = MULT_TLM;
-          opPort = MATH_MULTIPY;
+          opPort = MATH_MULTIPLY;
           opEv = MULT_EV;
           break;
       case DIVIDE:
@@ -972,7 +986,12 @@ Then, fill in the function with the code to perform the functions described at t
 
 ```
 
-The handler will send the appropriate events and telemetry values, then invoke the output math operation port to request the operation. Note that each channel and event argument that has an enumeration has a unique type declaration. Finally, note that the output command response port must be called with a command status in order to let the framework components know that the command is complete. If the completion status isn't sent, it will stall any sequences the command was part of. There are command error status along with successfull completions. Most commands return this status at the end of the handler, but component implementations can store the `opCode` and `cmdSeq` values to return later, but those specific values must be returned in order to match the status with the command originally sent.
+The handler will send the appropriate events and telemetry values, then invoke the output math operation port to request the operation. 
+Note that each channel and event argument that has an enumeration has a unique type declaration. 
+Finally, note that the output command response port must be called with a command status in order to let the framework components know that the command is complete. 
+If the completion status isn't sent, it will stall any sequences the command was part of. 
+There are command error status along with successfull completions. 
+Most commands return this status at the end of the handler, but component implementations can store the `opCode` and `cmdSeq` values to return later, but those specific values must be returned in order to match the status with the command originally sent.
 
 Find the empty result handler:
 
@@ -989,7 +1008,7 @@ Find the empty result handler:
 
 Fill in the result handler with code that reports telemetry and an event:
 
-```
+```c++
   void MathSenderComponentImpl ::
     mathIn_handler(
         const NATIVE_INT_TYPE portNum,
@@ -1271,7 +1290,7 @@ Add a member function to the implementation class in `Tester.cpp` to implement t
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
-      // verify the expect value of the event
+      // verify the expected value of the event arguments
       ASSERT_EVENTS_MS_RESULT(0,10.0);     
   }
 
@@ -1303,7 +1322,7 @@ The first call verifies that one and only one port call was made. This can be us
 
 The second call verifies that the port call that was made was the expected one.
 
-The third call looks at a stored history of calls to this port and verifies the expected call arguments were made. The history can store multiple calls, so the first argument looks in the first entry in the history.
+The third call looks at a stored history of calls to this port and verifies the expected call arguments were made. The history can store multiple calls, so the first argument indicates which index in the history to examine.
 
 Verify that the telemetry channels were written:
 
@@ -1349,9 +1368,9 @@ Next, prepare for calling `MathSender`'s result port by clearing the port and te
       this->clearHistory();
 ```
 
-As ports and commands are invoked in the component, the test component stores the history of calls out of the components. In order to proceed to the next test, this function clears the history. There are calls to clear individual histories as well. See `TesterBase.hpp` for a list. The `this->clearHistory()` call will clear them all, so is generally preferable.
+As ports and commands are invoked in the component, the test component stores the history of calls. This function clears the history, in order to provide a clean slate for the next test. There are calls to clear individual histories as well. See `TesterBase.hpp` for a list. The `this->clearHistory()` call will clear them all, so is generally preferable.
 
-The next step is to invoke the port that the `MathReceiver` component will call in the example program. For the unit test, the `MathSender` is not present to send the result back, so the unit test will emulate that call.
+The next step is to invoke the port that the `MathReceiver` component will call in the example program. For the unit test, the `MathReceiver` is not present to send the result back, so the unit test will emulate that call.
 
 First, the port invocation is made:
 
@@ -1375,7 +1394,7 @@ Next, the test checks for the expected telemetry and events:
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
-      // verify the expect value of the event
+      // verify the expected value of the event
       ASSERT_EVENTS_MS_RESULT(0,10.0);     
 ```
 
@@ -1388,7 +1407,9 @@ make gen_make
 make ut
 ```
 
-The build system looks for a script with a specific name in order to run the unit test. The script has the form `runtest_<build>`, where `<build>` is the build target. For example on a Linux host, the unit test will build a Linux binary so the script would be `runtest_LINUX`. The build system calls a script rather than the binary directly so developers who are writing unit tests can do any necessary setup for the test like generating files, executing other scripts, etc.
+The build system looks for a script with a specific name in order to run the unit test. The script has the form `runtest_<build>`, where `<build>` is the build target. For example on a Linux host, the unit test will build a Linux binary so the script would be `runtest_LINUX`. 
+The build system calls a script rather than the binary directly so developers who are writing unit tests can do any necessary setup for the test like generating files, executing other scripts, etc.
+The developer writes this script and places it in the `<module>/test/ut directory.
 
 A basic `runtest_LINUX` script looks like the following:
 
@@ -1451,8 +1472,8 @@ As before, a stub can be generated:
 
 ```
 make impl
-cp MathReceiverComponentImpl.cpp-template MathReceiverComponentImpl.cpp
-cp MathReceiverComponentImpl.hpp-template MathReceiverComponentImpl.hpp
+mv MathReceiverComponentImpl.cpp-template MathReceiverComponentImpl.cpp
+mv MathReceiverComponentImpl.hpp-template MathReceiverComponentImpl.hpp
 ```
 
 Add the stub files to `mod.mk`:
@@ -1470,7 +1491,7 @@ Add the files and compile them: `make rebuild`
 
 Look for the empty port hander in the sub class:
 
-```
+```c++
   void MathReceiverComponentImpl ::
     mathIn_handler(
         const NATIVE_INT_TYPE portNum,
@@ -1485,7 +1506,7 @@ Look for the empty port hander in the sub class:
 
 Fill the handler in with the computation of the result. The handler will also update telemetry and events:
 
-```
+```c++
   void MathReceiverComponentImpl ::
     mathIn_handler(
         const NATIVE_INT_TYPE portNum,
@@ -1531,13 +1552,16 @@ Fill the handler in with the computation of the result. The handler will also up
 
 ```
 
-In this handler, the operation is done based on the port arguments from `MathSender`. The `op` structure is populated for the event and telemetry calls, and the `mathOut` port is called to send the result back to `MathSender`. The parameter value is retrieved during initialization and is returned via the `paramGet_factor2()` call. The commands to set and save the commands run entirely in the code generated base classes.
+In this handler, the operation is done based on the port arguments from `MathSender`. 
+The `op` structure is populated for the event and telemetry calls, and the `mathOut` port is called to send the result back to `MathSender`. 
+The parameter value is retrieved during initialization and is returned via the `paramGet_factor2()` call. 
+The commands to set and save the factor2 parameter run entirely in the code generated base classes.
 
 ##### 2.4.2.1.2 Commands
 
 The command handler to update the value of `factor1` is as follows:
 
-```
+```c++
   void MathReceiverComponentImpl ::
     MR_SET_FACTOR1_cmdHandler(
         const FwOpcodeType opCode,
@@ -1555,11 +1579,13 @@ The command handler to update the value of `factor1` is as follows:
 
 ```
 
-The telemetry and log values are sent, and the command is responded to. Note that after three calls to the handler, the `this->log_ACTIVITY_HI_MR_SET_FACTOR1(val)` call will not actually send any events until the throttle is cleared.
+The telemetry and log values are sent, and the command response is sent. 
+Note that after three calls to the handler, the `this->log_ACTIVITY_HI_MR_SET_FACTOR1(val)` call will not actually send any events until the throttle is cleared.
+The throttled state is part of the generated code.
 
-The hander to clear the throttle is as follows:
+The handler to clear the throttle is as follows:
 
-```
+```c++
   void MathReceiverComponentImpl ::
     MR_CLEAR_EVENT_THROTTLE_cmdHandler(
         const FwOpcodeType opCode,
@@ -1576,9 +1602,10 @@ The hander to clear the throttle is as follows:
 ```
 ##### 2.4.2.1.3 Scheduler Call
 
-The port invoked by the scheduler retrieves the messages from the message queue and dispatches them:
+The port invoked by the scheduler retrieves the messages from the message queue and dispatches them. 
+The message dispatches invoke the command and input port handlers that were implemented earlier in the tutorial.
 
-```
+```c++
   void MathReceiverComponentImpl ::
     SchedIn_handler(
         const NATIVE_INT_TYPE portNum,
@@ -1598,7 +1625,7 @@ The port invoked by the scheduler retrieves the messages from the message queue 
 
 The developer can optionally receive a notification that a parameter has been updated by overriding a virtual function in the code generated base class:
 
-```     
+```c++ 
   void MathReceiverComponentImpl ::
      parameterUpdated(
       FwPrmIdType id /*!< The parameter ID*/
@@ -1613,7 +1640,8 @@ The developer can optionally receive a notification that a parameter has been up
 
 #### 2.4.2.2 Unit Tests
 
-See section `2.4.1.3.1` for directions on how to generate unit test stubs and copy them to the correct subdirectory. The `MathReceiver` tests are similar to `MathSender`.
+See section `2.4.1.3.1` for directions on how to generate unit test stubs and copy them to the correct subdirectory. 
+The `MathReceiver` tests are similar to `MathSender`.
 
 ##### 2.4.2.2.1 Test Code Implementation
 
@@ -1632,7 +1660,10 @@ The full unit test code for the `MathReceiver` component can be found in the `do
       ...
 ```
 
-The `loadParameters()` call will attempt to load any parameters that the component needs. The `this->paramSet_*` functions in the `*TesterBase` base classes allow the developer to set parameter and status values prior to the `loadParameters()` With no manually set parameter values preceding the call, in this test case the parameter value is set to the default value. It is a way to test default settings for parameters.
+The `loadParameters()` call will attempt to load any parameters that the component needs. 
+The `this->paramSet_*` functions in the `*TesterBase` base classes allow the developer to set parameter and status values prior to the `loadParameters()` 
+With no manually set parameter values preceding the call, in this test case the parameter value is set to the default value. 
+It is a way to test default settings for parameters.
 
 `Tester.cpp`, line 206:
 
@@ -1687,7 +1718,12 @@ This unit test demonstrates how event throttling works. The event is repeatedly 
 
 # 3 Topology
 
-Now that the two components are defined, implemented, and unit tested they can to be added to the `Ref` topology. The topology is the interconnection of all the components in the system in order to operate the system to meet the project objectives. They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F` repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. The `Ref` topology has already been developed as an example. The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
+Now that the two components are defined, implemented and unit tested they can to be added to the `Ref` topology. 
+The topology describes the interconnection of all the components so the system operates as intended. 
+They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F` repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. 
+The `Ref` topology has already been developed as an example. 
+The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. 
+It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
 
 ## 3.1 Define C++ Component Instances
 
@@ -1697,7 +1733,7 @@ The first step is to include the implementation files in the topology source cod
 
 There is a C++ header file that declares all the component instances as externals for use by the initialization code and the generated code that interconnects the components. The two new components can be added to this file. First, include the header files for the implementation classes:
 
-`Ref/Top/Components.hpp`, line 32:
+`Ref/Top/Components.hpp`, line 30:
 
 ```c++
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
@@ -1719,11 +1755,11 @@ extern Ref::MathReceiverComponentImpl mathReceiver;
 
 ### 3.1.2 Topology.cpp
 
-The initialization file is where the instances of the all the components are declared. The components are initialized in this file, and the generated topology connection function is called.
+This C++ file is where the instances of the all the components are declared and initialized. The generated topology connection function is called from this file.
 
 #### 3.1.2.1 Component Instantiation
 
-Put these declarations at the end of the declarations for the other `Ref` components:
+Put these declarations after the declarations for the other `Ref` components:
 
 `Ref/Top/Topology.cpp`, line 187:
 
@@ -1743,7 +1779,7 @@ Ref::MathReceiverComponentImpl mathReceiver
 
 Where the other components are initialzed, add `MathSender` and `MathReceiver`:
 
-`Ref/Top/Topology.cpp`, line 269:
+`Ref/Top/Topology.cpp`, line 286:
 
 ```c++
 	pingRcvr.init(10);
@@ -1752,11 +1788,12 @@ Where the other components are initialzed, add `MathSender` and `MathReceiver`:
     mathReceiver.init(10,0);
 ```
 
-The first argument is the queue message depth. This is the number of messages that can be pending while other messages are being dispatched. This number is 
+The first argument is the queue message depth. 
+This is the number of messages that can be pending while other messages are being dispatched. 
 
 After all the components are initialized, the generated function `constructRefArchitecture()` (see `RefTopologyAppAc.cpp`) can be called to connect the components together. How this function is generated will be seen later in the tutorial.
 
-`Ref/Top/Topology.cpp`, line 273:
+`Ref/Top/Topology.cpp`, line 291:
 
 ```c++
     // call generated function to connect components
@@ -1766,7 +1803,7 @@ After all the components are initialized, the generated function `constructRefAr
 
 Next, the components commands are registered.
 
-`Ref/Top/Topology.cpp`, line 291:
+`Ref/Top/Topology.cpp`, line 308:
 
 ```c++
     health.regCommands();
@@ -1778,7 +1815,7 @@ Next, the components commands are registered.
 
 Component parameters are retrieved from disk by `prmDb` prior to the components requesting them:
 
-`Ref/Top/Topology.cpp`, line 295:
+`Ref/Top/Topology.cpp`, line 314:
 
 ```c++
     // read parameters
@@ -1797,16 +1834,29 @@ Once the parameters are read by `prmDb`, the components can request them:
 
 The thread for the active `MathSender` component needs to be started:
 
-`Ref/Top/Topology.cpp`, line 340:
+`Ref/Top/Topology.cpp`, line 357:
 
 ```c++
     pingRcvr.start(0, 100, 10*1024);
 
     mathSender.start(0,100,10*1024);
 ```
-The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later. It does not need to to have a thread started.
 
-The `exitTasks()` is called when the process is shut down. It contains `exit()` calls to all the active components. These functions internally send a message to the component's thread to shut down.
+The arguments to the `start()` function is as follows:
+
+|Argument|Usage|
+|---|---|
+|1|Thread ID, unique value for each thread. Not used for Linux|
+|2|Thread priority. Passed to underlying OS|
+|3|Thread stack size. Passed to underlying OS|
+
+
+The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later. 
+It does not need to to have a thread started, since queued components do not have threads.
+
+The `exitTasks()` function is called when the process is shut down. 
+It contains `exit()` calls to all the active components. 
+These functions internally send a message to the component's thread to shut down.
 
 `Ref/Top/Topology.cpp`, line 396:
 
@@ -1817,7 +1867,10 @@ The `exitTasks()` is called when the process is shut down. It contains `exit()` 
 ```
 ## 3.2 Define Component Connections
 
-Components need to be connected to invoke each other via ports. The connections are specified via a topology XML file. The file for the Ref example is located in `Ref/Top/RefTopologyAi.xml` The connections for the new components will be added to the existing connections.
+Components need to be connected to invoke each other via ports. 
+The connections are specified via a topology XML file. 
+The file for the Ref example is located in `Ref/Top/RefTopologyAi.xml` 
+The connections for the new components will be added to the existing connections.
 
 ### 3.2.1 Component Imports
 
@@ -1859,7 +1912,11 @@ The type must match the type declared in the component XML:
 <component name="MathSender" kind="active" namespace="Ref">
 ```
 
-The `base_id` attribute specifies the beginning range of the assigned IDs for commands, telemetry, events, and parameters. The values declared in the component XML are added to this base address. This allows multiple instances of components to be declared with unique ID ranges. The `base_id_window` attribute is used to set a limit on ID ranges for spacing the base IDs sufficiently apart. If the IDs exceed the limit, the code generator will issue a warning.
+The `base_id` attribute specifies the beginning range of the assigned IDs for commands, telemetry, events, and parameters. 
+The values declared in the component XML are added to this base address. 
+This allows multiple instances of components to be declared with unique ID ranges. 
+The `base_id_window` attribute is used to set a limit on ID ranges for spacing the base IDs from different components sufficiently apart. 
+If the IDs exceed the limit, the code generator will issue a warning.
 
 ### 3.2.3 Command connections
 
@@ -1870,6 +1927,9 @@ The command connections should follow these rules:
 3. The command status from the components can go to port 0 of the command status port of the `cmdDisp` component.
 
 The following XML shows the command connection for the tutorial components.
+
+The port number used for the registration and dispatch ports is selected as 20,
+a unique number that hasn't been used yet in the `Ref` example.
 
 `Ref/MathSender/MathSenderComponentAi.xml`, line 817:
 
@@ -1910,9 +1970,9 @@ The following XML shows the command connection for the tutorial components.
 
 ### 3.2.4 Event Connections
 
-The output connections for ports are connected to the `eventLogger` component.
+The output connections for log ports are connected to the `eventLogger` component.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 861:
+`Ref/MathSender/MathSenderComponentAi.xml`, line 845:
 
 ```xml
    <!-- Event Logger Binary Connections -->
@@ -1962,7 +2022,7 @@ The telemetry output ports are connected to the `chanTlm` component.
 
 ### 3.2.6 Parameter Connections
 
-There are two parameter connections, a `PrmGet` connection for reading parameters during software initialization and a `PrmSet` for updating parameters in the component managing parameter values. F' has a basic parameter storage component `prmDb` that stores parameters in files. Upon bootup, they are read from a file specified in the constructor and stored in memory. Subsequent to this, components request their parameters via the `PrmGet` connection. If they are updated by command, they can be saved to storage by issuing a command to call the `PrmSet` with the new value and issuing the `PRM_SAVE_FILE` command.
+There are two parameter connections, a `PrmGet` connection for reading parameters during software initialization and a `PrmSet` for updating parameters in the component that manages parameter values. F' has a basic parameter storage component `prmDb` that stores parameters in files. Upon bootup, they are read from a file specified in the constructor and stored in memory. Subsequent to this, components request their parameters via the `PrmGet` connection. If they are updated by command, they can be saved to storage by issuing a command to call the `PrmSet` with the new value and issuing the `PRM_SAVE_FILE` command.
 
 `Ref/MathSender/MathSenderComponentAi.xml`, line 883:
 
@@ -2032,7 +2092,9 @@ The final connection is the connection that performs the math operation. It goes
    
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the `Ref/Top` directory. If the updates were correct, the module should compile with no errors. The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `make`.
+Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the `Ref/Top` directory. 
+If the updates were correct, the module should compile with no errors. 
+The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `make`.
 
 # 4 Executing the Example
 

@@ -103,7 +103,7 @@ namespace Ref {
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
-      // verify the expect value of the event
+      // verify the expected value of the event arguments
       ASSERT_EVENTS_MS_RESULT(0,10.0);     
   }
 
