@@ -33,12 +33,15 @@ import os
 class MainFrameFactory(object):
     '''Factory that creates new windows for the GDS'''
 
-    def __init__(self, opts):
+    def __init__(self, opts, config):
         """Constructor for the Main panel factory
 
         Arguments:
             opts {options object} -- The options passed to the startup script (gds.py)
+            config {ConfigManager object} -- The config object for the program
         """
+
+        self.config = config
 
         self.opts = opts
 
@@ -88,7 +91,7 @@ class MainFrameFactory(object):
 
         # TODO comment this function to explain
 
-        self.dist = distributor.Distributor()
+        self.dist = distributor.Distributor(self.config)
         self.client_socket = client_socket.ThreadedTCPSocketClient()
 
         if self.opts.generated_path != None:
@@ -125,7 +128,7 @@ class MainFrameFactory(object):
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
 
         self.client_socket.register_distributor(self.dist)
-        
+
         self.cmd_enc.register(self.client_socket)
 
         self.dist.register("FW_PACKET_LOG", self.event_dec)

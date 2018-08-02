@@ -1,7 +1,8 @@
-import binascii
+import sys
 
 from models.serialize import u32_type
 from utils import data_desc_type
+from utils import config_manager
 
 
 # NOTE decoder function to call is called data_callback(data)
@@ -13,15 +14,24 @@ class Distributor(object):
     Decoders can register with a distributor to recv packets of data of a certain description.
     """
 
-    def __init__(self):
+    def __init__(self, config):
         """
-        Sets up the dictionary of connected encoders and socket client object. Encoder dictionary is of the form
+        Sets up the dictionary of connected decoders and socket client object.
+
+        Decoder dictionary is of the form:
         {data descriptor name: list of decoder objects registered for that data}
+
+        Args:
+            config (ConfigManager): Config manager with information on the types
+                                    of the fields in the messages
         """
         self.__decoders = {key.name: [] for key in list(data_desc_type.DataDescType)}
 
         # Internal buffer for un distributed data
         self.__buf = ""
+
+        self.len_obj = config.get_type("msg_len")
+
 
     # NOTE we could use either the type of the object or an enum as the type argument. It should indicate what the decoder decodes.
     # TODO implement as an ENUM name as key
@@ -36,8 +46,89 @@ class Distributor(object):
         #TODO check that typeof is a valid DataDescType Enum value
         self.__decoders[typeof].append(obj)
 
-        # TODO remove
-        #print("Decoders=%s"%self.__decoders)
+
+    def parse_into_raw_msgs_api(self, data):
+        """
+        Parse the given data into raw messages.
+
+        Raw messages include a length and descriptor header in front of the
+        message data.
+
+        Args:
+            data (bytearray): Binary data to parse. First byte of data should be
+                              the first byte of a valid raw message.
+
+        Returns:
+            (leftover_data, [raw_msg1, raw_msg2, ..., raw_msgN])
+            Where leftover_data is a bytearray of anything at the end of data
+            that could not be parsed (due to insuficient length).
+        """
+        data_left = data
+
+        raw_msgs = []
+
+        # Keep parsing and then break when you can't parse no more
+        while True:
+            # Check if we have enough data to parse a length
+            if (len(data_left) < self.len_obj.getSize()):
+                break
+            self.len_obj.deserialize(data_left, 0)
+
+            expected_len = self.len_obj.val + self.len_obj.getSize()
+
+            # Check if we have enough data to parse
+            if (len(data_left) < expected_len):
+                break
+
+            raw_msgs.append(data_left[:expected_len])
+
+            data_left = data_left[expected_len:]
+
+
+        return (data_left, raw_msgs)
+
+
+    def parse_raw_msg_api(self, raw_msg):
+        """
+        Parse the given raw message into its component parts
+
+        Args:
+            raw_msg (bytearray): Raw message to parse. Must be a valid raw msg
+
+        Returns:
+            Tuple: (length, descriptor, msg). length is type int. Descriptor is
+            type int. Msg is a bytearray.
+        """
+        # Data Entry Structure
+        #
+        # +---------------------------+
+        # | Length (n bytes)          |
+        # +---------------------------+
+        # | Descriptor Type (4 bytes) |      -
+        # +---------------------------+      |
+        # |                           |      |
+        # | Message data...           |   Length
+        # | ...                       |      |
+        # | ..                        |      |
+        #   .                                :
+
+        offset = 0
+
+        # Parse length
+        self.len_obj.deserialize(raw_msg, offset)
+        offset += self.len_obj.getSize()
+        length = self.len_obj.val
+
+        # Parse Descriptor type
+        desc_obj = u32_type.U32Type()
+        desc_obj.deserialize(raw_msg, offset)
+        offset += desc_obj.getSize()
+        desc = desc_obj.val
+
+        # Retrieve message section
+        msg = raw_msg[offset:]
+
+        return (length, desc, msg)
 
 
     def on_recv(self, data):
@@ -56,50 +147,88 @@ class Distributor(object):
         #       them here. Ideally, the client would just be sending individual
         #       messages.
 
-        # TODO remove
-        #print("data=%s"%list(data))
-
 
         # Add new data to end of buffer
         self.__buf = self.__buf + data
 
-        # Parse messages until we run low on data and then break
-        while True:
-            # Start of data message should always be at start of buffer
-            offset = 0
+        (leftover_data, raw_msgs) = self.parse_into_raw_msgs_api(self.__buf)
+        self.__buf = leftover_data
 
-            # TODO remove
-            #print("self.__buf=%s"%list(self.__buf))
+        for raw_msg in raw_msgs:
+            (length, data_desc, msg) = self.parse_raw_msg_api(raw_msg)
 
-
-            # 4 byte length header
-            msg_len = u32_type.U32Type()
-            # Check if we have enough data to parse a length
-            if (len(self.__buf) < msg_len.getSize()):
-                break
-            msg_len.deserialize(self.__buf, offset)
-            offset += msg_len.getSize()
-
-            expected_len = msg_len.val + msg_len.getSize()
-
-            # Check if we have enough data to parse
-            if (len(self.__buf) < expected_len):
-                break
-
-            data_desc = u32_type.U32Type()
-            data_desc.deserialize(self.__buf, offset)
-            offset += data_desc.getSize()
-
-            # This data will be passed on to decoders
-            data_pass_thru = self.__buf[offset:expected_len]
-            # The rest of the data will be parsed later
-            self.__buf = self.__buf[expected_len:]
-
-            # Pass on data to decoders
-            data_desc_key = data_desc_type.DataDescType(data_desc.val).name
+            data_desc_key = data_desc_type.DataDescType(data_desc).name
 
             for d in self.__decoders[data_desc_key]:
-                d.data_callback(data_pass_thru)
+                d.data_callback(msg)
+
 
 if __name__ == "__main__":
-    pass
+    # Unit testing
+    config = config_manager.ConfigManager()
+    config.set('types', 'msg_len', 'U16')
+
+    dist = Distributor(config)
+
+    header_1 = "\x00\x0E\x00\x00\x00\x04"
+    length_1 = 14
+    desc_1 = 4
+    data_1 = "\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6A"
+
+    header_2 = "\x00\x0A\x00\x00\x00\x01"
+    length_2 = 10
+    desc_2 = 1
+    data_2 = "\x41\x42\x43\x44\x45\x46"
+
+    leftover_data = "\x00\x0F\x00\x00\x00\x02\xFF"
+
+    data = header_1 + data_1 + header_2 + data_2 + leftover_data
+
+    (test_leftover, raw_msgs) = dist.parse_into_raw_msgs_api(data)
+
+    if (test_leftover != leftover_data):
+        print ("expected leftover data to be %s, but found %s"%
+               (list(leftover_data), list(test_leftover)))
+        sys.exit(-1)
+
+    if (raw_msgs[0] != (header_1 + data_1)):
+        print ("expected first raw_msg to be %s, but found %s"%
+               (list(header_1 + data_1), list(raw_msgs[0])))
+        sys.exit(-1)
+
+    if (raw_msgs[1] != (header_2 + data_2)):
+        print ("expected second raw_msg to be %s, but found %s"%
+               (list(header_2 + data_2), list(raw_msgs[1])))
+        sys.exit(-1)
+
+    (test_len_1, test_desc_1, test_msg_1) = dist.parse_raw_msg_api(raw_msgs[0])
+    (test_len_2, test_desc_2, test_msg_2) = dist.parse_raw_msg_api(raw_msgs[1])
+
+    if (test_len_1 != length_1):
+        print("expected 1st length to be %d but found %d"%(length_1, test_len_1))
+        sys.exit(-1)
+
+    if (test_len_2 != length_2):
+        print("expected 2nd length to be %d but found %d"%(length_2, test_len_2))
+        sys.exit(-1)
+
+    if (test_desc_1 != desc_1):
+        print("expected 1st desc to be %d but found %d"%(desc_1, test_desc_1))
+        sys.exit(-1)
+
+    if (test_desc_2 != desc_2):
+        print("expected 2nd desc to be %d but found %d"%(desc_2, test_desc_2))
+        sys.exit(-1)
+
+    if (test_msg_1 != data_1):
+        print("expected 1st msg to be %s but found %s"%
+              (list(data_1), list(test_msg_1)))
+        sys.exit(-1)
+
+    if (test_msg_2 != data_2):
+        print("expected 2nd msg to be %s but found %s"%
+              (list(data_2), list(test_msg_2)))
+        sys.exit(-1)
+
+    print("ALL TESTS PASSED!")
+
