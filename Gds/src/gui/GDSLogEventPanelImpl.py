@@ -296,10 +296,10 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         node = self.ItemToObject(item)
         if isinstance(node, EventData) and col == 3:
             if node.template.severity == EventSeverity.FATAL:
-                attr.SetColour('red')
+                attr.SetBackgroundColour('red')
                 attr.SetBold(True)
             elif node.template.severity == EventSeverity.ACTIVITY_HI or node.template.severity == EventSeverity.WARNING_HI:
-                attr.SetColour('orange')
+                attr.SetBackgroundColour('orange')
                 attr.SetBold(True)
             return True
         return False
