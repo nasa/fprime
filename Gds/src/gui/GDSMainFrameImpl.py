@@ -50,6 +50,8 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		pass
 
 	def updateStatusBar(self):
+		"""Called every second to update teh values shown on the status bar at the bottom of the window
+		"""
 
 		self.status_bar.SetStatusText('Bytes Sent %d | Bytes Recv %d'%(self.status_bar.bytes_sent, self.status_bar.bytes_recv), 1)
 
@@ -64,15 +66,40 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		wx.CallLater(1000, self.updateStatusBar)
 
 	def updateBytesRecv(self, num):
+		"""Add to the number of bytes recieved
+		
+		Arguments:
+			num {int} -- number of bytes to add to the count
+		"""
+
 		self.status_bar.bytes_recv += num
 
 	def updateBytesSent(self, num):
+		"""Add to the number of bytes sent
+		
+		Arguments:
+			num {int} -- number of bytes to add to the count
+		"""
+
 		self.status_bar.bytes_sent += num
 
 	def on_recv(self, data):
+		"""Called when data is recieved over the TCP server. This callback is only here to get the length of the recvd data.
+		
+		Arguments:
+			data {bin} -- binary data list recieved
+		"""
+
 		self.updateBytesRecv(len(data))
 
 	def send(self, data, dest):
+		"""Called when data is sent from the command encoder to the TCP client. Only here so we can get the length of what is sent.
+		
+		Arguments:
+			data {bin} -- binary data list recieved
+			dest {string} -- destination string needed to creat the full binary string sent
+		"""
+
 		self.updateBytesSent(len("A5A5 %s %s"%(dest, data)))
 
 	# Override these handlers to implement functionality for GUI elements
@@ -105,6 +132,9 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
 
 class GDSStatusBar(wx.StatusBar):
+	"""Custom wxStatusBar implementation that allows us to draw the status light/circle on the bar
+	"""
+
 	
 	def __init__(self, parent):
 		wx.StatusBar.__init__(self, parent, -1)
@@ -125,6 +155,9 @@ class GDSStatusBar(wx.StatusBar):
 		self.light_panel.Bind(wx.EVT_PAINT, self.onPaint)
 
 	def onPaint(self, event):
+		"""Called when the status bar is redrawn (Refresh() is called on it)
+		"""
+
 		dc = wx.PaintDC(self.light_panel)
 		dc.Clear()
 		dc.SetBrush(wx.Brush(self.light_color))

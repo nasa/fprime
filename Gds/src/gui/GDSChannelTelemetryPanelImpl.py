@@ -47,16 +47,36 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         self.dv_model.DecRef()
         
     def data_callback(self, data):
+        """Recieves data from decoders to which this consumer is registered
+
+        Arguments:
+            data {Data Object} -- A Data Object containing the data passed from the decoder (e.g., an EventData object)
+        """
         if self.dv_model.RefCount > 1:
             self.dv_model.UpdateModel(data)
 
     def getChannelTelemDataViewState(self):
+        """Get the internal data list used by the model to populate the data view for telem panel
+        
+        Returns:
+            list -- list of ChData or PktData objects
+        """
+
         return self.dv_model.GetData()
     
     def setChannelTelemDataViewState(self, data):
+        """Set the internal data list used by the model to populate the data view for telem
+        
+        Arguments:
+            data {list} -- list of ChData or PktData objects
+        """
+
         self.dv_model.SetData(data)
 
     def onCopyKeyPressed(self, event):
+        """Callback for key pressed within the data view control
+        """
+
         # Ctrl-C pressed
         if event.ControlDown() and event.GetKeyCode() == 67:
             rows = self.ChannelTelemDataViewCtl.GetSelections()
@@ -83,6 +103,11 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
 class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
+    """This class acts as an intermediary between user data and the actual data 
+    view display. It stores data and maintains a mapping from data to items in 
+    the data view. Most of the methdos in this class just need to be defined 
+    and are called automatically by the data view.
+    """
 
     def __init__(self, data):
         wx.dataview.PyDataViewModel.__init__(self)
@@ -98,10 +123,24 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
+        """Get teh number of columns
+        
+        Returns:
+            int -- the number of columns
+        """
         return 4
 
     # Map the data column numbers to the data type
     def GetColumnType(self, col):
+        """Get the data type associated with the given column
+        
+        Arguments:
+            col {int} -- the column index of interest
+        
+        Returns:
+            dict -- mapping from column index to type
+        """
+
         mapper = { 0 : 'string',
                    1 : 'string',
                    2 : 'string',
@@ -110,6 +149,15 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         return mapper[col]
 
     def GetChildren(self, parent, children):
+        """Return the children of a given parent
+        
+        Arguments:
+            parent {Item} -- the parent to get children of
+            children {List} -- list of the children Items
+        
+        Returns:
+            int -- length of children
+        """
         # The view calls this method to find the children of any node in the
         # control. There is an implicit hidden root node, and the top level
         # item(s) should be reported as children of this node. A List view
@@ -136,6 +184,14 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def IsContainer(self, item):
+        """Find out if the given item has children
+        
+        Arguments:
+            item {Item} -- the item to test
+        
+        Returns:
+            bool -- returns True if the argument has children
+        """
         # Return True if the item has children, False otherwise.
 
         # The hidden root is a container
@@ -151,6 +207,14 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def GetParent(self, item):
+        """Get the parent of the given item
+        
+        Arguments:
+            item {Item} -- input item
+        
+        Returns:
+            Item -- the parent of the argument item
+        """
         # Return the item which is this item's parent.
 
         if not item:
@@ -167,6 +231,18 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def GetValue(self, item, col):
+        """Return the value to be displayed for this item and column
+        
+        Arguments:
+            item {Item} -- the item whose value we will get
+            col {int} -- the column we will get the value from
+        
+        Raises:
+            RuntimeError -- error if we get an object that we don't know how to handle
+        
+        Returns:
+            dict -- mapping from column to the value for a given item
+        """
         # Return the value to be displayed for this item and column. For this
         # example we'll just pull the values from the data objects we
         # associated with the items in GetChildren.
@@ -198,6 +274,16 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
 
     def GetAttr(self, item, col, attr):
+        """Get the attributes of the given item at the given column in the list control
+        
+        Arguments:
+            item {Item} -- item object in question
+            col {int} -- column number in question
+            attr {attr} -- the attribute object to set
+        
+        Returns:
+            bool -- True if attributes were set
+        """
         node = self.ItemToObject(item)
         if isinstance(node, PktData):
             attr.SetColour('blue')
@@ -217,6 +303,11 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         return False
 
     def UpdateModel(self, new_data):
+        """Add a new data item to the event log. 
+        
+        Arguments:
+            new_data {EventData} -- the new event data to be added
+        """
         match = [x for x in self.data if x.template == new_data.template]
 
         if len(match) == 0:
@@ -250,11 +341,23 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     
     def SetData(self, data):
+        """Set the data used by this model to populate the data view
+        
+        Arguments:
+            data {list} -- list of ChData and/or PktData objects
+        """
+
         for d in data:
             self.UpdateModel(d)
 
 
     def GetData(self):
+        """Get the list of data used by this model to populate the data view
+        
+        Returns:
+            list -- the data used in this model
+        """
+
         return self.data
 
 
