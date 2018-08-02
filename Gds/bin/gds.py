@@ -178,7 +178,7 @@ def main(argv=None):
 
 
 
-	factory = MainFrameFactory(opts)
+	factory = MainFrameFactory(opts, config)
 
 	factory.setup_pipeline()
 
