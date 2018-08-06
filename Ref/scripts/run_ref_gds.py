@@ -73,6 +73,7 @@ def main(argv=None):
 
 
     ########################### Run the GUI for the GDS #############################
+
     GUI_args = [python_bin,"%s/Gds/bin/gds.py"%build_root,
                 "--port","%d"%used_port,
                 "--xml-dict","%s/Ref/Top/RefTopologyAppDictionary.xml"%build_root,
@@ -100,9 +101,13 @@ def main(argv=None):
     #################################################################################
 
     # Wait for GUI process to close
+    print("Waiting for GUI")
     GUI.wait()
+    print("GUI Closed")
+
 
     if not nobin:
+        print("Waiting for App")
         try:
             REF.send_signal(signal.SIGTERM)
         except:
@@ -112,6 +117,10 @@ def main(argv=None):
             REF.wait()
         except:
             pass
+        print("App Closed")
+
+
+    print("Waiting for TTS")
 
     try:
         TTS.send_signal(signal.SIGINT)
@@ -123,6 +132,7 @@ def main(argv=None):
     except:
         pass
 
+    print("TTS Closed")
 
 if __name__ == "__main__":
     sys.exit(main())
