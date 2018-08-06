@@ -50,7 +50,8 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
             data {Data Object} -- A Data Object containing the data passed from the decoder (e.g., an EventData object)
         """
         if self.dv_model.RefCount > 1:
-            self.dv_model.UpdateModel(data)
+            # Use CallAfter to avoid race condition
+            wx.CallAfter(self.dv_model.UpdateModel,data)
 
     def scrollEventLogToBottom(self):
         """Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
@@ -296,10 +297,10 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         node = self.ItemToObject(item)
         if isinstance(node, EventData) and col == 3:
             if node.template.severity == EventSeverity.FATAL:
-                attr.SetBackgroundColour('red')
+                attr.SetColour('red')
                 attr.SetBold(True)
             elif node.template.severity == EventSeverity.ACTIVITY_HI or node.template.severity == EventSeverity.WARNING_HI:
-                attr.SetBackgroundColour('orange')
+                attr.SetColour('orange')
                 attr.SetBold(True)
             return True
         return False

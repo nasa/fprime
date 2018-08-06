@@ -11,6 +11,7 @@ import wx
 import GDSChannelTelemetryPanelGUI
 from pprint import pprint
 import inspect
+import GDSChannelFilterDialogImpl
 
 from data_types.ch_data import *
 from data_types.pkt_data import *
@@ -23,12 +24,14 @@ from models.serialize.serializable_type import SerializableType
 class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     '''Implmentation class. Defines functionality of the channel telemetry panel.'''
     
-    def __init__( self, parent ):
+    def __init__( self, parent, ch_dict={} ):
         """Constructor for the ChannelTelemetryImpl
         
         Arguments:
             parent {wx.Window} -- The parent window for this panel
         """
+
+        self.ch_dict = ch_dict
 
         GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
 
@@ -53,7 +56,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
             data {Data Object} -- A Data Object containing the data passed from the decoder (e.g., an EventData object)
         """
         if self.dv_model.RefCount > 1:
-            self.dv_model.UpdateModel(data)
+            # Use CallAfter to avoid race condition
+            wx.CallAfter(self.dv_model.UpdateModel,data)
 
     def getChannelTelemDataViewState(self):
         """Get the internal data list used by the model to populate the data view for telem panel
@@ -97,6 +101,9 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
+        dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict)
+        dlog.ShowModal()
+        dlog.Destroy()
         event.Skip()
 
     def onChannelTelemShowHexCheckBoxClick( self, event ):

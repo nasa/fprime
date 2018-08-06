@@ -94,8 +94,7 @@ class Decoder(object):
             #TODO remove
             #print("Sending %s to %s"%(parsed_data, obj))
 
-            # Need to use wx.CallAfter to avoid a race condition
-            wx.CallAfter(obj.data_callback, parsed_data)
+            obj.data_callback(parsed_data)
 
 
 if __name__ == "__main__":

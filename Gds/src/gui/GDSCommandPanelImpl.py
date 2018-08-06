@@ -45,8 +45,10 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		GDSCommandPanelGUI.Commands.__init__ ( self, parent)
 
 		self.cname_dict = cname_dict
-		self.CmdsComboBox.AppendItems(sorted(self.cname_dict.keys()))
-
+		
+		for n in sorted(self.cname_dict.keys()):
+			self.CmdsComboBox.Append(n)
+		
 		self.QuickCmdTextCtl.SetHint("cmd,arg1,arg2,\"string arg with spaces\"")
 
 		self.arginputs = list()

@@ -142,7 +142,7 @@ class MainFrameFactory(object):
             self.dist.register("FW_PACKET_PACKETIZED_TLM", self.pkt_dec)
 
 
-        frame = GDSMainFrameImpl.MainFrameImpl(None, self)
+        frame = GDSMainFrameImpl.MainFrameImpl(None, self, ch_dict=ch_dict)
 
         self.register_all(frame)
 

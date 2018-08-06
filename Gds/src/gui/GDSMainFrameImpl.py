@@ -15,7 +15,7 @@ from pprint import pprint
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
-	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None):
+	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None, ch_dict = None):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
 		self.status_bar = GDSStatusBar(self)
@@ -26,7 +26,7 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
 		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_name_dict)
 		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
-		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook)
+		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook, ch_dict=ch_dict)
 		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
 
 		if evnt_pnl_state:
