@@ -10,7 +10,6 @@ an interface for creating additional GDS windows that use this pipeline
 @bug No known bugs
 '''
 
-# TODO break up these imports into one per line and only import one event loader
 from loaders import ch_py_loader, ch_xml_loader
 from loaders import event_py_loader, event_xml_loader
 from loaders import pkt_xml_loader
