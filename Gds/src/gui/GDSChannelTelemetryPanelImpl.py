@@ -119,6 +119,225 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     def __init__(self, data):
         wx.dataview.PyDataViewModel.__init__(self)
         self.data = data
+        self.filter = []
+
+        # The PyDataViewModel derives from both DataViewModel and from
+        # DataViewItemObjectMapper, which has methods that help associate
+        # data view items with Python objects. Normally a dictionary is used
+        # so any Python object can be used as data nodes. If the data nodes
+        # are weak-referencable then the objmapper can use a
+        # WeakValueDictionary instead.
+        self.UseWeakRefs(True)
+
+    # Report how many columns this model provides data for.
+    def GetColumnCount(self):
+        """Get teh number of columns
+        
+        Returns:
+            int -- the number of columns
+        """
+        return 4
+
+    # Map the data column numbers to the data type
+    def GetColumnType(self, col):
+        """Get the data type associated with the given column
+        
+        Arguments:
+            col {int} -- the column index of interest
+        
+        Returns:
+            dict -- mapping from column index to type
+        """
+
+        mapper = { 0 : 'string',
+                   1 : 'string',
+                   2 : 'string',
+                   3 : 'string', # the real value is an int, but the renderer should convert it okay
+                   }
+        return mapper[col]
+
+    def GetChildren(self, parent, children):
+        """Return the children of a given parent
+        
+        Arguments:
+            parent {Item} -- the parent to get children of
+            children {List} -- list of the children Items
+        
+        Returns:
+            int -- length of children
+        """
+        # The view calls this method to find the children of any node in the
+        # control. There is an implicit hidden root node, and the top level
+        # item(s) should be reported as children of this node. A List view
+        # simply provides all items as children of this hidden root. A Tree
+        # view adds additional items as children of the other items, as needed,
+        # to provide the tree hierachy.
+
+        # If the parent item is invalid then it represents the hidden root
+        # item, so we'll use the genre objects as its children and they will
+        # end up being the collection of visible roots in our tree.
+        if not parent:
+            for obj in self.data:
+                children.append(self.ObjectToItem(obj))
+            return len(self.data)
+
+        return 0
+
+
+    def IsContainer(self, item):
+        """Find out if the given item has children
+        
+        Arguments:
+            item {Item} -- the item to test
+        
+        Returns:
+            bool -- returns True if the argument has children
+        """
+        # Return True if the item has children, False otherwise.
+
+        # The hidden root is a container
+        if not item:
+            return True
+        return False
+
+    def GetParent(self, item):
+        """Get the parent of the given item
+        
+        Arguments:
+            item {Item} -- input item
+        
+        Returns:
+            Item -- the parent of the argument item
+        """
+        # Return the item which is this item's parent.
+
+        return wx.dataview.NullDataViewItem
+
+    def GetValue(self, item, col):
+        """Return the value to be displayed for this item and column
+        
+        Arguments:
+            item {Item} -- the item whose value we will get
+            col {int} -- the column we will get the value from
+        
+        Raises:
+            RuntimeError -- error if we get an object that we don't know how to handle
+        
+        Returns:
+            dict -- mapping from column to the value for a given item
+        """
+        # Return the value to be displayed for this item and column. For this
+        # example we'll just pull the values from the data objects we
+        # associated with the items in GetChildren.
+
+        # Fetch the data object for this item.
+        node = self.ItemToObject(item)
+
+        if isinstance(node, ChData):
+            mapper = { 0 : str(node.template.get_full_name()),
+                       1 : str(node.template.id),
+                       2 : str(node.time.to_readable()),
+                       3 : str(node.val_obj.val)
+                       }                                                                                                                                                                                                        
+            return mapper[col]
+
+        else:
+            raise RuntimeError("unknown node type")
+
+    def GetAttr(self, item, col, attr):
+        """Get the attributes of the given item at the given column in the list control
+        
+        Arguments:
+            item {Item} -- item object in question
+            col {int} -- column number in question
+            attr {attr} -- the attribute object to set
+        
+        Returns:
+            bool -- True if attributes were set
+        """
+        node = self.ItemToObject(item)
+        if isinstance(node, ChData):
+            if node.val_obj.val < node.template.low_yellow or node.val_obj.val > node.template.high_yellow:
+                attr.SetColour('yellow')
+                attr.SetBold(True)
+            elif node.val_obj.val < node.template.low_orange or node.val_obj.val > node.template.high_orange:
+                attr.SetColour('orange')
+                attr.SetBold(True)
+            elif node.val_obj.val < node.template.low_red or node.val_obj.val > node.template.high_red:
+                attr.SetColour('red')
+                attr.SetBold(True)
+
+        return False
+
+    def UpdateModel(self, new_data):
+        """Add a new data item to the event log. 
+        
+        Arguments:
+            new_data {EventData} -- the new event data to be added
+        """
+        match = [x for x in self.data if x.template == new_data.template]
+
+        if len(match) == 0:
+            
+            if isinstance(new_data, PktData):
+                self.data.append(new_data)
+                self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                for c in new_data.get_chs():
+                    self.UpdateModel(c)
+            elif isinstance(new_data, ChData):
+                if new_data.get_pkt() is None:
+                    self.data.append(new_data)
+                    self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                else:
+                    self.ItemAdded(self.ObjectToItem(new_data.get_pkt()), self.ObjectToItem(new_data))
+
+        else:
+            
+            old_data = match[0]
+
+            if isinstance(new_data, PktData):
+                for o, n in zip(old_data.chs, new_data.chs):
+                    o.val_obj.__dict__ = n.val_obj.__dict__.copy()
+                    o.time.__dict__ = n.time.__dict__.copy()
+                    self.ItemChanged(self.ObjectToItem(o))        
+
+            elif isinstance(new_data, ChData):
+                old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
+                old_data.time.__dict__ = new_data.time.__dict__.copy()
+                self.ItemChanged(self.ObjectToItem(old_data)) 
+
+    def ChangeFilter(self, filt):
+        self.filter = filt
+
+    def SetData(self, data):
+        """Set the data used by this model to populate the data view
+        
+        Arguments:
+            data {list} -- list of ChData and/or PktData objects
+        """
+
+        for d in data:
+            self.UpdateModel(d)
+
+
+    def GetData(self):
+        """Get the list of data used by this model to populate the data view
+        
+        Returns:
+            list -- the data used in this model
+        """
+
+        return self.data
+
+
+
+''' 
+Implementation for nesting channels inside of packets in the DataViewCtrl in case someone ever wants to implement that again - Josef Biberstein (jxb@mit.edu)
+ 
+    def __init__(self, data):
+        wx.dataview.PyDataViewModel.__init__(self)
+        self.data = data
+        self.filter = []
 
         # The PyDataViewModel derives from both DataViewModel and from
         # DataViewItemObjectMapper, which has methods that help associate
@@ -345,28 +564,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
                 old_data.time.__dict__ = new_data.time.__dict__.copy()
                 self.ItemChanged(self.ObjectToItem(old_data)) 
-
-    
-    def SetData(self, data):
-        """Set the data used by this model to populate the data view
-        
-        Arguments:
-            data {list} -- list of ChData and/or PktData objects
-        """
-
-        for d in data:
-            self.UpdateModel(d)
-
-
-    def GetData(self):
-        """Get the list of data used by this model to populate the data view
-        
-        Returns:
-            list -- the data used in this model
-        """
-
-        return self.data
-
-
+'''
 
 

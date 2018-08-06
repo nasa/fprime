@@ -30,12 +30,12 @@ class ChannelFilterDialog ( wx.Dialog ):
 		
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_staticText1 = wx.StaticText( self.m_panel1, wx.ID_ANY, u"All Channels", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1 = wx.StaticText( self.m_panel1, wx.ID_ANY, u"Channels to Exclude", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText1.Wrap( -1 )
 		bSizer5.Add( self.m_staticText1, 0, wx.ALL, 5 )
 		
 		ListBoxAllChannelsChoices = []
-		self.ListBoxAllChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxAllChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_MULTIPLE )
+		self.ListBoxAllChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxAllChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_MULTIPLE|wx.LB_SORT )
 		bSizer5.Add( self.ListBoxAllChannels, 1, wx.ALL, 5 )
 		
 		
@@ -47,22 +47,22 @@ class ChannelFilterDialog ( wx.Dialog ):
 		bSizer8.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 		
 		self.ButtonAddChannel = wx.Button( self.m_panel1, wx.ID_ANY, u"Add >", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.ButtonAddChannel.SetFont( wx.Font( 7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+		self.ButtonAddChannel.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
 		
 		bSizer8.Add( self.ButtonAddChannel, 1, wx.ALIGN_CENTER|wx.ALL, 5 )
 		
 		self.ButtonAddAllChannels = wx.Button( self.m_panel1, wx.ID_ANY, u"Add All >>", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.ButtonAddAllChannels.SetFont( wx.Font( 7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+		self.ButtonAddAllChannels.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
 		
 		bSizer8.Add( self.ButtonAddAllChannels, 1, wx.ALIGN_CENTER|wx.ALL, 5 )
 		
-		self.ButtonRemoveChannel = wx.Button( self.m_panel1, wx.ID_ANY, u"< Remove", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.ButtonRemoveChannel.SetFont( wx.Font( 7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+		self.ButtonRemoveChannel = wx.Button( self.m_panel1, wx.ID_ANY, u"< Rem", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ButtonRemoveChannel.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
 		
 		bSizer8.Add( self.ButtonRemoveChannel, 1, wx.ALIGN_CENTER|wx.ALL, 5 )
 		
-		self.ButtonRemoveAllChannels = wx.Button( self.m_panel1, wx.ID_ANY, u"<< Remove All", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.ButtonRemoveAllChannels.SetFont( wx.Font( 7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+		self.ButtonRemoveAllChannels = wx.Button( self.m_panel1, wx.ID_ANY, u"<< Rem All", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ButtonRemoveAllChannels.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
 		
 		bSizer8.Add( self.ButtonRemoveAllChannels, 1, wx.ALIGN_CENTER|wx.ALL, 5 )
 		
@@ -79,7 +79,7 @@ class ChannelFilterDialog ( wx.Dialog ):
 		bSizer9.Add( self.m_staticText2, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
 		
 		ListBoxShowChannelsChoices = []
-		self.ListBoxShowChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxShowChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_MULTIPLE )
+		self.ListBoxShowChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxShowChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_MULTIPLE|wx.LB_SORT )
 		bSizer9.Add( self.ListBoxShowChannels, 1, wx.ALIGN_RIGHT|wx.ALL, 5 )
 		
 		
@@ -121,6 +121,7 @@ class ChannelFilterDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.EVT_CLOSE, self.onCloseChannelFilterDialog )
 		self.ButtonAddChannel.Bind( wx.EVT_BUTTON, self.onClickAddChannel )
 		self.ButtonAddAllChannels.Bind( wx.EVT_BUTTON, self.onClickAddAllChannels )
 		self.ButtonRemoveChannel.Bind( wx.EVT_BUTTON, self.onClickRemoveChannel )
@@ -135,6 +136,9 @@ class ChannelFilterDialog ( wx.Dialog ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def onCloseChannelFilterDialog( self, event ):
+		event.Skip()
+	
 	def onClickAddChannel( self, event ):
 		event.Skip()
 	
