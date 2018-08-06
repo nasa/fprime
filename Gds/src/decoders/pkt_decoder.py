@@ -53,7 +53,11 @@ class PktDecoder(ChDecoder):
             data (bytearray): Binary data to decode and pass to registered
                               consumers
         '''
-        self.send_to_all(self.decode_api(data))
+        result = self.decode_api(data)
+
+        # Make sure we don't send None data
+        if result != None:
+            self.send_to_all(result)
 
 
     def decode_api(self, data):
@@ -85,7 +89,11 @@ class PktDecoder(ChDecoder):
 
         if pkt_id not in self.__dict:
             # Don't crash if can't find pkt. Just notify and keep going
-            print("Packet decode error: id %d not in dictionary"%pkt_id)
+            print("Packet decode error: id %d not in dictionary. Time=%s"%(pkt_id, pkt_time.to_readable()))
+            print("Full pkt = \n")
+            for i in data:
+                print("0x%02x"%ord(i))
+
             return None
 
         # Retrieve the template instance for this channel

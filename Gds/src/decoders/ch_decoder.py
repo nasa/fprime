@@ -50,7 +50,11 @@ class ChDecoder(Decoder):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
-        self.send_to_all(self.decode_api(data))
+        result = self.decode_api(data)
+
+        # Make sure we don't send None data
+        if result != None:
+            self.send_to_all(result)
 
 
     def decode_api(self, data):
