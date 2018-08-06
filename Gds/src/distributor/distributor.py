@@ -1,3 +1,19 @@
+'''
+@brief Class to parse raw messages and distribute them to registered objects
+
+This class allows for other objects (namely Decoders) to register to receive
+data messages of a given descriptor type. The data message with the length and
+descriptor header will be passed on to the registered objects.
+
+@date Created June 2018
+@date Modified August 2, 2018
+
+@author Josef Biberstein
+@author Joseph Paetz
+
+@bug No known bugs
+'''
+
 import sys
 
 from models.serialize import u32_type

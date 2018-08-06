@@ -56,8 +56,6 @@ class PythonLoader(dict_loader.DictLoader):
             has the values of those fields.
         '''
         modules = self.import_modules(path, use_superpkg)
-        # TODO remove
-        #pprint(modules)
 
         module_dicts = []
         for module in modules:
@@ -90,8 +88,6 @@ class PythonLoader(dict_loader.DictLoader):
         Returns:
             A list of module objects of all the newly imported modules
         '''
-
-        print path
         # Verify path is a directory
         if not os.path.isdir(path):
             raise exceptions.GseControllerUndefinedDirectoryException(path)
@@ -112,15 +108,11 @@ class PythonLoader(dict_loader.DictLoader):
 
         # Compute a list of all files to import
         all_files = glob.glob(path + os.sep + '*.py')
-        #TODO remove
-        #print("all_files=")
-        #pprint(all_files)
 
 
         module_files = []
         for py_file in all_files:
             (file_path, file_name) = os.path.split(py_file)
-
             if (file_name != "__init__.py"):
                 module_files.append(file_name)
 
