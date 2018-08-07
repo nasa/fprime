@@ -35,7 +35,7 @@ class ChannelFilterDialog ( wx.Dialog ):
 		bSizer5.Add( self.m_staticText1, 0, wx.ALL, 5 )
 		
 		ListBoxAllChannelsChoices = []
-		self.ListBoxAllChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxAllChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_MULTIPLE|wx.LB_SORT )
+		self.ListBoxAllChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxAllChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_SORT )
 		bSizer5.Add( self.ListBoxAllChannels, 1, wx.ALL, 5 )
 		
 		
@@ -79,7 +79,7 @@ class ChannelFilterDialog ( wx.Dialog ):
 		bSizer9.Add( self.m_staticText2, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
 		
 		ListBoxShowChannelsChoices = []
-		self.ListBoxShowChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxShowChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_MULTIPLE|wx.LB_SORT )
+		self.ListBoxShowChannels = wx.ListBox( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size( 230,-1 ), ListBoxShowChannelsChoices, wx.LB_EXTENDED|wx.LB_HSCROLL|wx.LB_SORT )
 		bSizer9.Add( self.ListBoxShowChannels, 1, wx.ALIGN_RIGHT|wx.ALL, 5 )
 		
 		
