@@ -34,7 +34,7 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
             
     # Virtual event handlers, overide them in your derived class
     def onCloseChannelFilterDialog( self, event ):
-		event.Skip()
+        self.EndModal(-1)
 	
     def onClickAddChannel( self, event ):
         self.Swap(self.ListBoxShowChannels, self.ListBoxAllChannels)
@@ -63,4 +63,4 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
         self.EndModal(0)
 
     def onClickClose( self, event ):
-        event.Skip()
+        self.EndModal(-1)

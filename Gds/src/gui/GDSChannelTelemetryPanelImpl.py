@@ -44,6 +44,10 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         self.ChannelTelemDataViewCtl.AppendTextColumn("Time", 2, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=150, align=wx.ALIGN_NOT)
         self.ChannelTelemDataViewCtl.AppendTextColumn("Value", 3, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
 
+        # NOTE could just make the first column sortable cause sorting by the others doesn't really make sense
+        for c in self.ChannelTelemDataViewCtl.Columns:
+            c.Sortable = True
+
         self.ChannelTelemDataViewCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
 
     def __del__( self ):
@@ -102,8 +106,9 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
         dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict)
-        dlog.ShowModal()
-        self.dv_model.ChangeFilter(dlog.GetFilter())
+        ret = dlog.ShowModal()
+        if ret == 0:
+            self.dv_model.ChangeFilter(dlog.GetFilter())
         dlog.Destroy()
         event.Skip()
 
@@ -277,7 +282,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             new_data {EventData} -- the new event data to be added
         """
 
-        #print([str(d) for d in self.data])
+        lprint([str(d) for d in self.data])
         if isinstance(new_data, PktData):
             for c in new_data.get_chs():
                 self.UpdateModel(c)
@@ -297,22 +302,19 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                     self.ItemChanged(self.ObjectToItem(old_data)) 
 
     def ChangeFilter(self, filt):
-        #print(filt)
-        #print(self.filter)
-        # Reset filter - add everything back
 
         # Don't do anything if the filters are the same
         if self.filter == filt:
             return
-
+        # Reset filter - add everything back
         if filt == []:
             c = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() in self.filter]
-            a = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() not in self.filter]
-            print([str(d) for d in self.data if d.template.get_full_name() in self.filter])
-            print([str(d) for d in self.data if d.template.get_full_name() not in self.filter])
-            for i, j in zip(c, a):
-                self.ItemChanged(i)
-                self.ItemAdded(wx.dataview.NullDataViewItem, j)
+
+            for i in c:
+                self.ItemDeleted(wx.dataview.NullDataViewItem, i)  
+            for d in self.data:
+                self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+
         else:
             for d in self.data:
                 # If the previous filter was empty...
