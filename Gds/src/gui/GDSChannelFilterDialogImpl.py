@@ -30,7 +30,7 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
             itms = [src.GetString(i) for i in idxs]
             dest.AppendItems(itms)
             for i in itms:
-                src.Delete(src.FindString(i))
+                src.Delete(src.Items.index(i))
         
     def GetFilter(self):
         return self.filter
