@@ -20,7 +20,6 @@ allow consumers to receive raw data.
 @bug No known bugs
 '''
 
-import wx
 
 class Decoder(object):
     '''Base class for all decoder classes. Defines the interface for decoders'''
@@ -91,9 +90,6 @@ class Decoder(object):
             parsed_data: object to send to all registered consumers
         '''
         for obj in self.__consumers:
-            #TODO remove
-            #print("Sending %s to %s"%(parsed_data, obj))
-
             obj.data_callback(parsed_data)
 
 

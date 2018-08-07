@@ -30,7 +30,7 @@ class Distributor(object):
     Decoders can register with a distributor to recv packets of data of a certain description.
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Sets up the dictionary of connected decoders and socket client object.
 
@@ -38,9 +38,14 @@ class Distributor(object):
         {data descriptor name: list of decoder objects registered for that data}
 
         Args:
-            config (ConfigManager): Config manager with information on the types
-                                    of the fields in the messages
+            config (ConfigManager, default=None): Config manager with
+                   information on what types the message fields are. If None,
+                   defaults are used.
         """
+        if config==None:
+            # Retrieve defaults for the configs
+            config = config_manager.ConfigManager()
+
         self.__decoders = {key.name: [] for key in list(data_desc_type.DataDescType)}
 
         # Internal buffer for un distributed data
