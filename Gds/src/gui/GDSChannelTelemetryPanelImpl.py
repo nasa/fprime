@@ -103,6 +103,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     def onChannelTelemSelectChannelsButtonClick( self, event ):
         dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict)
         dlog.ShowModal()
+        self.dv_model.ChangeFilter(dlog.GetFilter())
         dlog.Destroy()
         event.Skip()
 
@@ -275,39 +276,61 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         Arguments:
             new_data {EventData} -- the new event data to be added
         """
-        match = [x for x in self.data if x.template == new_data.template]
 
-        if len(match) == 0:
+        #print([str(d) for d in self.data])
+        if isinstance(new_data, PktData):
+            for c in new_data.get_chs():
+                self.UpdateModel(c)
+        elif isinstance(new_data, ChData):
             
-            if isinstance(new_data, PktData):
+            match = [x for x in self.data if x.template == new_data.template]
+
+            if len(match) == 0:   
                 self.data.append(new_data)
-                self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
-                for c in new_data.get_chs():
-                    self.UpdateModel(c)
-            elif isinstance(new_data, ChData):
-                if new_data.get_pkt() is None:
-                    self.data.append(new_data)
+                if self.filter == [] or new_data.template.get_full_name() in self.filter:
                     self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
-                else:
-                    self.ItemAdded(self.ObjectToItem(new_data.get_pkt()), self.ObjectToItem(new_data))
-
-        else:
-            
-            old_data = match[0]
-
-            if isinstance(new_data, PktData):
-                for o, n in zip(old_data.chs, new_data.chs):
-                    o.val_obj.__dict__ = n.val_obj.__dict__.copy()
-                    o.time.__dict__ = n.time.__dict__.copy()
-                    self.ItemChanged(self.ObjectToItem(o))        
-
-            elif isinstance(new_data, ChData):
+            else:  
+                old_data = match[0]
                 old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
                 old_data.time.__dict__ = new_data.time.__dict__.copy()
-                self.ItemChanged(self.ObjectToItem(old_data)) 
+                if self.filter == [] or new_data.template.get_full_name() in self.filter:
+                    self.ItemChanged(self.ObjectToItem(old_data)) 
 
     def ChangeFilter(self, filt):
+        #print(filt)
+        #print(self.filter)
+        # Reset filter - add everything back
+
+        # Don't do anything if the filters are the same
+        if self.filter == filt:
+            return
+
+        if filt == []:
+            c = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() in self.filter]
+            a = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() not in self.filter]
+            print([str(d) for d in self.data if d.template.get_full_name() in self.filter])
+            print([str(d) for d in self.data if d.template.get_full_name() not in self.filter])
+            for i, j in zip(c, a):
+                self.ItemChanged(i)
+                self.ItemAdded(wx.dataview.NullDataViewItem, j)
+        else:
+            for d in self.data:
+                # If the previous filter was empty...
+                if self.filter == []:
+                    # Remove everything not in new filter, otherwise keep it
+                    if d.template.get_full_name() not in filt:
+                        self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                else:
+                    # Remove everything in prev filter but not in new filter
+                    if d.template.get_full_name() in self.filter and d.template.get_full_name() not in filt:
+                        self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                    # Add everything not in prev filter but in new filter
+                    elif d.template.get_full_name() not in self.filter and d.template.get_full_name() in filt:
+                        self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+
+        # Set new filter
         self.filter = filt
+
 
     def SetData(self, data):
         """Set the data used by this model to populate the data view

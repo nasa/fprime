@@ -102,7 +102,7 @@ class ChannelFilterDialog ( wx.Dialog ):
 		self.ButtionApplyFilter = wx.Button( self.m_panel1, wx.ID_ANY, u"Apply Filter", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer4.Add( self.ButtionApplyFilter, 1, wx.ALL, 5 )
 		
-		self.ButtonCancel = wx.Button( self.m_panel1, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ButtonCancel = wx.Button( self.m_panel1, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer4.Add( self.ButtonCancel, 1, wx.ALL, 5 )
 		
 		
@@ -129,7 +129,7 @@ class ChannelFilterDialog ( wx.Dialog ):
 		self.ButtonSaveFilter.Bind( wx.EVT_BUTTON, self.onClickSaveFilter )
 		self.ButtonLoadFilter.Bind( wx.EVT_BUTTON, self.onClickLoadFilter )
 		self.ButtionApplyFilter.Bind( wx.EVT_BUTTON, self.onClickApplyFilter )
-		self.ButtonCancel.Bind( wx.EVT_BUTTON, self.onClickCancel )
+		self.ButtonCancel.Bind( wx.EVT_BUTTON, self.onClickClose )
 	
 	def __del__( self ):
 		pass
@@ -160,6 +160,6 @@ class ChannelFilterDialog ( wx.Dialog ):
 	def onClickApplyFilter( self, event ):
 		event.Skip()
 	
-	def onClickCancel( self, event ):
+	def onClickClose( self, event ):
 		event.Skip()
 	

@@ -59,7 +59,8 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
         event.Skip()
     
     def onClickApplyFilter( self, event ):
-        event.Skip()
-    
-    def onClickCancel( self, event ):
+        self.filter = self.ListBoxShowChannels.Items
+        self.EndModal(0)
+
+    def onClickClose( self, event ):
         event.Skip()
