@@ -4,9 +4,9 @@ layout: default
 ---
 # Getting Started with F'
 
-In this guide, we will cover the basics of working with F'. To start with, we will grab the code, build the reference application, and verify
-that the reference application will run. After that we will create a custom F' component and build it into out own application. Along the way
-we will cover: Components, Topologies, Events, Telemetry, and Commands. In addition, we will see how to modify the build-system to include our
+In this guide, we will cover the basics of working with F'. To start with, we retrieve the code, build the reference application, and verify
+that the reference application will run. After that we will create a custom F' component and create our own application. Along the way
+we will cover: Components, Topologies, Events, Telemetry, and Commands. In addition, we will see how to modify the build system to include our
 new components and topologies.
 
 ## Getting Started with F' and the Reference Application
@@ -19,7 +19,8 @@ To install the packages in ubuntu, you can run the following commands:
 #### Ubuntu Installation
 ```
 sh fprime/mk/os-pkg/ubuntu-packages.sh
-pip install -r fprime/Gse/bin/required.txt
+pip install -r mk/python/pip_required_build.txt
+pip install -r mk/python/pip_required_gui.txt
 ```
 *Note:* other installation and setup instructions are availabe in the [user guide.](https://github.com/nasa/fprime/blob/master/docs/UsersGuide/FprimeUserGuide.pdf)
 
@@ -62,6 +63,14 @@ cd fprime/Ref/linux-linux-x86-debug-gnu-bin
 ./Ref
 ```
 
+**Running with the GUI:**
+``
+cd fprime/Ref
+./scripts/run_ref.sh
+``
+
+**Note:** running with the gui is the recommended way of running the application.
+
 Success!!! We have now successfully run the reference application, showing that the build tools work. We are ready to proceed to a custom application.
 
 ## Custom Application Goals
@@ -72,7 +81,7 @@ pretending to be am ACM device for basic serial communication. The messages thes
 ![USB GPS Hardware](img/usb-gps.jpg)
 
 This quick-start guide will show how to integrate one of these GPS receivers with the F' framework by wrapping it in a Component and defining commands,
-telemetry, and log events. Finnaly, we will modify the reference Topology to include this new component such that we can downlink our telemetry to
+telemetry, and log events. Finally, we will modify the reference Topology to include this new component such that we can downlink our telemetry to
 the F' supplied ground station (GSE).
 
 **Note:** all the sample files, and a working deployment are available at [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application).
@@ -84,7 +93,7 @@ and finish up by adding an event to report GPS lock status and a command to repo
 
 ### Designing the GPS Component
 
-Currently, F' designs are stored in XML files that feed the auto-coding system. An XML file represents a signle component including the ports it uses
+The F’ designs are specified by XML files that are compiled by code generators. An XML file represents a single component including the ports it uses
 to communicate with other components as well as references to the dictonaries that define events/log messages, telmetry, and commands. Further discussion
 of components, ports, events, telemetry, and commands can be found in the F' user guide. [User Guide](docs/UsersGuide/FprimeUserGuide.pdf). *Side note:* 
 Ports are also defined with XML, however; this application does not need any customized ports and thus we need not elaborate here.
@@ -98,7 +107,7 @@ mkdir -p GpsApp/Gps
 cd GpsApp/Gps
 ```
 
-Next, in this directory, we will create a file called *GpsComponentAi.xml* filled with the below text. This represents our Components design by defining
+Next, in this directory, we will create a file called *GpsComponentAi.xml* filled with the below text. This represents our component's design by defining
 the ports it uses to connect with other components and the files used to specify commands, telemetry, and events. As can be seen, we are creating our component
 to have 5 ports:
 
@@ -158,8 +167,7 @@ see this step later.
 ## Creating Commands.xml, Events.xml and Telemetry.xml Dictionaries
 
 These three XML dictionaries define the structure of commands, events, and telemetry that our component uses. This allows the auto-coding system
-to automatically generate the needed code to process commands, and emit events and telemetry. This save the developer for writing the specific code
-to drive the component.
+to automatically generate the needed code to process commands, and emit events and telemetry. This allows the developer to concentrate on the specific code for the component.
 
 First we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This command will trigger an event
 which will report if the GPS is locked or not. Command.xml should look like the following:
@@ -174,9 +182,7 @@ which will report if the GPS is locked or not. Command.xml should look like the 
 
 ======================================================================-->
 
-<commands
-  opcode_base="$GpsIdOpcodeBase"
->
+<commands>
 
   <command
     kind="async"
@@ -188,10 +194,6 @@ which will report if the GPS is locked or not. Command.xml should look like the 
 
 </commands>
 ```
-
-**Note:** opcode_base is auto-filled by the auto-coder giving out component's opcodes a unique offset so that we need not worry about what op-codes are
-defined outside this component. We can just number them within the component, and expect the auto-coder to resolve collisions by prefixing the op-codes
-with a defined offset.
 
 Next we will create an Events.xml dictionary that setup the events our component can log. In this case we have two events, GPS locked and GPS lock lost.
 Here again we have and ID base allowing us to fill in the event offsets later. The Events.xml file should look like:
@@ -206,9 +208,7 @@ Here again we have and ID base allowing us to fill in the event offsets later. T
 
 ======================================================================-->
 
-<events
-  event_base="$GpsIdEventsBase"
->
+<events>
 
   <event
     id="0"
@@ -244,9 +244,7 @@ satellites visible to the GPS unit. These are all standard fields emitted by a U
 
 ======================================================================-->
 
-<telemetry
-  telemetry_base="$GpsIdTelemetryBase"
->
+<telemetry>
 
   <channel
     id="0"
@@ -287,7 +285,7 @@ satellites visible to the GPS unit. These are all standard fields emitted by a U
 </telemetry>
 ```
 
-Now our dictionaries are setup. Before we can continue, we need to add *GpsIdBase* into the auto-coder constants file located at *fprime/Fw/Cfg/AcConstants.ini*. The end of this file should look like the following. This is the offset we disscussed earlier. In order to prevent collisions, it should be unique for other base ids set in
+Now our dictionaries are defined. Before we can continue, we need to add *GpsIdBase* into the auto-coder constants file located at *fprime/Fw/Cfg/AcConstants.ini*. The end of this file should look like the following. This is the offset we disscussed earlier. In order to prevent collisions, it should be unique for other base ids set in
 this file.
 
 ```
@@ -346,7 +344,7 @@ DEPLOYMENTS := Ref GpsApp acdev
 
 Given that we have already defined our *Topology* folder in the *GpsApp/Top* line above, we will need to add a placeholder for the Topology of our
 GpsApp, which we will fill later. Make the folder *fprime/GpsApp/Top* and add an empty file *mod.mk*. We will fill this folder and mod.mk file
-lateri, but creating it here enables us to build our component. Now our make system should be ready for us to build our new module, and take advantage of
+later, but creating it here enables us to build our component. Now our make system should be ready for us to build our new module, and take advantage of
  the code-generation that is available.
 
 ## Setting Up Module Make Files and Code
@@ -401,9 +399,9 @@ If these commands pass without errors, we are ready to start coding our module.
 
 Now it is time to code our module to read the GPS module and downlink the GPS telemetry. This is where the framework will help us considerably. All 
 these previous steps set us up to use the auto-coding features of F'. We can generate the basic implementation of the code by using the make 
-command *make impl*, which generates needed *GpsComponentImpl.cpp-tmpl* and *GpsComponentImpl.hpp-tmpl* files. We can use these as bases for our 
-implementation. In adition, the framework will also generate * *Ac.?pp* files, which handle the work of connecting ports allowing us to write 
-minimal code to support the component interface. Below we will take a look. First we generate code templates, and move them into place (because 
+command *make impl*, which generates needed *GpsComponentImpl.cpp-tmpl* and *GpsComponentImpl.hpp-tmpl* files. We can use these as the basis for our 
+implementation. In addition, the framework will also generate * *Ac.?pp* files, which handle the work of connecting ports allowing us to write 
+minimal code to support the component interface. First we generate code templates, and move them into place (because 
 don't already have implementations we can safely rename the template files).
 
 ```
@@ -412,8 +410,7 @@ mv GpsComponentImpl.cpp-tmpl GpsComponentImpl.cpp
 mv GpsComponentImpl.hpp-tmpl GpsComponentImpl.hpp
 ```
 
-*Note:* if the developer previously created the implementation .cpp and .hpp files for out component, then moving the templates in place could
-be dangerous.
+*Note:* If the developer regenerates the templates, care must be taken to not overwrite already implemented code by copying the templates to the implementation files.
 
 These template file contents are in the following sections.
 
@@ -565,9 +562,9 @@ Here it can be seen that we have two actions "TODO". First we will need to imple
 the second is to implement a command handler for *Gps_ReportLockStatus_cmdHandler*. Both are port calls that will be made
 into our component. Ports are found in the GpsComponentAi.xml, however; only our *schedIn* port is used directly. The 
 rest are called as part of telemetry, event logging, or command processing and thus have helpful wrappers (seen below).
-schedIn represents a call from a rate group driver. It is called a a set rate, e.g. 10Hz based on the rate group to which it 
-is connected. We will use this schedIn call to read the UART interface at a set rate of 1HZ. *Gps_ReportLockStatus_cmdHandler* is a 
-handler that implements the function for the command we defined in Command.xml. We also have the following out-going port calls, 
+schedIn represents a call from a rate group driver. It is called at a set rate, e.g. 10Hz based on the rate group to which it 
+is connected. We will use this schedIn call to read the UART interface at a set rate of 1Hz. *Gps_ReportLockStatus_cmdHandler* is a 
+handler that implements the function for the command we defined in Command.xml. We also have the following outgoing port calls, 
 and events that can be used as part of our code. 
 
 1. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
@@ -580,7 +577,7 @@ and events that can be used as part of our code.
 
 In order to make a GPS processor, we need to take the following steps:
 
-0. Implement the schedIn function (called at 1HZ)
+0. Implement the schedIn function (called at 1Hz)
 1. (Re)initialize the UART in the call to schedIn
 2. Read UART in schedIn
 3. Parse UART data in schedIn
@@ -685,7 +682,7 @@ namespace GpsApp {
 
   // Step 0: schedIn
   //
-  //  By implementing this "handler" we can respond to the 1HZ call allowing
+  //  By implementing this "handler" we can respond to the 1Hz call allowing
   //  us to read the GPS UART every 1 second.
   void GpsComponentImpl ::
     schedIn_handler(
@@ -707,7 +704,7 @@ namespace GpsApp {
           return;
       }
       //Then receive data from the GPS. Should block until available
-      //and thus, this module should not be driven at a rate faster than 1HZ
+      //and thus, this module should not be driven at a rate faster than 1Hz
       //Step 2: read the UART
       // Read the GPS message from the UART
       ssize_t size = read(m_fh, buffer, sizeof(buffer));
@@ -897,11 +894,12 @@ if this will work. Generally, this process is done with a design tool like Magic
 have access to this tool, the topology Ai is provided below. The user may then edit it to make changes.
 
 First, the Reference application's topology is copied into the *Top* folder of *GpsApp* application and we'll grab the deployment makefile 
-too.
+too. We do this as a convienence to save time during this tutorial. It is easier and faster to start with the Reference application's files
+and modify them to construct our topology.
 
 ```
 cp -r fprime/Ref/Top fprime/GpsApp/Top
-cp fprime/Ref/Makefile fprimt/GpsApp
+cp fprime/Ref/Makefile fprime/GpsApp
 ```
 
 Then update *fprime/GpsApp/Makefile* to set the following line to our deployment's name *GpsApp*.
@@ -912,18 +910,21 @@ DEPLOYMENT := GpsApp
 
 After this adjustment to the make system, we need to add 3 custom files that represent our Topology.  These files are the following:
 
-1. **RefTopologyAppAi.xml**: the design file showing the list of components, and the connections between components.
+1. **GpsTopologyAppAi.xml**: the design file showing the list of components, and the connections between components. This file is based
+on RefTopologyAppAi.xml from the reference application. GpsTopologyAppAi.xml should replace RefTopologyAppAi.xml.
 2. **Components.hpp**: the header file declaring in code the same components as listed in the topology ai XML, along with includes
 of the headers that define them.
 3. **Topology.cpp**: top level code, main function, and initialization of the components, threads, and registration of commands.
 
-Essentially, RefTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology is the implementation code. All of these
+Essentially, GpsTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology is the implementation code. All of these
 files are referenced by the make files we inherited from the reference app. Building the distribution (fprime/GpsApp) will include the 
 topology (fprime/GpsApp/Top) as its entry-point creating a single application, which represents our software.
 
 Sample versions of these files are provided below, and are annotated with comments representing the changes
 made to support the Gps Application. **Note:** these files are available in a working repository at:
 [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application) in case the user prefer a direct checkout of working code.
+
+We will also need to update the mod.mk in the Top directory to change the name of "RefTopologyAppAi.xml" to "GpsTopologyAppAi.xml".
 
 Once these files have been added to the *fprime/GpsApp/Top* folder, we have a complete project. The project can be built 
 by changing directory to the deployment directory, issuing our build commands and then running the executable.
@@ -953,8 +954,8 @@ If you see output similar to the following, when running with the UART GPS you h
 [ERROR] Failed to open file: /dev/ttyACM0
 ```
 
-That is it. In the next tutorial (comming soon), we'll cover how to connect this reference application to the
-GSE environment in order to read the telemetry we are downlinking.
+### Running with the GUI
+
 
 ### Topology.cpp (Sample)
 ```
@@ -1410,7 +1411,7 @@ extern GpsApp::GpsComponentImpl gpsImpl;
 #endif
 ```
 
-### RefTopologyAppAi.xml (Sample)
+### GpsTopologyAppAi.xml (Sample)
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
