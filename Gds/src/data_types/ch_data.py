@@ -22,7 +22,7 @@ class ChData(sys_data.SysData):
         Args:
             ch_val_obj: The channel's value at the given time. Should be an
                         instance of a class derived from the BaseType class
-                        (with a deserialized data value)
+                        (with a deserialized data value) or None
             ch_temp: Channel template instance for this channel
             ch_time: Time the reading was made
 
@@ -63,7 +63,10 @@ class ChData(sys_data.SysData):
         Returns:
             The channel reading
         '''
-        return self.val_obj.val
+        if self.val_obj == None:
+            return None
+        else:
+            return self.val_obj.val
 
     def get_time(self):
         '''
@@ -110,7 +113,9 @@ class ChData(sys_data.SysData):
         raw_time_str = str(self.time)
         ch_name = self.template.get_name()
         fmt_str = self.template.get_format_str()
-        if (fmt_str):
+        if (self.val_obj == None):
+            ch_val = "EMPTY CH OBJ"
+        elif (fmt_str):
             ch_val = fmt_str%(self.val_obj.val)
         else:
             ch_val = str(self.val_obj.val)

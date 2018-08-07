@@ -24,7 +24,7 @@ class EventData(sys_data.SysData):
                         be a tuple where each element is an object of a class
                         derived from the BaseType class. Each element's class
                         should match the class of the corresponding argument
-                        type object in the event_temp object.
+                        type object in the event_temp object. This can be None.
             event_time: The time the event occured (TimeType)
             event_temp: Event template instance for this event
 
@@ -80,11 +80,14 @@ class EventData(sys_data.SysData):
         severity = self.template.get_severity()
         format_str = self.template.get_format_str()
 
-        # The arguments are currently serializable objects which cannot be
-        # used to fill in a format string. Convert them to values that can be
-        arg_val_list = [arg_obj.val for arg_obj in self.args]
+        if self.args == None:
+            arg_str = "EMPTY EVENT OBJ"
+        else:
+            # The arguments are currently serializable objects which cannot be
+            # used to fill in a format string. Convert them to values that can be
+            arg_val_list = [arg_obj.val for arg_obj in self.args]
 
-        arg_str = format_str%tuple(arg_val_list)
+            arg_str = format_str%tuple(arg_val_list)
 
         if verbose and csv:
             return ("%s,%s,%s,%d,%s,%s"%(time_str, raw_time_str, name, self.id,
