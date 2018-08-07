@@ -14,9 +14,19 @@ new components and topologies.
 The first step to running F' is to ensure that the required build tools are available on your system. At its most basic, F' requires
 several tools to be installed: Git, GNU make, lxml, and python w/ cheetah. In order, to run the ground-system several more packages are required (see: Gse/bin/required.txt). Make is available on most systems, as well as git and lxml.
 
-To install the packages in ubuntu, you can run the following commands:
+### Cloning the Software and Building the Reference Application
 
-#### Ubuntu Installation
+The first step is to clone the software from GitHub. The following command will clone the software straight from NASA's GitHub project page.
+
+```
+git clone https://github.com/nasa/fprime.git
+```
+
+### Installation
+
+The next step is to install the software. Make sure git, and lxml are installed on your system. Then, using Python 2's pip tool the python dependencies can be installed. Both these steps can be accomplished on Ubuntu with the following commands:
+
+#### Ubuntu Installation.
 ```
 sh fprime/mk/os-pkg/ubuntu-packages.sh
 pip install -r mk/python/pip_required_build.txt
@@ -24,16 +34,14 @@ pip install -r mk/python/pip_required_gui.txt
 ```
 *Note:* other installation and setup instructions are availabe in the [user guide.](https://github.com/nasa/fprime/blob/master/docs/UsersGuide/FprimeUserGuide.pdf)
 
-### Cloning the Software and Building the Reference Application
 
-The next step is to clone the software from GitHub. The following command will clone the software straight from NASA's GitHub project page.
+### Building the Reference Application
 
-```
-git clone https://github.com/nasa/fprime.git
-```
+The reference application is used to help developers develop F Prime applications by showing various features. It is also a useful test of the
+installation and thus we will run it here.
 
-Once the software is cloned, the reference-application can be built by changing into the reference directory, generating make files,
-clean and makeing the code.
+Once the software is cloned and packages installed, the reference-application can be built by changing into the reference directory, generating make files,
+cleaning and makeing the code.
 
 ```
 cd fprime/Ref
@@ -51,25 +59,13 @@ In order to run the reference application, one needs to run the binary named *Re
 show that the reference application was successfully built and runnable. Replace *darwin-darwin-x86-debug-llvm-bin* in the below commands by the target
 used in building the reference application
 
-**On OS X**:
-```
-cd fprime/Ref/darwin-darwin-x86-debug-llvm-bin
-./Ref
-```
-
-**On Linux**:
-```
-cd fprime/Ref/linux-linux-x86-debug-gnu-bin
-./Ref
-```
-
 **Running with the GUI:**
 ``
 cd fprime/Ref
 ./scripts/run_ref.sh
 ``
 
-**Note:** running with the gui is the recommended way of running the application.
+**Note:** running with the gui is the recommended way of running the application. However, one can run the application directly from target output directory if desired.
 
 Success!!! We have now successfully run the reference application, showing that the build tools work. We are ready to proceed to a custom application.
 
