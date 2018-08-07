@@ -102,18 +102,24 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
                 wx.TheClipboard.Close()
         event.Skip()
 
-
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
         dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict)
         ret = dlog.ShowModal()
         if ret == 0:
             self.dv_model.ChangeFilter(dlog.GetFilter())
+        self.ChannelTelemFilterSelectedTextCtl.SetValue(dlog.current_filter_name)
         dlog.Destroy()
         event.Skip()
 
     def onChannelTelemShowHexCheckBoxClick( self, event ):
         event.Skip()
+
+    def onClickResetFilter( self, event ):
+        self.dv_model.ChangeFilter([])
+        self.ChannelTelemFilterSelectedTextCtl.SetValue("")
+        event.Skip()
+
 
 class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     """This class acts as an intermediary between user data and the actual data 

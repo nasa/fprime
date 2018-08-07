@@ -86,12 +86,16 @@ class ChannelFilterDialog ( wx.Dialog ):
 		bSizer3.Add( bSizer9, 1, wx.EXPAND, 5 )
 		
 		
-		bSizer2.Add( bSizer3, 5, wx.EXPAND, 5 )
+		bSizer2.Add( bSizer3, 8, wx.EXPAND, 5 )
 		
 		bSizer4 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_staticText4 = wx.StaticText( self.m_panel1, wx.ID_ANY, u"Current File", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText4.Wrap( -1 )
+		bSizer4.Add( self.m_staticText4, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		bSizer4.Add( ( 0, 0), 3, wx.EXPAND, 5 )
+		self.TextCtrlFileName = wx.TextCtrl( self.m_panel1, wx.ID_ANY, u"None", wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer4.Add( self.TextCtrlFileName, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.ButtonSaveFilter = wx.Button( self.m_panel1, wx.ID_ANY, u"Save Filter", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer4.Add( self.ButtonSaveFilter, 1, wx.ALL, 5 )

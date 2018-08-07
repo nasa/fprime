@@ -22,13 +22,16 @@ class ChannelTelemetry ( wx.Panel ):
 		
 		bSizer6 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.ChannelTelemDataViewCtl = wx.dataview.DataViewCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_MULTIPLE | wx.dataview.DV_VERT_RULES )
-		bSizer6.Add( self.ChannelTelemDataViewCtl, 8, wx.ALL|wx.EXPAND, 5 )
+		self.ChannelTelemDataViewCtl = wx.dataview.DataViewCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6.Add( self.ChannelTelemDataViewCtl, 10, wx.ALL|wx.EXPAND, 5 )
 		
 		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Channel Telemetry Filtering" ), wx.HORIZONTAL )
 		
 		self.ChannelTelemSelectChannelsButton = wx.Button( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Select Channels", wx.DefaultPosition, wx.DefaultSize, 0 )
 		sbSizer8.Add( self.ChannelTelemSelectChannelsButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.ChannelTelemResetFilterButton = wx.Button( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Reset Filter", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.ChannelTelemResetFilterButton, 0, wx.ALL, 5 )
 		
 		self.m_staticText3 = wx.StaticText( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Active Filter Selected", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText3.Wrap( -1 )
@@ -49,6 +52,7 @@ class ChannelTelemetry ( wx.Panel ):
 		
 		# Connect Events
 		self.ChannelTelemSelectChannelsButton.Bind( wx.EVT_BUTTON, self.onChannelTelemSelectChannelsButtonClick )
+		self.ChannelTelemResetFilterButton.Bind( wx.EVT_BUTTON, self.onClickResetFilter )
 		self.ChannelTelemShowHexCheckBox.Bind( wx.EVT_CHECKBOX, self.onChannelTelemShowHexCheckBoxClick )
 	
 	def __del__( self ):
@@ -59,7 +63,9 @@ class ChannelTelemetry ( wx.Panel ):
 	def onChannelTelemSelectChannelsButtonClick( self, event ):
 		event.Skip()
 	
+	def onClickResetFilter( self, event ):
+		event.Skip()
+	
 	def onChannelTelemShowHexCheckBoxClick( self, event ):
 		event.Skip()
 	
-
