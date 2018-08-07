@@ -268,6 +268,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
+            '''
             if node.val_obj.val < node.template.low_yellow or node.val_obj.val > node.template.high_yellow:
                 attr.SetColour('yellow')
                 attr.SetBold(True)
@@ -277,7 +278,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             elif node.val_obj.val < node.template.low_red or node.val_obj.val > node.template.high_red:
                 attr.SetColour('red')
                 attr.SetBold(True)
-
+            '''
         return False
 
     def UpdateModel(self, new_data):
