@@ -189,7 +189,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         return 0
 
-
     def IsContainer(self, item):
         """Find out if the given item has children
         
@@ -282,7 +281,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             new_data {EventData} -- the new event data to be added
         """
 
-        lprint([str(d) for d in self.data])
+        print([str(d) for d in self.data])
         if isinstance(new_data, PktData):
             for c in new_data.get_chs():
                 self.UpdateModel(c)

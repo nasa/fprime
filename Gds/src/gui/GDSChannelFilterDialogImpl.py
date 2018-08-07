@@ -1,4 +1,6 @@
+import wx
 import GDSChannelFilterDialogGUI
+import csv
 
 ###########################################################################
 ## Class ChannelFilterDialogImpl
@@ -53,6 +55,10 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
         event.Skip()
     
     def onClickSaveFilter( self, event ):
+        dialog = wx.FileDialog(self) 
+        ret = dialog.ShowModal()
+        if ret == wx.ID_OKAY:
+            pass
         event.Skip()
     
     def onClickLoadFilter( self, event ):
