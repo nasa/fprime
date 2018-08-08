@@ -153,6 +153,10 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['types'] = dict()
 
         self.__prop['types']['msg_len'] = "U32"
+        self.__prop['types']['msg_desc'] = "U32"
+        self.__prop['types']['ch_id'] = "U32"
+        self.__prop['types']['event_id'] = "U32"
+        self.__prop['types']['pkt_id'] = "U16"
 
         self._set_section_defaults('types')
 

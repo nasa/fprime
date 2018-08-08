@@ -21,18 +21,35 @@ purpose is to define the interface for an encoder.
 @bug No known bugs
 '''
 
+from utils.config_manager import ConfigManager
+
 class Encoder(object):
     '''Base class for all encoder classes. Defines the interface for encoders'''
 
-    def __init__(self):
+    def __init__(self, dest="FSW", config=None):
         '''
         Encoder class constructor
+
+        Args:
+            dest (string, "FSW" or "GUI", default="FSW"): Destination for binary
+                  data produced by encoder.
+            config (ConfigManager, default=None): Object with configuration data
+                    for the sizes of fields in the binary data. If None passed,
+                    defaults are used.
 
         Returns:
             An initialized encoder object.
         '''
         # List of senders to be notified of new data
         self.__senders = []
+
+        if config==None:
+            # Retrieve defaults for the configs
+            config = ConfigManager()
+
+        self.config = config
+
+        self.dest = dest
 
 
     def data_callback(self, data):
@@ -85,12 +102,10 @@ class Encoder(object):
         This function is not intended to be called from outside a decoder class
 
         Args:
-            binary_data: object to send to all registered senders
+            binary_data (bytearray): object to send to all registered senders
         '''
-        # TODO have a parameter passed to the encoder constructor for the dest
-        # of the data (FSW or GUI)
         for obj in self.__senders:
-            obj.send(binary_data, "FSW")
+            obj.send(binary_data, self.dest)
 
 
 if __name__ == "__main__":

@@ -22,9 +22,10 @@ class EventData(sys_data.SysData):
         Args:
             event_args: The arguments of the event being stored. This should
                         be a tuple where each element is an object of a class
-                        derived from the BaseType class. Each element's class
-                        should match the class of the corresponding argument
-                        type object in the event_temp object. This can be None.
+                        derived from the BaseType class with a filled in value.
+                        Each element's class should match the class of the
+                        corresponding argument type object in the event_temp
+                        object. This can be None.
             event_time: The time the event occured (TimeType)
             event_temp: Event template instance for this event
 

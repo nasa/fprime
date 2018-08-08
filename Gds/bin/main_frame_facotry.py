@@ -122,7 +122,7 @@ class MainFrameFactory(object):
             ch_name_dict = self.ch_ldr.get_name_dict(self.opts.xml_dict_path)
 
 
-        self.cmd_enc = cmd_encoder.CmdEncoder(self.cmd_name_dict)
+        self.cmd_enc = cmd_encoder.CmdEncoder()
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
 
