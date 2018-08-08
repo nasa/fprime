@@ -36,6 +36,20 @@ class ChData(sys_data.SysData):
         self.pkt = None
 
 
+    @staticmethod
+    def get_empty_obj(ch_temp):
+        '''
+        Obtains a channel object that is empty (has a value of None)
+
+        Args:
+            ch_temp (ChTemplate object): Template describing the channel
+
+        Returns:
+            A ChData Object with ch value of None
+        '''
+        return ChData(None, time_type.TimeType(), ch_temp)
+
+
     def set_pkt(self, pkt):
         '''
         Set the packet object to which this channel belongs (can be None)

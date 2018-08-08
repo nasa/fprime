@@ -43,6 +43,19 @@ class EventData(sys_data.SysData):
 
 
     @staticmethod
+    def get_empty_obj(event_temp):
+        '''
+        Obtains an event object that is empty (arguments = None)
+
+        Args:
+            event_temp (EventTemplate obj): Template describing event
+
+        Returns:
+            An EventData object with argument value of None
+        '''
+        return EventData(None, time_type.TimeType(), event_temp)
+
+    @staticmethod
     def get_csv_header(verbose=False):
         '''
         Get the header for a csv file containing event data
