@@ -35,7 +35,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
         GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
 
-        self.dv_model = ChannelTelemDataViewModel(ch_dict)
+        self.dv_model = ChannelTelemDataViewModel(self, ch_dict)
     
         self.ChannelTelemDataViewCtl.AssociateModel(self.dv_model)
 
@@ -113,6 +113,11 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onChannelTelemShowHexCheckBoxClick( self, event ):
+        self.ChannelTelemDataViewCtl.SelectAll()
+        s = self.ChannelTelemDataViewCtl.GetSelections()
+        for i in s:
+            self.dv_model.ItemChanged(i)
+        self.ChannelTelemDataViewCtl.UnselectAll()
         event.Skip()
 
     def onClickResetFilter( self, event ):
@@ -128,9 +133,9 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     and are called automatically by the data view.
     """
 
-    def __init__(self, ch_dict):
+    def __init__(self, parent, ch_dict):
         wx.dataview.PyDataViewModel.__init__(self)
-
+        self.parent = parent
         # All the possible ChData objects that we can possibly recieve
         self.data = []
         for c in ch_dict.values():
@@ -276,11 +281,18 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
             if node.val_obj != None:
-                mapper = { 0 : str(node.template.get_full_name()),
-                        1 : str(node.template.id),
-                        2 : str(node.time.to_readable()),
-                        3 : str(node.val_obj.val)
-                        }     
+                if self.parent.ChannelTelemShowHexCheckBox.Value == True:
+                    mapper = { 0 : str(node.template.get_full_name()),
+                            1 : str(hex(node.template.id)),
+                            2 : str(node.time.to_readable()),
+                            3 : str(node.val_obj.val)
+                            }     
+                else:
+                    mapper = { 0 : str(node.template.get_full_name()),
+                            1 : str(node.template.id),
+                            2 : str(node.time.to_readable()),
+                            3 : str(node.val_obj.val)
+                            }     
             else:
                 mapper = { 0 : str(node.template.get_full_name()),
                         1 : str(node.template.id),
