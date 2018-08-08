@@ -5,13 +5,13 @@ This encoder takes in cmd_data objects, serializes them, and sends the results
 to all registered senders.
 
 Serialized command format:
-    +--------------------------------+
-    | Header = "A5A5 "               |
-    | (5 byte string)                |
-    +--------------------------------+
-    | Destination = "GUI " or "FSW " |
-    | (4 byte string)                |
-    +--------------------------------+
+    +--------------------------------+          -
+    | Header = "A5A5 "               |          |
+    | (5 byte string)                |          |
+    +--------------------------------+      Added by
+    | Destination = "GUI " or "FSW " |       Sender
+    | (4 byte string)                |          |
+    +--------------------------------+          -
     | Command descriptor             |
     | (0x5A5A5A5A)                   |
     | (4 byte number)                |
@@ -49,20 +49,24 @@ from utils.data_desc_type import DataDescType
 class CmdEncoder(encoder.Encoder):
     '''Encoder class for command data'''
 
-    def __init__(self, cmd_dict):
+    def __init__(self, dest="FSW", config=None):
         '''
         CmdEncoder class constructor
 
         Args:
-            cmd_dict: Command dictionary. Command op codes should be keys and
-                      CmdTemplate objects should be values
+            dest (string, "FSW" or "GUI", default="FSW"): Destination for binary
+                  data produced by encoder.
+            config (ConfigManager, default=None): Object with configuration data
+                    for the sizes of fields in the binary data. If None passed,
+                    defaults are used.
 
         Returns:
             An initialized CmdEncoder object
         '''
-        super(CmdEncoder, self).__init__()
+        super(CmdEncoder, self).__init__(dest, config)
 
-        self.__dict = cmd_dict
+        self.len_obj = self.config.get_type("msg_len")
+
 
     def data_callback(self, data):
         '''
@@ -75,6 +79,7 @@ class CmdEncoder(encoder.Encoder):
             data: CmdData object to encode into binary data.
         '''
         self.send_to_all(self.encode_api(data))
+
 
     def encode_api(self, data):
         '''
@@ -99,7 +104,9 @@ class CmdEncoder(encoder.Encoder):
         for arg in data.get_args():
             arg_data += arg.serialize()
 
-        length = U32Type(len(descriptor) + len(op_code) + len(arg_data)).serialize()
+        length_val = len(descriptor) + len(op_code) + len(arg_data)
+        self.len_obj.val = length_val
+        length = self.len_obj.serialize()
 
         binary_data = (desc + length + descriptor + op_code + arg_data)
 

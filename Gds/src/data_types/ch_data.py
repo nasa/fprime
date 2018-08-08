@@ -82,6 +82,17 @@ class ChData(sys_data.SysData):
         else:
             return self.val_obj.val
 
+
+    def get_val_obj(self):
+        '''
+        Return the channel's value object
+
+        Returns:
+            The channel's value object containing the value (obj of a type
+            inherited from TypeBase
+        '''
+        return self.val_obj
+
     def get_time(self):
         '''
         Return the channel sample's timestamp
