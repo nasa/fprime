@@ -35,7 +35,7 @@ class ArgItemTextCtl(wx.Panel):
 
 	def setText(self, text):
 		
-		self.m_argWindow.SetValue(text)
+		self.m_argWindow.SetValue(str(text))
 
 	def getText(self):
 		"""Get the contents of this gui's text entry value

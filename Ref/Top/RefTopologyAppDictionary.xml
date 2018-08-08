@@ -981,7 +981,7 @@
     <channel component="recvBuffComp" name="Sensor1" id="0x66" description="Value of Sensor1" type="F32"/>
     <channel component="recvBuffComp" name="Sensor2" id="0x67" description="Value of Sensor3" type="F32"/>
     <channel component="recvBuffComp" name="Parameter1" id="0x68" description="Readback of Parameter1" type="U32"/>
-    <channel component="recvBuffComp" name="Parameter2" id="0x69" description="Readback of Parameter2" low_red="-3" low_orange="-2" low_yellow="-1" high_yellow="1" high_orange="2" hight_red="3" type="I16"/>
+    <channel component="recvBuffComp" name="Parameter2" id="0x69" description="Readback of Parameter2" low_red="-3" low_orange="-2" low_yellow="-1" high_yellow="1" high_orange="2" high_red="3" type="I16"/>
     <channel component="cmdDisp" name="CommandsDispatched" id="0x79" description="Number of commands dispatched" type="U32"/>
     <channel component="cmdDisp" name="CommandErrors" id="0x7a" description="Number of command errors" type="U32"/>
     <channel component="rateGroup2Comp" name="RgMaxTime" id="0xa1" format_string="%u us" description="Max execution time rate group" type="U32"/>

@@ -284,8 +284,8 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             else:
                 mapper = { 0 : str(node.template.get_full_name()),
                         1 : str(node.template.id),
-                        2 : str(node.time.to_readable()),
-                        3 : str(None)
+                        2 : u"",
+                        3 : u""
                         }
             
             return mapper[col]
@@ -307,19 +307,36 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
-            '''
-            if node.val_obj.val < node.template.low_yellow or node.val_obj.val > node.template.high_yellow:
-                attr.SetColour('yellow')
-                attr.SetBold(True)
-            elif node.val_obj.val < node.template.low_orange or node.val_obj.val > node.template.high_orange:
-                attr.SetColour('orange')
-                attr.SetBold(True)
-            elif node.val_obj.val < node.template.low_red or node.val_obj.val > node.template.high_red:
-                attr.SetColour('red')
-                attr.SetBold(True)
-            '''
+            if col == 3:
+                if node.val_obj != None:
+                    if node.template.low_red != None and node.val_obj.val < node.template.low_red:
+                        print("Red.....!")
+                        attr.SetColour('red')
+                        attr.SetBold(True)
+                    elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
+                        print("Red.....!")
+                        attr.SetColour('red')
+                        attr.SetBold(True)
+                    elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
+                        print("Orange....")
+                        attr.SetColour('orange')
+                        attr.SetBold(True)
+                    elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
+                        print("Orange....")
+                        attr.SetColour('orange')
+                        attr.SetBold(True)
+                    elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
+                        print("Yellow...")
+                        attr.SetColour('yellow')
+                        attr.SetBold(True)
+                    elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
+                        print("Yellow...")
+                        attr.SetColour('yellow')
+                        attr.SetBold(True)
+
+
         
-        return False
+        return True
 
     def UpdateModel(self, new_data):
         """Add a new data item to the event log. 
