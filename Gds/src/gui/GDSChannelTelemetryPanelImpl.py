@@ -12,6 +12,7 @@ import GDSChannelTelemetryPanelGUI
 from pprint import pprint
 import inspect
 import GDSChannelFilterDialogImpl
+from copy import deepcopy
 
 from data_types.ch_data import *
 from data_types.pkt_data import *
@@ -30,12 +31,11 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         Arguments:
             parent {wx.Window} -- The parent window for this panel
         """
-
         self.ch_dict = ch_dict
 
         GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
 
-        self.dv_model = ChannelTelemDataViewModel([])
+        self.dv_model = ChannelTelemDataViewModel(ch_dict)
     
         self.ChannelTelemDataViewCtl.AssociateModel(self.dv_model)
 
@@ -128,11 +128,21 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     and are called automatically by the data view.
     """
 
-    def __init__(self, data):
+    def __init__(self, ch_dict):
         wx.dataview.PyDataViewModel.__init__(self)
-        self.data = data
-        self.filter = []
 
+        # All the possible ChData objects that we can possibly recieve
+        self.data = []
+        for c in ch_dict.values():
+            self.data.append(ChData.get_empty_obj(c))
+
+        # The ChData objects that we have recieved
+        self.chs_seen = []
+
+        # The current list of full_names that we want to filter for
+        self.filter = []
+        self.prev_filter = []
+ 
         # The PyDataViewModel derives from both DataViewModel and from
         # DataViewItemObjectMapper, which has methods that help associate
         # data view items with Python objects. Normally a dictionary is used
@@ -143,15 +153,18 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
+        
         """Get teh number of columns
         
         Returns:
             int -- the number of columns
         """
+        
         return 4
 
     # Map the data column numbers to the data type
     def GetColumnType(self, col):
+        
         """Get the data type associated with the given column
         
         Arguments:
@@ -166,9 +179,11 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                    2 : 'string',
                    3 : 'string', # the real value is an int, but the renderer should convert it okay
                    }
+        
         return mapper[col]
 
     def GetChildren(self, parent, children):
+        
         """Return the children of a given parent
         
         Arguments:
@@ -189,13 +204,25 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # item, so we'll use the genre objects as its children and they will
         # end up being the collection of visible roots in our tree.
         if not parent:
-            for obj in self.data:
-                children.append(self.ObjectToItem(obj))
-            return len(self.data)
-
+            # If there is no filter
+            if self.filter == []:
+                for obj in self.chs_seen:
+                    children.append(self.ObjectToItem(obj))
+                
+                return len(self.chs_seen)
+            else:
+                print(self.filter)
+                gen = [x for x in self.data if x.template.get_full_name() in self.filter]
+                print(gen)
+                for obj in gen:
+                    children.append(self.ObjectToItem(obj))
+                
+                return len(gen)
+        
         return 0
 
     def IsContainer(self, item):
+        
         """Find out if the given item has children
         
         Arguments:
@@ -208,10 +235,13 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         # The hidden root is a container
         if not item:
+            
             return True
+        
         return False
-
+        
     def GetParent(self, item):
+        
         """Get the parent of the given item
         
         Arguments:
@@ -221,10 +251,11 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             Item -- the parent of the argument item
         """
         # Return the item which is this item's parent.
-
+        
         return wx.dataview.NullDataViewItem
-
+        
     def GetValue(self, item, col):
+        
         """Return the value to be displayed for this item and column
         
         Arguments:
@@ -243,19 +274,27 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         # Fetch the data object for this item.
         node = self.ItemToObject(item)
-
         if isinstance(node, ChData):
-            mapper = { 0 : str(node.template.get_full_name()),
-                       1 : str(node.template.id),
-                       2 : str(node.time.to_readable()),
-                       3 : str(node.val_obj.val)
-                       }                                                                                                                                                                                                        
+            if node.val_obj != None:
+                mapper = { 0 : str(node.template.get_full_name()),
+                        1 : str(node.template.id),
+                        2 : str(node.time.to_readable()),
+                        3 : str(node.val_obj.val)
+                        }     
+            else:
+                mapper = { 0 : str(node.template.get_full_name()),
+                        1 : str(node.template.id),
+                        2 : str(node.time.to_readable()),
+                        3 : str(None)
+                        }
+            
             return mapper[col]
 
         else:
             raise RuntimeError("unknown node type")
-
+        
     def GetAttr(self, item, col, attr):
+        
         """Get the attributes of the given item at the given column in the list control
         
         Arguments:
@@ -279,6 +318,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 attr.SetColour('red')
                 attr.SetBold(True)
             '''
+        
         return False
 
     def UpdateModel(self, new_data):
@@ -287,59 +327,84 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         Arguments:
             new_data {EventData} -- the new event data to be added
         """
-
-        print([str(d) for d in self.data])
+        
         if isinstance(new_data, PktData):
             for c in new_data.get_chs():
                 self.UpdateModel(c)
         elif isinstance(new_data, ChData):
-            
-            match = [x for x in self.data if x.template == new_data.template]
 
+            # Update list of all possible ChData with new_data
+            null_member = [x for x in self.data if x.template == new_data.template]
+            null_member = null_member[0]
+            null_member.val_obj = deepcopy(new_data.val_obj)
+            null_member.time = deepcopy(new_data.time)
+
+            # Check if we have seen this Ch before
+            match = [x for x in self.chs_seen if x.template == new_data.template]
+
+            # If we haven't...
             if len(match) == 0:   
-                self.data.append(new_data)
-                if self.filter == [] or new_data.template.get_full_name() in self.filter:
+                self.chs_seen.append(new_data)
+
+                # If there is no filter, add the new_data to the view
+                if self.filter == []:
                     self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                # If there is a filter, tell the updated member of the full Ch list to update in the view
+                elif self.new_data.template.get_full_name() in self.filter:
+                    self.ItemChanged(self.ObjectToItem(null_member))
+            # If we have...
             else:  
+                # Update teh old data in the list
                 old_data = match[0]
                 old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
                 old_data.time.__dict__ = new_data.time.__dict__.copy()
-                if self.filter == [] or new_data.template.get_full_name() in self.filter:
+
+                if self.filter == []:
                     self.ItemChanged(self.ObjectToItem(old_data)) 
-
+                elif new_data.template.get_full_name() in self.filter:
+                    self.ItemChanged(self.ObjectToItem(null_member))
+    
     def ChangeFilter(self, filt):
-
+        
         # Don't do anything if the filters are the same
         if self.filter == filt:
             return
-        # Reset filter - add everything back
+
+        # Set filter and prev_filter
+        self.prev_filter = self.filter
+        self.filter = filt
+
+        # Reset filter - add back all the channels in the data_seen list
         if filt == []:
-            c = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() in self.filter]
+            c = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() in self.prev_filter]
 
             for i in c:
                 self.ItemDeleted(wx.dataview.NullDataViewItem, i)  
-            for d in self.data:
+            for d in self.chs_seen:
                 self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
 
         else:
-            for d in self.data:
-                # If the previous filter was empty...
-                if self.filter == []:
-                    # Remove everything not in new filter, otherwise keep it
-                    if d.template.get_full_name() not in filt:
-                        self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
-                else:
+            # If the previous filter was empty...
+            if self.prev_filter == []:
+                
+                # Remove everything in the data seen list
+                for d in self.chs_seen:
+                    self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                
+                # Add everything from data that is in the filter
+                for d in self.data:
+                    if d.template.get_full_name() in filt:
+                        self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                
+            else:
+                for d in self.data:
                     # Remove everything in prev filter but not in new filter
-                    if d.template.get_full_name() in self.filter and d.template.get_full_name() not in filt:
+                    if d.template.get_full_name() in self.prev_filter and d.template.get_full_name() not in filt:
                         self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
                     # Add everything not in prev filter but in new filter
-                    elif d.template.get_full_name() not in self.filter and d.template.get_full_name() in filt:
+                    elif d.template.get_full_name() not in self.prev_filter and d.template.get_full_name() in filt:
                         self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
-
-        # Set new filter
-        self.filter = filt
-
-
+        
     def SetData(self, data):
         """Set the data used by this model to populate the data view
         
@@ -350,7 +415,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         for d in data:
             self.UpdateModel(d)
 
-
     def GetData(self):
         """Get the list of data used by this model to populate the data view
         
@@ -359,7 +423,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
 
         return self.data
-
 
 
 ''' 
