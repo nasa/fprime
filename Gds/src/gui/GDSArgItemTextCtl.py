@@ -52,8 +52,8 @@ class ArgItemTextCtl(wx.Panel):
 		Arguments:
 			event {wx.Event} -- wx object passed by callback
 		"""
-
-		self.Validate()
+		# NOTE This might be annoying - add it back if you want
+		#self.Validate()
 		
 class HexIntegerValidator(wx.Validator):
 	'''Validator which checks for hex or integer formating of entry.'''

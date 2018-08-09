@@ -86,9 +86,9 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 		for (arg_name, _, arg_type) in temp.arguments:
 			if type(arg_type) == BoolType:
-				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], arg_name)
+				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, ["True", "False"], arg_name, validator=GDSArgItemComboBox.ComboEnumValidator())
 			elif type(arg_type) == EnumType:
-				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, arg_type.keys(), arg_name)
+				k = GDSArgItemComboBox.ArgItemComboBox(self.CmdArgsScrolledWindow, arg_type.keys(), arg_name, validator= GDSArgItemComboBox.ComboEnumValidator())
 			elif type(arg_type) == type(F64Type()):
 				k = GDSArgItemTextCtl.ArgItemTextCtl(self.CmdArgsScrolledWindow, GDSArgItemTextCtl.RealValidator(), arg_name)
 			elif type(arg_type) == type(F32Type()):
@@ -136,15 +136,16 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		'''Gathers entered command arguments and sends them to all encoders'''
 		arglist = list()
 		for i in self.arginputs:
+			if i.Validate() == False:
+				return False
 			if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
-				if i.Validate() == False:
-					return False
 				arglist.append(str(i.getText()))
 			elif type (i) == GDSArgItemComboBox.ArgItemComboBox:
 				arglist.append(i.getSelection())
 
 
 		s = self.CmdsComboBox.GetStringSelection()
+		print(arglist)
 		if s is not u'':
 			temp = self.cname_dict[s]
 			data_obj = cmd_data.CmdData(tuple(arglist), temp)

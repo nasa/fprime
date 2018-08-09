@@ -1,8 +1,9 @@
 import wx
 class ArgItemComboBox(wx.Panel):
+
 	'''Defines the GUI and funcitonality for the GUI element which accepts command arguments with a wx.ComboBox'''
 
-	def __init__(self, parent, combo_options, label):
+	def __init__(self, parent, combo_options, label, validator):
 		"""ArgItemComboBox constructor
 		
 		Arguments:
@@ -21,7 +22,7 @@ class ArgItemComboBox(wx.Panel):
 		bSizer.Add( self.m_argStaticText, 0, wx.ALL, 5 )
 
 		
-		self.m_argWindow = wx.ComboBox( self, wx.ID_ANY, u"Combo!", wx.DefaultPosition, wx.DefaultSize, combo_options, wx.CB_READONLY )
+		self.m_argWindow = wx.ComboBox( self, wx.ID_ANY, u"Combo!", wx.DefaultPosition, wx.DefaultSize, combo_options, wx.CB_READONLY, validator=validator )
 		bSizer.Add( self.m_argWindow, 0, wx.ALL, 5 )
 
 		self.SetSizer( bSizer )
@@ -44,3 +45,41 @@ class ArgItemComboBox(wx.Panel):
 		"""
 
 		return self.m_argWindow.GetStringSelection()
+
+
+class ComboEnumValidator(wx.Validator):
+	'''Validator which checks for hex or integer formating of entry.'''
+
+	def __init__(self):
+		wx.Validator.__init__(self)
+
+	def Clone(self):
+		return ComboEnumValidator()
+
+	def Validate(self, win):
+		"""Validates the text control contents as a hex or integer number
+		
+		Arguments:
+			win {wx.Window} -- Parent window. Passed in automoatically
+		
+		Returns:
+			bool -- True if correct format, False otherwise
+		"""
+		comboBox = self.GetWindow()
+		text = comboBox.GetStringSelection()
+		
+		if type(text) != unicode or text == u'':
+			wx.MessageBox("You must select an Enum value from the dropdown menu to continue", "Error")
+			comboBox.SetBackgroundColour("pink")
+			comboBox.Refresh()
+			return False
+		else:
+			comboBox.SetBackgroundColour("white")
+			return True
+
+
+	def TransferToWindow(self):
+		return True
+
+	def TransferFromWindow(self):
+		return True
