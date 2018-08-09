@@ -12,7 +12,7 @@ new components and topologies.
 ## Getting Started with F' and the Reference Application
 
 The first step to running F' is to ensure that the required build tools are available on your system. At its most basic, F' requires
-several tools to be installed: Git, GNU make, lxml, and python w/ cheetah. In order, to run the ground-system several more packages are required (see: Gse/bin/required.txt). Make is available on most systems, as well as git and lxml.
+several tools to be installed: Git, GNU make, lxml, and python 2 w/ cheetah. In order, to run the ground-system several more packages are required (see: Gse/bin/required.txt). Make is available on most systems, as well as git and lxml.
 
 ### Cloning the Software and Building the Reference Application
 
@@ -26,14 +26,15 @@ git clone https://github.com/nasa/fprime.git
 
 The next step is to install the software. Make sure git, and lxml are installed on your system. Then, using Python 2's pip tool the python dependencies can be installed. Both these steps can be accomplished on Ubuntu with the following commands:
 
-#### Ubuntu Installation.
+#### Ubuntu Installation (sudo may be required)
 ```
 sh fprime/mk/os-pkg/ubuntu-packages.sh
-pip install -r mk/python/pip_required_build.txt
-pip install -r mk/python/pip_required_gui.txt
+pip install numpy
+pip install -r fprime/mk/python/pip_required_build.txt
+pip install -r fprime/mk/python/pip_required_gui.txt
 ```
 *Note:* other installation and setup instructions are availabe in the [user guide.](https://github.com/nasa/fprime/blob/master/docs/UsersGuide/FprimeUserGuide.pdf)
-
+*Note 2:* numpy is required for some packages setup scripts, and thus must be install first.
 
 ### Building the Reference Application
 
@@ -60,10 +61,10 @@ show that the reference application was successfully built and runnable. Replace
 used in building the reference application
 
 **Running with the GUI:**
-``
+```
 cd fprime/Ref
 ./scripts/run_ref.sh
-``
+```
 
 **Note:** running with the gui is the recommended way of running the application. However, one can run the application directly from target output directory if desired.
 
@@ -129,9 +130,9 @@ file should look like this:
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
-    <import_dictionary>Svc/FileDownlink/Commands.xml</import_dictionary>
-    <import_dictionary>Svc/FileDownlink/Telemetry.xml</import_dictionary>
-    <import_dictionary>Svc/FileDownlink/Events.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Commands.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Telemetry.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Events.xml</import_dictionary>
     <ports>
 
 
@@ -166,7 +167,7 @@ These three XML dictionaries define the structure of commands, events, and telem
 to automatically generate the needed code to process commands, and emit events and telemetry. This allows the developer to concentrate on the specific code for the component.
 
 First we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This command will trigger an event
-which will report if the GPS is locked or not. Command.xml should look like the following:
+which will report if the GPS is locked or not. Commands.xml should look like the following:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -328,7 +329,7 @@ GpsApp_MODULES := \
     $(UTILS_MODULES)
 ...
 ```
-This adds our (future) topology to the make system as well as the component we just created. This allows us to generate make files, and make our component. In
+This adds our (future) topology to the make system as well as the component we just created. This allows us to generate make files and make our component. In
 addition, we will be able to build our project's topology one we add that. *Note:* since we already added a folder for our Topology to the make system we'll need
 to create a placeholder folder (below) before we can build.
 
@@ -340,7 +341,7 @@ DEPLOYMENTS := Ref GpsApp acdev
 
 Given that we have already defined our *Topology* folder in the *GpsApp/Top* line above, we will need to add a placeholder for the Topology of our
 GpsApp, which we will fill later. Make the folder *fprime/GpsApp/Top* and add an empty file *mod.mk*. We will fill this folder and mod.mk file
-later, but creating it here enables us to build our component. Now our make system should be ready for us to build our new module, and take advantage of
+later, but creating it here enables us to build our component. Now our make system should be ready for us to build our new module and take advantage of
  the code-generation that is available.
 
 ## Setting Up Module Make Files and Code
@@ -382,7 +383,7 @@ HDR = \
 ```
 *Note:* since we have not created the code files yet, we leave them commented out. This allows us to test the make commands, without erring for
 missing files. We can test the make system by running the following commands. *make gen_make* will auto-generate parts of the make system, *make 
-clean* cleans the module, and *make* build the module.
+clean* cleans the module, and *make* builds the module.
 
 ```
 make gen_make
@@ -402,8 +403,8 @@ don't already have implementations we can safely rename the template files).
 
 ```
 make impl
-mv GpsComponentImpl.cpp-tmpl GpsComponentImpl.cpp
-mv GpsComponentImpl.hpp-tmpl GpsComponentImpl.hpp
+mv GpsComponentImpl.cpp-template GpsComponentImpl.cpp
+mv GpsComponentImpl.hpp-template GpsComponentImpl.hpp
 ```
 
 *Note:* If the developer regenerates the templates, care must be taken to not overwrite already implemented code by copying the templates to the implementation files.
@@ -874,6 +875,24 @@ namespace GpsApp {
 #endif
 ```
 
+Next, we need to add (or uncomment) our .cpp and .hpp to the mod.mk in the GpsApp directory.  The final version will look like this:
+
+### fprime/GpsApp/Gps/mod.mk (final)
+```
+# ---------------------------------------------------------------------- 
+# mod.mk
+# ---------------------------------------------------------------------- 
+
+SRC = \
+	GpsComponentAi.xml \
+        GpsComponentImpl.cpp
+
+HDR = \
+        GpsComponentImpl.hpp
+
+#SUBDIRS = test
+```
+
 Finally, regenerate the makefiles, clean, and build. We will use this pattern a lot.
 ```
 make gen_make
@@ -912,13 +931,13 @@ on RefTopologyAppAi.xml from the reference application. GpsTopologyAppAi.xml sho
 of the headers that define them.
 3. **Topology.cpp**: top level code, main function, and initialization of the components, threads, and registration of commands.
 
-Essentially, GpsTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology is the implementation code. All of these
+Essentially, GpsTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology.cpp is the implementation code. All of these
 files are referenced by the make files we inherited from the reference app. Building the distribution (fprime/GpsApp) will include the 
 topology (fprime/GpsApp/Top) as its entry-point creating a single application, which represents our software.
 
 Sample versions of these files are provided below, and are annotated with comments representing the changes
 made to support the Gps Application. **Note:** these files are available in a working repository at:
-[https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application) in case the user prefer a direct checkout of working code.
+[https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application) in case the user prefers a direct checkout of working code.
 
 We will also need to update the mod.mk in the Top directory to change the name of "RefTopologyAppAi.xml" to "GpsTopologyAppAi.xml".
 
@@ -949,9 +968,6 @@ If you see output similar to the following, when running with the UART GPS you h
 [ERROR] Failed to open file: /dev/ttyACM0
 [ERROR] Failed to open file: /dev/ttyACM0
 ```
-
-### Running with the GUI
-
 
 ### Topology.cpp (Sample)
 ```
