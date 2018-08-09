@@ -3,12 +3,12 @@
 import sys
 import pexpect
 import os
-from Tkinter import *
-import Pmw
 import threading
 import signal
 import time
 import Queue
+import wx
+import PexpectRunnerConsolImpl
 
 def sighandler(signum, frame):
 #    print "Signaled: %d" %signum
@@ -19,7 +19,6 @@ def sighandler(signum, frame):
 
 def process_poller():
     # command to run is arguments 2->end
-    global text
     global exitThread
     command = " ".join(sys.argv[3:])
     print "Running command %s"%command
@@ -36,11 +35,9 @@ def process_poller():
                 child.wait()
                 break
             if len(child.before):
-                text_queue.put(child.before)
-#                text.appendtext(child.before + "\n")
+                text_queue.put(child.before)              
         except pexpect.EOF:
             text_queue.put("**EXIT**")
-#            text.appendtext("**EXIT**")
             break
         except pexpect.TIMEOUT:
             if exitThread:
@@ -49,7 +46,6 @@ def process_poller():
                 break
             if len(child.before):
                 text_queue.put(child.before)
-#                text.appendtext(child.before + "\n")
                 
 def poll_text():
     
@@ -58,15 +54,15 @@ def poll_text():
         while True:
             msg = text_queue.get(block = False)
             if msg == "SIGQUIT":
-                root.quit()
+                consol.Close()
                 return
             else:
-                text.appendtext(msg + "\n")
+                consol.TextCtrlConsol.AppendText(msg + "\n\n")
             text_queue.task_done()
     except Queue.Empty:
         pass
     # reschedule
-    root.after(100,poll_text)
+    wx.CallLater(100, poll_text)
 
 def main(argv=None):
     
@@ -76,12 +72,12 @@ def main(argv=None):
     # 2 = title for window
     # 3... = binary to run
     
-    global root
-    root = Pmw.initialise()
-    root.title(sys.argv[2])
-    global text
-    text = Pmw.ScrolledText(root,hscrollmode="dynamic",vscrollmode="dynamic")
-    text.pack(expand=1,fill='both')
+    app = wx.App(False)
+
+    global consol
+    consol = PexpectRunnerConsolImpl.PexpectRunnerImpl(None)
+    consol.SetTitle(sys.argv[2])
+    consol.Show(True)
     
     global exitThread 
     exitThread = False
@@ -97,8 +93,8 @@ def main(argv=None):
     signal.signal(signal.SIGTERM,sighandler)
     signal.signal(signal.SIGCHLD,sighandler)
 
-    root.after(0,poll_text)
-    root.mainloop()
+    wx.CallLater(0, poll_text)
+    app.MainLoop()
     
     exitThread = True
     
@@ -108,3 +104,5 @@ def main(argv=None):
                 
 if __name__ == "__main__":
     sys.exit(main())
+
+    
