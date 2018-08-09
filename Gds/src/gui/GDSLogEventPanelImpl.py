@@ -1,8 +1,12 @@
+# TODO Documentation
+
+
 import wx
 import GDSLogEventPanelGUI
 from data_types.event_data import EventData
 from pprint import pprint
 from utils.event_severity import EventSeverity
+from utils.config_manager import ConfigManager
 
 ###########################################################################
 ## Class LogEventsImpl
@@ -21,7 +25,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
         GDSLogEventPanelGUI.LogEvents.__init__ ( self, parent)
         self.parent = parent
-    
+
         self.dv_model = EventLogDataViewModel([])
 
         self.EventLogDataListCtl.AssociateModel(self.dv_model)
@@ -34,11 +38,11 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         self.EventLogSeverityComboBox.Append('')
         for i in EventSeverity:
             self.EventLogSeverityComboBox.Append(i.name)
-       
+
         self.EventLogSeverityComboBox.SetSelection(0)
 
         self.EventLogDataListCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
-        
+
         self.scrollEventLogToBottom()
     def __del__( self ):
         self.dv_model.DecRef()
@@ -63,14 +67,14 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
                 i = self.dv_model.ObjectToItem(self.dv_model.data_filtered[int(l - 1)])
             else:
                 i = self.dv_model.ObjectToItem(self.dv_model.data[int(l - 1)])
-            
+
             self.EventLogDataListCtl.EnsureVisible(i)
             self.EventLogDataListCtl.Refresh()
         wx.CallLater(10, self.scrollEventLogToBottom)
 
     def getEventLogState(self):
         """Get the internal data list used by the model to populate the data view for telem panel
-        
+
         Returns:
             list -- list of ChData or PktData objects
         """
@@ -79,7 +83,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
     def setEventLogState(self, state):
         """Set the internal data list used by the model to populate the data view for telem
-        
+
         Arguments:
             data {list} -- list of ChData or PktData objects
         """
@@ -90,7 +94,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
     def onCopyKeyPressed(self, event):
         """Callback for key pressed within the data view control
         """
-        
+
         # Ctrl-C pressed
         if event.ControlDown() and event.GetKeyCode() == 67:
             rows = self.EventLogDataListCtl.GetSelections()
@@ -98,7 +102,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
             for r in rows:
                 o = self.dv_model.ItemToObject(r)
                 cpy_out += o.get_str(verbose=True, csv=True) + '\n'
-            
+
             clipboard = wx.TextDataObject()
             # Set data object value
             clipboard.SetText(cpy_out)
@@ -134,13 +138,40 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
 
 class EventLogDataViewModel(wx.dataview.PyDataViewModel):
-    """This class acts as an intermediary between user data and the actual data 
-    view display. It stores data and maintains a mapping from data to items in 
-    the data view. Most of the methdos in this class just need to be defined 
+    """This class acts as an intermediary between user data and the actual data
+    view display. It stores data and maintains a mapping from data to items in
+    the data view. Most of the methdos in this class just need to be defined
     and are called automatically by the data view.
     """
 
-    def __init__(self, data):
+    def __init__(self, data, config=None):
+        '''
+        Constructor
+
+        Args:
+            data: TODO
+            config (ConfigManager, default=None): object with all config info
+                   for colors. If None, defaults used
+        '''
+
+        if config==None:
+            config = ConfigManager()
+
+        self.config = config
+
+        # Colors in config object are Hex codes stored as strings.
+        #  Convert the string to an int, and then convert to a wxPython Colour
+        warn_lo_color_val = int(self.config.get('colors', 'warning_lo'), 16)
+        warn_hi_color_val = int(self.config.get('colors', 'warning_hi'), 16)
+        fatal_color_val = int(self.config.get('colors', 'fatal'), 16)
+        command_color_val = int(self.config.get('colors', 'command'), 16)
+
+        self.warn_lo_color = wx.Colour(warn_lo_color_val)
+        self.warn_hi_color = wx.Colour(warn_hi_color_val)
+        self.fatal_color = wx.Colour(fatal_color_val)
+        self.command_color = wx.Colour(command_color_val)
+
+
         wx.dataview.PyDataViewModel.__init__(self)
         self.data = data
 
@@ -159,7 +190,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
         """Get teh number of columns
-        
+
         Returns:
             int -- the number of columns
         """
@@ -169,10 +200,10 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
     # Map the data column numbers to the data type
     def GetColumnType(self, col):
         """Get the data type associated with the given column
-        
+
         Arguments:
             col {int} -- the column index of interest
-        
+
         Returns:
             dict -- mapping from column index to type
         """
@@ -181,17 +212,17 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
                    1 : 'string',
                    2 : 'string',
                    3 : 'string',
-                   3 : 'string', 
+                   3 : 'string',
                    }
         return mapper[col]
 
     def GetChildren(self, parent, children):
         """Return the children of a given parent
-        
+
         Arguments:
             parent {Item} -- the parent to get children of
             children {List} -- list of the children Items
-        
+
         Returns:
             int -- length of children
         """
@@ -216,10 +247,10 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
     def IsContainer(self, item):
         """Find out if the given item has children
-        
+
         Arguments:
             item {Item} -- the item to test
-        
+
         Returns:
             bool -- returns True if the argument has children
         """
@@ -235,10 +266,10 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
     def GetParent(self, item):
         """Get the parent of the given item
-        
+
         Arguments:
             item {Item} -- input item
-        
+
         Returns:
             Item -- the parent of the argument item
         """
@@ -249,14 +280,14 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
     def GetValue(self, item, col):
         """Return the value to be displayed for this item and column
-        
+
         Arguments:
             item {Item} -- the item whose value we will get
             col {int} -- the column we will get the value from
-        
+
         Raises:
             RuntimeError -- error if we get an object that we don't know how to handle
-        
+
         Returns:
             dict -- mapping from column to the value for a given item
         """
@@ -268,14 +299,14 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         # Fetch the data object for this item.
         node = self.ItemToObject(item)
         arg_vals = tuple([arg.val for arg in node.args])
-        
+
         if isinstance(node, EventData):
             mapper = { 0 : str(node.time.to_readable()),
                        1 : str(node.template.get_full_name()),
                        2 : str(node.template.id),
                        3 : str(node.template.severity.name),
                        4 : str(node.template.format_str%arg_vals)
-                       }                                                                                                                                                                                                        
+                       }
             return mapper[col]
 
         else:
@@ -284,12 +315,12 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
     def GetAttr(self, item, col, attr):
         """Get the attributes of the given item at the given column in the list control
-        
+
         Arguments:
             item {Item} -- item object in question
             col {int} -- column number in question
             attr {attr} -- the attribute object to set
-        
+
         Returns:
             bool -- True if attributes were set
         """
@@ -297,17 +328,23 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         node = self.ItemToObject(item)
         if isinstance(node, EventData) and col == 3:
             if node.template.severity == EventSeverity.FATAL:
-                attr.SetColour('red')
+                attr.SetColour(self.fatal_color)
                 attr.SetBold(True)
-            elif node.template.severity == EventSeverity.ACTIVITY_HI or node.template.severity == EventSeverity.WARNING_HI:
-                attr.SetColour('orange')
+            elif node.template.severity == EventSeverity.WARNING_HI:
+                attr.SetColour(self.warn_hi_color)
+                attr.SetBold(True)
+            elif node.template.severity == EventSeverity.WARNING_LO:
+                attr.SetColour(self.warn_lo_color)
+                attr.SetBold(True)
+            elif node.template.severity == EventSeverity.COMMAND:
+                attr.SetColour(self.command_color)
                 attr.SetBold(True)
             return True
         return False
 
     def UpdateModel(self, new_data):
-        """Add a new data item to the event log. 
-        
+        """Add a new data item to the event log.
+
         Arguments:
             new_data {EventData} -- the new event data to be added
         """
@@ -319,16 +356,16 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         if st == None and sev == None:
             self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
             self.data_filtered = list()
-        elif st is not None and st in new_data.get_str():     
+        elif st is not None and st in new_data.get_str():
             self.data_filtered.append(new_data)
-            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))  
+            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
         elif new_data.template.severity == sev:
             self.data_filtered.append(new_data)
-            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))  
+            self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
 
     def ApplyFilter(self, search_term, severity):
         """Apply a filter to the event log display. Pass None and None to reset the filter
-        
+
         Arguments:
             search_term {string} -- the term to search by
             severity {EventSeverity} -- severity to filter by
@@ -353,7 +390,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             for o in self.data:
                 self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
             self.data_filtered = list()
-        else:     
+        else:
             # Loop through data and remove those items which do not match the filter
             if last_filter_none:
                 for o in self.data:
@@ -381,7 +418,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
     def getDataLen(self):
         """Get the length of the list of data objects currently being used internally by this model
-        
+
         Returns:
             int -- length of the data list
         """
@@ -390,5 +427,5 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             return len(self.data)
         else:
             return len(self.data_filtered)
-    
+
 

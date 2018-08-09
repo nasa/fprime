@@ -150,6 +150,9 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         value association for each section.
         '''
 
+        ########################## TYPES ###########################
+        # These configs give the types of fields in the binary data
+
         self.__prop['types'] = dict()
 
         self.__prop['types']['msg_len'] = "U32"
@@ -159,6 +162,22 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['types']['pkt_id'] = "U16"
 
         self._set_section_defaults('types')
+
+
+        ######################### COLORS ###########################
+        # Colors are hex codes in BGR format
+
+        self.__prop['colors'] = dict()
+
+        self.__prop['colors']['warning_lo'] = "0x00BCED"
+        self.__prop['colors']['warning_hi'] = "0x0073E5"
+        self.__prop['colors']['fatal'] = "0x0000FF"
+        self.__prop['colors']['command'] = "0xFF0000"
+        self.__prop['colors']['red'] = "0x0000FF"
+        self.__prop['colors']['orange'] = "0x0073E5"
+        self.__prop['colors']['yellow'] = "0x00BCED"
+
+        self._set_section_defaults('colors')
 
 
     def _set_section_defaults(self, section):
