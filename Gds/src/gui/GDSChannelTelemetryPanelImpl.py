@@ -17,6 +17,7 @@ from copy import deepcopy
 from data_types.ch_data import *
 from data_types.pkt_data import *
 from models.serialize.serializable_type import SerializableType
+from utils.config_manager import ConfigManager
 
 ###########################################################################
 ## Class ChannelTelemetryImpl
@@ -24,10 +25,10 @@ from models.serialize.serializable_type import SerializableType
 
 class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     '''Implmentation class. Defines functionality of the channel telemetry panel.'''
-    
+
     def __init__( self, parent, ch_dict={} ):
         """Constructor for the ChannelTelemetryImpl
-        
+
         Arguments:
             parent {wx.Window} -- The parent window for this panel
         """
@@ -52,7 +53,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
     def __del__( self ):
         self.dv_model.DecRef()
-        
+
     def data_callback(self, data):
         """Recieves data from decoders to which this consumer is registered
 
@@ -65,16 +66,16 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
     def getChannelTelemDataViewState(self):
         """Get the internal data list used by the model to populate the data view for telem panel
-        
+
         Returns:
             list -- list of ChData or PktData objects
         """
 
         return self.dv_model.GetData()
-    
+
     def setChannelTelemDataViewState(self, data):
         """Set the internal data list used by the model to populate the data view for telem
-        
+
         Arguments:
             data {list} -- list of ChData or PktData objects
         """
@@ -92,7 +93,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
             for r in rows:
                 o = self.dv_model.ItemToObject(r)
                 cpy_out += o.get_str(verbose=True, csv=True) + '\n'
-            
+
             clipboard = wx.TextDataObject()
             # Set data object value
             clipboard.SetText(cpy_out)
@@ -127,15 +128,38 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
 
 class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
-    """This class acts as an intermediary between user data and the actual data 
-    view display. It stores data and maintains a mapping from data to items in 
-    the data view. Most of the methdos in this class just need to be defined 
+    """This class acts as an intermediary between user data and the actual data
+    view display. It stores data and maintains a mapping from data to items in
+    the data view. Most of the methdos in this class just need to be defined
     and are called automatically by the data view.
     """
 
-    def __init__(self, parent, ch_dict):
+    def __init__(self, parent, ch_dict, config=None):
+        '''
+        Constructor
+
+        Args:
+            ch_dict (dict() object with all ChTemplate objects as values):
+                    Channel dictionary
+            config (ConfigManager obj, default=None): ConfigManager with color
+                   information. If None, defaults used
+        '''
+
         wx.dataview.PyDataViewModel.__init__(self)
+
+        if config==None:
+            config = ConfigManager()
+
+        self.config = config
         self.parent = parent
+
+        # Colors in config object are Hex codes stored as strings.
+        #  Convert the string to an int, and then convert to a wxPython Colour
+        self.red = wx.Colour(int(self.config.get('colors', 'red'), 16))
+        self.orange = wx.Colour(int(self.config.get('colors', 'orange'), 16))
+        self.yellow = wx.Colour(int(self.config.get('colors', 'yellow'), 16))
+
+
         # All the possible ChData objects that we can possibly recieve
         self.data = []
         for c in ch_dict.values():
@@ -147,7 +171,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # The current list of full_names that we want to filter for
         self.filter = []
         self.prev_filter = []
- 
+
         # The PyDataViewModel derives from both DataViewModel and from
         # DataViewItemObjectMapper, which has methods that help associate
         # data view items with Python objects. Normally a dictionary is used
@@ -158,23 +182,23 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
-        
+
         """Get teh number of columns
-        
+
         Returns:
             int -- the number of columns
         """
-        
+
         return 4
 
     # Map the data column numbers to the data type
     def GetColumnType(self, col):
-        
+
         """Get the data type associated with the given column
-        
+
         Arguments:
             col {int} -- the column index of interest
-        
+
         Returns:
             dict -- mapping from column index to type
         """
@@ -184,17 +208,17 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                    2 : 'string',
                    3 : 'string', # the real value is an int, but the renderer should convert it okay
                    }
-        
+
         return mapper[col]
 
     def GetChildren(self, parent, children):
-        
+
         """Return the children of a given parent
-        
+
         Arguments:
             parent {Item} -- the parent to get children of
             children {List} -- list of the children Items
-        
+
         Returns:
             int -- length of children
         """
@@ -213,7 +237,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             if self.filter == []:
                 for obj in self.chs_seen:
                     children.append(self.ObjectToItem(obj))
-                
+
                 return len(self.chs_seen)
             else:
                 print(self.filter)
@@ -221,18 +245,18 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 print(gen)
                 for obj in gen:
                     children.append(self.ObjectToItem(obj))
-                
+
                 return len(gen)
-        
+
         return 0
 
     def IsContainer(self, item):
-        
+
         """Find out if the given item has children
-        
+
         Arguments:
             item {Item} -- the item to test
-        
+
         Returns:
             bool -- returns True if the argument has children
         """
@@ -240,36 +264,36 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         # The hidden root is a container
         if not item:
-            
+
             return True
-        
+
         return False
-        
+
     def GetParent(self, item):
-        
+
         """Get the parent of the given item
-        
+
         Arguments:
             item {Item} -- input item
-        
+
         Returns:
             Item -- the parent of the argument item
         """
         # Return the item which is this item's parent.
-        
+
         return wx.dataview.NullDataViewItem
-        
+
     def GetValue(self, item, col):
-        
+
         """Return the value to be displayed for this item and column
-        
+
         Arguments:
             item {Item} -- the item whose value we will get
             col {int} -- the column we will get the value from
-        
+
         Raises:
             RuntimeError -- error if we get an object that we don't know how to handle
-        
+
         Returns:
             dict -- mapping from column to the value for a given item
         """
@@ -299,21 +323,21 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                         2 : u"",
                         3 : u""
                         }
-            
+
             return mapper[col]
 
         else:
             raise RuntimeError("unknown node type")
-        
+
     def GetAttr(self, item, col, attr):
-        
+
         """Get the attributes of the given item at the given column in the list control
-        
+
         Arguments:
             item {Item} -- item object in question
             col {int} -- column number in question
             attr {attr} -- the attribute object to set
-        
+
         Returns:
             bool -- True if attributes were set
         """
@@ -323,40 +347,38 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 if node.val_obj != None:
                     if node.template.low_red != None and node.val_obj.val < node.template.low_red:
                         print("Red.....!")
-                        attr.SetColour('red')
+                        attr.SetColour(self.red)
                         attr.SetBold(True)
                     elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
                         print("Red.....!")
-                        attr.SetColour('red')
+                        attr.SetColour(self.red)
                         attr.SetBold(True)
                     elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
                         print("Orange....")
-                        attr.SetColour('orange')
+                        attr.SetColour(self.orange)
                         attr.SetBold(True)
                     elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
                         print("Orange....")
-                        attr.SetColour('orange')
+                        attr.SetColour(self.orange)
                         attr.SetBold(True)
                     elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
                         print("Yellow...")
-                        attr.SetColour('yellow')
+                        attr.SetColour(self.yellow)
                         attr.SetBold(True)
                     elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
                         print("Yellow...")
-                        attr.SetColour('yellow')
+                        attr.SetColour(self.yellow)
                         attr.SetBold(True)
-
-
-        
         return True
 
+
     def UpdateModel(self, new_data):
-        """Add a new data item to the event log. 
-        
+        """Add a new data item to the event log.
+
         Arguments:
             new_data {EventData} -- the new event data to be added
         """
-        
+
         if isinstance(new_data, PktData):
             for c in new_data.get_chs():
                 self.UpdateModel(c)
@@ -372,7 +394,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             match = [x for x in self.chs_seen if x.template == new_data.template]
 
             # If we haven't...
-            if len(match) == 0:   
+            if len(match) == 0:
                 self.chs_seen.append(new_data)
 
                 # If there is no filter, add the new_data to the view
@@ -382,19 +404,19 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 elif self.new_data.template.get_full_name() in self.filter:
                     self.ItemChanged(self.ObjectToItem(null_member))
             # If we have...
-            else:  
+            else:
                 # Update teh old data in the list
                 old_data = match[0]
                 old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
                 old_data.time.__dict__ = new_data.time.__dict__.copy()
 
                 if self.filter == []:
-                    self.ItemChanged(self.ObjectToItem(old_data)) 
+                    self.ItemChanged(self.ObjectToItem(old_data))
                 elif new_data.template.get_full_name() in self.filter:
                     self.ItemChanged(self.ObjectToItem(null_member))
-    
+
     def ChangeFilter(self, filt):
-        
+
         # Don't do anything if the filters are the same
         if self.filter == filt:
             return
@@ -408,23 +430,23 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             c = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() in self.prev_filter]
 
             for i in c:
-                self.ItemDeleted(wx.dataview.NullDataViewItem, i)  
+                self.ItemDeleted(wx.dataview.NullDataViewItem, i)
             for d in self.chs_seen:
                 self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
 
         else:
             # If the previous filter was empty...
             if self.prev_filter == []:
-                
+
                 # Remove everything in the data seen list
                 for d in self.chs_seen:
                     self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
-                
+
                 # Add everything from data that is in the filter
                 for d in self.data:
                     if d.template.get_full_name() in filt:
                         self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
-                
+
             else:
                 for d in self.data:
                     # Remove everything in prev filter but not in new filter
@@ -433,10 +455,10 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                     # Add everything not in prev filter but in new filter
                     elif d.template.get_full_name() not in self.prev_filter and d.template.get_full_name() in filt:
                         self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
-        
+
     def SetData(self, data):
         """Set the data used by this model to populate the data view
-        
+
         Arguments:
             data {list} -- list of ChData and/or PktData objects
         """
@@ -446,7 +468,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     def GetData(self):
         """Get the list of data used by this model to populate the data view
-        
+
         Returns:
             list -- the data used in this model
         """
@@ -454,9 +476,9 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         return self.data
 
 
-''' 
+'''
 Implementation for nesting channels inside of packets in the DataViewCtrl in case someone ever wants to implement that again - Josef Biberstein (jxb@mit.edu)
- 
+
     def __init__(self, data):
         wx.dataview.PyDataViewModel.__init__(self)
         self.data = data
@@ -473,7 +495,7 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
         """Get teh number of columns
-        
+
         Returns:
             int -- the number of columns
         """
@@ -482,10 +504,10 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
     # Map the data column numbers to the data type
     def GetColumnType(self, col):
         """Get the data type associated with the given column
-        
+
         Arguments:
             col {int} -- the column index of interest
-        
+
         Returns:
             dict -- mapping from column index to type
         """
@@ -499,11 +521,11 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
 
     def GetChildren(self, parent, children):
         """Return the children of a given parent
-        
+
         Arguments:
             parent {Item} -- the parent to get children of
             children {List} -- list of the children Items
-        
+
         Returns:
             int -- length of children
         """
@@ -534,10 +556,10 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
 
     def IsContainer(self, item):
         """Find out if the given item has children
-        
+
         Arguments:
             item {Item} -- the item to test
-        
+
         Returns:
             bool -- returns True if the argument has children
         """
@@ -557,10 +579,10 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
 
     def GetParent(self, item):
         """Get the parent of the given item
-        
+
         Arguments:
             item {Item} -- input item
-        
+
         Returns:
             Item -- the parent of the argument item
         """
@@ -581,14 +603,14 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
 
     def GetValue(self, item, col):
         """Return the value to be displayed for this item and column
-        
+
         Arguments:
             item {Item} -- the item whose value we will get
             col {int} -- the column we will get the value from
-        
+
         Raises:
             RuntimeError -- error if we get an object that we don't know how to handle
-        
+
         Returns:
             dict -- mapping from column to the value for a given item
         """
@@ -615,7 +637,7 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
                        1 : str(node.template.id),
                        2 : str(node.time.to_readable()),
                        3 : str(node.val_obj.val)
-                       }                                                                                                                                                                                                        
+                       }
             return mapper[col]
 
         else:
@@ -624,12 +646,12 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
 
     def GetAttr(self, item, col, attr):
         """Get the attributes of the given item at the given column in the list control
-        
+
         Arguments:
             item {Item} -- item object in question
             col {int} -- column number in question
             attr {attr} -- the attribute object to set
-        
+
         Returns:
             bool -- True if attributes were set
         """
@@ -652,15 +674,15 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
         return False
 
     def UpdateModel(self, new_data):
-        """Add a new data item to the event log. 
-        
+        """Add a new data item to the event log.
+
         Arguments:
             new_data {EventData} -- the new event data to be added
         """
         match = [x for x in self.data if x.template == new_data.template]
 
         if len(match) == 0:
-            
+
             if isinstance(new_data, PktData):
                 self.data.append(new_data)
                 self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
@@ -674,19 +696,19 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
                     self.ItemAdded(self.ObjectToItem(new_data.get_pkt()), self.ObjectToItem(new_data))
 
         else:
-            
+
             old_data = match[0]
 
             if isinstance(new_data, PktData):
                 for o, n in zip(old_data.chs, new_data.chs):
                     o.val_obj.__dict__ = n.val_obj.__dict__.copy()
                     o.time.__dict__ = n.time.__dict__.copy()
-                    self.ItemChanged(self.ObjectToItem(o))        
+                    self.ItemChanged(self.ObjectToItem(o))
 
             elif isinstance(new_data, ChData):
                 old_data.val_obj.__dict__ = new_data.val_obj.__dict__.copy()
                 old_data.time.__dict__ = new_data.time.__dict__.copy()
-                self.ItemChanged(self.ObjectToItem(old_data)) 
+                self.ItemChanged(self.ObjectToItem(old_data))
 '''
 
 
