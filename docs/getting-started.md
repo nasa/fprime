@@ -282,24 +282,6 @@ satellites visible to the GPS unit. These are all standard fields emitted by a U
 </telemetry>
 ```
 
-Now our dictionaries are defined. Before we can continue, we need to add *GpsIdBase* into the auto-coder constants file located at *fprime/Fw/Cfg/AcConstants.ini*. The end of this file should look like the following. This is the offset we disscussed earlier. In order to prevent collisions, it should be unique for other base ids set in
-this file.
-
-```
-...
-#
-# Demo application components
-#
-# Base IDs
-GpsIdBase                           =       0x0000                   ; Starting range for GPS IDs
-# Define starting opcodes
-GpsIdOpcodeBase                     =       %(GpsIdBase)s            ; Starting range for GPS IDs
-# Define starting telemetry IDs
-GpsIdTelemetryBase                  =       %(GpsIdBase)s            ; Starting telemetry ID for GPS
-# Define starting event IDs
-GpsIdEventsBase                     =       %(GpsIdBase)s            ; Starting Event ID for GPS
-```
-
 ## Setting Up the Build System for Gps and GpsApp
 
 The make system is configured to use *fprime/mk/configs/modules/modules.mk* as a place for specifying builds and various deployments. If we look
