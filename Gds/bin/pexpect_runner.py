@@ -93,7 +93,7 @@ def main(argv=None):
     signal.signal(signal.SIGTERM,sighandler)
     signal.signal(signal.SIGCHLD,sighandler)
 
-    wx.CallLater(0, poll_text)
+    wx.CallLater(1, poll_text)
     app.MainLoop()
     
     exitThread = True
