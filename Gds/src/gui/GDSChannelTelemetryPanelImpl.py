@@ -121,7 +121,6 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
             
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemContextMenu( self, event ):
-        print('hilo')
 
         if not hasattr(self, 'copy_context_id'):
             self.copy_context_id = wx.NewId()
@@ -374,32 +373,32 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
-            if col == 3:
-                if node.val_obj != None:
-                    if node.template.low_red != None and node.val_obj.val < node.template.low_red:
-                        print("Red.....!")
-                        attr.SetColour(self.red)
-                        attr.SetBold(True)
-                    elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
-                        print("Red.....!")
-                        attr.SetColour(self.red)
-                        attr.SetBold(True)
-                    elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
-                        print("Orange....")
-                        attr.SetColour(self.orange)
-                        attr.SetBold(True)
-                    elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
-                        print("Orange....")
-                        attr.SetColour(self.orange)
-                        attr.SetBold(True)
-                    elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
-                        print("Yellow...")
-                        attr.SetColour(self.yellow)
-                        attr.SetBold(True)
-                    elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
-                        print("Yellow...")
-                        attr.SetColour(self.yellow)
-                        attr.SetBold(True)
+            
+            if node.val_obj != None:
+                if node.template.low_red != None and node.val_obj.val < node.template.low_red:
+                    print("Red.....!")
+                    attr.SetColour(self.red)
+                    attr.SetBold(True)
+                elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
+                    print("Red.....!")
+                    attr.SetColour(self.red)
+                    attr.SetBold(True)
+                elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
+                    print("Orange....")
+                    attr.SetColour(self.orange)
+                    attr.SetBold(True)
+                elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
+                    print("Orange....")
+                    attr.SetColour(self.orange)
+                    attr.SetBold(True)
+                elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
+                    print("Yellow...")
+                    attr.SetColour(self.yellow)
+                    attr.SetBold(True)
+                elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
+                    print("Yellow...")
+                    attr.SetColour(self.yellow)
+                    attr.SetBold(True)
         return True
 
 

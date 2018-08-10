@@ -112,8 +112,34 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
                 wx.TheClipboard.Close()
         event.Skip()
 
+    def onCopyKeyPressedContext(self, event):
+        rows = self.EventLogDataListCtl.GetSelections()
+        cpy_out = ""
+        for r in rows:
+            o = self.dv_model.ItemToObject(r)
+            cpy_out += o.get_str(verbose=True, csv=True) + '\n'
 
+        clipboard = wx.TextDataObject()
+        # Set data object value
+        clipboard.SetText(cpy_out)
+        # Put the data in the clipboard
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(clipboard)
+            wx.TheClipboard.Close()
+            
     # Override these handlers to implement functionality for GUI elements
+    def onLogEventDataViewContextMenu( self, event ):
+        if not hasattr(self, 'copy_context_id'):
+            self.copy_context_id = wx.NewId()
+            self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
+
+        menu = wx.Menu()
+        cpy = menu.Append(self.copy_context_id, "copy")
+
+        self.PopupMenu(menu)
+        menu.Destroy()
+        event.Skip()
+
     def onEventLogClearButtonClick( self, event ):
         self.dv_model.DeleteAllItems()
 
