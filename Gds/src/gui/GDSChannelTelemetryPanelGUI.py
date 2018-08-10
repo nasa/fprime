@@ -51,6 +51,7 @@ class ChannelTelemetry ( wx.Panel ):
 		self.Layout()
 		
 		# Connect Events
+		self.ChannelTelemDataViewCtl.Bind( wx.dataview.EVT_DATAVIEW_ITEM_CONTEXT_MENU, self.onChannelTelemContextMenu, id = wx.ID_ANY )
 		self.ChannelTelemSelectChannelsButton.Bind( wx.EVT_BUTTON, self.onChannelTelemSelectChannelsButtonClick )
 		self.ChannelTelemResetFilterButton.Bind( wx.EVT_BUTTON, self.onClickResetFilter )
 		self.ChannelTelemShowHexCheckBox.Bind( wx.EVT_CHECKBOX, self.onChannelTelemShowHexCheckBoxClick )
@@ -60,6 +61,9 @@ class ChannelTelemetry ( wx.Panel ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def onChannelTelemContextMenu( self, event ):
+		event.Skip()
+	
 	def onChannelTelemSelectChannelsButtonClick( self, event ):
 		event.Skip()
 	

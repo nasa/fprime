@@ -104,7 +104,37 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
                 wx.TheClipboard.Close()
         event.Skip()
 
+    def onCopyKeyPressedContext(self, event):
+        rows = self.ChannelTelemDataViewCtl.GetSelections()
+        cpy_out = ""
+        for r in rows:
+            o = self.dv_model.ItemToObject(r)
+            cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+
+        clipboard = wx.TextDataObject()
+        # Set data object value
+        clipboard.SetText(cpy_out)
+        # Put the data in the clipboard
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(clipboard)
+            wx.TheClipboard.Close()
+            
     # Override these handlers to implement functionality for GUI elements
+    def onChannelTelemContextMenu( self, event ):
+        print('hilo')
+
+        if not hasattr(self, 'copy_context_id'):
+            self.copy_context_id = wx.NewId()
+            self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
+
+        menu = wx.Menu()
+        cpy = menu.Append(self.copy_context_id, "copy")
+
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+        event.Skip()
+
     def onChannelTelemSelectChannelsButtonClick( self, event ):
         dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict, config=self.config)
         ret = dlog.ShowModal()
