@@ -15,7 +15,7 @@ from pprint import pprint
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
-	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None, ch_dict = None):
+	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None, status_bar_state = None, ch_dict = None):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
 		self.status_bar = GDSStatusBar(self)
@@ -34,6 +34,9 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
 		if tlm_pnl_state:
 			self.telem_pnl.setChannelTelemDataViewState(tlm_pnl_state)
+
+		if status_bar_state:
+			self.status_bar.set_state(status_bar_state)
 
 		self.TabNotebook.AddPage( self.cmd_pnl, u"Commands", False )
 		self.TabNotebook.AddPage( self.event_pnl, u"Log Events", False )
@@ -162,8 +165,13 @@ class GDSStatusBar(wx.StatusBar):
 		dc.Clear()
 		dc.SetBrush(wx.Brush(self.light_color))
 		dc.DrawCircle(16, 8, 8)
-
-
+	
+	def get_state(self):
+		return self.bytes_recv, self.bytes_sent
+	
+	def set_state(self, state):
+		self.bytes_recv = state[0]
+		self.bytes_sent = state[1]
 
 
 	

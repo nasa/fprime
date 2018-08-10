@@ -60,6 +60,8 @@ class MainFrameFactory(object):
         self.cmd_name_dict = None
 
         self.main_frame_instances = []
+        
+        self.ch_dict = None
 
     def create_new_window(self):
         """Create a new instance of the GDS window
@@ -71,7 +73,8 @@ class MainFrameFactory(object):
         if len(self.main_frame_instances) > 0:
             frame = GDSMainFrameImpl.MainFrameImpl(None, self, \
                 evnt_pnl_state=self.main_frame_instances[0].event_pnl.getEventLogState(), \
-                tlm_pnl_state=self.main_frame_instances[0].telem_pnl.getChannelTelemDataViewState())
+                tlm_pnl_state=self.main_frame_instances[0].telem_pnl.getChannelTelemDataViewState(), \
+                status_bar_state=self.main_frame_instances[0].status_bar.get_state(), ch_dict=self.ch_dict)
 
             self.register_all(frame)
 
@@ -121,7 +124,7 @@ class MainFrameFactory(object):
             ch_dict = self.ch_ldr.get_id_dict(self.opts.xml_dict_path)
             ch_name_dict = self.ch_ldr.get_name_dict(self.opts.xml_dict_path)
 
-
+        self.ch_dict = ch_dict
         self.cmd_enc = cmd_encoder.CmdEncoder()
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)

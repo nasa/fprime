@@ -473,7 +473,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             list -- the data used in this model
         """
 
-        return self.data
+        return self.chs_seen
 
 
 '''
