@@ -21,7 +21,7 @@ class Status ( wx.Panel ):
 		
 		bSizer7 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.StatusTabTextCtl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		self.StatusTabTextCtl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_WORDWRAP|wx.TE_MULTILINE|wx.TE_READONLY )
 		bSizer7.Add( self.StatusTabTextCtl, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		

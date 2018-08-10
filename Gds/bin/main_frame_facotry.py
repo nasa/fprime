@@ -163,6 +163,10 @@ class MainFrameFactory(object):
         if (self.opts.pkt_spec_path != None):
             self.pkt_dec.register(frame.telem_pnl)
 
+        # Register the status panel so that it can dump ray data to the consol
+        self.client_socket.register_distributor(frame.status_pnl)
+        self.cmd_enc.register(frame.status_pnl)
+
         frame.cmd_pnl.register_encoder(self.cmd_enc)
 
         self.client_socket.register_distributor(frame)

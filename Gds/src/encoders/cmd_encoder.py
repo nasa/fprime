@@ -112,7 +112,5 @@ class CmdEncoder(encoder.Encoder):
 
         binary_data = (desc + length + descriptor + op_code + arg_data)
 
-        print(binascii.hexlify(binary_data))
-        print(len(binary_data) - 4 - 4 - 4 - 4 - 2)
         return binary_data
 
