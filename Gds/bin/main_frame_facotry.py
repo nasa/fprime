@@ -74,7 +74,7 @@ class MainFrameFactory(object):
             frame = GDSMainFrameImpl.MainFrameImpl(None, self, \
                 evnt_pnl_state=self.main_frame_instances[0].event_pnl.getEventLogState(), \
                 tlm_pnl_state=self.main_frame_instances[0].telem_pnl.getChannelTelemDataViewState(), \
-                status_bar_state=self.main_frame_instances[0].status_bar.get_state(), ch_dict=self.ch_dict)
+                status_bar_state=self.main_frame_instances[0].status_bar.get_state(), ch_dict=self.ch_dict, config=self.config)
 
             self.register_all(frame)
 
@@ -144,7 +144,7 @@ class MainFrameFactory(object):
             self.dist.register("FW_PACKET_PACKETIZED_TLM", self.pkt_dec)
 
 
-        frame = GDSMainFrameImpl.MainFrameImpl(None, self, ch_dict=ch_dict)
+        frame = GDSMainFrameImpl.MainFrameImpl(None, self, ch_dict=ch_dict, config=self.config)
 
         self.register_all(frame)
 

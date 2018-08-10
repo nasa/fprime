@@ -34,7 +34,7 @@ from itertools import cycle
 class CommandsImpl (GDSCommandPanelGUI.Commands):
 	'''Implementation file for the Command Panel GUI element'''
 
-	def __init__( self, parent, cname_dict ):
+	def __init__( self, parent, cname_dict, config=None ):
 		"""Constructor for the Command Panel implementation
 
 		Arguments:

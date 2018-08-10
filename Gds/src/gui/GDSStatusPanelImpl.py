@@ -7,7 +7,7 @@ import binascii
 
 class StatusImpl ( GDSStatusPanelGUI.Status ):
 	
-	def __init__( self, parent ):
+	def __init__( self, parent, config=None ):
 		GDSStatusPanelGUI.Status.__init__ ( self, parent)
 		self.msg_buffer = []
 

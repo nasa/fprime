@@ -15,7 +15,7 @@ from pprint import pprint
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 
-	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None, status_bar_state = None, ch_dict = None):
+	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None, status_bar_state = None, ch_dict = None, config=None):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
 
 		self.status_bar = GDSStatusBar(self)
@@ -24,10 +24,10 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		# The number of recvd bytes the last time we checked. Use to update the status light
 		self.last_num_byte_recv = 0
 
-		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_name_dict)
-		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook)
-		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook, ch_dict=ch_dict)
-		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook)
+		self.cmd_pnl = GDSCommandPanelImpl.CommandsImpl(self.TabNotebook, factory.cmd_name_dict, config=config)
+		self.event_pnl = GDSLogEventPanelImpl.LogEventsImpl(self.TabNotebook, config=config)
+		self.telem_pnl = GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl(self.TabNotebook, ch_dict=ch_dict, config=config)
+		self.status_pnl = GDSStatusPanelImpl.StatusImpl(self.TabNotebook, config=config)
 
 		if evnt_pnl_state:
 			self.event_pnl.setEventLogState(evnt_pnl_state)

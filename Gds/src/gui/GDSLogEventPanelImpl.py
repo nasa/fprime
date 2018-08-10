@@ -16,7 +16,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
     '''Implementation class for LogEvents panel. Defines funcitonality.'''
 
 
-    def __init__( self, parent ):
+    def __init__( self, parent, config=None ):
         """LogEventsImple constructor
 
         Arguments:

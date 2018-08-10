@@ -8,7 +8,7 @@ import csv
 
 class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
     
-    def __init__( self, parent, ch_dict ):
+    def __init__( self, parent, ch_dict, config=None ):
 
         GDSChannelFilterDialogGUI.ChannelFilterDialog.__init__ ( self, parent)
         self.ch_dict = ch_dict

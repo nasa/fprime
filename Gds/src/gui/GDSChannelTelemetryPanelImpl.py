@@ -26,13 +26,14 @@ from utils.config_manager import ConfigManager
 class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     '''Implmentation class. Defines functionality of the channel telemetry panel.'''
 
-    def __init__( self, parent, ch_dict={} ):
+    def __init__( self, parent, ch_dict={}, config=None ):
         """Constructor for the ChannelTelemetryImpl
 
         Arguments:
             parent {wx.Window} -- The parent window for this panel
         """
         self.ch_dict = ch_dict
+        self.config = config
 
         GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
 
@@ -105,7 +106,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemSelectChannelsButtonClick( self, event ):
-        dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict)
+        dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict, config=self.config)
         ret = dlog.ShowModal()
         if ret == 0:
             self.dv_model.ChangeFilter(dlog.GetFilter())
