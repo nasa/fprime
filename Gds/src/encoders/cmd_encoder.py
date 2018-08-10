@@ -46,6 +46,8 @@ from data_types.cmd_data import CmdData
 from models.serialize.u32_type import U32Type
 from utils.data_desc_type import DataDescType
 
+import binascii
+
 class CmdEncoder(encoder.Encoder):
     '''Encoder class for command data'''
 
@@ -110,5 +112,7 @@ class CmdEncoder(encoder.Encoder):
 
         binary_data = (desc + length + descriptor + op_code + arg_data)
 
+        print(binascii.hexlify(binary_data))
+        print(len(binary_data) - 4 - 4 - 4 - 4 - 2)
         return binary_data
 

@@ -145,7 +145,6 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 
 		s = self.CmdsComboBox.GetStringSelection()
-		print(arglist)
 		if s is not u'':
 			temp = self.cname_dict[s]
 			data_obj = cmd_data.CmdData(tuple(arglist), temp)

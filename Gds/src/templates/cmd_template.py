@@ -67,17 +67,17 @@ class CmdTemplate(data_template.DataTemplate):
         self.arguments = arguments
 
 
-    def get_ful_name(self):
+    def get_full_name(self):
         '''
         Get the full name of this event
 
         Returns:
             The full name (component.channel) for this event
         '''
-        return ("%s.%s"%(self.comp_name, self.id))
+        return ("%s.%s"%(self.comp_name, self.mnemonic))
 
     def get_comp_name(self):
-        return self.component
+        return self.comp_name
 
     def get_mnemonic(self):
         return self.mnemonic
