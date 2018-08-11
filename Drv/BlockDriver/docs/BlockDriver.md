@@ -7,4 +7,5 @@
 |Channel Name|ID|Type|Description|
 |---|---|---|---|
 |BD_Cycles|0 (0x0)|U32|Driver cycle count|
+|BD_Cycles|0 (0x0)|U32|Driver cycle count|
 

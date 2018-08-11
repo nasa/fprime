@@ -1,6 +1,6 @@
 <events>
     <!-- Open error -->
-    <event id="0" name="GP_OpenError" severity="WARNING_HI" format_string = "Error opening GPIO device %d: %d" >
+    <event id="0" name="GP_OpenError" severity="WARNING_HI" format_string = "Error opening GPIO device %d: %d (%s)" >
         <comment>
         Open error
         </comment>
@@ -10,6 +10,9 @@
             </arg>          
             <arg name="error" type="I32">
                 <comment>The error code</comment>
+            </arg>          
+            <arg name="msg" type="string" size="40">
+                <comment>The error string</comment>
             </arg>          
         </args>
     </event>

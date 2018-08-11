@@ -161,7 +161,7 @@
 
 // Define max length of assert string
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE                 80  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE                 120  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -169,7 +169,7 @@
 // The size of the object name stored in the object base class. Larger names will be truncated.
 #if FW_OBJECT_NAMES
  #ifndef FW_OBJ_NAME_MAX_SIZE
- #define FW_OBJ_NAME_MAX_SIZE                80  //!< Size of object name (if object names enabled)
+ #define FW_OBJ_NAME_MAX_SIZE                120  //!< Size of object name (if object names enabled)
  #endif
 #endif
 
@@ -242,7 +242,7 @@
 
 // Specifies the maximum size of a string in a log event
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE           80   //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE           100   //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.

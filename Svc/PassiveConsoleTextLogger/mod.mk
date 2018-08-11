@@ -18,12 +18,8 @@ SRC_CYGWIN = Stub/PrintfLoggerImplStub.cpp
 
 SRC_LINUX = Stub/PrintfLoggerImplStub.cpp
 
-SRC_TIMSP430 = MSP/TextLoggerImplMsp.cpp
-
 SRC_DARWIN = Stub/PrintfLoggerImplStub.cpp
 
-SRC_BAERAD750 = VxWorks/VxWorksLoggerImpl.cpp
-
-SRC_SPHINX = VxWorks/VxWorksLoggerImpl.cpp
+SRC_RASPIAN = Stub/PrintfLoggerImplStub.cpp
 
 HDR = ConsoleTextLoggerImpl.hpp

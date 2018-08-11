@@ -8,6 +8,10 @@
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Svc/Fatal/FatalEventPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <import_dictionary>Svc/ActiveLogger/ActiveLoggerCmdDict.xml</import_dictionary>
+    <import_dictionary>Svc/ActiveLogger/ActiveLoggerEvrDict.xml</import_dictionary>
+    <import_dictionary>Svc/ActiveLogger/ActiveLoggerIntIFDict.xml</import_dictionary>
+    
     <comment>A component for storing telemetry</comment>
     <ports>
         <port name="LogRecv" data_type="Fw::Log" kind="sync_input" >

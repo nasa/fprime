@@ -68,7 +68,11 @@ namespace Drv {
             ~LinuxSpiDriverComponentImpl(void);
 
             //! Open device
+<<<<<<< HEAD
             void open(NATIVE_INT_TYPE device,
+=======
+            bool open(NATIVE_INT_TYPE device,
+>>>>>>> nasa/master
                       NATIVE_INT_TYPE select,
                       SpiFrequency clock);
 

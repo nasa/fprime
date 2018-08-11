@@ -94,27 +94,27 @@ namespace Svc {
     assertTlm_BufferManager_NumAllocatedBuffers(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const U32& val
     )
     const
   {
-    ASSERT_LT(index, this->tlmHistory_BufferManager_NumAllocatedBuffers->size())
+    ASSERT_LT(__index, this->tlmHistory_BufferManager_NumAllocatedBuffers->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel BufferManager_NumAllocatedBuffers\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_BufferManager_NumAllocatedBuffers->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const TlmEntry_BufferManager_NumAllocatedBuffers& e =
-      this->tlmHistory_BufferManager_NumAllocatedBuffers->at(index);
+      this->tlmHistory_BufferManager_NumAllocatedBuffers->at(__index);
     ASSERT_EQ(val, e.arg)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
-      << index
+      << __index
       << " on telmetry channel BufferManager_NumAllocatedBuffers\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
@@ -144,27 +144,27 @@ namespace Svc {
     assertTlm_BufferManager_AllocatedSize(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const U32& val
     )
     const
   {
-    ASSERT_LT(index, this->tlmHistory_BufferManager_AllocatedSize->size())
+    ASSERT_LT(__index, this->tlmHistory_BufferManager_AllocatedSize->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel BufferManager_AllocatedSize\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_BufferManager_AllocatedSize->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const TlmEntry_BufferManager_AllocatedSize& e =
-      this->tlmHistory_BufferManager_AllocatedSize->at(index);
+      this->tlmHistory_BufferManager_AllocatedSize->at(__index);
     ASSERT_EQ(val, e.arg)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
-      << index
+      << __index
       << " on telmetry channel BufferManager_AllocatedSize\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
@@ -191,122 +191,63 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: BufferManager_AllocationQueueEmpty
+  // Event: ClearedErrorState
   // ----------------------------------------------------------------------
 
   void BufferManagerGTestBase ::
-    assertEvents_BufferManager_AllocationQueueEmpty_size(
+    assertEvents_ClearedErrorState_size(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
-    ASSERT_EQ(size, this->eventsSize_BufferManager_AllocationQueueEmpty)
+    ASSERT_EQ(size, this->eventsSize_ClearedErrorState)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Size of history for event BufferManager_AllocationQueueEmpty\n"
+      << "  Value:    Size of history for event ClearedErrorState\n"
       << "  Expected: " << size << "\n"
-      << "  Actual:   " << this->eventsSize_BufferManager_AllocationQueueEmpty << "\n";
+      << "  Actual:   " << this->eventsSize_ClearedErrorState << "\n";
   }
 
   // ----------------------------------------------------------------------
-  // Event: BufferManager_AllocationQueueFull
+  // Event: StoreSizeExceeded
   // ----------------------------------------------------------------------
 
   void BufferManagerGTestBase ::
-    assertEvents_BufferManager_AllocationQueueFull_size(
+    assertEvents_StoreSizeExceeded_size(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
-    ASSERT_EQ(size, this->eventsSize_BufferManager_AllocationQueueFull)
+    ASSERT_EQ(size, this->eventsSize_StoreSizeExceeded)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Size of history for event BufferManager_AllocationQueueFull\n"
+      << "  Value:    Size of history for event StoreSizeExceeded\n"
       << "  Expected: " << size << "\n"
-      << "  Actual:   " << this->eventsSize_BufferManager_AllocationQueueFull << "\n";
+      << "  Actual:   " << this->eventsSize_StoreSizeExceeded << "\n";
   }
 
   // ----------------------------------------------------------------------
-  // Event: BufferManager_IDMismatch
+  // Event: TooManyBuffers
   // ----------------------------------------------------------------------
 
   void BufferManagerGTestBase ::
-    assertEvents_BufferManager_IDMismatch_size(
+    assertEvents_TooManyBuffers_size(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
-    ASSERT_EQ(size, this->eventHistory_BufferManager_IDMismatch->size())
+    ASSERT_EQ(size, this->eventsSize_TooManyBuffers)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Size of history for event BufferManager_IDMismatch\n"
+      << "  Value:    Size of history for event TooManyBuffers\n"
       << "  Expected: " << size << "\n"
-      << "  Actual:   " << this->eventHistory_BufferManager_IDMismatch->size() << "\n";
-  }
-
-  void BufferManagerGTestBase ::
-    assertEvents_BufferManager_IDMismatch(
-        const char *const __callSiteFileName,
-        const U32 __callSiteLineNumber,
-        const U32 index,
-        const U32 expected,
-        const U32 saw
-    ) const
-  {
-    ASSERT_GT(this->eventHistory_BufferManager_IDMismatch->size(), index)
-      << "\n"
-      << "  File:     " << __callSiteFileName << "\n"
-      << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Index into history of event BufferManager_IDMismatch\n"
-      << "  Expected: Less than size of history (" 
-      << this->eventHistory_BufferManager_IDMismatch->size() << ")\n"
-      << "  Actual:   " << index << "\n";
-    const EventEntry_BufferManager_IDMismatch& e =
-      this->eventHistory_BufferManager_IDMismatch->at(index);
-    ASSERT_EQ(expected, e.expected)
-      << "\n"
-      << "  File:     " << __callSiteFileName << "\n"
-      << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Value of argument expected at index "
-      << index
-      << " in history of event BufferManager_IDMismatch\n"
-      << "  Expected: " << expected << "\n"
-      << "  Actual:   " << e.expected << "\n";
-    ASSERT_EQ(saw, e.saw)
-      << "\n"
-      << "  File:     " << __callSiteFileName << "\n"
-      << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Value of argument saw at index "
-      << index
-      << " in history of event BufferManager_IDMismatch\n"
-      << "  Expected: " << saw << "\n"
-      << "  Actual:   " << e.saw << "\n";
-  }
-
-  // ----------------------------------------------------------------------
-  // Event: BufferManager_StoreSizeExceeded
-  // ----------------------------------------------------------------------
-
-  void BufferManagerGTestBase ::
-    assertEvents_BufferManager_StoreSizeExceeded_size(
-        const char *const __callSiteFileName,
-        const U32 __callSiteLineNumber,
-        const U32 size
-    ) const
-  {
-    ASSERT_EQ(size, this->eventsSize_BufferManager_StoreSizeExceeded)
-      << "\n"
-      << "  File:     " << __callSiteFileName << "\n"
-      << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Size of history for event BufferManager_StoreSizeExceeded\n"
-      << "  Expected: " << size << "\n"
-      << "  Actual:   " << this->eventsSize_BufferManager_StoreSizeExceeded << "\n";
+      << "  Actual:   " << this->eventsSize_TooManyBuffers << "\n";
   }
 
 } // end namespace Svc

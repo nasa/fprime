@@ -269,7 +269,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             data = tlm_packet_size + self.recv(size)
 
         else:
-            raise RuntimeError("unrecognized client")
+            raise RuntimeError("unrecognized client %s"%dst)
         return data
 
 
