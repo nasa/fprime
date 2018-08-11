@@ -4,7 +4,15 @@ The following example shows the steps to implement a simple pair of components c
 
 ![`Component` Diagram](img/Comp.jpg "Component Pair")
 
-All the code in this tutorial can be found in this directory. The actual location of the components will be in the `Ref` directory, where a demonstration reference application is located. Here is a description of the components:
+All the code in this tutorial can be found in this directory. The actual location of the components will be in the `Ref` directory, where a demonstration reference application is located. 
+
+The prerequisite skills to understand this totorial are as follows:
+
+1) Working knowledge of Linux; how to navigate in a shell and execute programs
+2) An understanding of C++, including class declarations and inheritance
+3) An understanding of how XML is structured
+
+Here is a description of the components:
 
 # 1 Component Descriptions
 

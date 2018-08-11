@@ -21,3 +21,7 @@ Updated contributor list. No code changes.
 Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
 
 Added a tutorial [here.](docs/Tutorials/README.md)
+
+Updated Svc/BufferManager with bug fix
+
+Fixed a bunch of shell permissionss
