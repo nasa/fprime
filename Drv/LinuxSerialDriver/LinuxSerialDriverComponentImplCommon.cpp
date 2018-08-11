@@ -44,7 +44,7 @@ namespace Drv {
     void LinuxSerialDriverComponentImpl ::
       readBufferSend_handler(
           const NATIVE_INT_TYPE portNum,
-          Fw::Buffer Buffer
+          Fw::Buffer& Buffer
       )
     {
         this->m_readBuffMutex.lock();
