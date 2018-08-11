@@ -200,7 +200,7 @@ void constructApp(int port_number, char* hostname) {
         return;
     }
 
-    if (not ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+    if (not ledDrv.open(21,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
         return;
     }
 
