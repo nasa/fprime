@@ -1,3 +1,7 @@
+---
+title: F Prime: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
+layout: default
+---
 # F Prime: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
 F Prime (Fʹ) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F Prime has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
@@ -36,25 +40,3 @@ F Prime is tailored to the level of complexity required for small missions. This
 
 The typed port connections provide strong compile-time guarantees of correctness.
 
-## F Prime Resources
-
-The Reference application is shipped as part of F'. Documentation for this reference application can be found [here.](Ref/docs/sdd.md)
-
-The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf)
-
-## F Prime Release Notes
-
-#### Release 1.0: 
-
- * This is the initial release of the software to open source. See the license file for terms of use.
-
-#### Release 1.01
-
- * Updated contributor list. No code changes. 
-
-#### Release 1.1
-
- * Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
- * Added a tutorial [here.](docs/Tutorials/README.md)
- * Updated Svc/BufferManager with bug fix
- * Fixed a bunch of shell permissionss
