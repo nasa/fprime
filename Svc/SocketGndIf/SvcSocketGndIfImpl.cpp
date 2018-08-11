@@ -361,7 +361,7 @@ namespace Svc {
 
     void SocketGndIfImpl::fileDownlinkBufferSendIn_handler(
         NATIVE_INT_TYPE portNum, /*!< The port number*/
-        Fw::Buffer fwBuffer
+        Fw::Buffer& fwBuffer
     ) {
 
         char buf[256];

@@ -28,14 +28,14 @@
             </comment>
         </port>
     </ports>
-    <commands opcode_base="$PrmDbOpcodeBase">
+    <commands>
         <command kind="async" opcode="0" mnemonic="PRM_SAVE_FILE" >
             <comment>
             Command to save parameter image to file. Uses file name passed to constructor
             </comment>
         </command>
     </commands>
-    <events event_base="$PrmDbEventsBase">
+    <events>
         <event id="0" name="PrmIdNotFound" severity="WARNING_LO" format_string = "Parameter ID 0x%08X not found" throttle="5">
             <comment>
             Parameter ID not found in database.

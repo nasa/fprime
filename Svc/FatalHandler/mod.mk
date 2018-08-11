@@ -14,13 +14,13 @@
 
 SRC =	FatalHandlerComponentAi.xml FatalHandlerComponentCommonImpl.cpp
 
-SRC_BAERAD750 = FatalHandlerComponentVxWorksImpl.cpp
-
 SRC_LINUX = FatalHandlerComponentLinuxImpl.cpp
 
 SRC_CYGWIN = FatalHandlerComponentLinuxImpl.cpp
 
 SRC_DARWIN = FatalHandlerComponentLinuxImpl.cpp
+
+SRC_RASPIAN = FatalHandlerComponentLinuxImpl.cpp
 
 HDR = FatalHandlerComponentImpl.hpp	
 

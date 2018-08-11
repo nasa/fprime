@@ -12,8 +12,8 @@ from a fixed-size store.
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-BM-001 | `BufferManager` shall maintain a fixed-size store and shall provide a callee port on which another component may request and receive variable-size buffers allocated from the store. | This requirement provides variable-sized buffers that may be passed between components by reference. Such buffers are useful for transferring large data items of varying length, such as file packets and images. For such data items, a fixed-size buffer such as `Fw::ComBuffer` is not practical. | Test
-BM-002 | `BufferManager` shall provide an input port on which a component that has been given a buffer may return the buffer for deallocation. | Deallocation prevents the fixed-size store from becoming exhausted. Note that the component returning the buffer is generally the receiver, while the component requesting the buffer is generally the sender. See the [sequence diagram](#SequenceDiagram) below. | Test
+ISF-BM-001 | `BufferManager` shall maintain a fixed-size store and shall provide a callee port on which another component may request and receive variable-size buffers allocated from the store. | This requirement provides variable-sized buffers that may be passed between components by reference. Such buffers are useful for transferring large data items of varying length, such as file packets and images. For such data items, a fixed-size buffer such as `Fw::ComBuffer` is not practical. | Test
+ISF-BM-002 | `BufferManager` shall provide an input port on which a component that has been given a buffer may return the buffer for deallocation. | Deallocation prevents the fixed-size store from becoming exhausted. Note that the component returning the buffer is generally the receiver, while the component requesting the buffer is generally the sender. See the [sequence diagram](#SequenceDiagram) below. | Test
 
 ## 3 Design
 

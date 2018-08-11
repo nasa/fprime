@@ -23,20 +23,10 @@ SRC =
 
 HDR =				SvcSocketGndIfImpl.hpp
 
-SRC_CWSCP124 = 		SvcSocketGndIfImpl.cpp
-
-SRC_MXSCS750 = 		SvcSocketGndIfImpl.cpp
-
-SRC_SMP400K = 		SvcSocketGndIfImpl.cpp
-
-SRC_BAERAD750 = 	SvcSocketGndIfImpl.cpp
-
-SRC_SPHINX = 		SvcSocketGndIfImpl.cpp
-
 SRC_LINUX = 		SvcSocketGndIfImpl.cpp
-
-SRC_WSTS = 			SvcSocketGndIfImpl.cpp
 
 SRC_CYGWIN =		SvcSocketGndIfImpl.cpp
 
 SRC_DARWIN =        SvcSocketGndIfImpl.cpp
+
+SRC_RASPIAN = 		SvcSocketGndIfImpl.cpp

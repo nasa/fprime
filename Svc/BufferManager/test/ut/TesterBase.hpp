@@ -54,18 +54,18 @@ namespace Svc {
       // Connect these output ports to the input ports under test
       // ----------------------------------------------------------------------
 
-      //! Connect bufferGetCallee to to_bufferGetCallee[portNum]
-      //!
-      void connect_to_bufferGetCallee(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::InputBufferGetPort *const bufferGetCallee /*!< The port*/
-      );
-
       //! Connect bufferSendIn to to_bufferSendIn[portNum]
       //!
       void connect_to_bufferSendIn(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::InputBufferSendPort *const bufferSendIn /*!< The port*/
+      );
+
+      //! Connect bufferGetCallee to to_bufferGetCallee[portNum]
+      //!
+      void connect_to_bufferGetCallee(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::InputBufferGetPort *const bufferGetCallee /*!< The port*/
       );
 
     public:
@@ -83,14 +83,6 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
-      //! Get the port that receives input from tlmOut
-      //!
-      //! \return from_tlmOut[portNum]
-      //!
-      Fw::InputTlmPort* get_from_tlmOut(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
-      );
-
       //! Get the port that receives input from eventOut
       //!
       //! \return from_eventOut[portNum]
@@ -100,14 +92,22 @@ namespace Svc {
       );
 
 #if FW_ENABLE_TEXT_LOGGING == 1
-      //! Get the port that receives input from LogText
+      //! Get the port that receives input from textEventOut
       //!
-      //! \return from_LogText[portNum]
+      //! \return from_textEventOut[portNum]
       //!
-      Fw::InputLogTextPort* get_from_LogText(
+      Fw::InputLogTextPort* get_from_textEventOut(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 #endif
+
+      //! Get the port that receives input from tlmOut
+      //!
+      //! \return from_tlmOut[portNum]
+      //!
+      Fw::InputTlmPort* get_from_tlmOut(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
 
     protected:
 
@@ -216,18 +216,18 @@ namespace Svc {
       // Invocation functions for to ports
       // ----------------------------------------------------------------------
 
+      //! Invoke the to port connected to bufferSendIn
+      //!
+      void invoke_to_bufferSendIn(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Buffer &fwBuffer 
+      );
+
       //! Invoke the to port connected to bufferGetCallee
       //!
       Fw::Buffer invoke_to_bufferGetCallee(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 size 
-      );
-
-      //! Invoke the to port connected to bufferSendIn
-      //!
-      void invoke_to_bufferSendIn(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer fwBuffer 
       );
 
     public:
@@ -236,29 +236,11 @@ namespace Svc {
       // Getters for port counts
       // ----------------------------------------------------------------------
 
-      //! Get the number of to_bufferGetCallee ports
-      //!
-      //! \return The number of to_bufferGetCallee ports
-      //!
-      NATIVE_INT_TYPE getNum_to_bufferGetCallee(void) const;
-
-      //! Get the number of to_bufferSendIn ports
-      //!
-      //! \return The number of to_bufferSendIn ports
-      //!
-      NATIVE_INT_TYPE getNum_to_bufferSendIn(void) const;
-
       //! Get the number of from_timeCaller ports
       //!
       //! \return The number of from_timeCaller ports
       //!
       NATIVE_INT_TYPE getNum_from_timeCaller(void) const;
-
-      //! Get the number of from_tlmOut ports
-      //!
-      //! \return The number of from_tlmOut ports
-      //!
-      NATIVE_INT_TYPE getNum_from_tlmOut(void) const;
 
       //! Get the number of from_eventOut ports
       //!
@@ -267,12 +249,30 @@ namespace Svc {
       NATIVE_INT_TYPE getNum_from_eventOut(void) const;
 
 #if FW_ENABLE_TEXT_LOGGING == 1
-      //! Get the number of from_LogText ports
+      //! Get the number of from_textEventOut ports
       //!
-      //! \return The number of from_LogText ports
+      //! \return The number of from_textEventOut ports
       //!
-      NATIVE_INT_TYPE getNum_from_LogText(void) const;
+      NATIVE_INT_TYPE getNum_from_textEventOut(void) const;
 #endif
+
+      //! Get the number of to_bufferSendIn ports
+      //!
+      //! \return The number of to_bufferSendIn ports
+      //!
+      NATIVE_INT_TYPE getNum_to_bufferSendIn(void) const;
+
+      //! Get the number of to_bufferGetCallee ports
+      //!
+      //! \return The number of to_bufferGetCallee ports
+      //!
+      NATIVE_INT_TYPE getNum_to_bufferGetCallee(void) const;
+
+      //! Get the number of from_tlmOut ports
+      //!
+      //! \return The number of from_tlmOut ports
+      //!
+      NATIVE_INT_TYPE getNum_from_tlmOut(void) const;
 
     protected:
 
@@ -282,17 +282,17 @@ namespace Svc {
 
       //! Check whether port is connected
       //!
-      //! Whether to_bufferGetCallee[portNum] is connected
+      //! Whether to_bufferSendIn[portNum] is connected
       //!
-      bool isConnected_to_bufferGetCallee(
+      bool isConnected_to_bufferSendIn(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
       //! Check whether port is connected
       //!
-      //! Whether to_bufferSendIn[portNum] is connected
+      //! Whether to_bufferGetCallee[portNum] is connected
       //!
-      bool isConnected_to_bufferSendIn(
+      bool isConnected_to_bufferGetCallee(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -365,75 +365,50 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BufferManager_AllocationQueueEmpty
+      // Event: ClearedErrorState
       // ----------------------------------------------------------------------
 
-      //! Handle event BufferManager_AllocationQueueEmpty
+      //! Handle event ClearedErrorState
       //!
-      virtual void logIn_WARNING_HI_BufferManager_AllocationQueueEmpty(
+      virtual void logIn_ACTIVITY_HI_ClearedErrorState(
           void
       );
 
-      //! Size of history for event BufferManager_AllocationQueueEmpty
+      //! Size of history for event ClearedErrorState
       //!
-      U32 eventsSize_BufferManager_AllocationQueueEmpty;
+      U32 eventsSize_ClearedErrorState;
 
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BufferManager_AllocationQueueFull
+      // Event: StoreSizeExceeded
       // ----------------------------------------------------------------------
 
-      //! Handle event BufferManager_AllocationQueueFull
+      //! Handle event StoreSizeExceeded
       //!
-      virtual void logIn_WARNING_HI_BufferManager_AllocationQueueFull(
+      virtual void logIn_WARNING_HI_StoreSizeExceeded(
           void
       );
 
-      //! Size of history for event BufferManager_AllocationQueueFull
+      //! Size of history for event StoreSizeExceeded
       //!
-      U32 eventsSize_BufferManager_AllocationQueueFull;
+      U32 eventsSize_StoreSizeExceeded;
 
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BufferManager_IDMismatch
+      // Event: TooManyBuffers
       // ----------------------------------------------------------------------
 
-      //! Handle event BufferManager_IDMismatch
+      //! Handle event TooManyBuffers
       //!
-      virtual void logIn_WARNING_HI_BufferManager_IDMismatch(
-          U32 expected, /*!< The expected ID value*/
-          U32 saw /*!< The ID value seen*/
-      );
-
-      //! A history entry for event BufferManager_IDMismatch
-      //!
-      typedef struct {
-        U32 expected;
-        U32 saw;
-      } EventEntry_BufferManager_IDMismatch;
-
-      //! The history of BufferManager_IDMismatch events
-      //!
-      History<EventEntry_BufferManager_IDMismatch> 
-        *eventHistory_BufferManager_IDMismatch;
-
-    protected:
-
-      // ----------------------------------------------------------------------
-      // Event: BufferManager_StoreSizeExceeded
-      // ----------------------------------------------------------------------
-
-      //! Handle event BufferManager_StoreSizeExceeded
-      //!
-      virtual void logIn_WARNING_HI_BufferManager_StoreSizeExceeded(
+      virtual void logIn_WARNING_HI_TooManyBuffers(
           void
       );
 
-      //! Size of history for event BufferManager_StoreSizeExceeded
+      //! Size of history for event TooManyBuffers
       //!
-      U32 eventsSize_BufferManager_StoreSizeExceeded;
+      U32 eventsSize_TooManyBuffers;
 
     protected:
 
@@ -525,13 +500,13 @@ namespace Svc {
       // To ports
       // ----------------------------------------------------------------------
 
-      //! To port connected to bufferGetCallee
-      //!
-      Fw::OutputBufferGetPort m_to_bufferGetCallee[1];
-
       //! To port connected to bufferSendIn
       //!
       Fw::OutputBufferSendPort m_to_bufferSendIn[1];
+
+      //! To port connected to bufferGetCallee
+      //!
+      Fw::OutputBufferGetPort m_to_bufferGetCallee[1];
 
     private:
 
@@ -543,19 +518,19 @@ namespace Svc {
       //!
       Fw::InputTimePort m_from_timeCaller[1];
 
-      //! From port connected to tlmOut
-      //!
-      Fw::InputTlmPort m_from_tlmOut[1];
-
       //! From port connected to eventOut
       //!
       Fw::InputLogPort m_from_eventOut[1];
 
 #if FW_ENABLE_TEXT_LOGGING == 1
-      //! From port connected to LogText
+      //! From port connected to textEventOut
       //!
-      Fw::InputLogTextPort m_from_LogText[1];
+      Fw::InputLogTextPort m_from_textEventOut[1];
 #endif
+
+      //! From port connected to tlmOut
+      //!
+      Fw::InputTlmPort m_from_tlmOut[1];
 
     private:
 
@@ -571,16 +546,6 @@ namespace Svc {
           Fw::Time &time /*!< The U32 cmd argument*/
       );
 
-      //! Static function for port from_tlmOut
-      //!
-      static void from_tlmOut_static(
-          Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwChanIdType id, /*!< Telemetry Channel ID*/
-          Fw::Time &timeTag, /*!< Time Tag*/
-          Fw::TlmBuffer &val /*!< Buffer containing serialized telemetry value*/
-      );
-
       //! Static function for port from_eventOut
       //!
       static void from_eventOut_static(
@@ -593,9 +558,9 @@ namespace Svc {
       );
 
 #if FW_ENABLE_TEXT_LOGGING == 1
-      //! Static function for port from_LogText
+      //! Static function for port from_textEventOut
       //!
-      static void from_LogText_static(
+      static void from_textEventOut_static(
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwEventIdType id, /*!< Log ID*/
@@ -604,6 +569,16 @@ namespace Svc {
           Fw::TextLogString &text /*!< Text of log message*/
       );
 #endif
+
+      //! Static function for port from_tlmOut
+      //!
+      static void from_tlmOut_static(
+          Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwChanIdType id, /*!< Telemetry Channel ID*/
+          Fw::Time &timeTag, /*!< Time Tag*/
+          Fw::TlmBuffer &val /*!< Buffer containing serialized telemetry value*/
+      );
 
     private:
 

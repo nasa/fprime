@@ -11,6 +11,7 @@
     <import_port_type>Svc/Cycle/CyclePortAi.xml</import_port_type>
     <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <import_dictionary>Drv/BlockDriver/Tlm.xml</import_dictionary>
     
     <comment>An example block driver component with data buffers and interrupts</comment>
     <ports>
@@ -54,13 +55,6 @@
         </port>
         
     </ports>
-    <telemetry telemetry_base="$BlockDriverTelemetryBase">
-        <channel id="0" name="BD_Cycles" data_type="U32" abbrev="T002-1234">
-            <comment>
-            Driver cycle count
-            </comment>
-        </channel>
-    </telemetry>
     <internal_interfaces>
         <internal_interface name="InterruptReport" priority="1">
             <comment>

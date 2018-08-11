@@ -9,9 +9,7 @@
 
 ======================================================================-->
 
-<events
-  event_base="$FileDownlinkIdBase"
->
+<events>
 
   <event
     id="0"

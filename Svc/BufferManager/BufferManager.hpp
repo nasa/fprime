@@ -4,7 +4,7 @@
 // \brief  hpp file for BufferManager component implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2015-2017, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
@@ -28,29 +28,69 @@ namespace Svc {
     public BufferManagerComponentBase
   {
 
-    public:
+    PRIVATE:
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+      // ---------------------------------------------------------------------- 
+      // Warnings
+      // ---------------------------------------------------------------------- 
 
-      //! Construct object BufferManager
-      //!
-      BufferManager(
-          const char *const compName, //!< The component name
-          const U32 storeSize,
-          const U32 allocationQueueSize
-      );
+      class Warnings {
 
-      //! Initialize object BufferManager
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
+        public:
 
-      //! Destroy object BufferManager
-      //!
-      ~BufferManager(void);
+          //! Status
+          struct Status {
+
+            typedef enum {
+              //! Success
+              SUCCESS,
+              //! Store size exceeded
+              STORE_SIZE_EXCEEDED,
+              //! Too many buffers
+              TOO_MANY_BUFFERS,
+            } t;
+
+          };
+
+        PRIVATE:
+
+          //! Whether we have emitted a warning
+          struct State {
+
+            //! Construct a State object
+            State(void);
+
+            //! StoreSizeExceeded
+            bool storeSizeExceeded;
+
+            //! TooManyBuffers
+            bool tooManyBuffers;
+
+          };
+
+        public:
+
+          //! Construct a Warnings object
+          Warnings(
+              BufferManager& bufferManager //!< The enclosing BufferManager
+          );
+
+        public:
+
+          //! Update the warning state
+          void update(
+              const Status::t status //!< The status
+          );
+
+        PRIVATE:
+
+          //! The enclosing BufferManager
+          BufferManager& bufferManager;
+
+          //! The warning state
+          State state;
+
+      };
 
     PRIVATE:
 
@@ -80,7 +120,7 @@ namespace Svc {
           // Types 
           // ----------------------------------------------------------------------
 
-          typedef enum { STAT_OK, STAT_FAIL } Status;
+          typedef enum { SUCCESS, FAILURE } Status;
 
         public:
 
@@ -97,8 +137,11 @@ namespace Svc {
               U8* &result
           );
 
-          // Free n bytes from the store
-          Status free(const U32 n);
+          // Free bytes from the store
+          void free(
+              const U32 size, //!< The allocation size
+              U8 *const address //!< The allocation address
+          );
 
         PRIVATE:
 
@@ -116,8 +159,14 @@ namespace Svc {
           // Variables
           // ----------------------------------------------------------------------
          
-          // Pointer to the first free byte of store memory
+          //! Pointer to the first free byte of store memory
           U32 freeIndex;
+
+          //! The amount of padding at the end of the store, added to allocations that otherwise would wrap around
+          U32 padSize;
+
+          //! The total allocated size on the store
+          U32 allocatedSize;
 
       };
 
@@ -151,7 +200,7 @@ namespace Svc {
           struct Allocate {
 
             typedef enum {
-              STAT_OK, // Allocation OK
+              SUCCESS, // Allocation OK
               FULL // No more room
             } Status;
 
@@ -161,7 +210,7 @@ namespace Svc {
           struct Free {
 
             typedef enum {
-              STAT_OK, // Free OK
+              SUCCESS, // Free OK
               EMPTY, // Nothing to free
               ID_MISMATCH // ID supplied was not at head of queue
             } Status;
@@ -208,7 +257,6 @@ namespace Svc {
           // Update a circular index
           U32 getNextIndex(const U32 index);
 
-
         PRIVATE:
 
           // ----------------------------------------------------------------------
@@ -241,6 +289,30 @@ namespace Svc {
 
       };
 
+    public:
+
+      // ----------------------------------------------------------------------
+      // Construction, initialization, and destruction
+      // ----------------------------------------------------------------------
+
+      //! Construct object BufferManager
+      //!
+      BufferManager(
+          const char *const compName, //!< The component name
+          const U32 storeSize,
+          const U32 maxNumBuffers
+      );
+
+      //! Initialize object BufferManager
+      //!
+      void init(
+          const NATIVE_INT_TYPE instance //!< The instance number
+      );
+
+      //! Destroy object BufferManager
+      //!
+      ~BufferManager(void);
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -258,17 +330,8 @@ namespace Svc {
       //!
       void bufferSendIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer &buffer
       );
-
-    PRIVATE:
-
-      // ----------------------------------------------------------------------
-      // Helper methods 
-      // ----------------------------------------------------------------------
-
-      // Send telemetry
-      void sendTelemetry(void);
 
     PRIVATE:
 
@@ -276,10 +339,13 @@ namespace Svc {
       // Variables 
       // ----------------------------------------------------------------------
 
-      // The store
+      //! Warnings
+      Warnings warnings;
+
+      //! The store
       Store store;
 
-      // The allocation queue
+      //! The allocation queue
       AllocationQueue allocationQueue;
 
     };

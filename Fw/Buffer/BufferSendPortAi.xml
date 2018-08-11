@@ -4,7 +4,7 @@
 <interface name="BufferSend" namespace="Fw">
   <include_header>Fw/Buffer/BufferSerializableAc.hpp</include_header>
     <args>
-        <arg name="fwBuffer" type="Fw::Buffer" pass_by="value">
+        <arg name="fwBuffer" type="Fw::Buffer" pass_by="reference">
         </arg>
     </args>
 </interface>

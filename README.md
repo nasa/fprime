@@ -42,12 +42,19 @@ The Reference application is shipped as part of F'. Documentation for this refer
 
 The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf)
 
-## F' Release Notes
-Release 1.0: 
+## F Prime Release Notes
 
-This is the initial release of the software to open source. See the license file for terms of use.
+#### Release 1.0: 
 
-Release 1.01:
+ * This is the initial release of the software to open source. See the license file for terms of use.
 
-Updated contributor list. No code changes. 
+#### Release 1.01
 
+ * Updated contributor list. No code changes. 
+
+#### Release 1.1
+
+ * Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
+ * Added a tutorial [here.](docs/Tutorials/README.md)
+ * Updated Svc/BufferManager with bug fix
+ * Fixed a bunch of shell permissionss

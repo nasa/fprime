@@ -1,8 +1,5 @@
 #include <Components.hpp>
-
-
 #include <Fw/Types/Assert.hpp>
-#include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
@@ -20,25 +17,6 @@ enum {
     DOWNLINK_BUFFER_QUEUE_SIZE = 5,
     UPLINK_BUFFER_STORE_SIZE = 3000,
     UPLINK_BUFFER_QUEUE_SIZE = 30
-};
-
-enum {
-        ACTIVE_COMP_1HZ_RG,
-        ACTIVE_COMP_P5HZ_RG,
-        ACTIVE_COMP_P25HZ_RG,
-        ACTIVE_COMP_CMD_DISP,
-        ACTIVE_COMP_CMD_SEQ,
-        ACTIVE_COMP_LOGGER,
-        ACTIVE_COMP_TLM,
-        ACTIVE_COMP_PRMDB,
-        ACTIVE_COMP_FILE_DOWNLINK,
-        ACTIVE_COMP_FILE_UPLINK,
-
-        ACTIVE_COMP_BLKDRV,
-        ACTIVE_COMP_PING_RECEIVER,
-
-        CYCLER_TASK,
-        NUM_ACTIVE_COMPS
 };
 
 // Registry
@@ -222,8 +200,6 @@ void dumpobj(const char* objName) {
 
 void constructApp(int port_number, char* hostname) {
 
-    localTargetInit();
-
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
 #endif    
@@ -322,24 +298,24 @@ void constructApp(int port_number, char* hostname) {
 
     // Active component startup
     // start rate groups
-    rateGroup1Comp.start(ACTIVE_COMP_1HZ_RG, 120,10 * 1024);
-    rateGroup2Comp.start(ACTIVE_COMP_P5HZ_RG, 119,10 * 1024);
-    rateGroup3Comp.start(ACTIVE_COMP_P25HZ_RG, 118,10 * 1024);
+    rateGroup1Comp.start(0, 120,10 * 1024);
+    rateGroup2Comp.start(0, 119,10 * 1024);
+    rateGroup3Comp.start(0, 118,10 * 1024);
     // start driver
-    blockDrv.start(ACTIVE_COMP_BLKDRV,140,10*1024);
+    blockDrv.start(0,140,10*1024);
     // start dispatcher
-    cmdDisp.start(ACTIVE_COMP_CMD_DISP,101,10*1024);
+    cmdDisp.start(0,101,10*1024);
     // start sequencer
-    cmdSeq.start(ACTIVE_COMP_CMD_SEQ,100,10*1024);
+    cmdSeq.start(0,100,10*1024);
     // start telemetry
-    eventLogger.start(ACTIVE_COMP_LOGGER,98,10*1024);
-    chanTlm.start(ACTIVE_COMP_TLM,97,10*1024);
-    prmDb.start(ACTIVE_COMP_PRMDB,96,10*1024);
+    eventLogger.start(0,98,10*1024);
+    chanTlm.start(0,97,10*1024);
+    prmDb.start(0,96,10*1024);
 
-    fileDownlink.start(ACTIVE_COMP_FILE_DOWNLINK, 100, 10*1024);
-    fileUplink.start(ACTIVE_COMP_FILE_UPLINK, 100, 10*1024);
+    fileDownlink.start(0, 100, 10*1024);
+    fileUplink.start(0, 100, 10*1024);
 
-    pingRcvr.start(ACTIVE_COMP_PING_RECEIVER, 100, 10*1024);
+    pingRcvr.start(0, 100, 10*1024);
 
     // Initialize socket server
     sockGndIf.startSocketTask(100, port_number, hostname);

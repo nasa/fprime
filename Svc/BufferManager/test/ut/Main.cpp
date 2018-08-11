@@ -4,29 +4,9 @@
 
 #include "Tester.hpp"
 
-TEST(Test, allocateAndFreeOne) {
+TEST(Test, ThreeBufferProblem) {
   Svc::Tester tester;
-  tester.allocateAndFreeOne();
-}
-
-TEST(Test, allocationQueueEmpty) {
-  Svc::Tester tester;
-  tester.allocationQueueEmpty();
-}
-
-TEST(Test, allocationQueueFull) {
-  Svc::Tester tester;
-  tester.allocationQueueFull();
-}
-
-TEST(Test, idMismatch) {
-  Svc::Tester tester;
-  tester.idMismatch();
-}
-
-TEST(Test, storeSizeExceeded) {
-  Svc::Tester tester;
-  tester.storeSizeExceeded();
+  tester.three_buffer_problem();
 }
 
 int main(int argc, char **argv) {

@@ -9,9 +9,7 @@
 
 ======================================================================-->
 
-<commands
-  opcode_base="$FileDownlinkIdBase"
->
+<commands>
 
   <command
     kind="async"

@@ -1,0 +1,14 @@
+OUTPUT_DIR := raspian-$(COMPILER)-bin
+OBJ_PREFIX :=
+OBJ_SUFFIX := .o
+
+LIB_PREFIX := lib
+LIB_SUFFIX := .a
+
+BIN_PREFIX := 
+BIN_SUFFIX :=
+
+CONSTRUCTOR_FILE := ctdt.c
+CONSTRUCTOR_OBJ := ctdt.o
+
+SYMBOL_CHECK_FILE := echo
