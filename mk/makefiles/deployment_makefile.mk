@@ -122,6 +122,8 @@ serializable_install:
 dict_install: dict_clean
 	@$(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) dict_install
 	
+dictionary: ac_lvl4 dict_install
+	
 gen_html_docs:
 	@$(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) gen_html_docs
 	

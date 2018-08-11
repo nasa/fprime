@@ -51,8 +51,6 @@ namespace Svc {
 #if FW_ENABLE_TEXT_LOGGING
     this->textLogHistory = new History<TextLogEntry>(maxHistorySize);
 #endif
-    this->eventHistory_BufferManager_IDMismatch =
-      new History<EventEntry_BufferManager_IDMismatch>(maxHistorySize);
     // Clear history
     this->clearHistory();
   }
@@ -67,7 +65,6 @@ namespace Svc {
 #if FW_ENABLE_TEXT_LOGGING
     delete this->textLogHistory;
 #endif
-    delete this->eventHistory_BufferManager_IDMismatch;
   }
 
   void BufferManagerTesterBase ::
@@ -109,35 +106,6 @@ namespace Svc {
 
     }
 
-    // Attach input port tlmOut
-
-    for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_from_tlmOut();
-        ++_port
-    ) {
-
-      this->m_from_tlmOut[_port].init();
-      this->m_from_tlmOut[_port].addCallComp(
-          this,
-          from_tlmOut_static
-      );
-      this->m_from_tlmOut[_port].setPortNum(_port);
-
-#if FW_OBJECT_NAMES == 1
-      char _portName[80];
-      (void) snprintf(
-          _portName,
-          sizeof(_portName),
-          "%s_from_tlmOut[%d]",
-          this->m_objName,
-          _port
-      );
-      this->m_from_tlmOut[_port].setObjName(_portName);
-#endif
-
-    }
-
     // Attach input port eventOut
 
     for (
@@ -167,56 +135,62 @@ namespace Svc {
 
     }
 
-    // Attach input port LogText
+    // Attach input port textEventOut
 
 #if FW_ENABLE_TEXT_LOGGING == 1
     for (
         NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_from_LogText();
+        _port < this->getNum_from_textEventOut();
         ++_port
     ) {
 
-      this->m_from_LogText[_port].init();
-      this->m_from_LogText[_port].addCallComp(
+      this->m_from_textEventOut[_port].init();
+      this->m_from_textEventOut[_port].addCallComp(
           this,
-          from_LogText_static
+          from_textEventOut_static
       );
-      this->m_from_LogText[_port].setPortNum(_port);
+      this->m_from_textEventOut[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
       char _portName[80];
       (void) snprintf(
           _portName,
           sizeof(_portName),
-          "%s_from_LogText[%d]",
+          "%s_from_textEventOut[%d]",
           this->m_objName,
           _port
       );
-      this->m_from_LogText[_port].setObjName(_portName);
+      this->m_from_textEventOut[_port].setObjName(_portName);
 #endif
 
     }
 #endif
 
-    // Initialize output port bufferGetCallee
+    // Attach input port tlmOut
 
     for (
         NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_to_bufferGetCallee();
+        _port < this->getNum_from_tlmOut();
         ++_port
     ) {
-      this->m_to_bufferGetCallee[_port].init();
+
+      this->m_from_tlmOut[_port].init();
+      this->m_from_tlmOut[_port].addCallComp(
+          this,
+          from_tlmOut_static
+      );
+      this->m_from_tlmOut[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
       char _portName[80];
-      snprintf(
+      (void) snprintf(
           _portName,
           sizeof(_portName),
-          "%s_to_bufferGetCallee[%d]",
+          "%s_from_tlmOut[%d]",
           this->m_objName,
           _port
       );
-      this->m_to_bufferGetCallee[_port].setObjName(_portName);
+      this->m_from_tlmOut[_port].setObjName(_portName);
 #endif
 
     }
@@ -244,6 +218,29 @@ namespace Svc {
 
     }
 
+    // Initialize output port bufferGetCallee
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_to_bufferGetCallee();
+        ++_port
+    ) {
+      this->m_to_bufferGetCallee[_port].init();
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_to_bufferGetCallee[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_to_bufferGetCallee[_port].setObjName(_portName);
+#endif
+
+    }
+
   }
 
   // ----------------------------------------------------------------------
@@ -251,27 +248,9 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   NATIVE_INT_TYPE BufferManagerTesterBase ::
-    getNum_to_bufferGetCallee(void) const
-  {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_bufferGetCallee);
-  }
-
-  NATIVE_INT_TYPE BufferManagerTesterBase ::
-    getNum_to_bufferSendIn(void) const
-  {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_bufferSendIn);
-  }
-
-  NATIVE_INT_TYPE BufferManagerTesterBase ::
     getNum_from_timeCaller(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_timeCaller);
-  }
-
-  NATIVE_INT_TYPE BufferManagerTesterBase ::
-    getNum_from_tlmOut(void) const
-  {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_tlmOut);
   }
 
   NATIVE_INT_TYPE BufferManagerTesterBase ::
@@ -282,25 +261,33 @@ namespace Svc {
 
 #if FW_ENABLE_TEXT_LOGGING == 1
   NATIVE_INT_TYPE BufferManagerTesterBase ::
-    getNum_from_LogText(void) const
+    getNum_from_textEventOut(void) const
   {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_LogText);
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_textEventOut);
   }
 #endif
+
+  NATIVE_INT_TYPE BufferManagerTesterBase ::
+    getNum_to_bufferSendIn(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_bufferSendIn);
+  }
+
+  NATIVE_INT_TYPE BufferManagerTesterBase ::
+    getNum_to_bufferGetCallee(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_bufferGetCallee);
+  }
+
+  NATIVE_INT_TYPE BufferManagerTesterBase ::
+    getNum_from_tlmOut(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_tlmOut);
+  }
 
   // ----------------------------------------------------------------------
   // Connectors for to ports 
   // ----------------------------------------------------------------------
-
-  void BufferManagerTesterBase ::
-    connect_to_bufferGetCallee(
-        const NATIVE_INT_TYPE portNum,
-        Fw::InputBufferGetPort *const bufferGetCallee
-    ) 
-  {
-    FW_ASSERT(portNum < this->getNum_to_bufferGetCallee(),static_cast<AssertArg>(portNum));
-    this->m_to_bufferGetCallee[portNum].addCallPort(bufferGetCallee);
-  }
 
   void BufferManagerTesterBase ::
     connect_to_bufferSendIn(
@@ -312,10 +299,33 @@ namespace Svc {
     this->m_to_bufferSendIn[portNum].addCallPort(bufferSendIn);
   }
 
+  void BufferManagerTesterBase ::
+    connect_to_bufferGetCallee(
+        const NATIVE_INT_TYPE portNum,
+        Fw::InputBufferGetPort *const bufferGetCallee
+    ) 
+  {
+    FW_ASSERT(portNum < this->getNum_to_bufferGetCallee(),static_cast<AssertArg>(portNum));
+    this->m_to_bufferGetCallee[portNum].addCallPort(bufferGetCallee);
+  }
+
 
   // ----------------------------------------------------------------------
   // Invocation functions for to ports
   // ----------------------------------------------------------------------
+
+  void BufferManagerTesterBase ::
+    invoke_to_bufferSendIn(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Buffer &fwBuffer
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
+    this->m_to_bufferSendIn[portNum].invoke(
+        fwBuffer
+    );
+  }
 
   Fw::Buffer BufferManagerTesterBase ::
     invoke_to_bufferGetCallee(
@@ -330,35 +340,22 @@ namespace Svc {
     );
   }
 
-  void BufferManagerTesterBase ::
-    invoke_to_bufferSendIn(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer fwBuffer
-    )
-  {
-    FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
-    FW_ASSERT(portNum < this->getNum_to_bufferSendIn(),static_cast<AssertArg>(portNum));
-    this->m_to_bufferSendIn[portNum].invoke(
-        fwBuffer
-    );
-  }
-
   // ----------------------------------------------------------------------
   // Connection status for to ports
   // ----------------------------------------------------------------------
-
-  bool BufferManagerTesterBase ::
-    isConnected_to_bufferGetCallee(const NATIVE_INT_TYPE portNum)
-  {
-    FW_ASSERT(portNum < this->getNum_to_bufferGetCallee(), static_cast<AssertArg>(portNum));
-    return this->m_to_bufferGetCallee[portNum].isConnected();
-  }
 
   bool BufferManagerTesterBase ::
     isConnected_to_bufferSendIn(const NATIVE_INT_TYPE portNum)
   {
     FW_ASSERT(portNum < this->getNum_to_bufferSendIn(), static_cast<AssertArg>(portNum));
     return this->m_to_bufferSendIn[portNum].isConnected();
+  }
+
+  bool BufferManagerTesterBase ::
+    isConnected_to_bufferGetCallee(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_bufferGetCallee(), static_cast<AssertArg>(portNum));
+    return this->m_to_bufferGetCallee[portNum].isConnected();
   }
 
   // ----------------------------------------------------------------------
@@ -372,13 +369,6 @@ namespace Svc {
     return &this->m_from_timeCaller[portNum];
   }
 
-  Fw::InputTlmPort *BufferManagerTesterBase ::
-    get_from_tlmOut(const NATIVE_INT_TYPE portNum)
-  {
-    FW_ASSERT(portNum < this->getNum_from_tlmOut(),static_cast<AssertArg>(portNum));
-    return &this->m_from_tlmOut[portNum];
-  }
-
   Fw::InputLogPort *BufferManagerTesterBase ::
     get_from_eventOut(const NATIVE_INT_TYPE portNum)
   {
@@ -388,12 +378,19 @@ namespace Svc {
 
 #if FW_ENABLE_TEXT_LOGGING == 1
   Fw::InputLogTextPort *BufferManagerTesterBase ::
-    get_from_LogText(const NATIVE_INT_TYPE portNum)
+    get_from_textEventOut(const NATIVE_INT_TYPE portNum)
   {
-    FW_ASSERT(portNum < this->getNum_from_LogText(),static_cast<AssertArg>(portNum));
-    return &this->m_from_LogText[portNum];
+    FW_ASSERT(portNum < this->getNum_from_textEventOut(),static_cast<AssertArg>(portNum));
+    return &this->m_from_textEventOut[portNum];
   }
 #endif
+
+  Fw::InputTlmPort *BufferManagerTesterBase ::
+    get_from_tlmOut(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_from_tlmOut(),static_cast<AssertArg>(portNum));
+    return &this->m_from_tlmOut[portNum];
+  }
 
   // ----------------------------------------------------------------------
   // Static functions for from ports
@@ -430,7 +427,7 @@ namespace Svc {
 
 #if FW_ENABLE_TEXT_LOGGING == 1
   void BufferManagerTesterBase ::
-    from_LogText_static(
+    from_textEventOut_static(
         Fw::PassiveComponentBase *const component,
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
@@ -588,52 +585,58 @@ namespace Svc {
     FW_ASSERT(id >= idBase, id, idBase);
     switch (id - idBase) {
 
-      case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_ALLOCATIONQUEUEEMPTY: 
+      case BufferManagerComponentBase::EVENTID_CLEAREDERRORSTATE: 
       {
 
-        this->logIn_WARNING_HI_BufferManager_AllocationQueueEmpty();
-
-        break;
-
-      }
-
-      case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_ALLOCATIONQUEUEFULL: 
-      {
-
-        this->logIn_WARNING_HI_BufferManager_AllocationQueueFull();
-
-        break;
-
-      }
-
-      case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_IDMISMATCH: 
-      {
-
-        Fw::SerializeStatus _status;
-        U32 expected;
-        _status = args.deserialize(expected);
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
         FW_ASSERT(
-            _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
         );
-
-        U32 saw;
-        _status = args.deserialize(saw);
-        FW_ASSERT(
-            _status == Fw::FW_SERIALIZE_OK,
-            static_cast<AssertArg>(_status)
-        );
-
-        this->logIn_WARNING_HI_BufferManager_IDMismatch(expected, saw);
+#endif    
+        this->logIn_ACTIVITY_HI_ClearedErrorState();
 
         break;
 
       }
 
-      case BufferManagerComponentBase::EVENTID_BUFFERMANAGER_STORESIZEEXCEEDED: 
+      case BufferManagerComponentBase::EVENTID_STORESIZEEXCEEDED: 
       {
 
-        this->logIn_WARNING_HI_BufferManager_StoreSizeExceeded();
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
+        this->logIn_WARNING_HI_StoreSizeExceeded();
+
+        break;
+
+      }
+
+      case BufferManagerComponentBase::EVENTID_TOOMANYBUFFERS: 
+      {
+
+#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+#endif    
+        this->logIn_WARNING_HI_TooManyBuffers();
 
         break;
 
@@ -652,10 +655,9 @@ namespace Svc {
     clearEvents(void)
   {
     this->eventsSize = 0;
-    this->eventsSize_BufferManager_AllocationQueueEmpty = 0;
-    this->eventsSize_BufferManager_AllocationQueueFull = 0;
-    this->eventHistory_BufferManager_IDMismatch->clear();
-    this->eventsSize_BufferManager_StoreSizeExceeded = 0;
+    this->eventsSize_ClearedErrorState = 0;
+    this->eventsSize_StoreSizeExceeded = 0;
+    this->eventsSize_TooManyBuffers = 0;
   }
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -737,58 +739,41 @@ namespace Svc {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: BufferManager_AllocationQueueEmpty 
+  // Event: ClearedErrorState 
   // ----------------------------------------------------------------------
 
   void BufferManagerTesterBase ::
-    logIn_WARNING_HI_BufferManager_AllocationQueueEmpty(
+    logIn_ACTIVITY_HI_ClearedErrorState(
         void
     )
   {
-    ++this->eventsSize_BufferManager_AllocationQueueEmpty;
+    ++this->eventsSize_ClearedErrorState;
     ++this->eventsSize;
   }
 
   // ----------------------------------------------------------------------
-  // Event: BufferManager_AllocationQueueFull 
+  // Event: StoreSizeExceeded 
   // ----------------------------------------------------------------------
 
   void BufferManagerTesterBase ::
-    logIn_WARNING_HI_BufferManager_AllocationQueueFull(
+    logIn_WARNING_HI_StoreSizeExceeded(
         void
     )
   {
-    ++this->eventsSize_BufferManager_AllocationQueueFull;
+    ++this->eventsSize_StoreSizeExceeded;
     ++this->eventsSize;
   }
 
   // ----------------------------------------------------------------------
-  // Event: BufferManager_IDMismatch 
+  // Event: TooManyBuffers 
   // ----------------------------------------------------------------------
 
   void BufferManagerTesterBase ::
-    logIn_WARNING_HI_BufferManager_IDMismatch(
-        U32 expected,
-        U32 saw
-    )
-  {
-    EventEntry_BufferManager_IDMismatch e = {
-      expected, saw
-    };
-    eventHistory_BufferManager_IDMismatch->push_back(e);
-    ++this->eventsSize;
-  }
-
-  // ----------------------------------------------------------------------
-  // Event: BufferManager_StoreSizeExceeded 
-  // ----------------------------------------------------------------------
-
-  void BufferManagerTesterBase ::
-    logIn_WARNING_HI_BufferManager_StoreSizeExceeded(
+    logIn_WARNING_HI_TooManyBuffers(
         void
     )
   {
-    ++this->eventsSize_BufferManager_StoreSizeExceeded;
+    ++this->eventsSize_TooManyBuffers;
     ++this->eventsSize;
   }
 

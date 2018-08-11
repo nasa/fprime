@@ -1,7 +1,6 @@
 #include <Components.hpp>
 
 #include <Fw/Types/Assert.hpp>
-#include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Os/File.hpp>

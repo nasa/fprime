@@ -61,7 +61,7 @@ namespace Svc {
   void FileUplink ::
     bufferSendIn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     Fw::FilePacket filePacket;

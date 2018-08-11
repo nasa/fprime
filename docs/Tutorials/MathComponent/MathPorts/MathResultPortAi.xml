@@ -1,0 +1,11 @@
+<interface name="MathResult" namespace="Ref">
+    <comment>
+    Port to return the result of a math operation
+    </comment>
+    <args>
+        <arg name="result" type="F32">
+            <comment>the result of the operation</comment>
+		</arg>
+    </args>
+</interface>
+
