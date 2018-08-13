@@ -44,6 +44,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         self.EventLogDataListCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
 
         self.scrollEventLogToBottom()
+    
     def __del__( self ):
         self.dv_model.DecRef()
 
@@ -113,6 +114,12 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         event.Skip()
 
     def onCopyKeyPressedContext(self, event):
+        """Called when the copy option is selected from the context menu within the data view ctrl
+        
+        Arguments:
+            event {wx.Event} -- std event arg
+        """
+
         rows = self.EventLogDataListCtl.GetSelections()
         cpy_out = ""
         for r in rows:
@@ -270,7 +277,6 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             return len(self.data)
         return 0
 
-
     def IsContainer(self, item):
         """Find out if the given item has children
 
@@ -288,8 +294,6 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             return True
         return False
 
-
-
     def GetParent(self, item):
         """Get the parent of the given item
 
@@ -302,7 +306,6 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
         # Return the item which is this item's parent.
         return wx.dataview.NullDataViewItem
-
 
     def GetValue(self, item, col):
         """Return the value to be displayed for this item and column
@@ -337,7 +340,6 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
         else:
             raise RuntimeError("unknown node type")
-
 
     def GetAttr(self, item, col, attr):
         """Get the attributes of the given item at the given column in the list control

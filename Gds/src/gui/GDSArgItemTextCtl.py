@@ -34,7 +34,12 @@ class ArgItemTextCtl(wx.Panel):
 		self.m_argWindow.Bind(wx.EVT_KILL_FOCUS, self.onLeaveTextCtlInput)
 
 	def setText(self, text):
+		"""Set the contents of this gui's text entry value
 		
+		Arguments:
+			text {string} -- the string to set
+		"""
+
 		self.m_argWindow.SetValue(str(text))
 
 	def getText(self):
@@ -90,7 +95,6 @@ class HexIntegerValidator(wx.Validator):
 				textCtrl.Refresh()
 				return False
 
-
 	def TransferToWindow(self):
 		return True
 
@@ -128,7 +132,6 @@ class RealValidator(wx.Validator):
 			textCtrl.SetBackgroundColour("pink")
 			textCtrl.Refresh()
 			return False
-
 
 	def TransferToWindow(self):
 		return True

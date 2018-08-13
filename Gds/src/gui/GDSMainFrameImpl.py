@@ -14,6 +14,8 @@ from pprint import pprint
 ###########################################################################
 
 class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
+	"""Implementation of the main frame of the GDS which holds all of the different tabs
+	"""
 
 	def __init__( self, parent, factory, evnt_pnl_state = None, tlm_pnl_state = None, status_bar_state = None, ch_dict = None, config=None):
 		GDSMainFrameGUI.MainFrame.__init__ (self, parent)
@@ -48,7 +50,6 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		# Start updating light
 		self.updateStatusBar()
 		
-
 	def __del__( self ):
 		pass
 
@@ -132,12 +133,9 @@ class MainFrameImpl ( GDSMainFrameGUI.MainFrame ):
 		self.onMainFrameClose(event)
 
 
-
-
 class GDSStatusBar(wx.StatusBar):
 	"""Custom wxStatusBar implementation that allows us to draw the status light/circle on the bar
 	"""
-
 	
 	def __init__(self, parent):
 		wx.StatusBar.__init__(self, parent, -1)
@@ -167,9 +165,21 @@ class GDSStatusBar(wx.StatusBar):
 		dc.DrawCircle(16, 8, 8)
 	
 	def get_state(self):
+		"""Get the current state of the status bar
+		
+		Returns:
+			tuple -- (number of bytes recved, number of bytes sent)
+		"""
+
 		return self.bytes_recv, self.bytes_sent
 	
 	def set_state(self, state):
+		"""Set the state of the status bar
+		
+		Arguments:
+			state {tuple} -- (number of bytes recved, number of bytes sent)
+		"""
+
 		self.bytes_recv = state[0]
 		self.bytes_sent = state[1]
 

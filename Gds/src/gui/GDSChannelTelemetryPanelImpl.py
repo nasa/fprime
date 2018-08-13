@@ -105,6 +105,12 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onCopyKeyPressedContext(self, event):
+        """Callback for pressing the copy option in the context menu of the data view ctrl
+        
+        Arguments:
+            event {wx.Event} -- standard event arg from WX
+        """
+
         rows = self.ChannelTelemDataViewCtl.GetSelections()
         cpy_out = ""
         for r in rows:
@@ -213,7 +219,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     # Report how many columns this model provides data for.
     def GetColumnCount(self):
 
-        """Get teh number of columns
+        """Get the number of columns
 
         Returns:
             int -- the number of columns
@@ -401,7 +407,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                     attr.SetBold(True)
         return True
 
-
     def UpdateModel(self, new_data):
         """Add a new data item to the event log.
 
@@ -446,6 +451,12 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                     self.ItemChanged(self.ObjectToItem(null_member))
 
     def ChangeFilter(self, filt):
+        """Change the filter on this model
+        
+        Arguments:
+            filt {list} -- list of channel full names that we want to display
+        """
+
 
         # Don't do anything if the filters are the same
         if self.filter == filt:
@@ -504,7 +515,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
 
         return self.chs_seen
-
 
 '''
 Implementation for nesting channels inside of packets in the DataViewCtrl in case someone ever wants to implement that again - Josef Biberstein (jxb@mit.edu)

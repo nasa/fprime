@@ -30,7 +30,12 @@ class ArgItemComboBox(wx.Panel):
 		bSizer.Fit( self )
 
 	def setSelection(self, selection):
+		"""Set the current selection for the combobox of this gui element
 		
+		Arguments:
+			selection {string} -- the string to be selected
+		"""
+
 		for r in range(self.m_argWindow.Count):
 			t = self.m_argWindow.GetString(r)
 			if t == selection:
@@ -57,14 +62,15 @@ class ComboEnumValidator(wx.Validator):
 		return ComboEnumValidator()
 
 	def Validate(self, win):
-		"""Validates the text control contents as a hex or integer number
+		"""Validate the combobox for a valid string input
 		
 		Arguments:
-			win {wx.Window} -- Parent window. Passed in automoatically
+			win {wx.Window} -- The window that owns the combobox
 		
 		Returns:
-			bool -- True if correct format, False otherwise
+			bool -- True if valid, False otherwise
 		"""
+
 		comboBox = self.GetWindow()
 		text = comboBox.GetStringSelection()
 		
@@ -76,7 +82,6 @@ class ComboEnumValidator(wx.Validator):
 		else:
 			comboBox.SetBackgroundColour("white")
 			return True
-
 
 	def TransferToWindow(self):
 		return True

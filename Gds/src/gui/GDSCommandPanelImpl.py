@@ -71,14 +71,22 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 		self._encoders.append(enc)
 
-	# Cancel scroll button check if you get a scroll event on the window
 	def updateCmdSearchPool(self):
+		"""Updates the list of commands we are searching for in the command history
+		"""
+
 		if self._previous_search_term is not None:
 			itms = self.CmdHistListBox.Items
 			idxs = [i for i, v in enumerate(itms) if self._previous_search_term in v]
 			self._search_index_pool = cycle(idxs)
 
 	def setupCommandArguments(self, temp):
+		"""Render the command argument gui elements to the screen based on selected command
+		
+		Arguments:
+			temp {CmdTemplate} -- template object for the given command
+		"""
+
 		self.arginputs = list()
 		self.CmdArgsScrolledWindow.GetSizer().Clear(True)
 
@@ -131,7 +139,6 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		temp = self.cname_dict[s]
 		self.setupCommandArguments(temp)
 
-
 	def onCmdSendButtonClick( self, event ):
 		'''Gathers entered command arguments and sends them to all encoders'''
 		arglist = list()
@@ -157,7 +164,6 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 			self.updateCmdSearchPool()
 
 		return True
-
 
 	def onCmdHistSearchButtonClick( self, event ):
 
