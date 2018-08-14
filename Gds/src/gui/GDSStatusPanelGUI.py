@@ -21,8 +21,29 @@ class Status ( wx.Panel ):
 		
 		bSizer7 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.StatusTabTextCtl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_WORDWRAP|wx.TE_MULTILINE|wx.TE_READONLY )
-		bSizer7.Add( self.StatusTabTextCtl, 1, wx.ALL|wx.EXPAND, 5 )
+		bSizer3 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText1 = wx.StaticText( self, wx.ID_ANY, u"Data Recieved", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1.Wrap( -1 )
+		bSizer3.Add( self.m_staticText1, 1, wx.ALL, 5 )
+		
+		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"Data Sent", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText2.Wrap( -1 )
+		bSizer3.Add( self.m_staticText2, 1, wx.ALL, 5 )
+		
+		
+		bSizer7.Add( bSizer3, 0, wx.EXPAND, 5 )
+		
+		bSizer2 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.StatusTabRecvTextCtl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		bSizer2.Add( self.StatusTabRecvTextCtl, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		self.StatusTabSendTextCtl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		bSizer2.Add( self.StatusTabSendTextCtl, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer7.Add( bSizer2, 1, wx.EXPAND, 5 )
 		
 		
 		self.SetSizer( bSizer7 )
@@ -31,4 +52,3 @@ class Status ( wx.Panel ):
 	def __del__( self ):
 		pass
 	
-

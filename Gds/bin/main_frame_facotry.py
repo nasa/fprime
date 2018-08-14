@@ -26,7 +26,10 @@ from client_socket import client_socket
 
 from gui import GDSMainFrameImpl
 
+from logger import DataLogger
+
 import os
+import datetime
 
 # TODO document all methods
 class MainFrameFactory(object):
@@ -62,6 +65,13 @@ class MainFrameFactory(object):
         self.main_frame_instances = []
         
         self.ch_dict = None
+
+        self.logger = None
+
+        # Setup log file location
+        self.log_dir = os.path.dirname(os.path.realpath(__file__)) + '/../logs/' + str(datetime.date.today()) + os.sep
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
 
     def create_new_window(self):
         """Create a new instance of the GDS window
@@ -143,7 +153,6 @@ class MainFrameFactory(object):
             self.pkt_dec = pkt_decoder.PktDecoder(pkt_dict, ch_dict)
             self.dist.register("FW_PACKET_PACKETIZED_TLM", self.pkt_dec)
 
-
         frame = GDSMainFrameImpl.MainFrameImpl(None, self, ch_dict=ch_dict, config=self.config)
 
         self.register_all(frame)
@@ -151,6 +160,12 @@ class MainFrameFactory(object):
         frame.Show(True)
         self.main_frame_instances.append(frame)
 
+        # Setup the logging pipeline
+        self.logger = DataLogger.DataLogger(self.log_dir, verbose=True, csv=True)
+        self.event_dec.register(self.logger)
+        self.ch_dec.register(self.logger)
+        self.client_socket.register_distributor(self.logger)
+        self.cmd_enc.register(self.logger)
 
     def register_all(self, frame):
         '''

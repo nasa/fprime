@@ -59,6 +59,9 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 		self._search_index_pool = None
 
+		self._cmd_complete_search_pool = None
+
+
 	def __del__( self ):
 		pass
 
@@ -219,5 +222,62 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 		except IndexError:
 			raise Exception("Malformed command string or some arguments not specified")
 
+	def onCharQuickCmd( self, event ):
+		event.Skip()
 
+	def onKeyUpQuickCmd( self, event ):
+		event.Skip()
+	
+	def onTextQuickCmd( self, event ):
+		event.Skip()
 
+	def onKeyDownCmdComboBox( self, event ):
+		event.Skip()
+	
+	def onTextCmdComboBox( self, event ):
+		''' This the start of the autocomplete for the cmd combo box - finish if you want that feature and reach out to me if you want explanation (jxb@mit.edu)
+		# Get current text in cbox
+		text = self.CmdsComboBox.Value
+		print text
+
+		# Get current cursor position in cbox
+		cpos = self.CmdsComboBox.GetInsertionPoint() + 1
+		print cpos
+
+		# Generate search term by ignoring everything after the insertion point
+		search_term = text[:cpos]
+		print search_term
+
+		# Generate new cycler
+		idxs = [i for i, v in enumerate(self.cname_dict.keys()) if v.startswith(search_term)]
+		print(idxs)
+		self._cmd_complete_search_pool = cycle(idxs)
+
+		# Get first member in cycle
+		idx = next(self._cmd_complete_search_pool)
+
+		# Get the entry from cmd cbox that corresponds to this idx
+		new_txt = self.CmdsComboBox.GetString(idx)
+
+		# Set the cbox text to the new string
+		self.CmdsComboBox.Value = new_txt
+
+		# Set the insertion point and highlighting
+		self.CmdsComboBox.SetInsertionPoint(cpos)
+		self.CmdsComboBox.SetTextSelection(cpos, len(new_txt))
+		'''
+		event.Skip()
+	
+	def onTextEnterCmdComboBox( self, event ):
+		event.Skip()
+
+	def onCharCmdComboBox( self, event ):
+		'''
+		keycode = event.GetKeyCode()
+		print keycode
+
+		# Backspace pressed
+		if keycode != 8:
+			print self.CmdsComboBox.Value
+		'''
+		event.Skip()

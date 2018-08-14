@@ -12,7 +12,8 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
 	
 	def __init__( self, parent, config=None ):
 		GDSStatusPanelGUI.Status.__init__ ( self, parent)
-		self.msg_buffer = []
+		self._send_msg_buffer = []
+		self._recv_msg_buffer = []
 
 		# Start text control updating service
 		self.update_text_ctrl()
@@ -24,11 +25,15 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
 		"""Called to update the status panel with new raw output. Called every 500ms on the GUI thread.
 		"""
 
-		for m in self.msg_buffer:
-			self.StatusTabTextCtl.AppendText(m)
-		self.msg_buffer = []
+		for m in self._recv_msg_buffer:
+			self.StatusTabRecvTextCtl.AppendText(m)
+		for m in self._send_msg_buffer:
+			self.StatusTabSendTextCtl.AppendText(m)
+		self._send_msg_buffer = []
+		self._recv_msg_buffer = []
 		wx.CallLater(500, self.update_text_ctrl)
 	
+	# [00 12 34 ...]
 	# Some data was sent
 	def send(self, data, dest):
 		"""Send callback for the encoder
@@ -38,7 +43,7 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
 			dest {string} -- where the data will be sent by the server
 		"""
 
-		self.msg_buffer.append("Data sent to " + dest + '\n' + binascii.hexlify(data) + '\n\n')
+		self._send_msg_buffer.append("[" + " ".join(binascii.hexlify(data)[i:i+2] for i in range(0, len(binascii.hexlify(data)), 2)) + "]\n\n")
 
 	# Some data was recvd
 	def on_recv(self, data):
@@ -48,5 +53,5 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
 			data {bin} --binnary data string that was recved
 		"""
 
-		self.msg_buffer.append("Data was recieved\n" + binascii.hexlify(data) + '\n\n')
+		self._recv_msg_buffer.append("[" + " ".join(binascii.hexlify(data)[i:i+2] for i in range(0, len(binascii.hexlify(data)), 2)) + "]\n\n")
 
