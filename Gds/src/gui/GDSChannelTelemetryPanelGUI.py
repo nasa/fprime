@@ -22,7 +22,7 @@ class ChannelTelemetry ( wx.Panel ):
 		
 		bSizer6 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.ChannelTelemDataViewCtl = wx.dataview.DataViewCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_MULTIPLE )
+		self.ChannelTelemDataViewCtl = wx.dataview.DataViewCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_MULTIPLE | wx.dataview.DV_VERT_RULES )
 		bSizer6.Add( self.ChannelTelemDataViewCtl, 10, wx.ALL|wx.EXPAND, 5 )
 		
 		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Channel Telemetry Filtering" ), wx.HORIZONTAL )
