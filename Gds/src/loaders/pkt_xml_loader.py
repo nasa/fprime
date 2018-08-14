@@ -126,7 +126,7 @@ class PktXmlLoader(XmlLoader):
                 ch_name = ch.attrib[self.CH_NAME_FIELD]
 
                 if ch_name not in ch_name_dict:
-                    raise exceptions.GseControllerParseException(
+                    raise exceptions.GseControllerParsingException(
                             "Channel %s in pkt %s, but cannot be found in channel dictionary"%
                             (ch_name, pkt_name))
 
