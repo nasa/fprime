@@ -74,7 +74,7 @@ class ThreadedTCPSocketClient(object):
             self.__data_recv_thread.start()
         except:
             print("There was a problem connecting to the TCP Server")
-            exit()
+            exit(-1)
 
 
     def disconnect(self):
