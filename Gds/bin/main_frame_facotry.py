@@ -106,6 +106,7 @@ class MainFrameFactory(object):
         self.dist = distributor.Distributor(self.config)
         self.client_socket = client_socket.ThreadedTCPSocketClient()
 
+        # Choose the dictionary type we will use
         if self.opts.generated_path != None:
             use_py_dicts = True
         elif self.opts.xml_dict_path != None:
