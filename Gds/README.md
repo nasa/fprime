@@ -139,7 +139,7 @@ brew install graphviz
 pip install doxypypy
 ```
 
-Next, copy into or otherwise make `docs/py_filter` available in your path.
+Next, make `docs/py_filter` available in your system path however you see fit.
 Now you can run `doxygen Doxyfile` in the root directory to generate documentation in `docs/doxy/index.html`
 
 ## Notes
