@@ -123,13 +123,15 @@ all share the same subscriptions and therefore recieve the same data.
 
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.
-To do this, you will need to install '''doxygen''' and '''doxypypy''' with the following commands.
+To do this, you will need to install `doxygen` and `doxypypy` with the following commands.
 
-'''apt-get install doxygen
-pip install doxypypy'''
+```
+apt-get install doxygen
+pip install doxypypy
+```
 
-Next, copy into or otherwise make '''docs/py_filter''' available in your path.
-Now you can run '''doxygen Doxyfile''' in the root directory to generate documentation in '''docs/doxy/index.html
+Next, copy into or otherwise make `docs/py_filter` available in your path.
+Now you can run `doxygen Doxyfile` in the root directory to generate documentation in `docs/doxy/index.html`
 
 ## Notes
  - Currently, the models/common directory has command.py, event.py, and
