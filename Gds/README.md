@@ -123,11 +123,11 @@ all share the same subscriptions and therefore recieve the same data.
 
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.
-To do this, you will need to install `doxygen` and `doxypypy`.
+To do this, you will need to install `doxygen`, `doxypypy` and `graphviz`.
 
 ### Linux/Windows WSL
 ```
-apt-get install doxygen
+apt-get install doxygen graphviz
 pip install doxypypy
 ```
 
@@ -135,6 +135,7 @@ pip install doxypypy
 Install doxygen from the website (http://www.stack.nl/~dimitri/doxygen/download.html) or by using the following command if you have Homebrew
 ```
 brew install doxygen
+brew install graphviz
 pip install doxypypy
 ```
 
