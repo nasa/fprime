@@ -118,8 +118,18 @@ to the F' deployment.
 This class is responsible for setting up the pipeline of data between different 
 components in the publisher/subscriber interface - that is, it is 
 responsible for registering all of the various components that whish to share
-data. This class also supports the creation of multiple Gds GUI windows which 
+data. This class also supports the creation of multiple Gds GUI windows which
 all share the same subscriptions and therefore recieve the same data. 
+
+## Generate Documentation
+You can generate a doxygen documentation page for the GDS source.
+To do this, you will need to install '''doxygen''' and '''doxypypy''' with the following commands.
+
+'''apt-get install doxygen
+pip install doxypypy'''
+
+Next, copy into or otherwise make '''docs/py_filter''' available in your path.
+Now you can run '''doxygen Doxyfile''' in the root directory to generate documentation in '''docs/doxy/index.html
 
 ## Notes
  - Currently, the models/common directory has command.py, event.py, and
