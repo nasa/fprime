@@ -132,7 +132,7 @@ pip install doxypypy
 ```
 
 ### Mac
-Install doxygen by either getting on the website through their installer or using the following command if you have `brew`
+Install doxygen from the website (http://www.stack.nl/~dimitri/doxygen/download.html) or by using the following command if you have Homebrew
 ```
 brew install doxygen
 pip install doxypypy
