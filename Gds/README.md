@@ -121,6 +121,12 @@ responsible for registering all of the various components that whish to share
 data. This class also supports the creation of multiple Gds GUI windows which
 all share the same subscriptions and therefore recieve the same data. 
 
+## Start the GDS
+Starting the GDS can started along with the TCPServer and Reference App by executing the following script.
+```
+fprime-sw/Ref/scripts/run_ref_gds.sh
+```
+
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.
 To do this, you will need to install `doxygen`, `doxypypy` and `graphviz`.
