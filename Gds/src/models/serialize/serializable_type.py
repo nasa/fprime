@@ -45,16 +45,11 @@ class SerializableType(type_base.BaseType):
 
         # Check if the member list contains a description or not
         if len(mem_list[0]) == 3:
-            # TODO remove
-            print "adding descriptor to mem list items"
             new_mem_list = []
             for (memberName, memberVal, format_string) in mem_list:
                 new_mem_list.append((memberName, memberVal, format_string, None))
 
             mem_list = new_mem_list
-
-        # TODO remove
-        print "mem_list=%s"%mem_list
 
         # scan the list to see if it has the correct types
         for (memberName, memberVal, format_string, desc) in mem_list:
