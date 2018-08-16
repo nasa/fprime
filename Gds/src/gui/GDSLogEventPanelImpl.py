@@ -4,7 +4,6 @@
 import wx
 import GDSLogEventPanelGUI
 from data_types.event_data import EventData
-from pprint import pprint
 from utils.event_severity import EventSeverity
 from utils.config_manager import ConfigManager
 
@@ -136,6 +135,8 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
             
     # Override these handlers to implement functionality for GUI elements
     def onLogEventDataViewContextMenu( self, event ):
+
+        # Allows copying of data form the data view through right click context menu
         if not hasattr(self, 'copy_context_id'):
             self.copy_context_id = wx.NewId()
             self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
@@ -159,7 +160,6 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         except KeyError:
             severity = None
 
-        print((search_term, severity))
         self.dv_model.ApplyFilter(search_term, severity)
 
     def onEventLogResetFilterButtonClick( self, event ):

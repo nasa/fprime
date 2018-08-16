@@ -9,7 +9,6 @@
 
 import wx
 import GDSChannelTelemetryPanelGUI
-from pprint import pprint
 import inspect
 import GDSChannelFilterDialogImpl
 from copy import deepcopy
@@ -283,9 +282,8 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
                 return len(self.chs_seen)
             else:
-                print(self.filter)
+                
                 gen = [x for x in self.data if x.template.get_full_name() in self.filter]
-                print(gen)
                 for obj in gen:
                     children.append(self.ObjectToItem(obj))
 
@@ -389,27 +387,27 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             
             if node.val_obj != None:
                 if node.template.low_red != None and node.val_obj.val < node.template.low_red:
-                    print("Red.....!")
+                
                     attr.SetColour(self.red)
                     attr.SetBold(True)
                 elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
-                    print("Red.....!")
+                    
                     attr.SetColour(self.red)
                     attr.SetBold(True)
                 elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
-                    print("Orange....")
+                    
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
                 elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
-                    print("Orange....")
+                    
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
                 elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
-                    print("Yellow...")
+                    
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
                 elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
-                    print("Yellow...")
+                    
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
         return True

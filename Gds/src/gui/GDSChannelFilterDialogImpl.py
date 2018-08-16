@@ -78,7 +78,6 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
         # This will open a file dialog that can save the current filter as a csv
         dialog = wx.FileDialog(self, "Save filter", wildcard="CSV files (*.csv)|*.csv", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) 
         ret = dialog.ShowModal()
-        print(ret)
         if ret == wx.ID_OK:
             f = dialog.GetPath()
             with open(f, 'wb') as csvfile:
