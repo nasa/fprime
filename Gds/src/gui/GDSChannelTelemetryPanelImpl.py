@@ -9,7 +9,6 @@
 
 import wx
 import GDSChannelTelemetryPanelGUI
-from pprint import pprint
 import inspect
 import GDSChannelFilterDialogImpl
 from copy import deepcopy
@@ -128,6 +127,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemContextMenu( self, event ):
 
+        # This is called to create a context menu in the data view to allow calling of copy through a right click
         if not hasattr(self, 'copy_context_id'):
             self.copy_context_id = wx.NewId()
             self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
@@ -141,6 +141,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onChannelTelemSelectChannelsButtonClick( self, event ):
+
+        # Get a new channel filter by prompting the user with a dialog
         dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict, config=self.config)
         ret = dlog.ShowModal()
         if ret == 0:
@@ -150,6 +152,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onChannelTelemShowHexCheckBoxClick( self, event ):
+
+        # Display channel IDs as hexidecimal values
         self.ChannelTelemDataViewCtl.SelectAll()
         s = self.ChannelTelemDataViewCtl.GetSelections()
         for i in s:
@@ -158,6 +162,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onClickResetFilter( self, event ):
+
+        # Clear the filter
         self.dv_model.ChangeFilter([])
         self.ChannelTelemFilterSelectedTextCtl.SetValue("")
         event.Skip()
@@ -276,9 +282,8 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
                 return len(self.chs_seen)
             else:
-                print(self.filter)
+                
                 gen = [x for x in self.data if x.template.get_full_name() in self.filter]
-                print(gen)
                 for obj in gen:
                     children.append(self.ObjectToItem(obj))
 
@@ -382,27 +387,27 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             
             if node.val_obj != None:
                 if node.template.low_red != None and node.val_obj.val < node.template.low_red:
-                    print("Red.....!")
+                
                     attr.SetColour(self.red)
                     attr.SetBold(True)
                 elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
-                    print("Red.....!")
+                    
                     attr.SetColour(self.red)
                     attr.SetBold(True)
                 elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
-                    print("Orange....")
+                    
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
                 elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
-                    print("Orange....")
+                    
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
                 elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
-                    print("Yellow...")
+                    
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
                 elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
-                    print("Yellow...")
+                    
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
         return True

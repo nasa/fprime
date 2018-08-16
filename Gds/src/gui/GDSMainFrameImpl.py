@@ -7,7 +7,6 @@ import GDSLogEventPanelImpl
 
 import os
 
-from pprint import pprint
 
 ###########################################################################
 ## Class MainFrameImpl
