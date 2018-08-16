@@ -71,6 +71,9 @@ most of the units described below, a base class describes the interface and
 subclasses implement the interface for specific data types (such as events,
 channels, etc).
 
+To exapnd the Gds to accept more data types or have additional features, new classes 
+can be written and registered into the existing structure.
+
 ### TCP Client
 The TCP client is simply a passthrough for data coming from the TCP Server and 
 the F' Distrobution. The client handles all the socket connection overhead and 
@@ -150,6 +153,14 @@ components in the publisher/subscriber interface - that is, it is
 responsible for registering all of the various components that whish to share
 data. This class also supports the creation of multiple Gds GUI windows which
 all share the same subscriptions and therefore recieve the same data. 
+
+### ConfigManager
+The `ConfigManager` class is responsible for storing configurations used by GDS
+classes. An instance of this class is passed to some GDS classes such as 
+distributors and encoders (to indicate the types of some binary data fields) and
+to some consumers (to indicate colors). The ConfigManager class sets the defaults
+for each config, but a .ini file can also be passed into the constructor to set
+the configs to custom values.
 
 ## Modify GDS Structure
 To setup the structure of the GDS, instances of the above classes are first
