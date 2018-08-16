@@ -1,5 +1,4 @@
 # GDS
-
 ## Overview
 The Gds provides a remote interface for fprime deployments, allowing users to 
 view telemetry and events and send commands.
@@ -38,7 +37,33 @@ Starting the GDS can started along with the TCPServer and Reference App by execu
 ```
 fprime-sw/Ref/scripts/run_ref_gds.sh
 ```
-This script has default parameters passed to the GDS, but the full usage of the GDS is: [TODO]
+This script has default parameters passed to the GDS, but the full usage of the GDS is: 
+```
+usage: gds.py [-h] [-d GENERATED_PATH] [-x XML_DICT_PATH] [-s PKT_SPEC_PATH]
+              [-a ADDR] [-p PORT] [-L LOG_DIR_PATH] [-C CONFIG_PATH]
+
+GDS GUI to display telem and event data from Fprime deployments and send
+commands to them
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d GENERATED_PATH, --dictionary GENERATED_PATH
+                        Path to generated dictionary files (if using python
+                        module dictionaries)
+  -x XML_DICT_PATH, --xml-dict XML_DICT_PATH
+                        Path to the xml dictionary file (if using xml
+                        dictionaries)
+  -s PKT_SPEC_PATH, --pkt-spec PKT_SPEC_PATH
+                        Path to the packet specification file
+  -a ADDR, --addr ADDR  Set threaded tcp socket server address
+                        [default=127.0.0.1]
+  -p PORT, --port PORT  Set threaded tcp socket server port [default: 50000]
+  -L LOG_DIR_PATH       Path to directory where log files will be put (a
+                        subdirectory named with the current date and time will
+                        be made with individual log files within it)
+  -C CONFIG_PATH, --config CONFIG_PATH
+                        Path to the configuration file to read
+```
 
 ## Classes
 The Gds back end is composed of several different data proecssing units. For 
@@ -119,7 +144,7 @@ argument. In the case of the Gds, the consumers are the GUI panels that display
 data. Consumers can also produce data that is sent to encoders and eventually on
 to the F' deployment. 
 
-### Main Panel Factory
+### Main Frame Factory
 This class is responsible for setting up the pipeline of data between different 
 components in the publisher/subscriber interface - that is, it is 
 responsible for registering all of the various components that whish to share
@@ -131,7 +156,15 @@ To setup the structure of the GDS, instances of the above classes are first
 created. Then, they are registered to one another by calling the data producer's
 `register` function with the data consumer as the argument. The data consumer 
 is expected to implement a callback function to receive the data (`data_callback`
-for most classes, but check the base class's documentation for details)
+for most classes, but check the base class's documentation for details).
+
+An example of how to instantiate and register classes into the correct structure 
+can be found in the `MainFrameFactory` class.
+
+## Instalation
+[TODO]
+download wheel for system.
+use: sudo {path to python used by fprime} -m pip install {path to wxPython 4 .whl file}
 
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.
