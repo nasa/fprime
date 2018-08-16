@@ -63,7 +63,7 @@ class MainFrameFactory(object):
         self.cmd_name_dict = None
 
         self.main_frame_instances = []
-        
+
         self.ch_dict = None
 
         self.logger = None
@@ -103,6 +103,7 @@ class MainFrameFactory(object):
 
         # TODO comment this function to explain
 
+        # Create Distributor and client socket
         self.dist = distributor.Distributor(self.config)
         self.client_socket = client_socket.ThreadedTCPSocketClient()
 
@@ -114,6 +115,7 @@ class MainFrameFactory(object):
         else:
             raise Exception("No Dictionary path passed in options")
 
+        # Create Dictionaries
         if use_py_dicts:
             self.evnt_ldr = event_py_loader.EventPyLoader()
             eid_dict = self.evnt_ldr.get_id_dict(self.opts.generated_path + os.sep + "events")
@@ -136,17 +138,25 @@ class MainFrameFactory(object):
             ch_name_dict = self.ch_ldr.get_name_dict(self.opts.xml_dict_path)
 
         self.ch_dict = ch_dict
+
+        # Create encoders and decoders using dictionaries
         self.cmd_enc = cmd_encoder.CmdEncoder()
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
 
+        # Register distributor to client socket
         self.client_socket.register_distributor(self.dist)
 
+        # Register client socket to encoder
         self.cmd_enc.register(self.client_socket)
 
+        # Register the event and channel decoders to the distributor for their
+        # respective data types
         self.dist.register("FW_PACKET_LOG", self.event_dec)
         self.dist.register("FW_PACKET_TELEM", self.ch_dec)
 
+        # If a packet specification file is availiable, initialize and register
+        # a packet decoder
         # TODO find a cleaner way to handle implementations without a packet spec
         if (self.opts.pkt_spec_path != None):
             self.pkt_ldr = pkt_xml_loader.PktXmlLoader()
@@ -156,12 +166,13 @@ class MainFrameFactory(object):
 
         frame = GDSMainFrameImpl.MainFrameImpl(None, self, ch_dict=ch_dict, config=self.config)
 
+        # Register the decoders/encoders to the panels
         self.register_all(frame)
 
         frame.Show(True)
         self.main_frame_instances.append(frame)
 
-        # Setup the logging pipeline
+        # Setup the logging pipeline (register it to all its data sources)
         self.logger = DataLogger.DataLogger(self.log_dir, verbose=True, csv=True)
         self.event_dec.register(self.logger)
         self.ch_dec.register(self.logger)
