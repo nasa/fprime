@@ -22,7 +22,6 @@ from utils import config_manager
 
 
 # NOTE decoder function to call is called data_callback(data)
-# TODO close the socket when you're done
 class Distributor(object):
     """
     A distributor contains a socket client that connects to a ThreadedTCPServer.

@@ -103,9 +103,6 @@ class MainFrameFactory(object):
         Raises:
             Exception -- raised if no dictionary path passed in the opts object
         """
-
-        # TODO comment this function to explain
-
         # Create Distributor and client socket
         self.dist = distributor.Distributor(self.config)
         self.client_socket = client_socket.ThreadedTCPSocketClient()
