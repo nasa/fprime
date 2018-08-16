@@ -26,7 +26,7 @@ from client_socket import client_socket
 
 from gui import GDSMainFrameImpl
 
-from logger import DataLogger
+from logger import data_logger
 
 import os
 import datetime
@@ -69,7 +69,10 @@ class MainFrameFactory(object):
         self.logger = None
 
         # Setup log file location
-        self.log_dir = os.path.dirname(os.path.realpath(__file__)) + '/../logs/' + str(datetime.date.today()) + os.sep
+        d = datetime.datetime.now()
+        self.log_dir = opts.log_dir_path + os.sep + "%d_%02d_%02d-%02d_%02d_%02d"%(
+                                                    d.year, d.month, d.day,
+                                                    d.hour, d.minute, d.second)
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
 
@@ -173,7 +176,7 @@ class MainFrameFactory(object):
         self.main_frame_instances.append(frame)
 
         # Setup the logging pipeline (register it to all its data sources)
-        self.logger = DataLogger.DataLogger(self.log_dir, verbose=True, csv=True)
+        self.logger = data_logger.DataLogger(self.log_dir, verbose=True, csv=True)
         self.event_dec.register(self.logger)
         self.ch_dec.register(self.logger)
         self.client_socket.register_distributor(self.logger)

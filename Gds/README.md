@@ -1,10 +1,10 @@
 # GDS
 
-### Overview
+## Overview
 The Gds provides a remote interface for fprime deployments, allowing users to 
 view telemetry and events and send commands.
 
-The Gds is a heavily refactored version of the fprime Gse. Both the Gse and Gds 
+The Gds is an almost completely rewritten version of the fprime Gse. Both the Gse and Gds 
 use the ThreadedTCPServer to receive data from the fprime deployment. They also
 have very similar looking GUIs, start up scripts, and command line arguments. 
 However, The infrastructure supporting each one is very different.
@@ -12,7 +12,7 @@ However, The infrastructure supporting each one is very different.
 The Gds was designed to be adaptable, easily understanable, and easily 
 expandable. To this end, it is built using publisher/subscriber relationships.
 
-The diagram below shows an example structure for incomming data. Data from the 
+The diagram below shows the basic layout of the GDS. Data from the 
 F' deployment first enters the Gds at the TCP client. Each packet is then passed
 directly to the distributor which is responsible for parsing the packets in to 
 data messages and sending on each message type (currently only events, channels,
@@ -20,20 +20,25 @@ and packetized telemetry are supported) to decoders registered for that type.
 The decoder is responsible for turning that data message into a data object 
 which it passes along to all consumers registered to it. These consumers could 
 be anything, but in the Gds they are gui panels that display the data. 
-![Example Gds incoming data layout](docs/ExampleIncomingDataLayout.png)
-
-For outgoing data, the structure is similar. Currently, only commands are 
-supported for outgoing data. Command data objects are created in panels and 
-then sent to all encoders who are registered to that panel. The encoders take 
-the data object and turn it into binary data that can be sent to the fprime 
+For outgoing data, the structure is similar. Currently, commands are 
+the only ouput data type included. Command data objects are created in the command 
+panel and then sent to the command encoder registered to that panel. Encoders take
+a data object and turn it into binary data that can be sent to the fprime 
 deployment. The binary data is then passed to the TCP client which is 
 registered to the encoder. Finally, the TCP client send the data back
 to the TCP server and the F' deployment.
-![Example Gds outgoing data layout](docs/ExampleOutgoingDataLayout.png)
+![The layout of the GDS](docs/gds_layout.jpg)
 
 All of these objects are created and registered to other objects when the Gds 
 is initialized. Thus, all of the structure of the Gds is created in one place, 
 and can be easily modified.
+
+## Usage
+Starting the GDS can started along with the TCPServer and Reference App by executing the following script.
+```
+fprime-sw/Ref/scripts/run_ref_gds.sh
+```
+This script has default parameters passed to the GDS, but the full usage of the GDS is: [TODO]
 
 ## Classes
 The Gds back end is composed of several different data proecssing units. For 
@@ -121,11 +126,12 @@ responsible for registering all of the various components that whish to share
 data. This class also supports the creation of multiple Gds GUI windows which
 all share the same subscriptions and therefore recieve the same data. 
 
-## Start the GDS
-Starting the GDS can started along with the TCPServer and Reference App by executing the following script.
-```
-fprime-sw/Ref/scripts/run_ref_gds.sh
-```
+## Modify GDS Structure
+To setup the structure of the GDS, instances of the above classes are first
+created. Then, they are registered to one another by calling the data producer's
+`register` function with the data consumer as the argument. The data consumer 
+is expected to implement a callback function to receive the data (`data_callback`
+for most classes, but check the base class's documentation for details)
 
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.
@@ -152,5 +158,5 @@ Now you can run `doxygen Doxyfile` in the root directory to generate documentati
  - Currently, the models/common directory has command.py, event.py, and
    channel.py. These files must be present in order for the python dictionaries
    to be properly imported. However, they are empty and not used in the GDS. 
-   When we switch to XML dictionaries, these can go away. 
+   When we switch fully to XML dictionaries, these can go away. 
 

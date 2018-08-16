@@ -86,7 +86,7 @@ class EventData(sys_data.SysData):
                                           if true
 
         Returns:
-            String version of the channel data
+            String version of the event data
         '''
         time_str = self.time.to_readable(time_zone)
         raw_time_str = str(self.time)

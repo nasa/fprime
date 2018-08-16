@@ -1,198 +1,158 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-This is the f prime ground support equipment client
-program.  It is designed to bring up a front end
-GUI sending commands and receiving telemetry that
-are defined utilizing the various XML files
-used by the Autocoder to generate framework codes.
+This is the Fprime Ground data system GUI (GDS). It displays telemetry and event
+data from an Fprime deployment. Additionally, the GDS allows for commands to be
+sent to the Fprime deployment.
 
-@author:     Leonard J. Reder
+@author Josef Biberstein
+@author Joseph Paetz
 
-@copyright:  2014 California Institute of Technology. All rights reserved.
-
-@license:    license
-
-@contact:    reder@jpl.nasa.gov
+@copyright:  2018 California Institute of Technology. All rights reserved.
 '''
 import sys
 import os
-import time
-import glob
-import random
-from utils import PortFinder
+from time import sleep
+from argparse import ArgumentParser
 
-
-import traceback
-
-from distributor import distributor
 from client_socket import client_socket
-from decoders import event_decoder
-from decoders import ch_decoder
-from loaders import event_py_loader
-from loaders import cmd_py_loader
-from encoders import cmd_encoder
-from loaders import ch_py_loader
 from utils import config_manager
-
 from main_frame_facotry import MainFrameFactory
-
-from pprint import pprint
-
 import wx
 from gui import GDSMainFrameImpl
-from optparse import OptionParser
 
-from time import sleep
 
 __all__ = []
-__version__ = 0.1
-__date__ = '2015-04-03'
-__updated__ = '2015-04-03'
-LOGGER = None
+__version__ = 1.0
+__date__ = '2018-08-016'
+__updated__ = '2018-08-16'
 
-def connect(opts):
-	"""
-	Routine to launch Threaded TCP Server
-	and connect to gse.py.  The routine
-	creates default log files of stdout
-	and stderr.
-	"""
-	main_panel.TopPanel(None, None, opts).startTCP()
+def get_args():
+    default_port = 50000
 
+    # setup arg parser
+    parser = ArgumentParser(description=
+                'GDS GUI to display telem and event data from Fprime' +
+                ' deployments and send commands to them')
 
-def execute(opts):
-	"""
-	Routine to launch a FSW binary that
-	must be specified on the command line.
-	The routine creates default log files
-	of stdout and stderr.
-	"""
-	#
-	# Setup log file name here...
-	#
-	if opts == None:
-		p = os.environ['HOME'] + os.sep + 'fprime_logs' + os.sep + "app"
-	else:
-		p = opts.log_file_path + os.sep + "app"
-	#
-	if not os.path.exists(p):
-		os.makedirs(p)
-	#
-	logfile = p + os.sep + time.strftime("%y%m%d%H%M%S", time.gmtime()) + '_GSE.log'
-	#
-	# Launch the FSW application saving both stdout and stdin to common log.
-	#
-	op_sys = os.uname()[0]
-	if 'BUILD_ROOT' in os.environ:
-		build_root_path = os.environ['BUILD_ROOT']
-	else:
-		print "EXCEPTIONS:  BUILD_ROOT Environment Variable not found!"
-		raise exceptions.EnvironmentError
+    # setup arg parser
+    parser.add_argument("-d", "--dictionary", dest="generated_path", action="store",
+                        help="Path to generated dictionary files (if using python module dictionaries)")
 
-	app_cmd    = "\"%s -p %s | tee -a %s; exit\"" % (opts.exec_app, opts.port, logfile)
-	#app_cmd    = "\"%s |& tee -a %s; exit\"" % (opts.exec_app, logfile)
-	#app_cmd    = "\"%s\"" % (opts.exec_app)
-	if op_sys == 'Darwin':
-		app_script = '/usr/bin/osascript '
-		app_args   = '-e \'tell application \"Terminal" to do script '
-		# Note the exit is so Mac Terminal.app window will exit when process killed...
-		cmd = app_script + app_args + app_cmd +  " \'"
-	else:
-		app_script = "/usr/bin/gnome-terminal"
-		#app_args   = "-e "
-		app_args   = " -e"
-		cmd = app_script + app_args + app_cmd
-	os.system(cmd)
-	LOGGER.info("FSW Application Started: %s" % opts.exec_app)
+    parser.add_argument("-x", "--xml-dict", dest="xml_dict_path", action="store",
+                        help="Path to the xml dictionary file (if using xml dictionaries)")
 
+    parser.add_argument("-s", "--pkt-spec", dest="pkt_spec_path", action="store",
+                        help="Path to the packet specification file")
 
-def main_window_start():
-	"""
-	Everything GUI gets started from this routine.
-	"""
-	app = wx.App(False)
-	frame = GDSMainFrameImpl.MainFrameImpl(None)
-	frame.Show(True)
+    parser.add_argument("-a", "--addr", dest="addr", action="store",
+                        help="Set threaded tcp socket server address [default=127.0.0.1]",
+                        default="127.0.0.1")
 
-	app.MainLoop()
-	return frame
+    parser.add_argument("-p", "--port", dest="port", action="store", type=int,
+                        help="Set threaded tcp socket server port [default: %d]"%default_port,
+                        default=default_port)
+
+    parser.add_argument("-L", dest="log_dir_path", action="store",
+                        help="Path to directory where log files will be put " +
+                        "(a subdirectory named with the current date and time " +
+                        "will be made with individual log files within it)")
+
+    parser.add_argument("-C", "--config", dest="config_path", action="store",
+                        help="Path to the configuration file to read")
+
+    # process options
+    args = parser.parse_args()
+
+    # Verify Arguments
+    if (args.generated_path == None and args.xml_dict_path == None):
+        sys.stderr.write("Either -d or -x argument must be used to indicate a dictionary path")
+        return None
+
+    if (args.generated_path != None and not os.path.exists(args.generated_path)):
+        sys.stderr.write("Error: Dictionary directory %s does not exist."%args.generated_path)
+        return None
+    elif(args.generated_path != None and not os.path.isdir(args.generated_path)):
+        sys.stderr.write("Error: Generated Dictionary path %s is not a directory"%args.generated_path)
+        return None
+
+    if (args.xml_dict_path != None and not os.path.exists(args.xml_dict_path)):
+        sys.stderr.write("Error: Dictionary directory %s does not exist."%args.xml_dict_path)
+        return None
+    elif(args.xml_dict_path!= None and not os.path.isfile(args.xml_dict_path)):
+        sys.stderr.write("Error: Generated Dictionary path %s is not a file"%args.xml_dict_path)
+        return None
+
+    if (args.pkt_spec_path != None and not os.path.exists(args.pkt_spec_path)):
+        sys.stderr.write("Error: Dictionary directory %s does not exist."%args.pkt_spec_path)
+        return None
+    elif(args.pkt_spec_path != None and not os.path.isfile(args.pkt_spec_path)):
+        sys.stderr.write("Error: Generated Dictionary path %s is not a file"%args.pkt_spec_path)
+        return None
+
+    if (args.log_dir_path != None and not os.path.exists(args.log_dir_path)):
+        sys.stderr.write("Error: Dictionary directory %s does not exist."%args.log_dir_path)
+        return None
+    elif(args.log_dir_path != None and not os.path.isdir(args.log_dir_path)):
+        sys.stderr.write("Error: Generated Dictionary path %s is not a directory"%args.log_dir_path)
+        return None
+
+    if (args.config_path != None and not os.path.exists(args.config_path)):
+        sys.stderr.write("Error: Dictionary directory %s does not exist."%args.config_path)
+        return None
+    elif(args.config_path != None and not os.path.isfile(args.config_path)):
+        sys.stderr.write("Error: Generated Dictionary path %s is not a file"%args.config_path)
+        return None
+
+    return args
 
 
 def main(argv=None):
-	'''
-	Command line options.
-	'''
-	program_name = os.path.basename(sys.argv[0])
-	program_version = "v0.1"
-	program_build_date = "%s" % __updated__
+    # Double check wx python version by checking first character is at least
+    #  4 (wx version 4+ required)
+    wx_version = int(wx.version()[0])
 
-	program_version_string = '%%prog %s (%s)' % (program_version, program_build_date)
-	#program_usage = '''usage: spam two eggs''' # optional - will be autogenerated by optparse
-	program_longdesc = '''''' # optional - give further explanation about what the program does
-	program_license = "Copyright 2015 user_name (California Institute of Technology)                                            \
-				ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
-	#
-	# setup option parser
-	parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
-	parser.add_option("-d", "--dictionary", dest="generated_path", action="store", type="string", \
-						help="Set base path to generated command/telemetry definition files", default=None)
-        parser.add_option("-x", "--xml-dict", dest="xml_dict_path", action="store", type="string",
-                          help="Path to the xml dictionary", default=None)
-        parser.add_option("-s", "--pkt-spec", dest="pkt_spec_path", action="store", type="string",
-                          help="Path to the packet specification file", default=None)
-	parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set threaded tcp socket server address [default: %default]", \
-						default="127.0.0.1")
-	parser.add_option("-c", "--connect", action="store_true", dest="connect", help="Launches the Threaded TCP Socket Server on startup and connect to it [default: %default]", \
-						default=False)
-	parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set threaded tcp socket server port [default: %default]", \
-						default=50007)
-						#default=PortFinder.old_getport(50000,[]))
+    if (wx_version < 4):
+        sys.stderr.write("wxPython version is %s, version 4 or above is required"%
+                         wx.version())
+        return -1
 
-	parser.add_option("-e", "--execute", dest="exec_app", action="store", type="string", help="Execute the specified fsw application after socket server and UI are up [default: %default]")
-	parser.add_option("-L", "--log-file-path", dest="log_file_path", action="store", type="string", help="Path to log files [default: %default]")
-	parser.add_option("-r", "--log-file-prefix", dest="log_file_prefix", action="store", type="string", help="Prefix in log file path for each run. [default: current date/time]", \
-						default=None)
-	parser.add_option("-l", "--log-time", dest="log_time", action="store", type="string", help="Time used for logging. (local, GMT)", \
-						default="local")
-	parser.add_option("-n", "--no-about", dest="no_about", action="store_true", help="Do not show about text screen on start", \
-						default=True)
-        parser.add_option("-C", "--config", dest="config_path", action="store", help="Path to the configuration file to read", \
-                          default=None)
+    '''
+    Command line options.
+    '''
+    args = get_args()
+    if (args == None):
+        return -1
 
-	# process options
-	(opts, args) = parser.parse_args(sys.argv)
-	pprint(opts)
-
-	app = wx.App(False)
-
-        # Setup the configuration file
-        config = config_manager.ConfigManager()
-        if (opts.config_path != None):
-            if (os.path.isfile(opts.config_path)):
-                config.set_configs(opts.config_path)
-            else:
-                raise Exception("Invalid Configuration file passed in options")
-        else:
-            print("No Configuration File in options, using defaults")
+    # Setup the configuration file
+    config = config_manager.ConfigManager()
+    if (args.config_path != None):
+        config.set_configs(args.config_path)
+    else:
+        print("No Configuration File in options, using defaults")
 
 
+    app = wx.App(False)
 
-	factory = MainFrameFactory(opts, config)
+    # Initialize main frame factory
+    factory = MainFrameFactory(args, config)
 
-	factory.setup_pipeline()
+    # Setup main frame factory (This is where the back end classes are
+    #  initialized and registered to each other)
+    factory.setup_pipeline()
 
-	sleep(1)
+    sleep(1)
 
-	factory.client_socket.connect(opts.addr, opts.port)
+    factory.client_socket.connect(args.addr, args.port)
 
-	sleep(1)
+    sleep(1)
 
-	factory.client_socket.register_to_server(client_socket.GUI_TAG)
+    factory.client_socket.register_to_server(client_socket.GUI_TAG)
 
-	app.MainLoop()
+    app.MainLoop()
 
-	factory.client_socket.disconnect()
+    factory.client_socket.disconnect()
 
 if __name__ == "__main__":
-	sys.exit(main())
+    sys.exit(main())
+
