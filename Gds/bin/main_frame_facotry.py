@@ -176,6 +176,8 @@ class MainFrameFactory(object):
         self.logger = data_logger.DataLogger(self.log_dir, verbose=True, csv=True)
         self.event_dec.register(self.logger)
         self.ch_dec.register(self.logger)
+        if (self.opts.pkt_spec_path != None):
+            self.pkt_dec.register(self.logger)
         self.client_socket.register_distributor(self.logger)
         self.cmd_enc.register(self.logger)
 

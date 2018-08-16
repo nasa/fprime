@@ -37,6 +37,8 @@ Starting the GDS can started along with the TCPServer and Reference App by execu
 ```
 fprime-sw/Ref/scripts/run_ref_gds.sh
 ```
+The Ref example should be built, and the `Ref/logs` directory should exist in the fprime directory.
+
 This script has default parameters passed to the GDS, but the full usage of the GDS is: 
 ```
 usage: gds.py [-h] [-d GENERATED_PATH] [-x XML_DICT_PATH] [-s PKT_SPEC_PATH]
