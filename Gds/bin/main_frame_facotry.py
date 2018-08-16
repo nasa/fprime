@@ -31,7 +31,7 @@ from logger import DataLogger
 import os
 import datetime
 
-# TODO document all methods
+
 class MainFrameFactory(object):
     '''Factory that creates new windows for the GDS'''
 
