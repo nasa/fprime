@@ -8,7 +8,7 @@
 '''
 
 # Custom Python Modules
-from python_loader import PythonLoader
+from loaders.python_loader import PythonLoader
 from templates.ch_template import ChTemplate
 
 class ChPyLoader(PythonLoader):
