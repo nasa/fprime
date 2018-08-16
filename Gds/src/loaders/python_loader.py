@@ -20,9 +20,6 @@ import sys
 import os
 import glob
 
-# TODO remove
-from pprint import pprint
-
 # Custom Python Modules
 import dict_loader
 from controllers import exceptions

@@ -12,8 +12,6 @@ import python_loader
 from templates import event_template
 from utils.event_severity import EventSeverity
 
-# TODO remove
-from pprint import pprint
 
 class EventPyLoader(python_loader.PythonLoader):
     '''Class to load python based event dictionaries'''
@@ -62,14 +60,8 @@ class EventPyLoader(python_loader.PythonLoader):
             fields respectively and the values should be EventTemplate
             objects.
         '''
-        # TODO remove
-        #print("in EventPyLoader.construct_dict, path=%s"%path)
-
-
         # TODO currently we are always using the superpkg, is that OK?
         module_dicts = self.read_dict(path, use_superpkg=True)
-        # TODO remove:
-        #pprint(module_dicts)
 
 
         id_dict = dict()

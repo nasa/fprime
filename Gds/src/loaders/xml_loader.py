@@ -97,7 +97,6 @@ class XmlLoader(dict_loader.DictLoader):
         '''
         # Check that dictionary path exists
         if not os.path.isfile(path):
-            # TODO remove
             raise exceptions.GseControllerUndefinedFileException(path)
 
         # Create xml parser

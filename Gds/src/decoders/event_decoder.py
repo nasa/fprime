@@ -77,14 +77,11 @@ class EventDecoder(decoder.Decoder):
         id_obj.deserialize(data, ptr)
         ptr += id_obj.getSize()
         event_id = id_obj.val
-        #TODO remove
-        #print("id=%d"%event_id)
 
         # Decode time...
         event_time = time_type.TimeType()
         event_time.deserialize(data, ptr)
         ptr += event_time.getSize()
-        #print("time=%s"%event_time)
 
         if event_id in self.__dict:
             event_temp = self.__dict[event_id]

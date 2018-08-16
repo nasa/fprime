@@ -57,9 +57,6 @@ class Decoder(object):
             consumer_obj: Object to regiser to the decoder. Must implement a
                           data_callback function.
         '''
-        #TODO remove
-        #print("registering %s to %s"%(consumer_obj, self))
-
         self.__consumers.append(consumer_obj)
 
 
