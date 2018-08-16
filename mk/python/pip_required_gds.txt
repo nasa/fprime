@@ -1,4 +1,3 @@
-pexpect
-Pmw
 pytz
+wxPython
 

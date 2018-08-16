@@ -172,10 +172,21 @@ for most classes, but check the base class's documentation for details).
 An example of how to instantiate and register classes into the correct structure 
 can be found in the `MainFrameFactory` class.
 
-## Instalation
-[TODO]
-download wheel for system.
-use: sudo {path to python used by fprime} -m pip install {path to wxPython 4 .whl file}
+## Setup
+The Gds requires the packages in the `../mk/python/pip_required_gds.txt` file. The
+wxPython version must be at least 4.0.0.
+
+Some specific wxPython instructions are included below in case the regular install
+does not succeed.
+
+### wxPython Mac Install
+First try: ```{path to python used by fprime} -m pip install wxPython```
+
+If that doesn't work, try the following:
+
+Download the wheel file for your system from: https://pypi.org/project/wxPython/#files
+Run:
+```sudo {path to python used by fprime} -m pip install {path to wxPython 4 .whl file}```
 
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.
