@@ -128,6 +128,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
     # Override these handlers to implement functionality for GUI elements
     def onChannelTelemContextMenu( self, event ):
 
+        # This is called to create a context menu in the data view to allow calling of copy through a right click
         if not hasattr(self, 'copy_context_id'):
             self.copy_context_id = wx.NewId()
             self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
@@ -141,6 +142,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onChannelTelemSelectChannelsButtonClick( self, event ):
+
+        # Get a new channel filter by prompting the user with a dialog
         dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict, config=self.config)
         ret = dlog.ShowModal()
         if ret == 0:
@@ -150,6 +153,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onChannelTelemShowHexCheckBoxClick( self, event ):
+
+        # Display channel IDs as hexidecimal values
         self.ChannelTelemDataViewCtl.SelectAll()
         s = self.ChannelTelemDataViewCtl.GetSelections()
         for i in s:
@@ -158,6 +163,8 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         event.Skip()
 
     def onClickResetFilter( self, event ):
+
+        # Clear the filter
         self.dv_model.ChangeFilter([])
         self.ChannelTelemFilterSelectedTextCtl.SetValue("")
         event.Skip()

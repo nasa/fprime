@@ -74,6 +74,8 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
         event.Skip()
     
     def onClickSaveFilter( self, event ):
+
+        # This will open a file dialog that can save the current filter as a csv
         dialog = wx.FileDialog(self, "Save filter", wildcard="CSV files (*.csv)|*.csv", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) 
         ret = dialog.ShowModal()
         print(ret)
@@ -87,6 +89,7 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
         event.Skip()
     
     def onClickLoadFilter( self, event ):
+        # This will open a file dialog that will open a csv as a filter
         dialog = wx.FileDialog(self, "Open filter", wildcard="CSV files (*.csv)|*.csv", style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) 
         ret = dialog.ShowModal()
         if ret == wx.ID_OK:
