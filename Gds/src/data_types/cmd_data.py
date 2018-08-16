@@ -10,8 +10,9 @@ argument values.
 @bug No known bugs
 '''
 
-import sys_data
 from enum import Enum
+
+from data_types import sys_data
 
 from models.serialize.time_type import *
 
@@ -35,7 +36,6 @@ from models.serialize.serializable_type import *
 
 from copy import deepcopy
 
-from pprint import pprint
 
 class CmdData(sys_data.SysData):
     '''The CmdData class stores a specific command'''
@@ -60,7 +60,7 @@ class CmdData(sys_data.SysData):
 
         self.args = [deepcopy(typ) for (_, _, typ) in self.template.arguments]
         self.arg_names = [name for (name, _, _) in self.template.arguments]
-        
+
         if (cmd_time):
             self.time = cmd_time
         else:
@@ -68,10 +68,10 @@ class CmdData(sys_data.SysData):
 
         for val, typ in zip(self.arg_vals, self.args):
             self.convert_arg_value(val, typ)
-        
+
     def get_template(self):
         """Get the template class associate with this specific data object
-        
+
         Returns:
             Template -- The template class for this data object
         """
@@ -80,17 +80,17 @@ class CmdData(sys_data.SysData):
 
     def get_args(self):
         """Get the arguments associate with the template of this data object
-        
+
         Returns:
             list -- A list of type objects representing the arguments of the template of this data object (in order)
         """
 
         return self.args
 
-    def convert_arg_value(self, arg_val, arg_type): 
+    def convert_arg_value(self, arg_val, arg_type):
         print(type(arg_type))
         if "0x" in arg_val:
-            arg_val = int(arg_val, 16) 
+            arg_val = int(arg_val, 16)
 
         if type(arg_type) == type(BoolType()):
             if arg_val == "False":
@@ -102,37 +102,37 @@ class CmdData(sys_data.SysData):
             arg_type.val = arg_val
         elif type(arg_type) == type(F64Type()):
             arg_type.val = float(arg_val)
-            
+
         elif type(arg_type) == type(F32Type()):
             arg_type.val = float(arg_val)
-            
+
         elif type(arg_type) == type(I64Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(I32Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(I16Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(I8Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(U64Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(U32Type()):
             arg_type.val = int(arg_val)
 
         elif type(arg_type) == type(U16Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(U8Type()):
             arg_type.val = int(arg_val)
-            
+
         elif type(arg_type) == type(StringType()):
             arg_type.val = arg_val
-            
+
         elif type(arg_type) == type(SerializableType()):
             pass
         else:

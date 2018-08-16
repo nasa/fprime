@@ -18,7 +18,7 @@ Example data that would be sent to a decoder that parses channels:
 '''
 import copy
 
-from decoder import Decoder
+from decoders.decoder import Decoder
 from data_types.ch_data import ChData
 from models.serialize.u32_type import U32Type
 from models.serialize.time_type import TimeType

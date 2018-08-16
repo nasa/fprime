@@ -7,7 +7,7 @@
 @bug No known bugs
 '''
 
-import sys_data
+from data_types import sys_data
 from models.serialize import time_type
 
 class ChData(sys_data.SysData):
@@ -42,7 +42,7 @@ class ChData(sys_data.SysData):
         Obtains a channel object that is empty (has a value of None)
 
         Args:
-            ch_temp (ChTemplate object): Template describing the channel
+            ch_temp: (ChTemplate object) Template describing the channel
 
         Returns:
             A ChData Object with ch value of None
@@ -108,7 +108,7 @@ class ChData(sys_data.SysData):
         Get the header for a csv file containing channel data
 
         Args:
-            verbose (boolean, default=False): Indicates if header should be for
+            verbose: (boolean, default=False) Indicates if header should be for
                                               regular or verbose output
 
         Returns:
@@ -125,10 +125,10 @@ class ChData(sys_data.SysData):
         Convert the channel data to a string
 
         Args:
-            time_zone (tzinfo, default=None): Timezone to print time in. If
+            time_zone: (tzinfo, default=None) Timezone to print time in. If
                       time_zone=None, use local time.
-            verbose (boolean, default=False): Prints extra fields if True
-            csv (boolean, default=False): Prints each field with commas between
+            verbose: (boolean, default=False) Prints extra fields if True
+            csv: (boolean, default=False) Prints each field with commas between
                                           if true
 
         Returns:

@@ -7,7 +7,7 @@
 @bug No known bugs
 '''
 
-import sys_data
+from data_types import sys_data
 from models.serialize import time_type
 
 class EventData(sys_data.SysData):
@@ -49,7 +49,7 @@ class EventData(sys_data.SysData):
         Obtains an event object that is empty (arguments = None)
 
         Args:
-            event_temp (EventTemplate obj): Template describing event
+            event_temp: (EventTemplate obj) Template describing event
 
         Returns:
             An EventData object with argument value of None
@@ -62,7 +62,7 @@ class EventData(sys_data.SysData):
         Get the header for a csv file containing event data
 
         Args:
-            verbose (boolean, default=False): Indicates if header should be for
+            verbose: (boolean, default=False) Indicates if header should be for
                                               regular or verbose output
 
         Returns:
@@ -79,10 +79,10 @@ class EventData(sys_data.SysData):
         Convert the event data to a string
 
         Args:
-            time_zone (tzinfo, default=None): Timezone to print time in. If
+            time_zone: (tzinfo, default=None) Timezone to print time in. If
                       time_zone=None, use local time.
-            verbose (boolean, default=False): Prints extra fields if True
-            csv (boolean, default=False): Prints each field with commas between
+            verbose: (boolean, default=False) Prints extra fields if True
+            csv: (boolean, default=False) Prints each field with commas between
                                           if true
 
         Returns:

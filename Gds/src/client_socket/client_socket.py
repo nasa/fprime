@@ -1,9 +1,9 @@
+# TODO documentation
+
 import socket
 import threading
 import binascii
 import select
-
-from pprint import pprint
 
 from models.serialize import u32_type
 

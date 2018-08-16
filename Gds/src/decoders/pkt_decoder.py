@@ -17,7 +17,7 @@ Example data that would be sent to a decoder that parses events or channels:
 @bug No known bugs
 '''
 
-from ch_decoder import ChDecoder
+from decoders.ch_decoder import ChDecoder
 from data_types.pkt_data import PktData
 from data_types.ch_data import ChData
 from models.serialize.u16_type import U16Type
@@ -31,9 +31,9 @@ class PktDecoder(ChDecoder):
         Constructor
 
         Args:
-            pkt_name_dict (dict): Packet dictionary. Pkt names should be keys
+            pkt_name_dict: (dict) Packet dictionary. Pkt names should be keys
                                   and PktTemplate objects should be values
-            ch_dict (dict): Channel dictionary. Channel ids shoudl be keys and
+            ch_dict: (dict) Channel dictionary. Channel ids shoudl be keys and
                             ChTemplate objects should be values
 
         Returns:
@@ -50,7 +50,7 @@ class PktDecoder(ChDecoder):
         Function called to pass data to the decoder class
 
         Args:
-            data (bytearray): Binary data to decode and pass to registered
+            data: (bytearray) Binary data to decode and pass to registered
                               consumers
         '''
         result = self.decode_api(data)
@@ -68,7 +68,7 @@ class PktDecoder(ChDecoder):
         code as is used to parse data passed to the data_callback function.
 
         Args:
-            data (bytearray): Binary packetized telemetry data to decode
+            data: (bytearray) Binary packetized telemetry data to decode
 
         Returns:
             Parsed version of the input data in the form of a PktData object

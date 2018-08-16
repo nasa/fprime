@@ -78,7 +78,7 @@ class ChEncoder(Encoder):
         data to all registered senders.
 
         Args:
-            data (ChData obj): A non-empty ChData obj to encode into binary
+            data: (ChData obj) A non-empty ChData obj to encode into binary
         '''
         self.send_to_all(self.encode_api(data))
 

@@ -16,7 +16,7 @@ Example data structure:
 '''
 import copy
 
-import decoder
+from decoders import decoder
 from data_types import event_data
 from models.serialize import u32_type
 from models.serialize import time_type
