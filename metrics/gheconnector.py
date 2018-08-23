@@ -360,14 +360,15 @@ class GitHubConnector:
             self.labels[repo_name][label_name] = github_label_data
         return self.labels[repo_name][label_name]
 
-    def get_milestones(self, repo_name):
+    def get_milestones(self, repo_name, params=None):
         if not self.github:
             return {}
         if repo_name not in self.milestones:
             self.milestones[repo_name] = {}
         # /repos/:owner/:repo/labels
+        params = params or self.github_issue_params
         github_milestone_url = self.github_url + self.API_ENDPOINT + '/' + repo_name + self.MILESTONES_SUFFIX
-        github_milestone_data, h, s = self._github_request(github_milestone_url)
+        github_milestone_data, h, s = self._github_request(github_milestone_url, params=params)
         for milestone_json in github_milestone_data:
             milestone_number = milestone_json["number"]
             self.milestones[repo_name][milestone_number] = milestone_json

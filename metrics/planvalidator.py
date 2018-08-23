@@ -3,6 +3,7 @@ import gheconnector
 import datetime
 import csv
 import reportconfig
+import pprint
 
 
 class PlanValidator:
@@ -438,7 +439,7 @@ class PlanValidator:
 
 
 def main(args, config_file=None, config_opts=None, ghe_conn=None, repo=None, show_found=False,
-         update=False, create=False, task_labels=False):
+         update=False, create=False, task_labels=False, dump=False):
     """ Builds a planvalidator.PlanValidator object with the options specified in the config_file, and then validates
     the first plan found in the config against the first repo found in the config (if not overridden here). Validation
     results are output to console.
@@ -451,19 +452,25 @@ def main(args, config_file=None, config_opts=None, ghe_conn=None, repo=None, sho
         one with config_opts if specified.
     :param repo: Optional repo to search for issues. Otherwise defaults to the first repo specified in config_opts.
     :param show_found: Whether to show the corresponding issues that have been found on GHE, both matching and non-
-        matching. Can also be passed in via "--show-strict" arg.
+        matching. Can also be passed in via "--show-found" arg.
     :param update: Whether to update issues found on GitHub with data from the plan for assignee and milestone. Can also
         be passed in via "--update" arg.
     :param create: Whether to create missing issues on GitHub with date from the plan. Can also be passed in via the
         "--create" arg.
     :param task_labels: Whether to create a label for the task name as well as its gate. Can also be passed in via the
         "--task-labels" arg.
+    :param dump: If True, will redirect output to file and dump plan and issue dicts to local files for debug purposes.
+        Can also be passed in via the "--dump" arg.
     :return: None
     """
     show_found = show_found or "--show-found" in args
     update = update or "--update" in args
     create = create or "--create" in args
     task_labels = task_labels or "--task-labels" in args
+    dump = dump or "--dump" in args
+
+    if dump:
+        sys.stdout = open("output.txt", "w")
 
     if "--config" in args:
         config_file = args[args.index("--config") + 1]
@@ -483,6 +490,12 @@ def main(args, config_file=None, config_opts=None, ghe_conn=None, repo=None, sho
                                         task_labels=task_labels)
     pv.validate_plan_against_github(ghe_conn, repo, show_found=show_found, update=update, create=create,
                                     task_labels=task_labels)
+    if dump:
+        with open("plan.txt", 'w') as fp:
+            pprint.pprint(pv.plans, stream=fp)
+        with open("issues.txt", 'w') as fp:
+            pprint.pprint(ghe_conn.issues, stream=fp)
+        sys.stdout.close()
 
 
 if __name__ == '__main__':
