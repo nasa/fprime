@@ -1,0 +1,12 @@
+Ubuntu 16.0.2 Install Notes (reder 5 Sept. 2017)
+sudo apt-get update
+sudo apt-get install nodejs
+sudo apt-get install npm
+
+These install nodejs version 4.2.6 and npm version 3.5.2.
+
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+
+sudo ln -sf /usr/local/n/versions/node/<VERSION>/bin/node /usr/bin/nodejs
