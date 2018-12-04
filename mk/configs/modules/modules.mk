@@ -86,7 +86,6 @@ REF_MODULES := \
 	Ref/SendBuffApp \
 	Ref/SignalGen \
 	Ref/PingReceiver
-
 	
 Ref_MODULES := \
 	\
