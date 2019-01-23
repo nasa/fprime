@@ -12,6 +12,8 @@ The prerequisite skills to understand this totorial are as follows:
 2) An understanding of C++, including class declarations and inheritance
 3) An understanding of how XML is structured
 
+Before beginning, please make sure that all the dependencies are installed. Please read the [User Guide](/docs/UsersGuide/FprimeUserGuide.pdf) for help installing these packages.
+
 Here is a description of the components:
 
 # 1 Component Descriptions
@@ -114,7 +116,7 @@ There are two ports to define in order to perform the operation between the comp
             <enum name="MathOperation">
                 <item name="MATH_ADD"/>
                 <item name="MATH_SUB"/>
-                <item name="MATH_MULTIPY"/>
+                <item name="MATH_MULTIPLY"/>
                 <item name="MATH_DIVIDE"/>
             </enum>
             <comment>operation argument</comment>
@@ -155,7 +157,7 @@ The port arguments are passed from component to component when they are connecte
             <enum name="MathOperation">
                 <item name="MATH_ADD"/>
                 <item name="MATH_SUB"/>
-                <item name="MATH_MULTIPY"/>
+                <item name="MATH_MULTIPLY"/>
                 <item name="MATH_DIVIDE"/>
             </enum>
             <comment>operation argument</comment>
@@ -176,7 +178,7 @@ The enumerations are a special type of argument. When `type="ENUM"` is an attrib
            <enum name="MathOperation">
                 <item name="MATH_ADD"/>
                 <item name="MATH_SUB"/>
-                <item name="MATH_MULTIPY"/>
+                <item name="MATH_MULTIPLY"/>
                 <item name="MATH_DIVIDE"/>
             </enum>
  ```
@@ -274,7 +276,7 @@ SRC = 	MathOpPortAi.xml \
 		MathResultPortAi.xml
 ```
 
-Running `make gen_make` and 'make' as before will make the build system aware of the new port XML file and compile it.
+Running `make gen_make` and `make` as before will make the build system aware of the new port XML file and compile it.
 
 The code generated to implement ports is complete. Developers do not need to add any implmentation code of their own.
 
@@ -436,7 +438,7 @@ The `MathSender` component XML definition is as follows. The XML should be place
         </channel>
     </telemetry>
     <events>
-        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string="Math Cmd Recvd: %f %d %f"  >
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string="Math Cmd Recvd: %f %f %d"  >
             <comment>
             Math command received
             </comment>
@@ -683,9 +685,26 @@ REF_MODULES := \
 	Ref/MathSender
 ```
 
-Create a `mod.mk` file in `Ref/MathSender` and add `MathSenderComponentAi.xml`. 
+Create a `mod.mk` file in `Ref/MathSender` and add `MathSenderComponentAi.xml`.
 
-Once it is added, add the directory to the build and build the component by typing `make rebuild`.
+Create a `Makefile` file in `Ref/MathSender`, following the same structure as earlier:
+
+
+```make
+# derive module name from directory
+
+MODULE_DIR = Ref/MathSender
+MODULE = $(subst /,,$(MODULE_DIR))
+
+BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))
+export BUILD_ROOT
+
+include $(BUILD_ROOT)/mk/makefiles/module_targets.mk
+
+``` 
+
+
+Once it is added, add the directory to the build and build the component by typing `make rebuild` from the `Ref` directory.
 
 ### 2.3.2 MathReceiver Component
 
@@ -805,8 +824,10 @@ The `MathReceiver` component XML is as follows:
 The mod.mk file for this component is as follows:
 
 ```make
-SRC = 	MathSenderComponentAi.xml 
+SRC = 	MathReceiverComponentAi.xml 
 ```
+
+Don't forget to create a `Makefile` and add `Ref/MathReceiver` to `/mk/configs/modules/modules.mk`.
 
 
 Many of the elements are the same as described in `MathSender`, so this section will highlight the differences.
@@ -1030,6 +1051,8 @@ Fill in the result handler with code that reports telemetry and an event:
 ```
 
 This handler reports the result via a telemetry channel and an event.
+
+Once complete, add the directory to the build and build the component by typing `make rebuild` from the `Ref` directory.
 
 #### 2.4.1.3 Unit Tests
 
@@ -1535,7 +1558,7 @@ Fill the handler in with the computation of the result. The handler will also up
               op.setop(SUB);
               res = (val1 - val2)*this->m_factor1;
               break;
-          case MATH_MULTIPY:
+          case MATH_MULTIPLY:
               op.setop(MULT);
               res = (val1 * val2)*this->m_factor1;
               break;
@@ -1559,6 +1582,25 @@ Fill the handler in with the computation of the result. The handler will also up
   }
 
 ```
+
+If needed, add `m_factor1` and `m_factor1s` as private variables in `MathReceiverComponentImpl.hpp`:
+
+
+```c++
+//! Implementation for MR_CLEAR_EVENT_THROTTLE command handler
+//! Clear the event throttle
+void MR_CLEAR_EVENT_THROTTLE_cmdHandler(
+    const FwOpcodeType opCode, /*!< The opcode*/
+    const U32 cmdSeq /*!< The command sequence number*/
+);
+
+// stored factor1
+F32 m_factor1;
+// number of times factor1 has been written
+U32 m_factor1s;
+```
+
+
 
 In this handler, the operation is done based on the port arguments from `MathSender`. 
 The `op` structure is populated for the event and telemetry calls, and the `mathOut` port is called to send the result back to `MathSender`. 
@@ -1645,6 +1687,21 @@ The developer can optionally receive a notification that a parameter has been up
       }
   }
 ```
+
+Add the function to the header file:
+
+```c++
+ // stored factor1
+  F32 m_factor1;
+  // number of times factor1 has been written
+  U32 m_factor1s;
+  
+  void parameterUpdated(
+      FwPrmIdType id /*!< The parameter ID*/
+  );
+```
+
+Once it is added, add the directory to the build and build the component by typing `make rebuild` from the `Ref` directory.
 
 #### 2.4.2.2 Unit Tests
 
@@ -1877,14 +1934,14 @@ These functions internally send a message to the component's thread to shut down
 
 Components need to be connected to invoke each other via ports. 
 The connections are specified via a topology XML file. 
-The file for the Ref example is located in `Ref/Top/RefTopologyAi.xml` 
+The file for the Ref example is located in `Ref/Top/RefTopologyAppAi.xml` 
 The connections for the new components will be added to the existing connections.
 
 ### 3.2.1 Component Imports
 
 The component XML definitions must be imported into the topology file:
 
-`Ref/Top/RefTopologyAi.xml`, line 32:
+`Ref/Top/RefTopologyAppAi.xml`, line 32:
 
 ```xml
 	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
@@ -1897,7 +1954,7 @@ The component XML definitions must be imported into the topology file:
 
 The Component instances must be declared.
 
-`Ref/Top/RefTopologyAi.xml`, line 92:
+`Ref/Top/RefTopologyAppAi.xml`, line 92:
 
 ```xml
    <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
@@ -2102,7 +2159,11 @@ The final connection is the connection that performs the math operation. It goes
 
 Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the `Ref/Top` directory. 
 If the updates were correct, the module should compile with no errors. 
-The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `make`.
+The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `make`. 
+To build the command/telemetry GUI dictionary files, run `make dict_install`.
+
+
+If running `make` builds on the wrong platform, you can specify the build target by typing `make <target>`. The different build targets can be viewed with `make help`.
 
 # 4 Executing the Example
 
