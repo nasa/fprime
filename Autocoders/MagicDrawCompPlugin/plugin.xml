@@ -2,7 +2,7 @@
 <plugin
 	id="gov.nasa.jpl.magicdraw.componentAutocoder"
 	name="MagicDraw Component Plugin"
-	version="4.5"
+	version="4.6"
 	ownClassloader="true"
 	provider-name="NASA Jet Propulsion Laboratory, California Institute of Technology"
 	class="gov.nasa.jpl.componentaction.IsfXmlAutocoderAction">
