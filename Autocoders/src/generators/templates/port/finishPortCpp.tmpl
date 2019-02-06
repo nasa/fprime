@@ -53,7 +53,8 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
 
  #end for        
-        this->m_serPort->invokeSerial(_buffer);
+        status = this->m_serPort->invokeSerial(_buffer);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
     }
 \#else
     }    
