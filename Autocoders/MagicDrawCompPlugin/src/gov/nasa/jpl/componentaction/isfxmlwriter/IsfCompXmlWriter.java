@@ -22,7 +22,7 @@ public class IsfCompXmlWriter {
 		String templateFile = fileName + ".vm";
 		String outputFile = outDir + "/" + comp.getName() + fileName + ".xml";
 		//String outputFile = outDir + "/" + comp.getNamespace() + comp.getName() + fileName + ".xml";
-		String jarPath = "jar:file:" + pluginDir.toString() + "/MyPlugin.jar";
+		String jarPath = "jar:file:" + pluginDir.toString() + "/FpCompAuto.jar";
 		System.out.println("Writing to file: " + outputFile);
 		Application.getInstance().getGUILog()
 		.log("Writing new file: " + outputFile);
