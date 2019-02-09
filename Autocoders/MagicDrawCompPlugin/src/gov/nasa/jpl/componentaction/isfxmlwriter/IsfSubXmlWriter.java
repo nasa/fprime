@@ -28,7 +28,7 @@ public class IsfSubXmlWriter {
 		String templateFile = "TopologyAi.vm";
 		String outputFile = outDir + "/" + fileName + deployment + "AppAi.xml";
 		System.out.println("Writing to file: " + outputFile);
-		String jarPath = "jar:file:" + pluginDir.toString() + "/MyPlugin.jar";
+		String jarPath = "jar:file:" + pluginDir.toString() + "/FpCompAuto.jar";
 		//Application.getInstance().getGUILog().log("File: " + outputFile);
 		Application.getInstance().getGUILog()
 		.log("Writing new file: " + outputFile);
