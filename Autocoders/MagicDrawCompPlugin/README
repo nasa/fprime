@@ -1,9 +1,13 @@
 This contains the MagicDraw Plugin for the Component Autocoder:
 
 To install this plugin:
- - copy the files 'FpCompAuto.jar' and 'plugin.xml' found in this directory into the MagicDraw installation plugin directory:
+ - copy the files 'FpCompAuto.jar' and 'plugin.xml' and directory 'lib' found in this directory into the MagicDraw installation plugin directory:
 ie /Applications/MagicDraw_UML_17.2/plugins/gov.nasa.jpl.magicdraw.componentAutocoder.
  - This can also be done by typing "make install MD_INSTALL_LOC=<path to MagicDraw install directory>"
+
+```
+cp -r plugin.xml FpCompAuto.jar lib /Applications/MagicDraw_UML_17.2/plugins/gov.nasa.jpl.magicdraw.componentAutocoder
+```
 
 To rebuild the plugin from the command line:
 - Run 'make' in this directory. This will generate or re-generate a file 'FpCompAuto.jar' that contains the plugin.
@@ -97,3 +101,7 @@ version 4.5
 - Converted to Makefile based builds (Bocchino) and removed buggy sequence port autonumbering (Canham)
 - Name of plug-in was changed to "FpCompAuto.jar" away from Eclipse project default name
 - Added make target to install plug-in correctly
+
+version 4.6
+--------------
+- Added plugin dependencies to plugin.xml for MagicDraw 18.5+ 
