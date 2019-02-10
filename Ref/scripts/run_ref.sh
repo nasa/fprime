@@ -39,3 +39,4 @@ echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
 setenv PYTHONPATH ${BUILD_ROOT}/Gse/src
 ${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Ref/scripts/run_ref.py $*
+

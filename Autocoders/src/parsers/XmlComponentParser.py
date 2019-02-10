@@ -981,7 +981,7 @@ class XmlComponentParser(object):
     
     def get_imported_dictionary_files(self):
         """
-        Return a list of all imported deictonary XML files.
+        Return a list of all imported dictonary XML files.
         """
         return self.__import_dictionary_files
 
