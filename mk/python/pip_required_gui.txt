@@ -1,7 +1,7 @@
 multiprocess
 pexpect
 Pmw
-tkintertable
+tkintertable==1.2
 numpy
 scimath
 scipy

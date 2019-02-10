@@ -13,7 +13,7 @@ output_file = sys.argv[1]
 
 print "Writing version to %s"%output_file
 
-hash = subprocess.check_output(["git","log","--pretty=format:%h","-n","1"])
+hash = subprocess.check_output(["git","log","--pretty=format:%h","-n","1","--abbrev=8"])
 try:
     tag = subprocess.check_output(["git","describe","--abbrev=0","--tags"]).strip()
 except:
