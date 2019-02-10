@@ -45,7 +45,7 @@ def signal_handler(signal, frame):
 def now():
     return time.ctime(time.time())
 
-class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
     """
     Derived from original Stable demo during R&TD and adapted
     for use in new FSW gse.py applicaiton.
@@ -61,7 +61,8 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     Any client that sends a "List" comment makes the server display all
     registered clients.
     """
-    SocketServer.BaseRequestHandler.allow_reuse_address = True
+    SocketServer.StreamRequestHandler.allow_reuse_address = True
+    SocketServer.StreamRequestHandler.timeout = 1
 
     def handle(self):                           # on each client connect
         """
@@ -75,7 +76,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         self.registered = False
         self.name = ''
         self.id = 0
-
+        
         #print self.client_address, now()        # show this client's address
         # Read the data from the socket
         data = self.recv(13)
@@ -187,9 +188,12 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             elif header == "Quit":
                 LOCK.acquire()
                 print "Quit received!"
+                SERVER.dest_obj[self.name].put(struct.pack(">I", 0xA5A5A5A5))
+                shutdown_event.set()
+                time.sleep(1)
+                print "Quit processed!"
                 SERVER.shutdown()
                 SERVER.server_close()
-                shutdown_event.set()
                 LOCK.release()
                 break
 
@@ -215,6 +219,11 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                     return ''
                 msg = msg + chunk
                 n = len(msg)
+            except socket.timeout:
+                if shutdown_event.is_set():
+                    print "socket timed out and shutdown is requested"
+                    return "Quit\n"
+                continue
             except socket.error, err:
                 if err.errno == errno.ECONNRESET:
                     print "Socket error " + str(err.errno) + " (Connection reset by peer) occurred on recv()."
@@ -305,10 +314,11 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             elif 'FSW' in dst:
                 dest_list = FSW_clients
             for dest_elem in dest_list:
+                #print "Locking TCP"
                 LOCK.acquire()
                 if dest_elem in SERVER.dest_obj.keys():
                     # Send the message here....
-                    #print "Sending msg to ", dest_elem
+                    #print "Sending TCP msg to ", dest_elem
 
                     SERVER.dest_obj[dest_elem].put(data)
                 LOCK.release()
@@ -414,7 +424,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
                 LOCK.acquire()
                 if dest_elem in SERVER.dest_obj.keys():
                     # Send the message here....
-                    #print "Sending msg to ", dest_elem
+                    #print "Sending UDP msg to ", dest_elem
 
                     SERVER.dest_obj[dest_elem].put(data)
                 LOCK.release()
@@ -514,9 +524,11 @@ def main(argv=None):
             #print "Process ID: %s" % p
 
             while not shutdown_event.is_set():
-               server_thread.join(timeout = 1.0)
-               udp_server_thread.join(timeout = 1.0)
+                server_thread.join(timeout = 5.0)
+                udp_server_thread.join(timeout = 5.0)
 
+            print "shutdown from main thread"
+                
             SERVER.shutdown()
             SERVER.server_close()
             udp_server.shutdown()
