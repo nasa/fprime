@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+# ----------------------------------------------------------------------
+# gen_f-prime-md-plugin_mk
+# Generate f-prime-md-plugin.mk
+# ----------------------------------------------------------------------
+
+java_files=`find . -name '*.java' | grep -v 'IsfCommandLine\.java'`
+libs=`find lib -name '*.jar' | tr '\n' ':'`
+printf 'classes:'
+for file in $java_files
+do
+  printf ' \\\n  '$file
+done
+echo ''
+echo '\tmkdir -p $@'
+echo '\tjavac -classpath '$libs' -d classes -encoding UTF8 $+'
