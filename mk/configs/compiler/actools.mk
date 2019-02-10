@@ -7,7 +7,7 @@ DICT_GEN := "GLOBAL"
 
 #DICT_TYPE specifies what type of dictionary to generate, with the two arguments being "DEFAULT" or "AMPCS". 
 #"DEFAULT" is the default if the var is not set or is set to the wrong value. 
-DICT_TYPE := "XML"
+DICT_TYPE := "DEFAULT"
 
 # Python path addition for ACTOOLS
 

@@ -327,6 +327,9 @@
         <arg name="fatalValue" type="U32"/>
       </args>
     </command>
+    <command component="sockGndIf" mnemonic="GNDIF_ENABLE_INTERFACE" opcode="0x17d">
+      <args/>
+    </command>
     <command component="eventLogger" mnemonic="ALOG_SET_EVENT_REPORT_FILTER" opcode="0x1a5">
       <args>
         <arg name="FilterLevel" type="ActiveLogger::FilterLevel::InputFilterLevel"/>
@@ -1012,7 +1015,7 @@
     <channel component="fileDownlink" name="FileDownlink_Warnings" id="0x1f7" description="The total number of warnings" type="U32"/>
   </channels>
   <parameters>
-    <parameter component="sendBuffComp" name="parameter3" id="0x51" default="0"/>
+    <parameter component="sendBuffComp" name="parameter3" id="0x51" default="12"/>
     <parameter component="sendBuffComp" name="parameter4" id="0x52" default="13.14"/>
     <parameter component="recvBuffComp" name="parameter1" id="0x65" default="10"/>
     <parameter component="recvBuffComp" name="parameter2" id="0x66" default="11"/>
