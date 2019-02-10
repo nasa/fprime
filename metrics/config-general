@@ -1,0 +1,33 @@
+[DEFAULT]
+
+github_base_url = https://github.jpl.nasa.gov
+github_api_key = 93cf066bbd852d9d428e19e6fcc95f1fe6764cad
+github_repo_list = ablack/fprime-sw
+github_branch = metrics
+github_issue_parameters = state:all
+
+# github_label_mappings = bug:Bug
+# included_labels =
+# excluded_labels =
+
+metrics_make_deployment = Ref
+metrics_make_location = mk/configs/modules/modules.mk
+# metrics_components_list =
+
+metrics_build_prefix = LINUX_
+# metrics_sloc_estimation =
+# metrics_sloc_types =
+# metrics_comp_types =
+# metrics_periods =
+
+metrics_sloc_history = metrics/example/history/sloc.csv
+metrics_comp_history = metrics/example/history/comp.csv
+# metrics_ev_plan_files =
+
+# metrics_report_filename =
+metrics_report_dir = metrics/example
+metrics_report_artifact_dir = metrics/example/images
+metrics_report_sections = line_plot_issue_labels_trend,
+    table_issue_label_summary, table_issue_label_diffs,
+    split_bar_plot_sloc, stacked_bar_plot_sloc_compare, table_sloc_summary
+    split_bar_plot_comp, stacked_bar_plot_comp_compare, table_comp_summary
