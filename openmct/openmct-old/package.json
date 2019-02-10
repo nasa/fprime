@@ -1,0 +1,20 @@
+{
+  "name": "fprime-client",
+  "version": "0.0.1",
+  "description": "Client for ISF server",
+  "main": "client/app.js",
+  "scripts": {
+    "start": "rm -rf server/logs && python ../bin/json_dict.py && node server/app.js",
+    "start-bson": "node bson-server/BsonAdapter.js",
+    "postinstall": "cd node_modules/openmct && npm install"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "bson": "^3.0.0",
+    "express": "^4.15.3",
+    "openmct": "github:nasa/openmct",
+    "sprintf-js": "^1.1.1",
+    "vue": "^2.4.2",
+    "ws": "^3.0.0"
+  }
+}

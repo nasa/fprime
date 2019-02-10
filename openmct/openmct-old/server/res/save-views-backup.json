@@ -1,0 +1,1132 @@
+{
+  "c77da0f4-995c-4153-a75c-a3eb7675205e": {
+    "composition": [],
+    "name": "Tables",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1499965126750,
+    "persisted": 1499965126750
+  },
+  "462bc40f-2558-41b4-a156-4529095f8a63": {
+    "composition": [
+      "d0712139-44e7-4c87-9146-e679ac30a3f5",
+      "2f73c14e-fd2e-47f5-89b8-af5b49d95bae",
+      "23472b83-e5ef-4cb6-b30e-4ae850cbeff0",
+      "ff222604-365c-46ea-8e14-f902efc409c6"
+    ],
+    "name": "Tables",
+    "type": "layout",
+    "modified": 1499969372928,
+    "location": "mine",
+    "persisted": 1499969372928,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.taxonomy:481": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              11,
+              12
+            ]
+          },
+          "ref.taxonomy:41": {
+            "position": [
+              11,
+              0
+            ],
+            "dimensions": [
+              12,
+              12
+            ]
+          },
+          "ref.taxonomy:181": {
+            "position": [
+              23,
+              0
+            ],
+            "dimensions": [
+              10,
+              12
+            ]
+          },
+          "ref.events:": {
+            "position": [
+              0,
+              12
+            ],
+            "dimensions": [
+              33,
+              10
+            ]
+          },
+          "294c4011-c91c-4d6d-bab3-eb5e24c3e94b": {
+            "position": [
+              0,
+              12
+            ],
+            "dimensions": [
+              33,
+              9
+            ]
+          },
+          "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+            "position": [
+              0,
+              12
+            ],
+            "dimensions": [
+              48,
+              17
+            ]
+          },
+          "2f73c14e-fd2e-47f5-89b8-af5b49d95bae": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              16,
+              12
+            ]
+          },
+          "23472b83-e5ef-4cb6-b30e-4ae850cbeff0": {
+            "position": [
+              16,
+              0
+            ],
+            "dimensions": [
+              15,
+              12
+            ]
+          },
+          "ff222604-365c-46ea-8e14-f902efc409c6": {
+            "position": [
+              31,
+              0
+            ],
+            "dimensions": [
+              17,
+              12
+            ]
+          }
+        }
+      }
+    }
+  },
+  "mine": {
+    "name": "My Items",
+    "type": "folder",
+    "composition": [
+      "462bc40f-2558-41b4-a156-4529095f8a63",
+      "5a05c94c-2998-4e8a-b190-c47d7d860447",
+      "61948d5a-9154-4f37-90c7-560fa41f8d6f",
+      "8dbd2ce3-a87d-496f-809a-0a98225d86c9",
+      "e743f99a-8425-4c33-bdd3-ca2678ef547e"
+    ],
+    "location": "ROOT",
+    "modified": 1503501504943,
+    "persisted": 1503501504943
+  },
+  "e45ea34e-a37f-416d-b986-c2c90aa09e10": {
+    "layoutGrid": [
+      64,
+      16
+    ],
+    "composition": [
+      "ref.taxonomy:481"
+    ],
+    "name": "Unnamed Fixed Position Display",
+    "type": "telemetry.fixed",
+    "location": "mine",
+    "modified": 1499965348802,
+    "configuration": {
+      "fixed-display": {
+        "elements": [
+          {
+            "type": "fixed.telemetry",
+            "x": 0,
+            "y": 2,
+            "id": "ref.taxonomy:481",
+            "stroke": "transparent",
+            "color": "",
+            "titled": true,
+            "width": 10,
+            "height": 2,
+            "useGrid": true
+          }
+        ]
+      }
+    },
+    "persisted": 1499965348802
+  },
+  "68741f4d-2c4f-4c6b-bfa8-102dac7667fd": {
+    "layoutGrid": [
+      64,
+      16
+    ],
+    "composition": [
+      "ref.taxonomy:481"
+    ],
+    "name": "Unnamed Fixed Position Display",
+    "type": "telemetry.fixed",
+    "configuration": {
+      "fixed-display": {
+        "elements": [
+          {
+            "type": "fixed.telemetry",
+            "x": 0,
+            "y": 2,
+            "id": "ref.taxonomy:481",
+            "stroke": "transparent",
+            "color": "",
+            "titled": true,
+            "width": 10,
+            "height": 2,
+            "useGrid": true
+          }
+        ]
+      }
+    },
+    "modified": 1499965348897,
+    "location": "mine",
+    "persisted": 1499965348897
+  },
+  "4231e538-4988-4bf4-bffb-d33da97ca2cf": {
+    "composition": [
+      "ref.taxonomy:-1"
+    ],
+    "name": "Events",
+    "type": "table",
+    "location": "mine",
+    "modified": 1499968875841,
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Name": true,
+          "ID": true,
+          "Value": true
+        }
+      }
+    },
+    "persisted": 1499968875841
+  },
+  "294c4011-c91c-4d6d-bab3-eb5e24c3e94b": {
+    "composition": [
+      "ref.taxonomy:-1"
+    ],
+    "name": "Events",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Name": true,
+          "ID": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499968875976,
+    "location": "mine",
+    "persisted": 1499968875976
+  },
+  "2bf454b9-1a1f-4f4e-85ee-cb30469daf70": {
+    "composition": [],
+    "name": "Res",
+    "type": "folder",
+    "location": "mine",
+    "modified": 1499968960450,
+    "persisted": 1499968960450
+  },
+  "5a05c94c-2998-4e8a-b190-c47d7d860447": {
+    "composition": [
+      "2f73c14e-fd2e-47f5-89b8-af5b49d95bae",
+      "d0712139-44e7-4c87-9146-e679ac30a3f5",
+      "23472b83-e5ef-4cb6-b30e-4ae850cbeff0",
+      "ff222604-365c-46ea-8e14-f902efc409c6",
+      "79bcd1e2-5540-4159-a0c7-c78ed346d91e",
+      "a25f969c-5136-404f-b188-be3d7e23c3f7",
+      "9285df4b-2c70-4f37-8918-5d9a51cab60e",
+      "66914fd9-4cbc-4672-9652-d9f5d6cb57fa"
+    ],
+    "name": "Res",
+    "type": "folder",
+    "modified": 1500311437088,
+    "location": "mine",
+    "persisted": 1500311437088
+  },
+  "87e815fb-6f66-4522-8494-d22078577907": {
+    "composition": [
+      "ref.taxonomy:481"
+    ],
+    "name": "BD_Cycles",
+    "type": "table",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499969034348,
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "persisted": 1499969034348
+  },
+  "2f73c14e-fd2e-47f5-89b8-af5b49d95bae": {
+    "composition": [
+      "ref.taxonomy:481"
+    ],
+    "name": "BD_Cycles",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969034485,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969034485
+  },
+  "385dfd03-699a-4a1d-bb07-e51bf772a646": {
+    "composition": [
+      "ref.taxonomy:-1"
+    ],
+    "name": "Event Log",
+    "type": "table",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499969081734,
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Name": true,
+          "ID": true,
+          "Value": true
+        }
+      }
+    },
+    "persisted": 1499969081734
+  },
+  "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+    "composition": [
+      "ref.taxonomy:-1"
+    ],
+    "name": "Event Log",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Name": true,
+          "ID": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969081861,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969081861
+  },
+  "ff9911a5-0940-41fa-8716-59a4234e3f28": {
+    "composition": [
+      "ref.taxonomy:41"
+    ],
+    "name": "PR_NumPings",
+    "type": "table",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499969157994,
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "persisted": 1499969157994
+  },
+  "23472b83-e5ef-4cb6-b30e-4ae850cbeff0": {
+    "composition": [
+      "ref.taxonomy:41"
+    ],
+    "name": "PR_NumPings",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969158114,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969158114
+  },
+  "21a9913f-dae7-4aea-935c-dc902932120d": {
+    "composition": [
+      "ref.taxonomy:181"
+    ],
+    "name": "SG1_SignalGen",
+    "type": "table",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499969206376,
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "persisted": 1499969206376
+  },
+  "ff222604-365c-46ea-8e14-f902efc409c6": {
+    "composition": [
+      "ref.taxonomy:181"
+    ],
+    "name": "SG1_SignalGen",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969206495,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969206495
+  },
+  "05a2fc8f-34ec-4f10-ab81-31bbf72c18ae": {
+    "composition": [
+      "ref.taxonomy:181",
+      "ref.taxonomy:221",
+      "ref.taxonomy:201"
+    ],
+    "name": "SG_Collection",
+    "type": "telemetry.panel",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499969504329,
+    "persisted": 1499969504329
+  },
+  "79bcd1e2-5540-4159-a0c7-c78ed346d91e": {
+    "composition": [
+      "ref.taxonomy:181",
+      "ref.taxonomy:221",
+      "ref.taxonomy:201"
+    ],
+    "name": "SG_Collection",
+    "type": "telemetry.panel",
+    "modified": 1499969504543,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969504543
+  },
+  "0f362d60-c8c5-47b4-b6f8-af0a50dfdb6c": {
+    "composition": [
+      "79bcd1e2-5540-4159-a0c7-c78ed346d91e",
+      "ref.taxonomy:181",
+      "ref.taxonomy:221",
+      "ref.taxonomy:201"
+    ],
+    "name": "Plots",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1499969603516,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "79bcd1e2-5540-4159-a0c7-c78ed346d91e": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              49,
+              15
+            ]
+          },
+          "ref.taxonomy:181": {
+            "position": [
+              0,
+              15
+            ],
+            "dimensions": [
+              17,
+              10
+            ]
+          },
+          "ref.taxonomy:221": {
+            "position": [
+              17,
+              15
+            ],
+            "dimensions": [
+              16,
+              10
+            ]
+          },
+          "ref.taxonomy:201": {
+            "position": [
+              33,
+              15
+            ],
+            "dimensions": [
+              16,
+              10
+            ]
+          }
+        }
+      }
+    },
+    "persisted": 1499969603516
+  },
+  "61948d5a-9154-4f37-90c7-560fa41f8d6f": {
+    "composition": [
+      "79bcd1e2-5540-4159-a0c7-c78ed346d91e",
+      "ref.taxonomy:181",
+      "ref.taxonomy:221",
+      "ref.taxonomy:201",
+      "a25f969c-5136-404f-b188-be3d7e23c3f7",
+      "9285df4b-2c70-4f37-8918-5d9a51cab60e"
+    ],
+    "name": "Plots",
+    "type": "layout",
+    "configuration": {
+      "layout": {
+        "panels": {
+          "79bcd1e2-5540-4159-a0c7-c78ed346d91e": {
+            "position": [
+              0,
+              2
+            ],
+            "dimensions": [
+              49,
+              15
+            ]
+          },
+          "ref.taxonomy:181": {
+            "position": [
+              0,
+              17
+            ],
+            "dimensions": [
+              17,
+              10
+            ]
+          },
+          "ref.taxonomy:221": {
+            "position": [
+              17,
+              17
+            ],
+            "dimensions": [
+              16,
+              10
+            ]
+          },
+          "ref.taxonomy:201": {
+            "position": [
+              33,
+              17
+            ],
+            "dimensions": [
+              16,
+              10
+            ]
+          },
+          "033685ca-56f9-4243-b8fb-ca1283708f43": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              49,
+              2
+            ]
+          },
+          "a25f969c-5136-404f-b188-be3d7e23c3f7": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              18,
+              2
+            ]
+          },
+          "9285df4b-2c70-4f37-8918-5d9a51cab60e": {
+            "position": [
+              18,
+              0
+            ],
+            "dimensions": [
+              31,
+              2
+            ]
+          }
+        }
+      }
+    },
+    "modified": 1499970092534,
+    "location": "mine",
+    "persisted": 1499970092534
+  },
+  "a4e5b9c9-9141-4933-aae8-c2b71d6df1d9": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "UTC",
+    "name": "My Clock",
+    "type": "clock",
+    "location": "mine",
+    "modified": 1499969833459,
+    "persisted": 1499969833459
+  },
+  "033685ca-56f9-4243-b8fb-ca1283708f43": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "UTC",
+    "name": "My Clock",
+    "type": "clock",
+    "modified": 1499969833517,
+    "location": "mine",
+    "persisted": 1499969833517
+  },
+  "4e755c83-810b-40a5-b2f0-116f5db948ee": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "America/Los_Angeles",
+    "name": "LA Clock",
+    "type": "clock",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499970016795,
+    "persisted": 1499970016795
+  },
+  "a25f969c-5136-404f-b188-be3d7e23c3f7": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "America/Los_Angeles",
+    "name": "LA Clock",
+    "type": "clock",
+    "modified": 1499970016897,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499970016897
+  },
+  "ae42eae4-8215-43ec-aa2e-97aa07644652": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "UTC",
+    "name": "UTC Clock",
+    "type": "clock",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1499970031208,
+    "persisted": 1499970031208
+  },
+  "9285df4b-2c70-4f37-8918-5d9a51cab60e": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "UTC",
+    "name": "UTC Clock",
+    "type": "clock",
+    "modified": 1499970031268,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499970031268
+  },
+  "e3cc2c08-84f2-4b32-b646-7bb5c3995fbc": {
+    "composition": [
+      "ref.taxonomy:481",
+      "ref.taxonomy:181"
+    ],
+    "name": "Demo",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1499981892905,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.taxonomy:481": {
+            "position": [
+              1,
+              1
+            ],
+            "dimensions": [
+              23,
+              8
+            ]
+          },
+          "ref.taxonomy:181": {
+            "position": [
+              1,
+              10
+            ],
+            "dimensions": [
+              23,
+              8
+            ]
+          }
+        }
+      }
+    },
+    "persisted": 1499981892905
+  },
+  "8dbd2ce3-a87d-496f-809a-0a98225d86c9": {
+    "composition": [
+      "ref.taxonomy:481",
+      "ref.taxonomy:181"
+    ],
+    "name": "Demo",
+    "type": "layout",
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.taxonomy:481": {
+            "position": [
+              1,
+              1
+            ],
+            "dimensions": [
+              23,
+              8
+            ]
+          },
+          "ref.taxonomy:181": {
+            "position": [
+              1,
+              10
+            ],
+            "dimensions": [
+              23,
+              8
+            ]
+          }
+        }
+      }
+    },
+    "modified": 1499981893126,
+    "location": "mine",
+    "persisted": 1499981893126
+  },
+  "2be5df40-6ecc-445f-970c-0d3a4054f5ee": {
+    "layoutGrid": [
+      64,
+      16
+    ],
+    "composition": [
+      "ref.taxonomy:481",
+      "ref.taxonomy:-1"
+    ],
+    "name": "Demo Fixed Position Display",
+    "type": "telemetry.fixed",
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "modified": 1500311436421,
+    "configuration": {
+      "fixed-display": {
+        "elements": [
+          {
+            "type": "fixed.telemetry",
+            "x": 0,
+            "y": 1,
+            "id": "ref.taxonomy:481",
+            "stroke": "transparent",
+            "color": "",
+            "titled": true,
+            "width": 2,
+            "height": 1,
+            "useGrid": true
+          },
+          {
+            "type": "fixed.telemetry",
+            "x": 0,
+            "y": 3,
+            "id": "ref.taxonomy:-1",
+            "stroke": "transparent",
+            "color": "",
+            "titled": true,
+            "width": 7,
+            "height": 1,
+            "useGrid": true
+          }
+        ]
+      }
+    },
+    "persisted": 1500311436421
+  },
+  "66914fd9-4cbc-4672-9652-d9f5d6cb57fa": {
+    "layoutGrid": [
+      64,
+      16
+    ],
+    "composition": [
+      "ref.taxonomy:481",
+      "ref.taxonomy:-1"
+    ],
+    "name": "Demo Fixed Position Display",
+    "type": "telemetry.fixed",
+    "configuration": {
+      "fixed-display": {
+        "elements": [
+          {
+            "type": "fixed.telemetry",
+            "x": 0,
+            "y": 1,
+            "id": "ref.taxonomy:481",
+            "stroke": "transparent",
+            "color": "",
+            "titled": true,
+            "width": 2,
+            "height": 1,
+            "useGrid": true
+          },
+          {
+            "type": "fixed.telemetry",
+            "x": 0,
+            "y": 3,
+            "id": "ref.taxonomy:-1",
+            "stroke": "transparent",
+            "color": "",
+            "titled": true,
+            "width": 7,
+            "height": 1,
+            "useGrid": true
+          }
+        ]
+      }
+    },
+    "modified": 1500311436778,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1500311436778
+  },
+  "cdee6c89-c4c5-4024-9ff4-bdd9aa9b3be8": {
+    "composition": [
+      "ref.taxonomy:-1"
+    ],
+    "name": "Command",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1503444405140,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.taxonomy:-1": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              12,
+              8
+            ]
+          }
+        }
+      }
+    },
+    "persisted": 1503444405140
+  },
+  "4644f2c0-c61d-4a0f-981a-63603bbd6cdf": {
+    "composition": [
+      "ref.taxonomy:-1"
+    ],
+    "name": "Command",
+    "type": "layout",
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.taxonomy:-1": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              12,
+              8
+            ]
+          }
+        }
+      }
+    },
+    "modified": 1503444405314,
+    "location": "mine",
+    "persisted": 1503444405314
+  },
+  "70efdbe5-0737-4b3f-b152-92126f97ca51": {
+    "composition": [
+      "d0712139-44e7-4c87-9146-e679ac30a3f5",
+      "ref.command:console"
+    ],
+    "name": "Unnamed Display Layout",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1503444493965,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              46,
+              8
+            ]
+          },
+          "ref.command:console": {
+            "position": [
+              0,
+              8
+            ],
+            "dimensions": [
+              46,
+              12
+            ]
+          }
+        }
+      }
+    },
+    "persisted": 1503444493965
+  },
+  "9a86a1e1-ea1c-418b-827a-2140d11541e5": {
+    "composition": [
+      "d0712139-44e7-4c87-9146-e679ac30a3f5",
+      "ref.command:console",
+      "5f176358-2360-4c52-92e5-87320426a778"
+    ],
+    "name": "Unnamed Display Layout",
+    "type": "layout",
+    "configuration": {
+      "layout": {
+        "panels": {
+          "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+            "position": [
+              0,
+              6
+            ],
+            "dimensions": [
+              6,
+              6
+            ]
+          },
+          "ref.command:console": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              19,
+              22
+            ]
+          },
+          "5f176358-2360-4c52-92e5-87320426a778": {
+            "position": [
+              20,
+              0
+            ],
+            "dimensions": [
+              20,
+              22
+            ]
+          }
+        }
+      }
+    },
+    "modified": 1503468393025,
+    "location": "mine",
+    "persisted": 1503468393025
+  },
+  "0be2cf76-c0bc-4d3d-bc1c-990a990ce01c": {
+    "composition": [
+      "ref.command:console",
+      "ref.taxonomy:481"
+    ],
+    "name": "Unnamed Display Layout",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1503462438928,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.command:console": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              13,
+              22
+            ]
+          },
+          "ref.taxonomy:481": {
+            "position": [
+              28,
+              0
+            ],
+            "dimensions": [
+              12,
+              21
+            ]
+          }
+        }
+      }
+    },
+    "persisted": 1503462438928
+  },
+  "fafb9e21-abd0-4720-8439-099f4e9f0a29": {
+    "composition": [
+      "ref.command:console",
+      "ref.taxonomy:481",
+      "5cf5b019-0115-423e-b631-e1b9af5f9810"
+    ],
+    "name": "Unnamed Display Layout",
+    "type": "layout",
+    "configuration": {
+      "layout": {
+        "panels": {
+          "ref.command:console": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              13,
+              22
+            ]
+          },
+          "ref.taxonomy:481": {
+            "position": [
+              28,
+              0
+            ],
+            "dimensions": [
+              12,
+              21
+            ]
+          },
+          "5cf5b019-0115-423e-b631-e1b9af5f9810": {
+            "position": [
+              13,
+              0
+            ],
+            "dimensions": [
+              15,
+              21
+            ]
+          }
+        }
+      }
+    },
+    "modified": 1503462549503,
+    "location": "mine",
+    "persisted": 1503462549503
+  },
+  "93af13e4-353d-42e2-b68a-8ac58898fef8": {
+    "composition": [],
+    "name": "Unnamed Latest Value Table",
+    "type": "view.latest-value-table",
+    "location": "fafb9e21-abd0-4720-8439-099f4e9f0a29",
+    "modified": 1503462525492,
+    "persisted": 1503462525492
+  },
+  "5cf5b019-0115-423e-b631-e1b9af5f9810": {
+    "composition": [
+      "ref.taxonomy:481",
+      "ref.taxonomy:41",
+      "ref.taxonomy:85",
+      "ref.taxonomy:161",
+      "ref.taxonomy:162",
+      "ref.taxonomy:241"
+    ],
+    "name": "Unnamed Latest Value Table",
+    "type": "view.latest-value-table",
+    "modified": 1503462698742,
+    "location": "fafb9e21-abd0-4720-8439-099f4e9f0a29",
+    "persisted": 1503462698742
+  },
+  "9f01c794-2a69-436a-aba0-416d7faf996b": {
+    "composition": [
+      "ref.taxonomy:181",
+      "ref.taxonomy:221"
+    ],
+    "name": "SG1 and 2",
+    "type": "telemetry.panel",
+    "location": "9a86a1e1-ea1c-418b-827a-2140d11541e5",
+    "modified": 1503468369322,
+    "persisted": 1503468369322
+  },
+  "5f176358-2360-4c52-92e5-87320426a778": {
+    "composition": [
+      "ref.taxonomy:181",
+      "ref.taxonomy:221"
+    ],
+    "name": "SG1 and 2",
+    "type": "telemetry.panel",
+    "modified": 1503468369535,
+    "location": "9a86a1e1-ea1c-418b-827a-2140d11541e5",
+    "persisted": 1503468369535
+  },
+  "73ced903-5fbb-47de-b498-2862b6cec998": {
+    "composition": [],
+    "name": "Command Console with Events",
+    "type": "layout",
+    "location": "mine",
+    "modified": 1503501504720,
+    "persisted": 1503501504720
+  },
+  "e743f99a-8425-4c33-bdd3-ca2678ef547e": {
+    "composition": [
+      "d0712139-44e7-4c87-9146-e679ac30a3f5",
+      "ref.command:console"
+    ],
+    "name": "Command Console with Events",
+    "type": "layout",
+    "modified": 1503501528722,
+    "location": "mine",
+    "persisted": 1503501528722,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              40,
+              9
+            ]
+          },
+          "ref.command:console": {
+            "position": [
+              0,
+              9
+            ],
+            "dimensions": [
+              40,
+              13
+            ]
+          }
+        }
+      }
+    }
+  }
+}

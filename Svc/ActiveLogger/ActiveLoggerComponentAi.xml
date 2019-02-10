@@ -5,7 +5,6 @@
 <component name="ActiveLogger" kind="active" namespace="Svc">
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
-    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Svc/Fatal/FatalEventPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_dictionary>Svc/ActiveLogger/ActiveLoggerCmdDict.xml</import_dictionary>

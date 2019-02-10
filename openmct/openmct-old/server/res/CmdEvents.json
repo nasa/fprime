@@ -1,0 +1,75 @@
+{
+  "openmct": {
+    "f2b054b5-60d2-4d58-a297-cdaf2e783e9b": {
+      "composition": [
+        "ref.command:console",
+        "6eac6b80-7a58-4327-8e6c-f91707422c2a"
+      ],
+      "name": "CmdEvents",
+      "type": "layout",
+      "notes": "Command and EVR standard layout",
+      "modified": 1506978554572,
+      "location": "mine",
+      "persisted": 1506978554572,
+      "configuration": {
+        "layout": {
+          "panels": {
+            "ref.taxonomy:-1": {
+              "position": [
+                0,
+                0
+              ],
+              "dimensions": [
+                37,
+                12
+              ]
+            },
+            "ref.command:console": {
+              "position": [
+                0,
+                12
+              ],
+              "dimensions": [
+                37,
+                20
+              ]
+            },
+            "6eac6b80-7a58-4327-8e6c-f91707422c2a": {
+              "position": [
+                0,
+                0
+              ],
+              "dimensions": [
+                37,
+                12
+              ]
+            }
+          }
+        }
+      }
+    },
+    "6eac6b80-7a58-4327-8e6c-f91707422c2a": {
+      "composition": [
+        "ref.taxonomy:-1"
+      ],
+      "name": "EvrTelemetryTable",
+      "type": "table",
+      "configuration": {
+        "table": {
+          "columns": {
+            "Name": true,
+            "ID": true,
+            "Timestamp": true,
+            "Value": true,
+            "Severity": true
+          }
+        }
+      },
+      "notes": "Table of Event Reports",
+      "modified": 1506978508709,
+      "location": "f2b054b5-60d2-4d58-a297-cdaf2e783e9b",
+      "persisted": 1506978508709
+    }
+  },
+  "rootId": "f2b054b5-60d2-4d58-a297-cdaf2e783e9b"
+}

@@ -10,7 +10,10 @@
     <import_port_type>Svc/GndIf/GetConnectedPortAi.xml</import_port_type>
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
     <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
+
     <import_dictionary>Svc/GndIf/Events.xml</import_dictionary>
+    <import_dictionary>Svc/GndIf/Commands.xml</import_dictionary>
+
     <ports>
     
 

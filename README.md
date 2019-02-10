@@ -1,6 +1,6 @@
 # F Prime: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
-F Prime (Fʹ) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F Prime has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
+F Prime (FÊ¹) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F Prime has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
 
 F Prime comprises several elements: 
 
@@ -14,11 +14,11 @@ F Prime has the following key features:
 
 ### Reusability
 
-F Prime’s component-based architecture enables a high degree of modularity and software reuse. 
+F Primeâ€™s component-based architecture enables a high degree of modularity and software reuse. 
 
 ### Rapid Deployment
 
-F Prime provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the “boilerplate” code required in an F Prime deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
+F Prime provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the â€œboilerplateâ€� code required in an F Prime deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
 
 ### Portability
 
@@ -41,6 +41,12 @@ The typed port connections provide strong compile-time guarantees of correctness
 The Reference application is shipped as part of F'. Documentation for this reference application can be found [here.](Ref/docs/sdd.md)
 
 The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf)
+
+## Continuous Integration
+
+The continous integration system performs builds and unit-test check on any pull-requests created on the FÂ´ core. Thus ensuring that FÂ´ core is stable and well maintained.  Current build status can be seen here, but do note some PRs will fail and ask to be resubmitted:
+
+[![Build Status](https://cae-jenkins2.jpl.nasa.gov/buildStatus/icon?job=F_Prime_Infrastructure/fprime-ci)](https://cae-jenkins2.jpl.nasa.gov/job/F_Prime_Infrastructure/job/fprime-ci/)
 
 ## F Prime Release Notes
 

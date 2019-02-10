@@ -41,7 +41,7 @@ namespace Fw {
         if (buff != this->m_buf) {
             (void)strncpy(this->m_buf,buff,size);
             // NULL terminate
-            this->terminate();
+            this->terminate(sizeof(this->m_buf));
         }
     }
     
@@ -56,7 +56,7 @@ namespace Fw {
         // deserialize string
         SerializeStatus stat = buffer.deserialize((U8*)this->m_buf,maxSize);
         // make sure it is null-terminated
-        this->terminate();
+        this->terminate(maxSize);
 
         return stat;
     }
@@ -65,9 +65,9 @@ namespace Fw {
         return FW_LOG_TEXT_BUFFER_SIZE;
     }
     
-    void TextLogString::terminate(void) {
+    void TextLogString::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
-        this->m_buf[sizeof(this->m_buf)-1] = 0;
+        this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
     }
 
     const TextLogString& TextLogString::operator=(const TextLogString& other) {

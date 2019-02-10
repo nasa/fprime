@@ -444,6 +444,15 @@ class XmlComponentParser(object):
                                     mc = None
                                 enum_members.append((mn,v,mc))
                             channel_obj.set_type(((d,en),enum_members))
+                        elif channel_tag.tag == "units":
+                            #print "******************Found: %s" % channel_tag.tag
+                            name = channel_tag.attrib['name']
+                            #print "Name: %s" % name
+                            gain = channel_tag.attrib['gain']
+                            #print "Gain: %s" % gain
+                            offset = channel_tag.attrib['offset']
+                            #print "Offset: %s" % offset
+                            channel_obj.set_units(name, gain, offset)
                         else:
                             PRINT.info("%s: Invalid tag %s in channel %s"%(xml_file,channel_tag.tag,n))            
                             sys.exit(-1)
@@ -1255,6 +1264,8 @@ class Channel(object):
         self.__update = update
         self.__limits = limits
         self.__comment = comment
+        # A list of unit conversions for each channel
+        self.__units = list()
     
     def get_ids(self):
         return self.__ids
@@ -1280,6 +1291,10 @@ class Channel(object):
         return self.__limits
     def set_comment(self, comment):
         self.__comment = comment
+    def get_units(self):
+        return self.__units
+    def set_units(self, name, gain, offset):
+        self.__units.append((name, gain, offset))
 
 class Parameter(object):
     """

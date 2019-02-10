@@ -2,6 +2,12 @@
 # GndIf Component Dictionary
 
 
+## Command List
+
+|Mnemonic|ID|Description|Arg Name|Arg Type|Comment
+|---|---|---|---|---|---|
+|GNDIF_ENABLE_INTERFACE|0 (0x0)|Enable the interface for ground communications| | |   
+
 
 ## Event List
 

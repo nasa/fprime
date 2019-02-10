@@ -1,0 +1,366 @@
+{
+  "mine": {
+    "name": "My Items",
+    "type": "folder",
+    "composition": [
+      "462bc40f-2558-41b4-a156-4529095f8a63",
+      "61948d5a-9154-4f37-90c7-560fa41f8d6f"
+    ],
+    "location": "ROOT",
+    "modified": 1499981893264,
+    "persisted": 1499981893264
+  },
+  "462bc40f-2558-41b4-a156-4529095f8a63": {
+    "composition": [
+      "d0712139-44e7-4c87-9146-e679ac30a3f5",
+      "2f73c14e-fd2e-47f5-89b8-af5b49d95bae",
+      "23472b83-e5ef-4cb6-b30e-4ae850cbeff0",
+      "ff222604-365c-46ea-8e14-f902efc409c6"
+    ],
+    "name": "Tables",
+    "type": "layout",
+    "modified": 1499969372928,
+    "location": "mine",
+    "persisted": 1499969372928,
+    "configuration": {
+      "layout": {
+        "panels": {
+          "isf.taxonomy:481": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              11,
+              12
+            ]
+          },
+          "isf.taxonomy:41": {
+            "position": [
+              11,
+              0
+            ],
+            "dimensions": [
+              12,
+              12
+            ]
+          },
+          "isf.taxonomy:181": {
+            "position": [
+              23,
+              0
+            ],
+            "dimensions": [
+              10,
+              12
+            ]
+          },
+          "isf.events:": {
+            "position": [
+              0,
+              12
+            ],
+            "dimensions": [
+              33,
+              10
+            ]
+          },
+          "294c4011-c91c-4d6d-bab3-eb5e24c3e94b": {
+            "position": [
+              0,
+              12
+            ],
+            "dimensions": [
+              33,
+              9
+            ]
+          },
+          "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+            "position": [
+              0,
+              12
+            ],
+            "dimensions": [
+              48,
+              17
+            ]
+          },
+          "2f73c14e-fd2e-47f5-89b8-af5b49d95bae": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              16,
+              12
+            ]
+          },
+          "23472b83-e5ef-4cb6-b30e-4ae850cbeff0": {
+            "position": [
+              16,
+              0
+            ],
+            "dimensions": [
+              15,
+              12
+            ]
+          },
+          "ff222604-365c-46ea-8e14-f902efc409c6": {
+            "position": [
+              31,
+              0
+            ],
+            "dimensions": [
+              17,
+              12
+            ]
+          }
+        }
+      }
+    }
+  },
+
+  "294c4011-c91c-4d6d-bab3-eb5e24c3e94b": {
+    "composition": [
+      "isf.taxonomy:-1"
+    ],
+    "name": "Events",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Name": true,
+          "ID": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499968875976,
+    "location": "mine",
+    "persisted": 1499968875976
+  },
+
+  "d0712139-44e7-4c87-9146-e679ac30a3f5": {
+    "composition": [
+      "isf.taxonomy:-1"
+    ],
+    "name": "Event Log",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Name": true,
+          "ID": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969081861,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969081861
+  },
+
+  "2f73c14e-fd2e-47f5-89b8-af5b49d95bae": {
+    "composition": [
+      "isf.taxonomy:481"
+    ],
+    "name": "BD_Cycles",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969034485,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969034485
+  },
+
+  "23472b83-e5ef-4cb6-b30e-4ae850cbeff0": {
+    "composition": [
+      "isf.taxonomy:41"
+    ],
+    "name": "PR_NumPings",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969158114,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969158114
+  },
+
+  "ff222604-365c-46ea-8e14-f902efc409c6": {
+    "composition": [
+      "isf.taxonomy:181"
+    ],
+    "name": "SG1_SignalGen",
+    "type": "table",
+    "configuration": {
+      "table": {
+        "columns": {
+          "Timestamp": true,
+          "Value": true
+        }
+      }
+    },
+    "modified": 1499969206495,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969206495
+  },
+
+  "61948d5a-9154-4f37-90c7-560fa41f8d6f": {
+    "composition": [
+      "79bcd1e2-5540-4159-a0c7-c78ed346d91e",
+      "isf.taxonomy:181",
+      "isf.taxonomy:221",
+      "isf.taxonomy:201",
+      "a25f969c-5136-404f-b188-be3d7e23c3f7",
+      "9285df4b-2c70-4f37-8918-5d9a51cab60e"
+    ],
+    "name": "Plots",
+    "type": "layout",
+    "configuration": {
+      "layout": {
+        "panels": {
+          "79bcd1e2-5540-4159-a0c7-c78ed346d91e": {
+            "position": [
+              0,
+              2
+            ],
+            "dimensions": [
+              49,
+              15
+            ]
+          },
+          "isf.taxonomy:181": {
+            "position": [
+              0,
+              17
+            ],
+            "dimensions": [
+              17,
+              10
+            ]
+          },
+          "isf.taxonomy:221": {
+            "position": [
+              17,
+              17
+            ],
+            "dimensions": [
+              16,
+              10
+            ]
+          },
+          "isf.taxonomy:201": {
+            "position": [
+              33,
+              17
+            ],
+            "dimensions": [
+              16,
+              10
+            ]
+          },
+          "033685ca-56f9-4243-b8fb-ca1283708f43": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              49,
+              2
+            ]
+          },
+          "a25f969c-5136-404f-b188-be3d7e23c3f7": {
+            "position": [
+              0,
+              0
+            ],
+            "dimensions": [
+              18,
+              2
+            ]
+          },
+          "9285df4b-2c70-4f37-8918-5d9a51cab60e": {
+            "position": [
+              18,
+              0
+            ],
+            "dimensions": [
+              31,
+              2
+            ]
+          }
+        }
+      }
+    },
+    "modified": 1499970092534,
+    "location": "mine",
+    "persisted": 1499970092534
+  },
+
+  "79bcd1e2-5540-4159-a0c7-c78ed346d91e": {
+    "composition": [
+      "isf.taxonomy:181",
+      "isf.taxonomy:221",
+      "isf.taxonomy:201"
+    ],
+    "name": "SG_Collection",
+    "type": "telemetry.panel",
+    "modified": 1499969504543,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499969504543
+  },
+
+  "033685ca-56f9-4243-b8fb-ca1283708f43": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "UTC",
+    "name": "My Clock",
+    "type": "clock",
+    "modified": 1499969833517,
+    "location": "mine",
+    "persisted": 1499969833517
+  },
+
+  "a25f969c-5136-404f-b188-be3d7e23c3f7": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "America/Los_Angeles",
+    "name": "LA Clock",
+    "type": "clock",
+    "modified": 1499970016897,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499970016897
+  },
+
+  "9285df4b-2c70-4f37-8918-5d9a51cab60e": {
+    "clockFormat": [
+      "YYYY/MM/DD hh:mm:ss",
+      "clock12"
+    ],
+    "timezone": "UTC",
+    "name": "UTC Clock",
+    "type": "clock",
+    "modified": 1499970031268,
+    "location": "5a05c94c-2998-4e8a-b190-c47d7d860447",
+    "persisted": 1499970031268
+  }
+
+}
