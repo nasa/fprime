@@ -4,7 +4,7 @@
 
 # derive module name from directory
 
-MODULE_DIR = Autocoders/test/serialize_stringbuffer
+MODULE_DIR = Autocoders/Python/test/serialize_stringbuffer
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))

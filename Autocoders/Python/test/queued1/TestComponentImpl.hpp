@@ -8,7 +8,7 @@
 #ifndef TEST_QUEUED1_TESTCOMPONENTIMPL_HPP_
 #define TEST_QUEUED1_TESTCOMPONENTIMPL_HPP_
 
-#include <Autocoders/test/queued1/TestComponentAc.hpp>
+#include <Autocoders/Python/test/queued1/TestComponentAc.hpp>
 
 namespace SvcTest {
 

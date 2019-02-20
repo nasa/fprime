@@ -8,7 +8,7 @@
 #ifndef EXAMPLECOMPONENTIMPL_HPP_
 #define EXAMPLECOMPONENTIMPL_HPP_
 
-#include <Autocoders/templates/ExampleComponentAc.hpp>
+#include <Autocoders/Python/templates/ExampleComponentAc.hpp>
 
 namespace ExampleComponents {
 

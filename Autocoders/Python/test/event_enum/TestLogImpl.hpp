@@ -8,7 +8,7 @@
 #ifndef TESTCOMMAND1IMPL_HPP_
 #define TESTCOMMAND1IMPL_HPP_
 
-#include <Autocoders/test/event_enum/TestComponentAc.hpp>
+#include <Autocoders/Python/test/event_enum/TestComponentAc.hpp>
 
 class TestLogImpl: public Somewhere::TestLogComponentBase {
     public:

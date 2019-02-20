@@ -20,7 +20,7 @@
 #ifndef Example_TESTER_BASE_HPP
 #define Example_TESTER_BASE_HPP
 
-#include <Autocoders/test/ext_dict/ExampleComponentAc.hpp>
+#include <Autocoders/Python/test/ext_dict/ExampleComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

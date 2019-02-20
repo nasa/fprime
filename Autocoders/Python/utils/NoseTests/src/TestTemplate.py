@@ -50,7 +50,7 @@ class Test_#APPLICATION_NAME#:
     ## Set app path here
     @classmethod
     def setup_class(cls):
-        os.chdir("{BUILD_ROOT}/Autocoders/test/#APP_PATH_HERE#".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+        os.chdir("{BUILD_ROOT}/Autocoders/Python/test/#APP_PATH_HERE#".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 
     @classmethod
     def teardown_class(cls):
@@ -63,5 +63,5 @@ class Test_#APPLICATION_NAME#:
                 print "MAKE CLEAN ERROR"
                 print "''''''''''''''''"
                 print e.output
-        os.chdir("{BUILD_ROOT}/Autocoders/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+        os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 

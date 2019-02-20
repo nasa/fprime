@@ -4,7 +4,7 @@
 
 # derive module name from directory
 
-MODULE_DIR = Autocoders/test/stress
+MODULE_DIR = Autocoders/Python/test/stress
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))

@@ -22,6 +22,6 @@
  TEST_SRC = #ADD MAIN FILE HERE# 
 
 
- TEST_MODS = Autocoders/test/#ADD APP ROOT HERE# Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com
+ TEST_MODS = Autocoders/Python/test/#ADD APP ROOT HERE# Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com
 
 

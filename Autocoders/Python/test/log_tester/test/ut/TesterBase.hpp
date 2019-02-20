@@ -20,7 +20,7 @@
 #ifndef LogTester_TESTER_BASE_HPP
 #define LogTester_TESTER_BASE_HPP
 
-#include <Autocoders/test/log_tester/LogTestComponentAc.hpp>
+#include <Autocoders/Python/test/log_tester/LogTestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

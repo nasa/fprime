@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="TestTlm" kind="passive" namespace="Tlm">
-    <import_port_type>Autocoders/test/tlm1/TestPortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/tlm1/TestPortAi.xml</import_port_type>
     <comment>A component with a single telemetry channel</comment>
     <ports>
         <port name="aport" data_type="Another::Test" kind="sync_input" >

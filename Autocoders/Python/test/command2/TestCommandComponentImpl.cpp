@@ -18,7 +18,7 @@
 // ======================================================================
 
 
-#include <Autocoders/test/command2/TestCommandComponentImpl.hpp>
+#include <Autocoders/Python/test/command2/TestCommandComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace AcTest {

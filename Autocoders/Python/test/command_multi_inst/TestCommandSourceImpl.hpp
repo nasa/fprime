@@ -8,7 +8,7 @@
 #ifndef TESTCOMMANDSOURCEIMPL_HPP_
 #define TESTCOMMANDSOURCEIMPL_HPP_
 
-#include <Autocoders/test/command_tester/CommandTestComponentAc.hpp>
+#include <Autocoders/Python/test/command_tester/CommandTestComponentAc.hpp>
 
 class TestCommandSourceImpl: public Cmd::CommandTesterComponentBase {
     public:

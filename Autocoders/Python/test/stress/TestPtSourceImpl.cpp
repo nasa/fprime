@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/stress/TestPtSourceImpl.hpp>
+#include <Autocoders/Python/test/stress/TestPtSourceImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

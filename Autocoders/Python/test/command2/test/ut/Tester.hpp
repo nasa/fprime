@@ -21,7 +21,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Autocoders/test/command2/TestCommandComponentImpl.hpp"
+#include "Autocoders/Python/test/command2/TestCommandComponentImpl.hpp"
 
 namespace AcTest {
 

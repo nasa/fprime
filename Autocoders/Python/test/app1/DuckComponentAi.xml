@@ -7,7 +7,7 @@
    Note  kind attribute of component can be ether active or passive.
          -->
 <component name="Duck" kind="active" namespace="Duck">
-    <import_port_type>Autocoders/test/app1/Msg1PortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/app1/Msg1PortAi.xml</import_port_type>
     <comment>A demonstration Duck component with three ports</comment>
     <ports>
         <!-- First port defined-->

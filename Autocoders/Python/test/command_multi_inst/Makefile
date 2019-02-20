@@ -4,7 +4,7 @@
 
 # derive module name from directory
 
-MODULE_DIR = Autocoders/test/command_multi_inst
+MODULE_DIR = Autocoders/Python/test/command_multi_inst
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))

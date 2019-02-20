@@ -20,7 +20,7 @@
 #ifndef TestCommand_TESTER_BASE_HPP
 #define TestCommand_TESTER_BASE_HPP
 
-#include <Autocoders/test/comp_diff_namespace/TestComponentAc.hpp>
+#include <Autocoders/Python/test/comp_diff_namespace/TestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

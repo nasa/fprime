@@ -1,5 +1,5 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
-#include <Autocoders/test/port_nogen/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/test/port_nogen/ExampleComponentImpl.hpp>
 
 int main(int argc, char* argv[]) {
 

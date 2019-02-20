@@ -1,4 +1,4 @@
-<test_module path="/Autocoders/test/app2">
+<test_module path="/Autocoders/Python/test/app2">
 	<test_case name="void_send">
 		<p_group>
 			<p_expect>\(1 or 2 or quit\):</p_expect>

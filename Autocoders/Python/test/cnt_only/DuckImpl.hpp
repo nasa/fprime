@@ -1,7 +1,7 @@
 #ifndef DUCK_DUCK_IMPL_HPP
 #define DUCK_DUCK_IMPL_HPP
 
-#include <Autocoders/test/cnt_only/DuckComponentAc.hpp>
+#include <Autocoders/Python/test/cnt_only/DuckComponentAc.hpp>
 
 namespace Duck {
 

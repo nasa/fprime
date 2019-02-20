@@ -1,12 +1,12 @@
 #include <Fw/Cfg/Config.hpp>
 
-#include <Autocoders/test/stress/TestCommandImpl.hpp>
-#include <Autocoders/test/stress/TestCommandSourceImpl.hpp>
-#include <Autocoders/test/stress/TestPrmSourceImpl.hpp>
-#include <Autocoders/test/stress/TestTelemRecvImpl.hpp>
-#include <Autocoders/test/stress/TestLogRecvImpl.hpp>
-#include <Autocoders/test/time_tester/TestTimeImpl.hpp>
-#include <Autocoders/test/stress/TestPtSourceImpl.hpp>
+#include <Autocoders/Python/test/stress/TestCommandImpl.hpp>
+#include <Autocoders/Python/test/stress/TestCommandSourceImpl.hpp>
+#include <Autocoders/Python/test/stress/TestPrmSourceImpl.hpp>
+#include <Autocoders/Python/test/stress/TestTelemRecvImpl.hpp>
+#include <Autocoders/Python/test/stress/TestLogRecvImpl.hpp>
+#include <Autocoders/Python/test/time_tester/TestTimeImpl.hpp>
+#include <Autocoders/Python/test/stress/TestPtSourceImpl.hpp>
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 

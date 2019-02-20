@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/ext_dict/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/test/ext_dict/ExampleComponentImpl.hpp>
 #include <stdio.h>
 
 namespace ExampleComponents {

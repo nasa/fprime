@@ -20,7 +20,7 @@
 #ifndef TestPort_TESTER_BASE_HPP
 #define TestPort_TESTER_BASE_HPP
 
-#include <Autocoders/test/stress/TestPtComponentAc.hpp>
+#include <Autocoders/Python/test/stress/TestPtComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

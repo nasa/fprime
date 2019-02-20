@@ -1,5 +1,5 @@
-#include <Autocoders/test/queued1/test/ut/ComponentTesterImpl.hpp>
-#include <Autocoders/test/queued1/TestComponentImpl.hpp>
+#include <Autocoders/Python/test/queued1/test/ut/ComponentTesterImpl.hpp>
+#include <Autocoders/Python/test/queued1/TestComponentImpl.hpp>
 
 int main(int argc, char* argv[]) {
 

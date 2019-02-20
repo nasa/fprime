@@ -20,7 +20,7 @@
 #ifndef ParamTester_TESTER_BASE_HPP
 #define ParamTester_TESTER_BASE_HPP
 
-#include <Autocoders/test/param_tester/ParamTestComponentAc.hpp>
+#include <Autocoders/Python/test/param_tester/ParamTestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

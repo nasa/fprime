@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/interface1/TestComponentImpl.hpp>
+#include <Autocoders/Python/test/interface1/TestComponentImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

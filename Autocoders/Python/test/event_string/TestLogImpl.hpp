@@ -8,7 +8,7 @@
 #ifndef TESTCOMMAND1IMPL_HPP_
 #define TESTCOMMAND1IMPL_HPP_
 
-#include <Autocoders/test/event_string/TestComponentAc.hpp>
+#include <Autocoders/Python/test/event_string/TestComponentAc.hpp>
 
 class TestLogImpl: public Somewhere::TestLogComponentBase {
     public:

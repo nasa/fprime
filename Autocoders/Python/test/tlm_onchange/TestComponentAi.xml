@@ -2,8 +2,8 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="TestTlm" kind="passive" namespace="Tlm">
-    <import_port_type>Autocoders/test/tlm_onchange/TestPortAi.xml</import_port_type>
-    <import_serializable_type>Autocoders/test/tlm_onchange/QuaternionSerializableAi.xml</import_serializable_type>
+    <import_port_type>Autocoders/Python/test/tlm_onchange/TestPortAi.xml</import_port_type>
+    <import_serializable_type>Autocoders/Python/test/tlm_onchange/QuaternionSerializableAi.xml</import_serializable_type>
     <comment>A component with a single telemetry channel</comment>
     <ports>
         <port name="aport" data_type="Another::Test" kind="sync_input" >

@@ -7,8 +7,8 @@
    Note  kind attribute of component can be ether active or passive.
          -->
 <component name="TestCommand" kind="passive" namespace="Cmd">
-    <import_port_type>Autocoders/test/event1/TestPortAi.xml</import_port_type>
-    <import_serializable_type>Autocoders/test/event2/QuaternionSerializableAi.xml</import_serializable_type>
+    <import_port_type>Autocoders/Python/test/event1/TestPortAi.xml</import_port_type>
+    <import_serializable_type>Autocoders/Python/test/event2/QuaternionSerializableAi.xml</import_serializable_type>
     <comment>A component with a single command</comment>
     <events>
         <!-- A test event -->

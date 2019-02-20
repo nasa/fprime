@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="Example" kind="active" namespace="ExampleComponents" modeler="true">
-    <import_port_type>Autocoders/test/port_nogen/ExamplePortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/port_nogen/ExamplePortAi.xml</import_port_type>
     
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
@@ -18,7 +18,7 @@
 
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
     
-    <import_serializable_type>Autocoders/test/port_nogen/Example2SerializableAi.xml</import_serializable_type>
+    <import_serializable_type>Autocoders/Python/test/port_nogen/Example2SerializableAi.xml</import_serializable_type>
     <comment>An example component</comment>
     <ports>
         <port name="exampleInput" data_type="AnotherExample::Example" kind="async_input" priority="2" max_number="6">

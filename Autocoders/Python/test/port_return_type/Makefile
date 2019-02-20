@@ -4,7 +4,7 @@
 
 # derive module name from directory
 
-MODULE_DIR = Autocoders/test/port_return_type
+MODULE_DIR = Autocoders/Python/test/port_return_type
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))

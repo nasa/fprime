@@ -8,7 +8,7 @@
 #ifndef TESTTEXTLOGIMPL_HPP_
 #define TESTTEXTLOGIMPL_HPP_
 
-#include <Autocoders/test/log_tester/LogTestComponentAc.hpp>
+#include <Autocoders/Python/test/log_tester/LogTestComponentAc.hpp>
 
 class LogTextImpl: public Log::LogTesterComponentBase {
     public:

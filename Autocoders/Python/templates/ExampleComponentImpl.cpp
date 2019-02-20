@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/templates/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/templates/ExampleComponentImpl.hpp>
 #include <stdio.h>
 
 namespace ExampleComponents {

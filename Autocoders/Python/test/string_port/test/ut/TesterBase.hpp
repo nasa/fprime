@@ -20,7 +20,7 @@
 #ifndef TestComponent_TESTER_BASE_HPP
 #define TestComponent_TESTER_BASE_HPP
 
-#include <Autocoders/test/string_port/TestComponentAc.hpp>
+#include <Autocoders/Python/test/string_port/TestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

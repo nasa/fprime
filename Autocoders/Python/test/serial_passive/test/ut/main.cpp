@@ -1,5 +1,5 @@
-#include <Autocoders/test/serial_passive/TestSerialImpl.hpp>
-#include <Autocoders/test/port_loopback/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/test/serial_passive/TestSerialImpl.hpp>
+#include <Autocoders/Python/test/port_loopback/ExampleComponentImpl.hpp>
 
 int main(int argc, char* argv[]) {
 

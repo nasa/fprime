@@ -21,7 +21,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Autocoders/test/serial_passive/TestSerialImpl.hpp"
+#include "Autocoders/Python/test/serial_passive/TestSerialImpl.hpp"
 
 namespace TestComponents {
 

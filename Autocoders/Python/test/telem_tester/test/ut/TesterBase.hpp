@@ -20,7 +20,7 @@
 #ifndef TelemTester_TESTER_BASE_HPP
 #define TelemTester_TESTER_BASE_HPP
 
-#include <Autocoders/test/telem_tester/TelemTestComponentAc.hpp>
+#include <Autocoders/Python/test/telem_tester/TelemTestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

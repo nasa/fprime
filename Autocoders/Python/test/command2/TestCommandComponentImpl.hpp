@@ -20,7 +20,7 @@
 #ifndef TestCommand_HPP
 #define TestCommand_HPP
 
-#include "Autocoders/test/command2/TestComponentAc.hpp"
+#include "Autocoders/Python/test/command2/TestComponentAc.hpp"
 
 namespace AcTest {
 

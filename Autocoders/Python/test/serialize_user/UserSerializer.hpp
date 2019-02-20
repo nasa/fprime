@@ -4,7 +4,7 @@
 // A hand-coded serializable
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Autocoders/test/serialize_user/SomeStruct.hpp>
+#include <Autocoders/Python/test/serialize_user/SomeStruct.hpp>
 #if FW_SERIALIZABLE_TO_STRING
 #include <Fw/Types/StringType.hpp>
 #endif

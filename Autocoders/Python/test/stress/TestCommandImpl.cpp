@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/stress/TestCommandImpl.hpp>
+#include <Autocoders/Python/test/stress/TestCommandImpl.hpp>
 #include <Fw/Types/EightyCharString.hpp>
 #include <stdio.h>
 

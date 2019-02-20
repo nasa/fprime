@@ -21,7 +21,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Autocoders/test/event_throttle/TestLogImpl.hpp"
+#include "Autocoders/Python/test/event_throttle/TestLogImpl.hpp"
 
 namespace Somewhere {
 

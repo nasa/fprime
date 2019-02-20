@@ -8,7 +8,7 @@
 #ifndef TESTCOMMAND2IMPL_HPP_
 #define TESTCOMMAND2IMPL_HPP_
 
-#include <Autocoders/test/stress/TestComponentAc.hpp>
+#include <Autocoders/Python/test/stress/TestComponentAc.hpp>
 
 class TestCommand1Impl: public StressTest::TestCommandComponentBase {
     public:

@@ -13,7 +13,7 @@ which are lxml and cheetah.
 
 To install lxml go to http://lxml.de/installation.html for download and 
 install instructions.   You might like to use the pip tool for installing 
-and a version is already in accurev and located at Autocoders/utils/pip-1.2.1. 
+and a version is already in accurev and located at Autocoders/Python/utils/pip-1.2.1. 
 The other package you will need is the cheetah template language although I 
 think the yacgen.py will actually run without it.   Really Cheetah is just 
 used to generate the template Python.   I do not do the conversion at run-time 
@@ -21,7 +21,7 @@ but precompile all templates and version control both templates and generated
 python.  Anyways documentation on Cheetah is located at 
 http://www.cheetahtemplate.org/index.html and one can download the 
 software from this site as well.   Cheetah is also in accurev and is 
-located at Autocoders/utils/Cheetah-2.4.4.
+located at Autocoders/Python/utils/Cheetah-2.4.4.
 
 
 

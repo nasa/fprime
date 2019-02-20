@@ -36,7 +36,7 @@ class Test_CmdBuilder:
         d = self.constants.getDict('envar')
         d['file'] = xmlFiles[0]
         d['app'] = appName
-        properCmd = "{PYTHON_SRC} {BUILD_ROOT}/Autocoders/bin/isfgen.py -b -C -P {BUILD_ROOT}/{app}/{file}".format(**d)
+        properCmd = "{PYTHON_SRC} {BUILD_ROOT}/Autocoders/Python/bin/isfgen.py -b -C -P {BUILD_ROOT}/{app}/{file}".format(**d)
 
         print "properCmd: {}".format(properCmd)
         print "cmd: {}".format(cmd)

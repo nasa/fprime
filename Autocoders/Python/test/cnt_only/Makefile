@@ -5,7 +5,7 @@
 # derive module name from directory
 DEPLOYMENT = Top
 
-MODULE_DIR = Autocoders/test/cnt_only
+MODULE_DIR = Autocoders/Python/test/cnt_only
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))

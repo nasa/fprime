@@ -8,7 +8,7 @@
 #ifndef TESTTIMEIMPL_HPP_
 #define TESTTIMEIMPL_HPP_
 
-#include <Autocoders/test/time_tester/TimeTestComponentAc.hpp>
+#include <Autocoders/Python/test/time_tester/TimeTestComponentAc.hpp>
 
 class TestTimeImpl: public Time::TimeTesterComponentBase {
     public:

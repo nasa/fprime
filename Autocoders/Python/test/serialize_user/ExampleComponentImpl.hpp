@@ -8,7 +8,7 @@
 #ifndef TESTCOMMAND2IMPL_HPP_
 #define TESTCOMMAND2IMPL_HPP_
 
-#include <Autocoders/test/serialize_user/ExampleComponentAc.hpp>
+#include <Autocoders/Python/test/serialize_user/ExampleComponentAc.hpp>
 
 class ExampleComponentImpl: public ExampleComponents::ExampleComponentComponentBase {
     public:

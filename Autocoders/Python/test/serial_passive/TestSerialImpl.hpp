@@ -20,7 +20,7 @@
 #ifndef TestSerial_HPP
 #define TestSerial_HPP
 
-#include "Autocoders/test/serial_passive/TestComponentAc.hpp"
+#include "Autocoders/Python/test/serial_passive/TestComponentAc.hpp"
 
 namespace TestComponents {
 

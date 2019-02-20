@@ -83,7 +83,7 @@ class CmdBuilder(object):
         cmdDict['flags'] = flags
         for f in self.__xmlFiles:
             cmdDict['xmlFile'] = f
-            cmd = """{PYTHON_SRC} {BUILD_ROOT}/Autocoders/bin/isfgen.py {flags} {xmlFile}""".format(**cmdDict)
+            cmd = """{PYTHON_SRC} {BUILD_ROOT}/Autocoders/Python/bin/isfgen.py {flags} {xmlFile}""".format(**cmdDict)
             isfgenCmds.append(cmd)
         return isfgenCmds
 

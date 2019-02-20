@@ -1,7 +1,7 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Port/FwPortBase.hpp>
 
-#include <Autocoders/test/serialize_template/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/test/serialize_template/ExampleComponentImpl.hpp>
 
 template class Fw::StructSerializable<SomeUserStruct>;
 

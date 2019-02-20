@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/serialize_template/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/test/serialize_template/ExampleComponentImpl.hpp>
 #include <Fw/Types/FwEightyCharString.hpp>
 #include <cstdio>
 

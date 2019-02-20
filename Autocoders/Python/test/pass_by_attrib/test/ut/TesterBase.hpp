@@ -20,7 +20,7 @@
 #ifndef PassBy_TESTER_BASE_HPP
 #define PassBy_TESTER_BASE_HPP
 
-#include <Autocoders/test/pass_by_attrib/PassByComponentAc.hpp>
+#include <Autocoders/Python/test/pass_by_attrib/PassByComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

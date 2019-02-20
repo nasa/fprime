@@ -7,7 +7,7 @@ def setup_module():
     ## Application Specific Variables
     xmlFiles = ["Comp1Ai.xml", "Comp2Ai.xml"]
     implFiles = ["Comp1Impl.cpp", "Comp2Impl.cpp"]
-    appPath = "Autocoders/test/app1"
+    appPath = "Autocoders/Python/test/app1"
     target = "Top"
 
     ## Configure Command Builder

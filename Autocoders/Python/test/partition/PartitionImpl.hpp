@@ -1,7 +1,7 @@
 #ifndef PARTITION_PARTITION_IMPL_HPP
 #define PARTITION_PARTITION_IMPL_HPP
 
-#include <Autocoders/test/partition/PartitionPartitionComponentAc.hpp>
+#include <Autocoders/Python/test/partition/PartitionPartitionComponentAc.hpp>
 
 namespace Partition {
 

@@ -1,7 +1,7 @@
 #ifndef SIMPLE_ACTIVE_IMPL_HPP
 #define SIMPLE_ACTIVE_IMPL_HPP
 
-#include <Autocoders/test/active_tester/Simple_ActiveComponentAc.hpp>
+#include <Autocoders/Python/test/active_tester/Simple_ActiveComponentAc.hpp>
 
 namespace Simple_Active{
 

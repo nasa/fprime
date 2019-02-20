@@ -17,29 +17,29 @@ pexpect: https://pexpect.readthedocs.org/en/latest/
 
 
 Run the all tests within the test suite:
-    - cd to Autocoders/bin
+    - cd to Autocoders/Python/bin
     - run:
         python runNose.py
 
 View supported applications:
-    - cd to Autocoders/bin
+    - cd to Autocoders/Python/bin
     - run:
         python runNose.py -h
 
 Run specific test:
-    - cd to Autocoders/bin
+    - cd to Autocoders/Python/bin
     - run:
         python runNose.py Async_Input_Test
  
 (This will run all Async_Input_Tests within the test suite
 
 Run app specific test:
-    - cd to Autocoders/bin
+    - cd to Autocoders/Python/bin
     - run:
         python runNose.py active_tester.Async_Input_Test 
 
 Accumulate tests:
-    - cd to Autocoders/bin
+    - cd to Autocoders/Python/bin
     - run:
         python runNose.py Port_Send_Test Sync_Input_Test 
 
@@ -53,7 +53,7 @@ Add an application to the test suite:
     3. Register application in runNose.py (5)
 
 Create a new application:
-    -Copy the AppTemplate folder into Autocoders/test
+    -Copy the AppTemplate folder into Autocoders/Python/test
     - Perform name changes:
         1. Root folder name
         3. Makefile
@@ -66,7 +66,7 @@ Create a new application:
     - Update test/ut/mod.mk
     NOTE: Only declare executable cpp in test/ut/mod.mk
           Do not declate in root mod.mk 
-    - Register application in Autocoders/runNose.py
+    - Register application in Autocoders/Python/runNose.py
 
 
 ----------------------------------- Detailed Reference -----------------------------------
@@ -94,7 +94,7 @@ are collected the the test suite is run.
 
 Test module structure:
 
-/Autocoders/test
+/Autocoders/Python/test
     /active_tester
         active_nose_test.py
     /app1
@@ -117,14 +117,14 @@ Supported Application:      An application that:
                             2. Is registered in runNose (5)
 
 
-runNose:                    Test Suite runner located in Autocoders/bin
+runNose:                    Test Suite runner located in Autocoders/Python/bin
 
 
 ''''''''''''''''''''''''''''''''''''''''''
 (2) Adding a test module to an application
 ''''''''''''''''''''''''''''''''''''''''''
 
-- Copy Autocoders/TestTemplate.py into an application.
+- Copy Autocoders/Python/TestTemplate.py into an application.
 - Perform the required name changes
 - Implement pexpect_config.xml 
 - Register the application in runNose (4)    
@@ -138,7 +138,7 @@ pexpect can be used to validate runtime outputs of topology executables.
 pexpect anticipates and responds to the stdout of the executable.
 If output is not recognized pexpect will assert False.
 
-The following is an example from the test module within  Autocoders/test/active_tester/
+The following is an example from the test module within  Autocoders/Python/test/active_tester/
 
 ## test methods are collected alphabetically. When adding new test methods
 ## define method names according to current order

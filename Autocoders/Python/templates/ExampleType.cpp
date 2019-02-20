@@ -1,4 +1,4 @@
-#include <Autocoders/templates/ExampleType.hpp>
+#include <Autocoders/Python/templates/ExampleType.hpp>
 #include <Fw/Types/Assert.hpp>
 #if FW_SERIALIZABLE_TO_STRING
 #include <Fw/Types/EightyCharString.hpp>

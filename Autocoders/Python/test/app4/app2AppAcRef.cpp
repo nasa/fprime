@@ -1,8 +1,8 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <string.h>
 
-#include <Autocoders/test/app4/PartitionHubPartitionHubImpl.hpp>
-#include <Autocoders/test/app4/DuckDuckImpl.hpp>
+#include <Autocoders/Python/test/app4/PartitionHubPartitionHubImpl.hpp>
+#include <Autocoders/Python/test/app4/DuckDuckImpl.hpp>
 
 #include <unistd.h>
 

@@ -8,7 +8,7 @@
 #ifndef TESTPARAMIMPL_HPP_
 #define TESTPARAMIMPL_HPP_
 
-#include <Autocoders/test/param_enum/TestComponentAc.hpp>
+#include <Autocoders/Python/test/param_enum/TestComponentAc.hpp>
 
 class TestPrmImpl: public Prm::TestPrmComponentBase {
     public:

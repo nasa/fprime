@@ -1,5 +1,5 @@
-#include <Autocoders/test/command1/TestCommand1Impl.hpp>
-#include <Autocoders/test/command1/TestCommandSourceImpl.hpp>
+#include <Autocoders/Python/test/command1/TestCommand1Impl.hpp>
+#include <Autocoders/Python/test/command1/TestCommandSourceImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 int main(int argc, char* argv[]) {

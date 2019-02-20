@@ -8,7 +8,7 @@
 #ifndef TESTLOGRECVIMPL_HPP_
 #define TESTLOGRECVIMPL_HPP_
 
-#include <Autocoders/test/log_tester/TestTextLogImpl.hpp>
+#include <Autocoders/Python/test/log_tester/TestTextLogImpl.hpp>
 
 class TestLogRecvImpl: public LogTextImpl {
     public:

@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/command_string/TestCommandSourceImpl.hpp>
+#include <Autocoders/Python/test/command_string/TestCommandSourceImpl.hpp>
 #include <stdio.h>
 
 

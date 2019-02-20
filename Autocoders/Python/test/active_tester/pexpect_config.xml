@@ -1,4 +1,4 @@
-<test_module path="/Autocoders/test/active_tester">
+<test_module path="/Autocoders/Python/test/active_tester">
 	<test_case name="Sync_InputPortF32">
 		<p_group>
 			<p_expect>Enter g to go or q to quit:</p_expect>

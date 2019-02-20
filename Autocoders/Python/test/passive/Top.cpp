@@ -1,11 +1,11 @@
-#include <Autocoders/test/app1b/Top.hpp>
+#include <Autocoders/Python/test/app1b/Top.hpp>
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
 #include <string.h>
 
-#include <Autocoders/test/passive/PassiveC1Impl.hpp>
-#include <Autocoders/test/passive/PassiveC2Impl.hpp>
+#include <Autocoders/Python/test/passive/PassiveC1Impl.hpp>
+#include <Autocoders/Python/test/passive/PassiveC2Impl.hpp>
 
 #include <unistd.h>
 

@@ -15,6 +15,6 @@ setenv PYTHON_BASE `make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_pytho
 echo "PYTHON_BASE: ${PYTHON_BASE}"
 
 setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
-setenv PYTHONPATH ${BUILD_ROOT}/Autocoders/src
+setenv PYTHONPATH ${BUILD_ROOT}/Autocoders/Python/src
 echo "PYTHONPATH: ${PYTHONPATH}"
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Autocoders/bin/JSONDictionaryGen.py  $*
+${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Autocoders/Python/bin/JSONDictionaryGen.py  $*

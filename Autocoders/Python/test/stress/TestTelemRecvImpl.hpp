@@ -8,7 +8,7 @@
 #ifndef TESTTELEMRECVIMPL_HPP_
 #define TESTTELEMRECVIMPL_HPP_
 
-#include <Autocoders/test/telem_tester/TelemTestComponentAc.hpp>
+#include <Autocoders/Python/test/telem_tester/TelemTestComponentAc.hpp>
 
 class TestTelemRecvImpl: public Tlm::TelemTesterComponentBase {
     public:

@@ -7,8 +7,8 @@
    Note  kind attribute of component can be ether active or passive.
          -->
 <component name="TestCommand" kind="active" namespace="StressTest::Components">
-    <import_port_type>Autocoders/test/comp_diff_namespace/TestPortAi.xml</import_port_type>
-    <import_serializable_type>Autocoders/test/comp_diff_namespace/QuaternionSerializableAi.xml</import_serializable_type>
+    <import_port_type>Autocoders/Python/test/comp_diff_namespace/TestPortAi.xml</import_port_type>
+    <import_serializable_type>Autocoders/Python/test/comp_diff_namespace/QuaternionSerializableAi.xml</import_serializable_type>
     <comment>A stressfull component</comment>
     <ports>
         <port name="aport" data_type="Another::Someother::Test" kind="async_input" max_number="1">

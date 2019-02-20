@@ -1,5 +1,5 @@
-#include <Autocoders/test/param_string/TestPrmImpl.hpp>
-#include <Autocoders/test/param_string/TestPrmSourceImpl.hpp>
+#include <Autocoders/Python/test/param_string/TestPrmImpl.hpp>
+#include <Autocoders/Python/test/param_string/TestPrmSourceImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 int main(int argc, char* argv[]) {

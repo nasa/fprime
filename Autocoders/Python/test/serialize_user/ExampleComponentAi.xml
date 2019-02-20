@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="ExampleComponent" kind="active" namespace="ExampleComponents">
-    <import_port_type>Autocoders/test/serialize_user/ExamplePortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/serialize_user/ExamplePortAi.xml</import_port_type>
     <comment>An example component</comment>
     <ports>
         <port name="exampleInput" data_type="AnotherExample::Example" kind="async_input" priority="2" max_number="6">

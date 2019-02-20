@@ -8,7 +8,7 @@
 #ifndef TESTCOMMAND1IMPL_HPP_
 #define TESTCOMMAND1IMPL_HPP_
 
-#include <Autocoders/test/tlm_enum/TestComponentAc.hpp>
+#include <Autocoders/Python/test/tlm_enum/TestComponentAc.hpp>
 
 class TestTlmImpl: public Tlm::TestTlmComponentBase {
     public:

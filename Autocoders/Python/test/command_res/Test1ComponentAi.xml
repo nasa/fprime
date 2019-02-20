@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="Test1" kind="active" namespace="Cmd">
-    <import_port_type>Autocoders/test/command_res/Test2PortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/command_res/Test2PortAi.xml</import_port_type>
     <comment>A component with a single command</comment>
     <commands opcode_base="0x10">
         <!-- Input test command -->

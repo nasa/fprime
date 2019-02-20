@@ -1,3 +1,3 @@
 TEST_SRC = main.cpp
 
-TEST_MODS = Autocoders/test/serialize_stringbuffer Fw/Types
+TEST_MODS = Autocoders/Python/test/serialize_stringbuffer Fw/Types

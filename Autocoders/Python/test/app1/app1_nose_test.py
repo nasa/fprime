@@ -51,7 +51,7 @@ def c_port_send_test():
 
 
 def setup_module():
-    os.chdir("{BUILD_ROOT}/Autocoders/test/app1".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+    os.chdir("{BUILD_ROOT}/Autocoders/Python/test/app1".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
     
     make()
     make_ut()
@@ -66,7 +66,7 @@ def teardown_module():
             print "MAKE CLEAN ERROR"
             print "''''''''''''''''"
             print e.output
-    os.chdir("{BUILD_ROOT}/Autocoders/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+    os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 
 def make():
     try:

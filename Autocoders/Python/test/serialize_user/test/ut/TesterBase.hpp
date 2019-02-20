@@ -20,7 +20,7 @@
 #ifndef ExampleComponent_TESTER_BASE_HPP
 #define ExampleComponent_TESTER_BASE_HPP
 
-#include <Autocoders/test/serialize_user/ExampleComponentAc.hpp>
+#include <Autocoders/Python/test/serialize_user/ExampleComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

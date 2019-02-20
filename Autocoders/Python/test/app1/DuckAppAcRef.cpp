@@ -1,11 +1,11 @@
 
-#include <Autocoders/test/app1/Top.hpp>
+#include <Autocoders/Python/test/app1/Top.hpp>
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
 #include <string.h>
 
-#include <Autocoders/test/app1/DuckDuckImpl.hpp>
+#include <Autocoders/Python/test/app1/DuckDuckImpl.hpp>
 
 #include <unistd.h>
 

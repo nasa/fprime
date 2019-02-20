@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/stress/TestLogRecvImpl.hpp>
+#include <Autocoders/Python/test/stress/TestLogRecvImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

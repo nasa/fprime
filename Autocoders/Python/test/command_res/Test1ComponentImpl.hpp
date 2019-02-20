@@ -20,7 +20,7 @@
 #ifndef Test1_HPP
 #define Test1_HPP
 
-#include "Autocoders/test/command_res/Test1ComponentAc.hpp"
+#include "Autocoders/Python/test/command_res/Test1ComponentAc.hpp"
 
 namespace Cmd {
 

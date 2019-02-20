@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/queued1/TestComponentImpl.hpp>
+#include <Autocoders/Python/test/queued1/TestComponentImpl.hpp>
 #include <stdio.h>
 
 namespace SvcTest {

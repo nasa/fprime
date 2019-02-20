@@ -193,7 +193,7 @@ def runTestGen(testGenPath, verbose):
     supported_apps = generate_constants()
     # Change open all supported applications and run testGen
     for app in supported_apps:
-        appPath = "{BUILD_ROOT}/Autocoders/test/{APP_DIR}".format(BUILD_ROOT=os.environ.get('BUILD_ROOT'), APP_DIR=app)
+        appPath = "{BUILD_ROOT}/Autocoders/Python/test/{APP_DIR}".format(BUILD_ROOT=os.environ.get('BUILD_ROOT'), APP_DIR=app)
         logging.debug("Entering: %s" % appPath)
 
         os.chdir(appPath)
@@ -218,7 +218,7 @@ def cleanTestGen():
     supported_apps = generate_constants()
     # Change open all supported applications and run testGen
     for app in supported_apps:
-        appPath = "{BUILD_ROOT}/Autocoders/test/{APP_DIR}".format(BUILD_ROOT=os.environ.get('BUILD_ROOT'), APP_DIR=app)
+        appPath = "{BUILD_ROOT}/Autocoders/Python/test/{APP_DIR}".format(BUILD_ROOT=os.environ.get('BUILD_ROOT'), APP_DIR=app)
         logging.debug("Entering: %s" % appPath)
 
         os.chdir(appPath)
@@ -235,15 +235,15 @@ def run_nose(nose_call):
     @param nose_call: 
     Execute nose
     """
-    # Change directory to Autocoders/test
-    os.chdir("{BUILD_ROOT}/Autocoders/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+    # Change directory to Autocoders/Python/test
+    os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
      
     print "\n\n--------------- Calling NoseTest ---------------\n %s\n" % nose_call
     print "---------------    Test List     ---------------"
     subprocess.call(nose_call, shell=True)
 
     # Reset directory
-    os.chdir("{BUILD_ROOT}/Autocoders/".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+    os.chdir("{BUILD_ROOT}/Autocoders/Python/".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 
 
 def init_parser():
@@ -255,7 +255,7 @@ def init_parser():
              Test Suite Utility
              ''''''''''''''''''
              
-             README located in Autocoders/utils/Nosetests
+             README located in Autocoders/Python/utils/Nosetests
 
              Supported applications and their
              tests are specified below. To test 
@@ -295,7 +295,7 @@ if __name__ == "__main__":
 
     ## Setup Paths
     BUILD_ROOT = os.environ.get('BUILD_ROOT')
-    testGenPath = os.path.join(BUILD_ROOT, 'Autocoders/utils/NoseTests/TestGenerator.py')
+    testGenPath = os.path.join(BUILD_ROOT, 'Autocoders/Python/utils/NoseTests/TestGenerator.py')
 
     Parser = init_parser() 
     args = Parser.parse_args()

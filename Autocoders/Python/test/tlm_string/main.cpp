@@ -1,6 +1,6 @@
-#include <Autocoders/test/tlm_string/TestTelemImpl.hpp>
-#include <Autocoders/test/tlm_string/TestTelemRecvImpl.hpp>
-#include <Autocoders/test/time_tester/TestTimeImpl.hpp>
+#include <Autocoders/Python/test/tlm_string/TestTelemImpl.hpp>
+#include <Autocoders/Python/test/tlm_string/TestTelemRecvImpl.hpp>
+#include <Autocoders/Python/test/time_tester/TestTimeImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 int main(int argc, char* argv[]) {

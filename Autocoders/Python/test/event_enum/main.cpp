@@ -1,6 +1,6 @@
-#include <Autocoders/test/event_enum/TestLogImpl.hpp>
-#include <Autocoders/test/event_enum/TestLogRecvImpl.hpp>
-#include <Autocoders/test/time_tester/TestTimeImpl.hpp>
+#include <Autocoders/Python/test/event_enum/TestLogImpl.hpp>
+#include <Autocoders/Python/test/event_enum/TestLogRecvImpl.hpp>
+#include <Autocoders/Python/test/time_tester/TestTimeImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 int main(int argc, char* argv[]) {

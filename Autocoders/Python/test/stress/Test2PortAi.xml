@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
 <interface name="Test2" namespace="Somewhere">
-    <import_serializable_type>Autocoders/test/stress/QuaternionSerializableAi.xml</import_serializable_type>
+    <import_serializable_type>Autocoders/Python/test/stress/QuaternionSerializableAi.xml</import_serializable_type>
     <comment>
     Scheduler Port with order argument
     </comment>

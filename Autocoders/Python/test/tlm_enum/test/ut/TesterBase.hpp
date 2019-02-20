@@ -20,7 +20,7 @@
 #ifndef TestTlm_TESTER_BASE_HPP
 #define TestTlm_TESTER_BASE_HPP
 
-#include <Autocoders/test/tlm_enum/TestComponentAc.hpp>
+#include <Autocoders/Python/test/tlm_enum/TestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

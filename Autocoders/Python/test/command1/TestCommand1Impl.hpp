@@ -8,7 +8,7 @@
 #ifndef TESTCOMMAND1IMPL_HPP_
 #define TESTCOMMAND1IMPL_HPP_
 
-#include <Autocoders/test/command1/Test1ComponentAc.hpp>
+#include <Autocoders/Python/test/command1/Test1ComponentAc.hpp>
 
 class TestCommand1Impl: public Cmd::Test1ComponentBase {
     public:

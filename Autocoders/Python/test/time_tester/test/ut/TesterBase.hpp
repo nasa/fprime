@@ -20,7 +20,7 @@
 #ifndef TimeTester_TESTER_BASE_HPP
 #define TimeTester_TESTER_BASE_HPP
 
-#include <Autocoders/test/time_tester/TimeTestComponentAc.hpp>
+#include <Autocoders/Python/test/time_tester/TimeTestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

@@ -1,5 +1,5 @@
-#include <Autocoders/test/command_multi_inst/TestCommand1Impl.hpp>
-#include <Autocoders/test/command_multi_inst/TestCommandSourceImpl.hpp>
+#include <Autocoders/Python/test/command_multi_inst/TestCommand1Impl.hpp>
+#include <Autocoders/Python/test/command_multi_inst/TestCommandSourceImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 int main(int argc, char* argv[]) {

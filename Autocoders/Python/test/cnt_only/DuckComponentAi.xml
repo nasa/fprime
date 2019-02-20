@@ -7,7 +7,7 @@
          -->
 <?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="Duck" kind="active" namespace="Duck">
-    <import_port_type>Autocoders/test/cnt_only/Msg1PortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/cnt_only/Msg1PortAi.xml</import_port_type>
     <comment>A demonstration Duck component with three ports</comment>
     <ports>
         <!-- First port defined-->

@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/param_enum/TestPrmImpl.hpp>
+#include <Autocoders/Python/test/param_enum/TestPrmImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

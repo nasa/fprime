@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/event_enum/TestLogRecvImpl.hpp>
+#include <Autocoders/Python/test/event_enum/TestLogRecvImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

@@ -18,7 +18,7 @@
 // ====================================================================== 
 
 
-#include <Autocoders/test/serial_passive/TestSerialImpl.hpp>
+#include <Autocoders/Python/test/serial_passive/TestSerialImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace TestComponents {

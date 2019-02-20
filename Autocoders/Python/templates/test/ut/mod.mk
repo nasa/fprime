@@ -21,5 +21,5 @@
 
 TEST_SRC = TesterBase.cpp GTestBase.cpp main.cpp
 
-TEST_MODS = Autocoders/templates Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com gtest
+TEST_MODS = Autocoders/Python/templates Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com gtest
 

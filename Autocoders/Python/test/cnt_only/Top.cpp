@@ -1,10 +1,10 @@
-#include <Autocoders/test/cnt_only/Top.hpp>
+#include <Autocoders/Python/test/cnt_only/Top.hpp>
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
 #include <string.h>
 
-#include <Autocoders/test/cnt_only/DuckImpl.hpp>
+#include <Autocoders/Python/test/cnt_only/DuckImpl.hpp>
 
 #include <unistd.h>
 

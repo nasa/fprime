@@ -21,7 +21,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Autocoders/test/command1/Test1ComponentImpl.hpp"
+#include "Autocoders/Python/test/command1/Test1ComponentImpl.hpp"
 
 namespace Cmd {
 

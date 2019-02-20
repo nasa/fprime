@@ -12,19 +12,19 @@ DICT_TYPE := "DEFAULT"
 # Python path addition for ACTOOLS
 
 ifeq ("$(HOST)","Linux") # may need to set LXML_PATH and CHEETAH_PATH if they are somewhere other than where Python is installed
-    export PYTHONPATH := $(BUILD_ROOT)/Autocoders/src:$(BUILD_ROOT)/Autocoders/utils::$(LXML_PATH):$(CHEETAH_PATH)
+    export PYTHONPATH := $(BUILD_ROOT)/Autocoders/Python/src:$(BUILD_ROOT)/Autocoders/Python/utils::$(LXML_PATH):$(CHEETAH_PATH)
 endif
 
 ifeq ("$(HOST)","CYGWIN") # may need to set LXML_PATH and CHEETAH_PATH if they are somewhere other than where Python is installed
-    export PYTHONPATH := $(BUILD_ROOT)/Autocoders/src:$(BUILD_ROOT)/Autocoders/utils:$(LXML_PATH):$(CHEETAH_PATH)
+    export PYTHONPATH := $(BUILD_ROOT)/Autocoders/Python/src:$(BUILD_ROOT)/Autocoders/Python/utils:$(LXML_PATH):$(CHEETAH_PATH)
 endif
 
 ifeq ("$(HOST)","Darwin") # may need to set LXML_PATH and CHEETAH_PATH if they are somewhere other than where Python is installed
-    export PYTHONPATH := $(BUILD_ROOT)/Autocoders/src:$(BUILD_ROOT)/Autocoders/utils::$(LXML_PATH):$(CHEETAH_PATH)
+    export PYTHONPATH := $(BUILD_ROOT)/Autocoders/Python/src:$(BUILD_ROOT)/Autocoders/Python/utils::$(LXML_PATH):$(CHEETAH_PATH)
 endif
 
 
-CODE_GEN := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/bin/codegen.py
+CODE_GEN := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/bin/codegen.py
 DICT_MODULE_SUBDIR := Dict
 AMPCS_DICT_MODULE_SUBDIR := AMPCSDict
 
@@ -33,9 +33,9 @@ MD_DOC_SUBDIR := docs
 
 AMPCS_DICT_DEPLOYMENT_SUBDIR := dict/AMPCS
 
-AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsCommandMerge.py
-AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsEventMerge.py
-AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsTelemetryMerge.py
+AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsCommandMerge.py
+AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsEventMerge.py
+AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsTelemetryMerge.py
 
 
 ifeq ($(DICT_GEN),"GLOBAL")

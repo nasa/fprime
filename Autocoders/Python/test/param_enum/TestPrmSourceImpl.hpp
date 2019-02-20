@@ -8,7 +8,7 @@
 #ifndef TESTPARAMRECVIMPL_HPP_
 #define TESTPARAMRECVIMPL_HPP_
 
-#include <Autocoders/test/param_tester/ParamTestComponentAc.hpp>
+#include <Autocoders/Python/test/param_tester/ParamTestComponentAc.hpp>
 
 class TestParamSourceImpl: public Prm::ParamTesterComponentBase {
     public:

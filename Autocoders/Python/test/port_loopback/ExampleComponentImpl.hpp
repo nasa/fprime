@@ -20,7 +20,7 @@
 #ifndef Example_HPP
 #define Example_HPP
 
-#include "Autocoders/test/port_loopback/ExampleComponentAc.hpp"
+#include "Autocoders/Python/test/port_loopback/ExampleComponentAc.hpp"
 
 namespace ExampleComponents {
 

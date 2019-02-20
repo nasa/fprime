@@ -2,8 +2,8 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="TestPrm" kind="passive" namespace="Tlm">
-    <import_port_type>Autocoders/test/param2/TestPortAi.xml</import_port_type>
-    <import_serializable_type>Autocoders/test/param2/QuaternionSerializableAi.xml</import_serializable_type>
+    <import_port_type>Autocoders/Python/test/param2/TestPortAi.xml</import_port_type>
+    <import_serializable_type>Autocoders/Python/test/param2/QuaternionSerializableAi.xml</import_serializable_type>
     <comment>A component with a single parameter</comment>
     <ports>
         <port name="aport" data_type="Another::Test" kind="sync_input" >

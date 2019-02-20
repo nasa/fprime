@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/event_string/TestLogRecvImpl.hpp>
+#include <Autocoders/Python/test/event_string/TestLogRecvImpl.hpp>
 #include <stdio.h>
 #include <Fw/Log/LogString.hpp>
 

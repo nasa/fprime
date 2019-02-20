@@ -1,6 +1,6 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
-#include <Autocoders/test/serialize_user/ExampleComponentImpl.hpp>
+#include <Autocoders/Python/test/serialize_user/ExampleComponentImpl.hpp>
 
 int main(int argc, char* argv[]) {
 

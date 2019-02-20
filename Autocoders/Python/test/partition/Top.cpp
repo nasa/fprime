@@ -6,14 +6,14 @@
 // that only contains serializable port types and is passive.
 //
 //--------------------------------------------------------------------------------------
-#include <Autocoders/test/partition/Top.hpp>
+#include <Autocoders/Python/test/partition/Top.hpp>
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
 #include <string.h>
 
-#include <Autocoders/test/partition/DuckDuckImpl.hpp>
-#include <Autocoders/test/partition/PartitionImpl.hpp>
+#include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
+#include <Autocoders/Python/test/partition/PartitionImpl.hpp>
 
 #include <unistd.h>
 

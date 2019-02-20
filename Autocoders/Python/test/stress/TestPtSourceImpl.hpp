@@ -8,7 +8,7 @@
 #ifndef TESTPTSOURCEIMPL_HPP_
 #define TESTPTSOURCEIMPL_HPP_
 
-#include <Autocoders/test/stress/TestPtComponentAc.hpp>
+#include <Autocoders/Python/test/stress/TestPtComponentAc.hpp>
 
 class TestPtSourceImpl: public StressTest::TestPortComponentBase {
     public:

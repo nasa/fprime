@@ -92,16 +92,16 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         ################################################################
         #When using these, make sure to either prepend the build root env var or the appropriate amount of "../"
         self.__prop['schema'] = dict()
-        self.__prop['schema']["commands"]               = '/Autocoders/schema/default/command_schema.rng'
-        self.__prop['schema']["events"]                 = '/Autocoders/schema/default/event_schema.rng'
-        self.__prop['schema']["telemetry"]              = '/Autocoders/schema/default/channel_schema.rng'
-        self.__prop['schema']["component"]              = '/Autocoders/schema/default/component_schema.rng'
-        self.__prop['schema']["assembly"]               = '/Autocoders/schema/default/topology_schema.rng'
-        self.__prop['schema']["deployment"]             = '/Autocoders/schema/default/topology_schema.rng'
-        self.__prop['schema']["internal_interfaces"]    = '/Autocoders/schema/default/internal_interface_schema.rng'
-        self.__prop['schema']["interface"]              = '/Autocoders/schema/default/interface_schema.rng'
-        self.__prop['schema']["serializable"]              = '/Autocoders/schema/default/serializable_schema.rng'
-        self.__prop['schema']["parameters"]              = '/Autocoders/schema/default/parameters_schema.rng'
+        self.__prop['schema']["commands"]               = '/Autocoders/Python/schema/default/command_schema.rng'
+        self.__prop['schema']["events"]                 = '/Autocoders/Python/schema/default/event_schema.rng'
+        self.__prop['schema']["telemetry"]              = '/Autocoders/Python/schema/default/channel_schema.rng'
+        self.__prop['schema']["component"]              = '/Autocoders/Python/schema/default/component_schema.rng'
+        self.__prop['schema']["assembly"]               = '/Autocoders/Python/schema/default/topology_schema.rng'
+        self.__prop['schema']["deployment"]             = '/Autocoders/Python/schema/default/topology_schema.rng'
+        self.__prop['schema']["internal_interfaces"]    = '/Autocoders/Python/schema/default/internal_interface_schema.rng'
+        self.__prop['schema']["interface"]              = '/Autocoders/Python/schema/default/interface_schema.rng'
+        self.__prop['schema']["serializable"]              = '/Autocoders/Python/schema/default/serializable_schema.rng'
+        self.__prop['schema']["parameters"]              = '/Autocoders/Python/schema/default/parameters_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
         # component parameters here.

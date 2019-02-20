@@ -20,7 +20,7 @@
 #ifndef TestLog_TESTER_BASE_HPP
 #define TestLog_TESTER_BASE_HPP
 
-#include <Autocoders/test/event_enum/TestComponentAc.hpp>
+#include <Autocoders/Python/test/event_enum/TestComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

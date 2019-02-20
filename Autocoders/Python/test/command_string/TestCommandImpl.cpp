@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/command_string/TestCommandImpl.hpp>
+#include <Autocoders/Python/test/command_string/TestCommandImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

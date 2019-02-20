@@ -5,9 +5,9 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/tlm2/TestTelemRecvImpl.hpp>
+#include <Autocoders/Python/test/tlm2/TestTelemRecvImpl.hpp>
 #include <Fw/Types/EightyCharString.hpp>
-#include <Autocoders/test/tlm2/QuaternionSerializableAc.hpp>
+#include <Autocoders/Python/test/tlm2/QuaternionSerializableAc.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

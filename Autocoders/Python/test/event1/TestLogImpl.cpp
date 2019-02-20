@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <Autocoders/test/event1/TestLogImpl.hpp>
+#include <Autocoders/Python/test/event1/TestLogImpl.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1

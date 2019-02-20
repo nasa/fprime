@@ -1,7 +1,7 @@
 #ifndef PASSIVEC1IMPL_HPP
 #define PASSIVEC1IMPL_HPP
 
-#include <Autocoders/test/passive/PassiveC1ComponentAc.hpp>
+#include <Autocoders/Python/test/passive/PassiveC1ComponentAc.hpp>
 
 namespace Passive {
 

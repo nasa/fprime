@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="TestEvent" kind="passive" namespace="Tlm">
-    <import_port_type>Autocoders/test/log1/Test4PortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/log1/Test4PortAi.xml</import_port_type>
     <comment>A component with a single event</comment>
     <ports>
         <port name="aport" data_type="Another::Test4" kind="sync_input" >

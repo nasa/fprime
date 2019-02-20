@@ -1,6 +1,6 @@
 NOTE: 
 
-To regenerate the example component, from Autocoders/templates, type:
+To regenerate the example component, from Autocoders/Python/templates, type:
 "make test_<host os>", where host_os = cygwin, linux, darwin.
 Then copy the "ExampleComponentTestAc.cpp/.hpp" files to this directory. Change the header include in the .cpp file to match the unit test directory path. 
 
