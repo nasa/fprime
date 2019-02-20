@@ -18,7 +18,7 @@
             Packet Statistics
             </comment>
         </channel>
-        <channel id="1" name="Sensor1" data_type="F32" abbrev="R002-3000">
+        <channel id="1" name="Sensor1" data_type="F32" format_string = "%4.2fV" abbrev="R002-3000">
             <comment>
             Value of Sensor1
             </comment>

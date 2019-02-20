@@ -85,12 +85,12 @@ class Distributor(object):
         Returns:
             (leftover_data, [raw_msg1, raw_msg2, ..., raw_msgN])
             Where leftover_data is a bytearray of anything at the end of data
-            that could not be parsed (due to insuficient length).
+            that could not be parsed (due to insufficient length).
         """
         data_left = data
 
         raw_msgs = []
-        #Search data looking for key-fram
+        #Search data looking for key-frame
         if not self.key_frame is None:
             while True:
                 # Check if we have enough data to parse a key
@@ -188,6 +188,7 @@ class Distributor(object):
 
 
         # Add new data to end of buffer
+        
         self.__buf = self.__buf + data
 
         (leftover_data, raw_msgs) = self.parse_into_raw_msgs_api(self.__buf)

@@ -180,8 +180,8 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self._set_section_defaults('colors')
 
         self.__prop['framing'] = dict()
-        self.__prop['framing']['use_key'] = "True"
-        self.__prop['framing']['key_val'] = "0x30fc"
+        self.__prop['framing']['use_key'] = "False"
+        self.__prop['framing']['key_val'] = "0x0"
         self._set_section_defaults('framing')
 
 
