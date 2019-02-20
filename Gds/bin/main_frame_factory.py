@@ -10,23 +10,23 @@ an interface for creating additional GDS windows that use this pipeline
 @bug No known bugs
 '''
 
-from loaders import ch_py_loader, ch_xml_loader
-from loaders import event_py_loader, event_xml_loader
-from loaders import pkt_xml_loader
-from loaders import cmd_py_loader, cmd_xml_loader
+from fprime.gds.loaders import ch_py_loader, ch_xml_loader
+from fprime.gds.loaders import event_py_loader, event_xml_loader
+from fprime.gds.loaders import pkt_xml_loader
+from fprime.gds.loaders import cmd_py_loader, cmd_xml_loader
 
-from decoders import ch_decoder
-from decoders import event_decoder
-from decoders import pkt_decoder
-from encoders import cmd_encoder
+from fprime.gds.decoders import ch_decoder
+from fprime.gds.decoders import event_decoder
+from fprime.gds.decoders import pkt_decoder
+from fprime.gds.encoders import cmd_encoder
 
-from distributor import distributor
+from fprime.gds.distributor import distributor
 
-from client_socket import client_socket
+from fprime.gds.client_socket import client_socket
 
-from gui import GDSMainFrameImpl
+from fprime.gds.gui import GDSMainFrameImpl
 
-from logger import data_logger
+from fprime.gds.logger import data_logger
 
 import os
 import datetime

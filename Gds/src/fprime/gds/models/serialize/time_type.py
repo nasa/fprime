@@ -20,11 +20,11 @@ from pytz import *
 from enum import Enum
 
 # Custom Python Modules
-from models.serialize.type_exceptions import *
-from models.serialize import type_base
-from models.serialize import u32_type
-from models.serialize import u16_type
-from models.serialize import u8_type
+from fprime.gds.models.serialize.type_exceptions import *
+from fprime.gds.models.serialize import type_base
+from fprime.gds.models.serialize import u32_type
+from fprime.gds.models.serialize import u16_type
+from fprime.gds.models.serialize import u8_type
 
 TimeBase = Enum("TimeBase",
                  # No time base has been established

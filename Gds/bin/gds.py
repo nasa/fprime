@@ -15,11 +15,11 @@ import os
 from time import sleep
 from argparse import ArgumentParser
 
-from client_socket import client_socket
-from utils import config_manager
-from main_frame_facotry import MainFrameFactory
+from fprime.gds.client_socket import client_socket
+from fprime.gds.utils import config_manager
+from main_frame_factory import MainFrameFactory
 import wx
-from gui import GDSMainFrameImpl
+from fprime.gds.gui import GDSMainFrameImpl
 
 
 __all__ = []
@@ -147,7 +147,7 @@ def main(argv=None):
 
     sleep(1)
 
-    factory.client_socket.register_to_server(client_socket.GUI_TAG)
+    factory.client_socket.register_to_server(fprime.gds.client_socket.GUI_TAG)
 
     app.MainLoop()
 

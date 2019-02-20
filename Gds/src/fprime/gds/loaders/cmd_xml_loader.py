@@ -9,8 +9,8 @@
 
 # Custom Python Modules
 from xml_loader import XmlLoader
-from templates.cmd_template import CmdTemplate
-from controllers import exceptions
+from fprime.gds.templates.cmd_template import CmdTemplate
+from fprime.gds.controllers import exceptions
 
 
 class CmdXmlLoader(XmlLoader):

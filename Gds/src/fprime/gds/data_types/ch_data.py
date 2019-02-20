@@ -7,8 +7,8 @@
 @bug No known bugs
 '''
 
-from data_types import sys_data
-from models.serialize import time_type
+from fprime.gds.data_types import sys_data
+from fprime.gds.models.serialize import time_type
 
 class ChData(sys_data.SysData):
     '''
@@ -156,7 +156,19 @@ class ChData(sys_data.SysData):
         else:
             return ("%s: %s = %s"%(time_str_nice, ch_name, ch_val))
 
-
+    def get_val_str(self):
+        
+        '''
+        Convert the value to a string, using the format specifier if provided
+        '''
+        fmt_str = self.template.get_format_str()
+        if (self.val_obj == None):
+            return ""
+        elif (fmt_str):
+            return fmt_str%(self.val_obj.val)
+        else:
+            return str(self.val_obj.val)
+        
 
     def __str__(self):
         '''

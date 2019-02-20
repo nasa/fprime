@@ -5,7 +5,7 @@ import threading
 import binascii
 import select
 
-from models.serialize import u32_type
+from fprime.gds.models.serialize import u32_type
 
 
 # Constants for public use
@@ -38,10 +38,10 @@ class ThreadedTCPSocketClient(object):
 
 
     def register_distributor(self, distributor):
-        """Registers a distributor object with this socket
+        """Registers a fprime.gds.distributor object with this socket
 
         Arguments:
-                distributor {Distributor} -- Distributor must implement data_callback
+                fprime.gds.distributor {Distributor} -- Distributor must implement data_callback
         """
 
         self.__distributors.append(distributor)
@@ -104,7 +104,7 @@ class ThreadedTCPSocketClient(object):
             """
 
         while not self.stop_event.is_set():
-            #print "Running distributor client recv..."
+            #print "Running fprime.gds.distributor client recv..."
             ready = select.select([self.sock], [], [], self.__select_timeout)
             if ready[0]:
                 chunk = self.sock.recv(1024)

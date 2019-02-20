@@ -7,8 +7,8 @@
 @bug No known bugs
 '''
 
-from data_types import sys_data
-from models.serialize import time_type
+from fprime.gds.data_types import sys_data
+from fprime.gds.models.serialize import time_type
 
 class EventData(sys_data.SysData):
     '''

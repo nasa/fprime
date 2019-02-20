@@ -18,7 +18,7 @@ import logging
 
 import binascii
 
-from models.serialize.type_base import *
+from fprime.gds.models.serialize.type_base import *
 from optparse import OptionParser
 
 __version__ = 0.1

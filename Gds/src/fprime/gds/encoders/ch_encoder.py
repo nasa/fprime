@@ -33,16 +33,16 @@ Serialized Ch format:
 '''
 
 from encoder import Encoder
-from data_types.ch_data import ChData
-from utils.config_manager import ConfigManager
-from utils.data_desc_type import DataDescType
+from fprime.gds.data_types.ch_data import ChData
+from fprime.gds.utils.config_manager import ConfigManager
+from fprime.gds.utils.data_desc_type import DataDescType
 
 # For unit tests
 import sys
-from templates.ch_template import ChTemplate
-from models.serialize.time_type import TimeType
-from models.serialize.u16_type import U16Type
-from models.serialize.u32_type import U32Type
+from fprime.gds.templates.ch_template import ChTemplate
+from fprime.gds.models.serialize.time_type import TimeType
+from fprime.gds.models.serialize.u16_type import U16Type
+from fprime.gds.models.serialize.u32_type import U32Type
 
 class ChEncoder(Encoder):
     '''Encoder class for channel data'''

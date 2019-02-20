@@ -9,9 +9,9 @@
 
 # Custom Python Modules
 from xml_loader import XmlLoader
-from templates.event_template import EventTemplate
-from controllers import exceptions
-from utils.event_severity import EventSeverity
+from fprime.gds.templates.event_template import EventTemplate
+from fprime.gds.controllers import exceptions
+from fprime.gds.utils.event_severity import EventSeverity
 
 class EventXmlLoader(XmlLoader):
     '''Class to load xml based event dictionaries'''

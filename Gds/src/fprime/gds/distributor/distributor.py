@@ -16,9 +16,9 @@ descriptor header will be passed on to the registered objects.
 
 import sys
 
-from models.serialize import u32_type
-from utils import data_desc_type
-from utils import config_manager
+from fprime.gds.models.serialize import u32_type
+from fprime.gds.utils import data_desc_type
+from fprime.gds.utils import config_manager
 
 
 # NOTE decoder function to call is called data_callback(data)
@@ -49,7 +49,11 @@ class Distributor(object):
 
         # Internal buffer for un distributed data
         self.__buf = ""
-
+        #Setup key framing
+        self.key_frame = None
+        if (config.get("framing", "use_key", "false").lower() == "true"):
+            self.key_frame = int(config.get("framing", "key_val"), 16)
+        self.key_obj = config.get_type("key_val")
         self.len_obj = config.get_type("msg_len")
 
 
@@ -86,6 +90,21 @@ class Distributor(object):
         data_left = data
 
         raw_msgs = []
+        #Search data looking for key-fram
+        if not self.key_frame is None:
+            while True:
+                # Check if we have enough data to parse a key
+                # if not, bail on the function
+                if (len(data_left) < self.key_obj.getSize()):
+                    return (data_left, raw_msgs)
+                #Check leading key size bytes to see if it is the key
+                self.key_obj.deserialize(data_left, 0)
+                if self.key_obj.val != self.key_frame:
+                    data_left = data_left[1:]
+                    continue
+                #Key found break
+                data_left = data_left[self.key_obj.getSize():]
+                break
 
         # Keep parsing and then break when you can't parse no more
         while True:

@@ -7,9 +7,9 @@
 @bug No known bugs
 '''
 
-from data_types.sys_data import SysData
-from data_types.ch_data import ChData
-from models.serialize.time_type import TimeType
+from fprime.gds.data_types.sys_data import SysData
+from fprime.gds.data_types.ch_data import ChData
+from fprime.gds.models.serialize.time_type import TimeType
 
 class PktData(SysData):
     '''Stores the data from a specific packet receive'''

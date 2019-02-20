@@ -9,9 +9,9 @@
 
 # Custom Python Modules
 import python_loader
-from templates import event_template
-from utils.event_severity import EventSeverity
-
+from fprime.gds.templates import event_template
+from fprime.gds.utils.event_severity import EventSeverity
+from fprime.gds.models.serialize.type_exceptions import *
 
 class EventPyLoader(python_loader.PythonLoader):
     '''Class to load python based event dictionaries'''
@@ -68,18 +68,24 @@ class EventPyLoader(python_loader.PythonLoader):
         name_dict = dict()
 
         for event_dict in module_dicts:
-            # Create an event template object
-            event_temp = event_template.EventTemplate(
-                                                event_dict[self.ID_FIELD],
-                                                event_dict[self.NAME_FIELD],
-                                                event_dict[self.COMP_FIELD],
-                                                event_dict[self.ARGS_FIELD],
-                                                EventSeverity[event_dict[self.SEVERITY_FIELD]],
-                                                event_dict[self.FMT_STR_FIELD],
-                                                event_dict[self.DESC_FIELD])
+            
+            try:
+                # Create an event template object
+                event_temp = event_template.EventTemplate(
+                                                    event_dict[self.ID_FIELD],
+                                                    event_dict[self.NAME_FIELD],
+                                                    event_dict[self.COMP_FIELD],
+                                                    event_dict[self.ARGS_FIELD],
+                                                    EventSeverity[event_dict[self.SEVERITY_FIELD]],
+                                                    event_dict[self.FMT_STR_FIELD],
+                                                    event_dict[self.DESC_FIELD])
+                id_dict[event_dict[self.ID_FIELD]] = event_temp
+                name_dict[event_dict[self.NAME_FIELD]] = event_temp
+            except TypeMismatchException as error:
+                print("Type mismatch: %s"%error.getMsg())
+                raise error
+                    
 
-            id_dict[event_dict[self.ID_FIELD]] = event_temp
-            name_dict[event_dict[self.NAME_FIELD]] = event_temp
 
         return (id_dict, name_dict)
 

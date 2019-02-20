@@ -3,7 +3,7 @@
 import os
 import sys
 import time
-from utils.gse_api import GseApi
+from fprime.gds.utils.gse_api import GseApi
 from optparse import OptionParser
 
 __version__ = 0.1

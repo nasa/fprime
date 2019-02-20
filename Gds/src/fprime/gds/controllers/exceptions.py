@@ -7,6 +7,7 @@ Created on Jan 9, 2015
 class GseControllerException(Exception):
     def __init__(self,val):
         self.except_msg = val
+        super(GseControllerException, self).__init__(val)
     def getMsg(self):
         return self.except_msg
 
@@ -26,7 +27,7 @@ class GseControllerMnemonicMismatchException(GseControllerException):
     def __init__(self, val1, val2):
         super(GseControllerMnemonicMismatchException,self).__init__("ID mismatch (%s, %s) !" % (str(val1),str(val2)))
 
-class GseControllerStutasUpdateException(GseControllerException):
+class GseControllerStatusUpdateException(GseControllerException):
     def __init__(self, val):
-        super(GseControllerUndefinedDirectoryException,self).__init__("Bad status update mode: %s !" % str(val))
+        super(GseControllerStatusUpdateException,self).__init__("Bad status update mode: %s !" % str(val))
 

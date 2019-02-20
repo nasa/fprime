@@ -21,18 +21,18 @@ import glob
 import ConfigParser
 
 # Custom type modules
-from models.serialize.f32_type import *
-from models.serialize.f64_type import *
+from fprime.gds.models.serialize.f32_type import *
+from fprime.gds.models.serialize.f64_type import *
 
-from models.serialize.u8_type import *
-from models.serialize.u16_type import *
-from models.serialize.u32_type import *
-from models.serialize.u64_type import *
+from fprime.gds.models.serialize.u8_type import *
+from fprime.gds.models.serialize.u16_type import *
+from fprime.gds.models.serialize.u32_type import *
+from fprime.gds.models.serialize.u64_type import *
 
-from models.serialize.i8_type import *
-from models.serialize.i16_type import *
-from models.serialize.i32_type import *
-from models.serialize.i64_type import *
+from fprime.gds.models.serialize.i8_type import *
+from fprime.gds.models.serialize.i16_type import *
+from fprime.gds.models.serialize.i32_type import *
+from fprime.gds.models.serialize.i64_type import *
 
 
 class ConfigBadTypeException(Exception):
@@ -160,7 +160,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['types']['ch_id'] = "U32"
         self.__prop['types']['event_id'] = "U32"
         self.__prop['types']['pkt_id'] = "U16"
-
+        self.__prop['types']['key_val'] = "U16"
         self._set_section_defaults('types')
 
 
@@ -178,6 +178,11 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['colors']['yellow'] = "0x00BCED"
 
         self._set_section_defaults('colors')
+
+        self.__prop['framing'] = dict()
+        self.__prop['framing']['use_key'] = "True"
+        self.__prop['framing']['key_val'] = "0x30fc"
+        self._set_section_defaults('framing')
 
 
     def _set_section_defaults(self, section):

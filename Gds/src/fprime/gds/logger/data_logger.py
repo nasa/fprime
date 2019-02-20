@@ -5,20 +5,20 @@
 import datetime
 import os
 
-from data_types.ch_data import ChData
-from data_types.event_data import EventData
-from data_types.pkt_data import PktData
+from fprime.gds.data_types.ch_data import ChData
+from fprime.gds.data_types.event_data import EventData
+from fprime.gds.data_types.pkt_data import PktData
 class DataLogger(object):
 
-    def __init__(self, logdir, verbose=False, csv=False):
+    def __init__(self, logdir, verbose=False, csv=False, prefix=""):
 
         self.logdir = logdir
 
-        self.recv_file = "recv.bin"
-        self.send_file = "sent.bin"
-        self.telem_file = "channel.log"
-        self.event_file = "event.log"
-        self.command_file = "command.log"
+        self.recv_file = prefix + "recv.bin"
+        self.send_file = prefix + "sent.bin"
+        self.telem_file = prefix + "channel.log"
+        self.event_file = prefix + "event.log"
+        self.command_file = prefix + "command.log"
 
         self.verbose = verbose
         self.csv = csv

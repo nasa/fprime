@@ -13,10 +13,10 @@ import inspect
 import GDSChannelFilterDialogImpl
 from copy import deepcopy
 
-from data_types.ch_data import *
-from data_types.pkt_data import *
-from models.serialize.serializable_type import SerializableType
-from utils.config_manager import ConfigManager
+from fprime.gds.data_types.ch_data import *
+from fprime.gds.data_types.pkt_data import *
+from fprime.gds.models.serialize.serializable_type import SerializableType
+from fprime.gds.utils.config_manager import ConfigManager
 
 ###########################################################################
 ## Class ChannelTelemetryImpl
@@ -350,13 +350,13 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                     mapper = { 0 : str(node.template.get_full_name()),
                             1 : str(hex(node.template.id)),
                             2 : str(node.time.to_readable()),
-                            3 : str(node.val_obj.val)
+                            3 : node.get_val_str()
                             }     
                 else:
                     mapper = { 0 : str(node.template.get_full_name()),
                             1 : str(node.template.id),
                             2 : str(node.time.to_readable()),
-                            3 : str(node.val_obj.val)
+                            3 : node.get_val_str()
                             }     
             else:
                 mapper = { 0 : str(node.template.get_full_name()),

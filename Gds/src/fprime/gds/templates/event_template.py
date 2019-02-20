@@ -14,9 +14,9 @@ from enum import Enum
 
 import data_template
 
-from models.serialize import type_base
-from models.serialize.type_exceptions import *
-from utils.event_severity import EventSeverity
+from fprime.gds.models.serialize import type_base
+from fprime.gds.models.serialize.type_exceptions import *
+from fprime.gds.utils.event_severity import EventSeverity
 
 
 class EventTemplate(data_template.DataTemplate):

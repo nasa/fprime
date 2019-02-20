@@ -38,18 +38,18 @@ Serialized Event format:
 '''
 
 from encoder import Encoder
-from data_types.event_data import EventData
-from utils.config_manager import ConfigManager
-from utils.data_desc_type import DataDescType
+from fprime.gds.data_types.event_data import EventData
+from fprime.gds.utils.config_manager import ConfigManager
+from fprime.gds.utils.data_desc_type import DataDescType
 
 # For unit tests
 import sys
-from templates.event_template import EventTemplate
-from models.serialize.time_type import TimeType
-from models.serialize.u8_type import U8Type
-from models.serialize.u16_type import U16Type
-from models.serialize.u32_type import U32Type
-from utils.event_severity import EventSeverity
+from fprime.gds.templates.event_template import EventTemplate
+from fprime.gds.models.serialize.time_type import TimeType
+from fprime.gds.models.serialize.u8_type import U8Type
+from fprime.gds.models.serialize.u16_type import U16Type
+from fprime.gds.models.serialize.u32_type import U32Type
+from fprime.gds.utils.event_severity import EventSeverity
 
 
 class EventEncoder(Encoder):

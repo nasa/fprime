@@ -8,8 +8,8 @@
 '''
 
 # Custom Python Modules
-from loaders.python_loader import PythonLoader
-from templates.ch_template import ChTemplate
+from python_loader import PythonLoader
+from fprime.gds.templates.ch_template import ChTemplate
 
 class ChPyLoader(PythonLoader):
     '''Class to load python based telemetry channel dictionaries'''
