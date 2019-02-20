@@ -153,6 +153,9 @@
     </events>
     <parameters>
         <parameter id="0" set_opcode="10" save_opcode="11" name="parameter3" data_type="U8" default="12">
+            <comment>
+            A test parameter
+            </comment>
         </parameter>
         <parameter id="1" set_opcode="12" save_opcode="13" name="parameter4" data_type="F32" default="13.14">
             <comment>

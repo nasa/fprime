@@ -235,7 +235,7 @@ class XmlSerializeParser(object):
     
     def get_includes(self):
         """
-        Returns a list of all imported XML serializqble files.
+        Returns a list of all imported XML serializable files.
         """
         return self.__includes
 
