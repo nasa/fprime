@@ -147,7 +147,7 @@ def main(argv=None):
 
     sleep(1)
 
-    factory.client_socket.register_to_server(fprime.gds.client_socket.GUI_TAG)
+    factory.client_socket.register_to_server(client_socket.GUI_TAG)
 
     app.MainLoop()
 

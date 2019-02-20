@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import utils.PortFinder
+import fprime.gds.utils.PortFinder
 import sys
 import subprocess
 import os
@@ -25,7 +25,7 @@ def main(argv=None):
     python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
     
     for port in range(start_port,end_port):
-        if not utils.PortFinder.IsPortUsed(port):
+        if not fprime.gds.utils.PortFinder.IsPortUsed(port):
             used_port = port
             print("Using port %d"%used_port)
             break;

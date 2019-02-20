@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import utils.PortFinder
+from fprime.gds.utils import PortFinder
 import sys
 import subprocess
 import os
@@ -24,7 +24,7 @@ def main(argv=None):
 
     # Find the port we will use for the server
     for port in range(start_port,end_port):
-        if not utils.PortFinder.IsPortUsed(port):
+        if not PortFinder.IsPortUsed(port):
             used_port = port
             print("Using port %d"%used_port)
             break
@@ -92,7 +92,7 @@ def main(argv=None):
     ref_bin = "%s/Ref/%s/Ref"%(build_root,os.environ["OUTPUT_DIR"])
 
     if not nobin:
-        print("running ref app\n\n\n\n")
+        #print("running ref app\n\n\n\n")
         REF_args = [python_bin,"%s/Gds/bin/pexpect_runner.py"%build_root,
                     "Ref.log","Ref Application",ref_bin,"-p","%d"%used_port,
                     "-a",addr]
@@ -101,13 +101,13 @@ def main(argv=None):
     #################################################################################
 
     # Wait for GUI process to close
-    print("Waiting for GUI")
+    #print("Waiting for GUI")
     GUI.wait()
-    print("GUI Closed")
+    #print("GUI Closed")
 
 
     if not nobin:
-        print("Waiting for App")
+        #print("Waiting for App")
         try:
             REF.send_signal(signal.SIGTERM)
         except:
@@ -117,10 +117,10 @@ def main(argv=None):
             REF.wait()
         except:
             pass
-        print("App Closed")
+        #print("App Closed")
 
 
-    print("Waiting for TTS")
+    #print("Waiting for TTS")
 
     try:
         TTS.send_signal(signal.SIGINT)
@@ -132,7 +132,7 @@ def main(argv=None):
     except:
         pass
 
-    print("TTS Closed")
+    #print("TTS Closed")
 
 if __name__ == "__main__":
     sys.exit(main())
