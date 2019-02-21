@@ -21,9 +21,11 @@ SRC_CYGWIN = LinuxGpioDriverComponentImpl.cpp
 
 SRC_DARWIN = LinuxGpioDriverComponentImplStub.cpp
 
+SRC_RASPIAN = LinuxGpioDriverComponentImpl.cpp
+
+SRC_LINUXRT = LinuxGpioDriverComponentImpl.cpp
+
 HDR = LinuxGpioDriverComponentImpl.hpp
 
 SUBDIRS = test
 
-
-SRC_LINUXRT = LinuxGpioDriverComponentImpl.cpp
