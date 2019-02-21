@@ -7,7 +7,7 @@ set(UT_SOURCE_FILES
 )
 
 set(UT_MODULES
-  "${FPRIME_CORE_DIR}/Autocoders/test/serialize_stringbuffer"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/serialize_stringbuffer"
   "${FPRIME_CORE_DIR}/Fw/Types"
 )
 

@@ -45,7 +45,7 @@ namespace Tlm {
   }
 
   TelemTesterTesterBase ::
-    ~TelemTesterTesterBase(void) 
+    ~TelemTesterTesterBase(void)
   {
   }
 
@@ -95,14 +95,14 @@ namespace Tlm {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TelemTesterTesterBase ::
     connect_to_tlmRecvPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputTlmPort *const tlmRecvPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_tlmRecvPort(),static_cast<AssertArg>(portNum));
     this->m_to_tlmRecvPort[portNum].addCallPort(tlmRecvPort);

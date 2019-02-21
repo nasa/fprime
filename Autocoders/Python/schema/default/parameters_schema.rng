@@ -1,92 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar 
+<grammar
     xmlns="http://relaxng.org/ns/structure/1.0"
     xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
     datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-    
+
     <include href="common_elements.rng"/>
     <include href="common_types.rng"/>
-    
+
     <start>
         <ref name = "parameters_root_define"></ref>
     </start>
-    
+
     <define name = "parameters_root_define">
         <element name = "parameters">
             <!-- Attributes -->
-            
+
             <optional>
                 <attribute name = "parameter_base">
                     <a:documentation></a:documentation>
                     <ref name = "base_code_define"></ref>
                 </attribute>
             </optional>
-            
-            
+
+
             <optional>
                 <attribute name = "opcode_base">
                     <a:documentation></a:documentation>
                     <ref name = "base_code_define"></ref>
                 </attribute>
             </optional>
-            
+
             <!-- Elements -->
-            
+
             <oneOrMore>
                 <ref name = "parameter_define"></ref>
             </oneOrMore>
-            
-        </element>    
-        
+
+        </element>
+
     </define>
-    
+
     <define name = "parameter_define">
         <element name = "parameter">
             <a:documentation>Parameter definition.</a:documentation>
             <!-- Attributes -->
-            
+
             <attribute name = "id">
                 <a:documentation>ID of the attribute.</a:documentation>
                 <ref name = "id_define"></ref>
             </attribute>
-            
+
             <attribute name = "set_opcode">
                 <a:documentation>Opcode for setting the parameter.</a:documentation>
                 <ref name = "id_define"></ref>
             </attribute>
-            
+
             <attribute name = "save_opcode">
                 <a:documentation>Opcode for saving the parameter.</a:documentation>
                 <ref name = "id_define"></ref>
             </attribute>
-            
+
             <attribute name = "name">
                 <a:documentation>Parameter name</a:documentation>
                 <text></text>
             </attribute>
-            
+
             <ref name = "data_type_and_default_define"></ref>
-            
+
             <!-- Elements -->
-            <optional> 
+            <optional>
                 <ref name = "comment_define"></ref>
             </optional>
         </element>
-        
-        
-        
+
+
+
     </define>
-    
+
     <define name = "data_type_and_default_define">
         <!-- If the data_type attribute isn't one that is explicitly specified, the default case will make it pass. -->
         <a:documentation>Makes attribute pair choices to match data type with default value.</a:documentation>
-        
+
         <choice>
-            
+
             <group>
                 <a:documentation>Default pair.</a:documentation>
                 <attribute name = "data_type">
-                    <ref name = "not_user_cpp_type_define"></ref> 
+                    <ref name = "not_user_cpp_type_define"></ref>
                 </attribute>
                 <optional>
                     <attribute name = "default">
@@ -94,7 +94,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>Enum pair.</a:documentation>
                 <attribute name = "data_type">
@@ -108,25 +108,25 @@
                     <ref name = "enum_define"></ref>
                 </optional>
             </group>
-            
-            
+
+
             <group>
                 <a:documentation>String pair.</a:documentation>
                 <attribute name = "data_type">
                     <value>string</value>
                 </attribute>
-                
+
                 <optional>
                     <attribute name = "default">
                         <data type = "string"></data>
                     </attribute>
                 </optional>
-                
+
                 <attribute name = "size">
                     <ref name = "positive_integer_define"></ref>
                 </attribute>
             </group>
-            
+
             <group>
                 <a:documentation>I8 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -138,7 +138,7 @@
                   </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>U8 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -150,7 +150,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>I16 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -162,7 +162,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>U16 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -174,7 +174,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>I32 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -186,8 +186,8 @@
                     </attribute>
                 </optional>
             </group>
-            
-            
+
+
             <group>
                 <a:documentation>U32 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -199,7 +199,7 @@
                   </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>I64 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -211,7 +211,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>U64 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -223,7 +223,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>F32 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -235,7 +235,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>F64 pair.</a:documentation>
                 <attribute name = "data_type">
@@ -247,7 +247,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>NATIVE_INT_TYPE pair.</a:documentation>
                 <attribute name = "data_type">
@@ -259,7 +259,7 @@
                     </attribute>
                 </optional>
             </group>
-            
+
             <group>
                 <a:documentation>NATIVE_UINT_TYPE pair.</a:documentation>
                 <attribute name = "data_type">
@@ -271,9 +271,9 @@
                     </attribute>
                 </optional>
             </group>
-            
-            
-            
+
+
+
         </choice>
     </define>
 </grammar>

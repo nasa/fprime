@@ -81,15 +81,15 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         fp.writelines(c.__str__())
-        DEBUG.debug('===================================')     
-        
-        
+        DEBUG.debug('===================================')
+
+
     def DictStartVisit(self, obj):
         """
         Defined to generate files for generated code products.
         @parms obj: the instance of the command model to visit.
         """
-    
+
         # Build filename here...
         # Make dictionary directly if it doesn't exist
         output_dir = os.environ["DICT_DIR"] + "/commands"
@@ -98,12 +98,12 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
         # could be command or parameter object
         if type(obj) is Command.Command:
             # open files for commands and opcodes
-            # open a file for each opcode in a 
+            # open a file for each opcode in a
             # multi-instance component. If there is only
             # one instance, use the opcode directly.
             # Otherwise, it will be the opcode + instance
             self.__fp1 = list();
-            
+
             if len(obj.get_opcodes()) == 1:
                 pyfile = "%s/%s.py" % (output_dir,obj.get_mnemonic())
                 fd = open(pyfile,'w')
@@ -126,7 +126,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp2 = list();
             # Command stem will be component name minus namespace converted to uppercase
             self.__stem = obj.get_name().upper()
-            
+
             if len(obj.get_set_opcodes()) == 1:
                 # set/save opcode numbers had better match
                 if len(obj.get_set_opcodes()) != len(obj.get_save_opcodes()):
@@ -152,7 +152,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                         raise Exception("Could not open %s file." % pyfile)
                     self.__fp1.append(fd)
                     DEBUG.info('Completed %s open'%pyfile)
-                    
+
                     pyfile = "%s/%s_%d_PRM_SAVE.py" %(output_dir,self.__stem,inst)
                     DEBUG.info('Open file: %s' % pyfile)
                     fd = open(pyfile,'w')
@@ -165,7 +165,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
         else:
             print("Invalid type %s"%type(obj))
             sys.exit(-1)
-        
+
         # Open file for writing here...
 
 
@@ -184,7 +184,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[inst], "commandHeaderVisit")
                 inst += 1
-                
+
         elif type(obj) is Parameter.Parameter:
             # SET Command header
             inst = 0
@@ -207,7 +207,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp2[inst], "commandHeaderVisit")
                 inst += 1
- 
+
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the  Python command class
@@ -222,16 +222,16 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     c.mnemonic = obj.get_mnemonic() + "_%d"%inst
                 else:
                     c.mnemonic = obj.get_mnemonic()
-                    
+
                 c.opcode = opcode
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
-                
+
                 c.arglist = list()
                 c.ser_import_list = list()
-                
+
                 for arg_obj in obj.get_args():
-                    # convert XML types to Python classes                    
+                    # convert XML types to Python classes
                     (type_string,ser_import,dontcare) = DictTypeConverter.DictTypeConverter().convert(arg_obj.get_type(),arg_obj.get_size())
                     if ser_import != None:
                         c.ser_import_list.append(ser_import)
@@ -248,15 +248,15 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     c.mnemonic = "%s_%d_PRM_SET" %(self.__stem,inst)
                 else:
                     c.mnemonic = "%s_PRM_SET" %(self.__stem)
-                    
+
                 c.opcode = opcode
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
-                
+
                 c.arglist = list()
                 c.ser_import_list = list()
-            
-                # convert XML types to Python classes                    
+
+                # convert XML types to Python classes
                 (type_string,ser_import,dontcare) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
                 if ser_import != None:
                     c.ser_import_list.append(ser_import)
@@ -264,7 +264,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 self._writeTmpl(c, self.__fp1[inst], "commandBodyVisit")
                 self.__fp1[inst].close()
                 inst += 1
-            
+
             inst = 0
             for opcode in obj.get_save_opcodes():
                 # Save Command
@@ -276,14 +276,14 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.opcode = opcode
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
-                
+
                 c.arglist = list()
                 c.ser_import_list = list()
-                
+
                 self._writeTmpl(c, self.__fp2[inst], "commandBodyVisit")
                 self.__fp2[inst].close()
                 inst += 1
-            
+
 
 if __name__ == '__main__':
     pass

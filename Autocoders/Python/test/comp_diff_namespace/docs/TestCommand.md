@@ -6,9 +6,9 @@
 
 |Mnemonic|ID|Description|Arg Name|Arg Type|Comment
 |---|---|---|---|---|---|
-|TEST_CMD_1|356 (0x164)|A test command| | |   
-| | | |arg1|I32|The I32 command argument|                    
-| | | |arg2|Ref::Gnc::Quaternion||                    
+|TEST_CMD_1|356 (0x164)|A test command| | |
+| | | |arg1|I32|The I32 command argument|
+| | | |arg2|Ref::Gnc::Quaternion||
 
 ## Telemetry Channel List
 
@@ -21,6 +21,6 @@
 |Event Name|ID|Description|Arg Name|Arg Type|Arg Size|Description
 |---|---|---|---|---|---|---|
 |SomeEvent|200 (0xc8)|A test event| | | | |
-| | | |arg1|Ref::Gnc::Quaternion||The quaternion command argument|    
-| | | |arg2|F32||The F32 command argument|    
-| | | |arg3|U8||The U8 command argument|    
+| | | |arg1|Ref::Gnc::Quaternion||The quaternion command argument|
+| | | |arg2|F32||The F32 command argument|
+| | | |arg3|U8||The U8 command argument|

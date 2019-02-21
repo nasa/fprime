@@ -1,5 +1,8 @@
+#ifdef FPRIME_CMAKE
+#include "Autocode/GTestBase.hpp"
+#else
 #include <GTestBase.hpp>
-
+#endif
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 
 class ATester : public Tlm::TestTlmGTestBase {

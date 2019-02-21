@@ -18,7 +18,7 @@
         <enum name="SomeParamEnum">
             <item name="PAR_MEMB1"/>
             <item name="PAR_MEMB2" value="7" comment="This member is important"/>
-            <item name="PAR_MEMB3" value="15"/>           
+            <item name="PAR_MEMB3" value="15"/>
         </enum>
         <comment>
         A test parameter

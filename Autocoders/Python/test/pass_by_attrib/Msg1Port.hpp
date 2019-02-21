@@ -34,13 +34,13 @@ namespace Ports {
     protected:
     private:
         CompFuncPtr m_func;
-#if FW_PORT_SERIALIZATION == 1        
+#if FW_PORT_SERIALIZATION == 1
         void invokeSerial(Fw::SerializeBufferBase &buffer);
 #endif
 };
-    
+
     class OutputMsg1Port : public Fw::OutputPortBase {
-      public: 
+      public:
         OutputMsg1Port(void);
         void init(void);
         void addCallPort(InputMsg1Port* callPort);

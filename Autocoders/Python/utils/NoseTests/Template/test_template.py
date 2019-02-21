@@ -62,7 +62,7 @@ class test_template(Template):
             for k,v in KWs.items():
                 if k in allowedKWs: cheetahKWArgs[k] = v
             self._initCheetahInstance(**cheetahKWArgs)
-        
+
 
     def respond(self, trans=None):
 
@@ -78,18 +78,18 @@ class test_template(Template):
         write = trans.response().write
         SL = self._CHEETAH__searchList
         _filter = self._CHEETAH__currentFilter
-        
+
         ########################################
         ## START - generated method body
-        
+
         write(u"""import os
 
 import subprocess
 from subprocess import CalledProcessError
 import pexpect
-from pexpect import TIMEOUT, EOF 
+from pexpect import TIMEOUT, EOF
 import logging
-    
+
 def a_make_test():
     logging.debug('Checking make')
 
@@ -138,7 +138,7 @@ def b_make_ut_test():
             _v = VFFSL(SL,"test_case.name",True) # u'${test_case.name}' on line 43, col 37
             if _v is not None: write(_filter(_v, rawExpr=u'${test_case.name}')) # from line 43, col 37.
             write(u'''_test()")
- 
+
     try:
         ## Spawn executable
         p = pexpect.spawn("make run_ut")
@@ -224,7 +224,7 @@ def teardown_module():
 
 def make():
     try:
-        subprocess.check_output(\'make\', stderr = subprocess.STDOUT, shell=True) 
+        subprocess.check_output(\'make\', stderr = subprocess.STDOUT, shell=True)
         return True
     except CalledProcessError as e:
        print "MAKE ERROR"
@@ -235,7 +235,7 @@ def make():
 def make_ut():
     try:
         subprocess.check_output(\'make ut\', stderr = subprocess.STDOUT, shell=True)
-        return True 
+        return True
     except CalledProcessError as e:
         print "MAKE UT ERROR"
         print "\'\'\'\'\'\'\'\'\'\'\'\'\'"
@@ -243,12 +243,12 @@ def make_ut():
         return False
 
 ''')
-        
+
         ########################################
         ## END - generated method body
-        
+
         return _dummyTrans and trans.response().getvalue() or ""
-        
+
     ##################################################
     ## CHEETAH GENERATED ATTRIBUTES
 

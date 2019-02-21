@@ -8,11 +8,11 @@ using namespace std;
 namespace Passive {
 
         C1Impl::C1Impl(const char* compName) : C1Base(compName) {
-            
+
         }
-        
+
         C1Impl::~C1Impl(void) {
-            
+
         }
 
         // Internal call - implemented by hand.

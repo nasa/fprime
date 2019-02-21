@@ -51,12 +51,12 @@ namespace TlmPacker
 #end for
 #echo "};"
 
-    
+
     // An array (list or lists) of sets of ID's scheduled within cycle slots (empty slots are set to -1)
 
 #echo "    const U32 cycle_id_arr[NUM_SCHED_CYCLES] = {"
 #for id_list in $tlm_cycle_id_list:
-#for id in id_list: 
+#for id in id_list:
 #echo $str($id) + ", "
 #end for
 #end for
@@ -72,8 +72,8 @@ namespace TlmPacker
 #echo "    {" + $str($pkt.m_id) + ", " + $str($pkt.m_chan) + "},\n"
 #end if
 #end for
-    }; 
-    
+    };
+
     // Packet ID to Frequency and Offset mapping is set up here
     tlmPacketDefBase::sched_def pkt_sched_map[MAX_NUM_FREQ] =
     {
@@ -83,7 +83,7 @@ namespace TlmPacker
 #end if
 #end for
     };
-       
+
 #for $i in $range($len($tlm_packet_list))
 
     // Below are the data to define each specific packet type
@@ -111,7 +111,7 @@ namespace TlmPacker
 #end for
     };
 
-    fixed_field_def		pkt${i}_fixed_fields[PKT${i}_NUM_FIXED_FIELD] = 
+    fixed_field_def		pkt${i}_fixed_fields[PKT${i}_NUM_FIXED_FIELD] =
     {
 #set $k = 0
 #for $j in range($len($tlm_packet_list[$i].m_item_list))
@@ -125,7 +125,7 @@ namespace TlmPacker
 #end for
     };
 
-    tlmPacketDefBase::field_def		pkt${i}_variable_fields[PKT${i}_NUM_VARIABLE_FIELD] = 
+    tlmPacketDefBase::field_def		pkt${i}_variable_fields[PKT${i}_NUM_VARIABLE_FIELD] =
     {
 #for $j in range($len($tlm_packet_list[$i].m_item_list))
 #if (not $tlm_packet_list[$i].m_item_list[$j].m_is_constant and not $tlm_packet_list[$i].m_item_list[$j].m_is_reserve)
@@ -183,7 +183,7 @@ void tlmPacketDefBase::getPacketScheduledIdArray(int &num_pkt, const U32 * &pkt_
     pkt_arr = TlmPacker::cycle_id_arr;
 }
 
-U16 tlmPacketDefBase::getPacketToChannelMapping(I32 id) 
+U16 tlmPacketDefBase::getPacketToChannelMapping(I32 id)
 {
     int i;
     U16 missing_channel = 0xFFFF;
@@ -194,7 +194,7 @@ U16 tlmPacketDefBase::getPacketToChannelMapping(I32 id)
             return TlmPacker::pkt_channel_map[i].channel;
         }
     }
-    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels 
+    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels
     return missing_channel;
 }
 
@@ -217,7 +217,7 @@ F32 tlmPacketDefBase::getPacketFreq(I32 id) {
             return TlmPacker::pkt_sched_map[i].freq;
         }
     }
-    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels 
+    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels
     return missing_freq;
 }
 
@@ -231,7 +231,7 @@ I32 tlmPacketDefBase::getPacketOffset(I32 id) {
             return TlmPacker::pkt_sched_map[i].offset;
         }
     }
-    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels 
+    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels
     return missing_offset;
 }
 

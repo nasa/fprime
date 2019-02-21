@@ -43,18 +43,18 @@ namespace Tlm {
 #endif
   {
     // Initialize telemetry histories
-    this->tlmHistory_somechan = 
+    this->tlmHistory_somechan =
       new History<TlmEntry_somechan>(maxHistorySize);
-    this->tlmHistory_anotherchan = 
+    this->tlmHistory_anotherchan =
       new History<TlmEntry_anotherchan>(maxHistorySize);
-    this->tlmHistory_someenumchan = 
+    this->tlmHistory_someenumchan =
       new History<TlmEntry_someenumchan>(maxHistorySize);
     // Clear history
     this->clearHistory();
   }
 
   TestTlmTesterBase ::
-    ~TestTlmTesterBase(void) 
+    ~TestTlmTesterBase(void)
   {
     // Destroy telemetry histories
     delete this->tlmHistory_somechan;
@@ -178,14 +178,14 @@ namespace Tlm {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -225,7 +225,7 @@ namespace Tlm {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputTlmPort *TestTlmTesterBase ::
     get_from_Tlm(const NATIVE_INT_TYPE portNum)
   {
@@ -271,7 +271,7 @@ namespace Tlm {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
@@ -344,7 +344,7 @@ namespace Tlm {
           printf("Error deserializing someenumchan: %d\n", _status);
           return;
         }
-        TestTlmComponentBase::SomeEnum arg = 
+        TestTlmComponentBase::SomeEnum arg =
           static_cast<TestTlmComponentBase::SomeEnum>(someenumchanarg);
         this->tlmInput_someenumchan(timeTag, arg);
         break;
@@ -368,9 +368,9 @@ namespace Tlm {
     this->tlmHistory_someenumchan->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: somechan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     tlmInput_somechan(
@@ -383,9 +383,9 @@ namespace Tlm {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: anotherchan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     tlmInput_anotherchan(
@@ -398,9 +398,9 @@ namespace Tlm {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: someenumchan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     tlmInput_someenumchan(

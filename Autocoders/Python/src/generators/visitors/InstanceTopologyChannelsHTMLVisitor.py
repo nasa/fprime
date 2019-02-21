@@ -56,7 +56,7 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
     __form     = None
     __form_comment = None
     __model_parser = None
-    
+
     def __init__(self):
         """
         Constructor.
@@ -71,7 +71,7 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         self.prototypetext  = ""
         self.__fp_dict      = dict() # dictionary of instance name keyword to file handle pointer
 
-        
+
     def _writeTmpl(self, instance, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
@@ -81,8 +81,8 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug(c)
         self.__fp_dict[instance].writelines(c.__str__())
         DEBUG.debug('===================================')
-        
-        
+
+
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
@@ -147,19 +147,19 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         pass
-        
+
     def initTelemetryParams(self, obj, c):
         '''
         Telemetry function parameters for code generation
         '''
         c.param_tlm_id = (
-            "id", 
-            "const FwChanIdType", 
+            "id",
+            "const FwChanIdType",
             "The channel ID"
         )
         c.param_val = (
-            "val", 
-            "Fw::TlmBuffer&", 
+            "val",
+            "Fw::TlmBuffer&",
             "The channel value"
         )
 

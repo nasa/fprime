@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ExampleImpl.hpp
 // \author tim
 // \brief  hpp file for Example component implementation class
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef Example_HPP
 #define Example_HPP
@@ -68,7 +68,7 @@ namespace ExampleComponents {
           const NATIVE_INT_TYPE portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6 
+          AnotherExample::arg6String arg6
       );
 
     };

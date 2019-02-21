@@ -108,10 +108,10 @@ namespace StressTest {
           //!
           History(
               const U32 maxSize //!< The maximum history size
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -244,7 +244,7 @@ namespace StressTest {
 
       //! The history for from_aport
       //!
-      History<FromPortEntry_aport> 
+      History<FromPortEntry_aport>
         *fromPortHistory_aport;
 
       //! Push an entry on the history for from_aport2
@@ -264,7 +264,7 @@ namespace StressTest {
 
       //! The history for from_aport2
       //!
-      History<FromPortEntry_aport2> 
+      History<FromPortEntry_aport2>
         *fromPortHistory_aport2;
 
     public:

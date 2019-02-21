@@ -2,7 +2,7 @@
 #===============================================================================
 # NAME: TestImplHVisitor.py
 #
-# DESCRIPTION: A visitor class for generating test implementation 
+# DESCRIPTION: A visitor class for generating test implementation
 # header files.
 #
 # AUTHOR: bocchino
@@ -27,13 +27,13 @@ class TestImplHVisitor(TestImplVisitorBase.TestImplVisitorBase):
     def __init__(self):
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.initBase("TestImplH")
-    
+
     def emitPortParams(self, params):
         return self.emitPortParamsHpp(10, params)
 
     def emitNonPortParams(self, params):
         return self.emitNonPortParamsHpp(10, params)
-  
+
     def initFilesVisit(self, obj):
         self.openFile("Tester.hpp")
 

@@ -24,7 +24,7 @@
 #include "gtest/gtest.h"
 
 // ----------------------------------------------------------------------
-// Macros for event history assertions 
+// Macros for event history assertions
 // ----------------------------------------------------------------------
 
 #define ASSERT_EVENTS_SIZE(size) \

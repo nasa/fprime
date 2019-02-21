@@ -7,7 +7,7 @@
 #               of Parameter intances and is visited by the code
 #               generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: tcanham
 # EMAIL:  tcanham@jpl.nasa.gov
@@ -63,7 +63,7 @@ class Parameter(object):
         self.__component_name = component_name
         self.__base_setop = base_setop
         self.__base_saveop = base_saveop
-        # 
+        #
 
     def get_ids(self):
         """
@@ -118,20 +118,20 @@ class Parameter(object):
         Returns the original xml filename
         """
         return self.__xml_filename
-    
+
     def get_component_name(self):
         return self.__component_name
-    
+
     def get_component_base_name(self):
         '''
         Tries to isolate the base component name by finding the last part of the string that is joined by ::
         '''
         base_name_list = self.__component_name.split("::")
         return base_name_list[-1]
-    
+
     def get_base_saveop(self):
         return self.__base_saveop
-    
+
     def get_base_setop(self):
         return self.__base_setop
-    
+

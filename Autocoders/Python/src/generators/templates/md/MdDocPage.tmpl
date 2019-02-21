@@ -13,18 +13,18 @@
     #if len($opcode) == 1:
        #set $opcode = $opcode[0]
        #if "x" in $opcode:
-         #set $opcode = int($opcode, 16) 
+         #set $opcode = int($opcode, 16)
        #else
-         #set $opcode = int($opcode) 
+         #set $opcode = int($opcode)
        #end if
        #set $hexopcode = hex($opcode)
     #end if
-|${mnemonic}|${opcode} (${hexopcode})|${comment}| | |   
+|${mnemonic}|${opcode} (${hexopcode})|${comment}| | |
             #if $args_length > 1
                 #set $args_index = 1
                 #for $arg_name, $arg_type, $comment, $typeinfo in $args:
-| | | |$arg_name|$arg_type|$comment|                    
-                #end for    
+| | | |$arg_name|$arg_type|$comment|
+                #end for
             #end if
 #end for
 #end if
@@ -39,9 +39,9 @@
     #if len($id) == 1:
        #set $id = $id[0]
        #if "x" in $id:
-         #set $id = int($id, 16) 
+         #set $id = int($id, 16)
        #else
-         #set $id = int($id) 
+         #set $id = int($id)
        #end if
        #set $hexid = hex($id)
     #end if
@@ -61,15 +61,15 @@
     #if len($id) == 1:
        #set $id = $id[0]
        #if "x" in $id:
-         #set $id = int($id, 16) 
+         #set $id = int($id, 16)
        #else
-         #set $id = int($id) 
+         #set $id = int($id)
        #end if
        #set $hexid = hex($id)
     #end if
 |${eventname}|${id} (${hexid})|${comment}| | | | |
     #for $arg_name, $arg_type, $comment, $size, $typeinfo in $args:
-| | | |$arg_name|$arg_type|$size|$comment|    
-    #end for    
+| | | |$arg_name|$arg_type|$size|$comment|
+    #end for
 #end for
 #end if

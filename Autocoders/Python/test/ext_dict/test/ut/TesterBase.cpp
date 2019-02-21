@@ -45,13 +45,13 @@ namespace ExampleComponents {
     // Initialize command history
     this->cmdResponseHistory = new History<CmdResponse>(maxHistorySize);
     // Initialize telemetry histories
-    this->tlmHistory_somechan = 
+    this->tlmHistory_somechan =
       new History<TlmEntry_somechan>(maxHistorySize);
-    this->tlmHistory_anotherchan = 
+    this->tlmHistory_anotherchan =
       new History<TlmEntry_anotherchan>(maxHistorySize);
-    this->tlmHistory_stringchan = 
+    this->tlmHistory_stringchan =
       new History<TlmEntry_stringchan>(maxHistorySize);
-    this->tlmHistory_enumchan = 
+    this->tlmHistory_enumchan =
       new History<TlmEntry_enumchan>(maxHistorySize);
     // Initialize event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -67,7 +67,7 @@ namespace ExampleComponents {
   }
 
   ExampleTesterBase ::
-    ~ExampleTesterBase(void) 
+    ~ExampleTesterBase(void)
   {
     // Destroy command history
     delete this->cmdResponseHistory;
@@ -456,14 +456,14 @@ namespace ExampleComponents {
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     connect_to_exampleInput(
         const NATIVE_INT_TYPE portNum,
         AnotherExample::InputExamplePort *const exampleInput
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_exampleInput(),static_cast<AssertArg>(portNum));
     this->m_to_exampleInput[portNum].addCallPort(exampleInput);
@@ -473,7 +473,7 @@ namespace ExampleComponents {
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
@@ -522,7 +522,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   AnotherExample::InputExamplePort *ExampleTesterBase ::
     get_from_exampleOutput(const NATIVE_INT_TYPE portNum)
   {
@@ -604,7 +604,7 @@ namespace ExampleComponents {
     )
   {
     FW_ASSERT(callComp);
-    ExampleTesterBase* _testerBase = 
+    ExampleTesterBase* _testerBase =
       static_cast<ExampleTesterBase*>(callComp);
     _testerBase->from_exampleOutput_handlerBase(
         portNum,
@@ -702,7 +702,7 @@ namespace ExampleComponents {
         Fw::ParamBuffer &val
     )
   {
-    ExampleTesterBase* _testerBase = 
+    ExampleTesterBase* _testerBase =
       static_cast<ExampleTesterBase*>(component);
 
     Fw::SerializeStatus _status;
@@ -786,7 +786,7 @@ namespace ExampleComponents {
             static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            someparamVal == 
+            someparamVal ==
             _testerBase->m_param_someparam
         );
         break;
@@ -801,7 +801,7 @@ namespace ExampleComponents {
             static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            anotherparamVal == 
+            anotherparamVal ==
             _testerBase->m_param_anotherparam
         );
         break;
@@ -815,7 +815,7 @@ namespace ExampleComponents {
             _status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            stringparamVal == 
+            stringparamVal ==
             _testerBase->m_param_stringparam
         );
         break;
@@ -855,9 +855,9 @@ namespace ExampleComponents {
     this->fromPortHistory_exampleOutput->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: exampleOutput
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     pushFromPortEntry_exampleOutput(
@@ -911,9 +911,9 @@ namespace ExampleComponents {
     this->cmdResponseHistory->push_back(e);
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: TEST_CMD_1
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     sendCmd_TEST_CMD_1(
@@ -937,7 +937,7 @@ namespace ExampleComponents {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     _opcode = ExampleComponentBase::OPCODE_TEST_CMD_1;
 
@@ -954,9 +954,9 @@ namespace ExampleComponents {
 
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: TEST_CMD_2
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     sendCmd_TEST_CMD_2(
@@ -977,7 +977,7 @@ namespace ExampleComponents {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     _opcode = ExampleComponentBase::OPCODE_TEST_CMD_2;
 
@@ -995,7 +995,7 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1078,7 +1078,7 @@ namespace ExampleComponents {
           printf("Error deserializing enumchan: %d\n", _status);
           return;
         }
-        ExampleComponentBase::SomeTlmEnum arg = 
+        ExampleComponentBase::SomeTlmEnum arg =
           static_cast<ExampleComponentBase::SomeTlmEnum>(enumchanarg);
         this->tlmInput_enumchan(timeTag, arg);
         break;
@@ -1103,9 +1103,9 @@ namespace ExampleComponents {
     this->tlmHistory_enumchan->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: somechan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     tlmInput_somechan(
@@ -1118,9 +1118,9 @@ namespace ExampleComponents {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: anotherchan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     tlmInput_anotherchan(
@@ -1133,9 +1133,9 @@ namespace ExampleComponents {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: stringchan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     tlmInput_stringchan(
@@ -1148,9 +1148,9 @@ namespace ExampleComponents {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: enumchan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     tlmInput_enumchan(
@@ -1180,7 +1180,7 @@ namespace ExampleComponents {
 
     switch (id) {
 
-      case ExampleComponentBase::EVENTID_SOMEEVENT: 
+      case ExampleComponentBase::EVENTID_SOMEEVENT:
       {
 
         Fw::SerializeStatus _status;
@@ -1245,7 +1245,7 @@ namespace ExampleComponents {
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1308,11 +1308,11 @@ namespace ExampleComponents {
   }
 
   void ExampleTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -1321,7 +1321,7 @@ namespace ExampleComponents {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: SomeEvent 
+  // Event: SomeEvent
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1341,7 +1341,7 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // Parameter someparam 
+  // Parameter someparam
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1356,7 +1356,7 @@ namespace ExampleComponents {
 
   void ExampleTesterBase ::
     paramSend_someparam(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -1395,15 +1395,15 @@ namespace ExampleComponents {
     }
     else {
       this->m_to_CmdDisp[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }
   }
 
   // ----------------------------------------------------------------------
-  // Parameter anotherparam 
+  // Parameter anotherparam
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1418,7 +1418,7 @@ namespace ExampleComponents {
 
   void ExampleTesterBase ::
     paramSend_anotherparam(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -1457,15 +1457,15 @@ namespace ExampleComponents {
     }
     else {
       this->m_to_CmdDisp[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }
   }
 
   // ----------------------------------------------------------------------
-  // Parameter stringparam 
+  // Parameter stringparam
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1480,7 +1480,7 @@ namespace ExampleComponents {
 
   void ExampleTesterBase ::
     paramSend_stringparam(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -1519,15 +1519,15 @@ namespace ExampleComponents {
     }
     else {
       this->m_to_CmdDisp[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }
   }
 
   // ----------------------------------------------------------------------
-  // Parameter enumparam 
+  // Parameter enumparam
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
@@ -1542,7 +1542,7 @@ namespace ExampleComponents {
 
   void ExampleTesterBase ::
     paramSend_enumparam(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -1581,8 +1581,8 @@ namespace ExampleComponents {
     }
     else {
       this->m_to_CmdDisp[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }

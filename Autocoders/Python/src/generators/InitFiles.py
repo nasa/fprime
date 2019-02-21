@@ -45,14 +45,14 @@ class InitFiles:
     """
     __visitor_list = []
     __obj          = None
-    
+
     def __init__(self):
         """
         Constructor.
         """
         self.__visitor_list = list()
-        
-        
+
+
     def __call__(self, args):
         """
         Main execution point.

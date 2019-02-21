@@ -53,16 +53,16 @@ Fw::SerializeStatus UserSerializer::deserialize(Fw::SerializeBufferBase& buffer)
 #if FW_SERIALIZABLE_TO_STRING
 
 void UserSerializer::toString(Fw::StringBase& text) {
-    
+
     // declare strings to hold any serializable toString() arguments
-       
+
     char outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
     snprintf(outputString,FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE,
             "SomeUserStruct: %d %f %d",
             this->m_struct.mem1,this->m_struct.mem2,this->m_struct.mem3);
     outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE-1] = 0; // NULL terminate
-    
-    text = outputString;           
+
+    text = outputString;
 }
 
 #endif

@@ -114,10 +114,10 @@ namespace ExampleComponents {
           //!
           History(
               const U32 maxSize //!< The maximum history size
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -189,7 +189,7 @@ namespace ExampleComponents {
           const NATIVE_INT_TYPE portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6 
+          AnotherExample::arg6String arg6
       ) = 0;
 
       //! Handler base function for from_exampleOutput
@@ -198,7 +198,7 @@ namespace ExampleComponents {
           const NATIVE_INT_TYPE portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6 
+          AnotherExample::arg6String arg6
       );
 
     protected:
@@ -219,7 +219,7 @@ namespace ExampleComponents {
       void pushFromPortEntry_exampleOutput(
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6 
+          AnotherExample::arg6String arg6
       );
 
       //! A history entry for from_exampleOutput
@@ -232,7 +232,7 @@ namespace ExampleComponents {
 
       //! The history for from_exampleOutput
       //!
-      History<FromPortEntry_exampleOutput> 
+      History<FromPortEntry_exampleOutput>
         *fromPortHistory_exampleOutput;
 
     protected:
@@ -247,7 +247,7 @@ namespace ExampleComponents {
           const NATIVE_INT_TYPE portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6 
+          AnotherExample::arg6String arg6
       );
 
     public:
@@ -315,7 +315,7 @@ namespace ExampleComponents {
           const NATIVE_INT_TYPE portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6 
+          AnotherExample::arg6String arg6
       );
 
   };

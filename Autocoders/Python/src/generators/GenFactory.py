@@ -104,8 +104,8 @@ class GenFactory:
     __visitor_list = None
 
     class VisitorConfig:
-        """ 
-        The up front visitor configuration options. 
+        """
+        The up front visitor configuration options.
         """
         __enabled = None
         __generate_code = None
@@ -142,7 +142,7 @@ class GenFactory:
             if generate_code not in (True, False):
                 raise AttributeError, "GenFactory: bad generate code option"
             self.__generate_code = generate_code
-            
+
         def Instance(self):
             """
             Returns a NEW instance of type specified by type string.
@@ -219,8 +219,8 @@ class GenFactory:
 
 
     def __init__(self):
-        """ 
-        Private Constructor (singleton pattern) 
+        """
+        Private Constructor (singleton pattern)
         """
         self.__instance = None
         self.__configured_visitors = dict()
@@ -233,7 +233,7 @@ class GenFactory:
 # TKC - Removed singleton since component and command instances were clashing.
 #         if(GenFactory.__instance is None) :
 #             GenFactory.__instance = GenFactory()
-#         
+#
 #         return GenFactory.__instance
         return GenFactory()
 
@@ -271,7 +271,7 @@ class GenFactory:
         # be assembled by project.
 
         project_visitor_list = self._buildVisitorList()
-        
+
         # Instance the needed code snippet generator here.
 
         if the_type == "initFiles":
@@ -299,24 +299,24 @@ class GenFactory:
             code_section_generator = DictHeader.DictHeader()
         elif the_type == "DictBody":
             code_section_generator = DictBody.DictBody()
-            
+
         elif the_type == "InstanceDictStart":
             code_section_generator = InstanceDictStart.InstanceDictStart()
         elif the_type == "InstanceDictHeader":
             code_section_generator = InstanceDictHeader.InstanceDictHeader()
         elif the_type == "InstanceDictBody":
             code_section_generator = InstanceDictBody.InstanceDictBody()
-            
+
         elif the_type == "HtmlStart":
             code_section_generator = HtmlStartPage.HtmlStartPage()
         elif the_type == "HtmlDoc":
             code_section_generator = HtmlDocPage.HtmlDocPage()
-            
+
         elif the_type == "MdStart":
             code_section_generator = MdStartPage.MdStartPage()
         elif the_type == "MdDoc":
             code_section_generator = MdDocPage.MdDocPage()
-            
+
         else:
             print "GenFactory: unsupported code section (%s)." % (the_type)
             return None
@@ -342,8 +342,8 @@ class GenFactory:
         Note: The configuration for all producers must be set before the
         generator create method is called. Otherwise, the entire producer
         is disabled and no code will be produced from that generator.
-        
-        Note: instance names must be unique or the old instance 
+
+        Note: instance names must be unique or the old instance
         will be overwritten and not exist in the generated code.
         """
         if instance not in self.__configured_visitors:
@@ -394,9 +394,9 @@ def main():
     # Configures output only to stdout.
     Logger.connectOutputLogger(None)
 
-    GenFactory.getInstance().configureVisitor("TestComponentH", "ComponentHVisitor", True, True)  
+    GenFactory.getInstance().configureVisitor("TestComponentH", "ComponentHVisitor", True, True)
     GenFactory.getInstance().configureVisitor("TestComponentCpp", "ComponentCppVisitor", True, True)
-      
+
     initfiles = GenFactory.getInstance().create('initFiles')
     print initfiles
     initfiles('object args')

@@ -49,7 +49,7 @@ namespace Cmd {
   }
 
   Test1TesterBase ::
-    ~Test1TesterBase(void) 
+    ~Test1TesterBase(void)
   {
     // Destroy command history
     delete this->cmdResponseHistory;
@@ -177,14 +177,14 @@ namespace Cmd {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void Test1TesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTest2Port *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -194,7 +194,7 @@ namespace Cmd {
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
@@ -241,7 +241,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputCmdResponsePort *Test1TesterBase ::
     get_from_CmdStatus(const NATIVE_INT_TYPE portNum)
   {
@@ -299,9 +299,9 @@ namespace Cmd {
     this->cmdResponseHistory->push_back(e);
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: TEST_CMD_1
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void Test1TesterBase ::
     sendCmd_TEST_CMD_1(
@@ -325,7 +325,7 @@ namespace Cmd {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = Test1ComponentBase::OPCODE_TEST_CMD_1 + idBase;
@@ -343,9 +343,9 @@ namespace Cmd {
 
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: TEST_CMD_2
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void Test1TesterBase ::
     sendCmd_TEST_CMD_2(
@@ -369,7 +369,7 @@ namespace Cmd {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = Test1ComponentBase::OPCODE_TEST_CMD_2 + idBase;
@@ -387,11 +387,11 @@ namespace Cmd {
 
   }
 
-  
+
   void Test1TesterBase ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
-       
-    const U32 idBase = this->getIdBase();   
+
+    const U32 idBase = this->getIdBase();
     FwOpcodeType _opcode = opcode + idBase;
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(
@@ -403,11 +403,11 @@ namespace Cmd {
     else {
       printf("Test Command Output port not connected!\n");
     }
-        
+
   }
-  
+
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void Test1TesterBase ::

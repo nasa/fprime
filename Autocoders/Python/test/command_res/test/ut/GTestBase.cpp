@@ -33,7 +33,7 @@ namespace Cmd {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         Test1TesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,
@@ -86,7 +86,7 @@ namespace Cmd {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into command response history\n"
-      << "  Expected: Less than size of command response history (" 
+      << "  Expected: Less than size of command response history ("
       << this->cmdResponseHistory->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const CmdResponse& e = this->cmdResponseHistory->at(index);

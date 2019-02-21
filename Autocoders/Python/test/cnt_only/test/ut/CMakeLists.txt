@@ -7,7 +7,7 @@ set(UT_SOURCE_FILES
 )
 
 set(UT_MODULES
-  "${FPRIME_CORE_DIR}/Autocoders/test/cnt_only"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/cnt_only"
   "${FPRIME_CORE_DIR}/Fw/Comp"
   "${FPRIME_CORE_DIR}/Fw/Cmd"
   "${FPRIME_CORE_DIR}/Fw/Port"

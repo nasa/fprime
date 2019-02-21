@@ -6,7 +6,7 @@
 #               passed to the visitors and is the main interface
 #               for code generation queries.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -124,4 +124,4 @@ class Component(object):
     def get_base_id_window(self):
         return self.__base_id_window
 
-    
+

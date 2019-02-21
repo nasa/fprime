@@ -6,7 +6,7 @@ namespace Simple_Active_Tester{
     class Simple_Active_TesterImpl : public Simple_Active_TesterComponentBase {
 
 
-    
+
 
     public:
         Simple_Active_TesterImpl(const char* compName);

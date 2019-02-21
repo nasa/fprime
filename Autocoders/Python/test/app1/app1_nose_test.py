@@ -3,7 +3,7 @@ import os
 import subprocess
 from subprocess import CalledProcessError
 import pexpect
-from pexpect import TIMEOUT 
+from pexpect import TIMEOUT
 
 def a_make_test():
 
@@ -27,7 +27,7 @@ def c_port_send_test():
     expect_string = ".*\*\*\* Huey: cmd = {cmd_number} str = {cmd_string}.*".format(cmd_number=cn, cmd_string=cs)
     print expect_string
     try:
-        p = pexpect.spawn("make run_ut") 
+        p = pexpect.spawn("make run_ut")
         p.expect(".*q to quit:.*", timeout=3)
         p.sendline("g")
         p.expect(".*cmd number:.*", timeout=3)
@@ -52,12 +52,12 @@ def c_port_send_test():
 
 def setup_module():
     os.chdir("{BUILD_ROOT}/Autocoders/Python/test/app1".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
-    
+
     make()
     make_ut()
 
 def teardown_module():
-    
+
     cleanCmds = ['make clean', 'make ut_clean']
     for cmd in cleanCmds:
         try:
@@ -70,7 +70,7 @@ def teardown_module():
 
 def make():
     try:
-        subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True) 
+        subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True)
         return True
     except CalledProcessError as e:
        print "MAKE ERROR"
@@ -81,7 +81,7 @@ def make():
 def make_ut():
     try:
         subprocess.check_output('make ut', stderr = subprocess.STDOUT, shell=True)
-        return True 
+        return True
     except CalledProcessError as e:
         print "MAKE UT ERROR"
         print "'''''''''''''"

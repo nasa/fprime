@@ -50,7 +50,7 @@ namespace Cmd {
   }
 
   CommandTesterTesterBase ::
-    ~CommandTesterTesterBase(void) 
+    ~CommandTesterTesterBase(void)
   {
   }
 
@@ -164,14 +164,14 @@ namespace Cmd {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void CommandTesterTesterBase ::
     connect_to_cmdStatusPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdResponsePort *const cmdStatusPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_cmdStatusPort(),static_cast<AssertArg>(portNum));
     this->m_to_cmdStatusPort[portNum].addCallPort(cmdStatusPort);
@@ -181,7 +181,7 @@ namespace Cmd {
     connect_to_cmdRegPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdRegPort *const cmdRegPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_cmdRegPort(),static_cast<AssertArg>(portNum));
     this->m_to_cmdRegPort[portNum].addCallPort(cmdRegPort);
@@ -241,7 +241,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputCmdPort *CommandTesterTesterBase ::
     get_from_cmdSendPort(const NATIVE_INT_TYPE portNum)
   {
@@ -263,7 +263,7 @@ namespace Cmd {
     )
   {
     FW_ASSERT(callComp);
-    CommandTesterTesterBase* _testerBase = 
+    CommandTesterTesterBase* _testerBase =
       static_cast<CommandTesterTesterBase*>(callComp);
     _testerBase->from_cmdSendPort_handlerBase(
         portNum,
@@ -282,9 +282,9 @@ namespace Cmd {
     this->fromPortHistory_cmdSendPort->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: cmdSendPort
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandTesterTesterBase ::
     pushFromPortEntry_cmdSendPort(
@@ -320,7 +320,7 @@ namespace Cmd {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void CommandTesterTesterBase ::

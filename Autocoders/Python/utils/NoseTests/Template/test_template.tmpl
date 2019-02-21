@@ -3,9 +3,9 @@ import os
 import subprocess
 from subprocess import CalledProcessError
 import pexpect
-from pexpect import TIMEOUT, EOF 
+from pexpect import TIMEOUT, EOF
 import logging
-    
+
 def a_make_test():
     logging.debug('Checking make')
 
@@ -41,7 +41,7 @@ def b_make_ut_test():
 #set $char = chr($ascii_val)
 def ${char}_${test_case.name}_test():
     logging.debug("Entering ${char}_${test_case.name}_test()")
- 
+
     try:
         \## Spawn executable
         p = pexpect.spawn("make run_ut")
@@ -56,7 +56,7 @@ def ${char}_${test_case.name}_test():
         p.sendline("${psend}")
 
         logging.debug('Sent: ${psend}')
-        #end for 
+        #end for
 
         logging.debug('No timeout. Asserting test as true.')
         \## If there was no timeout the pexpect test passed
@@ -108,7 +108,7 @@ def teardown_module():
 
 def make():
     try:
-        subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True) 
+        subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True)
         return True
     except CalledProcessError as e:
        print "MAKE ERROR"
@@ -119,7 +119,7 @@ def make():
 def make_ut():
     try:
         subprocess.check_output('make ut', stderr = subprocess.STDOUT, shell=True)
-        return True 
+        return True
     except CalledProcessError as e:
         print "MAKE UT ERROR"
         print "'''''''''''''"

@@ -33,7 +33,7 @@ namespace StressTest {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TestPortTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

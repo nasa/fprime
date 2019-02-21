@@ -3,7 +3,7 @@
 # File difference and rename routines.
 # Main useful routines are:
 #    DiffAndRename
-#    
+#
 
 import os
 import stat
@@ -18,13 +18,13 @@ DEBUG = logging.getLogger('debug')
 removeJunk = False
 
 
-def compare_except_lines( file1, file2, linesOkToBeDifferent ): 
+def compare_except_lines( file1, file2, linesOkToBeDifferent ):
     """
     Do a line by line compare of
     file1 and file2 ignoring lines
     specified by number (starting
     with line 0) in the list of lines.
-    
+
     This routine mainly used for unit tests
     where ndiffs is 0 means files match.
     """
@@ -46,7 +46,7 @@ def compare_except_lines( file1, file2, linesOkToBeDifferent ):
 
     if len(old) != len(new):
         return abs( len(old) - len(new) )
-    
+
     for lineNum in range( 0, len(old)-1 ):
         if lineNum in linesOkToBeDifferent:
             pass
@@ -78,10 +78,10 @@ def compareAndRename( filename, dated_files_enable=False, except_lines_list=[]):
     Compare filename with filename.new and if different overwright filename
     with filename.new. Do file diff on all lines if except_lines_list is []
     otherwise ignore lines in list when doing compare.
-    
+
     When dated_files_enable=True write out files of form:
     filename.[new|old].yyyymmddThhmmss.
-    
+
     @param filename: Name of file without the .new attached.
     @param dated_files_enable: Enable dated backup file generation.
     @param except_lines_list: List of lines in file to exclude from compare (start at zero).
@@ -134,7 +134,7 @@ def DiffAndRename( filename, dated_files_enable = True ):
     Compare two files that are named 'file' and 'file.new'
     If the files differ by more than one line (the time stamp),
     then move 'file' to '.file.bu' and move 'file.new' to 'file'
-    
+
     date_files_enable allows one to turn off the generation
     of the *.new.date and *.old.date files so CC will not
     go crazy.  LJR - 10 Aug. 2007.
@@ -212,7 +212,7 @@ def renameAsErroneous(fileName,script=None):
     '''
     origfileName = fileName + ".new"
     timeTag = fileTimeTag( origfileName )
-    errfileName = fileName + timeTag + ".errors" 
+    errfileName = fileName + timeTag + ".errors"
     os.rename( origfileName, errfileName )
     if script:
         PRINT.error( "%s: this generated file is invalid: %s" % (script,errfileName) )

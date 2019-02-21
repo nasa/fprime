@@ -6,7 +6,7 @@ extern I32 debug_flag;
 
 
 namespace Drv {
-    
+
     namespace {
 
         class TimingSignalPortBuffer : public Fw::SerializeBufferBase {
@@ -52,9 +52,9 @@ namespace Drv {
 
     void InputTimingSignalPort::invoke(TimingSignal signal) {
 
-#if FW_PORT_TRACING        
+#if FW_PORT_TRACING
         this->trace();
-#endif        
+#endif
 
         FW_ASSERT(this->m_comp);
         FW_ASSERT(this->m_func);
@@ -62,26 +62,26 @@ namespace Drv {
         this->m_func(this->m_comp, this->m_portNum, signal);
     }
 
-#if FW_PORT_SERIALIZATION    
+#if FW_PORT_SERIALIZATION
     void InputTimingSignalPort::invokeSerial(Fw::SerializeBufferBase &buffer) {
 
-#if FW_PORT_TRACING        
+#if FW_PORT_TRACING
         this->trace();
 #endif
-        
+
         I32 val;
         Fw::SerializeStatus status = buffer.deserialize(val);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
         TimingSignal signal = static_cast<TimingSignal>(val);
-        
+
         FW_ASSERT(this->m_comp);
         FW_ASSERT(this->m_func);
 
         this->m_func(this->m_comp, this->m_portNum, signal);
     }
-#endif    
+#endif
 
-    OutputTimingSignalPort::OutputTimingSignalPort(void) : 
+    OutputTimingSignalPort::OutputTimingSignalPort(void) :
             m_port(0) {
     }
 
@@ -91,29 +91,29 @@ namespace Drv {
 
     void OutputTimingSignalPort::addCallPort(InputTimingSignalPort* callPort) {
         FW_ASSERT(callPort);
-        
+
         this->m_port = callPort;
         this->m_connObj = callPort;
     }
 
     void OutputTimingSignalPort::invoke(TimingSignal signal) {
 
-#if FW_PORT_TRACING == 1        
+#if FW_PORT_TRACING == 1
         this->trace();
-#endif        
+#endif
 
         if (this->m_port) {
             this->m_port->invoke(signal);
-#if FW_PORT_SERIALIZATION            
+#if FW_PORT_SERIALIZATION
         } else if (this->m_serPort) {
             TimingSignalPortBuffer buffer;
             Fw::SerializeStatus status = buffer.serialize((I32)signal);
             FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
             this->m_serPort->invokeSerial(buffer);
-#endif            
+#endif
         } else {
             FW_ASSERT(0);
         }
     }
-    
+
 }

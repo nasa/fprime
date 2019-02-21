@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <!-- Note: sync attribute can be sync, async, or guarded. Only for input />
-   Note: priority attribute can be high, medium, low or interrupt. 
+   Note: priority attribute can be high, medium, low or interrupt.
          Only valid for active components input.
    Note  kind attribute of component can be ether active or passive.
          -->
@@ -17,12 +17,12 @@
             The rate group cycle input
             </comment>
         </port>
-        
+
         <!-- Output Scheduler Ports -->
         <port name="RateGroupMemberOut" data_type="Sched" kind="output" max_number="$ActiveRateGroupOutputPorts">
         <comment>Scheduler output port to rate group members</comment>
         </port>
-        
+
     </ports>
     <telemetry telemetry_base="$ActiveRateGroupTelemetryBase">
         <channel id="0" name="RgMaxTime" data_type="U32" abbrev="S001-0000" update="on_change" format_string = "%u us">
@@ -49,10 +49,10 @@
             <args>
                 <arg name="cycle" type="U32">
                     <comment>The cycle where the cycle occurred</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>
-    
+
 </component>
 

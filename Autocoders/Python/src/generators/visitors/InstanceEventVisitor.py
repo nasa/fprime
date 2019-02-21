@@ -77,14 +77,14 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         fp.writelines(c.__str__())
-        DEBUG.debug('===================================')     
-       
-    def DictStartVisit(self, obj , topology_model): 
+        DEBUG.debug('===================================')
+
+    def DictStartVisit(self, obj , topology_model):
         """
         Defined to generate files for generated code products.
         @parms obj: the instance of the event model to visit.
         """
-    
+
         # Build filename here...
         # Make dictionary directly if it doesn't exist
         output_dir = os.environ["DICT_DIR"] + "/events"
@@ -92,15 +92,15 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             os.makedirs(output_dir)
             init_file = output_dir + os.sep + "__init__.py"
             open(init_file, "w+")
-        
+
         self.__fp = {};
-        
+
         try:
             instance_obj_list = topology_model.get_base_id_dict()[obj.get_component_base_name()]
         except Exception:
             PRINT.info("ERROR: Could not find instance object for component " + obj.get_component_base_name() + ". Check topology model to see if the component was instanced.")
             raise
-        
+
         for instance_obj in instance_obj_list:
             if instance_obj[3].get_dict_short_name() != None:
                 fname = "{}_{}".format(instance_obj[3].get_dict_short_name() , obj.get_name())
@@ -108,14 +108,14 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                 fname = obj.get_name()
             else:
                 fname = "{}_{}".format(instance_obj[0] , obj.get_name())
-                
+
             pyfile = "{}/{}.py".format(output_dir , fname)
             DEBUG.info('Open file: {}'.format(pyfile))
             fd = open(pyfile,'w')
             if fd == None:
                 raise Exception("Could not open {} file.".format(pyfile))
             DEBUG.info('Completed {} open'.format(pyfile))
-            self.__fp[fname] = fd        
+            self.__fp[fname] = fd
 
 
     def DictHeaderVisit(self, obj , topology_model):
@@ -123,7 +123,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate header for  event python class.
         @parms obj: the instance of the event model to operation on.
         """
-        
+
         for fname in self.__fp.keys():
             c = EventHeader.EventHeader()
             d = datetime.datetime.now()
@@ -132,8 +132,8 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[fname], "eventHeaderVisit")
 
-         
- 
+
+
     def DictBodyVisit(self, obj , topology_model):
         """
         Defined to generate the body of the  Python event class
@@ -144,7 +144,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
         except Exception:
             PRINT.info("ERROR: Could not find instance object for component " + obj.get_component_base_name() + ". Check topology model to see if the component was instanced.")
             raise
-        
+
         for instance_obj in instance_obj_list:
             c = EventBody.EventBody()
             if instance_obj[3].get_dict_short_name() != None:
@@ -154,29 +154,29 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 fname = "{}_{}".format(instance_obj[0] , obj.get_name())
             c.name = fname
-            
+
             if len(obj.get_ids()) > 1:
                 raise Exception("There is more than one event id when creating dictionaries. Check xml of {} or see if multiple explicit IDs exist in the AcConstants.ini file".format(fname))
             try:
                 c.id = hex(instance_obj[1]  + int(float(obj.get_ids()[0])))
             except:
                 c.id = hex(instance_obj[1]  + int(obj.get_ids()[0] , 16))
-                
+
             c.severity = obj.get_severity()
             c.format_string = obj.get_format_string()
             c.description = obj.get_comment()
             c.component = obj.get_component_name()
-            
+
             c.arglist = list()
             c.ser_import_list = list()
             arg_num = 0
-            
+
             for arg_obj in obj.get_args():
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
                 d = arg_obj.get_comment()
-                # convert XML types to Python classes                    
+                # convert XML types to Python classes
                 (type_string,ser_import,type_name) = DictTypeConverter.DictTypeConverter().convert(t,s)
                 if ser_import != None:
                     c.ser_import_list.append(ser_import)
@@ -189,12 +189,12 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                         sys.exit(-1)
                     else:
                         c.format_string = format_string
-                    
+
                 c.arglist.append((n,d,type_string))
                 arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyVisit")
             self.__fp[fname].close()
-            
+
 
 if __name__ == '__main__':
     pass

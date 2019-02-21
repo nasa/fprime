@@ -33,7 +33,7 @@ namespace Somewhere {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TestLogTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,
@@ -105,7 +105,7 @@ namespace Somewhere {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of event SomeEvent\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->eventHistory_SomeEvent->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const EventEntry_SomeEvent& e =
@@ -175,7 +175,7 @@ namespace Somewhere {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of event AnotherEvent\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->eventHistory_AnotherEvent->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const EventEntry_AnotherEvent& e =

@@ -107,7 +107,7 @@ namespace ExampleComponents {
     protected:
 
       // ----------------------------------------------------------------------
-      // From ports 
+      // From ports
       // ----------------------------------------------------------------------
 
       void assertFromPortHistory_size(
@@ -119,7 +119,7 @@ namespace ExampleComponents {
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: testOut 
+      // From port: testOut
       // ----------------------------------------------------------------------
 
       void assert_from_testOut_size(

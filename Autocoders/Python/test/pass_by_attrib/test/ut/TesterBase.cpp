@@ -45,7 +45,7 @@ namespace App {
   }
 
   PassByTesterBase ::
-    ~PassByTesterBase(void) 
+    ~PassByTesterBase(void)
   {
   }
 
@@ -93,14 +93,14 @@ namespace App {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void PassByTesterBase ::
     connect_to_ExtIn(
         const NATIVE_INT_TYPE portNum,
         Ports::InputMsg1Port *const ExtIn
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_ExtIn(),static_cast<AssertArg>(portNum));
     this->m_to_ExtIn[portNum].addCallPort(ExtIn);

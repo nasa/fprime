@@ -8,11 +8,11 @@ using namespace std;
 namespace App2 {
 
         VoidArgImpl::VoidArgImpl(const char* compName) : VoidArgComponentBase(compName) {
-            
+
         }
-        
+
         VoidArgImpl::~VoidArgImpl(void) {
-            
+
         }
 
 		void VoidArgImpl::init(NATIVE_INT_TYPE queueDepth) {

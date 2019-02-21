@@ -1,9 +1,9 @@
-\#if FW_PORT_SERIALIZATION == 1    
+\#if FW_PORT_SERIALIZATION == 1
     void Input${name}Port::invokeSerial(Fw::SerializeBufferBase &buffer) {
 #if $ret_flag == False:
 #if len($args) > 0:
         Fw::SerializeStatus _status;
-#end if        
+#end if
 \#if FW_PORT_TRACING == 1
         this->trace();
 \#endif

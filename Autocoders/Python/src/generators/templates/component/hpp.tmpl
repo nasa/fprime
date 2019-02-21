@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ${name}ComponentAc.hpp
 // \author Auto-generated
 // \brief  hpp file for ${name} component base class
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 \#ifndef ${name.upper()}_COMP_HPP_
 \#define ${name.upper()}_COMP_HPP_
@@ -372,7 +372,7 @@ $emit_port_params(8, $params)
     //! Handler base-class function for input port $instance
     //!
     void ${instance}_handlerBase(
-        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number") 
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
         Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
     );
 
@@ -482,17 +482,17 @@ $emit_port_params(8, $params)
     NATIVE_INT_TYPE getNum_${instance}_InputPorts(void);
 
   #end for
-  
+
     // ----------------------------------------------------------------------
     // Enumerations for number of ports
     // ----------------------------------------------------------------------
-    
+
     enum {
   #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
        NUM_${instance.upper()}_INPUT_PORTS = $max_num,
   #end for
     };
-  
+
 #end if
 #if $has_output_ports
   PROTECTED:
@@ -515,13 +515,13 @@ $emit_port_params(8, $params)
     #end if
 
   #end for
-  
+
     enum {
   #for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
        NUM_${instance.upper()}_OUTPUT_PORTS = $max_num,
   #end for
     };
-  
+
   PROTECTED:
 
     // ----------------------------------------------------------------------
@@ -675,8 +675,8 @@ $emit_non_port_params(8, $params)
 
   #for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands:
     //! Base-class handler function for command $mnemonic
-    //! 
-    void ${mnemonic}_cmdHandlerBase( 
+    //!
+    void ${mnemonic}_cmdHandlerBase(
         FwOpcodeType opCode, $doxygen_post_comment("The opcode")
         U32 cmdSeq, $doxygen_post_comment("The command sequence number")
         Fw::CmdArgBuffer &args $doxygen_post_comment("The command argument buffer")
@@ -720,7 +720,7 @@ $emit_non_port_params(8, $params)
       #end for
   #end for
     };
-    
+
   #set $throttle_values = [ \
     ($name, $throttle) \
     for $ids, $name, $severity, $format_string, $throttle, $comment in $events \
@@ -772,7 +772,7 @@ $emit_non_port_params(8, $params)
     void log_${severity}_${name}(
 $emit_non_port_params(8, $params)
     );
-    
+
   #if $throttle != None
     // reset throttle value for ${name}
     void log_${severity}_${name}_ThrottleClear(void);
@@ -841,7 +841,7 @@ $emit_non_port_params(8, $params)
         ${type} arg $doxygen_post_comment("The telemetry value")
     );
       #else:
-        #if $typeinfo == "user":      
+        #if $typeinfo == "user":
     void tlmWrite_${name}(
         ${type}& arg $doxygen_post_comment("The telemetry value")
     );
@@ -850,7 +850,7 @@ $emit_non_port_params(8, $params)
         ${type} arg $doxygen_post_comment("The telemetry value")
     );
         #end if
-      #end if  
+      #end if
     #end if
 
   #end for
@@ -1123,7 +1123,7 @@ $emit_port_params(8, $params)
 \#if FW_PORT_SERIALIZATION
 
   #for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
-  
+
     //! Serial port callback
     //!
     static void m_p_${instance}_in(
@@ -1292,7 +1292,7 @@ $emit_port_params(8, $params)
 #end for
 #end if
 
-  };  
+  };
 
 #if $namespace_list != None
  #for $namespace in $namespace_list

@@ -145,10 +145,10 @@ namespace Tlm {
           //!
           History(
               const U32 maxSize /*!< The maximum history size*/
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -292,9 +292,9 @@ namespace Tlm {
       // ----------------------------------------------------------------------
 
     protected:
-    
+
       // send command buffers directly - used for intentional command encoding errors
-      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args); 
+      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args);
 
     protected:
 

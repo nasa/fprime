@@ -3,12 +3,12 @@
 # UT_MODULES: List of modules linked in unit tests
 
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Autocoders/test/ext_dict/ExampleComponentAi.xml"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/ext_dict/ExampleComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
 set(UT_MODULES
-  "${FPRIME_CORE_DIR}/Autocoders/test/ext_dict"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/ext_dict"
   "${FPRIME_CORE_DIR}/Fw/Cmd"
   "${FPRIME_CORE_DIR}/Fw/Comp"
   "${FPRIME_CORE_DIR}/Fw/Port"

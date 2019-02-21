@@ -7,7 +7,7 @@
 #               of Command intances and is visited by the code
 #               generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: tcanham
 # EMAIL:  tcanham@jpl.nasa.gov
@@ -64,7 +64,7 @@ class Command(object):
         self.__component_base_name = component_base_name
         self.__base_opcode = base_opcode
         self.__full = full
-        # 
+        #
 #         self.__target_comp = None
 #         self.__target_command = None
 #         self.__target_type = None
@@ -74,7 +74,7 @@ class Command(object):
         Returns the original xml filename
         """
         return self.__xml_filename
-    
+
     def get_mnemonic(self):
         """
         Returns the command mnemonic
@@ -92,25 +92,25 @@ class Command(object):
         Returns type of command.
         """
         return self.__sync
-    
+
     def get_priority(self):
         """
         Returns priority of command.
         """
         return self.__priority
-        
+
     def get_full(self):
         """
         Returns queue full behavior of command.
         """
         return self.__full
-    
+
     def get_comment(self):
         """
         Returns comment for the command.
         """
         return self.__comment
-    
+
     def get_ifcomment(self):
         """
         Return interface comment for the command.
@@ -123,37 +123,37 @@ class Command(object):
         Return a list of Arg objects for each argument.
         """
         return self.__arg_obj_list
-    
+
     def get_serial_includes(self):
         """
         """
         return self.__incl_serial_list
-    
+
     def get_component_name(self):
         return self.__component_name
-    
+
     def get_component_base_name(self):
         return self.__component_base_name
-    
+
     def get_base_opcode(self):
         return self.__base_opcode
-    
+
 #     def get_target_comp(self):
 #         return self.__target_comp
-#         
+#
 #     def get_target_command(self):
 #         return self.__target_command
-#         
+#
 #     def get_target_type(self):
 #         return self.__target_type
-#     
+#
 #     def set_target_comp(self, comp):
 #         self.__target_comp = comp
-#         
+#
 #     def set_target_command(self, command):
 #         self.__target_command = command
-#         
+#
 #     def set_target_type(self, type):
 #         self.__target_type = type
-        
+
 

@@ -7,7 +7,7 @@
 #               of Port intances and is visited by the code
 #               generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -63,7 +63,7 @@ class Port(object):
         self.__incl_list = []
         self.__if_comment = ""
         self.__xml_filename = xml_filename
-        # 
+        #
         self.__target_comp = None
         self.__target_port = None
         self.__target_type = None
@@ -81,10 +81,10 @@ class Port(object):
         """
         Set type specific stuff for port type here.
         Not instance specific stuff.
-        
+
         @param namespace:     Namespace for port type.
         @param arg_obj_list:  List of Arg objects for each argument (list of Arg objects).
-        @param incl_list:     List of Include objects for each data type. 
+        @param incl_list:     List of Include objects for each data type.
         @param if_comment:    Interface comment.
         """
         self.__namespace   = namespace
@@ -121,7 +121,7 @@ class Port(object):
         """
         Returns role
         """
-        return self.__role 
+        return self.__role
 
     def get_xml_filename(self):
         """
@@ -134,14 +134,14 @@ class Port(object):
         Returns the port's namespace
         """
         return self.__namespace
-    
+
     def get_name(self):
         """
         Returns the port's instance name.
         """
         return self.__pname
 
-    
+
     def get_direction(self):
         """
         Return the direction for port.
@@ -172,13 +172,13 @@ class Port(object):
         Returns type of port.
         """
         return self.__sync
-    
+
     def get_comment(self):
         """
         Returns comment for the port.
         """
         return self.__comment
-    
+
     def get_ifcomment(self):
         """
         Return interface comment for the port.
@@ -199,51 +199,51 @@ class Port(object):
         These support data types within each Arg object.
         """
         return self.__incl_list
-    
+
     def get_serial_includes(self):
         """
         """
         return self.__incl_serial_list
-    
+
     def get_target_comp(self):
         return self.__target_comp
-        
+
     def get_target_port(self):
         return self.__target_port
-        
+
     def get_target_type(self):
         return self.__target_type
-    
+
     def get_target_direction(self):
         return self.__target_direction
-    
+
     def set_target_comp(self, comp):
         self.__target_comp = comp
-        
+
     def set_target_port(self, port):
         self.__target_port = port
-        
+
     def set_target_type(self, type):
         self.__target_type = type
-        
+
     def set_target_direction(self,direction):
         self.__target_direction = direction
-        
+
     def set_direction(self, direction):
         self.__direction = direction
-            
+
     def get_max_number(self):
         return self.__max_number
-    
+
     def get_target_num(self):
         return self.__target_num
 
     def set_target_num(self,n):
         self.__target_num=n
-    
+
     def get_source_num(self):
         return self.__source_num
-    
+
     def set_source_num(self,n):
         self.__source_num=n
 

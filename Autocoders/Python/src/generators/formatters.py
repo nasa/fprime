@@ -60,7 +60,7 @@ class CommentFormatters(object):
         Protected method that strips spaces, carriage returns etc. off each line
         in the list of lines.  Except that lines between a start @code line and
         an end @code line are left alone.
-        
+
         For the @code lines the leading number of spaces before the @ of
         the first @code is stripped off each line.
         """
@@ -98,7 +98,7 @@ class CommentFormatters(object):
         # Added since an empty line seems to be added.
         del(line_list[-1])
 
-        for l in line_list:            
+        for l in line_list:
             new_lines = new_lines + str + l + '\n'
 
         return new_lines
@@ -117,7 +117,7 @@ class CommentFormatters(object):
             item = item.strip()
             if item != "":
                 return count
-            count += 1            
+            count += 1
 
         return -1
 
@@ -184,7 +184,7 @@ class CommentFormatters(object):
 
     def commentDraw(self, user_comment, arguments, type='iface', check_and_send=False):
         """
-        This method is used to format the comments for a function. The 
+        This method is used to format the comments for a function. The
         comments will includes information about each argument. The text
         is formatted in doxygen style.
         """
@@ -300,7 +300,7 @@ class CommentFormatters(object):
 
         if(start == -1):
             return
-        
+
         for index in range(start, end):
 
             line = line_list[index]
@@ -316,15 +316,15 @@ class CommentFormatters(object):
             elif trimwhitespace==False and "@code" == line.strip():
                 trimwhitespace = True
             elif trimwhitespace==False and "\code" == line.strip():
-                trimwhitespace = True                            
-                
+                trimwhitespace = True
+
             if(started):
                 comment_str += "* "
             else:
-                started = True 
+                started = True
 
             if(trimwhitespace):
-                comment_str += line.strip() + "\n"                
+                comment_str += line.strip() + "\n"
             else:
                 comment_str += line[trim_left_spaces:] + "\n"
 
@@ -372,12 +372,12 @@ class CommentFormatters(object):
         # Make sure the last paragraph is appended to paraList
         if paragraph != "":
             para_list.append(paragraph)
-        
+
         formatted_comment = ""
-    
+
         for paragraph in para_list:
             self._dlog(ddt, "paragraph ==%s==" % paragraph)
-        
+
             # Separate paragraphs with a blank line -- not at beginning, not at end
             if formatted_comment != "":
                 formatted_comment = formatted_comment + "\n *"
@@ -392,11 +392,11 @@ class CommentFormatters(object):
                 len_this_line = len(this_line)
                 len_this_word = len(this_word)
                 len_with_word = len_this_line + len_this_word
-        
+
                 # 76 'cuz we'll prepend " * ", and "less than" because we append a blank
                 if len_with_word < 76:
                     this_line = this_line + " " + this_word
-                else:    
+                else:
                 # This even handles case where this_word is longer than line limit
                 # remember to get rid of the trailing space at end of line
                     self._dlog( ddt2, "...append formatted_comment here.")
@@ -436,7 +436,7 @@ class Formatters(object):
     """
     __config = None
     __instance = None
-    
+
     def __init__(self):
         """
         Constructor.
@@ -464,7 +464,7 @@ class Formatters(object):
     def capFirstCharTuple3(self, t, en):
         """
         For three element tupple capitallize first character of select
-        elements.   They are enabled by binary bits (e.g. en=111 sets 
+        elements.   They are enabled by binary bits (e.g. en=111 sets
         each element, en=010 set element 1, etc.)
         @param t: A three element tuple
         @param en: A binary selection of which elements to capitallize.
@@ -474,7 +474,7 @@ class Formatters(object):
         if len(t) != 3:
             PRINT.info("Tuple must be 3 element only!")
             raise exceptions.TypeError
-        
+
         for s in t:
             if 1&i:
                 t2.append(self.capFirstChar(s))
@@ -484,7 +484,7 @@ class Formatters(object):
 
         return (t2[0],t2[1],t2[2])
 
-                
+
     def capFirstChar(self, s):
         """
         Capitallize first character of string name.
@@ -578,7 +578,7 @@ class Formatters(object):
         @param name: Original function name with '_' seperation.
         """
         return(self.functionStringName(id, name, '_ac_parse', itype, verbose))
-    
+
     def functionUnpackName(self,id,name,itype='iface',verbose=False):
         """
         Return a mod_unpack_name form name.
@@ -586,7 +586,7 @@ class Formatters(object):
         @param name: Original function name with '_' seperation.
         """
         return(self.functionStringName(id, name, '_ac_unpack', itype, verbose))
-    
+
     def function_handler_name(self,id,name):
         """
         Return a mod_unpack_name form name.
@@ -596,13 +596,13 @@ class Formatters(object):
         name_str = name + '_handler'
         return(name_str)
 
-   
+
     def msgTypedefName(self, id, name, name_sep='AcMsg'):
         """
         Return the name of msg typedef from a import function name.
         @param id: The module id.
         @param name: Original function name with '_' seperation.
-        @param name_sep: A string placed between the id and interface name 
+        @param name_sep: A string placed between the id and interface name
         """
 
         #print id
@@ -649,7 +649,7 @@ class Formatters(object):
         else:
             return("None")
 
-    
+
     def msgTokenName(self, id, name):
         """
         Return the name of msg typedef
@@ -684,8 +684,8 @@ class Formatters(object):
         name_list = [id.upper()] + ['AC_OPCODE'] + name_list[1:]
         new_name = '_'
         new_name = new_name.join(name_list)
-        return(new_name)  
-    
+        return(new_name)
+
     def opcodeStemName(self, id, name):
         """
         Return a command stem name per MSL naming rules.
@@ -783,11 +783,11 @@ class Formatters(object):
     ##########################################
     # Methods for argument handling.
     ##########################################
-                
+
     ##########################################
     # Methods formatting methods.
     ##########################################
-    
+
     def argNameConvert(self, arg):
         """
         Return function argument in the
@@ -818,7 +818,7 @@ class Formatters(object):
             func_string = "%s%s(" % (name,80*" ")
         else:
             func_string = "%s( " % name
-                
+
         if len(args) == 0:
             func_string += "void )"
         else:
@@ -833,7 +833,7 @@ class Formatters(object):
         """
         If comment greater then max truncate
         and add '...' else leave it alone.
-        
+
         If comment is not "" prefix with '///< '.
         Note that '///<
         """
@@ -879,7 +879,7 @@ class Formatters(object):
             # use &@ instead of &( since two ( break formatFun method.
             pass_by_pointer = self.getPassByPointer(args[-1])
             if prefix == "message->" and args[-1][1][-1] == "*" and not pass_by_pointer:
-                func_string += "&@" + prefix + args[-1][0] + '))' 
+                func_string += "&@" + prefix + args[-1][0] + '))'
             elif prefix == "message." and args[-1][1] == "GblReply*":
 ## STEVE: Make it work statement. Need to pass reply without the prefix.
                 func_string += args[-1][0] + ')'
@@ -894,14 +894,14 @@ class Formatters(object):
     def simpleFuncDraw(self, name, args, proto=True, indent=0):
         """
         This is a simply C function formatter. The arguments are a function
-        name, and its arguments. A string is returned that is a C code 
+        name, and its arguments. A string is returned that is a C code
         function declaration. The proto flag is used to properly terminate
         the function.
         """
 
         # Get the simply case out of the way.
         if len(args) == 0:
-            
+
             if proto == True:
                 function_str = name.strip() + '(void);'
             else:
@@ -950,7 +950,7 @@ class Formatters(object):
 
             return function_str
 
-        # Determine the longest argument type name. We will use that to 
+        # Determine the longest argument type name. We will use that to
         # align the remaining arguments. This is done solely to make the
         # function look better.
 
@@ -993,7 +993,7 @@ class Formatters(object):
 
         pad = 0
 
-        fname = name.strip() 
+        fname = name.strip()
         fname_len = len(fname)
 
         arg_list = list()
@@ -1014,7 +1014,7 @@ class Formatters(object):
 
 
         # The args are in tuple form. Go through and separate all the tuple
-        # values into their argument type, argument name, and comments. 
+        # values into their argument type, argument name, and comments.
 
         for arg in args:
             l = self.argNameConvert(arg).split()
@@ -1030,7 +1030,7 @@ class Formatters(object):
         max_type_len = max(map(len,type_list))
         max_comment_len = max(map(len,comment_list))
 
-        # Build a list of strings that have all the argument types, and 
+        # Build a list of strings that have all the argument types, and
         # argument names aligned on the longest lines.
 
         type_args_list = self.argStringAlign(type_list, arg_list, pad)
@@ -1069,12 +1069,12 @@ class Formatters(object):
                 format_func += "%s%s\n" % (pad*" ", type_args_list[-1])
             else:
                 format_func += "%s%s" % (pad*" ", type_args_list[-1])
-    
+
         #print "Formatted function call"
         #print format_func
         return format_func
 
-            
+
     def formatFunCommentOldVersion(self, name, args, proto=True, indent=0):
         """
         Method to format a function line
@@ -1099,7 +1099,7 @@ class Formatters(object):
             type_max    = max(map(lambda x: len(x.strip()), format_func_list[1:]))
             # Set where to put them.
             comment_list = map(self.formComment, map(lambda x: x[2], args))
-            
+
             # cpos is comment position from left on line
             # apos is argument position from left on line
             cpos = line_length - comment_max
@@ -1120,7 +1120,7 @@ class Formatters(object):
                 str = apad + a.strip() + pad + comment_list[i] + '\n' #  + pad + comment_list[i]
                 func_arg_list.append(str)
                 i += 1
-            # 
+            #
             #print 'Last arg: ',func_arg_list[-1].replace(') ',');')
             # TODO: add switch so a ; is inserted - end of last arg after ).
             func_arg_string = ""
@@ -1140,7 +1140,7 @@ class Formatters(object):
         """
         ddt = 0
         str_len = len(one_line)
-    
+
         if (indent + str_len) < 78:
             return one_line
 
@@ -1162,7 +1162,7 @@ class Formatters(object):
 
         # NOTE we split args on commas, which means the last arg will contain ")"
         #
-        arg_list_untrimmed = args.split(",")    
+        arg_list_untrimmed = args.split(",")
         self._dlog(ddt, "arg_list_untrimmed=%s" % arg_list_untrimmed)
         num_args = len(arg_list_untrimmed)
 
@@ -1197,7 +1197,7 @@ class Formatters(object):
                 formated_line = formated_line + '\n' + pad + nxt + ','
                 self._dlog(ddt, "A formated_line=\n%s" % formated_line)
 
-            formated_line = formated_line + '\n' + pad + arg_list[-1] 
+            formated_line = formated_line + '\n' + pad + arg_list[-1]
             self._dlog(ddt, "A formated_line=\n%s" % formated_line)
         else:
             # Each argument goes on a new line, and we can't align with the lParen.
@@ -1229,7 +1229,7 @@ class Formatters(object):
         """
         Method to align generatic type/argument
         sets found in struct, typedefs and unions.
-        
+
         Run this function again for alignment of
         comments on the end.
         @param type_list: list of argument type names.
@@ -1282,7 +1282,7 @@ class Formatters(object):
         """
         Method to align the type/argument/comment
         combination that appears within typedefs.
-        @param args: list of tuple args from xml. 
+        @param args: list of tuple args from xml.
         """
 
         type_list = list()
@@ -1293,7 +1293,7 @@ class Formatters(object):
             # EGB pass by pointer: This is to allow pointers to be passed directly via IPC
             pass_by_pointer = self.getPassByPointer(arg)
             if(pass_by_pointer):
-                type_list.append(self.typeValue(arg[1].strip()) + " * ")                
+                type_list.append(self.typeValue(arg[1].strip()) + " * ")
             else:
                 type_list.append(self.typeValue(arg[1].strip()))
 
@@ -1313,7 +1313,7 @@ class Formatters(object):
 #        str = self.argStringAlign(str, comment_list, int(self.__config.get('ipc','arg_comment_spaces')))
 
         return str
-    
+
     #
     # These methods are added to provide multi-thread naming convention
     # within a module.
@@ -1434,8 +1434,8 @@ class Formatters(object):
             else:
                 new_args.append(arg)
 
-        return new_args 
-        
+        return new_args
+
 
 def main():
     pass

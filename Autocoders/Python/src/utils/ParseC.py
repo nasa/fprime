@@ -35,7 +35,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     @param: loadfile - True = read/open from file; False = don't read/open
 
     @return: the integer value, or exception
-    
+
     Note: A ValueError exception is raised if the value is not found,
     or if the value can not be represented as an integer.
     """
@@ -92,7 +92,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     for toks,start,end in parser.scanString(data, 1):
         # Return the first one we find. There should only be one, but
         # any conditional compilation in the code could result in a
-        # wrong value returned. 
+        # wrong value returned.
         results = int(toks[0])
         break
 
@@ -105,11 +105,11 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     specified string. The results of the parse return a dictionary
     value of the enumeration name/value pairs. This only works for
     named typedefs.
-    
+
     The loadfile argument is used to indicate if the specified file
     should be opened and read, or if the file is already loaded into
     the filename argument.
-    
+
     @param: typename, The name of the enum typedef
     @param: filename, The filename to parse for the enum
     @param: loadfile, True to open filename; False if already in memory
@@ -141,7 +141,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
                 raise KeyError, str
             filename = msl_root + os.sep + filename
             if not os.path.isfile(filename):
-            ###################### 
+            ######################
                 str = 'ERROR: utils.ParseC.ParseTypedefEnum: %s file not found.' % filename
                 print str
                 raise IOError, str
@@ -150,7 +150,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
         try:
             data = fd.read()
-        except: 
+        except:
             raise IOError, '%r: error reading file.' % filename
         else:
             fd.close()
@@ -164,14 +164,14 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         str = "ERROR: utils.ParseC.ParseTypedefEnum typename argument empty (%s)" % typename
         print str
         raise ValueError, str
-        
+
     #
-    # Configure a parser to pickoff a typedef enumeration. This only works 
+    # Configure a parser to pickoff a typedef enumeration. This only works
     # for named typedefs of enumerations. We are looking for 'typedef enum'
     # followd by the typename.
 
     parser = Forward()
- 
+
     keyword   = Literal("typedef enum").suppress()
     typetoken = Literal(typename).suppress()
 
@@ -188,7 +188,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
     val = Word("=" + " " + "-" + decORhex + "(int)") + restOfLine.suppress()
 
-    enums = (identifier + Optional(comma + restOfLine.suppress() ^ val)) 
+    enums = (identifier + Optional(comma + restOfLine.suppress() ^ val))
     parser = (keyword + Optional(identifier).suppress() + left_brace + ZeroOrMore(enums) + right_brace + typetoken + semicolon)
 
     parser.ignore(cStyleComment)
@@ -196,7 +196,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     #
     # Check that the enum exists within the file
     # and if it does not then raise an exception.
-    # 
+    #
     # LJR Added 30 July 2007 to flag missing enum definitions.
     #
     if (typename in data) == False:
@@ -204,24 +204,24 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         print str
         raise ValueError, str
 
-    # Parse the file using the configured parser and scanString. The 
+    # Parse the file using the configured parser and scanString. The
     # processing loop is empty since there is only one match. The parse
-    # should contain one value since only one typedef can exist with 
+    # should contain one value since only one typedef can exist with
     # this name.
     #
     # Forget about the start, and end values. Those contains the start
     # and end locations of the keywords. We are interested in the parsed
     # tokens. There should only be one instance returned. This corresponds
-    # to the one named typedef in the file. There is a C code error if 
+    # to the one named typedef in the file. There is a C code error if
     # the typedef is multiply defined.
 
     toks = []
     for toks,start,end in parser.scanString(data, 1):
         continue
 
-        # Nothing in the loop. We just want the tokens. The tokens are 
+        # Nothing in the loop. We just want the tokens. The tokens are
         # further parsed into a dictionary. This second parse is needed
-        # since some enums may be missing values. We need to supply a 
+        # since some enums may be missing values. We need to supply a
         # value in those cases.
 
     # In some cases, the value of the enumeration is not specified. We
@@ -292,7 +292,7 @@ def ParseTypedefEnumValue(name, typename, filename, loadfile=True):
     This function returns the value for a C enum value that exists in
     the specified C filename. A numeric value is returned representing
     the value of the enum. An exception is raised if nothing is found.
-    
+
     @param: enumname - the name of the enumeration to find
     @param: typename - the name of the enumerated type
     @param: filename - the name of the C file

@@ -4,6 +4,6 @@
     <comment>
     A port with no arguments
     </comment>
-    <return type="U32"  pass_by="value"/>    
+    <return type="U32"  pass_by="value"/>
 </interface>
 

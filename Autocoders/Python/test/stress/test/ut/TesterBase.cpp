@@ -52,7 +52,7 @@ namespace StressTest {
   }
 
   TestPortTesterBase ::
-    ~TestPortTesterBase(void) 
+    ~TestPortTesterBase(void)
   {
   }
 
@@ -144,7 +144,7 @@ namespace StressTest {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Another::InputTestPort *TestPortTesterBase ::
     get_from_aport(const NATIVE_INT_TYPE portNum)
   {
@@ -173,7 +173,7 @@ namespace StressTest {
     )
   {
     FW_ASSERT(callComp);
-    TestPortTesterBase* _testerBase = 
+    TestPortTesterBase* _testerBase =
       static_cast<TestPortTesterBase*>(callComp);
     _testerBase->from_aport_handlerBase(
         portNum,
@@ -191,7 +191,7 @@ namespace StressTest {
     )
   {
     FW_ASSERT(callComp);
-    TestPortTesterBase* _testerBase = 
+    TestPortTesterBase* _testerBase =
       static_cast<TestPortTesterBase*>(callComp);
     _testerBase->from_aport2_handlerBase(
         portNum,
@@ -211,9 +211,9 @@ namespace StressTest {
     this->fromPortHistory_aport2->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: aport
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestPortTesterBase ::
     pushFromPortEntry_aport(
@@ -229,9 +229,9 @@ namespace StressTest {
     ++this->fromPortHistorySize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: aport2
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestPortTesterBase ::
     pushFromPortEntry_aport2(
@@ -282,7 +282,7 @@ namespace StressTest {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestPortTesterBase ::

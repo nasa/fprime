@@ -30,25 +30,25 @@ void dumpobj(const char* objName) {
 }
 
 
-void constructArchitecture(void) {  
+void constructArchitecture(void) {
     Fw::PortBase::setTrace(true);
-    
+
     simpleRegPtr = new Fw::SimpleObjRegistry();
 
-    // 
+    //
     hub1Comp_ptr   = new PartitionHub::PartitionHubImpl("hub1");
     hueyComp_ptr   = new Duck::DuckImpl("Huey");
-    
+
     hub1Comp_ptr->init(10);
     hueyComp_ptr->init(10);
-    
-    // 
+
+    //
     hub1Comp_ptr->setoutputPort1SerializeOutputPort(0, hueyComp_ptr->getinputPort2Msg2InputPort(0));
-    // 
+    //
     hub1Comp_ptr->setoutputPort2SerializeOutputPort(0, hueyComp_ptr->getinputPort3Msg1InputPort(0));
-    // 
+    //
     hueyComp_ptr->setoutputPort1Msg2OutputPort(0, hub1Comp_ptr->getinputPort1SerializeInputPort(0));
-    // 
+    //
     hueyComp_ptr->setoutputPort2Msg1OutputPort(0, hub1Comp_ptr->getinputPort2SerializeInputPort(0));
 
     // Active component startup

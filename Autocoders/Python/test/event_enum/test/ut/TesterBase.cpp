@@ -53,7 +53,7 @@ namespace Somewhere {
   }
 
   TestLogTesterBase ::
-    ~TestLogTesterBase(void) 
+    ~TestLogTesterBase(void)
   {
     // Destroy event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -217,14 +217,14 @@ namespace Somewhere {
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -264,7 +264,7 @@ namespace Somewhere {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputTimePort *TestLogTesterBase ::
     get_from_Time(const NATIVE_INT_TYPE portNum)
   {
@@ -337,7 +337,7 @@ namespace Somewhere {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
@@ -376,7 +376,7 @@ namespace Somewhere {
     FW_ASSERT(id >= idBase, id, idBase);
     switch (id - idBase) {
 
-      case TestLogComponentBase::EVENTID_SOMEEVENT: 
+      case TestLogComponentBase::EVENTID_SOMEEVENT:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -390,8 +390,8 @@ namespace Somewhere {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 3,_numArgs,3);
-        
-#endif    
+
+#endif
         I32 arg1;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -404,7 +404,7 @@ namespace Somewhere {
           );
           FW_ASSERT(_argSize == sizeof(I32),_argSize,sizeof(I32));
         }
-#endif      
+#endif
         _status = args.deserialize(arg1);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -422,7 +422,7 @@ namespace Somewhere {
           );
           FW_ASSERT(_argSize == sizeof(FwEnumStoreType),_argSize,sizeof(FwEnumStoreType));
         }
-#endif      
+#endif
         FwEnumStoreType arg2Int;
         _status = args.deserialize(arg2Int);
         TestLogComponentBase::SomeEnum arg2 = static_cast<TestLogComponentBase::SomeEnum>(arg2Int);
@@ -443,7 +443,7 @@ namespace Somewhere {
           );
           FW_ASSERT(_argSize == sizeof(U8),_argSize,sizeof(U8));
         }
-#endif      
+#endif
         _status = args.deserialize(arg3);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -475,7 +475,7 @@ namespace Somewhere {
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
@@ -538,11 +538,11 @@ namespace Somewhere {
   }
 
   void TestLogTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -551,7 +551,7 @@ namespace Somewhere {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: SomeEvent 
+  // Event: SomeEvent
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::

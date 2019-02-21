@@ -11,11 +11,11 @@ namespace Simple_Active{
         ~Simple_ActiveImpl(void);
         void init(NATIVE_INT_TYPE queueDepth);
     private:
-        void U32_Async_handler(NATIVE_INT_TYPE portNum, U32 int_arg);    
-        void F32_Sync_handler(NATIVE_INT_TYPE portNUm, F32 float_arg);    
+        void U32_Async_handler(NATIVE_INT_TYPE portNum, U32 int_arg);
+        void F32_Sync_handler(NATIVE_INT_TYPE portNUm, F32 float_arg);
     };
 
-    
+
 };
 
 #endif

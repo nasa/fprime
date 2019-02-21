@@ -53,7 +53,7 @@ namespace Cmd {
   }
 
   TestCommandTesterBase ::
-    ~TestCommandTesterBase(void) 
+    ~TestCommandTesterBase(void)
   {
     // Destroy event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -217,14 +217,14 @@ namespace Cmd {
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -264,7 +264,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputTimePort *TestCommandTesterBase ::
     get_from_Time(const NATIVE_INT_TYPE portNum)
   {
@@ -337,7 +337,7 @@ namespace Cmd {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
@@ -376,7 +376,7 @@ namespace Cmd {
     FW_ASSERT(id >= idBase, id, idBase);
     switch (id - idBase) {
 
-      case TestCommandComponentBase::EVENTID_SOMEEVENT: 
+      case TestCommandComponentBase::EVENTID_SOMEEVENT:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -390,8 +390,8 @@ namespace Cmd {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 3,_numArgs,3);
-        
-#endif    
+
+#endif
         I32 arg1;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -404,7 +404,7 @@ namespace Cmd {
           );
           FW_ASSERT(_argSize == sizeof(I32),_argSize,sizeof(I32));
         }
-#endif      
+#endif
         _status = args.deserialize(arg1);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -423,7 +423,7 @@ namespace Cmd {
           );
           FW_ASSERT(_argSize == sizeof(F32),_argSize,sizeof(F32));
         }
-#endif      
+#endif
         _status = args.deserialize(arg2);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -442,7 +442,7 @@ namespace Cmd {
           );
           FW_ASSERT(_argSize == sizeof(Ref::Gnc::Quaternion),_argSize,sizeof(Ref::Gnc::Quaternion));
         }
-#endif      
+#endif
         _status = args.deserialize(arg3);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -474,7 +474,7 @@ namespace Cmd {
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
@@ -537,11 +537,11 @@ namespace Cmd {
   }
 
   void TestCommandTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -550,7 +550,7 @@ namespace Cmd {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: SomeEvent 
+  // Event: SomeEvent
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::

@@ -65,7 +65,7 @@
   this->assertTlm_enumchan(__FILE__, __LINE__, index, value)
 
 // ----------------------------------------------------------------------
-// Macros for event history assertions 
+// Macros for event history assertions
 // ----------------------------------------------------------------------
 
 #define ASSERT_EVENTS_SIZE(size) \
@@ -337,7 +337,7 @@ namespace ExampleComponents {
     protected:
 
       // ----------------------------------------------------------------------
-      // From ports 
+      // From ports
       // ----------------------------------------------------------------------
 
       void assertFromPortHistory_size(
@@ -349,7 +349,7 @@ namespace ExampleComponents {
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: exampleOutput 
+      // From port: exampleOutput
       // ----------------------------------------------------------------------
 
       void assert_from_exampleOutput_size(

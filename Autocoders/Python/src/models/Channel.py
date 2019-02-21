@@ -7,7 +7,7 @@
 #               of Port intances and is visited by the code
 #               generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -65,7 +65,7 @@ class Channel(object):
         self.__xml_filename = xml_filename
         self.__component_name = component_name
         self.__component_base_name = component_base_name
-        # 
+        #
 
     def get_ids(self):
         """
@@ -96,31 +96,31 @@ class Channel(object):
         Return the channel abbreviation
         """
         return self.__abbrev
-    
+
     def set_abbrev(self , new_abbrev):
         """
         Sets the abbrev to be new_abbrev
         """
         self.__abbrev = new_abbrev
-    
+
     def get_format_string(self):
         """
         Return the format specifier
         """
         return self.__format_string
-    
+
     def get_update(self):
         """
         Return the update ("always" or "on_change")
         """
         return self.__update
-    
+
     def get_limits(self):
         """
         Return the channel limits
         """
         return self.__limits
-    
+
     def get_comment(self):
         """
         Returns comment for the command.
@@ -132,9 +132,9 @@ class Channel(object):
         Returns the original xml filename
         """
         return self.__xml_filename
-    
+
     def get_component_name(self):
         return self.__component_name
-    
+
     def get_component_base_name(self):
         return self.__component_base_name

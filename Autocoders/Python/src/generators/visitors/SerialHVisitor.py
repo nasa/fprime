@@ -97,16 +97,16 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 arg_str += "%s %s" % (mtype, name)
                 arg_str += ", "
-            
+
         arg_str = arg_str.strip(', ')
         return arg_str
-    
+
     def _get_conv_mem_list(self, obj):
         """
         Return a list of port argument tuples
         """
         arg_list = list()
-        
+
         for (name,mtype,size,format,comment) in obj.get_members():
             typeinfo = None
             if type(mtype) == type(tuple()):
@@ -117,12 +117,12 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 typeinfo = "string"
             elif mtype not in typelist:
                 typeinfo = "extern"
-                
+
             arg_list.append((name,mtype,size,format,comment,typeinfo))
-                        
+
         return arg_list
-    
-    
+
+
     def _get_enum_string_list(self, enum_list):
         """
         """
@@ -132,13 +132,13 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         for e in enum_list:
             # No value, No comment
             if (e[1] == None) and (e[2] == None):
-                s = "%s," % (e[0]) 
+                s = "%s," % (e[0])
             # No value, With comment
             elif (e[1] == None) and (e[2] != None):
-                s = "%s,  // %s" % (e[0],e[2]) 
+                s = "%s,  // %s" % (e[0],e[2])
             # With value, No comment
             elif (e[1] != None) and (e[2] == None):
-                s = "%s = %s," % (e[0],e[1]) 
+                s = "%s = %s," % (e[0],e[1])
             # With value and comment
             elif (e[1] != None) and (e[2] != None):
                 s = "%s = %s,  // %s" % (e)
@@ -147,7 +147,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             enum_str_list.append(s)
 
         return (enum_tuple, enum_str_list)
-    
+
 
 
     def _writeTmpl(self, c, visit_str):
@@ -184,7 +184,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 msg = "XML file naming format not allowed (must be XXXSerializableAi.xml), Filename: %s" % xml_file
                 PRINT.info(msg)
                 sys.exit(-1)
-       
+
         # Open file for writting here...
         DEBUG.info('Open file: %s' % filename)
         self.__fp = open(filename,'w')
@@ -246,7 +246,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split('::')
-        
+
         c.enum_type_list = []
         t = map(lambda x: x[1], obj.get_members())
         enum_list = filter(lambda x: type(x) == type(tuple()), t)

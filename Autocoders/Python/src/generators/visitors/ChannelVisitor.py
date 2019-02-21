@@ -78,24 +78,24 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         fp.writelines(c.__str__())
-        DEBUG.debug('===================================')     
-        
-        
+        DEBUG.debug('===================================')
+
+
     def DictStartVisit(self, obj):
         """
         Defined to generate files for generated code products.
         @parms obj: the instance of the channel model to visit.
         """
-    
+
         # Build filename here...
         # Make dictionary directly if it doesn't exist
         output_dir = os.environ["DICT_DIR"] + "/channels"
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
         pyfile = output_dir + "/" + obj.get_name() + ".py"
-        
+
         self.__fp = list();
-        
+
         if len(obj.get_ids()) == 1:
             pyfile = "%s/%s.py" % (output_dir,obj.get_name())
             fd = open(pyfile,'w')
@@ -127,7 +127,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[inst], "channelHeaderVisit")
             inst += 1
- 
+
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the Python channel class
@@ -137,7 +137,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         for id in obj.get_ids():
             c = ChannelBody.ChannelBody()
             if len(obj.get_ids()) > 1:
-                c.name = obj.get_name() + "_%d"%inst 
+                c.name = obj.get_name() + "_%d"%inst
             else:
                 c.name = obj.get_name()
             c.id = id
@@ -145,18 +145,18 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
             c.format_string = obj.get_format_string()
             c.component = obj.get_component_name()
             (c.low_red,c.low_orange,c.low_yellow,c.high_yellow,c.high_orange,c.high_red) = obj.get_limits()
-    
+
             c.ser_import = None
-            
+
             (c.type,c.ser_import,type_name) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
             # special case for enums and Gse GUI. Needs to convert %d to %s
             if type_name == "enum":
-                c.format_string = "%s"            
-    
+                c.format_string = "%s"
+
             self._writeTmpl(c, self.__fp[inst], "channelBodyVisit")
             self.__fp[inst].close()
             inst += 1
-            
+
 
 if __name__ == '__main__':
     pass

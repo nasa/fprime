@@ -23,7 +23,7 @@ class TestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
         return c.component_base + "::" + type \
         if typeinfo == "enum" \
         else type
- 
+
     def getTlmType(self, c):
         def f(type, typeinfo):
             if type == "string":
@@ -64,7 +64,7 @@ class TestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
             params = c.event_params[eventName]
             return self.transformEventParams(c, params)
         return f
-  
+
     def transformCommandParams(self, c, params):
         def transformCommandParam(param):
             name, type, comment, typeinfo = param

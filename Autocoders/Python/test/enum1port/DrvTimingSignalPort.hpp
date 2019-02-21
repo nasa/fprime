@@ -7,15 +7,15 @@
 #include <Fw/Types/FwBasicTypes.hpp>
 
 namespace Drv {
-    
+
     typedef enum {
             REAL_TIME_INTERRUPT
     } TimingSignal ;
 
     class InputTimingSignalPort : public Fw::InputPortBase {
-      public: 
+      public:
         typedef void (*CompFuncPtr)(Fw::ComponentBase* callComp, NATIVE_INT_TYPE portNum, TimingSignal signal);
-        
+
         InputTimingSignalPort(void);
         void init(void);
         void addCallComp(Fw::ComponentBase* callComp, CompFuncPtr funcPtr);
@@ -23,13 +23,13 @@ namespace Drv {
       protected:
       private:
         CompFuncPtr m_func;
-#if FW_PORT_SERIALIZATION        
+#if FW_PORT_SERIALIZATION
         void invokeSerial(Fw::SerializeBufferBase &buffer);
-#endif        
+#endif
     };
 
     class OutputTimingSignalPort : public Fw::OutputPortBase {
-      public: 
+      public:
         OutputTimingSignalPort(void);
         void init(void);
         void addCallPort(Drv::InputTimingSignalPort* callPort);

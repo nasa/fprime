@@ -4,7 +4,7 @@
 
 //Set base id section
 void set$(name)Ids(void){
-#for $id_string in $component_reference_ids:	
+#for $id_string in $component_reference_ids:
 	${id_string}
 #end for
 }
@@ -14,13 +14,13 @@ void set$(name)Ids(void){
 #if $connect_only:
     #pass
 #else:
-void $(name)Init(void) {  
+void $(name)Init(void) {
 ###
     Fw::PortBase::setTrace(true);
-#if $is_ptr:    
+#if $is_ptr:
     simpleReg_ptr = new Fw::SimpleObjRegistry();
 #else:
-    #pass ##If objects are being generated as instances they were instansiated in includes. 
+    #pass ##If objects are being generated as instances they were instansiated in includes.
 #end if
 #if $kind.get_comment():
 // $kind.get_comment()
@@ -33,23 +33,23 @@ void $(name)Init(void) {
 #end if
 
 #end for
-    
+
     // Component initialization
 #for $init_template in $component_inits:
-    ${init_template} 
+    ${init_template}
 #end for
 ###
 }
 
-void $(name)Start(void) {  
+void $(name)Start(void) {
     // Active component startup
     // start(identifier, priority, stack_size)
 #for $startup_template  in $component_startups:
-    ${startup_template} 
-#end for  
+    ${startup_template}
+#end for
 }
 
-void $(name)Register(void) {  
+void $(name)Register(void) {
     // Command registration
 #for $cmdReg in $command_registrations:
     ${cmdReg}
@@ -59,9 +59,9 @@ void $(name)Register(void) {
 #end if
 
 
-void construct$(name)Architecture(void) {  
+void construct$(name)Architecture(void) {
 #if $connect_only:
-   #pass 
+   #pass
 #else:
 	$(name)Init();
 #end if
@@ -75,15 +75,15 @@ void construct$(name)Architecture(void) {
 
 ####
 #if $connect_only:
-   #pass 
+   #pass
 #else:
 ###
   	$(name)Start();
 
 	dumparch();
-	
+
 	$(name)Register();
-    
+
 
 ####
 

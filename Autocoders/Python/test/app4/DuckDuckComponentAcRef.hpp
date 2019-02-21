@@ -47,15 +47,15 @@ namespace Duck {
         virtual void inputPort1_Msg2_handler(NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd) = 0;
         // base class function (can be called by derived classes to bypass port)
         void inputPort1_Msg2_handler_base(NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd);
-        
+
         virtual void inputPort2_Msg2_handler(NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd) = 0;
         // base class function (can be called by derived classes to bypass port)
         void inputPort2_Msg2_handler_base(NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd);
-        
+
         virtual void inputPort3_Msg1_handler(NATIVE_INT_TYPE portNum, U32 cmd) = 0;
         // base class function (can be called by derived classes to bypass port)
         void inputPort3_Msg1_handler_base(NATIVE_INT_TYPE portNum, U32 cmd);
-        
+
         // upcalls for output ports
         void outputPort1_Msg2_out(NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd);
         void outputPort2_Msg1_out(NATIVE_INT_TYPE portNum, U32 cmd);

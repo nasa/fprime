@@ -1,4 +1,8 @@
+#ifdef FPRIME_CMAKE
 #include <GTestBase.hpp>
+#else
+#include "Autocoder/GTestBase.hpp"
+#endif
 
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 

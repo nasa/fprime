@@ -52,7 +52,7 @@
             <args>
                 <arg name="id" type="U32">
                     <comment>The ID argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="501" name="PacketChecksumError" severity="WARNING_HI" format_string = "Packet ID %d had checksum error" >
@@ -62,7 +62,7 @@
             <args>
                 <arg name="id" type="U32">
                     <comment>The ID argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="502" name="BuffRecvParameterUpdated" severity="ACTIVITY_LO" format_string = "BuffRecv Parameter %d was updated" >
@@ -72,7 +72,7 @@
             <args>
                 <arg name="id" type="U32">
                     <comment>The ID argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>
@@ -87,6 +87,6 @@
             A test parameter
             </comment>
         </parameter>
-    </parameters>    
+    </parameters>
 </component>
 

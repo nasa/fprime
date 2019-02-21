@@ -24,7 +24,7 @@ def parseConfigFile(args):
     f = open(configFilePath, 'r')
 
     TestModuleValues = doParse(f)
-    
+
     ## Add Verbosity
     TestModuleValues['verbose'] = 'INFO'
     if verbose:
@@ -53,7 +53,7 @@ def doParse(f):
         module_path = test_module.attrib['path']
 
         path = BUILD_ROOT + module_path
-        TestModuleValues['module_path'] = path 
+        TestModuleValues['module_path'] = path
         logging.debug("module_path: %s" % path)
     else:
         logging.info("test_module needs to have path")
@@ -84,7 +84,7 @@ def doParse(f):
             logging.debug("p_send: %s" % p_send)
 
             ptuples.append((p_expect, p_send))
-        
+
         case = Test_Case(name, ptuples)
         ## Add to TestModule
         TestModuleValues['test_cases'].append(case)
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     #logging.debug("configFile: %s" % configFile)
     logging.debug("Parsing ConfigFile")
     TestModuleValues = parseConfigFile(args)
-    
+
     logging.debug("Writing to template")
     writeToTemplate(TestModuleValues)
 

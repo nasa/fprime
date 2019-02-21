@@ -1,4 +1,5 @@
-#include <Autocoders/Python/test/cnt_only/Top.hpp>
+#include <Autocoders/Python/test/cnt_only/Components.hpp>
+#include <Autocoders/Python/test/cnt_only/DuckTopologyAppAc.hpp>
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
@@ -13,9 +14,9 @@ using namespace std;
 // Registry
 static Fw::SimpleObjRegistry* simpleReg_ptr = 0;
 
-// Component instance pointers
-Duck::DuckImpl* Huey_ptr = new Duck::DuckImpl("Duck");
-Duck::DuckImpl* Duey_ptr = new Duck::DuckImpl("Duck");
+// Component instances
+extern Duck::DuckImpl Huey;
+extern Duck::DuckImpl Duey;
 
 extern "C" {
 	void dumparch(void);
@@ -28,16 +29,16 @@ extern "C" {
 };
 #endif
 
-int main(int argc, char* argv[])  { 
-        
-        Huey_ptr->init(10);
-        Duey_ptr->init(10);
+int main(int argc, char* argv[])  {
+
+        Huey.init(10);
+        Duey.init(10);
 	// Construct the topology here.
-	constructArchitecture();
+	constructDuckArchitecture();
 
         //Start Components
-        Huey_ptr->start(0, 10 * 1024, 100);
-        Duey_ptr->start(0, 10 * 1024, 100);
+        Huey.start(0, 10 * 1024, 100);
+        Duey.start(0, 10 * 1024, 100);
 
 	// Ask for input to huey or duey here.
 	char in[80];
@@ -62,12 +63,12 @@ int main(int argc, char* argv[])  {
 		cin >> in;
 		//
 		if (in[0]=='h') {
-			cout << "hueyComp_ptr->get_ExtCmdIn_InputPort()->msg1_in(" << cmd << "," << str << ");" << endl;
-			Huey_ptr->get_CmdIn_InputPort(0)->invoke(cmd,*str);
+			cout << "hueyComp.get_ExtCmdIn_InputPort()->msg1_in(" << cmd << "," << str << ");" << endl;
+			Huey.get_CmdIn_InputPort(0)->invoke(cmd,*str);
 			cout << "huey ExtCmdIn call completed..." << endl;
 		} else if (in[0] == 'd') {
-			cout << "dueyComp_ptr->get_ExtCmdIn_InputPort()->msg1_in(" << cmd << "," << str << ");" << endl;
-			Duey_ptr->get_ExtCmdIn_InputPort(0)->invoke(cmd,*str);
+			cout << "dueyComp.get_ExtCmdIn_InputPort()->msg1_in(" << cmd << "," << str << ");" << endl;
+			Duey.get_ExtCmdIn_InputPort(0)->invoke(cmd,*str);
 			cout << "duey ExtCmdIn call completed..." << endl;
 		} else if (strcmp(in,"quit")==0) {
 			cout << "quit demo!" << endl;
@@ -80,11 +81,7 @@ int main(int argc, char* argv[])  {
         break;
 	}
 
-	cout << "Deleting components..." << endl;
-	delete Huey_ptr;
-	delete Duey_ptr;
 	cout << "Delete registration objects..." << endl;
 	delete simpleReg_ptr;
 	cout << "Completed..." << endl;
 }
-

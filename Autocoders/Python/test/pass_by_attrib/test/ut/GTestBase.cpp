@@ -33,7 +33,7 @@ namespace App {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         PassByTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

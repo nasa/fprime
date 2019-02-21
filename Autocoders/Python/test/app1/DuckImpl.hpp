@@ -18,7 +18,7 @@ namespace Duck {
         void ExtCmdIn_handler(NATIVE_INT_TYPE portNum, U32 cmd, Fw::EightyCharString str);
         void CmdIn_handler(NATIVE_INT_TYPE portNum, U32 cmd, Fw::EightyCharString str);
 	};
-	
+
 };
 
 #endif

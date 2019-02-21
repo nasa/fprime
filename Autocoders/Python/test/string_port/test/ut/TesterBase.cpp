@@ -50,7 +50,7 @@ namespace ExampleComponents {
   }
 
   TestComponentTesterBase ::
-    ~TestComponentTesterBase(void) 
+    ~TestComponentTesterBase(void)
   {
   }
 
@@ -133,14 +133,14 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestComponentTesterBase ::
     connect_to_testIn(
         const NATIVE_INT_TYPE portNum,
         AnotherExample::InputTestPort *const testIn
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_testIn(),static_cast<AssertArg>(portNum));
     this->m_to_testIn[portNum].addCallPort(testIn);
@@ -180,7 +180,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   AnotherExample::InputTestPort *TestComponentTesterBase ::
     get_from_testOut(const NATIVE_INT_TYPE portNum)
   {
@@ -202,7 +202,7 @@ namespace ExampleComponents {
     )
   {
     FW_ASSERT(callComp);
-    TestComponentTesterBase* _testerBase = 
+    TestComponentTesterBase* _testerBase =
       static_cast<TestComponentTesterBase*>(callComp);
     _testerBase->from_testOut_handlerBase(
         portNum,
@@ -221,9 +221,9 @@ namespace ExampleComponents {
     this->fromPortHistory_testOut->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: testOut
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestComponentTesterBase ::
     pushFromPortEntry_testOut(
@@ -259,7 +259,7 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestComponentTesterBase ::

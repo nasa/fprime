@@ -94,7 +94,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 arg_str += "%s %s" % (mtype, name)
                 arg_str += ", "
-            
+
         arg_str = arg_str.strip(', ')
         return arg_str
 
@@ -111,7 +111,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += ", "
                 arg_str += "%s" % arg[2]
                 arg_str += ", "
-            else:            
+            else:
                 arg_str += prefix + "%s" % arg[0]
                 arg_str += ", "
 
@@ -123,7 +123,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         Return a list of struct member tuples
         """
         arg_list = list()
-        
+
         for (name,mtype,size,format,comment) in obj.get_members():
             typeinfo = None
             if type(mtype) == type(tuple()):
@@ -134,12 +134,12 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 typeinfo = "string"
             elif mtype not in typelist:
                 typeinfo = "extern"
-                
+
             arg_list.append((name,mtype,size,format,comment,typeinfo))
-            
+
         return arg_list
-    
-    
+
+
 
 
     def _writeTmpl(self, c, visit_str):
@@ -157,7 +157,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate files for generated code products.
         @parms args: the instance of the concrete element to operation on.
         """
-        # Build filename here... 
+        # Build filename here...
         if self.__config.get("serialize","XMLDefaultFileName") == "True":
             namespace = "".join(obj.get_namespace().split('::'))
             filename = namespace + obj.get_name() + self.__config.get("serialize","SerializableCpp")
@@ -175,7 +175,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 msg = "XML file naming format not allowed (must be XXXSerializableAi.xml), Filename: %s" % xml_file
                 PRINT.info(msg)
                 sys.exit(-1)
- 
+
         # Open file for writting here...
         DEBUG.info('Open file: %s' % filename)
         self.__fp = open(filename,'w')
@@ -203,8 +203,10 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         # normalize path to Linux separators - TKC
         path = path.replace("\\","/")
         if ModelParser.BUILD_ROOT != None:
-            if path[:len(ModelParser.BUILD_ROOT)].lower() == ModelParser.BUILD_ROOT.lower():
-                relative_path = path[len(ModelParser.BUILD_ROOT+"/"):]
+            path = os.path.normpath(os.path.realpath(path))
+            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
+            if path[:len(build_root)].lower() == build_root.lower():
+                relative_path = path[len(build_root+'/'):]
             else:
                 PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
                 sys.exit(-1)
@@ -268,7 +270,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args_string = self._get_args_string(obj)
         c.args_mstring = self._get_args_string(obj, "src.m_")
         c.args_mstring_ptr = self._get_args_string(obj, "src->m_")
-        c.members = self._get_conv_mem_list(obj) 
+        c.members = self._get_conv_mem_list(obj)
         self._writeTmpl(c, "publicVisit")
 
 

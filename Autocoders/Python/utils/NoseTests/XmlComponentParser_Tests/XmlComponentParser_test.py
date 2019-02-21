@@ -2,7 +2,7 @@ from parsers import XmlComponentParser
 import os
 
 
-## Manual RecvBuffComponent 
+## Manual RecvBuffComponent
 ## has the following implicit ports:
 #
 #  CmdDisp
@@ -11,7 +11,7 @@ import os
 #
 #  ParamGet
 #  ParamSet
-#  
+#
 #  Telemetry
 #
 #  TimeGet
@@ -24,7 +24,7 @@ def ComponentParser_manualxml_test():
 						   'CmdResponse',
 						   'CmdRegistration',
 						   'ParamGet',
-						   'ParamSet'] 
+						   'ParamSet']
 
 	xmlfile = os.path.join(os.getcwd(), "man_RecvBuffComponentAi.xml")
 

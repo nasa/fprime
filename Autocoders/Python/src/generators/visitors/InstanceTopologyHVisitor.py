@@ -56,7 +56,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
     __form     = None
     __form_comment = None
     __model_parser = None
-    
+
     def __init__(self):
         """
         Constructor.
@@ -69,7 +69,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         self.bodytext       = ""
         self.prototypetext  = ""
 
-        
+
     def _writeTmpl(self, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
@@ -79,8 +79,8 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
         DEBUG.debug('===================================')
-        
-        
+
+
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
@@ -141,8 +141,10 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         # normalize path to Linux separators - TKC
         path = path.replace("\\","/")
         if ModelParser.BUILD_ROOT != None:
-            if path[:len(ModelParser.BUILD_ROOT)] == ModelParser.BUILD_ROOT:
-                relative_path = path[len(ModelParser.BUILD_ROOT+"/"):]
+            path = os.path.normpath(os.path.realpath(path))
+            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
+            if path[:len(build_root)].lower() == build_root.lower():
+                relative_path = path[len(build_root+'/'):]
             else:
                 PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
                 sys.exit(-1)
@@ -151,7 +153,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         #
         c = includes1TopologyH.includes1TopologyH()
         temp = obj.get_comp_list()
-        
+
         # Only generate port connections
         c.connect_only = False
         if obj.connect_only:
@@ -170,7 +172,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         if self.__config.get("component","XMLDefaultFileName") == "False":
             namespace_flag = ""
         #
-        
+
         c.component_header_list = []
         for component in temp:
             #
@@ -191,7 +193,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
             c.path = path
             c.component_header_list.append((path, namespace, component.get_kind()))
         #
-        # Build list of unique component types here...    
+        # Build list of unique component types here...
         comp_types = [k[2] for k in c.component_header_list]
         comp_types = self.__model_parser.uniqueList(comp_types)
         comp_headers = c.component_header_list
@@ -210,8 +212,8 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         for component in temp:
             d = {'ns':component.get_namespace(), 'name':component.get_name(), 'kind':component.get_kind()}
             component_list.append(dict(d))
-            
-            
+
+
         c.component_import_list = []
         for xml_name in obj.get_instance_header_dict():
             if obj.get_instance_header_dict()[xml_name] != None:
@@ -225,14 +227,14 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
             c.component_import_list.append(xml_path)
 
         c.component_declarations = []
-        
+
         for component in component_list:
             if obj.is_ptr:
                 declaration_template = """{ns}::{kind}Impl* {name}_ptr = 0;""".format(**component)
             else:
                 declaration_template = """{ns}::{kind}Impl {name}("{name}");""".format(**component)
             c.component_declarations.append(declaration_template)
-        
+
 
 
         self._writeTmpl(c, "includes1Visit")
@@ -268,7 +270,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         component_list = []
         connection_list = []
         port_list = []
-       
+
         c.name = obj.get_name()
         c.kind = obj
         c.component_declarations = []
@@ -278,7 +280,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         c.component_teardowns = []
         c.command_registrations = []
         c.component_reference_ids = []
-        
+
         # Only generate port connections
         c.connect_only = False
         if obj.connect_only:
@@ -318,25 +320,25 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
                 c.component_declarations.append(declaration_template)
             else:
                 pass ## If objects are generated as instances the object was instansiated in includes
-        #   
-        
+        #
+
         #
         #Generate Set Window/Base ID Method
         for id_tuple in obj.get_base_id_list():
             n = id_tuple[0]
             base_id = id_tuple[1]
             window_id = id_tuple[2]
-            
+
             declaration_template = None
             if(obj.is_ptr):
                 declaration_template = """{}_ptr->setIdBase({});""".format(n , base_id)
             else:
                 declaration_template = """{}.setIdBase({});""".format(n , base_id)
-            
-            
+
+
             c.component_reference_ids.append(declaration_template)
         #
-        
+
         #
         # Generate Component Initalizations
         for component in component_list:
@@ -344,24 +346,24 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
                 init_template = """{name}_ptr->init(10);""".format(**component)
             else:
                 init_template = """{name}.init(10);""".format(**component)
-            c.component_inits.append(init_template) 
+            c.component_inits.append(init_template)
         #
 
         # Generate Port Connections
         for connection in connection_list:
             if connection['type'] == "Serial":
-                    connection['type'] = "Serialize" 
+                    connection['type'] = "Serialize"
             if connection['ttype'] == "Serialize":
-                    connection['ttype'] = "Serialize"  
+                    connection['ttype'] = "Serialize"
 
             comment = "//{comment}".format(**connection)
             if(obj.is_ptr):
                 connection = """{comp}_ptr->set_{name}_OutputPort({num}, {tcomp}_ptr->get_{tname}_InputPort({tnum}));""".format(**connection)
                 connection_template = (comment, connection)
-            else: 
+            else:
                 connection = """{comp}.set_{name}_OutputPort({num}, {tcomp}.get_{tname}_InputPort({tnum}));""".format(**connection)
                 connection_template = (comment, connection)
-            c.port_connections.append(connection_template) 
+            c.port_connections.append(connection_template)
 
         #
         # Generate Component Command Registration
@@ -369,9 +371,9 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
             if connection['type'] == "CmdReg" and connection['direction'] == "output":
                 if(obj.is_ptr):
                     registration = """{comp}_ptr->regCommands();""".format(**connection)
-                else: 
+                else:
                     registration = """{comp}.regCommands();""".format(**connection)
-                c.command_registrations.append(registration) 
+                c.command_registrations.append(registration)
             #c.command_registrations.append(connection['comp']+" "+str(connection['type'])+" "+str(connection['direction']))
 
         #
@@ -383,7 +385,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
                     startup_template = """{name}_ptr->start(0, 100, 10 * 1024);""".format(**component)
                 else:
                     startup_template = """{name}.start(0, 100, 10 * 1024);""".format(**component)
-                c.component_startups.append(startup_template)   
+                c.component_startups.append(startup_template)
         #
 
         #
@@ -395,9 +397,9 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
                     teardown_template = """{name}_ptr->exit();""".format(**component)
                 else:
                     teardown_template = """{name}.exit();""".format(**component)
-                c.component_teardowns.append(teardown_template)   
+                c.component_teardowns.append(teardown_template)
         #
- 
+
         self._writeTmpl(c, "publicVisit")
 
 

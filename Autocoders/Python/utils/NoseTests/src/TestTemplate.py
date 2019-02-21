@@ -3,14 +3,14 @@ import os
 import subprocess
 from subprocess import CalledProcessError
 import pexpect
-from pexpect import EOF, TIMEOUT 
+from pexpect import EOF, TIMEOUT
 
 #TODO
 ## Write application name here
 class Test_#APPLICATION_NAME#:
-        
+
     def test_make(self):
-    
+
         try:
             subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True)
             assert True
@@ -21,7 +21,7 @@ class Test_#APPLICATION_NAME#:
            assert False
 
     def test_make_ut(self):
-        
+
         try:
             subprocess.check_output('make ut', stderr = subprocess.STDOUT, shell=True)
             assert True
@@ -33,12 +33,12 @@ class Test_#APPLICATION_NAME#:
     def test_run_ut(self):
 
         try:
-            p = pexpect.spawn("make run_ut") 
+            p = pexpect.spawn("make run_ut")
 
             #
             ## Write pexpect code here
             #
-        
+
         except EOF: #EOF is thrown when program ends
             assert True
         except TIMEOUT as e:
@@ -54,7 +54,7 @@ class Test_#APPLICATION_NAME#:
 
     @classmethod
     def teardown_class(cls):
-        
+
         cleanCmds = ['make clean', 'make ut_clean']
         for cmd in cleanCmds:
             try:

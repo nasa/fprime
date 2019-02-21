@@ -44,14 +44,14 @@ class InstanceDictStart:
     """
     __visitor_list = []
     __obj          = None
-    
+
     def __init__(self):
         """
         Constructor.
         """
         self.__visitor_list = list()
-        
-        
+
+
     def __call__(self, args , topology_model):
         """
         Main execution point.

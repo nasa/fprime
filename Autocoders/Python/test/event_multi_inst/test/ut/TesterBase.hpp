@@ -132,10 +132,10 @@ namespace Somewhere {
           //!
           History(
               const U32 maxSize /*!< The maximum history size*/
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -346,7 +346,7 @@ namespace Somewhere {
 
       //! The history of SomeEvent events
       //!
-      History<EventEntry_SomeEvent> 
+      History<EventEntry_SomeEvent>
         *eventHistory_SomeEvent;
 
     protected:
@@ -375,7 +375,7 @@ namespace Somewhere {
 
       //! The history of AnotherEvent events
       //!
-      History<EventEntry_AnotherEvent> 
+      History<EventEntry_AnotherEvent>
         *eventHistory_AnotherEvent;
 
     protected:

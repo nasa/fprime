@@ -54,13 +54,13 @@ class TopoFactory:
     __instance = None
 
     def __init__(self):
-        """ 
-        Private Constructor (singleton pattern) 
+        """
+        Private Constructor (singleton pattern)
         """
         self.__instance = None
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.__generate_new_IDS = True #Work around to disable ID generation/table output in the case ACCOnstants.ini is used to build
-        
+
         self.__table_info = [] #["COLUMN NAME" , <INT OF SPACE PADDING AROUND NAME> , "DESCRIPTION"]
         self.__table_info.append(["INSTANCE NAME" , 5 , "Name of the instance object."])
         self.__table_info.append(["BASE ID (HEX)" , 0 , "Base ID set for the instance."])
@@ -75,7 +75,7 @@ class TopoFactory:
         If value is false, IDs will not be generated and will not be used inside the cpp file
         '''
         self.__generate_new_IDS = value
-            
+
 
     def getInstance():
         """
@@ -83,7 +83,7 @@ class TopoFactory:
         """
         if(TopoFactory.__instance is None) :
             TopoFactory.__instance = TopoFactory()
-        
+
         return TopoFactory.__instance
 
 
@@ -97,34 +97,37 @@ class TopoFactory:
         """
         # Instance a list of model.Component classes that are all the instanced items from parsed xml.
         x = the_parsed_topology_xml
-       
-       
+
+
         componentXMLNameToComponent = {} #Dictionary maps XML names to processes component objects so redundant processing is avoided
         components = []
         for comp_xml_path in x.get_comp_type_file_header_dict():
-            file_path = os.environ['BUILD_ROOT'] + '/' + comp_xml_path
-            #print file_path
+            for possible in [os.environ.get("BUILD_ROOT"), os.environ.get("FPRIME_CORE_DIR")]:
+                file_path = os.path.join(possible, comp_xml_path)
+                if os.path.exists(file_path):
+                    break
             processedXML = XmlComponentParser.XmlComponentParser(file_path)
             comp_name = processedXML.get_component().get_name()
             componentXMLNameToComponent[comp_name] = processedXML
-        
+
         for instance in x.get_instances():
             if instance.get_type() not in componentXMLNameToComponent.keys():
                 PRINT.info("Component XML file type {} was not specified in the topology XML. Please specify the path using <import_component_type> tags.".format(instance.get_type()))
             else:
-                instance.set_component_object(componentXMLNameToComponent[instance.get_type()]) 
+                instance.set_component_object(componentXMLNameToComponent[instance.get_type()])
             components.append(Component.Component(instance.get_namespace(), instance.get_name(), instance.get_type(), xml_filename= x.get_xml_filename(), kind2=instance.get_kind()))
-    
+
+
         #print "Assembly name: " + x.get_name(), x.get_base_id(), x.get_base_id_window()
         #for component in components:
         #    print component.get_name(), component.get_base_id(), component.get_base_id_window()
-            
-        if self.__generate_new_IDS: 
+
+        if self.__generate_new_IDS:
             # Iterate over all the model.Component classes and...
             instance_name_base_id_list = self.__compute_base_ids(x.get_base_id(), x.get_base_id_window(), x.get_instances() , x.get_xml_filename())
         else:
             instance_name_base_id_list = []
-        
+
         # Iterate over all the model.Component classes and then...
             # Iterate over all the connection sources and assigned output ports to each Component..
             # For each output port you want to assign the connect comment, target component name, target port and type...
@@ -147,11 +150,11 @@ class TopoFactory:
                         port.set_target_direction("input")
                     else:
                         port.set_target_direction("output")
-                    
+
                     port_obj_list.append(port)
             component.set_ports(port_obj_list)
 
-        # Instance a Topology class and give it namespace, comment and list of components.        
+        # Instance a Topology class and give it namespace, comment and list of components.
         the_topology = Topology.Topology(x.get_namespace(), x.get_comment(), components, x.get_name() , instance_name_base_id_list , x.get_prepend_instance_name())
         the_topology.set_instance_header_dict(x.get_comp_type_file_header_dict())
 
@@ -165,9 +168,9 @@ class TopoFactory:
             out = int(float(id_string))
         except:
             out = int(id_string , 16)
-            
+
         return out
-    
+
     def __compute_component_base_id_range(self , comp_xml):
         """
         Computes the base ID range of an XMLComponentParser object.
@@ -175,50 +178,50 @@ class TopoFactory:
         if not comp_xml:
             return None
         highest_ID = None
-        
+
         event_id_list = []
         for event in comp_xml.get_events():
             #if len(event.get_ids()) != 1:
             #   print("Component of type {} has multiple IDs for event {}. Please check if the ACConstants.ini file has all the ids set to zero.".format(comp_xml.get_component().get_name() , event.get_name()))
             id = self.__id_to_int(event.get_ids()[0])
-            
+
             if id in event_id_list:
                 print("IDCollisionError: Event ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
             event_id_list.append(id)
-            
+
             if id > highest_ID:
                 highest_ID = id
-                
-        channel_id_list = []        
+
+        channel_id_list = []
         for channel in comp_xml.get_channels():
             #if len(event.get_ids()) != 1:
             #   print("Component of type {} has multiple IDs for event {}. Please check if the ACConstants.ini file has all the ids set to zero.".format(comp_xml.get_component().get_name() , event.get_name()))
             id = self.__id_to_int(channel.get_ids()[0])
-            
+
             if id in channel_id_list:
                 print("IDCollisionError: Channel ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
             channel_id_list.append(id)
-            
+
             if id > highest_ID:
                 highest_ID = id
-                
-                
+
+
         command_id_list = []
         for commands in comp_xml.get_commands():
             #if len(event.get_ids()) != 1:
             #   print("Component of type {} has multiple IDs for event {}. Please check if the ACConstants.ini file has all the ids set to zero.".format(comp_xml.get_component().get_name() , event.get_name()))
             id = self.__id_to_int(commands.get_opcodes()[0])
-            
+
             if id in command_id_list:
                 print("IDCollisionError: Command ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
             command_id_list.append(id)
-            
+
             if id > highest_ID:
                 highest_ID = id
-                
+
         parameter_id_list = []
         parameter_opcode_list = []
         for parameters in comp_xml.get_parameters():
@@ -226,20 +229,20 @@ class TopoFactory:
             #   print("Component of type {} has multiple IDs for event {}. Please check if the ACConstants.ini file has all the ids set to zero.".format(comp_xml.get_component().get_name() , event.get_name()))
             #Check ids
             id = self.__id_to_int(parameters.get_ids()[0])
-            
+
             if id in parameter_id_list:
                 print("IDCollisionError: Parameter ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
             parameter_id_list.append(id)
-            
+
             if id > highest_ID:
                 highest_ID = id
-                
-            #check set/save op and make sure they don't collide with command IDS
+
+            #check set/save op and make sure they don't collide with command IDs
             #Set opcodes
-            
+
             id = self.__id_to_int(parameters.get_set_opcodes()[0])
-            
+
             if id in parameter_opcode_list:
                 print("IDCollisionError: Parameter set opcode {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
@@ -247,14 +250,14 @@ class TopoFactory:
                 print("IDCollisionError: Parameter set opcode {} in component {} is the same as another command id in this component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
             parameter_opcode_list.append(id)
-            
+
             if id > highest_ID:
                 highest_ID = id
-            
+
             #Save opcodes
 
             id = self.__id_to_int(parameters.get_save_opcodes()[0])
-            
+
             if id in parameter_opcode_list:
                 print("IDCollisionError: Parameter save opcode {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
@@ -262,15 +265,15 @@ class TopoFactory:
                 print("IDCollisionError: Parameter save opcode {} in component {} is the same as another command id in this component.".format(id , comp_xml.get_component().get_name()))
                 sys.exit(-1)
             parameter_opcode_list.append(id)
-            
+
             if id > highest_ID:
                 highest_ID = id
-                
-            
-                
+
+
+
         if highest_ID != None:
             return highest_ID + 1
-    
+
     def __compute_component_ID_amount(self , comp_xml):
         """
         Computes the max amount of IDs found in an XMLComponentParser object.
@@ -278,9 +281,9 @@ class TopoFactory:
         if not comp_xml:
             return None
         return max(len(comp_xml.get_events())  , len(comp_xml.get_channels()) + 2 * len(comp_xml.get_parameters()) , len(comp_xml.get_commands()) , len(comp_xml.get_parameters()) )
-        
-        
-    
+
+
+
     def __compute_base_ids(self, assembly_base_id, assembly_window, instances , xml_file_path):
         """
         Compute the set of baseIds for the component instances here.
@@ -294,37 +297,37 @@ class TopoFactory:
         if assembly_window == None:
             assembly_window = self.__config.get('assembly','window')
             PRINT.info("WARNING: No assembly base Id window size set, defaulting to %s" % assembly_window)
-        
+
         base_ids_list = []
         out_base_ids_list = []
-        
+
         assembly_base_id = int(assembly_base_id)
-        assembly_window  = int(assembly_window)    
-        
+        assembly_window  = int(assembly_window)
+
         initial_comp_with_ID = [] #List of component tuples that have base IDS specified in the topology model
         initial_comp_without_ID = [] #Lit of component tuples that do not have base IDS specified in the topology model
-        
+
         id = assembly_base_id
         if(id <= 0):
             id = 1
         window = assembly_window
-        
+
         # Pass 1 - Populate initial_comp lists with their respective items
-        
+
         for inst in instances:
             t = self.__set_base_id_list(id, window, inst)
             if inst.get_base_id() == None:
                 initial_comp_without_ID.append(t)
             else:
                 initial_comp_with_ID.append(t)
-                
-        # Pass 2 - Sort with_ID list by base ID and without_ID list by window size    
-        
+
+        # Pass 2 - Sort with_ID list by base ID and without_ID list by window size
+
         initial_comp_with_ID.sort(key=lambda x: x[1])
         initial_comp_without_ID.sort(key=lambda x: x[2])
-        
-        # Pass 3 - Check with_ID list to ensure no base / window IDs collide
-        
+
+        # Pass 3 - Check with_ID list to ensure no base / window IDS collide
+
         prev_id = 0
         prev_window = 0
         prev_name = "NONE"
@@ -338,9 +341,9 @@ class TopoFactory:
             prev_name = t[0]
             prev_id = t[1]
             prev_window = t[2]
-            
+
         # Pass 4 - Merge ID lists
-        
+
         prev_id = id
         prev_window = 0
         with_ID_obj = None
@@ -348,15 +351,15 @@ class TopoFactory:
         while(True):
             if len(initial_comp_with_ID) == 0 and len(initial_comp_without_ID) == 0 and not with_ID_obj and not without_ID_obj :
                 break
-            
+
             if len(initial_comp_with_ID) > 0 and with_ID_obj == None:
                 with_ID_obj = initial_comp_with_ID.pop(0)
-                
+
             if len(initial_comp_without_ID) > 0 and without_ID_obj == None:
                 without_ID_obj = initial_comp_without_ID.pop(0)
-            
+
             next_poss_id = prev_id + prev_window #The next possible id that can be taken
-            
+
             if with_ID_obj  == None and without_ID_obj != None: #If there is nothing in the with ID list, but items exist in the without ID list
                 without_ID_obj[1] = next_poss_id
                 out_base_ids_list.append(without_ID_obj)
@@ -372,14 +375,14 @@ class TopoFactory:
                 else:
                     out_base_ids_list.append(with_ID_obj)
                     with_ID_obj = None
-                
+
             prev_id = out_base_ids_list[-1][1]
             prev_window = out_base_ids_list[-1][2]
-            
-            
+
+
         # Pass 5 - Save and Print table
-        save_buffer = "" 
-        
+        save_buffer = ""
+
         prev = None
         act_wind = 0
         for t in out_base_ids_list:
@@ -388,19 +391,19 @@ class TopoFactory:
             save_buffer = self.__print_base_id_table(prev , act_wind , save_buffer)
             prev = t
         save_buffer = self.__print_base_id_table(prev , "inf." , save_buffer)
-        
+
         save_buffer = self.__print_base_id_table_comments(save_buffer)
-        
+
         csv_removed_from_path_name = xml_file_path.replace(".XML" , "")
         csv_removed_from_path_name = csv_removed_from_path_name.replace(".xml" , "")
         save_log_file_path = csv_removed_from_path_name + "_IDTableLog.txt"
-        
+
         save_log_file = open(save_log_file_path , 'w')
         save_log_file.write(save_buffer)
         save_log_file.close()
-        
+
         return out_base_ids_list
-    
+
     def __print_base_id_table_comments(self , save_buffer):
         #First find the table length and the largest length of a column header
         tableSize = 0
@@ -410,11 +413,11 @@ class TopoFactory:
             tableSize += headerLen + 2 * header[1]
             if headerLen > largestColHeader:
                 largestColHeader = headerLen
-        
-        print_item  = "-" * (tableSize + 4)  
+
+        print_item  = "-" * (tableSize + 4)
         PRINT.info(print_item)
         save_buffer += print_item + "\n"
-        
+
         tabLen = largestColHeader + 3
         for header in self.__table_info:
             headerLen = len(header[0])
@@ -429,29 +432,29 @@ class TopoFactory:
                     newSize = tableSize - tabLen
                     outString =  " " * tabLen + desc[0:newSize]
                     desc = desc[newSize:]
-                print_item  = "| " + outString + ((tableSize - len(outString))  * " ") + " |"  
+                print_item  = "| " + outString + ((tableSize - len(outString))  * " ") + " |"
                 PRINT.info(print_item)
                 save_buffer += print_item + "\n"
-                
+
         print_item  = "-" * (tableSize + 4)
         PRINT.info(print_item)
         save_buffer += print_item + "\n"
-        
+
         return save_buffer
-        
-    
+
+
     def __print_base_id_table(self , base_id_tuple , actual_window_size , save_buffer):
         """
         Routing prints the base_id_list to a table format.
         If base_id_list is None, the routing prints the header
         """
-        
-        
+
+
         if base_id_tuple == None:
             print_item = " | ".join(header[1] * ' ' + header[0] + header[1] * ' ' for header in self.__table_info)
             save_buffer += print_item + "\n"
             PRINT.info(print_item)
-            
+
         else:
             ns = ""
             if(base_id_tuple[3].get_base_max_id_window() == None):
@@ -463,9 +466,9 @@ class TopoFactory:
             data_row.append(str(actual_window_size))
             data_row.append(str(base_id_tuple[4]))
             data_row.append(str(base_id_tuple[5]))
-            
+
             table_header_size = [len(header[0]) + 2 * header[1] for header in self.__table_info]
-            
+
             while(True):
                 #Check if the items in the data_row  have a length of zero
                 all_items_lenth_zero = True
@@ -474,7 +477,7 @@ class TopoFactory:
                         all_items_lenth_zero = False
                 if all_items_lenth_zero:
                     break
-                
+
                 row_string = ""
                 for i in range(len(self.__table_info)):
                     curr_write_string = data_row[i][0:table_header_size[i]]
@@ -483,11 +486,11 @@ class TopoFactory:
                         row_string += " | "
                     format_string = "{0:^"+str(table_header_size[i])+"}"
                     row_string += format_string.format(curr_write_string)
-                    
+
                 save_buffer += row_string + "\n"
                 PRINT.info(row_string)
         return save_buffer
-                    
+
 
 
     def __set_base_id_list(self, id, size, inst):
@@ -517,18 +520,18 @@ class TopoFactory:
             PRINT.info("WARNING: %s instance reseting base id to %d" % (n,b))
         #
         # set window size or override it on instance basis
-        
+
         component_calculated_window_range = self.__compute_component_base_id_range(comp)
-        
+
         '''
-        Note: The calculated window range is really the largest ID (plus one) found in the component object. 
-        
+        Note: The calculated window range is really the largest ID (plus one) found in the component object.
+
         Logic for calculating window size
         1) If user specifies window size in instance tag, use that.
         2) If the user does not specify the window size in the instance tag, use the larger of the default window size and the calculated window size
         3) If the calculated window size is larger than the new window size, thrown an error
         '''
-        
+
         if inst.get_base_id_window() != None:
             w = abs(int(inst.get_base_id_window()))
             PRINT.info("{} instance reseting base id window range to instance specified size ({})".format(n,w))
@@ -539,11 +542,11 @@ class TopoFactory:
             else:
                 w = component_calculated_window_range
                 PRINT.info("{} instance reseting base id window range to size calculated from the component XML file ({})".format(n,w))
-                
+
 
         if w < component_calculated_window_range:
             PRINT.info("ERROR: The specified window range for component {} is {}, which is smaller than the calculated window range of {}. Please check the instance definitions in the topology xml file.".format(n , w , component_calculated_window_range))
-            
+
         return [n, b, w , inst , component_calculated_window_range , self.__compute_component_ID_amount(comp)]
 
 
@@ -557,7 +560,7 @@ def main():
     #
     # Basic usage of this factory to create the component meta-model
     #
-    the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xmlfile)    
+    the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xmlfile)
     top = TopoFactory().create(the_parsed_topology_xml)
     #
     # End of usage and comp is the instance of model to be used.
@@ -586,10 +589,10 @@ def main():
             print "        Target Port: " + port.get_target_port()
             print "        Target Type: " + port.get_target_type()
             print "        Target Direction:" + port.get_target_direction()
-            print  
+            print
         print
-        
-        
+
+
 
 if __name__ == '__main__':
     main()

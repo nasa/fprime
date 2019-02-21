@@ -60,8 +60,8 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
-        DEBUG.debug('===================================')     
-        
+        DEBUG.debug('===================================')
+
     def argsString(self, args):
         '''
         Make a list of args into a string
@@ -72,7 +72,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             result = args[0]
             for arg in args[1:]:
                 result += ", %s"%arg
-        return result 
+        return result
 
     def buildFileName(self, obj):
         """
@@ -100,7 +100,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Make a list of command args into a string
         '''
         def f(lst):
-            def g((name, a, b, c)): 
+            def g((name, a, b, c)):
                 return name
             return self.argsString(map(g, lst))
         return f
@@ -175,8 +175,8 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             str = ""
             for i in xrange(0, length-1):
                 str += self.emitParam(
-                    NOT_LAST, 
-                    indent, 
+                    NOT_LAST,
+                    indent,
                     paramStrs,
                     params[i]
                 )
@@ -205,7 +205,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Make a list of event args into a string
         '''
         def f(args):
-            def g(lst): 
+            def g(lst):
                 name = lst[0]
                 return name
             return self.argsString(map(g, args))
@@ -237,26 +237,26 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             c.params_init_hpp = [ c.param_instance_default_zero ]
             c.params_init_cpp = [ c.param_instance ]
         elif c.needs_msg_size:
-            c.params_init_hpp = [ 
-                c.param_queueDepth, 
-                c.param_msgSize, 
+            c.params_init_hpp = [
+                c.param_queueDepth,
+                c.param_msgSize,
                 c.param_instance_default_zero
             ]
             c.params_init_cpp = [
-                c.param_queueDepth, 
-                c.param_msgSize, 
+                c.param_queueDepth,
+                c.param_msgSize,
                 c.param_instance
             ]
         else:
-            c.params_init_hpp = [ 
-                c.param_queueDepth, 
+            c.params_init_hpp = [
+                c.param_queueDepth,
                 c.param_instance_default_zero
             ]
-            c.params_init_cpp = [ 
-                c.param_queueDepth, 
+            c.params_init_cpp = [
+                c.param_queueDepth,
                 c.param_instance
             ]
-        
+
     def initBase(self, visitor):
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.__form         = formatters.Formatters.getInstance()
@@ -272,18 +272,18 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Command function parameters for code generation
         '''
         c.param_cmdSeq = (
-            "cmdSeq", 
-            "const U32", 
+            "cmdSeq",
+            "const U32",
             "The command sequence number"
         )
         c.param_opCode = (
-            "opCode", 
-            "const FwOpcodeType", 
+            "opCode",
+            "const FwOpcodeType",
             "The opcode"
         )
         c.param_response = (
-            "response", 
-            "const Fw::CommandResponse", 
+            "response",
+            "const Fw::CommandResponse",
             "The command response"
         )
 
@@ -319,38 +319,38 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Some of these are also used for telemetry
         '''
         c.param_event_id = (
-            "id", 
-            "const FwEventIdType", 
+            "id",
+            "const FwEventIdType",
             "The event ID"
         )
         c.param_timeTag = (
-            "timeTag", 
-            "Fw::Time&", 
+            "timeTag",
+            "Fw::Time&",
             "The time"
         )
         c.param_const_timeTag = (
-            "timeTag", 
-            "const Fw::Time&", 
+            "timeTag",
+            "const Fw::Time&",
             "The time"
         )
         c.param_log_severity = (
-            "severity", 
-            "const Fw::LogSeverity", 
+            "severity",
+            "const Fw::LogSeverity",
             "The severity"
         )
         c.param_text_log_severity = (
-            "severity", 
-            "const Fw::TextLogSeverity", 
+            "severity",
+            "const Fw::TextLogSeverity",
             "The severity"
         )
         c.param_args = (
-            "args", 
-            "Fw::LogBuffer&", 
+            "args",
+            "Fw::LogBuffer&",
             "The serialized arguments"
         )
         c.param_text = (
-            "text", 
-            "const Fw::TextLogString&", 
+            "text",
+            "const Fw::TextLogString&",
             "The event string"
         )
 
@@ -400,7 +400,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             else:
                 return None
         port_types = self.mapPartial(f, c.ports_sync)
-        
+
         def g( (mnemonic, opcodes, sync, priority, full, comment) ):
             if self.isAsync(sync):
                 if len(opcodes) == 1:
@@ -415,13 +415,13 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             else:
                 return None
         cmd_types = self.mapPartial(g, c.commands)
-        
+
         def h( (name, priority, full)):
             return "INT_IF_" + name.upper()
-        
+
         il = self.__model_parser.getInternalInterfacesList(obj)
-        interface_types = self.mapPartial(h, c.internal_interfaces) 
-        
+        interface_types = self.mapPartial(h, c.internal_interfaces)
+
         c.msg_types = port_types + cmd_types + interface_types
 
     def initParameterParams(self, obj, c):
@@ -429,8 +429,8 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Parameter function parameters for code generation
         '''
         c.param_valid = (
-            "valid", 
-            "Fw::ParamValid", 
+            "valid",
+            "Fw::ParamValid",
             "The parameter valid flag"
         )
 
@@ -463,9 +463,9 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.has_serial_output_ports = len(c.serial_output_ports) > 0
 
     def initPortIncludes(self, obj, c):
-        c.port_includes = list()    
+        c.port_includes = list()
         for include in self.__model_parser.uniqueList(obj.get_xml_port_files()):
-            c.port_includes.append(include.replace("PortAi.xml","PortAc.hpp"))    
+            c.port_includes.append(include.replace("PortAi.xml","PortAc.hpp"))
 
     def initPortInputTypes(self, obj, c):
         '''
@@ -687,7 +687,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             if role == 'LogEvent':
                 c.LogEvent_Name = name
             if role == 'LogTextEvent':
-                c.LogTextEvent_Name = name    
+                c.LogTextEvent_Name = name
             if role == 'ParamGet':
                 c.ParamGet_Name = name
             if role == 'ParamSet':
@@ -702,21 +702,21 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Port function parameters for code generation
         '''
         c.param_portNum = (
-            "portNum", 
-            "const NATIVE_INT_TYPE", 
-            "The port number", 
+            "portNum",
+            "const NATIVE_INT_TYPE",
+            "The port number",
             ""
         )
         c.param_Buffer = (
-            "Buffer", 
-            "Fw::SerializeBufferBase", 
-            "The serialization buffer", 
+            "Buffer",
+            "Fw::SerializeBufferBase",
+            "The serialization buffer",
             "&"
         )
         c.param_callComp = (
-            "callComp", 
-            "Fw::PassiveComponentBase", 
-            "The component instance", 
+            "callComp",
+            "Fw::PassiveComponentBase",
+            "The component instance",
             "*const "
         )
         c.emit_port_params_hpp = self.emitPortParamsHpp
@@ -753,28 +753,28 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.emit_non_port_params = c.emit_non_port_params_hpp
         c.emit_non_port_params_cpp = self.emitNonPortParamsCpp
         c.param_compName = (
-            "compName", 
-            "const char *const", 
+            "compName",
+            "const char *const",
             "The component name"
         )
         c.param_instance = (
-            "instance", 
-            "const NATIVE_INT_TYPE", 
+            "instance",
+            "const NATIVE_INT_TYPE",
             "The instance number"
         )
         c.param_instance_default_zero = (
-            "instance = 0", 
-            "const NATIVE_INT_TYPE", 
+            "instance = 0",
+            "const NATIVE_INT_TYPE",
             "The instance number"
         )
         c.param_msgSize = (
-            "msgSize", 
-            "const NATIVE_INT_TYPE", 
+            "msgSize",
+            "const NATIVE_INT_TYPE",
             "The message size"
         )
         c.param_queueDepth = (
-            "queueDepth", 
-            "const NATIVE_INT_TYPE", 
+            "queueDepth",
+            "const NATIVE_INT_TYPE",
             "The queue depth"
         )
 
@@ -783,11 +783,11 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Include any headers for channel/parameter serializable includes
         '''
         ser_includes = [
-            si.get_xml_filename() 
+            si.get_xml_filename()
             for si in obj.get_serializables()
         ]
         s_includes = [
-            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","") 
+            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","")
             for sinc in ser_includes
         ]
         c.ser_includes = s_includes
@@ -801,19 +801,19 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.channel_enums = self.__model_parser.getTelemEnumList(obj)
         c.channels = self.__model_parser.getChannelsList(obj)
         self.initTelemetryParams(obj, c)
-        
+
     def initTelemetryParams(self, obj, c):
         '''
         Telemetry function parameters for code generation
         '''
         c.param_tlm_id = (
-            "id", 
-            "const FwChanIdType", 
+            "id",
+            "const FwChanIdType",
             "The channel ID"
         )
         c.param_val = (
-            "val", 
-            "Fw::TlmBuffer&", 
+            "val",
+            "Fw::TlmBuffer&",
             "The channel value"
         )
 
@@ -832,7 +832,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Make a list of command args into a string
         '''
         def f(lst):
-            def g((name, a, b, c)): 
+            def g((name, a, b, c)):
                 return name
             return self.argsString(map(g, lst))
         return f
@@ -867,7 +867,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         if self.__fp == None:
             raise "Could not open file %s" % filename
         DEBUG.info('Completed')
-        
+
     def initFilesVisit(self, obj):
         filename = self.buildFileName(obj)
         self.openFile(filename)
@@ -924,8 +924,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         # normalize path to Linux separators - TKC
         path = path.replace("\\","/")
         if ModelParser.BUILD_ROOT != None:
-            if path[:len(ModelParser.BUILD_ROOT)].lower() == ModelParser.BUILD_ROOT.lower():
-                relative_path = path[len(ModelParser.BUILD_ROOT+'/'):]
+            path = os.path.normpath(os.path.realpath(path))
+            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
+            if path[:len(build_root)].lower() == build_root.lower():
+                relative_path = path[len(build_root+'/'):]
             else:
                 PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
                 sys.exit(-1)

@@ -23,7 +23,7 @@
             <enum name="SomeEnum">
                 <item name="MEMBER1"/>
                 <item name="MEMBER2" value="7" comment="A non-RT interrupt fictional item"/>
-                <item name="MEMBER3" value="15"/>           
+                <item name="MEMBER3" value="15"/>
             </enum>
             <comment>The ENUM argument</comment>
         </arg>

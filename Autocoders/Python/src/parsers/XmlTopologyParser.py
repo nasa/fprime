@@ -2,9 +2,9 @@
 #===============================================================================
 # NAME: XmlTopologyParser.py
 #
-# DESCRIPTION:  This class parses the XML serializable types files. 
+# DESCRIPTION:  This class parses the XML serializable types files.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -36,7 +36,7 @@ from models import ModelParser
 # Global logger init. below.
 PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
-
+ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
 #
 class XmlTopologyParser(object):
     def __init__(self, xml_file=None):
@@ -56,32 +56,32 @@ class XmlTopologyParser(object):
         #
         self.__base_id = None
         self.__base_id_window = None
-        
+
         self.__prepend_instance_name = False #Used to turn off prepending instance name in the situation where instance dicts are being generated and only one instance of an object is created
 
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(stri)
             raise IOError, stri
-        
+
         fd = open(xml_file,'r')
         element_tree = etree.parse(fd)
-        
+
         #Validate against schema
-        relax_file_handler = open(os.environ["BUILD_ROOT"] +self.__config.get('schema' , 'assembly') , 'r')
+        relax_file_handler = open(ROOTDIR +self.__config.get('schema' , 'assembly') , 'r')
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
-        
+
         try:
             relax_compiled.assert_(element_tree)
         except Exception , e:
-            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file ,os.environ["BUILD_ROOT"] + self.__config.get('schema' , 'assembly')))
+            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file ,ROOTDIR + self.__config.get('schema' , 'assembly')))
             PRINT.info(e)
             PRINT.info(relax_compiled.error_log)
             PRINT.info(relax_compiled.error_log.last_error)
             raise e
-        
+
         for e in element_tree.iter():
             c = None
             if e.tag == 'assembly' or e.tag == 'deployment':
@@ -107,7 +107,7 @@ class XmlTopologyParser(object):
                     self.__base_id_window = e.attrib['base_id_range']
                 else:
                     self.__base_id_window = None
-                    
+
                 if 'prepend_instance_name' in e.attrib:
                     if e.attrib['prepend_instance_name'].upper() == "TRUE":
                         self.__prepend_instance_name = True
@@ -198,9 +198,17 @@ class XmlTopologyParser(object):
         # For each component xml file specified assign it to a component instance object
         PRINT.info("\nSearching for component XML files")
         for xml_file in self.__comp_type_files:
-            if ModelParser.BUILD_ROOT != None:
-                xml_file = ModelParser.BUILD_ROOT + os.sep + xml_file
-            xml_file = xml_file.strip()
+            core = os.environ.get("FPRIME_CORE_DIR")
+            for possible in [ModelParser.BUILD_ROOT, core, None]:
+                if not possible is None:
+                    checker = os.path.join(possible, xml_file)
+                else:
+                    checker = xml_file
+                if os.path.exists(checker):
+                    break
+            else:
+                PRINT.info("WARNING: Could not find XML file: %s" % xml_file)
+            xml_file = checker.strip()
             if os.path.exists(xml_file) == True:
                 PRINT.info("Found component XML file: %s" % xml_file)
                 xml_parsed = XmlComponentParser.XmlComponentParser(xml_file)
@@ -209,8 +217,6 @@ class XmlTopologyParser(object):
                         PRINT.info("Populating instance %s of type %s with parser tree" % (inst.get_name(), inst.get_type()))
                         DEBUG.info("Populating instance %s of type %s with parser tree" % (inst.get_name(), inst.get_type()))
                         inst.set_comp_xml(xml_parsed)
-            else:
-                PRINT.info("WARNING: Could not find XML file: %s" % xml_file)
         #
         # For each instance determine if it is active or passive here...
         # Determine a maximum base id window required for each instance here
@@ -235,13 +241,13 @@ class XmlTopologyParser(object):
         Return root directory
         """
         return self.__root
-        
+
     def is_topology(self):
         """
         Returns true if topology xml or false if other type.
         """
         return self.__is_topology_xml
-    
+
     def get_xml_filename(self):
         """
         Return the original XML filename parsed.
@@ -253,13 +259,13 @@ class XmlTopologyParser(object):
         Return namespace
         """
         return self.__namespace
-    
+
     def get_name(self):
         """
         Return name
         """
         return self.__name
-    
+
     def get_deployment(self):
         """
         Return deployment for instanced topology dictionaries
@@ -271,25 +277,25 @@ class XmlTopologyParser(object):
         Return top level topology comment string
         """
         return self.__comment
-    
+
     def get_instances(self):
         """
         Returns a topology object.
         """
         return self.__instances
-    
+
     def get_connections(self):
         """
         Returns a topology object.
         """
         return self.__connections
-    
+
     def get_base_id(self):
         """
         Return base id of topology
         """
         return self.__base_id
-    
+
     def get_base_id_window(self):
         """
         Return base id window size of topology
@@ -306,13 +312,13 @@ class XmlTopologyParser(object):
         ev_ids = len(x.get_events())
         par_ids = len(x.get_parameters())
         return max([cmd_ids, ch_ids, ev_ids, par_ids])
-    
+
     def get_comp_type_file_header_dict(self):
         return self.__comp_type_file_header
-    
+
     def get_prepend_instance_name(self):
         return self.__prepend_instance_name
-    
+
 class Connection(object):
     """
     Storage for connection data
@@ -332,13 +338,13 @@ class Connection(object):
         self.__target_port = None
         self.__target_type = None
         self.__target_num  = None
-    
+
     def set_comment(self, c):
         """
         Set comment string here...
         """
         self.__comment = c
-            
+
     def set_source(self, comp, port, type, num):
         """
         Set source data here...
@@ -347,7 +353,7 @@ class Connection(object):
         self.__source_port = port
         self.__source_type = type
         self.__source_num = num
-        
+
     def set_target(self, comp, port, type, num):
         """
         Set target data here...
@@ -356,7 +362,7 @@ class Connection(object):
         self.__target_port = port
         self.__target_type = type
         self.__target_num = num
-        
+
     def get_name(self):
         return self.__name
     def get_type(self):
@@ -367,8 +373,8 @@ class Connection(object):
         return (self.__target_comp, self.__target_port, self.__target_type, self.__target_num)
     def get_comment(self):
         return self.__comment
-    
-    
+
+
 class Instance(object):
     """
     Instance of components to connect
@@ -384,12 +390,12 @@ class Instance(object):
         self.__xml_parsed_file = None
         self.__dict_short_name = dict_short_name
         self.__component_obj = None #Used in TopoFactory to compute window IDS
-    
+
     def set_component_object(self , comp):
         self.__component_obj = comp
     def get_component_object(self):
         return self.__component_obj
-    
+
     def get_name(self):
         return self.__name
     def get_type(self):
@@ -404,34 +410,34 @@ class Instance(object):
         return self.__base_id
     def get_base_id_window(self):
         return self.__base_id_window
-    
+
     def get_comp_xml(self):
         return self.__xml_parsed_file
     def set_comp_xml(self, x):
         self.__xml_parsed_file = x
-    
+
     def get_base_max_id_window(self):
         return self.__base_max_id_window
     def set_base_max_id_window(self, m):
         self.__base_max_id_window = m
-        
+
     def get_dict_short_name(self):
         return self.__dict_short_name
-    
+
 if __name__ == '__main__':
 
     xmlfile = "../../test/app1a/DuckAppAi.xml"
 
     print "Topology XML parse test (%s)" % xmlfile
-     
+
     xml_topology_parser = XmlTopologyParser(xmlfile)
     instances = xml_topology_parser.get_instances()
     connections = xml_topology_parser.get_connections()
-    
+
     print "Topology XML: %s" % xml_topology_parser.is_topology()
     print "Namespace: %s" % xml_topology_parser.get_namespace()
     print "Comment: %s" % xml_topology_parser.get_comment()
-    
+
     print "Instances:"
     for x in instances:
         print "Name: %s, Type: %s" % (x.get_name(), x.get_type())

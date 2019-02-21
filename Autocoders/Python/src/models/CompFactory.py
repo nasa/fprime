@@ -54,8 +54,8 @@ class CompFactory:
 
 
     def __init__(self):
-        """ 
-        Private Constructor (singleton pattern) 
+        """
+        Private Constructor (singleton pattern)
         """
         self.__parsed   = None
         self.__instance = None
@@ -68,7 +68,7 @@ class CompFactory:
         """
         if(CompFactory.__instance is None) :
             CompFactory.__instance = CompFactory()
-        
+
         return CompFactory.__instance
 
 
@@ -88,7 +88,7 @@ class CompFactory:
         comp_parameter_obj_list = x.get_parameters()
         comp_event_obj_list = x.get_events()
         comp_internal_interface_obj_list = x.get_internal_interfaces()
-        
+
         #
         comp_namespace = comp_obj.get_namespace()
         comp_name      = comp_obj.get_name()
@@ -98,17 +98,17 @@ class CompFactory:
         if comp_namespace == None:
             comp_full_name = comp_name
         else:
-            comp_full_name = comp_namespace + "::" + comp_name  
+            comp_full_name = comp_namespace + "::" + comp_name
         # get original filename here...
         comp_xml_filename = x.get_xml_filename()
         #
         comp_xml_port_files = x.get_port_type_files()
         comp_c_header_files = x.get_header_files()
         has_guarded_ports = False
-        
+
         num_async_ports = 0
         num_sync_ports = 0 # includes guarded ports
-        
+
         #
         #print ("Component: %s"%comp_name)
         incl_list = []
@@ -155,8 +155,8 @@ class CompFactory:
                 size    = a.get_size()
                 arg_obj_list.append(Arg.Arg(name, atype, None, size, comment))
             command_obj_list.append(Command.Command(m, o, arg_obj_list, s, p, c, comp_xml_filename,comp_full_name , component_base_name = comp_name , base_opcode = command_obj.get_base_opcode() , full  = f))
-            
-            
+
+
         channel_obj_list = []
         for channel_obj in comp_channel_obj_list:
             i=channel_obj.get_ids()
@@ -169,19 +169,19 @@ class CompFactory:
             u=channel_obj.get_update()
             l=channel_obj.get_limits()
             channel_obj_list.append(
-                Channel.Channel(ids=i, 
-                                name=n, 
-                                ctype=t, 
-                                size=s, 
-                                abbrev=a, 
-                                format_string=f, 
+                Channel.Channel(ids=i,
+                                name=n,
+                                ctype=t,
+                                size=s,
+                                abbrev=a,
+                                format_string=f,
                                 update=u,
                                 limits=l,
                                 comment=c,
                                 xml_filename=comp_xml_filename,
                                 component_name=comp_full_name,
                                 component_base_name = comp_name))
-        
+
         event_obj_list = []
         for event_obj in comp_event_obj_list:
             i=event_obj.get_ids()
@@ -198,7 +198,7 @@ class CompFactory:
                 comment = a.get_comment()
                 arg_obj_list.append(Arg.Arg(name, atype, None, size, comment))
             event_obj_list.append(Event.Event(i, n, s, f, t, arg_obj_list, c, comp_xml_filename,comp_full_name , component_base_name = comp_name))
-            
+
         internal_interface_obj_list = []
         for internal_interface_obj in comp_internal_interface_obj_list:
             # borrow this for check
@@ -227,7 +227,7 @@ class CompFactory:
             s=parameter_obj.get_size()
             c=parameter_obj.get_comment()
             parameter_obj_list.append(Parameter.Parameter(i, n, t, set_ops, save_ops, d, s, c, comp_xml_filename,comp_full_name , base_setop = parameter_obj.get_base_setop() , base_saveop = parameter_obj.get_base_saveop()))
-            
+
         serializable_obj_list = []
         for serializable_obj in parsed_serializable_list:
             f=serializable_obj.get_xml_filename()
@@ -239,7 +239,7 @@ class CompFactory:
             m=serializable_obj.get_members()
             t=serializable_obj.get_typeid()
             serializable_obj_list.append(Serialize.Serialize(f,n,ns,c,x,None,m,t))
-                    
+
         #
         # Check here to make sure all the port types in the component XML
         # exist in the port XMLs
@@ -272,7 +272,7 @@ class CompFactory:
             for parsed_port_obj in parsed_port_xml_list:
                 #print "Meta: Name: %s, Type: %s" % (port_obj.get_name(), port_obj.get_type())
                 #print "Meta: Port Type: %s, Port Interface: %s" % (port_obj.get_type(),parsed_port_obj.get_interface().get_name())
-                    
+
                 if port_obj.get_type() == parsed_port_obj.get_interface().get_name():
                     arg_obj_list = []
                     incl_list = parsed_port_obj.get_include_header_files()
@@ -280,7 +280,7 @@ class CompFactory:
                     if_comment = parsed_port_obj.get_interface().get_comment()
                     return_type = parsed_port_obj.get_interface().get_return_type()
                     return_modifier = parsed_port_obj.get_interface().get_return_modifier()
-            
+
                     for a in parsed_port_obj.get_args():
                         name    = a.get_name()
                         atype   = a.get_type()
@@ -299,7 +299,7 @@ class CompFactory:
                     if (port_obj.get_type() == "Serial") and (port_obj.get_role() != None):
                         PRINT.info("ERROR: %s: Port \"%s\" cannot have a role and be a serialized port" % (the_parsed_component_xml.get_xml_filename(), port_obj.get_name()))
                         sys.exit(-1)
-                         
+
         # check some component/port rules
         # 1) Active or queued need at least one async port/command
         if (comp_kind == "active") or (comp_kind == "queued"):
@@ -311,7 +311,7 @@ class CompFactory:
             if num_sync_ports == 0:
                 PRINT.info("ERROR: %s: Queued component \"%s\" needs at least one sync/guarded port or command" % (the_parsed_component_xml.get_xml_filename(), comp_name))
                 sys.exit(-1)
-                 
+
 
         #
         # Instance the component here...
@@ -321,7 +321,7 @@ class CompFactory:
         the_component.set_c_header_files(comp_c_header_files)
         if (has_guarded_ports):
             the_component.set_has_guarded_ports()
-        
+
         #for p in the_component.get_ports():
         #    print p.get_name(), p.get_namespace()
         #    for a in p.get_args():
@@ -340,8 +340,8 @@ def main():
     #
     # Basic usage of this factory to create the component meta-model
     #
-    parsed_port_xml_list = [] 
-    the_parsed_component_xml = XmlComponentParser.XmlComponentParser(xmlfile)    
+    parsed_port_xml_list = []
+    the_parsed_component_xml = XmlComponentParser.XmlComponentParser(xmlfile)
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
     for port_file in port_type_files_list:
         #print "Parsing %s" % port_file
@@ -367,7 +367,7 @@ def main():
         print port.get_args()
         for arg in port.get_args():
             print "\t%s : %s  # %s" % (arg.get_name(), arg.get_type(), arg.get_comment())
-        
+
 
 if __name__ == '__main__':
     main()

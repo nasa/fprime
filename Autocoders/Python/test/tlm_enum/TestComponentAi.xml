@@ -16,7 +16,7 @@
             <enum name="SomeEnum">
                 <item name="MEM1"/>
                 <item name="MEM2" value="7" comment="A comment"/>
-                <item name="MEM3" value="15"/>           
+                <item name="MEM3" value="15"/>
             </enum>
     		<comment>
     		A test channel

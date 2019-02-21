@@ -24,10 +24,10 @@ def generate_constants():
 
     ## Define apps here
     ## All supported applications must have the base tests
-    supported_apps['active_tester'] = base_tests.copy() 
-#    supported_apps['app1'] = base_tests.copy() 
-    supported_apps['app2'] = base_tests.copy() 
-#    supported_apps['cnt_only'] = base_tests.copy() 
+    supported_apps['active_tester'] = base_tests.copy()
+#    supported_apps['app1'] = base_tests.copy()
+    supported_apps['app2'] = base_tests.copy()
+#    supported_apps['cnt_only'] = base_tests.copy()
 
 
     ## Define test cases and their descriptions here
@@ -43,10 +43,10 @@ def generate_constants():
     supported_apps['app2']['test_file'] = "app2_nose_test.py"
     supported_apps['app2']['Void_Send_Test'] = "c_void_send_test"
     supported_apps['app2']['Port_Send_Test'] = "d_port_send_test"
-    
+
 #    supported_apps['cnt_only']['test_file'] = "cnt_only_nose_test.py"
 #    supported_apps['cnt_only']['Port_Send_Test'] = "c_port_send_test"
- 
+
 
     return supported_apps
 
@@ -55,7 +55,7 @@ def generate_entry(key, supported_apps):
     Generates an entry for
     the help text.
     """
-    
+
     entry_template = """\n\n{app_name}""".format(app_name=key)
     entry_template += """\n----------"""
     for test_t in supported_apps[key]:
@@ -63,17 +63,17 @@ def generate_entry(key, supported_apps):
             continue
         entry_template += """\n{test_type}""".format(test_type=test_t)
     return entry_template
-    
+
 
 def get_app_list():
     """
     Return a formated list
-    of test modules and their 
+    of test modules and their
     test cases.
     """
 
     app_list = """--------- Supported Applications ---------"""
-    
+
 
     supported_apps = generate_constants()
     ## Add app_name and test methods combination to app_list
@@ -81,15 +81,15 @@ def get_app_list():
         entry = generate_entry(key, supported_apps)
         app_list += entry
     return app_list
- 
+
 def process_args(args):
     """
     Process user arguments.
     """
-    
+
     # Application Dictionary
     supported_apps  = generate_constants()
-    
+
     nose_call = """nosetests -v"""
 
     ## Run all tests if no applications are specified
@@ -98,7 +98,7 @@ def process_args(args):
             logging.debug("app: %s" % key)
             nose_call += " "+key+" "
     else:
-        for appTest in args.applications:            
+        for appTest in args.applications:
             nose_args = parse_app(appTest)
             logging.debug("nose_args: %s" % nose_args)
             nose_call += nose_args
@@ -109,7 +109,7 @@ def process_args(args):
 def generate_for_method(test_method):
     """
     @param test_method: What test case to run.
-    Returns argument string for nose. 
+    Returns argument string for nose.
     """
 
     supported_apps = generate_constants()
@@ -117,10 +117,10 @@ def generate_for_method(test_method):
     cmd_string = ""
 
     for app in supported_apps:
-        
-        ## Dictionary for nose arguments         
+
+        ## Dictionary for nose arguments
         args_dict = dict()
-        
+
         try:
             # Application might not support speficied test_method
             try:
@@ -139,7 +139,7 @@ def generate_for_method(test_method):
         nose_args = """ {app_name}/{test_file}:{test_method} """.format(**args_dict)
 
         cmd_string += nose_args
-    
+
     return cmd_string
 
 def parse_app(appTest):
@@ -154,10 +154,10 @@ def parse_app(appTest):
     app_test = appTest.split(".")
     app_or_test = app_test[0]
 
-    # Add test method to nose args 
+    # Add test method to nose args
     if "_Test" in app_or_test:
-        test_method = app_or_test 
-        nose_args = generate_for_method(test_method) 
+        test_method = app_or_test
+        nose_args = generate_for_method(test_method)
         return nose_args
 
     # Add single application to nose args
@@ -169,16 +169,16 @@ def parse_app(appTest):
         raise RuntimeError
 
 
-    ## Add application specific test method 
+    ## Add application specific test method
     args_dict['test_method'] = ""
-    if len(app_test) == 2: 
+    if len(app_test) == 2:
         test_method = app_test[1]
         try:
             args_dict['test_method'] = supported_apps[app_or_test][test_method]
         except KeyError:
             print "Invalid test method name: %s" % test_method
             raise RuntimeError
-    
+
 
     nose_args = """ {app_name}/{test_file}:{test_method} """.format(**args_dict)
 
@@ -226,18 +226,18 @@ def cleanTestGen():
         test_file = supported_apps[app]['test_file']
         logging.debug("Removing TestModule: %s" % test_file)
         subprocess.call('rm {TEST_FILE}'.format(TEST_FILE=test_file), shell=True)
-        
+
     os.chdir(binPath)
 
 
 def run_nose(nose_call):
     """
-    @param nose_call: 
+    @param nose_call:
     Execute nose
     """
     # Change directory to Autocoders/Python/test
     os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
-     
+
     print "\n\n--------------- Calling NoseTest ---------------\n %s\n" % nose_call
     print "---------------    Test List     ---------------"
     subprocess.call(nose_call, shell=True)
@@ -254,16 +254,16 @@ def init_parser():
     des = """\
              Test Suite Utility
              ''''''''''''''''''
-             
+
              README located in Autocoders/Python/utils/Nosetests
 
              Supported applications and their
-             tests are specified below. To test 
-             all, run with no arguments. To run 
-             a specific application and/or test 
+             tests are specified below. To test
+             all, run with no arguments. To run
+             a specific application and/or test
              run with this format:
-             
-             Generic Ex: 
+
+             Generic Ex:
              runNose.py app_name.test_method
 
              Specific Ex:
@@ -272,7 +272,7 @@ def init_parser():
 
              Apps and their tests are accumulated.
              So the following arguments are valid:
-             
+
              runNose.py app1 app2 active_tester.Sync_Input_Test active_tester.Async_Input_Test
 
              This will test everything in app1 and app2,
@@ -281,14 +281,14 @@ def init_parser():
 
 
     parser = argparse.ArgumentParser(description = des,
-                                     formatter_class=argparse.RawDescriptionHelpFormatter, 
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=app_list)
     parser.add_argument('-v', help="Increase verbosity", action="store_true")
     parser.add_argument('applications', nargs='*', help="A list of applications to test.")
 
 
     return parser
-    
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
@@ -297,7 +297,7 @@ if __name__ == "__main__":
     BUILD_ROOT = os.environ.get('BUILD_ROOT')
     testGenPath = os.path.join(BUILD_ROOT, 'Autocoders/Python/utils/NoseTests/TestGenerator.py')
 
-    Parser = init_parser() 
+    Parser = init_parser()
     args = Parser.parse_args()
 
     ## Get Verbosity

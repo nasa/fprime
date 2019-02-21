@@ -33,7 +33,7 @@ namespace ExampleComponents {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         ExampleTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,
@@ -86,7 +86,7 @@ namespace ExampleComponents {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into command response history\n"
-      << "  Expected: Less than size of command response history (" 
+      << "  Expected: Less than size of command response history ("
       << this->cmdResponseHistory->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const CmdResponse& e = this->cmdResponseHistory->at(index);
@@ -173,7 +173,7 @@ namespace ExampleComponents {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel somechan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_somechan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_somechan& e =
@@ -223,7 +223,7 @@ namespace ExampleComponents {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel anotherchan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_anotherchan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_anotherchan& e =
@@ -273,7 +273,7 @@ namespace ExampleComponents {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel stringchan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_stringchan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_stringchan& e =
@@ -323,7 +323,7 @@ namespace ExampleComponents {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel enumchan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_enumchan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_enumchan& e =
@@ -396,7 +396,7 @@ namespace ExampleComponents {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of event SomeEvent\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->eventHistory_SomeEvent->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const EventEntry_SomeEvent& e =

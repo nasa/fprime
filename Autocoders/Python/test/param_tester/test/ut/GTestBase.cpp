@@ -33,7 +33,7 @@ namespace Prm {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         ParamTesterTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

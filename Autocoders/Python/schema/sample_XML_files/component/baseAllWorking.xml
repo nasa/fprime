@@ -4,12 +4,12 @@
     <import_dictionary>test/one</import_dictionary>
     <import_port_type>test/two</import_port_type>
     <include_header>test/three</include_header>
-    
+
     <ports>
         <port name="inputOne" kind="async_input" data_type="string"></port>
         <port name="outputOne" kind="output" data_type="U16"></port>
     </ports>
-    
-        
-    
+
+
+
 </component>

@@ -33,7 +33,7 @@ namespace ExampleComponents {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         ExampleTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

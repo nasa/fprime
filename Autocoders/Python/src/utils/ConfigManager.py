@@ -29,7 +29,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
     This class provides a single entrypoint for all configurable properties,
     namely the self.Prop dictionary.
     """
-    
+
     __instance = None
     __prop     = None
 
@@ -49,13 +49,13 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         config_file_name = 'ac.ini'
         files = list()
         # Append other paths to look in here.
-        
+
         # Look in next one, the home directory of the user.
         files.append(os.environ['HOME'] + os.sep + config_file_name)
         # Look in last directory first, the current directory
         files.append(os.path.realpath(os.curdir) + os.sep + config_file_name)
         self.read(files)
-        
+
     def getInstance():
         """
         Return instance of singleton.
@@ -121,13 +121,13 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['component']['ComponentH']      = 'ComponentAc.hpp'
         self.__prop['component']['ImplCpp']         = 'ComponentImpl.cpp-template'
         self.__prop['component']['ImplH']           = 'ComponentImpl.hpp-template'
-        
+
         self.__prop['component']['ComponentTestCpp'] = "ComponentTestAc.cpp"
         self.__prop['component']['ComponentTestH'] = "ComponentTestAc.hpp"
-        
+
         self.__prop['component']['GTestCpp'] = "GTestAc.cpp"
         self.__prop['component']['GTestH'] = "GTestAc.hpp"
-        
+
         self.__prop['component']['TestImplCpp']         = "TestImpl.cpp"
         self.__prop['component']['TestImplH']           = "TestImpl.hpp"
 
@@ -237,7 +237,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['special_ports']['LogEvent']['name'] = 'Log'
         self.__prop['special_ports']['LogEvent']['type'] = 'Fw::Log'
         self.__prop['special_ports']['LogEvent']['direction'] = 'Output'
-        self.__prop['special_ports']['LogEvent']['comment'] = None 
+        self.__prop['special_ports']['LogEvent']['comment'] = None
         self.__prop['special_ports']['LogEvent']['port_file'] = 'Fw/Log/LogPortAi.xml'
 
         self.__prop['special_ports']['LogTextEvent'] = dict()
@@ -252,7 +252,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['special_ports']['TimeGet']['type'] = 'Fw::Time'
         self.__prop['special_ports']['TimeGet']['direction'] = 'Output'
         self.__prop['special_ports']['TimeGet']['comment'] = None
-        self.__prop['special_ports']['TimeGet']['port_file'] = 'Fw/Time/TimePortAi.xml' 
+        self.__prop['special_ports']['TimeGet']['port_file'] = 'Fw/Time/TimePortAi.xml'
 
         self.__prop['special_ports']['Telemetry'] = dict()
         self.__prop['special_ports']['Telemetry']['name'] = 'Tlm'
@@ -276,9 +276,9 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['special_ports']['ParamSet']['port_file'] = 'Fw/Prm/PrmSetPortAi.xml'
 
         self._setSectionDefaults('special_ports')
-        
+
         # Add constants processing
-        
+
         self.__prop['constants'] = dict()
         # where the constants file is relative to BUILD_ROOT
         # constants will be in the INI file format supported by the ConfigParser library
@@ -311,4 +311,4 @@ if __name__ == '__main__':
     print 'c_int_suffix = %s' % config.get('ipc','c_int_suffix')
     print 'c_dispatch_suffix = %s' % config.get('ipc','c_dispatch_suffix')
     print 'c_cmd_dispatch_suffix = %s' % config.get('ipc', 'c_cmd_dispatch_suffix')
-    
+

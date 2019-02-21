@@ -45,7 +45,7 @@ namespace Cmd {
   }
 
   TestTesterBase ::
-    ~TestTesterBase(void) 
+    ~TestTesterBase(void)
   {
   }
 

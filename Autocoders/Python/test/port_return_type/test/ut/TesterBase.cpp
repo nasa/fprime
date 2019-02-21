@@ -53,7 +53,7 @@ namespace Tlm {
   }
 
   TestEventTesterBase ::
-    ~TestEventTesterBase(void) 
+    ~TestEventTesterBase(void)
   {
     // Destroy event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -215,14 +215,14 @@ namespace Tlm {
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestEventTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTest4Port *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -262,7 +262,7 @@ namespace Tlm {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputTimePort *TestEventTesterBase ::
     get_from_Time(const NATIVE_INT_TYPE portNum)
   {
@@ -334,7 +334,7 @@ namespace Tlm {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestEventTesterBase ::
@@ -371,7 +371,7 @@ namespace Tlm {
 
     switch (id) {
 
-      case TestEventComponentBase::EVENTID_SOMEEVENT: 
+      case TestEventComponentBase::EVENTID_SOMEEVENT:
       {
 
         Fw::SerializeStatus _status;
@@ -407,7 +407,7 @@ namespace Tlm {
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void TestEventTesterBase ::
@@ -470,11 +470,11 @@ namespace Tlm {
   }
 
   void TestEventTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -483,7 +483,7 @@ namespace Tlm {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: SomeEvent 
+  // Event: SomeEvent
   // ----------------------------------------------------------------------
 
   void TestEventTesterBase ::

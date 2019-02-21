@@ -7,6 +7,6 @@ Example2SerializableAi.xml - A second serializable used in ExampleSerializableAi
 ExampleComponentImpl.cpp - Implementation of developer component class
 ExampleType.cpp - Implementation of developer-written serializable type
 
-mod.mk - make configuration file listing sources to build 
+mod.mk - make configuration file listing sources to build
 
 test/ut - sample unit test for testing component

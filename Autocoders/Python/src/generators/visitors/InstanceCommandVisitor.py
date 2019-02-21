@@ -81,15 +81,15 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         fp.writelines(c.__str__())
-        DEBUG.debug('===================================')     
-        
-        
+        DEBUG.debug('===================================')
+
+
     def DictStartVisit(self, obj , topology_model):
         """
         Defined to generate files for generated code products.
         @parms obj: the instance of the command model to visit.
         """
-    
+
         # Build filename here...
         # Make dictionary directly if it doesn't exist
         output_dir = os.environ["DICT_DIR"] + "/commands"
@@ -97,7 +97,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
             os.makedirs(output_dir)
             init_file = output_dir + os.sep + "__init__.py"
             open(init_file, "w+")
-        
+
         try:
             instance_obj_list = topology_model.get_base_id_dict()[obj.get_component_base_name()]
         except Exception:
@@ -106,10 +106,10 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 PRINT.info("ERROR: Could not find instance object for the current component and the current component is not of Parameter or Command type, which are the only two supported command dictionary generation types. Check everything!")
             raise
-        
+
         if type(obj) is Command.Command:
             # open files for commands and instance names
-            # open a file for each instance in a 
+            # open a file for each instance in a
             # multi-instance component. If there is only
             # one instance, use the command name directly.
             # Otherwise, it will be the instance name + command name
@@ -128,15 +128,15 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                     raise Exception("Could not open {} file.".format(pyfile))
                 DEBUG.info('Completed {} open'.format(pyfile))
                 self.__fp1[fname] = fd
-            
-           
+
+
         elif type(obj) is Parameter.Parameter:
             self.__fp1 = {}
             self.__fp2 = {}
             # Command stem will be component name minus namespace converted to uppercase
             self.__stem = obj.get_name().upper()
-            
-    
+
+
             for instance_obj in instance_obj_list:
                 if instance_obj[3].get_dict_short_name() != None:
                     fname = "{}_{}".format(instance_obj[3].get_dict_short_name() , self.__stem)
@@ -151,7 +151,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                     raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp1[fname] = fd
                 DEBUG.info('Completed {} open'.format(pyfile))
-                
+
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir,fname)
                 DEBUG.info('Open file: {}'.format(pyfile))
                 fd = open(pyfile,'w')
@@ -163,7 +163,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
         else:
             print("Invalid type {}".format(obj))
             sys.exit(-1)
-        
+
         # Open file for writing here...
 
 
@@ -172,7 +172,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate header for  command python class.
         @parms obj: the instance of the command model to visit.
         """
-        
+
         if type(obj) is Command.Command:
             for fname in self.__fp1.keys():
                 c = CommandHeader.CommandHeader()
@@ -181,7 +181,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.user = os.environ['USER']
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[fname], "commandHeaderVisit")
-                
+
         elif type(obj) is Parameter.Parameter:
             # SET Command header
             for fname in self.__fp1.keys():
@@ -200,7 +200,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.user = os.environ['USER']
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp2[fname], "commandHeaderVisit")
- 
+
     def DictBodyVisit(self, obj , topology_model):
         """
         Defined to generate the body of the  Python command class
@@ -211,7 +211,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
         except Exception:
             PRINT.info("ERROR: Could not find instance object for component " + obj.get_component_base_name() + ". Check topology model to see if the component was instanced.")
             raise
-        
+
         if type(obj) is Command.Command:
             for instance_obj in instance_obj_list:
                 c = CommandBody.CommandBody()
@@ -229,52 +229,52 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                     c.opcode = hex(int(obj.get_base_opcode() , 16) + instance_obj[1])
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
-                
+
                 c.arglist = list()
                 c.ser_import_list = list()
-                
+
                 for arg_obj in obj.get_args():
-                    # convert XML types to Python classes                    
+                    # convert XML types to Python classes
                     (type_string,ser_import,dontcare) = DictTypeConverter.DictTypeConverter().convert(arg_obj.get_type(),arg_obj.get_size())
                     if ser_import != None:
                         c.ser_import_list.append(ser_import)
                     c.arglist.append((arg_obj.get_name(),arg_obj.get_comment(),type_string))
                 self._writeTmpl(c, self.__fp1[fname], "commandBodyVisit")
                 self.__fp1[fname].close()
-                
+
         if type(obj) is Parameter.Parameter:
             for instance_obj in instance_obj_list:
                 # Set Command
                 c = CommandBody.CommandBody()
-                
+
                 if instance_obj[3].get_dict_short_name() != None:
                     fname = "{}_{}".format(instance_obj[3].get_dict_short_name() , self.__stem)
                 elif not topology_model.get_prepend_instance_name() and len(instance_obj_list) == 1:
                     fname = self.__stem
                 else:
                     fname = "{}_{}".format(instance_obj[0] , self.__stem)
-                
+
                 c.mnemonic = fname + "_PRM_SET"
-                
+
                 try:
                     c.opcode = hex(int(float(obj.get_base_setop())) + instance_obj[1])
                 except:
                     c.opcode = hex(int(obj.get_base_setop() , 16) + instance_obj[1])
-                    
+
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
-                
+
                 c.arglist = list()
                 c.ser_import_list = list()
-            
-                # convert XML types to Python classes                    
+
+                # convert XML types to Python classes
                 (type_string,ser_import,dontcare) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
                 if ser_import != None:
                     c.ser_import_list.append(ser_import)
                 c.arglist.append((obj.get_name(),obj.get_comment(),type_string))
                 self._writeTmpl(c, self.__fp1[fname], "commandBodyVisit")
                 self.__fp1[fname].close()
-            
+
             for instance_obj in instance_obj_list:
                 # Set Command
                 c = CommandBody.CommandBody()
@@ -284,18 +284,18 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                     fname = self.__stem
                 else:
                     fname = "{}_{}".format(instance_obj[0] , self.__stem)
-                
+
                 c.mnemonic = fname + "_PRM_SAVE"
-                
+
                 try:
                     c.opcode = hex(int(float(obj.get_base_saveop())) + instance_obj[1])
                 except:
                     c.opcode = hex(int(obj.get_base_saveop() , 16) + instance_obj[1])
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
-                
+
                 c.arglist = list()
-                c.ser_import_list = list()         
+                c.ser_import_list = list()
 
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyVisit")
                 self.__fp2[fname].close()

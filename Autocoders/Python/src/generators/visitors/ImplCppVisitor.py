@@ -35,7 +35,7 @@ class ImplCppVisitor(ImplVisitorBase.ImplVisitorBase):
 
     def emitNonPortParams(self, params):
         return self.emitNonPortParamsCpp(8, params)
-  
+
     def startSourceFilesVisit(self, obj):
         c = cpp.cpp()
         self.init(obj, c)

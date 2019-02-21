@@ -49,7 +49,7 @@ namespace AcTest {
   }
 
   TestCommandTesterBase ::
-    ~TestCommandTesterBase(void) 
+    ~TestCommandTesterBase(void)
   {
     // Destroy command history
     delete this->cmdResponseHistory;
@@ -177,14 +177,14 @@ namespace AcTest {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -194,7 +194,7 @@ namespace AcTest {
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
@@ -241,7 +241,7 @@ namespace AcTest {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputCmdResponsePort *TestCommandTesterBase ::
     get_from_CmdStatus(const NATIVE_INT_TYPE portNum)
   {
@@ -299,9 +299,9 @@ namespace AcTest {
     this->cmdResponseHistory->push_back(e);
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: TEST_CMD_1
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
     sendCmd_TEST_CMD_1(
@@ -325,7 +325,7 @@ namespace AcTest {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = TestCommandComponentBase::OPCODE_TEST_CMD_1 + idBase;
@@ -343,11 +343,11 @@ namespace AcTest {
 
   }
 
-  
+
   void TestCommandTesterBase ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
-       
-    const U32 idBase = this->getIdBase();   
+
+    const U32 idBase = this->getIdBase();
     FwOpcodeType _opcode = opcode + idBase;
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(
@@ -359,11 +359,11 @@ namespace AcTest {
     else {
       printf("Test Command Output port not connected!\n");
     }
-        
+
   }
-  
+
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::

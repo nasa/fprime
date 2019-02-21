@@ -19,7 +19,7 @@ import sys
 def AddSysPath(new_path):
 
     # Avoid adding nonexistent paths
-    if not os.path.exists(new_path): 
+    if not os.path.exists(new_path):
         return -1
 
     # Standardize the path. Windows is case-sensitive
@@ -45,7 +45,7 @@ def AddSysPath(new_path):
 if __name__ == '__main__':
 
     print "Before:"
-    for x in sys.path: 
+    for x in sys.path:
         print x
 
     if sys.platform == 'win32':
@@ -55,5 +55,5 @@ if __name__ == '__main__':
         print AddSysPath('/usr/lib')
 
     print "After:"
-    for x in sys.path: 
+    for x in sys.path:
         print x

@@ -1,4 +1,8 @@
+#ifdef FPRIME_CMAKE
+#include "Autocode/GTestBase.hpp"
+#else
 #include <GTestBase.hpp>
+#endif
 #include "TesterBase.hpp"
 #include <Fw/Cfg/Config.hpp>
 

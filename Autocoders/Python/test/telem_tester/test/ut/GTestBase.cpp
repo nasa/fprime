@@ -33,7 +33,7 @@ namespace Tlm {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TelemTesterTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

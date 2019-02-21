@@ -3,7 +3,7 @@
 # NAME: StartSource
 #
 # DESCRIPTION:  The StartSource class is the main entry point
-#				for generation of beginning and header comments code 
+#				for generation of beginning and header comments code
 #               in code generation.
 #
 # USAGE: Nominally the StartSource.__call__ is called by using the
@@ -45,14 +45,14 @@ class StartSource:
     """
     __visitor_list = []
     __obj          = None
-    
+
     def __init__(self):
         """
         Constructor.
         """
         self.__visitor_list = list()
-        
-        
+
+
     def __call__(self, args):
         """
         Main execution point.

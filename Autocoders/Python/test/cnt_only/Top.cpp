@@ -28,8 +28,8 @@ extern "C" {
 };
 #endif
 
-int main(int argc, char* argv[])  { 
-        
+int main(int argc, char* argv[])  {
+
         Huey_ptr->init(10);
         Duey_ptr->init(10);
 	// Construct the topology here.

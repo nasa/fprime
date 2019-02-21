@@ -9,7 +9,7 @@
             <enum name="TimingSignal">
                 <item name="REAL_TIME_INTERRUPT"/>
                 <item name="NONE_REAL_TIME_INTERRUPT" value="7" comment="A non-RT interrupt fictional item"/>
-                <item name="TIMER" value="15"/>           
+                <item name="TIMER" value="15"/>
             </enum>
             <comment>The ENUM argument</comment>
 		</arg>

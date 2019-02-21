@@ -44,7 +44,7 @@
     // Initialize command history
     this->cmdResponseHistory = new History<CmdResponse>(maxHistorySize);
     // Initialize telemetry histories
-    this->tlmHistory_somechan = 
+    this->tlmHistory_somechan =
       new History<TlmEntry_somechan>(maxHistorySize);
     // Initialize event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -57,7 +57,7 @@
   }
 
   TestCommandTesterBase ::
-    ~TestCommandTesterBase(void) 
+    ~TestCommandTesterBase(void)
   {
     // Destroy command history
     delete this->cmdResponseHistory;
@@ -407,14 +407,14 @@
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         ::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -424,7 +424,7 @@
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
@@ -471,7 +471,7 @@
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputCmdResponsePort *TestCommandTesterBase ::
     get_from_CmdStatus(const NATIVE_INT_TYPE portNum)
   {
@@ -625,7 +625,7 @@
         Fw::ParamBuffer &val
     )
   {
-    TestCommandTesterBase* _testerBase = 
+    TestCommandTesterBase* _testerBase =
       static_cast<TestCommandTesterBase*>(component);
 
     Fw::SerializeStatus _status;
@@ -685,7 +685,7 @@
             static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            someparamVal == 
+            someparamVal ==
             _testerBase->m_param_someparam
         );
         break;
@@ -714,9 +714,9 @@
     this->cmdResponseHistory->push_back(e);
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: TEST_CMD_1
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
     sendCmd_TEST_CMD_1(
@@ -737,7 +737,7 @@
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = TestCommandComponentBase::OPCODE_TEST_CMD_1 + idBase;
@@ -755,11 +755,11 @@
 
   }
 
-  
+
   void TestCommandTesterBase ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
-       
-    const U32 idBase = this->getIdBase();   
+
+    const U32 idBase = this->getIdBase();
     FwOpcodeType _opcode = opcode + idBase;
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(
@@ -771,11 +771,11 @@
     else {
       printf("Test Command Output port not connected!\n");
     }
-        
+
   }
-  
+
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
@@ -844,9 +844,9 @@
     this->tlmHistory_somechan->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: somechan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
     tlmInput_somechan(
@@ -878,7 +878,7 @@
     FW_ASSERT(id >= idBase, id, idBase);
     switch (id - idBase) {
 
-      case TestCommandComponentBase::EVENTID_SOMEEVENT: 
+      case TestCommandComponentBase::EVENTID_SOMEEVENT:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -892,8 +892,8 @@
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 3,_numArgs,3);
-        
-#endif    
+
+#endif
         Quaternion arg1;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -906,7 +906,7 @@
           );
           FW_ASSERT(_argSize == sizeof(Quaternion),_argSize,sizeof(Quaternion));
         }
-#endif      
+#endif
         _status = args.deserialize(arg1);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -925,7 +925,7 @@
           );
           FW_ASSERT(_argSize == sizeof(F32),_argSize,sizeof(F32));
         }
-#endif      
+#endif
         _status = args.deserialize(arg2);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -944,7 +944,7 @@
           );
           FW_ASSERT(_argSize == sizeof(U8),_argSize,sizeof(U8));
         }
-#endif      
+#endif
         _status = args.deserialize(arg3);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -976,7 +976,7 @@
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
@@ -1039,11 +1039,11 @@
   }
 
   void TestCommandTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -1052,7 +1052,7 @@
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: SomeEvent 
+  // Event: SomeEvent
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
@@ -1070,7 +1070,7 @@
   }
 
   // ----------------------------------------------------------------------
-  // Parameter someparam 
+  // Parameter someparam
   // ----------------------------------------------------------------------
 
   void TestCommandTesterBase ::
@@ -1085,7 +1085,7 @@
 
   void TestCommandTesterBase ::
     paramSend_someparam(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -1116,10 +1116,10 @@
 
   void TestCommandTesterBase ::
     paramSave_someparam (
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
-    
+
   {
     Fw::CmdArgBuffer args;
     FwOpcodeType _prmOpcode;
@@ -1130,8 +1130,8 @@
     }
     else {
       this->m_to_CmdDisp[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }

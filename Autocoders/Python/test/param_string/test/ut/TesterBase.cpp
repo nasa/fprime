@@ -49,7 +49,7 @@ namespace Prm {
   }
 
   TestPrmTesterBase ::
-    ~TestPrmTesterBase(void) 
+    ~TestPrmTesterBase(void)
   {
     // Destroy command history
     delete this->cmdResponseHistory;
@@ -248,14 +248,14 @@ namespace Prm {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestPrmTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -265,7 +265,7 @@ namespace Prm {
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
@@ -312,7 +312,7 @@ namespace Prm {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputCmdResponsePort *TestPrmTesterBase ::
     get_from_CmdStatus(const NATIVE_INT_TYPE portNum)
   {
@@ -378,7 +378,7 @@ namespace Prm {
         Fw::ParamBuffer &val
     )
   {
-    TestPrmTesterBase* _testerBase = 
+    TestPrmTesterBase* _testerBase =
       static_cast<TestPrmTesterBase*>(component);
 
     Fw::SerializeStatus _status;
@@ -437,7 +437,7 @@ namespace Prm {
             _status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            stringparamVal == 
+            stringparamVal ==
             _testerBase->m_param_stringparam
         );
         break;
@@ -466,11 +466,11 @@ namespace Prm {
     this->cmdResponseHistory->push_back(e);
   }
 
-  
+
   void TestPrmTesterBase ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
-       
-    const U32 idBase = this->getIdBase();   
+
+    const U32 idBase = this->getIdBase();
     FwOpcodeType _opcode = opcode + idBase;
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(
@@ -482,11 +482,11 @@ namespace Prm {
     else {
       printf("Test Command Output port not connected!\n");
     }
-        
+
   }
-  
+
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestPrmTesterBase ::
@@ -496,7 +496,7 @@ namespace Prm {
   }
 
   // ----------------------------------------------------------------------
-  // Parameter stringparam 
+  // Parameter stringparam
   // ----------------------------------------------------------------------
 
   void TestPrmTesterBase ::
@@ -511,7 +511,7 @@ namespace Prm {
 
   void TestPrmTesterBase ::
     paramSend_stringparam(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -542,10 +542,10 @@ namespace Prm {
 
   void TestPrmTesterBase ::
     paramSave_stringparam (
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
-    
+
   {
     Fw::CmdArgBuffer args;
     FwOpcodeType _prmOpcode;
@@ -556,8 +556,8 @@ namespace Prm {
     }
     else {
       this->m_to_CmdDisp[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }

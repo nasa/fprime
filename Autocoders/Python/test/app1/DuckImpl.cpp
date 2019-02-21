@@ -8,11 +8,11 @@ using namespace std;
 namespace Duck {
 
 		DuckImpl::DuckImpl(const char* compName) : DuckComponentBase(compName) {
-			
+
 		}
-		
+
 		DuckImpl::~DuckImpl(void) {
-			
+
 		}
 
 		void DuckImpl::init(NATIVE_INT_TYPE queueDepth) {

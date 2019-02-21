@@ -7,7 +7,7 @@
 #               of InternalInterface instances and is visited by the code
 #               generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: tcanham
 # EMAIL:  tcanham@jpl.nasa.gov
@@ -57,7 +57,7 @@ class InternalInterface(object):
         self.__comment = comment
         self.__xml_filename = xml_filename
         self.__component_name = component_name
-        # 
+        #
 #         self.__target_comp = None
 #         self.__target_command = None
 #         self.__target_type = None
@@ -67,7 +67,7 @@ class InternalInterface(object):
         Returns the original xml filename
         """
         return self.__xml_filename
-    
+
     def get_name(self):
         """
         Returns the interface name
@@ -79,25 +79,25 @@ class InternalInterface(object):
         Returns priority of the interface.
         """
         return self.__priority
-    
+
     def get_full(self):
         """
         Returns queue full behavior of the interface.
         """
         return self.__full
-    
+
     def get_comment(self):
         """
         Returns comment for the interface.
         """
         return self.__comment
-    
+
     def get_args(self):
         """
         Return a list of Arg objects for each argument.
         """
         return self.__arg_obj_list
-    
+
     def get_component_name(self):
         return self.__component_name
-    
+

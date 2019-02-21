@@ -2,9 +2,9 @@
 #===============================================================================
 # NAME: XmlPortsParser.py
 #
-# DESCRIPTION:  This class parses the XML port types files. 
+# DESCRIPTION:  This class parses the XML port types files.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -35,6 +35,7 @@ from utils import ConfigManager
 # Global logger init. below.
 PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
+ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
 #
 class XmlPortsParser(object):
     """
@@ -70,18 +71,18 @@ class XmlPortsParser(object):
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
-        
-        
+
+
         #Validate against schema
-        relax_file_handler = open(os.environ["BUILD_ROOT"] +self.__config.get('schema' , 'interface') , 'r')
+        relax_file_handler = open(ROOTDIR +self.__config.get('schema' , 'interface') , 'r')
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
-        
+
         try:
             relax_compiled.assert_(element_tree)
         except Exception , e:
-            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file ,os.environ["BUILD_ROOT"] + self.__config.get('schema' , 'interface')))
+            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.__config.get('schema' , 'interface')))
             PRINT.info(e)
             PRINT.info(relax_compiled.error_log)
             PRINT.info(relax_compiled.error_log.last_error)
@@ -89,16 +90,16 @@ class XmlPortsParser(object):
 
         interface = element_tree.getroot()
         if interface.tag != "interface":
-            PRINT.info("%s is not a interface file"%xml_file)            
+            PRINT.info("%s is not a interface file"%xml_file)
             sys.exit(-1)
-        
+
         print("Parsing Interface %s" %interface.attrib['name'])
-        
+
         if 'namespace' in interface.attrib:
             namespace_name = interface.attrib['namespace']
         else:
             namespace_name = None
-        
+
         self.__port = Interface(namespace_name,interface.attrib['name'])
 
         for interface_tag in interface:
@@ -111,7 +112,7 @@ class XmlPortsParser(object):
             elif interface_tag.tag == 'args':
                 for arg in interface_tag:
                     if arg.tag != 'arg':
-                        PRINT.info("%s: Invalid tag %s in interface args definition"%(xml_file,arg.tag))            
+                        PRINT.info("%s: Invalid tag %s in interface args definition"%(xml_file,arg.tag))
                         sys.exit(-1)
                     n = arg.attrib['name']
                     t = arg.attrib['type']
@@ -123,7 +124,7 @@ class XmlPortsParser(object):
                         if not "size" in arg.attrib.keys():
                             PRINT.info("%s: arg %s string must specify size tag"%(xml_file,arg.tag))
                             sys.exit(-1)
-                        else:                        
+                        else:
                             s = arg.attrib['size']
                     else:
                         s = None
@@ -148,9 +149,9 @@ class XmlPortsParser(object):
                                 enum_members.append((mn,v,mc))
                             arg_obj.set_type(((t,en),enum_members))
                         else:
-                            PRINT.info("%s: Invalid argument tag %s in port %s argument %s"%(xml_file,arg_tag.tag,interface_tag.tag,n))            
+                            PRINT.info("%s: Invalid argument tag %s in port %s argument %s"%(xml_file,arg_tag.tag,interface_tag.tag,n))
                             sys.exit(-1)
-            
+
                     self.__args.append(arg_obj)
 
             elif interface_tag.tag == 'return':
@@ -179,14 +180,14 @@ class XmlPortsParser(object):
                     else:
                         PRINT.info("%s: Invalid port return value tag %s"%(xml_file,enum_tag.tag))
                         sys.exit(-1)
-                        
+
                 self.__port.set_return(t, m)
-                
+
         # Check XML name for compliance here...
 #         name = self.get_interface().get_name()
 #         if (os.path.basename(xml_file)[:len(name)] != name):
 #             PRINT.info("ERROR: Port XML files must begin with name of port...")
-#             sys.exit(-1)                
+#             sys.exit(-1)
 
     def __del__(self):
         for a in self.__args:
@@ -204,25 +205,25 @@ class XmlPortsParser(object):
         Return the original XML filename parsed.
         """
         return self.__xml_filename
-    
+
     def get_include_header_files(self):
         """
         Return a list of all imported .hpp or .h files.
         """
         return self.__include_header_files
-    
+
     def get_includes_serial_files(self):
         """
         Return a list of all imported Serializable XML files.
         """
         return self.__include_serializable_files
-    
+
     def get_interface(self):
         """
         Returns a interface object.
         """
         return self.__port
-    
+
     def get_args(self):
         """
         Returns a list of arg objects with all text and attrib needed.
@@ -279,13 +280,13 @@ class Arg(object):
         @param modifier:  Whether argument is passed by value, reference, or pointer
         @param size:  size of array for string and buffer
         @param comment:  A single or multline comment
-        """ 
+        """
         self.__name = name
         self.__type = atype
         self.__modifier = modifier
         self.__size = size
         self.__comment = comment
-    
+
     def get_name(self):
         return self.__name
     def get_type(self):
@@ -307,13 +308,13 @@ if __name__ == '__main__':
     xmlfile = "../../test/Msg1InterfaceAi.xml"
 
     print "Ports XML parse test (%s)" % xmlfile
-     
+
     xml_parser = XmlPortsParser(xmlfile)
-    
+
     interface = xml_parser.get_interface()
     port_type_file_list = xml_parser.get_include_header_files()
     args_list = xml_parser.get_args()
-    
+
     print "Namespace: %s Interface name: %s" % \
         (interface.get_namespace(), interface.get_name())
     print "Interface comment:"

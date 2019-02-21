@@ -17,11 +17,11 @@ def dumpAttrs(obj,log=None, loglvl=logging.DEBUG):
     '''
     '''
     dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=log, loglvl=loglvl, showDoc=False, showMethods=False, showAtributes=True)
-    
+
 def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DEBUG, showDoc=True, showMethods=True, showAtributes=True):
     """
     Print a nicely formatted overview of an object.
-    
+
     By default, output goes to stdout via print. However, if a
     logging object is passed in as the keyword argument, then
     the output will be put to the loggging object. The default
@@ -45,13 +45,13 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
                def bar(self, b):
                    "A silly method"
                    return a*b
-       ... ... ... ... 
+       ... ... ... ...
        >>> foo = Foo()
        >>> dumpObj(foo)
        Instance of class 'Foo' as defined in module __main__ with id 136863308
        Documentation string:   None
        Built-in Methods:       __delattr__, __getattribute__, __hash__, __init__
-                               __new__, __reduce__, __repr__, __setattr__,       
+                               __new__, __reduce__, __repr__, __setattr__,
                                __str__
        Methods:
          bar                   "A silly method"
@@ -60,7 +60,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
          __weakref__           None
          a                     30
     """
-    
+
     import types
 
     # Formatting parameters.
@@ -75,7 +75,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
     objclass  = None
     objdoc    = None
     objmodule = '<None defined>'
-    
+
     methods   = []
     builtins  = []
     classes   = []
@@ -91,7 +91,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
             objdoc = attr
         elif slot == '__module__':
             objmodule = attr
-        elif (isinstance(attr, types.BuiltinMethodType) or 
+        elif (isinstance(attr, types.BuiltinMethodType) or
               isinstance(attr, MethodWrapperType)):
             builtins.append( slot )
         elif (isinstance(attr, types.MethodType) or
@@ -168,7 +168,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
             else:
                 print
                 print prettyString
-    
+
         # Classes
         if classes:
             if log:
@@ -187,7 +187,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
                 log.log(loglvl,prettyString)
             else:
                 print prettyString
-    
+
         # User methods
         if methods:
             if log:
@@ -259,7 +259,7 @@ def prettyPrint(string, maxlen=75, split=' '):
 
     # Tack on the splitting character to guarantee a final match
     string += split
-    
+
     lines   = []
     oldeol  = 0
     eol     = 0
@@ -273,14 +273,14 @@ def prettyPrint(string, maxlen=75, split=' '):
 def nukenewlines(string):
     """Strip newlines and any trailing/following whitespace; rejoin
     with a single space where the newlines were.
-    
+
     Bug: This routine will completely butcher any whitespace-formatted
     text."""
-    
+
     if not string: return ''
     lines = string.splitlines()
     return ' '.join( [line.strip() for line in lines] )
-    
+
 def delchars(str, chars):
     """Returns a string for which all occurrences of characters in
     chars have been removed."""

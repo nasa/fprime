@@ -33,19 +33,19 @@ int main(int argc, char* argv[]){
     char charIn[1];
 
     constructArchitecture();
-    
+
     while(true){
 
         cout << "Enter g to go or q to quit: ";
         cin >> charIn;
 
         if(strcmp(charIn,"g")==0){
-            charIn[0] = 0;  
+            charIn[0] = 0;
             cout << "Enter u for unsigned-int and f for float:";
             cin >> charIn;
 
             if(strcmp(charIn,"u") == 0){
-                test_U32_Async();         
+                test_U32_Async();
             }else{
                 test_F32_Sync();
             }

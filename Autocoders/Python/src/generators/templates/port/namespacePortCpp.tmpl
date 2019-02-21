@@ -43,13 +43,13 @@ namespace ${n} {
             this->terminate(sizeof(this->m_buf));
         }
     }
-    
+
     Fw::SerializeStatus ${argname}String::serialize(Fw::SerializeBufferBase& buffer) const {
         NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
         // serialize string as buffer
         return buffer.serialize((U8*)this->m_buf,strSize);
     }
-    
+
     Fw::SerializeStatus ${argname}String::deserialize(Fw::SerializeBufferBase& buffer) {
         NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
         // deserialize string
@@ -59,11 +59,11 @@ namespace ${n} {
 
         return stat;
     }
-    
+
     NATIVE_UINT_TYPE ${argname}String::getCapacity(void) const {
         return sizeof(this->m_buf);
     }
-    
+
     const ${argname}String& ${argname}String::operator=(const ${argname}String& other) {
         this->copyBuff(other.m_buf,this->getCapacity());
         return *this;
@@ -74,13 +74,13 @@ namespace ${n} {
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
     }
 
-#end if 
+#end if
 #if $type == "buffer":
 
     ${argname}Buffer::${argname}Buffer(const U8 *args, NATIVE_UINT_TYPE size) {
         Fw::SerializeBufferBase::setBuff(args,size);
     }
-    
+
     ${argname}Buffer::${argname}Buffer() : Fw::SerializeBufferBase() {
     }
 
@@ -106,9 +106,9 @@ namespace ${n} {
 
     U8* ${argname}Buffer::getBuffAddr(void) {
         return this->m_data;
-    }    
-    
-#end if 
+    }
+
+#end if
 #end for
 
     namespace {

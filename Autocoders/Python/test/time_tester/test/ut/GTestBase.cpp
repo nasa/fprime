@@ -33,7 +33,7 @@ namespace Time {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TimeTesterTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

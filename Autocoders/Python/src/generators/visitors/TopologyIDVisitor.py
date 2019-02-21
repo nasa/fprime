@@ -54,7 +54,7 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
     __form     = None
     __form_comment = None
     __model_parser = None
-    
+
     def __init__(self):
         """
         Constructor.
@@ -67,7 +67,7 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         self.bodytext       = ""
         self.prototypetext  = ""
 
-        
+
     def _writeTmpl(self, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
@@ -77,8 +77,8 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
         DEBUG.debug('===================================')
-        
-        
+
+
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
@@ -150,9 +150,9 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         c = publicTopologyID.publicTopologyID()
-  
+
         c.id_list = [] #Contents will be strings in the form 'component name,instance name,base id,window range'
-        
+
         #
         #Generate Set Window/Base ID Method
         for id_tuple in obj.get_base_id_list():
@@ -160,13 +160,13 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
             type = id_tuple[3].get_type()
             base_id = id_tuple[1]
             window_id = id_tuple[2]
-            
+
             instance_list = [type, n , base_id , window_id]
-            
-            
+
+
             c.id_list.append(",".join(str(x) for x in instance_list))
         #
-        
+
         self._writeTmpl(c, "publicVisit")
 
 

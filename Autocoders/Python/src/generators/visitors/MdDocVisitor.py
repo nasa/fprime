@@ -42,14 +42,14 @@ class MdDocVisitor(ComponentVisitorBase.ComponentVisitorBase):
 
     def __init__(self):
         self.initBase("MdDoc")
-        
+
     def mdStartPage(self, obj):
         output_dir = os.environ["MD_DOC_SUBDIR"]
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
         htmlfile = output_dir + "/" + obj.get_name() + ".md"
         self.openFile(htmlfile)
-        
+
     def mdPageVisit(self, obj):
         c = MdDocPage.MdDocPage()
         self.init(obj, c)

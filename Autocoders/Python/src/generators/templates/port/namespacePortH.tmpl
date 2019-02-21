@@ -24,11 +24,11 @@ namespace ${namespace} {
 
     class ${argname}String : public Fw::StringBase {
         public:
-        
+
             enum {
                 SERIALIZED_SIZE = ${size} + sizeof(FwBuffSizeType) //!< Serialized size of ${argname}String
             };
-        
+
             ${argname}String(const char* src); //!< char buffer constructor
             ${argname}String(const Fw::StringBase& src); //!< other string constructor
             ${argname}String(const ${argname}String& src); //!< same type string constructor
@@ -36,12 +36,12 @@ namespace ${namespace} {
             virtual ~${argname}String(void); //!< destructor
             const char* toChar(void) const; //!< return internal buffer
             NATIVE_UINT_TYPE length(void) const; //!< length of string
-            
+
             const ${argname}String& operator=(const ${argname}String& other); //!< equal operator for other strings
-            
+
             Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< deserialization method
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< serialization method
-            
+
         private:
             void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy buffer, overwriting old string
             NATIVE_UINT_TYPE getCapacity(void) const ;
@@ -49,8 +49,8 @@ namespace ${namespace} {
 
             char m_buf[${size}]; //!< buffer for string
     };
-    
-#end if 
+
+#end if
 #if $type == "buffer":
 
     class ${argname}Buffer : public Fw::SerializeBufferBase {
@@ -73,8 +73,8 @@ namespace ${namespace} {
         private:
             U8 m_data[${size}]; //!< data buffer
     };
-    
-#end if 
+
+#end if
 #end for
 
     /// Input $name port description

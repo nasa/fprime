@@ -2,7 +2,7 @@
 #===============================================================================
 # NAME: ImplHVisitor.py
 #
-# DESCRIPTION: A visitor class for generating component implementation 
+# DESCRIPTION: A visitor class for generating component implementation
 # header files.
 #
 # AUTHOR: bocchino
@@ -27,7 +27,7 @@ class ImplHVisitor(ImplVisitorBase.ImplVisitorBase):
     def __init__(self):
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.initBase("ImplH")
-    
+
     def buildFileName(self, obj):
         return obj.get_name() + self.__config.get("component", "ImplH")
 
@@ -36,7 +36,7 @@ class ImplHVisitor(ImplVisitorBase.ImplVisitorBase):
 
     def emitNonPortParams(self, params):
         return self.emitNonPortParamsHpp(10, params)
-  
+
     def startSourceFilesVisit(self, obj):
         c = hpp.hpp()
         self.init(obj, c)

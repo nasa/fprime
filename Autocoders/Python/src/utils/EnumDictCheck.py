@@ -82,7 +82,7 @@ class EnumInfo:
         self.name = type_name
 
         self.bits = 0
-        self.max_abs_value = 0 
+        self.max_abs_value = 0
 
     def is_signed(self):
         return self.signed
@@ -133,7 +133,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
     for line in fd:
 
         # Build a map for each enumeration. The key is the name of the
-        # enumeration. The value is the highest numeric value of all 
+        # enumeration. The value is the highest numeric value of all
         # the items.
 
         if line.find("<enum_typedef ") != -1:
@@ -162,7 +162,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
                     break
 
             #print ">>>>>Final max value of %s (%s) is %d" % (key,enum.name,enum.max_abs_value)
-            
+
             if enums.has_key(key):
                 print "Duplicate enumerations: %s." % (key)
                 return None
@@ -181,7 +181,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
             # The key is the type name.
             key = fields[3]
             # now this is I32, I16 or I8.  Chop off the I
-            integertypename = fields[5] 
+            integertypename = fields[5]
             integertypename = integertypename[1:]
             value = int(integertypename)
             if key[0:3] != "All":
@@ -200,7 +200,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
 
     if verbose == True:
-        print "Done gathering %d enumerations." % (len(enums)) 
+        print "Done gathering %d enumerations." % (len(enums))
         print "Done gathering %d usages." % (len(enum_info))
 
     for type in enums.iterkeys():

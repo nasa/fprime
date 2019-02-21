@@ -33,7 +33,7 @@ namespace Tlm {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TestTlmTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,
@@ -104,7 +104,7 @@ namespace Tlm {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel somechan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_somechan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_somechan& e =
@@ -154,7 +154,7 @@ namespace Tlm {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel anotherchan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_anotherchan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_anotherchan& e =
@@ -204,7 +204,7 @@ namespace Tlm {
       << "  File:     " << __ISF_callSiteFileName << "\n"
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel someenumchan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_someenumchan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_someenumchan& e =

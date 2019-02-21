@@ -36,7 +36,7 @@ $emit_cpp_params([ $param_compName, $param_maxHistorySize ])
 \#else
 $emit_cpp_params([ $param_maxHistorySize ])
 \#endif
-    ) : 
+    ) :
         ${tester_base} (
 \#if FW_OBJECT_NAMES == 1
             compName,
@@ -79,7 +79,7 @@ $emit_cpp_params($params_assert_cmd_response)
     ASSERT_LT(__index, this->cmdResponseHistory->size())
       $failure_message
       $LTLT "  Value:    Index into command response history\n"
-      $LTLT "  Expected: Less than size of command response history (" 
+      $LTLT "  Expected: Less than size of command response history ("
       $LTLT this->cmdResponseHistory->size() $LTLT ")\n"
       $LTLT "  Actual:   " $LTLT __index $LTLT "\n";
     const CmdResponse& e = this->cmdResponseHistory->at(__index);
@@ -151,7 +151,7 @@ $emit_cpp_params([ $param_fileName, $param_lineNumber, $param_index, $param_val 
     ASSERT_LT(__index, this->tlmHistory_${channel_name}->size())
       $failure_message
       $LTLT "  Value:    Index into history of telemetry channel ${channel_name}\n"
-      $LTLT "  Expected: Less than size of history (" 
+      $LTLT "  Expected: Less than size of history ("
       $LTLT this->tlmHistory_${channel_name}->size() $LTLT ")\n"
       $LTLT "  Actual:   " $LTLT __index $LTLT "\n";
     const TlmEntry_${channel_name}& e =
@@ -223,7 +223,7 @@ $emit_cpp_params($params_assert_event + $params)
     ASSERT_GT(this->eventHistory_${event_name}->size(), __index)
       $failure_message
       $LTLT "  Value:    Index into history of event ${event_name}\n"
-      $LTLT "  Expected: Less than size of history (" 
+      $LTLT "  Expected: Less than size of history ("
       $LTLT this->eventHistory_${event_name}->size() $LTLT ")\n"
       $LTLT "  Actual:   " $LTLT __index $LTLT "\n";
     const EventEntry_${event_name}& e =

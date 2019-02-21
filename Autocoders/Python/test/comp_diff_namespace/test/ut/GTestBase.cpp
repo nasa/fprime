@@ -34,7 +34,7 @@ namespace Components {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TestCommandTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,
@@ -87,7 +87,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into command response history\n"
-      << "  Expected: Less than size of command response history (" 
+      << "  Expected: Less than size of command response history ("
       << this->cmdResponseHistory->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const CmdResponse& e = this->cmdResponseHistory->at(index);
@@ -174,7 +174,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel somechan\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->tlmHistory_somechan->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const TlmEntry_somechan& e =
@@ -245,7 +245,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event SomeEvent\n"
-      << "  Expected: Less than size of history (" 
+      << "  Expected: Less than size of history ("
       << this->eventHistory_SomeEvent->size() << ")\n"
       << "  Actual:   " << index << "\n";
     const EventEntry_SomeEvent& e =

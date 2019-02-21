@@ -8,11 +8,11 @@ using namespace std;
 namespace Duck {
 
         DuckImpl::DuckImpl(const char* compName) : DuckBase(compName) {
-            
+
         }
-        
+
         DuckImpl::~DuckImpl(void) {
-            
+
         }
 
         // Internal call - implemented by hand.

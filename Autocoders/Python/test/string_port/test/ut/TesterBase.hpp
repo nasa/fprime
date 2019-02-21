@@ -114,10 +114,10 @@ namespace ExampleComponents {
           //!
           History(
               const U32 maxSize //!< The maximum history size
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -232,7 +232,7 @@ namespace ExampleComponents {
 
       //! The history for from_testOut
       //!
-      History<FromPortEntry_testOut> 
+      History<FromPortEntry_testOut>
         *fromPortHistory_testOut;
 
     protected:

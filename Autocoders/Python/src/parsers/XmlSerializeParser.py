@@ -2,9 +2,9 @@
 #===============================================================================
 # NAME: XmlSerializeParser.py
 #
-# DESCRIPTION:  This class parses the XML serializable types files. 
+# DESCRIPTION:  This class parses the XML serializable types files.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -55,7 +55,7 @@ format_dictionary = {
 class XmlSerializeParser(object):
     """
     An XML parser class that uses lxml.etree to consume an XML
-    serializable type documents.  The class is instanced with 
+    serializable type documents.  The class is instanced with
     an XML file name.
     """
     def __init__(self, xml_file=None):
@@ -78,9 +78,9 @@ class XmlSerializeParser(object):
         self.__type_id = None
         #
         self.__xml_filename = xml_file
-        
+
         self.__config       = ConfigManager.ConfigManager.getInstance()
-        
+
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
@@ -91,13 +91,13 @@ class XmlSerializeParser(object):
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
-        
+
          #Validate new imports using their root tag as a key to find what schema to use
         file_handler = open(os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower()) , 'r')
         relax_parsed = etree.parse(file_handler)
         file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
-        
+
         try:
             relax_compiled.assert_(element_tree)
         except Exception , e:
@@ -106,26 +106,26 @@ class XmlSerializeParser(object):
             PRINT.info(relax_compiled.error_log)
             PRINT.info(relax_compiled.error_log.last_error)
             raise e
-        
+
         serializable = element_tree.getroot()
         if serializable.tag != "serializable":
-            PRINT.info("%s is not a serializable definition file"%xml_file)            
+            PRINT.info("%s is not a serializable definition file"%xml_file)
             sys.exit(-1)
-            
+
         print("Parsing Serializable %s" %serializable.attrib['name'])
-        
+
         self.__name = serializable.attrib['name']
-            
+
         if 'namespace' in serializable.attrib:
             self.__namespace = serializable.attrib['namespace']
         else:
             self.__namespace = None
-            
+
         if 'typeid' in serializable.attrib:
             self.__type_id = serializable.attrib['typeid']
         else:
             self.__type_id = None
-        
+
         for serializable_tag in serializable:
             if serializable_tag.tag == 'comment':
                 self.__comment = serializable_tag.text.strip()
@@ -136,17 +136,17 @@ class XmlSerializeParser(object):
             elif serializable_tag.tag == 'members':
                 for member in serializable_tag:
                     if member.tag != 'member':
-                        PRINT.info("%s: Invalid tag %s in serializable member definition"%(xml_file,member.tag))            
+                        PRINT.info("%s: Invalid tag %s in serializable member definition"%(xml_file,member.tag))
                         sys.exit(-1)
                     n = member.attrib['name']
                     t = member.attrib['type']
                     if 'size' in member.attrib.keys():
                         if t == "ENUM":
-                            PRINT.info("%s: Member %s: arrays of enums not supported yet!"%(xml_file,n))            
+                            PRINT.info("%s: Member %s: arrays of enums not supported yet!"%(xml_file,n))
                             sys.exit(-1)
                         s = member.attrib['size']
                         if not s.isdigit():
-                            PRINT.info("%s: Member %s: size must be a number"%(xml_file,n))            
+                            PRINT.info("%s: Member %s: size must be a number"%(xml_file,n))
                             sys.exit(-1)
                     else:
                         s = None
@@ -166,7 +166,7 @@ class XmlSerializeParser(object):
                         c = member.attrib['comment']
                     else:
                         c = None
-                        
+
                     for member_tag in member:
                         if member_tag.tag == 'enum' and t == 'ENUM':
                             en = member_tag.attrib['name']
@@ -184,17 +184,17 @@ class XmlSerializeParser(object):
                                 enum_members.append((mn,v,mc))
                             t = ((t,en),enum_members)
                         else:
-                            PRINT.info("%s: Invalid member tag %s in serializable member %s"%(xml_file,member_tag.tag,n))            
+                            PRINT.info("%s: Invalid member tag %s in serializable member %s"%(xml_file,member_tag.tag,n))
                             sys.exit(-1)
-                        
-                       
-                    self.__members.append((n, t, s, f, c))    
-                        
-                        
+
+
+                    self.__members.append((n, t, s, f, c))
+
+
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.
         #
-        
+
         if not 'typeid' in serializable.attrib:
             s = etree.tostring(element_tree.getroot())
             h = hashlib.sha256(s)
@@ -225,28 +225,28 @@ class XmlSerializeParser(object):
 
     def get_namespace(self):
         return self.__namespace
-    
+
     def get_include_header_files(self):
         """
         Return a list of all imported Port type XML files.
         """
         return self.__include_header_files
 
-    
+
     def get_includes(self):
         """
         Returns a list of all imported XML serializable files.
         """
         return self.__includes
 
-    
+
     def get_comment(self):
         """
         Return text block string of comment for serializable class.
         """
         return self.__comment
 
-    
+
     def get_members(self):
         """
         Returns a list of member (name, type, optional size, optional format, optional comment) needed.

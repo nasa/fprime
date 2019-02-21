@@ -3,7 +3,7 @@ import CmdBuilder
 
 # Setup Path and Build
 def setup_module():
-    
+
     ## Application Specific Variables
     xmlFiles = ["Comp1Ai.xml", "Comp2Ai.xml"]
     implFiles = ["Comp1Impl.cpp", "Comp2Impl.cpp"]
@@ -13,20 +13,20 @@ def setup_module():
     ## Configure Command Builder
     Builder = CmdBuilder.CmdBuilder.getInstance()
     Builder.setAppPath(appPath)
-    cppFiles = Builder.generateCppFiles(xmlFiles) 
+    cppFiles = Builder.generateCppFiles(xmlFiles)
     Builder.setTarget(target)
     Builder.setImplFiles(implFiles)
     Builder.setXmlFiles(xmlFiles)
-    Builder.setCppFiles(cppFiles)    
+    Builder.setCppFiles(cppFiles)
 
 
     ## Set isfgen flags
     flags = "-b"
 
-    
+
     isfgenCmds = Builder.generateIsfgenCommands(flags)
-    buildCmds = Builder.generateBuildCommands() 
- 
+    buildCmds = Builder.generateBuildCommands()
+
 
     for cmd in isfgenCmds:
         print cmd

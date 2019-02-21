@@ -45,7 +45,7 @@ namespace Prm {
   }
 
   ParamTesterTesterBase ::
-    ~ParamTesterTesterBase(void) 
+    ~ParamTesterTesterBase(void)
   {
   }
 
@@ -124,14 +124,14 @@ namespace Prm {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void ParamTesterTesterBase ::
     connect_to_paramGetPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputPrmGetPort *const paramGetPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_paramGetPort(),static_cast<AssertArg>(portNum));
     this->m_to_paramGetPort[portNum].addCallPort(paramGetPort);
@@ -141,7 +141,7 @@ namespace Prm {
     connect_to_paramSetPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputPrmSetPort *const paramSetPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_paramSetPort(),static_cast<AssertArg>(portNum));
     this->m_to_paramSetPort[portNum].addCallPort(paramSetPort);

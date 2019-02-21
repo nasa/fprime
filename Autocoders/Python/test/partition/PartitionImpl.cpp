@@ -10,9 +10,9 @@ namespace Partition {
 		PartitionImpl::PartitionImpl(const char* compName) : PartitionBase(compName) {
 
 		}
-		
+
 		PartitionImpl::~PartitionImpl(void) {
-			
+
 		}
 
 		// downcall for input port

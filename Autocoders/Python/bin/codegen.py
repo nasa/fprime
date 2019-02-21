@@ -126,7 +126,7 @@ def pinit():
     vers = "%prog " + VERSION.id + " " + VERSION.comment
 
     parser = OptionParser(usage, version=vers)
-    
+
     parser.add_option("-b", "--build_root", dest="build_root_flag",
         help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
         action="store_true", default=False)
@@ -138,7 +138,7 @@ def pinit():
     parser.add_option("-v", "--verbose", dest="verbose_flag",
         help="Enable verbose mode showing more runtime detail (def: False)",
         action="store_true", default=False)
-    
+
     parser.add_option("-t", "--template", dest="impl_flag",
         help="Enable generation of *Impl_[hpp,cpp].template implementation template files (def: False)",
         action="store_true", default=False)
@@ -155,39 +155,39 @@ def pinit():
 
     parser.add_option("-d", "--dependency-file", dest="dependency_file",
         default=None, help="Set the output file for build dependencies")
-    
+
     parser.add_option("-g", "--default_dict", dest="default_dict",
         help="Generate default GDS dictionary classes", action="store_true", default=False)
-    
+
     parser.add_option("-x", "--xml_topology_dict", dest="xml_topology_dict",
         help="Generate XML GDS dictionary file", action="store_true", default=False)
-    
+
     parser.add_option("-T", "--default_topology_dict", dest="default_topology_dict",
         help="Generate default GDS topology dictionary classes", action="store_true", default=False)
-    
+
     parser.add_option("-a", "--ampcs_dict", dest="ampcs_dict",
         help="Generate AMPCS GDS dictionary classes", action="store_true", default=False)
-    
+
     parser.add_option("-A", "--ampcs_topology_dict", dest="ampcs_topology_dict",
         help="Generate AMPCS GDS topology dictionary classes", action="store_true", default=False)
-    
+
     parser.add_option("-o", "--dict_dir", dest="dict_dir",
         help="Output directory for dictionary. Needed for -g.", default=None)
 
     parser.add_option("-H", "--html_docs", dest="html_docs",
         help="Generate HTML docs for commands, telemetry, events, and parameters", action="store_true", default=False)
-    
+
     parser.add_option("-D", "--html_doc_dir", dest="html_doc_dir",
         help="Directory for HTML documentation", default=None)
-    
+
     parser.add_option("-m", "--md_docs", dest="md_docs",
         help="Generate MarkDown docs for commands, telemetry, events, and parameters", action="store_true", default=False)
-    
+
     parser.add_option("-M", "--md_doc_dir", dest="md_doc_dir",
         help="Directory for MarkDown documentation", default=None)
-    
-    parser.add_option("-P", "--is_ptr", dest="is_ptr", 
-        help="Generate component ptr's in topology.", action="store_true", default=False)    
+
+    parser.add_option("-P", "--is_ptr", dest="is_ptr",
+        help="Generate component ptr's in topology.", action="store_true", default=False)
 
     parser.add_option("-C", "--connect_only", dest="connect_only",
         help="Only generate port connections in topology.", action="store_true", default=False)
@@ -207,7 +207,7 @@ def pinit():
 
     return parser
 
-def generate_topology(the_parsed_topology_xml, xml_filename, opt):            
+def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     DEBUG.debug("Topology xml type description file: %s" % xml_filename)
     generator = TopoFactory.TopoFactory.getInstance()
     if not(opt.default_topology_dict or opt.ampcs_topology_dict or opt.xml_topology_dict):
@@ -216,13 +216,13 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
     if(opt.is_ptr):
         PRINT.info("Topology Components will be initalized as Pointers. ")
-        topology_model.is_ptr = opt.is_ptr    
+        topology_model.is_ptr = opt.is_ptr
     if(opt.connect_only):
         PRINT.info("Only port connections will be generated for Topology.")
         topology_model.connect_only = opt.connect_only
 
     generator = GenFactory.GenFactory.getInstance()
-    
+
     if "Ai" in xml_filename:
         base = xml_filename.split("Ai")[0]
         h_instance_name = base + "_H"
@@ -234,26 +234,26 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise exceptions.IOError
-    
+
     #Figures out what visitor to use
     if opt.default_topology_dict or opt.xml_topology_dict:
-        generator.configureVisitor(h_instance_name, "InstanceTopologyHVisitor", True, True)  
+        generator.configureVisitor(h_instance_name, "InstanceTopologyHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "InstanceTopologyCppVisitor", True, True)
     else:
-        generator.configureVisitor(h_instance_name, "TopologyHVisitor", True, True)  
+        generator.configureVisitor(h_instance_name, "TopologyHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "TopologyCppVisitor", True, True)
-        
+
     #Used to generate base ID/base ID window CSV files
     if True:
         generator.configureVisitor(csv_instance_name , "TopologyIDVisitor" , True , True)
-    
+
     #Used to generate HTML tables of ID's etc.
     if opt.default_topology_dict or opt.xml_topology_dict:
         generator.configureVisitor(cmd_html_instance_name, "InstanceTopologyCmdHTMLVisitor", True, True)
         generator.configureVisitor(channel_html_instance_name, "InstanceTopologyChannelsTMLVisitor", True, True)
         generator.configureVisitor(event_html_instance_name, "InstanceTopologyEventsHTMLVisitor", True, True)
-    
-    #uses the topology model to process the items        
+
+    #uses the topology model to process the items
     if opt.default_topology_dict or opt.ampcs_topology_dict or opt.xml_topology_dict:
         #create list of used parsed component xmls
         parsed_xml_dict = {}
@@ -263,7 +263,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 #comp.set_component_object(comp.)
             else:
                 PRINT.info( "Components with type {} aren't in the topology model.".format(comp.get_type()))
-              
+
         '''
             If creating AMPCS dictionary, this portion validates channel abbreviations.
             A dictionary is created, where each key is an abbreviation which corresponds to a channel name.
@@ -277,7 +277,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 #             for parsed_xml_type in parsed_xml_dict:
 #                 if parsed_xml_dict[parsed_xml_type] == None:
 #                     PRINT.info("XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
-#                     raise Exception()    
+#                     raise Exception()
 #                 for chan in parsed_xml_dict[parsed_xml_type].get_channels():
 #                     if chan.get_abbrev() == None:
 #                         PRINT.info("Channel {} of component type {} has no abbreviation. Please specify the abbreviation in the component XML file.".format(chan.get_name() , parsed_xml_type))
@@ -290,15 +290,15 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
-            os.environ["DICT_DIR"] = BUILD_ROOT + os.sep + "Gse/generated" + os.sep + DEPLOYMENT
+            os.environ["DICT_DIR"] = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT) + os.sep + "Gse/generated" + os.sep + DEPLOYMENT
             dict_dir = os.environ["DICT_DIR"]
             PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
             import shutil
             if os.path.exists(dict_dir):
                 shutil.rmtree(dict_dir)
-            PRINT.info("Overriding for instanced topology dictionaries the --dict_dir option with xml derived path: %s", dict_dir)    
+            PRINT.info("Overriding for instanced topology dictionaries the --dict_dir option with xml derived path: %s", dict_dir)
         #
-        xml_list = []         
+        xml_list = []
         for parsed_xml_type in parsed_xml_dict:
             if parsed_xml_dict[parsed_xml_type] == None:
                 PRINT.info("XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
@@ -307,7 +307,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             generate_component_instance_dictionary(parsed_xml_dict[parsed_xml_type] , opt , topology_model)
 
         topology_model.set_instance_xml_list(xml_list)
-        
+
         if opt.xml_topology_dict:
             topology_dict = etree.Element("dictionary")
             topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
@@ -323,12 +323,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 comp_name = comp.get_name()
                 comp_id = int(comp.get_base_id())
                 PRINT.debug("Processing %s [%s] (%s)"%(comp_name,comp_type,hex(comp_id)))
-                
+
                 # check for included serializable XML
                 if (parsed_xml_dict[comp_type].get_serializable_type_files() != None):
                     serializable_file_list = parsed_xml_dict[comp_type].get_serializable_type_files()
                     for serializable_file in serializable_file_list:
-                        serializable_file = BUILD_ROOT + os.sep + serializable_file
+                        serializable_file = search_for_file("Serializable", serializable_file)
                         serializable_model = XmlSerializeParser.XmlSerializeParser(serializable_file)
                         if (len(serializable_model.get_includes()) != 0):
                             raise Exception("%s: Can only include one level of serializable for dictionaries"%serializable_file)
@@ -355,7 +355,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     # keep track of incrementing enum value
                                     if value != None:
                                         enum_value = int(value)
-                                      
+
                                     enum_mem.attrib["value"] = "%d"%enum_value
                                     enum_value = enum_value + 1
                                     if comment != None:
@@ -363,15 +363,15 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     enum_elem.append(enum_mem)
                                 enum_list.append(enum_elem)
                             else:
-                                type_name = member_type    
+                                type_name = member_type
                                 if member_type == "string":
-                                    member_elem.attrib["len"] = member.get_size()   
+                                    member_elem.attrib["len"] = member.get_size()
                             member_elem.attrib["type"] = type_name
                             members_elem.append(member_elem)
                         serializable_elem.append(members_elem)
                         serializable_list.append(serializable_elem)
 
-                
+
                 # check for commands
                 if (parsed_xml_dict[comp_type].get_commands() != None):
                     for command in parsed_xml_dict[comp_type].get_commands():
@@ -400,7 +400,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     # keep track of incrementing enum value
                                     if value != None:
                                         enum_value = int(value)
-                                      
+
                                     enum_mem.attrib["value"] = "%d"%enum_value
                                     enum_value = enum_value + 1
                                     if comment != None:
@@ -408,14 +408,14 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     enum_elem.append(enum_mem)
                                 enum_list.append(enum_elem)
                             else:
-                                type_name = arg_type    
+                                type_name = arg_type
                                 if arg_type == "string":
-                                    arg_elem.attrib["len"] = arg.get_size()   
+                                    arg_elem.attrib["len"] = arg.get_size()
                             arg_elem.attrib["type"] = type_name
                             args_elem.append(arg_elem)
                         command_elem.append(args_elem)
                         command_list.append(command_elem)
-                
+
                 # check for channels
                 if (parsed_xml_dict[comp_type].get_channels() != None):
                     for chan in parsed_xml_dict[comp_type].get_channels():
@@ -428,7 +428,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             channel_elem.attrib["format_string"] = chan.get_format_string()
                         if chan.get_comment() != None:
                             channel_elem.attrib["description"] = chan.get_comment()
-    
+
                         channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
                         if ("comment" in channel_elem.attrib.keys()):
                             channel_elem.attrib["description"] = channel_elem.attrib["comment"]
@@ -446,7 +446,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 # keep track of incrementing enum value
                                 if value != None:
                                     enum_value = int(value)
-                                
+
                                 enum_mem.attrib["value"] = "%d"%enum_value
                                 enum_value = enum_value + 1
                                 if comment != None:
@@ -454,9 +454,9 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 enum_elem.append(enum_mem)
                             enum_list.append(enum_elem)
                         else:
-                            type_name = channel_type 
+                            type_name = channel_type
                             if channel_type == "string":
-                                channel_elem.attrib["len"] = chan.get_size()   
+                                channel_elem.attrib["len"] = chan.get_size()
                         (lr,lo,ly,hy,ho,hr) = chan.get_limits()
                         if (lr != None):
                             channel_elem.attrib["low_red"] = lr
@@ -470,7 +470,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             channel_elem.attrib["high_orange"] = ho
                         if (hr != None):
                             channel_elem.attrib["hight_red"] = hr
-                            
+
                         channel_elem.attrib["type"] = type_name
                         telemetry_list.append(channel_elem)
 
@@ -505,7 +505,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     # keep track of incrementing enum value
                                     if value != None:
                                         enum_value = int(value)
-                                     
+
                                     enum_mem.attrib["value"] = "%d"%enum_value
                                     enum_value = enum_value + 1
                                     if comment != None:
@@ -515,16 +515,16 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 # replace enum format string %d with %s for ground system
                                 format_string = DictTypeConverter.DictTypeConverter().format_replace(format_string,arg_num,'d','s')
                             else:
-                                type_name = arg_type    
+                                type_name = arg_type
                                 if arg_type == "string":
-                                    arg_elem.attrib["len"] = arg.get_size()   
+                                    arg_elem.attrib["len"] = arg.get_size()
                             arg_elem.attrib["type"] = type_name
                             args_elem.append(arg_elem)
                             arg_num += 1
                         event_elem.attrib["format_string"] = format_string
                         event_elem.append(args_elem)
                         event_list.append(event_elem)
-        
+
                 # check for parameters
                 if (parsed_xml_dict[comp_type].get_parameters() != None):
                     for parameter in parsed_xml_dict[comp_type].get_parameters():
@@ -535,10 +535,10 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_set.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SET"
                         command_elem_set.attrib["opcode"] = "%s"%(hex(int(parameter.get_set_opcodes()[0],base=0) + comp_id))
                         if ("comment" in command_elem.attrib.keys()):
-                            command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set" 
+                            command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
-                            command_elem_set.attrib["description"] = parameter.get_name() + " parameter set" 
-                            
+                            command_elem_set.attrib["description"] = parameter.get_name() + " parameter set"
+
                         args_elem = etree.Element("args")
                         arg_elem = etree.Element("arg")
                         arg_elem.attrib["name"] = "val"
@@ -556,7 +556,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 # keep track of incrementing enum value
                                 if value != None:
                                     enum_value = int(value)
-                                  
+
                                 enum_mem.attrib["value"] = "%d"%enum_value
                                 enum_value = enum_value + 1
                                 if comment != None:
@@ -567,16 +567,16 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     param_default = membername
                             enum_list.append(enum_elem)
                         else:
-                            type_name = arg_type    
+                            type_name = arg_type
                             if arg_type == "string":
                                 arg_elem.attrib["len"] = arg.get_size()
                             else:
-                                param_default = "0"      
+                                param_default = "0"
                         arg_elem.attrib["type"] = type_name
                         args_elem.append(arg_elem)
                         command_elem_set.append(args_elem)
                         command_list.append(command_elem_set)
-                        
+
                         command_elem_save = etree.Element("command")
                         command_elem_save.attrib["component"] = comp_name
                         command_elem_save.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SAVE"
@@ -585,9 +585,9 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             command_elem_save.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_save.attrib["description"] = parameter.get_name() +  " parameter save"
-                            
+
                         command_list.append(command_elem_save)
-                        
+
                         param_elem = etree.Element("parameter")
                         param_elem.attrib["component"] = comp_name
                         param_elem.attrib["name"] = parameter.get_name()
@@ -595,7 +595,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         if parameter.get_default() != None:
                             param_default = parameter.get_default()
                         param_elem.attrib["default"] = param_default
-                            
+
                         parameter_list.append(param_elem)
 
             topology_dict.append(enum_list)
@@ -604,13 +604,13 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             topology_dict.append(event_list)
             topology_dict.append(telemetry_list)
             topology_dict.append(parameter_list)
-            
+
             fileName = the_parsed_topology_xml.get_xml_filename().replace("Ai.xml","Dictionary.xml")
             PRINT.info ("Generating XML dictionary %s"%fileName)
             fd = open(fileName,"w")
             fd.write(etree.tostring(topology_dict,pretty_print=True))
 
-    
+
     initFiles   = generator.create("initFiles")
     #startSource = generator.create("startSource")
     includes1   = generator.create("includes1")
@@ -632,8 +632,8 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     #
     # 4. Generate final code here and close all files.
     finishSource(topology_model)
-    
-    
+
+
     return(topology_model)
 
 def generate_component_instance_dictionary(the_parsed_component_xml , opt , topology_model):
@@ -643,49 +643,39 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
     #
     parsed_port_xml_list = []
     parsed_serializable_xml_list = []
-    #uses the topology model to process the items        
+    #uses the topology model to process the items
     #checks if the topology model exists
     if topology_model == None:
         PRINT.info("Topology model was not specified. Please also input a topology model when running this command.")
         raise exceptions.IOError
 
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
-        
+
     for port_file in port_type_files_list:
-        if BUILD_ROOT != None:
-            port_file = BUILD_ROOT + os.sep + port_file
-        DEBUG.debug("Port xml type description file: %s" % port_file)
-        if not os.path.exists(port_file):
-            PRINT.info("ERROR: Port xml specification file %s does not exist!" % port_file)
-            sys.exit(-1)
+        port_file = search_for_file("Port", port_file)
         xml_parser_obj = XmlPortsParser.XmlPortsParser(port_file)
         #print xml_parser_obj.get_args()
         parsed_port_xml_list.append(xml_parser_obj)
         del(xml_parser_obj)
-        
+
     serializable_type_files_list = the_parsed_component_xml.get_serializable_type_files()
     for serializable_file in serializable_type_files_list:
-        if BUILD_ROOT != None:
-            serializable_file = BUILD_ROOT + os.sep + serializable_file
-        DEBUG.debug("Serializable xml type description file: %s" % serializable_file)
-        if not os.path.exists(serializable_file):
-            PRINT.info("ERROR: Serializable xml specification file %s does not exist!" % serializable_file)
-            sys.exit(-1)
+        serializable_file = search_for_file("Serializable", serializable_file)
         xml_parser_obj = XmlSerializeParser.XmlSerializeParser(serializable_file) # Telemetry/Params can only use generated serializable types
         # check to make sure that the serializables don't have things that channels and parameters can't have
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info("ERROR: Component include serializables cannot use user-defined types. file: " % serializable_file)
             sys.exit(-1)
-            
+
         #print xml_parser_obj.get_args()
         parsed_serializable_xml_list.append(xml_parser_obj)
         del(xml_parser_obj)
-    
-    
+
+
     generator = CompFactory.CompFactory.getInstance()
     component_model = generator.create(the_parsed_component_xml, parsed_port_xml_list, parsed_serializable_xml_list)
-    
+
     if opt.default_topology_dict:
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -695,21 +685,21 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
             defaultStartCmd = default_dict_generator.create("InstanceDictStart")
             defaultCmdHeader = default_dict_generator.create("InstanceDictHeader")
             defaultCmdBody = default_dict_generator.create("InstanceDictBody")
-    
+
             defaultStartCmd(command_model , topology_model)
             defaultCmdHeader(command_model , topology_model)
             defaultCmdBody(command_model , topology_model)
-    
+
         for parameter_model in component_model.get_parameters():
             DEBUG.info("Processing parameter %s"%parameter_model.get_name())
             defaultStartCmd = default_dict_generator.create("InstanceDictStart")
             defaultCmdHeader = default_dict_generator.create("InstanceDictHeader")
             defaultCmdBody = default_dict_generator.create("InstanceDictBody")
-    
+
             defaultStartCmd(parameter_model , topology_model)
             defaultCmdHeader(parameter_model , topology_model)
             defaultCmdBody(parameter_model , topology_model)
-            
+
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
         default_dict_generator.configureVisitor("Events","InstanceEventVisitor",True,True)
@@ -718,11 +708,11 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
             defaultStartEvent = default_dict_generator.create("InstanceDictStart")
             defaultEventHeader = default_dict_generator.create("InstanceDictHeader")
             defaultEventBody = default_dict_generator.create("InstanceDictBody")
-    
+
             defaultStartEvent(event_model , topology_model)
             defaultEventHeader(event_model , topology_model)
             defaultEventBody(event_model , topology_model)
-           
+
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
         default_dict_generator.configureVisitor("Channels","InstanceChannelVisitor",True,True)
@@ -731,12 +721,12 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
             defaultStartChannel = default_dict_generator.create("InstanceDictStart")
             defaultChannelHeader = default_dict_generator.create("InstanceDictHeader")
             defaultChannelBody = default_dict_generator.create("InstanceDictBody")
-    
+
             defaultStartChannel(channel_model , topology_model)
             defaultChannelHeader(channel_model , topology_model)
             defaultChannelBody(channel_model , topology_model)
-    
-            
+
+
 #     if opt.ampcs_topology_dict:
 #         # Hack to always write AMPCS into correct deployment path...
 #         # Note note removing it first...
@@ -746,10 +736,10 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
 #         InstanceAmpcsCommandConverter.InstanceAmpcsCommandConverter(component_model , topology_model).writeFile(dict_dir)
 #         InstanceAmpcsTelemetryConverter.InstanceAmpcsTelemetryConverter(component_model , topology_model).writeFile(dict_dir)
 #         InstanceAmpcsEventConverter.InstanceAmpcsEventConverter(component_model , topology_model).writeFile(dict_dir)
-    
+
 def generate_component(the_parsed_component_xml, xml_filename, opt , topology_model = None):
     """
-    Creates a component meta-model, configures visitors and 
+    Creates a component meta-model, configures visitors and
     generates the component files.  Nothing is returned.
     """
     global BUILD_ROOT
@@ -760,9 +750,9 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         report_file = open("%sReport.txt"%xml_filename.replace("Ai.xml",""),"w")
         num_input_ports = 0
         num_output_ports = 0
-        
+
         # Count ports
-        
+
         for port in the_parsed_component_xml.get_ports():
             if port.get_direction() == "input":
                 num_input_ports = num_input_ports + int(port.get_max_number())
@@ -773,7 +763,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
                 report_file.write("Input Ports: %d\n"%num_input_ports)
             if (num_output_ports):
                 report_file.write("Output Ports: %d\n"%num_output_ports)
-            
+
         # Count regular commands
         commands = 0
         idList = ""
@@ -795,7 +785,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
 
         if commands > 0:
             report_file.write("Commands: %d\n OpCodes: %s\n"%(commands,idList[:-1]))
-            
+
         if len(the_parsed_component_xml.get_channels()):
             idList = ""
             channels = 0
@@ -804,7 +794,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
                 for id in channel.get_ids():
                     idList += id + ","
             report_file.write("Channels: %d\n ChanIds: %s\n"%(channels,idList[:-1]))
-            
+
         if len(the_parsed_component_xml.get_events()):
             idList = ""
             events = 0
@@ -813,7 +803,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
                 for id in event.get_ids():
                     idList += id + ","
             report_file.write("Events: %d\n EventIds: %s\n"%(events,idList[:-1]))
-        
+
         if len(the_parsed_component_xml.get_parameters()):
             idList = ""
             parameters = 0
@@ -824,17 +814,11 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
             report_file.write("Parameters: %d\n ParamIds: %s\n"%(parameters,idList[:-1]))
     #
     # Configure the meta-model for the component
-    #        
+    #
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
-        
+
     for port_file in port_type_files_list:
-        if BUILD_ROOT != None:
-            port_file = BUILD_ROOT + os.sep + port_file
-        print(BUILD_ROOT)
-        DEBUG.debug("Port xml type description file: %s" % port_file)
-        if not os.path.exists(port_file):
-            PRINT.info("ERROR: Port xml specification file %s does not exist!" % port_file)
-            sys.exit(-1)
+        port_file = search_for_file("Port", port_file)
         xml_parser_obj = XmlPortsParser.XmlPortsParser(port_file)
         #print xml_parser_obj.get_args()
         parsed_port_xml_list.append(xml_parser_obj)
@@ -843,31 +827,26 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     parsed_serializable_xml_list = []
     #
     # Configure the meta-model for the component
-    #        
+    #
     serializable_type_files_list = the_parsed_component_xml.get_serializable_type_files()
     for serializable_file in serializable_type_files_list:
-        if BUILD_ROOT != None:
-            serializable_file = BUILD_ROOT + os.sep + serializable_file
-        DEBUG.debug("Serializable xml type description file: %s" % serializable_file)
-        if not os.path.exists(serializable_file):
-            PRINT.info("ERROR: Serializable xml specification file %s does not exist!" % serializable_file)
-            sys.exit(-1)
+        serializable_file = search_for_file("Serializable", serializable_file)
         xml_parser_obj = XmlSerializeParser.XmlSerializeParser(serializable_file) # Telemetry/Params can only use generated serializable types
         # check to make sure that the serializables don't have things that channels and parameters can't have
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info("ERROR: Component include serializables cannot use user-defined types. file: " % serializable_file)
             sys.exit(-1)
-            
+
         #print xml_parser_obj.get_args()
         parsed_serializable_xml_list.append(xml_parser_obj)
         del(xml_parser_obj)
-    
+
     #
     #for p in the_parsed_component_xml.get_ports():
     #    print p.get_name(), p.get_type()
     #print parsed_port_xml_list
-        
+
     #for p in parsed_port_xml_list:
     #    print p.get_interface().get_name(), p.get_interface().get_namespace()
     #    print p.get_args()
@@ -880,7 +859,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         #for event_model in component_model.get_events():
         #    event_model.set_ids([1,2,3])
         #    tv.append(event_model)
-    
+
 
     #
     # Configure and create the visitors that will generate the code.
@@ -904,24 +883,24 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise exceptions.IOError
-    
+
     #
     if opt.impl_flag:
         PRINT.info("Enabled generation of implementation template files...")
-        generator.configureVisitor(h_instance_name_tmpl, "ImplHVisitor", True, True)  
+        generator.configureVisitor(h_instance_name_tmpl, "ImplHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name_tmpl, "ImplCppVisitor", True, True)
     elif opt.unit_test:
         PRINT.info("Enabled generation of unit test component files...")
-        generator.configureVisitor(h_instance_test_name, "ComponentTestHVisitor", True, True)  
+        generator.configureVisitor(h_instance_test_name, "ComponentTestHVisitor", True, True)
         generator.configureVisitor(cpp_instance_test_name, "ComponentTestCppVisitor", True, True)
-        generator.configureVisitor(h_instance_gtest_name, "GTestHVisitor", True, True)  
+        generator.configureVisitor(h_instance_gtest_name, "GTestHVisitor", True, True)
         generator.configureVisitor(cpp_instance_gtest_name, "GTestCppVisitor", True, True)
-        generator.configureVisitor(h_instance_test_impl_name, "TestImplHVisitor", True, True)  
+        generator.configureVisitor(h_instance_test_impl_name, "TestImplHVisitor", True, True)
         generator.configureVisitor(cpp_instance_test_impl_name, "TestImplCppVisitor", True, True)
     else:
-        generator.configureVisitor(h_instance_name, "ComponentHVisitor", True, True)  
+        generator.configureVisitor(h_instance_name, "ComponentHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "ComponentCppVisitor", True, True)
-        
+
     #for port_file in port_type_files_list:
     #    if "Ai" in port_file:
     #        base = port_file.split("Ai")[0]
@@ -930,7 +909,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     #    else:
     #        PRINT.info("Missing Ai at end of file: %s" % port_file)
     #        raise exceptions.IOError
-    #    generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)  
+    #    generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     #    generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
     #
     # The idea here is that each of these generators is used to create
@@ -976,7 +955,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     # 9. Generate final code here and close all files.
     finishSource(component_model)
     #
-        
+
     # if requested, generate ground system dictionary
     if opt.default_dict:
         if opt.dict_dir == None:
@@ -1018,7 +997,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
             defaultStartEvent(event_model)
             defaultEventHeader(event_model)
             defaultEventBody(event_model)
-            
+
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
         default_dict_generator.configureVisitor("Channels","ChannelVisitor",True,True)
@@ -1031,7 +1010,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
             defaultStartChannel(channel_model)
             defaultChannelHeader(channel_model)
             defaultChannelBody(channel_model)
-     
+
     if opt.ampcs_dict and not opt.default_topology_dict:
         if opt.dict_dir == None:
             PRINT.info("Dictionary output directory not specified!")
@@ -1040,12 +1019,12 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         AmpcsCommandConverter.AmpcsCommandConverter(component_model).writeFile(opt.dict_dir)
         AmpcsTelemetryConverter.AmpcsTelemetryConverter(component_model).writeFile(opt.dict_dir)
         AmpcsEventConverter.AmpcsEventConverter(component_model).writeFile(opt.dict_dir)
-        
+
     if opt.html_docs:
         if opt.html_doc_dir == None:
             PRINT.info("HTML documentation output directory not specified!")
             raise exceptions.IOError
-            
+
         os.environ["HTML_DOC_SUBDIR"] = opt.html_doc_dir
         html_doc_generator = GenFactory.GenFactory.getInstance()
         html_doc_generator.configureVisitor(base + "_Html", "HtmlDocVisitor", True, True)
@@ -1058,7 +1037,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         if opt.md_doc_dir == None:
             PRINT.info("MD documentation output directory not specified!")
             raise exceptions.IOError
-            
+
         os.environ["MD_DOC_SUBDIR"] = opt.md_doc_dir
         md_doc_generator = GenFactory.GenFactory.getInstance()
         md_doc_generator.configureVisitor(base + "_Md", "MdDocVisitor", True, True)
@@ -1069,12 +1048,12 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
 
 def generate_port(the_parsed_port_xml, port_file):
     """
-    Creates a port meta-model, configures visitors and 
+    Creates a port meta-model, configures visitors and
     generates the port/interface type files.  Nothing is returned.
     """
     #
     # Configure the meta-model for the component
-    #        
+    #
     DEBUG.debug("Port xml type description file: %s" % port_file)
     generator = PortFactory.PortFactory.getInstance()
     port_model = generator.create(the_parsed_port_xml)
@@ -1098,7 +1077,7 @@ def generate_port(the_parsed_port_xml, port_file):
         PRINT.info("Missing Ai at end of file name...")
         raise exceptions.IOError
     #
-    generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)  
+    generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
     #
     # The idea here is that each of these generators is used to create
@@ -1142,16 +1121,16 @@ def generate_port(the_parsed_port_xml, port_file):
     #
     # 9. Generate final code here and close all files.
     finishSource(port_model)
-    
+
 
 def generate_serializable(the_serial_xml, opt):
     """
-    Creates a serializable meta-model class, configures visitors and 
+    Creates a serializable meta-model class, configures visitors and
     generates the serializable class files.  Nothing is returned.
     """
     #
     # Configure the meta-model for the serializable here
-    #        
+    #
     f = the_serial_xml.get_xml_filename()
     DEBUG.debug("Serializable xml type description file: %s" % f)
     n = the_serial_xml.get_name()
@@ -1175,7 +1154,7 @@ def generate_serializable(the_serial_xml, opt):
         raise exceptions.IOError
     #
     generator = GenFactory.GenFactory.getInstance()
-    generator.configureVisitor(h_instance_name, "SerialCppVisitor", True, True)  
+    generator.configureVisitor(h_instance_name, "SerialCppVisitor", True, True)
     generator.configureVisitor(cpp_instance_name, "SerialHVisitor", True, True)
     # only generate if serializable is usable for dictionary. Can't have includes of other types
     if opt.default_dict:
@@ -1188,7 +1167,7 @@ def generate_serializable(the_serial_xml, opt):
                 raise exceptions.IOError
             os.environ["DICT_DIR"] = opt.dict_dir
             generator.configureVisitor("SerialDict", "SerializableVisitor", True, True)
-            
+
     if opt.default_topology_dict:
         if  len(i) != 0 or len(i2) != 0:
             PRINT.info("Dictionary: Skipping %s because of external includes"%(f))
@@ -1243,17 +1222,17 @@ def generate_serializable(the_serial_xml, opt):
     private(model)
     #
     # 9. Generate final code here and close all files.
-    finishSource(model)    
-    
+    finishSource(model)
+
 
 def generate_dependency_file(filename, target_file, subst_path, parser, type):
-    
+
     # verify directory exists for dependency file and is directory
     if not os.path.isdir(os.path.dirname(filename)):
         PRINT.info("ERROR: Dependency file path %s does not exist!",os.path.dirname(full_path))
         sys.exit(-1)
-    
-            
+
+
     # open dependency file
     dep_file = open(filename,'w')
     # get working directory and normalize path
@@ -1266,14 +1245,14 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     # if path to substitute is specified, replace with build root
     if subst_path_local != None:
         full_path = full_path.replace(subst_path_local,"$(BUILD_ROOT)")
-                            
+
     # print("sub: %s\ndep_file: %s\ntdir: %s\ntfile: %s\nfp: %s"%(subst_path_local,filename,target_directory,target_file_local,full_path))
-                            
+
     # write target to file
     dep_file.write("%s:" % full_path)
-    
+
     # assemble list of files
-    
+
     if type == "interface":
         file_list = parser.get_include_header_files() + parser.get_includes_serial_files()
     elif type == "component":
@@ -1287,29 +1266,52 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         #file_list = list()
         #for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
-        
+
     else:
         PRINT.info("ERROR: Unrecognized dependency type %s!",type)
         sys.exit(-1)
-        
-    
+
+
     # write dependencies
     for include in file_list:
         # print("include %s\n"%include)
         if (subst_path_local != None):
-            full_path = "$(BUILD_ROOT)/" + include.replace('\\','/') 
+            full_path = "$(BUILD_ROOT)/" + include.replace('\\','/')
         else:
             PRINT.info("ERROR: No build root to attach. Not sure how to generate dependency.")
             sys.exit(-1)
 
         dep_file.write("\\\n    %s  "%full_path)
-    
-    
+
+
     # carriage return
     dep_file.write("\n\n")
     # close file
     dep_file.close()
-    
+
+def search_for_file(file_type, file_path):
+    '''
+    Searches for a given included port or serializable by looking in three places:
+     - The specified BUILD_ROOT
+     - The F Prime core
+     - The exact specified path
+    @param file_type: type of file searched for
+    @param file_path: path to look for based on offset
+    @return: full path of file
+    '''
+    core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
+    for possible in [BUILD_ROOT, core, None]:
+        if not possible is None:
+            checker = os.path.join(possible, file_path)
+        else:
+            checker = file_path
+        if os.path.exists(checker):
+            DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
+            return checker
+    else:
+        PRINT.info("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
+        sys.exit(-1)
+
 def main():
     """
     Main program.
@@ -1335,7 +1337,7 @@ def main():
         Parser.error('Specified path does not exist (%s)!' % opt.work_path)
 
     working_dir = opt.work_path
-    
+
     # Get the current working directory so that we can return to it when
     # the program completes. We always want to return to the place where
     # we started.
@@ -1386,9 +1388,9 @@ def main():
             BUILD_ROOT = os.environ['BUILD_ROOT']
             ModelParser.BUILD_ROOT = BUILD_ROOT
             #PRINT.info("BUILD_ROOT set to %s"%BUILD_ROOT)
-   
-    for xml_filename in xml_filenames:       
-        
+
+    for xml_filename in xml_filenames:
+
         xml_filename = os.path.basename(xml_filename)
         xml_type = XmlParser.XmlParser(xml_filename)()
 
@@ -1417,11 +1419,11 @@ def main():
         else:
             PRINT.info("Invalid XML found...this format not supported")
             ERROR=True
-            
+
         if opt.dependency_file != None:
             if opt.build_root_flag:
                 generate_dependency_file(opt.dependency_file, xml_filename, BUILD_ROOT, dependency_parser,xml_type)
-        
+
 
     # Always return to directory where we started.
     os.chdir(starting_directory)

@@ -1,17 +1,17 @@
 ##
 ## This template will produce the constructArchitecture() global function that instances components and connects them.
 ##
-void construct$(name)Architecture(void) {  
+void construct$(name)Architecture(void) {
 ###
 #if $connect_only:
     #pass
 #else:
 ###
     Fw::PortBase::setTrace(true);
-#if $is_ptr:    
+#if $is_ptr:
     simpleReg_ptr = new Fw::SimpleObjRegistry();
 #else:
-    #pass ##If objects are being generated as instances they were instansiated in includes. 
+    #pass ##If objects are being generated as instances they were instansiated in includes.
 #end if
 #if $kind.get_comment():
 // $kind.get_comment()
@@ -24,10 +24,10 @@ void construct$(name)Architecture(void) {
 #end if
 
 #end for
-    
+
     // Component initialization
 #for $init_template in $component_inits:
-    ${init_template} 
+    ${init_template}
 #end for
 ###
 #end if
@@ -40,14 +40,14 @@ void construct$(name)Architecture(void) {
 
 ####
 #if $connect_only:
-   #pass 
+   #pass
 #else:
 ###
     // Active component startup
     // start(identifier, priority, stack_size)
 #for $startup_template  in $component_startups:
-    ${startup_template} 
-#end for    
+    ${startup_template}
+#end for
 
     dumparch();
 

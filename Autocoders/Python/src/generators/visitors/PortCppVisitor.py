@@ -89,12 +89,12 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                     sys.exit(-1)
             else:
                 t = arg.get_type()
-                
+
             if t == "string":
                 t = arg.get_name() + "String"
             if t == "buffer":
                 t = arg.get_name() + "Buffer"
-                
+
             #
             # Add modifier here - if any...
             if arg.get_modifier() == "pointer":
@@ -121,13 +121,13 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             arg_str += ", "
         arg_str = arg_str.strip(', ')
         return arg_str
-    
+
     def _get_args_list(self, obj):
         """
         Return a list of port argument tuples
         """
         arg_list = list()
-        
+
         for arg in obj.get_args():
             n = arg.get_name()
             t = arg.get_type()
@@ -135,9 +135,9 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             s = arg.get_size()
             c = arg.get_comment()
             arg_list.append((n,t,m,s,c))
-            
+
         return arg_list
-    
+
 
     def _writeTmpl(self, c, visit_str):
         """
@@ -154,7 +154,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate files for generated code products.
         @parms args: the instance of the concrete element to operation on.
         """
-        # Build filename here...   
+        # Build filename here...
         if self.__config.get("port","XMLDefaultFileName") == "True":
             filename = obj.get_type() + self.__config.get("port","PortCpp")
             PRINT.info("Generating code filename: %s, using XML namespace and name attributes..." % filename)
@@ -170,8 +170,8 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 msg = "XML file naming format not allowed (must be XXXPortAi.xml), Filename: %s" % xml_file
                 PRINT.info(msg)
-                raise        
-        
+                raise
+
         # Open file for writting here...
         DEBUG.info('Open file: %s' % filename)
         self.__fp = open(filename,'w')
@@ -199,8 +199,10 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # normalize path to Linux separators - TKC
         path = path.replace("\\","/")
         if ModelParser.BUILD_ROOT != None:
-            if path[:len(ModelParser.BUILD_ROOT)].lower() == ModelParser.BUILD_ROOT.lower():
-                relative_path = path[len(ModelParser.BUILD_ROOT+"/"):]
+            path = os.path.normpath(os.path.realpath(path))
+            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
+            if path[:len(build_root)].lower() == build_root.lower():
+                relative_path = path[len(build_root+'/'):]
             else:
                 PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
                 sys.exit(-1)
@@ -244,7 +246,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         else:
             c.namespace_list = obj.get_namespace().split('::')
         c.name = obj.get_type()
-        
+
         c.arg_list = self._get_args_list(obj)
 
         self._writeTmpl(c, "namespaceVisit")
@@ -327,7 +329,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                 c.pointer_marker.append(True)
             else:
                 c.pointer_marker.append(False)
-        c.pointer_marker        
+        c.pointer_marker
         tmp
         tmp = self._replace_enum(tmp)
         c.args = tmp

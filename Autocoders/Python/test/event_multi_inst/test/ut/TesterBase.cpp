@@ -55,7 +55,7 @@ namespace Somewhere {
   }
 
   TestLogTesterBase ::
-    ~TestLogTesterBase(void) 
+    ~TestLogTesterBase(void)
   {
     // Destroy event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -220,14 +220,14 @@ namespace Somewhere {
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -267,7 +267,7 @@ namespace Somewhere {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputTimePort *TestLogTesterBase ::
     get_from_Time(const NATIVE_INT_TYPE portNum)
   {
@@ -340,7 +340,7 @@ namespace Somewhere {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
@@ -379,8 +379,8 @@ namespace Somewhere {
     FW_ASSERT(id >= idBase, id, idBase);
     switch (id - idBase) {
 
-      case TestLogComponentBase::EVENTID_SOMEEVENT_0: 
-      case TestLogComponentBase::EVENTID_SOMEEVENT_1: 
+      case TestLogComponentBase::EVENTID_SOMEEVENT_0:
+      case TestLogComponentBase::EVENTID_SOMEEVENT_1:
       {
 
         Fw::SerializeStatus _status;
@@ -411,8 +411,8 @@ namespace Somewhere {
 
       }
 
-      case TestLogComponentBase::EVENTID_ANOTHEREVENT_0: 
-      case TestLogComponentBase::EVENTID_ANOTHEREVENT_1: 
+      case TestLogComponentBase::EVENTID_ANOTHEREVENT_0:
+      case TestLogComponentBase::EVENTID_ANOTHEREVENT_1:
       {
 
         Fw::SerializeStatus _status;
@@ -471,7 +471,7 @@ namespace Somewhere {
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
@@ -534,11 +534,11 @@ namespace Somewhere {
   }
 
   void TestLogTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -547,7 +547,7 @@ namespace Somewhere {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: SomeEvent 
+  // Event: SomeEvent
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::
@@ -565,7 +565,7 @@ namespace Somewhere {
   }
 
   // ----------------------------------------------------------------------
-  // Event: AnotherEvent 
+  // Event: AnotherEvent
   // ----------------------------------------------------------------------
 
   void TestLogTesterBase ::

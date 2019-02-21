@@ -33,7 +33,7 @@ namespace Cmd {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TestTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

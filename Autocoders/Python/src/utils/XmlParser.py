@@ -5,7 +5,7 @@
 # DESCRIPTION:  This is a general xml parser class based on
 #               the pythom xml2obj receipe.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -79,7 +79,7 @@ class Parser(object):
             str = "ERROR: Could not find specified XML file %s." % filename
             PRINT.info(str)
             raise IOError, str
-        
+
         return open(filename,'r').read()
 
 
@@ -91,16 +91,16 @@ class Parser(object):
         Visitor is best a method of a derived class,
         in which case will receive the 'self' of the derived
         class of XmlParser.Parser: useful!!
-        
+
         The visitor will receive the element (class XmlParser.Element)
         that was just started, therefore can check only attributes and
         NOT content.
-        
+
         Special value of ANY_XML_ELEMENT_NAME can be used to connect a
         single visitor to the start of any element: might be useful for debugging.
         """
         self.__node_start_visit_dict[element_name] = visitor
-    
+
     def exampleStartVisitor( self, element ):
         '''
         This is an example of a method you might register via addStartVisitor.
@@ -111,7 +111,7 @@ class Parser(object):
             print "Argument is not a Parser.Element (it is a %s)" % element.__class__.__name__
             raise TypeError, "XmlParser.Parser.exampleStartVisitor argument" + \
                              " is not a Parser.Element (it is a %s)" % element.__class__.__name__
-        
+
         s = "exampleStartVisitor element %s attributes=[" % element.getName()
         for attrName in element.getAttr().keys():
             attrValue = element.getAttr(attrName)
@@ -122,17 +122,17 @@ class Parser(object):
     def addEndVisitor(self, element_name, visitor):
         """
         Attach a visitor to the end of the element
-        to validate. 
+        to validate.
 
         Visitor is best a method of a derived class,
         in which case will receive the 'self' of the derived
         class of XmlParser.Parser: useful!!
-        
+
         The visitor will receive the element (class XmlParser.Element)
         that was just started, therefore can check BOTH attributes AND
         content. But usually, better to report on content only, as
         the line containing the start is hard to get here.
-        
+
         Special value of ANY_XML_ELEMENT_NAME can be used to connect a
         single visitor to the start of any element: might be useful for
         debugging.
@@ -168,7 +168,7 @@ class Parser(object):
 #                         % (type(token).__name__,str(token),
 #                            type(content).__name__,str(content),
 #                            type(loc).__name__,str(loc) ) )
-         
+
             if token == "START":
                 name = content[0]
                 attr = content[1]
@@ -184,7 +184,7 @@ class Parser(object):
 
     def parse_file(self, filename):
         """
-        Parse the specified XML file into a tree of Element objects. Since the 
+        Parse the specified XML file into a tree of Element objects. Since the
         objects are appended to any existing Element objects, this method can
         be used to parse multiple XML files into a single tree. Just call this
         method with each filename.
@@ -245,7 +245,7 @@ class Parser(object):
 
         return self.__root
 
-        
+
     def _startElement(self, name, attr):
         """
         Start element handler.
@@ -274,7 +274,7 @@ class Parser(object):
         name = self.__node_stack[-1].getName()
         if name in self.__node_end_visit_dict.keys():
             self.__node_end_visit_dict[name](self.__node_stack[-1])
-        
+
         self.__node_stack = self.__node_stack[:-1]
 
 
@@ -294,18 +294,18 @@ class Parser(object):
         Validate the attributes of a single element. Note that attributes
         cannot be repeated, or its not valid XML, so we won't even get here
         with repeated attributes.
-        
+
         Returns five items as a list, so use like this:
-        
+
         (probs,vals,badAttrs,errMsg) = self.validateElement(e,listOfAttrNames)
-        
+
         @return problems: a count of the number of problems found.
         @return value: a dictionary, values indexed by attribute name
         @return invalidAttrs: a list of names of unexpected attributes.
         @return errorMsg: a single line message describing the problems,
 
         if any. It is not printed herein: the caller can print this message if
-        desired. It always has something in it, even if no problems, so it can 
+        desired. It always has something in it, even if no problems, so it can
         be used as the beginning of an error message for more detailed checks
         done by the caller (subclass' element validation method).
         '''
@@ -315,7 +315,7 @@ class Parser(object):
         invalidAttrs = list()
 
         errorMsg = 'Error: XML element <%s> is invalid' % (element.getName())
-        
+
         for attrName in validAttrs:
             value[attrName] = None
 
@@ -325,7 +325,7 @@ class Parser(object):
                 value[attrName] = attrValue
             else:
                 invalidAttrs.append(attrName)
-        
+
         for elemName in validAttrs:
             if not value[elemName]:
                 errorMsg += '; did not find "%s" attribute' % elemName
@@ -336,25 +336,25 @@ class Parser(object):
                 problems += 1
 
         return ( problems,value,invalidAttrs,errorMsg )
-    
+
     def countSubtree( self, element, expectedChildren ):
         '''
         Count the children of an element that have names (XML tags) from
         a specified list. The shape of the tree is not specified, so this only
         confirms the existence, and the count of, specified elements, but does
         not confirm order nor depth nor the shape of the subtree.
-        
+
         Returns four items as a list, so use like this:
-        
+
         (found,unexpectedChildren,errMsg) = self.validateSubtree(e,listOfExpectedChildrenNames)
-        
+
         @param element: The root of a tree of elements.
         @param expectedChildren: Names of children nodes.
-        
+
         @return found: a dictionary, indexed by child name, containing the count of
         children of each name.
         @return unexpectedChildren: a list of names of unexpected children elements.
-        @return errMsg: an error message. Never printed herein, and always non-empty even 
+        @return errMsg: an error message. Never printed herein, and always non-empty even
         if no problems, so can be used as the beginning of an error message for more
         detailed validation performed by the caller (the subclass' element validation
         methods).
@@ -378,9 +378,9 @@ class Parser(object):
             else:
                 unexpectedChildren.append(childName)
                 DEBUG.debug('unexpected %s' % childName)
-    
+
         return ( found, unexpectedChildren, errMsg )
-               
+
 
     def dump(self):
         """
@@ -388,9 +388,9 @@ class Parser(object):
         """
         if self.__root == None:
             return
-        
+
         elist = self.__root.getElements()
-        if len(elist) > 0:      
+        if len(elist) > 0:
             for e in elist:
                 print "Element: %s" % e.getName()
                 print "Data: %s" % e.getData()
@@ -439,7 +439,7 @@ class Element:
         self.cdata = ''
         # The element's child element list (sequence)
         self.children = []
-    
+
     def addChild(self, element):
         """
         Add a reference to a child element object.
@@ -460,17 +460,17 @@ class Element:
         Get the cdata.
         """
         return self.cdata
-    
+
     def getName(self):
         """
         Get the tag name for this element.
         """
         return self.name
-    
+
     def getElements(self,name=""):
         """
         Get a list of child elements
-        
+
         If no tag name is given, return list of all children.
         else return only those children with a matching tag name.
         """
@@ -483,7 +483,7 @@ class Element:
                 if element.name == name:
                     elements.append(element)
             return elements
-    
+
     def __getitem__(self, item):
         """
         Make getData, getName and getElemnets
@@ -536,4 +536,4 @@ if __name__ == '__main__':
 
     for iface in root.getElements('iface'):
         print iface.getElements('id')[0].getData()
- 
+

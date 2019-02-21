@@ -178,10 +178,10 @@
           //!
           History(
               const U32 maxSize /*!< The maximum history size*/
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -351,9 +351,9 @@
       // ----------------------------------------------------------------------
 
     protected:
-    
+
       // send command buffers directly - used for intentional command encoding errors
-      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args); 
+      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args);
 
       //! Send a TEST_CMD_1 command
       //!
@@ -361,7 +361,7 @@
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq, /*!< The command sequence number*/
           I32 arg1, /*!< The I32 command argument*/
-          Quaternion arg2 
+          Quaternion arg2
       );
 
     protected:
@@ -480,7 +480,7 @@
 
       //! The history of SomeEvent events
       //!
-      History<EventEntry_SomeEvent> 
+      History<EventEntry_SomeEvent>
         *eventHistory_SomeEvent;
 
     protected:
@@ -527,7 +527,7 @@
 
       //! The history of somechan values
       //!
-      History<TlmEntry_somechan> 
+      History<TlmEntry_somechan>
         *tlmHistory_somechan;
 
     protected:

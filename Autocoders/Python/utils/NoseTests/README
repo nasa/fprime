@@ -1,5 +1,5 @@
 Nose Test Suite ReadMe
-""""""""""""""""""""""   
+""""""""""""""""""""""
 
 Test Suite requires:
 
@@ -12,7 +12,7 @@ pip install pexpect
 nose:    https://nose.readthedocs.org/en/latest/s
 pexpect: https://pexpect.readthedocs.org/en/latest/
 
------------------------------------- Quick Reference  -----------------------------------  
+------------------------------------ Quick Reference  -----------------------------------
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 
@@ -30,25 +30,25 @@ Run specific test:
     - cd to Autocoders/Python/bin
     - run:
         python runNose.py Async_Input_Test
- 
+
 (This will run all Async_Input_Tests within the test suite
 
 Run app specific test:
     - cd to Autocoders/Python/bin
     - run:
-        python runNose.py active_tester.Async_Input_Test 
+        python runNose.py active_tester.Async_Input_Test
 
 Accumulate tests:
     - cd to Autocoders/Python/bin
     - run:
-        python runNose.py Port_Send_Test Sync_Input_Test 
+        python runNose.py Port_Send_Test Sync_Input_Test
 
-(Runs all Port_Send_Test's and all Sync_Input_Test's)       
- 
+(Runs all Port_Send_Test's and all Sync_Input_Test's)
+
 Add an application to the test suite:
     1. Add a test module to an application: (2)
         - Copy TestTemplate.py into the application directory
-        - Perform name changes 
+        - Perform name changes
     2. Implement pexpect_config.xml (3)
     3. Register application in runNose.py (5)
 
@@ -65,7 +65,7 @@ Create a new application:
     - Copy executable cpp file into test/ut
     - Update test/ut/mod.mk
     NOTE: Only declare executable cpp in test/ut/mod.mk
-          Do not declate in root mod.mk 
+          Do not declate in root mod.mk
     - Register application in Autocoders/Python/runNose.py
 
 
@@ -79,17 +79,17 @@ Contents
 (1)  Test Suite Overview
 (1b) Test Suite Elements
 (2)  Adding a test module to an application
-(3)  Implementing the test module with pexpect 
+(3)  Implementing the test module with pexpect
 (4)  Testing the test module
 (5)  Registering the application in runNose
 
 
 '''''''''''''''''''''''
-(1) Test Suite Overview 
+(1) Test Suite Overview
 '''''''''''''''''''''''
 
 A test suite is created when runNose.py is executed. Nose enters each registered application and searches
-for modules that ends with '_test'. Matched modules are added to the test suite. After all test modules 
+for modules that ends with '_test'. Matched modules are added to the test suite. After all test modules
 are collected the the test suite is run.
 
 Test module structure:
@@ -110,10 +110,10 @@ Test module structure:
 Test Module:                A nose test module that resides within an application directory.
                             It must end with '_test'
 
-Test Suite:                 All collected test modules 
+Test Suite:                 All collected test modules
 
 Supported Application:      An application that:
-                            1. Has implemented a test module (3) 
+                            1. Has implemented a test module (3)
                             2. Is registered in runNose (5)
 
 
@@ -126,10 +126,10 @@ runNose:                    Test Suite runner located in Autocoders/Python/bin
 
 - Copy Autocoders/Python/TestTemplate.py into an application.
 - Perform the required name changes
-- Implement pexpect_config.xml 
-- Register the application in runNose (4)    
+- Implement pexpect_config.xml
+- Register the application in runNose (4)
 
-  
+
 '''''''''''''''''''''''''''''''''''''''''''
 (3) Implementing a test module with pexpect
 '''''''''''''''''''''''''''''''''''''''''''
@@ -143,13 +143,13 @@ The following is an example from the test module within  Autocoders/Python/test/
 ## test methods are collected alphabetically. When adding new test methods
 ## define method names according to current order
 ## Ex:
-## a_make_test() <--- Default Test 
+## a_make_test() <--- Default Test
 ## b_make_ut()   <--- Default Test
 ## c_test()
-## d_new_test() 
+## d_new_test()
 
 def c_Sync_InputPortF32_test():
-    ## Set input 
+    ## Set input
     f = "3.14"
 
     ## Match f with expected output
@@ -160,19 +160,19 @@ def c_Sync_InputPortF32_test():
         p.expect(".*Enter g to go or q to quit:.*", timeout=3)
         p.sendline("g")
         p.expect(".*Enter u for unsigned-int and f for float:.*", timeout=3)
-        p.sendline("f") 
+        p.sendline("f")
         p.expect(".*Enter a float to send to CompA:.*")
-        p.sendline(f)                       
-        p.expect(expect_string, timeout=3)          
+        p.sendline(f)
+        p.expect(expect_string, timeout=3)
         p.sendline("q")
-        
+
         ## If there was no timeout the pexpect test passed
         assert True
 
         ## A timeout occurs when pexpect cannot match the executable
-        ## output with the designated expectation. In this case the 
+        ## output with the designated expectation. In this case the
         ## key expectation is p.expect(expect_string, timeout=3)
-        ## which tests what the method name describes 
+        ## which tests what the method name describes
     except TIMEOUT as e:
         print "Timeout Error. Expected Value not returned."
         print "-------Program Output-------"
@@ -194,7 +194,7 @@ To test if the test module is running as desired run the command from the applic
 
 This will run the test module and let you know if the pexpect test's are functional.
 
-pexpect: 
+pexpect:
     https://pexpect.readthedocs.org/en/latest/
 
 
@@ -205,7 +205,7 @@ pexpect:
 - Add the appllication's attributes to the getConstants() method in runNose.py:
 
 
-Line: 9 
+Line: 9
 
 ## Designate test applications here
 def generate_constants():
@@ -218,10 +218,10 @@ def generate_constants():
 
     ## Define apps here
     ## All supported applications must have the base tests
-    constants_dict['active_tester'] = base_tests.copy() 
-    constants_dict['app1'] = base_tests.copy() 
-    constants_dict['app2'] = base_tests.copy() 
-    constants_dict['cnt_only'] = base_tests.copy() 
+    constants_dict['active_tester'] = base_tests.copy()
+    constants_dict['app1'] = base_tests.copy()
+    constants_dict['app2'] = base_tests.copy()
+    constants_dict['cnt_only'] = base_tests.copy()
 
 
     ## Define test cases and their descriptions here
@@ -238,7 +238,7 @@ def generate_constants():
     constants_dict['app2']['test_file'] = "app2_nose_test.py"
     constants_dict['app2']['Void_Send_Test'] = "c_void_send_test"
     constants_dict['app2']['Port_Send_Test'] = "d_port_send_test"
-    
+
     constants_dict['cnt_only']['test_file'] = "cnt_only_nose_test.py"
     constants_dict['cnt_only']['Port_Send_Test'] = "c_port_send_test"
 
@@ -247,5 +247,5 @@ def generate_constants():
 
 Supported applications:
     1. Are displayed when runNose is run with the help flag.
-    2. Can be used as arguments for runNose    
+    2. Can be used as arguments for runNose
 

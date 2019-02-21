@@ -19,12 +19,12 @@
 	   #end if
        #set $hexopcode = hex($opcode)
 	#end if
-|${mnemonic}|${opcode} (${hexopcode})|${comment}| | |	
+|${mnemonic}|${opcode} (${hexopcode})|${comment}| | |
   			#if $args_length > 1
   				#set $args_index = 1
   				#for $arg_name, $arg_type, $comment, $typeinfo in $args:
-| | | |$arg_name|$arg_type|$comment|					
-				#end for	
+| | | |$arg_name|$arg_type|$comment|
+				#end for
 			#end if
 #end for
 #end if

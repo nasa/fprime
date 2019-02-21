@@ -137,10 +137,10 @@ $emit_hpp_params([ $param_maxHistorySize ])
           //!
           History(
               const U32 maxSize $doxygen_post_comment("The maximum history size")
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -258,7 +258,7 @@ $emit_hpp_port_params($params)
 
       //! The history for from_${instance}
       //!
-      History<FromPortEntry_${instance}> 
+      History<FromPortEntry_${instance}>
         *fromPortHistory_${instance};
 
     #else:
@@ -379,9 +379,9 @@ $emit_hpp_params([ $param_portNum ])
       // ----------------------------------------------------------------------
 
     protected:
-    
+
       // send command buffers directly - used for intentional command encoding errors
-      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args); 
+      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args);
 
   #for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands:
       //! Send a $mnemonic command
@@ -509,7 +509,7 @@ $emit_hpp_params($params)
 
       //! The history of $event_name events
       //!
-      History<EventEntry_${event_name}> 
+      History<EventEntry_${event_name}>
         *eventHistory_${event_name};
 
   #else:
@@ -564,7 +564,7 @@ $emit_hpp_params([ $param_const_timeTag, $param_val ])
 
       //! The history of $name values
       //!
-      History<TlmEntry_${name}> 
+      History<TlmEntry_${name}>
         *tlmHistory_${name};
 
 #end for

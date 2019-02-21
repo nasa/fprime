@@ -52,7 +52,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
 #if $has_telemetry:
     // Initialize telemetry histories
   #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
-    this->tlmHistory_${tlm_name} = 
+    this->tlmHistory_${tlm_name} =
       new History<TlmEntry_${tlm_name}>(maxHistorySize);
   #end for
 #end if
@@ -86,7 +86,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
   }
 
   ${tester_base} ::
-    ~${tester_base}(void) 
+    ~${tester_base}(void)
   {
 #if $has_commands or $has_parameters:
     // Destroy command history
@@ -223,7 +223,7 @@ $emit_cpp_params([ $param_instance ])
 #end if
 #if $has_input_ports:
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
@@ -231,7 +231,7 @@ $emit_cpp_params([ $param_instance ])
   void ${tester_base} ::
     connect_to_${instance}(
 $emit_cpp_params([ $param_portNum, $param_port ])
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
     #if $type == "Serial":
@@ -306,7 +306,7 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   #for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
     #set $namespace = $port_namespaces[$type]
     #if $role == "LogTextEvent"
@@ -345,7 +345,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
     )
   {
     FW_ASSERT(callComp);
-    ${tester_base}* _testerBase = 
+    ${tester_base}* _testerBase =
       static_cast<${tester_base}*>(callComp);
     #if $void_params and $void_return_type:
     _testerBase->from_${instance}_handlerBase(portNum);
@@ -374,14 +374,14 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
     )
   {
     FW_ASSERT(callComp);
-    ${tester_base}* _testerBase = 
+    ${tester_base}* _testerBase =
       static_cast<${tester_base}*>(callComp);
 
     _testerBase->from_${instance}_handlerBase(
         portNum,
         Buffer
     );
-  }  
+  }
 
   void ${tester_base} ::
     from_${instance}_handlerBase(
@@ -394,8 +394,8 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         portNum,
         Buffer
     );
-  } 
-   
+  }
+
   #end for
   #if $has_commands or $has_parameters:
   void ${tester_base} ::
@@ -499,7 +499,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         Fw::ParamBuffer &val
     )
   {
-    ${tester_base}* _testerBase = 
+    ${tester_base}* _testerBase =
       static_cast<${tester_base}*>(component);
 
     Fw::SerializeStatus _status;
@@ -511,9 +511,9 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
 
     switch (id - idBase) {
     #for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
-      #for $id in $ids 
+      #for $id in $ids
       case ${id}:
-      #end for 
+      #end for
       {
       #if $typeinfo == "ENUM":
         _status = val.serialize(
@@ -563,7 +563,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
     #for $ids, $prmname, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
       #for $id in $ids
       case ${id}:
-      #end for 
+      #end for
       {
       #if $typeinfo == "enum":
         FwEnumStoreType ${prmname}Val;
@@ -583,7 +583,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
             _status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            ${prmname}Val == 
+            ${prmname}Val ==
             _testerBase->m_param_${prmname}
         );
       #else
@@ -594,7 +594,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
             static_cast<AssertArg>(_status)
         );
         FW_ASSERT(
-            ${prmname}Val == 
+            ${prmname}Val ==
             _testerBase->m_param_${prmname}
         );
       #end if
@@ -632,9 +632,9 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
   }
 
   #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: $instance
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
     #set $params = $port_params[$instance]
   void ${tester_base} ::
@@ -713,9 +713,9 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
 
   #for $mnemonic, $opcodes, $sync, $priority, $full, $comment in $commands:
     #set $params = $command_params[$mnemonic]
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: $mnemonic
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ${tester_base} ::
     sendCmd_${mnemonic}(
@@ -740,7 +740,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
     #end for
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     #if len($opcodes) == 1
@@ -774,11 +774,11 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
   }
 
   #end for
-  
+
   void ${tester_base} ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
-       
-    const U32 idBase = this->getIdBase();   
+
+    const U32 idBase = this->getIdBase();
     FwOpcodeType _opcode = opcode + idBase;
     if (this->m_to_${Cmd_Name}[0].isConnected()) {
       this->m_to_${Cmd_Name}[0].invoke(
@@ -790,13 +790,13 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
     else {
       printf("Test Command Output port not connected!\n");
     }
-        
+
   }
-  
+
 #end if
 #if $has_output_ports:
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void ${tester_base} ::
@@ -876,7 +876,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
           return;
         }
     #if $typeinfo == "enum":
-        ${component_base}::${type} arg = 
+        ${component_base}::${type} arg =
           static_cast<${component_base}::${type}>(${tlm_name}arg);
     #end if
         this->tlmInput_${tlm_name}(timeTag, arg);
@@ -903,9 +903,9 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
   }
 
   #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: $tlm_name
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
     #set $param_val = $get_param_val_Tlm($type, $typeinfo)
   void ${tester_base} ::
@@ -944,9 +944,9 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
     #set $inst = 0
     #for $id in $ids
       #if len($ids) == 1
-      case ${component_base}::EVENTID_${event_name.upper}: 
+      case ${component_base}::EVENTID_${event_name.upper}:
       #else
-      case ${component_base}::EVENTID_${event_name.upper}_${inst}: 
+      case ${component_base}::EVENTID_${event_name.upper}_${inst}:
       #end if
       #set $inst = $inst + 1
     #end for
@@ -964,7 +964,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
           static_cast<AssertArg>(_status)
         );
         // verify they match expected.
-#if $severity == "FATAL"     
+#if $severity == "FATAL"
         FW_ASSERT(_numArgs == $len($args)+1,_numArgs,$len($args)+1);
         // For FATAL, there is a stack size of 4 and a dummy entry.
         U8 stackArgLen;
@@ -974,18 +974,18 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
             static_cast<AssertArg>(_status)
         );
         FW_ASSERT(4 == stackArgLen,stackArgLen);
-		U32 dummyStackArg;        
+		U32 dummyStackArg;
         _status = args.deserialize(dummyStackArg);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
             static_cast<AssertArg>(_status)
         );
         FW_ASSERT(0 == dummyStackArg,dummyStackArg);
-#else       
+#else
         FW_ASSERT(_numArgs == $len($args),_numArgs,$len($args));
-#end if        
-        
-\#endif    
+#end if
+
+\#endif
     #else
 \#if FW_AMPCS_COMPATIBLE
         // For AMPCS, decode zero arguments
@@ -996,7 +996,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
             _zero_status == Fw::FW_SERIALIZE_OK,
             static_cast<AssertArg>(_zero_status)
         );
-\#endif    
+\#endif
     #end if
     #for $arg_name, $type, $comment, $size, $typeinfo in $args:
       #if $typeinfo == "enum"
@@ -1011,7 +1011,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
           );
           FW_ASSERT(_argSize == sizeof(FwEnumStoreType),_argSize,sizeof(FwEnumStoreType));
         }
-\#endif      
+\#endif
         #set $type = $component_base + "::" + $type
         FwEnumStoreType ${arg_name}Int;
         _status = args.deserialize(${arg_name}Int);
@@ -1032,7 +1032,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
           );
           FW_ASSERT(_argSize == sizeof(${type}),_argSize,sizeof(${type}));
         }
-\#endif      
+\#endif
         _status = args.deserialize($arg_name);
       #end if
         FW_ASSERT(
@@ -1074,7 +1074,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
 \#if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void ${tester_base} ::
@@ -1137,11 +1137,11 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
   }
 
   void ${tester_base} ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -1152,7 +1152,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
   #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
     #set $params = $get_event_params($event_name)
   // ----------------------------------------------------------------------
-  // Event: $event_name 
+  // Event: $event_name
   // ----------------------------------------------------------------------
 
   void ${tester_base} ::
@@ -1172,10 +1172,10 @@ $emit_cpp_params($params)
   }
 
   #end for
-#end if 
+#end if
 #for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
   // ----------------------------------------------------------------------
-  // Parameter $prm_name 
+  // Parameter $prm_name
   // ----------------------------------------------------------------------
 
   #set $param_val = $get_param_val_Param($type, $typeinfo)
@@ -1190,7 +1190,7 @@ $emit_cpp_params([ $param_val, $param_valid ])
 
   void ${tester_base} ::
     paramSend_${prm_name}(
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
   {
@@ -1228,7 +1228,7 @@ $emit_cpp_params([ $param_val, $param_valid ])
          FW_ASSERT(0,instance);
          break;
     }
-  #end if 
+  #end if
     if (not this->m_to_${Cmd_Name}[0].isConnected()) {
       printf("Test Command Output port not connected!\n");
     }
@@ -1244,10 +1244,10 @@ $emit_cpp_params([ $param_val, $param_valid ])
 
   void ${tester_base} ::
     paramSave_${prm_name} (
-        NATIVE_INT_TYPE instance, 
+        NATIVE_INT_TYPE instance,
         U32 cmdSeq
     )
-    
+
   {
     Fw::CmdArgBuffer args;
     FwOpcodeType _prmOpcode;
@@ -1266,15 +1266,15 @@ $emit_cpp_params([ $param_val, $param_valid ])
         default:
           FW_ASSERT(0,instance);
           break;
-    } 
+    }
     #end if
     if (not this->m_to_${Cmd_Name}[0].isConnected()) {
       printf("Test Command Output port not connected!\n");
     }
     else {
       this->m_to_${Cmd_Name}[0].invoke(
-          _prmOpcode, 
-          cmdSeq, 
+          _prmOpcode,
+          cmdSeq,
           args
       );
     }

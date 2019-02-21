@@ -45,7 +45,7 @@ namespace Log {
   }
 
   LogTesterTesterBase ::
-    ~LogTesterTesterBase(void) 
+    ~LogTesterTesterBase(void)
   {
   }
 
@@ -124,14 +124,14 @@ namespace Log {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void LogTesterTesterBase ::
     connect_to_logRecvPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputLogPort *const logRecvPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_logRecvPort(),static_cast<AssertArg>(portNum));
     this->m_to_logRecvPort[portNum].addCallPort(logRecvPort);
@@ -141,7 +141,7 @@ namespace Log {
     connect_to_textLogRecvPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputLogTextPort *const textLogRecvPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_textLogRecvPort(),static_cast<AssertArg>(portNum));
     this->m_to_textLogRecvPort[portNum].addCallPort(textLogRecvPort);

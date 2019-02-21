@@ -2,12 +2,16 @@
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <!-- Note: sync attribute can be sync, async, or guarded. Only for input />
-   Note: priority attribute can be high, medium, low or interrupt. 
+   Note: priority attribute can be high, medium, low or interrupt.
          Only valid for active components input.
    Note  kind attribute of component can be ether active or passive.
          -->
 <component name="TestLog" kind="passive" namespace="Somewhere">
     <import_port_type>Autocoders/Python/test/event_throttle/TestPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+    <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+
     <comment>A component with a single command for testing logging</comment>
     <events>
         <!-- A test event -->
@@ -18,13 +22,13 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>The F32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg3" type="U8">
                     <comment>The U8 command argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="101" name="SomeOtherEvent" severity="DIAGNOSTIC" format_string = "My Event %d %f %c">
@@ -34,17 +38,20 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>The F32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg3" type="U8">
                     <comment>The U8 command argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>
     <ports>
+        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" role="TimeGet"/>
+        <port name="Log" kind="output" data_type="Fw::Log" max_number="1" role="LogEvent"/>
+        <port name="LogText" kind="output" data_type="Fw::LogText" max_number="1" role="LogTextEvent"/>
         <port name="aport" data_type="Another::Test" kind="sync_input" >
             <comment>
             A test port
@@ -52,4 +59,3 @@
         </port>
     </ports>
 </component>
-

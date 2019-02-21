@@ -20,7 +20,7 @@
             The output port of type SomeType has a return value
             </comment>
         </port>
-        
+
     </ports>
 </component>
 

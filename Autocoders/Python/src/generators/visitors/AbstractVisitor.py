@@ -54,10 +54,10 @@ class AbstractVisitor:
 
     def generateEmptyFile(self):
         """
-        Return flag indicating if a file should be created. 
+        Return flag indicating if a file should be created.
         """
         return self.__generate_empty_file
-    
+
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.

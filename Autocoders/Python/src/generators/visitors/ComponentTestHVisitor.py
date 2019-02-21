@@ -38,8 +38,8 @@ class ComponentTestHVisitor(TestVisitorBase.TestVisitorBase):
         c.emit_hpp_params = self.emitHppParams
         c.emit_hpp_port_params = self.emitHppPortParams
         c.param_maxHistorySize = (
-            "maxHistorySize", 
-            "const U32", 
+            "maxHistorySize",
+            "const U32",
             "The maximum size of each history"
         )
         self._writeTmpl(c, "startSourceFilesVisit")

@@ -50,7 +50,7 @@ namespace ExampleComponents {
   }
 
   ExampleComponentTesterBase ::
-    ~ExampleComponentTesterBase(void) 
+    ~ExampleComponentTesterBase(void)
   {
   }
 
@@ -133,14 +133,14 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void ExampleComponentTesterBase ::
     connect_to_exampleInput(
         const NATIVE_INT_TYPE portNum,
         AnotherExample::InputExamplePort *const exampleInput
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_exampleInput(),static_cast<AssertArg>(portNum));
     this->m_to_exampleInput[portNum].addCallPort(exampleInput);
@@ -179,7 +179,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   AnotherExample::InputExamplePort *ExampleComponentTesterBase ::
     get_from_exampleOutput(const NATIVE_INT_TYPE portNum)
   {
@@ -200,7 +200,7 @@ namespace ExampleComponents {
     )
   {
     FW_ASSERT(callComp);
-    ExampleComponentTesterBase* _testerBase = 
+    ExampleComponentTesterBase* _testerBase =
       static_cast<ExampleComponentTesterBase*>(callComp);
     _testerBase->from_exampleOutput_handlerBase(
         portNum,
@@ -219,9 +219,9 @@ namespace ExampleComponents {
     this->fromPortHistory_exampleOutput->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: exampleOutput
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleComponentTesterBase ::
     pushFromPortEntry_exampleOutput(
@@ -255,7 +255,7 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void ExampleComponentTesterBase ::

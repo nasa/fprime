@@ -33,17 +33,17 @@ void dumpobj(const char* objName) {
 
 void constructArchitecture(void) {
     Fw::PortBase::setTrace(true);
-    
+
     simpleRegPtr = new Fw::SimpleObjRegistry();
 
     // Instantiate the Huey and Duey components
     hueyComp_ptr   = new Duck::DuckImpl("Duck");
     dueyComp_ptr   = new Duck::DuckImpl("Duck");
-    
-    
+
+
     // Connect Huey to Duey
     hueyComp_ptr->set_CmdOut_OutputPort(0, dueyComp_ptr->get_ExtCmdIn_InputPort(0));
-    
+
     // Connect Duey to Huey
     dueyComp_ptr->set_CmdOut_OutputPort(0, hueyComp_ptr->get_CmdIn_InputPort(0));
 
@@ -52,7 +52,7 @@ void constructArchitecture(void) {
     // start(identifier, stack size, priority)
     hueyComp_ptr->start(0, 10 * 1024, 100);
     dueyComp_ptr->start(0, 10 * 1024, 100);
-    
+
     dumparch();
 }
 

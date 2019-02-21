@@ -10,7 +10,7 @@ import shutil
 ## Check if file exists, and create a backup copy using an appended
 ## versioning string. This function was copied directly from the
 ## language cookbook.
-## 
+##
 ## Arguments:
 ##    filename: the test filename
 ##    vtype: copy or rename action

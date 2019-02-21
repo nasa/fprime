@@ -15,7 +15,7 @@ namespace Partition {
 		I32 inputPort1_Serialize_handler(Fw::SerializeBufferBase &Buffer);
 		I32 inputPort2_Serialize_handler(Fw::SerializeBufferBase &Buffer);
 	};
-	
+
 };
 
 #endif

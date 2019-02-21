@@ -47,7 +47,7 @@ namespace TestComponents {
   }
 
   TestSerialTesterBase ::
-    ~TestSerialTesterBase(void) 
+    ~TestSerialTesterBase(void)
   {
   }
 
@@ -190,14 +190,14 @@ namespace TestComponents {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestSerialTesterBase ::
     connect_to_SerialInSync(
         const NATIVE_INT_TYPE portNum,
         Fw::InputSerializePort *const SerialInSync
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_SerialInSync(),static_cast<AssertArg>(portNum));
     this->m_to_SerialInSync[portNum].registerSerialPort(SerialInSync);
@@ -207,7 +207,7 @@ namespace TestComponents {
     connect_to_SerialInGuarded(
         const NATIVE_INT_TYPE portNum,
         Fw::InputSerializePort *const SerialInGuarded
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_SerialInGuarded(),static_cast<AssertArg>(portNum));
     this->m_to_SerialInGuarded[portNum].registerSerialPort(SerialInGuarded);
@@ -217,7 +217,7 @@ namespace TestComponents {
     connect_to_SerialInAsync(
         const NATIVE_INT_TYPE portNum,
         Fw::InputSerializePort *const SerialInAsync
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_SerialInAsync(),static_cast<AssertArg>(portNum));
     this->m_to_SerialInAsync[portNum].registerSerialPort(SerialInAsync);
@@ -286,7 +286,7 @@ namespace TestComponents {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputSerializePort *TestSerialTesterBase ::
     get_from_SerialOut(const NATIVE_INT_TYPE portNum)
   {
@@ -295,7 +295,7 @@ namespace TestComponents {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestSerialTesterBase ::

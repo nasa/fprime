@@ -25,7 +25,7 @@ class GTestHVisitor(GTestVisitorBase.GTestVisitorBase):
 
     def emitHppParams(self, params):
         return self.emitNonPortParamsHpp(10, params)
-  
+
     def emitMacroParams(self, params):
         length = len(params)
         str = ""

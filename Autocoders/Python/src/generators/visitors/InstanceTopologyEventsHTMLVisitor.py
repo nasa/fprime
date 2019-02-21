@@ -56,7 +56,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
     __form     = None
     __form_comment = None
     __model_parser = None
-    
+
     def __init__(self):
         """
         Constructor.
@@ -72,7 +72,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         self.prototypetext  = ""
         self.__fp_dict      = dict() # dictionary of instance name keyword to file handle pointer
 
-        
+
     def _writeTmpl(self, instance, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
@@ -82,8 +82,8 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug(c)
         self.__fp_dict[instance].writelines(c.__str__())
         DEBUG.debug('===================================')
-        
-        
+
+
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
@@ -154,12 +154,12 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         Make a list of event args into a string
         '''
         def f(args):
-            def g(lst): 
+            def g(lst):
                 name = lst[0]
                 return name
             return self.argsString(map(g, args))
         return f
-    
+
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.

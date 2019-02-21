@@ -151,7 +151,7 @@ namespace StressTest {
     protected:
 
       // ----------------------------------------------------------------------
-      // From ports 
+      // From ports
       // ----------------------------------------------------------------------
 
       void assertFromPortHistory_size(
@@ -163,7 +163,7 @@ namespace StressTest {
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: aport 
+      // From port: aport
       // ----------------------------------------------------------------------
 
       void assert_from_aport_size(
@@ -175,7 +175,7 @@ namespace StressTest {
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: aport2 
+      // From port: aport2
       // ----------------------------------------------------------------------
 
       void assert_from_aport2_size(

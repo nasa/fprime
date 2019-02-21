@@ -3,7 +3,7 @@ import os
 from BuildConstants import BuildConstants
 
 class CmdBuilder(object):
-    
+
     ## These stay constant for the duration of the test
     #  They are set during initalization
     __instance = None
@@ -19,11 +19,11 @@ class CmdBuilder(object):
     __appPath = None
     __xmlFiles = None
     __cppFiles = None
-    __target = None 
+    __target = None
 
 
     def __init__(self, system):
-       
+
         print "Building for %s" % system
 
         self.__BuildConstants = BuildConstants()
@@ -34,31 +34,31 @@ class CmdBuilder(object):
         self.__libPaths = self.__getLibPaths(system)
         self.__libs = self.__getLibs(system)
 
-    def generateBuildCommands(self): 
+    def generateBuildCommands(self):
         if len(self.__cppFiles) == 0:
-            print "Error: No cpp files are set." 
+            print "Error: No cpp files are set."
             exit()
         if self.__target == None:
             print "Error: Target not set"
             exit()
 
         cmdDict = {'oFile': None, 'cCompiler': self.__cCompiler, 'includes': self.__includes, 'appPath':"-I"+self.__appPath, 'cFile': None, 'target': self.__target}
-        
+
         oFiles = []
         buildList = []
         ## Generate .o files and create compiler commands
         for f in self.__cppFiles:
-            s = f.split('.') 
-            
-            oFile = s[0] + ".o" 
-            oFiles.append(oFile) 
-            cmdDict['oFile'] = oFile 
+            s = f.split('.')
+
+            oFile = s[0] + ".o"
+            oFiles.append(oFile)
+            cmdDict['oFile'] = oFile
             cmdDict['cFile'] = f
-           
+
 
             buildCmd = """{cCompiler} -Wall -m64 -o {oFile} -c {includes} {appPath} {cFile}""".format(**cmdDict)
             buildList.append(buildCmd)
-        
+
         ## Link everything together
         buildCmd = """{cCompiler} -o {target} -Wall -m64 -v""".format(**cmdDict)
         for f in oFiles:
@@ -66,8 +66,8 @@ class CmdBuilder(object):
         for L in self.__libPaths:
             buildCmd += " -L{} ".format(L)
         for l in self.__libs:
-            buildCmd += " -l{} ".format(l) 
-        
+            buildCmd += " -l{} ".format(l)
+
         buildList.append(buildCmd)
         return buildList
 
@@ -79,7 +79,7 @@ class CmdBuilder(object):
 
         isfgenCmds = []
 
-        cmdDict  = self.__BuildConstants.getDict('envar') 
+        cmdDict  = self.__BuildConstants.getDict('envar')
         cmdDict['flags'] = flags
         for f in self.__xmlFiles:
             cmdDict['xmlFile'] = f
@@ -93,8 +93,8 @@ class CmdBuilder(object):
     def setXmlFiles(self, xmlFiles):
        fileList = []
        for x in xmlFiles:
-           fileList.append(os.path.join(self.__appPath, x)) 
-       self.__xmlFiles = fileList 
+           fileList.append(os.path.join(self.__appPath, x))
+       self.__xmlFiles = fileList
     def setCppFiles(self, cppFiles):
         for f in cppFiles:
             self.__cppFiles.append(os.path.join(self.__appPath, f))
@@ -114,7 +114,7 @@ class CmdBuilder(object):
         return self.__BuildConstants.getEntry(system, 'libPaths')
     def __getLibs(self, system):
         return self.__BuildConstants.getEntry("generic", 'libs')
-    
+
 
     def generateCppFiles(self, xmlFiles):
         cppFiles = []
@@ -128,11 +128,11 @@ class CmdBuilder(object):
             cppFiles.append(d[0] + "Ac.cpp")
         return cppFiles
 
-    def getInstance(): 
-        if(CmdBuilder.__instance is None): 
+    def getInstance():
+        if(CmdBuilder.__instance is None):
             system = sys.platform
 
             CmdBuilder.__instance = CmdBuilder(system)
         return CmdBuilder.__instance
     getInstance = staticmethod(getInstance)
-    
+

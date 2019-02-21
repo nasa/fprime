@@ -122,10 +122,10 @@ namespace Tlm {
           //!
           History(
               const U32 maxSize /*!< The maximum history size*/
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -282,7 +282,7 @@ namespace Tlm {
 
       //! The history of somechan values
       //!
-      History<TlmEntry_somechan> 
+      History<TlmEntry_somechan>
         *tlmHistory_somechan;
 
     protected:
@@ -307,7 +307,7 @@ namespace Tlm {
 
       //! The history of anotherchan values
       //!
-      History<TlmEntry_anotherchan> 
+      History<TlmEntry_anotherchan>
         *tlmHistory_anotherchan;
 
     protected:
@@ -332,7 +332,7 @@ namespace Tlm {
 
       //! The history of someenumchan values
       //!
-      History<TlmEntry_someenumchan> 
+      History<TlmEntry_someenumchan>
         *tlmHistory_someenumchan;
 
     protected:

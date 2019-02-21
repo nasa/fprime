@@ -6,7 +6,7 @@
 #               instanced as an association to Port instances and visited
 #               by the code generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -49,13 +49,13 @@ class Arg(object):
         @param modifier: Modification of the argument (i.e. pointer or reference)
         @param size: size of array of type (string or buffer)
         @param comment:  A single or multline comment
-        """ 
+        """
         self.__name = name
         self.__type = atype
         self.__modifier = modifier
         self.__size = size
         self.__comment = comment
-    
+
     def get_name(self):
         return self.__name
     def get_type(self):

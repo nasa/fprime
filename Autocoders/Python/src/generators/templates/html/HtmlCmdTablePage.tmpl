@@ -43,7 +43,7 @@ html {
 		<tr>
 	</thead>
 	<tbody>
-	
+
 #for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands:
 	#set $args = $command_args[$mnemonic]
 	#set $args_length = len($args) + 1
@@ -63,20 +63,20 @@ html {
   			#if $args_length > 1
   				#set $args_index = 1
   				#for $arg_name, $arg_type, $comment, $typeinfo in $args:
-  					#set $arg_style = "border-right: 2px solid black;"		
+  					#set $arg_style = "border-right: 2px solid black;"
   					#if $args_index == 1
 					#set $arg_style += "border-top: 2px solid black;"
-					#end if				
+					#end if
 					#if $args_index + 1 == $args_length
 					#set $arg_style += "border-bottom: 2px solid black;"
-					#end if	
-					<tr style = "$arg_style">					
+					#end if
+					<tr style = "$arg_style">
 						<td>$arg_name</td>
 						<td>$arg_type</td>
 						<td>$comment</td>
 					</tr>
 					#set $args_index += 1
-				#end for	
+				#end for
 			#else
 				<td></td>
 				<td></td>
@@ -85,7 +85,7 @@ html {
 		</tr>
 #end for
 	</tbody>
-</table>   
+</table>
 
 
 #end if

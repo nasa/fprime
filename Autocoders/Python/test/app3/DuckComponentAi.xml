@@ -14,5 +14,5 @@
         <port name="inputPort2" data_type="Msg2" kind="sync_input">
         	<comment> </comment>
         </port>
-    </ports>   
+    </ports>
 </component>

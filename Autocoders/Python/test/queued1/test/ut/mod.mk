@@ -14,12 +14,11 @@
 # This is a template for the mod.mk file that goes in each module
 # and each module's subdirectories.
 # With a fresh checkout, "make gen_make" should be invoked. It should also be
-# run if any of the variables are updated. Any unused variables can 
+# run if any of the variables are updated. Any unused variables can
 # be deleted from the file.
 
 # There are some standard files that are included for reference
 
-TEST_SRC = TestComponentTestAc.cpp ComponentTester.cpp ComponentTesterImpl.cpp
+TEST_SRC = TestComponentTestAi.xml ComponentTester.cpp ComponentTesterImpl.cpp
 
 TEST_MODS = Autocoders/Python/test/queued1 Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com
-

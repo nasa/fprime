@@ -1,6 +1,6 @@
 Date: 10 May. 2013
 
-This test case builds a passive partition component (originally used as an Arinc653 hub) and 
+This test case builds a passive partition component (originally used as an Arinc653 hub) and
 connects serializable ports to typed ports of the Duck active test component.  Messages
 are echoed from Duck through Partition to demonstrate sync serialized port calls.
 

@@ -1,8 +1,8 @@
-    Input${name}Port::Input${name}Port(void) : 
-        Fw::InputPortBase(), 
+    Input${name}Port::Input${name}Port(void) :
+        Fw::InputPortBase(),
         m_func(0) {
     }
-    
+
     void Input${name}Port::init(void) {
         Fw::InputPortBase::init();
     }
@@ -19,7 +19,7 @@
     // call virtual logging function for component
     ${return_type}Input${name}Port::invoke(${args_proto_string}) {
 
-\#if FW_PORT_TRACING == 1        
+\#if FW_PORT_TRACING == 1
         this->trace();
 \#endif
         FW_ASSERT(this->m_comp);

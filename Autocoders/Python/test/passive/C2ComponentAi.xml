@@ -10,16 +10,16 @@
     </comment>
     <ports>
         <port name="Void" data_type="Void" kind="sync_input">
-            <comment/> 
+            <comment/>
         </port>
-            
+
         <port name="Msg1" data_type="Msg1" kind="sync_input">
-            <comment/> 
+            <comment/>
         </port>
-                       
+
         <port name="Msg2" kind="output" data_type="Msg2">
             <comment/>
         </port>
-        
+
     </ports>
 </component>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
-<assembly> 
+<assembly>
     <instance namespace="PartitionHub" name="hub1" type="PartitionHub"/>
     <instance namespace="Duck" name="Huey" type="Duck" />
     <connection name = "Connection1">
@@ -18,5 +18,5 @@
     <connection name = "Connection4">
         <source component = "hub1" port = "outputPort2" type = "Serial"/>
         <target component = "Huey" port = "inputPort3" type = "Msg1"/>
-    </connection>       
+    </connection>
 </assembly>

@@ -10,5 +10,5 @@
 #   entity requires an export license issued by the U.S. State Department
 #   or an ITAR exemption prior to the export or transfer.
 #
- 		
-SUBDIRS = ut		
+
+SUBDIRS = ut

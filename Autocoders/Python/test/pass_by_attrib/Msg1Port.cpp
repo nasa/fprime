@@ -30,11 +30,11 @@ namespace Ports {
         };
 
     }
-    InputMsg1Port::InputMsg1Port(void) : 
-        Fw::InputPortBase(), 
+    InputMsg1Port::InputMsg1Port(void) :
+        Fw::InputPortBase(),
         m_func(0) {
     }
-    
+
     void InputMsg1Port::init(void) {
         Fw::InputPortBase::init();
     }
@@ -51,7 +51,7 @@ namespace Ports {
     // call virtual logging function for component
     void InputMsg1Port::invoke(U32 arg1, U32 *arg2, U32 &arg3) {
 
-#if FW_PORT_TRACING == 1        
+#if FW_PORT_TRACING == 1
         this->trace();
 #endif
         FW_ASSERT(this->m_comp);
@@ -60,7 +60,7 @@ namespace Ports {
 
     }
 
-#if FW_PORT_SERIALIZATION == 1    
+#if FW_PORT_SERIALIZATION == 1
     void InputMsg1Port::invokeSerial(Fw::SerializeBufferBase &buffer) {
         Fw::SerializeStatus status;
 #if FW_PORT_TRACING == 1
@@ -94,7 +94,7 @@ void OutputMsg1Port::init(void) {
 
 void OutputMsg1Port::addCallPort(InputMsg1Port* callPort) {
     FW_ASSERT(callPort);
-    
+
     this->m_port = callPort;
     this->m_connObj = callPort;
 #if FW_PORT_SERIALIZATION == 1
@@ -109,7 +109,7 @@ void OutputMsg1Port::invoke(U32 arg1, U32 *arg2, U32 &arg3) {
 
     if (this->m_port) {
         this->m_port->invoke(arg1, arg2, arg3);
-#if FW_PORT_SERIALIZATION            
+#if FW_PORT_SERIALIZATION
     } else if (this->m_serPort) {
         Fw::SerializeStatus status;
         Msg1PortBuffer _buffer;
@@ -123,7 +123,7 @@ void OutputMsg1Port::invoke(U32 arg1, U32 *arg2, U32 &arg3) {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<NATIVE_INT_TYPE>(status));
 
         this->m_serPort->invokeSerial(_buffer);
-#endif            
+#endif
     } else {
         FW_ASSERT(0);
     }

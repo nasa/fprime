@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ${name}ComponentAc.cpp
 // \author Auto-generated
 // \brief  cpp file for ${name} component base class
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 \#include <stdio.h>
 \#include <Fw/Cfg/Config.hpp>
@@ -92,7 +92,7 @@ namespace ${namespace} {
     // Define a message buffer class large enough to handle all the
     // asynchronous inputs to the component
 
-    class ComponentIpcSerializableBuffer : 
+    class ComponentIpcSerializableBuffer :
       public Fw::SerializeBufferBase
     {
 
@@ -239,7 +239,7 @@ namespace ${namespace} {
           FW_ASSERT(0,this->getInstance());
           break;
     }
-    #end if   
+    #end if
   #end for
   #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     #if len($osets) == 1
@@ -256,11 +256,11 @@ namespace ${namespace} {
           );
           break;
       #set $inst = $inst + 1
-      #end for     
+      #end for
       default:
           FW_ASSERT(0,this->getInstance());
           break;
-    }    
+    }
     #end if
     #if len($osaves) == 1
     this->m_${CmdReg_Name}_OutputPort[0].invoke(
@@ -276,11 +276,11 @@ namespace ${namespace} {
           );
           break;
       #set $inst = $inst + 1
-      #end for     
+      #end for
       default:
           FW_ASSERT(0,this->getInstance());
           break;
-    }    
+    }
     #end if
   #end for
   }
@@ -297,7 +297,7 @@ namespace ${namespace} {
     Fw::SerializeStatus stat = Fw::FW_SERIALIZE_OK;
     FW_ASSERT(this->m_${ParamGet_Name}_OutputPort[0].isConnected());
 
-    FwPrmIdType _id; 
+    FwPrmIdType _id;
   #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     // choose parameter ID to get
     #if len($ids) == 1
@@ -317,7 +317,7 @@ namespace ${namespace} {
              FW_ASSERT(0,this->getInstance());
              break;
        }
-    #end if   
+    #end if
     // Get parameter ${prmname}
     this->m_param_${prmname}_valid =
       this->m_${ParamGet_Name}_OutputPort[0].invoke(
@@ -420,13 +420,13 @@ namespace ${namespace} {
       #end if
     #end if
   #end for
-  
+
   #for $ids, $eventname, $severity, $format_string, $throttle, $comment in $events:
     #if $throttle != None
     this->m_${eventname}Throttle = 0;
     #end if
-  #end for  
-  
+  #end for
+
   #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     this->m_param_${prmname}_valid = Fw::PARAM_UNINIT;
   #end for
@@ -526,7 +526,7 @@ namespace ${namespace} {
         static_cast<NATIVE_INT_TYPE>(sizeof(NATIVE_INT_TYPE)) +
         static_cast<NATIVE_INT_TYPE>(sizeof(I32)),
         static_cast<NATIVE_INT_TYPE>(ComponentIpcSerializableBuffer::SERIALIZATION_SIZE));
-        
+
     Os::Queue::QueueStatus qStat =
     this->createQueue(queueDepth,this->m_msgSize);
   #else
@@ -679,15 +679,15 @@ namespace ${namespace} {
             args
         );
         break;
-        
+
   #end for
   #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     #if len($ids) == 1
-      case OPCODE_${prmname.upper}_SET: 
+      case OPCODE_${prmname.upper}_SET:
     #else
       #set $inst = 0
       #for $id in $ids
-      case OPCODE_${prmname.upper}_${inst}_SET: 
+      case OPCODE_${prmname.upper}_${inst}_SET:
         #set $inst = $inst + 1
       #end for
     #end if
@@ -701,11 +701,11 @@ namespace ${namespace} {
         break;
       }
     #if len($ids) == 1
-      case OPCODE_${prmname.upper}_SAVE: 
+      case OPCODE_${prmname.upper}_SAVE:
     #else
       #set $inst = 0
       #for $id in $ids
-      case OPCODE_${prmname.upper}_${inst}_SAVE: 
+      case OPCODE_${prmname.upper}_${inst}_SAVE:
         #set $inst = $inst + 1
       #end for
     #end if
@@ -787,7 +787,7 @@ namespace ${namespace} {
 
         #end for
       #end if
-\#if FW_CMD_CHECK_RESIDUAL      
+\#if FW_CMD_CHECK_RESIDUAL
     // Make sure there was no data left over.
     // That means the argument buffer size was incorrect.
     if (args.getBuffLeft() != 0) {
@@ -799,7 +799,7 @@ namespace ${namespace} {
       }
       return;
     }
-\#endif    
+\#endif
       #if $sync == 'guarded'
     this->lock();
       #end if
@@ -875,12 +875,12 @@ namespace ${namespace} {
         _status == Fw::FW_SERIALIZE_OK,
         static_cast<AssertArg>(_status)
     );
-    
+
     // send message
-    Os::Queue::QueueBlocking _block = 
+    Os::Queue::QueueBlocking _block =
       #if $full == 'block'
       Os::Queue::QUEUE_BLOCKING;
-      #else 
+      #else
       Os::Queue::QUEUE_NONBLOCKING;
       #end if
     Os::Queue::QueueStatus qStatus =
@@ -894,7 +894,7 @@ namespace ${namespace} {
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
         static_cast<AssertArg>(qStatus)
-    );    
+    );
 
     #end if
   }
@@ -968,9 +968,9 @@ namespace ${namespace} {
           _stat == Fw::FW_SERIALIZE_OK,
           static_cast<AssertArg>(_stat)
       );
-      
+
       FwChanIdType _id;
-      
+
     #if len($ids) == 1
       _id = this->getIdBase() + CHANNELID_${tlmname.upper};
     #else
@@ -984,12 +984,12 @@ namespace ${namespace} {
       #end for
           default:
             // Silence compiler warning
-            _id = (FwChanIdType) 0;  
+            _id = (FwChanIdType) 0;
             FW_ASSERT(0,this->getInstance());
             break;
       }
     #end if
-      
+
       this->m_${Tlm_Name}_OutputPort[0].invoke(
           _id,
           _tlmTime,
@@ -1007,7 +1007,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   Fw::Time ${class_name} ::
-    getTime(void) 
+    getTime(void)
   {
     if (this->m_${Time_Name}_OutputPort[0].isConnected()) {
       Fw::Time _time;
@@ -1075,9 +1075,9 @@ namespace ${namespace} {
 
   Fw::ParamValid ${class_name} ::
     getParam(
-      FwPrmIdType id, 
+      FwPrmIdType id,
       Fw::ParamBuffer& buff
-    ) 
+    )
   {
     if (this->m_${ParamGet_Name}_OutputPort[0].isConnected()) {
       return this->m_${ParamGet_Name}_OutputPort[0].invoke(id,buff);
@@ -1198,7 +1198,7 @@ namespace ${namespace} {
         $params
     )
   {
-  
+
     #if $throttle != None
     // check throttle value
     if (this->m_${eventname}Throttle >= EVENTID_${eventname.upper}_THROTTLE) {
@@ -1213,9 +1213,9 @@ namespace ${namespace} {
     if (this->m_${Time_Name}_OutputPort[0].isConnected()) {
        this->m_${Time_Name}_OutputPort[0].invoke( _logTime);
     }
-    
+
     FwEventIdType _id = static_cast<FwEventIdType>(0);
-    
+
     #if len($ids) == 1
     _id = this->getIdBase() + EVENTID_${eventname.upper};
     #else
@@ -1231,7 +1231,7 @@ namespace ${namespace} {
         FW_ASSERT(0,this->getInstance());
         break;
     };
-  #end if      
+  #end if
 
     // Emit the event on the log port
     if (this->m_${LogEvent_Name}_OutputPort[0].isConnected()) {
@@ -1242,7 +1242,7 @@ namespace ${namespace} {
       Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
 
 \#if FW_AMPCS_COMPATIBLE
-#if $severity == "FATAL"     
+#if $severity == "FATAL"
       // Serialize the number of arguments
       _status = _logBuff.serialize(static_cast<U8>($len($args)+1));
       FW_ASSERT(
@@ -1267,7 +1267,7 @@ namespace ${namespace} {
           _status == Fw::FW_SERIALIZE_OK,
           static_cast<AssertArg>(_status)
       );
-      #end if      
+      #end if
 \#endif
     #else
 \#if FW_AMPCS_COMPATIBLE
@@ -1380,7 +1380,7 @@ namespace ${namespace} {
 \#endif
 
   }
-  
+
   #if $throttle != None
     void ${class_name}::log_${severity}_${eventname}_ThrottleClear(void) {
         // reset throttle counter
@@ -1431,12 +1431,12 @@ namespace ${namespace} {
       #end if
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK, static_cast<AssertArg>(_status));
     #end for
-    
+
     // send message
-    Os::Queue::QueueBlocking _block = 
+    Os::Queue::QueueBlocking _block =
       #if $full == 'block'
       Os::Queue::QUEUE_BLOCKING;
-      #else 
+      #else
       Os::Queue::QUEUE_NONBLOCKING;
       #end if
     Os::Queue::QueueStatus qStatus =
@@ -1450,7 +1450,7 @@ namespace ${namespace} {
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
         static_cast<AssertArg>(qStatus)
-    );    
+    );
 
   }
 
@@ -1482,7 +1482,7 @@ namespace ${namespace} {
 \#if FW_PORT_SERIALIZATION
   #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
     #if $type == "Serial":
-    
+
   void ${class_name} ::
     m_p_${instance}_in(
         Fw::PassiveComponentBase* callComp,
@@ -1490,22 +1490,22 @@ namespace ${namespace} {
         Fw::SerializeBufferBase& buffer) {
 
     FW_ASSERT(callComp);
-    ${class_name}* compPtr = (${class_name}*) callComp; 
-    compPtr->${instance}_handlerBase(portNum,buffer);       
+    ${class_name}* compPtr = (${class_name}*) callComp;
+    compPtr->${instance}_handlerBase(portNum,buffer);
   }
     #end if
   #end for
   #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
     #if $type == "Serial":
-    
+
   void ${class_name} ::
     ${instance}_handlerBase(
-        NATIVE_INT_TYPE portNum, 
+        NATIVE_INT_TYPE portNum,
         Fw::SerializeBufferBase& buffer) {
       #if $sync == "guarded":
      // lock call
     this->lock();
-      #end if  
+      #end if
       #if $sync == "guarded" or $sync == "sync":
     this->${instance}_handler(portNum,buffer);
       #end if
@@ -1513,7 +1513,7 @@ namespace ${namespace} {
     this->unLock();
       #end if
       #if $sync == "async":
-    // declare buffer for 
+    // declare buffer for
     U8 msgBuff[this->m_msgSize];
     Fw::ExternalSerializeBuffer msgSerBuff(msgBuff,this->m_msgSize);
 
@@ -1534,19 +1534,19 @@ namespace ${namespace} {
         _status == Fw::FW_SERIALIZE_OK,
         static_cast<AssertArg>(_status)
     );
-    
+
     // serialize buffer
     _status = msgSerBuff.serialize(buffer);
     FW_ASSERT (
         _status == Fw::FW_SERIALIZE_OK,
         static_cast<AssertArg>(_status)
     );
-    
+
     // send message
-    Os::Queue::QueueBlocking _block = 
+    Os::Queue::QueueBlocking _block =
       #if $full == 'block'
       Os::Queue::QUEUE_BLOCKING;
-      #else 
+      #else
       Os::Queue::QUEUE_NONBLOCKING;
       #end if
     Os::Queue::QueueStatus qStatus =
@@ -1561,8 +1561,8 @@ namespace ${namespace} {
         qStatus == Os::Queue::QUEUE_OK,
         static_cast<AssertArg>(qStatus)
     );
-         
-    #end if  
+
+    #end if
   }
     #end if
   #end for
@@ -1677,12 +1677,12 @@ namespace ${namespace} {
     );
 
       #end for
-      
+
     // send message
-    Os::Queue::QueueBlocking _block = 
+    Os::Queue::QueueBlocking _block =
       #if $full == 'block'
       Os::Queue::QUEUE_BLOCKING;
-      #else 
+      #else
       Os::Queue::QUEUE_NONBLOCKING;
       #end if
     Os::Queue::QueueStatus qStatus =
@@ -1696,8 +1696,8 @@ namespace ${namespace} {
     FW_ASSERT(
         qStatus == Os::Queue::QUEUE_OK,
         static_cast<AssertArg>(qStatus)
-    );      
-      
+    );
+
     #else:
       #if $sync == "guarded":
     // Lock guard mutex before calling
@@ -1770,7 +1770,7 @@ namespace ${namespace} {
     Fw::ExternalSerializeBuffer msg(msgBuff,this->m_msgSize);
 #else
     ComponentIpcSerializableBuffer msg;
-#end if    
+#end if
     NATIVE_INT_TYPE priority;
 
   #if ($kind == "active")
@@ -1817,7 +1817,7 @@ namespace ${namespace} {
     switch (msgType) {
 
   #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
-    #if $sync == "async" and $role != "Cmd": 
+    #if $sync == "async" and $role != "Cmd":
       // Handle async input port $instance
       case ${instance.upper()}_${type.upper()}: {
 
@@ -1881,7 +1881,7 @@ namespace ${namespace} {
       #else
         #set $inst = 0
         #for $opcode in $opcodes
-      case CMD_${mnemonic.upper()}_${inst}: 
+      case CMD_${mnemonic.upper()}_${inst}:
            #set $inst = $inst + 1
         #end for
       {
@@ -1939,7 +1939,7 @@ namespace ${namespace} {
       #end for
         // Make sure there was no data left over.
         // That means the argument buffer size was incorrect.
-\#if FW_CMD_CHECK_RESIDUAL        
+\#if FW_CMD_CHECK_RESIDUAL
         if (args.getBuffLeft() != 0) {
           if (this->m_${CmdStatus_Name}_OutputPort[0].isConnected()) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_FORMAT_ERROR);

@@ -42,14 +42,14 @@ class HtmlDocVisitor(ComponentVisitorBase.ComponentVisitorBase):
 
     def __init__(self):
         self.initBase("HtmlDoc")
-        
+
     def htmlStartPage(self, obj):
         output_dir = os.environ["HTML_DOC_SUBDIR"]
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
         htmlfile = output_dir + "/" + obj.get_name() + ".html"
         self.openFile(htmlfile)
-        
+
     def htmlPageVisit(self, obj):
         c = HtmlDocPage.HtmlDocPage()
         self.init(obj, c)

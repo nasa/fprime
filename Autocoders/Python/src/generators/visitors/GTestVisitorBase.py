@@ -23,7 +23,7 @@ class GTestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
         return c.component_base + "::" + type \
         if typeinfo == "enum" \
         else type
- 
+
     def getTlmType(self, c):
         def f(type, typeinfo):
             if type == "string":
@@ -47,7 +47,7 @@ class GTestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
             params = c.event_params[eventName]
             return self.transformEventParams(c, params)
         return f
-  
+
     def getParamValTlm(self, c):
         def f(type, typeinfo):
             if type == "string":
@@ -65,31 +65,31 @@ class GTestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
         c.get_event_params = self.getEventParams(c)
         c.get_param_val_Tlm = self.getParamValTlm(c)
         c.param_maxHistorySize = (
-            "maxHistorySize", 
-            "const U32", 
+            "maxHistorySize",
+            "const U32",
             "The maximum size of each history"
         )
         c.param_fileName = (
-             "__callSiteFileName", 
-             "const char *const", 
-             "The name of the file containing the call site", 
+             "__callSiteFileName",
+             "const char *const",
+             "The name of the file containing the call site",
              ""
         )
         c.param_lineNumber = (
-            "__callSiteLineNumber", 
-            "const U32", 
+            "__callSiteLineNumber",
+            "const U32",
             "The line number of the call site", ""
         )
         c.param_size = ("size", "const U32", "The asserted size", "")
         c.param_index = ("__index", "const U32", "The index", "")
         c.params_assert_size = [ c.param_fileName, c.param_lineNumber, c.param_size ]
-        c.params_assert_cmd_response = [ 
-            c.param_fileName, 
-            c.param_lineNumber, 
-            c.param_index, 
-            c.param_opCode, 
-            c.param_cmdSeq, 
-            c.param_response 
+        c.params_assert_cmd_response = [
+            c.param_fileName,
+            c.param_lineNumber,
+            c.param_index,
+            c.param_opCode,
+            c.param_cmdSeq,
+            c.param_response
         ]
         c.params_assert_event = [ c.param_fileName, c.param_lineNumber, c.param_index ]
         c.params_assert_from_port = c.params_assert_event

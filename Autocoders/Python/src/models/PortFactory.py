@@ -47,8 +47,8 @@ class PortFactory:
 
 
     def __init__(self):
-        """ 
-        Private Constructor (singleton pattern) 
+        """
+        Private Constructor (singleton pattern)
         """
         self.__parsed   = None
         self.__instance = None
@@ -61,7 +61,7 @@ class PortFactory:
         """
         if(PortFactory.__instance is None) :
             PortFactory.__instance = PortFactory()
-        
+
         return PortFactory.__instance
 
 
@@ -88,7 +88,7 @@ class PortFactory:
         port_xml_filename = x.get_xml_filename()
         #
         # Add port args here...
-        # 
+        #
         args_list = []
         for arg in args_obj_list:
             n=arg.get_name()
@@ -118,18 +118,18 @@ def main():
     #
     the_parsed_port_xml = XmlPortsParser.XmlPortsParser(xmlfile)
     print the_parsed_port_xml.get_args()
-    args = the_parsed_port_xml.get_args()  
+    args = the_parsed_port_xml.get_args()
     for a in args:
         print "\t",a
         print "\t",a.get_name()
         print "\t",a.get_type()
-        print "\t",a.get_comment()    
+        print "\t",a.get_comment()
     print the_parsed_port_xml.get_include_header_files()
     print the_parsed_port_xml.get_interface()
     print the_parsed_port_xml.get_interface().get_comment()
     print the_parsed_port_xml.get_interface().get_name()
     print the_parsed_port_xml.get_interface().get_namespace()
-    
+
     port = PortFactory().create(the_parsed_port_xml)
     #
     # End of usage and port is the instance of model to be used.
@@ -144,7 +144,7 @@ def main():
     print "Args: %s" % args
     for a in args:
         print "Arg Name: %s Type: %s Comment: %s" % (a.get_name(), a.get_type(), a.get_comment())
-    
+
 
 if __name__ == '__main__':
     main()

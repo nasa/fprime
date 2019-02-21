@@ -8,12 +8,10 @@
 
 using namespace std;
 
-extern "C++" void constructArchitecture();
+extern "C++" void constructActive_TesterArchitecture();
 
-extern Simple_Active::Simple_ActiveImpl CompA;
-extern Simple_Active_Tester::Simple_Active_TesterImpl CompA_Tester;
-
-
+Simple_Active_Tester::Simple_Active_TesterImpl CompA_Tester("CompA_Tester");
+Simple_Active::Simple_ActiveImpl CompA("CompA");
 
 void test_U32_Async(){
        int int_to_send;
@@ -33,20 +31,20 @@ int main(int argc, char* argv[]){
 
     char charIn[1];
 
-    constructArchitecture();
-    
+    constructActive_TesterArchitecture();
+
     while(true){
 
         cout << "Enter g to go or q to quit: ";
         cin >> charIn;
 
         if(strcmp(charIn,"g")==0){
-            charIn[0] = 0;  
+            charIn[0] = 0;
             cout << "Enter u for unsigned-int and f for float:";
             cin >> charIn;
 
             if(strcmp(charIn,"u") == 0){
-                test_U32_Async();         
+                test_U32_Async();
             }else{
                 test_F32_Sync();
             }

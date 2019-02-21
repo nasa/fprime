@@ -45,7 +45,7 @@ namespace Time {
   }
 
   TimeTesterTesterBase ::
-    ~TimeTesterTesterBase(void) 
+    ~TimeTesterTesterBase(void)
   {
   }
 
@@ -95,14 +95,14 @@ namespace Time {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TimeTesterTesterBase ::
     connect_to_timeGetPort(
         const NATIVE_INT_TYPE portNum,
         Fw::InputTimePort *const timeGetPort
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_timeGetPort(),static_cast<AssertArg>(portNum));
     this->m_to_timeGetPort[portNum].addCallPort(timeGetPort);

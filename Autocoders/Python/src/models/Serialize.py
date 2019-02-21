@@ -5,7 +5,7 @@
 # DESCRIPTION:  This is an Serialize meta-model class.  It is
 #               instanced for the generation of Serializable classes.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -48,7 +48,7 @@ class Serialize(object):
         @param xml_includes_list: optional list of XML serializable includes
         @param c_includes_list: optional list of C serializable includes
         @param members_list: list of members (name, type, optional comment)
-        """ 
+        """
         self.__xml_filename = xml_filename
         self.__name = name
         self.__namespace = namespace
@@ -57,7 +57,7 @@ class Serialize(object):
         self.__c_includes_list = c_includes_list
         self.__members_list = members_list
         self.__type_id = type_id
-    
+
     def get_xml_filename(self):
         return self.__xml_filename
     def get_name(self):

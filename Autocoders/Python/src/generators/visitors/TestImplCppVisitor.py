@@ -30,7 +30,7 @@ class TestImplCppVisitor(TestImplVisitorBase.TestImplVisitorBase):
 
     def emitNonPortParams(self, params):
         return self.emitNonPortParamsCpp(8, params)
-  
+
     def initFilesVisit(self, obj):
         self.openFile("Tester.cpp")
 

@@ -3,13 +3,13 @@
 # UT_MODULES: List of modules linked in unit tests
 
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Autocoders/test/serial_passive/TestComponentAi.xml"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/serial_passive/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
 set(UT_MODULES
-  "${FPRIME_CORE_DIR}/Autocoders/test/serial_passive"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/serial_passive"
   "${FPRIME_CORE_DIR}/Fw/Cmd"
   "${FPRIME_CORE_DIR}/Fw/Comp"
   "${FPRIME_CORE_DIR}/Fw/Port"
@@ -21,7 +21,7 @@ set(UT_MODULES
   "${FPRIME_CORE_DIR}/Fw/Obj"
   "${FPRIME_CORE_DIR}/Os"
   "${FPRIME_CORE_DIR}/Fw/Com"
-  "${FPRIME_CORE_DIR}/Autocoders/test/port_loopback"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/port_loopback"
 )
 
 add_unit_test("${UT_SOURCE_FILES}" "${UT_MODULES}")

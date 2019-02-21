@@ -187,10 +187,10 @@ namespace ExampleComponents {
           //!
           History(
               const U32 maxSize //!< The maximum history size
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -313,7 +313,7 @@ namespace ExampleComponents {
 
       //! The history for from_exampleOutput
       //!
-      History<FromPortEntry_exampleOutput> 
+      History<FromPortEntry_exampleOutput>
         *fromPortHistory_exampleOutput;
 
     protected:
@@ -574,7 +574,7 @@ namespace ExampleComponents {
 
       //! The history of SomeEvent events
       //!
-      History<EventEntry_SomeEvent> 
+      History<EventEntry_SomeEvent>
         *eventHistory_SomeEvent;
 
     protected:
@@ -621,7 +621,7 @@ namespace ExampleComponents {
 
       //! The history of somechan values
       //!
-      History<TlmEntry_somechan> 
+      History<TlmEntry_somechan>
         *tlmHistory_somechan;
 
     protected:
@@ -646,7 +646,7 @@ namespace ExampleComponents {
 
       //! The history of anotherchan values
       //!
-      History<TlmEntry_anotherchan> 
+      History<TlmEntry_anotherchan>
         *tlmHistory_anotherchan;
 
     protected:
@@ -671,7 +671,7 @@ namespace ExampleComponents {
 
       //! The history of stringchan values
       //!
-      History<TlmEntry_stringchan> 
+      History<TlmEntry_stringchan>
         *tlmHistory_stringchan;
 
     protected:
@@ -696,7 +696,7 @@ namespace ExampleComponents {
 
       //! The history of enumchan values
       //!
-      History<TlmEntry_enumchan> 
+      History<TlmEntry_enumchan>
         *tlmHistory_enumchan;
 
     protected:

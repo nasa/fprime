@@ -107,7 +107,7 @@ namespace Cmd {
     protected:
 
       // ----------------------------------------------------------------------
-      // From ports 
+      // From ports
       // ----------------------------------------------------------------------
 
       void assertFromPortHistory_size(
@@ -119,7 +119,7 @@ namespace Cmd {
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: cmdSendPort 
+      // From port: cmdSendPort
       // ----------------------------------------------------------------------
 
       void assert_from_cmdSendPort_size(

@@ -45,7 +45,7 @@ namespace ExampleComponents {
   }
 
   ExampleTesterBase ::
-    ~ExampleTesterBase(void) 
+    ~ExampleTesterBase(void)
   {
   }
 
@@ -93,14 +93,14 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     connect_to_exampleInput(
         const NATIVE_INT_TYPE portNum,
         APortCollection::InputSomePort *const exampleInput
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_exampleInput(),static_cast<AssertArg>(portNum));
     this->m_to_exampleInput[portNum].addCallPort(exampleInput);
@@ -119,7 +119,7 @@ namespace ExampleComponents {
     FW_ASSERT(portNum < this->getNum_to_exampleInput(),static_cast<AssertArg>(portNum));
     FW_ASSERT(portNum < this->getNum_to_exampleInput(),static_cast<AssertArg>(portNum));
     return this->m_to_exampleInput[portNum].invoke(
-        
+
     );
   }
 

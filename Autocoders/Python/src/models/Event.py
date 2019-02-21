@@ -7,7 +7,7 @@
 #               of Event intances and is visited by the code
 #               generators.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: tcanham
 # EMAIL:  tcanham@jpl.nasa.gov
@@ -78,42 +78,42 @@ class Event(object):
         Returns severity of event.
         """
         return self.__severity
-    
+
     def get_format_string(self):
         """
         Returns format string for displaying event.
         """
         return self.__format_string
-    
+
     def get_throttle(self):
         """
         returns throttle value for event
         """
         return self.__throttle
-    
+
     def get_comment(self):
         """
         Returns comment for the event.
         """
         return self.__comment
-    
+
     def get_args(self):
         """
         Return a list of Arg objects for each argument.
         """
         return self.__arg_obj_list
-    
+
     def get_xml_filename(self):
         """
         Returns the original xml filename
         """
         return self.__xml_filename
-    
+
     def get_component_name(self):
         return self.__component_name
-    
+
     def get_component_base_name(self):
         return self.__component_base_name
-    
-    
-    
+
+
+

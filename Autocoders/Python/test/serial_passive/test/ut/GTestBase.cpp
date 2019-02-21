@@ -33,7 +33,7 @@ namespace TestComponents {
 #else
         const U32 maxHistorySize
 #endif
-    ) : 
+    ) :
         TestSerialTesterBase (
 #if FW_OBJECT_NAMES == 1
             compName,

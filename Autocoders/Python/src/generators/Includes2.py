@@ -3,7 +3,7 @@
 # NAME: Includes2
 #
 # DESCRIPTION:  The Includes2 class is the main entry point
-#				for generation of a second set of include files. 
+#				for generation of a second set of include files.
 #
 # USAGE: Nominally the Includes2.__call__ is called by using the
 #		 instance name.  The instance name is the function
@@ -44,14 +44,14 @@ class Includes2:
     """
     __visitor_list = []
     __obj          = None
-    
+
     def __init__(self):
         """
         Constructor.
         """
         self.__visitor_list = list()
-        
-        
+
+
     def __call__(self, args):
         """
         Main execution point.

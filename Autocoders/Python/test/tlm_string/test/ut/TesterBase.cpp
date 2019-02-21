@@ -43,16 +43,16 @@ namespace Tlm {
 #endif
   {
     // Initialize telemetry histories
-    this->tlmHistory_somechan = 
+    this->tlmHistory_somechan =
       new History<TlmEntry_somechan>(maxHistorySize);
-    this->tlmHistory_stringchan = 
+    this->tlmHistory_stringchan =
       new History<TlmEntry_stringchan>(maxHistorySize);
     // Clear history
     this->clearHistory();
   }
 
   TestTlmTesterBase ::
-    ~TestTlmTesterBase(void) 
+    ~TestTlmTesterBase(void)
   {
     // Destroy telemetry histories
     delete this->tlmHistory_somechan;
@@ -175,14 +175,14 @@ namespace Tlm {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     connect_to_aport(
         const NATIVE_INT_TYPE portNum,
         Another::InputTestPort *const aport
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
     this->m_to_aport[portNum].addCallPort(aport);
@@ -222,7 +222,7 @@ namespace Tlm {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputTlmPort *TestTlmTesterBase ::
     get_from_Tlm(const NATIVE_INT_TYPE portNum)
   {
@@ -268,7 +268,7 @@ namespace Tlm {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
@@ -347,9 +347,9 @@ namespace Tlm {
     this->tlmHistory_stringchan->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: somechan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     tlmInput_somechan(
@@ -362,9 +362,9 @@ namespace Tlm {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: stringchan
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void TestTlmTesterBase ::
     tlmInput_stringchan(

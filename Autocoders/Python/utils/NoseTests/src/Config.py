@@ -1,4 +1,4 @@
-import sys    
+import sys
 import BuildConstants
 
 class Config(object):
@@ -31,7 +31,7 @@ class Config(object):
 
     def setLibs(self):
         self.libs = BuildConstants.get(self.system, "libs")
- 
+
     def setCompiler(self):
         if self.system == "darwin" or self.system == "linux":
             self.cCompiler = BuildConstants.get(self.system, "compiler")

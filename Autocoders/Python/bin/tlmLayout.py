@@ -6,7 +6,7 @@
 #               generates .hpp of the packet layout(s) and a table that can be
 #               used to form the packet(s)
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: Len Day
 # EMAIL:  len.day@jpl.nasa.gov
@@ -118,7 +118,7 @@ class Packet:
     def run_period(self, line):
         global tlm_period
         tlm_period = float(line[1])
-        
+
     def frequency(self, line):
         """
         Frequency of packet is always in Hz. so no units given.
@@ -133,13 +133,13 @@ class Packet:
         NOTE: One and only one offset per ID can currently be specified.
         """
         if "s" in line[1].lower():
-            self.m_offset = int((float(line[1].split()[0].strip()) / (1.0/tlm_period))+0.5) 
+            self.m_offset = int((float(line[1].split()[0].strip()) / (1.0/tlm_period))+0.5)
         else:
             self.m_offset = int(line[1])
-        
+
     def channel(self,line):
         """
-        Channel number.  This is a channel number assigned to 
+        Channel number.  This is a channel number assigned to
         the packet of type ID.  It is typically used for mapping
         of packet ID's types to 1553 sub-addresses.
         """
@@ -407,7 +407,7 @@ class Packet:
         global tlm_packet_list
         global tlm_max_packet_bytes
         global tlm_duration
-        global tlm_period 
+        global tlm_period
         global verbose
 
         if (not len(self.m_header_list) and not len(self.m_item_list)):
@@ -431,14 +431,14 @@ class Packet:
                 print "Duration (in seconds only): %f" % tlm_duration
             if tlm_period is not None:
                 print  "Run or Sample Period (in hz. only): %f" % tlm_period
-                
+
             if self.m_freq is not None:
                 print "Packet frequency (Hz.): " + str(self.m_freq)
-                
+
             if self.m_offset is not None:
                 print "Packet offset: " + str(self.m_offset)
-            
-            
+
+
             print "packet size in bits: " + str(self.m_bit_index) + " (" + str(self.m_bit_index / 8) + " bytes)"
             print "Number of fixed-value fields:" + str(self.m_num_fixed_fields) + ", variable fields: " + str(self.m_num_variable_fields)
             print "name: ", self.m_name
@@ -528,7 +528,7 @@ class CsvLine:
     def finish(self):
 
         self.packet.packet_complete()
-        
+
 # CsvFile reads the input file and processes each line
 
 class CsvFile:
@@ -561,10 +561,10 @@ def sched_cycle_ids_max(max_cycle):
     cycle_max_list = [0 for _ in range(max_cycle)]
     cycle_offset = None
     i = 0
-    
+
     if tlm_period == None:
         return []
-    
+
     for p in tlm_packet_list:
         if (p.m_freq is not None) and (p.m_offset is not None):
             cycle_offset = int(((1.0/p.m_freq) / (1.0/tlm_period))+0.5)
@@ -591,10 +591,10 @@ def sched_cycle_ids(max_cycle):
     cycle_id_list = [list() for _ in range(max_cycle)]
     cycle_offset = None
 
-    
+
     if tlm_period == None:
         return []
-    
+
     for p in tlm_packet_list:
         if (p.m_freq is not None) and (p.m_offset is not None):
             cycle_offset = int(((1.0/p.m_freq) / (1.0/tlm_period))+0.5)
@@ -612,7 +612,7 @@ def sched_cycle_ids(max_cycle):
     for id in cycle_id_list:
         if len(id) == 0:
             id.append(-1)
-    
+
     #j = 0
     #for i in cycle_id_list:
     #    print "%d: %s" % (j, i)
@@ -648,13 +648,13 @@ def output_cpp(output_file, template_file):
 
     t = Template(file=template_file)
     t.tlm_packet_list = tlm_packet_list
-    
+
     # Generate schedule code if both duration and period defined
     if( (tlm_duration is not None) and (tlm_period is not None) ):
         t.tlm_max_cycles = int(tlm_duration*tlm_period)
     else:
         t.tlm_max_cycles = None
-        
+
     t.tlm_cycle_max_list = sched_cycle_ids_max(t.tlm_max_cycles)
     t.tlm_cycle_id_list = sched_cycle_ids(t.tlm_max_cycles)
     # Create ID to channel mapping
@@ -672,7 +672,7 @@ def output_cpp(output_file, template_file):
         t.tlm_period = tlm_period
     else:
         t.tlm_period = -1
-    
+
     f = open(output_file, "w")
     print >>f, t
 
@@ -716,8 +716,8 @@ def main():
     f = CsvFile()
     for file in args.input_file:
         f.process(file)
-        
+
     output(cpp_output_file, template_file)
 
 if (__name__ == '__main__'):
-    main()    
+    main()

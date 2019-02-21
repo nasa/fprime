@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Test1.hpp
 // \author tcanham
 // \brief  cpp file for Test1 test harness implementation class
@@ -8,14 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
 // responsibility to obtain export licenses, or other export authority
 // as may be required before exporting such information to foreign
 // countries or providing access to foreign persons.
-// ====================================================================== 
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -26,11 +26,11 @@
 namespace Cmd {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester(void) :
 #if FW_OBJECT_NAMES == 1
       Test1GTestBase("Tester", MAX_HISTORY_SIZE),
       component("Test1")
@@ -44,13 +44,13 @@ namespace Cmd {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester(void)
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -118,11 +118,11 @@ namespace Cmd {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts(void)
   {
 
     // aport
@@ -139,20 +139,20 @@ namespace Cmd {
 
     // CmdStatus
     this->component.set_CmdStatus_OutputPort(
-        0, 
+        0,
         this->get_from_CmdStatus(0)
     );
 
     // CmdReg
     this->component.set_CmdReg_OutputPort(
-        0, 
+        0,
         this->get_from_CmdReg(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents(void)
   {
     this->init();
     this->component.init(QUEUE_DEPTH,

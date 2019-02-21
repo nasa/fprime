@@ -3,11 +3,11 @@
 
 <component name="Example" kind="active" namespace="ExampleComponents" modeler="true">
     <import_port_type>Autocoders/Python/test/port_nogen/ExamplePortAi.xml</import_port_type>
-    
+
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
-    
+
     <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
 
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
@@ -17,7 +17,7 @@
     <import_port_type>Fw/Prm/PrmGetPortAi.xml</import_port_type>
 
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
-    
+
     <import_serializable_type>Autocoders/Python/test/port_nogen/Example2SerializableAi.xml</import_serializable_type>
     <comment>An example component</comment>
     <ports>
@@ -31,7 +31,7 @@
             Example output port
             </comment>
         </port>
-        
+
         <port name="CmdDisp" data_type="Fw::Cmd" kind="input" role="Cmd">
             <comment>
             Command input port
@@ -47,13 +47,13 @@
             Command output registration port
             </comment>
         </port>
-        
+
         <port name="Tlm" data_type="Fw::Tlm" kind="output" role="Telemetry">
             <comment>
             Telemetry output port
             </comment>
         </port>
-        
+
         <port name="Log" data_type="Fw::Log" kind="output" role="LogEvent">
             <comment>
             Log binary output port
@@ -64,19 +64,19 @@
             Log text output port
             </comment>
         </port>
-        
+
         <port name="Time" data_type="Fw::Time" kind="output" role="TimeGet">
             <comment>
             Time output port for reading time
             </comment>
         </port>
-        
+
         <port name="ParamGet" data_type="Fw::PrmGet" kind="output" role="ParamGet">
             <comment>
             Parameter output port for reading parameters
             </comment>
         </port>
-        
+
         <port name="ParamSet" data_type="Fw::PrmSet" kind="output" role="ParamSet">
             <comment>
             Parameter output port for reading parameters
@@ -92,12 +92,12 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="ENUM">
                     <enum name="CmdEnum">
                         <item name="CMD_MEMB1"/>
                         <item name="CMD_MEMB2" value="7" comment="This member is important"/>
-                        <item name="CMD_MEMB3" value="15"/>           
+                        <item name="CMD_MEMB3" value="15"/>
                     </enum>
                     <comment>The ENUM argument</comment>
                 </arg>
@@ -113,7 +113,7 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>A float argument</comment>
                 </arg>
@@ -131,7 +131,7 @@
             A test channel
             </comment>
         </channel>
-        <channel id="102" name="stringchan" data_type="U32"> 
+        <channel id="102" name="stringchan" data_type="U32">
             <comment>
             A test channel
             </comment>
@@ -140,7 +140,7 @@
                 <enum name="SomeTlmEnum">
                     <item name="TLM_MEMB1"/>
                     <item name="TLM_MEMB2" value="7" comment="This member is important"/>
-                    <item name="TLM_MEMB3" value="15"/>           
+                    <item name="TLM_MEMB3" value="15"/>
                 </enum>
             <comment>
             A test enum channel
@@ -167,7 +167,7 @@
             <enum name="SomeParamEnum">
                 <item name="PAR_MEMB1"/>
                 <item name="PAR_MEMB2" value="7" comment="This member is important"/>
-                <item name="PAR_MEMB3" value="15"/>           
+                <item name="PAR_MEMB3" value="15"/>
             </enum>
             <comment>
             A test parameter
@@ -183,24 +183,24 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 event argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>The F32 event argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg3" type="U32">
                     <comment>The Example4 event argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg4" type="string" size="12">
                     <comment>The string event argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg5" type="ENUM">
                     <enum name="SomeEventEnum">
                         <item name="EVENT_MEMB1"/>
                         <item name="EVENT_MEMB2" value="7" comment="This member is important"/>
-                        <item name="EVENT_MEMB3" value="15"/>           
+                        <item name="EVENT_MEMB3" value="15"/>
                     </enum>
                     <comment>The enum event argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>

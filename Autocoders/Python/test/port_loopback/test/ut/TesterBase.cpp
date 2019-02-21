@@ -50,7 +50,7 @@ namespace ExampleComponents {
   }
 
   ExampleTesterBase ::
-    ~ExampleTesterBase(void) 
+    ~ExampleTesterBase(void)
   {
   }
 
@@ -133,14 +133,14 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     connect_to_exampleInput(
         const NATIVE_INT_TYPE portNum,
         AnotherExample::InputExamplePort *const exampleInput
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_exampleInput(),static_cast<AssertArg>(portNum));
     this->m_to_exampleInput[portNum].addCallPort(exampleInput);
@@ -180,7 +180,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   AnotherExample::InputExamplePort *ExampleTesterBase ::
     get_from_exampleOutput(const NATIVE_INT_TYPE portNum)
   {
@@ -202,7 +202,7 @@ namespace ExampleComponents {
     )
   {
     FW_ASSERT(callComp);
-    ExampleTesterBase* _testerBase = 
+    ExampleTesterBase* _testerBase =
       static_cast<ExampleTesterBase*>(callComp);
     _testerBase->from_exampleOutput_handlerBase(
         portNum,
@@ -221,9 +221,9 @@ namespace ExampleComponents {
     this->fromPortHistory_exampleOutput->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: exampleOutput
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::
     pushFromPortEntry_exampleOutput(
@@ -259,7 +259,7 @@ namespace ExampleComponents {
   }
 
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void ExampleTesterBase ::

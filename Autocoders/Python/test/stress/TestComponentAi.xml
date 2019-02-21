@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Note: sync attribute can be sync, async, or guarded. Only for input />
-   Note: priority attribute can be high, medium, low or interrupt. 
+   Note: priority attribute can be high, medium, low or interrupt.
          Only valid for active components input.
    Note  kind attribute of component can be ether active or passive.
          -->
@@ -32,12 +32,12 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="ENUM">
                     <enum name="SomeEnum">
                         <item name="MEMB1"/>
                         <item name="MEMB2" value="7" comment="This member is important"/>
-                        <item name="MEMB3" value="15"/>           
+                        <item name="MEMB3" value="15"/>
                     </enum>
                     <comment>The ENUM argument</comment>
                 </arg>
@@ -50,7 +50,7 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>A float argument</comment>
                 </arg>
@@ -78,13 +78,13 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>The F32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg3" type="U8">
                     <comment>The U8 command argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="101" name="AnotherEvent" severity="WARNING_HI" format_string = "Another Event %d %f %s" >
@@ -94,13 +94,13 @@
             <args>
                 <arg name="arg1" type="I32">
                     <comment>The I32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg2" type="F32">
                     <comment>The F32 command argument</comment>
-                </arg>          
+                </arg>
                 <arg name="arg3" type="Ref::Gnc::Quaternion">
                     <comment>The U8 command argument</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>

@@ -44,9 +44,9 @@ void dumpobj(const char* objName) {
 
 
 void constructArchitecture(void) {
-	
+
 	Fw::PortBase::setTrace(true);
-	
+
 	simpleRegPtr = new Fw::SimpleObjRegistry();
 
 	// Instantiate the Huey

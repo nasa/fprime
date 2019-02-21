@@ -10,7 +10,7 @@ class Test_CmdBuilder:
         print "Setting Test_CmdBuilder"
 
         cls.builder = CmdBuilder.getInstance()
-        cls.constants = BuildConstants() 
+        cls.constants = BuildConstants()
     def test_cppGeneration_badXml(self):
         xmlFiles = ['comp.xml']
         cppFiles = self.builder.generateCppFiles(xmlFiles)
@@ -29,7 +29,7 @@ class Test_CmdBuilder:
         self.builder.setAppPath(appName)
         self.builder.setXmlFiles(xmlFiles)
 
-        isfgenCmds = self.builder.generateIsfgenCommands(flags) 
+        isfgenCmds = self.builder.generateIsfgenCommands(flags)
 
         cmd = isfgenCmds[0]
 
@@ -40,7 +40,7 @@ class Test_CmdBuilder:
 
         print "properCmd: {}".format(properCmd)
         print "cmd: {}".format(cmd)
-    
+
         assert cmd == properCmd
 
 class Test_BuildConstants:
@@ -60,7 +60,7 @@ class Test_BuildConstants:
         properPath = "{BUILD_ROOT}/Fw/libA/libBin".format(**self.Constants.getDict('envar'))
 
         libPaths = self.Constants._BuildConstants__getLibPaths(fwLibs, osLibs, "libBin")
-        
+
         path = libPaths[0]
 
 

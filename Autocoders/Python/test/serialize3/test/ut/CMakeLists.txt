@@ -8,7 +8,7 @@ set(UT_SOURCE_FILES
 
 set(UT_MODULES
   "${FPRIME_CORE_DIR}/Fw/Types"
-  "${FPRIME_CORE_DIR}/Autocoders/test/serialize3"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/serialize3"
 )
 
 add_unit_test("${UT_SOURCE_FILES}" "${UT_MODULES}")
