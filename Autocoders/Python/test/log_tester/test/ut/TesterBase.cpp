@@ -42,6 +42,9 @@ namespace Log {
       Fw::PassiveComponentBase()
 #endif
   {
+    // Initialize histories for typed user output ports
+    this->fromPortHistory_Time =
+      new History<FromPortEntry_Time>(maxHistorySize);
     // Clear history
     this->clearHistory();
   }
@@ -251,12 +254,77 @@ namespace Log {
   }
 
   // ----------------------------------------------------------------------
+  // Static functions for from ports
+  // ----------------------------------------------------------------------
+
+  void LogTesterTesterBase ::
+    from_Time_static(
+        Fw::PassiveComponentBase *const callComp,
+        const NATIVE_INT_TYPE portNum,
+        Fw::Time &time
+    )
+  {
+    FW_ASSERT(callComp);
+    LogTesterTesterBase* _testerBase =
+      static_cast<LogTesterTesterBase*>(callComp);
+    _testerBase->from_Time_handlerBase(
+        portNum,
+        time
+    );
+  }
+
+  // ----------------------------------------------------------------------
+  // Histories for typed from ports
+  // ----------------------------------------------------------------------
+
+  void LogTesterTesterBase ::
+    clearFromPortHistory(void)
+  {
+    this->fromPortHistorySize = 0;
+    this->fromPortHistory_Time->clear();
+  }
+
+  // ----------------------------------------------------------------------
+  // From port: Time
+  // ----------------------------------------------------------------------
+
+  void LogTesterTesterBase ::
+    pushFromPortEntry_Time(
+        Fw::Time &time
+    )
+  {
+    FromPortEntry_Time _e = {
+      time
+    };
+    this->fromPortHistory_Time->push_back(_e);
+    ++this->fromPortHistorySize;
+  }
+
+  // ----------------------------------------------------------------------
+  // Handler base functions for from ports
+  // ----------------------------------------------------------------------
+
+  void LogTesterTesterBase ::
+    from_Time_handlerBase(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Time &time
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_from_Time(),static_cast<AssertArg>(portNum));
+    this->from_Time_handler(
+        portNum,
+        time
+    );
+  }
+
+  // ----------------------------------------------------------------------
   // History
   // ----------------------------------------------------------------------
 
   void LogTesterTesterBase ::
     clearHistory()
   {
+    this->clearFromPortHistory();
   }
 
 } // end namespace Log

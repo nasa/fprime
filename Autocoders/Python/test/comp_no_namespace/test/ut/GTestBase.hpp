@@ -106,7 +106,7 @@
       void assertCmdResponse(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CommandResponse response /*!< The command response*/
@@ -143,7 +143,7 @@
       void assertTlm_somechan(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const Quaternion& val /*!< The channel value*/
       ) const;
 
@@ -174,7 +174,7 @@
       void assertEvents_SomeEvent(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const Quaternion arg1, /*!< The quaternion command argument*/
           const F32 arg2, /*!< The F32 command argument*/
           const U8 arg3 /*!< The U8 command argument*/

@@ -8,7 +8,7 @@
 
     <comment>A component for testing telemetry</comment>
     <ports>
-        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" role="TimeGet"/>
+        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" />
         <port name="logRecvPort" data_type="Fw::Log" kind="sync_input" >
             <comment>
             Test Log Port

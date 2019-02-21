@@ -99,7 +99,7 @@ namespace Somewhere {
       void assertEvents_SomeEvent(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const I32 arg1, /*!< The I32 command argument*/
           const F32 arg2, /*!< The F32 command argument*/
           const U8 arg3 /*!< The U8 command argument*/
@@ -120,7 +120,7 @@ namespace Somewhere {
       void assertEvents_SomeOtherEvent(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const I32 arg1, /*!< The I32 command argument*/
           const F32 arg2, /*!< The F32 command argument*/
           const U8 arg3 /*!< The U8 command argument*/

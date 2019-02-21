@@ -1,5 +1,5 @@
 #ifdef FPRIME_CMAKE
-#include "Autocode/GTestBase.hpp"
+#include "Autocoder/GTestBase.hpp"
 #else
 #include <GTestBase.hpp>
 #endif

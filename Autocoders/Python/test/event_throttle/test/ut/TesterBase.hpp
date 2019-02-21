@@ -216,12 +216,6 @@ namespace Somewhere {
       // Getters for port counts
       // ----------------------------------------------------------------------
 
-      //! Get the number of to_aport ports
-      //!
-      //! \return The number of to_aport ports
-      //!
-      NATIVE_INT_TYPE getNum_to_aport(void) const;
-
       //! Get the number of from_Time ports
       //!
       //! \return The number of from_Time ports
@@ -241,6 +235,12 @@ namespace Somewhere {
       //!
       NATIVE_INT_TYPE getNum_from_LogText(void) const;
 #endif
+
+      //! Get the number of to_aport ports
+      //!
+      //! \return The number of to_aport ports
+      //!
+      NATIVE_INT_TYPE getNum_to_aport(void) const;
 
     protected:
 

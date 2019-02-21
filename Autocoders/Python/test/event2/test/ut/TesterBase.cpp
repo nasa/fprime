@@ -191,12 +191,6 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   NATIVE_INT_TYPE TestCommandTesterBase ::
-    getNum_to_aport(void) const
-  {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_aport);
-  }
-
-  NATIVE_INT_TYPE TestCommandTesterBase ::
     getNum_from_Time(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_Time);
@@ -215,6 +209,12 @@ namespace Cmd {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_LogText);
   }
 #endif
+
+  NATIVE_INT_TYPE TestCommandTesterBase ::
+    getNum_to_aport(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_aport);
+  }
 
   // ----------------------------------------------------------------------
   // Connectors for to ports

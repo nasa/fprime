@@ -50,4 +50,44 @@ namespace Log {
 
   }
 
+  // ----------------------------------------------------------------------
+  // From ports
+  // ----------------------------------------------------------------------
+
+  void LogTesterGTestBase ::
+    assertFromPortHistory_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(size, this->fromPortHistorySize)
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Total size of all from port histories\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->fromPortHistorySize << "\n";
+  }
+
+  // ----------------------------------------------------------------------
+  // From port: Time
+  // ----------------------------------------------------------------------
+
+  void LogTesterGTestBase ::
+    assert_from_Time_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(size, this->fromPortHistory_Time->size())
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Size of history for from_Time\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->fromPortHistory_Time->size() << "\n";
+  }
+
 } // end namespace Log

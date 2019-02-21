@@ -187,6 +187,56 @@ namespace Log {
     protected:
 
       // ----------------------------------------------------------------------
+      // Handler prototypes for typed from ports
+      // ----------------------------------------------------------------------
+
+      //! Handler prototype for from_Time
+      //!
+      virtual void from_Time_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Time &time /*!< The U32 cmd argument*/
+      ) = 0;
+
+      //! Handler base function for from_Time
+      //!
+      void from_Time_handlerBase(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Time &time /*!< The U32 cmd argument*/
+      );
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Histories for typed from ports
+      // ----------------------------------------------------------------------
+
+      //! Clear from port history
+      //!
+      void clearFromPortHistory(void);
+
+      //! The total number of from port entries
+      //!
+      U32 fromPortHistorySize;
+
+      //! Push an entry on the history for from_Time
+      void pushFromPortEntry_Time(
+          Fw::Time &time /*!< The U32 cmd argument*/
+      );
+
+      //! A history entry for from_Time
+      //!
+      typedef struct {
+        Fw::Time time;
+      } FromPortEntry_Time;
+
+      //! The history for from_Time
+      //!
+      History<FromPortEntry_Time>
+        *fromPortHistory_Time;
+
+    protected:
+
+      // ----------------------------------------------------------------------
       // Invocation functions for to ports
       // ----------------------------------------------------------------------
 

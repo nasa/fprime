@@ -81,35 +81,6 @@
 
 		Fw::PassiveComponentBase::init(instance);
 
-    // Attach input port CmdStatus
-
-    for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_from_CmdStatus();
-        ++_port
-    ) {
-
-      this->m_from_CmdStatus[_port].init();
-      this->m_from_CmdStatus[_port].addCallComp(
-          this,
-          from_CmdStatus_static
-      );
-      this->m_from_CmdStatus[_port].setPortNum(_port);
-
-#if FW_OBJECT_NAMES == 1
-      char _portName[80];
-      (void) snprintf(
-          _portName,
-          sizeof(_portName),
-          "%s_from_CmdStatus[%d]",
-          this->m_objName,
-          _port
-      );
-      this->m_from_CmdStatus[_port].setObjName(_portName);
-#endif
-
-    }
-
     // Attach input port CmdReg
 
     for (
@@ -135,6 +106,35 @@
           _port
       );
       this->m_from_CmdReg[_port].setObjName(_portName);
+#endif
+
+    }
+
+    // Attach input port CmdStatus
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_from_CmdStatus();
+        ++_port
+    ) {
+
+      this->m_from_CmdStatus[_port].init();
+      this->m_from_CmdStatus[_port].addCallComp(
+          this,
+          from_CmdStatus_static
+      );
+      this->m_from_CmdStatus[_port].setPortNum(_port);
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      (void) snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_from_CmdStatus[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_from_CmdStatus[_port].setObjName(_portName);
 #endif
 
     }
@@ -345,27 +345,21 @@
   // ----------------------------------------------------------------------
 
   NATIVE_INT_TYPE TestCommandTesterBase ::
-    getNum_to_aport(void) const
-  {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_aport);
-  }
-
-  NATIVE_INT_TYPE TestCommandTesterBase ::
     getNum_to_CmdDisp(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_CmdDisp);
   }
 
   NATIVE_INT_TYPE TestCommandTesterBase ::
-    getNum_from_CmdStatus(void) const
-  {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_CmdStatus);
-  }
-
-  NATIVE_INT_TYPE TestCommandTesterBase ::
     getNum_from_CmdReg(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_CmdReg);
+  }
+
+  NATIVE_INT_TYPE TestCommandTesterBase ::
+    getNum_from_CmdStatus(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_CmdStatus);
   }
 
   NATIVE_INT_TYPE TestCommandTesterBase ::
@@ -406,19 +400,15 @@
   }
 #endif
 
+  NATIVE_INT_TYPE TestCommandTesterBase ::
+    getNum_to_aport(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_aport);
+  }
+
   // ----------------------------------------------------------------------
   // Connectors for to ports
   // ----------------------------------------------------------------------
-
-  void TestCommandTesterBase ::
-    connect_to_aport(
-        const NATIVE_INT_TYPE portNum,
-        ::InputTestPort *const aport
-    )
-  {
-    FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
-    this->m_to_aport[portNum].addCallPort(aport);
-  }
 
   void TestCommandTesterBase ::
     connect_to_CmdDisp(
@@ -428,6 +418,16 @@
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
+  }
+
+  void TestCommandTesterBase ::
+    connect_to_aport(
+        const NATIVE_INT_TYPE portNum,
+        ::InputTestPort *const aport
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_aport(),static_cast<AssertArg>(portNum));
+    this->m_to_aport[portNum].addCallPort(aport);
   }
 
 
@@ -455,35 +455,35 @@
   // ----------------------------------------------------------------------
 
   bool TestCommandTesterBase ::
-    isConnected_to_aport(const NATIVE_INT_TYPE portNum)
-  {
-    FW_ASSERT(portNum < this->getNum_to_aport(), static_cast<AssertArg>(portNum));
-    return this->m_to_aport[portNum].isConnected();
-  }
-
-  bool TestCommandTesterBase ::
     isConnected_to_CmdDisp(const NATIVE_INT_TYPE portNum)
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(), static_cast<AssertArg>(portNum));
     return this->m_to_CmdDisp[portNum].isConnected();
   }
 
+  bool TestCommandTesterBase ::
+    isConnected_to_aport(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_aport(), static_cast<AssertArg>(portNum));
+    return this->m_to_aport[portNum].isConnected();
+  }
+
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
-
-  Fw::InputCmdResponsePort *TestCommandTesterBase ::
-    get_from_CmdStatus(const NATIVE_INT_TYPE portNum)
-  {
-    FW_ASSERT(portNum < this->getNum_from_CmdStatus(),static_cast<AssertArg>(portNum));
-    return &this->m_from_CmdStatus[portNum];
-  }
 
   Fw::InputCmdRegPort *TestCommandTesterBase ::
     get_from_CmdReg(const NATIVE_INT_TYPE portNum)
   {
     FW_ASSERT(portNum < this->getNum_from_CmdReg(),static_cast<AssertArg>(portNum));
     return &this->m_from_CmdReg[portNum];
+  }
+
+  Fw::InputCmdResponsePort *TestCommandTesterBase ::
+    get_from_CmdStatus(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_from_CmdStatus(),static_cast<AssertArg>(portNum));
+    return &this->m_from_CmdStatus[portNum];
   }
 
   Fw::InputPrmGetPort *TestCommandTesterBase ::

@@ -1,7 +1,7 @@
 #ifdef FPRIME_CMAKE
-#include <GTestBase.hpp>
-#else
 #include "Autocoder/GTestBase.hpp"
+#else
+#include <GTestBase.hpp>
 #endif
 #include "TesterBase.hpp"
 #include <Fw/Cfg/Config.hpp>
@@ -17,6 +17,13 @@ class ATester : public Log::LogTesterGTestBase {
 #endif
     }
 
+  void from_Time_handler(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Time &time
+    )
+  {
+    this->pushFromPortEntry_Time(time);
+  }
 };
 
 int main(int argc, char* argv[]) {
