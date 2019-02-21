@@ -1,0 +1,42 @@
+---
+title: F Prime: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
+layout: default
+---
+# F Prime: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
+
+F Prime (Fʹ) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F Prime has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
+
+F Prime comprises several elements: 
+
+* An architecture that decomposes flight software into discrete components with well-defined interfaces
+* A C++ framework that provides core capabilities such as message queues and threads
+* Modeling tools for specifying components and connections and automatically generating code
+* A growing collection of ready-to-use components
+* Testing tools for testing flight software at the unit and integration levels.
+
+F Prime has the following key features:
+
+### Reusability
+
+F Prime’s component-based architecture enables a high degree of modularity and software reuse. 
+
+### Rapid Deployment
+
+F Prime provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the “boilerplate” code required in an F Prime deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
+
+### Portability
+
+F Prime runs on a wide range of processors, from microcontrollers to multicore computers, and on several operating systems. Porting F Prime to new operating systems is straightforward.
+
+### High Performance
+
+F Prime utilizes a point-to-point architecture. The architecture minimizes the use of computational resources and is well suited for smaller processors.
+	
+### Adaptability
+
+F Prime is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while still supporting a wide variety of missions.
+
+### Analyzability
+
+The typed port connections provide strong compile-time guarantees of correctness.
+

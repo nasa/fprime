@@ -1,6 +1,6 @@
 <events>
     <!-- Open error -->
-    <event id="0" name="DR_OpenError" severity="WARNING_HI" format_string = "Error opening UART device %s: %d" >
+    <event id="0" name="DR_OpenError" severity="WARNING_HI" format_string = "Error opening UART device %s: %d %s" >
         <comment>
         UART open error
         </comment>
@@ -10,6 +10,9 @@
             </arg>
             <arg name="error" type="I32">
                 <comment>The error code</comment>
+            </arg>
+            <arg name="name" type="string" size="40">
+                <comment>error string</comment>
             </arg>
         </args>
     </event>

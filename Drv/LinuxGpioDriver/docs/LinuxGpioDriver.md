@@ -10,6 +10,7 @@
 |GP_OpenError|0 (0x0)|Open error| | | | |
 | | | |gpio|I32||The device|
 | | | |error|I32||The error code|
+| | | |msg|Fw::LogStringArg&|40|The error string|
 |GP_ConfigError|1 (0x1)|GPIO configure error| | | | |
 | | | |gpio|I32||The device|
 | | | |error|I32||The error code|

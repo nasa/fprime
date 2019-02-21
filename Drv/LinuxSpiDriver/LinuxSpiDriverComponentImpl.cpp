@@ -73,10 +73,11 @@ namespace Drv {
         }
         this->m_bytes += readBuffer.getsize();
         this->tlmWrite_SPI_Bytes(this->m_bytes);
+        return;
 
     }
 
-    void LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
+    bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
                                            NATIVE_INT_TYPE select,
                                            SpiFrequency clock) {
 
@@ -96,7 +97,7 @@ namespace Drv {
         if (fd == -1) {
             DEBUG_PRINT("open SPI device %d.%d failed. %d\n",device,select,errno);
             this->log_WARNING_HI_SPI_OpenError(device,select,fd);
-            return;
+            return false;
         } else {
             DEBUG_PRINT("Successfully opened SPI device %s fd %d\n",devName,fd);
         }
@@ -112,7 +113,7 @@ namespace Drv {
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_WR_MODE fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return;
+            return false;
         } else {
             DEBUG_PRINT("SPI fd %d WR mode successfully configured to %d\n",fd,mode);
         }
@@ -121,7 +122,7 @@ namespace Drv {
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_RD_MODE fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return;
+            return false;
         } else {
             DEBUG_PRINT("SPI fd %d RD mode successfully configured to %d\n",fd,mode);
         }
@@ -134,7 +135,7 @@ namespace Drv {
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_WR_BITS_PER_WORD fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return;
+            return false;
         } else {
             DEBUG_PRINT("SPI fd %d WR bits per word successfully configured to %d\n",fd,bits);
         }
@@ -143,7 +144,7 @@ namespace Drv {
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_RD_BITS_PER_WORD fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return;
+            return false;
         } else {
             DEBUG_PRINT("SPI fd %d RD bits per word successfully configured to %d\n",fd,bits);
         }
@@ -155,7 +156,7 @@ namespace Drv {
         if (ret == -1) {
             DEBUG_PRINT("ioctl SPI_IOC_WR_MAX_SPEED_HZ fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return;
+            return false;
         } else {
             DEBUG_PRINT("SPI fd %d WR freq successfully configured to %d\n",fd,clock);
         }
@@ -164,10 +165,12 @@ namespace Drv {
         if (ret == -1) {
            DEBUG_PRINT("ioctl SPI_IOC_RD_MAX_SPEED_HZ fd %d failed. %d\n",fd,errno);
            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-           return;
+           return false;
         } else {
            DEBUG_PRINT("SPI fd %d RD freq successfully configured to %d\n",fd,clock);
         }
+
+        return true;
 
     }
 
