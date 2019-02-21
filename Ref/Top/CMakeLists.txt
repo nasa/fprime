@@ -13,10 +13,10 @@ set(SOURCE_FILES
 
 set(DEPLOYMENT_MODULES
   # Reference components
-  "${CMAKE_CURRENT_LIST_DIR}/../PingReceiver"
   "${CMAKE_CURRENT_LIST_DIR}/../RecvBuffApp"
   "${CMAKE_CURRENT_LIST_DIR}/../SendBuffApp"
   "${CMAKE_CURRENT_LIST_DIR}/../SignalGen"
+  "${CMAKE_CURRENT_LIST_DIR}/../PingReceiver"
 
   # Services componets
   Svc/ActiveLogger

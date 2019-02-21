@@ -4,6 +4,7 @@
 
 set(AUTOCODER_INPUT_FILES
   "${CMAKE_CURRENT_LIST_DIR}/GndIfComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/GetConnectedPortAi.xml"
 )
 
 set(SOURCE_FILES

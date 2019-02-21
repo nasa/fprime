@@ -8,6 +8,10 @@ set(AUTOCODER_INPUT_FILES
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencerImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Events.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FPrimeSequence.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Sequence.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/formats/AMPCSSequence.cpp"
 )
 
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")

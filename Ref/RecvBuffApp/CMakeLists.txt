@@ -4,6 +4,7 @@
 
 set(AUTOCODER_INPUT_FILES
   "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/PacketStatSerializableAi.xml"
 )
 
 set(SOURCE_FILES
