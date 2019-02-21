@@ -42,6 +42,8 @@ namespace Log {
       Fw::PassiveComponentBase()
 #endif
   {
+    // Clear history
+    this->clearHistory();
   }
 
   LogTesterTesterBase ::
@@ -58,6 +60,35 @@ namespace Log {
     // Initialize base class
 
 		Fw::PassiveComponentBase::init(instance);
+
+    // Attach input port Time
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_from_Time();
+        ++_port
+    ) {
+
+      this->m_from_Time[_port].init();
+      this->m_from_Time[_port].addCallComp(
+          this,
+          from_Time_static
+      );
+      this->m_from_Time[_port].setPortNum(_port);
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      (void) snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_from_Time[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_from_Time[_port].setObjName(_portName);
+#endif
+
+    }
 
     // Initialize output port logRecvPort
 
@@ -110,6 +141,12 @@ namespace Log {
   // ----------------------------------------------------------------------
   // Getters for port counts
   // ----------------------------------------------------------------------
+
+  NATIVE_INT_TYPE LogTesterTesterBase ::
+    getNum_from_Time(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_Time);
+  }
 
   NATIVE_INT_TYPE LogTesterTesterBase ::
     getNum_to_logRecvPort(void) const
@@ -200,6 +237,26 @@ namespace Log {
   {
     FW_ASSERT(portNum < this->getNum_to_textLogRecvPort(), static_cast<AssertArg>(portNum));
     return this->m_to_textLogRecvPort[portNum].isConnected();
+  }
+
+  // ----------------------------------------------------------------------
+  // Getters for from ports
+  // ----------------------------------------------------------------------
+
+  Fw::InputTimePort *LogTesterTesterBase ::
+    get_from_Time(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_from_Time(),static_cast<AssertArg>(portNum));
+    return &this->m_from_Time[portNum];
+  }
+
+  // ----------------------------------------------------------------------
+  // History
+  // ----------------------------------------------------------------------
+
+  void LogTesterTesterBase ::
+    clearHistory()
+  {
   }
 
 } // end namespace Log

@@ -54,18 +54,18 @@ namespace Cmd {
       // Connect these output ports to the input ports under test
       // ----------------------------------------------------------------------
 
-      //! Connect aport to to_aport[portNum]
-      //!
-      void connect_to_aport(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Another::InputTest2Port *const aport /*!< The port*/
-      );
-
       //! Connect CmdDisp to to_CmdDisp[portNum]
       //!
       void connect_to_CmdDisp(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::InputCmdPort *const CmdDisp /*!< The port*/
+      );
+
+      //! Connect aport to to_aport[portNum]
+      //!
+      void connect_to_aport(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Another::InputTest2Port *const aport /*!< The port*/
       );
 
     public:
@@ -75,19 +75,19 @@ namespace Cmd {
       // Connect these input ports to the output ports under test
       // ----------------------------------------------------------------------
 
-      //! Get the port that receives input from CmdStatus
-      //!
-      //! \return from_CmdStatus[portNum]
-      //!
-      Fw::InputCmdResponsePort* get_from_CmdStatus(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
-      );
-
       //! Get the port that receives input from CmdReg
       //!
       //! \return from_CmdReg[portNum]
       //!
       Fw::InputCmdRegPort* get_from_CmdReg(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
+      //! Get the port that receives input from CmdStatus
+      //!
+      //! \return from_CmdStatus[portNum]
+      //!
+      Fw::InputCmdResponsePort* get_from_CmdStatus(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -213,17 +213,17 @@ namespace Cmd {
       // Getters for port counts
       // ----------------------------------------------------------------------
 
-      //! Get the number of to_aport ports
-      //!
-      //! \return The number of to_aport ports
-      //!
-      NATIVE_INT_TYPE getNum_to_aport(void) const;
-
       //! Get the number of to_CmdDisp ports
       //!
       //! \return The number of to_CmdDisp ports
       //!
       NATIVE_INT_TYPE getNum_to_CmdDisp(void) const;
+
+      //! Get the number of from_CmdReg ports
+      //!
+      //! \return The number of from_CmdReg ports
+      //!
+      NATIVE_INT_TYPE getNum_from_CmdReg(void) const;
 
       //! Get the number of from_CmdStatus ports
       //!
@@ -231,11 +231,11 @@ namespace Cmd {
       //!
       NATIVE_INT_TYPE getNum_from_CmdStatus(void) const;
 
-      //! Get the number of from_CmdReg ports
+      //! Get the number of to_aport ports
       //!
-      //! \return The number of from_CmdReg ports
+      //! \return The number of to_aport ports
       //!
-      NATIVE_INT_TYPE getNum_from_CmdReg(void) const;
+      NATIVE_INT_TYPE getNum_to_aport(void) const;
 
     protected:
 
@@ -245,17 +245,17 @@ namespace Cmd {
 
       //! Check whether port is connected
       //!
-      //! Whether to_aport[portNum] is connected
+      //! Whether to_CmdDisp[portNum] is connected
       //!
-      bool isConnected_to_aport(
+      bool isConnected_to_CmdDisp(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
       //! Check whether port is connected
       //!
-      //! Whether to_CmdDisp[portNum] is connected
+      //! Whether to_aport[portNum] is connected
       //!
-      bool isConnected_to_CmdDisp(
+      bool isConnected_to_aport(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -320,13 +320,13 @@ namespace Cmd {
       // To ports
       // ----------------------------------------------------------------------
 
-      //! To port connected to aport
-      //!
-      Another::OutputTest2Port m_to_aport[1];
-
       //! To port connected to CmdDisp
       //!
       Fw::OutputCmdPort m_to_CmdDisp[1];
+
+      //! To port connected to aport
+      //!
+      Another::OutputTest2Port m_to_aport[1];
 
     private:
 
@@ -334,19 +334,27 @@ namespace Cmd {
       // From ports
       // ----------------------------------------------------------------------
 
-      //! From port connected to CmdStatus
-      //!
-      Fw::InputCmdResponsePort m_from_CmdStatus[1];
-
       //! From port connected to CmdReg
       //!
       Fw::InputCmdRegPort m_from_CmdReg[1];
+
+      //! From port connected to CmdStatus
+      //!
+      Fw::InputCmdResponsePort m_from_CmdStatus[1];
 
     private:
 
       // ----------------------------------------------------------------------
       // Static functions for output ports
       // ----------------------------------------------------------------------
+
+      //! Static function for port from_CmdReg
+      //!
+      static void from_CmdReg_static(
+          Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwOpcodeType opCode /*!< Command Op Code*/
+      );
 
       //! Static function for port from_CmdStatus
       //!
@@ -356,14 +364,6 @@ namespace Cmd {
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
           Fw::CommandResponse response /*!< The command response argument*/
-      );
-
-      //! Static function for port from_CmdReg
-      //!
-      static void from_CmdReg_static(
-          Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwOpcodeType opCode /*!< Command Op Code*/
       );
 
   };

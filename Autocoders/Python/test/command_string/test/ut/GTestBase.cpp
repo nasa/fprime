@@ -74,28 +74,28 @@ namespace AcTest {
     assertCmdResponse(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         const Fw::CommandResponse response
     )
     const
   {
-    ASSERT_LT(index, this->cmdResponseHistory->size())
+    ASSERT_LT(__index, this->cmdResponseHistory->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into command response history\n"
       << "  Expected: Less than size of command response history ("
       << this->cmdResponseHistory->size() << ")\n"
-      << "  Actual:   " << index << "\n";
-    const CmdResponse& e = this->cmdResponseHistory->at(index);
+      << "  Actual:   " << __index << "\n";
+    const CmdResponse& e = this->cmdResponseHistory->at(__index);
     ASSERT_EQ(opCode, e.opCode)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Opcode at index "
-      << index
+      << __index
       << " in command response history\n"
       << "  Expected: " << opCode << "\n"
       << "  Actual:   " << e.opCode << "\n";
@@ -104,7 +104,7 @@ namespace AcTest {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command sequence number at index "
-      << index
+      << __index
       << " in command response history\n"
       << "  Expected: " << cmdSeq << "\n"
       << "  Actual:   " << e.cmdSeq << "\n";
@@ -113,7 +113,7 @@ namespace AcTest {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command response at index "
-      << index
+      << __index
       << " in command resopnse history\n"
       << "  Expected: " << response << "\n"
       << "  Actual:   " << e.response << "\n";
