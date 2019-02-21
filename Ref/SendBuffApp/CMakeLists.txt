@@ -3,7 +3,6 @@
 # SOURCE_FILES: Handcoded C++ source files
 
 set(AUTOCODER_INPUT_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveStateEnumAi.txt"
   "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentAi.xml"
 )
 
