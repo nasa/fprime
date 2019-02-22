@@ -22,7 +22,7 @@ import glob
 
 # Custom Python Modules
 import dict_loader
-from fprime.common.controllers import exceptions
+from fprime.common.data_types import exceptions
 
 class PythonLoader(dict_loader.DictLoader):
     '''Class to help load python file based dictionaries'''

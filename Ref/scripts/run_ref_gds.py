@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from fprime.gds.utils import PortFinder
+from fprime.common.utils import PortFinder
 import sys
 import subprocess
 import os
@@ -74,7 +74,7 @@ def main(argv=None):
 
     ########################### Run the GUI for the GDS #############################
 
-    GUI_args = [python_bin,"%s/Gds/bin/gds.py"%build_root,
+    GUI_args = [python_bin,"%s/Gds/wxGui/bin/gds.py"%build_root,
                 "--port","%d"%used_port,
                 "--xml-dict","%s/Ref/Top/RefTopologyAppDictionary.xml"%build_root,
                 "--addr",addr,"-L","%s/Ref/logs"%build_root,

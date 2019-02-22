@@ -12,7 +12,7 @@ from lxml import etree
 
 # Custom python modules
 from fprime.common.loaders.xml_loader import XmlLoader
-from fprime.common.controllers import exceptions
+from fprime.common.data_types import exceptions
 from fprime.common.templates.pkt_template import PktTemplate
 
 class PktXmlLoader(XmlLoader):

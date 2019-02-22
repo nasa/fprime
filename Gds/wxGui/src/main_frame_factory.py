@@ -24,7 +24,7 @@ from fprime.common.distributor import distributor
 
 from fprime.common.client_socket import client_socket
 
-from fprime.common.gui import GDSMainFrameImpl
+import GDSMainFrameImpl
 
 from fprime.common.logger import data_logger
 

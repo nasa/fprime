@@ -10,7 +10,7 @@
 # Custom Python Modules
 from xml_loader import XmlLoader
 from fprime.common.templates.event_template import EventTemplate
-from fprime.common.controllers import exceptions
+from fprime.common.data_types import exceptions
 from fprime.common.utils.event_severity import EventSeverity
 
 class EventXmlLoader(XmlLoader):

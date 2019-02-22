@@ -18,8 +18,8 @@ import wx
 
 from fprime.common.client_socket import client_socket
 from fprime.common.utils import config_manager
-from fprime.wxGui.src.main_frame_factory import MainFrameFactory
-from fprime.wxGui.src.GDSMainFrameImpl import GDSMainFrameImpl
+from wxGui.src.main_frame_factory import MainFrameFactory
+from wxGui.src.GDSMainFrameImpl import MainFrameImpl
 
 
 __all__ = []

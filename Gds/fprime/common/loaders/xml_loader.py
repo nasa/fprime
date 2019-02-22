@@ -21,7 +21,7 @@ from lxml import etree
 
 # Custom Python Modules
 import dict_loader
-from fprime.common.controllers import exceptions
+from fprime.common.data_types import exceptions
 
 # Custom type modules
 from fprime.common.models.serialize.bool_type import *

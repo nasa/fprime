@@ -10,7 +10,7 @@
 # Custom Python Modules
 from xml_loader import XmlLoader
 from fprime.common.templates.cmd_template import CmdTemplate
-from fprime.common.controllers import exceptions
+from fprime.common.data_types import exceptions
 
 
 class CmdXmlLoader(XmlLoader):
