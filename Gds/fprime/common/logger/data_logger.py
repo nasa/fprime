@@ -5,9 +5,10 @@
 import datetime
 import os
 
-from fprime.gds.data_types.ch_data import ChData
-from fprime.gds.data_types.event_data import EventData
-from fprime.gds.data_types.pkt_data import PktData
+from fprime.common.data_types.ch_data import ChData
+from fprime.common.data_types.event_data import EventData
+from fprime.common.data_types.pkt_data import PktData
+
 class DataLogger(object):
 
     def __init__(self, logdir, verbose=False, csv=False, prefix=""):

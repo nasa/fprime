@@ -12,27 +12,27 @@ argument values.
 
 from enum import Enum
 
-from fprime.gds.data_types import sys_data
+from fprime.common.data_types import sys_data
 
-from fprime.gds.models.serialize.time_type import *
+from fprime.common.models.serialize.time_type import *
 
-from fprime.gds.models.serialize.bool_type import *
-from fprime.gds.models.serialize.enum_type import *
-from fprime.gds.models.serialize.f32_type import *
-from fprime.gds.models.serialize.f64_type import *
+from fprime.common.models.serialize.bool_type import *
+from fprime.common.models.serialize.enum_type import *
+from fprime.common.models.serialize.f32_type import *
+from fprime.common.models.serialize.f64_type import *
 
-from fprime.gds.models.serialize.u8_type import *
-from fprime.gds.models.serialize.u16_type import *
-from fprime.gds.models.serialize.u32_type import *
-from fprime.gds.models.serialize.u64_type import *
+from fprime.common.models.serialize.u8_type import *
+from fprime.common.models.serialize.u16_type import *
+from fprime.common.models.serialize.u32_type import *
+from fprime.common.models.serialize.u64_type import *
 
-from fprime.gds.models.serialize.i8_type import *
-from fprime.gds.models.serialize.i16_type import *
-from fprime.gds.models.serialize.i32_type import *
-from fprime.gds.models.serialize.i64_type import *
+from fprime.common.models.serialize.i8_type import *
+from fprime.common.models.serialize.i16_type import *
+from fprime.common.models.serialize.i32_type import *
+from fprime.common.models.serialize.i64_type import *
 
-from fprime.gds.models.serialize.string_type import *
-from fprime.gds.models.serialize.serializable_type import *
+from fprime.common.models.serialize.string_type import *
+from fprime.common.models.serialize.serializable_type import *
 
 from copy import deepcopy
 

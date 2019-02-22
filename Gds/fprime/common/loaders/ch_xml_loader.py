@@ -9,8 +9,8 @@
 
 # Custom Python Modules
 from xml_loader import XmlLoader
-from fprime.gds.templates.ch_template import ChTemplate
-from fprime.gds.controllers import exceptions
+from fprime.common.templates.ch_template import ChTemplate
+from fprime.common.controllers import exceptions
 
 class ChXmlLoader(XmlLoader):
     '''Class to load xml based telemetry channel dictionaries'''

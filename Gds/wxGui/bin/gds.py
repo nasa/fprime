@@ -14,12 +14,12 @@ import sys
 import os
 from time import sleep
 from argparse import ArgumentParser
-
-from fprime.gds.client_socket import client_socket
-from fprime.gds.utils import config_manager
-from main_frame_factory import MainFrameFactory
 import wx
-from fprime.gds.gui import GDSMainFrameImpl
+
+from fprime.common.client_socket import client_socket
+from fprime.common.utils import config_manager
+from fprime.wxGui.src.main_frame_factory import MainFrameFactory
+from fprime.wxGui.src.GDSMainFrameImpl import GDSMainFrameImpl
 
 
 __all__ = []

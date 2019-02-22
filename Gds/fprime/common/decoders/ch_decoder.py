@@ -18,11 +18,11 @@ Example data that would be sent to a decoder that parses channels:
 '''
 import copy
 
-from fprime.gds.decoders.decoder import Decoder
-from fprime.gds.data_types.ch_data import ChData
-from fprime.gds.models.serialize.u32_type import U32Type
-from fprime.gds.models.serialize.time_type import TimeType
-from fprime.gds.models.serialize.type_exceptions import *
+from fprime.common.decoders.decoder import Decoder
+from fprime.common.data_types.ch_data import ChData
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.type_exceptions import *
 
 class ChDecoder(Decoder):
     '''Decoder class for Channel data'''

@@ -13,10 +13,10 @@ import inspect
 import GDSChannelFilterDialogImpl
 from copy import deepcopy
 
-from fprime.gds.data_types.ch_data import *
-from fprime.gds.data_types.pkt_data import *
-from fprime.gds.models.serialize.serializable_type import SerializableType
-from fprime.gds.utils.config_manager import ConfigManager
+from fprime.common.data_types.ch_data import *
+from fprime.common.data_types.pkt_data import *
+from fprime.common.models.serialize.serializable_type import SerializableType
+from fprime.common.utils.config_manager import ConfigManager
 
 ###########################################################################
 ## Class ChannelTelemetryImpl

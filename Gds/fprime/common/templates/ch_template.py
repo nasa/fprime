@@ -12,8 +12,8 @@ reading)
 
 import data_template
 
-from fprime.gds.models.serialize.type_base import *
-from fprime.gds.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_base import *
+from fprime.common.models.serialize.type_exceptions import *
 
 class ChTemplate(data_template.DataTemplate):
     '''Class for channel templates that describe specific telemetry channels'''

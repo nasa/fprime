@@ -38,19 +38,19 @@ Serialized Packet format:
 '''
 
 from encoder import Encoder
-from fprime.gds.data_types.pkt_data import PktData
-from fprime.gds.utils.config_manager import ConfigManager
-from fprime.gds.utils.data_desc_type import DataDescType
+from fprime.common.data_types.pkt_data import PktData
+from fprime.common.utils.config_manager import ConfigManager
+from fprime.common.utils.data_desc_type import DataDescType
 
 # For Unit Test
 import sys
-from fprime.gds.templates.ch_template import ChTemplate
-from fprime.gds.templates.pkt_template import PktTemplate
-from fprime.gds.data_types.ch_data import ChData
-from fprime.gds.models.serialize.time_type import TimeType
-from fprime.gds.models.serialize.u8_type import U8Type
-from fprime.gds.models.serialize.u16_type import U16Type
-from fprime.gds.models.serialize.u32_type import U32Type
+from fprime.common.templates.ch_template import ChTemplate
+from fprime.common.templates.pkt_template import PktTemplate
+from fprime.common.data_types.ch_data import ChData
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
 
 
 class PktEncoder(Encoder):

@@ -16,11 +16,11 @@ Example data structure:
 '''
 import copy
 
-from fprime.gds.decoders import decoder
-from fprime.gds.data_types import event_data
-from fprime.gds.models.serialize import u32_type
-from fprime.gds.models.serialize import time_type
-from fprime.gds.models.serialize.type_exceptions import *
+from fprime.common.decoders import decoder
+from fprime.common.data_types import event_data
+from fprime.common.models.serialize import u32_type
+from fprime.common.models.serialize import time_type
+from fprime.common.models.serialize.type_exceptions import *
 import traceback
 
 class EventDecoder(decoder.Decoder):

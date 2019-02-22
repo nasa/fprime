@@ -21,7 +21,7 @@ purpose is to define the interface for an encoder.
 @bug No known bugs
 '''
 
-from fprime.gds.utils.config_manager import ConfigManager
+from fprime.common.utils.config_manager import ConfigManager
 
 class Encoder(object):
     '''Base class for all encoder classes. Defines the interface for encoders'''

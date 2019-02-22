@@ -9,7 +9,7 @@
 
 # Custom Python Modules
 import python_loader
-from fprime.gds.templates import cmd_template
+from fprime.common.templates import cmd_template
 
 class CmdPyLoader(python_loader.PythonLoader):
     '''Class to load python based command dictionaries'''

@@ -9,9 +9,9 @@
 
 # Custom Python Modules
 import python_loader
-from fprime.gds.templates import event_template
-from fprime.gds.utils.event_severity import EventSeverity
-from fprime.gds.models.serialize.type_exceptions import *
+from fprime.common.templates import event_template
+from fprime.common.utils.event_severity import EventSeverity
+from fprime.common.models.serialize.type_exceptions import *
 
 class EventPyLoader(python_loader.PythonLoader):
     '''Class to load python based event dictionaries'''

@@ -21,28 +21,26 @@ from lxml import etree
 
 # Custom Python Modules
 import dict_loader
-from fprime.gds.controllers import exceptions
+from fprime.common.controllers import exceptions
 
 # Custom type modules
-from fprime.gds.models.serialize.bool_type import *
-from fprime.gds.models.serialize.enum_type import *
-from fprime.gds.models.serialize.f32_type import *
-from fprime.gds.models.serialize.f64_type import *
+from fprime.common.models.serialize.bool_type import *
+from fprime.common.models.serialize.enum_type import *
+from fprime.common.models.serialize.f32_type import *
+from fprime.common.models.serialize.f64_type import *
 
-from fprime.gds.models.serialize.u8_type import *
-from fprime.gds.models.serialize.u16_type import *
-from fprime.gds.models.serialize.u32_type import *
-from fprime.gds.models.serialize.u64_type import *
+from fprime.common.models.serialize.u8_type import *
+from fprime.common.models.serialize.u16_type import *
+from fprime.common.models.serialize.u32_type import *
+from fprime.common.models.serialize.u64_type import *
 
-from fprime.gds.models.serialize.i8_type import *
-from fprime.gds.models.serialize.i16_type import *
-from fprime.gds.models.serialize.i32_type import *
-from fprime.gds.models.serialize.i64_type import *
+from fprime.common.models.serialize.i8_type import *
+from fprime.common.models.serialize.i16_type import *
+from fprime.common.models.serialize.i32_type import *
+from fprime.common.models.serialize.i64_type import *
 
-from fprime.gds.models.serialize.string_type import *
-from fprime.gds.models.serialize.serializable_type import *
-
-
+from fprime.common.models.serialize.string_type import *
+from fprime.common.models.serialize.serializable_type import *
 
 class XmlLoader(dict_loader.DictLoader):
     '''Class to help load xml based dictionaries'''

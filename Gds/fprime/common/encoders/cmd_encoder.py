@@ -42,9 +42,9 @@ Serialized command format:
 '''
 
 import encoder
-from fprime.gds.data_types.cmd_data import CmdData
-from fprime.gds.models.serialize.u32_type import U32Type
-from fprime.gds.utils.data_desc_type import DataDescType
+from fprime.common.data_types.cmd_data import CmdData
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.utils.data_desc_type import DataDescType
 
 import binascii
 

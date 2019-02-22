@@ -3,9 +3,9 @@
 
 import wx
 import GDSLogEventPanelGUI
-from fprime.gds.data_types.event_data import EventData
-from fprime.gds.utils.event_severity import EventSeverity
-from fprime.gds.utils.config_manager import ConfigManager
+from fprime.common.data_types.event_data import EventData
+from fprime.common.utils.event_severity import EventSeverity
+from fprime.common.utils.config_manager import ConfigManager
 
 ###########################################################################
 ## Class LogEventsImpl

@@ -11,9 +11,9 @@ import os
 from lxml import etree
 
 # Custom python modules
-from fprime.gds.loaders.xml_loader import XmlLoader
-from fprime.gds.controllers import exceptions
-from fprime.gds.templates.pkt_template import PktTemplate
+from fprime.common.loaders.xml_loader import XmlLoader
+from fprime.common.controllers import exceptions
+from fprime.common.templates.pkt_template import PktTemplate
 
 class PktXmlLoader(XmlLoader):
     '''Class to load xml packet dictionaries'''

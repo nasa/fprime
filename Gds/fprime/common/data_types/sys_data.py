@@ -11,8 +11,8 @@ of the data as well as data such as channel value or argument value.
 @bug No known bugs
 '''
 
-from fprime.gds.models.serialize import time_type
-from fprime.gds.templates import data_template
+from fprime.common.models.serialize import time_type
+from fprime.common.templates import data_template
 
 class SysData(object):
     '''

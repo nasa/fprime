@@ -16,9 +16,9 @@ descriptor header will be passed on to the registered objects.
 
 import sys
 
-from fprime.gds.models.serialize import u32_type
-from fprime.gds.utils import data_desc_type
-from fprime.gds.utils import config_manager
+from fprime.common.models.serialize import u32_type
+from fprime.common.utils import data_desc_type
+from fprime.common.utils import config_manager
 
 
 # NOTE decoder function to call is called data_callback(data)
