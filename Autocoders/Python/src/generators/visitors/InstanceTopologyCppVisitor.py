@@ -144,8 +144,10 @@ class InstanceTopologyCppVisitor(AbstractVisitor.AbstractVisitor):
         path = path.replace("/commands", "")
 
         if ModelParser.BUILD_ROOT != None:
-            if path[:len(ModelParser.BUILD_ROOT)] == ModelParser.BUILD_ROOT:
-                relative_path = path[len(ModelParser.BUILD_ROOT+"/"):]
+            path = os.path.normpath(os.path.realpath(path))
+            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
+            if path[:len(build_root)] == build_root:
+                relative_path = path[len(build_root+"/"):]
             else:
                 PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
                 sys.exit(-1)
