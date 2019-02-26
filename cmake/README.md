@@ -1,24 +1,25 @@
 # F` CMake Build System
 
-Stock F´ ships with a bispoke makesystem ensure that building is done correctly and in the correct order. However, using and mantaining this build
-system presents a steep learning curve to new users of F´. This included CMake system is intended as an eventual replacement to the existing build
-system that should be easier to learn and use. In addition, the use of cmake puts F´more in line with standard C++ development.
+Stock F´ ships with a bispoke makesystem ensure that building is done correctly and in the correct order. However, using and mantaining 
+this build system presents a steep learning curve to new users of F´. This included CMake system is intended as an eventual replacement 
+to the existing build system that should be easier to learn and use. In addition, the use of cmake puts F´more in line with standard C++ 
+development.
 
-Since this CMake system ships along-side the original make system, certain caveats must be understood before beigining to use CMake. These caveats
-should dissappear after CMake replaces the original make system in its entirety
+Since this CMake system ships along-side the original make system, certain caveats must be understood before beigining to use CMake. 
+These caveats should dissappear after CMake replaces the original make system in its entirety
 
 ### CMakes Caveats
 
-1. CMake should not be used in tandem with the original make system.  If it is needed to switch between make systems, perform a `git clean` command
-   or otherwise remove generated files.
-2. CMake in-source builds will be dangerous as auto-generated CMake Makefiles will clobber the existing make system. Use CMake out-of-source builds
-   until the old make system is replaced.
+1. CMake should not be used in tandem with the original make system.  If it is needed to switch between make systems, perform a `git
+clean` command or otherwise remove generated files.
+2. CMake in-source builds will be dangerous as auto-generated CMake Makefiles will clobber the existing make system. Use CMake out-of-
+source builds until the old make system is replaced.
 3. CMake UTs collide with existing UTs. Thus a cmake `make check` may not fully pass. 
 
 ## Getting Started Using CMake and F`
 
-CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to perform
-the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes down to just a small number of step:
+CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to 
+perform the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes down to just a small number of step:
 
 1. Make a directory to build in
 2. Call CMake to generate make-files
@@ -28,9 +29,9 @@ the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes
 
 ### Make Build Directory and Generate CMake Files
 
-The following commands will create a new build directory and generate CMake files. Separate builds (for different OS targets, or different build
-configurations) should be isolated in their own build-directories.  These directories can be achived as build-artifacts, but are typically not
-added to source managment (Git).
+The following commands will create a new build directory and generate CMake files. Separate builds (for different OS targets, or 
+different build configurations) should be isolated in their own build-directories.  These directories can be achived as build-artifacts, 
+but are typically not added to source managment (Git).
 
 Below, a user-provided deployment directory could be substituted for `Ref` below in-order to build a different deployment.
 
@@ -56,6 +57,33 @@ make check
 ```
 
 **Note:** for the time-being, the application must be built before attempting to build and run the UTs.
+
+## Adding in New CMake Components and Deployments
+
+The core of a cmake build is the `CMakeLists.txt` file. This file specifices the files needed to build the current portion of the system.
+In our case each Component, Port, and Topology get a `CMakeList.txt` along with the top-level deployment directort. It a directory 
+supports unit-testing, then it should also be 
+
+### Ports and Components `CMakeLists.txt`
+
+
+Ports and Component `CMakeLists.txt` files specifiy two variables. The first carries inputs to the AutoCoder and the other specifiy 
+normal F´ source files that are not supplied to the AutoCoder.  These CMakeLists.txt files look like the following:
+
+https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/48f1eeddea0237404dbeabd974941b94b25f8551/Svc/CmdDispatcher/CMakeLists.txt#L1-L16
+
+Here, set() calls are used to add the two list variables specified above. Finally, two other calls are made. `generate_module` calls into
+the F´ CMake setup to configure this directory as a module. It registers dependencies, and prepares the auto-coder to be called when
+building. Lastly, we add the `test/ut` subdirectory to CMake such that it can be run to add a Unit Test to CMake.
+
+Simarlarly, these `CMakeLists.txt` files supporting components must be included in a Deployment `CMakeList.txt` file. Subdirectories can 
+contain `CMakeList.txt` files for collecting includes. The Top-level `fprime/CMakeLists.txt` can also contain the module for efficient 
+unit-test building.
+
+
+
+
+
 
 
 
