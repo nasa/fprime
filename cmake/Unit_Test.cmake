@@ -45,15 +45,17 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       set(BASE_SOURCE "${AUTOCODE_DIR}/TesterBase.cpp")
       set(GTEST_HEADER "${AUTOCODE_DIR}/GTestBase.hpp")
       set(BASE_HEADER "${AUTOCODE_DIR}/TesterBase.hpp")
+      target_include_directories(${EXE_NAME} PRIVATE ${AUTOCODE_DIR})
       add_custom_command(
         OUTPUT ${GTEST_SOURCE} ${BASE_SOURCE} ${GTEST_HEADER} ${BASE_HEADER}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${AUTOCODE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy ${COMPONENT_XML} ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy ${TEST_SOURCE} ${AUTOCODE_DIR}
         COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
         ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${AUTOCODE_DIR} --build_root ${RAW_XML}
         COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
         ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${AUTOCODE_DIR} --build_root -u ${RAW_XML}
-        DEPENDS ${COMPONENT_XML}
+        COMMAND ${CMAKE_COMMAND} -E remove ${AUTOCODE_DIR}/Tester.hpp ${AUTOCODE_DIR}/Tester.cpp
+        DEPENDS ${TEST_SOURCE}
       )
 
       # Add autocode sources to module
