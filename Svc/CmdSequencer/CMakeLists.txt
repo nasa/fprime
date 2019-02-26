@@ -17,4 +17,5 @@ set(SOURCE_FILES
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
 
 # Add unit test directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+#TODO: CmdSequencer UTs don't work in CMake
+#add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
