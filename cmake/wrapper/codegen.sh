@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ####
 # Note:
 #  This file wraps the code-generation call such that the following actions are performed:
