@@ -74,7 +74,7 @@ In this design, F´is included as a sub-repository or sub directory to the proje
 freezing of the F´ core components. This could easily be extended to treat F´ as a library and link against it. Here builds are performed in user supplied directories. The user creates
 a named directory to build into, and then supplies cmake the configuration arguments to setup the build properly.
 
-![F´ As Sub Repository]("img/CMake Ops - Recommended.png" "F´ As Sub Repository")
+![F´ As Sub Repository](img/CMake%20Ops%20-%20Recommended.png "F´ As Sub Repository")
 
 As can be seen here, the adaptations and core top-level directory live alongside one another. The builds go into separate build directories, one for each configuration. This can be
 setup with the following commands. Setup needs to be done once and only once for each build type. After that, one can call make over-and-over.
@@ -101,7 +101,7 @@ In this design, F´ core and adaptations are kept in of the F´ directory. This 
 to update F´, if needed, but is otherwise a stable approach. Here a user uses a named directory to build into, and then supplies cmake the configuration arguments to setup the build
  properly, just like in section 3.1.  The only difference is that all code is in the F´ checkout. This forces a full fork of F´.
 
-![Combined F´ and Adaptations]("img/CMake Ops - Traditional.png" "Combined F´ and Adaptations")
+![Combined F´ and Adaptations](img/CMake%20Ops%20-%20Traditional.png "Combined F´ and Adaptations")
 
 As can be seen here, the adaptations and core code live in the same directory. The builds go into separate build directories, one for each configuration. This can be setup with the
 following commands. Setup needs to be done once and only once for each build type. After that, one can call make over-and-over.
@@ -151,7 +151,7 @@ This style is strongly discouraged. It is supported simply to not break the old 
 If at all possible, *do not* use this paradigm without understanding the above caveats and having safety mechanisms to combat the negative 
 consequences of this pattern.
 
-![Old Style F´Build]("img/CMake Ops - Old Style.png" "Old Style F´Build")
+![Old Style F´Build](img/CMake%20Ops%20-%20Old%20Style.png "Old Style F´Build")
 
 Here the adaptations are combined and the builds land in the same directory as the source. To use this system, the following commands can be 
 run:
