@@ -23,6 +23,8 @@ LINK_BIN_PRE_TO := -o
 LINK_BIN_POST_TO := -o
 LINK_BIN_TO := -o
 
+POST_LINK_BIN := @echo
+
 LIBS_START := -Wl,--start-group
 LIBS_END := -Wl,--end-group
 

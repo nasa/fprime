@@ -1,5 +1,6 @@
 import sys
 import os
+import os.path
 
 deployment_title = """
 <HTML>
@@ -72,11 +73,11 @@ md_title = '''
 [$deployment SDD](sdd.md)
 
 ### Modules
-|Module|Link]
-|---|---|
+|Module|SDD|Dictionary|
+|---|---|---|
 '''
 
-md_doc_line ='''|%s|[Link](%s)|
+md_doc_line ='''|%s|[Link](%s)|[Link](%s)|
 '''
 
 
@@ -123,7 +124,9 @@ for module in sys.argv[2:]:
        "../../" + module + "/docs/sdd.md")
     )
     md_doc.write(md_doc_line % (module,
-       "../../" + module + "/docs/sdd.md")
+       "../../" + module + "/docs/sdd.md",
+       "../../" + module + "/docs/" + os.path.basename(module) + ".md"
+       )
     )
 #       "../../" + module +"/docs/dox.html",
 #       "../../" + module +"/docs/scrub.html"))

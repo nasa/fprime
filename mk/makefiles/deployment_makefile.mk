@@ -34,6 +34,8 @@ ac_lvl3:
 ac_lvl4:
 	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) AC_LVL1 AC_LVL2 AC_LVL3 AC_LVL4
 	
+dictionary: ac_lvl4 dict_install
+	
 sloc: $(NATIVE_BUILD)_sloc
 
 sloc_report: $(NATIVE_BUILD)_sloc_report
@@ -49,7 +51,13 @@ clean_dox: $(NATIVE_BUILD)_clean_dox
 $(BUILDS): ac_lvl4
 	@$(TIME) $(MAKE) $(JOBS) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) BUILD=$@ bin
 
-$(foreach build,$(BUILDS),$(build)_opt): ac_lvl3
+$(foreach build,$(BUILDS),$(build)_debug): ac_lvl4
+	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile COMP=comp-debug DEPLOYMENT=$(DEPLOYMENT) BUILD=$(subst _debug,,$@) bin
+
+$(foreach build,$(BUILDS),$(build)_debug_clean):
+	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile COMP=comp-debug DEPLOYMENT=$(DEPLOYMENT) BUILD=$(subst _debug_clean,,$@) clean
+
+$(foreach build,$(BUILDS),$(build)_opt): ac_lvl4
 	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile COMP=comp-opt DEPLOYMENT=$(DEPLOYMENT) BUILD=$(subst _opt,,$@) bin
 
 $(foreach build,$(BUILDS),$(build)_opt_clean):
@@ -60,6 +68,12 @@ $(foreach build,$(BUILDS),$(build)_clean):
 
 $(foreach build,$(BUILDS),$(build)_bin_clean):
 	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) BUILD=$(subst _bin_clean,,$@) bin_clean
+
+$(foreach build,$(BUILDS),$(build)_opt_bin_clean):
+	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) BUILD=$(subst _opt_bin_clean,,$@) bin_clean
+
+$(foreach build,$(BUILDS),$(build)_debug_bin_clean):
+	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile COMP=comp-debug DEPLOYMENT=$(DEPLOYMENT) BUILD=$(subst _debug_clean,,$@) bin_clean
 
 #$(foreach build,$(BUILDS),$(build)_dox):
 #	@$(TIME) $(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile BUILD=$(subst _dox,,$@) dox
@@ -124,8 +138,6 @@ serializable_install:
 dict_install: dict_clean
 	@$(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) dict_install
 	
-dictionary: ac_lvl4 dict_install
-	
 gen_html_docs:
 	@$(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) gen_html_docs
 	
@@ -155,5 +167,17 @@ ampcs_merge:
 	
 run_unit_tests:
 	@cd $(BUILD_ROOT)/ptf && $(BUILD_ROOT)/ptf/runtests.sh -i $(USER) -r suites/fw_unit_tests.suite
-
+	
+submod:
+	git submodule update --init --recursive
+	
+coverity: coverity_clean
+	@$(COVERITY_BIN)/cov-build --dir .coverity_output make COV_BUILD
+	@$(COVERITY_BIN)/cov-analyze --user-model-file $(BUILD_ROOT)/mk/coverity/ModelAssert.xmldb --dir .coverity_output
+	@$(COVERITY_BIN)/cov-format-errors --html-output .coverity_output/html -dir .coverity_output -x -X
+	@echo "HTML output in: .coverity_output/html/index.html"
+	
+coverity_clean:
+	$(RM_DIR) ./.coverity_output
+	
 include $(BUILD_ROOT)/mk/makefiles/templates.mk
