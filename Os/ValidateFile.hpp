@@ -22,6 +22,8 @@
 
 #define VFILE_HASH_CHUNK_SIZE (256)
 
+#include <Utils/Hash/HashBuffer.hpp>
+
 namespace Os {
     
     namespace ValidateFile {
@@ -46,11 +48,23 @@ namespace Os {
             OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
         } Status;
 
+        // also return hash
+        Status validate(const char* fileName, const char* hashFileName,
+                        Utils::HashBuffer &hashBuffer); 
+        //!< Validate the contents of a file 'fileName' against its hash
+
+        // for backwards compatibility
         Status validate(const char* fileName, const char* hashFileName); //!< Validate the contents of a file 'fileName' against its hash
                                                                                    //!< stored in 'hashFileName'
 
+        // also return hash
+        Status createValidation(const char* fileName, const char* hash,
+                                Utils::HashBuffer &hashBuffer);
+
+        // for backwards compatibility
         Status createValidation(const char* fileName, const char* hashFileName);   //!< Create a validation of the file 'fileName' and store it in
                                                                                              //!< in a file 'hashFileName'
+
     }
 }
 

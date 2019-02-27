@@ -1,5 +1,5 @@
 \#if FW_PORT_SERIALIZATION == 1    
-    void Input${name}Port::invokeSerial(Fw::SerializeBufferBase &buffer) {
+    Fw::SerializeStatus Input${name}Port::invokeSerial(Fw::SerializeBufferBase &buffer) {
 #if $ret_flag == False:
 #if len($args) > 0:
         Fw::SerializeStatus _status;
@@ -24,7 +24,9 @@
         FwEnumStoreType ${arg[0]}_val;
         _status = buffer.deserialize(${arg[0]}_val);
 #end if
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<AssertArg>(_status));
+        if (Fw::FW_SERIALIZE_OK != _status) {
+            return _status;
+        }
         $arg[1] $arg[0] = static_cast<$arg[1]>(${arg[0]}_val);
 #else:
 ## Generate all other deserialize here...
@@ -48,7 +50,9 @@
         $argtype $arg[0];
         _status = buffer.deserialize($arg[0]);
 #end if
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<AssertArg>(_status));
+        if (Fw::FW_SERIALIZE_OK != _status) {
+            return _status;
+        }
 #end if
 #set $num = $num + 1
 #end for
@@ -58,9 +62,13 @@
 #else:
         this->m_func(this->m_comp, this->m_portNum);
 #end if
+    
+        return Fw::FW_SERIALIZE_OK;
 #else:
 ## For return type the invokeSerial is not used so just throw an assert here...
         FW_ASSERT(0);
+
+        return Fw::FW_SERIALIZE_OK;
 #end if
     }
 \#endif

@@ -9,6 +9,7 @@
 #define FWCASSERT_HPP_
 
 #include <Fw/Cfg/Config.hpp>
+#include <Fw/Types/BasicTypes.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 
@@ -28,9 +29,18 @@
     (CAssert0((U8*)__FILE__, __LINE__))))
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 I32 CAssert0(FILE_NAME_ARG file, U32 lineNo); //!< C assert function
 I32 CAssert1(FILE_NAME_ARG file, U32 lineNo, NATIVE_INT_TYPE arg1); //!< C assert function 1
+
+#ifdef __cplusplus
+} // extern "C"
+#endif // __cplusplus
+
+
 
 #endif // ASSERT is defined
 #endif /* FWCASSERT_HPP_ */

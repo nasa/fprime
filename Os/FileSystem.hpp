@@ -28,7 +28,7 @@ namespace Os {
 
 		Status createDirectory(const char* path); //!<  create a new directory at location path
 		Status removeDirectory(const char* path); //!<  remove a directory at location path
-		Status readDirectory(const char* path,  const U32 maxNum, Fw::EightyCharString fileArray[]);	//!< read the contents of a directory.  Size of fileArray should be maxNum.
+		Status readDirectory(const char* path,  const U32 maxNum, Fw::EightyCharString fileArray[], U32& numFiles);	//!< read the contents of a directory.  Size of fileArray should be maxNum.
 		Status removeFile(const char* path); //!< removes a file at location path
 		Status moveFile(const char* originPath, const char* destPath); //! moves a file from origin to destination
 		Status copyFile(const char* originPath, const char* destPath); //! copies a file from origin to destination
@@ -36,6 +36,7 @@ namespace Os {
 		Status getFileCount(const char* directory, U32& fileCount); //!< counts the number of files in the given directory
 		Status changeWorkingDirectory(const char* path); //!<  move current directory to path
 
+        Status getFreeSpace(const char* path, U64& totalBytes, U64& freeBytes); //!< get FS free and total space in bytes on filesystem containing path
 	}
 
 }

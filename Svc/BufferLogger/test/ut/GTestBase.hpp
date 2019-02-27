@@ -194,7 +194,7 @@ namespace Svc {
       void assertCmdResponse(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CommandResponse response /*!< The command response*/
@@ -231,7 +231,7 @@ namespace Svc {
       void assertTlm_BufferLogger_NumLoggedBuffers(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const U32& val /*!< The channel value*/
       ) const;
 
@@ -262,7 +262,7 @@ namespace Svc {
       void assertEvents_BL_LogFileClosed(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const char *const file /*!< The file*/
       ) const;
 
@@ -281,7 +281,7 @@ namespace Svc {
       void assertEvents_BL_LogFileOpenError(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const U32 errornum, /*!< The error number returned from the open operation*/
           const char *const file /*!< The file*/
       ) const;
@@ -301,7 +301,7 @@ namespace Svc {
       void assertEvents_BL_LogFileValidationError(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const char *const validationFile, /*!< The validation file*/
           const U32 status /*!< The Os::Validate::Status return*/
       ) const;
@@ -321,7 +321,7 @@ namespace Svc {
       void assertEvents_BL_LogFileWriteError(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const U32 errornum, /*!< The error number returned from the write operation*/
           const U32 bytesWritten, /*!< The number of bytes successfully written*/
           const U32 bytesToWrite, /*!< The number of bytes attempted*/

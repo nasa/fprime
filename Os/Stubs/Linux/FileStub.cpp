@@ -98,12 +98,25 @@ namespace Os {
             case OPEN_WRITE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
                 break;
+            case OPEN_SYNC_WRITE:
+                flags = O_WRONLY | O_CREAT | O_SYNC;
+                break;
+            case OPEN_SYNC_DIRECT_WRITE:
+                flags = O_WRONLY | O_CREAT | O_DSYNC
+#ifdef __linux__
+                        | O_DIRECT;
+#else
+                ;
+#endif
+            case OPEN_CREATE:
+                flags = O_WRONLY | O_CREAT | O_TRUNC;
+                break;
             default:
                 FW_ASSERT(0,(NATIVE_INT_TYPE)mode);
                 break;
         }
 
-        NATIVE_INT_TYPE userFlags = 
+        NATIVE_INT_TYPE userFlags =
 #ifdef __VXWORKS__
         0;
 #else
@@ -132,6 +145,36 @@ namespace Os {
         this->m_mode = mode;
         this->m_fd = fd;
         return stat;
+    }
+
+    File::Status File::prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len) {
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            return NOT_OPENED;
+        }
+
+        File::Status fileStatus = OP_OK;
+
+#ifdef __linux__
+        NATIVE_INT_TYPE stat = posix_fallocate(this->m_fd, offset, len);
+
+        if (stat) {
+            switch (stat) {
+                case ENOSPC:
+                case EFBIG:
+                    fileStatus = NO_SPACE;
+                    break;
+                case EBADF:
+                    fileStatus = DOESNT_EXIST;
+                    break;
+                default:
+                    fileStatus = OTHER_ERROR;
+                    break;
+            }
+        }
+#endif
+
+        return fileStatus;
     }
 
     File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
@@ -289,6 +332,74 @@ namespace Os {
             } else {
                 size = writeSize;
                 break; // break out of while loop
+            }
+        }
+
+        return stat;
+    }
+
+    // NOTE(mereweth) - see http://lkml.iu.edu/hypermail/linux/kernel/1005.2/01845.html
+    // recommendation from Linus Torvalds, but doesn't seem to be that fast
+    File::Status File::bulkWrite(const void * buffer, NATIVE_UINT_TYPE &totalSize,
+                                 NATIVE_INT_TYPE chunkSize) {
+#ifdef __linux__
+        const NATIVE_UINT_TYPE startPosition = lseek(this->m_fd, 0, SEEK_CUR);
+#endif
+        NATIVE_UINT_TYPE newBytesWritten = 0;
+
+        for (NATIVE_UINT_TYPE idx = 0; idx < totalSize; idx += chunkSize) {
+            NATIVE_INT_TYPE size = chunkSize;
+            // if we're on the last iteration and length isn't a multiple of chunkSize
+            if (idx + chunkSize > totalSize) {
+                size = totalSize - idx;
+            }
+            const NATIVE_INT_TYPE toWrite = size;
+            const Os::File::Status fileStatus = this->write(buffer, size, false);
+            if (!(fileStatus == Os::File::OP_OK
+                  && size == static_cast<NATIVE_INT_TYPE>(toWrite))) {
+                totalSize = newBytesWritten;
+                return fileStatus;
+            }
+
+#ifdef __linux__
+            sync_file_range(this->m_fd,
+                            startPosition + newBytesWritten,
+                            chunkSize,
+                            SYNC_FILE_RANGE_WRITE);
+
+            if (newBytesWritten) {
+                sync_file_range(this->m_fd,
+                                startPosition + newBytesWritten - chunkSize,
+                                chunkSize,
+                                SYNC_FILE_RANGE_WAIT_BEFORE
+                                | SYNC_FILE_RANGE_WRITE
+                                | SYNC_FILE_RANGE_WAIT_AFTER);
+            }
+#endif
+
+            newBytesWritten += toWrite;
+        }
+
+        totalSize = newBytesWritten;
+        return OP_OK;
+    }
+
+    File::Status File::flush() {
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            return NOT_OPENED;
+        }
+
+        File::Status stat = OP_OK;
+
+        if (-1 == fsync(this->m_fd)) {
+            switch (errno) {
+                case ENOSPC:
+                    stat = NO_SPACE;
+                    break;
+                default:
+                    stat = OTHER_ERROR;
+                    break;
             }
         }
 

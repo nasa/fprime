@@ -235,7 +235,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 
                 for arg_obj in obj.get_args():
                     # convert XML types to Python classes                    
-                    (type_string,ser_import,dontcare) = DictTypeConverter.DictTypeConverter().convert(arg_obj.get_type(),arg_obj.get_size())
+                    (type_string,ser_import,dontcare,dontcare2) = DictTypeConverter.DictTypeConverter().convert(arg_obj.get_type(),arg_obj.get_size())
                     if ser_import != None:
                         c.ser_import_list.append(ser_import)
                     c.arglist.append((arg_obj.get_name(),arg_obj.get_comment(),type_string))
@@ -268,7 +268,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.ser_import_list = list()
             
                 # convert XML types to Python classes                    
-                (type_string,ser_import,dontcare) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
+                (type_string,ser_import,dontcare,dontcare2) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
                 if ser_import != None:
                     c.ser_import_list.append(ser_import)
                 c.arglist.append((obj.get_name(),obj.get_comment(),type_string))

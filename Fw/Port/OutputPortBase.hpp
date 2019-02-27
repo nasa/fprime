@@ -14,7 +14,7 @@ namespace Fw {
         public:
 #if FW_PORT_SERIALIZATION == 1           
             void registerSerialPort(InputPortBase* port); // !< register a port for serialized calls
-            void invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
+            SerializeStatus invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
 #endif            
 
         protected:

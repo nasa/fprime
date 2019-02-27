@@ -18,6 +18,7 @@ from optparse import OptionParser
 
 from utils import Logger
 from utils import ConfigManager
+from utils import DictTypeConverter
 
 
 # Meta-model for Component only generation
@@ -34,6 +35,8 @@ from parsers import XmlComponentParser
 from parsers import XmlPortsParser
 from parsers import XmlSerializeParser
 from parsers import XmlTopologyParser
+
+from lxml import etree
 
 # Comment back in when converters added
 # from converters import AmpcsCommandConverter
