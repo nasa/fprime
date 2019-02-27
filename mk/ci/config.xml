@@ -1,0 +1,147 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>&lt;h2&gt;F´ Continuous Integration&lt;/h2&gt;&#xd;
+&#xd;
+Continuous integration of the F´ core software. This performs safety checks on Pull Requests ensuring that the&#xd;
+&lt;em&gt;devel&lt;/em&gt; and &lt;em&gt;master&lt;/em&gt; branches are protected from erroneous pull requests.&#xd;
+&#xd;
+&lt;h3&gt;Current Tests&lt;/h3&gt;&#xd;
+&lt;ol&gt;&#xd;
+  &lt;li&gt;(Re)Build of &quot;Ref&quot; app passes as expected.&lt;/li&gt;&#xd;
+  &lt;li&gt;Python testing framework of all UTs pass (TODO)&lt;/li&gt;&#xd;
+  &lt;li&gt;Running Ref app comes-up and stable (TODO)&lt;/li&gt;&#xd;
+&lt;/ol&gt;&#xd;
+&lt;h3&gt;Future tests&lt;/h3&gt;&#xd;
+&lt;ol&gt;&#xd;
+  &lt;li&gt;Autocoder UTs&lt;/li&gt;&#xd;
+  &lt;li&gt;GUI functional&lt;/li&gt;&#xd;
+  &lt;li&gt;Target specific Int Tests&lt;/li&gt;&#xd;
+&lt;/ol&gt;&#xd;
+&#xd;
+&lt;em&gt;Note:&lt;/em&gt; Contact Michael.D.Starch@jpl.nasa.gov for comments and/or questions!</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
+      <projectUrl>FILL-ME</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <com.synopsys.arc.jenkinsci.plugins.jobrestrictions.jobs.JobRestrictionProperty plugin="job-restrictions@0.8"/>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
+        <url>FILL-ME</url>
+        <credentialsId></credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>${ghprbActualCommit}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>CAE-Jenkins2-DH-Agents-Linux</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers>
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.42.0">
+      <spec>H/5 * * * *</spec>
+      <configVersion>3</configVersion>
+      <adminlist>mstarch
+swcaegitadmin</adminlist>
+      <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
+      <orgslist></orgslist>
+      <cron>H/5 * * * *</cron>
+      <buildDescTemplate></buildDescTemplate>
+      <onlyTriggerPhrase>false</onlyTriggerPhrase>
+      <useGitHubHooks>true</useGitHubHooks>
+      <permitAll>false</permitAll>
+      <whitelist></whitelist>
+      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+      <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
+      <whiteListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch></branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </whiteListTargetBranches>
+      <blackListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch></branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </blackListTargetBranches>
+      <gitHubAuthId>FILL-ME</gitHubAuthId>
+      <triggerPhrase></triggerPhrase>
+      <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+      <blackListCommitAuthor></blackListCommitAuthor>
+      <blackListLabels></blackListLabels>
+      <whiteListLabels></whiteListLabels>
+      <includedRegions></includedRegions>
+      <excludedRegions></excludedRegions>
+      <extensions>
+        <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+          <commitStatusContext></commitStatusContext>
+          <triggeredStatus></triggeredStatus>
+          <startedStatus></startedStatus>
+          <statusUrl></statusUrl>
+          <addTestResults>false</addTestResults>
+        </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+      </extensions>
+    </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+export PATH=&quot;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;
+echo &quot;Merging: origin/${ghprbTargetBranch} into ${ghprbActualCommit}}&quot;
+git merge origin/${ghprbTargetBranch}
+if (( $? != 0 ))
+then
+    echo &quot;[ERROR] Automatic merge failed.&quot; 1&gt;&amp;2
+    exit 1
+fi
+cd ptf
+./run_all_unit_tests.sh
+if (( $? != 0 ))
+then
+    echo &quot;[ERROR] Build or Unit Tests Failed&quot; 1&gt;&amp;2
+    exit 1
+fi
+./run_ac_tests.sh
+if (( $? != 0 ))
+then
+    echo &quot;[ERROR] Autocoder Unit Tests Failed&quot; 1&gt;&amp;2
+    exit 1
+fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper plugin="docker-custom-build-environment@1.7.3">
+      <selector class="com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector">
+        <contextPath>mk/</contextPath>
+        <dockerfile>docker/Dockerfile</dockerfile>
+      </selector>
+      <dockerHost plugin="docker-commons@1.13"/>
+      <dockerRegistryCredentials></dockerRegistryCredentials>
+      <verbose>false</verbose>
+      <volumes class="empty-list"/>
+      <privileged>false</privileged>
+      <group></group>
+      <command></command>
+      <forcePull>false</forcePull>
+      <net>bridge</net>
+      <memory></memory>
+      <cpu></cpu>
+    </com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper>
+  </buildWrappers>
+</project>

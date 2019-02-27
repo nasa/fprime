@@ -68,9 +68,9 @@
             <ref name = "data_type_and_default_define"></ref>
             
             <!-- Elements -->
-            
-            <ref name = "comment_define"></ref>
-            
+            <optional> 
+                <ref name = "comment_define"></ref>
+            </optional>
         </element>
         
         

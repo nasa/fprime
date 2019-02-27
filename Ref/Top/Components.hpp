@@ -24,7 +24,6 @@ void exitTasks(void);
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
 #include <Ref/SendBuffApp/SendBuffComponentImpl.hpp>
 #include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
-#include <Ref/Top/TargetInit.hpp>
 #include <Ref/SignalGen/SignalGen.hpp>
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>

@@ -49,20 +49,14 @@
 #define ASSERT_EVENTS_SIZE(size) \
   this->assertEvents_size(__FILE__, __LINE__, size)
 
-#define ASSERT_EVENTS_BufferManager_AllocationQueueEmpty_SIZE(size) \
-  this->assertEvents_BufferManager_AllocationQueueEmpty_size(__FILE__, __LINE__, size)
+#define ASSERT_EVENTS_ClearedErrorState_SIZE(size) \
+  this->assertEvents_ClearedErrorState_size(__FILE__, __LINE__, size)
 
-#define ASSERT_EVENTS_BufferManager_AllocationQueueFull_SIZE(size) \
-  this->assertEvents_BufferManager_AllocationQueueFull_size(__FILE__, __LINE__, size)
+#define ASSERT_EVENTS_StoreSizeExceeded_SIZE(size) \
+  this->assertEvents_StoreSizeExceeded_size(__FILE__, __LINE__, size)
 
-#define ASSERT_EVENTS_BufferManager_IDMismatch_SIZE(size) \
-  this->assertEvents_BufferManager_IDMismatch_size(__FILE__, __LINE__, size)
-
-#define ASSERT_EVENTS_BufferManager_IDMismatch(index, _expected, _saw) \
-  this->assertEvents_BufferManager_IDMismatch(__FILE__, __LINE__, index, _expected, _saw)
-
-#define ASSERT_EVENTS_BufferManager_StoreSizeExceeded_SIZE(size) \
-  this->assertEvents_BufferManager_StoreSizeExceeded_size(__FILE__, __LINE__, size)
+#define ASSERT_EVENTS_TooManyBuffers_SIZE(size) \
+  this->assertEvents_TooManyBuffers_size(__FILE__, __LINE__, size)
 
 namespace Svc {
 
@@ -125,7 +119,7 @@ namespace Svc {
       void assertTlm_BufferManager_NumAllocatedBuffers(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const U32& val /*!< The channel value*/
       ) const;
 
@@ -146,7 +140,7 @@ namespace Svc {
       void assertTlm_BufferManager_AllocatedSize(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const U32& val /*!< The channel value*/
       ) const;
 
@@ -165,10 +159,10 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BufferManager_AllocationQueueEmpty
+      // Event: ClearedErrorState
       // ----------------------------------------------------------------------
 
-      void assertEvents_BufferManager_AllocationQueueEmpty_size(
+      void assertEvents_ClearedErrorState_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
@@ -177,10 +171,10 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BufferManager_AllocationQueueFull
+      // Event: StoreSizeExceeded
       // ----------------------------------------------------------------------
 
-      void assertEvents_BufferManager_AllocationQueueFull_size(
+      void assertEvents_StoreSizeExceeded_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
@@ -189,30 +183,10 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BufferManager_IDMismatch
+      // Event: TooManyBuffers
       // ----------------------------------------------------------------------
 
-      void assertEvents_BufferManager_IDMismatch_size(
-          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 size /*!< The asserted size*/
-      ) const;
-
-      void assertEvents_BufferManager_IDMismatch(
-          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
-          const U32 expected, /*!< The expected ID value*/
-          const U32 saw /*!< The ID value seen*/
-      ) const;
-
-    protected:
-
-      // ----------------------------------------------------------------------
-      // Event: BufferManager_StoreSizeExceeded
-      // ----------------------------------------------------------------------
-
-      void assertEvents_BufferManager_StoreSizeExceeded_size(
+      void assertEvents_TooManyBuffers_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/

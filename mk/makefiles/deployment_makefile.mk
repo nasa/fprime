@@ -16,7 +16,9 @@ clean: $(NATIVE_BUILD)_clean
 
 bin_clean: $(NATIVE_BUILD)_bin_clean
 
-rebuild: gen_make clean all
+rebuild: gen_make clean all dict_install
+
+dictionary: ac_lvl4 dict_install
 
 run: $(NATIVE_BUILD)_run
 
@@ -121,6 +123,8 @@ serializable_install:
 
 dict_install: dict_clean
 	@$(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) dict_install
+	
+dictionary: ac_lvl4 dict_install
 	
 gen_html_docs:
 	@$(MAKE) -f $(BUILD_ROOT)/mk/makefiles/Makefile DEPLOYMENT=$(DEPLOYMENT) gen_html_docs

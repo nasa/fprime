@@ -112,7 +112,7 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
                     except exceptions.IOError:
                         PRINT.info("Could not open %s file." % filename)
                         sys.exit(-1)
-                    PRINT.info("Generating HTML Channels Table for %s:%s component instance..." % (t[0], k))
+                    DEBUG.info("Generating HTML Channels Table for %s:%s component instance..." % (t[0], k))
         os.chdir("..")
 
     def startSourceFilesVisit(self, obj):

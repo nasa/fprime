@@ -135,7 +135,7 @@ namespace Svc {
       Fw::LogStringArg fileArg((const char*)file);
 #endif
 
-      I8 msg[80];
+      I8 msg[FW_ASSERT_TEXT_SIZE];
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
       fprintf(stderr, "%s\n",(const char*)msg);
 
