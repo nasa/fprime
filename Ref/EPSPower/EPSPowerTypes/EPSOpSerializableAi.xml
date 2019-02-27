@@ -1,0 +1,18 @@
+<serializable namespace="Ref" name="EPSPowerOp">
+	<comment>
+	This value holds the values of a math operation
+	</comment>
+	<members>
+		<member name="val1" type="F32"/>
+		<member name="val2" type="F32"/>
+		<member name="op" type="ENUM">
+		    <enum name="Operation">
+			<item name="ADD"/>
+			<item name="SUB"/>
+			<item name="MULT"/>
+			<item name="DIVIDE"/>
+		    </enum>
+		</member>
+		<member name="result" type="F32"/>
+	</members>
+</serializable>

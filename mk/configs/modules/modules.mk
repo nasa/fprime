@@ -88,8 +88,11 @@ REF_MODULES := \
 	Ref/SendBuffApp \
 	Ref/SignalGen \
 	Ref/PingReceiver \
-	Ref/Example/ports
-	
+	Ref/Example/ports \
+	Ref/EPSPower/EPSPowerPort \
+	Ref/EPSPower/EPSPowerReceiver \
+	Ref/EPSPower/EPSPowerSender \
+	Ref/EPSPower/EPSPowerTypes
 Ref_MODULES := \
 	\
 	$(REF_MODULES) \

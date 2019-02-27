@@ -1,0 +1,107 @@
+<component name="EPSReceiver" kind="queued" namespace="Ref">
+	<import_port_type>Ref/EPSPower/EPSPowerPort/EPSOpPortAi.xml</import_port_type>
+	<import_port_type>Ref/EPSPower/EPSPowerPort/EPSResultPortAi.xml</import_port_type>
+	<import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+	<import_serializable_type>Ref/EPSPower/EPSPowerTypes/EPSOpSerializableAi.xml</import_serializable_type>
+	<comment>Component sending a math operation</comment>
+	<ports>
+	   <port name="EPSIn" data_type="Ref::EPSPowerOp" kind="async_input">
+		<comment>Port for receiving the math operation</comment>
+	   </port>
+	   <port name="EPSOut" data_type="Ref::EPSPowerResult" kind="output">
+		<comment>Port for returning the math result</comment>
+	   </port>
+	   <port name="SchedIn" data_type="Sched" kind="sync_input">
+		<comment>The rate group scheduler input</comment>
+	   </port>
+	</ports>
+	<commands>
+	   <command kind="async" opcode="0" mnemonic="ER_SET_FACTOR1">
+		<comment>Set Operation multiplication factor1</comment>
+	   	<args>
+		   <arg name="val" type="F32">
+			<comment>The first factor</comment>
+		   </arg>
+		</args>
+	   </command>
+	   <command kind="async" opcode="1" mnemonic="ER_CLEAR_EVENT_THROTTLE">
+		<comment>Clear the event throttle</comment>
+	   </command>
+	</commands>
+	<telemetry>
+		<channel id="0" name="ER_OPERATION" data_type="Ref::EPSPowerOp">
+		   <comment>The operation</comment>
+		</channel>
+		<channel id="1" name="ER_FACTOR1S" data_type="U32">
+		    <comment>The number of ER_SET_FACTOR1 commands</comment>
+		</channel>
+		<channel id="2" name="ER_FACTOR1" data_type="F32">
+		    <comment>Factor 1 value</comment>
+		</channel>
+		<channel id="3" name="ER_FACTOR2" data_type="F32">
+		    <comment>Factor 2 value</comment>
+		</channel>
+	</telemetry>
+	<events>
+	    <event id="0" name="ER_SET_FACTOR1" severity="ACTIVITY_HI" format_string="Factor 1: %f" throttle="3" >
+		<comment>Operation factor 1</comment>
+		<args>
+		   <arg name="val" type="F32">
+			<comment>The factor value</comment>
+		   </arg>
+		</args>
+	    </event>
+	    <event id="1" name="ER_UPDATED_FACTOR2" severity="ACTIVITY_HI" format_string="Factor 2 updated to: %f" >
+		<comment>Updated factor 2</comment>
+		<args>
+		   <arg name="val" type="F32">
+			<comment>The factor value</comment>
+		   </arg>
+		</args>
+	    </event>
+	    <event id="2" name="ER_OPERATION_PERFORMED" severity="ACTIVITY_HI" format_string="Operation performed: %s" >
+		<comment>Math Operation performed</comment>
+		<args>
+		   <arg name="val" type="Ref::EPSPowerOp">
+			<comment>The operation</comment>
+		   </arg>
+		</args>
+	    </event>
+	    <event id="3" name="ER_THROTTLE_CLEARED" severity="ACTIVITY_HI" format_string="Event throttled Cleared">
+		<comment>Event throttle cleared</comment>
+	    </event>
+	</events>
+	<parameters>
+	    <parameter id="0" name="factor2" data_type="F32" default="1.0" set_opcode="10" save_opcode="11">
+		<comment>A test parameter</comment>
+	    </parameter>
+	</parameters>
+
+</component>
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
