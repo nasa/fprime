@@ -1,24 +1,25 @@
 # F` CMake Build System
 
-Stock F´ ships with a bispoke makesystem ensure that building is done correctly and in the correct order. However, using and mantaining this build
-system presents a steep learning curve to new users of F´. This included CMake system is intended as an eventual replacement to the existing build
-system that should be easier to learn and use. In addition, the use of cmake puts F´more in line with standard C++ development.
+Stock F´ ships with a bispoke makesystem ensure that building is done correctly and in the correct order. However, using and mantaining 
+this build system presents a steep learning curve to new users of F´. This included CMake system is intended as an eventual replacement 
+to the existing build system that should be easier to learn and use. In addition, the use of cmake puts F´more in line with standard C++ 
+development.
 
-Since this CMake system ships along-side the original make system, certain caveats must be understood before beigining to use CMake. These caveats
-should dissappear after CMake replaces the original make system in its entirety
+Since this CMake system ships along-side the original make system, certain caveats must be understood before beigining to use CMake. 
+These caveats should dissappear after CMake replaces the original make system in its entirety
 
 ### CMakes Caveats
 
-1. CMake should not be used in tandem with the original make system.  If it is needed to switch between make systems, perform a `git clean` command
-   or otherwise remove generated files.
-2. CMake in-source builds will be dangerous as auto-generated CMake Makefiles will clobber the existing make system. Use CMake out-of-source builds
-   until the old make system is replaced.
+1. CMake should not be used in tandem with the original make system.  If it is needed to switch between make systems, perform a `git
+clean` command or otherwise remove generated files.
+2. CMake in-source builds will be dangerous as auto-generated CMake Makefiles will clobber the existing make system. Use CMake out-of-
+source builds until the old make system is replaced.
 3. CMake UTs collide with existing UTs. Thus a cmake `make check` may not fully pass. 
 
 ## Getting Started Using CMake and F`
 
-CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to perform
-the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes down to just a small number of step:
+CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to 
+perform the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes down to just a small number of step:
 
 1. Make a directory to build in
 2. Call CMake to generate make-files
@@ -28,9 +29,9 @@ the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes
 
 ### Make Build Directory and Generate CMake Files
 
-The following commands will create a new build directory and generate CMake files. Separate builds (for different OS targets, or different build
-configurations) should be isolated in their own build-directories.  These directories can be achived as build-artifacts, but are typically not
-added to source managment (Git).
+The following commands will create a new build directory and generate CMake files. Separate builds (for different OS targets, or 
+different build configurations) should be isolated in their own build-directories.  These directories can be achived as build-artifacts, 
+but are typically not added to source managment (Git).
 
 Below, a user-provided deployment directory could be substituted for `Ref` below in-order to build a different deployment.
 
@@ -56,6 +57,186 @@ make check
 ```
 
 **Note:** for the time-being, the application must be built before attempting to build and run the UTs.
+
+## Adding in New CMake Components and Deployments
+
+The core of a cmake build is the `CMakeLists.txt` file. This file specifices the files needed to build the current portion of the system.
+In our case each Component, Port, and Topology get a `CMakeList.txt` along with the top-level deployment directort. It a directory 
+supports unit-testing, then it should also be 
+
+### Ports and Components `CMakeLists.txt`
+
+
+Ports and Component `CMakeLists.txt` files specifiy two variables. The first carries inputs to the AutoCoder and the other specifiy 
+normal F´ source files that are not supplied to the AutoCoder.  These CMakeLists.txt files look like the following:
+
+https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/48f1eeddea0237404dbeabd974941b94b25f8551/Svc/CmdDispatcher/CMakeLists.txt#L1-L16
+
+Here, set() calls are used to add the two list variables specified above. Finally, two other calls are made. `generate_module` calls into
+the F´ CMake setup to configure this directory as a module. It registers dependencies, and prepares the auto-coder to be called when
+building. Lastly, we add the `test/ut` subdirectory to CMake such that it can be run to add a Unit Test to CMake.
+
+Simarlarly, these `CMakeLists.txt` files supporting components must be included in a Deployment `CMakeList.txt` file. Subdirectories can 
+contain `CMakeList.txt` files for collecting includes. The Top-level `fprime/CMakeLists.txt` can also contain the module for efficient 
+unit-test building.
+
+### Topology and Deployment `CMakeLists.txt`
+
+The topology `CMakeLists.txt` file contains the two list variables "AUTOCODER_INPUT_FILES` and `SOURCE_FILES` in the same way as Ports 
+and Components. However, as seen in the following example, Topology `CMakeLists.txt` file also contain a list variable that contains all
+the dependencies for this topology.  Finally, we call `generate_deployment` instead of `genetate_module`
+
+https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/e4c1874c564769d3230c95d1cc0a8a9692911400/Ref/Top/CMakeLists.txt#L1-L81
+
+In order to build deployments as separate items. A deployment entry-`CMakeLists.txt` must be added in order to setup CMake, include F´'s 
+CMake setup etc. This file resembles more standard `CMakeLists.txt` with special includes.  This is documented here:
+
+https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/e4c1874c564769d3230c95d1cc0a8a9692911400/Ref/CMakeLists.txt#L1-L60
+
+The critical line is `include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")`, which links to F´'s CMake setup. This setup brings in
+F´ CMake options, functions, and architecture.
+
+## Advanced CMake Usage (Caution: these steps are not polished, hence "Advanced")
+
+CMake supports some advanced build-cases that will soon become standard practice for projects that wish to use F´. These features are 
+less polished than the normal CMake usage but will be developed further as time continues. Thus, basic notes are included here but users
+should endevour to have solid understanding of CMake before expecting these to work 100%.
+
+These features include:
+1. Building with F´as a Subdirectory/Module
+2. Unit-builds
+3. Not including all of F´ core in the build
+
+### CMake With F´ As a Subdirectory
+
+CMake allows users to setup application outside of the existing fprime directory. This means F´ can be treated as a submodule. This 
+enables a cleaner use of F´ in larger projects. In order to use F´ in this way, the following needed to be taken care of.
+
+1. F´ autocoded folders should be placed in the build-artifactes, not in the source tree. This prevents writing to F´ when it is a
+   submodule/library.
+2. F´ build-root must be overrided until the AutoCoder is fixed to be BUILD_ROOT independent
+3. UTs cannot be run, as they currently write to the source tree.
+
+The Autocoded files can be written to the build tree by specifying `-DGENERATE_AC_IN_SOURCE=OFF` when running CMake. This can be done 
+with the following command:
+
+```
+ cmake -DGENERATE_AC_IN_SOURCE=OFF  ../Ref
+ ```
+F´ BUILD_ROOT must also be overrided for the non-core components. Otherwise, the auto-coder and other tools will fail.  This can be done
+with the following two lines added to the Deployment `CMakeLists.txt`. However, these lines **must** be added after including F´core 
+subdirectories.
+
+```
+# **** First Include FPrime.cmake, the core components CMake ***
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+
+# Note: when building a deployment outside of the F´ core directories, then the
+# build root must be re-mapped for use with the standard build system components.
+#
+# In this way, the module names can be predicted as an offset from the (new) build
+# root, without breaking the standard locations of F´.
+#
+# Uncomment the following lines, and set them to the BUILD_ROOT of your deployment,
+# which is typically one directory up from the CMakeLists.txt in the deployment dir.
+
+# **** Second, override the current BUILD_ROOT ****
+set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
+
+
+... add deployment only modules here ...
+```
+
+Unit test support with the build-style is coming soon.  Running `make check` here may not work if F´ core subdirectory is read-only.
+
+### Unit-Builds with CMake
+
+When building F´, it is sometimes helpful to build just the active component and ignore the rest of the system. This can be done by the 
+following commands:
+
+```
+cd <build-dir>/<sorting-dir>/path/to/component
+make
+```
+
+Where the above `<sorting-dir>` is one of the two:
+
+1. F-Prime: for F´core components
+2. Ref (or `Deployment`): for deployment specific directories
+
+### Building Without Full F´
+
+Sometimes, a user desires to only use parts of F´ core and not all of F´ core. This usually is done through deployment dependencies, 
+however; if the user also wants to prevent **all** CMake build artifacts from unused components this must be done by removing the 
+FPrime.cmake include from the deployment `CMakeLists.txt` file, and replace the include with the key bits from that list file.
+
+Remove the following:
+```
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+
+```
+
+Replace it with:
+```
+####
+# FPrime.cmake:
+#
+# This file is the entry point for building F prime. It does not setup F prime as
+# a project, but rather allows the user to build F prime as a library, or as
+# part of an external project.  This file includes the cmake build system and 
+# sets up the following environment variables used within the build of the
+# F prime common components.
+#
+#  Environment and CMake Variables:
+#   1. FPRIME_CORE_DIR: the root directory of F prime's core code
+#   2. FPRIME_CURRENT_BUILD_ROOT: BUILD_ROOT for the core F prime code. *MUST* be
+#          reset when building custom code outside of source tree.
+####
+
+# Defines the FPRIME_CORE_DIR directory to be the core of the F prime build. It is
+# used to specify where F prime core lives allowing it to be separate from the
+# add-ons used by projects.
+set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
+message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
+
+# BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
+# path from which to do internal operations.
+#
+#
+set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
+
+# Include the build system and the options that the build system allows.
+include("${FPRIME_CORE_DIR}/cmake/CMakeLists.txt")
+
+# In order to generate AC files out-of-source, the ${CMAKE_BINARY_DIR} must
+# be included as the AC files will be placed there in a parallel, but separated,
+# directory from the source.
+if (NOT GENERATE_AC_IN_SOURCE)
+    message(STATUS "Running out-of-source AC Generation")
+    # Normal (deployment) outputs
+    include_directories("${CMAKE_BINARY_DIR}")
+    # Core outputs
+    include_directories("${CMAKE_BINARY_DIR}/F-Prime")
+else()
+    message(STATUS "Running in-source AC Generation")
+endif()
+
+# Must always include the F prime core directory, as its headers are relative to
+# that directory.
+include_directories(SYSTEM "${FPRIME_CORE_DIR}")
+
+# Add gtest
+include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+add_subdirectory("${FPRIME_CORE_DIR}/gtest/" "${CMAKE_BINARY_DIR}/F-Prime")
+
+# Module subdirectories
+# Autocoders is first for Cheetah templates
+add_subdirectory("${FPRIME_CORE_DIR}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
+
+... add only desired subdirectories/components here ...
+```
 
 
 
