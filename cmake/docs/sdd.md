@@ -1,5 +1,3 @@
-<title>CMake Build System</title>
-
 # CMake Build System
 
 ## 1 Introduction
@@ -7,7 +5,8 @@
 The CMake build system is a rewrite of the F´ make system used to streamline the build process, expand features, and bring F´ more in line with the greater C++ community by using
 a standardized tool rather than bespoke Makefiles.
 
-This document seeks to describe the requirments, operations concept, and architecture of this make systm in a formal way.
+This document seeks to describe the requirements, operations concept, and architecture of this make system in a formal way. **Note:** actual usage guidelines can be found in the
+CMake system README.md. ![F´ CMake README.md](../README.md "F´ CMake README.md") 
 
 ## 1.1 Defitions
 
@@ -17,6 +16,7 @@ This document seeks to describe the requirments, operations concept, and archite
 **In-Source Build:** generate build artifacts along-side source code.
 **Out-Of-Source Build:** generate build artifacts in a separate directory source code.
 **Build Configurations:** different build setups, like different targets, debug flags, different deployments. Typically these are isolated from one another.
+**F´ Module:** super set of F´ components and F´ ports.
 
 
 ## 2 Requirements
@@ -79,19 +79,19 @@ a named directory to build into, and then supplies cmake the configuration argum
 As can be seen here, the adaptations and core top-level directory live alongside one another. The builds go into separate build directories, one for each configuration. This can be
 setup with the following commands. Setup needs to be done once and only once for each build type. After that, one can call make over-and-over.
 
-```
+``` 
 cd <project>
 mkdir build_config1
 cd build_config1
 cmake ../<path-to-deployment> -D<configuration settings>
-```
+``` 
 
 Then when code or make changes occur, this configuration can easily be rebuilt by performing the following commands (as many times as needed during development iteration).
 
-```
+``` 
 cd <project>/build_config1
 make
-```
+``` 
 
 For building individual components, please see section "3.3, *out-of-source* building of individual components".
 
@@ -106,19 +106,19 @@ to update F´, if needed, but is otherwise a stable approach. Here a user uses a
 As can be seen here, the adaptations and core code live in the same directory. The builds go into separate build directories, one for each configuration. This can be setup with the
 following commands. Setup needs to be done once and only once for each build type. After that, one can call make over-and-over.
 
-```
+``` 
 cd <fprime>
 mkdir build_config1
 cd build_config1
 cmake ../<path-to-deployment> -D<configuration settings>
-```
+``` 
 
 Then when code or make changes occur, this configuration can easily be rebuilt by performing the following commands (as many times as needed during development iteration).
 
-```
+``` 
 cd <project>/build_config1
 make
-```
+``` 
 
 For building individual components, please see section "3.3, *out-of-source* building of individual components".
 
@@ -129,16 +129,16 @@ components live in `<build>/F-Prime/<path-to-component>` and adaptations typical
 to build the component.  A referend app example can be seen in the commands below.
 
 **Build F´ Svc Component Individually**
-```
+``` 
 cd build_config1/F-Prime/Svc/FatalHandler
 make
-```
+``` 
 
 **Build Ref Component Individually**
-```
+``` 
 cd build_config1/Ref/PingReceiver/
 make
-```
+``` 
 
 ### 3.4 (Highly Discouraged) Old Style *In-Source* Builds
 
@@ -156,16 +156,221 @@ consequences of this pattern.
 Here the adaptations are combined and the builds land in the same directory as the source. To use this system, the following commands can be 
 run:
 
-```
+``` 
 cd <fprime>
 git clean -xdf . #WARNING, this clobbers *all* untracked files
 cmake ../<path-to-deployment> -D<configuration settings>
 make
-```
+``` 
 
 Each time the build it run it, the above commands **must** be run to prevent errors and unpredictable builds. However, it is heavy handed to
 purge all artifacts of the build system.  Configurations are lost or pollute new builds.  Hence the discouraging tone used in this section.
 
-## 4 Design
+### 3.5 Adding in New Components and Topologies
 
-**This is thundering your way...but has yet to arrive.**
+New components can be added by creating a `CMakeLists.txt` file in the directory of that component. This file is required to set two CMake variables:
+
+1. **AUTOCODER_INPUT_FILES**: a list of files to run through the autocoder when generating this module.
+2. **SOURCE_FILES**: a list of standard source files, written by hand.
+
+These are set using the CMake set() function, as shown below. Finally, this file must call generate_module, a F´ CMake support function used to setup the
+auto coding step and ensure this component is built as an F´ module.  This call passes in the above variables.
+
+** Module CMakeList.txt **
+```
+# Default module cmake file
+# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
+# SOURCE_FILES: Handcoded C++ source files
+
+set(AUTOCODER_INPUT_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentAi.xml"
+)
+
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentImpl.cpp"
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+```
+
+This file must be added to some parent CMakeLists.txt file using the add_subdirectory file. If it is a new F´ component this is typically added to `CMakeLists.txt` in the top-level directory
+this component goes in. i.e. `fprime/Svc/CMakeLists.txt`. These sub-CMakeLists.txt are there as a convenience and are included themselves in FPrime.cmake. If there is no convenient sub list file,
+the component may be added directly to `fprime/cmake/FPrime.cmake`. Non-core components must be added to the deployment `CMakeLists.txt` file, or to some child included from there.
+
+**Example Add Subdirectory**
+``` 
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+```
+
+Topology `CMakeLists.txt` follow the same format as the Module files with two deviations. First, they must list module dependencies in the variable, DEPLOYMENT_MODULES (this will soon be corrected and rendered unnecessary) and
+secondly, they call the function generate_deployment passing the name of the deployment (e.g. Ref), AUTOCODER_INPUT_FILES, SOURCE_FILES, and DEPLOYMENT_MODULES.
+
+** Topology CMakeList.txt **
+``` 
+# Default deployment cmake file
+# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
+# SOURCE_FILES: Handcoded C++ source files
+# DEPLOYMNET_MODULES: Modules needed by this deployment
+
+set(AUTOCODER_INPUT_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
+)
+
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"
+)
+
+set(DEPLOYMENT_MODULES
+  # Reference components
+  "${CMAKE_CURRENT_LIST_DIR}/../RecvBuffApp"
+  "${CMAKE_CURRENT_LIST_DIR}/../SendBuffApp"
+  "${CMAKE_CURRENT_LIST_DIR}/../SignalGen"
+  "${CMAKE_CURRENT_LIST_DIR}/../PingReceiver"
+
+  # Services componets
+  Svc/ActiveLogger
+  Svc/ActiveRateGroup
+  Svc/AssertFatalAdapter
+  Svc/BufferManager
+  Svc/CmdDispatcher
+  Svc/CmdSequencer
+  Svc/FatalHandler
+  Svc/FileDownlink
+  Svc/FileUplink
+  Svc/GndIf
+  Svc/Health
+  Svc/LinuxTime
+  Svc/PassiveConsoleTextLogger
+  Svc/PassiveTextLogger
+  Svc/PrmDb
+  Svc/RateGroupDriver
+  Svc/SocketGndIf
+  Svc/Time
+  Svc/TlmChan
+
+  # Services ports
+  Svc/Cycle
+  Svc/Fatal
+  Svc/Ping
+  Svc/Sched
+  Svc/Seq
+  Svc/WatchDog
+
+  # Driver Ports
+  Drv/DataTypes
+
+  # Driver Components
+  Drv/BlockDriver
+
+  # CFDP modules
+  CFDP/Checksum
+
+  # Utility modules
+  Utils/Hash
+
+  # Framework ports
+  Fw/Buffer
+  Fw/Cmd
+  Fw/Log
+  Fw/Time
+  Fw/Tlm
+  Fw/Prm
+  Fw/Com
+
+  # Framework
+  Fw/FilePacket
+  Fw/Comp
+  Fw/Obj
+  Fw/Port
+  Fw/Types
+  Os
+)
+
+# invoke deployment function (DEPLOYMENT_NAME AUTOCODER_INPUT_FILES SOURCE_FILES DEPLOYMENT_MODULES)
+generate_deployement("Ref" "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${DEPLOYMENT_MODULES}")
+``` 
+
+These files must also be added to entry-point `CMakeList.txt` or a child therein.
+
+## 4 CMake Build Organization
+
+The CMake system is organized into three pieces. There are the entry-point files supplied by the deployment or executable, F´ core CMake support files, and the
+CMakeLists.txt files used to build core and adaptation F´ components and topologies. These pieces are respectively yellow, green, and blue/orange in the diagram below.
+
+![F´ CMake File Organization](img/CMake%20File%20Organization.png "F´ CMake File Organization")
+
+### 4.1 Deployment and Executable CMake Files
+
+These files are supplied by the the deployment or executable being built. This is typically supplied by the adaption project of F´. These files supply two critical functions. Primarily, this
+must supply an entry-point of the build system. It contains the standard CMake headers and an inclusion of the F´ CMake support file `FPrime.cmake`. This ensures CMake is ready to run, and all
+the F´ setup is included. This should look something like the following:
+
+** CMake Headers and F´ Build System**
+``` 
+##
+# Section 1: Basic Project Setup
+#
+# This contains the basic project information. Specifically, a cmake version and
+# project definition.
+##
+cmake_minimum_required(VERSION 3.5)
+project(FPrime-Ref C CXX)
+set(CMAKE_BUILD_TYPE DEBUG)
+
+##
+# Section 2: F´ Core
+#
+# This includes all of the F´ core components, and imports the make-system. F´ core
+# components will be placed in the F-Prime binary subdirectory to keep them from
+# colliding with deployment specific items.
+##
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+``` 
+
+The secondary function of this file is to include any sub directories that contain adaptation specific F´ components. This is just like the F´ core sub directory inclusions as described below, but
+represent adaptation specific components. To see what these files look like, see section 4.3.
+
+**Including Sub Directories**
+``` 
+##
+# Section 3: Components and Topology
+#
+# This section includes deployment specific directories. This allows use of non-
+# core components in the topology, which is also added here.
+##
+file(RELATIVE_PATH DEPLOY_BINARY_DIR "${FPRIME_CURRENT_BUILD_ROOT}" "${CMAKE_CURRENT_LIST_DIR}")
+
+# Add component subdirectories
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/" "${DEPLOY_BINARY_DIR}/PingReceiver")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/" "${DEPLOY_BINARY_DIR}/RecvBuffApp")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/" "${DEPLOY_BINARY_DIR}/SendBuffApp")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/" "${DEPLOY_BINARY_DIR}/SignalGen")
+``` 
+**Note:** the output of the components are routed to named sub-directories of the build, starting with the `Ref` prefix.
+
+
+### 4.2 F´ Core CMake Support Files
+
+These files provide the the core CMake functions used to make components, deployments, and modules. In addition `FPrime.cmake` includes the sub directories that compose F´ core components. In that way
+deployments need only include the one CMake file to import all of F´. Functions that automate the auto-code function, module dependencies, and various other utilities are included to. Thus deployments
+and executables can follow the same pattern as core F´ components when adding custom components of their own.
+
+### 4.3 F´Core and Adaptation CMakeLists.txt Files
+
+These files are used to specify the build layout of the F´ components, ports, and topologies. They are composed in a hierarchy as shown below. These files call the F´ module and deployment functions to
+generate the expected build files. The file format is described in section *3.5 Adding in New Components and Topologies*. These files link source files, and auto-coder inputs to the generate functions.
+These functions assemble F´ from those constituents.
+
+![F´ CMake Lists Hierarchy](img/CMake%20Lists%20Hierarchy.png "F´ CMake File Organization")
+
+## 5 CMake Architecture
+
+As can be see thus far, most of the F´ build magic is encapsulated in CMake utility functions. This section will describe the primary functions and how they setup the F´ build. There are two primart
+functions in this architecture:
+
+1. generate_module: used to take a module and generate the build files for it
+2. generate_deployment: used to take a deployment and generate the full build of the executable
+
+### 5.1 generate_module
+
+
