@@ -4,8 +4,7 @@ function(generate_deployement DEPLOYMENT_NAME AUTOCODER_INPUT_FILES SOURCE_FILES
 
   message(STATUS "Adding executable: ${DEPLOYMENT_NAME}")
   # add_executable(<name> [sources...])
-  #TODO: ramification of these changes
-  #TODO: custom executable
+  #TODO: reverse this change to sub in empty.cpp
   add_executable("${DEPLOYMENT_NAME}" "${SOURCE_FILES}")
 
   # Generate module from sources

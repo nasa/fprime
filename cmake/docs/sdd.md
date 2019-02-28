@@ -371,6 +371,47 @@ functions in this architecture:
 1. generate_module: used to take a module and generate the build files for it
 2. generate_deployment: used to take a deployment and generate the full build of the executable
 
+![F´ CMake Architecture](img/CMake%-%20Architecture.png "F´ CMake Architecture")
+
+**Note:** colors are inherited from above diagrams. Red items are output products, and purple represents execution steps.
+
+
 ### 5.1 generate_module
 
+Generate module takes a list of autocoder input files, and a list of source files and takes the following actions:
 
+1. Calculates the module name
+2. Adds a library product for this module
+3. Registers all needed autocoder steps based on the AUTOCODER_INPUT_FILES variable.
+4. Create a unit-test module for this module
+
+Once these steps have completed, CMake generates host-specific build files that encapsulate the auto-coder calls for the module, the dependencies of the module, the sources for the module, and the
+the unit tests for the module.  Running these build files will generate the module's library for use within the deployment linking stage.
+
+### 5.2 generate_deployment
+
+Generate deployments takes a deployment name, autocoder input files, a list of source files, and a list of deployment dependencies. It then takes the following actions:
+
+1. Adds an executable product for this deployment
+2. Runs the deployment through generate_module (section 5.1)
+3. Adds the library from each dependency to the deployment
+4. Adds Fw_Cfg to include F´ configuration
+5. Adds in a threading library
+
+Once these steps have completed, CMake generates host-specific build files that encapsulate the auto-coder calls for the deployment.  Running this build file will generate the module's executable,
+and if needed the libraries it depends.
+
+### 5.3 Adding New Platforms
+
+CMake allows you to specify the tool chain as part of the initial CMake step, so at its core, compiling for a new target OS should be as simple as doing the following step.
+
+```
+cmake <path to deployment> -DCMAKE_TOOLCHAIN_FILE=path/to/toolchain_file
+```
+
+However, adding tool-chains this way neglects some F´ convenience setup for compiling platform-specific code. In addition, adding tool-chains this way can be cumbersome. Thus, a user may also register
+a new platform in the `fprime/cmake/platform/` directory by creating a `<platform>.cmake` file there. More specific steps will be described in `fprime/cmake/platform/README.md`.
+
+## 6 Unit Tests
+
+This section will describe unit testing of the build system itself. However, this is not done nor designed yet.
