@@ -176,7 +176,7 @@ New components can be added by creating a `CMakeLists.txt` file in the directory
 These are set using the CMake set() function, as shown below. Finally, this file must call generate_module, a F´ CMake support function used to setup the
 auto coding step and ensure this component is built as an F´ module.  This call passes in the above variables.
 
-** Module CMakeList.txt **
+**Module CMakeList.txt**
 ```
 # Default module cmake file
 # AUTOCODER_INPUT_FILES: Contains all Autocoder input files
@@ -205,7 +205,7 @@ add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 Topology `CMakeLists.txt` follow the same format as the Module files with two deviations. First, they must list module dependencies in the variable, DEPLOYMENT_MODULES (this will soon be corrected and rendered unnecessary) and
 secondly, they call the function generate_deployment passing the name of the deployment (e.g. Ref), AUTOCODER_INPUT_FILES, SOURCE_FILES, and DEPLOYMENT_MODULES.
 
-** Topology CMakeList.txt **
+**Topology CMakeList.txt**
 ``` 
 # Default deployment cmake file
 # AUTOCODER_INPUT_FILES: Contains all Autocoder input files
@@ -305,7 +305,7 @@ These files are supplied by the the deployment or executable being built. This i
 must supply an entry-point of the build system. It contains the standard CMake headers and an inclusion of the F´ CMake support file `FPrime.cmake`. This ensures CMake is ready to run, and all
 the F´ setup is included. This should look something like the following:
 
-** CMake Headers and F´ Build System**
+**CMake Headers and F´ Build System**
 ``` 
 ##
 # Section 1: Basic Project Setup
@@ -371,9 +371,9 @@ functions in this architecture:
 1. generate_module: used to take a module and generate the build files for it
 2. generate_deployment: used to take a deployment and generate the full build of the executable
 
-![F´ CMake Architecture](img/CMake%-%20Architecture.png "F´ CMake Architecture")
+![F´ CMake Architecture](img/CMake%20-%20Architecture.png "F´ CMake Architecture")
 
-**Note:** colors are inherited from above diagrams. Red items are output products, and purple represents execution steps.
+**Note:** colors are inherited from above diagrams. Red items are output products, and purple items represent execution steps.
 
 
 ### 5.1 generate_module
