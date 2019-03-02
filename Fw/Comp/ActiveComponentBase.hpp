@@ -43,6 +43,7 @@ namespace Fw {
 #endif
         PRIVATE:
             static void s_baseTask(void*); //!< function provided to task class for new thread.
+            static void s_baseBareTask(void*); //!< function provided to task class for new thread.
     };
 
 }

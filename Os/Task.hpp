@@ -39,7 +39,11 @@ namespace Os {
             bool isSuspended(void); //!< check with OS to see if it is suspended already
             bool isStarted(void); //!< check to see if task is started
             void setStarted(bool started); //!< set task to started when thread is fully up. Avoids a VxWorks race condition.
-            
+            /**
+             * Returns the task-handle owned by this task
+             */
+            POINTER_CAST getRawHandle();
+
             static void registerTaskRegistry(TaskRegistry* registry);
             
         private:

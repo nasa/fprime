@@ -63,10 +63,15 @@ namespace Fw {
         (void)snprintf(taskNameChar,sizeof(taskNameChar),"ActComp_%d",Os::Task::getNumTasks());
         taskName = taskNameChar;
 #endif
-        
+// If running with the baremetal scheduler, use a variant of the task-loop that
+// does not loop internal, but waits for an external eiteration call.
+#if FW_BAREMETAL_SCHEDULER == 1
+        Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this);
+#else
     	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseTask,
                         this);
-    	FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
+#endif
+       FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
     }
     
     void ActiveComponentBase::exit(void) {
@@ -77,6 +82,29 @@ namespace Fw {
         FW_ASSERT(Os::Queue::QUEUE_OK == qStat,static_cast<NATIVE_INT_TYPE>(qStat));
     }
 
+    void ActiveComponentBase::s_baseBareTask(void* ptr) {
+        FW_ASSERT(arg != NULL);
+        ActiveComponentBase* comp = reinterpret_cast<ActiveComponentBase*>(ptr);
+        //Start if not started
+        if (!comp->m_task.isStarted()) {
+            comp->m_task.setStarted(true);
+        }
+        //Bare components cannot block, so return to the scheduler
+        if (comp->m_queue.getNumMsgs() == 0) {
+            return;
+        }
+        ActiveComponentBase::MsgDispatchStatus loopStatus = comp->doDispatch();
+        switch (loopStatus) {
+            case ActiveComponentBase::MSG_DISPATCH_OK: // if normal message processing, continue
+                break;
+            case ActiveComponentBase::MSG_DISPATCH_EXIT:
+                comp->finalizer();
+                comp->m_task.setStarted(false);
+                break;
+            default:
+                FW_ASSERT(0,(NATIVE_INT_TYPE)loopStatus);
+        }
+    }
     void ActiveComponentBase::s_baseTask(void* ptr) {
         // cast void* back to active component
         ActiveComponentBase* comp = static_cast<ActiveComponentBase*> (ptr);

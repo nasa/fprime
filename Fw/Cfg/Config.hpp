@@ -117,6 +117,11 @@
 #ifndef FW_QUEUE_REGISTRATION
 #define FW_QUEUE_REGISTRATION               1   //!< Indicates whether or not queue registration is used
 #endif
+
+#ifndef FW_BAREMETAL_SCHEDULER
+#define FW_BAREMETAL_SCHEDULER             1   //!< Indicates whether or not a baremetal scheduler should be used. Alternatively the Os scheduler is used.
+#endif
+
 // Port Facilities
 
 // This allows tracing calls through ports for debugging
