@@ -83,7 +83,7 @@ namespace Fw {
     }
 
     void ActiveComponentBase::s_baseBareTask(void* ptr) {
-        FW_ASSERT(arg != NULL);
+        FW_ASSERT(ptr != NULL);
         ActiveComponentBase* comp = reinterpret_cast<ActiveComponentBase*>(ptr);
         //Start if not started
         if (!comp->m_task.isStarted()) {

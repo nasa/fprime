@@ -1,5 +1,4 @@
 #include <Fw/Comp/ActiveComponentBase.hpp>
-#include <Fw/Comp/VirtualComponent.hpp>
 #include <Os/Task.hpp>
 #include <Os/Baremetal/TaskRunner/BareTaskHandle.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -25,9 +24,6 @@ Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identif
     handle->m_priority = priority;
     handle->m_routine = routine;
     handle->m_argument = arg;
-    //Fw::ActiveComponentBase* tmp = reinterpret_cast<Fw::ActiveComponentBase*>(arg);
-    Fw::VirtualComponent::s_start_comp(arg);
-    handle->m_routine = Fw::VirtualComponent::s_step_comp;
     //Register this task
     m_handle = reinterpret_cast<POINTER_CAST>(handle);
     this->m_name = "BR_";
