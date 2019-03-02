@@ -19,12 +19,12 @@ Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identif
     if (handle == NULL) {
        return Task::TASK_UNKNOWN_ERROR;
     }
-    printf("A Task is Registered: %s Function: 0x%p and Arg: 0x%p\n", name.toChar(), routine, arg);
+    //Set handle memeber variables
     handle->m_enabled = true;
     handle->m_priority = priority;
     handle->m_routine = routine;
     handle->m_argument = arg;
-    //Register this task
+    //Register this task using our custom task handle
     m_handle = reinterpret_cast<POINTER_CAST>(handle);
     this->m_name = "BR_";
     this->m_name += name;
@@ -33,11 +33,14 @@ Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identif
     if (Task::s_taskRegistry) {
         Task::s_taskRegistry->addTask(this);
     }
+    //Running the task the first time allows setup activities for the task
+    handle->m_routine(handle->m_argument);
     return Task::TASK_OK;
 }
 
 Task::TaskStatus Task::delay(NATIVE_UINT_TYPE milliseconds)
 {
+    //Task delays are a bad idea in baremetal tasks
     return Task::TASK_DELAY_ERROR;
 }
 

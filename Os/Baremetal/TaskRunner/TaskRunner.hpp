@@ -34,13 +34,18 @@ class TaskRunner : TaskRegistry {
          */
         void removeTask(Task* task);
         /**
+         * Stop this task registry
+         */
+        void stop();
+        /**
          * Program loop, used to run all tasks forever
          */
-        void run_forever();
+        void run();
     private:
         U32 m_index;
         Task* m_task_table[TASK_REGISTRY_CAP];
         Task::taskRoutine m_callback;
+        bool m_cont;
 };
 } //End Namespace Os
 #endif /* OS_BAREMETAL_TASKRUNNER_TASKRUNNER_HPP_ */
