@@ -1,18 +1,17 @@
 This contains the MagicDraw Plugin for the Component Autocoder:
 
 To install this plugin:
- - copy the files 'MyPlugin.jar' and 'plugin.xml' found in this directory into the MagicDraw installation plugin directory:
+ - copy the files 'FpCompAuto.jar' and 'plugin.xml' and directory 'lib' found in this directory into the MagicDraw installation plugin directory:
 ie /Applications/MagicDraw_UML_17.2/plugins/gov.nasa.jpl.magicdraw.componentAutocoder.
+ - This can also be done by typing "make install MD_INSTALL_LOC=<path to MagicDraw install directory>"
 
-To generate a new plugin:
-- Close MagicDraw
-- Open the project in Eclipse
-- Move the existing .jar file out of the way (in ISF/isf/Autocoders/MagicDrawPlugin)
-- In Eclipse right click on the MagicDrawPlugin project (on the left screen of eclipse)
-- Select 'Export'
-- Select 'JAR File'
-- Select the export destination to this directory
-- Update the version number in plugin.xml
+```
+cp -r plugin.xml FpCompAuto.jar lib /Applications/MagicDraw_UML_17.2/plugins/gov.nasa.jpl.magicdraw.componentAutocoder
+```
+
+To rebuild the plugin from the command line:
+- Run 'make' in this directory. This will generate or re-generate a file 'FpCompAuto.jar' that contains the plugin.
+- Copy 'FpCompAuto.jar' to 'FpCompAuto.jar' as described above.
 
 To run the plugin in MagicDraw:
 - Run MagicDraw - you should see a 'Component Autocoder' tab next to the 'Help' tab
@@ -21,20 +20,6 @@ To run the plugin in MagicDraw:
 - Pull down the 'Component Autocoder' tab and click on 'Auto Generate Component/Port/Topology XML
 - Check the Messages Window for a list of all the Components, Ports and Subsystem XML's that are generated and the location of where they are generated.
 
-To debug the plugin code in Eclipse with MagicDraw:
-- Make a Java project and point to the MagicDraw Plugin directory
-- Setup a Run Configuration under the Java Application 
-  - See the screen shots in this directory:  RunConfigMain, RunConfigArgs and RunConfigClassPath
-- In the Configuration Main tab for Project enter 'MDPlugin', for Main Class enter'com.nomagic.magicdraw.Main
-- In the Arguments tab enter: -Xmx800M -XX:PermSize=8M -XX:MaxPermSize=270m
--Dinstall.root="/Applications/cae_md18_0_sp5_mdk-2.3.1"
--ea
-- Change the .jar files in the .classpath: 
-- Select Project -> Properties -> Libraries -> Add External Class Folder.  You can change the order around if necesarry.
-- To run plugin: In Eclipse select Run -> Debug. This should bring up MagicDraw.
-- In MagicDraw bring up the model and auto-generate the XML
-
-
 To add a new Model: ex FatalEvent port
 - New SysML Project ex: Fatal
 - New Package ex: Fatal
@@ -42,7 +27,6 @@ To add a new Model: ex FatalEvent port
 - New PortType - FatalEvent
 - Create ValueProperty - Id
 - Export Pkg to New Module - FatalModule.mdxml
-
 
 To run the JUnit test cases for exceptions:
 - Open the MagicDraw project in Eclipse
@@ -112,4 +96,12 @@ version 4.4
 --------------
 - Removed throwing an exception when the instances don't match the config csv file.  The reason being is that the ISF Reference model has some rogue instance that I could not remove.  This should be cleaned up in the next major refactoring of the code.
 
+version 4.5
+--------------
+- Converted to Makefile based builds (Bocchino) and removed buggy sequence port autonumbering (Canham)
+- Name of plug-in was changed to "FpCompAuto.jar" away from Eclipse project default name
+- Added make target to install plug-in correctly
 
+version 4.6
+--------------
+- Added plugin dependencies to plugin.xml for MagicDraw 18.5+ 
