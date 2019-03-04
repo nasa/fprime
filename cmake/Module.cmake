@@ -90,6 +90,30 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
         ${FPRIME_CORE_DIR}/cmake/wrapper/codegen.sh ${IS_TOP} ${AC_FINAL_XML} ${AC_FINAL_DIR}
         DEPENDS ${AC_FINAL_XML}
       )
+      #For serializables, add the dict dir
+      if (${AC_TYPE} STREQUAL "serializable")
+          set(SERIALIZABLE_DICT_DIR "${FPRIME_CORE_DIR}/Gse/generated/${PROJECT_NAME}/serializable")
+          execute_process(
+            COMMAND ${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
+            RESULT_VARIABLE ERR_RETURN
+            OUTPUT_VARIABLE NS
+         )
+         if (${ERR_RETURN})
+             message(FATAL_ERROR "Could not get serializable Namespace/Name with: ${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py ${AC_FINAL_XML}")
+         endif()
+         set(SER_PY ${CMAKE_CURRENT_LIST_DIR}/Dict/serializable/${NS}.py)
+         set(DEST_PY ${SERIALIZABLE_DICT_DIR}/${NS}.py)
+         get_filename_component(DEST_DIR ${DEST_PY} DIRECTORY)
+         add_custom_command(
+             OUTPUT ${DEST_PY}
+             COMMAND ${CMAKE_COMMAND} -E make_directory ${DEST_DIR}
+             COMMAND ${CMAKE_COMMAND} -E copy ${SER_PY} ${DEST_PY}
+             COMMAND ${CMAKE_COMMAND} -E touch ${SERIALIZABLE_DICT_DIR}/__init__.py
+             COMMAND ${CMAKE_COMMAND} -E touch ${DEST_DIR}/__init__.py
+             DEPENDS ${AC_FINAL_HEADER}
+         )
+         target_sources(${MODULE_NAME} PRIVATE ${SERIALIZABLE_DICT_DIR}/${NS}.py)
+      endif()
       #Add in the generated files in their final home, and then search for dependencies
       add_generated_sources(${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${MODULE_NAME})
       fprime_dependencies(${AC_FINAL_XML} ${MODULE_NAME} ${LOWER_TYPE})

@@ -7,7 +7,7 @@ message(STATUS "Requiring thread library")
 FIND_PACKAGE ( Threads REQUIRED )
 
 set(DARWIN_COMMON
-  "-Wall -Wextra -fno-builtin -fno-asm -Wno-unused-parameter -Wno-long-long -v"
+  "-Wall -Wextra -fno-builtin -fno-asm -Wno-unused-parameter -Wno-long-long"
 )
 
 set(CMAKE_C_FLAGS

@@ -48,12 +48,30 @@ then
 fi
 # Go to the AI directory
 cd ${AI_DIR}
-if [[ "${IS_TOP}" == "NO" ]]
+if [[ "${AI_XML}" == *Serializable* ]]
+then
+    ${PYTHON_AUTOCODER_DIR}/bin/codegen.py --build_root --default_topology_dict --dict_dir "Dict" "${AI_XML}"
+elif [[ "${IS_TOP}" == "NO" ]]
 then
     ${PYTHON_AUTOCODER_DIR}/bin/codegen.py --build_root "${AI_XML}"
 else
+    TMP_DIR="/tmp/serializables-$(date)"
+    #NOTE: codegen will remove serializables sub directory. This moves them to safety and back
+    for dir in "${DICTIONARY_DIR}"/*
+    do
+        BASE_NAME="$(basename ${dir})"
+        mkdir -p "${TMP_DIR}/${BASE_NAME}"
+        mv "${DICTIONARY_DIR}/${BASE_NAME}"/serializable "${TMP_DIR}/${BASE_NAME}/serializable"
+    done
     # TODO: update this for XML style dictionaries
     ${PYTHON_AUTOCODER_DIR}/bin/codegen.py --build_root --connect_only --default_topology_dict --dict_dir "${DICTIONARY_DIR}" "${AI_XML}"
+    for dir in "${DICTIONARY_DIR}"/*
+    do
+        BASE_NAME="$(basename ${dir})"
+        mv "${TMP_DIR}/${BASE_NAME}/serializable" "${DICTIONARY_DIR}/${BASE_NAME}/serializable"
+        rmdir "${TMP_DIR}/${BASE_NAME}"
+    done
+    rmdir "${TMP_DIR}"
 fi
 # Move the output to the directory
 CWD=`pwd`

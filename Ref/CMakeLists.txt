@@ -19,7 +19,7 @@
 # project definition.
 ##
 cmake_minimum_required(VERSION 3.5)
-project(FPrime-Ref C CXX)
+project(Ref C CXX)
 set(CMAKE_BUILD_TYPE DEBUG)
 
 ##
