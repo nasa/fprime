@@ -78,15 +78,15 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         fp.writelines(c.__str__())
-        DEBUG.debug('===================================')
-
-
+        DEBUG.debug('===================================')     
+        
+        
     def DictStartVisit(self, obj , topology_model):
         """
         Defined to generate files for generated code products.
         @parms obj: the instance of the channel model to visit.
         """
-
+    
         # Build filename here...
         # Make dictionary directly if it doesn't exist
         output_dir = os.environ["DICT_DIR"] + "/channels"
@@ -94,15 +94,15 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
             os.makedirs(output_dir)
             init_file = output_dir + os.sep + "__init__.py"
             open(init_file, "w+")
-
+            
         self.__fp = {}
-
+        
         try:
             instance_obj_list = topology_model.get_base_id_dict()[obj.get_component_base_name()]
         except Exception:
             PRINT.info("ERROR: Could not find instance object for component " + obj.get_component_base_name() + ". Check topology model to see if the component was instanced.")
             raise
-
+        
         for instance_obj in instance_obj_list:
             if instance_obj[3].get_dict_short_name() != None:
                 fname = "{}_{}".format(instance_obj[3].get_dict_short_name() , obj.get_name())
@@ -117,14 +117,14 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
                 raise Exception("Could not open {} file.".format(pyfile))
             DEBUG.info('Completed {} open'.format(pyfile))
             self.__fp[fname] = fd
-
-
+                
+            
 
     def DictHeaderVisit(self, obj , topology_model):
         """
         Defined to generate header for  channel python class.
         """
-
+        
         for fname in self.__fp.keys():
             c = ChannelHeader.ChannelHeader()
             d = datetime.datetime.now()
@@ -132,8 +132,8 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
             c.user = os.environ['USER']
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[fname], "channelHeaderVisit")
-
-
+      
+ 
     def DictBodyVisit(self, obj , topology_model):
         """
         Defined to generate the body of the  Python channel class
@@ -144,7 +144,7 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
         except Exception:
             PRINT.info("ERROR: Could not find instance object for component " + obj.get_component_base_name() + ". Check topology model to see if the component was instanced.")
             raise
-
+        
         for instance_obj in instance_obj_list:
             c = ChannelBody.ChannelBody()
             if instance_obj[3].get_dict_short_name() != None:
@@ -154,30 +154,30 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 fname = "{}_{}".format(instance_obj[0] , obj.get_name())
             c.name = fname
-
+            
             if len(obj.get_ids()) > 1:
                 raise Exception("There is more than one event id when creating dictionaries. Check xml of {} or see if multiple explicit IDs exist in the AcConstants.ini file".format(fname))
             try:
                 c.id = hex(instance_obj[1]  + int(float(obj.get_ids()[0])))
             except:
                 c.id = hex(instance_obj[1]  + int(obj.get_ids()[0] , 16))
-
+            
             c.description = obj.get_comment()
             c.format_string = obj.get_format_string()
             c.component = obj.get_component_name()
             (c.low_red,c.low_orange,c.low_yellow,c.high_yellow,c.high_orange,c.high_red) = obj.get_limits()
 
             c.ser_import = None
-
-            (c.type,c.ser_import,type_name) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
+            
+            (c.type,c.ser_import,type_name,dontcare) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
             # special case for enums and Gse GUI. Needs to convert %d to %s
             if type_name == "enum":
-                c.format_string = "%s"
-
+                c.format_string = "%s"            
+    
             self._writeTmpl(c, self.__fp[fname], "channelBodyVisit")
             self.__fp[fname].close()
-
-
+                
+            
 
 if __name__ == '__main__':
     pass

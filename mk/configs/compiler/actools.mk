@@ -37,6 +37,8 @@ AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/convert
 AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsEventMerge.py
 AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsTelemetryMerge.py
 
+TELEMETRY_PACKETIZER := $(BUILD_ROOT)/mk/bin/run_tlm_packetizer.sh
+
 
 ifeq ($(DICT_GEN),"GLOBAL")
 	AC_INTERFACE_GEN := $(CODE_GEN) --build_root

@@ -35,7 +35,7 @@ namespace Os {
             
             static void getRawTime(RawTime& time);  //!<  Get the current raw time
             
-        private:
+        PRIVATE:
 
             RawTime m_startTime; //!<  Stored start time
             RawTime m_stopTime; //!<  Stored end time

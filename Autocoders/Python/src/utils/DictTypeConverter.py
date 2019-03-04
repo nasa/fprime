@@ -1,20 +1,21 @@
 
 class DictTypeConverter(object):
-
+    
     def __init__(self):
         pass
-
+    
     def convert(self, t,size):
 
         # check for various type variations
         type_string = ""
         type_name = t
         ser_import = None
+        use_size = False if size is None else True
         # check for enums
         if (type(t) == type(tuple())):
             # extract enumeration arguments
-            # to match the C rules, we have to start
-            # counting member values from 0 or the
+            # to match the C rules, we have to start 
+            # counting member values from 0 or the 
             # last member value
             curr_memb_val = 0
             # make sure it's an enum
@@ -23,7 +24,7 @@ class DictTypeConverter(object):
                 sys.exit(-1)
             enum_type = t[0][1]
             type_string += "EnumType(\"" + t[0][1] + "\",{"
-
+            
             for (mname,mval,mcomment) in t[1]:
                 # check for member value
                 if mval != None:
@@ -34,6 +35,7 @@ class DictTypeConverter(object):
             type_name = "enum"
         # otherwise, lookup type translation in table
         elif t == "string":
+            use_size = False
             type_string += "StringType(max_string_len=%s)"%size
         else:
             type_lookup = {
@@ -56,12 +58,12 @@ class DictTypeConverter(object):
                 ser_type = t.split("::")
                 type_string += "%s.%s()" %(".".join(ser_type),ser_type[-1])
                 ser_import = ".".join(ser_type)
-        return (type_string,ser_import,type_name)
-
+        return (type_string,ser_import,type_name,use_size)
+    
     def format_replace(self, format_string, spec_num, old, new):
         """
         Search the format specifier string and replace tokens
-        Mainly a special case to handle enumerations. Software
+        Mainly a special case to handle enumerations. Software 
         needs "%d", while Gse needs "%s"
         spec_num = instance of token (0..n)
         """
@@ -69,11 +71,11 @@ class DictTypeConverter(object):
         flist = format_string.split('%')
         # make sure we're not looking past the list
         if spec_num + 1 >= len(flist):
-            return None
+            return None 
         # replace token
         flist[spec_num+1] = flist[spec_num+1].replace(old,new,1)
         # rejoin string
         return "%".join(flist)
-
-
-
+        
+                
+    

@@ -16,8 +16,8 @@ import errno
 import time
 import logging
 
-from utils import Logger
-from models.serialize.type_base import *
+from fprime.gse.utils import Logger
+from fprime.gse.models.serialize.type_base import *
 from optparse import OptionParser
 
 __version__ = 0.1

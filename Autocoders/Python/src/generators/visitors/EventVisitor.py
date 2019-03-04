@@ -77,22 +77,22 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug('===================================')
         DEBUG.debug(c)
         fp.writelines(c.__str__())
-        DEBUG.debug('===================================')
-
+        DEBUG.debug('===================================')     
+        
     def DictStartVisit(self, obj):
         """
         Defined to generate files for generated code products.
         @parms obj: the instance of the event model to visit.
         """
-
+    
         # Build filename here...
         # Make dictionary directly if it doesn't exist
         output_dir = os.environ["DICT_DIR"] + "/events"
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
-
+        
         self.__fp = list();
-
+        
         if len(obj.get_ids()) == 1:
             pyfile = "%s/%s.py" % (output_dir,obj.get_name())
             fd = open(pyfile,'w')
@@ -110,7 +110,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                     raise Exception("Could not open %s file." % pyfile)
                 DEBUG.info('Completed %s open'%pyfile)
                 self.__fp.append(fd)
-
+        
 
 
     def DictHeaderVisit(self, obj):
@@ -127,8 +127,8 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
             c.source = obj.get_xml_filename()
             self._writeTmpl(c,self.__fp[inst], "eventHeaderVisit")
             inst += 1
-
-
+         
+ 
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the  Python event class
@@ -138,7 +138,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         for id in obj.get_ids():
             c = EventBody.EventBody()
             if len(obj.get_ids()) > 1:
-                c.name = obj.get_name() + "_%d"%inst
+                c.name = obj.get_name() + "_%d"%inst 
             else:
                 c.name = obj.get_name()
             c.id = id
@@ -146,18 +146,18 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
             c.format_string = obj.get_format_string()
             c.description = obj.get_comment()
             c.component = obj.get_component_name()
-
+            
             c.arglist = list()
             c.ser_import_list = list()
             arg_num = 0
-
+            
             for arg_obj in obj.get_args():
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
                 d = arg_obj.get_comment()
-                # convert XML types to Python classes
-                (type_string,ser_import,type_name) = DictTypeConverter.DictTypeConverter().convert(t,s)
+                # convert XML types to Python classes                    
+                (type_string,ser_import,type_name,dontcare) = DictTypeConverter.DictTypeConverter().convert(t,s)
                 if ser_import != None:
                     c.ser_import_list.append(ser_import)
                 # convert format specifier if necessary
@@ -169,7 +169,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                         sys.exit(-1)
                     else:
                         c.format_string = format_string
-
+                    
                 c.arglist.append((n,d,type_string))
                 arg_num += 1
             self._writeTmpl(c, self.__fp[inst], "eventBodyVisit")

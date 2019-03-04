@@ -93,16 +93,16 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 arg_str += "%s %s" % (mtype, name)
                 arg_str += ", "
-
+            
         arg_str = arg_str.strip(', ')
         return arg_str
-
+    
     def _get_conv_mem_list(self, obj):
         """
         Return a list of port argument tuples
         """
         arg_list = list()
-
+        
         for (name,mtype,size,format,comment) in obj.get_members():
             typeinfo = None
             if type(mtype) == type(tuple()):
@@ -113,12 +113,12 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
                 typeinfo = "string"
             elif mtype not in typelist:
                 typeinfo = "extern"
-
+                
             arg_list.append((name,mtype,size,format,comment,typeinfo))
-
+                        
         return arg_list
-
-
+    
+    
     def _get_enum_string_list(self, enum_list):
         """
         """
@@ -128,13 +128,13 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         for e in enum_list:
             # No value, No comment
             if (e[1] == None) and (e[2] == None):
-                s = "%s," % (e[0])
+                s = "%s," % (e[0]) 
             # No value, With comment
             elif (e[1] == None) and (e[2] != None):
-                s = "%s,  // %s" % (e[0],e[2])
+                s = "%s,  // %s" % (e[0],e[2]) 
             # With value, No comment
             elif (e[1] != None) and (e[2] == None):
-                s = "%s = %s," % (e[0],e[1])
+                s = "%s = %s," % (e[0],e[1]) 
             # With value and comment
             elif (e[1] != None) and (e[2] != None):
                 s = "%s = %s,  // %s" % (e)
@@ -144,7 +144,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         enum_str_list[-1] = enum_str_list[-1].replace(',','')
 
         return (enum_tuple, enum_str_list)
-
+    
 
 
     def _writeTmpl(self, c, visit_str):
@@ -164,33 +164,33 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         @parms obj: the instance of the concrete element to operation on.
         """
         # Build filename here...
-
+        
         # file location will be based on namespace
-
+        
         namespace = obj.get_namespace()
         typename = obj.get_name()
         dict_dir = os.environ["DICT_DIR"]
-
+        
         if namespace == None:
             output_dir = "%s/serializable/"%(dict_dir)
         else:
             output_dir = "%s/serializable/%s"%(dict_dir,namespace.replace("::","/"))
-
+        
         # make directory
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
         pyfile = output_dir + "/" + obj.get_name() + ".py"
-
+        
         # make empty __init__.py
         open("%s/%s"%(output_dir,"__init__.py"),'w').close()
-
+               
         # Open file for writting here...
         DEBUG.info('Open file: %s' % pyfile)
         self.__fp = open(pyfile,'w')
         if self.__fp == None:
             raise "Could not open %s file." % pyfile
         DEBUG.info('Completed')
-
+        
     def startSourceFilesVisit(self, obj):
         """
         Defined to generate header for  command python class.
@@ -227,8 +227,8 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         c.name = obj.get_name()
         c.mem_list = list()
         for (n,t,s,f,comment) in obj.get_members():
-            # convert XML types to Python classes
-            (type_string,dontcare,type_name) = DictTypeConverter.DictTypeConverter().convert(t,s)
+            # convert XML types to Python classes                    
+            (type_string,dontcare,type_name,use_size) = DictTypeConverter.DictTypeConverter().convert(t,s)
             if type_name == "enum":
                 format_string = DictTypeConverter.DictTypeConverter().format_replace(f,0,'d','s')
                 # check for an error
@@ -236,9 +236,9 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
                     PRINT.info("Member %s in serializable %s had error processing format specifier \"%s\""%(n,c.name,f))
                     sys.exit(-1)
                 else:
-                    f = format_string
-            c.mem_list.append((n,type_string,f))
-
+                    f = format_string            
+            c.mem_list.append((n,type_string,f,int(s) if use_size else 1))
+            
         self._writeTmpl(c, "publicVisit")
 
 

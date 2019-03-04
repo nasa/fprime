@@ -22,15 +22,15 @@ import Pmw
 import time
 import glob
 import random
-from utils import Logger
-from utils import PortFinder
-from utils import ConfigManager
+from fprime.gse.utils import Logger
+from fprime.gse.utils import PortFinder
+from fprime.gse.utils import ConfigManager
 
-import controllers.exceptions
+import fprime.gse.controllers.exceptions
 import traceback
 
-from views import main_panel_factory
-from views import main_panel
+from fprime.gse.views import main_panel_factory
+from fprime.gse.views import main_panel
 from optparse import OptionParser
 
 __all__ = []
@@ -176,6 +176,10 @@ def main(argv=None):
                           #default=50007)
                           #default=PortFinder.old_getport(50000,[]))
                           )
+        parser.add_option("-s", "--stream_port", dest="stream_port", action="store", type="int", help="Set streaming socket server port [default: %default]", \
+                          #default=50007)
+                          #default=PortFinder.old_getport(50000,[]))
+                          )
         parser.add_option("-e", "--execute", dest="exec_app", action="store", type="string", help="Execute the specified fsw application after socket server and UI are up [default: %default]", \
                           default=fsw_app)
         parser.add_option("-L", "--log-file-path", dest="log_file_path", action="store", type="string", help="Path to log files [default: %default]", \
@@ -188,6 +192,9 @@ def main(argv=None):
                           default="local")
         parser.add_option("-n", "--no-about", dest="no_about", action="store_true", help="Do not show about text screen on start", \
                           default=True)
+        parser.add_option("-t", "--title", dest="title", action="store",type="string", help="Set GUI title", default="Fprime")
+
+        parser.add_option("-x", "--packetspec", dest="packetspec", action="store",type="string", help="Path to packet specification file", default=None)
 
 
         #parser.add_option("-v", "--verbose", dest="verbose", action="count", help="set verbosity level [default: %default]")
@@ -263,7 +270,7 @@ def main(argv=None):
             root.after(1000, execute, opts)
         root.mainloop()
 
-    except controllers.exceptions.GseControllerException, e:
+    except fprime.gse.controllers.exceptions.GseControllerException, e:
         sys.stderr.write("Exception: %s\n"%e.getMsg())
         traceback.print_exc()
         return 2
