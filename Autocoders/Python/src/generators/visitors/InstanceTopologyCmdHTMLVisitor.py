@@ -20,7 +20,7 @@ import os
 import sys
 import time
 from optparse import OptionParser
-import exceptions
+
 #
 # Python extention modules and custom interfaces
 #
@@ -110,7 +110,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
                     try:
                         self.__fp_dict[name] = open(filename,'w')
                         DEBUG.info('Completed')
-                    except exceptions.IOError:
+                    except IOError:
                         PRINT.info("Could not open %s file." % filename)
                         sys.exit(-1)
                     DEBUG.info("Generating HTML Command Table for %s:%s component instance..." % (t[0], k))

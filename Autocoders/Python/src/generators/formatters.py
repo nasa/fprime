@@ -23,7 +23,7 @@ import sys
 import time
 import re
 import logging
-import exceptions
+
 
 from utils import ConfigManager
 
@@ -473,7 +473,7 @@ class Formatters(object):
         t2 = []
         if len(t) != 3:
             PRINT.info("Tuple must be 3 element only!")
-            raise exceptions.TypeError
+            raise TypeError
 
         for s in t:
             if 1&i:

@@ -12,7 +12,7 @@ import sys
 import time
 import glob
 import logging
-import exceptions
+
 
 from optparse import OptionParser
 
@@ -233,7 +233,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         event_html_instance_name = base + "_Event_HTML"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
 
     #Figures out what visitor to use
     if opt.default_topology_dict or opt.xml_topology_dict:
@@ -647,7 +647,7 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
     #checks if the topology model exists
     if topology_model == None:
         PRINT.info("Topology model was not specified. Please also input a topology model when running this command.")
-        raise exceptions.IOError
+        raise IOError
 
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
 
@@ -882,7 +882,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
 
     #
     if opt.impl_flag:
@@ -908,7 +908,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     #        cpp_instance_name = base + "_Cpp"
     #    else:
     #        PRINT.info("Missing Ai at end of file: %s" % port_file)
-    #        raise exceptions.IOError
+    #        raise IOError
     #    generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     #    generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
     #
@@ -960,7 +960,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.default_dict:
         if opt.dict_dir == None:
             PRINT.info("Dictionary output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
         os.environ["DICT_DIR"] = opt.dict_dir
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -1014,7 +1014,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.ampcs_dict and not opt.default_topology_dict:
         if opt.dict_dir == None:
             PRINT.info("Dictionary output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
         os.environ["AMPCS_DICT_DIR"] = opt.dict_dir
         AmpcsCommandConverter.AmpcsCommandConverter(component_model).writeFile(opt.dict_dir)
         AmpcsTelemetryConverter.AmpcsTelemetryConverter(component_model).writeFile(opt.dict_dir)
@@ -1023,7 +1023,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.html_docs:
         if opt.html_doc_dir == None:
             PRINT.info("HTML documentation output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
 
         os.environ["HTML_DOC_SUBDIR"] = opt.html_doc_dir
         html_doc_generator = GenFactory.GenFactory.getInstance()
@@ -1036,7 +1036,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.md_docs:
         if opt.md_doc_dir == None:
             PRINT.info("MD documentation output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
 
         os.environ["MD_DOC_SUBDIR"] = opt.md_doc_dir
         md_doc_generator = GenFactory.GenFactory.getInstance()
@@ -1075,7 +1075,7 @@ def generate_port(the_parsed_port_xml, port_file):
         cpp_instance_name = base + "_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
     #
     generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
@@ -1151,7 +1151,7 @@ def generate_serializable(the_serial_xml, opt):
         cpp_instance_name = base + "_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
     #
     generator = GenFactory.GenFactory.getInstance()
     generator.configureVisitor(h_instance_name, "SerialCppVisitor", True, True)
@@ -1164,7 +1164,7 @@ def generate_serializable(the_serial_xml, opt):
             # borrow source visitor pattern for serializable dictionary
             if opt.dict_dir == None:
                 PRINT.info("Dictionary output directory not specified!")
-                raise exceptions.IOError
+                raise IOError
             os.environ["DICT_DIR"] = opt.dict_dir
             generator.configureVisitor("SerialDict", "SerializableVisitor", True, True)
 
@@ -1175,7 +1175,7 @@ def generate_serializable(the_serial_xml, opt):
             # borrow source visitor pattern for serializable dictionary
             if opt.dict_dir == None:
                 PRINT.info("Dictionary output directory not specified!")
-                raise exceptions.IOError
+                raise IOError
             os.environ["DICT_DIR"] = opt.dict_dir
             print("\n")
             print(opt.dict_dir)
