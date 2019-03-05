@@ -6,12 +6,12 @@ import os
 import getpass
 
 if len(sys.argv) != 2:
-    print "Should be %s <output version file>"
+    print("Should be %s <output version file>")
     sys.exit(-1)
 
 output_file = sys.argv[1]
 
-print "Writing version to %s"%output_file
+print("Writing version to %s"%output_file)
 
 hash = subprocess.check_output(["git","log","--pretty=format:%h","-n","1","--abbrev=8"])
 try:

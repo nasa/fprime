@@ -28,7 +28,7 @@ semis = 0
 if options.output == "summary":
 	for file in args[1:]:
 		if verbose:
-			print "Processing %s"%file
+			print("Processing %s"%file)
 		for line in open(file).readlines():
 			# search for total line
 			if line.count("total 	[ncsl:sloc"):
@@ -38,16 +38,16 @@ if options.output == "summary":
 				comments_loc = int(line_tuple[2])
 				semis_loc = int(line_tuple[3])
 				if verbose:
-					print "sloc: %15d ncsl: %15d comments: %15d semis: %15d"%(sloc_loc,ncsl_loc,comments_loc,semis_loc)
+					print("sloc: %15d ncsl: %15d comments: %15d semis: %15d"%(sloc_loc,ncsl_loc,comments_loc,semis_loc))
 				sloc += sloc_loc
 				ncsl += ncsl_loc
 				comments += comments_loc
 				semis += semis_loc
 
-	print "%s SLOC: %10d NCSL: %10d COMMENTS: %10d SEMIS: %10d"%(options.description,sloc,ncsl,comments,semis)
+	print("%s SLOC: %10d NCSL: %10d COMMENTS: %10d SEMIS: %10d"%(options.description,sloc,ncsl,comments,semis))
 
 if options.output == "csv_header":
-	print "%-40s%10s,%10s,%10s,%10s"%("Module" + ",","HAND","AC","XML","TOTAL")
+	print("%-40s%10s,%10s,%10s,%10s"%("Module" + ",","HAND","AC","XML","TOTAL"))
 	sys.exit(0)
 
 if options.output == "csv":
@@ -60,9 +60,9 @@ if options.output == "csv":
 				line_tuple = line.split()
 				ncsl_loc = int(line_tuple[1])
 				if verbose:
-					print "file: %s ncsl: %15d"%(file,ncsl_loc)
+					print("file: %s ncsl: %15d"%(file,ncsl_loc))
 				sloc += ncsl_loc
 				sloc_list.append(ncsl_loc)
 	
-	print "%-40s%10d,%10d,%10d,%10d"%(options.description + ",",sloc_list[0],sloc_list[1],sloc_list[2],sloc)
+	print("%-40s%10d,%10d,%10d,%10d"%(options.description + ",",sloc_list[0],sloc_list[1],sloc_list[2],sloc))
 	
