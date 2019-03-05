@@ -161,7 +161,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 DEBUG.info('Completed {} open'.format(pyfile))
 
         else:
-            print("Invalid type {}".format(obj))
+            print(("Invalid type {}".format(obj)))
             sys.exit(-1)
         
         # Open file for writing here...
@@ -174,7 +174,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
         """
         
         if type(obj) is Command.Command:
-            for fname in self.__fp1.keys():
+            for fname in list(self.__fp1.keys()):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
@@ -184,7 +184,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 
         elif type(obj) is Parameter.Parameter:
             # SET Command header
-            for fname in self.__fp1.keys():
+            for fname in list(self.__fp1.keys()):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
@@ -193,7 +193,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 self._writeTmpl(c, self.__fp1[fname], "commandHeaderVisit")
 
             # SAVE Command header
-            for fname in self.__fp2.keys():
+            for fname in list(self.__fp2.keys()):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")

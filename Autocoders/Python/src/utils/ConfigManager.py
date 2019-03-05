@@ -22,9 +22,13 @@
 #===============================================================================
 import os
 import sys
-import ConfigParser
+# 2/3 support
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
-class ConfigManager(ConfigParser.SafeConfigParser):
+class ConfigManager(configparser.SafeConfigParser):
     """
     This class provides a single entrypoint for all configurable properties,
     namely the self.Prop dictionary.
@@ -37,9 +41,9 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         """
         Constructor.
         """
-        ConfigParser.SafeConfigParser.__init__(self)
-        ConfigParser.ConfigParser.__init__(self)
-        ConfigParser.RawConfigParser.__init__(self)
+        configparser.SafeConfigParser.__init__(self)
+        configparser.ConfigParser.__init__(self)
+        configparser.RawConfigParser.__init__(self)
         self.__prop   = dict()
         self._setProps()
         # Now look for an ac.ini file within
@@ -291,7 +295,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         For a section set up the default values.
         """
         self.add_section(section)
-        for (key,value) in self.__prop[section].items():
+        for (key,value) in list(self.__prop[section].items()):
             self.set(section, key, "%s" % value)
 
 
@@ -300,15 +304,15 @@ if __name__ == '__main__':
     # Quick test of configure defaults.
     #
     config = ConfigManager().getInstance()
-    print
-    print 'IPC section defaults:'
+    print()
+    print('IPC section defaults:')
     for (key, value) in config.items('ipc'):
-        print "%s = %s" % (key, value)
-    print
-    print 'Get some of the ipc values:'
-    print 'h_pub_suffix = %s' % config.get('ipc','h_pub_suffix')
-    print 'h_msg_suffix = %s' % config.get('ipc','h_msg_suffix')
-    print 'c_int_suffix = %s' % config.get('ipc','c_int_suffix')
-    print 'c_dispatch_suffix = %s' % config.get('ipc','c_dispatch_suffix')
-    print 'c_cmd_dispatch_suffix = %s' % config.get('ipc', 'c_cmd_dispatch_suffix')
+        print("%s = %s" % (key, value))
+    print()
+    print('Get some of the ipc values:')
+    print('h_pub_suffix = %s' % config.get('ipc','h_pub_suffix'))
+    print('h_msg_suffix = %s' % config.get('ipc','h_msg_suffix'))
+    print('c_int_suffix = %s' % config.get('ipc','c_int_suffix'))
+    print('c_dispatch_suffix = %s' % config.get('ipc','c_dispatch_suffix'))
+    print('c_cmd_dispatch_suffix = %s' % config.get('ipc', 'c_cmd_dispatch_suffix'))
 

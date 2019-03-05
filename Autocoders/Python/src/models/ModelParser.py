@@ -246,7 +246,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(map(lambda x: "%s %s%s" % (x[1], x[3], x[0]),d[l]))
+                d2[l] = ", ".join(["%s %s%s" % (x[1], x[3], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -261,7 +261,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(map(lambda x: "%s" % x[0], d[l]))
+                d2[l] = ", ".join(["%s" % x[0] for x in d[l]])
             else:
                 d2[l] = ""
         return d2
@@ -299,7 +299,7 @@ class ModelParser(object):
                 if p == p2.get_type():
                     port_namespace_dict[p] = p2.get_namespace()
         # Now for any Serial port types make sure namespace is 'Fw'...
-        if 'Serial' in port_namespace_dict.keys():
+        if 'Serial' in list(port_namespace_dict.keys()):
             port_namespace_dict['Serial'] = 'Fw'
         #
         return port_namespace_dict
@@ -536,7 +536,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(map(lambda x: "%s %s" % (x[1], x[0]),d[l]))
+                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -624,7 +624,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(map(lambda x: "%s %s" % (x[1], x[0]),d[l]))
+                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -650,7 +650,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(map(lambda x: "%s %s" % (x[1], x[0]),d[l]))
+                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2

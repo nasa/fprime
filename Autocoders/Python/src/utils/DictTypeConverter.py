@@ -51,7 +51,7 @@ class DictTypeConverter(object):
                "F64":"F64Type()",
                "bool":"BoolType()",
             }
-            if type_lookup.has_key(t):
+            if t in type_lookup:
                 type_string += type_lookup[t]
             else: # set up serializable imports
                 # Path to serializable is going to be the namespace.type

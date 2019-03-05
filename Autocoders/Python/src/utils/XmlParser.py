@@ -78,7 +78,7 @@ class Parser(object):
         if os.path.isfile(filename) == False:
             str = "ERROR: Could not find specified XML file %s." % filename
             PRINT.info(str)
-            raise IOError, str
+            raise IOError(str)
 
         return open(filename,'r').read()
 
@@ -107,17 +107,17 @@ class Parser(object):
         It might be useful to see your XML as its parsed in during debugging.
         '''
         if True != isinstance( element, Parser.Element ):
-            print "Usage: exampleStartVisitor( Parser.Element )"
-            print "Argument is not a Parser.Element (it is a %s)" % element.__class__.__name__
-            raise TypeError, "XmlParser.Parser.exampleStartVisitor argument" + \
-                             " is not a Parser.Element (it is a %s)" % element.__class__.__name__
+            print("Usage: exampleStartVisitor( Parser.Element )")
+            print("Argument is not a Parser.Element (it is a %s)" % element.__class__.__name__)
+            raise TypeError("XmlParser.Parser.exampleStartVisitor argument" + \
+                             " is not a Parser.Element (it is a %s)" % element.__class__.__name__)
 
         s = "exampleStartVisitor element %s attributes=[" % element.getName()
-        for attrName in element.getAttr().keys():
+        for attrName in list(element.getAttr().keys()):
             attrValue = element.getAttr(attrName)
             s += ' %s="%s"' % attrName, attrValue
         s += ' ]'
-        print s
+        print(s)
 
     def addEndVisitor(self, element_name, visitor):
         """
@@ -228,7 +228,7 @@ class Parser(object):
                         # previously parsed file. Stop since this will result
                         # in an orphaned tree branch.
 
-                        print "XML file (%s) has invalid root name: %s (expected: %s)." % (filename, name, self.__root.getName())
+                        print("XML file (%s) has invalid root name: %s (expected: %s)." % (filename, name, self.__root.getName()))
                         return
 
                 else:
@@ -263,7 +263,7 @@ class Parser(object):
 
         self.__node_stack.append(element)
 
-        if name in self.__node_start_visit_dict.keys():
+        if name in list(self.__node_start_visit_dict.keys()):
             self.__node_start_visit_dict[name](self._Parser__node_stack[-1])
 
 
@@ -272,7 +272,7 @@ class Parser(object):
         End element event handler.
         """
         name = self.__node_stack[-1].getName()
-        if name in self.__node_end_visit_dict.keys():
+        if name in list(self.__node_end_visit_dict.keys()):
             self.__node_end_visit_dict[name](self.__node_stack[-1])
 
         self.__node_stack = self.__node_stack[:-1]
@@ -319,7 +319,7 @@ class Parser(object):
         for attrName in validAttrs:
             value[attrName] = None
 
-        for attrName in element.getAttr().keys():
+        for attrName in list(element.getAttr().keys()):
             attrValue = element.getAttr(attrName)
             if attrName in validAttrs:
                 value[attrName] = attrValue
@@ -392,11 +392,11 @@ class Parser(object):
         elist = self.__root.getElements()
         if len(elist) > 0:
             for e in elist:
-                print "Element: %s" % e.getName()
-                print "Data: %s" % e.getData()
-                print "Attr:"
-                for attr in e.getAttr().keys():
-                    print "  %s = %s" % (attr, e.getAttr(attr))
+                print("Element: %s" % e.getName())
+                print("Data: %s" % e.getData())
+                print("Attr:")
+                for attr in list(e.getAttr().keys()):
+                    print("  %s = %s" % (attr, e.getAttr(attr)))
                 child = e.getElements()
                 self.dump2(child)
 
@@ -411,11 +411,11 @@ class Parser(object):
         else:
             for e in elist:
                 tabs = level*'  '
-                print "%sElement: %s" % (tabs, e.getName())
-                print "%sData: %s" % (tabs, e.getData())
-                print "%sAttr:" % tabs
-                for attr in e.getAttr().keys():
-                    print "%s%s = %s" % (tabs, attr, e.getAttr(attr))
+                print("%sElement: %s" % (tabs, e.getName()))
+                print("%sData: %s" % (tabs, e.getData()))
+                print("%sAttr:" % tabs)
+                for attr in list(e.getAttr().keys()):
+                    print("%s%s = %s" % (tabs, attr, e.getAttr(attr)))
                 self.dump2(e.getElements(),level+1)
 
 
@@ -505,9 +505,9 @@ def node_visit(element):
     """
     Demonstration node visitor
     """
-    print "Visit element %s" % element.getName()
-    print "Visit data    %s" % element.getData()
-    print "Visit attr    %s" % element.getAttr()
+    print("Visit element %s" % element.getName())
+    print("Visit data    %s" % element.getData())
+    print("Visit attr    %s" % element.getAttr())
 
 
 if __name__ == '__main__':
@@ -515,7 +515,7 @@ if __name__ == '__main__':
     xmlfile1 = os.environ['MSL_ROOT'] + "/cmd/cmd_ai_ipc.xml"
     xmlfile2 = os.environ['MSL_ROOT'] + "/apxs/apxs_ai_ipc.xml"
 
-    print "IPC parse test (genshi)"
+    print("IPC parse test (genshi)")
 
 # There are two ways to use this class:
 #  1. Pass file to constructor, and call parse method
@@ -531,9 +531,9 @@ if __name__ == '__main__':
     root = p.parse_file(xmlfile1)
     root = p.parse_file(xmlfile2)
 
-    print "Dump the xml file %s" % xmlfile1
+    print("Dump the xml file %s" % xmlfile1)
     p.dump()
 
     for iface in root.getElements('iface'):
-        print iface.getElements('id')[0].getData()
+        print(iface.getElements('id')[0].getData())
 

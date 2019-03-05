@@ -65,7 +65,7 @@ class XmlPortsParser(object):
         if os.path.isfile(xml_file) == False:
             str = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(str)
-            raise IOError, str
+            raise IOError(str)
 
         fd = open(xml_file,'r')
 
@@ -80,8 +80,9 @@ class XmlPortsParser(object):
         relax_compiled = etree.RelaxNG(relax_parsed)
 
         try:
-            relax_compiled.assert_(element_tree)
-        except Exception , e:
+            # 2/3 conversion
+            relax_compiled.validate(element_tree)
+        except Exception as e:
             PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.__config.get('schema' , 'interface')))
             PRINT.info(e)
             PRINT.info(relax_compiled.error_log)
@@ -93,7 +94,7 @@ class XmlPortsParser(object):
             PRINT.info("%s is not a interface file"%xml_file)
             sys.exit(-1)
 
-        print("Parsing Interface %s" %interface.attrib['name'])
+        print(("Parsing Interface %s" %interface.attrib['name']))
 
         if 'namespace' in interface.attrib:
             namespace_name = interface.attrib['namespace']
@@ -116,12 +117,12 @@ class XmlPortsParser(object):
                         sys.exit(-1)
                     n = arg.attrib['name']
                     t = arg.attrib['type']
-                    if 'pass_by' in arg.attrib.keys():
+                    if 'pass_by' in list(arg.attrib.keys()):
                         p = arg.attrib['pass_by']
                     else:
                         p = None
                     if t == 'string' or t == 'buffer':
-                        if not "size" in arg.attrib.keys():
+                        if not "size" in list(arg.attrib.keys()):
                             PRINT.info("%s: arg %s string must specify size tag"%(xml_file,arg.tag))
                             sys.exit(-1)
                         else:
@@ -138,11 +139,11 @@ class XmlPortsParser(object):
                             enum_members = []
                             for mem in arg_tag:
                                 mn = mem.attrib['name']
-                                if "value" in mem.attrib.keys():
+                                if "value" in list(mem.attrib.keys()):
                                     v = mem.attrib['value']
                                 else:
                                     v = None
-                                if "comment" in mem.attrib.keys():
+                                if "comment" in list(mem.attrib.keys()):
                                     mc = mem.attrib['comment'].strip()
                                 else:
                                     mc = None
@@ -156,7 +157,7 @@ class XmlPortsParser(object):
 
             elif interface_tag.tag == 'return':
                 t = interface_tag.attrib['type']
-                if 'pass_by' in interface_tag.attrib.keys():
+                if 'pass_by' in list(interface_tag.attrib.keys()):
                     m = interface_tag.attrib['pass_by']
                 else:
                     m = "value"
@@ -167,11 +168,11 @@ class XmlPortsParser(object):
                         enum_members = []
                         for mem in enum_tag:
                             mn = mem.attrib['name']
-                            if "value" in mem.attrib.keys():
+                            if "value" in list(mem.attrib.keys()):
                                 v = mem.attrib['value']
                             else:
                                 v = None
-                            if "comment" in mem.attrib.keys():
+                            if "comment" in list(mem.attrib.keys()):
                                 mc = mem.attrib['comment'].strip()
                             else:
                                 mc = None
@@ -307,7 +308,7 @@ if __name__ == '__main__':
 
     xmlfile = "../../test/Msg1InterfaceAi.xml"
 
-    print "Ports XML parse test (%s)" % xmlfile
+    print("Ports XML parse test (%s)" % xmlfile)
 
     xml_parser = XmlPortsParser(xmlfile)
 
@@ -315,16 +316,16 @@ if __name__ == '__main__':
     port_type_file_list = xml_parser.get_include_header_files()
     args_list = xml_parser.get_args()
 
-    print "Namespace: %s Interface name: %s" % \
-        (interface.get_namespace(), interface.get_name())
-    print "Interface comment:"
-    print interface.get_comment()
-    print
-    print "Args:"
+    print("Namespace: %s Interface name: %s" % \
+        (interface.get_namespace(), interface.get_name()))
+    print("Interface comment:")
+    print(interface.get_comment())
+    print()
+    print("Args:")
     for arg in args_list:
-        print "Name: %s, Type: %s" % (arg.get_name(), arg.get_type())
-        print "Port comment:"
-        print arg.get_comment()
+        print("Name: %s, Type: %s" % (arg.get_name(), arg.get_type()))
+        print("Port comment:")
+        print(arg.get_comment())
 
 
 

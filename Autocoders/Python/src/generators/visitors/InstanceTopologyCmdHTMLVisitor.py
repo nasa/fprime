@@ -94,7 +94,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
             os.mkdir(self.__cmd_dir)
         os.chdir(self.__cmd_dir)
         # Iterate over types
-        for k in obj.get_base_id_dict().keys():
+        for k in list(obj.get_base_id_dict().keys()):
             tlist = obj.get_base_id_dict()[k]
             #print "Type: %s\n" % k,
             # Iterate over instances and get name
@@ -157,7 +157,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         #os.chdir(self.__cmd_dir)
         c = HtmlCmdTablePage.HtmlCmdTablePage()
-        for k in obj.get_base_id_dict().keys():
+        for k in list(obj.get_base_id_dict().keys()):
             tlist = obj.get_base_id_dict()[k]
             #print "Type: %s\n" % k,
             c.has_commands = True
@@ -199,7 +199,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate ending static code within files.
         """
-        for fp in self.__fp_dict.keys():
+        for fp in list(self.__fp_dict.keys()):
             self.__fp_dict[fp].close()
         PRINT.info("Completed generating HTML command tables...")
 

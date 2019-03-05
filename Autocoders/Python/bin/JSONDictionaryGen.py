@@ -99,7 +99,7 @@ def main():
         xmlFilename = args[0]
 
     # Check for BUILD_ROOT env. variable
-    if ('BUILD_ROOT' in os.environ.keys()) == False:
+    if ('BUILD_ROOT' in list(os.environ.keys())) == False:
         PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
         sys.exit(-1)
     else:
@@ -245,7 +245,7 @@ def main():
 
                 units = []
                 for unit in channel.get_units():
-                    units.append(dict(zip(unitLabels, unit)))
+                    units.append(dict(list(zip(unitLabels, unit))))
 
                 typeObj = channel.get_type()
                 type_name = ''
@@ -266,7 +266,7 @@ def main():
                     "telem_type": "channel",
                     "component": component,
                     "format_string": channel.get_format_string(),
-                    "limits" : dict(zip(limitLabels, channel.get_limits())),
+                    "limits" : dict(list(zip(limitLabels, channel.get_limits()))),
                     "type": type_name,
                     "units": units
                 }
@@ -279,8 +279,8 @@ def main():
 
     #Prepend instance name to commands, events, and channels with duplicate component types
     # PRINT.info(json.dumps(instanceIDs, indent=4))
-    for telemetryType, idDict in instanceIDs.items():
-        for name, ids in idDict.items():
+    for telemetryType, idDict in list(instanceIDs.items()):
+        for name, ids in list(idDict.items()):
             if len(ids) > 1:
                 for id in ids:
                     telem = dictionary[deployment][telemetryType][id]

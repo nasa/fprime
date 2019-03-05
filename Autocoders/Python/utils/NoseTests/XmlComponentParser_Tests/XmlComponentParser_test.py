@@ -40,7 +40,7 @@ def ComponentParser_manualxml_test():
 		if found:
 			assert True
 		else:
-			print "%s port is required but not present." % required_port
+			print("%s port is required but not present." % required_port)
 			assert False
 
 ## If xml is missing a port XmlComponentParser should exit

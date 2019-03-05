@@ -99,8 +99,9 @@ class XmlSerializeParser(object):
         relax_compiled = etree.RelaxNG(relax_parsed)
 
         try:
-            relax_compiled.assert_(element_tree)
-        except Exception , e:
+            # 2/3 conversion
+            relax_compiled.validate(element_tree)
+        except Exception as e:
             PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower())))
             PRINT.info(e)
             PRINT.info(relax_compiled.error_log)
@@ -112,7 +113,7 @@ class XmlSerializeParser(object):
             PRINT.info("%s is not a serializable definition file"%xml_file)
             sys.exit(-1)
 
-        print("Parsing Serializable %s" %serializable.attrib['name'])
+        print(("Parsing Serializable %s" %serializable.attrib['name']))
 
         self.__name = serializable.attrib['name']
 
@@ -140,7 +141,7 @@ class XmlSerializeParser(object):
                         sys.exit(-1)
                     n = member.attrib['name']
                     t = member.attrib['type']
-                    if 'size' in member.attrib.keys():
+                    if 'size' in list(member.attrib.keys()):
                         if t == "ENUM":
                             PRINT.info("%s: Member %s: arrays of enums not supported yet!"%(xml_file,n))
                             sys.exit(-1)
@@ -150,10 +151,10 @@ class XmlSerializeParser(object):
                             sys.exit(-1)
                     else:
                         s = None
-                    if 'format' in member.attrib.keys():
+                    if 'format' in list(member.attrib.keys()):
                         f = member.attrib['format']
                     else:
-                        if t in format_dictionary.keys():
+                        if t in list(format_dictionary.keys()):
                             f = format_dictionary[t]
                         else: # Must be included type, which will use toString method
                             f = "%s"
@@ -162,7 +163,7 @@ class XmlSerializeParser(object):
                             PRINT.info("%s: member %s string must specify size tag"%(xml_file,member.tag))
                             sys.exit(-1)
 
-                    if 'comment' in member.attrib.keys():
+                    if 'comment' in list(member.attrib.keys()):
                         c = member.attrib['comment']
                     else:
                         c = None
@@ -173,11 +174,11 @@ class XmlSerializeParser(object):
                             enum_members = []
                             for mem in member_tag:
                                 mn = mem.attrib['name']
-                                if "value" in mem.attrib.keys():
+                                if "value" in list(mem.attrib.keys()):
                                     v = mem.attrib['value']
                                 else:
                                     v = None
-                                if "comment" in mem.attrib.keys():
+                                if "comment" in list(mem.attrib.keys()):
                                     mc = mem.attrib['comment'].strip()
                                 else:
                                     mc = None
@@ -256,20 +257,20 @@ class XmlSerializeParser(object):
 
 if __name__ == '__main__':
     xmlfile = sys.argv[1]
-    print "Ports XML parse test (%s)" % xmlfile
+    print("Ports XML parse test (%s)" % xmlfile)
     xml_parser = XmlSerializeParser(xmlfile)
-    print "Serializable: %s" % xml_parser.is_serializable()
-    print "File: %s" % xml_parser.get_xml_filename()
-    print "Namespace: %s" % xml_parser.get_namespace()
-    print "Name: %s" % xml_parser.get_name()
-    print "Comment: %s" % xml_parser.get_comment()
+    print("Serializable: %s" % xml_parser.is_serializable())
+    print("File: %s" % xml_parser.get_xml_filename())
+    print("Namespace: %s" % xml_parser.get_namespace())
+    print("Name: %s" % xml_parser.get_name())
+    print("Comment: %s" % xml_parser.get_comment())
     for i in xml_parser.get_include_header_files():
-        print "C Include: %s" % i
+        print("C Include: %s" % i)
     for i in xml_parser.get_includes():
-        print "XML Include: %s" % i
-    print "Members:"
+        print("XML Include: %s" % i)
+    print("Members:")
     for (n,t,c) in xml_parser.get_members():
-        print "Name: %s, Type: %s, Comment: %s" % (n,t,c)
+        print("Name: %s, Type: %s, Comment: %s" % (n,t,c))
 
 
 

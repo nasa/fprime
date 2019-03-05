@@ -100,9 +100,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Make a list of command args into a string
         '''
         def f(lst):
-            def g((name, a, b, c)):
+            def g(xxx_todo_changeme):
+                (name, a, b, c) = xxx_todo_changeme
                 return name
-            return self.argsString(map(g, lst))
+            return self.argsString(list(map(g, lst)))
         return f
 
     def config(self, a, b):
@@ -137,7 +138,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
 
     def emitIndent(self, indent):
         str = ""
-        for i in xrange(0, indent):
+        for i in range(0, indent):
             str += " "
         return str
 
@@ -173,7 +174,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             return self.emitIndent(indent) + "void"
         else:
             str = ""
-            for i in xrange(0, length-1):
+            for i in range(0, length-1):
                 str += self.emitParam(
                     NOT_LAST,
                     indent,
@@ -208,7 +209,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             def g(lst):
                 name = lst[0]
                 return name
-            return self.argsString(map(g, args))
+            return self.argsString(list(map(g, args)))
         return f
 
     def finishSourceFilesVisit(self, obj):
@@ -394,14 +395,16 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         '''
         Construct msg types list
         '''
-        def f( (instance, type, direction, sync, priority, role) ):
+        def f(xxx_todo_changeme2 ):
+            (instance, type, direction, sync, priority, role) = xxx_todo_changeme2
             if self.isInput(direction) and self.isAsync(sync):
                 return instance.upper() + "_" + type.upper()
             else:
                 return None
         port_types = self.mapPartial(f, c.ports_sync)
 
-        def g( (mnemonic, opcodes, sync, priority, full, comment) ):
+        def g(xxx_todo_changeme3 ):
+            (mnemonic, opcodes, sync, priority, full, comment) = xxx_todo_changeme3
             if self.isAsync(sync):
                 if len(opcodes) == 1:
                     return "CMD_" + mnemonic.upper()
@@ -416,7 +419,8 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                 return None
         cmd_types = self.mapPartial(g, c.commands)
 
-        def h( (name, priority, full)):
+        def h(xxx_todo_changeme4):
+            (name, priority, full) = xxx_todo_changeme4
             return "INT_IF_" + name.upper()
 
         il = self.__model_parser.getInternalInterfacesList(obj)
@@ -471,7 +475,8 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         '''
         Construct port input type list
         '''
-        def f( (instance, type, direction, sync, priority, role) ):
+        def f(xxx_todo_changeme5 ):
+            (instance, type, direction, sync, priority, role) = xxx_todo_changeme5
             if self.isSerial(type):
                 # No serial ports
                 return None
@@ -823,7 +828,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             type_includes = type_includes + p.get_includes()
         c.types_includes = self.__model_parser.uniqueList(type_includes)
         c.c_includes = obj.get_c_header_files()
-        if False in map(lambda x: x[-3:] == 'hpp' or x[-1:] == 'h', c.c_includes):
+        if False in [x[-3:] == 'hpp' or x[-1:] == 'h' for x in c.c_includes]:
             PRINT.info("ERROR: Only .hpp or .h files can be given within <include_header> tag!!!")
             sys.exit(-1)
 
@@ -832,9 +837,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Make a list of command args into a string
         '''
         def f(lst):
-            def g((name, a, b, c)):
+            def g(xxx_todo_changeme1):
+                (name, a, b, c) = xxx_todo_changeme1
                 return name
-            return self.argsString(map(g, lst))
+            return self.argsString(list(map(g, lst)))
         return f
 
     def isPrimitiveType(self, type):

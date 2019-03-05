@@ -52,7 +52,7 @@ class CommentFormatters(object):
         Protected debugging method.
         """
         if ddt == 1:
-            print arg
+            print(arg)
 
 
     def _strip_without_code(self, line_list):
@@ -459,7 +459,7 @@ class Formatters(object):
         Protected debugging method.
         """
         if ddt == 1:
-            print arg
+            print(arg)
 
     def capFirstCharTuple3(self, t, en):
         """
@@ -525,7 +525,7 @@ class Formatters(object):
         elif len(id_list) > 2:
             str = "ERROR: Invalid module_subtask name: %s" % (id)
             PRINT.info(str)
-            raise SyntaxError, str
+            raise SyntaxError(str)
 
         # If first item of name_list is module id take it off.
         if name_list[0] == id:
@@ -611,7 +611,7 @@ class Formatters(object):
         name_list = name.strip('_').split('_')
 
         #print name_list
-        name_list = map((lambda x: x[0].upper() + x[1:]), name_list)
+        name_list = list(map((lambda x: x[0].upper() + x[1:]), name_list))
 
         if len(id_list) == 1:
             # main module thread naming
@@ -659,7 +659,7 @@ class Formatters(object):
         """
         id_list   = id.split('_')
         name_list = name.split('_')
-        name_list = map((lambda x: x.upper()), name_list)
+        name_list = list(map((lambda x: x.upper()), name_list))
         # original single thread case
         if len(id_list) == 1:
             name_list = [id.upper()] + ["AC_MSG"] + name_list[1:]
@@ -677,7 +677,7 @@ class Formatters(object):
         @param name: Original function name with '_' seperation.
         """
         name_list = name.split('_')
-        name_list = map((lambda x: x.upper()), name_list)
+        name_list = list(map((lambda x: x.upper()), name_list))
         # Test for trailing _CMD and remove.
         if name_list[-1] == 'CMD':
             del(name_list[-1])
@@ -737,7 +737,7 @@ class Formatters(object):
             cmds.append( self.opcodeStemName(id, c) )
 
         for c in cmds:
-            if sum(map(lambda x: int(x == c), cmds)) > 1:
+            if sum([int(x == c) for x in cmds]) > 1:
                 PRINT.info("ERROR: DETECTED %s COMMAND STEM NAME REPEATED." % c)
                 raise Exception("Error detected repeated command stem name.")
         return True
@@ -751,7 +751,7 @@ class Formatters(object):
         id's within the templates.
         """
         name_list = name.split('_')
-        name_list = map((lambda x: x.upper()), name_list)
+        name_list = list(map((lambda x: x.upper()), name_list))
         name_list = name_list[1:]
         new_name = '_'
         new_name = new_name.join(name_list)
@@ -954,7 +954,7 @@ class Formatters(object):
         # align the remaining arguments. This is done solely to make the
         # function look better.
 
-        max_type_len = max(map(len, type_list))
+        max_type_len = max(list(map(len, type_list)))
 
         function_str = name.strip() + '(\n'
 
@@ -1026,9 +1026,9 @@ class Formatters(object):
         # lines on the longest line to make things look pretty. This is all
         # just formatting at this time.
 
-        max_arg_len = max(map(len,arg_list))
-        max_type_len = max(map(len,type_list))
-        max_comment_len = max(map(len,comment_list))
+        max_arg_len = max(list(map(len,arg_list)))
+        max_type_len = max(list(map(len,type_list)))
+        max_comment_len = max(list(map(len,comment_list)))
 
         # Build a list of strings that have all the argument types, and
         # argument names aligned on the longest lines.
@@ -1095,10 +1095,10 @@ class Formatters(object):
             # Trim the trailing spaces from the function name.
             format_func_name = format_func_list[0].strip(' (') + '( \n'
             # Scan arg type_name and comments for maximums.
-            comment_max = max(map(lambda x: len(x[2]), args))
-            type_max    = max(map(lambda x: len(x.strip()), format_func_list[1:]))
+            comment_max = max([len(x[2]) for x in args])
+            type_max    = max([len(x.strip()) for x in format_func_list[1:]])
             # Set where to put them.
-            comment_list = map(self.formComment, map(lambda x: x[2], args))
+            comment_list = list(map(self.formComment, [x[2] for x in args]))
 
             # cpos is comment position from left on line
             # apos is argument position from left on line
@@ -1168,9 +1168,9 @@ class Formatters(object):
 
         # Trim leading and trailing blanks
         #
-        arg_list = map(lambda x: x.strip(), arg_list_untrimmed)
+        arg_list = [x.strip() for x in arg_list_untrimmed]
         self._dlog(ddt, "arg_list=%s" % arg_list)
-        max_arg_len = max(map(len,arg_list))
+        max_arg_len = max(list(map(len,arg_list)))
         type_and_name_len = len( type_and_name )
 
         if ( indent + type_and_name_len + 2 + max_arg_len + 2 ) <= 78:
@@ -1241,7 +1241,7 @@ class Formatters(object):
 
         if len(type_list) > 0:
 
-            max_type_length = max(map(len,type_list))
+            max_type_length = max(list(map(len,type_list)))
 
             i = 0
             for type in type_list:
@@ -1335,7 +1335,7 @@ class Formatters(object):
         else:
             str = "ERROR: Internal module id must be of form module_subtask or module (%s)" % (module_id)
             PRINT.info(str)
-            raise ValueError, str
+            raise ValueError(str)
         return mod_id_dir
 
 
@@ -1348,7 +1348,7 @@ class Formatters(object):
         if len(mod_id_list) == 1:
             mod_id_cap = mod_id[0].upper() + mod_id[1:]
         elif len(mod_id_list) == 2:
-            mod_id_cap = map(lambda x: x[0].upper() + x[1:], mod_id_list)
+            mod_id_cap = [x[0].upper() + x[1:] for x in mod_id_list]
         # size of mod_id list error in subThreadDir method.
         mod_id_cap_str = "".join(mod_id_cap)
         return mod_id_cap_str
@@ -1379,7 +1379,7 @@ class Formatters(object):
         module_id_dir = self.subThreadDir(mod_id)
         # Handle context only if it is a sub_task here.
         if mod_id != module_id_dir:
-            context_id_list  = map(lambda x: x.context_id_name, context_list)
+            context_id_list  = [x.context_id_name for x in context_list]
             module_id_first_cap = self.subThreadModuleFirstCap(mod_id)
             module_id_caps = module_id_first_cap.upper()
             first_value = module_id_caps + "_AC_INST0"

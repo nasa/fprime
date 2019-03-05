@@ -24,7 +24,7 @@ from optparse import OptionParser
 from lxml import etree
 from parsers import XmlComponentParser
 from utils import ConfigManager
-from __builtin__ import file
+#from builtins import file
 #
 # Python extention modules and custom interfaces
 #
@@ -62,7 +62,7 @@ class XmlTopologyParser(object):
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(stri)
-            raise IOError, stri
+            raise IOError(stri)
 
         fd = open(xml_file,'r')
         element_tree = etree.parse(fd)
@@ -74,8 +74,9 @@ class XmlTopologyParser(object):
         relax_compiled = etree.RelaxNG(relax_parsed)
 
         try:
-            relax_compiled.assert_(element_tree)
-        except Exception , e:
+            # 2/3 conversion
+            relax_compiled.validate(element_tree)
+        except Exception as e:
             PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file ,ROOTDIR + self.__config.get('schema' , 'assembly')))
             PRINT.info(e)
             PRINT.info(relax_compiled.error_log)
@@ -142,7 +143,7 @@ class XmlTopologyParser(object):
                 x = e.attrib['name']
                 y = e.attrib['type']
                 z = e.attrib['namespace']
-                if 'kind' in e.attrib.keys():
+                if 'kind' in list(e.attrib.keys()):
                     k = e.attrib['kind']
                 else:
                     k = "active"
@@ -169,7 +170,7 @@ class XmlTopologyParser(object):
                 x = e.attrib['component']
                 y = e.attrib['port']
                 z = e.attrib['type']
-                if "num" in e.attrib.keys():
+                if "num" in list(e.attrib.keys()):
                     n = int(e.attrib['num'])
                 else:
                     n = 0
@@ -178,7 +179,7 @@ class XmlTopologyParser(object):
                 x = e.attrib['component']
                 y = e.attrib['port']
                 z = e.attrib['type']
-                if "num" in e.attrib.keys():
+                if "num" in list(e.attrib.keys()):
                     n = int(e.attrib['num'])
                 else:
                     n = 0
@@ -428,22 +429,22 @@ if __name__ == '__main__':
 
     xmlfile = "../../test/app1a/DuckAppAi.xml"
 
-    print "Topology XML parse test (%s)" % xmlfile
+    print("Topology XML parse test (%s)" % xmlfile)
 
     xml_topology_parser = XmlTopologyParser(xmlfile)
     instances = xml_topology_parser.get_instances()
     connections = xml_topology_parser.get_connections()
 
-    print "Topology XML: %s" % xml_topology_parser.is_topology()
-    print "Namespace: %s" % xml_topology_parser.get_namespace()
-    print "Comment: %s" % xml_topology_parser.get_comment()
+    print("Topology XML: %s" % xml_topology_parser.is_topology())
+    print("Namespace: %s" % xml_topology_parser.get_namespace())
+    print("Comment: %s" % xml_topology_parser.get_comment())
 
-    print "Instances:"
+    print("Instances:")
     for x in instances:
-        print "Name: %s, Type: %s" % (x.get_name(), x.get_type())
-    print "Connections:"
+        print("Name: %s, Type: %s" % (x.get_name(), x.get_type()))
+    print("Connections:")
     for c in connections:
-        print "Name: %s, Type: %s" % (c.get_name(), c.get_type())
-        print "Source: Component is %s, Port is %s, Port Type is %s" % (c.get_source())
-        print "Target: Component is %s, Port is %s, Port Type is %s" % (c.get_target())
-        print "Comment: %s" % c.get_comment()
+        print("Name: %s, Type: %s" % (c.get_name(), c.get_type()))
+        print("Source: Component is %s, Port is %s, Port Type is %s" % (c.get_source()))
+        print("Target: Component is %s, Port is %s, Port Type is %s" % (c.get_target()))
+        print("Comment: %s" % c.get_comment())

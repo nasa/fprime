@@ -7,11 +7,11 @@ PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
 
 def printDict(di, format="%-25s %s",log=None, loglvl=logging.DEBUG):
-    for (key, val) in di.items():
+    for (key, val) in list(di.items()):
         if log:
             log.log(loglvl,format % (str(key)+':', val))
         else:
-            print format % (str(key)+':', val)
+            print(format % (str(key)+':', val))
 
 def dumpAttrs(obj,log=None, loglvl=logging.DEBUG):
     '''
@@ -97,7 +97,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
         elif (isinstance(attr, types.MethodType) or
               isinstance(attr, types.FunctionType)):
             methods.append( (slot, attr) )
-        elif isinstance(attr, types.TypeType):
+        elif isinstance(attr, type):
             classes.append( (slot, attr) )
         else:
             attrs.append( (slot, attr) )
@@ -137,7 +137,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
     if log:
         log.log(loglvl,'\n'.join(prettyPrint(intro, maxlen)))
     else:
-        print '\n'.join(prettyPrint(intro, maxlen))
+        print('\n'.join(prettyPrint(intro, maxlen)))
 
     if showDoc:
         # Object's Docstring
@@ -152,8 +152,8 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
             log.log(loglvl,'')
             log.log(loglvl,prettyString)
         else:
-            print
-            print prettyString
+            print()
+            print(prettyString)
 
     if showMethods:
         # Built-in methods
@@ -166,8 +166,8 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
                 log.log(loglvl,'')
                 log.log(loglvl,prettyString)
             else:
-                print
-                print prettyString
+                print()
+                print(prettyString)
 
         # Classes
         if classes:
@@ -175,8 +175,8 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
                 log.log(loglvl,'')
                 log.log(loglvl,'Classes:')
             else:
-                print
-                print 'Classes:'
+                print()
+                print('Classes:')
         for (classname, classtype) in classes:
             classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
             prettyString = prettyPrintCols( ('',
@@ -186,7 +186,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
             if log:
                 log.log(loglvl,prettyString)
             else:
-                print prettyString
+                print(prettyString)
 
         # User methods
         if methods:
@@ -194,8 +194,8 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
                 log.log(loglvl,'')
                 log.log(loglvl,'Methods:')
             else:
-                print
-                print 'Methods:'
+                print()
+                print('Methods:')
         for (methodname, method) in methods:
             methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
             prettyString = prettyPrintCols( ('',
@@ -205,7 +205,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
             if log:
                 log.log(loglvl,prettyString)
             else:
-                print prettyString
+                print(prettyString)
 
     if showAtributes:
         # Attributes
@@ -214,8 +214,8 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
                 log.log(loglvl,'')
                 log.log(loglvl,'Attributes:')
             else:
-                print
-                print 'Attributes:'
+                print()
+                print('Attributes:')
         for (attr, val) in attrs:
             prettyString = prettyPrintCols( ('',
                                               attr,
@@ -224,7 +224,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
             if log:
                 log.log(loglvl,prettyString)
             else:
-                print prettyString
+                print(prettyString)
 
 
 def prettyPrintCols(strings, widths, split=' '):
@@ -234,7 +234,7 @@ def prettyPrintCols(strings, widths, split=' '):
 
     assert len(strings) == len(widths)
 
-    strings = map(nukenewlines, strings)
+    strings = list(map(nukenewlines, strings))
 
     # pretty print each column
     cols = [''] * len(strings)
@@ -245,7 +245,7 @@ def prettyPrintCols(strings, widths, split=' '):
     format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
 
     def formatline(*cols):
-        return format % tuple(map(lambda s: (s or ''), cols))
+        return format % tuple([(s or '') for s in cols])
 
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))

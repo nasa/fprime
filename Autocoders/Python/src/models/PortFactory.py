@@ -112,38 +112,38 @@ def main():
 
     xmlfile = "../../test/Msg1InterfaceAi.xml"
 
-    print "Port XML parse test (%s)" % xmlfile
+    print("Port XML parse test (%s)" % xmlfile)
     #
     # Basic usage of this factory to create the component meta-model
     #
     the_parsed_port_xml = XmlPortsParser.XmlPortsParser(xmlfile)
-    print the_parsed_port_xml.get_args()
+    print(the_parsed_port_xml.get_args())
     args = the_parsed_port_xml.get_args()
     for a in args:
-        print "\t",a
-        print "\t",a.get_name()
-        print "\t",a.get_type()
-        print "\t",a.get_comment()
-    print the_parsed_port_xml.get_include_header_files()
-    print the_parsed_port_xml.get_interface()
-    print the_parsed_port_xml.get_interface().get_comment()
-    print the_parsed_port_xml.get_interface().get_name()
-    print the_parsed_port_xml.get_interface().get_namespace()
+        print("\t",a)
+        print("\t",a.get_name())
+        print("\t",a.get_type())
+        print("\t",a.get_comment())
+    print(the_parsed_port_xml.get_include_header_files())
+    print(the_parsed_port_xml.get_interface())
+    print(the_parsed_port_xml.get_interface().get_comment())
+    print(the_parsed_port_xml.get_interface().get_name())
+    print(the_parsed_port_xml.get_interface().get_namespace())
 
     port = PortFactory().create(the_parsed_port_xml)
     #
     # End of usage and port is the instance of model to be used.
     #
-    print "Port: %s" % port
-    print "Namespace: %s" % port.get_namespace()
-    print "Type: %s" % port.get_type()
-    print "Comment: %s" % port.get_ifcomment()
-    print "Includes: %s" % port.get_includes()
-    print
+    print("Port: %s" % port)
+    print("Namespace: %s" % port.get_namespace())
+    print("Type: %s" % port.get_type())
+    print("Comment: %s" % port.get_ifcomment())
+    print("Includes: %s" % port.get_includes())
+    print()
     args = port.get_args()
-    print "Args: %s" % args
+    print("Args: %s" % args)
     for a in args:
-        print "Arg Name: %s Type: %s Comment: %s" % (a.get_name(), a.get_type(), a.get_comment())
+        print("Arg Name: %s Type: %s Comment: %s" % (a.get_name(), a.get_type(), a.get_comment()))
 
 
 if __name__ == '__main__':

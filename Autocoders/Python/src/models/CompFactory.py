@@ -336,7 +336,7 @@ def main():
 
     xmlfile = "../../test/app1a/NikonComponentAi.xml"
 
-    print "Component XML parse test (%s)" % xmlfile
+    print("Component XML parse test (%s)" % xmlfile)
     #
     # Basic usage of this factory to create the component meta-model
     #
@@ -351,22 +351,22 @@ def main():
     #
     # End of usage and comp is the instance of model to be used.
     #
-    print "Component: %s" % comp
-    print "Namespace: %s" % comp.get_namespace()
-    print "Name: %s" % comp.get_name()
-    print "Kind: %s" % comp.get_kind()
-    print "Comment: %s" % comp.get_comment()
-    print "Ports: %s" % comp.get_ports()
-    print
+    print("Component: %s" % comp)
+    print("Namespace: %s" % comp.get_namespace())
+    print("Name: %s" % comp.get_name())
+    print("Kind: %s" % comp.get_kind())
+    print("Comment: %s" % comp.get_comment())
+    print("Ports: %s" % comp.get_ports())
+    print()
     for port in comp.get_ports():
-        print "Port:"
-        print port.get_name(), port.get_type(), port.get_direction(), port.get_sync(), port.get_namespace()
-        print port.get_comment()
-        print port.get_ifcomment()
-        print port.get_includes()
-        print port.get_args()
+        print("Port:")
+        print(port.get_name(), port.get_type(), port.get_direction(), port.get_sync(), port.get_namespace())
+        print(port.get_comment())
+        print(port.get_ifcomment())
+        print(port.get_includes())
+        print(port.get_args())
         for arg in port.get_args():
-            print "\t%s : %s  # %s" % (arg.get_name(), arg.get_type(), arg.get_comment())
+            print("\t%s : %s  # %s" % (arg.get_name(), arg.get_type(), arg.get_comment()))
 
 
 if __name__ == '__main__':

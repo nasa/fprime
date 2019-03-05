@@ -23,7 +23,10 @@ import time
 from utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 #from __builtin__ import None
 from pickle import NONE
 
@@ -71,7 +74,7 @@ class XmlComponentParser(object):
         constants_file = ROOTDIR + os.sep + self.Config.get('constants','constants_file')
         ## make sure it is a real file
         if os.path.isfile(constants_file):
-            self.__const_parser = ConfigParser.SafeConfigParser()
+            self.__const_parser = configparser.SafeConfigParser()
             self.__const_parser.read(constants_file)
         else:
             self.__const_parser = None
@@ -80,7 +83,7 @@ class XmlComponentParser(object):
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(stri)
-            raise IOError, stri
+            raise IOError(stri)
 
         fd = open(xml_file,'r')
 
@@ -94,13 +97,14 @@ class XmlComponentParser(object):
         relax_compiled = etree.RelaxNG(relax_parsed)
 
         try:
-            relax_compiled.assert_(element_tree)
-        except Exception , e:
+            # 2/3 conversion
+            relax_compiled.validate(element_tree)
+        except Exception as e:
             PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.Config.get('schema' , 'component')))
             PRINT.info(e)
             PRINT.info(relax_compiled.error_log)
             PRINT.info(relax_compiled.error_log.last_error)
-            print element_tree
+            print(element_tree)
             raise e
 
         ## Add Implicit ports if needed
@@ -115,7 +119,7 @@ class XmlComponentParser(object):
         component = element_tree.getroot()
         component_name = component.attrib['name']
 
-        print("Parsing Component %s" %component_name)
+        print(("Parsing Component %s" %component_name))
 
         if 'namespace' in component.attrib:
             namespace_name = component.attrib['namespace']
@@ -154,7 +158,7 @@ class XmlComponentParser(object):
                 else:
                     stri = "ERROR: Could not find specified dictionary XML file %s." % dict_file
                     PRINT.info(stri)
-                    raise IOError, stri
+                    raise IOError(stri)
                 PRINT.info("Reading external dictionary %s"%dict_file)
                 dict_fd = open(dict_file,'r')
                 dict_parser = etree.XMLParser(remove_comments=True)
@@ -168,8 +172,9 @@ class XmlComponentParser(object):
                 relax_compiled = etree.RelaxNG(relax_parsed)
 
                 try:
-                    relax_compiled.assert_(dict_element_tree)
-                except Exception , e:
+                    # 2/3 conversion
+                    relax_compiled.validate(element_tree)
+                except Exception as e:
                     PRINT.info("XML file {} is not valid according to schema {}.".format(dict_file , ROOTDIR + self.Config.get('schema' , dict_element_tree.getroot().tag.lower())))
                     PRINT.info(e)
                     PRINT.info(relax_compiled.error_log)
@@ -186,7 +191,7 @@ class XmlComponentParser(object):
                     n = port.attrib['name']
                     ## Set role if defined
                     r = None
-                    if 'role' in port.attrib.keys():
+                    if 'role' in list(port.attrib.keys()):
                         r = port.attrib['role']
                     d_orig = port.attrib['kind']
                     # special case for MagicDraw modeling tool. A bit of a hack...
@@ -210,15 +215,15 @@ class XmlComponentParser(object):
                         if d != "input":
                             PRINT.info(err%(xml_file,d_orig,n))
                             sys.exit(-1)
-                    if "max_number" in port.attrib.keys():
+                    if "max_number" in list(port.attrib.keys()):
                         m = self.__eval_var(constants_file, "Component", port.attrib['max_number'])
                     else:
                         m = 1
-                    if "priority" in port.attrib.keys():
+                    if "priority" in list(port.attrib.keys()):
                         p = port.attrib['priority']
                     else:
                         p = 0
-                    if "full" in port.attrib.keys():
+                    if "full" in list(port.attrib.keys()):
                         f = port.attrib["full"]
                         if f not in ['drop','assert','block']:
                             err = "%s: Invalid attribute value \"%s\" for \"full\" in port \"%s\" definition. Should be one of \"drop\", \"assert\", or \"block\""
@@ -236,7 +241,7 @@ class XmlComponentParser(object):
                     self.__ports.append(port_obj)
             elif comp_tag.tag == 'commands': # parse commands
                 # see if command opcode base is specified
-                if "opcode_base" in comp_tag.attrib.keys():
+                if "opcode_base" in list(comp_tag.attrib.keys()):
                     opcode_base = self.__eval_var(constants_file, "Component", comp_tag.attrib["opcode_base"])
                     opcode_bases = opcode_base.split(",")
                     # Check number of instances
@@ -273,12 +278,12 @@ class XmlComponentParser(object):
                     if component.attrib['kind'] == 'passive' and s == 'async':
                         PRINT.info("%s: Command %s cannot be async with a passive component"%(xml_file,m))
                         sys.exit(-1)
-                    if "priority" in command.attrib.keys():
+                    if "priority" in list(command.attrib.keys()):
                         p = command.attrib['priority']
                     else:
                         p = 0
 
-                    if "full" in command.attrib.keys():
+                    if "full" in list(command.attrib.keys()):
                         f = command.attrib["full"]
                         if f not in ['drop','assert','block']:
                             err = "%s: Invalid attribute value \"%s\" for \"full\" in command \"%s\" definition. Should be one of \"drop\", \"assert\", or \"block\""
@@ -317,11 +322,11 @@ class XmlComponentParser(object):
                                         enum_members = []
                                         for mem in arg_tag:
                                             mn = mem.attrib['name']
-                                            if "value" in mem.attrib.keys():
+                                            if "value" in list(mem.attrib.keys()):
                                                 v = mem.attrib['value']
                                             else:
                                                 v = None
-                                            if "comment" in mem.attrib.keys():
+                                            if "comment" in list(mem.attrib.keys()):
                                                 mc = mem.attrib['comment'].strip()
                                             else:
                                                 mc = None
@@ -341,7 +346,7 @@ class XmlComponentParser(object):
                 else:
                     PRINT.info("Warning: No commands defined within the 'commands' tag ")
             elif comp_tag.tag == 'telemetry': # parse telemetry channels
-                if "telemetry_base" in comp_tag.attrib.keys():
+                if "telemetry_base" in list(comp_tag.attrib.keys()):
                     telemetry_base = self.__eval_var(constants_file, "Component", comp_tag.attrib["telemetry_base"])
                     telemetry_bases = telemetry_base.split(",")
                     # Check number of instances
@@ -381,49 +386,49 @@ class XmlComponentParser(object):
                     ho = None
                     hr = None
 
-                    if 'low_red' in channel.attrib.keys():
+                    if 'low_red' in list(channel.attrib.keys()):
                         lr = channel.attrib['low_red']
-                    if 'low_orange' in channel.attrib.keys():
+                    if 'low_orange' in list(channel.attrib.keys()):
                         lo = channel.attrib['low_orange']
-                    if 'low_yellow' in channel.attrib.keys():
+                    if 'low_yellow' in list(channel.attrib.keys()):
                         ly = channel.attrib['low_yellow']
-                    if 'high_yellow' in channel.attrib.keys():
+                    if 'high_yellow' in list(channel.attrib.keys()):
                         hy = channel.attrib['high_yellow']
-                    if 'high_orange' in channel.attrib.keys():
+                    if 'high_orange' in list(channel.attrib.keys()):
                         ho = channel.attrib['high_orange']
-                    if 'high_red' in channel.attrib.keys():
+                    if 'high_red' in list(channel.attrib.keys()):
                         hr = channel.attrib['high_red']
 
                     n = channel.attrib['name']
 
                     #type
-                    if 'data_type' in channel.attrib.keys() and 'type' in channel.attrib.keys():
+                    if 'data_type' in list(channel.attrib.keys()) and 'type' in list(channel.attrib.keys()):
                         PRINT.info("%s: Telemetry channel %s attributes 'data_type' and 'type' are  both specified. Only specify one."%(xml_file,n))
                         sys.exit(-1)
 
-                    if 'data_type' in channel.attrib.keys():
+                    if 'data_type' in list(channel.attrib.keys()):
                         d = channel.attrib['data_type']
                     else:
                         d = channel.attrib['type']
 
-                    if 'format_string' in channel.attrib.keys():
+                    if 'format_string' in list(channel.attrib.keys()):
                         f = channel.attrib['format_string']
                     else:
                         f = None
-                    if 'update' in channel.attrib.keys():
+                    if 'update' in list(channel.attrib.keys()):
                         u = channel.attrib['update']
                         if u != 'always' and u != 'on_change':
                             PRINT.info("%s: Invalid update %s in channel %s. Should be \"always\" or \"on_change\""%(xml_file,u,n))
                             sys.exit(-1)
                     else:
                         u = None
-                    if 'abbrev' in channel.attrib.keys():
+                    if 'abbrev' in list(channel.attrib.keys()):
                         a = channel.attrib['abbrev']
                     else:
                         a = None
                     s = None
                     if d == 'string':
-                        if not 'size' in channel.attrib.keys():
+                        if not 'size' in list(channel.attrib.keys()):
                             PRINT.info("%s: Telemetry channel %s string value must specify a size"%(xml_file,n))
                             sys.exit(-1)
                         s = channel.attrib["size"]
@@ -437,11 +442,11 @@ class XmlComponentParser(object):
                             enum_members = []
                             for mem in channel_tag:
                                 mn = mem.attrib['name']
-                                if "value" in mem.attrib.keys():
+                                if "value" in list(mem.attrib.keys()):
                                     v = mem.attrib['value']
                                 else:
                                     v = None
-                                if "comment" in mem.attrib.keys():
+                                if "comment" in list(mem.attrib.keys()):
                                     mc = mem.attrib['comment'].strip()
                                 else:
                                     mc = None
@@ -465,7 +470,7 @@ class XmlComponentParser(object):
                 else:
                     PRINT.info("Warning: No channels defined within telemetry tag")
             elif comp_tag.tag == 'events': # parse events
-                if "event_base" in comp_tag.attrib.keys():
+                if "event_base" in list(comp_tag.attrib.keys()):
                     event_base = self.__eval_var(constants_file, "Component", comp_tag.attrib["event_base"])
                     event_bases = event_base.split(",")
                     # Check number of instances
@@ -510,7 +515,7 @@ class XmlComponentParser(object):
                     f_temp = f.replace("%%" , "")
                     f_arg_amount = f_temp.count("%")
 
-                    if 'throttle' in event.attrib.keys():
+                    if 'throttle' in list(event.attrib.keys()):
                         t = event.attrib['throttle']
                     else:
                         t = None
@@ -535,7 +540,7 @@ class XmlComponentParser(object):
                                 t = arg.attrib['type']
                                 s = None
                                 if t == 'string':
-                                    if not 'size' in arg.attrib.keys():
+                                    if not 'size' in list(arg.attrib.keys()):
                                         PRINT.info("%s: Event %s string argument %s must specify a size"%(xml_file,event.attrib['name'],n))
                                         sys.exit(-1)
                                     s = arg.attrib["size"]
@@ -549,11 +554,11 @@ class XmlComponentParser(object):
                                         enum_members = []
                                         for mem in arg_tag:
                                             mn = mem.attrib['name']
-                                            if "value" in mem.attrib.keys():
+                                            if "value" in list(mem.attrib.keys()):
                                                 v = mem.attrib['value']
                                             else:
                                                 v = None
-                                            if "comment" in mem.attrib.keys():
+                                            if "comment" in list(mem.attrib.keys()):
                                                 mc = mem.attrib['comment'].strip()
                                             else:
                                                 mc = None
@@ -572,7 +577,7 @@ class XmlComponentParser(object):
                 else:
                     PRINT.info("Warning: No events defined within events tag")
             elif comp_tag.tag == 'parameters': # parse parameters
-                if "parameter_base" in comp_tag.attrib.keys():
+                if "parameter_base" in list(comp_tag.attrib.keys()):
                     parameter_base = self.__eval_var(constants_file, "Component", comp_tag.attrib["parameter_base"])
                     parameter_bases = parameter_base.split(",")
                     # Check number of instances
@@ -592,7 +597,7 @@ class XmlComponentParser(object):
 
                 # see if parameter command opcode base is specified
                 opcode_base_list = list()
-                if "opcode_base" in comp_tag.attrib.keys():
+                if "opcode_base" in list(comp_tag.attrib.keys()):
                     opcode_base = self.__eval_var(constants_file, "Component", comp_tag.attrib["opcode_base"])
                     opcode_bases = opcode_base.split(",")
                     # Check number of instances
@@ -645,11 +650,11 @@ class XmlComponentParser(object):
 
                     s = None
                     if d == 'string':
-                        if not 'size' in parameter.attrib.keys():
+                        if not 'size' in list(parameter.attrib.keys()):
                             PRINT.info("%s: Parameter %s string value must specify a size"%(xml_file,n))
                             sys.exit(-1)
                         s = parameter.attrib["size"]
-                    if "default" in parameter.attrib.keys():
+                    if "default" in list(parameter.attrib.keys()):
                         f = parameter.attrib['default']
                     else:
                         f = None
@@ -662,11 +667,11 @@ class XmlComponentParser(object):
                             enum_members = []
                             for mem in parameter_tag:
                                 mn = mem.attrib['name']
-                                if "value" in mem.attrib.keys():
+                                if "value" in list(mem.attrib.keys()):
                                     v = mem.attrib['value']
                                 else:
                                     v = None
-                                if "comment" in mem.attrib.keys():
+                                if "comment" in list(mem.attrib.keys()):
                                     mc = mem.attrib['comment'].strip()
                                 else:
                                     mc = None
@@ -689,12 +694,12 @@ class XmlComponentParser(object):
                         PRINT.info("%s: Invalid tag %s in internal interface definition"%(xml_file,internal_interface.tag))
                         sys.exit(-1)
                     n = internal_interface.attrib['name']
-                    if "priority" in internal_interface.attrib.keys():
+                    if "priority" in list(internal_interface.attrib.keys()):
                         p = internal_interface.attrib['priority']
                     else:
                         p = 0
 
-                    if "full" in internal_interface.attrib.keys():
+                    if "full" in list(internal_interface.attrib.keys()):
                         f = internal_interface.attrib["full"]
                         if f not in ['drop','assert','block']:
                             err = "%s: Invalid attribute value \"%s\" for \"full\" in internal_interface \"%s\" definition. Should be one of \"drop\", \"assert\", or \"block\""
@@ -729,11 +734,11 @@ class XmlComponentParser(object):
                                         enum_members = []
                                         for mem in arg_tag:
                                             mn = mem.attrib['name']
-                                            if "value" in mem.attrib.keys():
+                                            if "value" in list(mem.attrib.keys()):
                                                 v = mem.attrib['value']
                                             else:
                                                 v = None
-                                            if "comment" in mem.attrib.keys():
+                                            if "comment" in list(mem.attrib.keys()):
                                                 mc = mem.attrib['comment'].strip()
                                             else:
                                                 mc = None
@@ -835,7 +840,7 @@ class XmlComponentParser(object):
 
             ## Ports Missing: Aborting
             else:
-                for port, value in cmd_or_param.iteritems():
+                for port, value in cmd_or_param.items():
                     if value == False:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
@@ -858,7 +863,7 @@ class XmlComponentParser(object):
 
             ## Ports Missing: Abort
             else:
-                for port, value in param.iteritems():
+                for port, value in param.items():
                     if value == False:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
@@ -1416,7 +1421,7 @@ if __name__ == '__main__':
     xmlfile = "../../test/app1a/FujiComponentAi.xml"
     xmlfile = sys.argv[1]
 
-    print "Component XML parse test (%s)" % xmlfile
+    print("Component XML parse test (%s)" % xmlfile)
 
     xml_component_parser = XmlComponentParser(xmlfile)
 
@@ -1424,18 +1429,18 @@ if __name__ == '__main__':
     port_import_list = xml_component_parser.get_port_type_files()
     port_list = xml_component_parser.get_ports()
 
-    print "Namespace: %s Component name: %s Kind: %s" % (comp.get_namespace(), comp.get_name(), comp.get_kind())
-    print "Component comment:"
-    print comp.get_comment()
-    print
-    print "Ports:"
+    print("Namespace: %s Component name: %s Kind: %s" % (comp.get_namespace(), comp.get_name(), comp.get_kind()))
+    print("Component comment:")
+    print(comp.get_comment())
+    print()
+    print("Ports:")
     for port in port_list:
-        print "Name: %s, Direction: %s, Type: %s, Sync: %s" % \
-                    (port.get_name(), port.get_direction(), port.get_type(), port.get_sync())
-        print "Port comment:"
-        print port.get_comment()
-    print
-    print "Imports:"
+        print("Name: %s, Direction: %s, Type: %s, Sync: %s" % \
+                    (port.get_name(), port.get_direction(), port.get_type(), port.get_sync()))
+        print("Port comment:")
+        print(port.get_comment())
+    print()
+    print("Imports:")
     for i in port_import_list:
-        print "\t%s" % i
-    print
+        print("\t%s" % i)
+    print()

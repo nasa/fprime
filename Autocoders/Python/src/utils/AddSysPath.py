@@ -44,16 +44,16 @@ def AddSysPath(new_path):
 
 if __name__ == '__main__':
 
-    print "Before:"
+    print("Before:")
     for x in sys.path:
-        print x
+        print(x)
 
     if sys.platform == 'win32':
-        print AddSysPath('c:\\Temp')
-        print AddSysPath('c:\\temp')
+        print(AddSysPath('c:\\Temp'))
+        print(AddSysPath('c:\\temp'))
     else:
-        print AddSysPath('/usr/lib')
+        print(AddSysPath('/usr/lib'))
 
-    print "After:"
+    print("After:")
     for x in sys.path:
-        print x
+        print(x)

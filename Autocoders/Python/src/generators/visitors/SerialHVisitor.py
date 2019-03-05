@@ -223,12 +223,12 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = includes2SerialH.includes2SerialH()
         c.xml_includes_list = obj.get_xml_includes()
-        if False in map(lambda x: x[-6:] == 'Ai.xml', c.xml_includes_list):
+        if False in [x[-6:] == 'Ai.xml' for x in c.xml_includes_list]:
             PRINT.info("ERROR: Only Ai.xml files can be given within <import_serializable_type> tag!!!")
             sys.exit(-1)
         c.xml_includes_list = [x.replace('Ai.xml','Ac.hpp') for x in  c.xml_includes_list]
         c.c_includes_list = obj.get_c_includes()
-        if False in map(lambda x: x[-3:] == 'hpp' or x[-1:] == 'h', c.c_includes_list):
+        if False in [x[-3:] == 'hpp' or x[-1:] == 'h' for x in c.c_includes_list]:
             PRINT.info("ERROR: Only .hpp or .h files can be given within <include_header> tag!!!")
             sys.exit(-1)
         #
@@ -248,8 +248,8 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             c.namespace_list = obj.get_namespace().split('::')
 
         c.enum_type_list = []
-        t = map(lambda x: x[1], obj.get_members())
-        enum_list = filter(lambda x: type(x) == type(tuple()), t)
+        t = [x[1] for x in obj.get_members()]
+        enum_list = [x for x in t if type(x) == type(tuple())]
         for e in enum_list:
             c.enum_type_list.append(self._get_enum_string_list(e))
 

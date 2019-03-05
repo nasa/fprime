@@ -57,7 +57,7 @@ class TestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
             name, type, comment, size, typeinfo = param
             type = self.transformEnumType(c, type, typeinfo)
             return (name, type, comment, typeinfo)
-        return map(transformEventParam, params)
+        return list(map(transformEventParam, params))
 
     def getEventParams(self, c):
         def f(eventName):
@@ -70,7 +70,7 @@ class TestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
             name, type, comment, typeinfo = param
             type = self.transformEnumType(c, type, typeinfo)
             return (name, type, comment, typeinfo)
-        return map(transformCommandParam, params)
+        return list(map(transformCommandParam, params))
 
     def getCommandParams(self, c):
         def f(mnemonic):

@@ -28,7 +28,7 @@ def VersionFile(filename, vtype='copy'):
 
         # check the vtype parameter
         if vtype not in ('copy', 'rename'):
-            raise ValueError, 'Unknown vtype %r' % (vtype,)
+            raise ValueError('Unknown vtype %r' % (vtype,))
 
         # Determine root filename so extension doesn't get longer
         n, e = os.path.splitext(filename)
@@ -42,7 +42,7 @@ def VersionFile(filename, vtype='copy'):
             root = filename
 
         # Find the next available file version
-        for i in xrange(num, 1000):
+        for i in range(num, 1000):
 
             new_file = '%s.%03d' % (root, i)
 
@@ -53,7 +53,7 @@ def VersionFile(filename, vtype='copy'):
                     os.rename(filename, new_file)
                 return True
 
-        raise RuntimeError, "Can't %s %r, all name taken" % (vtype, filename)
+        raise RuntimeError("Can't %s %r, all name taken" % (vtype, filename))
 
     return False
 
@@ -65,14 +65,14 @@ if __name__ == '__main__':
     open(tfn, 'w').close()
 
     # version it 3 times
-    print VersionFile(tfn)
-    print VersionFile(tfn)
-    print VersionFile(tfn)
+    print(VersionFile(tfn))
+    print(VersionFile(tfn))
+    print(VersionFile(tfn))
 
     # remove all test.txt* files we just made
     for x in ('', '.000', '.001', '.002'):
         os.unlink(tfn + x)
 
     # show what happens when the file does not exist
-    print VersionFile(tfn)
-    print VersionFile(tfn)
+    print(VersionFile(tfn))
+    print(VersionFile(tfn))

@@ -40,7 +40,7 @@ class GTestVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
                 return (name, c.component_base + "::" + type, comment, typeinfo)
             else:
                 return (name, "const " + type, comment, typeinfo)
-        return map(transformEventParam, params)
+        return list(map(transformEventParam, params))
 
     def getEventParams(self, c):
         def f(eventName):

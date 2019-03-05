@@ -25,67 +25,67 @@ import logging
 from utils import Logger
 from utils import ConfigManager
 
-from visitors import ComponentCppVisitor
-from visitors import ComponentHVisitor
-from visitors import ImplCppVisitor
-from visitors import ImplHVisitor
-from visitors import PortCppVisitor
-from visitors import PortHVisitor
-from visitors import SerialCppVisitor
-from visitors import SerialHVisitor
-from visitors import TopologyCppVisitor
-from visitors import TopologyHVisitor
-from visitors import TopologyIDVisitor
+from .visitors import ComponentCppVisitor
+from .visitors import ComponentHVisitor
+from .visitors import ImplCppVisitor
+from .visitors import ImplHVisitor
+from .visitors import PortCppVisitor
+from .visitors import PortHVisitor
+from .visitors import SerialCppVisitor
+from .visitors import SerialHVisitor
+from .visitors import TopologyCppVisitor
+from .visitors import TopologyHVisitor
+from .visitors import TopologyIDVisitor
 
-from visitors import InstanceTopologyHVisitor
-from visitors import InstanceTopologyCppVisitor
-from visitors import InstanceTopologyCmdHTMLVisitor
-from visitors import InstanceTopologyChannelsHTMLVisitor
-from visitors import InstanceTopologyEventsHTMLVisitor
+from .visitors import InstanceTopologyHVisitor
+from .visitors import InstanceTopologyCppVisitor
+from .visitors import InstanceTopologyCmdHTMLVisitor
+from .visitors import InstanceTopologyChannelsHTMLVisitor
+from .visitors import InstanceTopologyEventsHTMLVisitor
 
-from visitors import ComponentTestHVisitor
-from visitors import ComponentTestCppVisitor
-from visitors import GTestHVisitor
-from visitors import GTestCppVisitor
-from visitors import TestImplCppVisitor
-from visitors import TestImplHVisitor
+from .visitors import ComponentTestHVisitor
+from .visitors import ComponentTestCppVisitor
+from .visitors import GTestHVisitor
+from .visitors import GTestCppVisitor
+from .visitors import TestImplCppVisitor
+from .visitors import TestImplHVisitor
 
-from visitors import CommandVisitor
-from visitors import EventVisitor
-from visitors import ChannelVisitor
-from visitors import SerializableVisitor
+from .visitors import CommandVisitor
+from .visitors import EventVisitor
+from .visitors import ChannelVisitor
+from .visitors import SerializableVisitor
 
-from visitors import InstanceCommandVisitor
-from visitors import InstanceEventVisitor
-from visitors import InstanceChannelVisitor
-from visitors import InstanceSerializableVisitor
+from .visitors import InstanceCommandVisitor
+from .visitors import InstanceEventVisitor
+from .visitors import InstanceChannelVisitor
+from .visitors import InstanceSerializableVisitor
 
-from visitors import HtmlDocVisitor
-from visitors import MdDocVisitor
+from .visitors import HtmlDocVisitor
+from .visitors import MdDocVisitor
 
-import InitFiles
-import StartSource
-import Includes1
-import Includes2
-import Namespace
-import Public
-import Protected
-import Private
-import FinishSource
+from . import InitFiles
+from . import StartSource
+from . import Includes1
+from . import Includes2
+from . import Namespace
+from . import Public
+from . import Protected
+from . import Private
+from . import FinishSource
 
-import DictStart
-import DictHeader
-import DictBody
+from . import DictStart
+from . import DictHeader
+from . import DictBody
 
-import InstanceDictStart
-import InstanceDictHeader
-import InstanceDictBody
+from . import InstanceDictStart
+from . import InstanceDictHeader
+from . import InstanceDictBody
 
-import HtmlDocPage
-import HtmlStartPage
+from . import HtmlDocPage
+from . import HtmlStartPage
 
-import MdDocPage
-import MdStartPage
+from . import MdDocPage
+from . import MdStartPage
 
 # Global logger init. below.
 PRINT = logging.getLogger('output')
@@ -133,14 +133,14 @@ class GenFactory:
             """
             """
             if enabled not in (True, False):
-                raise AttributeError, "GenFactory: bad is enabled option"
+                raise AttributeError("GenFactory: bad is enabled option")
             self.__enabled = enabled
 
         def setGenerateCode(self, generate_code):
             """
             """
             if generate_code not in (True, False):
-                raise AttributeError, "GenFactory: bad generate code option"
+                raise AttributeError("GenFactory: bad generate code option")
             self.__generate_code = generate_code
 
         def Instance(self):
@@ -214,7 +214,7 @@ class GenFactory:
             else:
                 s = "VisitorConfig.getInstance: unsupported visitor type (%s)" % (self.__type)
                 PRINT.info(s)
-                raise ValueError, s
+                raise ValueError(s)
             return inst
 
 
@@ -318,7 +318,7 @@ class GenFactory:
             code_section_generator = MdDocPage.MdDocPage()
 
         else:
-            print "GenFactory: unsupported code section (%s)." % (the_type)
+            print("GenFactory: unsupported code section (%s)." % (the_type))
             return None
 
         self._addVisitor(code_section_generator, project_visitor_list)
@@ -398,7 +398,7 @@ def main():
     GenFactory.getInstance().configureVisitor("TestComponentCpp", "ComponentCppVisitor", True, True)
 
     initfiles = GenFactory.getInstance().create('initFiles')
-    print initfiles
+    print(initfiles)
     initfiles('object args')
 
 

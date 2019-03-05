@@ -124,7 +124,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
         @parms obj: the instance of the event model to operation on.
         """
         
-        for fname in self.__fp.keys():
+        for fname in list(self.__fp.keys()):
             c = EventHeader.EventHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")

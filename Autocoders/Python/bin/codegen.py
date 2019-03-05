@@ -380,7 +380,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem.attrib["component"] = comp_name
                         command_elem.attrib["mnemonic"] = command.get_mnemonic()
                         command_elem.attrib["opcode"] = "%s"%(hex(int(command.get_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in command_elem.attrib.keys()):
+                        if ("comment" in list(command_elem.attrib.keys())):
                             command_elem.attrib["description"] = command_elem.attrib["comment"]
                         args_elem = etree.Element("args")
                         for arg in command.get_args():
@@ -430,7 +430,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             channel_elem.attrib["description"] = chan.get_comment()
 
                         channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
-                        if ("comment" in channel_elem.attrib.keys()):
+                        if ("comment" in list(channel_elem.attrib.keys())):
                             channel_elem.attrib["description"] = channel_elem.attrib["comment"]
                         channel_type = chan.get_type()
                         if type(channel_type) == type(tuple()):
@@ -484,7 +484,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         event_elem.attrib["id"] = "%s"%(hex(int(event.get_ids()[0],base=0) + comp_id))
                         event_elem.attrib["severity"] = event.get_severity()
                         format_string = event.get_format_string()
-                        if ("comment" in event_elem.attrib.keys()):
+                        if ("comment" in list(event_elem.attrib.keys())):
                             event_elem.attrib["description"] = event_elem.attrib["comment"]
                         args_elem = etree.Element("args")
                         arg_num = 0
@@ -534,7 +534,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_set.attrib["component"] = comp_name
                         command_elem_set.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SET"
                         command_elem_set.attrib["opcode"] = "%s"%(hex(int(parameter.get_set_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in command_elem.attrib.keys()):
+                        if ("comment" in list(command_elem.attrib.keys())):
                             command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_set.attrib["description"] = parameter.get_name() + " parameter set"
@@ -581,7 +581,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_save.attrib["component"] = comp_name
                         command_elem_save.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SAVE"
                         command_elem_save.attrib["opcode"] = "%s"%(hex(int(parameter.get_save_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in command_elem.attrib.keys()):
+                        if ("comment" in list(command_elem.attrib.keys())):
                             command_elem_save.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_save.attrib["description"] = parameter.get_name() +  " parameter save"
@@ -1177,9 +1177,9 @@ def generate_serializable(the_serial_xml, opt):
                 PRINT.info("Dictionary output directory not specified!")
                 raise exceptions.IOError
             os.environ["DICT_DIR"] = opt.dict_dir
-            print "\n"
-            print opt.dict_dir
-            print "\n"
+            print("\n")
+            print(opt.dict_dir)
+            print("\n")
             generator.configureVisitor("SerialDict", "InstanceSerializableVisitor", True, True)
     #
     # The idea here is that each of these generators is used to create
@@ -1261,7 +1261,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         file_list = parser.get_include_header_files() + parser.get_includes()
     elif type == "assembly" or  type == "deployment":
         # get list of dependency files from XML/header file list
-        file_list_tmp = parser.get_comp_type_file_header_dict().keys()
+        file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
         #file_list = list()
         #for f in file_list_tmp:
@@ -1381,7 +1381,7 @@ def main():
     #
     if opt.build_root_flag == True:
         # Check for BUILD_ROOT env. variable
-        if ('BUILD_ROOT' in os.environ.keys()) == False:
+        if ('BUILD_ROOT' in list(os.environ.keys())) == False:
             PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
             sys.exit(-1)
         else:
@@ -1413,7 +1413,7 @@ def main():
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
-            print "Found assembly or deployment named: %s\n" % DEPLOYMENT
+            print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
             generate_topology(the_parsed_topology_xml, xml_filename, opt)
             dependency_parser = the_parsed_topology_xml
         else:

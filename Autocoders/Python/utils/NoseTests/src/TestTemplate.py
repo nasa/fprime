@@ -15,9 +15,9 @@ class Test_#APPLICATION_NAME#:
             subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True)
             assert True
         except CalledProcessError as e:
-           print "MAKE ERROR"
-           print "''''''''''"
-           print e.output
+           print("MAKE ERROR")
+           print("''''''''''")
+           print(e.output)
            assert False
 
     def test_make_ut(self):
@@ -26,9 +26,9 @@ class Test_#APPLICATION_NAME#:
             subprocess.check_output('make ut', stderr = subprocess.STDOUT, shell=True)
             assert True
         except CalledProcessError as e:
-            print "MAKE UT ERROR"
-            print "'''''''''''''"
-            print e.output
+            print("MAKE UT ERROR")
+            print("'''''''''''''")
+            print(e.output)
             assert False
     def test_run_ut(self):
 
@@ -42,8 +42,8 @@ class Test_#APPLICATION_NAME#:
         except EOF: #EOF is thrown when program ends
             assert True
         except TIMEOUT as e:
-            print "Timeout. Test Failed."
-            print e.get_trace()
+            print("Timeout. Test Failed.")
+            print(e.get_trace())
             assert False
 
     #TODO
@@ -60,8 +60,8 @@ class Test_#APPLICATION_NAME#:
             try:
                 subprocess.check_output(cmd, stderr = subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError as e:
-                print "MAKE CLEAN ERROR"
-                print "''''''''''''''''"
-                print e.output
+                print("MAKE CLEAN ERROR")
+                print("''''''''''''''''")
+                print(e.output)
         os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 

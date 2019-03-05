@@ -28,7 +28,7 @@ import csv
 import datetime
 import copy
 from Cheetah.Template import Template
-from Tkconstants import NONE
+from tkinter.constants import NONE
 
 #
 # Python extention modules and custom interfaces
@@ -108,7 +108,7 @@ class Packet:
 
     def err_msg(self, msg):
         global tlm_input_line_num
-        print msg, "at input line ", tlm_input_line_num
+        print(msg, "at input line ", tlm_input_line_num)
         exit(1)
 
     def duration(self, line):
@@ -428,48 +428,48 @@ class Packet:
 
         if (verbose):
             if tlm_duration is not None:
-                print "Duration (in seconds only): %f" % tlm_duration
+                print("Duration (in seconds only): %f" % tlm_duration)
             if tlm_period is not None:
-                print  "Run or Sample Period (in hz. only): %f" % tlm_period
+                print("Run or Sample Period (in hz. only): %f" % tlm_period)
 
             if self.m_freq is not None:
-                print "Packet frequency (Hz.): " + str(self.m_freq)
+                print("Packet frequency (Hz.): " + str(self.m_freq))
 
             if self.m_offset is not None:
-                print "Packet offset: " + str(self.m_offset)
+                print("Packet offset: " + str(self.m_offset))
 
 
-            print "packet size in bits: " + str(self.m_bit_index) + " (" + str(self.m_bit_index / 8) + " bytes)"
-            print "Number of fixed-value fields:" + str(self.m_num_fixed_fields) + ", variable fields: " + str(self.m_num_variable_fields)
-            print "name: ", self.m_name
-            print "packet ID: ", self.m_id, ", comment: ", self.m_id_comment
+            print("packet size in bits: " + str(self.m_bit_index) + " (" + str(self.m_bit_index / 8) + " bytes)")
+            print("Number of fixed-value fields:" + str(self.m_num_fixed_fields) + ", variable fields: " + str(self.m_num_variable_fields))
+            print("name: ", self.m_name)
+            print("packet ID: ", self.m_id, ", comment: ", self.m_id_comment)
 
-            print "Number of items in packet header list:         ", len(self.m_header_list)
-            print "Number of general items in packet header list: ", self.num_header_general_fields
-            print "Maximum field size in bits:                    ", self.m_max_field_bits
+            print("Number of items in packet header list:         ", len(self.m_header_list))
+            print("Number of general items in packet header list: ", self.num_header_general_fields)
+            print("Maximum field size in bits:                    ", self.m_max_field_bits)
             for field in self.m_header_list:
-                print "\tType:         ", field.m_type
-                print "\tID:           ", field.m_id
-                print "\tStart bit:    ", field.m_bit_start
-                print "\tSize in bits: ", field.m_bits
-                print "\tComment:      ", field.m_comment
-            print ""
+                print("\tType:         ", field.m_type)
+                print("\tID:           ", field.m_id)
+                print("\tStart bit:    ", field.m_bit_start)
+                print("\tSize in bits: ", field.m_bits)
+                print("\tComment:      ", field.m_comment)
+            print("")
 
-            print "Number of items in packet item list: ", len(self.m_item_list)
+            print("Number of items in packet item list: ", len(self.m_item_list))
             i = 0
             for item in self.m_item_list:
                 i += 1
-                print "Item # ", i
-                print "\tis_reserve:     ", item.m_is_reserve
-                print "\tis_constant:    ", item.m_is_constant
-                print "\tname:           ", item.m_name
-                print "\tid:             ", item.m_id
-                print "\tdata type:      ", item.m_data_type
-                print "\tconstant value: ", item.m_constant_value
-                print "\tstart bit:      ", item.m_bit_start
-                print "\tbits:           ", item.m_bits
-                print "\tcomment:        ", item.m_comment
-            print
+                print("Item # ", i)
+                print("\tis_reserve:     ", item.m_is_reserve)
+                print("\tis_constant:    ", item.m_is_constant)
+                print("\tname:           ", item.m_name)
+                print("\tid:             ", item.m_id)
+                print("\tdata type:      ", item.m_data_type)
+                print("\tconstant value: ", item.m_constant_value)
+                print("\tstart bit:      ", item.m_bit_start)
+                print("\tbits:           ", item.m_bits)
+                print("\tcomment:        ", item.m_comment)
+            print()
 
         if (self.m_name == ""):
             self.err_msg("Preceeding packet has no name")
@@ -522,7 +522,7 @@ class CsvLine:
         if (kw in self.keywords):
             self.keywords[kw](line)
         else:
-            print "Invalid keyword '" + line[0] + "' at line ", tlm_input_line_num
+            print("Invalid keyword '" + line[0] + "' at line ", tlm_input_line_num)
             exit(1)
 
     def finish(self):
@@ -542,7 +542,7 @@ class CsvFile:
         try:
             m_fp = open(name, "rU")
         except:
-            print("Error opening " + name)
+            print(("Error opening " + name))
             exit()
         m_reader = csv.reader(m_fp, dialect = 'excel')
 
@@ -674,7 +674,7 @@ def output_cpp(output_file, template_file):
         t.tlm_period = -1
 
     f = open(output_file, "w")
-    print >>f, t
+    print(t, file=f)
 
 def output_html():
     global tlm_packet_list
