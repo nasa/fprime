@@ -189,7 +189,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.info('Open file: %s' % filename)
         self.__fp = open(filename,'w')
         if self.__fp == None:
-            raise "Could not open %s file." % filename
+            raise Exception("Could not open %s file.") % filename
         DEBUG.info('Completed')
 
 

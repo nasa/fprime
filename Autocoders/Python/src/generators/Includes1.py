@@ -76,7 +76,7 @@ class Includes1:
             visitor.includes1Visit(self.__obj)
         else:
             DEBUG.error('Includes1.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Includes1.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Includes1.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class Includes1:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('Includes1.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Includes1.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Includes1.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

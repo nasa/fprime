@@ -76,7 +76,7 @@ class MdStartPage:
             visitor.mdStartPage(self.__obj)
         else:
             DEBUG.error('MDStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'MdStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('MdStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class MdStartPage:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('MdStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'MdStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('MdStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

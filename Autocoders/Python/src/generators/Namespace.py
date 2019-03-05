@@ -77,7 +77,7 @@ class Namespace:
             visitor.namespaceVisit(self.__obj)
         else:
             DEBUG.error('Namespace.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Namespace.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Namespace.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -89,7 +89,7 @@ class Namespace:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('Namespace.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Namespace.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Namespace.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

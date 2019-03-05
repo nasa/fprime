@@ -717,7 +717,7 @@ class Formatters(object):
         # Check charactors
         if len( re.findall('[^A-Z0-9_]',name_string) ) != 0:
             PRINT.info("ERROR: DETECTED INVALID CHARACTER IN COMMAND STEM NAME (%s)." % name_string)
-            raise "Fatal error detected invalid character in command stem name."
+            raise Exception("Fatal error detected invalid character in command stem name.")
         # All is ok
         return name_string
 
@@ -739,7 +739,7 @@ class Formatters(object):
         for c in cmds:
             if sum(map(lambda x: int(x == c), cmds)) > 1:
                 PRINT.info("ERROR: DETECTED %s COMMAND STEM NAME REPEATED." % c)
-                raise "Error detected repeated command stem name."
+                raise Exception("Error detected repeated command stem name.")
         return True
 
 
@@ -1147,12 +1147,12 @@ class Formatters(object):
         l_paren = one_line.find("(")
         if l_paren == -1:
             PRINT.info("ERROR: No left paren in function name passed to formatFun: %s." % one_line)
-            raise "No left paren in function name passed to formatFun."
+            raise Exception("No left paren in function name passed to formatFun.")
 
         two_chunks = one_line.split("(")
         if len(two_chunks) != 2:
             PRINT.info("ERROR: Too many left parens in name passed to formatFun: %s" % one_line)
-            raise "Too many left parens in name passed to formatFun."
+            raise Exception("Too many left parens in name passed to formatFun.")
 
         type_and_name = two_chunks[0]
         args          = two_chunks[1]

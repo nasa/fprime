@@ -60,19 +60,19 @@ class AbstractGenerator:
         Main execution point.
         Calls the accept method on each visitor to generate the code.
         """
-        raise "AbstractGenerator.__call__() - Implementation Error: you must supply your own concrete implementation."
+        raise Exception("AbstractGenerator.__call__() - Implementation Error: you must supply your own concrete implementation.")
 
     def accept(self, visitor):
         """
         Execute the visit call on this object.
         """
-        raise "AbstractFace.accept.accept(v) - Implementation Error: you must supply your own concrete implementation."
+        raise Exception("AbstractFace.accept.accept(v) - Implementation Error: you must supply your own concrete implementation.")
 
     def addVisitor(self, visitor):
         """
 	    Method to add the visitor to a list of visitors.
 	    """
-        raise "AbstractFace.accept.addVisitor(v) - Implementation Error: you must supply your own concrete implementation."
+        raise Exception("AbstractFace.accept.addVisitor(v) - Implementation Error: you must supply your own concrete implementation.")
 
 
 if __name__ == '__main__':

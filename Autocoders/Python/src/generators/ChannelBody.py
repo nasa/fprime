@@ -76,7 +76,7 @@ class ChannelBody:
             visitor.channelBodyVisit(self.__obj)
         else:
             DEBUG.error('ChannelBody.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'ChannelBody.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('ChannelBody.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class ChannelBody:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('ChannelBody.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'ChannelBody.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('ChannelBody.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

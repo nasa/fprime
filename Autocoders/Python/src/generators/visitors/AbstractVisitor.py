@@ -63,13 +63,13 @@ class AbstractVisitor:
         Defined to generate files for generated code products.
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.initFilesVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.initFilesVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def startSourceFilesVisit(self, obj):
         """
         Defined to generate starting static code within files.
         """
-        raise '# AbstractVisitor.startSourceFilesVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.startSourceFilesVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def includes1Visit(self, obj):
         """
@@ -77,7 +77,7 @@ class AbstractVisitor:
         Usually used for the base classes but also for Port types
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.includesVisit1() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.includesVisit1() - Implementation Error: you must supply your own concrete implementation.')
 
     def includes2Visit(self, obj):
         """
@@ -85,7 +85,7 @@ class AbstractVisitor:
         Usually used for data type includes and system includes.
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.includesVisit2() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.includesVisit2() - Implementation Error: you must supply your own concrete implementation.')
 
     def namespaceVisit(self, obj):
         """
@@ -93,53 +93,53 @@ class AbstractVisitor:
         Also any pre-condition code is generated.
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.namespaceVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.namespaceVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.publicVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.publicVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.protectedVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.protectedVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        raise '# AbstractVisitor.privateVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.privateVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def finishSourceFilesVisit(self, obj):
         """
         Defined to generate ending static code within files.
         """
-        raise '# AbstractVisitor.endSourceFilesVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# AbstractVisitor.endSourceFilesVisit() - Implementation Error: you must supply your own concrete implementation.')
 
 
     def DictStartVisit(self, obj):
         """
         Defined to generate start of command Python class.
         """
-        raise '# DictStartVisit.startCommandVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# DictStartVisit.startCommandVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def DictHeaderVisit(self, obj):
         """
         Defined to generate header for Python command class.
         """
-        raise '# DictStartVisit.commandHeaderVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# DictStartVisit.commandHeaderVisit() - Implementation Error: you must supply your own concrete implementation.')
 
     def DictBodyVisit(self, obj):
         """
         Defined to generate body for Python command class.
         """
-        raise '# DictStartVisit.commandBodyVisit() - Implementation Error: you must supply your own concrete implementation.'
+        raise Exception('# DictStartVisit.commandBodyVisit() - Implementation Error: you must supply your own concrete implementation.')
 
 
     def isSync(self, str):

@@ -76,7 +76,7 @@ class InstanceDictBody:
             visitor.DictBodyVisit(self.__obj , topology_model)
         else:
             DEBUG.error('InstanceDictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'InstanceDictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('InstanceDictBodyVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class InstanceDictBody:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('InstanceDictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'InstanceDictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('InstanceDictBodyVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

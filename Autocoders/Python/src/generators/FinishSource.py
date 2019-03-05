@@ -76,7 +76,7 @@ class FinishSource:
             visitor.finishSourceFilesVisit(self.__obj)
         else:
             DEBUG.error('FinishSource.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'FinishSource.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('FinishSource.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class FinishSource:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('FinishSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'FinishSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('FinishSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

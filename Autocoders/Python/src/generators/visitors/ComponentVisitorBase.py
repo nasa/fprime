@@ -865,7 +865,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         DEBUG.info('Open file: %s' % filename)
         self.__fp = open(filename,'w')
         if self.__fp == None:
-            raise "Could not open file %s" % filename
+            raise Exception("Could not open file %s") % filename
         DEBUG.info('Completed')
 
     def initFilesVisit(self, obj):

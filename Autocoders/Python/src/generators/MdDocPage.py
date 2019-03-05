@@ -76,7 +76,7 @@ class MdDocPage:
             visitor.mdPageVisit(self.__obj)
         else:
             DEBUG.error('MdDoc.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'MdDoc.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('MdDoc.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class MdDocPage:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('MdDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'MdDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('MdDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

@@ -76,7 +76,7 @@ class CommandBody:
             visitor.commandBodyVisit(self.__obj)
         else:
             DEBUG.error('startCommandVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'startCommandVisit.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('startCommandVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class CommandBody:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('startCommandVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'startCommandVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('startCommandVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

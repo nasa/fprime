@@ -76,7 +76,7 @@ class DictHeader:
             visitor.DictHeaderVisit(self.__obj)
         else:
             DEBUG.error('DictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'DictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('DictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class DictHeader:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('DictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'DictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('DictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):
