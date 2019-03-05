@@ -1030,8 +1030,10 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         html_doc_generator.configureVisitor(base + "_Html", "HtmlDocVisitor", True, True)
         htmlStart   = html_doc_generator.create("HtmlStart")
         htmlDoc     = html_doc_generator.create("HtmlDoc")
+        finisher    = html_doc_generator.create("finishSource")
         htmlStart(component_model)
         htmlDoc(component_model)
+        finisher(component_model)
 
     if opt.md_docs:
         if opt.md_doc_dir == None:
@@ -1043,8 +1045,10 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         md_doc_generator.configureVisitor(base + "_Md", "MdDocVisitor", True, True)
         mdStart   = md_doc_generator.create("MdStart")
         mdDoc     = md_doc_generator.create("MdDoc")
+        finisher  = md_doc_generator.create("finishSource")
         mdStart(component_model)
         mdDoc(component_model)
+        finisher(component_model)
 
 def generate_port(the_parsed_port_xml, port_file):
     """
