@@ -190,7 +190,7 @@ class TopoFactory:
                 sys.exit(-1)
             event_id_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
         channel_id_list = []
@@ -204,7 +204,7 @@ class TopoFactory:
                 sys.exit(-1)
             channel_id_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
 
@@ -544,7 +544,7 @@ class TopoFactory:
                 PRINT.info("{} instance reseting base id window range to size calculated from the component XML file ({})".format(n,w))
 
 
-        if w < component_calculated_window_range:
+        if component_calculated_window_range is not None and w < component_calculated_window_range:
             PRINT.info("ERROR: The specified window range for component {} is {}, which is smaller than the calculated window range of {}. Please check the instance definitions in the topology xml file.".format(n , w , component_calculated_window_range))
 
         return [n, b, w , inst , component_calculated_window_range , self.__compute_component_ID_amount(comp)]

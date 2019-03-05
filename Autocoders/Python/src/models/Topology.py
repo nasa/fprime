@@ -53,8 +53,8 @@ class Topology(object):
         self.__instance_header_dict = {} #The key is a val from the __instance_xml_list, the associated value is either a path to where the header file is located or a None. If the value is a None, "predict" where the file loc will be
         self.__prepend_instance_name = prepend_instance_name
 
-	self.is_ptr = False
-	self.connect_only = False
+        self.is_ptr = False
+        self.connect_only = False
 
     def get_namespace(self):
         return self.__namespace

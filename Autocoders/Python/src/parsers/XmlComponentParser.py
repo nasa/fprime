@@ -961,7 +961,8 @@ class XmlComponentParser(object):
         if not self.__const_parser.has_option(section,var):
             PRINT.info("%s: Config file %s has no variable %s in section %s"%(file,self.Config._ConfigManager__prop['constants']['constants_file'],var,section))
             sys.exit(-1)
-        return self.__const_parser.get(section,var)
+        # Python 3's SafeConfigParser isn't stripping comments, this fixes that problem
+        return self.__const_parser.get(section,var).split(";")[0]
 
     def is_component(self):
         """
