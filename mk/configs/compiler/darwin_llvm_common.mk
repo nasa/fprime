@@ -28,6 +28,7 @@ LINK_LIBS := -ldl -lpthread -lm -lc++
 
 OPT_SPEED := -Os
 DEBUG := -g3
+POST_LINK_BIN := echo
 
 DARWIN_LLVM_CFLAGS := $(LINUX_FLAGS_COMMON) \
 					$(COMMON_DEFINES) \
