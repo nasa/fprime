@@ -63,6 +63,8 @@
 
 "Autocoder test comp_no_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_no_namespace)
 "Autocoder test comp_diff_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_diff_namespace)
+#TODO: Fix "Autocoder test comp_no_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_no_namespace)
+"Autocoder test comp_diff_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_diff_namespace)
 
 "Autocoder test port_loopback" $(BUILD_ROOT)/ptf/std/RebuildModule.py ENV(MODULE=Autocoders/Python/test/port_loopback)
 #TODO: fix "Autocoder test serial_passive" $(BUILD_ROOT)/ptf/std/RebuildModule.py ENV(MODULE=Autocoders/Python/test/serial_passive)

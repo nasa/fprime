@@ -47,7 +47,7 @@
   this->assertTlm_somechan(__FILE__, __LINE__, index, value)
 
 // ----------------------------------------------------------------------
-// Macros for event history assertions
+// Macros for event history assertions 
 // ----------------------------------------------------------------------
 
 #define ASSERT_EVENTS_SIZE(size) \
