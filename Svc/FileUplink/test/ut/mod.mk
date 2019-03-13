@@ -19,6 +19,7 @@ TEST_MODS= \
 	Fw/Time \
 	Fw/Tlm \
 	Fw/Types \
+	Utils/Hash \
 	Os \
 	Svc/FileUplink \
 	gtest

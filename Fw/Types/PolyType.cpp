@@ -403,7 +403,7 @@ namespace Fw {
     SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
 
         // store type
-        SerializeStatus stat = buffer.serialize(static_cast<I32> (this->m_dataType));
+        SerializeStatus stat = buffer.serialize(static_cast<FwEnumStoreType> (this->m_dataType));
 
         // switch on type
         switch (this->m_dataType) {
@@ -459,7 +459,7 @@ namespace Fw {
 
     SerializeStatus PolyType::deserialize(SerializeBufferBase& buffer) {
         // get type
-        I32 des;
+        FwEnumStoreType des;
         SerializeStatus stat = buffer.deserialize(des);
 
         if (stat != FW_SERIALIZE_OK) {

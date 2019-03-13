@@ -598,7 +598,7 @@ namespace Svc {
   {
     const Fw::FilePacket::DataPacket dataPacket = {
       { Fw::FilePacket::T_DATA, this->sequenceIndex++ },
-      byteOffset,
+      static_cast<U32>(byteOffset),
       PACKET_SIZE,
       packetData
     };

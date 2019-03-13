@@ -19,8 +19,9 @@
 namespace Fw {
     class ActiveComponentBase : public QueuedComponentBase {
         public:
-            void start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize); //!< called by instantiator when task is to be started
+            void start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity = -1); //!< called by instantiator when task is to be started
             void exit(void); //!< exit task in active component
+            Os::Task::TaskStatus join(void **value_ptr); //!< provide return value of thread if value_ptr is not NULL
 
             enum {
                 ACTIVE_COMPONENT_EXIT //!< message to exit active component task
@@ -31,7 +32,7 @@ namespace Fw {
             ActiveComponentBase(const char* name); //!< Constructor
 #else
             ActiveComponentBase(); //!< Constructor
-#endif            
+#endif
             virtual ~ActiveComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization code
             virtual void preamble(void); //!< A function that will be called before the event loop is entered

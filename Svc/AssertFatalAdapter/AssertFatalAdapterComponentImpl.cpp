@@ -137,7 +137,7 @@ namespace Svc {
 
       I8 msg[FW_ASSERT_TEXT_SIZE];
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      printf("%s\n",(const char*)msg);
+      fprintf(stderr, "%s\n",(const char*)msg);
 
       switch (numArgs) {
           case 0:

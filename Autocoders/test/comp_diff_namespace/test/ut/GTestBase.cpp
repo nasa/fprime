@@ -75,28 +75,28 @@ namespace Components {
     assertCmdResponse(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         const Fw::CommandResponse response
     )
     const
   {
-    ASSERT_LT(index, this->cmdResponseHistory->size())
+    ASSERT_LT(__index, this->cmdResponseHistory->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into command response history\n"
       << "  Expected: Less than size of command response history (" 
       << this->cmdResponseHistory->size() << ")\n"
-      << "  Actual:   " << index << "\n";
-    const CmdResponse& e = this->cmdResponseHistory->at(index);
+      << "  Actual:   " << __index << "\n";
+    const CmdResponse& e = this->cmdResponseHistory->at(__index);
     ASSERT_EQ(opCode, e.opCode)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Opcode at index "
-      << index
+      << __index
       << " in command response history\n"
       << "  Expected: " << opCode << "\n"
       << "  Actual:   " << e.opCode << "\n";
@@ -105,7 +105,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command sequence number at index "
-      << index
+      << __index
       << " in command response history\n"
       << "  Expected: " << cmdSeq << "\n"
       << "  Actual:   " << e.cmdSeq << "\n";
@@ -114,7 +114,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command response at index "
-      << index
+      << __index
       << " in command resopnse history\n"
       << "  Expected: " << response << "\n"
       << "  Actual:   " << e.response << "\n";
@@ -164,27 +164,27 @@ namespace Components {
     assertTlm_somechan(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const Ref::Gnc::Quaternion& val
     )
     const
   {
-    ASSERT_LT(index, this->tlmHistory_somechan->size())
+    ASSERT_LT(__index, this->tlmHistory_somechan->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel somechan\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_somechan->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const TlmEntry_somechan& e =
-      this->tlmHistory_somechan->at(index);
+      this->tlmHistory_somechan->at(__index);
     ASSERT_EQ(val, e.arg)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
-      << index
+      << __index
       << " on telmetry channel somechan\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
@@ -234,28 +234,28 @@ namespace Components {
     assertEvents_SomeEvent(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const Ref::Gnc::Quaternion arg1,
         const F32 arg2,
         const U8 arg3
     ) const
   {
-    ASSERT_GT(this->eventHistory_SomeEvent->size(), index)
+    ASSERT_GT(this->eventHistory_SomeEvent->size(), __index)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event SomeEvent\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_SomeEvent->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const EventEntry_SomeEvent& e =
-      this->eventHistory_SomeEvent->at(index);
+      this->eventHistory_SomeEvent->at(__index);
     ASSERT_EQ(arg1, e.arg1)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument arg1 at index "
-      << index
+      << __index
       << " in history of event SomeEvent\n"
       << "  Expected: " << arg1 << "\n"
       << "  Actual:   " << e.arg1 << "\n";
@@ -264,7 +264,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument arg2 at index "
-      << index
+      << __index
       << " in history of event SomeEvent\n"
       << "  Expected: " << arg2 << "\n"
       << "  Actual:   " << e.arg2 << "\n";
@@ -273,7 +273,7 @@ namespace Components {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument arg3 at index "
-      << index
+      << __index
       << " in history of event SomeEvent\n"
       << "  Expected: " << arg3 << "\n"
       << "  Actual:   " << e.arg3 << "\n";

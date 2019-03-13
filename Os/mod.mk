@@ -15,12 +15,15 @@ SRC = 			TaskCommon.cpp \
 				TaskString.cpp \
 				QueueCommon.cpp \
 				QueueString.cpp \
+				IPCQueueCommon.cpp \
 				SimpleQueueRegistry.cpp \
 				MemCommon.cpp \
 				ValidateFileCommon.cpp \
-				ValidatedFile.cpp 
+				ValidatedFile.cpp \
+				FileCommon.cpp
 
 HDR = 			Queue.hpp \
+				IPCQueue.hpp \
 				QueueString.hpp \
 				SimpleQueueRegistry.hpp \
 				Task.hpp \
@@ -31,10 +34,12 @@ HDR = 			Queue.hpp \
 				Mutex.hpp \
 				File.hpp \
 				ValidateFile.hpp \
-				ValidatedFile.hpp \
-				FileSystem.hpp
+				FileSystem.hpp \
+				LocklessQueue.hpp \
+				ValidatedFile.hpp
 
-SRC_LINUX=      Pthreads/Queue.cpp \
+SRC_LINUX=      Posix/IPCQueue.cpp \
+               	Pthreads/Queue.cpp \
                	Pthreads/BufferQueueCommon.cpp \
                 Pthreads/PriorityBufferQueue.cpp \
                 Pthreads/MaxHeap/MaxHeap.cpp \
@@ -46,9 +51,11 @@ SRC_LINUX=      Pthreads/Queue.cpp \
 				X86/IntervalTimer.cpp \
 				Linux/IntervalTimer.cpp \
 				Posix/Mutex.cpp \
-				Linux/FileSystem.cpp
+				Linux/FileSystem.cpp \
+				Posix/LocklessQueue.cpp
 
-SRC_DARWIN =    Pthreads/Queue.cpp \
+SRC_DARWIN =    MacOs/IPCQueueStub.cpp \ # NOTE(mereweth) - provide a stub that only works in single-process, not IPC
+               	Pthreads/Queue.cpp \
                 Pthreads/BufferQueueCommon.cpp \
                 Pthreads/PriorityBufferQueue.cpp \
                 Pthreads/MaxHeap/MaxHeap.cpp \
@@ -60,7 +67,8 @@ SRC_DARWIN =    Pthreads/Queue.cpp \
 				X86/IntervalTimer.cpp \
 				MacOs/IntervalTimer.cpp \
 				Posix/Mutex.cpp \
-				Linux/FileSystem.cpp
+				Linux/FileSystem.cpp  \
+				Posix/LocklessQueue.cpp
 
 SRC_CYGWIN =    Pthreads/Queue.cpp \
                	Pthreads/BufferQueueCommon.cpp \
