@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import fprime.gds.utils.PortFinder
 import sys
 import subprocess
 import os
@@ -10,18 +9,6 @@ from optparse import OptionParser
 
 def main(argv=None):
     
-    start_port = 50000
-    end_port = 50100
-    used_port = None
-    nobin = True
-
-    hostname = os.uname()[1]
-    if (hostname == "dieb-sse.jpl.nasa.gov") :
-        addr = "192.168.0.1"
-    else :
-        addr = "192.168.0.33"
-    print ("Using address %s"%addr)
-
     python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
     
     for port in range(start_port,end_port):
@@ -37,8 +24,8 @@ def main(argv=None):
     build_root = os.environ["BUILD_ROOT"]
     
     parser = OptionParser()
-    parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: %default]", default=used_port)
-    parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set the threaded TCP socket server address [default: %default]", default=addr)
+    parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: %default]", default=50000)
+    parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set the threaded TCP socket server address [default: %default]", default="localhost")
     parser.add_option("-n", "--nobin", dest="nobin", action="store_true", help="Disables the binary app from starting [default: %default]", default=False)
     parser.add_option("-t", "--twin", dest="twin", action="store_true", help="Runs Threaed TCP Server in window, otherwise backgrounds [default: %default]", default=False)
 
@@ -68,29 +55,8 @@ def main(argv=None):
     #print ("GUI: %s"%" ".join(GUI_args))
     GUI = subprocess.Popen(GUI_args)
     
-    # run Ref app
-    
-    op_sys = os.uname()[0]
-    
-    ref_bin = "%s/Ref/%s/Ref"%(build_root,os.environ["OUTPUT_DIR"])
-    
-    if not nobin:
-        REF_args = [python_bin,"%s/Gse/bin/pexpect_runner.py"%build_root,"Ref.log","Ref Application",ref_bin,"-p","%d"%used_port,"-a",addr]
-        REF = subprocess.Popen(REF_args)
-    
     GUI.wait()
 
-    if not nobin:
-        try:
-            REF.send_signal(signal.SIGTERM)
-        except:
-            pass
-            
-        try:
-            REF.wait()
-        except:
-            pass
-            
     try:
         TTS.send_signal(signal.SIGINT)
     except:

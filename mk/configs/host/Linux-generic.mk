@@ -22,4 +22,8 @@ JOBS := -j 4
 
 CRC := $(BUILD_ROOT)/mk/bin/run_file_crc.sh
 
+
+export PI_TOOLS := /opt/tools/rpi
+
+
 SYMBOL_CHECK := echo

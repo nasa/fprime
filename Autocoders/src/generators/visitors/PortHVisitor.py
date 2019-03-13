@@ -219,6 +219,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = startPortH.startPortH()
         c.name = obj.get_type
+        c.name_space = obj.get_namespace()
         d = datetime.datetime.now()
         c.date = d.strftime("%A, %d %B %Y")
         c.user = os.environ['USER']
@@ -370,6 +371,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         else:
             c.namespace_list = obj.get_namespace().split('::')
         c.name = obj.get_type()
+        c.name_space = obj.get_namespace();
         c.desc = obj.get_comment()
         c.args_string = self._get_args_string(obj)
         r = obj.get_return()

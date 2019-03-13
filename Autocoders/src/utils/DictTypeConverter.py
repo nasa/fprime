@@ -10,6 +10,7 @@ class DictTypeConverter(object):
         type_string = ""
         type_name = t
         ser_import = None
+        use_size = False if size is None else True
         # check for enums
         if (type(t) == type(tuple())):
             # extract enumeration arguments
@@ -34,6 +35,7 @@ class DictTypeConverter(object):
             type_name = "enum"
         # otherwise, lookup type translation in table
         elif t == "string":
+            use_size = False
             type_string += "StringType(max_string_len=%s)"%size
         else:
             type_lookup = {
@@ -56,7 +58,7 @@ class DictTypeConverter(object):
                 ser_type = t.split("::")
                 type_string += "%s.%s()" %(".".join(ser_type),ser_type[-1])
                 ser_import = ".".join(ser_type)
-        return (type_string,ser_import,type_name)
+        return (type_string,ser_import,type_name,use_size)
     
     def format_replace(self, format_string, spec_num, old, new):
         """

@@ -12,4 +12,7 @@ CXXFLAGS :=	$(DEBUG) \
 			$(LINUX_GNU_INCLUDES) \
 			$(UT_FLAGS)
 
+# for e.g. *Intercepter functions in Os/Stubs
+LINK_BIN_FLAGS := -z muldefs $(LINK_BIN_FLAGS)
+
 COMPILER := linux-x86-debug-gnu-ut-nocov

@@ -7,7 +7,7 @@ DICT_GEN := "GLOBAL"
 
 #DICT_TYPE specifies what type of dictionary to generate, with the two arguments being "DEFAULT" or "AMPCS". 
 #"DEFAULT" is the default if the var is not set or is set to the wrong value. 
-DICT_TYPE := "XML"
+DICT_TYPE := "DEFAULT"
 
 # Python path addition for ACTOOLS
 
@@ -36,6 +36,8 @@ AMPCS_DICT_DEPLOYMENT_SUBDIR := dict/AMPCS
 AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsCommandMerge.py
 AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsEventMerge.py
 AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsTelemetryMerge.py
+
+TELEMETRY_PACKETIZER := $(BUILD_ROOT)/mk/bin/run_tlm_packetizer.sh
 
 
 ifeq ($(DICT_GEN),"GLOBAL")

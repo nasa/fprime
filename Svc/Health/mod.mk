@@ -23,6 +23,4 @@ SRC_CYGWIN = Stub/HealthComponentStubChecks.cpp
 
 SRC_DARWIN = Stub/HealthComponentStubChecks.cpp
 
-SRC_BAERAD750 = VxWorks/HealthComponentVxWorksChecks.cpp
-
-SRC_SPHINX = VxWorks/HealthComponentVxWorksChecks.cpp
+SRC_RASPIAN = Stub/HealthComponentStubChecks.cpp	

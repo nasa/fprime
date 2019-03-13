@@ -1,6 +1,6 @@
 // ====================================================================== 
 // \title  BufferManager/test/ut/Tester.hpp
-// \author bocchino
+// \author mstarch
 // \brief  hpp file for BufferManager test harness implementation class
 //
 // \copyright
@@ -29,10 +29,18 @@ namespace Svc {
     public BufferManagerGTestBase
   {
 
+      // ----------------------------------------------------------------------
+      // Construction and destruction
+      // ----------------------------------------------------------------------
+
     public:
 
+      //! Construct object Tester
+      //!
       Tester(void);
 
+      //! Destroy object Tester
+      //!
       ~Tester(void);
 
     public:
@@ -41,41 +49,33 @@ namespace Svc {
       // Tests
       // ---------------------------------------------------------------------- 
 
-      // Allocate and free one buffer
-      void allocateAndFreeOne(void);
-
-      // Error: Free request with empty allocation queue
-      void allocationQueueEmpty(void);
-
-      // Error: Allocation request with full allocation queue
-      void allocationQueueFull(void);
-
-      // Error: Mismatched buffer ID
-      void idMismatch(void);
-
-      // Error: Store size exceeded
-      void storeSizeExceeded(void);
-
+      void three_buffer_problem(void);
     private:
 
       // ----------------------------------------------------------------------
       // Helper methods
       // ----------------------------------------------------------------------
 
+      //! Connect ports
+      //!
       void connectPorts(void);
 
+      //! Initialize components
+      //!
       void initComponents(void);
 
     private:
 
       // ----------------------------------------------------------------------
-      // The component under test 
+      // Variables
       // ----------------------------------------------------------------------
 
-      BufferManager bufferManager;
+      //! The component under test
+      //!
+      BufferManager component;
 
   };
 
-};
+} // end namespace Svc
 
 #endif

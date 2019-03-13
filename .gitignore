@@ -57,3 +57,7 @@ core
 ./Gds/docs/doxy
 
 *Dictionary.xml
+*TopologyAppID.csv 
+*TopologyAppAi_IDTableLog.txt
+
+.vscode

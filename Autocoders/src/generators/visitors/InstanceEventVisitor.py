@@ -177,7 +177,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                 s = arg_obj.get_size()
                 d = arg_obj.get_comment()
                 # convert XML types to Python classes                    
-                (type_string,ser_import,type_name) = DictTypeConverter.DictTypeConverter().convert(t,s)
+                (type_string,ser_import,type_name,dontcare) = DictTypeConverter.DictTypeConverter().convert(t,s)
                 if ser_import != None:
                     c.ser_import_list.append(ser_import)
                 # convert format specifier if necessary

@@ -340,7 +340,8 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             member_elem = etree.Element("member")
                             member_elem.attrib["name"] = member_name
                             member_elem.attrib["format_specifier"] = member_format_specifier
-                            member_elem.attrib["description"] = member_comment
+                            if member_comment != None:
+                                member_elem.attrib["description"] = member_comment
                             if type(member_type) == type(tuple()):
                                 enum_value = 0
                                 type_name = "%s::%s::%s"%(serializable_type,member_name,member_type[0][1])

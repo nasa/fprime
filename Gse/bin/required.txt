@@ -6,3 +6,6 @@ multiprocess
 pexpect
 Pmw
 tkintertable
+pyzmq
+numpy
+pillow

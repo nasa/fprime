@@ -56,6 +56,7 @@ SVC_MODULES := \
 	Svc/Time \
 	Svc/Cycle \
 	Svc/LinuxTime \
+	Svc/LinuxTimer \
 	Svc/ActiveLogger \
 	Svc/Fatal \
 	Svc/PolyIf \
@@ -73,16 +74,19 @@ SVC_MODULES := \
 	Svc/UdpReceiver
 	
 
-DRV_MODULES := \
+DEMO_DRV_MODULES := \
 	Drv/DataTypes \
 	Drv/BlockDriver \
-	Drv/GpioDriverPorts \
+	Drv/GpioDriverPorts
+		
+LINUX_DRV_MODULES := \
 	Drv/LinuxGpioDriver \
 	Drv/LinuxSerialDriver \
 	Drv/LinuxSpiDriver \
 	Drv/SerialDriverPorts \
-	Drv/SpiDriverPorts
-
+	Drv/SpiDriverPorts \
+	Drv/GpioDriverPorts
+	
 REF_MODULES := \
 	Ref/Top \
 	Ref/RecvBuffApp \
@@ -96,7 +100,7 @@ Ref_MODULES := \
 	\
 	$(SVC_MODULES) \
 	\
-	$(DRV_MODULES) \
+	$(DEMO_DRV_MODULES) \
 	\
 	$(FW_MODULES) \
 	\
@@ -167,6 +171,26 @@ ACDEVTEST_MODULES := \
     \
 	Autocoders/templates
 	
+RPI_APP_MODULES := \
+	RPI/Top \
+	RPI/RpiDemo
+	
+RPI_MODULES := \
+	\
+	$(RPI_APP_MODULES) \
+	\
+	$(SVC_MODULES) \
+	\
+	$(LINUX_DRV_MODULES) \
+	\
+	$(CFDP_MODULES) \
+  	\
+	$(FW_MODULES) \
+	\
+	$(OS_MODULES) \
+	\
+  	$(UTILS_MODULES)
+
 acdev_MODULES := \
 	$(FW_MODULES) \
 	\
@@ -184,7 +208,7 @@ OTHER_MODULES := \
 
 # List deployments
 
-DEPLOYMENTS := Ref acdev
+DEPLOYMENTS := Ref acdev RPI
 
 # Location of ground/gse software. Autocoded dictionary elements are copied here.
 GDS_MODULE := Gse

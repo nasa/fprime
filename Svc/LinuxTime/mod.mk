@@ -24,9 +24,7 @@ SRC_CYGWIN = LinuxTimeImpl.cpp
 
 SRC_DARWIN = DarwinTimeImpl.cpp
 
-SRC_BAERAD750 = VxWorksTimeImpl.cpp
-
-SRC_SPHINX = VxWorksTimeImpl.cpp
+SRC_RASPIAN = LinuxTimeImpl.cpp
 
 HDR = LinuxTimeImpl.hpp
 
