@@ -10,6 +10,9 @@ export MARKDOWN ?= markdown_py -x markdown.extensions.extra -x markdown.extensio
 
 FILE_HASH := $(BUILD_ROOT)/mk/bin/run_file_hash.sh
 
+SIZE = size
+CKSUM_SH := $(BUILD_ROOT)/mk/bin/md5.sh
+export CKSUM := /sbin/md5
 
 MAKE = make
 JOBS = -j 4
