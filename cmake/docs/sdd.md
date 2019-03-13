@@ -2,52 +2,58 @@
 
 ## 1 Introduction
 
-The CMake build system is a rewrite of the F´ make system used to streamline the build process, expand features, and bring F´ more in line with the greater C++ community by using
-a standardized tool rather than bespoke Makefiles.
+This document describes a new build system based on the popular open source tool cmake ![https://cmake.org/](https://cmake.org/) .  The software design document will present a set of requirements for the build system, some operational concepts, and the candidate build system design.   This build system is intended to replace the legacy F´ build system which is difficult to enhance and maintain.  The legacy F´ build system had was inherited from the JPL Mars Science Laboratory mission and created over 10 years ago.   Note: Usage guidelines for the new cmake system discussed here, can be found in the CMake system ![README.md](../README.md "README.md") . 
 
-This document seeks to describe the requirements, operations concept, and architecture of this make system in a formal way. **Note:** actual usage guidelines can be found in the
-CMake system README.md. ![F´ CMake README.md](../README.md "F´ CMake README.md") 
+## 1.1 Definitions
 
-## 1.1 Defitions
+These terms have specific meaning within this SDD. The table below gives a quick reference for the reader.
 
-**Host:** machine or architecture used to build the code.
-**Target:** machine or architecture for which the code is built.
-**Build Commands:** commands run through the make system.
-**In-Source Build:** generate build artifacts along-side source code.
-**Out-Of-Source Build:** generate build artifacts in a separate directory source code.
-**Build Configurations:** different build setups, like different targets, debug flags, different deployments. Typically these are isolated from one another.
-**F´ Module:** super set of F´ components and F´ ports.
-
+| Term | Meaning |
+|---|---|
+| **Host** | Machine or architecture used to build the code. |
+| **Target** | Machine or architecture for which the code is built. |
+| **Build Commands** | Commands run through the make system. |
+| **In-Source Build** | Generate build artifacts along-side source code. |
+| **Out-Of-Source Build** | Generate build artifacts in a separate directory source code. |
+| **Build Configurations** | Different build setups, like different targets, debug flags, different deployments. Typically these are isolated from one another. |
+| **F´ Module** | Super set of F´ components and F´ ports. |
+| **Deployments** | F´ binary/executable containing framework intended to run as F´. |
+| **Executable** | Binary built with the build system, not intended to run as F´ deployment |
 
 ## 2 Requirements
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-BUILD-01 | The build system shall use standardized tools to build F´. | Building and maintaining make systems requires community supported tools. | Inspection | 
-BUILD-02 | The build system shall run on Linux, and Mac OS. | F´ development at JPL takes place on Linux and Mac OS machines | Inspection |
-BUILD-03 | The build system shall provide templates for supporting other host OSes. | Templates make adding hosts easier. | Inspection |
-BUILD-04 | The build system shall provide templates for supporting other targets. | Templates make adding new targets easier. | Inspection |
-BUILD-05 | The build system shall provide a VxWorks target example. | VxWorks is common at JPL and makes a fantastic example. | Inspection |
+BUILD-01 | TThe build system shall support native F´ builds and installations on Linux, and Mac OS. | F´ development at JPL takes place on Linux and Mac OS machines | Inspection |
+BUILD-02 | The build system shall provide templates for supporting other host OSes. | Templates make adding hosts easier. | Inspection |
+BUILD-03 | The build system shall provide templates for supporting other targets. | Templates make adding new targets easier. | Inspection |
+BUILD-05 | The build system shall provide a cross-compiled target example. | Cross-compilation is common at JPL and must be provided as an example. | Inspection |
 BUILD-06 | The build system shall support custom build commands. | Custom build commands allow for extension of the build system. | Inspection |
-BUILD-07 | The build system shall support custom build commands. | Custom build commands allow for extension of the build system. | Inspection |
-BUILD-08 | The build system shall support individual component build. | Compiling a specific component can speed-up development. | Unit Test |
-BUILD-09 | The build system shall support unit test building and running system checks. | Unit testing is critical for proper development. | Unit Test |
-BUILD-10 | The build system shall support building deployments. | Deployments must build properly | Unit Test |
-BUILD-11 | The build system shall support integration with other build systems. | Some libraries come with other make systems. | Inspection |
-BUILD-12 | The build system shall not require specific ordering of all modules to build properly. | Ordering of all F´ is difficult when it must be explicit | Inspection |
-BUILD-13 | The build system shall support separate out-of-source building of F´ | Build artifacts are commonly kept separate from source code. | Inspection |
-BUILD-14 | The build system shall support executable and tool building | Not all of F´ is a deployment | Inspection |
-BUILD-15 | The build system shall support installation and distribution of outputs, headers, and libraries | Shipping of binary outputs is important for projects. | Inspection |
-BUILD-16 | The build system shall support user-configurable builds i.e. debug, release, etc. | F´ may need access to different build variants for debugging purposes | Inspection |
-BUILD-17 | The build system shall be easy to use including adding new components | F´'s current build system has a steep learning curve | Inspection |
-BUILD-18 | The build system shall not be explicitly slow. | Compilation times are non-trivial | Inspection |
-BUILD_19 | The build system shall isolation dependencies and builds per deployment-specific configuration | Current F´ has issues with global make config directory | Inspection |
-BUILD_20 | The build system shall not be difficult to set up | Porting to the new make system should not require massive efforts | Inspection |
-BUILD_21 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection |
-BUILD_22 | The build system shall not preclude building on Windows hosts. | Windows build are desired to be supported in the future. | Inspection |
-BUILD_23 | The build system shall not preclude building sub topologies. | Sub topologies are desired in the future. | Inspection |
-BUILD_24 | The build system shall not preclude building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection |
-BUILD_25 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection |
+BUILD-07 | The build system shall support individual component, port, and topology builds. | Compiling a specific component can speed-up development. | Unit Test |
+BUILD-08 | The build system shall support unit test building and running system checks. | Unit testing is critical for proper development. | Unit Test |
+BUILD-09 | The build system shall support building deployments. | Deployments must build properly | Unit Test |
+BUILD-10 | The build system shall support integration with other build systems. | Some libraries come with other make systems. | Inspection |
+BUILD-11 | The build system shall not require specific ordering of all modules to build properly. | Ordering of all F´ is difficult when it must be explicit | Inspection |
+BUILD-12 | The build system shall support separate out-of-source building of F´ | Build artifacts are commonly kept separate from source code. | Inspection |
+BUILD-13 | The build system shall support executable and tool building | Not all of F´ is a deployment | Inspection |
+BUILD-14 | The build system shall support installation and distribution of outputs, headers, and libraries | Shipping of binary outputs is important for projects. | Inspection |
+BUILD-15 | The build system shall support user-configurable builds i.e. debug, release, etc. | F´ may need access to different build variants for debugging purposes | Inspection |
+BUILD-16 | The build system shall be easy to use including adding new components | F´'s current build system has a steep learning curve | Inspection |
+BUILD-17 | The build system shall not be explicitly slow. | Compilation times are non-trivial | Inspection |
+BUILD_18 | Deployments shall configure dependencies independently. | Current F´ has issues with global make config directory | Inspection |
+BUILD_19 | The build system shall not be difficult to set up and configure. | Porting existing F´ deployments to the new make system should not require massive efforts | Inspection |
+BUILD_20 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection |
+BUILD_21 | The build system shall support Windows hosts. | Windows build are desired to be supported in the future. | Inspection |
+BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection |
+BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection |
+BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection |
+BUILD_25 | The build system shall support installation and packaging | | Inspection |
+BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | |
+BUILD_27 | The build system shall support explicit and implicit execution of the F´ Autocoder. | |
+BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | 
+BUILD_29 | The build system shall implement all user targets of the legacy F´ build system. | | 
+BUILD_30 | The build system shall support execution of individual, sets, or all GSE based integration tests. | |
+BUILD_31 | The build system shall support execution of individual, sets, or all F´ Autocoder and associated tooling tests. | |
 
 ## 3 Operations Concepts
 
@@ -59,7 +65,7 @@ become more difficult when using *in-source* builds.
 The CMake system will allow *in-source* builds, but only when operating precisely as the old make system is running. Thus there are three paradigms of operation for the CMake system. 
 These paradigms are described below. They are:
 
-1. (Recommended) Treating F´ as a sub-repo/library. Builds are performed out-of-source.
+1. (Recommended) Treating F´ as a library. Builds are performed out-of-source.
 2. Adding project code directly to F´. Builds are still performed out-of-source.
 3. (Highly Discouraged) Adding code to F´, building is done in-source.  **Note:** this will not work when running with the old make system.
 
@@ -68,9 +74,9 @@ build_raspi_debug). This keeps all of that configuration, and all of the outputs
 that the state is forgotten and something "wrong" is built. This is easily supported by options 1 and 2 as they use *out-of-source* builds.  Options 3, performing *in-source* builds
 becomes very difficult as any and all build artifacts must be purged. Thus, this option specifically is discouraged.
 
-### 3.1 (Recommended) Treating F´As a Sub-Repo or Library w/ Out-Of-Source Builds
+### 3.1 (Recommended) Treating F´As a Library w/ Out-Of-Source Builds
 
-In this design, F´is included as a sub-repository or sub directory to the project. All adaptations are kept out of the F´ directory, allowing for streamlined F´ update, patching, and 
+In this design, F´is included as a sub directory to the project. All adaptations are kept out of the F´ directory, allowing for streamlined F´ update, patching, and 
 freezing of the F´ core components. This could easily be extended to treat F´ as a library and link against it. Here builds are performed in user supplied directories. The user creates
 a named directory to build into, and then supplies cmake the configuration arguments to setup the build properly.
 
@@ -365,7 +371,7 @@ These functions assemble F´ from those constituents.
 
 ## 5 CMake Architecture
 
-As can be see thus far, most of the F´ build magic is encapsulated in CMake utility functions. This section will describe the primary functions and how they setup the F´ build. There are two primart
+As can be see thus far, most of the F´ build magic is encapsulated in CMake utility functions. This section will describe the primary functions and how they setup the F´ build. There are two primary
 functions in this architecture:
 
 1. generate_module: used to take a module and generate the build files for it
