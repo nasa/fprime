@@ -94,27 +94,27 @@ namespace Tlm {
     assertTlm_somechan(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const U32& val
     )
     const
   {
-    ASSERT_LT(index, this->tlmHistory_somechan->size())
+    ASSERT_LT(__index, this->tlmHistory_somechan->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel somechan\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_somechan->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const TlmEntry_somechan& e =
-      this->tlmHistory_somechan->at(index);
+      this->tlmHistory_somechan->at(__index);
     ASSERT_EQ(val, e.arg)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
-      << index
+      << __index
       << " on telmetry channel somechan\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";

@@ -97,7 +97,7 @@ namespace Tlm {
       void assertTlm_AQuat(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const U32 __index, /*!< The index*/
           const Ref::Gnc::Quaternion& val /*!< The channel value*/
       ) const;
 
