@@ -61,8 +61,6 @@
 "Autocoder test tlm1" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/tlm1)
 "Autocoder test tlm2" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/tlm2)
 
-"Autocoder test comp_no_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_no_namespace)
-"Autocoder test comp_diff_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_diff_namespace)
 #TODO: Fix "Autocoder test comp_no_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_no_namespace)
 "Autocoder test comp_diff_namespace" $(BUILD_ROOT)/ptf/std/GenRebuildUnitTest.py ENV(MODULE=Autocoders/Python/test/comp_diff_namespace)
 
