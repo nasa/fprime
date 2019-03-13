@@ -19,6 +19,8 @@ import os
 import copy
 from datetime import datetime, timedelta
 
+from fprime.gse.models.serialize.type_exceptions import *
+
 __author__ = "Kevin Dinkel"
 __copyright__ = "Copyright 2015, California Institute of Technology."
 __version__ = "1.0"
@@ -33,10 +35,10 @@ def __error(string):
   sys.exit(1)
 
 # try:
-from models.common.command import Descriptor
-from views.seq_panel import SeqBinaryWriter
-from controllers import command_loader
-from controllers import exceptions as gseExceptions
+from fprime.gse.models.common.command import Descriptor
+from fprime.gse.views.seq_panel import SeqBinaryWriter
+from fprime.gse.controllers import command_loader
+from fprime.gse.controllers import exceptions as gseExceptions
 
 # except:
 #  __error("The Gse source code was not found in your $PYTHONPATH variable. Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
@@ -122,10 +124,14 @@ def __parse(seqfile):
       # If the string contains a "." assume that it is a float:
       elif "." in arg:
         return float(arg)
+      elif arg == 'True' or arg == 'true' or arg == 'TRUE':
+        return True
+      elif arg == 'False' or arg == 'false' or arg == 'FALSE':
+        return False
       else:
         try:
           # See if it translates to an integer:
-          return int(arg)
+          return int(arg,0)
         except ValueError:
           try:
             # See if it translates to a float:
@@ -230,7 +236,7 @@ def __parse(seqfile):
               __errorLine(i, "Encountered sytax error parsing arguments")
         yield i, descriptor, seconds, useconds, mnemonic, args
 
-def generateSequence(inputFile, outputFile=None):
+def generateSequence(inputFile, outputFile=None, timebase=0xffff):
   '''
   Write a binary sequence file from a text sequence file
   @param inputFile: A text input sequence file name (usually a .seq extension)
@@ -242,15 +248,15 @@ def generateSequence(inputFile, outputFile=None):
     generated_command_path = generated_path + "/commands"
   except:
     __error("Environment variable 'GSE_GENERATED_PATH' not set. It should be set to something like '$BUILD_ROOT/Gse/generated/$DEPLOYMENT' and also added to $PYTHONPATH.")
-  command_loader = command_loader.CommandLoader.getInstance()
+  cmds = command_loader.CommandLoader.getInstance()
   try:
-    command_loader.create(generated_command_path)
+    cmds.create(generated_command_path)
   except gseExceptions.GseControllerUndefinedDirectoryException:
     __error("Environment variable 'GSE_GENERATED_PATH' is set to '" + generated_path + "'. This is not a valid directory. Make sure this variable is set correctly, and the GSE python deployment autocode as been installed in this location.")
 
   # Parse the input file:
   command_list = []
-  command_obj_dict = command_loader.getCommandDict()
+  command_obj_dict = cmds.getCommandDict()
   for i, descriptor, seconds, useconds, mnemonic, args in __parse(inputFile):
     # Make sure that command is in the command dictionary:
     if mnemonic in command_obj_dict:
@@ -272,7 +278,7 @@ def generateSequence(inputFile, outputFile=None):
       __errorLine(i, "'" + mnemonic + "' does not match any command in the command dictionary.")
 
   # Write to the output file:
-  writer = SeqBinaryWriter()
+  writer = SeqBinaryWriter(timebase=timebase)
   if not outputFile:
     outputFile = os.path.splitext(inputFile)[0] + ".bin"
   try:
@@ -287,8 +293,21 @@ if __name__ == "__main__":
   The main program if run from the commandline. Note that this file can also be used
   as a module by calling the generateSequence() function
   '''
-  if len(sys.argv) == 2 or len(sys.argv) == 3:
-    generateSequence(*sys.argv[1:])
+  timebase = 0xffff
+  good = False
+  args = copy.copy(sys.argv[1:])
+  try:
+    if "-t" in args:
+      index = args.index("-t")
+      timebase = int(args[index + 1], 0)
+      args = args[:index] + args[index + 2:]
+    good = True
+  except ValueError:
+    print "Could not parse time base: {0}".format(args[index + 1])
+  except IndexError:
+    print "No time base argument supplied to '-t' argument"
+  if (len(args) == 1 or len(args) == 2) and good:
+    generateSequence(*args, timebase=timebase)
   else:
     print "Usage: tinyseqgen sequence_file_in.seq [binary_sequence_file_out.bin]"
     print
@@ -296,6 +315,8 @@ if __name__ == "__main__":
     print
     print "Description: tinyseqgen takes a simple input sequence format (.seq),"
     print "and outputs a binary command sequence loadable by the Svc/SequenceFileLoader."
+    print
+    print "    -t <time base>: time base, set the time base integer. Defaults to: 0xFFFF"
     print
     print "Here, try out this example input sequence file (simple_sequence.seq):"
     print

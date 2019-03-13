@@ -18,10 +18,13 @@
 
 typedef void* (*pthread_func_ptr)(void*);
 
+//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(x,...)
+
 namespace Os {
     Task::Task() : m_handle(0), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false) {
     }
-    
+
     Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
 
         this->m_name = "TP_";
@@ -39,7 +42,7 @@ namespace Os {
         pthread_attr_t att;
         // clear att; can cause issues
         memset(&att,0,sizeof(att));
-        
+
         I32 stat = pthread_attr_init(&att);
         if (stat != 0) {
             printf("pthread_attr_init: (%d)(%d): %s\n",stat,errno,strerror(stat));
@@ -104,13 +107,13 @@ namespace Os {
 #elif defined TGT_OS_TYPE_DARWIN
 #else
         #error Unsupported OS!
-#endif        
+#endif
 
         // If a registry has been registered, register task
         if (Task::s_taskRegistry) {
             Task::s_taskRegistry->addTask(this);
         }
-        
+
         pthread_t* tid = new pthread_t;
         stat = pthread_create(tid,&att,(pthread_func_ptr)routine,arg);
 
@@ -134,28 +137,28 @@ namespace Os {
 
         return tStat;
     }
-    
+
     Task::TaskStatus Task::delay(NATIVE_UINT_TYPE milliseconds)
     {
         timespec time1;
-        
+
         time1.tv_sec = milliseconds/1000;
         time1.tv_nsec = (milliseconds%1000)*1000000;
-        
+
         timespec time2;
         time2.tv_sec = 0;
         time2.tv_nsec = 0;
-        
+
         timespec* sleepTimePtr = &time1;
         timespec* remTimePtr = &time2;
-        
+
         while (true) {
             int stat = nanosleep(sleepTimePtr,remTimePtr);
             if (0 == stat) {
                 return TASK_OK;
-            } else { // check errno  
+            } else { // check errno
                 if (EINTR == errno) { // swap pointers
-                    timespec* temp = remTimePtr; 
+                    timespec* temp = remTimePtr;
                     remTimePtr = sleepTimePtr;
                     sleepTimePtr = temp;
                     continue; // if interrupted, just continue
@@ -164,9 +167,9 @@ namespace Os {
                 }
             }
         }
-        
+
         return TASK_OK; // for coverage analysis
-        
+
     }
 
 
@@ -178,15 +181,15 @@ namespace Os {
         if (Task::s_taskRegistry) {
             Task::s_taskRegistry->removeTask(this);
         }
-        
+
     }
-    
+
     // FIXME: Need to find out how to do this for Posix threads
-    
+
     void Task::suspend(bool onPurpose) {
         FW_ASSERT(0);
     }
-                    
+
     void Task::resume(void) {
         FW_ASSERT(0);
     }
@@ -196,5 +199,19 @@ namespace Os {
         return false;
     }
 
-}
+    Task::TaskStatus Task::join(void **value_ptr) {
+        NATIVE_INT_TYPE stat = 0;
+        if (!(this->m_handle)) {
+            return TASK_JOIN_ERROR;
+        }
+        stat = pthread_join(*((pthread_t*) this->m_handle), value_ptr);
 
+        if (stat != 0) {
+            DEBUG_PRINT("join: %s\n", strerror(errno));
+            return TASK_JOIN_ERROR;
+        }
+        else {
+            return TASK_OK;
+        }
+    }
+}

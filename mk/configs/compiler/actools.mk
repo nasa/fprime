@@ -37,6 +37,8 @@ AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/Amp
 AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsEventMerge.py
 AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/src/converters/AmpcsTelemetryMerge.py
 
+TELEMETRY_PACKETIZER := $(BUILD_ROOT)/mk/bin/run_tlm_packetizer.sh
+
 
 ifeq ($(DICT_GEN),"GLOBAL")
 	AC_INTERFACE_GEN := $(CODE_GEN) --build_root
@@ -51,8 +53,13 @@ ifeq ($(DICT_TYPE) , "AMPCS")
 	AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root
 	AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only  --ampcs_topology_dict --dict_dir $(AMPCS_DICT_MODULE_SUBDIR)
 else
-	AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root --default_topology_dict --dict_dir $(DICT_MODULE_SUBDIR)
-	AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only  --default_topology_dict
+    ifeq ($(DICT_TYPE) , "XML")
+	   AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root
+	   AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only --xml_topology_dict
+	else
+	   AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root --default_topology_dict --dict_dir $(DICT_MODULE_SUBDIR)
+	   AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only  --default_topology_dict
+    endif	
 endif
 	
 else # local

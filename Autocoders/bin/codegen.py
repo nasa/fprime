@@ -18,6 +18,7 @@ from optparse import OptionParser
 
 from utils import Logger
 from utils import ConfigManager
+from utils import DictTypeConverter
 
 
 # Meta-model for Component only generation
@@ -34,6 +35,8 @@ from parsers import XmlComponentParser
 from parsers import XmlPortsParser
 from parsers import XmlSerializeParser
 from parsers import XmlTopologyParser
+
+from lxml import etree
 
 # Comment back in when converters added
 # from converters import AmpcsCommandConverter
@@ -156,6 +159,9 @@ def pinit():
     parser.add_option("-g", "--default_dict", dest="default_dict",
         help="Generate default GDS dictionary classes", action="store_true", default=False)
     
+    parser.add_option("-x", "--xml_topology_dict", dest="xml_topology_dict",
+        help="Generate XML GDS dictionary file", action="store_true", default=False)
+    
     parser.add_option("-T", "--default_topology_dict", dest="default_topology_dict",
         help="Generate default GDS topology dictionary classes", action="store_true", default=False)
     
@@ -204,7 +210,7 @@ def pinit():
 def generate_topology(the_parsed_topology_xml, xml_filename, opt):            
     DEBUG.debug("Topology xml type description file: %s" % xml_filename)
     generator = TopoFactory.TopoFactory.getInstance()
-    if not(opt.default_topology_dict or opt.ampcs_topology_dict):
+    if not(opt.default_topology_dict or opt.ampcs_topology_dict or opt.xml_topology_dict):
         generator.set_generate_ID(False)
     topology_model = generator.create(the_parsed_topology_xml)
 
@@ -230,7 +236,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         raise exceptions.IOError
     
     #Figures out what visitor to use
-    if opt.default_topology_dict:
+    if opt.default_topology_dict or opt.xml_topology_dict:
         generator.configureVisitor(h_instance_name, "InstanceTopologyHVisitor", True, True)  
         generator.configureVisitor(cpp_instance_name, "InstanceTopologyCppVisitor", True, True)
     else:
@@ -242,14 +248,14 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         generator.configureVisitor(csv_instance_name , "TopologyIDVisitor" , True , True)
     
     #Used to generate HTML tables of ID's etc.
-    if opt.default_topology_dict:
+    if opt.default_topology_dict or opt.xml_topology_dict:
         generator.configureVisitor(cmd_html_instance_name, "InstanceTopologyCmdHTMLVisitor", True, True)
         generator.configureVisitor(channel_html_instance_name, "InstanceTopologyChannelsTMLVisitor", True, True)
         generator.configureVisitor(event_html_instance_name, "InstanceTopologyEventsHTMLVisitor", True, True)
     
     #uses the topology model to process the items        
-    if opt.default_topology_dict or opt.ampcs_topology_dict:
-        #create list of used parsed compoennt xmls
+    if opt.default_topology_dict or opt.ampcs_topology_dict or opt.xml_topology_dict:
+        #create list of used parsed component xmls
         parsed_xml_dict = {}
         for comp in the_parsed_topology_xml.get_instances():
             if comp.get_type() in topology_model.get_base_id_dict():
@@ -257,7 +263,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 #comp.set_component_object(comp.)
             else:
                 PRINT.info( "Components with type {} aren't in the topology model.".format(comp.get_type()))
-                
+              
         '''
             If creating AMPCS dictionary, this portion validates channel abbreviations.
             A dictionary is created, where each key is an abbreviation which corresponds to a channel name.
@@ -283,13 +289,14 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         #
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
-        os.environ["DICT_DIR"] = BUILD_ROOT + os.sep + "Gse/generated" + os.sep + DEPLOYMENT
-        dict_dir = os.environ["DICT_DIR"]
-        PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
-        import shutil
-        if os.path.exists(dict_dir):
-            shutil.rmtree(dict_dir)
-        PRINT.info("Overriding for instanced topology dictionaries the --dict_dir option with xml derived path: %s", dict_dir)    
+        if opt.default_topology_dict:
+            os.environ["DICT_DIR"] = BUILD_ROOT + os.sep + "Gse/generated" + os.sep + DEPLOYMENT
+            dict_dir = os.environ["DICT_DIR"]
+            PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
+            import shutil
+            if os.path.exists(dict_dir):
+                shutil.rmtree(dict_dir)
+            PRINT.info("Overriding for instanced topology dictionaries the --dict_dir option with xml derived path: %s", dict_dir)    
         #
         xml_list = []         
         for parsed_xml_type in parsed_xml_dict:
@@ -300,6 +307,309 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             generate_component_instance_dictionary(parsed_xml_dict[parsed_xml_type] , opt , topology_model)
 
         topology_model.set_instance_xml_list(xml_list)
+        
+        if opt.xml_topology_dict:
+            topology_dict = etree.Element("dictionary")
+            topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
+            # create a new XML tree for dictionary
+            enum_list = etree.Element("enums")
+            serializable_list = etree.Element("serializables")
+            command_list = etree.Element("commands")
+            event_list = etree.Element("events")
+            telemetry_list = etree.Element("channels")
+            parameter_list = etree.Element("parameters")
+            for comp in the_parsed_topology_xml.get_instances():
+                comp_type = comp.get_type()
+                comp_name = comp.get_name()
+                comp_id = int(comp.get_base_id())
+                PRINT.debug("Processing %s [%s] (%s)"%(comp_name,comp_type,hex(comp_id)))
+                
+                # check for included serializable XML
+                if (parsed_xml_dict[comp_type].get_serializable_type_files() != None):
+                    serializable_file_list = parsed_xml_dict[comp_type].get_serializable_type_files()
+                    for serializable_file in serializable_file_list:
+                        serializable_file = BUILD_ROOT + os.sep + serializable_file
+                        serializable_model = XmlSerializeParser.XmlSerializeParser(serializable_file)
+                        if (len(serializable_model.get_includes()) != 0):
+                            raise Exception("%s: Can only include one level of serializable for dictionaries"%serializable_file)
+                        serializable_elem = etree.Element("serializable")
+                        serializable_type = serializable_model.get_namespace() + "::" + serializable_model.get_name()
+                        serializable_elem.attrib["type"] = serializable_type
+                        members_elem = etree.Element("members")
+                        for (member_name, member_type, member_size, member_format_specifier, member_comment) in serializable_model.get_members():
+                            member_elem = etree.Element("member")
+                            member_elem.attrib["name"] = member_name
+                            member_elem.attrib["format_specifier"] = member_format_specifier
+                            if member_comment != None:
+                                member_elem.attrib["description"] = member_comment
+                            if type(member_type) == type(tuple()):
+                                enum_value = 0
+                                type_name = "%s::%s::%s"%(serializable_type,member_name,member_type[0][1])
+                                # Add enum entry
+                                enum_elem = etree.Element("enum")
+                                enum_elem.attrib["type"] = type_name
+                                # Add enum members
+                                for (membername,value,comment) in member_type[1]:
+                                    enum_mem = etree.Element("item")
+                                    enum_mem.attrib["name"] = membername
+                                    # keep track of incrementing enum value
+                                    if value != None:
+                                        enum_value = int(value)
+                                      
+                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_value = enum_value + 1
+                                    if comment != None:
+                                        enum_mem.attrib["description"] = comment
+                                    enum_elem.append(enum_mem)
+                                enum_list.append(enum_elem)
+                            else:
+                                type_name = member_type    
+                                if member_type == "string":
+                                    member_elem.attrib["len"] = member.get_size()   
+                            member_elem.attrib["type"] = type_name
+                            members_elem.append(member_elem)
+                        serializable_elem.append(members_elem)
+                        serializable_list.append(serializable_elem)
+
+                
+                # check for commands
+                if (parsed_xml_dict[comp_type].get_commands() != None):
+                    for command in parsed_xml_dict[comp_type].get_commands():
+                        PRINT.debug("Processing Command %s"%command.get_mnemonic())
+                        command_elem = etree.Element("command")
+                        command_elem.attrib["component"] = comp_name
+                        command_elem.attrib["mnemonic"] = command.get_mnemonic()
+                        command_elem.attrib["opcode"] = "%s"%(hex(int(command.get_opcodes()[0],base=0) + comp_id))
+                        if ("comment" in command_elem.attrib.keys()):
+                            command_elem.attrib["description"] = command_elem.attrib["comment"]
+                        args_elem = etree.Element("args")
+                        for arg in command.get_args():
+                            arg_elem = etree.Element("arg")
+                            arg_elem.attrib["name"] = arg.get_name()
+                            arg_type = arg.get_type()
+                            if type(arg_type) == type(tuple()):
+                                enum_value = 0
+                                type_name = "%s::%s::%s"%(comp_type,arg.get_name(),arg_type[0][1])
+                                # Add enum entry
+                                enum_elem = etree.Element("enum")
+                                enum_elem.attrib["type"] = type_name
+                                # Add enum members
+                                for (membername,value,comment) in arg_type[1]:
+                                    enum_mem = etree.Element("item")
+                                    enum_mem.attrib["name"] = membername
+                                    # keep track of incrementing enum value
+                                    if value != None:
+                                        enum_value = int(value)
+                                      
+                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_value = enum_value + 1
+                                    if comment != None:
+                                        enum_mem.attrib["description"] = comment
+                                    enum_elem.append(enum_mem)
+                                enum_list.append(enum_elem)
+                            else:
+                                type_name = arg_type    
+                                if arg_type == "string":
+                                    arg_elem.attrib["len"] = arg.get_size()   
+                            arg_elem.attrib["type"] = type_name
+                            args_elem.append(arg_elem)
+                        command_elem.append(args_elem)
+                        command_list.append(command_elem)
+                
+                # check for channels
+                if (parsed_xml_dict[comp_type].get_channels() != None):
+                    for chan in parsed_xml_dict[comp_type].get_channels():
+                        PRINT.debug("Processing Channel %s"%chan.get_name())
+                        channel_elem = etree.Element("channel")
+                        channel_elem.attrib["component"] = comp_name
+                        channel_elem.attrib["name"] = chan.get_name()
+                        channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
+                        if chan.get_format_string() != None:
+                            channel_elem.attrib["format_string"] = chan.get_format_string()
+                        if chan.get_comment() != None:
+                            channel_elem.attrib["description"] = chan.get_comment()
+    
+                        channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
+                        if ("comment" in channel_elem.attrib.keys()):
+                            channel_elem.attrib["description"] = channel_elem.attrib["comment"]
+                        channel_type = chan.get_type()
+                        if type(channel_type) == type(tuple()):
+                            enum_value = 0
+                            type_name = "%s::%s::%s"%(comp_type,chan.get_name(),channel_type[0][1])
+                            # Add enum entry
+                            enum_elem = etree.Element("enum")
+                            enum_elem.attrib["type"] = type_name
+                            # Add enum members
+                            for (membername,value,comment) in channel_type[1]:
+                                enum_mem = etree.Element("item")
+                                enum_mem.attrib["name"] = membername
+                                # keep track of incrementing enum value
+                                if value != None:
+                                    enum_value = int(value)
+                                
+                                enum_mem.attrib["value"] = "%d"%enum_value
+                                enum_value = enum_value + 1
+                                if comment != None:
+                                    enum_mem.attrib["description"] = comment
+                                enum_elem.append(enum_mem)
+                            enum_list.append(enum_elem)
+                        else:
+                            type_name = channel_type 
+                            if channel_type == "string":
+                                channel_elem.attrib["len"] = chan.get_size()   
+                        (lr,lo,ly,hy,ho,hr) = chan.get_limits()
+                        if (lr != None):
+                            channel_elem.attrib["low_red"] = lr
+                        if (lo != None):
+                            channel_elem.attrib["low_orange"] = lo
+                        if (ly != None):
+                            channel_elem.attrib["low_yellow"] = ly
+                        if (hy != None):
+                            channel_elem.attrib["high_yellow"] = hy
+                        if (ho != None):
+                            channel_elem.attrib["high_orange"] = ho
+                        if (hr != None):
+                            channel_elem.attrib["hight_red"] = hr
+                            
+                        channel_elem.attrib["type"] = type_name
+                        telemetry_list.append(channel_elem)
+
+                # check for events
+                if (parsed_xml_dict[comp_type].get_events() != None):
+                    for event in parsed_xml_dict[comp_type].get_events():
+                        PRINT.debug("Processing Event %s"%event.get_name())
+                        event_elem = etree.Element("event")
+                        event_elem.attrib["component"] = comp_name
+                        event_elem.attrib["name"] = event.get_name()
+                        event_elem.attrib["id"] = "%s"%(hex(int(event.get_ids()[0],base=0) + comp_id))
+                        event_elem.attrib["severity"] = event.get_severity()
+                        format_string = event.get_format_string()
+                        if ("comment" in event_elem.attrib.keys()):
+                            event_elem.attrib["description"] = event_elem.attrib["comment"]
+                        args_elem = etree.Element("args")
+                        arg_num = 0
+                        for arg in event.get_args():
+                            arg_elem = etree.Element("arg")
+                            arg_elem.attrib["name"] = arg.get_name()
+                            arg_type = arg.get_type()
+                            if type(arg_type) == type(tuple()):
+                                enum_value = 0
+                                type_name = "%s::%s::%s"%(comp_type,arg.get_name(),arg_type[0][1])
+                                # Add enum entry
+                                enum_elem = etree.Element("enum")
+                                enum_elem.attrib["type"] = type_name
+                                # Add enum members
+                                for (membername,value,comment) in arg_type[1]:
+                                    enum_mem = etree.Element("item")
+                                    enum_mem.attrib["name"] = membername
+                                    # keep track of incrementing enum value
+                                    if value != None:
+                                        enum_value = int(value)
+                                     
+                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_value = enum_value + 1
+                                    if comment != None:
+                                        enum_mem.attrib["description"] = comment
+                                    enum_elem.append(enum_mem)
+                                enum_list.append(enum_elem)
+                                # replace enum format string %d with %s for ground system
+                                format_string = DictTypeConverter.DictTypeConverter().format_replace(format_string,arg_num,'d','s')
+                            else:
+                                type_name = arg_type    
+                                if arg_type == "string":
+                                    arg_elem.attrib["len"] = arg.get_size()   
+                            arg_elem.attrib["type"] = type_name
+                            args_elem.append(arg_elem)
+                            arg_num += 1
+                        event_elem.attrib["format_string"] = format_string
+                        event_elem.append(args_elem)
+                        event_list.append(event_elem)
+        
+                # check for parameters
+                if (parsed_xml_dict[comp_type].get_parameters() != None):
+                    for parameter in parsed_xml_dict[comp_type].get_parameters():
+                        PRINT.debug("Processing Parameter %s"%chan.get_name())
+                        param_default = None
+                        command_elem_set = etree.Element("command")
+                        command_elem_set.attrib["component"] = comp_name
+                        command_elem_set.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SET"
+                        command_elem_set.attrib["opcode"] = "%s"%(hex(int(parameter.get_set_opcodes()[0],base=0) + comp_id))
+                        if ("comment" in command_elem.attrib.keys()):
+                            command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set" 
+                        else:
+                            command_elem_set.attrib["description"] = parameter.get_name() + " parameter set" 
+                            
+                        args_elem = etree.Element("args")
+                        arg_elem = etree.Element("arg")
+                        arg_elem.attrib["name"] = "val"
+                        arg_type = parameter.get_type()
+                        if type(arg_type) == type(tuple()):
+                            enum_value = 0
+                            type_name = "%s::%s::%s"%(comp_type,arg.get_name(),arg_type[0][1])
+                            # Add enum entry
+                            enum_elem = etree.Element("enum")
+                            enum_elem.attrib["type"] = type_name
+                            # Add enum members
+                            for (membername,value,comment) in arg_type[1]:
+                                enum_mem = etree.Element("item")
+                                enum_mem.attrib["name"] = membername
+                                # keep track of incrementing enum value
+                                if value != None:
+                                    enum_value = int(value)
+                                  
+                                enum_mem.attrib["value"] = "%d"%enum_value
+                                enum_value = enum_value + 1
+                                if comment != None:
+                                    enum_mem.attrib["description"] = comment
+                                enum_elem.append(enum_mem)
+                                # assign default to be first enum member
+                                if param_default == None:
+                                    param_default = membername
+                            enum_list.append(enum_elem)
+                        else:
+                            type_name = arg_type    
+                            if arg_type == "string":
+                                arg_elem.attrib["len"] = arg.get_size()
+                            else:
+                                param_default = "0"      
+                        arg_elem.attrib["type"] = type_name
+                        args_elem.append(arg_elem)
+                        command_elem_set.append(args_elem)
+                        command_list.append(command_elem_set)
+                        
+                        command_elem_save = etree.Element("command")
+                        command_elem_save.attrib["component"] = comp_name
+                        command_elem_save.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SAVE"
+                        command_elem_save.attrib["opcode"] = "%s"%(hex(int(parameter.get_save_opcodes()[0],base=0) + comp_id))
+                        if ("comment" in command_elem.attrib.keys()):
+                            command_elem_save.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
+                        else:
+                            command_elem_save.attrib["description"] = parameter.get_name() +  " parameter save"
+                            
+                        command_list.append(command_elem_save)
+                        
+                        param_elem = etree.Element("parameter")
+                        param_elem.attrib["component"] = comp_name
+                        param_elem.attrib["name"] = parameter.get_name()
+                        param_elem.attrib["id"] = "%s"%(hex(int(parameter.get_ids()[0],base=0) + comp_id))
+                        if parameter.get_default() != None:
+                            param_default = parameter.get_default()
+                        param_elem.attrib["default"] = param_default
+                            
+                        parameter_list.append(param_elem)
+
+            topology_dict.append(enum_list)
+            topology_dict.append(serializable_list)
+            topology_dict.append(command_list)
+            topology_dict.append(event_list)
+            topology_dict.append(telemetry_list)
+            topology_dict.append(parameter_list)
+            
+            fileName = the_parsed_topology_xml.get_xml_filename().replace("Ai.xml","Dictionary.xml")
+            PRINT.info ("Generating XML dictionary %s"%fileName)
+            fd = open(fileName,"w")
+            fd.write(etree.tostring(topology_dict,pretty_print=True))
+
     
     initFiles   = generator.create("initFiles")
     #startSource = generator.create("startSource")
@@ -329,6 +639,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 def generate_component_instance_dictionary(the_parsed_component_xml , opt , topology_model):
     global BUILD_ROOT
     global DEPLOYMENT
+
     #
     parsed_port_xml_list = []
     parsed_serializable_xml_list = []
@@ -372,12 +683,11 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
         del(xml_parser_obj)
     
     
-    default_dict_generator = GenFactory.GenFactory.getInstance()
-    
     generator = CompFactory.CompFactory.getInstance()
     component_model = generator.create(the_parsed_component_xml, parsed_port_xml_list, parsed_serializable_xml_list)
     
     if opt.default_topology_dict:
+        default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
         default_dict_generator.configureVisitor("Commands","InstanceCommandVisitor",True,True)
         for command_model in component_model.get_commands():
@@ -425,7 +735,8 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
             defaultStartChannel(channel_model , topology_model)
             defaultChannelHeader(channel_model , topology_model)
             defaultChannelBody(channel_model , topology_model)
-
+    
+            
 #     if opt.ampcs_topology_dict:
 #         # Hack to always write AMPCS into correct deployment path...
 #         # Note note removing it first...

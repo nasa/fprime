@@ -166,8 +166,8 @@ namespace Fw {
         status = FW_DESERIALIZE_TYPE_MISMATCH;
         break;
       default:
-        status = static_cast<SerializeStatus>(0);
-        FW_ASSERT(0);
+        FW_ASSERT(0,status);
+        break;
     }
     return status;
   }

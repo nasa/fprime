@@ -120,7 +120,7 @@ namespace Svc {
       ASSERT_EVENTS_BL_LogFileWriteError(
           0,
           Os::File::NOT_OPENED, // errornum
-          sizeof(SIZE_TYPE), // bytesWritten
+          0, // bytesWritten
           sizeof(SIZE_TYPE), // bytesAttempted
           fileName.toChar() // file
       );
@@ -160,7 +160,7 @@ namespace Svc {
           ASSERT_EVENTS_BL_LogFileWriteError(
               i,
               Os::File::NOT_OPENED,
-              sizeof(SIZE_TYPE),
+              0,
               sizeof(SIZE_TYPE),
               fileName.toChar()
           );

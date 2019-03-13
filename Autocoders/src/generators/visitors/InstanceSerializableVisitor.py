@@ -228,7 +228,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         c.mem_list = list()
         for (n,t,s,f,comment) in obj.get_members():
             # convert XML types to Python classes                    
-            (type_string,dontcare,type_name) = DictTypeConverter.DictTypeConverter().convert(t,s)
+            (type_string,dontcare,type_name,use_size) = DictTypeConverter.DictTypeConverter().convert(t,s)
             if type_name == "enum":
                 format_string = DictTypeConverter.DictTypeConverter().format_replace(f,0,'d','s')
                 # check for an error
@@ -237,7 +237,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
                     sys.exit(-1)
                 else:
                     f = format_string            
-            c.mem_list.append((n,type_string,f))
+            c.mem_list.append((n,type_string,f,int(s) if use_size else 1))
             
         self._writeTmpl(c, "publicVisit")
 

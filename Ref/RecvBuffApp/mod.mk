@@ -20,7 +20,8 @@
 # There are some standard files that are included for reference
 
 SRC = 	RecvBuffComponentImpl.cpp \
-		RecvBuffComponentAi.xml
+		RecvBuffComponentAi.xml \
+		PacketStatSerializableAi.xml
 		
 HDR = 	RecvBuffComponentImpl.hpp
 		

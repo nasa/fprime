@@ -40,6 +40,15 @@ namespace Fw {
         this->m_seconds = seconds;
     }
 
+    const Time& Time::operator=(const Time& other) {
+        this->m_timeBase = other.m_timeBase;
+        this->m_timeContext = other.m_timeContext;
+        this->m_useconds = other.m_useconds;
+        this->m_seconds = other.m_seconds;
+
+        return other;
+    }
+
     bool Time::operator==(const Time& other) const {
         return (Time::compare(*this,other) == EQ);
     }

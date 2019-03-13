@@ -60,12 +60,15 @@ $(BUILD_ROOT)/mk/bin/ncsl: $(BUILD_ROOT)/mk/tools/ncsl/ncsl.c
 ifneq ("$(BUILD)","") # only define if building binary targets
 
 $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX): $(TARGET_LIBS)
-	$(MKDIR) $(@D)
+	@$(MKDIR) $(@D)
 	@echo Generating version...
-	$(GEN_VERSION) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
-	$(CC) $(COMPILE_ONLY) $(COMPILE_TO) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
+	@$(GEN_VERSION) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
+	@$(CC) $(COMPILE_ONLY) $(COMPILE_TO) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
 	@echo Linking binary...
-	@$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $^ $(LINK_LIBS) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o
+	@$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $(LIBS_START) $^ $(LINK_LIBS) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(LIBS_END) 
+	@$(POST_LINK_BIN) $(POST_LINK_PRE_ARGS) $@ $(POST_LINK_POST_ARGS) 
+	@$(SIZE) $@
+	@$(CKSUM_SH) $@ $@.$(CKSUM_EXT)
 
 endif
 # Module-level code generator targets
@@ -93,7 +96,7 @@ run_ut:
 	test/ut/runtest_$(BUILD) $(OUTPUT_DIR)
 	
 cov:
-	$(GCOV) -o $(OUTPUT_DIR) $(SRC_$(MOD_TARGET)) $(SRC_AC_$(MOD_TARGET)) > $(OUTPUT_DIR)/$(MOD_TARGET)_gcov.txt
+	$(GCOV) -o $(OUTPUT_DIR) $(SRC_$(MOD_TARGET)_$(BUILD)) $(SRC_AC_$(MOD_TARGET)) > $(OUTPUT_DIR)/$(MOD_TARGET)_gcov.txt
 
 comp_report_gen:
 	@$(COMP_REPORT_GEN) $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/*ComponentReport.txt))

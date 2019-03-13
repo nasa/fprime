@@ -44,9 +44,9 @@
 | | | |Opcode|U32||Invalid opcode|    
 |TooManyCommands|6 (0x6)|Exceeded the number of commands that can be simultaneously executed| | | | |
 | | | |Opcode|U32||The opcode that overflowed the list|    
-|NoOpReceived|7 (0x7)|The command dispatcher has successfully recieved a NO-OP command from GUI| | | | |
-|NoOpStringReceived|8 (0x8)|The command dispatcher has successfully recieved a NO-OP command from GUI, now generating a NO-OP string| | | | |
-| | | |No_op_string|Fw::LogStringArg&|40|The NO-OP string that is generated|    
+|NoOpReceived|7 (0x7)|The command dispatcher has successfully recieved a NO-OP command| | | | |
+|NoOpStringReceived|8 (0x8)|The command dispatcher has successfully recieved a NO-OP command from GUI with a string| | | | |
+| | | |message|Fw::LogStringArg&|40|The NO-OP string that is generated|    
 |TestCmd1Args|9 (0x9)|This log event message returns the TEST_CMD_1 arguments.| | | | |
 | | | |arg1|I32||Arg1|    
 | | | |arg2|F32||Arg2|    

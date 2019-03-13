@@ -169,7 +169,7 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
 
             c.ser_import = None
             
-            (c.type,c.ser_import,type_name) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
+            (c.type,c.ser_import,type_name,dontcare) = DictTypeConverter.DictTypeConverter().convert(obj.get_type(),obj.get_size())
             # special case for enums and Gse GUI. Needs to convert %d to %s
             if type_name == "enum":
                 c.format_string = "%s"            

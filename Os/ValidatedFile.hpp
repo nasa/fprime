@@ -40,11 +40,11 @@ namespace Os {
 
       //! Validate the file
       //! \return Status
-      Os::ValidateFile::Status validate(void) const;
+      Os::ValidateFile::Status validate(void);
 
       //! Create the hash file
       //! \return Status
-      Os::ValidateFile::Status createHashFile(void) const;
+      Os::ValidateFile::Status createHashFile(void);
 
     public:
 
@@ -56,6 +56,10 @@ namespace Os {
       //! \return The hash file name
       const Fw::EightyCharString& getHashFileName(void) const;
 
+      //! Get the hash file buffer
+      //! \return The hash file buffer
+      const Utils::HashBuffer& getHashBuffer(void) const;
+
     PRIVATE:
 
       //! The file name
@@ -64,6 +68,8 @@ namespace Os {
       //! The hash file name
       Fw::EightyCharString hashFileName;
 
+      //! The hash value after creating or loading a validation file
+      Utils::HashBuffer hashBuffer;
   };
 
 };

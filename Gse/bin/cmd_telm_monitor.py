@@ -17,7 +17,7 @@ import Pmw
 import struct
 import math
 import time
-from controllers import client_sock
+from fprime.gse.controllers import client_sock
 #import ModeMgrSm
 
 

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import utils.PortFinder
 import sys
 import subprocess
 import os
@@ -10,34 +9,13 @@ from optparse import OptionParser
 
 def main(argv=None):
     
-    start_port = 50000
-    end_port = 50100
-    used_port = None
-    addr = "127.0.0.1" 
-    nobin = False
-    
-    #if len(sys.argv) > 1:
-    #    if sys.argv[1] == "-nobin":
-    #        print("Not starting binary.")
-    #        nobin = True
+    build_root = os.environ["BUILD_ROOT"]
     
     python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
     
-    for port in range(start_port,end_port):
-        if not utils.PortFinder.IsPortUsed(port):
-            used_port = port
-            print("Using port %d"%used_port)
-            break;
-        
-    if (used_port == None):
-        print("Could not find port in range %d to %d",start_port,end_port)
-        return -1
-    
-    build_root = os.environ["BUILD_ROOT"]
-    
     parser = OptionParser()
-    parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: %default]", default=used_port)
-    parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set the threaded TCP socket server address [default: %default]", default=addr)
+    parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: %default]", default=50000)
+    parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set the threaded TCP socket server address [default: %default]", default="localhost")
     parser.add_option("-n", "--nobin", dest="nobin", action="store_true", help="Disables the binary app from starting [default: %default]", default=False)
     parser.add_option("-t", "--twin", dest="twin", action="store_true", help="Runs Threaed TCP Server in window, otherwise backgrounds [default: %default]", default=False)
 

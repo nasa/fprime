@@ -74,28 +74,28 @@ namespace Svc {
     assertCmdResponse(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         const Fw::CommandResponse response
     )
     const
   {
-    ASSERT_LT(index, this->cmdResponseHistory->size())
+    ASSERT_LT(__index, this->cmdResponseHistory->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into command response history\n"
       << "  Expected: Less than size of command response history (" 
       << this->cmdResponseHistory->size() << ")\n"
-      << "  Actual:   " << index << "\n";
-    const CmdResponse& e = this->cmdResponseHistory->at(index);
+      << "  Actual:   " << __index << "\n";
+    const CmdResponse& e = this->cmdResponseHistory->at(__index);
     ASSERT_EQ(opCode, e.opCode)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Opcode at index "
-      << index
+      << __index
       << " in command response history\n"
       << "  Expected: " << opCode << "\n"
       << "  Actual:   " << e.opCode << "\n";
@@ -104,7 +104,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command sequence number at index "
-      << index
+      << __index
       << " in command response history\n"
       << "  Expected: " << cmdSeq << "\n"
       << "  Actual:   " << e.cmdSeq << "\n";
@@ -113,7 +113,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command response at index "
-      << index
+      << __index
       << " in command resopnse history\n"
       << "  Expected: " << response << "\n"
       << "  Actual:   " << e.response << "\n";
@@ -163,27 +163,27 @@ namespace Svc {
     assertTlm_BufferLogger_NumLoggedBuffers(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const U32& val
     )
     const
   {
-    ASSERT_LT(index, this->tlmHistory_BufferLogger_NumLoggedBuffers->size())
+    ASSERT_LT(__index, this->tlmHistory_BufferLogger_NumLoggedBuffers->size())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of telemetry channel BufferLogger_NumLoggedBuffers\n"
       << "  Expected: Less than size of history (" 
       << this->tlmHistory_BufferLogger_NumLoggedBuffers->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const TlmEntry_BufferLogger_NumLoggedBuffers& e =
-      this->tlmHistory_BufferLogger_NumLoggedBuffers->at(index);
+      this->tlmHistory_BufferLogger_NumLoggedBuffers->at(__index);
     ASSERT_EQ(val, e.arg)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
-      << index
+      << __index
       << " on telmetry channel BufferLogger_NumLoggedBuffers\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
@@ -233,26 +233,26 @@ namespace Svc {
     assertEvents_BL_LogFileClosed(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const char *const file
     ) const
   {
-    ASSERT_GT(this->eventHistory_BL_LogFileClosed->size(), index)
+    ASSERT_GT(this->eventHistory_BL_LogFileClosed->size(), __index)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event BL_LogFileClosed\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_BL_LogFileClosed->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const EventEntry_BL_LogFileClosed& e =
-      this->eventHistory_BL_LogFileClosed->at(index);
+      this->eventHistory_BL_LogFileClosed->at(__index);
     ASSERT_STREQ(file, e.file.toChar())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument file at index "
-      << index
+      << __index
       << " in history of event BL_LogFileClosed\n"
       << "  Expected: " << file << "\n"
       << "  Actual:   " << e.file.toChar() << "\n";
@@ -282,27 +282,27 @@ namespace Svc {
     assertEvents_BL_LogFileOpenError(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const U32 errornum,
         const char *const file
     ) const
   {
-    ASSERT_GT(this->eventHistory_BL_LogFileOpenError->size(), index)
+    ASSERT_GT(this->eventHistory_BL_LogFileOpenError->size(), __index)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event BL_LogFileOpenError\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_BL_LogFileOpenError->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const EventEntry_BL_LogFileOpenError& e =
-      this->eventHistory_BL_LogFileOpenError->at(index);
+      this->eventHistory_BL_LogFileOpenError->at(__index);
     ASSERT_EQ(errornum, e.errornum)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument errornum at index "
-      << index
+      << __index
       << " in history of event BL_LogFileOpenError\n"
       << "  Expected: " << errornum << "\n"
       << "  Actual:   " << e.errornum << "\n";
@@ -311,7 +311,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument file at index "
-      << index
+      << __index
       << " in history of event BL_LogFileOpenError\n"
       << "  Expected: " << file << "\n"
       << "  Actual:   " << e.file.toChar() << "\n";
@@ -341,27 +341,27 @@ namespace Svc {
     assertEvents_BL_LogFileValidationError(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const char *const validationFile,
         const U32 status
     ) const
   {
-    ASSERT_GT(this->eventHistory_BL_LogFileValidationError->size(), index)
+    ASSERT_GT(this->eventHistory_BL_LogFileValidationError->size(), __index)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event BL_LogFileValidationError\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_BL_LogFileValidationError->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const EventEntry_BL_LogFileValidationError& e =
-      this->eventHistory_BL_LogFileValidationError->at(index);
+      this->eventHistory_BL_LogFileValidationError->at(__index);
     ASSERT_STREQ(validationFile, e.validationFile.toChar())
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument validationFile at index "
-      << index
+      << __index
       << " in history of event BL_LogFileValidationError\n"
       << "  Expected: " << validationFile << "\n"
       << "  Actual:   " << e.validationFile.toChar() << "\n";
@@ -370,7 +370,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument status at index "
-      << index
+      << __index
       << " in history of event BL_LogFileValidationError\n"
       << "  Expected: " << status << "\n"
       << "  Actual:   " << e.status << "\n";
@@ -400,29 +400,29 @@ namespace Svc {
     assertEvents_BL_LogFileWriteError(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
-        const U32 index,
+        const U32 __index,
         const U32 errornum,
         const U32 bytesWritten,
         const U32 bytesToWrite,
         const char *const file
     ) const
   {
-    ASSERT_GT(this->eventHistory_BL_LogFileWriteError->size(), index)
+    ASSERT_GT(this->eventHistory_BL_LogFileWriteError->size(), __index)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Index into history of event BL_LogFileWriteError\n"
       << "  Expected: Less than size of history (" 
       << this->eventHistory_BL_LogFileWriteError->size() << ")\n"
-      << "  Actual:   " << index << "\n";
+      << "  Actual:   " << __index << "\n";
     const EventEntry_BL_LogFileWriteError& e =
-      this->eventHistory_BL_LogFileWriteError->at(index);
+      this->eventHistory_BL_LogFileWriteError->at(__index);
     ASSERT_EQ(errornum, e.errornum)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument errornum at index "
-      << index
+      << __index
       << " in history of event BL_LogFileWriteError\n"
       << "  Expected: " << errornum << "\n"
       << "  Actual:   " << e.errornum << "\n";
@@ -431,7 +431,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument bytesWritten at index "
-      << index
+      << __index
       << " in history of event BL_LogFileWriteError\n"
       << "  Expected: " << bytesWritten << "\n"
       << "  Actual:   " << e.bytesWritten << "\n";
@@ -440,7 +440,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument bytesToWrite at index "
-      << index
+      << __index
       << " in history of event BL_LogFileWriteError\n"
       << "  Expected: " << bytesToWrite << "\n"
       << "  Actual:   " << e.bytesToWrite << "\n";
@@ -449,7 +449,7 @@ namespace Svc {
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value of argument file at index "
-      << index
+      << __index
       << " in history of event BL_LogFileWriteError\n"
       << "  Expected: " << file << "\n"
       << "  Actual:   " << e.file.toChar() << "\n";

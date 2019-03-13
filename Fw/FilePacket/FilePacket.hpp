@@ -99,6 +99,9 @@ namespace Fw {
           //! The sequence index
           U32 sequenceIndex;
           
+          //! Header size
+          enum { HEADERSIZE = sizeof(U8) + sizeof(sequenceIndex) };
+
         PRIVATE:
 
           //! Initialize a file packet header
@@ -180,6 +183,12 @@ namespace Fw {
 
           //! Pointer to the file data
           const U8 *data;
+
+          //! header size
+          enum { HEADERSIZE = Header::HEADERSIZE +
+              sizeof(byteOffset) +
+              sizeof(dataSize) };
+
 
         public:
 
