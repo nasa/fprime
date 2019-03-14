@@ -48,7 +48,7 @@ while ((done == False) and (currentTime < maxTime)):
     currentTime += 500
 
 if (done == False):
-     print "Didn't find FSW initialization message."
+     print("Didn't find FSW initialization message.")
      exitAll() 
      sys.exit(-1) 
      
@@ -72,7 +72,7 @@ target_helper.run_cmd("osal_print(\"hello, world!\\n\")")
 target_helper.run_cmd("osal_print(\"   val =  2 something\\n\")")
 
   
-print "vxsim_st test completed successfully."
+print("vxsim_st test completed successfully.")
 
 exitAll()
 sys.exit(0)

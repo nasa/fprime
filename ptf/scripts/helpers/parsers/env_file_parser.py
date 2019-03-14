@@ -1,4 +1,4 @@
-import commands
+import subprocess
 import os
 import sys
 
@@ -36,9 +36,9 @@ class EnvFileReader:
 				# extract variable value
 				sub_var = val[var_start_index+2:var_end_index]
 				# look for variable in environment, if there rebuild val
-				if os.environ.has_key(sub_var):
+				if sub_var in os.environ:
 					val = val[0:var_start_index] + os.environ[sub_var] + val[var_end_index+1:]
-				elif env_var.has_key(sub_var):
+				elif sub_var in env_var:
 					val = val[0:var_start_index] + env_var[sub_var] + val[var_end_index+1:]
 				else:
 					raise "Variable %s not found in environment" % sub_var

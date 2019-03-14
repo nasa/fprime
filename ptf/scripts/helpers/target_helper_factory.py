@@ -13,6 +13,6 @@ class TargetHelperFactory:
         if type == "isf_linux":
             return scripts.helpers.target_helpers.isf_linux_helper.IsfLinuxHelper(deployment,instance_id)
         else:
-            print "Unknown target " + type
+            print("Unknown target " + type)
 
         

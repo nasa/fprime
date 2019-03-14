@@ -20,6 +20,6 @@ target_helper.exit()
 simulation_helper.exit()
 gds_helper.exit()
 
-print "Interactive session finished."
+print("Interactive session finished.")
 
 
