@@ -1,9 +1,7 @@
 include $(BUILD_ROOT)/mk/configs/host/Linux-common.mk
 
 TIME := time
-PYTHON_BASE ?= /usr
-export PYTHON_BASE # needed by ac scripts
-export PYTHON_BIN := $(PYTHON_BASE)/bin/python
+export PYTHON_BIN := python
 
 export CHEETAH_COMPILE ?= cheetah-compile
 export MARKDOWN ?= markdown_py -x markdown.extensions.extra -x markdown.extensions.codehilite
