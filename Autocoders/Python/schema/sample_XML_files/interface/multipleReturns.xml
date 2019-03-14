@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/interface_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<interface name="TEST" namespace="SRC" priority="1">
+    <include_header>test/file/one</include_header>
+    <comment>Interface Testing</comment>
+    <args>
+        <arg name="argOne" type="string" size="2"></arg>
+    </args>
+    <return type="ENUM" >
+        <enum name="returned">
+            <item name="itemOne" comment="Item One"></item>
+            <item name="itemTwo" comment="Item Two"></item>
+        </enum>
+    </return>
+    <return type="I8"></return>
+</interface>

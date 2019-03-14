@@ -17,8 +17,8 @@
 |Event Name|ID|Description|Arg Name|Arg Type|Arg Size|Description
 |---|---|---|---|---|---|---|
 |FirstPacketReceived|0 (0x0)|First packet received| | | | |
-| | | |id|U32||The ID argument|    
+| | | |id|U32||The ID argument|
 |PacketChecksumError|1 (0x1)|Packet checksum error| | | | |
-| | | |id|U32||The ID argument|    
+| | | |id|U32||The ID argument|
 |BuffRecvParameterUpdated|2 (0x2)|Report parameter update| | | | |
-| | | |id|U32||The ID argument|    
+| | | |id|U32||The ID argument|

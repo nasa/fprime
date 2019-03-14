@@ -45,9 +45,9 @@ namespace Svc {
     // Initialize command history
     this->cmdResponseHistory = new History<CmdResponse>(maxHistorySize);
     // Initialize telemetry histories
-    this->tlmHistory_CommandsDispatched = 
+    this->tlmHistory_CommandsDispatched =
       new History<TlmEntry_CommandsDispatched>(maxHistorySize);
-    this->tlmHistory_CommandErrors = 
+    this->tlmHistory_CommandErrors =
       new History<TlmEntry_CommandErrors>(maxHistorySize);
     // Initialize event histories
 #if FW_ENABLE_TEXT_LOGGING
@@ -83,7 +83,7 @@ namespace Svc {
   }
 
   CommandDispatcherTesterBase ::
-    ~CommandDispatcherTesterBase(void) 
+    ~CommandDispatcherTesterBase(void)
   {
     // Destroy command history
     delete this->cmdResponseHistory;
@@ -563,14 +563,14 @@ namespace Svc {
 #endif
 
   // ----------------------------------------------------------------------
-  // Connectors for to ports 
+  // Connectors for to ports
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     connect_to_compCmdReg(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdRegPort *const compCmdReg
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_compCmdReg(),static_cast<AssertArg>(portNum));
     this->m_to_compCmdReg[portNum].addCallPort(compCmdReg);
@@ -580,7 +580,7 @@ namespace Svc {
     connect_to_compCmdStat(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdResponsePort *const compCmdStat
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_compCmdStat(),static_cast<AssertArg>(portNum));
     this->m_to_compCmdStat[portNum].addCallPort(compCmdStat);
@@ -590,7 +590,7 @@ namespace Svc {
     connect_to_seqCmdBuff(
         const NATIVE_INT_TYPE portNum,
         Fw::InputComPort *const seqCmdBuff
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_seqCmdBuff(),static_cast<AssertArg>(portNum));
     this->m_to_seqCmdBuff[portNum].addCallPort(seqCmdBuff);
@@ -600,7 +600,7 @@ namespace Svc {
     connect_to_pingIn(
         const NATIVE_INT_TYPE portNum,
         Svc::InputPingPort *const pingIn
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_pingIn(),static_cast<AssertArg>(portNum));
     this->m_to_pingIn[portNum].addCallPort(pingIn);
@@ -610,7 +610,7 @@ namespace Svc {
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
-    ) 
+    )
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(),static_cast<AssertArg>(portNum));
     this->m_to_CmdDisp[portNum].addCallPort(CmdDisp);
@@ -718,7 +718,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
   // Getters for from ports
   // ----------------------------------------------------------------------
- 
+
   Fw::InputCmdPort *CommandDispatcherTesterBase ::
     get_from_compCmdSend(const NATIVE_INT_TYPE portNum)
   {
@@ -798,7 +798,7 @@ namespace Svc {
     )
   {
     FW_ASSERT(callComp);
-    CommandDispatcherTesterBase* _testerBase = 
+    CommandDispatcherTesterBase* _testerBase =
       static_cast<CommandDispatcherTesterBase*>(callComp);
     _testerBase->from_compCmdSend_handlerBase(
         portNum,
@@ -816,7 +816,7 @@ namespace Svc {
     )
   {
     FW_ASSERT(callComp);
-    CommandDispatcherTesterBase* _testerBase = 
+    CommandDispatcherTesterBase* _testerBase =
       static_cast<CommandDispatcherTesterBase*>(callComp);
     _testerBase->from_seqCmdStatus_handlerBase(
         portNum,
@@ -832,7 +832,7 @@ namespace Svc {
     )
   {
     FW_ASSERT(callComp);
-    CommandDispatcherTesterBase* _testerBase = 
+    CommandDispatcherTesterBase* _testerBase =
       static_cast<CommandDispatcherTesterBase*>(callComp);
     _testerBase->from_pingOut_handlerBase(
         portNum,
@@ -935,9 +935,9 @@ namespace Svc {
     this->fromPortHistory_pingOut->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: compCmdSend
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     pushFromPortEntry_compCmdSend(
@@ -953,9 +953,9 @@ namespace Svc {
     ++this->fromPortHistorySize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: seqCmdStatus
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     pushFromPortEntry_seqCmdStatus(
@@ -971,9 +971,9 @@ namespace Svc {
     ++this->fromPortHistorySize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // From port: pingOut
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     pushFromPortEntry_pingOut(
@@ -1049,9 +1049,9 @@ namespace Svc {
     this->cmdResponseHistory->push_back(e);
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: CMD_NO_OP
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     sendCmd_CMD_NO_OP(
@@ -1065,7 +1065,7 @@ namespace Svc {
     Fw::CmdArgBuffer buff;
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = CommandDispatcherComponentBase::OPCODE_CMD_NO_OP + idBase;
@@ -1083,9 +1083,9 @@ namespace Svc {
 
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: CMD_NO_OP_STRING
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     sendCmd_CMD_NO_OP_STRING(
@@ -1103,7 +1103,7 @@ namespace Svc {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = CommandDispatcherComponentBase::OPCODE_CMD_NO_OP_STRING + idBase;
@@ -1121,9 +1121,9 @@ namespace Svc {
 
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: CMD_TEST_CMD_1
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     sendCmd_CMD_TEST_CMD_1(
@@ -1147,7 +1147,7 @@ namespace Svc {
     FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = CommandDispatcherComponentBase::OPCODE_CMD_TEST_CMD_1 + idBase;
@@ -1165,9 +1165,9 @@ namespace Svc {
 
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Command: CMD_CLEAR_TRACKING
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     sendCmd_CMD_CLEAR_TRACKING(
@@ -1181,7 +1181,7 @@ namespace Svc {
     Fw::CmdArgBuffer buff;
 
     // Call output command port
-    
+
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = CommandDispatcherComponentBase::OPCODE_CMD_CLEAR_TRACKING + idBase;
@@ -1199,11 +1199,11 @@ namespace Svc {
 
   }
 
-  
+
   void CommandDispatcherTesterBase ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
-       
-    const U32 idBase = this->getIdBase();   
+
+    const U32 idBase = this->getIdBase();
     FwOpcodeType _opcode = opcode + idBase;
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(
@@ -1215,11 +1215,11 @@ namespace Svc {
     else {
       printf("Test Command Output port not connected!\n");
     }
-        
+
   }
-  
+
   // ----------------------------------------------------------------------
-  // History 
+  // History
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -1302,9 +1302,9 @@ namespace Svc {
     this->tlmHistory_CommandErrors->clear();
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: CommandsDispatched
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     tlmInput_CommandsDispatched(
@@ -1317,9 +1317,9 @@ namespace Svc {
     ++this->tlmSize;
   }
 
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
   // Channel: CommandErrors
-  // ---------------------------------------------------------------------- 
+  // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
     tlmInput_CommandErrors(
@@ -1351,7 +1351,7 @@ namespace Svc {
     FW_ASSERT(id >= idBase, id, idBase);
     switch (id - idBase) {
 
-      case CommandDispatcherComponentBase::EVENTID_OPCODEREGISTERED: 
+      case CommandDispatcherComponentBase::EVENTID_OPCODEREGISTERED:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1365,8 +1365,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 3,_numArgs,3);
-        
-#endif    
+
+#endif
         U32 Opcode;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1379,7 +1379,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
         }
-#endif      
+#endif
         _status = args.deserialize(Opcode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1398,7 +1398,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(I32),_argSize,sizeof(I32));
         }
-#endif      
+#endif
         _status = args.deserialize(port);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1417,7 +1417,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(I32),_argSize,sizeof(I32));
         }
-#endif      
+#endif
         _status = args.deserialize(slot);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1430,7 +1430,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_OPCODEDISPATCHED: 
+      case CommandDispatcherComponentBase::EVENTID_OPCODEDISPATCHED:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1444,8 +1444,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 2,_numArgs,2);
-        
-#endif    
+
+#endif
         U32 Opcode;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1458,7 +1458,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
         }
-#endif      
+#endif
         _status = args.deserialize(Opcode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1477,7 +1477,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(I32),_argSize,sizeof(I32));
         }
-#endif      
+#endif
         _status = args.deserialize(port);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1490,7 +1490,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_OPCODECOMPLETED: 
+      case CommandDispatcherComponentBase::EVENTID_OPCODECOMPLETED:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1504,8 +1504,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 1,_numArgs,1);
-        
-#endif    
+
+#endif
         U32 Opcode;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1518,7 +1518,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
         }
-#endif      
+#endif
         _status = args.deserialize(Opcode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1531,7 +1531,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_OPCODEERROR: 
+      case CommandDispatcherComponentBase::EVENTID_OPCODEERROR:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1545,8 +1545,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 2,_numArgs,2);
-        
-#endif    
+
+#endif
         U32 Opcode;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1559,7 +1559,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
         }
-#endif      
+#endif
         _status = args.deserialize(Opcode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1577,7 +1577,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(FwEnumStoreType),_argSize,sizeof(FwEnumStoreType));
         }
-#endif      
+#endif
         FwEnumStoreType errorInt;
         _status = args.deserialize(errorInt);
         CommandDispatcherComponentBase::ErrorResponse error = static_cast<CommandDispatcherComponentBase::ErrorResponse>(errorInt);
@@ -1592,7 +1592,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_MALFORMEDCOMMAND: 
+      case CommandDispatcherComponentBase::EVENTID_MALFORMEDCOMMAND:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1606,8 +1606,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 1,_numArgs,1);
-        
-#endif    
+
+#endif
 #if FW_AMPCS_COMPATIBLE
         {
           // Deserialize the argument size
@@ -1619,7 +1619,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(FwEnumStoreType),_argSize,sizeof(FwEnumStoreType));
         }
-#endif      
+#endif
         FwEnumStoreType StatusInt;
         _status = args.deserialize(StatusInt);
         CommandDispatcherComponentBase::CmdSerError Status = static_cast<CommandDispatcherComponentBase::CmdSerError>(StatusInt);
@@ -1634,7 +1634,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_INVALIDCOMMAND: 
+      case CommandDispatcherComponentBase::EVENTID_INVALIDCOMMAND:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1648,8 +1648,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 1,_numArgs,1);
-        
-#endif    
+
+#endif
         U32 Opcode;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1662,7 +1662,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
         }
-#endif      
+#endif
         _status = args.deserialize(Opcode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1675,7 +1675,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_TOOMANYCOMMANDS: 
+      case CommandDispatcherComponentBase::EVENTID_TOOMANYCOMMANDS:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1689,8 +1689,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 1,_numArgs,1);
-        
-#endif    
+
+#endif
         U32 Opcode;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1703,7 +1703,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
         }
-#endif      
+#endif
         _status = args.deserialize(Opcode);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1716,7 +1716,7 @@ namespace Svc {
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_NOOPRECEIVED: 
+      case CommandDispatcherComponentBase::EVENTID_NOOPRECEIVED:
       {
 
 #if FW_AMPCS_COMPATIBLE
@@ -1728,14 +1728,14 @@ namespace Svc {
             _zero_status == Fw::FW_SERIALIZE_OK,
             static_cast<AssertArg>(_zero_status)
         );
-#endif    
-        this->logIn_COMMAND_NoOpReceived();
+#endif
+        this->logIn_ACTIVITY_HI_NoOpReceived();
 
         break;
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_NOOPSTRINGRECEIVED: 
+      case CommandDispatcherComponentBase::EVENTID_NOOPSTRINGRECEIVED:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1749,22 +1749,22 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 1,_numArgs,1);
-        
-#endif    
-        Fw::LogStringArg No_op_string;
-        _status = args.deserialize(No_op_string);
+
+#endif
+        Fw::LogStringArg message;
+        _status = args.deserialize(message);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
             static_cast<AssertArg>(_status)
         );
 
-        this->logIn_COMMAND_NoOpStringReceived(No_op_string);
+        this->logIn_ACTIVITY_HI_NoOpStringReceived(message);
 
         break;
 
       }
 
-      case CommandDispatcherComponentBase::EVENTID_TESTCMD1ARGS: 
+      case CommandDispatcherComponentBase::EVENTID_TESTCMD1ARGS:
       {
 
         Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
@@ -1778,8 +1778,8 @@ namespace Svc {
         );
         // verify they match expected.
         FW_ASSERT(_numArgs == 3,_numArgs,3);
-        
-#endif    
+
+#endif
         I32 arg1;
 #if FW_AMPCS_COMPATIBLE
         {
@@ -1792,7 +1792,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(I32),_argSize,sizeof(I32));
         }
-#endif      
+#endif
         _status = args.deserialize(arg1);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1811,7 +1811,7 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(F32),_argSize,sizeof(F32));
         }
-#endif      
+#endif
         _status = args.deserialize(arg2);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
@@ -1830,14 +1830,14 @@ namespace Svc {
           );
           FW_ASSERT(_argSize == sizeof(U8),_argSize,sizeof(U8));
         }
-#endif      
+#endif
         _status = args.deserialize(arg3);
         FW_ASSERT(
             _status == Fw::FW_SERIALIZE_OK,
             static_cast<AssertArg>(_status)
         );
 
-        this->logIn_COMMAND_TestCmd1Args(arg1, arg2, arg3);
+        this->logIn_ACTIVITY_HI_TestCmd1Args(arg1, arg2, arg3);
 
         break;
 
@@ -1871,7 +1871,7 @@ namespace Svc {
 #if FW_ENABLE_TEXT_LOGGING
 
   // ----------------------------------------------------------------------
-  // Text events 
+  // Text events
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -1934,11 +1934,11 @@ namespace Svc {
   }
 
   void CommandDispatcherTesterBase ::
-    printTextLogHistory(FILE *file) 
+    printTextLogHistory(FILE *file)
   {
     for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
       this->printTextLogHistoryEntry(
-          this->textLogHistory->at(i), 
+          this->textLogHistory->at(i),
           file
       );
     }
@@ -1947,7 +1947,7 @@ namespace Svc {
 #endif
 
   // ----------------------------------------------------------------------
-  // Event: OpCodeRegistered 
+  // Event: OpCodeRegistered
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -1965,7 +1965,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: OpCodeDispatched 
+  // Event: OpCodeDispatched
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -1982,7 +1982,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: OpCodeCompleted 
+  // Event: OpCodeCompleted
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -1998,7 +1998,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: OpCodeError 
+  // Event: OpCodeError
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -2015,7 +2015,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: MalformedCommand 
+  // Event: MalformedCommand
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -2031,7 +2031,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: InvalidCommand 
+  // Event: InvalidCommand
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -2047,7 +2047,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: TooManyCommands 
+  // Event: TooManyCommands
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
@@ -2063,11 +2063,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: NoOpReceived 
+  // Event: NoOpReceived
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
-    logIn_COMMAND_NoOpReceived(
+    logIn_ACTIVITY_HI_NoOpReceived(
         void
     )
   {
@@ -2076,27 +2076,27 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: NoOpStringReceived 
+  // Event: NoOpStringReceived
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
-    logIn_COMMAND_NoOpStringReceived(
-        Fw::LogStringArg& No_op_string
+    logIn_ACTIVITY_HI_NoOpStringReceived(
+        Fw::LogStringArg& message
     )
   {
     EventEntry_NoOpStringReceived e = {
-      No_op_string
+      message
     };
     eventHistory_NoOpStringReceived->push_back(e);
     ++this->eventsSize;
   }
 
   // ----------------------------------------------------------------------
-  // Event: TestCmd1Args 
+  // Event: TestCmd1Args
   // ----------------------------------------------------------------------
 
   void CommandDispatcherTesterBase ::
-    logIn_COMMAND_TestCmd1Args(
+    logIn_ACTIVITY_HI_TestCmd1Args(
         I32 arg1,
         F32 arg2,
         U8 arg3

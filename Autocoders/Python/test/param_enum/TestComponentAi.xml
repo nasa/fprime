@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="TestPrm" kind="passive" namespace="Prm">
+    <import_port_type>Autocoders/Python/test/param_enum/TestPortAi.xml</import_port_type>
+    <import_port_type>Fw/Prm/PrmGetPortAi.xml</import_port_type>
+    <import_port_type>Fw/Prm/PrmSetPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+
+    <comment>A component with a single parameter</comment>
+    <ports>
+        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
+        <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
+        <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"/>
+        <port name="ParamGet" kind="output" data_type="Fw::PrmGet" max_number="1" role="ParamGet"/>
+        <port name="ParamSet" kind="output" data_type="Fw::PrmSet" max_number="1" role="ParamSet"/>
+        <port name="aport" data_type="Another::Test" kind="sync_input" >
+            <comment>
+            A test port
+            </comment>
+        </port>
+    </ports>
+    <parameters>
+    	<parameter id="100" set_opcode="0x100" save_opcode="0x101" name="enumparam" data_type="ENUM" default = "MEM2">
+            <enum name="SomeEnum">
+                <item name="MEM1"/>
+                <item name="MEM2" value="7" comment="A comment"/>
+                <item name="MEM3" value="15"/>
+            </enum>
+    		<comment>
+    		A test parameter
+    		</comment>
+    	</parameter>
+    </parameters>
+</component>

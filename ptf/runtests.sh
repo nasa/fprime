@@ -26,7 +26,9 @@ endif
 
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-setenv PYTHON_BASE /usr
+if !($?PYTHON_BASE) then
+    setenv PYTHON_BASE /usr
+endif
 
 setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib:/usr/lib:/lib
 setenv PATH ${PATH}:/usr/bin:/bin

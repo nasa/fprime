@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../../Autocoders/Python/schema/ISF_Type_Schema.rnc" type="compact"?>
+<serializable namespace="Example3" name="ExampleSerializable" typeid = "123">
+    <import_serializable_type>Autocoders/Python/test/port_nogen/Example2SerializableAi.xml</import_serializable_type>
+    <include_header>Autocoders/Python/test/port_nogen/ExampleType.hpp</include_header>
+    <comment>
+    This is an optional comment describing the serializable class.
+    </comment>
+    <members>
+        <member name="T1" type="ANameSpace::mytype"/>
+        <member name="T2" type="Example4::Example2" comment="An optional single line comment"/>
+        <member name="T3" type="I32"/>
+        <member name="T4" type="bool"/>
+        <member name="T5" type="string" size="23"/>
+        <member name="T6" type="ENUM">
+            <enum name="SomeEnum">
+                <item name="MEM1"/>
+                <item name="MEM2" value="7" comment="A member comment"/>
+                <item name="MEM3" value="15"/>
+            </enum>
+        </member>
+    </members>
+</serializable>
+

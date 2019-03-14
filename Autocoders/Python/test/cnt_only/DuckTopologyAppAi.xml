@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<assembly name="Duck">
+    <import_component_type>Autocoders/Python/test/cnt_only/DuckComponentAi.xml</import_component_type>
+    <comment>Instantiate the Huey and Duey components</comment>
+    <instance namespace="Duck" name ="Huey" type ="Duck"/>
+    <instance namespace="Duck" name ="Duey" type ="Duck"/>
+    <connection name ="huey_duey_cmd" type="direct">
+        <comment>Connect Huey to Duey</comment>
+        <source component="Huey" port="CmdOut" type="Msg1"/>
+        <target component="Duey" port="CmdIn"  type="Msg1"/>
+    </connection>
+    <connection name = "duey_huey_cmd" type="direct">
+        <comment>Connect Duey to Huey</comment>
+        <source component="Duey" port="CmdOut" type="Msg1"/>
+        <target component="Huey" port="CmdIn"  type="Msg1"/>
+    </connection>
+</assembly>
