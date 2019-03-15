@@ -1,11 +1,8 @@
-#!/bin/csh
+#!/bin/sh
 
-if !($?BUILD_ROOT) then
-    set curdir = "${PWD}"
-    setenv BUILD_ROOT `dirname $0`/../..
-    cd $BUILD_ROOT
-    setenv BUILD_ROOT ${PWD}
-    cd ${curdir}
-endif
+DIRNAME="`dirname $0`"
+# Set BUILD_ROOT if undefined and print the result
+echo "BUILD_ROOT is: ${BUILD_ROOT=`cd ${DIRNAME}/../..; pwd`}"
+export BUILD_ROOT
 
-${BUILD_ROOT}/Gse/bin/run_cmds.sh --addr localhost --port 50000 --dictionary ${BUILD_ROOT}/Gse/generated/Ref $*
+${BUILD_ROOT}/Gse/bin/run_cmds.sh --addr localhost --port 50000 --dictionary ${BUILD_ROOT}/Gse/generated/Ref "$@"
