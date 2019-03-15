@@ -318,13 +318,8 @@ class DownlinkShell(object):
 
 		# We need to know the python base
 		# before we begin the subprocess.
-		if 'PYTHON_BASE' not in os.environ:
-		    print "Please set PYTHON_BASE"
-		    raise exceptions.EnvironmentError
-
-
 		# Set start command. file listener will call if needed
-		self.__start_cmd = os.environ['PYTHON_BASE'] + "/bin/python " + downlink_path + " -p {port} -i {host} -l {log_folder}".format( \
+		self.__start_cmd = "python " + downlink_path + " -p {port} -i {host} -l {log_folder}".format( \
 		                          port=port, host=host, log_folder=self.__log_folder)
 
 
