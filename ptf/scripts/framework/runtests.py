@@ -90,7 +90,7 @@ if options.quiet == None:
 	print("Host: " + host)
 
 # get BUILD_ROOT environment variable
-
+os.environ["HOST"] = host
 build_root = os.getenv("BUILD_ROOT")
 
 # check to see if host file exists
