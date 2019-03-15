@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/sh
 # *******************************************************************************
 # * Copyright 2013, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship
@@ -24,14 +24,9 @@ endif
 
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-# Borrow some variables from build
-setenv PYTHON_BASE `make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_python_base`
-echo "PYTHON_BASE: ${PYTHON_BASE}"
-
 # Get binary output path
-setenv OUTPUT_DIR `make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=RASPIAN print_output_dir`
+export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=RASPIAN print_output_dir`"
 echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 
-setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
-setenv PYTHONPATH ${BUILD_ROOT}/Gse/src:${BUILD_ROOT}/Gse/generated/FlightDemo/serializable
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/RPI/scripts/run_pi.py $*
+export PYTHONPATH="${BUILD_ROOT}/Gse/src:${BUILD_ROOT}/Gse/generated/FlightDemo/serializable"
+python "${BUILD_ROOT}/RPI/scripts/run_pi.py" "$@"
