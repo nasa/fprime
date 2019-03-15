@@ -9,20 +9,20 @@ import parsers.variable_list_parser
 #os.environ["PARSER_VERBOSE"] = "true"
 # Make sure that BUILD_ROOT environment variable is set
 
-if not os.environ.has_key("BUILD_ROOT"):
+if "BUILD_ROOT" not in os.environ:
 	print("You must define BUILD_ROOT first.")
 	sys.exit(-1)
 
 makefiledir = sys.argv[1]
 	
-print "Generating Makefiles in %s"%	makefiledir
+print("Generating Makefiles in %s"%	makefiledir)
 
 
 try:
 	mod_file_parser = parsers.variable_list_parser.VariableListParser(os.environ["BUILD_ROOT"] + "/mk/configs/modules/modules.mk",":=")
-except parsers.variable_list_parser.VariableParseError, ex:
+except parsers.variable_list_parser.VariableParseError as ex:
 	# delete the partial or old Makefile
-	print("**Error: " + ex.getErr() + "**")
+	print(("**Error: " + ex.getErr() + "**"))
 	sys.exit(-1)
 	
 deployment_list = mod_file_parser.getValList("DEPLOYMENTS")
@@ -53,13 +53,13 @@ for module in all_module_list:
 	# for module name, remove slashes
 	module_name = module.replace("/","").replace("\\","")
 	
-	if os.environ.has_key("PARSER_VERBOSE"):
-		print ("Processing module \"%s\" dir %s"%(module_name,module))
+	if "PARSER_VERBOSE" in os.environ:
+		print(("Processing module \"%s\" dir %s"%(module_name,module)))
 
 	try:
 		parser_list.append(parsers.mod_mk_parser.ModMkParser(module_name,module,True))
-	except parsers.mod_mk_parser.CfgParseError, ex:
-		print("**Error: " + ex.getErr() + "**")
+	except parsers.mod_mk_parser.CfgParseError as ex:
+		print(("**Error: " + ex.getErr() + "**"))
 		for file in ["/ac_targets.mk","/bin_targets.mk","/vars.mk"]:
 			del_file = sys.argv[1] + file
 			if os.path.exists(del_file):
@@ -74,21 +74,21 @@ file_descriptor = open("%s/vars.mk"%makefiledir,'w')
 
 # write front of makefile to file
 
-if os.environ.has_key("PARSER_VERBOSE"):
+if "PARSER_VERBOSE" in os.environ:
 	print ("Opening Makefile")
 
 file_descriptor.write("# *** Genearated Makefile ***\n# Modifications will be overwritten.\n\n")
 #file_descriptor.write("include $(BUILD_ROOT)/mk/makefiles/front.mk\n")
 
 # write variables
-if os.environ.has_key("PARSER_VERBOSE"):
+if "PARSER_VERBOSE" in os.environ:
 	print("Writing Makefile variables")
 
 for parser in parser_list:
 	try:
 		parser.generateVariables(file_descriptor)
-	except parsers.mod_mk_parser.CfgParseError, message:
-		print("**Error: " + message.getErr() + "**")
+	except parsers.mod_mk_parser.CfgParseError as message:
+		print(("**Error: " + message.getErr() + "**"))
 		sys.exit(-1)
 		
 file_descriptor.close()
@@ -104,14 +104,14 @@ bin_targets_file_descriptor = open("%s/bin_targets.mk"%makefiledir,'w')
 
 # write targets
 
-if os.environ.has_key("PARSER_VERBOSE"):
+if "PARSER_VERBOSE" in os.environ:
 	print("Writing Makefile targets")
 	
 for parser in parser_list:
 	try:
 		parser.generateTargets(ac_targets_file_descriptor,bin_targets_file_descriptor)
-	except parsers.mod_mk_parser.CfgParseError, message:
-		print("**Error: " + message.getErr() + "**")
+	except parsers.mod_mk_parser.CfgParseError as message:
+		print(("**Error: " + message.getErr() + "**"))
 		sys.exit(-1)
 
 ac_targets_file_descriptor.close()

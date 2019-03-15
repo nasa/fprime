@@ -6,8 +6,8 @@
 
 |Mnemonic|ID|Description|Arg Name|Arg Type|Comment
 |---|---|---|---|---|---|
-|BA_SetMode|0 (0x0)|Set the mode| | |   
-| | | |mode|OpState||                    
+|BA_SetMode|0 (0x0)|Set the mode| | |
+| | | |mode|OpState||
 
 ## Telemetry Channel List
 

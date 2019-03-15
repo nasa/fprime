@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Running ${BUILD_ROOT}/Autocoders/test/port_nogen/test/ut/$1/test_ut"
-${BUILD_ROOT}/Autocoders/test/port_nogen/test/ut/$1/test_ut
-

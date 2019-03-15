@@ -1,0 +1,36 @@
+<commands>
+    <command kind="async" opcode="0x100" mnemonic="TEST_CMD_1" priority="1">
+        <comment>
+        A test command
+        </comment>
+        <args>
+            <arg name="arg1" type="I32">
+                <comment>The I32 command argument</comment>
+            </arg>
+            <arg name="arg2" type="ENUM">
+                <enum name="CmdEnum">
+                    <item name="CMD_MEMB1"/>
+                    <item name="CMD_MEMB2" value="7" comment="This member is important"/>
+                    <item name="CMD_MEMB3" value="15"/>
+                </enum>
+                <comment>The ENUM argument</comment>
+            </arg>
+            <arg name="arg3" type="string" size="20">
+                <comment>The string argument</comment>
+            </arg>
+         </args>
+    </command>
+    <command kind="sync" opcode="0x101" mnemonic="TEST_CMD_2" >
+        <comment>
+        A test command
+        </comment>
+        <args>
+            <arg name="arg1" type="I32">
+                <comment>The I32 command argument</comment>
+            </arg>
+            <arg name="arg2" type="F32">
+                <comment>A float argument</comment>
+            </arg>
+         </args>
+    </command>
+</commands>

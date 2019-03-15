@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!-- Note: sync attribute can be sync, async, or guarded. Only for input />
+   Note: priority attribute can be high, medium, low or interrupt.
+         Only valid for active components input.
+   Note  kind attribute of component can be ether active or passive.
+         -->
+<component name="TestCommand" kind="active">
+    <import_port_type>Autocoders/Python/test/comp_no_namespace/TestPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+    <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+    <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+    <import_port_type>Fw/Prm/PrmGetPortAi.xml</import_port_type>
+    <import_port_type>Fw/Prm/PrmSetPortAi.xml</import_port_type>
+
+    <import_serializable_type>Autocoders/Python/test/comp_no_namespace/QuaternionSerializableAi.xml</import_serializable_type>
+    <comment>A stressfull component</comment>
+    <ports>
+        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
+        <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
+        <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"/>
+        <port name="ParamGet" kind="output" data_type="Fw::PrmGet" max_number="1" role="ParamGet"/>
+        <port name="ParamSet" kind="output" data_type="Fw::PrmSet" max_number="1" role="ParamSet"/>
+        <port name="Tlm" kind="output" data_type="Fw::Tlm" max_number="1" role="Telemetry"/>
+        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" role="TimeGet"/>
+        <port name="Log" kind="output" data_type="Fw::Log" max_number="1" role="LogEvent"/>
+        <port name="LogText" kind="output" data_type="Fw::LogText" max_number="1" role="LogTextEvent"/>
+
+        <port name="aport" data_type="Test" kind="async_input" max_number="1">
+            <comment>
+            A test port
+            </comment>
+        </port>
+    </ports>
+    <commands opcode_base="100">
+        <!-- Input test command -->
+        <command kind="async" opcode="0x100" mnemonic="TEST_CMD_1" priority="1">
+            <comment>
+            A test command
+            </comment>
+            <args>
+                <arg name="arg1" type="I32">
+                    <comment>The I32 command argument</comment>
+                </arg>
+                <arg name="arg2" type="Quaternion">
+                </arg>
+             </args>
+        </command>
+    </commands>
+    <telemetry telemetry_base="100">
+        <channel id="100" name="somechan" data_type="Quaternion">
+            <comment>
+            A test channel
+            </comment>
+        </channel>
+    </telemetry>
+    <events event_base="100">
+        <event id="100" name="SomeEvent" severity="ACTIVITY_LO" format_string = "My Event %d %f %c"  >
+            <comment>
+            A test event
+            </comment>
+            <args>
+                <arg name="arg1" type="Quaternion">
+                    <comment>The quaternion command argument</comment>
+                </arg>
+                <arg name="arg2" type="F32">
+                    <comment>The F32 command argument</comment>
+                </arg>
+                <arg name="arg3" type="U8">
+                    <comment>The U8 command argument</comment>
+                </arg>
+            </args>
+        </event>
+    </events>
+    <parameters parameter_base="100" opcode_base="200">
+        <parameter id="100" name="someparam" data_type="Quaternion" set_opcode="0x102" save_opcode="0x103">
+            <comment>
+            A test parameter
+            </comment>
+        </parameter>
+    </parameters>
+</component>

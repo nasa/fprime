@@ -122,10 +122,10 @@ ifeq ($(DICT_GEN),"GLOBAL")
 	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events/__init__.py
 	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels/__init__.py
 	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands/__init__.py
-	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/bin/'default_dict/channels/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels
-	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/bin/default_dict/events/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events
-	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/bin/default_dict/commands/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands
-	@#@$(CP_RECURSE) $(wildcard $(BUILD_ROOT)/Autocoders/bin/default_dict/serializable) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)
+	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/Python/bin/'default_dict/channels/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels
+	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/Python/bin/default_dict/events/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events
+	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/Python/bin/default_dict/commands/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands
+	@#@$(CP_RECURSE) $(wildcard $(BUILD_ROOT)/Autocoders/Python/bin/default_dict/serializable) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)
 	@echo "Installing serializables in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable"
 	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable
 	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable/__init__.py

@@ -9,7 +9,7 @@ from optparse import OptionParser
 
 def main(argv=None):
     
-    python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
+    python_bin = "python"
     
     for port in range(start_port,end_port):
         if not fprime.gds.utils.PortFinder.IsPortUsed(port):

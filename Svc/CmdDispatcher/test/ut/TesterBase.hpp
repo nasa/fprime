@@ -208,10 +208,10 @@ namespace Svc {
           //!
           History(
               const U32 maxSize /*!< The maximum history size*/
-          ) : 
-              numEntries(0), 
-              maxSize(maxSize) 
-          { 
+          ) :
+              numEntries(0),
+              maxSize(maxSize)
+          {
             this->entries = new T[maxSize];
           }
 
@@ -358,7 +358,7 @@ namespace Svc {
 
       //! The history for from_compCmdSend
       //!
-      History<FromPortEntry_compCmdSend> 
+      History<FromPortEntry_compCmdSend>
         *fromPortHistory_compCmdSend;
 
       //! Push an entry on the history for from_seqCmdStatus
@@ -378,7 +378,7 @@ namespace Svc {
 
       //! The history for from_seqCmdStatus
       //!
-      History<FromPortEntry_seqCmdStatus> 
+      History<FromPortEntry_seqCmdStatus>
         *fromPortHistory_seqCmdStatus;
 
       //! Push an entry on the history for from_pingOut
@@ -394,7 +394,7 @@ namespace Svc {
 
       //! The history for from_pingOut
       //!
-      History<FromPortEntry_pingOut> 
+      History<FromPortEntry_pingOut>
         *fromPortHistory_pingOut;
 
     protected:
@@ -577,9 +577,9 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
     protected:
-    
+
       // send command buffers directly - used for intentional command encoding errors
-      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args); 
+      void sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args);
 
       //! Send a CMD_NO_OP command
       //!
@@ -729,7 +729,7 @@ namespace Svc {
 
       //! The history of OpCodeRegistered events
       //!
-      History<EventEntry_OpCodeRegistered> 
+      History<EventEntry_OpCodeRegistered>
         *eventHistory_OpCodeRegistered;
 
     protected:
@@ -754,7 +754,7 @@ namespace Svc {
 
       //! The history of OpCodeDispatched events
       //!
-      History<EventEntry_OpCodeDispatched> 
+      History<EventEntry_OpCodeDispatched>
         *eventHistory_OpCodeDispatched;
 
     protected:
@@ -777,7 +777,7 @@ namespace Svc {
 
       //! The history of OpCodeCompleted events
       //!
-      History<EventEntry_OpCodeCompleted> 
+      History<EventEntry_OpCodeCompleted>
         *eventHistory_OpCodeCompleted;
 
     protected:
@@ -802,7 +802,7 @@ namespace Svc {
 
       //! The history of OpCodeError events
       //!
-      History<EventEntry_OpCodeError> 
+      History<EventEntry_OpCodeError>
         *eventHistory_OpCodeError;
 
     protected:
@@ -825,7 +825,7 @@ namespace Svc {
 
       //! The history of MalformedCommand events
       //!
-      History<EventEntry_MalformedCommand> 
+      History<EventEntry_MalformedCommand>
         *eventHistory_MalformedCommand;
 
     protected:
@@ -848,7 +848,7 @@ namespace Svc {
 
       //! The history of InvalidCommand events
       //!
-      History<EventEntry_InvalidCommand> 
+      History<EventEntry_InvalidCommand>
         *eventHistory_InvalidCommand;
 
     protected:
@@ -871,7 +871,7 @@ namespace Svc {
 
       //! The history of TooManyCommands events
       //!
-      History<EventEntry_TooManyCommands> 
+      History<EventEntry_TooManyCommands>
         *eventHistory_TooManyCommands;
 
     protected:
@@ -882,7 +882,7 @@ namespace Svc {
 
       //! Handle event NoOpReceived
       //!
-      virtual void logIn_COMMAND_NoOpReceived(
+      virtual void logIn_ACTIVITY_HI_NoOpReceived(
           void
       );
 
@@ -898,19 +898,19 @@ namespace Svc {
 
       //! Handle event NoOpStringReceived
       //!
-      virtual void logIn_COMMAND_NoOpStringReceived(
-          Fw::LogStringArg& No_op_string /*!< The NO-OP string that is generated*/
+      virtual void logIn_ACTIVITY_HI_NoOpStringReceived(
+          Fw::LogStringArg& message /*!< The NO-OP string that is generated*/
       );
 
       //! A history entry for event NoOpStringReceived
       //!
       typedef struct {
-        Fw::LogStringArg No_op_string;
+        Fw::LogStringArg message;
       } EventEntry_NoOpStringReceived;
 
       //! The history of NoOpStringReceived events
       //!
-      History<EventEntry_NoOpStringReceived> 
+      History<EventEntry_NoOpStringReceived>
         *eventHistory_NoOpStringReceived;
 
     protected:
@@ -921,7 +921,7 @@ namespace Svc {
 
       //! Handle event TestCmd1Args
       //!
-      virtual void logIn_COMMAND_TestCmd1Args(
+      virtual void logIn_ACTIVITY_HI_TestCmd1Args(
           I32 arg1, /*!< Arg1*/
           F32 arg2, /*!< Arg2*/
           U8 arg3 /*!< Arg3*/
@@ -937,7 +937,7 @@ namespace Svc {
 
       //! The history of TestCmd1Args events
       //!
-      History<EventEntry_TestCmd1Args> 
+      History<EventEntry_TestCmd1Args>
         *eventHistory_TestCmd1Args;
 
     protected:
@@ -984,7 +984,7 @@ namespace Svc {
 
       //! The history of CommandsDispatched values
       //!
-      History<TlmEntry_CommandsDispatched> 
+      History<TlmEntry_CommandsDispatched>
         *tlmHistory_CommandsDispatched;
 
     protected:
@@ -1009,7 +1009,7 @@ namespace Svc {
 
       //! The history of CommandErrors values
       //!
-      History<TlmEntry_CommandErrors> 
+      History<TlmEntry_CommandErrors>
         *tlmHistory_CommandErrors;
 
     protected:
@@ -1032,7 +1032,7 @@ namespace Svc {
 
       //! To port connected to compCmdReg
       //!
-      Fw::OutputCmdRegPort m_to_compCmdReg[20];
+      Fw::OutputCmdRegPort m_to_compCmdReg[30];
 
       //! To port connected to compCmdStat
       //!
@@ -1058,7 +1058,7 @@ namespace Svc {
 
       //! From port connected to compCmdSend
       //!
-      Fw::InputCmdPort m_from_compCmdSend[20];
+      Fw::InputCmdPort m_from_compCmdSend[30];
 
       //! From port connected to seqCmdStatus
       //!

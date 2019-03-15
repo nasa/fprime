@@ -53,7 +53,7 @@
   this->assertTlm_CommandErrors(__FILE__, __LINE__, index, value)
 
 // ----------------------------------------------------------------------
-// Macros for event history assertions 
+// Macros for event history assertions
 // ----------------------------------------------------------------------
 
 #define ASSERT_EVENTS_SIZE(size) \
@@ -107,8 +107,8 @@
 #define ASSERT_EVENTS_NoOpStringReceived_SIZE(size) \
   this->assertEvents_NoOpStringReceived_size(__FILE__, __LINE__, size)
 
-#define ASSERT_EVENTS_NoOpStringReceived(index, _No_op_string) \
-  this->assertEvents_NoOpStringReceived(__FILE__, __LINE__, index, _No_op_string)
+#define ASSERT_EVENTS_NoOpStringReceived(index, _message) \
+  this->assertEvents_NoOpStringReceived(__FILE__, __LINE__, index, _message)
 
 #define ASSERT_EVENTS_TestCmd1Args_SIZE(size) \
   this->assertEvents_TestCmd1Args_size(__FILE__, __LINE__, size)
@@ -276,17 +276,17 @@ namespace Svc {
       //! Assert size of command response history
       //!
       void assertCmdResponse_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       //! Assert command response in history at index
       //!
       void assertCmdResponse(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CommandResponse response /*!< The command response*/
@@ -301,8 +301,8 @@ namespace Svc {
       //! Assert size of telemetry history
       //!
       void assertTlm_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
@@ -315,15 +315,15 @@ namespace Svc {
       //! Assert telemetry value in history at index
       //!
       void assertTlm_CommandsDispatched_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertTlm_CommandsDispatched(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32& val /*!< The channel value*/
       ) const;
 
@@ -336,15 +336,15 @@ namespace Svc {
       //! Assert telemetry value in history at index
       //!
       void assertTlm_CommandErrors_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertTlm_CommandErrors(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32& val /*!< The channel value*/
       ) const;
 
@@ -355,8 +355,8 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
@@ -367,15 +367,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_OpCodeRegistered_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_OpCodeRegistered(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32 Opcode, /*!< The opcode to register*/
           const I32 port, /*!< The registration port*/
           const I32 slot /*!< The dispatch slot it was placed in*/
@@ -388,15 +388,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_OpCodeDispatched_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_OpCodeDispatched(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32 Opcode, /*!< The opcode dispatched*/
           const I32 port /*!< The port dispatched to*/
       ) const;
@@ -408,15 +408,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_OpCodeCompleted_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_OpCodeCompleted(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32 Opcode /*!< The I32 command argument*/
       ) const;
 
@@ -427,15 +427,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_OpCodeError_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_OpCodeError(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32 Opcode, /*!< The opcode with the error*/
           CommandDispatcherComponentBase::ErrorResponse error /*!< The error value*/
       ) const;
@@ -447,15 +447,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_MalformedCommand_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_MalformedCommand(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           CommandDispatcherComponentBase::CmdSerError Status /*!< The deserialization error*/
       ) const;
 
@@ -466,15 +466,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_InvalidCommand_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_InvalidCommand(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32 Opcode /*!< Invalid opcode*/
       ) const;
 
@@ -485,15 +485,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_TooManyCommands_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_TooManyCommands(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const U32 Opcode /*!< The opcode that overflowed the list*/
       ) const;
 
@@ -504,8 +504,8 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_NoOpReceived_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
@@ -516,16 +516,16 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_NoOpStringReceived_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_NoOpStringReceived(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
-          const char *const No_op_string /*!< The NO-OP string that is generated*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
+          const char *const message /*!< The NO-OP string that is generated*/
       ) const;
 
     protected:
@@ -535,15 +535,15 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       void assertEvents_TestCmd1Args_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
       void assertEvents_TestCmd1Args(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
-          const U32 index, /*!< The index*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
           const I32 arg1, /*!< Arg1*/
           const F32 arg2, /*!< Arg2*/
           const U8 arg3 /*!< Arg3*/
@@ -552,48 +552,48 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // From ports 
+      // From ports
       // ----------------------------------------------------------------------
 
       void assertFromPortHistory_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: compCmdSend 
+      // From port: compCmdSend
       // ----------------------------------------------------------------------
 
       void assert_from_compCmdSend_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: seqCmdStatus 
+      // From port: seqCmdStatus
       // ----------------------------------------------------------------------
 
       void assert_from_seqCmdStatus_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 
     protected:
 
       // ----------------------------------------------------------------------
-      // From port: pingOut 
+      // From port: pingOut
       // ----------------------------------------------------------------------
 
       void assert_from_pingOut_size(
-          const char *const __ISF_callSiteFileName, /*!< The name of the file containing the call site*/
-          const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
       ) const;
 

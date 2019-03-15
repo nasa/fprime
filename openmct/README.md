@@ -57,7 +57,7 @@ and installs many dependencies.
 ```
 npm run configure <Topology XML Filepath>
 ```
-First runs the autocoder at `Autocoders/bin/JSONDictonaryGen.py`, which generates
+First runs the autocoder at `Autocoders/Python/bin/JSONDictonaryGen.py`, which generates
 a dictionary in JSON format for the given deployment XML, then runs the Node.js script at
 `openmct/scripts/generateConfigJSON.js` to generate the configuration that defines dictionaries for
 the OpenMCT server. For example, to configure the server for

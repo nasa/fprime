@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="LogTester" kind="passive" namespace="Log">
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+    <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+
+    <comment>A component for testing telemetry</comment>
+    <ports>
+        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" />
+        <port name="logRecvPort" data_type="Fw::Log" kind="sync_input" >
+            <comment>
+            Test Log Port
+            </comment>
+        </port>
+        <port name="textLogRecvPort" data_type="Fw::LogText" kind="sync_input" >
+            <comment>
+            Test Text Log Port
+            </comment>
+        </port>
+    </ports>
+</component>

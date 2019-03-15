@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name = "test" kind="active" namespace="SRC">
+    <import_dictionary>test/one</import_dictionary>
+    <import_port_type>test/two</import_port_type>
+    <include_header>test/three</include_header>
+
+    <ports>
+        <port name="inputOne" kind="async_input" data_type="string"></port>
+        <port name="outputOne" kind="output" data_type="U16"></port>
+    </ports>
+
+    <interface name="iifTwo">
+        <args>
+            <arg name="ArgTwo" type="boolean"></arg>
+        </args>
+    </interface>
+
+    <telemetry telemetry_base="x1">
+        <channel id="0x0" name="ChanOne" update="always" data_type="I8" high_orange="30">
+            <comment>Channel One</comment>
+        </channel>
+        <channel id = "x1" name = "ChanTwo" update="on_change" data_type="ENUM">
+            <comment>Channel Two Coordinates</comment>
+            <enum name="coor">
+                <item name="x" comment="x coor"></item>
+                <item name="y"/>
+            </enum>
+        </channel>
+        <channel id="2" name="ChanThree" data_type="string">
+            <comment>Channel Three</comment>
+        </channel>
+    </telemetry>
+
+    <commands opcode_base="$OPCODEBASE">
+        <command kind="async" opcode="0" mnemonic="Flight Command Zero" size = "10">
+            <comment>Flight Command Zero excecutes very simple command.</comment>
+        </command>
+        <command kind = "sync"  opcode="1" mnemonic="Flight Command One">
+            <comment>Flight Command One excecutes complex command.</comment>
+            <args>
+                <arg name="Throttle" type="I8" size="8" pass_by="reference" comment="Throttle Value">
+                    <comment>Controles the throttle value.</comment>
+                </arg>
+                <arg name="Rotation" type = "ENUM">
+                    <enum name="RotationValues">
+                        <item name="Yaw" value="-1"></item>
+                        <item name="Pitch" value = "0" comment = "Around y."/>
+                        <item name = "Role" comment = "Around z."></item>
+                    </enum>
+                </arg>
+                <arg name="Display" type="string" size="15">
+                    <comment>Message to pop up onto onboard flight 8 bit display.</comment>
+                </arg>
+            </args>
+        </command>
+        <command kind="async" opcode="2" mnemonic="Flight Command Two"></command>
+    </commands>
+
+    <events event_base="0x10">
+        <event name="EventOne" id="0" severity="INFO" format_string="Event Status: s%" throttle="10">
+            <comment>Informs event status.</comment>
+        </event>
+        <event name = "EventTwo" id = "x1" severity="FATAL" format_string="NONE">
+            <args>
+                <arg name="AG1" type="string" size="1"></arg>
+            </args>
+        </event>
+    </events>
+
+    <parameters opcode_base="$testBase" parameter_base="0x10">
+        <parameter id="0" set_opcode="0x1" save_opcode="0x2" name="ParamA" data_type="F32" default="32.1">
+            <comment>Float Parameter</comment>
+        </parameter>
+        <parameter id="1" set_opcode="0x3" save_opcode="0x4" name="ParamB" data_type="NATIVE_INT_TYPE" default="10">
+            <comment>Native Int Type</comment>
+        </parameter>
+        <parameter id="2" set_opcode="x5" save_opcode="x6" name="ParamC" data_type="U8" default="1">
+            <comment>Unsigned 8 bit</comment>
+        </parameter>
+        <parameter id="3" set_opcode="7" save_opcode="8" name="ParamD" data_type="string" size="10" default="def">
+            <comment>string</comment>
+        </parameter>
+        <parameter id="4" set_opcode="9" save_opcode="10" name="ParamE" data_type="boolean" default="true">
+            <comment>boolean</comment>
+        </parameter>
+    </parameters>
+
+</component>

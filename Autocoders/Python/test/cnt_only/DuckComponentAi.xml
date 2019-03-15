@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Note: sync attribute can be sync, async, or guarded. Only for input />
+   Note: priority attribute can be high, medium, low or interrupt.
+         Only valid for active components input.
+   Note  kind attribute of component can be ether active or passive.
+         -->
+<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Duck" kind="active" namespace="Duck">
+    <import_port_type>Autocoders/Python/test/cnt_only/Msg1PortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+
+    <comment>A demonstration Duck component with three ports</comment>
+    <ports>
+        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
+        <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
+        <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"/>
+
+        <!-- First port defined-->
+        <port name="ExtCmdIn" data_type="Msg1" kind="async_input" max_number="1000">
+            <comment>
+            The input port of type SomeType
+            </comment>
+        </port>
+
+        <!-- Second port defined-->
+        <port name="CmdIn" data_type="Msg1" kind="async_input">
+        <comment>The input port of type SomeType</comment>
+        </port>
+
+        <!-- Third port defined-->
+        <port name="CmdOut" data_type="Msg1" kind="output">
+        <comment>The output port of type AnotherType</comment>
+        </port>
+    </ports>
+</component>

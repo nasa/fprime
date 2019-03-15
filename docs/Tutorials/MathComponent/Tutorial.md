@@ -2335,7 +2335,6 @@ The output should appear as follows:
 
 ```
 BUILD_ROOT is: xxxxxx/fprime
-PYTHON_BASE: /usr
 NATIVE_BUILD: LINUX
 OUTPUT_DIR: linux-linux-x86-debug-gnu-bin
 None
@@ -2405,7 +2404,6 @@ The output should appear as follows:
 
 ```           
 BUILD_ROOT is: XXXXXX/fprime
-PYTHON_BASE: /usr
 Sequence is 191 bytes
 CRC: 3121812285 (0xBA13133D)
 ```

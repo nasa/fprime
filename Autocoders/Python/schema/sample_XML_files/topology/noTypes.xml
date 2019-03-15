@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<assembly name = "REF" base_id="0x10">
+    <import_component_type>test/import/one</import_component_type>
+    <import_component_type>test/import/two</import_component_type>
+    <import_component_type>test/import/three</import_component_type>
+
+    <instance name="FlightModuleOne" namespace="SRC" dict_short_name = "FM1"/>
+    <instance name="FlightModuleTwo" namespace="SRC"  dict_short_name="FM2" base_id = "10"/>
+    <instance name = "FlightModuleThree" namespace="SRC"  dict_short_name="FM3" base_id="20" base_id_range="20"></instance>
+    <instance name = "Processor" namespace="Fake" ></instance>
+
+    <connection name="Connection1">
+        <source component="FlightModuleOne" port="P1" num="-1"></source>
+        <target component="FlightModuleTwo" port="P2" num="1"></target>
+    </connection>
+
+    <connection name="Connection2">
+        <source component="FlightModuleThree" port="Negotiate" num="1"></source>
+        <target component="Processor" port="SendOut" num="1"></target>
+    </connection>
+
+</assembly>

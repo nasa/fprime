@@ -1,4 +1,4 @@
-import commands
+import subprocess
 import os
 import sys
 
@@ -18,7 +18,7 @@ class EnvFileReader:
 			
 			# check for =
 			if line.find("=") == -1:
-				raise "Missing '=' on line %i of file %s" % (line_num,filename)
+				raise Exception("Missing '=' on line %i of file %s" % (line_num,filename))
 			# split into var = val pairs
 			(var,val) = line.split("=",1)
 			# remove whitespace from vars and values
@@ -32,16 +32,16 @@ class EnvFileReader:
 					break
 				var_end_index = val.find(")")
 				if var_end_index == -1:
-					raise "Variable parse error on line %i of file %s" % (line_num,filename)
+					raise Exception("Variable parse error on line %i of file %s" % (line_num,filename))
 				# extract variable value
 				sub_var = val[var_start_index+2:var_end_index]
 				# look for variable in environment, if there rebuild val
-				if os.environ.has_key(sub_var):
+				if sub_var in os.environ:
 					val = val[0:var_start_index] + os.environ[sub_var] + val[var_end_index+1:]
-				elif env_var.has_key(sub_var):
+				elif sub_var in env_var:
 					val = val[0:var_start_index] + env_var[sub_var] + val[var_end_index+1:]
 				else:
-					raise "Variable %s not found in environment" % sub_var
+					raise Exception("Variable %s not found in environment" % sub_var)
 					
 				
 #			print "%s = %s" % (var, val)

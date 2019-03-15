@@ -344,7 +344,7 @@ class ProjectMetrics:
                     issues = self._ghe_conn.get_issues(repo_name)
                 except BaseException as err:
                     print("WARN: {}".format(err.message))
-                for issue_number in issues.keys():
+                for issue_number in list(issues.keys()):
                     # if issue_number % 100 == 0 or issue_number == 682:
                     #     pass
                     issue = issues[issue_number]
@@ -376,10 +376,10 @@ class ProjectMetrics:
                                                        closed_date)
 
                     # make sure that we don't have mismatched labels between events and current issue
-                    self.validate_issue_label_state(issue, event_labels, self.task_gates.keys())
+                    self.validate_issue_label_state(issue, event_labels, list(self.task_gates.keys()))
 
         # pre-process the issue delta dict into sequential date lists for each label
-        for label in self._issue_delta_timelines.keys():
+        for label in list(self._issue_delta_timelines.keys()):
             self.issue_deltas[label] = {self.NEW: [], self.DONE: [], self.OPEN: []}
             self.issue_totals[label] = {self.NEW: [], self.DONE: [], self.OPEN: []}
 
@@ -391,7 +391,7 @@ class ProjectMetrics:
         # build lists of dates, deltas, and totals
         while cur_date <= today:
             self.issue_dates.append(cur_date)
-            for label in self._issue_delta_timelines.keys():
+            for label in list(self._issue_delta_timelines.keys()):
                 if len(self.issue_dates) > 1:
                     prev_new = self.issue_totals[label][self.NEW][-1]
                     prev_done = self.issue_totals[label][self.DONE][-1]
@@ -422,13 +422,13 @@ class ProjectMetrics:
         # process the plan deltas if we have any
         if progress_deltas:
             start = sorted(progress_deltas.keys())[0]
-            date_list = [start + datetime.timedelta(x + 1) for x in xrange((today - start).days)]
+            date_list = [start + datetime.timedelta(x + 1) for x in range((today - start).days)]
             self.plan_progress[self.EV] = [progress_deltas[start]]
             self.plan_progress[self.DATE] = [start]
             for day in date_list:
                 self.plan_progress[self.DATE].append(day)
                 self.plan_progress[self.EV].append(self.plan_progress[self.EV][-1])
-                if day in progress_deltas.keys():
+                if day in list(progress_deltas.keys()):
                     self.plan_progress[self.EV][-1] += progress_deltas[day]
         # make sure progress dates match plan dates
         return
@@ -539,7 +539,7 @@ class ProjectMetrics:
             label_name = config_opts.git_label_mappings[label_name]
         if label_name in config_opts.excluded_labels:
             return event_labels
-        if label_name in self.task_gates.keys():
+        if label_name in list(self.task_gates.keys()):
             return event_labels
 
         event_type = event_json.get("event")
@@ -803,7 +803,7 @@ class ProjectMetrics:
         :param config_opts:
         :return:
         """
-        for directory in config_opts.dir_comp_map.keys():
+        for directory in list(config_opts.dir_comp_map.keys()):
             component = config_opts.dir_comp_map[directory]
             self.sloc_data[component] = {}
             for sloc_type in [(self.SLOC_MC_FILE, self.MC),
@@ -851,7 +851,7 @@ class ProjectMetrics:
         :param config_opts:
         :return:
         """
-        for directory in config_opts.dir_comp_map.keys():
+        for directory in list(config_opts.dir_comp_map.keys()):
             component = config_opts.dir_comp_map[directory]
             self.comp_data[component] = {}
             comp = component
@@ -901,8 +901,8 @@ class ProjectMetrics:
         current_totals = {}
         component_totals = {}
         # generate totals for history file
-        for component in component_data.keys():
-            for item in component_data[component].keys():
+        for component in list(component_data.keys()):
+            for item in list(component_data[component].keys()):
                 if item not in current_totals:
                     current_totals[item] = component_data[component][item]
                 else:
@@ -924,7 +924,7 @@ class ProjectMetrics:
         next_date = component_totals[self.DATE][index] + datetime.timedelta(days=1)
         while next_date <= today:
             if str(next_date) != str(component_totals[self.DATE][index + 1]):
-                for key in component_totals.keys():
+                for key in list(component_totals.keys()):
                     if key == self.DATE:
                         insert_val = next_date
                     else:
@@ -963,7 +963,7 @@ class ProjectMetrics:
         # rebuild history file with potentially new keys
         old_columns = data[0]
 
-        header = totals.keys()
+        header = list(totals.keys())
         for column in old_columns:
             if column not in header:
                 header.append(column)
