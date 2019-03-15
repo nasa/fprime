@@ -1,6 +1,5 @@
-#!/usr/bin/python
+#!python
 
-from fprime.common.utils import PortFinder
 import sys
 import subprocess
 import os
@@ -13,34 +12,16 @@ from pprint import pprint
 
 def main(argv=None):
 
-    start_port = 50000
-    end_port = 50100
-    used_port = None
-    addr = "127.0.0.1"
-    nobin = False
-
     # Get a path to the python binary we are using to launch processes
-    python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
-
-    # Find the port we will use for the server
-    for port in range(start_port,end_port):
-        if not PortFinder.IsPortUsed(port):
-            used_port = port
-            print("Using port %d"%used_port)
-            break
-
-    # Exit if we cannot find a port
-    if (used_port == None):
-        print("Could not find port in range %d to %d",start_port,end_port)
-        return -1
+    python_bin = "python"
 
     # Get a path to the root of the reference application build directory
     build_root = os.environ["BUILD_ROOT"]
 
     # Parse options on the command line
     parser = OptionParser()
-    parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: %default]", default=used_port)
-    parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set the threaded TCP socket server address [default: %default]", default=addr)
+    parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: 50000]", default=50000)
+    parser.add_option("-a", "--addr", dest="addr", action="store", type="string", help="set the threaded TCP socket server address [default: %default]", default="0.0.0.0")
     parser.add_option("-n", "--nobin", dest="nobin", action="store_true", help="Disables the binary app from starting [default: %default]", default=False)
     parser.add_option("-t", "--twin", dest="twin", action="store_true", help="Runs Threaed TCP Server in window, otherwise backgrounds [default: %default]", default=False)
 
