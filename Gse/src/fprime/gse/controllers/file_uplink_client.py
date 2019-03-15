@@ -256,11 +256,7 @@ class UplinkShell(object):
 
         # We need to know the python base
         # before we begin the subprocess.
-        if 'PYTHON_BASE' not in os.environ:
-            print "Please set PYTHON_BASE"
-            raise exceptions.EnvironmentError
-
-        cmd         = os.environ['PYTHON_BASE'] + "/bin/python " + uplink_path + " -p {port} -i {host} -f {src} -d {dest} -o {off} -s {size} -l {log_folder}".format( \
+        cmd         = "python " + uplink_path + " -p {port} -i {host} -f {src} -d {dest} -o {off} -s {size} -l {log_folder}".format( \
                                   port=port, host=host, src=src_path, dest=dest_path, \
                                   off=offset, size=data_size, log_folder=self.__log_folder)
 

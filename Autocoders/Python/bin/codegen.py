@@ -12,7 +12,7 @@ import sys
 import time
 import glob
 import logging
-import exceptions
+
 
 from optparse import OptionParser
 
@@ -233,7 +233,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         event_html_instance_name = base + "_Event_HTML"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
 
     #Figures out what visitor to use
     if opt.default_topology_dict or opt.xml_topology_dict:
@@ -380,7 +380,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem.attrib["component"] = comp_name
                         command_elem.attrib["mnemonic"] = command.get_mnemonic()
                         command_elem.attrib["opcode"] = "%s"%(hex(int(command.get_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in command_elem.attrib.keys()):
+                        if ("comment" in list(command_elem.attrib.keys())):
                             command_elem.attrib["description"] = command_elem.attrib["comment"]
                         args_elem = etree.Element("args")
                         for arg in command.get_args():
@@ -430,7 +430,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             channel_elem.attrib["description"] = chan.get_comment()
 
                         channel_elem.attrib["id"] = "%s"%(hex(int(chan.get_ids()[0],base=0) + comp_id))
-                        if ("comment" in channel_elem.attrib.keys()):
+                        if ("comment" in list(channel_elem.attrib.keys())):
                             channel_elem.attrib["description"] = channel_elem.attrib["comment"]
                         channel_type = chan.get_type()
                         if type(channel_type) == type(tuple()):
@@ -484,7 +484,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         event_elem.attrib["id"] = "%s"%(hex(int(event.get_ids()[0],base=0) + comp_id))
                         event_elem.attrib["severity"] = event.get_severity()
                         format_string = event.get_format_string()
-                        if ("comment" in event_elem.attrib.keys()):
+                        if ("comment" in list(event_elem.attrib.keys())):
                             event_elem.attrib["description"] = event_elem.attrib["comment"]
                         args_elem = etree.Element("args")
                         arg_num = 0
@@ -534,7 +534,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_set.attrib["component"] = comp_name
                         command_elem_set.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SET"
                         command_elem_set.attrib["opcode"] = "%s"%(hex(int(parameter.get_set_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in command_elem.attrib.keys()):
+                        if ("comment" in list(command_elem.attrib.keys())):
                             command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_set.attrib["description"] = parameter.get_name() + " parameter set"
@@ -581,7 +581,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_save.attrib["component"] = comp_name
                         command_elem_save.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SAVE"
                         command_elem_save.attrib["opcode"] = "%s"%(hex(int(parameter.get_save_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in command_elem.attrib.keys()):
+                        if ("comment" in list(command_elem.attrib.keys())):
                             command_elem_save.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_save.attrib["description"] = parameter.get_name() +  " parameter save"
@@ -647,7 +647,7 @@ def generate_component_instance_dictionary(the_parsed_component_xml , opt , topo
     #checks if the topology model exists
     if topology_model == None:
         PRINT.info("Topology model was not specified. Please also input a topology model when running this command.")
-        raise exceptions.IOError
+        raise IOError
 
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
 
@@ -882,7 +882,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
 
     #
     if opt.impl_flag:
@@ -908,7 +908,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     #        cpp_instance_name = base + "_Cpp"
     #    else:
     #        PRINT.info("Missing Ai at end of file: %s" % port_file)
-    #        raise exceptions.IOError
+    #        raise IOError
     #    generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     #    generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
     #
@@ -960,7 +960,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.default_dict:
         if opt.dict_dir == None:
             PRINT.info("Dictionary output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
         os.environ["DICT_DIR"] = opt.dict_dir
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -1014,7 +1014,7 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.ampcs_dict and not opt.default_topology_dict:
         if opt.dict_dir == None:
             PRINT.info("Dictionary output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
         os.environ["AMPCS_DICT_DIR"] = opt.dict_dir
         AmpcsCommandConverter.AmpcsCommandConverter(component_model).writeFile(opt.dict_dir)
         AmpcsTelemetryConverter.AmpcsTelemetryConverter(component_model).writeFile(opt.dict_dir)
@@ -1023,28 +1023,32 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     if opt.html_docs:
         if opt.html_doc_dir == None:
             PRINT.info("HTML documentation output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
 
         os.environ["HTML_DOC_SUBDIR"] = opt.html_doc_dir
         html_doc_generator = GenFactory.GenFactory.getInstance()
         html_doc_generator.configureVisitor(base + "_Html", "HtmlDocVisitor", True, True)
         htmlStart   = html_doc_generator.create("HtmlStart")
         htmlDoc     = html_doc_generator.create("HtmlDoc")
+        finisher    = html_doc_generator.create("finishSource")
         htmlStart(component_model)
         htmlDoc(component_model)
+        finisher(component_model)
 
     if opt.md_docs:
         if opt.md_doc_dir == None:
             PRINT.info("MD documentation output directory not specified!")
-            raise exceptions.IOError
+            raise IOError
 
         os.environ["MD_DOC_SUBDIR"] = opt.md_doc_dir
         md_doc_generator = GenFactory.GenFactory.getInstance()
         md_doc_generator.configureVisitor(base + "_Md", "MdDocVisitor", True, True)
         mdStart   = md_doc_generator.create("MdStart")
         mdDoc     = md_doc_generator.create("MdDoc")
+        finisher  = md_doc_generator.create("finishSource")
         mdStart(component_model)
         mdDoc(component_model)
+        finisher(component_model)
 
 def generate_port(the_parsed_port_xml, port_file):
     """
@@ -1075,7 +1079,7 @@ def generate_port(the_parsed_port_xml, port_file):
         cpp_instance_name = base + "_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
     #
     generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
@@ -1151,7 +1155,7 @@ def generate_serializable(the_serial_xml, opt):
         cpp_instance_name = base + "_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise exceptions.IOError
+        raise IOError
     #
     generator = GenFactory.GenFactory.getInstance()
     generator.configureVisitor(h_instance_name, "SerialCppVisitor", True, True)
@@ -1164,7 +1168,7 @@ def generate_serializable(the_serial_xml, opt):
             # borrow source visitor pattern for serializable dictionary
             if opt.dict_dir == None:
                 PRINT.info("Dictionary output directory not specified!")
-                raise exceptions.IOError
+                raise IOError
             os.environ["DICT_DIR"] = opt.dict_dir
             generator.configureVisitor("SerialDict", "SerializableVisitor", True, True)
 
@@ -1175,11 +1179,11 @@ def generate_serializable(the_serial_xml, opt):
             # borrow source visitor pattern for serializable dictionary
             if opt.dict_dir == None:
                 PRINT.info("Dictionary output directory not specified!")
-                raise exceptions.IOError
+                raise IOError
             os.environ["DICT_DIR"] = opt.dict_dir
-            print "\n"
-            print opt.dict_dir
-            print "\n"
+            print("\n")
+            print(opt.dict_dir)
+            print("\n")
             generator.configureVisitor("SerialDict", "InstanceSerializableVisitor", True, True)
     #
     # The idea here is that each of these generators is used to create
@@ -1261,7 +1265,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         file_list = parser.get_include_header_files() + parser.get_includes()
     elif type == "assembly" or  type == "deployment":
         # get list of dependency files from XML/header file list
-        file_list_tmp = parser.get_comp_type_file_header_dict().keys()
+        file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
         #file_list = list()
         #for f in file_list_tmp:
@@ -1381,7 +1385,7 @@ def main():
     #
     if opt.build_root_flag == True:
         # Check for BUILD_ROOT env. variable
-        if ('BUILD_ROOT' in os.environ.keys()) == False:
+        if ('BUILD_ROOT' in list(os.environ.keys())) == False:
             PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
             sys.exit(-1)
         else:
@@ -1413,7 +1417,7 @@ def main():
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
-            print "Found assembly or deployment named: %s\n" % DEPLOYMENT
+            print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
             generate_topology(the_parsed_topology_xml, xml_filename, opt)
             dependency_parser = the_parsed_topology_xml
         else:

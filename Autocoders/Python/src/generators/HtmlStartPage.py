@@ -76,7 +76,7 @@ class HtmlStartPage:
             visitor.htmlStartPage(self.__obj)
         else:
             DEBUG.error('HtmlStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'HtmlStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('HtmlStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class HtmlStartPage:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('HtmlStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'HtmlStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('HtmlStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

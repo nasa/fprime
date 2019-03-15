@@ -58,7 +58,7 @@ class AbstractParser(object):
         @param name: Name of tag to return.
         @return: Tag data value contents. A list.
         """
-        raise "AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of get(...)."
+        raise Exception("AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of get(...).")
 
     def getAttr(self, name):
         """
@@ -66,7 +66,7 @@ class AbstractParser(object):
         @param name: Name of tag to return.
         @return: Tag attribute dict contents.  A list of dict.
         """
-        raise "AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of getAttr(...)."
+        raise Exception("AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of getAttr(...).")
 
 
 if __name__ == '__main__':

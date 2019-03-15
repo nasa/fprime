@@ -76,7 +76,7 @@ class EventHeader:
             visitor.eventHeaderVisit(self.__obj)
         else:
             DEBUG.error('EventHeader.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'EventHeader.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('EventHeader.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class EventHeader:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('EventHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'EventHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('EventHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

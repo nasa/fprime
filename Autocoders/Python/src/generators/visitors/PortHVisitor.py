@@ -209,7 +209,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.info('Open file: %s' % filename)
         self.__fp = open(filename,'w')
         if self.__fp == None:
-            raise "Could not open %s file." % filename
+            raise Exception("Could not open %s file.") % filename
         DEBUG.info('Completed')
 
 
@@ -244,11 +244,11 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = includes2PortH.includes2PortH()
         c.c_includes_list = obj.get_includes()
-        if False in map(lambda x: x[-3:] == 'hpp' or x[-1:] == 'h', c.c_includes_list):
+        if False in [x[-3:] == 'hpp' or x[-1:] == 'h' for x in c.c_includes_list]:
             PRINT.info("ERROR: Only .hpp or .h files can be given within <include_header> tag!!!")
             sys.exit(-1)
         c.xml_includes_list = obj.get_serial_includes()
-        if False in map(lambda x: x[-6:] == 'Ai.xml', c.xml_includes_list):
+        if False in [x[-6:] == 'Ai.xml' for x in c.xml_includes_list]:
             PRINT.info("ERROR: Only xml files can be given within <import_serializable_type> tag!!!")
             sys.exit(-1)
         c.xml_includes_list = [x.replace('Ai.xml','Ac.hpp') for x in  c.xml_includes_list]
@@ -298,12 +298,12 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         #[(('ENUM', name of typedef), [ list of (name, value, comment) enumerations]), (...), (...), ...]
         #
         c.enum_type_list = []
-        t = map(lambda x: x.get_type(), obj.get_args())
+        t = [x.get_type() for x in obj.get_args()]
         # if a return type add it to the list to scan for enum
         r = obj.get_return()
         if (r != None):
             t += obj.get_return()
-        enum_list = filter(lambda x: type(x) == type(tuple()), t)
+        enum_list = [x for x in t if type(x) == type(tuple())]
         for e in enum_list:
             c.enum_type_list.append(self._get_enum_string_list(e))
         #print c.enum_type_list

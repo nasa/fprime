@@ -132,8 +132,8 @@ def generate_for_method(test_method):
             args_dict['test_file'] = supported_apps[app]['test_file']
 
         except KeyError:
-            print "Test Method not not found"
-            print "Are you sure it is specified correctly in runNose.py?"
+            print("Test Method not not found")
+            print("Are you sure it is specified correctly in runNose.py?")
             raise RuntimeError
 
         nose_args = """ {app_name}/{test_file}:{test_method} """.format(**args_dict)
@@ -165,7 +165,7 @@ def parse_app(appTest):
     try:
         args_dict['test_file'] = supported_apps[app_or_test]['test_file']
     except KeyError:
-        print "Invalid application name: %s" % app_or_test
+        print("Invalid application name: %s" % app_or_test)
         raise RuntimeError
 
 
@@ -176,13 +176,13 @@ def parse_app(appTest):
         try:
             args_dict['test_method'] = supported_apps[app_or_test][test_method]
         except KeyError:
-            print "Invalid test method name: %s" % test_method
+            print("Invalid test method name: %s" % test_method)
             raise RuntimeError
 
 
     nose_args = """ {app_name}/{test_file}:{test_method} """.format(**args_dict)
 
-    print nose_args
+    print(nose_args)
 
     return nose_args
 
@@ -238,8 +238,8 @@ def run_nose(nose_call):
     # Change directory to Autocoders/Python/test
     os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 
-    print "\n\n--------------- Calling NoseTest ---------------\n %s\n" % nose_call
-    print "---------------    Test List     ---------------"
+    print("\n\n--------------- Calling NoseTest ---------------\n %s\n" % nose_call)
+    print("---------------    Test List     ---------------")
     subprocess.call(nose_call, shell=True)
 
     # Reset directory
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     try:
         nose_call = process_args(args)
     except RuntimeError:
-        print "Aborting."
+        print("Aborting.")
         sys.exit()
 
     run_nose(nose_call)

@@ -11,7 +11,7 @@ def main(argv=None):
     
     build_root = os.environ["BUILD_ROOT"]
     
-    python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
+    python_bin = "python"
     
     parser = OptionParser()
     parser.add_option("-p", "--port", dest="port", action="store", type="int", help="Set the threaded TCP socket server port [default: %default]", default=50000)

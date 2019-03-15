@@ -9,7 +9,7 @@
 # conditional compilation code.
 
 import os
-from pyparsing import *
+from .pyparsing import *
 from time import clock
 
 # Constants
@@ -40,7 +40,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     or if the value can not be represented as an integer.
     """
     if loadfile not in (True, False):
-        raise ValueError, '%r: invalid loadfile argument' % loadfile
+        raise ValueError('%r: invalid loadfile argument' % loadfile)
 
     results = ""
 
@@ -51,14 +51,14 @@ def ParseNumDefine(defname, filename, loadfile=True):
     if loadfile == True:
 
         if not os.path.isfile(filename):
-            raise IOError, '%r: file not found.' % filename
+            raise IOError('%r: file not found.' % filename)
 
         fd = open(filename)
 
         try:
             data = fd.read()
         except:
-            raise IOError, '%r: error reading file.' % filename
+            raise IOError('%r: error reading file.' % filename)
         else:
             fd.close()
 
@@ -117,7 +117,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     """
 
     if loadfile not in (True, False):
-        raise ValueError, '%r: invalid loadfile argument' % loadfile
+        raise ValueError('%r: invalid loadfile argument' % loadfile)
 
     dictionary = {}
 
@@ -137,21 +137,21 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
                 msl_root = os.environ["MSL_ROOT"]
             else:
                 str = "MSL_ROOT is not defined in the environment."
-                print str
-                raise KeyError, str
+                print(str)
+                raise KeyError(str)
             filename = msl_root + os.sep + filename
             if not os.path.isfile(filename):
             ######################
                 str = 'ERROR: utils.ParseC.ParseTypedefEnum: %s file not found.' % filename
-                print str
-                raise IOError, str
+                print(str)
+                raise IOError(str)
 
         fd = open(filename)
 
         try:
             data = fd.read()
         except:
-            raise IOError, '%r: error reading file.' % filename
+            raise IOError('%r: error reading file.' % filename)
         else:
             fd.close()
 
@@ -162,8 +162,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
     if (typename == "" or typename == None) == True:
         str = "ERROR: utils.ParseC.ParseTypedefEnum typename argument empty (%s)" % typename
-        print str
-        raise ValueError, str
+        print(str)
+        raise ValueError(str)
 
     #
     # Configure a parser to pickoff a typedef enumeration. This only works
@@ -201,8 +201,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     #
     if (typename in data) == False:
         str = "ERROR: could not find ENUM type (%s)" % typename
-        print str
-        raise ValueError, str
+        print(str)
+        raise ValueError(str)
 
     # Parse the file using the configured parser and scanString. The
     # processing loop is empty since there is only one match. The parse
@@ -231,8 +231,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
     if len(toks) == 0:
         str = "ERROR: could not find ENUM (%s) in %s" % (typename, filename)
-        print str
-        raise ValueError, str
+        print(str)
+        raise ValueError(str)
 
     # In ANSI/ISO C, enums must be legal int values. On MSL FSW target,
     # that means 32-bits, signed. Need to convert hex values to signed int.
@@ -250,8 +250,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         t = toks[i]
 
         if typename == debugOnType:
-            print typename + "(0):"
-            print t
+            print(typename + "(0):")
+            print(t)
 
         # Kludge from above. Remove the cast that we eventually
         # want to have suppressed during the parse. This does
@@ -261,16 +261,16 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         t = t.replace("(int)", "")
 
         if typename == debugOnType:
-            print typename + "(1):"
-            print t
+            print(typename + "(1):")
+            print(t)
 
         # Use the supplied value if specified.
         if t[0:1] == "=":
             # Use int to convert hex2dec.
             if typename == debugOnType:
-                print typename + "(2):"
-                print t[1:]
-                print int(t[1:],0)
+                print(typename + "(2):")
+                print(t[1:])
+                print(int(t[1:],0))
             val = int(t[1:], 0)
             if val & sign_bit:
                 val = -((~val & sign_mask) + 1)
@@ -279,8 +279,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
             dictionary[t] = val
 
         if typename == debugOnType:
-            print typename + "(3):"
-            print val
+            print(typename + "(3):")
+            print(val)
         val = val + 1
         pt = t
 
@@ -308,7 +308,7 @@ def ParseTypedefEnumValue(name, typename, filename, loadfile=True):
     enums = ParseTypedefEnum(typename, filename, loadfile)
 
     if name not in enums:
-        raise ValueError, '%r: enumeration not found' % name
+        raise ValueError('%r: enumeration not found' % name)
 
     return int(enums[name])
 
@@ -353,40 +353,40 @@ if __name__ == '__main__':
     typename = "CmdStatus"
     enumname = "CMD_FAILED_MODE_CHECK"
 
-    print
-    print "Checking ParseTypedefEnumValue..."
-    print 'Typedef: %s' % typename
+    print()
+    print("Checking ParseTypedefEnumValue...")
+    print('Typedef: %s' % typename)
 
     result = ParseTypedefEnumValue(enumname, typename, testdata, False)
 
-    print "The value of %s is: %d." % (enumname, result)
+    print("The value of %s is: %d." % (enumname, result))
 
 ##################################################
 
     index = 0
     typename = "CmdStatus"
 
-    print
-    print "Checking ParseTypedefEnum..."
-    print 'Typedef: %s' % typename
+    print()
+    print("Checking ParseTypedefEnum...")
+    print('Typedef: %s' % typename)
 
     results = ParseTypedefEnum(typename, testdata, False)
 
-    for key, value in results.items():
-        print "    " + str(key) + " -> " + str(value)
+    for key, value in list(results.items()):
+        print("    " + str(key) + " -> " + str(value))
 
 ##################################################
 
-    print
-    print "Checking ParseNumDefine..."
+    print()
+    print("Checking ParseNumDefine...")
     define = ["APPLE", "PEAR", "ORANGE"]
 
     for d in define:
         try:
             value = ParseNumDefine(d, testdata, False)
-            print "The value of " + d + " is: " + str(value)
+            print("The value of " + d + " is: " + str(value))
         except ValueError:
-            print d + ": could not find define."
+            print(d + ": could not find define.")
 
 
 ##################################################

@@ -56,22 +56,22 @@ class EnumCheckResults:
             return False
 
     def report_warnings(self):
-        print "Enum Check Warnings: (%d)" % (self.underruns + self.stale_bools)
-        print "==========================="
-        print "    stale boolean: %d" % (self.stale_bools)
+        print("Enum Check Warnings: (%d)" % (self.underruns + self.stale_bools))
+        print("===========================")
+        print("    stale boolean: %d" % (self.stale_bools))
         for i in self.underrun_details:
-            print "    enumeration underrun: type=%s" % (i[0])
-            print "       bits=%d, max_value=%d, signed=%d" % (i[1], i[2], i[3])
+            print("    enumeration underrun: type=%s" % (i[0]))
+            print("       bits=%d, max_value=%d, signed=%d" % (i[1], i[2], i[3]))
 
 
     def report_errors(self):
 
-        print "Enum Check Errors: (%d)" % (self.overruns + self.key_errors)
-        print "==========================="
-        print "    missing key: %d" % (self.key_errors)
+        print("Enum Check Errors: (%d)" % (self.overruns + self.key_errors))
+        print("===========================")
+        print("    missing key: %d" % (self.key_errors))
         for i in self.overrun_details:
-            print "    enumeration overrrun: type=%s" % (i[0])
-            print "       bits=%d, max_value=%d, signed=%d" % (i[1], i[2], i[3])
+            print("    enumeration overrrun: type=%s" % (i[0]))
+            print("       bits=%d, max_value=%d, signed=%d" % (i[1], i[2], i[3]))
 
 
 class EnumInfo:
@@ -107,7 +107,7 @@ class EnumInfo:
             self.bits = bits
         else:
             str = "ERROR: %s invalid bit length %d." % (self.name, bits)
-            raise ValueError, str
+            raise ValueError(str)
 
 
 def cmd_dict_enum_size_check(filename, verbose=False):
@@ -119,7 +119,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
     if not os.path.exists(filename):
         if verbose == True:
-            print "The specified dictionary does not exist: %s" % (filename)
+            print("The specified dictionary does not exist: %s" % (filename))
             return None
 
     enum_info = {}
@@ -163,8 +163,8 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
             #print ">>>>>Final max value of %s (%s) is %d" % (key,enum.name,enum.max_abs_value)
 
-            if enums.has_key(key):
-                print "Duplicate enumerations: %s." % (key)
+            if key in enums:
+                print("Duplicate enumerations: %s." % (key))
                 return None
 
             # enum_types[key] = value
@@ -187,10 +187,10 @@ def cmd_dict_enum_size_check(filename, verbose=False):
             if key[0:3] != "All":
 		enums[key].set_bits(value)
 
-            	if enum_info.has_key(key):
+            	if key in enum_info:
                 # Skip the ones we generated.
                     if key.find("InstanceId") == -1:
-                        print "Duplicate enumeration usages: %s." % (key)
+                        print("Duplicate enumeration usages: %s." % (key))
                         return None
 
                 enum_info[key] = enums[key]
@@ -200,10 +200,10 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
 
     if verbose == True:
-        print "Done gathering %d enumerations." % (len(enums))
-        print "Done gathering %d usages." % (len(enum_info))
+        print("Done gathering %d enumerations." % (len(enums)))
+        print("Done gathering %d usages." % (len(enum_info)))
 
-    for type in enums.iterkeys():
+    for type in enums.keys():
 
         # Calculate the allowed maximum value for this type based
         # on the bit length that was specified. We want the maximum
@@ -254,7 +254,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
                 results.add_key_error()
 
     if verbose == True:
-        print "Done performing dictionary enumeration check."
+        print("Done performing dictionary enumeration check.")
 
     return results
 
@@ -266,7 +266,7 @@ if (__name__ == '__main__'):
     status = cmd_dict_enum_size_check(filename, True)
 
     if status == None:
-        print "Error perform dictionary enumeration check."
+        print("Error perform dictionary enumeration check.")
         sys.exit(-1)
 
     status.report_warnings()

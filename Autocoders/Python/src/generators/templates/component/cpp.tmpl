@@ -1397,7 +1397,7 @@ namespace ${namespace} {
 
   #for $ifname, $priority, $full in $internal_interfaces:
   void ${class_name}::
-    #if $internal_interface_param_strs.has_key($ifname):
+    #if $ifname in $internal_interface_param_strs:
     ${ifname}_internalInterfaceInvoke(
         $internal_interface_param_strs[$ifname]
     )

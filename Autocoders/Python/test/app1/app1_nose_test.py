@@ -25,7 +25,7 @@ def c_port_send_test():
     cn = 10
     cs = "Some_String"
     expect_string = ".*\*\*\* Huey: cmd = {cmd_number} str = {cmd_string}.*".format(cmd_number=cn, cmd_string=cs)
-    print expect_string
+    print(expect_string)
     try:
         p = pexpect.spawn("make run_ut")
         p.expect(".*q to quit:.*", timeout=3)
@@ -41,11 +41,11 @@ def c_port_send_test():
         p.sendline("q")
         assert True
     except TIMEOUT as e:
-        print "Timeout Error. Expected Value not returned."
-        print "-------Program Output-------"
-        print p.before
-        print "-------Expected Output-------"
-        print e.get_trace()
+        print("Timeout Error. Expected Value not returned.")
+        print("-------Program Output-------")
+        print(p.before)
+        print("-------Expected Output-------")
+        print(e.get_trace())
         assert False
 
 
@@ -63,9 +63,9 @@ def teardown_module():
         try:
             subprocess.check_output(cmd, stderr = subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as e:
-            print "MAKE CLEAN ERROR"
-            print "''''''''''''''''"
-            print e.output
+            print("MAKE CLEAN ERROR")
+            print("''''''''''''''''")
+            print(e.output)
     os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
 
 def make():
@@ -73,9 +73,9 @@ def make():
         subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True)
         return True
     except CalledProcessError as e:
-       print "MAKE ERROR"
-       print "''''''''''"
-       print e.output
+       print("MAKE ERROR")
+       print("''''''''''")
+       print(e.output)
        return False
 
 def make_ut():
@@ -83,9 +83,9 @@ def make_ut():
         subprocess.check_output('make ut', stderr = subprocess.STDOUT, shell=True)
         return True
     except CalledProcessError as e:
-        print "MAKE UT ERROR"
-        print "'''''''''''''"
-        print e.output
+        print("MAKE UT ERROR")
+        print("'''''''''''''")
+        print(e.output)
         return False
 
 

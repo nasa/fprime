@@ -163,7 +163,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     DEBUG.info('Completed %s open'%pyfile)
 
         else:
-            print("Invalid type %s"%type(obj))
+            print(("Invalid type %s"%type(obj)))
             sys.exit(-1)
         
         # Open file for writing here...

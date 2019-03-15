@@ -22,7 +22,7 @@ import time
 import socket
 import logging
 
-import CompFactory
+from . import CompFactory
 
 
 from utils import Logger
@@ -33,7 +33,7 @@ from parsers import XmlTopologyParser
 from models import Component
 from models import Port
 from models import Topology
-from __builtin__ import True
+#from builtins import True
 #from Canvas import Window
 
 from parsers import XmlComponentParser
@@ -111,7 +111,7 @@ class TopoFactory:
             componentXMLNameToComponent[comp_name] = processedXML
 
         for instance in x.get_instances():
-            if instance.get_type() not in componentXMLNameToComponent.keys():
+            if instance.get_type() not in list(componentXMLNameToComponent.keys()):
                 PRINT.info("Component XML file type {} was not specified in the topology XML. Please specify the path using <import_component_type> tags.".format(instance.get_type()))
             else:
                 instance.set_component_object(componentXMLNameToComponent[instance.get_type()])
@@ -186,11 +186,11 @@ class TopoFactory:
             id = self.__id_to_int(event.get_ids()[0])
 
             if id in event_id_list:
-                print("IDCollisionError: Event ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Event ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             event_id_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
         channel_id_list = []
@@ -200,11 +200,11 @@ class TopoFactory:
             id = self.__id_to_int(channel.get_ids()[0])
 
             if id in channel_id_list:
-                print("IDCollisionError: Channel ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Channel ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             channel_id_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
 
@@ -215,7 +215,7 @@ class TopoFactory:
             id = self.__id_to_int(commands.get_opcodes()[0])
 
             if id in command_id_list:
-                print("IDCollisionError: Command ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Command ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             command_id_list.append(id)
 
@@ -231,7 +231,7 @@ class TopoFactory:
             id = self.__id_to_int(parameters.get_ids()[0])
 
             if id in parameter_id_list:
-                print("IDCollisionError: Parameter ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Parameter ID {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             parameter_id_list.append(id)
 
@@ -244,10 +244,10 @@ class TopoFactory:
             id = self.__id_to_int(parameters.get_set_opcodes()[0])
 
             if id in parameter_opcode_list:
-                print("IDCollisionError: Parameter set opcode {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Parameter set opcode {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             if id in command_id_list:
-                print("IDCollisionError: Parameter set opcode {} in component {} is the same as another command id in this component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Parameter set opcode {} in component {} is the same as another command id in this component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             parameter_opcode_list.append(id)
 
@@ -259,10 +259,10 @@ class TopoFactory:
             id = self.__id_to_int(parameters.get_save_opcodes()[0])
 
             if id in parameter_opcode_list:
-                print("IDCollisionError: Parameter save opcode {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Parameter save opcode {} in component {} is used more than once in the same component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             if id in command_id_list:
-                print("IDCollisionError: Parameter save opcode {} in component {} is the same as another command id in this component.".format(id , comp_xml.get_component().get_name()))
+                print(("IDCollisionError: Parameter save opcode {} in component {} is the same as another command id in this component.".format(id , comp_xml.get_component().get_name())))
                 sys.exit(-1)
             parameter_opcode_list.append(id)
 
@@ -544,7 +544,7 @@ class TopoFactory:
                 PRINT.info("{} instance reseting base id window range to size calculated from the component XML file ({})".format(n,w))
 
 
-        if w < component_calculated_window_range:
+        if component_calculated_window_range is not None and w < component_calculated_window_range:
             PRINT.info("ERROR: The specified window range for component {} is {}, which is smaller than the calculated window range of {}. Please check the instance definitions in the topology xml file.".format(n , w , component_calculated_window_range))
 
         return [n, b, w , inst , component_calculated_window_range , self.__compute_component_ID_amount(comp)]
@@ -556,7 +556,7 @@ def main():
 
     xmlfile = "../../test/app1a/DuckAppAi.xml"
 
-    print "Topology XML parse test (%s)" % xmlfile
+    print("Topology XML parse test (%s)" % xmlfile)
     #
     # Basic usage of this factory to create the component meta-model
     #
@@ -565,32 +565,32 @@ def main():
     #
     # End of usage and comp is the instance of model to be used.
     #
-    print "Topology: %s" % top
-    print "Namespace: %s" % top.get_namespace()
-    print "Comment: %s" % top.get_comment()
-    print
+    print("Topology: %s" % top)
+    print("Namespace: %s" % top.get_namespace())
+    print("Comment: %s" % top.get_comment())
+    print()
     for component in top.get_comp_list():
-        print "Component"
-        print "    Namespace: " + component.get_namespace()
-        print "    Name: " + component.get_name()
-        print "    Type: " + component.get_kind()
+        print("Component")
+        print("    Namespace: " + component.get_namespace())
+        print("    Name: " + component.get_name())
+        print("    Type: " + component.get_kind())
         if component.get_comment() != None:
-            print "    Comment: " + component.get_comment()
-        print "    Output Ports:"
+            print("    Comment: " + component.get_comment())
+        print("    Output Ports:")
         for port in component.get_ports():
-            print "        Name: " + port.get_name()
-            print "        Port Type: " + port.get_type()
-            print "        Direction: " + port.get_direction()
+            print("        Name: " + port.get_name())
+            print("        Port Type: " + port.get_type())
+            print("        Direction: " + port.get_direction())
             if port.get_sync() != None:
-                print "        Sync: " + port.get_sync()
+                print("        Sync: " + port.get_sync())
             if port.get_comment() != None:
-                print "        Comment: " + port.get_comment()
-            print "        Target Component: " + port.get_target_comp()
-            print "        Target Port: " + port.get_target_port()
-            print "        Target Type: " + port.get_target_type()
-            print "        Target Direction:" + port.get_target_direction()
-            print
-        print
+                print("        Comment: " + port.get_comment())
+            print("        Target Component: " + port.get_target_comp())
+            print("        Target Port: " + port.get_target_port())
+            print("        Target Type: " + port.get_target_type())
+            print("        Target Direction:" + port.get_target_direction())
+            print()
+        print()
 
 
 

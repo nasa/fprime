@@ -76,7 +76,7 @@ class Private:
             visitor.privateVisit(self.__obj)
         else:
             DEBUG.error('Private.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Private.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Private.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class Private:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('Private.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Private.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Private.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

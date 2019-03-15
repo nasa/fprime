@@ -1,20 +1,12 @@
-#!/bin/csh
-
-if !($?BUILD_ROOT) then
-    set curdir = "${PWD}"
-    setenv BUILD_ROOT `dirname $0`/../..
-    cd $BUILD_ROOT
-    setenv BUILD_ROOT ${PWD}
-    cd ${curdir}
-endif
-
+#!/bin/sh
+DIRNAME="`dirname $0`"
+# Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
+if [ -z ${BUILD_ROOT} ]
+then
+    export BUILD_ROOT="`cd ${DIRNAME}/../../..; pwd`"
+fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-# Borrow some variables from build
-setenv PYTHON_BASE `make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_python_base`
-echo "PYTHON_BASE: ${PYTHON_BASE}"
-
-setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
-setenv PYTHONPATH ${BUILD_ROOT}/Autocoders/Python/src
+export PYTHONPATH="${BUILD_ROOT}/Autocoders/Python/src"
 echo "PYTHONPATH: ${PYTHONPATH}"
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Autocoders/Python/bin/JSONDictionaryGen.py  $*
+python "${BUILD_ROOT}/Autocoders/Python/bin/JSONDictionaryGen.py" "$@"

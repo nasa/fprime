@@ -2,5 +2,5 @@
 
 import os
 
-for var in os.environ.keys():
-    print "%s = %s" % (var,os.environ[var])
+for var in list(os.environ.keys()):
+    print("%s = %s" % (var,os.environ[var]))

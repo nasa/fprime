@@ -20,7 +20,7 @@ import os
 import sys
 import time
 from optparse import OptionParser
-import exceptions
+
 #
 # Python extention modules and custom interfaces
 #
@@ -94,7 +94,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
             os.mkdir(self.__cmd_dir)
         os.chdir(self.__cmd_dir)
         # Iterate over types
-        for k in obj.get_base_id_dict().keys():
+        for k in list(obj.get_base_id_dict().keys()):
             tlist = obj.get_base_id_dict()[k]
             #print "Type: %s\n" % k,
             # Iterate over instances and get name
@@ -110,7 +110,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
                     try:
                         self.__fp_dict[name] = open(filename,'w')
                         DEBUG.info('Completed')
-                    except exceptions.IOError:
+                    except IOError:
                         PRINT.info("Could not open %s file." % filename)
                         sys.exit(-1)
                     DEBUG.info("Generating HTML Event Table for %s:%s component instance..." % (t[0], k))
@@ -157,7 +157,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
             def g(lst):
                 name = lst[0]
                 return name
-            return self.argsString(map(g, args))
+            return self.argsString(list(map(g, args)))
         return f
 
     def publicVisit(self, obj):
@@ -167,11 +167,11 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         #os.chdir(self.__cmd_dir)
         c = HtmlEventsTablePage.HtmlEventsTablePage()
-        for k in obj.get_base_id_dict().keys():
+        for k in list(obj.get_base_id_dict().keys()):
             tlist = obj.get_base_id_dict()[k]
             #print "Type: %s\n" % k,
             for t in tlist:
-                if (t[0] in self.__fp_dict.keys()):
+                if (t[0] in list(self.__fp_dict.keys())):
                     # print "\tInstance: %s, Base ID: %s\n" % (t[0],t[1])
                     eobj = t[3].get_comp_xml()
                     c.name = "%s:%s" % (t[0], k)
@@ -206,7 +206,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate ending static code within files.
         """
-        for fp in self.__fp_dict.keys():
+        for fp in list(self.__fp_dict.keys()):
             self.__fp_dict[fp].close()
         PRINT.info("Completed generating HTML event tables...")
 

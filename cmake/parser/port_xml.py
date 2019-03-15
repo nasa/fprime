@@ -55,7 +55,7 @@ def get_serializable_targets(input_file, library_name):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print "Usage: port_xml.py <input_Ai.xml> <library name>"
+        print("Usage: port_xml.py <input_Ai.xml> <library name>")
         exit(1)
 
     get_serializable_targets(sys.argv[1], sys.argv[2])

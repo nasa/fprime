@@ -29,9 +29,9 @@ def setup_module():
 
 
     for cmd in isfgenCmds:
-        print cmd
+        print(cmd)
     for cmd in buildCmds:
-        print cmd
+        print(cmd)
 
 #    for cmd in isfgenCmds:
 #        subprocess.call(cmd, shell=True)

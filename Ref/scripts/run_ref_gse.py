@@ -9,7 +9,7 @@ from optparse import OptionParser
 
 def main(argv=None):
     
-    python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
+    python_bin = "python"
     
     build_root = os.environ["BUILD_ROOT"]
     

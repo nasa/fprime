@@ -7,7 +7,7 @@ class Test_CmdBuilder:
 
     @classmethod
     def setup_class(cls):
-        print "Setting Test_CmdBuilder"
+        print("Setting Test_CmdBuilder")
 
         cls.builder = CmdBuilder.getInstance()
         cls.constants = BuildConstants()
@@ -38,8 +38,8 @@ class Test_CmdBuilder:
         d['app'] = appName
         properCmd = "{PYTHON_SRC} {BUILD_ROOT}/Autocoders/Python/bin/isfgen.py -b -C -P {BUILD_ROOT}/{app}/{file}".format(**d)
 
-        print "properCmd: {}".format(properCmd)
-        print "cmd: {}".format(cmd)
+        print("properCmd: {}".format(properCmd))
+        print("cmd: {}".format(cmd))
 
         assert cmd == properCmd
 
@@ -49,7 +49,7 @@ class Test_BuildConstants:
 
     @classmethod
     def setup_class(cls):
-        print "Setting up Class"
+        print("Setting up Class")
         cls.Constants = BuildConstants()
 
     def test_getLibPaths(self):
@@ -64,14 +64,14 @@ class Test_BuildConstants:
         path = libPaths[0]
 
 
-        print "properPath: {}".format(properPath)
-        print "path: {}".format(path)
+        print("properPath: {}".format(properPath))
+        print("path: {}".format(path))
         assert properPath == libPaths[0]
     def test_getFwLibs(self):
         libs = ['libA']
         properFile = "FwlibA"
         f = self.Constants._BuildConstants__getFwLibs(libs)
         f = f[0]
-        print "properLib: {}".format(properFile)
-        print "lib: {}".format(f)
+        print("properLib: {}".format(properFile))
+        print("lib: {}".format(f))
         assert f == properFile

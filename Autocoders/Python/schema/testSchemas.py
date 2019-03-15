@@ -156,26 +156,26 @@ class schema_test:
 
 		if test_set[2]:
 			with pytest.raises(test_set[2]) as excinfo:
-				self.__compiled.assert_(xml_parsed)
+				self.__compiled.assertTrue(xml_parsed)
 				if excinfo:
-					print "Schema " + self.__schema_name + " failed validating the current file."
-					print "\n"
-					print test_set[0] + " raised the wrong exception or passed, when fail was expected (Exception " + str(test_set[2]) +  "."
-					print "File path - " + test_set[1]
-					print excinfo
-					print "\n"
+					print("Schema " + self.__schema_name + " failed validating the current file.")
+					print("\n")
+					print(test_set[0] + " raised the wrong exception or passed, when fail was expected (Exception " + str(test_set[2]) +  ".")
+					print("File path - " + test_set[1])
+					print(excinfo)
+					print("\n")
 					raise
 
 		else:
 			try:
-				self.__compiled.assert_(xml_parsed)
+				self.__compiled.assertTrue(xml_parsed)
 			except:
-				print "Schema " + self.__schema_name + " failed validating the current file."
-				print "\n"
-				print test_set[0] + " raised an exception but was supposed to pass."
-				print "File path - " + test_set[1]
+				print("Schema " + self.__schema_name + " failed validating the current file.")
+				print("\n")
+				print(test_set[0] + " raised an exception but was supposed to pass.")
+				print("File path - " + test_set[1])
 
-				print "\n"
+				print("\n")
 				raise
 
 
@@ -184,7 +184,7 @@ class schema_test:
 		"""
 		Prints a header string for a schema_test object.
 		"""
-		print("\nTesting {} - {}\n".format(self.__schema_name , self.__schema_path))
+		print(("\nTesting {} - {}\n".format(self.__schema_name , self.__schema_path)))
 
 
 

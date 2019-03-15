@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/sh
 # *******************************************************************************
 # * Copyright 2013, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship
@@ -13,24 +13,13 @@
 # * information to foreign countries or providing access to foreign
 # * persons.
 # *
-
-# remove me
- 
-if !($?BUILD_ROOT) then
-	set curdir = "${PWD}"
-	setenv BUILD_ROOT `dirname $0`/..
-	cd $BUILD_ROOT
-	setenv BUILD_ROOT ${PWD}
-	cd ${curdir}
-endif
-
+DIRNAME="`dirname $0`"
+# Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
+if [ -z ${BUILD_ROOT} ]
+then
+    export BUILD_ROOT="`cd ${DIRNAME}/..; pwd`"
+fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-if !($?PYTHON_BASE) then
-    setenv PYTHON_BASE /usr
-endif
-
-setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib:/usr/lib:/lib
-setenv PATH ${PATH}:/usr/bin:/bin
-setenv PYTHONPATH ${BUILD_ROOT}/ptf
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/ptf/scripts/framework/runtests.py $*
+export PYTHONPATH="${BUILD_ROOT?}/ptf"
+python "${BUILD_ROOT?}/ptf/scripts/framework/runtests.py" "$@"

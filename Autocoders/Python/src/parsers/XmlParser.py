@@ -42,7 +42,7 @@ class XmlParser(object):
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file {}.".format(xml_file)
             PRINT.info(stri)
-            raise IOError, stri
+            raise IOError(stri)
 
         fd = open(xml_file,'r')
 

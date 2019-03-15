@@ -76,7 +76,7 @@ class Protected:
             visitor.protectedVisit(self.__obj)
         else:
             DEBUG.error('Protected.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Protected.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Protected.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class Protected:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('Protected.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'Protected.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('Protected.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

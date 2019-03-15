@@ -76,7 +76,7 @@ class StartChannel:
             visitor.startChannelVisit(self.__obj)
         else:
             DEBUG.error('startChannelVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'startChannelVisit.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('startChannelVisit.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class StartChannel:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('startChannelVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'startChannelVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('startChannelVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

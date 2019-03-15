@@ -1,6 +1,6 @@
 import sys
 import os
-from BuildConstants import BuildConstants
+from .BuildConstants import BuildConstants
 
 class CmdBuilder(object):
 
@@ -24,7 +24,7 @@ class CmdBuilder(object):
 
     def __init__(self, system):
 
-        print "Building for %s" % system
+        print("Building for %s" % system)
 
         self.__BuildConstants = BuildConstants()
 
@@ -36,10 +36,10 @@ class CmdBuilder(object):
 
     def generateBuildCommands(self):
         if len(self.__cppFiles) == 0:
-            print "Error: No cpp files are set."
+            print("Error: No cpp files are set.")
             exit()
         if self.__target == None:
-            print "Error: Target not set"
+            print("Error: Target not set")
             exit()
 
         cmdDict = {'oFile': None, 'cCompiler': self.__cCompiler, 'includes': self.__includes, 'appPath':"-I"+self.__appPath, 'cFile': None, 'target': self.__target}
@@ -74,7 +74,7 @@ class CmdBuilder(object):
 
     def generateIsfgenCommands(self, flags):
         if len(self.__xmlFiles) == 0:
-            print "Error: No XML Files are set."
+            print("Error: No XML Files are set.")
             exit()
 
         isfgenCmds = []
@@ -122,7 +122,7 @@ class CmdBuilder(object):
         for f in xmlFiles:
             s = f.split('.')
             if s[0][-2:] != 'Ai': #Check if Xmlfiles are named properly
-                print "FileName Error. Xmlfile must be of format __Ai.xml"
+                print("FileName Error. Xmlfile must be of format __Ai.xml")
                 return None
             d = s[0].split('Ai')
             cppFiles.append(d[0] + "Ac.cpp")

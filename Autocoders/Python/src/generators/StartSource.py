@@ -77,7 +77,7 @@ class StartSource:
             visitor.startSourceFilesVisit(self.__obj)
         else:
             DEBUG.error('StartSource.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'StartSource.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('StartSource.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -89,7 +89,7 @@ class StartSource:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('StartSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'StartSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('StartSource.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

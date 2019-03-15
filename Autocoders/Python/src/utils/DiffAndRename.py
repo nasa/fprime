@@ -89,13 +89,13 @@ def compareAndRename( filename, dated_files_enable=False, except_lines_list=[]):
     # No .new file case.
     if not os.path.exists( filename + '.new' ):
         str = "ERROR: Cannot find %s.new" % filename
-        print str
-        raise IOError, str
+        print(str)
+        raise IOError(str)
 
     # No old file exists so just move it
     if not os.path.exists( filename ):
         os.rename( filename + ".new", filename )
-        print "...done creating new %s" % filename
+        print("...done creating new %s" % filename)
         return
 
     filename_new = filename + ".new"
@@ -108,12 +108,12 @@ def compareAndRename( filename, dated_files_enable=False, except_lines_list=[]):
             if os.path.exists( filename + timeTag ):
                 os.remove( filename + timeTag )
             os.rename( filename, filename + ".old" + timeTag )
-            print "...moved old file to %s.old%s" % (filename,timeTag)
+            print("...moved old file to %s.old%s" % (filename,timeTag))
         #
         if os.path.exists( filename ):
             os.remove( filename )
         os.rename( filename_new, filename )
-        print "...replaced old with new %s" % filename
+        print("...replaced old with new %s" % filename)
     else:
         # file does not have diffs
         if dated_files_enable == True:
@@ -121,12 +121,12 @@ def compareAndRename( filename, dated_files_enable=False, except_lines_list=[]):
             if os.path.exists( filename + ".new" + timeTag ):
                 os.remove( filename + ".new" + timeTag )
             os.rename( filename_new, filename + ".new" + timeTag )
-            print "...new %s did not differ from old file." % filename
-            print "...keeping new file as %s.new%s" % (filename,timeTag)
+            print("...new %s did not differ from old file." % filename)
+            print("...keeping new file as %s.new%s" % (filename,timeTag))
         #
         else:
             os.remove( filename_new )
-            print "...new %s did not differ from old file - removing new file." % filename
+            print("...new %s did not differ from old file - removing new file." % filename)
 
 
 def DiffAndRename( filename, dated_files_enable = True ):
@@ -140,12 +140,12 @@ def DiffAndRename( filename, dated_files_enable = True ):
     go crazy.  LJR - 10 Aug. 2007.
     '''
     if not os.path.exists( filename + '.new' ):
-        print "Cannot find %s.new" % filename
+        print("Cannot find %s.new" % filename)
         return
 
     if not os.path.exists( filename ):
         os.rename( filename + ".new", filename )
-        print "... done creating new %s" % filename
+        print("... done creating new %s" % filename)
         return
 
     old = open( filename, 'r' ).readlines()
@@ -173,10 +173,10 @@ def DiffAndRename( filename, dated_files_enable = True ):
         if filesDiffer:
             os.remove( filename )
             os.rename( filename + ".new", filename )
-            print "... replaced old with new %s" % filename
+            print("... replaced old with new %s" % filename)
         else:
             os.remove( filename + ".new" )
-            print "... new %s did not differ from old file." % filename
+            print("... new %s did not differ from old file." % filename)
     else:
         if filesDiffer:
             if dated_files_enable == True:
@@ -184,20 +184,20 @@ def DiffAndRename( filename, dated_files_enable = True ):
                 if os.path.exists( filename + timeTag ):
                     os.remove( filename + timeTag )
                 os.rename( filename, filename + ".old" + timeTag )
-                print "... moved old file to %s.old%s" % (filename,timeTag)
+                print("... moved old file to %s.old%s" % (filename,timeTag))
             os.rename( filename + ".new", filename )
-            print "... and replaced old with new %s" % filename
+            print("... and replaced old with new %s" % filename)
         else:
             if dated_files_enable == True:
                 timeTag = fileTimeTag( filename )
                 if os.path.exists( filename + ".new" + timeTag ):
                     os.remove( filename + ".new" + timeTag )
                 os.rename( filename + ".new", filename + ".new" + timeTag )
-                print "... new %s did not differ from old file." % filename
-                print "... keeping new file as %s.new%s" % (filename,timeTag)
+                print("... new %s did not differ from old file." % filename)
+                print("... keeping new file as %s.new%s" % (filename,timeTag))
             else:
                 os.remove( filename + ".new" )
-                print "... removing new file"
+                print("... removing new file")
 
 
 def renameAsErroneous(fileName,script=None):
@@ -225,7 +225,7 @@ def test_remove_files(pattern):
     filesInDir = os.listdir(".")
     filesMatchingPattern = fnmatch.filter(filesInDir,pattern)
     for fileName in filesMatchingPattern:
-        print "removing %s" % fileName
+        print("removing %s" % fileName)
         os.remove(fileName)
 
 def test_files_exist(pattern):
@@ -255,14 +255,14 @@ last time here
     delta = datetime.timedelta(minutes=2)
 
     filename = "foo"
-    print "Test 1:"
-    print "expect 'Cannot find %s.new'" % filename
+    print("Test 1:")
+    print("expect 'Cannot find %s.new'" % filename)
     removeJunk = True
     DiffAndRename( "foo" )
 
-    print
-    print "Test 2:"
-    print "expect '... done creating new %s" % filename
+    print()
+    print("Test 2:")
+    print("expect '... done creating new %s" % filename)
     new = open("foo.new","w")
     new.write(now.ctime())
     new.write(data)
@@ -270,15 +270,15 @@ last time here
     removeJunk = True
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- did not create foo"
+        print("ERROR -- did not create foo")
     if test_files_exist( "foo.new*" ):
-        print "ERROR -- did not rename foo.new"
+        print("ERROR -- did not rename foo.new")
     if test_files_exist( "foo.old*" ):
-        print "ERROR -- no reason to create foo.old"
+        print("ERROR -- no reason to create foo.old")
 
-    print
-    print "Test 3:"
-    print "expect '... new %s did not differ from old file." % filename
+    print()
+    print("Test 3:")
+    print("expect '... new %s did not differ from old file." % filename)
     origstatinfo = os.stat("foo")
     new = open("foo.new","w")
     now += delta
@@ -288,21 +288,21 @@ last time here
     removeJunk = True
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- foo went away"
+        print("ERROR -- foo went away")
     if test_files_exist( "foo.new*" ):
-        print "ERROR -- did not delete foo.new"
+        print("ERROR -- did not delete foo.new")
     if test_files_exist( "foo.old*" ):
-        print "ERROR -- no reason to create foo.old"
+        print("ERROR -- no reason to create foo.old")
     afterstatinfo = os.stat("foo")
     fileChanged = False
     for i in range(0,len(origstatinfo)-1):
         if origstatinfo[i] != afterstatinfo[i]:
-            print "ERROR -- file changed i=%d" % i
+            print("ERROR -- file changed i=%d" % i)
             fileChanged = True
 
-    print
-    print "Test 4:"
-    print "expect '...  replaced old with new %s" % filename
+    print()
+    print("Test 4:")
+    print("expect '...  replaced old with new %s" % filename)
     new = open("foo.new","w")
     now += delta
     new.write(now.ctime())
@@ -312,31 +312,31 @@ last time here
     removeJunk = True
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- foo went away"
+        print("ERROR -- foo went away")
     if test_files_exist( "foo.new*" ):
-        print "ERROR -- did not delete foo.new"
+        print("ERROR -- did not delete foo.new")
     if test_files_exist( "foo.old*" ):
-        print "ERROR -- moved foo to foo.old"
+        print("ERROR -- moved foo to foo.old")
     afterstatinfo = os.stat("foo")
     fileChanged = False
     for i in range(len(origstatinfo)):
         if origstatinfo[i] != afterstatinfo[i]:
-            print "OK -- file changed i=%d" % i
+            print("OK -- file changed i=%d" % i)
             fileChanged = True
     if not fileChanged:
-        print "ERROR -- file did not change!"
+        print("ERROR -- file did not change!")
 
     test_remove_files("foo*")
 
-    print
-    print "Test 5:"
-    print "expect 'Cannot find %s.new'" % filename
+    print()
+    print("Test 5:")
+    print("expect 'Cannot find %s.new'" % filename)
     removeJunk = False
     DiffAndRename( "foo" )
 
-    print
-    print "Test 6:"
-    print "expect '... done creating new %s" % filename
+    print()
+    print("Test 6:")
+    print("expect '... done creating new %s" % filename)
     new = open("foo.new","w")
     new.write(now.ctime())
     new.write(data)
@@ -344,18 +344,18 @@ last time here
     removeJunk = False
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- did not create foo"
+        print("ERROR -- did not create foo")
     if not os.path.exists("foo"):
-        print "ERROR -- did not rename foo.new"
+        print("ERROR -- did not rename foo.new")
     if test_files_exist( "foo.new*" ):
-        print "ERROR -- should not rename to foo.new.timestamp"
+        print("ERROR -- should not rename to foo.new.timestamp")
     if test_files_exist( "foo.old*" ):
-        print "ERROR -- no reason to create foo.old.timestamp"
+        print("ERROR -- no reason to create foo.old.timestamp")
 
-    print
-    print "Test 7:"
-    print "expect '... new foo did not differ from old file."
-    print "and    '... keeping new file as foo.new.yyyymmddThhmmss"
+    print()
+    print("Test 7:")
+    print("expect '... new foo did not differ from old file.")
+    print("and    '... keeping new file as foo.new.yyyymmddThhmmss")
     origstatinfo = os.stat("foo")
     new = open("foo.new","w")
     now += delta
@@ -365,24 +365,24 @@ last time here
     removeJunk = False
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- foo went away"
+        print("ERROR -- foo went away")
     if os.path.exists( "foo.new" ):
-        print "ERROR -- did not rename foo.new"
+        print("ERROR -- did not rename foo.new")
     if not test_files_exist( "foo.new*" ):
-        print "ERROR -- did not keep foo.new.yyyymmddThhmmss"
+        print("ERROR -- did not keep foo.new.yyyymmddThhmmss")
     if test_files_exist( "foo.old*" ):
-        print "ERROR -- should be no foo.old"
+        print("ERROR -- should be no foo.old")
     afterstatinfo = os.stat("foo")
     fileChanged = False
     for i in range(0,len(origstatinfo)-1):
         if origstatinfo[i] != afterstatinfo[i]:
-            print "ERROR -- file changed i=%d" % i
+            print("ERROR -- file changed i=%d" % i)
             fileChanged = True
 
-    print
-    print "Test 8:"
-    print "expect '... moved old file to %s.old.timestamp" % filename
-    print "and    '... and replaced old with new %s" % filename
+    print()
+    print("Test 8:")
+    print("expect '... moved old file to %s.old.timestamp" % filename)
+    print("and    '... and replaced old with new %s" % filename)
     new = open("foo.new","w")
     now += delta
     new.write(now.ctime())
@@ -392,27 +392,27 @@ last time here
     removeJunk = False
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- foo went away"
+        print("ERROR -- foo went away")
     if os.path.exists( "foo.new" ):
-        print "ERROR -- did not delete foo.new"
+        print("ERROR -- did not delete foo.new")
     if not test_files_exist( "foo.old*" ):
-        print "ERROR -- should be foo.old.timestamp"
+        print("ERROR -- should be foo.old.timestamp")
     afterstatinfo = os.stat("foo")
     fileChanged = False
     for i in range(0,len(origstatinfo)-1):
         if origstatinfo[i] != afterstatinfo[i]:
-            print "OK -- file changed i=%d" % i
+            print("OK -- file changed i=%d" % i)
             fileChanged = True
     if not fileChanged:
-        print "ERROR -- file did not change!"
+        print("ERROR -- file did not change!")
 
-    print
-    print "Test 9:"
-    print "expect '... moved old file to %s.old" % filename
-    print "and    '... and replaced old with new %s" % filename
+    print()
+    print("Test 9:")
+    print("expect '... moved old file to %s.old" % filename)
+    print("and    '... and replaced old with new %s" % filename)
     files = test_files_matching_pattern("foo.old*")
     if 1 != len(files):
-        print "ERROR -- too many old files."
+        print("ERROR -- too many old files.")
     before_stat_foo_old = os.stat(files[0])
     before_stat_foo     = os.stat("foo")
     new = open("foo.new","w")
@@ -426,31 +426,31 @@ last time here
     removeJunk = False
     DiffAndRename( "foo" )
     if not os.path.exists("foo"):
-        print "ERROR -- foo went away"
+        print("ERROR -- foo went away")
     if os.path.exists( "foo.new" ):
-        print "ERROR -- did not delete foo.new"
+        print("ERROR -- did not delete foo.new")
     if not test_files_exist( "foo.old*" ):
-        print "ERROR -- should be foo.old.timestamp"
+        print("ERROR -- should be foo.old.timestamp")
     files = test_files_matching_pattern("foo.old*")
     if len(files) < 1:
-        print "ERROR -- should be at least one, probably two, foo.old*"
+        print("ERROR -- should be at least one, probably two, foo.old*")
     after_stat_foo_old = os.stat(files[0])
     after_stat_foo     = os.stat("foo")
 
     fileChanged = False
     for i in range(0,len(before_stat_foo)-1):
         if before_stat_foo[i] != after_stat_foo_old[i]:
-            print "ERROR -- foo.old should be old foo -- changed i=%d" % i
+            print("ERROR -- foo.old should be old foo -- changed i=%d" % i)
             fileChanged = True
     if fileChanged:
-        print "ERROR -- foo.old should be old foo!"
+        print("ERROR -- foo.old should be old foo!")
     fileChanged = False
     for i in range(0,len(before_stat_foo)-1):
         if before_stat_foo_new[i] != after_stat_foo[i]:
-            print "ERROR -- foo should be old foo.new -- changed i=%d" % i
+            print("ERROR -- foo should be old foo.new -- changed i=%d" % i)
             fileChanged = True
     if fileChanged:
-        print "ERROR -- foo should be old foo.new!"
+        print("ERROR -- foo should be old foo.new!")
 
     test_remove_files("foo*")
 

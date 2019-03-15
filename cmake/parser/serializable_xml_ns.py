@@ -16,6 +16,6 @@ def get_serializable_qualified(input_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print "Usage: serializable_xml_ns.py <input_Ai.xml>"
+        print("Usage: serializable_xml_ns.py <input_Ai.xml>")
         exit(1)
     get_serializable_qualified(sys.argv[1])

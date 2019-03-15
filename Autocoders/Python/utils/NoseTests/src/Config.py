@@ -1,5 +1,5 @@
 import sys
-import BuildConstants
+from . import BuildConstants
 
 class Config(object):
 

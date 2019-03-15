@@ -76,7 +76,7 @@ class HtmlDocPage:
             visitor.htmlPageVisit(self.__obj)
         else:
             DEBUG.error('HtmlDoc.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'HtmlDoc.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('HtmlDoc.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class HtmlDocPage:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('HtmlDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'HtmlDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('HtmlDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

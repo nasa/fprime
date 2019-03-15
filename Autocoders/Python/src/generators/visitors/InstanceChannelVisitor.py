@@ -125,7 +125,7 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate header for  channel python class.
         """
         
-        for fname in self.__fp.keys():
+        for fname in list(self.__fp.keys()):
             c = ChannelHeader.ChannelHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")

@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/sh
 # *******************************************************************************
 # * Copyright 2013, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship
@@ -13,5 +13,5 @@
 # * information to foreign countries or providing access to foreign
 # * persons.
 # *
-
-./runtests.sh -i ${USER} -r -q suites/deployment_build.suite suites/ac_unit_tests.suite
+DIRNAME="`dirname $0`"
+"${DIRNAME}/runtests.sh" -i ${USER} -r -q suites/deployment_build.suite suites/ac_unit_tests.suite

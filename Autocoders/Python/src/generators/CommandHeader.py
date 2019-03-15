@@ -76,7 +76,7 @@ class CommandHeader:
             visitor.commandHeaderVisit(self.__obj)
         else:
             DEBUG.error('CommandHeader.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'CommandHeader.accept() - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('CommandHeader.accept() - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def addVisitor(self, visitor):
@@ -88,7 +88,7 @@ class CommandHeader:
             self.__visitor_list.append(visitor)
         else:
             DEBUG.error('CommandHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise 'CommandHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!'
+            raise Exception('CommandHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
 
 
     def getObj(self):

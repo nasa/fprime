@@ -8,10 +8,11 @@
 import sys
 import os
 import os.path
+import collections
 try:
     import builtins as builtin
 except ImportError:
-    import __builtin__ as builtin
+    import builtins as builtin
 from os.path import getmtime, exists
 import time
 import types
@@ -59,7 +60,7 @@ class test_template(Template):
         if not self._CHEETAH__instanceInitialized:
             cheetahKWArgs = {}
             allowedKWs = 'searchList namespaces filter filtersLib errorCatcher'.split()
-            for k,v in KWs.items():
+            for k,v in list(KWs.items()):
                 if k in allowedKWs: cheetahKWArgs[k] = v
             self._initCheetahInstance(**cheetahKWArgs)
 
@@ -69,7 +70,7 @@ class test_template(Template):
 
 
         ## CHEETAH: main method generated for this template
-        if (not trans and not self._CHEETAH__isBuffering and not callable(self.transaction)):
+        if (not trans and not self._CHEETAH__isBuffering and not isinstance(self.transaction, collections.Callable)):
             trans = self.transaction # is None unless self.awake() was called
         if not trans:
             trans = DummyTransaction()
@@ -82,7 +83,7 @@ class test_template(Template):
         ########################################
         ## START - generated method body
 
-        write(u"""import os
+        write("""import os
 
 import subprocess
 from subprocess import CalledProcessError
@@ -124,20 +125,20 @@ def b_make_ut_test():
             # Increment character
             ascii_val = VFFSL(SL,"ascii_val",True) + 1
             char = chr(VFFSL(SL,"ascii_val",True))
-            write(u'''def ''')
+            write('''def ''')
             _v = VFFSL(SL,"char",True) # u'${char}' on line 42, col 5
-            if _v is not None: write(_filter(_v, rawExpr=u'${char}')) # from line 42, col 5.
-            write(u'''_''')
+            if _v is not None: write(_filter(_v, rawExpr='${char}')) # from line 42, col 5.
+            write('''_''')
             _v = VFFSL(SL,"test_case.name",True) # u'${test_case.name}' on line 42, col 13
-            if _v is not None: write(_filter(_v, rawExpr=u'${test_case.name}')) # from line 42, col 13.
-            write(u'''_test():
+            if _v is not None: write(_filter(_v, rawExpr='${test_case.name}')) # from line 42, col 13.
+            write('''_test():
     logging.debug("Entering ''')
             _v = VFFSL(SL,"char",True) # u'${char}' on line 43, col 29
-            if _v is not None: write(_filter(_v, rawExpr=u'${char}')) # from line 43, col 29.
-            write(u'''_''')
+            if _v is not None: write(_filter(_v, rawExpr='${char}')) # from line 43, col 29.
+            write('''_''')
             _v = VFFSL(SL,"test_case.name",True) # u'${test_case.name}' on line 43, col 37
-            if _v is not None: write(_filter(_v, rawExpr=u'${test_case.name}')) # from line 43, col 37.
-            write(u'''_test()")
+            if _v is not None: write(_filter(_v, rawExpr='${test_case.name}')) # from line 43, col 37.
+            write('''_test()")
 
     try:
         ## Spawn executable
@@ -148,26 +149,26 @@ def b_make_ut_test():
 
 ''')
             for pout, psend in VFFSL(SL,"test_case.ptuples",True): # generated from line 52, col 9
-                write(u"""        logging.debug('Expecting: """)
+                write("""        logging.debug('Expecting: """)
                 _v = VFFSL(SL,"pout",True) # u'${pout}' on line 53, col 35
-                if _v is not None: write(_filter(_v, rawExpr=u'${pout}')) # from line 53, col 35.
-                write(u'''\')
+                if _v is not None: write(_filter(_v, rawExpr='${pout}')) # from line 53, col 35.
+                write('''\')
 
         p.expect(".*''')
                 _v = VFFSL(SL,"pout",True) # u'${pout}' on line 55, col 21
-                if _v is not None: write(_filter(_v, rawExpr=u'${pout}')) # from line 55, col 21.
-                write(u'''.*", timeout=3)
+                if _v is not None: write(_filter(_v, rawExpr='${pout}')) # from line 55, col 21.
+                write('''.*", timeout=3)
         p.sendline("''')
                 _v = VFFSL(SL,"psend",True) # u'${psend}' on line 56, col 21
-                if _v is not None: write(_filter(_v, rawExpr=u'${psend}')) # from line 56, col 21.
-                write(u'''")
+                if _v is not None: write(_filter(_v, rawExpr='${psend}')) # from line 56, col 21.
+                write('''")
 
         logging.debug(\'Sent: ''')
                 _v = VFFSL(SL,"psend",True) # u'${psend}' on line 58, col 30
-                if _v is not None: write(_filter(_v, rawExpr=u'${psend}')) # from line 58, col 30.
-                write(u"""')
+                if _v is not None: write(_filter(_v, rawExpr='${psend}')) # from line 58, col 30.
+                write("""')
 """)
-            write(u'''
+            write('''
         logging.debug(\'No timeout. Asserting test as true.\')
         ## If there was no timeout the pexpect test passed
         assert True
@@ -186,17 +187,17 @@ def b_make_ut_test():
 
 
 ''')
-        write(u'''
+        write('''
 def setup_module():
     appPath = "''')
         _v = VFFSL(SL,"TestModuleValues",True)['module_path'] # u"${TestModuleValues['module_path']}" on line 81, col 16
-        if _v is not None: write(_filter(_v, rawExpr=u"${TestModuleValues['module_path']}")) # from line 81, col 16.
-        write(u'''"
+        if _v is not None: write(_filter(_v, rawExpr="${TestModuleValues['module_path']}")) # from line 81, col 16.
+        write('''"
 
     logging.basicConfig(level=logging.''')
         _v = VFFSL(SL,"log_level",True) # u'${log_level}' on line 83, col 39
-        if _v is not None: write(_filter(_v, rawExpr=u'${log_level}')) # from line 83, col 39.
-        write(u''')
+        if _v is not None: write(_filter(_v, rawExpr='${log_level}')) # from line 83, col 39.
+        write(''')
 
     logging.debug(\'Setting up test module.\')
     logging.debug(\'Application path: %s\' % appPath)
