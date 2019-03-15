@@ -16,15 +16,15 @@
 |Event Name|ID|Description|Arg Name|Arg Type|Arg Size|Description
 |---|---|---|---|---|---|---|
 |UR_PortOpened|0 (0x0)|Connection opened| | | | |
-| | | |port|U32|||    
+| | | |port|U32|||
 |UR_SocketError|1 (0x1)|UDP port socket error| | | | |
-| | | |error|Fw::LogStringArg&|80||    
+| | | |error|Fw::LogStringArg&|80||
 |UR_BindError|2 (0x2)|UDP port socket error| | | | |
-| | | |error|Fw::LogStringArg&|80||    
+| | | |error|Fw::LogStringArg&|80||
 |UR_RecvError|3 (0x3)|UDP receive error| | | | |
-| | | |error|Fw::LogStringArg&|80||    
+| | | |error|Fw::LogStringArg&|80||
 |UR_DecodeError|4 (0x4)|Port decode error| | | | |
-| | | |stage|DecodeStage|||    
-| | | |error|I32|||    
+| | | |stage|DecodeStage|||
+| | | |error|I32|||
 |UR_DroppedPacket|5 (0x5)|Dropped packet was detected| | | | |
-| | | |diff|U32|||    
+| | | |diff|U32|||
