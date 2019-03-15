@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<assembly name = "REF">
+    <import_component_type>test/import/one</import_component_type>
+    <import_component_type>test/import/two</import_component_type>
+    <import_component_type>test/import/three</import_component_type>
+
+    <instance name="FlightModuleOne" namespace="SRC" type="FlightModule" dict_short_name = "FM1"/>
+    <instance name="FlightModuleTwo" namespace="SRC" type="FlightModule" dict_short_name="FM2" base_id = "10"/>
+    <instance name = "FlightModuleThree" namespace="SRC" type = "FlightModule" dict_short_name="FM3" base_id="20" base_id_range="20"></instance>
+    <instance name = "Processor" namespace="Fake" type="CPU"></instance>
+
+
+</assembly>

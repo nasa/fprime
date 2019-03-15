@@ -1,0 +1,107 @@
+##
+## This template will produce the constructArchitecture() global function that instances components and connects them.
+##
+
+//Set base id section
+void set$(name)Ids(void){
+#for $id_string in $component_reference_ids:
+	${id_string}
+#end for
+}
+
+
+###
+#if $connect_only:
+    #pass
+#else:
+void $(name)Init(void) {
+###
+    Fw::PortBase::setTrace(true);
+#if $is_ptr:
+    simpleReg_ptr = new Fw::SimpleObjRegistry();
+#else:
+    #pass ##If objects are being generated as instances they were instansiated in includes.
+#end if
+#if $kind.get_comment():
+// $kind.get_comment()
+#end if
+#for $declaration_template in $component_declarations:
+#if $declaration_template is None:
+    #pass
+#else:
+    ${declaration_template}
+#end if
+
+#end for
+
+    // Component initialization
+#for $init_template in $component_inits:
+    ${init_template}
+#end for
+###
+}
+
+void $(name)Start(void) {
+    // Active component startup
+    // start(identifier, priority, stack_size)
+#for $startup_template  in $component_startups:
+    ${startup_template}
+#end for
+}
+
+void $(name)Register(void) {
+    // Command registration
+#for $cmdReg in $command_registrations:
+    ${cmdReg}
+#end for
+}
+
+#end if
+
+
+void construct$(name)Architecture(void) {
+#if $connect_only:
+   #pass
+#else:
+	$(name)Init();
+#end if
+	set$(name)Ids();
+
+    // Port connections
+#for $comment, $connection in $port_connections:
+    ${comment}
+    ${connection}
+#end for
+
+####
+#if $connect_only:
+   #pass
+#else:
+###
+  	$(name)Start();
+
+	dumparch();
+
+	$(name)Register();
+
+
+####
+
+###
+#end if
+}
+
+
+#if $connect_only:
+    #pass
+#else:
+void exitTasks(void) {
+   // Task cleanup
+#for $teardown_template in $component_teardowns:
+    ${teardown_template}
+#end for
+}
+#end if
+
+
+

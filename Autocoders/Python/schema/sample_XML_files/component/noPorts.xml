@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name = "test" kind="active" namespace="SRC">
+    <import_dictionary>test/one</import_dictionary>
+    <import_port_type>test/two</import_port_type>
+    <include_header>test/three</include_header>
+
+    <ports>
+
+    </ports>
+
+
+
+</component>

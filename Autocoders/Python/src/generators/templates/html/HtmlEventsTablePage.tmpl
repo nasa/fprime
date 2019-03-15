@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>${name} Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+#if $has_events
+<h1><b>Events: ${name}</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+#for $id, $eventname, $severity, $format_string, $throttle, $comment in $events:
+	#set $args = $event_args[$eventname]
+	#set $args_length = len($args) + 1
+	##
+	#if len($id) == 1:
+       #set $id = $id[0]
+       #if "x" in $id:
+         #set $id = int($id, 16) + $base_id
+       #else
+         #set $id = int($id) + $base_id
+       #end if
+       #set $hexid = hex($id)
+    #end if
+		<tr style = "border: 2px solid black;">
+			<td rowspan="$args_length">${eventname}</td>
+			<td rowspan="$args_length">${id} (${hexid})</td>
+			<td rowspan="$args_length">${comment}</td>
+  			#if $args_length > 1
+  				#set $args_index = 1
+  				#for $arg_name, $arg_type, $comment, $size, $typeinfo in $args:
+  					#set $arg_style = "border-right: 2px solid black;"
+  					#if $args_index == 1
+					#set $arg_style += "border-top: 2px solid black;"
+					#end if
+					#if $args_index + 1 == $args_length
+					#set $arg_style += "border-bottom: 2px solid black;"
+					#end if
+					<tr style = "$arg_style">
+						<td>$arg_name</td>
+						<td>$arg_type</td>
+						<td>$size</td>
+						<td>$comment</td>
+					</tr>
+					#set $args_index += 1
+				#end for
+			#else
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			#end if
+		</tr>
+#end for
+	</tbody>
+</table>
+
+#end if
+</body>
+</html>

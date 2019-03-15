@@ -4,7 +4,7 @@
   "description": "bson parser server",
   "main": "index.js",
   "scripts": {
-    "configure": "../Autocoders/bin/run_JSONDict.sh --path=res ",
+    "configure": "../Autocoders/Python/bin/run_JSONDict.sh --path=res ",
     "postconfigure": "node scripts/generateConfigJSON.js",
     "start": "node scripts/prestart.js",
     "poststart": "node index.js",
