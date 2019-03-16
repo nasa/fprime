@@ -1,7 +1,7 @@
 import Pmw
 import time
 
-from fprime.tkGui.controllers import consumer
+from tkGui.controllers import consumer
 
 
 class StatusBarUpdater(consumer.Consumer):

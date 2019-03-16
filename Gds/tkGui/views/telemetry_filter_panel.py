@@ -10,7 +10,7 @@ import tkFileDialog
 import Pmw
 import os
 
-from fprime.tkGui.controllers import channel_loader
+from tkGui.controllers import channel_loader
 
 def telemetryFilterDialog(parent, inactive_channels, selected_channels=[]):
     """

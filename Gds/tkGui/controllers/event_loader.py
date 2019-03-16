@@ -20,9 +20,9 @@ import os
 import sys
 import collections
 
-from fprime.tkGui.controllers import exceptions
+from tkGui.controllers import exceptions
 from fprime.common.models.common import event
-from fprime.tkGui.controllers import module_loader
+from tkGui.controllers import module_loader
 
 # Add the loadModules method using this decorator
 @module_loader.ModuleLoader

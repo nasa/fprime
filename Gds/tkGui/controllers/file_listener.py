@@ -4,10 +4,10 @@ import signal
 import threading
 import Queue
 
-from fprime.tkGui.controllers import observer
-from fprime.tkGui.controllers import file_uplink_client
-from fprime.tkGui.controllers import file_downlink_client
-from fprime.tkGui.controllers import status_updater
+from tkGui.controllers import observer
+from tkGui.controllers import file_uplink_client
+from tkGui.controllers import file_downlink_client
+from tkGui.controllers import status_updater
 
 
 class FileListener(observer.Observable):

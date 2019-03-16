@@ -14,12 +14,12 @@ from tkintertable.Filtering import FilterFrame
 
 from fprime.common.models.common.event import Severity
 
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import observer
+from tkGui.controllers import status_updater
+from tkGui.controllers import observer
 
-from fprime.tkGui.utils import ConfigManager
-from fprime.tkGui.utils import tkGui_misc
-from fprime.tkGui.utils import tkGui_persist
+from tkGui.utils import ConfigManager
+from tkGui.utils import tkGui_misc
+from tkGui.utils import tkGui_persist
 
 class LogEventPanel(observer.Observer):
     '''

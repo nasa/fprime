@@ -34,18 +34,18 @@ import status_panel
 import status_bar
 import file_panel
 
-from fprime.tkGui.controllers import client_sock
-from fprime.tkGui.controllers import socket_listener
-from fprime.tkGui.controllers import event_listener
-from fprime.tkGui.controllers import channel_listener
-from fprime.tkGui.controllers import packetize_channel_listener
-from fprime.tkGui.controllers import exceptions
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import status_bar_updater
-from fprime.tkGui.controllers import file_listener
+from tkGui.controllers import client_sock
+from tkGui.controllers import socket_listener
+from tkGui.controllers import event_listener
+from tkGui.controllers import channel_listener
+from tkGui.controllers import packetize_channel_listener
+from tkGui.controllers import exceptions
+from tkGui.controllers import status_updater
+from tkGui.controllers import status_bar_updater
+from tkGui.controllers import file_listener
 
-from fprime.tkGui.utils import ConfigManager
-from fprime.tkGui.utils.gse_persist import WindowMementoOriginator, MementoCaretaker
+from tkGui.utils import ConfigManager
+from tkGui.utils.tkGui_persist import WindowMementoOriginator, MementoCaretaker
 
 from Canvas import Line
 

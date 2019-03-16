@@ -1,10 +1,10 @@
 import Tkinter
 import Pmw
 
-from fprime.tkGui.controllers import event_listener
-from fprime.tkGui.controllers import status_bar_updater
+from tkGui.controllers import event_listener
+from tkGui.controllers import status_bar_updater
 
-from fprime.tkGui.utils import ConfigManager
+from tkGui.utils import ConfigManager
 import time
 
 

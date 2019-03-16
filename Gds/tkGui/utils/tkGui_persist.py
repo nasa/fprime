@@ -1,8 +1,8 @@
 import Tkinter
 import pickle
 import collections
-from fprime.tkGui.utils import ConfigManager
-from fprime.tkGui.controllers import status_updater
+from tkGui.utils import ConfigManager
+from tkGui.controllers import status_updater
 
 class Memento(object):
 

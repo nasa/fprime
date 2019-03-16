@@ -8,11 +8,11 @@ from enum import Enum
 from subprocess import PIPE
 from optparse import OptionParser
 
-from fprime.tkGui.controllers import client_sock
+from tkGui.controllers import client_sock
 from fprime.common.models.serialize.u32_type import *
 from fprime.common.models.serialize.u8_type import *
-from fprime.tkGui.utils.checksum import *
-from fprime.tkGui.utils import Logger
+from tkGui.utils.checksum import *
+from tkGui.utils import Logger
 
 from fprime.common.models.serialize.filepacket import PacketType
 from fprime.common.models.serialize import filepacket

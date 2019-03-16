@@ -21,11 +21,11 @@ import sys
 import collections
 from collections import OrderedDict
 
-from fprime.tkGui.controllers import exceptions
+from tkGui.controllers import exceptions
 from fprime.common.models.common import channel_telemetry
-from fprime.tkGui.controllers import module_loader
+from tkGui.controllers import module_loader
 from lxml import etree
-from fprime.tkGui.controllers import channel_loader
+from tkGui.controllers import channel_loader
 
 
 # Add the loadModules method using this decorator

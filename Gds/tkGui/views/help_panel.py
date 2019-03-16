@@ -5,8 +5,8 @@ import re
 import Pmw
 import os
 
-from fprime.tkGui.utils import ConfigManager
-from fprime.tkGui.utils import tkGui_misc
+from tkGui.utils import ConfigManager
+from tkGui.utils import tkGui_misc
 
 class HelpPanel(object):
     '''

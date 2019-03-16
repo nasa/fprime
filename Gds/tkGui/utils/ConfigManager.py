@@ -26,7 +26,7 @@ import glob
 import ConfigParser
 
 from fprime.common.models.common.event import Severity
-import gse_misc
+import tkGui_misc
 
 class ConfigManager(ConfigParser.SafeConfigParser):
     """

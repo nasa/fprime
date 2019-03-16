@@ -20,7 +20,7 @@
 import collections
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize import u32_type
-from fprime.tkGui.controllers import status_bar_updater
+from tkGui.controllers import status_bar_updater
 #from fprime.gse.views import main_panel
 
 class Commander:

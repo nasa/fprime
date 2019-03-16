@@ -5,14 +5,14 @@ import Pmw
 import os
 import time
 
-from fprime.tkGui.utils import ConfigManager
+from tkGui.utils import ConfigManager
 
-from fprime.tkGui.controllers import file_uplink_client
-from fprime.tkGui.controllers import file_downlink_client
-from fprime.tkGui.controllers import event_listener
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import command_loader
-from fprime.tkGui.controllers import commander
+from tkGui.controllers import file_uplink_client
+from tkGui.controllers import file_downlink_client
+from tkGui.controllers import event_listener
+from tkGui.controllers import status_updater
+from tkGui.controllers import command_loader
+from tkGui.controllers import commander
 
 class StatusFrame(Tkinter.LabelFrame):
     """

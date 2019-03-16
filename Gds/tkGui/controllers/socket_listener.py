@@ -27,19 +27,19 @@ import struct
 import logging
 import time
 
-from fprime.tkGui.controllers import observer
-from fprime.tkGui.controllers import event_listener
-from fprime.tkGui.controllers import channel_listener
-from fprime.tkGui.controllers import packetize_channel_listener
-from fprime.tkGui.controllers import status_bar_updater
-from fprime.tkGui.controllers import stripchart_listener
+from tkGui.controllers import observer
+from tkGui.controllers import event_listener
+from tkGui.controllers import channel_listener
+from tkGui.controllers import packetize_channel_listener
+from tkGui.controllers import status_bar_updater
+from tkGui.controllers import stripchart_listener
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import u16_type
 from fprime.common.models.serialize import u8_type
 
-from fprime.tkGui.utils import Logger
+from tkGui.utils import Logger
 
 class SocketListener:
     """

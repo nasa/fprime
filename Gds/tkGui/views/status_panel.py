@@ -2,8 +2,8 @@
 import Tkinter
 import Pmw
 
-from fprime.tkGui.controllers import exceptions
-from fprime.tkGui.controllers import observer
+from tkGui.controllers import exceptions
+from tkGui.controllers import observer
 
 class StatusPanel(observer.Observer):
     '''

@@ -22,13 +22,13 @@ import os
 import logging
 import time
 
-from fprime.tkGui.controllers import observer
-from fprime.tkGui.controllers import exceptions
-from fprime.tkGui.controllers import status_bar_updater
+from tkGui.controllers import observer
+from tkGui.controllers import exceptions
+from tkGui.controllers import status_bar_updater
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize import u32_type
-from fprime.tkGui.utils import Logger
+from tkGui.utils import Logger
 
 class StatusUpdater(observer.Observable):
     """

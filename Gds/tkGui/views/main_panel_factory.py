@@ -29,31 +29,31 @@ import Pmw
 import subprocess
 
 
-from fprime.tkGui.views import main_panel
-from fprime.tkGui.views import command_panel
-from fprime.tkGui.views import log_event_panel
-from fprime.tkGui.views import telemetry_panel
-from fprime.tkGui.views import seq_panel
-from fprime.tkGui.views import status_panel
-from fprime.tkGui.views import status_bar
-from fprime.tkGui.views import file_panel
-from fprime.tkGui.views import stripchart_panel
-from fprime.tkGui.views import help_panel
+from tkGui.views import main_panel
+from tkGui.views import command_panel
+from tkGui.views import log_event_panel
+from tkGui.views import telemetry_panel
+from tkGui.views import seq_panel
+from tkGui.views import status_panel
+from tkGui.views import status_bar
+from tkGui.views import file_panel
+from tkGui.views import stripchart_panel
+from tkGui.views import help_panel
 
-from fprime.tkGui.controllers import command_loader
-from fprime.tkGui.controllers import commander
-from fprime.tkGui.controllers import event_loader
-from fprime.tkGui.controllers import event_listener
-from fprime.tkGui.controllers import channel_loader
-from fprime.tkGui.controllers import channel_listener
-from fprime.tkGui.controllers import packetize_channel_loader
-from fprime.tkGui.controllers import packetize_channel_listener
-from fprime.tkGui.controllers import status_bar_updater
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import exceptions
-from fprime.tkGui.controllers import file_listener
-from fprime.tkGui.controllers import stripchart_listener
-from fprime.tkGui.controllers import socket_listener
+from tkGui.controllers import command_loader
+from tkGui.controllers import commander
+from tkGui.controllers import event_loader
+from tkGui.controllers import event_listener
+from tkGui.controllers import channel_loader
+from tkGui.controllers import channel_listener
+from tkGui.controllers import packetize_channel_loader
+from tkGui.controllers import packetize_channel_listener
+from tkGui.controllers import status_bar_updater
+from tkGui.controllers import status_updater
+from tkGui.controllers import exceptions
+from tkGui.controllers import file_listener
+from tkGui.controllers import stripchart_listener
+from tkGui.controllers import socket_listener
 
 # Global logger init. below.
 PRINT = logging.getLogger('output')

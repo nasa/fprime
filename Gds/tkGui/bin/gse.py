@@ -22,14 +22,15 @@ import Pmw
 import time
 import glob
 import random
-from fprime.gse.utils import Logger
-from fprime.gse.utils import ConfigManager
 
-import fprime.gse.controllers.exceptions
+from tkGui.utils import Logger
+from tkGui.utils import ConfigManager
+
+import tkGui.controllers.exceptions
 import traceback
 
-from fprime.tkGui.views import main_panel_factory
-from fprime.tkGui.views import main_panel
+from tkGui.views import main_panel_factory
+from tkGui.views import main_panel
 from optparse import OptionParser
 
 __all__ = []
@@ -269,7 +270,7 @@ def main(argv=None):
             root.after(1000, execute, opts)
         root.mainloop()
 
-    except fprime.gse.controllers.exceptions.GseControllerException, e:
+    except tkGui.controllers.exceptions.GseControllerException, e:
         sys.stderr.write("Exception: %s\n"%e.getMsg())
         traceback.print_exc()
         return 2

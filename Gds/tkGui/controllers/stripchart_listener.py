@@ -3,7 +3,7 @@ import Tkinter
 import signal
 import datetime
 
-from fprime.tkGui.controllers import observer
+from tkGui.controllers import observer
 
 class StripChartListener(observer.Observable):
     """

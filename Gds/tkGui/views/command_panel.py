@@ -7,14 +7,14 @@ import Tkinter
 import Pmw
 import time
 
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import status_bar_updater
-from fprime.tkGui.controllers import command_loader
-from fprime.tkGui.controllers import commander
+from tkGui.controllers import status_updater
+from tkGui.controllers import status_bar_updater
+from tkGui.controllers import command_loader
+from tkGui.controllers import commander
 
-from fprime.tkGui.models.common import command
-from fprime.tkGui.utils import tkGui_misc
-from fprime.tkGui.utils import command_args
+from fprime.common.models.common import command
+from tkGui.utils import tkGui_misc
+from tkGui.utils import command_args
 
 import exceptions
 import command_args_frame
@@ -121,7 +121,7 @@ class CommandPanel(object):
         self.__selected_cmd_mnemonic = self.__cmds_list[0]
 
         # Rebind Up and Down key events to prevent exception
-        gse_misc.rebind_comboBox(self.__combobox)
+        tkGui_misc.rebind_comboBox(self.__combobox)
         # Rebind for auto complete
         self.__combobox._entryWidget.bind("<Key>", self.__combobox_entry)
         self.__combobox._entryWidget.bind("<Return>", self.__combobox_return)

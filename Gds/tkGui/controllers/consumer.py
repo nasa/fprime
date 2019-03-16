@@ -17,7 +17,7 @@
 import Queue
 import threading
 
-from fprime.tkGui.controllers import observer
+from tkGui.controllers import observer
 
 # Make class an abstract base class
 class Consumer(observer.Observable):

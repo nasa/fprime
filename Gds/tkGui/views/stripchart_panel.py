@@ -19,16 +19,16 @@ import matplotlib.dates as md
 from matplotlib.ticker import FuncFormatter
 import numpy as np
 
-from fprime.common.controllers import channel_loader
-from fprime.common.controllers import event_loader
-from fprime.common.controllers import status_updater
-from fprime.common.controllers import event_listener
-from fprime.common.controllers import stripchart_listener
-from fprime.common.controllers import status_bar_updater
-from fprime.common.controllers import observer
+from tkGui.controllers import channel_loader
+from tkGui.controllers import event_loader
+from tkGui.controllers import status_updater
+from tkGui.controllers import event_listener
+from tkGui.controllers import stripchart_listener
+from tkGui.controllers import status_bar_updater
+from tkGui.controllers import observer
 
-from fprime.common.utils import ConfigManager
-from fprime.tkGui.utils import tkGui_misc
+from tkGui.utils import ConfigManager
+from tkGui.utils import tkGui_misc
 from fprime.common.models.common.event import Severity
 
 

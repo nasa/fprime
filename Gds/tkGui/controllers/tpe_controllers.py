@@ -5,10 +5,10 @@ import tkFileDialog
 import csv
 import collections
 
-from fprime.tkGui.views.tpe_views import PacketView
-from fprime.tkGui.models.tpe_models import PacketModel
-from fprime.tkGui.models.tpe_models import SessionModel
-from fprime.tkGui.models.tpe_models import ItemEntry, FillerEntry
+from tkGui.views.tpe_views import PacketView
+from tkGui.models.tpe_models import PacketModel
+from tkGui.models.tpe_models import SessionModel
+from tkGui.models.tpe_models import ItemEntry, FillerEntry
 
 
 class SessionController(object):

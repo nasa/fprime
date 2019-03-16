@@ -27,8 +27,8 @@ import exceptions
 import Tkinter
 import Pmw
 
-from fprime.tkGui.controllers import command_loader
-from fprime.tkGui.controllers import commander
+from tkGui.controllers import command_loader
+from tkGui.controllers import commander
 
 # Import the types this way so they do not need prefixing for execution.
 from fprime.common.models.serialize.type_exceptions import *
@@ -52,7 +52,7 @@ from fprime.common.models.serialize.i64_type import *
 from fprime.common.models.serialize.string_type import *
 from fprime.common.models.serialize.serializable_type import *
 
-from fprime.tkGui.utils import gse_misc
+from tkGui.utils import tkGui_misc
 
 # Global logger init. below.
 PRINT = logging.getLogger('output')

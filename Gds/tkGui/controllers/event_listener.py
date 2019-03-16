@@ -34,16 +34,16 @@ import time
 
 #@todo Add logging to disk of log events via the Logger module.
 
-from fprime.tkGui.controllers import consumer
-from fprime.tkGui.controllers import event_loader
-from fprime.tkGui.controllers import status_bar_updater
+from tkGui.controllers import consumer
+from tkGui.controllers import event_loader
+from tkGui.controllers import status_bar_updater
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import u16_type
 from fprime.common.models.serialize import u8_type
 
-from fprime.tkGui.utils import Logger
+from tkGui.utils import Logger
 
 
 class EventListener(consumer.Consumer):

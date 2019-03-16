@@ -7,8 +7,8 @@ import Tkinter
 import Pmw
 import time
 
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import command_loader
+from tkGui.controllers import status_updater
+from tkGui.controllers import command_loader
 from fprime.common.models.common import command
 import exceptions
 
@@ -21,8 +21,8 @@ from fprime.common.models.serialize.u16_type import *
 from fprime.common.models.serialize.u8_type import *
 from fprime.common.models.serialize.time_type import *
 
-from fprime.tkGui.utils import tkGui_misc
-from fprime.tkGui.utils import command_args
+from tkGui.utils import tkGui_misc
+from tkGui.utils import command_args
 
 import zlib
 

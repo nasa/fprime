@@ -20,7 +20,7 @@ import glob
 import os
 import sys
 
-from fprime.tkGui.controllers import exceptions
+from tkGui.controllers import exceptions
 from fprime.common.models.common import command
 from fprime.common.models.serialize import enum_type
 

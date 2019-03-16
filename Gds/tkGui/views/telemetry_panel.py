@@ -10,10 +10,10 @@ import Pmw
 from tkintertable.Tables import TableCanvas
 from tkintertable.TableModels import TableModel
 
-from fprime.tkGui.utils import ConfigManager
-from fprime.tkGui.controllers import channel_loader
-from fprime.tkGui.controllers import status_updater
-from fprime.tkGui.controllers import observer
+from tkGui.utils import ConfigManager
+from tkGui.controllers import channel_loader
+from tkGui.controllers import status_updater
+from tkGui.controllers import observer
 import telemetry_filter_panel
 
 

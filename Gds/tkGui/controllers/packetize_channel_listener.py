@@ -34,16 +34,16 @@ import logging
 import time
 import Queue
 
-from fprime.tkGui.controllers import consumer
-from fprime.tkGui.controllers import channel_listener
-from fprime.tkGui.controllers import packetize_channel_loader
+from tkGui.controllers import consumer
+from tkGui.controllers import channel_listener
+from tkGui.controllers import packetize_channel_loader
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import u16_type
 from fprime.common.models.serialize import u8_type
 
-from fprime.tkGui.utils import Logger
+from tkGui.utils import Logger
 
 class PacketizeChannelListener(consumer.Consumer):
     """
