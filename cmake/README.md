@@ -1,4 +1,4 @@
-# F` CMake Build System
+# F´ CMake Build System
 
 Stock F´ ships with a bispoke make system ensure that building is done correctly and in the correct order. However, using and maintaining 
 this build system presents a steep learning curve to new users of F´. This included CMake system is intended as an eventual replacement 
@@ -8,8 +8,8 @@ development.
 Since this CMake system ships along-side the original make system, certain caveats must be understood before beginning to use CMake. 
 These caveats should disappear after CMake replaces the original make system in its entirety
 
-Installation guides for CMake can be found here: ![https://cmake.org/install/] (https://cmake.org/install/).
-Further documentation can be found in the SDD: ![SDD.md](docs/sdd.md)
+Installation guides for CMake can be found here: [https://cmake.org/install/](https://cmake.org/install/).
+Further documentation can be found in the SDD: [SDD.md](docs/sdd.md)
 
 ### CMakes Caveats
 
@@ -98,6 +98,49 @@ https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/e4c1874c564769d3230c95d1cc0a8
 
 The critical line is `include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")`, which links to F´'s CMake setup. This setup brings in
 F´ CMake options, functions, and architecture.
+
+## Cross-Compiling With CMake
+
+In order to cross compile F´ with the cmake system to some new target platform, two files are required. These two files are
+a cmake toolchain file, and an F´ platform file. Once these files have been created, a cross-compile can be setup and run 
+with the following commands:
+
+```
+mkdir build-cross
+cd build-cross
+cmake -DCMAKE_TOOLCHAIN_FILE=<path/to/toolchain/file> <path/to/deployment>
+make
+```
+
+### CMake Toolchain File
+
+Toolchain files are used to setup the tools and packages used to cross-compile code for a separate target platform.
+The cmake toolchain files are placed in [cmake/toolchain](toolchain) and are standard CMake toolchain files.
+[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html](https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
+Alternatively, the user may specify a path to an external CMake toolchain file. This file specifies the path to the tools
+used to perform the build (i.e. the compilers, libraries, and packages). A sample template for setting up new toolchain 
+files can be found at [cmake/toolchain/toolchain.cmake.template](toolchain/toolchain.cmake.template). Copy this file to
+the new toolchain name, fill it out, and it can be then used with the above cross-compile instructions. **Note:** a parallel
+platform file must also be created before a toolchain file can be used.
+
+```
+cd cmake
+cp toolchain/toolchain.cmake.template toolchain/<toolchain-name>.cmake
+```
+
+### CMake Platfrom File
+
+Platform files are used to specify CMake options, compile flags, definitions, and other setting used by F´ when compiling
+for a separate target. These files are F´ specific and are named after the ${CMAKE_SYSTEM_NAME} defined in the toolchain
+file used to kick-off a cross compile. The platform files are found in [cmake/platform](platform). In order to create one
+of these files, copy the platform template and fill it out. The template for setting up new platform files can be found at
+[cmake/platform/platform.cmake.template](platform/platform.cmake.template) Then follow the above instructions to cross-
+compile. **Note:** a parallel toolchain file must exist in order to trigger this platform file.
+
+```
+cd cmake
+cp platform/platform.cmake.template platform/<platform-name>.cmake
+```
 
 ## Advanced CMake Usage (Caution: these steps are not polished, hence "Advanced")
 
@@ -240,6 +283,8 @@ add_subdirectory("${FPRIME_CORE_DIR}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/A
 
 ... add only desired subdirectories/components here ...
 ```
+
+
 
 
 
