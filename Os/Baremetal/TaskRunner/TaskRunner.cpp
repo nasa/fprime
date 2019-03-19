@@ -39,7 +39,7 @@ void TaskRunner::removeTask(Task* task) {
     bool found = false;
     //Squash that existing task
     for (U32 i = 0; i < TASK_REGISTRY_CAP; i++) {
-        found = found | task == this->m_task_table[i];
+        found = found | (task == this->m_task_table[i]);
         //If not found, keep looking
         if (!found) {
             continue;
