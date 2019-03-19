@@ -22,38 +22,37 @@ These terms have specific meaning within this SDD. The table below gives a quick
 
 ## 2 Requirements
 
-Requirement | Description | Rationale | Verification Method
----- | ---- | ---- | ----
-BUILD-01 | TThe build system shall support native F´ builds and installations on Linux, and Mac OS. | F´ development at JPL takes place on Linux and Mac OS machines | Inspection |
-BUILD-02 | The build system shall provide templates for supporting other host OSes. | Templates make adding hosts easier. | Inspection |
-BUILD-03 | The build system shall provide templates for supporting other targets. | Templates make adding new targets easier. | Inspection |
-BUILD-05 | The build system shall provide a cross-compiled target example. | Cross-compilation is common at JPL and must be provided as an example. | Inspection |
-BUILD-06 | The build system shall support custom build commands. | Custom build commands allow for extension of the build system. | Inspection |
-BUILD-07 | The build system shall support individual component, port, and topology builds. | Compiling a specific component can speed-up development. | Unit Test |
-BUILD-08 | The build system shall support unit test building and running system checks. | Unit testing is critical for proper development. | Unit Test |
-BUILD-09 | The build system shall support building deployments. | Deployments must build properly | Unit Test |
-BUILD-10 | The build system shall support integration with other build systems. | Some libraries come with other make systems. | Inspection |
-BUILD-11 | The build system shall not require specific ordering of all modules to build properly. | Ordering of all F´ is difficult when it must be explicit | Inspection |
-BUILD-12 | The build system shall support separate out-of-source building of F´ | Build artifacts are commonly kept separate from source code. | Inspection |
-BUILD-13 | The build system shall support executable and tool building | Not all of F´ is a deployment | Inspection |
-BUILD-14 | The build system shall support installation and distribution of outputs, headers, and libraries | Shipping of binary outputs is important for projects. | Inspection |
-BUILD-15 | The build system shall support user-configurable builds i.e. debug, release, etc. | F´ may need access to different build variants for debugging purposes | Inspection |
-BUILD-16 | The build system shall be easy to use including adding new components | F´'s current build system has a steep learning curve | Inspection |
-BUILD-17 | The build system shall not be explicitly slow. | Compilation times are non-trivial | Inspection |
-BUILD_18 | Deployments shall configure dependencies independently. | Current F´ has issues with global make config directory | Inspection |
-BUILD_19 | The build system shall not be difficult to set up and configure. | Porting existing F´ deployments to the new make system should not require massive efforts | Inspection |
-BUILD_20 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection |
-BUILD_21 | The build system shall support Windows hosts. | Windows build are desired to be supported in the future. | Inspection |
-BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection |
-BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection |
-BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection |
-BUILD_25 | The build system shall support installation and packaging | | Inspection |
-BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | |
-BUILD_27 | The build system shall support explicit and implicit execution of the F´ Autocoder. | |
-BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | 
-BUILD_29 | The build system shall implement all user targets of the legacy F´ build system. | | 
-BUILD_30 | The build system shall support execution of individual, sets, or all GSE based integration tests. | |
-BUILD_31 | The build system shall support execution of individual, sets, or all F´ Autocoder and associated tooling tests. | |
+Requirement | Description | Rationale | Verification Method | Status |
+---- | ---- | ---- | ---- | ----
+BUILD-01 | The build system shall support native F´ builds and installations on Linux, and Mac OS. | F´ development at JPL takes place on Linux and Mac OS machines | Inspection | Built-In |
+BUILD-02 | The build system shall provide templates for supporting other host OSes. | Templates make adding hosts easier. | Inspection | Built-In |
+BUILD-03 | The build system shall provide templates for supporting other targets. | Templates make adding new targets easier. | Inspection | Needed |
+BUILD-05 | The build system shall provide a cross-compiled target example. | Cross-compilation is common at JPL and must be provided as an example. | Inspection | Done |
+BUILD-06 | The build system shall support custom build commands. | Custom build commands allow for extension of the build system. | Inspection | Needed |
+BUILD-07 | The build system shall support individual component, port, and topology builds. | Compiling a specific component can speed-up development. | Unit Test | Work-Around |
+BUILD-08 | The build system shall support unit test building and running system checks. | Unit testing is critical for proper development. | Unit Test | Needed |
+BUILD-09 | The build system shall support building deployments. | Deployments must build properly | Unit Test | Done |
+BUILD-10 | The build system shall support integration with other build systems. | Some libraries come with other make systems. | Inspection | Needed |
+BUILD-11 | The build system shall not require specific ordering of all modules to build properly. | Ordering of all F´ is difficult when it must be explicit | Inspection | Built-In |
+BUILD-12 | The build system shall support separate out-of-source building of F´ | Build artifacts are commonly kept separate from source code. | Inspection | Done |
+BUILD-13 | The build system shall support executable and tool building | Not all of F´ is a deployment | Inspection | Needed |
+BUILD-14 | The build system shall support installation and distribution of outputs, headers, and libraries | Shipping of binary outputs is important for projects. | Inspection | Needed |
+BUILD-15 | The build system shall support user-configurable builds i.e. debug, release, etc. | F´ may need access to different build variants for debugging purposes | Inspection | Work-Around |
+BUILD-16 | The build system shall be easy to use including adding new components | F´'s current build system has a steep learning curve | Inspection | Done |
+BUILD-17 | The build system shall not be explicitly slow. | Compilation times are non-trivial | Inspection | Done |
+BUILD_18 | Deployments shall configure dependencies independently. | Current F´ has issues with global make config directory | Inspection | Done |
+BUILD_19 | The build system shall not be difficult to set up and configure. | Porting existing F´ deployments to the new make system should not require massive efforts | Inspection | Built-In |
+BUILD_20 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection | Done |
+BUILD_21 | The build system shall support Windows hosts. | Windows build are desired to be supported in the future. | Inspection | Needed |
+BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection | Needed |
+BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection | Needed |
+BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection | Needed |
+BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | | | Needed |
+BUILD_27 | The build system shall support explicit and implicit execution of the F´ Autocoder. | | | Done |
+BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | | |  Done/Built-In |
+BUILD_29 | The build system shall implement all user targets of the legacy F´ build system. | | | Deferred |
+BUILD_30 | The build system shall support execution of individual, sets, or all GSE based integration tests. | | | Needed |
+BUILD_31 | The build system shall support execution of individual, sets, or all F´ Autocoder and associated tooling tests. |  | | Done |
 
 ## 3 Operations Concepts
 
@@ -409,14 +408,18 @@ and if needed the libraries it depends.
 
 ### 5.3 Adding New Platforms
 
-CMake allows you to specify the tool chain as part of the initial CMake step, so at its core, compiling for a new target OS should be as simple as doing the following step.
+CMake allows you to specify the toolchain as part of the initial CMake step, so at its core, compiling for a new target OS should be as simple as doing the following step.
 
 ```
 cmake <path to deployment> -DCMAKE_TOOLCHAIN_FILE=path/to/toolchain_file
 ```
 
-However, adding tool-chains this way neglects some F´ convenience setup for compiling platform-specific code. In addition, adding tool-chains this way can be cumbersome. Thus, a user may also register
-a new platform in the `fprime/cmake/platform/` directory by creating a `<platform>.cmake` file there. More specific steps will be described in `fprime/cmake/platform/README.md`.
+However, adding tool-chains this way neglects some F´ convenience setup for compiling platform-specific code. Thus, a user 
+must also register a platform file. A new platform in the `fprime/cmake/platform/` directory is made by creating a 
+`<platform>.cmake` file there. More specific steps will be described in `fprime/cmake/platform/README.md`.
+
+Toolchain files can also be added to `fprime/cmake/toolchain/` if they should be provided with F´to make compiling with new 
+toolchains easier.
 
 ## 6 Unit Tests
 
