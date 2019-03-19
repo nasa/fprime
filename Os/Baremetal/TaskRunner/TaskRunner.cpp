@@ -10,9 +10,8 @@
 #include <Os/Baremetal/TaskRunner/BareTaskHandle.hpp>
 namespace Os {
 
-TaskRunner::TaskRunner(Task::taskRoutine callback) :
+TaskRunner::TaskRunner() :
     m_index(0),
-    m_callback(callback),
     m_cont(false)
 {
     for (U32 i = 0; i < TASK_REGISTRY_CAP; i++) {

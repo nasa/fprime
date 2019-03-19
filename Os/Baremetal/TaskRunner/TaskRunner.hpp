@@ -19,7 +19,7 @@ namespace Os {
 class TaskRunner : TaskRegistry {
     public:
         //!< Nothing constructor
-        TaskRunner(Task::taskRoutine callback);
+        TaskRunner();
         //!< Nothing destructor
         ~TaskRunner();
         /**
@@ -44,7 +44,6 @@ class TaskRunner : TaskRegistry {
     private:
         U32 m_index;
         Task* m_task_table[TASK_REGISTRY_CAP];
-        Task::taskRoutine m_callback;
         bool m_cont;
 };
 } //End Namespace Os
