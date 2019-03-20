@@ -14,9 +14,9 @@
 |Event Name|ID|Description|Arg Name|Arg Type|Arg Size|Description
 |---|---|---|---|---|---|---|
 |US_PortOpened|0 (0x0)|Connection opened| | | | |
-| | | |server|Fw::LogStringArg&|80||    
-| | | |port|U32|||    
+| | | |server|Fw::LogStringArg&|80||
+| | | |port|U32|||
 |US_SocketError|1 (0x1)|UDP port socket error| | | | |
-| | | |error|Fw::LogStringArg&|80||    
+| | | |error|Fw::LogStringArg&|80||
 |US_SendError|2 (0x2)|UDP send error| | | | |
-| | | |error|Fw::LogStringArg&|80||    
+| | | |error|Fw::LogStringArg&|80||

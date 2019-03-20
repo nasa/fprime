@@ -61,3 +61,6 @@ core
 *TopologyAppAi_IDTableLog.txt
 
 .vscode
+py_dict
+.settings
+

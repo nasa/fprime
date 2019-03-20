@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/sh
 # *******************************************************************************
 # * Copyright 2013, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship
@@ -13,23 +13,13 @@
 # * information to foreign countries or providing access to foreign
 # * persons.
 # *
-
-if !($?BUILD_ROOT) then
-    set curdir = "${PWD}"
-    setenv BUILD_ROOT `dirname $0`/../..
-    cd $BUILD_ROOT
-    setenv BUILD_ROOT ${PWD}
-    cd ${curdir}
-endif
-
+DIRNAME="`dirname $0`"
+# Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
+if [ -z ${BUILD_ROOT} ]
+then
+    export BUILD_ROOT="`cd ${DIRNAME}/../../..; pwd`"
+fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-# Borrow some variables from build
-
-setenv PYTHON_BASE `make -s -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_python_base`
-echo "PYTHON_BASE: ${PYTHON_BASE}"
-
-setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
-setenv PYTHONPATH ${BUILD_ROOT}/Gds/src
-setenv GSE_GENERATED_PATH ${BUILD_ROOT}/Gse/generated/Ref
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Gds/bin/tinyseqgen.py $*
+export PYTHONPATH="${BUILD_ROOT}/Gds"
+python "${BUILD_ROOT}/Gds/tkGui/bin/seqgen.py" "$@"
