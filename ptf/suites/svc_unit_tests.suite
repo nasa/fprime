@@ -13,4 +13,6 @@
 "Svc/FileUplink Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/FileUplink)
 "Svc/FileDownlink Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/FileDownlink)
 "Svc/ComLogger Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/ComLogger)
+"Svc/UdpSender Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/UdpSender)
+"Svc/UdpReceiver Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Svc/UdpReceiver)
 
