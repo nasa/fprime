@@ -26,6 +26,15 @@ message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
+# Library types, used for generating shared objects
+#
+if (FPRIME_SHARED_LIBS)
+    message(STATUS "Generating shared libraries")
+    set(FPRIME_LIB_TYPE "SHARED")
+else()
+    message(STATUS "Generating static libraries")
+    set(FPRIME_LIB_TYPE "STATIC")
+endif()
 # Include the build system and the options that the build system allows.
 include("${FPRIME_CORE_DIR}/cmake/CMakeLists.txt")
 

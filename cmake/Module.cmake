@@ -201,7 +201,7 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
 
   add_library(
     ${MODULE_NAME}
-    STATIC
+    ${FPRIME_LIB_TYPE}
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
