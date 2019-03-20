@@ -9,9 +9,6 @@ test_harness/src/test_harness-C/application.out
 lib*.a
 *-bin
 ac_dep
-yacgen.log
-.accurev
-.acignore
 *~
 .metadata
 RemoteSystemsTempFiles

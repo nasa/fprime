@@ -1,13 +1,6 @@
-# ACTools script definitions
-#DICT_GEN specifies if instances of components should be specified in AcConstants.ini ("LOCAL") or should be drawn from the
-#Topology XML files ("GLOBAL").
-#If "GLOBAL" is used, please zero out all IDS by replacing them with 0x000.
-#"LOCAL" is the default if this var is not set or is not set to "GLOBAL" or "LOCAL".
-DICT_GEN := "GLOBAL"
-
-#DICT_TYPE specifies what type of dictionary to generate, with the two arguments being "DEFAULT" or "AMPCS". 
-#"DEFAULT" is the default if the var is not set or is set to the wrong value. 
-DICT_TYPE := "DEFAULT"
+#DICT_TYPE specifies what type of dictionary to generate, with the arguments being "PYTHON", "AMPCS", or "XML" 
+#"PYTHON" is the default if the var is not set or is set to the wrong value. 
+DICT_TYPE := "PYTHON"
 
 # Python path addition for ACTOOLS
 
@@ -40,14 +33,13 @@ AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/conve
 TELEMETRY_PACKETIZER := $(BUILD_ROOT)/mk/bin/run_tlm_packetizer.sh
 
 
-ifeq ($(DICT_GEN),"GLOBAL")
-	AC_INTERFACE_GEN := $(CODE_GEN) --build_root
-	# DEFAULT Dictionary
-	AC_COMPONENT_GEN := $(CODE_GEN) --build_root --default_topology_dict --gen_report --html_docs --html_doc_dir $(HTML_DOC_SUBDIR) --md_docs --md_doc_dir $(MD_DOC_SUBDIR)
-	#
-	AC_TEST_COMPONENT_GEN := $(CODE_GEN) --build_root -u
-	#
-	AC_IMPL_GEN := $(CODE_GEN) --build_root -t
+AC_INTERFACE_GEN := $(CODE_GEN) --build_root
+# DEFAULT Dictionary
+AC_COMPONENT_GEN := $(CODE_GEN) --build_root --default_topology_dict --gen_report --html_docs --html_doc_dir $(HTML_DOC_SUBDIR) --md_docs --md_doc_dir $(MD_DOC_SUBDIR)
+#
+AC_TEST_COMPONENT_GEN := $(CODE_GEN) --build_root -u
+#
+AC_IMPL_GEN := $(CODE_GEN) --build_root -t
 	# AMPCS Dictionary
 ifeq ($(DICT_TYPE) , "AMPCS")
 	AC_SERIALIZABLE_GEN := $(CODE_GEN) --build_root
@@ -62,30 +54,6 @@ else
     endif	
 endif
 	
-else # local
-	AC_SERIALIZABLE_GEN := $(CODE_GEN) --default_dict --dict_dir $(DICT_MODULE_SUBDIR) --build_root 
-	AC_INTERFACE_GEN :=  $(CODE_GEN) --build_root
-	
-ifeq ($(DICT_TYPE) , "AMPCS")
-	# AMPCS Dictionary
-	AC_COMPONENT_GEN :=  $(CODE_GEN) --build_root --ampcs_dict --gen_report --dict_dir $(AMPCS_DICT_MODULE_SUBDIR) \
-					--html_docs --html_doc_dir $(HTML_DOC_SUBDIR)  --md_docs --md_doc_dir $(MD_DOC_SUBDIR)
-else
-	# DEFAULT Dictionary
-	AC_COMPONENT_GEN :=  $(CODE_GEN) --default_dict--dict_dir $(DICT_MODULE_SUBDIR) --build_root --gen_report \
-					--html_docs --html_doc_dir $(HTML_DOC_SUBDIR) --md_docs --md_doc_dir $(MD_DOC_SUBDIR)
-endif
-	AC_TEST_COMPONENT_GEN :=  $(CODE_GEN) --build_root -u
-
-	AC_IMPL_GEN := $(CODE_GEN) --build_root -t
-
-
-	AC_TOPOLOGY_GEN := $(CODE_GEN) --build_root --connect_only
-
-endif
-	
-
-
 AC_DEP_DIR	:= ac_dep
 
 DEP_FILE_ARG := --dependency-file
