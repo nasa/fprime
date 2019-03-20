@@ -53,7 +53,7 @@ core
 ./Gds/logs/*
 ./Gds/docs/doxy
 
-*Dictionary.xml
+*AppDictionary.xml
 *TopologyAppID.csv 
 *TopologyAppAi_IDTableLog.txt
 
