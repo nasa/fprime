@@ -1,0 +1,35 @@
+####
+# platform.cmake.template: 
+#
+# This file acts as a template for the fprime platform files used by the CMake system.
+# These files specify build flags, compiler directives, and must specify an include
+# directory for system includes like "StandardTypes.hpp".
+#
+# Follow all the steps in this template to create a platform file. Ensure
+# to remove the platform-failsafe (step 1) and fill in all <SOMETHING> tags.
+####
+
+## STEP 1: DELETE the following fail-safe line
+message(FATAL_ERROR "\n[F-PRIME] Platform must be filled before use.\n")
+
+## STEP 2: Specify the OS type include directive i.e. LINUX or DARWIN
+add_definitions(-DTGT_OS_TYPE_<PLATFORM-NAME>)
+
+# STEP 3: Specify CMAKE C and CXX compile flags. DO NOT clear existing flags
+set(CMAKE_C_FLAGS
+  "${CMAKE_C_FLAGS} <ADD-C-FLAGS-HERE>"
+)
+set(CMAKE_CXX_FLAGS
+  "${CMAKE_CXX_FLAGS} <ADD-CXX-FLAGS-HERE>"
+)
+
+# STEP 4: Specify that a thread package should be searched in the toolchain
+#         directory. NOTE: when running without threads, remove this line.
+message(STATUS "Requiring thread library")
+FIND_PACKAGE ( Threads REQUIRED )
+
+# STEP 5: Specify a directory containing the "StandardTypes.hpp" headers, as well
+#         as other system headers. Other global headers can be placed here.
+#         Note: Typically, the Linux directory is a good default, as it grabs
+#         standard types from <stdint.h>. 
+include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
