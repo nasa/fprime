@@ -10,7 +10,14 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Add TestSerializable module
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/TestSerializable")

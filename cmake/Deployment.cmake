@@ -8,7 +8,7 @@ function(generate_deployement DEPLOYMENT_NAME AUTOCODER_INPUT_FILES SOURCE_FILES
   add_executable("${DEPLOYMENT_NAME}" "${SOURCE_FILES}")
 
   # Generate module from sources
-  generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+  generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${DEPLOYMENT_MODULES}")
 
   # Generate module library names
   set(LIBRARIES "")
@@ -21,9 +21,6 @@ function(generate_deployement DEPLOYMENT_NAME AUTOCODER_INPUT_FILES SOURCE_FILES
   # Sets MODULE_NAME to unique name based on path
   get_module_name(${CMAKE_CURRENT_LIST_DIR})
   target_link_libraries("${DEPLOYMENT_NAME}" ${MODULE_NAME} "${LIBRARIES}")
-
-  # Include Framework configuration target
-  target_link_libraries("${DEPLOYMENT_NAME}" "Fw_Cfg")
 
   # TODO Thread library per target
   target_link_libraries("${DEPLOYMENT_NAME}" "${CMAKE_THREAD_LIBS_INIT}")

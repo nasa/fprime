@@ -84,8 +84,11 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   if(ERR_RETURN)
      message(FATAL_ERROR "Failed to parse ${XML_PATH} using parser ${PARSER_PY} with result: ${ERR_RETURN}")
   endif()
-  # For every dected dependency, add them to the supplied module
+  # For every dected dependency, add them to the supplied module. This enforces build order.
+  # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
+  # this prevents the need for manually specifying link orders.
   foreach(TARGET ${TARGETS})
     add_dependencies(${MODULE_NAME} ${TARGET})
+    target_link_libraries(${MODULE_NAME} ${TARGET})
   endforeach()
 endfunction(fprime_dependencies)

@@ -27,8 +27,15 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
 )
 
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+)
+
 # Invoke build system generate_module
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Add stubs directory
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")

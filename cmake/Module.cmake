@@ -195,7 +195,7 @@ function(topology_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
 endfunction(topology_autocoder)
 
 # Define function for adding fprime module library
-function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES)
+function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
   # Sets MODULE_NAME to unique name based on path
   get_module_name(${CMAKE_CURRENT_LIST_DIR})
 
@@ -216,6 +216,14 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES)
   port_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
   component_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
   topology_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
+
+  set(OLD_MODULE_NAME ${MODULE_NAME})
+  foreach(LINK_DEP ${LINK_DEPS})
+    get_module_name(${LINK_DEP})
+    add_dependencies(${OLD_MODULE_NAME}  ${MODULE_NAME})
+    target_link_libraries(${OLD_MODULE_NAME}  ${MODULE_NAME})
+  endforeach()
+  set(MODULE_NAME ${OLD_MODULE_NAME})
 
   # Remove empty source from target
   get_target_property(FINAL_SOURCE_FILES ${MODULE_NAME} SOURCES)

@@ -14,7 +14,14 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PathName.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StartPacket.cpp"
 )
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+)
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Add dependency on gtest
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
