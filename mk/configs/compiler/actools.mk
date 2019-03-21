@@ -26,9 +26,9 @@ MD_DOC_SUBDIR := docs
 
 AMPCS_DICT_DEPLOYMENT_SUBDIR := dict/AMPCS
 
-AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsCommandMerge.py
-AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsEventMerge.py
-AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/converters/AmpcsTelemetryMerge.py
+AMPCS_COMMAND_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/converters/AmpcsCommandMerge.py
+AMPCS_EVENT_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/converters/AmpcsEventMerge.py
+AMPCS_TELEMETRY_MERGE := $(PYTHON_BIN) $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/converters/AmpcsTelemetryMerge.py
 
 TELEMETRY_PACKETIZER := $(BUILD_ROOT)/mk/bin/run_tlm_packetizer.sh
 
