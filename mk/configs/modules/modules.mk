@@ -210,5 +210,3 @@ OTHER_MODULES := \
 
 DEPLOYMENTS := Ref acdev RPI
 
-# Location of ground/gse software. Autocoded dictionary elements are copied here.
-GDS_MODULE := Gse

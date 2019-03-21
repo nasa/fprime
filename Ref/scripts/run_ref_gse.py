@@ -11,6 +11,16 @@ def main(argv=None):
     
     python_bin = "python"
     
+    for port in range(start_port,end_port):
+        if not fprime.gds.utils.PortFinder.IsPortUsed(port):
+            used_port = port
+            print("Using port %d"%used_port)
+            break;
+        
+    if (used_port == None):
+        print("Could not find port in range %d to %d",start_port,end_port)
+        return -1
+    
     build_root = os.environ["BUILD_ROOT"]
     
     parser = OptionParser()
