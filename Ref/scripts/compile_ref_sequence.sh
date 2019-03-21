@@ -21,4 +21,4 @@ then
 fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 export PYTHONPATH="${BUILD_ROOT}/Gds"
-python "${BUILD_ROOT}/Gds/tkGui/bin/seqgen.py" -g ${BUILD_ROOT}/Ref/py_dict "$@"
+python "${BUILD_ROOT}/Gds/bin/tkgui/seqgen.py" -g ${BUILD_ROOT}/Ref/py_dict "$@"

@@ -34,7 +34,7 @@ def main(argv=None):
 
     ################## Run the ThreadedTCPServer.py #################################
     if twin:
-        TTS_args = [python_bin,"%s/Gds/wxGui/bin/pexpect_runner.py"%build_root,
+        TTS_args = [python_bin,"%s/Gds/bin/wxgui/pexpect_runner.py"%build_root,
                     "ThreadedTCP.log","Threaded TCP Server",
                     python_bin,"%s/Gds/bin/ThreadedTCPServer.py"%build_root,
                     "--port","%d"%used_port, "--host",addr]
@@ -55,7 +55,7 @@ def main(argv=None):
 
     ########################### Run the GUI for the GDS #############################
 
-    GUI_args = [python_bin,"%s/Gds/wxGui/bin/gds.py"%build_root,
+    GUI_args = [python_bin,"%s/Gds/bin/wxgui/gds.py"%build_root,
                 "--port","%d"%used_port,
                 "--dictionary","%s/Ref/py_dict"%build_root,
                 "--addr",addr,"-L","%s/Ref/logs"%build_root,
@@ -74,7 +74,7 @@ def main(argv=None):
 
     if not nobin:
         #print("running ref app\n\n\n\n")
-        REF_args = [python_bin,"%s/Gds/wxGui/bin/pexpect_runner.py"%build_root,
+        REF_args = [python_bin,"%s/Gds/bin/wxgui/pexpect_runner.py"%build_root,
                     "Ref.log","Ref Application",ref_bin,"-p","%d"%used_port,
                     "-a",addr]
         REF = subprocess.Popen(REF_args)
