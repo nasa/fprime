@@ -9,11 +9,11 @@ import tkFileDialog
 
 from optparse import OptionParser
 
-from fprime.gse.utils import ConfigManager
-from fprime.gse.controllers import channel_loader
-from fprime.gse.models.tpe_models import SessionModel
-from fprime.gse.controllers.tpe_controllers import SessionController
-from fprime.gse.controllers.exceptions import GseControllerUndefinedDirectoryException
+from fprime.tkGui.utils import ConfigManager
+from fprime.tkGui.controllers import channel_loader
+from fprime.tkGui.models.tpe_models import SessionModel
+from fprime.tkGui.controllers.tpe_controllers import SessionController
+from fprime.tkGui.controllers.exceptions import GseControllerUndefinedDirectoryException
 
 # Setup logging
 Logger = logging.getLogger(__name__)

@@ -38,8 +38,8 @@ def __error(string):
 # try:
 from fprime.common.models.common.command import Descriptor
 from tkGui.views.seq_panel import SeqBinaryWriter
-from tkGui.gse.controllers import command_loader
-from tkGui.gse.controllers import exceptions as gseExceptions
+from tkGui.controllers import command_loader
+from tkGui.controllers import exceptions as gseExceptions
 
 # except:
 #  __error("The Gse source code was not found in your $PYTHONPATH variable. Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
@@ -237,7 +237,7 @@ def __parse(seqfile):
               __errorLine(i, "Encountered sytax error parsing arguments")
         yield i, descriptor, seconds, useconds, mnemonic, args
 
-def generateSequence(inputFile, outputFile=None, generated_path, timebase):
+def generateSequence(inputFile, outputFile, generated_path, timebase):
   '''
   Write a binary sequence file from a text sequence file
   @param inputFile: A text input sequence file name (usually a .seq extension)
@@ -312,8 +312,11 @@ if __name__ == "__main__":
         print("Could not parse time base %s"%opts.timebase)
         sys.exit(-1)
      
-  if (len(args) == 1 or len(args) == 2) and good:
-    generateSequence(*args, generated_path=opts.generated_path,timebase=timebase)
+  if (len(args) == 1 or len(args) == 2):
+    inputfile = args[0]
+    if len(args) == 1:
+        outputfile = None
+    generateSequence(inputfile,outputfile, opts.generated_path,timebase)
   else:
     parser.print_help()
     sys.exit(1)

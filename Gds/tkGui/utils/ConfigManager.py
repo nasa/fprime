@@ -164,7 +164,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         #
 
         self.__prop['persist'] = dict()
-        self.__prop['persist']['save_file'] = os.path.join(build_root, "Gse/generated/gse_persist.pkl")
+        self.__prop['persist']['save_file'] = os.path.join(build_root, "Gds/configs/gse_persist.pkl")
 
         self.__prop['strippanel'] = dict()
         self.__prop['strippanel']['plot_height'] = 3 #Height in Inches
@@ -187,7 +187,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['file_management']['default_downlink_path'] = os.path.join(os.environ['HOME'], 'fprime')
 
         self.__prop['helppanel'] = dict()
-        self.__prop['helppanel']['doc_folder'] = os.path.join(build_root, "Gse/docs")
+        self.__prop['helppanel']['doc_folder'] = os.path.join(build_root, "Gds/tkGui/docs")
         self.__prop['helppanel']['max_header_size'] = 36
         self.__prop['helppanel']['min_header_size'] = 18
         self.__prop['helppanel']['default_font_size'] = 14

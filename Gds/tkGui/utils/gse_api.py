@@ -20,25 +20,25 @@ import signal
 import subprocess
 from subprocess import PIPE, STDOUT
 
-from fprime.gse.utils import Logger
-from fprime.gse.utils import command_args
+from tkGui.utils import Logger
+from tkGui.utils import command_args
 from checksum import *
-from fprime.gse.models.serialize.u32_type import *
+from fprime.common.models.serialize.u32_type import *
 
-from fprime.gse.controllers import command_loader
-from fprime.gse.controllers import commander
-from fprime.gse.controllers import event_loader
-from fprime.gse.controllers import event_listener
-from fprime.gse.controllers import channel_loader
-from fprime.gse.controllers import packetize_channel_loader
-from fprime.gse.controllers import channel_listener
-from fprime.gse.controllers import packetize_channel_listener
-from fprime.gse.controllers import client_sock
-from fprime.gse.controllers import socket_listener
-from fprime.gse.controllers import file_uplink_client
-from fprime.gse.controllers import file_downlink_client
-from fprime.gse.controllers.file_downlink_client import DownlinkStatus
-from fprime.gse.controllers.file_uplink_client import UplinkStatus
+from tkGui.controllers import command_loader
+from tkGui.controllers import commander
+from tkGui.controllers import event_loader
+from tkGui.controllers import event_listener
+from tkGui.controllers import channel_loader
+from tkGui.controllers import packetize_channel_loader
+from tkGui.controllers import channel_listener
+from tkGui.controllers import packetize_channel_listener
+from tkGui.controllers import client_sock
+from tkGui.controllers import socket_listener
+from tkGui.controllers import file_uplink_client
+from tkGui.controllers import file_downlink_client
+from tkGui.controllers.file_downlink_client import DownlinkStatus
+from tkGui.controllers.file_uplink_client import UplinkStatus
 
 from ConfigManager import ConfigManager
 from ConfigParser import NoOptionError
