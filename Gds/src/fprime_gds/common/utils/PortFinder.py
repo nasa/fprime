@@ -29,7 +29,7 @@ def IsPortUsed(port):
            s.bind((socket.gethostname(),port))
            s.close()
         except: 
-           print 'error: no valid address-to-host mapping for the host %s.' % socket.gethostname()
+           print('error: no valid address-to-host mapping for the host %s.' % socket.gethostname())
        
         portUsed = False
     except:
@@ -73,7 +73,7 @@ def old_getport(startport,newport):
    return portnum
 
 if __name__ == "__main__":
-   print old_getport(150,[])
+   print(old_getport(150,[]))
 
    #for port in range(50000,50100):
    #   val = IsPortUsed(port)

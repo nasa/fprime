@@ -87,7 +87,7 @@ class Channel(object):
             self.__ch_type.deserialize(ser_data, offset)
             val = self.__ch_type.val
         except TypeException as e:
-            print "Channel deserialize exception %s"%(e.getMsg())
+            print("Channel deserialize exception %s"%(e.getMsg()))
             val = "ERR"
             
         #

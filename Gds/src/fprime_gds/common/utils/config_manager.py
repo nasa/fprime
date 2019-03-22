@@ -18,7 +18,10 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 import os
 import sys
 import glob
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 # Custom type modules
 from fprime.common.models.serialize.f32_type import *
@@ -48,7 +51,7 @@ class ConfigBadTypeException(Exception):
               (type_str, config_name))
 
 
-class ConfigManager(ConfigParser.SafeConfigParser):
+class ConfigManager(configparser.SafeConfigParser):
     '''
     This class provides a single entrypoint for all configurable properties,
     '''
@@ -67,9 +70,9 @@ class ConfigManager(ConfigParser.SafeConfigParser):
             will be used until the set_configs method is called!
         '''
         # Cannot use super() function since ConfigParser is an old-style class
-        ConfigParser.SafeConfigParser.__init__(self)
-        ConfigParser.ConfigParser.__init__(self)
-        ConfigParser.RawConfigParser.__init__(self)
+        configparser.SafeConfigParser.__init__(self)
+        configparser.ConfigParser.__init__(self)
+        configparser.RawConfigParser.__init__(self)
 
         # Set default properties
         self.__prop   = dict()
