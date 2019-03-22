@@ -85,7 +85,7 @@ def get_args(args):
     dictionary = parsed_args.dictionary
     # If app is None, search deploy for it
     if app is None and parsed_args.deploy is not None:
-        basename = os.path.basename(parsed_args.deploy)
+        basename = os.path.basename(os.path.normpath(parsed_args.deploy))
         app = find_in(basename, parsed_args.deploy, is_file=True)
     elif app is None:
         error_exit("--app or -d must be supplied to run app, or -n supplied to disable app", 2)
@@ -96,7 +96,7 @@ def get_args(args):
         raise Exception("EXIT FAILED")
     # If dictionary is None, search deploy for it
     if dictionary is None and parsed_args.deploy is not None:
-        dictionary = find_in("python_dict", parsed_args.deploy, is_file=False)
+        dictionary = find_in("py_dict", parsed_args.deploy, is_file=False)
     elif dictionary is None:
         error_exit("--dictionary or -d must be supplied to supply dictionary", 2)
         raise Exception("EXIT FAILED")
@@ -108,9 +108,9 @@ def get_args(args):
         error_exit("-d or --app and --dictionary must be supplied.", 3)
         raise Exception("EXIT FAILED")
     # Check and set GUI specifics
-    if parsed_args.gui == "wk" and parsed_args.config is None and parsed_args.deploy is not None:
+    if parsed_args.gui == "wx" and parsed_args.config is None and parsed_args.deploy is not None:
         parsed_args.config = find_in("gds.ini", parsed_args.deploy, is_file=True)
-    elif parsed_args.gui == "wk":
+    elif parsed_args.gui == "wx" and parsed_args.config is None:
         error_exit("wx GUI requires -c to be specified, or gse.ini in deployment specified with -d", 4)
     # Check and set GUI specifics
     if parsed_args.gui == "tk" and parsed_args.logs is None and parsed_args.deploy is not None:
@@ -161,7 +161,7 @@ def launch_process(cmd, stdout=None, stderr=None, name=None):
     time.sleep(2)
     proc.poll()
     if proc.returncode is not None:
-        error_exit("Failed to start {0}".format(name), file=sys.stderr)
+        error_exit("Failed to start {0}".format(name), 1)
         raise Exception("FAILED TO EXIT")
     return proc
 
@@ -195,7 +195,7 @@ def launch_tk(port, dictionary, address, log_dir):
     return launch_process(gse_args, name="TK GUI")
 
 
-def launch_gds(port, dictionary, address, config):
+def launch_wx(port, dictionary, address, config):
     '''
     Launch the GDS gui
     :param port: port to connect to
@@ -204,7 +204,7 @@ def launch_gds(port, dictionary, address, config):
     :param config: configuration to use
     :return: process
     '''
-    gse_args = ["python", "-u", "-m", "fprime_gds.wkgui.tools.gds", "--port", str(port), "--dictionary", dictionary,
+    gse_args = ["python", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port), "--dictionary", dictionary,
                 "--addr", address, "--config", config]
     return launch_process(gse_args, name="WX GUI")
 
@@ -213,6 +213,8 @@ def launch_app(app, port, address):
     '''
     Launch the app
     :param app: application to launch
+    :param port: port to connect to
+    :param address: address to connect to
     :return: process
     '''
     name = "{0} Application".format(os.path.basename(app))
@@ -238,7 +240,7 @@ def main(argv=None):
     if args.gui == "tk":
         wait_proc = launch_tk(args.port, dictionary, address, args.logs)
     elif args.gui == "wx":
-        wait_proc = launch_gds(args.port, dictionary, address, args.config)
+        wait_proc = launch_wx(args.port, dictionary, address, args.config)
     elif args.gui == "none":
         print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
