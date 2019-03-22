@@ -10,6 +10,7 @@ sent to the Fprime deployment.
 
 @copyright:  2018 California Institute of Technology. All rights reserved.
 '''
+from __future__ import print_function
 import sys
 import os
 from time import sleep

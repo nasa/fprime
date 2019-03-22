@@ -1,5 +1,5 @@
 #!/bin/env python
-
+from __future__ import print_function
 import os
 import sys
 import time
@@ -41,7 +41,7 @@ def main(argv=None):
                 default=1.0) 
         (opts, args) = parser.parse_args(argv) 
     
-    except Exception, e:
+    except Exception as e:
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help\n")
@@ -51,7 +51,7 @@ def main(argv=None):
     
     # process each of the files
     for script in args:
-        print "Parsing command file %s"%script
+        print("Parsing command file %s"%script)
         command_list = process_command_file(script)
         for (command,cmd_args) in command_list:
             # Check for delay request in script
