@@ -34,7 +34,8 @@ def detect_terminal(title):
     if platform.system() == "Windows":
         return ["cmd.exe", "/C"]
     else:
-        terminals = [["xterm", "-T", title, "-e"], ["gnome-terminal", "--title", title, "--"], ["Konsole", "-e"]]
+        terminals = [["xterm", "-T", title, "-e"], ["lxterminal", "-t", title, "-e"],
+                     ["gnome-terminal", "--title", title, "--"], ["Konsole", "-e"]]
         for terminal in terminals:
             try:
                 if shutil.which(terminal[0]) is not None:
