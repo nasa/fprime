@@ -6,6 +6,8 @@ import atexit
 import argparse
 import platform
 import subprocess
+import shutil
+import distutils
 
 # Try to import each GUI type, and if it can be imported
 # it will be provided to the user as an option
@@ -30,10 +32,18 @@ def detect_terminal(title):
     :return: terminal program
     '''
     if platform.system() == "Windows":
-        cmd = ["cmd.exe", "/C"]
+        return ["cmd.exe", "/C"]
     else:
-        cmd = ["xterm", "-T", title, "-e"]
-    return cmd
+        terminals = [["xterm", "-T", title, "-e"], ["gnome-terminal", "--title", title, "--"], ["Konsole", "-e"]]
+        for terminal in terminals:
+            try:
+                if shutil.which(terminal[0]) is not None:
+                    return terminal
+            except AttributeError:
+                if distutils.spawn.find_executable(terminal[0]) is not None:
+                    return terminal
+        else:
+            error_exit("No terminal emulator found. Please install 'xterm'", 8)
 
 
 def find_in(token, deploy, is_file=True, error=None):
