@@ -2,9 +2,11 @@
 Created on Dec 18, 2014
 @author: tcanham, reder
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
-from type_exceptions import *
-import type_base
+from .type_exceptions import *
+from . import type_base
 
 @type_base.serialize
 @type_base.deserialize
@@ -65,14 +67,14 @@ class BoolType(type_base.BaseType):
 
 
 if __name__ == '__main__':
-    print "bool"
+    print("bool")
     try:
         val = BoolType(True)
-        print "Value: %s" % str(val.val)
+        print("Value: %s" % str(val.val))
         buff = val.serialize()
         type_base.showBytes(buff)
         val2 = BoolType()
         val2.deserialize(buff,len(buff))
-        print "Deserialized: %s" % str(val2.val)
+        print("Deserialized: %s" % str(val2.val))
     except TypeException as e:
-        print "Exception: %s"%e.getMsg()
+        print("Exception: %s"%e.getMsg())

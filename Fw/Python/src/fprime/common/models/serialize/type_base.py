@@ -4,8 +4,10 @@ Created on Dec 18, 2014
 @author: reder
 Replaced type base class with decorators
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
-from type_exceptions import *
+from .type_exceptions import *
 #
 #
 class BaseType(object):
@@ -71,9 +73,9 @@ def showBytes(byteBuffer):
     """
     Routine to show bytes in buffer for testing.
     """
-    print "Byte buffer size: %d" % len(byteBuffer)
+    print("Byte buffer size: %d" % len(byteBuffer))
     for entry in range(0,len(byteBuffer)):
-        print "Byte %d: 0x%02X (%c)"%(entry,struct.unpack("B",byteBuffer[entry])[0],struct.unpack("B",byteBuffer[entry])[0])
+        print("Byte %d: 0x%02X (%c)"%(entry,struct.unpack("B",byteBuffer[entry])[0],struct.unpack("B",byteBuffer[entry])[0]))
 
 
 if __name__ == '__main__':

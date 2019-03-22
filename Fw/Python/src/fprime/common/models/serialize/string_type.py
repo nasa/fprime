@@ -4,9 +4,11 @@ Created on Dec 18, 2014
 @author: tcanham
 
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
-from type_exceptions import *
-import type_base
+from .type_exceptions import *
+from . import type_base
 
 @type_base.serialize
 @type_base.deserialize
@@ -90,17 +92,17 @@ class StringType(type_base.BaseType):
 
 
 if __name__ == '__main__':
-    print "string"
+    print("string")
     try:
         val = StringType("This is a string")
-        print "Value: %s" % val.val
+        print("Value: %s" % val.val)
         buff = val.serialize()
         type_base.showBytes(buff)
         val2 = StringType()
         val2.deserialize(buff,0)
-        print "Deserialize: %s" % val2.val
+        print("Deserialize: %s" % val2.val)
     except TypeException as e:
-        print "Exception: %s"%e.getMsg()
+        print("Exception: %s"%e.getMsg())
 
 
 

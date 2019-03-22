@@ -4,9 +4,11 @@ Created on Dec 18, 2014
 @author: tcanham, reder
 
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
-from type_exceptions import *
-import type_base
+from .type_exceptions import *
+from . import type_base
 
 @type_base.serialize
 @type_base.deserialize
@@ -60,25 +62,25 @@ class I32Type(type_base.BaseType):
 
 
 if __name__ == '__main__':
-    print "I32"
+    print("I32")
     try:
         val = I32Type(-2000000)
-        print "Value: %s" % str(val.val)
+        print("Value: %s" % str(val.val))
         buff = val.serialize()
         type_base.showBytes(buff)
-        print "Serialized: ",repr(buff)
+        print("Serialized: ",repr(buff))
         val2 = I32Type()
         val2.deserialize(buff,len(buff))
-        print "Deserialize: %s" % str(val2.val)
+        print("Deserialize: %s" % str(val2.val))
         #
         val3 = I32Type(1000000)
-        print "Value: %s" % str(val3.val)
+        print("Value: %s" % str(val3.val))
         buff = val3.serialize()
         type_base.showBytes(buff)
-        print "Serialized: ",repr(buff)
+        print("Serialized: ",repr(buff))
         val4 = I32Type()
         val4.deserialize(buff,len(buff))
-        print "Deserialize: %s" % str(val4.val)
+        print("Deserialize: %s" % str(val4.val))
 
     except TypeException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())

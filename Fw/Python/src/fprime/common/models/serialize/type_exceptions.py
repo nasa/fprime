@@ -4,6 +4,8 @@ Created on Dec 18, 2014
 @author: tcanham
 
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
 
 # Exception classes for all types
@@ -60,38 +62,38 @@ class CompoundTypeLengthMismatchException(TypeException):
 
 if __name__ == '__main__':
 
-    print "TypeException"
+    print("TypeException")
     try:
         raise TypeException("Test TypeException")
     except TypeException as e:
-        print "Exception: %s"%e.getMsg()
+        print("Exception: %s"%e.getMsg())
 
-    print "TypeRangeException"
+    print("TypeRangeException")
     try:
         raise TypeRangeException("Test Value")
     except TypeRangeException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())
 
-    print "TypeMismatchException"
+    print("TypeMismatchException")
     try:
         raise TypeMismatchException("EXPECTED_TYPE", "ACTUAL_TYPE")
     except TypeMismatchException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())
 
-    print "EnumMismatchException"
+    print("EnumMismatchException")
     try:
         raise EnumMismatchException("BAD_MEMBER","ENUM")
     except EnumMismatchException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())
 
-    print "DeserializeException"
+    print("DeserializeException")
     try:
         raise DeserializeException("MESSAGE")
     except DeserializeException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())
 
-    print "ArgNotFoundException"
+    print("ArgNotFoundException")
     try:
         raise ArgNotFoundException("MESSAGE")
     except ArgNotFoundException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())

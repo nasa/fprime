@@ -13,6 +13,8 @@ time tags sent with serialized data in the fprime architecture.
 
 @bug No known bugs
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 
 import time
 from datetime import *
@@ -314,18 +316,18 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
 
     try:
         val = TimeType(t_base, t_context, secs, usecs)
-        print("creating: TimeType(%d, %d, %d, %d)"%
-               (t_base, t_context, secs, usecs))
-        print(str(val))
+        print(("creating: TimeType(%d, %d, %d, %d)"%
+               (t_base, t_context, secs, usecs)))
+        print((str(val)))
 
         buff = val.serialize()
-        print("Serialized: %s"%repr(buff))
+        print(("Serialized: %s"%repr(buff)))
         type_base.showBytes(buff)
 
         val2 = TimeType()
         val2.deserialize(buff, 0)
-        print("Deserialized: TimeType(%d, %d, %d, %d)"%
-              (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds))
+        print(("Deserialized: TimeType(%d, %d, %d, %d)"%
+              (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds)))
 
         if (val2.timeBase != t_base):
             return False
@@ -338,7 +340,7 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
         else:
             return True
     except TypeException as e:
-        print "Exception: %s"%e.getMsg()
+        print("Exception: %s"%e.getMsg())
         if (isinstance(e, TypeRangeException) and should_err):
             return True
         else:
@@ -368,47 +370,47 @@ if __name__ == '__main__':
     passed = 0
     failed = 0
 
-    print "TimeType Tests"
-    print "--------------------------------------------------------------------"
+    print("TimeType Tests")
+    print("--------------------------------------------------------------------")
 
     val = TimeType()
     size = val.getSize()
     if (size != TIME_SIZE):
-        print("Test Failed, getSize() returned %d, expected %d"%
-              (size, TIME_SIZE))
+        print(("Test Failed, getSize() returned %d, expected %d"%
+              (size, TIME_SIZE)))
         failed += 1
     else:
-        print("Test Passed, getSize() returned %d"%size)
+        print(("Test Passed, getSize() returned %d"%size))
         passed += 1
 
 
-    print "\nNext %d tests expected to be exception free"%len(in_no_err_list)
+    print("\nNext %d tests expected to be exception free"%len(in_no_err_list))
 
     for (t_base, t_context, secs, usecs) in in_no_err_list:
         result = ser_deser_test(t_base, t_context, secs, usecs)
 
         if result:
-            print "Test Passed\n\n"
+            print("Test Passed\n\n")
             passed += 1
         else:
-            print "Test FAILED\n\n"
+            print("Test FAILED\n\n")
             failed += 1
 
 
-    print "\nNext %d tests expected to have exceptions"%len(in_err_list)
+    print("\nNext %d tests expected to have exceptions"%len(in_err_list))
 
     for (t_base, t_context, secs, usecs) in in_err_list:
         result = ser_deser_test(t_base, t_context, secs, usecs, should_err=True)
 
         if result:
-            print "Test Passed\n\n"
+            print("Test Passed\n\n")
             passed += 1
         else:
-            print "Test FAILED\n\n"
+            print("Test FAILED\n\n")
             failed += 1
 
     print("-------------------------------------------------------------------")
     print("Results:")
-    print("\tPassed: %d"%passed)
-    print("\tFAILED: %d"%failed)
+    print(("\tPassed: %d"%passed))
+    print(("\tFAILED: %d"%failed))
 

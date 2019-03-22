@@ -2,9 +2,11 @@
 Created on Dec 18, 2014
 @author: tcanham, reder
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
-from type_exceptions import *
-import type_base
+from .type_exceptions import *
+from . import type_base
 
 @type_base.serialize
 @type_base.deserialize
@@ -55,16 +57,16 @@ class F32Type(type_base.BaseType):
 
 
 if __name__ == '__main__':
-    print "F32"
+    print("F32")
     try:
         val = F32Type(3.6)
-        print "Value: %s" % str(val.val)
+        print("Value: %s" % str(val.val))
         buff = val.serialize()
         type_base.showBytes(buff)
-        print "Serialized: ",repr(buff)
+        print("Serialized: ",repr(buff))
         val2 = F32Type()
         val2.deserialize(buff,len(buff))
-        print "Deserialize: %f" % val2.val
+        print("Deserialize: %f" % val2.val)
     except TypeException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())
 

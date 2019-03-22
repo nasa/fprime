@@ -12,12 +12,14 @@
 #===============================================================================
 #
 # Python standard modules
+from __future__ import print_function
+from __future__ import absolute_import
 
 from abc import ABCMeta, abstractmethod
 
-from u32_type import *
-from u16_type import *
-from u8_type import *
+from .u32_type import *
+from .u16_type import *
+from .u8_type import *
 
 from enum import Enum
 
@@ -32,9 +34,7 @@ class PacketType(Enum):
    NONE  = 255
 
 
-class FilePacketAbc(object):
-   __metaclass__ = ABCMeta
-
+class FilePacketAbc(object, metaclass=ABCMeta):
    @abstractmethod
    def serialize(self):
       pass

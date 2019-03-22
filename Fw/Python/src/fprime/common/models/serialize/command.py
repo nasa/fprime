@@ -3,30 +3,32 @@ Created on Jan 5, 2015
 
 @author: tcanham
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 
 # Import the types this way so they do not need prefixing for execution.
-from type_exceptions import *
-from type_base import *
+from .type_exceptions import *
+from .type_base import *
 
-from bool_type import *
-from enum_type import *
-from f32_type import *
-from f64_type import *
+from .bool_type import *
+from .enum_type import *
+from .f32_type import *
+from .f64_type import *
 
-from u8_type import *
-from u16_type import *
-from u32_type import *
-from u64_type import *
+from .u8_type import *
+from .u16_type import *
+from .u32_type import *
+from .u64_type import *
 
-from i8_type import *
-from i16_type import *
-from i32_type import *
-from i64_type import *
+from .i8_type import *
+from .i16_type import *
+from .i32_type import *
+from .i64_type import *
 
-from time_type import *
+from .time_type import *
 
-from string_type import *
-from serializable_type import *
+from .string_type import *
+from .serializable_type import *
 
 from enum import Enum
 
@@ -192,14 +194,14 @@ if __name__ == '__main__':
     try:
         testCommand = Command("SomeComponent","TEST_CMD",0x123,"Test Command",arglist)
     except TypeException as e:
-        print "Exception: %s"%e.getMsg()
+        print("Exception: %s"%e.getMsg())
     t = U32Type(3)
     t2 = F32Type(123.456)
     try:
         testCommand.setArg("arg1", t)
         testCommand.setArg("arg2", t2)
     except TypeException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())
 
     data = testCommand.serialize()
     type_base.showBytes(data)

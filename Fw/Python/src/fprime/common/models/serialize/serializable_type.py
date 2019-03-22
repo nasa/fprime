@@ -4,12 +4,14 @@ Created on Dec 18, 2014
 @author: tcanham
 
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import struct
-from type_exceptions import *
-import type_base
-import u32_type
-import string_type
-import enum_type
+from .type_exceptions import *
+from . import type_base
+from . import u32_type
+from . import string_type
+from . import enum_type
 
 @type_base.serialize
 @type_base.deserialize
@@ -112,7 +114,7 @@ class SerializableType(type_base.BaseType):
         return size;
 
 if __name__ == '__main__':
-    print "Serializable"
+    print("Serializable")
     try:
         i32Mem    = u32_type.U32Type(1000000)
         stringMem = string_type.StringType("something to say")
@@ -124,11 +126,11 @@ if __name__ == '__main__':
 
         serType = SerializableType("ASerType", memList)
 
-        print "Value: %s" % repr(memList)
+        print("Value: %s" % repr(memList))
         buff = serType.serialize()
         type_base.showBytes(buff)
         serType2 = SerializableType("ASerType",memList)
         serType2.deserialize(buff, len(buff))
-        print "Deserialized: %s" % repr(serType2.mem_list)
+        print("Deserialized: %s" % repr(serType2.mem_list))
     except TypeException as e:
-        print "Exception: %s" % e.getMsg()
+        print("Exception: %s" % e.getMsg())

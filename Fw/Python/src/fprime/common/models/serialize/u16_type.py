@@ -3,8 +3,10 @@ Created on Dec 18, 2014
 
 @author: tcanham, reder
 '''
-from type_exceptions import *
-import type_base
+from __future__ import print_function
+from __future__ import absolute_import
+from .type_exceptions import *
+from . import type_base
 
 @type_base.serialize
 @type_base.deserialize
@@ -59,15 +61,15 @@ class U16Type(type_base.BaseType):
 
 
 if __name__ == '__main__':
-    print "U16"
+    print("U16")
     try:
         val = U16Type(1000)
-        print "Val: %s" % str(val.val)
+        print("Val: %s" % str(val.val))
         buff = val.serialize()
         type_base.showBytes(buff)
-        print "Serialized: ",repr(buff)
+        print("Serialized: ",repr(buff))
         val2 = U16Type()
         val2.deserialize(buff,len(buff))
-        print "Deser: %s" % str(val2.val)
+        print("Deser: %s" % str(val2.val))
     except TypeException as e:
-        print "Exception: %s"%e.getMsg()
+        print("Exception: %s"%e.getMsg())
