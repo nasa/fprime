@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import wx
-import GDSStatusPanelGUI
+from . import GDSStatusPanelGUI
 import binascii
 ###########################################################################
 ## Class StatusImpl

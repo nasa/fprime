@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 import wx
-import GDSCommandPanelGUI
-import GDSArgItemTextCtl
-import GDSArgItemComboBox
+from . import GDSCommandPanelGUI
+from . import GDSArgItemTextCtl
+from . import GDSArgItemComboBox
 
 from fprime.common.models.serialize.bool_type import *
 from fprime.common.models.serialize.enum_type import *

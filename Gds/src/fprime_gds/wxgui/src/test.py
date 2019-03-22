@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import wx
-import GDSMainFrameImpl
+from . import GDSMainFrameImpl
 
 app = wx.App(False)
 frame = GDSMainFrameImpl.MainFrameImpl(None)

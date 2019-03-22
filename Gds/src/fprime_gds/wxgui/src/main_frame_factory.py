@@ -9,6 +9,7 @@ an interface for creating additional GDS windows that use this pipeline
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
 from fprime_gds.common.loaders import ch_py_loader, ch_xml_loader
 from fprime_gds.common.loaders import event_py_loader, event_xml_loader
@@ -24,7 +25,7 @@ from fprime_gds.common.distributor import distributor
 
 from fprime_gds.common.client_socket import client_socket
 
-import GDSMainFrameImpl
+from . import GDSMainFrameImpl
 
 from fprime_gds.common.logger import data_logger
 

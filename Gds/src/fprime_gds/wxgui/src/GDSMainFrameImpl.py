@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import wx
-import GDSMainFrameGUI
-import GDSChannelTelemetryPanelImpl
-import GDSStatusPanelImpl
-import GDSCommandPanelImpl
-import GDSLogEventPanelImpl
+from . import GDSMainFrameGUI
+from . import GDSChannelTelemetryPanelImpl
+from . import GDSStatusPanelImpl
+from . import GDSCommandPanelImpl
+from . import GDSLogEventPanelImpl
 
 import os
 

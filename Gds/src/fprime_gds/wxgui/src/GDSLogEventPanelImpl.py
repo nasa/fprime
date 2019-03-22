@@ -1,8 +1,8 @@
 # TODO Documentation
-
+from __future__ import absolute_import
 
 import wx
-import GDSLogEventPanelGUI
+from . import GDSLogEventPanelGUI
 from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.utils.event_severity import EventSeverity
 from fprime_gds.common.utils.config_manager import ConfigManager

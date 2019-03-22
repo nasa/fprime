@@ -6,11 +6,12 @@
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
 import wx
-import GDSChannelTelemetryPanelGUI
+from . import GDSChannelTelemetryPanelGUI
 import inspect
-import GDSChannelFilterDialogImpl
+from . import GDSChannelFilterDialogImpl
 from copy import deepcopy
 
 from fprime_gds.common.data_types.ch_data import *
