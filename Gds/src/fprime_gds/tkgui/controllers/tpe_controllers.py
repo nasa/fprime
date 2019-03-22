@@ -6,9 +6,9 @@ import csv
 import collections
 
 from fprime_gds.tkgui.views.tpe_views import PacketView
-from fprime_gds.tkgui.models.tpe_models import PacketModel
-from fprime_gds.tkgui.models.tpe_models import SessionModel
-from fprime_gds.tkgui.models.tpe_models import ItemEntry, FillerEntry
+from fprime_gds.tkgui.tpe_models import PacketModel
+from fprime_gds.tkgui.tpe_models import SessionModel
+from fprime_gds.tkgui.tpe_models import ItemEntry, FillerEntry
 
 
 class SessionController(object):

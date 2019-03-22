@@ -17,6 +17,7 @@ from __future__ import absolute_import
 
 from abc import ABCMeta, abstractmethod
 
+import six
 from .u32_type import *
 from .u16_type import *
 from .u8_type import *
@@ -33,8 +34,8 @@ class PacketType(Enum):
    CANCEL= 3
    NONE  = 255
 
-
-class FilePacketAbc(object, metaclass=ABCMeta):
+@six.add_metaclass(ABCMeta)
+class FilePacketAbc(object):
    @abstractmethod
    def serialize(self):
       pass

@@ -11,7 +11,7 @@ from optparse import OptionParser
 
 from fprime_gds.tkgui.utils import ConfigManager
 from fprime_gds.tkgui.controllers import channel_loader
-from fprime_gds.tkgui.models.tpe_models import SessionModel
+from fprime_gds.tkgui.tpe_models import SessionModel
 from fprime_gds.tkgui.controllers.tpe_controllers import SessionController
 from fprime_gds.tkgui.controllers.exceptions import GseControllerUndefinedDirectoryException
 

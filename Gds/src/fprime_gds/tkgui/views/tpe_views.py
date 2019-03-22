@@ -3,7 +3,7 @@ import tkMessageBox
 import Pmw
 import ttk
 
-from fprime_gds.tkgui.models.tpe_models import SessionModel
+from fprime_gds.tkgui.tpe_models import SessionModel
 
 # This class defines color styles
 # It should be relatively easy for users to make their own if they are so inclined
