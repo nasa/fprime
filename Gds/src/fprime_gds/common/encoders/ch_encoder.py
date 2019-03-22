@@ -31,8 +31,9 @@ Serialized Ch format:
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
-from encoder import Encoder
+from .encoder import Encoder
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime_gds.common.utils.data_desc_type import DataDescType
