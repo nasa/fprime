@@ -15,6 +15,8 @@ try:
     GUIS.append("tk")
 except ImportError as exc:
     print("[WARNING] Could not import TK GUI: {0}:{1}".format(type(exc), str(exc), file=sys.stderr))
+except SyntaxError as exc:
+    print("[WARNING] TK GUI not supported in Python 3: {0}:{1}".format(type(exc), str(exc), file=sys.stderr))
 try:
     import fprime_gds.wxgui.tools.gds
     GUIS.append("wx")
@@ -118,7 +120,7 @@ def get_args(args):
     elif parsed_args.gui == "tk" and parsed_args.logs is None:
         error_exit("tk GUI requires -l to be specified, or write permission in deployment dir specified with -d", 4)
     # Make log file
-    if parsed_args.logs is not None:
+    if parsed_args.gui == "tk" and parsed_args.logs is not None:
         try:
             os.mkdir(parsed_args.logs)
         except Exception as ioe:
