@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import socket
 import sys
-import commands
+import subprocess
 
 '''
 This module is used to find an available socket port.
@@ -17,6 +17,19 @@ This module is used to find an available socket port.
 
 @contact:    reder@jpl.nasa.gov
 '''
+def getstatusoutput(cmd):
+    '''
+    Replaces `commands.getstatusoutput` for use in python 2/3 code. This is a wrapper layer to virtualize old python 2
+    code with new python 3 syntax and libraries.
+    @param cmd: command to run
+    '''
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    (out, err) = process.communicate()
+    if sys.version_info >= (3, 0):
+        out = out.decode("utf-8")
+    assert err is None, "Failed to force standard error to standard out"
+    return (process.returncode, out)
+
 
 def IsPortUsed(port):
     s = ''
@@ -51,13 +64,13 @@ def old_getport(startport,newport):
    portnum = startport
    # Search /etc/services for specified socket port
    cmd = "grep " + str(startport) + " /etc/services"
-   (status, portused1) = commands.getstatusoutput(cmd)
+   (status, portused1) = getstatusoutput(cmd)
    found = portused1.find(str(startport))
 
    # Query netstat for the specified socket port
    if found == -1:
       cmd = "netstat -a | grep " + str(startport)
-      (status, portused2) = commands.getstatusoutput(cmd)
+      (status, portused2) = getstatusoutput(cmd)
       found = portused2.find(str(startport))
 
    # Recursively call getport() if specified port is used
