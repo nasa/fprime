@@ -16,6 +16,7 @@ Example data that would be sent to a decoder that parses channels:
 
 @bug No known bugs
 '''
+from __future__ import print_function
 import copy
 
 from fprime_gds.common.decoders.decoder import Decoder

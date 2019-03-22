@@ -3,6 +3,7 @@ Created on Feb. 9, 2015
 
 @author: reder
 '''
+from __future__ import print_function
 
 # Import the types this way so they do not need prefixing for execution.
 from fprime.common.models.serialize.type_exceptions import *

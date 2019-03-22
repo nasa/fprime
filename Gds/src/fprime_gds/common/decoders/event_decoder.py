@@ -14,6 +14,7 @@ Example data structure:
 
 @bug No known bugs
 '''
+from __future__ import print_function
 import copy
 
 from fprime_gds.common.decoders import decoder

@@ -13,6 +13,7 @@ descriptor header will be passed on to the registered objects.
 
 @bug No known bugs
 '''
+from __future__ import print_function
 
 import sys
 
