@@ -36,7 +36,7 @@ def detect_terminal(title):
     return cmd
 
 
-def find_in(token, deploy, is_file=True):
+def find_in(token, deploy, is_file=True, error=None):
     '''
     Find token in deploy directory by walking
     :param token: token to search for
@@ -49,7 +49,10 @@ def find_in(token, deploy, is_file=True):
     for dirpath, dirs, files in os.walk(deploy):
         if (is_file and token in files) or (not is_file and token in dirs):
             return os.path.join(dirpath, token)
-    error_exit("Failed to find {0} '{1}' under {2}".format("file" if is_file else "directory", token, deploy), 4)
+    #Fill in default error
+    if error is None:
+        error = "Failed to find {0} '{1}' under {2}".format("file" if is_file else "directory", token, deploy)
+    error_exit(error, 4)
 
 
 def get_args(args):
@@ -73,13 +76,12 @@ def get_args(args):
                         help="Path to dictionary. Overrides deploy if both are set")
     parser.add_argument("--app", dest="app", action="store", required=False, type=str,
                         help="Path to app to run. Overrides deploy if both are set. Ignored if -n is set.")
+    parser.add_argument("-l", "--logs", dest="logs", action="store", default=None, type=str,
+                        help="Logging directory. Created if non-existant.")
     # GUI specific items
     if "wx" in GUIS:
         parser.add_argument("-c", "--config", dest="config", action="store", default=None, type=str,
                             help="Configuration for wx GUI. Ignored if not using wx.")
-    if "tk" in GUIS:
-        parser.add_argument("-l", "--logs", dest="logs", action="store", default=None, type=str,
-                            help="Log dirctory for tk GUI. Ignored if not using tk.")
     # Parse the arguments
     parsed_args = parser.parse_args(args)
     # Find the dictionary and app
@@ -88,7 +90,9 @@ def get_args(args):
     # If app is None, search deploy for it
     if app is None and parsed_args.deploy is not None:
         basename = os.path.basename(os.path.normpath(parsed_args.deploy))
-        app = find_in(basename, parsed_args.deploy, is_file=True)
+        app = find_in(basename, parsed_args.deploy, is_file=True,
+                      error="Could not find application '{0}' under {1}. Specify -a, build it, or run without using -n."
+                      .format(basename, parsed_args.deploy))
     elif app is None:
         error_exit("--app or -d must be supplied to run app, or -n supplied to disable app", 2)
         raise Exception("EXIT FAILED")
@@ -98,7 +102,9 @@ def get_args(args):
         raise Exception("EXIT FAILED")
     # If dictionary is None, search deploy for it
     if dictionary is None and parsed_args.deploy is not None:
-        dictionary = find_in("py_dict", parsed_args.deploy, is_file=False)
+        dictionary = find_in("py_dict", parsed_args.deploy, is_file=False,
+                      error="Could not find python dictionaries' under {0}. Specify --dictionary or build them."
+                      .format(parsed_args.deploy))
     elif dictionary is None:
         error_exit("--dictionary or -d must be supplied to supply dictionary", 2)
         raise Exception("EXIT FAILED")
@@ -111,21 +117,23 @@ def get_args(args):
         raise Exception("EXIT FAILED")
     # Check and set GUI specifics
     if parsed_args.gui == "wx" and parsed_args.config is None and parsed_args.deploy is not None:
-        parsed_args.config = find_in("gds.ini", parsed_args.deploy, is_file=True)
+        parsed_args.config = find_in("gds.ini", parsed_args.deploy, is_file=True,
+                      error="Could not gds.ini dictionaries' under {0}. Specify -c or create it."
+                      .format(parsed_args.deploy))
     elif parsed_args.gui == "wx" and parsed_args.config is None:
         error_exit("wx GUI requires -c to be specified, or gse.ini in deployment specified with -d", 4)
     # Check and set GUI specifics
-    if parsed_args.gui == "tk" and parsed_args.logs is None and parsed_args.deploy is not None:
-        parsed_args.logs = os.path.join(parsed_args.deploy, "gse-log")
-    elif parsed_args.gui == "tk" and parsed_args.logs is None:
-        error_exit("tk GUI requires -l to be specified, or write permission in deployment dir specified with -d", 4)
+    if parsed_args.logs is None and parsed_args.deploy is not None:
+        parsed_args.logs = os.path.join(parsed_args.deploy, "logs")
+    elif parsed_args.logs is None:
+        error_exit("Log directory -l or deployment dir -d write permission needed", 5)
     # Make log file
-    if parsed_args.gui == "tk" and parsed_args.logs is not None:
+    if parsed_args.logs is not None:
         try:
             os.mkdir(parsed_args.logs)
         except Exception as ioe:
             if "exists" not in str(ioe).lower():
-                error_exit("Failed to make directory for GSE logs at {0} with error {1}".format(parsed_args.logs, ioe))
+                error_exit("Failed to make directory for logs at {0} with error {1}".format(parsed_args.logs, ioe))
     return parsed_args, app, dictionary
 
 
@@ -168,15 +176,16 @@ def launch_process(cmd, stdout=None, stderr=None, name=None):
     return proc
 
 
-def launch_tts(port, address):
+def launch_tts(port, address, logs):
     '''
     Launch the Threaded TCP Server
     :param port: port to attach to
     :param address: address to bind to
+    :param logs: logs output directory
     :return: process
     '''
     # Open log, and prepare to close it cleanly on exit
-    tts_log = open("ThreadedTCP.log", 'w')
+    tts_log = open(os.path.join(logs, "ThreadedTCP.log"), 'w')
     atexit.register(lambda: tts_log.close())
     # Launch the tcp server
     tts_cmd = ["python", "-u", "-m", "fprime_gds.executables.tcpserver", "--port", str(port), "--host", str(address)]
@@ -197,17 +206,18 @@ def launch_tk(port, dictionary, address, log_dir):
     return launch_process(gse_args, name="TK GUI")
 
 
-def launch_wx(port, dictionary, address, config):
+def launch_wx(port, dictionary, address, log_dir, config):
     '''
     Launch the GDS gui
     :param port: port to connect to
     :param dictionary: dictionary to look at
     :param address: address to connect to
+    :param log_dir: directory to place logs
     :param config: configuration to use
     :return: process
     '''
     gse_args = ["python", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port), "--dictionary", dictionary,
-                "--addr", address, "--config", config]
+                "--addr", address, "-L", log_dir, "--config", config]
     return launch_process(gse_args, name="WX GUI")
 
 
@@ -233,7 +243,7 @@ def main(argv=None):
     args, app, dictionary = get_args(argv)
 
     # Launch TTS and ensure it starts w/o error
-    launch_tts(args.port, args.addr)
+    launch_tts(args.port, args.addr, args.logs)
     # Launch a gui, if specified
     address = args.addr
     if address == "0.0.0.0":
@@ -242,7 +252,7 @@ def main(argv=None):
     if args.gui == "tk":
         wait_proc = launch_tk(args.port, dictionary, address, args.logs)
     elif args.gui == "wx":
-        wait_proc = launch_wx(args.port, dictionary, address, args.config)
+        wait_proc = launch_wx(args.port, dictionary, address, args.logs, args.config)
     elif args.gui == "none":
         print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
