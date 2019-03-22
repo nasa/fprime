@@ -187,7 +187,7 @@ class ConfigManager(ConfigParser.SafeConfigParser):
         self.__prop['file_management']['default_downlink_path'] = os.path.join(os.environ['HOME'], 'fprime')
 
         self.__prop['helppanel'] = dict()
-        self.__prop['helppanel']['doc_folder'] = os.path.join(build_root, "Gds/fprime_gds/tkgui/docs")
+        self.__prop['helppanel']['doc_folder'] = os.path.join(build_root, "Gds/src/fprime_gds/tkgui/docs")
         self.__prop['helppanel']['max_header_size'] = 36
         self.__prop['helppanel']['min_header_size'] = 18
         self.__prop['helppanel']['default_font_size'] = 14

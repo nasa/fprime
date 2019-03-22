@@ -1,9 +1,13 @@
 #!/usr/bin/env python
-
+from __future__ import print_function
 import socket
 import threading
-import Queue
-import SocketServer
+try:
+    import queue
+    import socketserver
+except ImportError:
+    import Queue as queue
+    import SocketServer as socketserver
 import time
 import os
 import signal
@@ -33,14 +37,14 @@ FSW_ids = []
 GUI_ids = []
 
 def signal_handler(signal, frame):
-    print "Ctrl-C received, server shutting down."
+    print("Ctrl-C received, server shutting down.")
     shutdown_event.set()
 
 
 def now():
     return time.ctime(time.time())
 
-class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
+class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
     """
     Derived from original Stable demo during R&TD and adapted
     for use in new FSW gse.py applicaiton.
@@ -56,8 +60,8 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
     Any client that sends a "List" comment makes the server display all
     registered clients.
     """
-    SocketServer.StreamRequestHandler.allow_reuse_address = True
-    SocketServer.StreamRequestHandler.timeout = 1
+    socketserver.StreamRequestHandler.allow_reuse_address = True
+    socketserver.StreamRequestHandler.timeout = 1
 
     def handle(self):                           # on each client connect
         """
@@ -78,7 +82,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
 
         # Connection was closed by the client
         if not data:
-            print "Client exited."
+            print("Client exited.")
             return
 
         else:
@@ -89,10 +93,10 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             self.processQueue()
 
             if self.registered:
-                print "Registration complete waiting for message."
+                print("Registration complete waiting for message.")
                 self.getNewMsg()
             else:
-                print "Unable to register client."
+                print("Unable to register client.")
                 return
 
 
@@ -106,7 +110,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             GUI_ids.remove(self.id)
         LOCK.release()
 
-        print "Closed %s connection." % self.name
+        print("Closed %s connection." % self.name)
         self.registered = False
         self.request.close()
 
@@ -160,7 +164,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             self.registered = True
             self.name = name
             self.id = id
-            print "Registered client " + self.name
+            print("Registered client " + self.name)
 
     #################################################
     # New Routines to process the command messages
@@ -182,11 +186,11 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
 
             elif header == "Quit":
                 LOCK.acquire()
-                print "Quit received!"
+                print("Quit received!")
                 SERVER.dest_obj[self.name].put(struct.pack(">I", 0xA5A5A5A5))
                 shutdown_event.set()
                 time.sleep(1)
-                print "Quit processed!"
+                print("Quit processed!")
                 SERVER.shutdown()
                 SERVER.server_close()
                 LOCK.release()
@@ -210,20 +214,20 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             try:
                 chunk = self.request.recv(l-n)
                 if chunk == '':
-                    print "read data from socket is empty!"
+                    print("read data from socket is empty!")
                     return ''
                 msg = msg + chunk
                 n = len(msg)
             except socket.timeout:
                 if shutdown_event.is_set():
-                    print "socket timed out and shutdown is requested"
+                    print("socket timed out and shutdown is requested")
                     return "Quit\n"
                 continue
-            except socket.error, err:
+            except socket.error as err:
                 if err.errno == errno.ECONNRESET:
-                    print "Socket error " + str(err.errno) + " (Connection reset by peer) occurred on recv()."
+                    print("Socket error " + str(err.errno) + " (Connection reset by peer) occurred on recv().")
                 else:
-                    print "Socket error " + str(err.errno) + " occurred on recv()."
+                    print("Socket error " + str(err.errno) + " occurred on recv().")
         return msg
 
 
@@ -235,7 +239,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
         header = self.recv(5)
 
         if len(header) == 0:
-            print "Header information is empty, client " + self.name + " exiting."
+            print("Header information is empty, client " + self.name + " exiting.")
             return header
         if header == "List\n":
             return "List"
@@ -287,10 +291,10 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
         dest_list = []
 
         if header == "List":
-            print "List of registered clients: "
+            print("List of registered clients: ")
             LOCK.acquire()
-            for d in SERVER.dest_obj.keys():
-                print "\t" + SERVER.dest_obj[d].name
+            for d in list(SERVER.dest_obj.keys()):
+                print("\t" + SERVER.dest_obj[d].name)
                 reg_client_str = "List " + SERVER.dest_obj[d].name
                 l = len(reg_client_str)
                 reg_client_str = struct.pack("i%ds" % l, l,reg_client_str)
@@ -303,7 +307,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
         if head == 'A5A5':  # Packet Header
             #print "Received Packet: %s %s...\n" % (head,dst)
             if data == '':
-                print " Data is empty, returning."
+                print(" Data is empty, returning.")
             if 'GUI' in dst:
                 dest_list = GUI_clients
             elif 'FSW' in dst:
@@ -311,7 +315,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             for dest_elem in dest_list:
                 #print "Locking TCP"
                 LOCK.acquire()
-                if dest_elem in SERVER.dest_obj.keys():
+                if dest_elem in list(SERVER.dest_obj.keys()):
                     # Send the message here....
                     #print "Sending TCP msg to ", dest_elem
 
@@ -320,7 +324,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
         else:
             raise RuntimeError("Packet missing A5A5 header")
 
-class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
+class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
     """
     Derived from original Stable demo during R&TD and adapted
     for use in new FSW gse.py applicaiton.
@@ -336,7 +340,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
     Any client that sends a "List" comment makes the server display all
     registered clients.
     """
-    SocketServer.BaseRequestHandler.allow_reuse_address = True
+    socketserver.BaseRequestHandler.allow_reuse_address = True
 
     def handle(self):                           # on each packet
         """
@@ -410,14 +414,14 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
         if head == 'A5A5':  # Packet Header
             #print "Received Packet: %s %s...\n" % (head,dst)
             if data == '':
-                print " Data is empty, returning."
+                print(" Data is empty, returning.")
             if 'GUI' in dst:
                 dest_list = GUI_clients
             else:
-                print "dest? %s"%dst
+                print("dest? %s"%dst)
             for dest_elem in dest_list:
                 LOCK.acquire()
-                if dest_elem in SERVER.dest_obj.keys():
+                if dest_elem in list(SERVER.dest_obj.keys()):
                     # Send the message here....
                     #print "Sending UDP msg to ", dest_elem
 
@@ -426,7 +430,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
         else:
             raise RuntimeError("Telemetry missing A5A5 header")
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """
     TCP Socket server.
 
@@ -436,7 +440,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     dest_obj = dict()
     lock_obj = threading.Lock()
 
-class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
+class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
     """
     UDP Socket server.
     """
@@ -462,8 +466,8 @@ class DestObj:
         try:
            #print "about to send data to " + self.name
            self.socket.send(msg);
-        except socket.error, err:
-           print "Socket error " + str(err.errno) + " occurred on send()."
+        except socket.error as err:
+           print("Socket error " + str(err.errno) + " occurred on send().")
 
 
     def fileno(self):
@@ -505,7 +509,7 @@ def main(argv=None):
             LOCK   = server.lock_obj
             ip, port = server.server_address
 
-            print "TCP Socket Server listening on host addr %s, port %s" % (HOST, PORT)
+            print("TCP Socket Server listening on host addr %s, port %s" % (HOST, PORT))
             # Start a thread with the server -- that thread will then start one
             # more thread for each request
             server_thread = threading.Thread(target=server.serve_forever)
@@ -522,7 +526,7 @@ def main(argv=None):
                 server_thread.join(timeout = 5.0)
                 udp_server_thread.join(timeout = 5.0)
 
-            print "shutdown from main thread"
+            print("shutdown from main thread")
                 
             SERVER.shutdown()
             SERVER.server_close()
@@ -531,7 +535,7 @@ def main(argv=None):
             
             time.sleep(1)
 
-        except Exception, e:
+        except Exception as e:
             indent = len(program_name) * " "
             sys.stderr.write(program_name + ": " + repr(e) + "\n")
             sys.stderr.write(indent + "  for help use --help\n")
