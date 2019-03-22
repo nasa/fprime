@@ -14,6 +14,7 @@ this class will be empty.
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
 import importlib
 import sys
@@ -21,7 +22,7 @@ import os
 import glob
 
 # Custom Python Modules
-import dict_loader
+from . import dict_loader
 from fprime_gds.common.data_types import exceptions
 
 class PythonLoader(dict_loader.DictLoader):

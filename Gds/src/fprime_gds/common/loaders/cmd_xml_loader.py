@@ -6,9 +6,10 @@
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
 # Custom Python Modules
-from xml_loader import XmlLoader
+from .xml_loader import XmlLoader
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 from fprime_gds.common.data_types import exceptions
 

@@ -6,9 +6,9 @@
 
 @bug No known bugs
 '''
-
+from __future__ import absolute_import
 # Custom Python Modules
-from python_loader import PythonLoader
+from .python_loader import PythonLoader
 from fprime_gds.common.templates.ch_template import ChTemplate
 
 class ChPyLoader(PythonLoader):

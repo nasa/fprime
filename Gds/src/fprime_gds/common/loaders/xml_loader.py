@@ -13,6 +13,7 @@ helper functions
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
 import sys
 import os
@@ -20,7 +21,7 @@ from copy import deepcopy
 from lxml import etree
 
 # Custom Python Modules
-import dict_loader
+from . import dict_loader
 from fprime_gds.common.data_types import exceptions
 
 # Custom type modules

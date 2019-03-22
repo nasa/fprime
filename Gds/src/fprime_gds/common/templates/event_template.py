@@ -9,10 +9,11 @@ or cmdSeq_CS_CmdStarted
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
 from enum import Enum
 
-import data_template
+from . import data_template
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize.type_exceptions import *

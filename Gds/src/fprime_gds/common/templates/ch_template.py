@@ -9,8 +9,9 @@ reading)
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
-import data_template
+from . import data_template
 
 from fprime.common.models.serialize.type_base import *
 from fprime.common.models.serialize.type_exceptions import *

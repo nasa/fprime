@@ -10,9 +10,10 @@ describe the packet with ID 5 and channels A, B, and C in that order.
 
 @bug No known bugs
 '''
+from __future__ import absolute_import
 
-import data_template
-import ch_template
+from . import data_template
+from . import ch_template
 
 from fprime.common.models.serialize.type_exceptions import *
 
