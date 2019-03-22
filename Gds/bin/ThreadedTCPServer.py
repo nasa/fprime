@@ -15,7 +15,7 @@ import errno
 import time
 import logging
 
-from fprime_gds.common.models.serialize.type_base import *
+from fprime.common.models.serialize.type_base import *
 from optparse import OptionParser
 
 __version__ = 0.1

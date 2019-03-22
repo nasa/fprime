@@ -47,10 +47,10 @@ import sys
 from fprime_gds.common.templates.ch_template import ChTemplate
 from fprime_gds.common.templates.pkt_template import PktTemplate
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.models.serialize.time_type import TimeType
-from fprime_gds.common.models.serialize.u8_type import U8Type
-from fprime_gds.common.models.serialize.u16_type import U16Type
-from fprime_gds.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
 
 
 class PktEncoder(Encoder):

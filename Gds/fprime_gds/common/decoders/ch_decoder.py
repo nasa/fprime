@@ -20,9 +20,9 @@ import copy
 
 from fprime_gds.common.decoders.decoder import Decoder
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.models.serialize.u32_type import U32Type
-from fprime_gds.common.models.serialize.time_type import TimeType
-from fprime_gds.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.type_exceptions import *
 
 class ChDecoder(Decoder):
     '''Decoder class for Channel data'''

@@ -16,7 +16,7 @@ descriptor header will be passed on to the registered objects.
 
 import sys
 
-from fprime_gds.common.models.serialize import u32_type
+from fprime.common.models.serialize import u32_type
 from fprime_gds.common.utils import data_desc_type
 from fprime_gds.common.utils import config_manager
 

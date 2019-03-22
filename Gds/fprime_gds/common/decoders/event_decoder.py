@@ -18,9 +18,9 @@ import copy
 
 from fprime_gds.common.decoders import decoder
 from fprime_gds.common.data_types import event_data
-from fprime_gds.common.models.serialize import u32_type
-from fprime_gds.common.models.serialize import time_type
-from fprime_gds.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize import u32_type
+from fprime.common.models.serialize import time_type
+from fprime.common.models.serialize.type_exceptions import *
 import traceback
 
 class EventDecoder(decoder.Decoder):

@@ -22,7 +22,7 @@ import sys
 
 from fprime_gds.tkgui.controllers import exceptions
 from fprime_gds.common.models.common import command
-from fprime_gds.common.models.serialize import enum_type
+from fprime.common.models.serialize import enum_type
 
 class CommandLoader(object):
     '''

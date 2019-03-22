@@ -40,9 +40,9 @@ from fprime_gds.common.utils.data_desc_type import DataDescType
 # For unit tests
 import sys
 from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.models.serialize.time_type import TimeType
-from fprime_gds.common.models.serialize.u16_type import U16Type
-from fprime_gds.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
 
 class ChEncoder(Encoder):
     '''Encoder class for channel data'''

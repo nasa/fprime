@@ -14,7 +14,7 @@ describe the packet with ID 5 and channels A, B, and C in that order.
 import data_template
 import ch_template
 
-from fprime_gds.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import *
 
 class PktTemplate(data_template.DataTemplate):
     '''Class to create packet templates to describe specific packet types'''

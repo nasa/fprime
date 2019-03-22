@@ -18,8 +18,8 @@
 # Python standard modules
 #
 import collections
-from fprime_gds.common.models.serialize import type_base
-from fprime_gds.common.models.serialize import u32_type
+from fprime.common.models.serialize import type_base
+from fprime.common.models.serialize import u32_type
 from fprime_gds.tkgui.controllers import status_bar_updater
 #from fprime_gds.gse.views import main_panel
 

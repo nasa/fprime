@@ -31,26 +31,26 @@ from fprime_gds.tkgui.controllers import command_loader
 from fprime_gds.tkgui.controllers import commander
 
 # Import the types this way so they do not need prefixing for execution.
-from fprime_gds.common.models.serialize.type_exceptions import *
-from fprime_gds.common.models.serialize.type_base import *
+from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_base import *
 
-from fprime_gds.common.models.serialize.bool_type import *
-from fprime_gds.common.models.serialize.enum_type import *
-from fprime_gds.common.models.serialize.f32_type import *
-from fprime_gds.common.models.serialize.f64_type import *
+from fprime.common.models.serialize.bool_type import *
+from fprime.common.models.serialize.enum_type import *
+from fprime.common.models.serialize.f32_type import *
+from fprime.common.models.serialize.f64_type import *
 
-from fprime_gds.common.models.serialize.u8_type import *
-from fprime_gds.common.models.serialize.u16_type import *
-from fprime_gds.common.models.serialize.u32_type import *
-from fprime_gds.common.models.serialize.u64_type import *
+from fprime.common.models.serialize.u8_type import *
+from fprime.common.models.serialize.u16_type import *
+from fprime.common.models.serialize.u32_type import *
+from fprime.common.models.serialize.u64_type import *
 
-from fprime_gds.common.models.serialize.i8_type import *
-from fprime_gds.common.models.serialize.i16_type import *
-from fprime_gds.common.models.serialize.i32_type import *
-from fprime_gds.common.models.serialize.i64_type import *
+from fprime.common.models.serialize.i8_type import *
+from fprime.common.models.serialize.i16_type import *
+from fprime.common.models.serialize.i32_type import *
+from fprime.common.models.serialize.i64_type import *
 
-from fprime_gds.common.models.serialize.string_type import *
-from fprime_gds.common.models.serialize.serializable_type import *
+from fprime.common.models.serialize.string_type import *
+from fprime.common.models.serialize.serializable_type import *
 
 from fprime_gds.tkgui.utils import tkGui_misc
 

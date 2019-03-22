@@ -9,8 +9,8 @@ from enum import Enum
 from subprocess import PIPE
 
 
-from fprime_gds.common.models.serialize.u32_type import *
-from fprime_gds.common.models.serialize.filepacket import *
+from fprime.common.models.serialize.u32_type import *
+from fprime.common.models.serialize.filepacket import *
 from fprime_gds.tkgui.utils.checksum import Checksum
 from fprime_gds.tkgui.utils import Logger
 

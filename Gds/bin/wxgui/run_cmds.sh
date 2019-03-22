@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/sh
 # *******************************************************************************
 # * Copyright 2013, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship

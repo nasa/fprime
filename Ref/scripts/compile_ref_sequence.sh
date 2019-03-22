@@ -20,5 +20,5 @@ then
     export BUILD_ROOT="`cd ${DIRNAME}/../..; pwd`"
 fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
-export PYTHONPATH="${BUILD_ROOT}/Gds"
+export PYTHONPATH="${BUILD_ROOT}/Fw/Python/src:${BUILD_ROOT}/Gds/src"
 python "${BUILD_ROOT}/Gds/bin/tkgui/seqgen.py" -g ${BUILD_ROOT}/Ref/py_dict "$@"

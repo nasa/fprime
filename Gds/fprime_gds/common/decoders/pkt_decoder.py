@@ -20,8 +20,8 @@ Example data that would be sent to a decoder that parses events or channels:
 from fprime_gds.common.decoders.ch_decoder import ChDecoder
 from fprime_gds.common.data_types.pkt_data import PktData
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.models.serialize.u16_type import U16Type
-from fprime_gds.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.time_type import TimeType
 
 class PktDecoder(ChDecoder):
     '''Decoder class for Packetized Telemetry data'''

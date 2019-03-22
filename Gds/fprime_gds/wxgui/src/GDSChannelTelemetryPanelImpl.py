@@ -15,7 +15,7 @@ from copy import deepcopy
 
 from fprime_gds.common.data_types.ch_data import *
 from fprime_gds.common.data_types.pkt_data import *
-from fprime_gds.common.models.serialize.serializable_type import SerializableType
+from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime_gds.common.utils.config_manager import ConfigManager
 
 ###########################################################################

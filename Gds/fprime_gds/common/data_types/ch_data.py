@@ -8,7 +8,7 @@
 '''
 
 from fprime_gds.common.data_types import sys_data
-from fprime_gds.common.models.serialize import time_type
+from fprime.common.models.serialize import time_type
 
 class ChData(sys_data.SysData):
     '''

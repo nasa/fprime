@@ -5,7 +5,7 @@ import threading
 import binascii
 import select
 
-from fprime_gds.common.models.serialize import u32_type
+from fprime.common.models.serialize import u32_type
 
 
 # Constants for public use

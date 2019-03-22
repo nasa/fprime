@@ -45,10 +45,10 @@ from fprime_gds.common.utils.data_desc_type import DataDescType
 # For unit tests
 import sys
 from fprime_gds.common.templates.event_template import EventTemplate
-from fprime_gds.common.models.serialize.time_type import TimeType
-from fprime_gds.common.models.serialize.u8_type import U8Type
-from fprime_gds.common.models.serialize.u16_type import U16Type
-from fprime_gds.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
 from fprime_gds.common.utils.event_severity import EventSeverity
 
 

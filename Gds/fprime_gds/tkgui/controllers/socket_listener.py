@@ -34,10 +34,10 @@ from fprime_gds.tkgui.controllers import packetize_channel_listener
 from fprime_gds.tkgui.controllers import status_bar_updater
 from fprime_gds.tkgui.controllers import stripchart_listener
 
-from fprime_gds.common.models.serialize import type_base
-from fprime_gds.common.models.serialize import u32_type
-from fprime_gds.common.models.serialize import u16_type
-from fprime_gds.common.models.serialize import u8_type
+from fprime.common.models.serialize import type_base
+from fprime.common.models.serialize import u32_type
+from fprime.common.models.serialize import u16_type
+from fprime.common.models.serialize import u8_type
 
 from fprime_gds.tkgui.utils import Logger
 

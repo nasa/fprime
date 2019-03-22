@@ -10,8 +10,8 @@ Instances of this class describe a specific command type.
 '''
 from enum import Enum
 import data_template
-from fprime_gds.common.models.serialize.type_base import BaseType
-from fprime_gds.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_base import BaseType
+from fprime.common.models.serialize.type_exceptions import *
 
 
 

@@ -20,7 +20,7 @@ import copy
 from datetime import datetime, timedelta
 from optparse import OptionParser
 
-from fprime_gds.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import *
 
 __author__ = "Kevin Dinkel"
 __copyright__ = "Copyright 2015, California Institute of Technology."

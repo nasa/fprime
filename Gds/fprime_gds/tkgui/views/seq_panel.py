@@ -14,12 +14,12 @@ import exceptions
 
 import command_args_frame
 
-from fprime_gds.common.models.serialize.i32_type import *
-from fprime_gds.common.models.serialize.u64_type import *
-from fprime_gds.common.models.serialize.u32_type import *
-from fprime_gds.common.models.serialize.u16_type import *
-from fprime_gds.common.models.serialize.u8_type import *
-from fprime_gds.common.models.serialize.time_type import *
+from fprime.common.models.serialize.i32_type import *
+from fprime.common.models.serialize.u64_type import *
+from fprime.common.models.serialize.u32_type import *
+from fprime.common.models.serialize.u16_type import *
+from fprime.common.models.serialize.u8_type import *
+from fprime.common.models.serialize.time_type import *
 
 from fprime_gds.tkgui.utils import tkGui_misc
 from fprime_gds.tkgui.utils import command_args

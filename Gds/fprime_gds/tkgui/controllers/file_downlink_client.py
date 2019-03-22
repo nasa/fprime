@@ -9,13 +9,13 @@ from subprocess import PIPE
 from optparse import OptionParser
 
 from fprime_gds.tkgui.controllers import client_sock
-from fprime_gds.common.models.serialize.u32_type import *
-from fprime_gds.common.models.serialize.u8_type import *
+from fprime.common.models.serialize.u32_type import *
+from fprime.common.models.serialize.u8_type import *
 from fprime_gds.tkgui.utils.checksum import *
 from fprime_gds.tkgui.utils import Logger
 
-from fprime_gds.common.models.serialize.filepacket import PacketType
-from fprime_gds.common.models.serialize import filepacket
+from fprime.common.models.serialize.filepacket import PacketType
+from fprime.common.models.serialize import filepacket
 
 
 # Module logger

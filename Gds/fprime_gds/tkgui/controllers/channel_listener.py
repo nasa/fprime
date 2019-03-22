@@ -40,10 +40,10 @@ from fprime_gds.tkgui.controllers import consumer
 from fprime_gds.tkgui.controllers import channel_loader
 from fprime_gds.tkgui.controllers import status_bar_updater
 
-from fprime_gds.common.models.serialize import type_base
-from fprime_gds.common.models.serialize import u32_type
-from fprime_gds.common.models.serialize import u16_type
-from fprime_gds.common.models.serialize import u8_type
+from fprime.common.models.serialize import type_base
+from fprime.common.models.serialize import u32_type
+from fprime.common.models.serialize import u16_type
+from fprime.common.models.serialize import u8_type
 
 from fprime_gds.tkgui.utils import Logger
 

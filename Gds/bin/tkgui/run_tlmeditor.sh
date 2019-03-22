@@ -27,5 +27,5 @@ echo "NATIVE_BUILD: ${NATIVE_BUILD}"
 export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=$NATIVE_BUILD print_output_dir`"
 
 echo "OUTPUT_DIR: ${OUTPUT_DIR}"
-export PYTHONPATH="${BUILD_ROOT}/Gse/src"
+export PYTHONPATH="${BUILD_ROOT}/Fw/Python/src:${BUILD_ROOT}/Gds/src"
 python "${BUILD_ROOT}/Gse/bin/TLMPacketEditor.py" "$@"
