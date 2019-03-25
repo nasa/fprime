@@ -89,7 +89,6 @@ class CmdData(sys_data.SysData):
         return self.args
 
     def convert_arg_value(self, arg_val, arg_type):
-        print(type(arg_type))
         if "0x" in arg_val:
             arg_val = int(arg_val, 16)
 
