@@ -6,6 +6,7 @@ import socket
 import sys
 import subprocess
 
+from fprime.constants import DATA_ENCODING
 '''
 This module is used to find an available socket port.
 
@@ -26,7 +27,7 @@ def getstatusoutput(cmd):
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     (out, err) = process.communicate()
     if sys.version_info >= (3, 0):
-        out = out.decode("utf-8")
+        out = out.decode(DATA_ENCODING)
     assert err is None, "Failed to force standard error to standard out"
     return (process.returncode, out)
 

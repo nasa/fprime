@@ -7,6 +7,9 @@ Created on Dec 18, 2014
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
+
+from fprime.constants import DATA_ENCODING
+
 from .type_exceptions import *
 from . import type_base
 
@@ -56,7 +59,7 @@ class StringType(type_base.BaseType):
                 raise StringSizeException(s, self.__max_string_len)
 
         # store string value plus size - place size in front
-        buff = struct.pack('>H',len(self.val)) + self.val
+        buff = struct.pack('>H',len(self.val)) + self.val.encode(DATA_ENCODING)
         return buff
 
 
@@ -74,7 +77,7 @@ class StringType(type_base.BaseType):
             raise DeserializeException("Not enough data to deserialize! Needed: %d Left: %d" % (strSize,offset))
 
         # get string value here
-        self.val = data[offset+2:offset+2+strSize]
+        self.val = data[offset+2:offset+2+strSize].decode(DATA_ENCODING)
 
         # If max_string_len is set check that string size does not exceed...
         if not self.__max_string_len == None:

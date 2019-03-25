@@ -275,7 +275,10 @@ def main(argv=None):
     if wait_proc is None:
         wait_proc = app_proc
     # Wait for either gui or app to finish, then close
-    wait_proc.wait()
+    try:
+        wait_proc.wait()
+    except KeyboardInterrupt:
+        print("[INFO] CTRL-C received. Exiting.")
     return 0
 
 

@@ -49,10 +49,14 @@ class Distributor(object):
         self.__decoders = {key.name: [] for key in list(data_desc_type.DataDescType)}
 
         # Internal buffer for un distributed data
-        self.__buf = ""
+        self.__buf = b""
         #Setup key framing
         self.key_frame = None
-        if (config.get("framing", "use_key", "false").lower() == "true"):
+        try:
+            tmp_frame = config.get("framing", "use_key")
+        except:
+            tmp_frame = "false"
+        if (tmp_frame.lower() == "true"):
             self.key_frame = int(config.get("framing", "key_val"), 16)
         self.key_obj = config.get_type("key_val")
         self.len_obj = config.get_type("msg_len")

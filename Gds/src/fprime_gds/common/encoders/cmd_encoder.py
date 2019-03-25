@@ -103,7 +103,7 @@ class CmdEncoder(encoder.Encoder):
 
         op_code = U32Type(cmd_temp.get_op_code()).serialize()
 
-        arg_data = ""
+        arg_data = b""
         for arg in data.get_args():
             arg_data += arg.serialize()
 

@@ -23,8 +23,8 @@ class DataLogger(object):
 
         self.verbose = verbose
         self.csv = csv
-        self.f_r = open(self.logdir + os.sep + self.recv_file, "w+")
-        self.f_s = open(self.logdir + os.sep + self.send_file, "w+")
+        self.f_r = open(self.logdir + os.sep + self.recv_file, "wb+")
+        self.f_s = open(self.logdir + os.sep + self.send_file, "wb+")
         self.f_telem = open(self.logdir + os.sep + self.telem_file, "w+")
         self.f_event = open(self.logdir + os.sep + self.event_file, "w+")
 

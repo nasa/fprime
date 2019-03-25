@@ -19,6 +19,7 @@ import errno
 import time
 import logging
 
+from fprime.constants import DATA_ENCODING
 from fprime.common.models.serialize.type_base import *
 from optparse import OptionParser
 
@@ -70,10 +71,10 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         by a newline.  For each packet, call processPkt.
         """
 
-        self.partial = ''
+        self.partial = b''
         self.cmdQueue = []
         self.registered = False
-        self.name = ''
+        self.name = b''
         self.id = 0
         
         #print self.client_address, now()        # show this client's address
@@ -110,19 +111,19 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             GUI_ids.remove(self.id)
         LOCK.release()
 
-        print("Closed %s connection." % self.name)
+        print("Closed %s connection." % self.name.decode(DATA_ENCODING))
         self.registered = False
         self.request.close()
 
 
-    def getCmds(self, inputString, end_of_command='\n'):
+    def getCmds(self, inputString, end_of_command=b'\n'):
         """
         Build a command from partial or full socket input
         """
         commands = inputString.split(end_of_command)
         if len(self.partial):
             commands[0] = self.partial + commands[0]
-            self.partial = ''
+            self.partial = b''
         if len(commands[-1]):
             self.partial = commands[-1]
             self.cmdQueue.extend(commands[:-1])
@@ -139,21 +140,21 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         params = cmd.split()
         id = 0
 
-        if params[0] == 'Register':
+        if params[0] == b'Register':
             LOCK.acquire()
             name = params[1]
-            if 'FSW' in name:
+            if b'FSW' in name:
                 if FSW_clients:
                     id = sorted(FSW_ids)[-1] + 1
 
-                name = params[1] + '_' + str(id)
+                name = params[1] + b'_' + bytes(id)
                 FSW_clients.append(name)
                 FSW_ids.append(id)
-            elif 'GUI' in name:
+            elif b'GUI' in name:
                 if GUI_clients:
                     id = sorted(GUI_ids)[-1] + 1
 
-                name = params[1] + '_' + str(id)
+                name = params[1] + b'_' + bytes(id)
                 GUI_clients.append(name)
                 GUI_ids.append(id)
 
@@ -164,7 +165,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             self.registered = True
             self.name = name
             self.id = id
-            print("Registered client " + self.name)
+            print("Registered client " + self.name.decode(DATA_ENCODING))
 
     #################################################
     # New Routines to process the command messages
@@ -184,7 +185,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             if not header:
                 break
 
-            elif header == "Quit":
+            elif header == b"Quit":
                 LOCK.acquire()
                 print("Quit received!")
                 SERVER.dest_obj[self.name].put(struct.pack(">I", 0xA5A5A5A5))
@@ -207,21 +208,21 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         """
         Read l bytes from socket.
         """
-        chunk =''
-        msg = ""
+        chunk = b''
+        msg = b""
         n = 0
         while l > n:
             try:
                 chunk = self.request.recv(l-n)
-                if chunk == '':
+                if chunk == b'':
                     print("read data from socket is empty!")
-                    return ''
+                    return b''
                 msg = msg + chunk
                 n = len(msg)
             except socket.timeout:
                 if shutdown_event.is_set():
                     print("socket timed out and shutdown is requested")
-                    return "Quit\n"
+                    return b"Quit\n"
                 continue
             except socket.error as err:
                 if err.errno == errno.ECONNRESET:
@@ -239,13 +240,13 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         header = self.recv(5)
 
         if len(header) == 0:
-            print("Header information is empty, client " + self.name + " exiting.")
+            print("Header information is empty, client " + self.name.decode(DATA_ENCODING) + " exiting.")
             return header
-        if header == "List\n":
-            return "List"
-        elif header == "Quit\n":
-            return "Quit"
-        elif header[:-1] == "A5A5":
+        if header == b"List\n":
+            return b"List"
+        elif header == b"Quit\n":
+            return b"Quit"
+        elif header[:-1] == b"A5A5":
             header2 = self.recv(4)
             return (header + header2)
         else:
@@ -258,26 +259,26 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         GUI receives telemetry.
         FSW receives commands of various lengths.
         """
-        data = ""
-        if header == "List":
-            return ""
-        elif header == "Quit":
-            return ""
-        dst = header.split(" ")[1].strip(" ")
-        if dst == "FSW":
+        data = b""
+        if header == b"List":
+            return b""
+        elif header == b"Quit":
+            return b""
+        dst = header.split(b" ")[1].strip(b" ")
+        if dst == b"FSW":
             # Read variable length command data here...
             desc = self.recv(4)
             sizeb = self.recv(4)
             size = struct.unpack(">I", sizeb)[0]
             data = desc + sizeb + self.recv(size)
-        elif dst == "GUI":
+        elif dst == b"GUI":
             # Read telemetry data here...
             tlm_packet_size = self.recv(4)
             size = struct.unpack(">I", tlm_packet_size)[0]
             data = tlm_packet_size + self.recv(size)
 
         else:
-            raise RuntimeError("unrecognized client %s"%dst)
+            raise RuntimeError("unrecognized client %s"%dst.decode(DATA_ENCODING))
         return data
 
 
@@ -285,17 +286,17 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         """
         Process a single command here header and data here.
         The command must always start with A5A5 except if it is a List.
-        Once the entire header string is processed send it on queue.
+        Once the entire header tstring is processed send it on queue.
         If something goes wrong report and shutdown server.
         """
         dest_list = []
 
-        if header == "List":
+        if header == b"List":
             print("List of registered clients: ")
             LOCK.acquire()
             for d in list(SERVER.dest_obj.keys()):
-                print("\t" + SERVER.dest_obj[d].name)
-                reg_client_str = "List " + SERVER.dest_obj[d].name
+                print("\t" + SERVER.dest_obj[d].name.decode(DATA_ENCODING))
+                reg_client_str = b"List " + SERVER.dest_obj[d].name
                 l = len(reg_client_str)
                 reg_client_str = struct.pack("i%ds" % l, l,reg_client_str)
                 self.request.send(reg_client_str)
@@ -303,14 +304,14 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             return 0
 
         # Process data here...
-        head, dst = header.strip(" ").split(" ")
-        if head == 'A5A5':  # Packet Header
+        head, dst = header.strip(b" ").split(b" ")
+        if head == b'A5A5':  # Packet Header
             #print "Received Packet: %s %s...\n" % (head,dst)
-            if data == '':
+            if data == b'':
                 print(" Data is empty, returning.")
-            if 'GUI' in dst:
+            if b'GUI' in dst:
                 dest_list = GUI_clients
-            elif 'FSW' in dst:
+            elif b'FSW' in dst:
                 dest_list = FSW_clients
             for dest_elem in dest_list:
                 #print "Locking TCP"
@@ -392,7 +393,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         FSW receives commands of various lengths.
         """
         data = ""
-        dst = header.split(" ")[1].strip(" ")
+        dst = header.split(b" ")[1].strip(b" ")
         # Read telemetry data here...
         tlm_packet_size = packet[:4]
         size = struct.unpack(">I", tlm_packet_size)[0]
@@ -410,15 +411,15 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         """
         dest_list = []
         # Process data here...
-        head, dst = header.strip(" ").split(" ")
-        if head == 'A5A5':  # Packet Header
+        head, dst = header.strip(b" ").split(b" ")
+        if head == b'A5A5':  # Packet Header
             #print "Received Packet: %s %s...\n" % (head,dst)
             if data == '':
                 print(" Data is empty, returning.")
-            if 'GUI' in dst:
+            if b'GUI' in dst:
                 dest_list = GUI_clients
             else:
-                print("dest? %s"%dst)
+                print("dest? %s"%dst.decode(DATA_ENCODING))
             for dest_elem in dest_list:
                 LOCK.acquire()
                 if dest_elem in list(SERVER.dest_obj.keys()):
@@ -456,7 +457,7 @@ class DestObj:
         """
         self.name = name
         self.socket = request
-        self.packet = ""
+        self.packet = b""
 
     def put(self, msg):
         """
