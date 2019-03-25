@@ -44,7 +44,7 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
             data {bin} -- binary data packet
             dest {string} -- where the data will be sent by the server
         """
-        str_data = "[" +" ".join(["{0:2x}".format(byte) for byte in data]) + "]\n\n"
+        str_data = "[" +" ".join(["{0:2x}".format(byte if type(byte) != str else ord(byte)) for byte in data]) + "]\n\n"
         self._send_msg_buffer.append(str_data)
 
     # Some data was recvd
@@ -54,7 +54,7 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
         Arguments:
             data {bin} --binnary data string that was recved
         """
-        str_data = "[" +" ".join(["{0:2x}".format(byte) for byte in data]) + "]\n\n"
+        str_data = "[" +" ".join(["{0:2x}".format(byte if type(byte) != str else ord(byte)) for byte in data]) + "]\n\n"
 
         self._recv_msg_buffer.append(str_data)
 

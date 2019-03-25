@@ -7,7 +7,7 @@ import argparse
 import platform
 import subprocess
 import shutil
-import distutils
+import distutils.spawn
 
 # Try to import each GUI type, and if it can be imported
 # it will be provided to the user as an option
