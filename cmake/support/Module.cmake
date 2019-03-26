@@ -51,7 +51,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       if(${LOWER_TYPE} STREQUAL "topology")
           # Create a dictionary directory for the deployment
           set(IS_TOP "YES")
-          set(DICTIONARY_DIR "${FPRIME_CORE_DIR}/Gse/generated/${TOPOLOGY_NAME}")
+          set(DICTIONARY_DIR "${CMAKE_SOURCE_DIR}/py_dict")
           file(MAKE_DIRECTORY "${DICTIONARY_DIR}")
       # Not topology set variables accordingly
       else()
@@ -77,14 +77,14 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
         OUTPUT ${AC_FINAL_HEADER} ${AC_FINAL_SOURCE}
         COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT} 
         PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR} FPRIME_CORE_DIR=${FPRIME_CORE_DIR}
-        ${FPRIME_CORE_DIR}/cmake/wrapper/codegen.sh ${IS_TOP} ${AC_FINAL_XML} ${AC_FINAL_DIR}
+        ${FPRIME_CORE_DIR}/cmake/support/wrapper/codegen.sh ${IS_TOP} ${AC_FINAL_XML} ${AC_FINAL_DIR}
         DEPENDS ${AC_FINAL_XML}
       )
       #For serializables, add the dict dir
       if (${AC_TYPE} STREQUAL "serializable")
           set(SERIALIZABLE_DICT_DIR "${CMAKE_SOURCE_DIR}/py_dict/serializable")
           execute_process(
-            COMMAND ${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
+            COMMAND ${FPRIME_CORE_DIR}/cmake/support/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
             RESULT_VARIABLE ERR_RETURN
             OUTPUT_VARIABLE NS
          )

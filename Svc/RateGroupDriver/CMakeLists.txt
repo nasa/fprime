@@ -15,6 +15,9 @@ set(LINK_DEPS
   Fw/Types
   Fw/Comp
   Fw/Port
+  Fw/Com
+  Fw/Log
+  Fw/Tlm
 )
 
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")

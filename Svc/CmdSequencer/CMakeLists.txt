@@ -19,6 +19,9 @@ set(LINK_DEPS
   Fw/Types
   Fw/Comp
   Fw/Port
+  Fw/Com
+  Fw/Log
+  Fw/Tlm
   Os
   Fw/FilePacket
   Utils/Hash

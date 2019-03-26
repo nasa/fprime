@@ -68,16 +68,16 @@ endfunction(add_generated_sources)
 ####
 function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   # Figure out which parser to use when looking for various dependencies.
-  set(PARSER_PY ${FPRIME_CORE_DIR}/cmake/parser/${PARSER_TYPE}_xml.py)
+  set(PARSER_PY "${FPRIME_CORE_DIR}/cmake/support/parser/${PARSER_TYPE}_xml.py")
   if (${PARSER_TYPE} STREQUAL "topology")
     execute_process(
-      COMMAND ${FPRIME_CORE_DIR}/cmake/parser/topology_xml.py "--targets" "${XML_PATH}"
+      COMMAND "${PARSER_PY}" "--targets" "${XML_PATH}"
       RESULT_VARIABLE ERR_RETURN
       OUTPUT_VARIABLE TARGETS
     )
   else() 
     execute_process(
-      COMMAND ${PARSER_PY} "${XML_PATH}" "${MODULE_NAME}"
+      COMMAND "${PARSER_PY}" "${XML_PATH}" "${MODULE_NAME}"
       RESULT_VARIABLE ERR_RETURN
       OUTPUT_VARIABLE TARGETS
     )
