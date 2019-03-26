@@ -5,7 +5,7 @@ import os
 import re
 import argparse
 import logging
-from generators.templates.component import includes1ComponentTestCpp
+from fprime_ac.generators.templates.component import includes1ComponentTestCpp
 from NoseTests.Template import test_template
 from lxml import etree
 

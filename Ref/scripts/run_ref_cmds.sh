@@ -7,4 +7,4 @@ then
 fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-${BUILD_ROOT}/Gds/tkGui/bin/run_cmds.sh --addr localhost --port 50000 --dictionary ${BUILD_ROOT}/Ref/py_dict "$@"
+${BUILD_ROOT}/Gds/bin/tkgui/run_cmds.sh --addr localhost --port 50000 --dictionary ${BUILD_ROOT}/Ref/py_dict "$@"

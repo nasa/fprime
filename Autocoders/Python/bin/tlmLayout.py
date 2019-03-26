@@ -704,7 +704,7 @@ def main():
     parser.add_argument('--template',
                         action = 'store',
                         required = True,
-                        help = 'Required. Fully-qualified file name of the cheetah template used by this script (normally in Autocoders/Python/src/utils/TlmPacketDefBase.tmpl)')
+                        help = 'Required. Fully-qualified file name of the cheetah template used by this script (normally in Autocoders/Python/src/fprime_ac/utils/TlmPacketDefBase.tmpl)')
     parser.add_argument('input_file',
                         nargs='+',
                         help = 'One or more input tab-delimited csv file names')

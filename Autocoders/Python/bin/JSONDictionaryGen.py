@@ -14,10 +14,10 @@ import sys
 
 from optparse import OptionParser
 
-from models import ModelParser
-from parsers import XmlTopologyParser
-from parsers import XmlSerializeParser
-from utils import Logger
+from fprime_ac.models import ModelParser
+from fprime_ac.parsers import XmlTopologyParser
+from fprime_ac.parsers import XmlSerializeParser
+from fprime_ac.utils import Logger
 
 # Version label for now
 class Version:

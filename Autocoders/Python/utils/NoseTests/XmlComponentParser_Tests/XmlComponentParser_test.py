@@ -1,4 +1,4 @@
-from parsers import XmlComponentParser
+from fprime_ac.parsers import XmlComponentParser
 import os
 
 

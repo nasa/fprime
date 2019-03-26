@@ -19,13 +19,6 @@ if [ -z ${BUILD_ROOT} ]
 then
     export BUILD_ROOT="`cd ${DIRNAME}/../..; pwd`"
 fi
-echo "BUILD_ROOT is: ${BUILD_ROOT}"
-# Get binary output path
-export NATIVE_BUILD="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_native_build`"
-echo "NATIVE_BUILD: ${NATIVE_BUILD}"
-export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=$NATIVE_BUILD print_output_dir`"
-echo "OUTPUT_DIR: ${OUTPUT_DIR}"
-export PYTHONPATH="${BUILD_ROOT}/Gds"
-echo "PYTHONPATH: ${PYTHONPATH}"
+DEPLOY=`cd ${DIRNAME}/..; pwd;`
+${BUILD_ROOT}/Gds/bin/run_deployment.sh --deploy "${DEPLOY}"
 
-python ${BUILD_ROOT}/Ref/scripts/run_ref.py "$@" &
