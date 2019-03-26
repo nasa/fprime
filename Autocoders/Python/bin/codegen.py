@@ -16,25 +16,25 @@ import logging
 
 from optparse import OptionParser
 
-from utils import Logger
-from utils import ConfigManager
-from utils import DictTypeConverter
+from fprime_ac.utils import Logger
+from fprime_ac.utils import ConfigManager
+from fprime_ac.utils import DictTypeConverter
 
 
 # Meta-model for Component only generation
-from models import CompFactory
-from models import PortFactory
-from models import TopoFactory
-from models import Serialize
-from models import ModelParser
+from fprime_ac.models import CompFactory
+from fprime_ac.models import PortFactory
+from fprime_ac.models import TopoFactory
+from fprime_ac.models import Serialize
+from fprime_ac.models import ModelParser
 
 
 # Parsers to read the XML
-from parsers import XmlParser
-from parsers import XmlComponentParser
-from parsers import XmlPortsParser
-from parsers import XmlSerializeParser
-from parsers import XmlTopologyParser
+from fprime_ac.parsers import XmlParser
+from fprime_ac.parsers import XmlComponentParser
+from fprime_ac.parsers import XmlPortsParser
+from fprime_ac.parsers import XmlSerializeParser
+from fprime_ac.parsers import XmlTopologyParser
 
 from lxml import etree
 
@@ -49,7 +49,7 @@ from lxml import etree
 #@todo: from src.parsers import assembly_parser
 
 #Generators to produce the code
-from generators import GenFactory
+from fprime_ac.generators import GenFactory
 
 # Flag to indicate verbose mode.
 VERBOSE = False
