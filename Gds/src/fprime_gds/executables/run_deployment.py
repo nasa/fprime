@@ -37,7 +37,7 @@ def detect_terminal(title):
     if platform.system() == "Windows":
         return ["cmd.exe", "/C"]
     else:
-        terminals = [["gnome-terminal", "--disable-factory", "--title", title, "--wait", "--"],
+        terminals = [["gnome-terminal", "--disable-factory", "--title", title, "--"],
             ["xterm", "-hold", "-T", title, "-e"], ["lxterminal", "-t", title, "-e"], ["Konsole", "-e"],
             ["x-terminal-emulator", "-T", title, "-e"]]
         # Gnome terminal not working
@@ -200,7 +200,6 @@ def launch_process(cmd, stdout=None, stderr=None, name=None, pgroup=False):
             # Terminate with extreme prejudice
             proc.kill()
         except OSError as ose:
-            print("[ERROR] OS Error on kill: {0}".format(ose))
             pass
     atexit.register(kill_wait)
     print("[INFO] Waiting 5 seconds for {0} to start".format(name))
