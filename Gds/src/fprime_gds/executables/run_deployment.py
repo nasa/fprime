@@ -4,7 +4,9 @@ import sys
 import time
 import atexit
 import argparse
+import datetime
 import platform
+import signal
 import subprocess
 import shutil
 import distutils.spawn
@@ -25,6 +27,7 @@ try:
 except ImportError as exc:
     print("[WARNING] Could not import WX GUI: {0}:{1}".format(type(exc), str(exc), file=sys.stderr))
 
+
 def detect_terminal(title):
     '''
     Detect a terminal based on the OS.
@@ -34,8 +37,10 @@ def detect_terminal(title):
     if platform.system() == "Windows":
         return ["cmd.exe", "/C"]
     else:
-        terminals = [["xterm", "-T", title, "-e"], ["lxterminal", "-t", title, "-e"],
-                     ["gnome-terminal", "--title", title, "--"], ["Konsole", "-e"]]
+        terminals = [["gnome-terminal", "--disable-factory", "--title", title, "--wait", "--"],
+            ["xterm", "-hold", "-T", title, "-e"], ["lxterminal", "-t", title, "-e"], ["Konsole", "-e"],
+            ["x-terminal-emulator", "-T", title, "-e"]]
+        # Gnome terminal not working
         for terminal in terminals:
             try:
                 if shutil.which(terminal[0]) is not None:
@@ -140,8 +145,13 @@ def get_args(args):
         error_exit("Log directory -l or deployment dir -d write permission needed", 5)
     # Make log file
     if parsed_args.logs is not None:
+        date_now = datetime.datetime.now()
+        parsed_args.logs = os.path.join(parsed_args.logs,
+                                        "%d_%02d_%02d-%02d_%02d_%02d" % (date_now.year, date_now.month, date_now.day,
+                                                                         date_now.hour, date_now.minute,
+                                                                         date_now.second))
         try:
-            os.mkdir(parsed_args.logs)
+            os.makedirs(parsed_args.logs)
         except Exception as ioe:
             if "exists" not in str(ioe).lower():
                 error_exit("Failed to make directory for logs at {0} with error {1}".format(parsed_args.logs, ioe))
@@ -156,7 +166,7 @@ def error_exit(error, code=1):
     sys.exit(code)
 
 
-def launch_process(cmd, stdout=None, stderr=None, name=None):
+def launch_process(cmd, stdout=None, stderr=None, name=None, pgroup=False):
     '''
     Launch a process in python
     :param cmd: command arguments to run
@@ -167,19 +177,34 @@ def launch_process(cmd, stdout=None, stderr=None, name=None):
     '''
     if name is None:
         name = str(cmd)
-    proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
+    # Start with PGroup to nuke poorly designed terminals
+    if pgroup:
+        proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr, shell=False, preexec_fn=os.setpgrp)
+    else:
+        proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr, shell=False, preexec_fn=os.setpgrp)
 
     # When python exits, nuke this process
     def kill_wait():
-        '''Kill process and wait for 2 seconds for it to die'''
+        '''Kill process and wait it to die'''
         try:
+            # Process groups, and their terminal spawn deserve no mercy
+            if pgroup:
+                os.killpg(proc.pid, signal.SIGINT)
+                os.killpg(proc.pid, signal.SIGTERM)
+                time.sleep(2)
+                os.killpg(proc.pid, signal.SIGKILL)
+                return
+            # Normal processes are gently terminated
+            proc.terminate()
+            time.sleep(1)
+            # Terminate with extreme prejudice
             proc.kill()
-            proc.wait()
-        except OSError:
+        except OSError as ose:
+            print("[ERROR] OS Error on kill: {0}".format(ose))
             pass
     atexit.register(kill_wait)
-    print("[INFO] Waiting 2 seconds for {0} to start".format(name))
-    time.sleep(2)
+    print("[INFO] Waiting 5 seconds for {0} to start".format(name))
+    time.sleep(5)
     proc.poll()
     if proc.returncode is not None:
         error_exit("Failed to start {0}".format(name), 1)
@@ -232,18 +257,22 @@ def launch_wx(port, dictionary, address, log_dir, config):
     return launch_process(gse_args, name="WX GUI")
 
 
-def launch_app(app, port, address):
+def launch_app(app, port, address, log_dir):
     '''
     Launch the app
     :param app: application to launch
     :param port: port to connect to
     :param address: address to connect to
+    :param log_dir: log directory to place files into
     :return: process
     '''
-    name = "{0} Application".format(os.path.basename(app))
-    app_cmd = detect_terminal(name)
+    app_name = os.path.basename(app)
+    app_cmd = detect_terminal(app_name)
+    app_cmd.extend(["python", "-u", "-m", "fprime_gds.executables.appwrapper",
+                    os.path.join(log_dir, "{0}.stdout.log".format(app_name)),
+                    ])
     app_cmd.extend([os.path.abspath(app), "-p", str(port), "-a", address])
-    return launch_process(app_cmd, name=name)
+    return launch_process(app_cmd, name="{0} Application".format(app_name), pgroup=True)
 
 
 def main(argv=None):
@@ -270,7 +299,7 @@ def main(argv=None):
         raise Exception("Invalid GUI specified: {0}".format(args.gui))
     # Run app if specified
     if not args.noapp:
-        app_proc = launch_app(app, args.port, address)
+        app_proc = launch_app(app, args.port, address, args.logs)
     # Determine waitable item
     if wait_proc is None:
         wait_proc = app_proc
