@@ -16,8 +16,13 @@ set(SOURCE_FILES
 )
 
 set(LINK_DEPS
+  gtest
   Fw/Cfg
   Fw/Types
+  Fw/Types/GTest
+  CFDP/Checksum
+  CFDP/Checksum/GTest
+  Fw/FilePacket
   Fw/Comp
   Fw/Port
 )

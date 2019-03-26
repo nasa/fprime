@@ -9,4 +9,4 @@ set(AUTOCODER_INPUT_FILES
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
 )
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "")
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "gtest;CFDP/Checksum")

@@ -13,6 +13,9 @@ set(SOURCE_FILES
 set(LINK_DEPS
   Fw/Cfg
   Fw/Types
+  Fw/Log
+  Fw/Tlm
+  Fw/Cmd
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "")
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")

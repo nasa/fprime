@@ -31,8 +31,7 @@ set(LINK_DEPS
   "${CMAKE_THREAD_LIBS_INIT}" 
   Fw/Cfg
   Fw/Types
-  Fw/Comp
-  Fw/Port
+  Utils/Hash
 )
 
 # Invoke build system generate_module

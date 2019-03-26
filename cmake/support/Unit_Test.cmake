@@ -22,7 +22,7 @@ function(generate_ut_library MODULE_NAME SOURCE_FILES)
     "-DPROTECTED=public"
     "-DPRIVATE=public"
   )
-
+  add_dependencies(${UT_MODULE_NAME} gtest)
   # Add dependency on original module
   add_dependencies(${UT_MODULE_NAME} ${MODULE_NAME})
 

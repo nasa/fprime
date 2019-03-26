@@ -18,6 +18,7 @@ set(LINK_DEPS
   Fw/Cfg
   Fw/Obj
   Fw/Types
+  Os
 )
 
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")

@@ -15,9 +15,9 @@ set(LINK_DEPS
   Fw/Types
   Fw/Comp
   Fw/Port
-  Fw/Log
   Fw/Com
   Fw/Log
+  Fw/Cmd
   Fw/Tlm
 )
 

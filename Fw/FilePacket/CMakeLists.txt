@@ -19,6 +19,7 @@ set(SOURCE_FILES
 set(LINK_DEPS
   Fw/Cfg
   Fw/Types
+  CFDP/Checksum
   Fw/Comp
   Fw/Port
   Fw/Buffer

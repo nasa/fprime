@@ -19,6 +19,7 @@ set(LINK_DEPS
   Fw/Com
   Fw/Log
   Fw/Tlm
+  Svc/PassiveTextLogger
 )
 
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")

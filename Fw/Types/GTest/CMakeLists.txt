@@ -11,6 +11,7 @@ set(SOURCE_FILES
 )
 
 set(LINK_DEPS
+  gtest
   Fw/Cfg
   Fw/Types
   Fw/Comp
