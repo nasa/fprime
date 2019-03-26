@@ -28,7 +28,7 @@ message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
 # Library types, used for generating shared objects
 #
-if (FPRIME_SHARED_LIBS)
+if (LINK_AS_SHARED_LIBS)
     message(STATUS "Generating shared libraries")
     set(FPRIME_LIB_TYPE "SHARED")
 else()

@@ -40,7 +40,9 @@ endfunction(get_module_name)
 # \param MODULE_NAME: name of the module to add generated sources too
 ####
 function(add_generated_sources CPP_SOURCE HPP_SOURCE)
-  message(STATUS "Adding: ${CPP_SOURCE} ${HPP_SOURCE}")
+  if (CMAKE_DEBUG_OUTPUT)
+    message(STATUS "\tGenerated files: ${CPP_SOURCE} ${HPP_SOURCE}")
+  endif()
   set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
   # Add auto-coded sources to the module as sources
   target_sources(
@@ -51,7 +53,7 @@ function(add_generated_sources CPP_SOURCE HPP_SOURCE)
   set_source_files_properties(${CPP_SOURCE} PROPERTIES GENERATED TRUE)
   set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
   # Includes the source, so that the Ac files can include source headers
-  target_include_directories(${MODULE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories("${MODULE_NAME}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction(add_generated_sources)
 ####
 # FPrime Dependencies:

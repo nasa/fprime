@@ -217,9 +217,14 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
-  get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
-  message(STATUS "${OUT}")
-
+  # Link library list output on per-module basis
+  if (CMAKE_DEBUG_OUTPUT)
+     get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
+     if (OUT MATCHES ".*-NOTFOUND")
+       set(OUT "--none--")
+     endif()
+     message(STATUS "\tLinks dependencies: ${OUT}")
+  endif()
   # Create unit test module
   generate_ut_library(${MODULE_NAME} "${FINAL_SOURCE_FILES}")
 
