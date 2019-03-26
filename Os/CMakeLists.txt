@@ -28,6 +28,7 @@ set(SOURCE_FILES
 )
 
 set(LINK_DEPS
+  "${CMAKE_THREAD_LIBS_INIT}" 
   Fw/Cfg
   Fw/Types
   Fw/Comp

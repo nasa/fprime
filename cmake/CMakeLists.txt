@@ -10,7 +10,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/src/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/parser/CMakeLists.txt")
 
 # Bring in the rest of the build system
-include("${CMAKE_CURRENT_LIST_DIR}/Deployment.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/Executable.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Unit_Test.cmake")

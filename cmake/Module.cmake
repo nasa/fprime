@@ -7,19 +7,9 @@
 # These are used as the building blocks of F prime items. This includes deployments,
 # tools, and indiviual components.
 ####
-
+# Include some helper libraries
 include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")
-# Include files with implementation specific details like cheetah
 include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
-
-# Create target for python serializables
-set(PYTHON_SERIALIZABLES "python_serializables")
-add_library(
-  ${PYTHON_SERIALIZABLES}
-  STATIC
-  ${EMPTY_C_SRC}
-)
-
 ####
 # Autocoder:
 #
@@ -92,7 +82,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       )
       #For serializables, add the dict dir
       if (${AC_TYPE} STREQUAL "serializable")
-          set(SERIALIZABLE_DICT_DIR "${FPRIME_CORE_DIR}/Gse/generated/${PROJECT_NAME}/serializable")
+          set(SERIALIZABLE_DICT_DIR "${CMAKE_SOURCE_DIR}/py_dict/serializable")
           execute_process(
             COMMAND ${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
             RESULT_VARIABLE ERR_RETURN
@@ -155,16 +145,6 @@ function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
         ${MODULE_NAME}
         PRIVATE ${ENUM_FINAL_DIR}/${ENUM_SOURCE} ${ENUM_FINAL_DIR}/${ENUM_HEADER}
       )
-
-      # TODO: Invoke autocoder to produce enum dictionary
-      # add_custom_command(
-      #   ${PYTHON_SERIALIZABLES}
-      #   OUTPUT ${ENUM_PY}
-      #   COMMAND ${CMAKE_COMMAND} -E env SHELL_AUTOCODER_DIR=${SHELL_AUTOCODER_DIR}
-      #   ${SHELL_AUTOCODER_DIR}/bin/enum_py.sh ${ENUM_TXT}
-      #   DEPENDS ${ENUM_TXT}
-      # )
-
     endif()
   endforeach()
 endfunction(enum_autocoder)
@@ -219,9 +199,13 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
 
   set(OLD_MODULE_NAME ${MODULE_NAME})
   foreach(LINK_DEP ${LINK_DEPS})
-    get_module_name(${LINK_DEP})
-    add_dependencies(${OLD_MODULE_NAME}  ${MODULE_NAME})
-    target_link_libraries(${OLD_MODULE_NAME}  ${MODULE_NAME})
+	  if ("${LINK_DEP}" MATCHES "-l.*")
+      target_link_libraries("${OLD_MODULE_NAME}" "${LINK_DEP}")
+    else()
+      get_module_name(${LINK_DEP})
+      add_dependencies(${OLD_MODULE_NAME}  ${MODULE_NAME})
+      target_link_libraries(${OLD_MODULE_NAME}  ${MODULE_NAME})
+    endif()
   endforeach()
   set(MODULE_NAME ${OLD_MODULE_NAME})
 
@@ -233,6 +217,8 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
+  get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
+  message(STATUS "${OUT}")
 
   # Create unit test module
   generate_ut_library(${MODULE_NAME} "${FINAL_SOURCE_FILES}")
