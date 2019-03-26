@@ -20,6 +20,5 @@ then
     export BUILD_ROOT="`cd ${DIRNAME}/../..; pwd`"
 fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
-export PYTHONPATH="${BUILD_ROOT}/Gse/src"
-export GSE_GENERATED_PATH="${BUILD_ROOT}/Gse/generated/Ref"
-python "${BUILD_ROOT}/Gse/bin/tinyseqgen.py" "$@"
+export PYTHONPATH="${BUILD_ROOT}/Gds"
+python "${BUILD_ROOT}/Gds/tkGui/bin/seqgen.py" -g ${BUILD_ROOT}/Ref/py_dict "$@"

@@ -69,7 +69,10 @@ SVC_MODULES := \
 	Svc/FileDownlink \
     Svc/AssertFatalAdapter \
     Svc/FatalHandler \
-	Svc/FileManager
+	Svc/FileManager \
+	Svc/UdpSender \
+	Svc/UdpReceiver
+	
 
 DEMO_DRV_MODULES := \
 	Drv/DataTypes \
@@ -207,5 +210,3 @@ OTHER_MODULES := \
 
 DEPLOYMENTS := Ref acdev RPI
 
-# Location of ground/gse software. Autocoded dictionary elements are copied here.
-GDS_MODULE := Gse

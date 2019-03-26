@@ -290,7 +290,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
-            os.environ["DICT_DIR"] = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT) + os.sep + "Gse/generated" + os.sep + DEPLOYMENT
+            os.environ["DICT_DIR"] = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT) + os.sep + DEPLOYMENT + os.sep + "py_dict"
             dict_dir = os.environ["DICT_DIR"]
             PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
             import shutil
