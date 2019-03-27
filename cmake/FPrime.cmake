@@ -19,15 +19,35 @@
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
 
+# Include the Options, and platform files. These are files that change the build
+# setup. Users may need to add items to these files in order to ensure that all
+# specific project builds work as expected.
+include("${CMAKE_CURRENT_LIST_DIR}/Options.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
+
+# Include the support files that provide all the functions, utilities, and other
+# hidden items in the CMake system. Typically a user should not interact with any
+# of these files, as they are a library that automates FPrime builds.
+include("${CMAKE_CURRENT_LIST_DIR}/support/src/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/support/parser/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/support/Executable.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/support/Module.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
+
 # BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
 # path from which to do internal operations.
-#
-#
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
-# Include the build system and the options that the build system allows.
-include("${FPRIME_CORE_DIR}/cmake/CMakeLists.txt")
+# Library types, used for generating shared objects or static archives
+if (LINK_AS_SHARED_LIBS)
+    message(STATUS "Generating shared libraries")
+    set(FPRIME_LIB_TYPE "SHARED")
+else()
+    message(STATUS "Generating static libraries")
+    set(FPRIME_LIB_TYPE "STATIC")
+endif()
 
 # In order to generate AC files out-of-source, the ${CMAKE_BINARY_DIR} must
 # be included as the AC files will be placed there in a parallel, but separated,

@@ -14,4 +14,11 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PortBase.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Obj
+  Fw/Types
+  Os
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")

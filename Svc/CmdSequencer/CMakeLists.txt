@@ -14,7 +14,21 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/formats/AMPCSSequence.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+  Fw/Com
+  Fw/Log
+  Fw/Tlm
+  Os
+  Fw/FilePacket
+  Utils/Hash
+  CFDP/Checksum
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Add unit test directory
 #TODO: CmdSequencer UTs don't work in CMake

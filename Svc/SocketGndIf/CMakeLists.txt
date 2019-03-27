@@ -10,7 +10,20 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SvcSocketGndIfImpl.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+  Fw/Com
+  Fw/Log
+  Fw/Tlm
+  Fw/Cmd
+  Fw/Buffer
+  Svc/GndIf
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})

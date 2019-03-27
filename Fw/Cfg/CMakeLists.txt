@@ -10,4 +10,4 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ConfigCheck.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "")

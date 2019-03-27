@@ -9,7 +9,7 @@ function(generate_ut_library MODULE_NAME SOURCE_FILES)
 
   add_library(
     ${UT_MODULE_NAME}
-    STATIC
+    ${FPRIME_LIB_TYPE}
     EXCLUDE_FROM_ALL # Do not include unit test builds in all
     ${SOURCE_FILES}
   )
@@ -22,7 +22,7 @@ function(generate_ut_library MODULE_NAME SOURCE_FILES)
     "-DPROTECTED=public"
     "-DPRIVATE=public"
   )
-
+  add_dependencies(${UT_MODULE_NAME} gtest)
   # Add dependency on original module
   add_dependencies(${UT_MODULE_NAME} ${MODULE_NAME})
 

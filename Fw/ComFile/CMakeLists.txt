@@ -11,4 +11,11 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FilePacket.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")

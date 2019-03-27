@@ -10,7 +10,17 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PolyDbImpl.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+  Fw/Com
+  Fw/Log
+  Fw/Tlm
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Add unit test directory
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

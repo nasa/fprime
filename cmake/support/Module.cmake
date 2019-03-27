@@ -7,19 +7,9 @@
 # These are used as the building blocks of F prime items. This includes deployments,
 # tools, and indiviual components.
 ####
-
+# Include some helper libraries
 include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")
-# Include files with implementation specific details like cheetah
 include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
-
-# Create target for python serializables
-set(PYTHON_SERIALIZABLES "python_serializables")
-add_library(
-  ${PYTHON_SERIALIZABLES}
-  STATIC
-  ${EMPTY_C_SRC}
-)
-
 ####
 # Autocoder:
 #
@@ -61,7 +51,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       if(${LOWER_TYPE} STREQUAL "topology")
           # Create a dictionary directory for the deployment
           set(IS_TOP "YES")
-          set(DICTIONARY_DIR "${FPRIME_CORE_DIR}/Gse/generated/${TOPOLOGY_NAME}")
+          set(DICTIONARY_DIR "${CMAKE_SOURCE_DIR}/py_dict")
           file(MAKE_DIRECTORY "${DICTIONARY_DIR}")
       # Not topology set variables accordingly
       else()
@@ -87,14 +77,14 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
         OUTPUT ${AC_FINAL_HEADER} ${AC_FINAL_SOURCE}
         COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT} 
         PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR} FPRIME_CORE_DIR=${FPRIME_CORE_DIR}
-        ${FPRIME_CORE_DIR}/cmake/wrapper/codegen.sh ${IS_TOP} ${AC_FINAL_XML} ${AC_FINAL_DIR}
+        ${FPRIME_CORE_DIR}/cmake/support/wrapper/codegen.sh ${IS_TOP} ${AC_FINAL_XML} ${AC_FINAL_DIR}
         DEPENDS ${AC_FINAL_XML}
       )
       #For serializables, add the dict dir
       if (${AC_TYPE} STREQUAL "serializable")
-          set(SERIALIZABLE_DICT_DIR "${FPRIME_CORE_DIR}/Gse/generated/${PROJECT_NAME}/serializable")
+          set(SERIALIZABLE_DICT_DIR "${CMAKE_SOURCE_DIR}/py_dict/serializable")
           execute_process(
-            COMMAND ${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
+            COMMAND ${FPRIME_CORE_DIR}/cmake/support/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
             RESULT_VARIABLE ERR_RETURN
             OUTPUT_VARIABLE NS
          )
@@ -155,16 +145,6 @@ function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
         ${MODULE_NAME}
         PRIVATE ${ENUM_FINAL_DIR}/${ENUM_SOURCE} ${ENUM_FINAL_DIR}/${ENUM_HEADER}
       )
-
-      # TODO: Invoke autocoder to produce enum dictionary
-      # add_custom_command(
-      #   ${PYTHON_SERIALIZABLES}
-      #   OUTPUT ${ENUM_PY}
-      #   COMMAND ${CMAKE_COMMAND} -E env SHELL_AUTOCODER_DIR=${SHELL_AUTOCODER_DIR}
-      #   ${SHELL_AUTOCODER_DIR}/bin/enum_py.sh ${ENUM_TXT}
-      #   DEPENDS ${ENUM_TXT}
-      # )
-
     endif()
   endforeach()
 endfunction(enum_autocoder)
@@ -195,13 +175,13 @@ function(topology_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
 endfunction(topology_autocoder)
 
 # Define function for adding fprime module library
-function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES)
+function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
   # Sets MODULE_NAME to unique name based on path
   get_module_name(${CMAKE_CURRENT_LIST_DIR})
 
   add_library(
     ${MODULE_NAME}
-    STATIC
+    ${FPRIME_LIB_TYPE}
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
@@ -217,6 +197,18 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES)
   component_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
   topology_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
 
+  set(OLD_MODULE_NAME ${MODULE_NAME})
+  foreach(LINK_DEP ${LINK_DEPS})
+	  if ("${LINK_DEP}" MATCHES "-l.*")
+      target_link_libraries("${OLD_MODULE_NAME}" "${LINK_DEP}")
+    else()
+      get_module_name(${LINK_DEP})
+      add_dependencies(${OLD_MODULE_NAME}  ${MODULE_NAME})
+      target_link_libraries(${OLD_MODULE_NAME}  ${MODULE_NAME})
+    endif()
+  endforeach()
+  set(MODULE_NAME ${OLD_MODULE_NAME})
+
   # Remove empty source from target
   get_target_property(FINAL_SOURCE_FILES ${MODULE_NAME} SOURCES)
   list(REMOVE_ITEM FINAL_SOURCE_FILES ${EMPTY_C_SRC})
@@ -225,7 +217,14 @@ function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES)
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
-
+  # Link library list output on per-module basis
+  if (CMAKE_DEBUG_OUTPUT)
+     get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
+     if (OUT MATCHES ".*-NOTFOUND")
+       set(OUT "--none--")
+     endif()
+     message(STATUS "\tLinks dependencies: ${OUT}")
+  endif()
   # Create unit test module
   generate_ut_library(${MODULE_NAME} "${FINAL_SOURCE_FILES}")
 

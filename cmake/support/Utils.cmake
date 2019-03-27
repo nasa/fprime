@@ -40,7 +40,9 @@ endfunction(get_module_name)
 # \param MODULE_NAME: name of the module to add generated sources too
 ####
 function(add_generated_sources CPP_SOURCE HPP_SOURCE)
-  message(STATUS "Adding: ${CPP_SOURCE} ${HPP_SOURCE}")
+  if (CMAKE_DEBUG_OUTPUT)
+    message(STATUS "\tGenerated files: ${CPP_SOURCE} ${HPP_SOURCE}")
+  endif()
   set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
   # Add auto-coded sources to the module as sources
   target_sources(
@@ -51,7 +53,7 @@ function(add_generated_sources CPP_SOURCE HPP_SOURCE)
   set_source_files_properties(${CPP_SOURCE} PROPERTIES GENERATED TRUE)
   set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
   # Includes the source, so that the Ac files can include source headers
-  target_include_directories(${MODULE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories("${MODULE_NAME}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction(add_generated_sources)
 ####
 # FPrime Dependencies:
@@ -66,16 +68,16 @@ endfunction(add_generated_sources)
 ####
 function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   # Figure out which parser to use when looking for various dependencies.
-  set(PARSER_PY ${FPRIME_CORE_DIR}/cmake/parser/${PARSER_TYPE}_xml.py)
+  set(PARSER_PY "${FPRIME_CORE_DIR}/cmake/support/parser/${PARSER_TYPE}_xml.py")
   if (${PARSER_TYPE} STREQUAL "topology")
     execute_process(
-      COMMAND ${FPRIME_CORE_DIR}/cmake/parser/topology_xml.py "--targets" "${XML_PATH}"
+      COMMAND "${PARSER_PY}" "--targets" "${XML_PATH}"
       RESULT_VARIABLE ERR_RETURN
       OUTPUT_VARIABLE TARGETS
     )
   else() 
     execute_process(
-      COMMAND ${PARSER_PY} "${XML_PATH}" "${MODULE_NAME}"
+      COMMAND "${PARSER_PY}" "${XML_PATH}" "${MODULE_NAME}"
       RESULT_VARIABLE ERR_RETURN
       OUTPUT_VARIABLE TARGETS
     )
@@ -84,8 +86,11 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   if(ERR_RETURN)
      message(FATAL_ERROR "Failed to parse ${XML_PATH} using parser ${PARSER_PY} with result: ${ERR_RETURN}")
   endif()
-  # For every dected dependency, add them to the supplied module
+  # For every dected dependency, add them to the supplied module. This enforces build order.
+  # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
+  # this prevents the need for manually specifying link orders.
   foreach(TARGET ${TARGETS})
     add_dependencies(${MODULE_NAME} ${TARGET})
+    target_link_libraries(${MODULE_NAME} ${TARGET})
   endforeach()
 endfunction(fprime_dependencies)

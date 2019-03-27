@@ -15,7 +15,7 @@ set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/ExampleType.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "")
 
 # Add unit test directory
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

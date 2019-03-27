@@ -19,7 +19,11 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/StringType.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+set(LINK_DEPS
+  Fw/Cfg
+)
+
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Add GTest directory
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

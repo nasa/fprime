@@ -8,8 +8,15 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Linux/FileStub.cpp"
 )
 
+set(LINK_DEPS
+  Fw/Cfg
+  Fw/Types
+  Fw/Comp
+  Fw/Port
+)
+
 # Invoke build system generate_module
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 
 # Sets MODULE_NAME to unique name based on path
