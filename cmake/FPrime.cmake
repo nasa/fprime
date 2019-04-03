@@ -48,7 +48,10 @@ else()
     message(STATUS "Generating static libraries")
     set(FPRIME_LIB_TYPE "STATIC")
 endif()
-
+# Let user know on the choice of dictionaries
+if (GENERATE_HERITAGE_PY_DICT)
+    message(STATUS "Generating Heritage Python Dictionaries")
+endif()
 # In order to generate AC files out-of-source, the ${CMAKE_BINARY_DIR} must
 # be included as the AC files will be placed there in a parallel, but separated,
 # directory from the source.

@@ -11,7 +11,7 @@
 #      Svc/ActiveLogger also becomes Svc_ActiveLogger
 #
 # \param DIRECTORY_PATH: path to infer MODULE_NAME from
-# \return MODULE_NAME
+# \return MODULE_NAME (set in parent scope
 ####
 function(get_module_name DIRECTORY_PATH)
   # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
@@ -27,6 +27,53 @@ function(get_module_name DIRECTORY_PATH)
   string(REPLACE "/" "_" TEMP_MODULE_NAME ${TEMP_MODULE_NAME})
   set(MODULE_NAME ${TEMP_MODULE_NAME} PARENT_SCOPE)
 endfunction(get_module_name)
+
+####
+# Setup Module Dicts:
+#
+# Creates a dictionary target for the module, that is then added to the "dict" and "module"
+# targets.
+# \param MOD_NAME: name of module being processed
+# \param AI_XML: AI_XML that is generating dictionaries
+# \param DICT_INPUTS: inputs from auto-coder, used to trigger dictionary generation
+####
+function(setup_module_dicts MOD_NAME AI_XML DICT_INPUTS)
+    set(AI_DICT_NAME "${AI_XML}_DICT")
+    set(MOD_DICT_NAME "${MOD_NAME}_DICT")
+    # Add the dictionary target for this module, if it doesn't already exist
+    if (NOT TARGET ${MOD_DICT_NAME})
+        add_custom_target(${MOD_DICT_NAME})
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "\tAdding Dict Target: ${OLD_MODULE_NAME}_DICT")
+        endif()
+    endif()
+    add_custom_target(${AI_DICT_NAME} DEPENDS ${DICT_INPUTS})
+    # Add dependencies upstream
+    add_dependencies(${AI_DICT_NAME} ${CODEGEN_TARGET})
+    add_dependencies(${MOD_DICT_NAME} ${AI_DICT_NAME})
+endfunction(setup_module_dicts)
+
+####
+# Add Dict Deps:
+#
+# Used to track dictionary dependencies, in order to ensure that the fewest number of dictionary
+# targets are used.
+# \param OLD_MODULE_NAME: module receiving a dict dependency
+# \param MODULE_NAME: name of the module whose dictionary will be added
+####
+function(add_dict_deps OLD_MODULE_NAME MODULE_NAME)
+    # Skip if there is no dict module to be added
+    if (TARGET "${MODULE_NAME}_DICT")
+        # We have sub-dictionaries, create a roll-up target
+        if (NOT TARGET "${OLD_MODULE_NAME}_DICT")
+            if (CMAKE_DEBUG_OUTPUT)
+                message(STATUS "\tAdding Faux-Dict Target: ${OLD_MODULE_NAME}_DICT")
+            endif()
+            add_custom_target("${OLD_MODULE_NAME}_DICT")
+        endif()
+        add_dependencies("${OLD_MODULE_NAME}_DICT" "${MODULE_NAME}_DICT")
+    endif()
+endfunction(add_dict_deps)
 
 ####
 # Generated Files:
@@ -89,8 +136,9 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   # For every dected dependency, add them to the supplied module. This enforces build order.
   # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
   # this prevents the need for manually specifying link orders.
-  foreach(TARGET ${TARGETS})
+  foreach(TARGET ${TARGETS}) #TODO: can this be a non-loop?
     add_dependencies(${MODULE_NAME} ${TARGET})
     target_link_libraries(${MODULE_NAME} ${TARGET})
+    add_dict_deps(${MODULE_NAME}  ${TARGET})
   endforeach()
 endfunction(fprime_dependencies)

@@ -607,7 +607,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
             fileName = the_parsed_topology_xml.get_xml_filename().replace("Ai.xml","Dictionary.xml")
             PRINT.info ("Generating XML dictionary %s"%fileName)
-            fd = open(fileName,"w")
+            fd = open(fileName,"wb") #Note: binary forces the same encoding of the source files
             fd.write(etree.tostring(topology_dict,pretty_print=True))
 
 

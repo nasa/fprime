@@ -33,3 +33,12 @@ option(GENERATE_AC_IN_SOURCE "Ac.cpp and Ac.hpp are placed with source files." O
 # runtime behavior.
 ####
 option(LINK_AS_SHARED_LIBS "Link F prime with shared libraries." OFF)
+
+####
+# GENERATE_HERITAGE_PY_DICT:
+#
+# This option switches from generating XML dictionaries to generating the heritage python
+# dictionatries. This enables backward compatible use with the older Tk GUI and other tools that
+# use python fragment dictionaries.
+####
+option(GENERATE_HERITAGE_PY_DICT "Generate F prime python dictionaries instead of XML based dictionaries." OFF)
