@@ -26,16 +26,16 @@ Requirement | Description | Rationale | Verification Method | Status |
 ---- | ---- | ---- | ---- | ----
 BUILD-01 | The build system shall support native F´ builds and installations on Linux, and Mac OS. | F´ development at JPL takes place on Linux and Mac OS machines | Inspection | Built-In |
 BUILD-02 | The build system shall provide templates for supporting other host OSes. | Templates make adding hosts easier. | Inspection | Built-In |
-BUILD-03 | The build system shall provide templates for supporting other targets. | Templates make adding new targets easier. | Inspection | Needed |
+BUILD-03 | The build system shall provide templates for supporting other targets. | Templates make adding new targets easier. | Inspection | Done |
 BUILD-05 | The build system shall provide a cross-compiled target example. | Cross-compilation is common at JPL and must be provided as an example. | Inspection | Done |
 BUILD-06 | The build system shall support custom build commands. | Custom build commands allow for extension of the build system. | Inspection | Needed |
 BUILD-07 | The build system shall support individual component, port, and topology builds. | Compiling a specific component can speed-up development. | Unit Test | Work-Around |
 BUILD-08 | The build system shall support unit test building and running system checks. | Unit testing is critical for proper development. | Unit Test | Needed |
 BUILD-09 | The build system shall support building deployments. | Deployments must build properly | Unit Test | Done |
-BUILD-10 | The build system shall support integration with other build systems. | Some libraries come with other make systems. | Inspection | Needed |
+BUILD-10 | The build system shall support integration with other build systems. | Some libraries come with other make systems. | Inspection | Built-In |
 BUILD-11 | The build system shall not require specific ordering of all modules to build properly. | Ordering of all F´ is difficult when it must be explicit | Inspection | Built-In |
 BUILD-12 | The build system shall support separate out-of-source building of F´ | Build artifacts are commonly kept separate from source code. | Inspection | Done |
-BUILD-13 | The build system shall support executable and tool building | Not all of F´ is a deployment | Inspection | Needed |
+BUILD-13 | The build system shall support executable and tool building | Not all of F´ is a deployment | Inspection | Done |
 BUILD-14 | The build system shall support installation and distribution of outputs, headers, and libraries | Shipping of binary outputs is important for projects. | Inspection | Needed |
 BUILD-15 | The build system shall support user-configurable builds i.e. debug, release, etc. | F´ may need access to different build variants for debugging purposes | Inspection | Work-Around |
 BUILD-16 | The build system shall be easy to use including adding new components | F´'s current build system has a steep learning curve | Inspection | Done |
@@ -45,7 +45,7 @@ BUILD_19 | The build system shall not be difficult to set up and configure. | Po
 BUILD_20 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection | Done |
 BUILD_21 | The build system shall support Windows hosts. | Windows build are desired to be supported in the future. | Inspection | Needed |
 BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection | Needed |
-BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection | Needed |
+BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection | Done |
 BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection | Needed |
 BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | | | Needed |
 BUILD_27 | The build system shall support explicit and implicit execution of the F´ Autocoder. | | | Done |
