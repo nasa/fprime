@@ -19,7 +19,11 @@
 
 # There are some standard files that are included for reference
 
-TEST_SRC = TesterBase.cpp GTestBase.cpp Tester.cpp main.cpp
+TEST_SRC = Handcode/TesterBase.cpp Handcode/GTestBase.cpp Tester.cpp main.cpp
 
 TEST_MODS = Svc/AssertFatalAdapter Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Types Fw/Log Fw/Obj Os gtest
 
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

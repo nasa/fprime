@@ -11,8 +11,8 @@
 #   or an ITAR exemption prior to the export or transfer.
 #
 
-TEST_SRC = 	TesterBase.cpp \
-			GTestBase.cpp \
+TEST_SRC = 	Handcode/TesterBase.cpp \
+			Handcode/GTestBase.cpp \
 			Tester.cpp \
 			main.cpp
 
@@ -31,3 +31,7 @@ TEST_MODS = Svc/Health \
 			Svc/Sched \
 			Os \
 			gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

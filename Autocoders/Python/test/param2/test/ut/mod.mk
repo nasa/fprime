@@ -19,6 +19,10 @@
 
 # There are some standard files that are included for reference
 
-TEST_SRC = GTestBase.cpp TesterBase.cpp main.cpp
+TEST_SRC = Handcode/GTestBase.cpp Handcode/TesterBase.cpp main.cpp
 
 TEST_MODS = Autocoders/Python/test/param2 Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

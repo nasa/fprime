@@ -19,3 +19,7 @@ TEST_SRC =      OsQueueTest.cpp \
                 OsFileSystemTest.cpp
 
 TEST_MODS = Os Fw/Obj Fw/Types Utils/Hash
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

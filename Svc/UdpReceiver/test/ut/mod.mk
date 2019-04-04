@@ -1,8 +1,8 @@
 
 TEST_SRC = main.cpp \
 	Tester.cpp \
-	GTestBase.cpp \
-	TesterBase.cpp
+	Handcode/GTestBase.cpp \
+	Handcode/TesterBase.cpp
 	
 TEST_MODS = Svc/UdpReceiver \
 			Svc/Sched \
@@ -16,3 +16,6 @@ TEST_MODS = Svc/UdpReceiver \
 			Fw/Types \
 			Os \
 			gtest
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

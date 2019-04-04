@@ -19,8 +19,8 @@
 
 # There are some standard files that are included for reference
 
-TEST_SRC = 	TesterBase.cpp \
-			GTestBase.cpp \
+TEST_SRC = 	Handcode/TesterBase.cpp \
+			Handcode/GTestBase.cpp \
 			TlmChanTester.cpp \
 			TlmChanImplTester.cpp
 
@@ -37,3 +37,7 @@ TEST_MODS = Svc/TlmChan \
 			Fw/Types \
 			Os \
 			gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

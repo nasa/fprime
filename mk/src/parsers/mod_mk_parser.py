@@ -134,7 +134,7 @@ comp_helper_targets = """
 
 """
 
-class CfgParseError:
+class CfgParseError(Exception):
     def __init__(self, error):
         self.error = error
     def getErr(self):

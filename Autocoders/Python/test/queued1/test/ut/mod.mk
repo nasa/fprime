@@ -22,3 +22,7 @@
 TEST_SRC = TestComponentTestAi.xml ComponentTester.cpp ComponentTesterImpl.cpp
 
 TEST_MODS = Autocoders/Python/test/queued1 Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

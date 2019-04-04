@@ -4,8 +4,8 @@
 
 TEST_SRC =       main.cpp \
 				Tester.cpp \
-				GTestBase.cpp \
-				TesterBase.cpp
+				Handcode/GTestBase.cpp \
+				Handcode/TesterBase.cpp
 
 TEST_MODS =          Ref/MathSender \
 					Ref/MathPorts \
@@ -23,3 +23,7 @@ TEST_MODS =          Ref/MathSender \
 					Utils/Hash \
 					gtest
 
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

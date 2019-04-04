@@ -22,3 +22,6 @@
 TEST_SRC = TimeTest.cpp
 
 TEST_MODS = Fw/Time Fw/Types gtest
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

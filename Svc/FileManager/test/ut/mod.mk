@@ -19,7 +19,7 @@
 
 # There are some standard files that are included for reference
 
-TEST_SRC = 	TesterBase.cpp GTestBase.cpp Tester.cpp Main.cpp
+TEST_SRC = 	Handcode/TesterBase.cpp Handcode/GTestBase.cpp Tester.cpp Main.cpp 
 
 TEST_MODS = Svc/FileManager \
 			Fw/Tlm \
@@ -31,5 +31,10 @@ TEST_MODS = Svc/FileManager \
 			Fw/Time \
 			Fw/Types \
 			Fw/Com \
+			Utils/Hash \
 			Os \
 			gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

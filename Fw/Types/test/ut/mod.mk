@@ -22,3 +22,6 @@
 TEST_SRC = TypesTest.cpp
 
 TEST_MODS = Fw/Types Os gtest
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode
