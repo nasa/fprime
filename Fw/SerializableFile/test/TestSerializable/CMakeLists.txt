@@ -20,7 +20,7 @@ set(LINK_DEPS
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
 # Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
+get_module_name(${CMAKE_CURRENT_LIST_DIR} "FALSE")
 
 # Exclude test module from all build
 set_target_properties(
@@ -28,3 +28,12 @@ set_target_properties(
   PROPERTIES
   EXCLUDE_FROM_ALL TRUE
 )
+
+get_module_name(${CMAKE_CURRENT_LIST_DIR} "TRUE")
+# Exclude test module from all build
+set_target_properties(
+  ${MODULE_NAME}
+  PROPERTIES
+  EXCLUDE_FROM_ALL TRUE
+)
+

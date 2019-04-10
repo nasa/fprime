@@ -25,7 +25,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 function(add_dict_target)
     # If we are generating python dictionaries, then we need to copy the outputs
-    if (GENERATE_HERITAGE_PY_DICT)
+    if (UT_BUILD)
+        return()
+    elseif (GENERATE_HERITAGE_PY_DICT)
         add_custom_target(
             dict
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/dict/serializable ${CMAKE_SOURCE_DIR}/py_dict/serializable
@@ -40,27 +42,33 @@ endfunction(add_dict_target)
 ####
 # Generate Executable:
 #
-# Top-level executable generation.
+# Top-level executable generation. Core allows for generarion of UT specifics without affecting API.
 # \param EXECUTABLE_NAME: name of executable to be generated.
-# \param AUTOCODER_INPUT_FILES: list of auto-coder files input into this executable
-# \param SOURCE_FILES: source files for this executable
-# \param LINK_DEPS: specified module-level link dependencies
+# \param SOURCE_FILES_INPUT: source files for this executable, split into AC and normal sources
+# \param DEPS_INPUT: specified module-level dependencies
 ####
-function(generate_executable EXECUTABLE_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
-  add_dict_target()
+function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
+  # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
+  # their separate peices. 
+  #
+  # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
+  # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
+  # LINK_DEPS = -l link flags given to DEPS_INPUT
+  # MOD_DEPS = All other module inputs DEPS_INPUT
+  split_source_files("${SOURCE_FILES_INPUT}")
+  split_dependencies("${DEPS_INPUT}")
+
   message(STATUS "Adding executable: ${EXECUTABLE_NAME}")
   add_executable(
       "${EXECUTABLE_NAME}"
-      "${EMPTY_C_SRC}" # Added to suppress warning if module only has autocode
+      "${SOURCE_FILES}" # Added to suppress warning if module only has autocode
   )
-  # Generate module from sources
-  generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
-
-  # Sets MODULE_NAME to unique name based on path
-  get_module_name(${CMAKE_CURRENT_LIST_DIR})
-  target_link_libraries("${EXECUTABLE_NAME}" "${MODULE_NAME}")
-
-  #Force top-level to depend on dicts and make the executable run the "dict" command
-  add_dependencies(dict "${MODULE_NAME}_DICT")
-  add_dependencies("${EXECUTABLE_NAME}" dict)
+  # Setup a dictionary target, and generate an input module
+  add_dict_target()
+  generate_module(${EXECUTABLE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
+  # Add dependencies to the 'dict' target, if not a UT build
+  if (UT_BUILD)
+      add_dependencies(dict "${MODULE_NAME}_dict")
+      add_dependencies("${EXECUTABLE_NAME}" dict)
+  endif()
 endfunction(generate_executable)

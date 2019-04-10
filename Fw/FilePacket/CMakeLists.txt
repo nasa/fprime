@@ -1,11 +1,10 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CancelPacket.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DataPacket.cpp"
@@ -15,26 +14,18 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PathName.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StartPacket.cpp"
 )
-
-set(LINK_DEPS
+# Note: no autocoding files, so basic dependencies must be hard-coded
+set(MOD_DEPS
   Fw/Cfg
   Fw/Types
   CFDP/Checksum
-  Fw/Comp
-  Fw/Port
   Fw/Buffer
 )
+register_fprime_module()
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
-
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Depends on BufferSerializable defined in another module
-add_dependencies(${MODULE_NAME} "Fw_Buffer")
 
 # Add GTest directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
+## TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
 
 # Add unit test directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+## TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

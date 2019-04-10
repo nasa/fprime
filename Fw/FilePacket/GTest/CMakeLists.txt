@@ -28,6 +28,6 @@ set(LINK_DEPS
 )
 generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
 
-# Add dependency on gtest
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-add_dependencies(${MODULE_NAME} ${GTEST_TARGET}) 
+### Add dependency on gtest
+##get_module_name(${CMAKE_CURRENT_LIST_DIR})
+##add_dependencies(${MODULE_NAME} ${GTEST_TARGET}) 

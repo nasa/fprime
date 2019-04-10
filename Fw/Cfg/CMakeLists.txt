@@ -1,13 +1,11 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ConfigCheck.cpp"
 )
-
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "")
+register_fprime_module()

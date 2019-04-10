@@ -1,32 +1,35 @@
-# Setup testing infrastructure
+####
+# Testing does not properly handle unit test dependencies in some versions of CMake. Therefore,
+# we follow a standard workaround from CMake users and create a "check" target used to run the
+# tests while rolling-up the dependencies properly.
+####
 enable_testing()
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
-# Create a unit test library
-function(generate_ut_library MODULE_NAME SOURCE_FILES)
-  # Generate unit test module name
-  string(CONCAT UT_MODULE_NAME ${MODULE_NAME} "_ut")
-
-  add_library(
-    ${UT_MODULE_NAME}
-    ${FPRIME_LIB_TYPE}
-    EXCLUDE_FROM_ALL # Do not include unit test builds in all
-    ${SOURCE_FILES}
-  )
-
-  # Add unit test compile definitions
-  target_compile_definitions(
-    ${UT_MODULE_NAME}
-    PRIVATE
-    "-DBUILD_UT"
-    "-DPROTECTED=public"
-    "-DPRIVATE=public"
-  )
-  add_dependencies(${UT_MODULE_NAME} gtest)
-  # Add dependency on original module
-  add_dependencies(${UT_MODULE_NAME} ${MODULE_NAME})
-
-endfunction(generate_ut_library)
+## # Create a unit test library
+## function(generate_ut_library MODULE_NAME SOURCE_FILES)
+##   # Generate unit test module name
+##   string(CONCAT UT_MODULE_NAME ${MODULE_NAME} "_ut")
+##
+##   add_library(
+##     ${UT_MODULE_NAME}
+##     ${FPRIME_LIB_TYPE}
+##     EXCLUDE_FROM_ALL # Do not include unit test builds in all
+##     ${SOURCE_FILES}
+##   )
+##
+##   # Add unit test compile definitions
+##   target_compile_definitions(
+##     ${UT_MODULE_NAME}
+##     PRIVATE
+##     "-DBUILD_UT"
+##     "-DPROTECTED=public"
+##     "-DPRIVATE=public"
+##   )
+##   add_dependencies(${UT_MODULE_NAME} gtest)
+##   # Add dependency on original module
+##   add_dependencies(${UT_MODULE_NAME} ${MODULE_NAME})
+## endfunction(generate_ut_library)
 
 # Invoke autocoder to generate unit test files
 function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
@@ -70,60 +73,38 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
   endforeach()
 endfunction(unit_test_component_autocoder)
 
-# Add a unit test
-function(add_unit_test SOURCE_FILES MODULES_LIST)
-  # Sets MODULE_NAME to unique name based on path
-  set(MODULE_NAME "")
-  get_module_name(${CMAKE_CURRENT_LIST_DIR})
-  set(UT_EXE_NAME ${MODULE_NAME})
-  message(STATUS "\tAdding unit test: ${UT_EXE_NAME}")
 
-  # Create excutable
-  add_executable(
-    ${UT_EXE_NAME}
-    EXCLUDE_FROM_ALL
-    ${SOURCE_FILES}
-  )
-
-  # Invoke componet autocoder for unit tests
-  unit_test_component_autocoder(${UT_EXE_NAME} ${SOURCE_FILES})
-
-  # Generate ut libary names
-  set(UT_LIBRARIES "")
-  foreach(UT_MODULE_PATH ${MODULES_LIST})
-    # Sets MODULE_NAME to unique name based on path
-    get_module_name(${UT_MODULE_PATH})
-    string(CONCAT UT_MODULE_NAME ${MODULE_NAME} "_ut")
-    list(APPEND UT_LIBRARIES ${UT_MODULE_NAME})
-  endforeach()
-
-  # Link modules
-  target_link_libraries(
-    "${UT_EXE_NAME}"
-    "${GTEST_TARGET}"
-    "${CMAKE_THREAD_LIBS_INIT}"
-    "${UT_LIBRARIES}"
-  )
-
-  # Add unit tests definitions
-  target_compile_definitions(
-    ${UT_EXE_NAME}
-    PRIVATE
-    "-DBUILD_UT"
-    "-DPROTECTED=public"
-    "-DPRIVATE=public"
-  )
-
-  # Add test
-  add_test(
-    NAME ${UT_EXE_NAME}
-    COMMAND ${UT_EXE_NAME}
-  )
-
-  # Add dependency on check
-  add_dependencies(
-    check
-    ${UT_EXE_NAME}
-  )
-
-endfunction(add_unit_test)
+####
+# Add Unit Test:
+#
+# Dispair has set in, and I don't know anymore.
+####
+function(generate_ut UT_EXE_NAME UT_SOURCES MOD_DEPS)
+    generate_executable(${UT_EXE_NAME} "" "")
+    # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
+    # their separate peices. 
+    #
+    # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
+    # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
+    # LINK_DEPS = -l link flags given to DEPS_INPUT
+    # MOD_DEPS = All other module inputs DEPS_INPUT
+    split_source_files("${SOURCE_FILES_INPUT}")
+    split_dependencies("${DEPS_INPUT}")
+    # Generate the UTs w/ autocoding and add the other sources  
+    unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}")
+    target_sources(
+        ${UT_EXE_NAME}
+        PRIVATE
+        ${SOURCE_FILES}
+    )
+    # Link modules
+    target_link_libraries(
+        "${UT_EXE_NAME}"
+        "${GTEST_TARGET}"
+        ${LINK_DEPS}
+        ${MOD_DEPS}
+    )
+    # Add test and dependencies to the "check" target
+    add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
+    add_dependencies(check)
+endfunction()

@@ -28,13 +28,14 @@ include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 # Include the support files that provide all the functions, utilities, and other
 # hidden items in the CMake system. Typically a user should not interact with any
 # of these files, as they are a library that automates FPrime builds.
+include("${CMAKE_CURRENT_LIST_DIR}/support/Executable.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/src/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/support/parser/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Executable.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Module.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
-
+include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 # BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
 # path from which to do internal operations.
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")

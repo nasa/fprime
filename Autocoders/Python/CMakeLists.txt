@@ -3,4 +3,4 @@ set(PYTHON_AUTOCODER_DIR "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL "Directory f
 
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/src/")
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/templates/")
-# add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/")
+#TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/")

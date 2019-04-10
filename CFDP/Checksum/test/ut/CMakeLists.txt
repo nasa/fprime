@@ -11,4 +11,4 @@ set(UT_MODULES
   "${FPRIME_CORE_DIR}/Fw/Types"
 )
 
-add_unit_test("${UT_SOURCE_FILES}" "${UT_MODULES}")
+#add_unit_test("${UT_SOURCE_FILES}" "${UT_MODULES}")

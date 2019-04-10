@@ -1,9 +1,10 @@
-# Add source files for module
-
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
@@ -26,22 +27,20 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
 )
-
-set(LINK_DEPS
+set(MOD_DEPS
   "${CMAKE_THREAD_LIBS_INIT}" 
   Fw/Cfg
   Fw/Types
   Utils/Hash
 )
 
-# Invoke build system generate_module
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
+register_fprime_module()
 
 # Add stubs directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
+##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
 
 # Add unit test directories
 
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut")
+##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut")
+##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut")
