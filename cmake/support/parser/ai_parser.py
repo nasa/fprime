@@ -106,7 +106,7 @@ def read_xml_file(input_file, import_base):
         dependencies.update(read_fprime_import(import_type, root))
     # Recurse imports for other importables
     for recurse_ai in root.findall("import_dictionary"):
-        read_xml_file(os.path.join(import_base, recurse_ai.text), import_base)
+        dependencies.update(read_xml_file(os.path.join(import_base, recurse_ai.text), import_base))
     return dependencies
 
 
