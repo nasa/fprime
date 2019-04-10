@@ -22,10 +22,14 @@ set(MOD_DEPS
   Fw/Buffer
 )
 register_fprime_module()
-
-
 # Add GTest directory
-## TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
 
-# Add unit test directory
-## TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+set(UT_MOD_DEPS
+    Fw/FilePacket/GTest
+)
+
+set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+)
+register_fprime_ut()

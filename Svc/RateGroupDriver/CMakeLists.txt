@@ -12,4 +12,11 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+
+### UTs ###
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Svc/RateGroupDriver/RateGroupDriverComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateGroupDriverTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateGroupDriverImplTester.cpp"
+)
+register_fprime_ut()

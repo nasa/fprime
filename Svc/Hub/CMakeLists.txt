@@ -13,4 +13,3 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

@@ -5,6 +5,9 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+set(MOD_DEPS
+    Fw/Com
+)
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/CmdRegPortAi.xml"

@@ -67,7 +67,11 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   generate_module(${EXECUTABLE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
   # Add dependencies to the 'dict' target, if not a UT build
   if (NOT UT_BUILD)
-      add_dependencies(dict "${MODULE_NAME}_dict")
-      add_dependencies("${EXECUTABLE_NAME}" dict)
+      add_dependencies(dict "${EXECUTABLE_NAME}_dict")
+      add_dependencies(${EXECUTABLE_NAME} dict)
+  endif()
+  # Link library list output on per-module basis
+  if (CMAKE_DEBUG_OUTPUT)
+	  print_dependencies(${EXECUTABLE_NAME})
   endif()
 endfunction(generate_executable)

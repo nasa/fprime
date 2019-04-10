@@ -45,6 +45,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
     string(REGEX MATCH "([a-zA-Z0-9\-_]+)${NAME_TYPE}Ai.xml" AC_XML "${INPUT_FILE}")
     string(REGEX REPLACE "([a-zA-Z0-9\-_]+)(${NAME_TYPE}Ai.xml)" "\\1" AC_NAME "${AC_XML}")
     if(NOT ${AC_XML} STREQUAL "")
+      get_filename_component(INPUT_FILE_REAL "${INPUT_FILE}" REALPATH)
       message(STATUS "\tFound ${LOWER_TYPE}: ${AC_NAME} from ${AC_XML}")
       # The build system intrinsically depends on these AC_XML files, so add it to the CMAKE_CONFIGURE_DEPENDS  
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${AC_XML})
@@ -61,8 +62,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       endif()
       string(CONCAT AC_FINAL_HEADER ${AC_FINAL_DIR} "/" ${AC_HEADER})
       string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
-      string(CONCAT AC_FINAL_XML ${CMAKE_CURRENT_LIST_DIR} "/" ${AC_XML})
-      acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${AC_FINAL_XML}")
+      acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
 
       # Serializables and topologies generate dictionaries
       if (${AC_TYPE} STREQUAL "topology" OR ${AC_TYPE} STREQUAL "serializable")
@@ -70,12 +70,12 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       endif()
       # Generated and detected dependencies
       add_generated_sources(${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${MODULE_NAME})
-      fprime_dependencies(${AC_FINAL_XML} ${MODULE_NAME} ${LOWER_TYPE})
+      fprime_dependencies(${INPUT_FILE_REAL} ${MODULE_NAME} ${LOWER_TYPE})
     endif()
   endforeach()
 endfunction(generic_autocoder)
 
-# Function for invokeing enum autocoder: TODO fix enumerations
+# TODO: enumerations don't work super well with the system.  Don't use.
 function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
   # Search for enum txt files
   foreach(INPUT_FILE ${AUTOCODER_INPUT_FILES})
@@ -116,14 +116,12 @@ endfunction(enum_autocoder)
 ####
 # Generate Module:
 #
-# Generates the module as an F prime module. This means that it will process autocoding, sources,
-# and linking. This will all be generated into a library.
+# Generates the module as an F prime module. This means that it will process autocoding,
+# and dependencies. Hard sources are not added here, but in the caller. This will all be
+# generated into a library.
 #
-# This starts by splitting SOURCE_FILES_INPUT into its constitutient peices
-# "AUTOCODER_INPUT_FILES" and "SOURCE_FILES". The first is routed to the autocoder and the second
-# is routed to the source files for library.
-#
-# DEPS_INPUT is broken into modules and -l flags.
+# MOD_DEPS are F prime dependencies.
+# LINK_DEPS are noraml link dependencies. i.e. -lm
 ####
 function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
   # If there are  build flags, set them now 
@@ -160,12 +158,14 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
-  # Link library list output on per-module basis
-  if (CMAKE_DEBUG_OUTPUT)
-	  print_dependencies(${OBJ_NAME})
-  endif()
 endfunction(generate_module)
-
+####
+# Generate Library:
+#
+# Generates a library as part of F prime. This runs the AC and all the other items for the build.
+# It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
+# and library deps.
+####
 function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
   # their separate peices. 
@@ -188,4 +188,8 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
   generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
+  # Link library list output on per-module basis
+  if (CMAKE_DEBUG_OUTPUT)
+	  print_dependencies(${MODULE_NAME})
+  endif()
 endfunction(generate_library)

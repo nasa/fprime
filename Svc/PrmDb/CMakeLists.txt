@@ -12,4 +12,14 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+
+### UTs ###
+set(UT_MOD_DEPS
+    Os_Stubs
+)
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Svc/PrmDb/PrmDbComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
+)
+register_fprime_ut()

@@ -12,4 +12,15 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+### UTs ###
+####
+# WARNING:
+#
+# This UT does not use auto-generate GTest files. DO NOT emulate.
+####
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbComponentTestAc.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbImplTester.cpp"
+)
+register_fprime_ut()

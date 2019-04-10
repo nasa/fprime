@@ -37,10 +37,28 @@ set(MOD_DEPS
 register_fprime_module()
 
 # Add stubs directory
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
 
-# Add unit test directories
+### UTS ### Note: 3 separate UTs registered here.
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsQueueTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
+)
+## TODO: **BROKEN UT**, validation of File fails
+#register_fprime_ut()
 
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut")
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut")
+# Second UT Pthreads
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/test/ut/BufferQueueTest.cpp"
+)
+register_fprime_ut("Os_pthreads")
+
+# Third  UT Pthrads MAX Heap
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp"
+)
+register_fprime_ut("Os_pthreads_max_heap")

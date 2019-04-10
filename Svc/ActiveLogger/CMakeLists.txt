@@ -12,5 +12,13 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-
-##TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+### UTs ###
+set(UT_MOD_DEPS
+    Os_Stubs
+)
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Svc/ActiveLogger/ActiveLoggerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerImplTester.cpp"
+)
+register_fprime_ut()

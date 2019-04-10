@@ -22,7 +22,7 @@
 #ifndef ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 #define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 
-#include <Svc/ActiveRateGroup/test/ut/GTestBase.hpp>
+#include <GTestBase.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 
 namespace Svc {

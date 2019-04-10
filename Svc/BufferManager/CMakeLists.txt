@@ -13,4 +13,10 @@ set(SOURCE_FILES
 
 register_fprime_module()
 
-##TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+### UTS ###
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Svc/BufferManager/BufferManagerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+)
+register_fprime_ut()

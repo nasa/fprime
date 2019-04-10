@@ -11,6 +11,12 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Time.cpp"
 )
 register_fprime_module()
-
-# Add unit test directory
-## TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+### UTs ###
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTest.cpp"
+)
+set(UT_MOD_DEPS
+  "${FPRIME_CORE_DIR}/Fw/Time"
+  "${FPRIME_CORE_DIR}/Fw/Types"
+)
+register_fprime_ut()

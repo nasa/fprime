@@ -22,8 +22,14 @@ set(MOD_DEPS
   Fw/Cfg
 )
 register_fprime_module()
-# Add GTest directory
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
+### UTs ###
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TypesTest.cpp"
+)
+set(UT_MOD_DEPS
+  "${FPRIME_CORE_DIR}/Os"
+)
+register_fprime_ut()
 
-# Add unit test directory
-##TODO-MSTARCH: add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+# Non-test directory
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

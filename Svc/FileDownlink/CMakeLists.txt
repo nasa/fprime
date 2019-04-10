@@ -19,5 +19,11 @@ set(MOD_DEPS
   CFDP/Checksum
 )
 register_fprime_module()
-
-##TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+### UTs ###
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Svc/FileDownlink/FileDownlinkComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileBuffer.cpp"
+)
+register_fprime_ut()
