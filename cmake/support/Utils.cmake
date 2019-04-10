@@ -127,8 +127,9 @@ endfunction(add_generated_sources)
 # \param PARSER_TYPE: type of parser to use. Must be one of the prefixes *_xml in cmake/parser/
 ####
 function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
+  string(REGEX REPLACE "_${BUILD_SUFFIX}" "" MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
-      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME}" "${FPRIME_CURRENT_BUILD_ROOT}"
+      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
 	  OUTPUT_VARIABLE TARGETS
   )
@@ -139,11 +140,9 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   # For every dected dependency, add them to the supplied module. This enforces build order.
   # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
   # this prevents the need for manually specifying link orders.
-  add_dependencies(${MODULE_NAME} ${TARGETS})
-  target_link_libraries(${MODULE_NAME} ${TARGETS})
-  
-  #Add in all dictionary targets
   foreach(TARGET ${TARGETS})
+    add_dependencies(${MODULE_NAME} "${TARGET}_${BUILD_SUFFIX}")
+    target_link_libraries(${MODULE_NAME} "${TARGET}_${BUILD_SUFFIX}")
     add_dict_deps(${MODULE_NAME}  ${TARGET})
   endforeach()
 endfunction(fprime_dependencies)

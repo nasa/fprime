@@ -8,7 +8,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Linux-common.cmake")
 
 set(BUILD_FLAGS
     "-DBUILD_UT"
-    "-DPROTECTED=public
+    "-DPROTECTED=public"
     "-DPRIVATE=public"
 )
 set(BUILD_SUFFIX "_linux_ut")

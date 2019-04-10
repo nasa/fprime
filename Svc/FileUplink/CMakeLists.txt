@@ -21,11 +21,9 @@ set(MOD_DEPS
 )
 register_fprime_module()
 
-##TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
-
 ### UTs ###
-##TODO-MSTARCH: set(UT_SOURCES
-##TODO-MSTARCH: 	${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp
-##TODO-MSTARCH: 	${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp
-##TODO-MSTARCH: )
-##TODO-MSTARCH: add_unit_test("${UT_SOURCES}" "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
+set(UT_SOURCE_FILES
+  ${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp
+)
+register_fprime_ut()

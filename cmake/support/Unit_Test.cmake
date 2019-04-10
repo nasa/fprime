@@ -80,31 +80,15 @@ endfunction(unit_test_component_autocoder)
 # Dispair has set in, and I don't know anymore.
 ####
 function(generate_ut UT_EXE_NAME UT_SOURCES MOD_DEPS)
-    generate_executable(${UT_EXE_NAME} "" "")
-    # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-    # their separate peices. 
-    #
-    # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
-    # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
-    # LINK_DEPS = -l link flags given to DEPS_INPUT
-    # MOD_DEPS = All other module inputs DEPS_INPUT
-    split_source_files("${SOURCE_FILES_INPUT}")
-    split_dependencies("${DEPS_INPUT}")
+    generate_executable(${UT_EXE_NAME} "${UT_SOURCES}" "${MOD_DEPS}")
     # Generate the UTs w/ autocoding and add the other sources  
     unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}")
-    target_sources(
-        ${UT_EXE_NAME}
-        PRIVATE
-        ${SOURCE_FILES}
-    )
     # Link modules
     target_link_libraries(
         "${UT_EXE_NAME}"
         "${GTEST_TARGET}"
-        ${LINK_DEPS}
-        ${MOD_DEPS}
     )
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
-    add_dependencies(check)
+    add_dependencies(check ${UT_EXE_NAME})
 endfunction()

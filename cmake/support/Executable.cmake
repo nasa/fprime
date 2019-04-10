@@ -57,7 +57,6 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # MOD_DEPS = All other module inputs DEPS_INPUT
   split_source_files("${SOURCE_FILES_INPUT}")
   split_dependencies("${DEPS_INPUT}")
-
   message(STATUS "Adding executable: ${EXECUTABLE_NAME}")
   add_executable(
       "${EXECUTABLE_NAME}"
@@ -67,7 +66,7 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   add_dict_target()
   generate_module(${EXECUTABLE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
   # Add dependencies to the 'dict' target, if not a UT build
-  if (UT_BUILD)
+  if (NOT UT_BUILD)
       add_dependencies(dict "${MODULE_NAME}_dict")
       add_dependencies("${EXECUTABLE_NAME}" dict)
   endif()
