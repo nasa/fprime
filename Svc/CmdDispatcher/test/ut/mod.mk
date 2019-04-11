@@ -19,8 +19,8 @@
 
 # There are some standard files that are included for reference
 
-TEST_SRC = 	TesterBase.cpp \
-			GTestBase.cpp \
+TEST_SRC = 	Handcode/TesterBase.cpp \
+			Handcode/GTestBase.cpp \
 			CommandDispatcherTester.cpp \
 			CommandDispatcherImplTester.cpp
 
@@ -38,3 +38,6 @@ TEST_MODS = Svc/CmdDispatcher \
 			Svc/Ping \
 			Os \
 			gtest
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

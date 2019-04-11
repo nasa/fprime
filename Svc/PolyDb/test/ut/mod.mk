@@ -32,3 +32,6 @@ TEST_MODS = Svc/PolyDb \
 			Fw/Types \
 			Os \
 			gtest
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

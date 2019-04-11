@@ -1,21 +1,19 @@
-# Default deployment cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-# DEPLOYMNET_MODULES: Modules needed by this deployment
-
-set(AUTOCODER_INPUT_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+# Note: using PROJECT_NAME as EXECUTABLE_NAME
+####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
 )
-
-set(DEPLOYMENT_MODULES
+# Note: supply non-explicit dependencies here
+set(MOD_DEPS
   Svc/PassiveConsoleTextLogger
   Svc/SocketGndIf
   Svc/LinuxTime
 )
-
-# invoke deployment function (DEPLOYMENT_NAME AUTOCODER_INPUT_FILES SOURCE_FILES DEPLOYMENT_MODULES)
-generate_executable("${PROJECT_NAME}" "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${DEPLOYMENT_MODULES}")
+register_fprime_executable()

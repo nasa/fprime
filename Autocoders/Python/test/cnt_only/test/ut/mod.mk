@@ -25,3 +25,7 @@
  TEST_MODS = Autocoders/Python/test/cnt_only Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com
 
 
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

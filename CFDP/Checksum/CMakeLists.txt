@@ -1,24 +1,28 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Checksum.cpp"
 )
 
-set(LINK_DEPS
+set(MOD_DEPS
   Fw/Cfg
   Fw/Types
 )
+register_fprime_module()
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+)
 
+set(UT_MOD_DEPS
+  "${FPRIME_CORE_DIR}/CFDP/Checksum"
+  "${FPRIME_CORE_DIR}/Fw/Types"
+)
+register_fprime_ut()
 # Add GTest directory
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
-
-# Add unit test directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

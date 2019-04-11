@@ -142,7 +142,12 @@ namespace Svc {
 
       //! Assert failed command execution
       void assertFailure(const FwOpcodeType opcode) const;
-
+      //! Handler for from_pingOut
+      //!
+      void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
+      );
     private:
 
       // ----------------------------------------------------------------------

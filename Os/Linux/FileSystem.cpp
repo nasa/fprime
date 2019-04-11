@@ -24,7 +24,7 @@ namespace Os {
 #ifdef __VXWORKS__
 			int mkStat = ::mkdir(path);
 #else
-			int mkStat = ::mkdir(path,S_IRUSR|S_IWRITE);
+			int mkStat = ::mkdir(path,S_IRWXU);
 #endif
 
 			if (-1 == mkStat) {

@@ -10,6 +10,7 @@
 # Include some helper libraries
 include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
+
 ####
 # Autocoder:
 #
@@ -44,20 +45,11 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
     string(REGEX MATCH "([a-zA-Z0-9\-_]+)${NAME_TYPE}Ai.xml" AC_XML "${INPUT_FILE}")
     string(REGEX REPLACE "([a-zA-Z0-9\-_]+)(${NAME_TYPE}Ai.xml)" "\\1" AC_NAME "${AC_XML}")
     if(NOT ${AC_XML} STREQUAL "")
+      get_filename_component(INPUT_FILE_REAL "${INPUT_FILE}" REALPATH)
       message(STATUS "\tFound ${LOWER_TYPE}: ${AC_NAME} from ${AC_XML}")
       # The build system intrinsically depends on these AC_XML files, so add it to the CMAKE_CONFIGURE_DEPENDS  
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${AC_XML})
-      # Topology specific updates
-      if(${LOWER_TYPE} STREQUAL "topology")
-          # Create a dictionary directory for the deployment
-          set(IS_TOP "YES")
-          set(DICTIONARY_DIR "${CMAKE_SOURCE_DIR}/py_dict")
-          file(MAKE_DIRECTORY "${DICTIONARY_DIR}")
-      # Not topology set variables accordingly
-      else()
-          set(IS_TOP "NO")
-          set(DICTIONARY_DIR "")
-      endif()
+
       # Calculate the Ac .hpp and .cpp files that should be generated
       string(CONCAT AC_HEADER ${AC_NAME} "${NAME_TYPE}Ac.hpp")
       string(CONCAT AC_SOURCE ${AC_NAME} "${NAME_TYPE}Ac.cpp")
@@ -70,48 +62,20 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       endif()
       string(CONCAT AC_FINAL_HEADER ${AC_FINAL_DIR} "/" ${AC_HEADER})
       string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
-      string(CONCAT AC_FINAL_XML ${CMAKE_CURRENT_LIST_DIR} "/" ${AC_XML})
+      acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
 
-      # Invoke autocoder to produce serializable header and cpp
-      add_custom_command(
-        OUTPUT ${AC_FINAL_HEADER} ${AC_FINAL_SOURCE}
-        COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT} 
-        PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR} FPRIME_CORE_DIR=${FPRIME_CORE_DIR}
-        ${FPRIME_CORE_DIR}/cmake/support/wrapper/codegen.sh ${IS_TOP} ${AC_FINAL_XML} ${AC_FINAL_DIR}
-        DEPENDS ${AC_FINAL_XML}
-      )
-      #For serializables, add the dict dir
-      if (${AC_TYPE} STREQUAL "serializable")
-          set(SERIALIZABLE_DICT_DIR "${CMAKE_SOURCE_DIR}/py_dict/serializable")
-          execute_process(
-            COMMAND ${FPRIME_CORE_DIR}/cmake/support/parser/serializable_xml_ns.py "${AC_FINAL_XML}"
-            RESULT_VARIABLE ERR_RETURN
-            OUTPUT_VARIABLE NS
-         )
-         if (${ERR_RETURN})
-             message(FATAL_ERROR "Could not get serializable Namespace/Name with: ${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py ${AC_FINAL_XML}")
-         endif()
-         set(SER_PY ${CMAKE_CURRENT_LIST_DIR}/Dict/serializable/${NS}.py)
-         set(DEST_PY ${SERIALIZABLE_DICT_DIR}/${NS}.py)
-         get_filename_component(DEST_DIR ${DEST_PY} DIRECTORY)
-         add_custom_command(
-             OUTPUT ${DEST_PY}
-             COMMAND ${CMAKE_COMMAND} -E make_directory ${DEST_DIR}
-             COMMAND ${CMAKE_COMMAND} -E copy ${SER_PY} ${DEST_PY}
-             COMMAND ${CMAKE_COMMAND} -E touch ${SERIALIZABLE_DICT_DIR}/__init__.py
-             COMMAND ${CMAKE_COMMAND} -E touch ${DEST_DIR}/__init__.py
-             DEPENDS ${AC_FINAL_HEADER}
-         )
-         target_sources(${MODULE_NAME} PRIVATE ${SERIALIZABLE_DICT_DIR}/${NS}.py)
+      # Serializables and topologies generate dictionaries
+      if (${AC_TYPE} STREQUAL "topology" OR ${AC_TYPE} STREQUAL "serializable")
+          setup_module_dicts("${MODULE_NAME}" "${AC_XML}" "${AC_OUTPUTS}")
       endif()
-      #Add in the generated files in their final home, and then search for dependencies
+      # Generated and detected dependencies
       add_generated_sources(${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${MODULE_NAME})
-      fprime_dependencies(${AC_FINAL_XML} ${MODULE_NAME} ${LOWER_TYPE})
+      fprime_dependencies(${INPUT_FILE_REAL} ${MODULE_NAME} ${LOWER_TYPE})
     endif()
   endforeach()
 endfunction(generic_autocoder)
 
-# Function for invokeing enum autocoder
+# TODO: enumerations don't work super well with the system.  Don't use.
 function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
   # Search for enum txt files
   foreach(INPUT_FILE ${AUTOCODER_INPUT_FILES})
@@ -150,82 +114,82 @@ function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
 endfunction(enum_autocoder)
 
 ####
-# Serializables:
+# Generate Module:
 #
-# This function controls the the generation of the auto-coded files for serializable objects in the ststem.
-# It then mines the XML files for dependencies and then adds them as dependencies to the module being built.
+# Generates the module as an F prime module. This means that it will process autocoding,
+# and dependencies. Hard sources are not added here, but in the caller. This will all be
+# generated into a library.
+#
+# MOD_DEPS are F prime dependencies.
+# LINK_DEPS are noraml link dependencies. i.e. -lm
 ####
-function(serializable_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
-  generic_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "serializable")
-endfunction(serializable_autocoder)
+function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
+  # If there are  build flags, set them now 
+  if (DEFINED BUILD_FLAGS)
+      target_compile_definitions(${OBJ_NAME} PUBLIC ${BUILD_FLAGS})
+  endif()
+  # Add dependencies on autocoder
+  add_dependencies(${OBJ_NAME} ${CODEGEN_TARGET})
 
-# Function for invokeing port autocoder
-function(port_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
-  generic_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "port")
-endfunction(port_autocoder)
+  # Go through each auto-coder type and process every file in the AC list. Each item of each type
+  # will generate autocodor outputs.
+  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "enum")
+  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "serializable")
+  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "port")
+  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "component")
+  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "topology")
 
-# Function for invokeing component autocoder
-function(component_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
-  generic_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "component")
-endfunction(component_autocoder)
+  # Add in all non-module link (-l) dependencies
+  target_link_libraries(${OBJ_NAME} ${LINK_DEPS})
 
-# Function for invokeing topology autocoder
-function(topology_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
-  generic_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "topology")
-endfunction(topology_autocoder)
+  # Add in specified (non-detected) mod dependencies, and Dict dependencies therein.
+  foreach(MOD_DEP ${MOD_DEPS})
+      get_module_name(${MOD_DEP})
+      add_dependencies(${OBJ_NAME} ${MODULE_NAME})
+      target_link_libraries(${OBJ_NAME} ${MODULE_NAME})
+      add_dict_deps(${OBJ_NAME} ${MODULE_NAME})
+  endforeach()
+  
+  # Remove empty source from target
+  get_target_property(FINAL_SOURCE_FILES ${OBJ_NAME} SOURCES)
+  list(REMOVE_ITEM FINAL_SOURCE_FILES ${EMPTY_C_SRC})
+  set_target_properties(
+     ${OBJ_NAME}
+     PROPERTIES
+     SOURCES "${FINAL_SOURCE_FILES}"
+  )
+endfunction(generate_module)
+####
+# Generate Library:
+#
+# Generates a library as part of F prime. This runs the AC and all the other items for the build.
+# It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
+# and library deps.
+####
+function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
+  # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
+  # their separate peices. 
+  #
+  # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
+  # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
+  # LINK_DEPS = -l link flags given to DEPS_INPUT
+  # MOD_DEPS = All other module inputs DEPS_INPUT
+  split_source_files("${SOURCE_FILES_INPUT}")
+  split_dependencies("${DEPS_INPUT}")
 
-# Define function for adding fprime module library
-function(generate_module AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS)
-  # Sets MODULE_NAME to unique name based on path
+  # Sets MODULE_NAME to unique name based on path, and then adds the library of
   get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
+  message(STATUS "Adding library: ${MODULE_NAME}")
+  # Add the library name
   add_library(
     ${MODULE_NAME}
     ${FPRIME_LIB_TYPE}
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
-  message(STATUS "Adding library: ${MODULE_NAME}")
-
-  # Add dependencies on autocoder
-  add_dependencies(${MODULE_NAME} ${CODEGEN_TARGET})
-
-  # Check for autocoder xml files
-  enum_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
-  serializable_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
-  port_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
-  component_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
-  topology_autocoder(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}")
-
-  set(OLD_MODULE_NAME ${MODULE_NAME})
-  foreach(LINK_DEP ${LINK_DEPS})
-	  if ("${LINK_DEP}" MATCHES "-l.*")
-      target_link_libraries("${OLD_MODULE_NAME}" "${LINK_DEP}")
-    else()
-      get_module_name(${LINK_DEP})
-      add_dependencies(${OLD_MODULE_NAME}  ${MODULE_NAME})
-      target_link_libraries(${OLD_MODULE_NAME}  ${MODULE_NAME})
-    endif()
-  endforeach()
-  set(MODULE_NAME ${OLD_MODULE_NAME})
-
-  # Remove empty source from target
-  get_target_property(FINAL_SOURCE_FILES ${MODULE_NAME} SOURCES)
-  list(REMOVE_ITEM FINAL_SOURCE_FILES ${EMPTY_C_SRC})
-  set_target_properties(
-     ${MODULE_NAME}
-     PROPERTIES
-     SOURCES "${FINAL_SOURCE_FILES}"
-  )
+  generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
   # Link library list output on per-module basis
   if (CMAKE_DEBUG_OUTPUT)
-     get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
-     if (OUT MATCHES ".*-NOTFOUND")
-       set(OUT "--none--")
-     endif()
-     message(STATUS "\tLinks dependencies: ${OUT}")
+	  print_dependencies(${MODULE_NAME})
   endif()
-  # Create unit test module
-  generate_ut_library(${MODULE_NAME} "${FINAL_SOURCE_FILES}")
-
-endfunction(generate_module)
+endfunction(generate_library)

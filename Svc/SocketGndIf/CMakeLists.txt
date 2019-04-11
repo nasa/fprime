@@ -1,32 +1,16 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+# Note: using PROJECT_NAME as EXECUTABLE_NAME
+####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SvcSocketGndIfImpl.cpp"
 )
-
-set(LINK_DEPS
-  Fw/Cfg
-  Fw/Types
-  Fw/Comp
-  Fw/Port
-  Fw/Com
-  Fw/Log
-  Fw/Tlm
-  Fw/Cmd
-  Fw/Buffer
-  Svc/GndIf
+set(MOD_DEPS
+    Svc/GndIf
+    Fw/Buffer
 )
-
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
-
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Depends on a component defined in another module
-add_dependencies(${MODULE_NAME} "Svc_GndIf")
+register_fprime_module()

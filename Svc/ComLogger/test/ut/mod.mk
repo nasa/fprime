@@ -2,8 +2,8 @@
 # mod.mk 
 # ----------------------------------------------------------------------
 
-TEST_SRC=TesterBase.cpp \
-				 GTestBase.cpp \
+TEST_SRC=Handcode/TesterBase.cpp \
+				 Handcode/GTestBase.cpp \
 				 Tester.cpp \
 				 Main.cpp 
 
@@ -14,3 +14,7 @@ TEST_MODS=Svc/ComLogger \
 					Utils/Hash \
 					gtest
 
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

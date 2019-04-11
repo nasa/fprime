@@ -1,11 +1,11 @@
-# Add source files for module
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+# Note: using PROJECT_NAME as EXECUTABLE_NAME
+####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/BasicTypes.cpp"
@@ -18,15 +18,18 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Serializable.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringType.cpp"
 )
-
-set(LINK_DEPS
+set(MOD_DEPS
   Fw/Cfg
 )
+register_fprime_module()
+### UTs ###
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TypesTest.cpp"
+)
+set(UT_MOD_DEPS
+  "${FPRIME_CORE_DIR}/Os"
+)
+register_fprime_ut()
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
-
-# Add GTest directory
+# Non-test directory
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
-
-# Add unit test directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

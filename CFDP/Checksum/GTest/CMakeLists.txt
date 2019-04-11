@@ -1,12 +1,18 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+####
+if (UT_BUILD)
+    set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
+    )
 
-set(AUTOCODER_INPUT_FILES
-  ""
-)
-
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
-)
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "gtest;CFDP/Checksum")
+    set(MOD_DEPS
+        gtest
+        CFDP/Checksum
+    )
+    register_fprime_module()
+endif()

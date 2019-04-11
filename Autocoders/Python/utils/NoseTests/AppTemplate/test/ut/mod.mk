@@ -25,3 +25,7 @@
  TEST_MODS = Autocoders/Python/test/#ADD APP ROOT HERE# Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com
 
 
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

@@ -19,8 +19,8 @@
 
 # There are some standard files that are included for reference
 
-TEST_SRC = 	TesterBase.cpp \
-			GTestBase.cpp \
+TEST_SRC = 	Handcode/TesterBase.cpp \
+			Handcode/GTestBase.cpp \
 			Tester.cpp \
 			main.cpp
 
@@ -34,3 +34,7 @@ TEST_MODS = Svc/LinuxTimer \
 			Fw/Port \
 			Os \
 			gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

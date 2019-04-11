@@ -1,23 +1,22 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files
-
-set(AUTOCODER_INPUT_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/TimePortAi.xml"
-)
-
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/TimePortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Time.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Time.cpp"
 )
-
-set(LINK_DEPS
-  Fw/Cfg
-  Fw/Types
-  Fw/Comp
-  Fw/Port
+register_fprime_module()
+### UTs ###
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTest.cpp"
 )
-
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}")
-
-# Add unit test directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+set(UT_MOD_DEPS
+  "${FPRIME_CORE_DIR}/Fw/Time"
+  "${FPRIME_CORE_DIR}/Fw/Types"
+)
+register_fprime_ut()

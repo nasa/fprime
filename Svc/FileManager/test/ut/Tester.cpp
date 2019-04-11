@@ -477,5 +477,13 @@ namespace Svc {
     ASSERT_TLM_Errors_SIZE(1);
     ASSERT_TLM_Errors(0, 1);
   }
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
+  }
 
 } // end namespace Svc
