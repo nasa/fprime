@@ -20,7 +20,7 @@ register_fprime_module()
 
 
 # Add unit test directory
-##TODO-MSTARCH add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+##TODO-MSTARCH add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})

@@ -1,3 +1,3 @@
 # Add autocoder subdirectories
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Python/")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Shell/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Python/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Shell/")

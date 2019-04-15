@@ -23,7 +23,7 @@ set(MOD_DEPS
 )
 register_fprime_module()
 # Add GTest directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
 
 set(UT_MOD_DEPS
     Fw/FilePacket/GTest

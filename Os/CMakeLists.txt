@@ -37,7 +37,7 @@ set(MOD_DEPS
 register_fprime_module()
 
 # Add stubs directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

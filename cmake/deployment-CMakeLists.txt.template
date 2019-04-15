@@ -1,15 +1,11 @@
 ####
-# 'Ref' Deployment:
+# Deployment 'CMakeLists.txt':
 #
-# This sets up the build for the 'Ref' Application, including the custom reference
-# components. In addition, it imports FPrime.cmake, which includes the core F Prime
-# components.
-#
-# This file has several sections.
-#
-# 1. Header Section: define basic properties of the build
-# 2. F´ core: includes all F´ core components, and build-system properties
-# 3. Local subdirectories: contains all deployment specific directory additions
+# F prime deployments setup the most basic CMake settings, include the F prime build system, list
+# deployment specific module includes, and define the executable that represents the executable.
+# The F prime build system include step implicitly includes access to the F prime core components.
+# Listing the deployment specific module directories brings in access to the depoyment's modules,
+# and the 
 ####
 
 ##
@@ -20,7 +16,6 @@
 ##
 project(Ref C CXX)
 set(CMAKE_BUILD_TYPE DEBUG)
-cmake_minimum_required(VERSION 3.5)
 
 ##
 # Section 2: F´ Core

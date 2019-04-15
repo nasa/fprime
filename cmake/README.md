@@ -9,6 +9,9 @@ Since this CMake system ships along-side the original make system, certain cavea
 These caveats should disappear after CMake replaces the original make system in its entirety
 
 Installation guides for CMake can be found here: [https://cmake.org/install/](https://cmake.org/install/).
+
+Further user documentation can be found in API.md: [API.md](docs/API.md)
+
 Further documentation can be found in the SDD: [SDD.md](docs/sdd.md)
 
 ### CMakes Caveats

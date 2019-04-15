@@ -1,1 +1,1 @@
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/generators/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/generators/")
