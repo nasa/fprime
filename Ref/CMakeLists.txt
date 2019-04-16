@@ -18,9 +18,9 @@
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-cmake_minimum_required(VERSION 3.5)
 project(Ref C CXX)
 set(CMAKE_BUILD_TYPE DEBUG)
+cmake_minimum_required(VERSION 3.5)
 
 ##
 # Section 2: F´ Core
@@ -48,13 +48,11 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 # This section includes deployment specific directories. This allows use of non-
 # core components in the topology, which is also added here.
 ##
-file(RELATIVE_PATH DEPLOY_BINARY_DIR "${FPRIME_CURRENT_BUILD_ROOT}" "${CMAKE_CURRENT_LIST_DIR}")
-
 # Add component subdirectories
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/" "${DEPLOY_BINARY_DIR}/PingReceiver")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/" "${DEPLOY_BINARY_DIR}/RecvBuffApp")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/" "${DEPLOY_BINARY_DIR}/SendBuffApp")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/" "${DEPLOY_BINARY_DIR}/SignalGen")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 
 # Add Topology subdirectory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/" "${DEPLOY_BINARY_DIR}/Top")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")

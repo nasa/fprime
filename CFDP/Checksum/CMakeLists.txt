@@ -25,4 +25,4 @@ set(UT_MOD_DEPS
 )
 register_fprime_ut()
 # Add GTest directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

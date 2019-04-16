@@ -25,4 +25,4 @@ set_target_properties(
 )
 
 # Add unit test directory
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")

@@ -1,42 +1,58 @@
 # F´ CMake Build System
 
-Stock F´ ships with a bispoke make system ensure that building is done correctly and in the correct order. However, using and maintaining 
-this build system presents a steep learning curve to new users of F´. This included CMake system is intended as an eventual replacement 
-to the existing build system that should be easier to learn and use. In addition, the use of cmake puts F´more in line with standard C++ 
-development.
+Stock F´ ships with a bispoke make system ensure that building is done correctly and in the correct
+order. However, using and maintaining this build system presents a steep learning curve to new
+users of F´. This included CMake system is intended as an eventual replacement to the existing
+build system that should be easier to learn and use. In addition, the use of cmake puts F´more in
+line with standard C++ development.
 
-Since this CMake system ships along-side the original make system, certain caveats must be understood before beginning to use CMake. 
-These caveats should disappear after CMake replaces the original make system in its entirety
+Since this CMake system ships along-side the original make system, certain caveats must be
+understood before beginning to use CMake. These caveats should disappear after CMake replaces the
+original make system in its entirety.
 
-Installation guides for CMake can be found here: [https://cmake.org/install/](https://cmake.org/install/).
+Installation guides for CMake can be found here:
+[https://cmake.org/install/](https://cmake.org/install/).
+
+Further usage documentation can be found in API.md: [API.md](docs/API.md). This document will
+explain the usage of core F´ CMake functions used to construct CMake deployments.
+
 Further documentation can be found in the SDD: [SDD.md](docs/sdd.md)
 
 ### CMakes Caveats
 
-1. CMake should not be used in tandem with the original make system.  If it is needed to switch between make systems, perform a `git
-clean` command or otherwise remove generated files.
-2. CMake in-source builds will be dangerous as auto-generated CMake Makefiles will clobber the existing make system. Use CMake out-of-
-source builds until the old make system is replaced.
-3. CMake UTs collide with existing UTs. Thus a cmake `make check` may not fully pass. 
+1. CMake should not be used in tandem with the original make system.  If it is needed to switch
+between make systems, perform a `git clean ` command or otherwise remove generated files.
+2. CMake in-source builds will be dangerous as auto-generated CMake Makefiles will clobber the
+existing make system. Use CMake out-of-source builds until the old make system is replaced.
 
 ## Getting Started Using CMake and F`
 
-CMake as a system auto-generates OS-specific make files for building F´. Once these file are generated, standard make tools can be run to 
-perform the compiling, asebmling, linking etc. Building a CMake-enabled deployment comes down to just a small number of step:
+CMake as a system auto-generates OS-specific make files for building F´. Once these file are
+generated, standard make tools can be run to perform the compiling, assembling, linking etc.
+Building a CMake-enabled deployment comes down to just a small number of steps:
 
-1. Make a directory to build in
-2. Call CMake to generate make-files
-3. Engage OS-specific make system (Linux and Mac OS X examples provided)
-  1. Build the Deployment
-  2. (Optional) Run the Deployment's Unit Tests
+1. Make and change to a directory to build in: `mkdir build_dir; cd build_dir`
+2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt`
+3. Engage OS-specific make system: `make`
+4. Run unit tests: `make check`
 
-### Make Build Directory and Generate CMake Files
+Further information on each step is provided below.
 
-The following commands will create a new build directory and generate CMake files. Separate builds (for different OS targets, or 
-different build configurations) should be isolated in their own build-directories.  These directories can be achived as build-artifacts, 
-but are typically not added to source managment (Git).
+### Make Build Directory and Generate CMake Files (Run Once Per Configuration)
 
-Below, a user-provided deployment directory could be substituted for `Ref` below in-order to build a different deployment.
+When building F´ using the CMake system, each build type should be separated into its own directory.
+Any time a different platform, toolchain, or option set are used, a new directory should be created.
+However, each of these directories are independent, and can be built independently without cleaning
+or removing the others.
+
+The following commands will create a new build directory and generate CMake files. Separate builds
+should be isolated in their own build-directories.  These directories can be achived as
+build-artifacts, but are typically not added to source managment (Git).
+
+Below, a user-provided deployment directory could be substituted for `Ref` below in-order to build a
+different deployment. More on deployments below.
+
+**Build Setup Commands**
 
 ```
 # Make a build directory and change directory into it
@@ -46,64 +62,52 @@ cd fprime/build-dir
 cmake ../Ref/
 ```
 
-### Building Deployments (Linux, Mac OS X)
+### Building Deployments (Iterated On Change)
 
-Once generated by CMake, the cmake files typicall do not need to be re-generated. If new configuration is needed, a separate (new) build
-directory should be used.  If changes occur to the CMake system, running the following steps will rerun the CMake file generation. Thus,
-the above step can be run one time.  Rebuilding and iteration can be done with the following simple steps:
+Once generated by CMake, the cmake files typically do not need to be re-generated. If new
+configuration is needed, a separate (new) build directory should be used.  If changes occur to the
+CMake system, running the following steps will rerun the CMake file generation. Thus, the above
+step can be run one time.  Rebuilding and iteration can be done with the following simple steps:
 
-```
+**Build Commands(Linux, Mac OS X)**
+
+``` 
 # Build the application (Will regenerate CMake if necessary)
 make
 # Build and run the UTs (if desired)
 make check
 ```
 
-**Note:** for the time-being, the application must be built before attempting to build and run the UTs.
+## CMake Options
+
+There are several options that can be specified as part of the CMake system. These options are
+documented in the following file: [Options.md](docs/Options.md).
 
 ## Adding in New CMake Components and Deployments
 
-The core of a cmake build is the `CMakeLists.txt` file. This file specifices the files needed to build the current portion of the system.
-In our case each Component, Port, and Topology get a `CMakeList.txt` along with the top-level deployment directort. It a directory 
-supports unit-testing, then it should also be 
+The core of a cmake build is the `CMakeLists.txt` file. This file specifices the files needed to
+build the current directory of the system. In F prime each Component, Port, and Topology get a
+`CMakeList.txt` along with the top-level deployment directory.
 
-### Ports and Components `CMakeLists.txt`
+Two templates for these CMakeLists.txt files are provided as part of the CMake system. One for
+Modules that result in the creation of a library, executable, or both. The other for Deployments,
+which setup the CMake for a deploment and include a number of Modules.
 
+Components, Ports, and Topologies (`Top` folders) all use the Module template. These modules
+provide libraries and executables to the system.
 
-Ports and Component `CMakeLists.txt` files specifiy two variables. The first carries inputs to the AutoCoder and the other specifiy 
-normal F´ source files that are not supplied to the AutoCoder.  These CMakeLists.txt files look like the following:
+Top-level deployment directories (`Ref` folder) use the deployment templates. It is there to setup
+the entry point to the build system.
 
-https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/48f1eeddea0237404dbeabd974941b94b25f8551/Svc/CmdDispatcher/CMakeLists.txt#L1-L16
+For more on Modules, see: [module.md](docs/module.md)
+For more on Deployments, see: [deployment.md](docs/deployment.md)
 
-Here, set() calls are used to add the two list variables specified above. Finally, two other calls are made. `generate_module` calls into
-the F´ CMake setup to configure this directory as a module. It registers dependencies, and prepares the auto-coder to be called when
-building. Lastly, we add the `test/ut` subdirectory to CMake such that it can be run to add a Unit Test to CMake.
-
-Simarlarly, these `CMakeLists.txt` files supporting components must be included in a Deployment `CMakeList.txt` file. Subdirectories can 
-contain `CMakeList.txt` files for collecting includes. The Top-level `fprime/CMakeLists.txt` can also contain the module for efficient 
-unit-test building.
-
-### Topology and Deployment `CMakeLists.txt`
-
-The topology `CMakeLists.txt` file contains the two list variables "AUTOCODER_INPUT_FILES` and `SOURCE_FILES` in the same way as Ports 
-and Components. However, as seen in the following example, Topology `CMakeLists.txt` file also contain a list variable that contains all
-the dependencies for this topology.  Finally, we call `generate_deployment` instead of `genetate_module`
-
-https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/e4c1874c564769d3230c95d1cc0a8a9692911400/Ref/Top/CMakeLists.txt#L1-L81
-
-In order to build deployments as separate items. A deployment entry-`CMakeLists.txt` must be added in order to setup CMake, include F´'s 
-CMake setup etc. This file resembles more standard `CMakeLists.txt` with special includes.  This is documented here:
-
-https://github.jpl.nasa.gov/mstarch/fprime-sw/blob/e4c1874c564769d3230c95d1cc0a8a9692911400/Ref/CMakeLists.txt#L1-L60
-
-The critical line is `include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")`, which links to F´'s CMake setup. This setup brings in
-F´ CMake options, functions, and architecture.
 
 ## Cross-Compiling With CMake
 
-In order to cross compile F´ with the cmake system to some new target platform, two files are required. These two files are
-a cmake toolchain file, and an F´ platform file. Once these files have been created, a cross-compile can be setup and run 
-with the following commands:
+In order to cross compile F´ with the cmake system to some new target platform, two files are
+required. These two files are a cmake toolchain file, and an F´ platform file. Once these files
+have been created, a cross-compile can be setup and run with the following commands:
 
 ```
 mkdir build-cross
@@ -114,33 +118,39 @@ make
 
 ### CMake Toolchain File
 
-Toolchain files are used to setup the tools and packages used to cross-compile code for a separate target platform.
-The cmake toolchain files are placed in [cmake/toolchain](toolchain) and are standard CMake toolchain files.
-[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html](https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
-Alternatively, the user may specify a path to an external CMake toolchain file. This file specifies the path to the tools
-used to perform the build (i.e. the compilers, libraries, and packages). A sample template for setting up new toolchain 
-files can be found at [cmake/toolchain/toolchain.cmake.template](toolchain/toolchain.cmake.template). Copy this file to
-the new toolchain name, fill it out, and it can be then used with the above cross-compile instructions. **Note:** a parallel
-platform file must also be created before a toolchain file can be used.
+Toolchain files are used to setup the tools and packages used to cross-compile code for a separate
+target platform. The cmake toolchain files are placed in [cmake/toolchain](toolchain) and are
+standard CMake toolchain files.
+[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html]
+(https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
+Alternatively, the user may specify a path to an external CMake toolchain file. This file specifies
+the path to the tools used to perform the build (i.e. the compilers, libraries, and packages). A
+sample template for setting up new toolchain files can be found at
+[cmake/toolchain/toolchain.cmake.template](toolchain/toolchain.cmake.template). Copy this file to
+the new toolchain name, fill it out, and it can be then used with the above cross-compile
+instructions.
 
-```
-cd cmake
-cp toolchain/toolchain.cmake.template toolchain/<toolchain-name>.cmake
-```
+**Note:** a parallel platform file must be created or an exisitng platform file specified with the
+`-DPLATFORM` option before a toolchain file can be used.
+
+More information can be found at: [template.md](docs/template.md).
+More information can be found at: [Options.md](docs/Options.md).
 
 ### CMake Platfrom File
 
-Platform files are used to specify CMake options, compile flags, definitions, and other setting used by F´ when compiling
-for a separate target. These files are F´ specific and are named after the ${CMAKE_SYSTEM_NAME} defined in the toolchain
-file used to kick-off a cross compile. The platform files are found in [cmake/platform](platform). In order to create one
-of these files, copy the platform template and fill it out. The template for setting up new platform files can be found at
-[cmake/platform/platform.cmake.template](platform/platform.cmake.template) Then follow the above instructions to cross-
-compile. **Note:** a parallel toolchain file must exist in order to trigger this platform file.
+Platform files are used to specify CMake options, compile flags, definitions, and other setting
+used by F´ when compiling for a separate target. These files are F´ specific and are named after
+the ${CMAKE_SYSTEM_NAME} defined in the toolchain file used to kick-off a cross compile. The
+platform files are found in [cmake/platform](platform). In order to create one of these files, copy
+the platform template and fill it out. The template for setting up new platform files can be found
+at [cmake/platform/platform.cmake.template](platform/platform.cmake.template) Then follow the above
+instructions to cross-compile.
 
-```
-cd cmake
-cp platform/platform.cmake.template platform/<platform-name>.cmake
-```
+**Note:** a parallel toolchain file must exist in order to trigger this platform file unless it is
+manually specified with the `-DPLATFORM` option.
+
+More information can be found at: [platform.md](docs/platform.md).
+More information can be found at: [Options.md](docs/Options.md).
 
 ## Advanced CMake Usage (Caution: these steps are not polished, hence "Advanced")
 
@@ -155,51 +165,32 @@ These features include:
 
 ### CMake With F´ As a Subdirectory
 
-CMake allows users to setup application outside of the existing fprime directory. This means F´ can be treated as a submodule. This 
-enables a cleaner use of F´ in larger projects. In order to use F´ in this way, the following needed to be taken care of.
+CMake allows users to setup application outside of the existing fprime directory. This means F´ can
+be treated as a submodule. This enables a cleaner use of F´ in larger projects. In order to use F´
+in this way, the following needed to be taken care of.
 
-1. F´ autocoded folders should be placed in the build-artifactes, not in the source tree. This prevents writing to F´ when it is a
-   submodule/library.
-2. F´ build-root must be overrided until the AutoCoder is fixed to be BUILD_ROOT independent
-3. UTs cannot be run, as they currently write to the source tree.
+1. F´ autocoded folders should be placed in the build-output. In-source-builds **cannot** be used.
+2. F´ build-root must be overrided until the AutoCoder is fixed to be BUILD_ROOT independent.
 
-The Autocoded files can be written to the build tree by specifying `-DGENERATE_AC_IN_SOURCE=OFF` when running CMake. This can be done 
-with the following command:
-
-```
- cmake -DGENERATE_AC_IN_SOURCE=OFF  ../Ref
- ```
-F´ BUILD_ROOT must also be overrided for the non-core components. Otherwise, the auto-coder and other tools will fail.  This can be done
-with the following two lines added to the Deployment `CMakeLists.txt`. However, these lines **must** be added after including F´core 
-subdirectories.
+F´ BUILD_ROOT must also be overrided for the non-core components. Otherwise, the auto-coder and
+other tools will fail.  This can be done with the following two lines added to the Deployment
+`CMakeLists.txt`. However, these lines **must** be added after including F´core subdirectories.
 
 ```
 # **** First Include FPrime.cmake, the core components CMake ***
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 
-# Note: when building a deployment outside of the F´ core directories, then the
-# build root must be re-mapped for use with the standard build system components.
-#
-# In this way, the module names can be predicted as an offset from the (new) build
-# root, without breaking the standard locations of F´.
-#
-# Uncomment the following lines, and set them to the BUILD_ROOT of your deployment,
-# which is typically one directory up from the CMakeLists.txt in the deployment dir.
-
 # **** Second, override the current BUILD_ROOT ****
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
-
 ... add deployment only modules here ...
 ```
 
-Unit test support with the build-style is coming soon.  Running `make check` here may not work if F´ core subdirectory is read-only.
-
 ### Unit-Builds with CMake
 
-When building F´, it is sometimes helpful to build just the active component and ignore the rest of the system. This can be done by the 
-following commands:
+When building F´, it is sometimes helpful to build just the active component and ignore the rest
+of the system. This can be done by the following commands:
 
 ```
 cd <build-dir>/<sorting-dir>/path/to/component

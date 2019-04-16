@@ -1,1 +1,1 @@
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/fprime_ac/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/fprime_ac/")
