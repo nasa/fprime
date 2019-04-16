@@ -2,7 +2,9 @@
 
 ## 1 Introduction
 
-This document describes a new build system based on the popular open source tool cmake ![https://cmake.org/](https://cmake.org/) .  The software design document will present a set of requirements for the build system, some operational concepts, and the candidate build system design.   This build system is intended to replace the legacy F´ build system which is difficult to enhance and maintain.  The legacy F´ build system had was inherited from the JPL Mars Science Laboratory mission and created over 10 years ago.   Note: Usage guidelines for the new cmake system discussed here, can be found in the CMake system ![README.md](../README.md "README.md") . 
+This document describes a new build system based on the popular open source tool cmake ![https://cmake.org/](https://cmake.org/).  The software design document will present a set of requirements for the build system, some operational concepts, and the candidate build system design.   This build system is intended to replace the legacy F´ build system which is difficult to enhance and maintain.  The legacy F´ build system had was inherited from the JPL Mars Science Laboratory mission and created over 10 years ago.
+
+**Note:** for usage instructions and user documentation see: ![README.md](../README.md "README.md"). 
 
 ## 1.1 Definitions
 
@@ -66,7 +68,7 @@ These paradigms are described below. They are:
 
 1. (Recommended) Treating F´ as a library. Builds are performed out-of-source.
 2. Adding project code directly to F´. Builds are still performed out-of-source.
-3. (Highly Discouraged) Adding code to F´, building is done in-source.  **Note:** this will not work when running with the old make system.
+3. (Highly Discouraged) Adding code to F´, building is done in-source.  **Note:** this will not work when running with the old make system in-place.
 
 Separate build configurations (different targets, different cmake options set, different deployments, debug builds, etc.) would normally be placed in separate build directories (i.e. 
 build_raspi_debug). This keeps all of that configuration, and all of the outputs fully isolated. There is not a change of linking confusion, or build collisions. Nor is there a chance
@@ -175,27 +177,25 @@ purge all artifacts of the build system.  Configurations are lost or pollute new
 
 New components can be added by creating a `CMakeLists.txt` file in the directory of that component. This file is required to set two CMake variables:
 
-1. **AUTOCODER_INPUT_FILES**: a list of files to run through the autocoder when generating this module.
-2. **SOURCE_FILES**: a list of standard source files, written by hand.
+1. **SOURCE_FILES**: a list of files that act as source or autocoding source files.
+2. **MOD_DEPS**: (optional) a list of module and link dependencies.
 
-These are set using the CMake set() function, as shown below. Finally, this file must call generate_module, a F´ CMake support function used to setup the
+These are set using the CMake set() function, as shown below. Finally, this file must call `register_fprime_module`, a F´ CMake support function used to setup the
 auto coding step and ensure this component is built as an F´ module.  This call passes in the above variables.
 
 **Module CMakeList.txt**
 ```
 # Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
 # SOURCE_FILES: Handcoded C++ source files
 
-set(AUTOCODER_INPUT_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentAi.xml"
-)
-
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentImpl.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+# Note: no MOD_DEPS needed.
+
+register_fprime_module()
 ```
 
 This file must be added to some parent CMakeLists.txt file using the add_subdirectory file. If it is a new F´ component this is typically added to `CMakeLists.txt` in the top-level directory
@@ -204,95 +204,28 @@ the component may be added directly to `fprime/cmake/FPrime.cmake`. Non-core com
 
 **Example Add Subdirectory**
 ``` 
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 ```
 
-Topology `CMakeLists.txt` follow the same format as the Module files with two deviations. First, they must list module dependencies in the variable, DEPLOYMENT_MODULES (this will soon be corrected and rendered unnecessary) and
-secondly, they call the function generate_deployment passing the name of the deployment (e.g. Ref), AUTOCODER_INPUT_FILES, SOURCE_FILES, and DEPLOYMENT_MODULES.
+Topology `CMakeLists.txt` follow the same format as the Module files with two deviations. First, `MOD_DEPS` is usually defined as some dependencies cannot be auto-detectesd must be chosen and `register_fprime_executable` is called as an executable will be generated.
 
 **Topology CMakeList.txt**
 ``` 
 # Default deployment cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
 # SOURCE_FILES: Handcoded C++ source files
-# DEPLOYMNET_MODULES: Modules needed by this deployment
-
-set(AUTOCODER_INPUT_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
-)
+# MOD_DEPS: Modules needed by this deployment
 
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"
 )
 
-set(DEPLOYMENT_MODULES
-  # Reference components
-  "${CMAKE_CURRENT_LIST_DIR}/../RecvBuffApp"
-  "${CMAKE_CURRENT_LIST_DIR}/../SendBuffApp"
-  "${CMAKE_CURRENT_LIST_DIR}/../SignalGen"
-  "${CMAKE_CURRENT_LIST_DIR}/../PingReceiver"
-
-  # Services componets
-  Svc/ActiveLogger
-  Svc/ActiveRateGroup
-  Svc/AssertFatalAdapter
-  Svc/BufferManager
-  Svc/CmdDispatcher
-  Svc/CmdSequencer
-  Svc/FatalHandler
-  Svc/FileDownlink
-  Svc/FileUplink
-  Svc/GndIf
-  Svc/Health
+set(MOD_DEPS
   Svc/LinuxTime
   Svc/PassiveConsoleTextLogger
-  Svc/PassiveTextLogger
-  Svc/PrmDb
-  Svc/RateGroupDriver
-  Svc/SocketGndIf
-  Svc/Time
-  Svc/TlmChan
-
-  # Services ports
-  Svc/Cycle
-  Svc/Fatal
-  Svc/Ping
-  Svc/Sched
-  Svc/Seq
-  Svc/WatchDog
-
-  # Driver Ports
-  Drv/DataTypes
-
-  # Driver Components
-  Drv/BlockDriver
-
-  # CFDP modules
-  CFDP/Checksum
-
-  # Utility modules
-  Utils/Hash
-
-  # Framework ports
-  Fw/Buffer
-  Fw/Cmd
-  Fw/Log
-  Fw/Time
-  Fw/Tlm
-  Fw/Prm
-  Fw/Com
-
-  # Framework
-  Fw/FilePacket
-  Fw/Comp
-  Fw/Obj
-  Fw/Port
-  Fw/Types
-  Os
 )
 
-# invoke deployment function (DEPLOYMENT_NAME AUTOCODER_INPUT_FILES SOURCE_FILES DEPLOYMENT_MODULES)
-generate_deployement("Ref" "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${DEPLOYMENT_MODULES}")
+register_fprime_executable()
 ``` 
 
 These files must also be added to entry-point `CMakeList.txt` or a child therein.
@@ -343,13 +276,11 @@ represent adaptation specific components. To see what these files look like, see
 # This section includes deployment specific directories. This allows use of non-
 # core components in the topology, which is also added here.
 ##
-file(RELATIVE_PATH DEPLOY_BINARY_DIR "${FPRIME_CURRENT_BUILD_ROOT}" "${CMAKE_CURRENT_LIST_DIR}")
-
 # Add component subdirectories
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/" "${DEPLOY_BINARY_DIR}/PingReceiver")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/" "${DEPLOY_BINARY_DIR}/RecvBuffApp")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/" "${DEPLOY_BINARY_DIR}/SendBuffApp")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/" "${DEPLOY_BINARY_DIR}/SignalGen")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 ``` 
 **Note:** the output of the components are routed to named sub-directories of the build, starting with the `Ref` prefix.
 
@@ -374,12 +305,17 @@ As can be see thus far, most of the F´ build magic is encapsulated in CMake uti
 functions in this architecture:
 
 1. generate_module: used to take a module and generate the build files for it
-2. generate_deployment: used to take a deployment and generate the full build of the executable
+2. generate_executable: used to take a deployment and generate the full build of the executable
 
 ![F´ CMake Architecture](img/CMake%20-%20Architecture.png "F´ CMake Architecture")
 
 **Note:** colors are inherited from above diagrams. Red items are output products, and purple items represent execution steps.
 
+A complete list of documentation pages can be found at:
+
+1. API: user-level interations
+2. Options: options supplied to CMake
+3. toolchain: 
 
 ### 5.1 generate_module
 
@@ -393,9 +329,9 @@ Generate module takes a list of autocoder input files, and a list of source file
 Once these steps have completed, CMake generates host-specific build files that encapsulate the auto-coder calls for the module, the dependencies of the module, the sources for the module, and the
 the unit tests for the module.  Running these build files will generate the module's library for use within the deployment linking stage.
 
-### 5.2 generate_deployment
+### 5.2 generate_executable
 
-Generate deployments takes a deployment name, autocoder input files, a list of source files, and a list of deployment dependencies. It then takes the following actions:
+Generate deployments takes a executable name, autocoder input files, a list of source files, and a list of executable dependencies. It then takes the following actions:
 
 1. Adds an executable product for this deployment
 2. Runs the deployment through generate_module (section 5.1)
