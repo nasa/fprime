@@ -6,11 +6,41 @@ API of the F prime CMake system. These functions represent the external interfac
 CMake system. Users and developers should understand these functions in order to perform the
 following actions in CMake:
 
+ - Add an F prime subdirectory to the system.
  - Register an F prime module (library).
  - Register an F prime executable (deployment, other executable).
  - Register an F prime unit-test (executable with special dependencies).
 
 @author mstarch
+
+
+## Function `add_fprime_subdirectory`:
+
+Adds a subdirectory to the build system. This allows the system to find new available modules,
+executables, and unit tests. Every module, used or not, by the deployment/root CMAKE file should
+be added as a subdirectory. CMake's dependency system will prevent superfluous building, and thus
+it is inconsequential to add a subdirectory that will not be used.
+
+Every subdirectory added should declare a `CMakeLists.txt`. These in-turn may add their own sub-
+directories. This creates a directed acyclic graph of modules, one subtree of which will be built
+for each executable in the system.
+
+This directory is computed based off the `FPRIME_CURRENT_BUILD_ROOT` variable. It must be set to
+be used. Otherwise, an error will occure.
+
+A user can specify an optional argument to set the build-space, creating a sub-directory under
+the `CMAKE_BINARY_DIR` to place the outputs of the builds of this directory. This is typically
+**not needed**. `EXCLUDE-FROM-ALL` can also be supplied.
+See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
+
+**Note:** Replaces CMake `add_subdirectory` call in order to automate the [binary_dir] argument.
+          F prime subdirectories have specific binary roots to avoid collisions, and provide for
+          the standard F prime #include paths rooted at the root of the repo.
+
+**Arguments:**
+ - FP_SOURCE_DIR: directory to add (same as add_directory)
+ - EXCLUDE_FROM_ALL: (optional) exclude any targets from 'all'. See:
+                     https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 
 
 ## Function `register_fprime_module`:
@@ -259,6 +289,8 @@ register_fprime_ut()
 
 ## Next Topics:
  - Options: [Options.md](Options.md) describes the CMake system options to change build options.
+ - Deployment: [deployment.md](deployment.md) describes how to setup Deployment CMakeLists.txt.
+ - Module: [module.md](module.md) describes how to setup Module CMakeLists.txt.
  - Toolchains: [toolchain.md](toolchain.md) describes CMake cross-compile toolchain setup.
  - Platforms: [platform.md](platform.md) describes the F prime specific platform settings.
 
