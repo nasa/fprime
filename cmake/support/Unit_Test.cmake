@@ -1,12 +1,25 @@
 ####
+# Unit_Test.cmak:
+#
 # Testing does not properly handle unit test dependencies in some versions of CMake. Therefore,
 # we follow a standard workaround from CMake users and create a "check" target used to run the
-# tests while rolling-up the dependencies properly.
+# tests while rolling-up the dependencies properly. Thus tests may be run using `make check` as
+# opposed to the standard CMake call. The CMake test support functions are still used.
+#
 ####
 enable_testing()
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
-# Invoke autocoder to generate unit test files
+####
+# Function `unit_test_component_autocoder`:
+#
+# Performs registration of the autocoder step for the generation of GTestBase.hpp, GTestBase.cpp,
+# TesterBase.cpp, and TesterBase.hpp. These autocoding steps automate, and keep up-to-date the
+# above files saving time.
+# 
+# **EXE_NAME:** name of exe (unit test exe)
+# **SOURCE_FILES:** source files to provide for autocoding
+####
 function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
   # Search for component xml files
   foreach(TEST_SOURCE ${SOURCE_FILES})
@@ -42,7 +55,6 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
         COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
         DEPENDS ${TEST_SOURCE}
       )
-
       # Add autocode sources to module
       target_sources(
         ${EXE_NAME}
@@ -50,16 +62,19 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
         ${GTEST_SOURCE}
         ${BASE_SOURCE}
       )
-
     endif()
   endforeach()
 endfunction(unit_test_component_autocoder)
 
 
 ####
-# Add Unit Test:
+# Function `generate_ut`:
 #
-# Dispair has set in, and I don't know anymore.
+# Generates the actual unit test, dependencies, and call the autocoder.
+#
+# **UT_EXE_NAME:** name of the UT executable to be created
+# **UT_SOURCES_INPUT:** sources to split into source and autocoder file
+# **MOD_DEPS_INPUT:** dependencies split into thread and module dependencies
 ####
 function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
@@ -78,7 +93,7 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     target_link_libraries(
         "${UT_EXE_NAME}"
         "${GTEST_TARGET}"
-        "-lpthread"
+        "-lpthread" #TODO: fix this
     )
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})

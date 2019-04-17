@@ -402,9 +402,9 @@ endfunction(register_fprime_ut)
 
 #### Documentation links
 # Next Topics:
-#  - Options: [Options.md](Options.md) describes the CMake system options to change build options.
-#  - Deployment: [deployment.md](deployment.md) describes how to setup Deployment CMakeLists.txt.
-#  - Module: [module.md](module.md) describes how to setup Module CMakeLists.txt.
-#  - Toolchains: [toolchain.md](toolchain.md) describes CMake cross-compile toolchain setup.
-#  - Platforms: [platform.md](platform.md) describes the F prime specific platform settings.
+#  - Setting Options: [Options](Options.md) are used to vary a CMake build.
+#  - Adding Deployment: [Deployments](deployment.md) create F prime builds.
+#  - Adding Module: [Modules](module.md) register F prime Ports, Compontents, etc.
+#  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
+#  - Adding Platforms: [Platforms](platform.md) help F prime set Cross-Compiling specific items.
 ####
