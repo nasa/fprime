@@ -376,11 +376,13 @@ A complete list of documentation pages can be found at:
 2. [Options](Options.md): options to affect the build setup.
 3. [platform](platform.md): F´ platform setup documentation and how and creation.
 4. [toolchain](toolchain.md): CMake toolchain setup documentation and creation.
-5. [Module](support/Module.md): detailed inner documentation on module functions
-6. [Executable](support/Executable.md): detailed inner documentation on executable functions.
-7. [Unit-Test](support/Unit_Test.md): detailed inner documentation on unit test functions.
-8. [Utils](support/Utils.md): detailed inner documentation on utility functions.
-8. [AC-Utils](support/AC_Utils.md): detailed innner documentation on AC utility functions.
+4. [module](module.md): adding modules to the CMake sytem.
+4. [deployment](deployment.md): adding deployment to the CMake system.
+5. [Support/Module](support/Module.md): detailed inner documentation on module functions
+6. [Support/Executable](support/Executable.md): detailed inner documentation on executable functions.
+7. [Support/Unit-Test](support/Unit_Test.md): detailed inner documentation on unit test functions.
+8. [Support/Utils](support/Utils.md): detailed inner documentation on utility functions.
+8. [Support/AC-Utils](support/AC_Utils.md): detailed innner documentation on AC utility functions.
 
 ### 5.1 Module Functions: register_fprime_module and generate_module
 
