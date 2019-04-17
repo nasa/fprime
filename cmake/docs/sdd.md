@@ -372,15 +372,15 @@ represent execution steps.
 
 A complete list of documentation pages can be found at:
 
-1. [API](docs/API.md): standard user-level functions.
-2. [Options](docs/Options.md): options to affect the build setup.
-3. [platform](docs/platform.md): F´ platform setup documentation and how and creation.
-4. [toolchain](docs/toolchain.md): CMake toolchain setup documentation and creation.
-5. [Module](docs/support/Module.md): detailed inner documentation on module functions
-6. [Executable](docs/support/Executable.md): detailed inner documentation on executable functions.
-7. [Unit-Test](docs/support/Unit_Test.md): detailed inner documentation on unit test functions.
-8. [Utils](docs/support/Utils.md): detailed inner documentation on utility functions.
-8. [AC-Utils](docs/support/AC_Utils.md): detailed innner documentation on AC utility functions.
+1. [API](API.md): standard user-level functions.
+2. [Options](Options.md): options to affect the build setup.
+3. [platform](platform.md): F´ platform setup documentation and how and creation.
+4. [toolchain](toolchain.md): CMake toolchain setup documentation and creation.
+5. [Module](support/Module.md): detailed inner documentation on module functions
+6. [Executable](support/Executable.md): detailed inner documentation on executable functions.
+7. [Unit-Test](support/Unit_Test.md): detailed inner documentation on unit test functions.
+8. [Utils](support/Utils.md): detailed inner documentation on utility functions.
+8. [AC-Utils](support/AC_Utils.md): detailed innner documentation on AC utility functions.
 
 ### 5.1 Module Functions: register_fprime_module and generate_module
 
