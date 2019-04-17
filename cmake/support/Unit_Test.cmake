@@ -17,8 +17,8 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 # TesterBase.cpp, and TesterBase.hpp. These autocoding steps automate, and keep up-to-date the
 # above files saving time.
 # 
-# **EXE_NAME:** name of exe (unit test exe)
-# **SOURCE_FILES:** source files to provide for autocoding
+# - **EXE_NAME:** name of exe (unit test exe)
+# - **SOURCE_FILES:** source files to provide for autocoding
 ####
 function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
   # Search for component xml files
@@ -72,9 +72,9 @@ endfunction(unit_test_component_autocoder)
 #
 # Generates the actual unit test, dependencies, and call the autocoder.
 #
-# **UT_EXE_NAME:** name of the UT executable to be created
-# **UT_SOURCES_INPUT:** sources to split into source and autocoder file
-# **MOD_DEPS_INPUT:** dependencies split into thread and module dependencies
+# - **UT_EXE_NAME:** name of the UT executable to be created
+# - **UT_SOURCES_INPUT:** sources to split into source and autocoder file
+# - **MOD_DEPS_INPUT:** dependencies split into thread and module dependencies
 ####
 function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into

@@ -33,9 +33,10 @@ endfunction(add_dict_target)
 # Function `generate_executable:`
 #
 # Top-level executable generation. Core allows for generarion of UT specifics without affecting API.
-# **EXECUTABLE_NAME:** name of executable to be generated.
-# **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
-# **DEPS_INPUT:** specified module-level dependencies
+#
+# - **EXECUTABLE_NAME:** name of executable to be generated.
+# - **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
+# - **DEPS_INPUT:** specified module-level dependencies
 ####
 function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into

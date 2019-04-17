@@ -17,8 +17,9 @@ it and make it possible to generate the dictionaries out-of-band from the compil
 ## Function `generate_executable:`
 
 Top-level executable generation. Core allows for generarion of UT specifics without affecting API.
-**EXECUTABLE_NAME:** name of executable to be generated.
-**SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
-**DEPS_INPUT:** specified module-level dependencies
+
+- **EXECUTABLE_NAME:** name of executable to be generated.
+- **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
+- **DEPS_INPUT:** specified module-level dependencies
 
 

@@ -38,9 +38,9 @@ See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
           the standard F prime #include paths rooted at the root of the repo.
 
 **Arguments:**
- - FP_SOURCE_DIR: directory to add (same as add_directory)
- - EXCLUDE_FROM_ALL: (optional) exclude any targets from 'all'. See:
-                     https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
+ - **FP_SOURCE_DIR:** directory to add (same as add_directory)
+ - **EXCLUDE_FROM_ALL:** (optional) exclude any targets from 'all'. See:
+                         https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 
 
 ## Function `register_fprime_module`:
@@ -51,23 +51,27 @@ inputs, and (optionally) any non-standard link dependencies.
 
 Required variables (defined in calling scope):
 
+
+- **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
+  etc files here. This list will be split into autocoder inputs or sources.
+
+**i.e.:**
 ```
-  SOURCE_FILES - cmake list of input source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
-                 etc files here. This list will be split into autocoder inputs or sources.
+set(SOURCE_FILES
+    MyComponentAi.xml
+    SomeFile.cpp
+    MyComponentImpl.cpp)
+```
+- **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
+  needed if non-standard link dependencies are used. If not set or supplied, only F prime
+  detectable dependencies will be available. Link flags like "-lpthread" can be here.
 
-                 i.e. set(SOURCE_FILES
-                          MyComponentAi.xml
-                          SomeFile.cpp
-                          MyComponentImpl.cpp)
-
-  MOD_DEPS - (optional) cmake list of extra link dependencies. This is optional, and only needed
-             if non-standard link dependencies are used. If not set or supplied, only F prime
-             detectable dependencies will be available. Link flags like "-lpthread" can be here.
-
-             i.e. set(LINK_DEPS
-                      Module1
-                      Module2
-                      -lpthread)
+**i.e.:**
+```
+set(LINK_DEPS
+    Module1
+    Module2
+    -lpthread)
 ```
 
 **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
@@ -139,26 +143,30 @@ autocoding and source inputs, and (optionally) any non-standard link dependencie
 
 Required variables (defined in calling scope):
 
-```
-  EXECUTABLE_NAME - (optional) executable name supplied. If not supplied, or passed in, then
+
+- **EXECUTABLE_NAME:** (optional) executable name supplied. If not supplied, or passed in, then
                     PROJECT_NAME from the CMake definitions is used.
 
-  SOURCE_FILES - cmake list of input source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
+- **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
                  etc. files here. This list will be split into autocoder inputs or sources.
+**i.e.:**
+```
+set(SOURCE_FILES
+    MyComponentAi.xml
+    SomeFile.cpp
+    MyComponentImpl.cpp)
+```
 
-                 i.e. set(SOURCE_FILES
-                          MyComponentAi.xml
-                          SomeFile.cpp
-                          MyComponentImpl.cpp)
+- **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only needed
+  if non-standard link dependencies are used. If not set or supplied, only F prime
+  detectable dependencies will be available. Link flags like "-lpthread" can be here.
 
-  MOD_DEPS - (optional) cmake list of extra link dependencies. This is optional, and only needed
-             if non-standard link dependencies are used. If not set or supplied, only F prime
-             detectable dependencies will be available. Link flags like "-lpthread" can be here.
-
-             i.e. set(LINK_DEPS
-                      Module1
-                      Module2
-                      -lpthread)
+**i.e.:**
+```
+set(LINK_DEPS
+    Module1
+    Module2
+    -lpthread)
 ```
 
 Note: if desired, these fields may be supplied in-order as arguments to the function. Passing
@@ -220,28 +228,33 @@ non-standard link dependencies.
 
 Required variables (defined in calling scope):
 
+
+- **UT_NAME:** (optional) executable name supplied. If not supplied, or passed in, then
+  the module name _exe will be used.
+
+- **UT_SOURCE_FILES:** cmake list of UT source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
+  etc. files here. This list will be split into autocoder inputs or sources.
+  It is only used when building this specific unit test target.
+
+ **i.e.:**
 ```
-  UT_NAME - (optional) executable name supplied. If not supplied, or passed in, then
-            the module name _exe will be used.
+set(SOURCE_FILES
+    MyComponentAi.xml
+    SomeFile.cpp
+    MyComponentImpl.cpp)
+```
 
-  UT_SOURCE_FILES - cmake list of UT source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
-                    etc. files here. This list will be split into autocoder inputs or sources.
-                    It is only used when building this specific unit test target.
+- **UT_MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
+  needed if non-standard link dependencies are used. If not set or supplied, only
+  F prime detectable dependencies will be available. Link flags like "-lpthread"
+  can be here.
 
-                    i.e. set(SOURCE_FILES
-                             MyComponentAi.xml
-                             SomeFile.cpp
-                             MyComponentImpl.cpp)
-
-  UT_MOD_DEPS - (optional) cmake list of extra link dependencies. This is optional, and only
-                needed if non-standard link dependencies are used. If not set or supplied, only
-                F prime detectable dependencies will be available. Link flags like "-lpthread"
-                can be here.
-
-                i.e. set(LINK_DEPS
-                         Module1
-                         Module2
-                         -lpthread)
+**i.e.:**
+```
+set(LINK_DEPS
+    Module1
+    Module2
+    -lpthread)
 ```
 
   **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
