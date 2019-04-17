@@ -15,9 +15,9 @@ This function controls the the generation of the auto-coded files, generically, 
 and components. It then mines the XML files for dependencies and then adds them as dependencies to the
 module being built.
 
-**MODULE_NAME:** name of the module which is being auto-coded.
-**AUTOCODER_INPUT_FILES:** list of input files sent to the autocoder
-**AC_TYPE:** type of the auto-coder being invoked,
+- **MODULE_NAME:** name of the module which is being auto-coded.
+- **AUTOCODER_INPUT_FILES:** list of input files sent to the autocoder
+- **AC_TYPE:** type of the auto-coder being invoked,
 
 
 
@@ -27,10 +27,10 @@ Generates the module as an F prime module. This means that it will process autoc
 and dependencies. Hard sources are not added here, but in the caller. This will all be
 generated into a library.
 
-**OBJ_NAME:** object name to add dependencies to.
-**AUTOCODER_INPUT_FILES:** files to pass to the autocoder
-**LINK_DEPS:** link-time dependecies like -lm or -lpthread
-**MOD_DEPS:** CMake module dependencies
+- **OBJ_NAME:** object name to add dependencies to.
+- **AUTOCODER_INPUT_FILES:** files to pass to the autocoder
+- **LINK_DEPS:** link-time dependecies like -lm or -lpthread
+- **MOD_DEPS:** CMake module dependencies
 
 
 
@@ -40,8 +40,8 @@ Generates a library as part of F prime. This runs the AC and all the other items
 It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
 and library deps.
 
-*SOURCE_FILES_INPUT:* source files that will be split into AC and normal sources.
-*DEPS_INPUT:* dependencies bound for link and cmake dependencies
+- *SOURCE_FILES_INPUT:* source files that will be split into AC and normal sources.
+- *DEPS_INPUT:* dependencies bound for link and cmake dependencies
 
 
 
