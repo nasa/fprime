@@ -12,15 +12,16 @@ include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
 
 ####
-# Autocoder:
+# Function `generic_autocoder`:
 #
-# This function controls the the generation of the auto-coded filesi, generically, for serializables, ports,
+# This function controls the the generation of the auto-coded files, generically, for serializables, ports,
 # and components. It then mines the XML files for dependencies and then adds them as dependencies to the 
 # module being built.
 #
-# \param MODULE_NAME: name of the module which is being auto-coded.
-# \param AUTOCODER_INPUT_FILES: list of input files sent to the autocoder
-# \param AC_TYPE: type of the auto-coder being invoked,
+# - **MODULE_NAME:** name of the module which is being auto-coded.
+# - **AUTOCODER_INPUT_FILES:** list of input files sent to the autocoder
+# - **AC_TYPE:** type of the auto-coder being invoked,
+#
 ####
 function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
   # Setup needed variants of AC_TYPE in order to power this function.
@@ -114,14 +115,17 @@ function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
 endfunction(enum_autocoder)
 
 ####
-# Generate Module:
+# Function `generate_module`:
 #
 # Generates the module as an F prime module. This means that it will process autocoding,
 # and dependencies. Hard sources are not added here, but in the caller. This will all be
 # generated into a library.
 #
-# MOD_DEPS are F prime dependencies.
-# LINK_DEPS are noraml link dependencies. i.e. -lm
+# - **OBJ_NAME:** object name to add dependencies to. 
+# - **AUTOCODER_INPUT_FILES:** files to pass to the autocoder
+# - **LINK_DEPS:** link-time dependecies like -lm or -lpthread
+# - **MOD_DEPS:** CMake module dependencies
+#
 ####
 function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
   # If there are  build flags, set them now 
@@ -160,11 +164,15 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
   )
 endfunction(generate_module)
 ####
-# Generate Library:
+# Function `generate_library`:
 #
 # Generates a library as part of F prime. This runs the AC and all the other items for the build.
 # It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
 # and library deps.
+#
+# - *SOURCE_FILES_INPUT:* source files that will be split into AC and normal sources.
+# - *DEPS_INPUT:* dependencies bound for link and cmake dependencies
+#
 ####
 function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into

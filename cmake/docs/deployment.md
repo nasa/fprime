@@ -12,7 +12,7 @@ directory. This `CMakeLists.txt` is buildable as part of CMake. Thus, the user c
 deployment using the following commands. Unless building unit tests, these commands are the
 recommended way of building F prime projects.
 
-** Build Commands **
+**Build Commands**
 ```
 mkdir build_dir
 cd build_dir
