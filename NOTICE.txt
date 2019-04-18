@@ -1,4 +1,8 @@
-Copyright (c) 2009,2010,2011,2012,2013,2014, California Institute of Technology
+Copyright (c) 2009-2019, California Institute of Technology
 ("Caltech"). U.S. Government sponsorship acknowledged.
 
 All rights reserved.
+
+This product includes the GTest code Copyright, Google Inc.
+This product includes cryptographic software written by  Eric Young (eay@cryptsoft.com)
+This product includes pyparsing written by Paul T. McGuire
