@@ -38,3 +38,23 @@ add_custom_target(
 cmake ../Ref
 make dict
 ```
+
+## Custom External Libraries With Other Build Systems
+
+There are two ways to handle external libraries and building them within CMake. One is to simply
+use the `add_directory` cmake command to add the directory. Then use a `CMakeLists.txt` to call
+`add_custom_target` or `add_custom_command` trigger the actual building. The `add_custom_target`
+is used when the system does not depend on the files produced (directly) but may need a link
+dependency, and `add_custom_command` is used when the system needs access to the output files.
+
+Alternativley, `ExternalProject_Add` can be used if the external library requires download,
+version control, and building steps.
+
+**Supporting Documentation:**
+1. [https://cmake.org/cmake/help/latest/command/add_custom_target.html](https://cmake.org/cmake/help/latest/command/add_custom_target.html)
+2. [https://cmake.org/cmake/help/latest/command/add_custom_command.html](https://cmake.org/cmake/help/latest/command/add_custom_command.html)
+3. [https://cmake.org/cmake/help/latest/module/ExternalProject.html](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
+4. [https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf](https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf)
+
+
+
