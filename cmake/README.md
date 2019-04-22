@@ -16,6 +16,9 @@ Installation guides for CMake can be found here:
 Further usage documentation can be found in API.md: [API.md](docs/API.md). This document will
 explain the usage of core F´ CMake functions used to construct CMake deployments.
 
+Further discussion regarding transition from the former make system can be found here:
+[Migration.md](docs/Migration.md)
+
 Further documentation can be found in the SDD: [SDD.md](docs/sdd.md)
 
 ### CMakes Caveats
@@ -152,6 +155,12 @@ manually specified with the `-DPLATFORM` option.
 More information can be found at: [platform.md](docs/platform.md).
 More information can be found at: [Options.md](docs/Options.md).
 
+## CMake Customization
+
+Sometimes users need to crack open the CMake structure in order to do things like adding a external
+library/build system, adding custom make targets, building utilities, etc. These issues are described
+here: [Customization](docs/Customization.md)
+
 ## Advanced CMake Usage (Caution: these steps are not polished, hence "Advanced")
 
 CMake supports some advanced build-cases that will soon become standard practice for projects that wish to use F´. These features are 
@@ -160,8 +169,6 @@ should endevour to have solid understanding of CMake before expecting these to w
 
 These features include:
 1. Building with F´as a Subdirectory/Module
-2. Unit-builds
-3. Not including all of F´ core in the build
 
 ### CMake With F´ As a Subdirectory
 
@@ -186,19 +193,3 @@ message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
 ... add deployment only modules here ...
 ```
-
-### Unit-Builds with CMake
-
-When building F´, it is sometimes helpful to build just the active component and ignore the rest
-of the system. This can be done by the following commands:
-
-```
-cd <build-dir>/<sorting-dir>/path/to/component
-make
-```
-
-Where the above `<sorting-dir>` is one of the two:
-
-1. F-Prime: for F´core components
-2. Ref (or `Deployment`): for deployment specific directories
-
