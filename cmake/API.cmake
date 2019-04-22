@@ -413,6 +413,39 @@ function(register_fprime_ut)
     generate_ut("${UT_NAME}" "${SC_IFS}" "${MD_IFS}")
 endfunction(register_fprime_ut)
 
+####
+# Function `register_fprime_target`:
+#
+# Some custom targets require a multi-phase build process that is run for each module, and for the
+# deployment/executable that is being built. These must therefore register module-specific and
+# deployment specific instructions.
+#
+# **Examples:**
+# - dict: build sub dictionaries for each module, and roll-up into a global deployment dictionary
+# - sloc: lines of code are counted per-module
+# - docs: documentation is also per-module
+#
+# This function allows the user to register a file containing two functions `add_module_target`
+# and `add_global_target`. `add_global_target` adds a top-level target like `make dict` which will
+# then depend on every one of the targets created in `add_module_target`.
+#
+# **TARGET_FILE_PATH:** path to file defining above functions 
+###
+function(register_fprime_target TARGET_FILE_PATH)
+    # Check for some problems moving forward
+    if (NOT EXISTS ${TARGET_FILE_PATH})
+        message(FATAL_ERROR "${TARGET_FILE_PATH} does not exist.")
+        return()
+    endif()
+    # Update the global list of target files
+    set(TMP "${FPRIME_TARGET_LIST}")
+    list(APPEND TMP "${TARGET_FILE_PATH}")
+    list(REMOVE_DUPLICATES TMP)
+    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom F prime targtes" FORCE)
+	#Setup global target. Note: module targets found during module processing
+	setup_global_target("${TARGET_FILE_PATH}")
+endfunction(register_fprime_target)
+
 #### Documentation links
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
