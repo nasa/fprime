@@ -196,6 +196,12 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
   generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
+  # Install the executable
+  install(TARGETS "${MODULE_NAME}"
+        RUNTIME DESTINATION "bin/${PLATFORM}"
+        LIBRARY DESTINATION "lib/${PLATFORM}"
+        ARCHIVE DESTINATION "lib/static/${PLATFORM}"
+        OPTIONAL)
   # Link library list output on per-module basis
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${MODULE_NAME})

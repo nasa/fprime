@@ -61,6 +61,11 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
       add_dependencies(dict "${EXECUTABLE_NAME}_dict")
       add_dependencies(${EXECUTABLE_NAME} dict)
   endif()
+  # Install the executable
+  install(TARGETS "${EXECUTABLE_NAME}"
+        RUNTIME DESTINATION "bin/${PLATFORM}"
+        LIBRARY DESTINATION "lib/${PLATFORM}"
+        ARCHIVE DESTINATION "lib/static/${PLATFORM}")
   # Link library list output on per-module basis
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${EXECUTABLE_NAME})

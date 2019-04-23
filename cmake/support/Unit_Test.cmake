@@ -1,5 +1,5 @@
 ####
-# Unit_Test.cmak:
+# Unit_Test.cmake:
 #
 # Testing does not properly handle unit test dependencies in some versions of CMake. Therefore,
 # we follow a standard workaround from CMake users and create a "check" target used to run the
