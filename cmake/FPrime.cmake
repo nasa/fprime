@@ -37,6 +37,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/support/Executable.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Module.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/support/Target.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 # BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
 # path from which to do internal operations.
@@ -74,6 +75,7 @@ else()
     message(STATUS "Running in-source AC Generation")
 endif()
 
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")

@@ -131,35 +131,35 @@ class CommandArgsFrame:
             elif type(arg_type) == type(F32Type()):
                 e = Pmw.EntryField(frame, validate={'validator': 'real'},label_text = arg_name, labelpos='nw',value = "0.0")
             elif type(arg_type) == type(I64Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : -9223372036854775808L,
                                                     'max' : 9223372036854775807L},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(I32Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : -2147483648,
                                                     'max' : 2147483647},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(I16Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : -32768,
                                                     'max' : 32767},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(I8Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : -128,
                                                     'max' : 127},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(U64Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : 0,
                                                     'max' : 18446744073709551615L},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(U32Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : 0,
                                                     'max' : 4294967295},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(U16Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : 0,
                                                     'max' : 65535},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(U8Type()):
-                e = Pmw.EntryField(frame, validate={'validator': gse_misc.hex_integer_validate, 'stringtovalue':gse_misc.hex_integer_stringtovalue,
+                e = Pmw.EntryField(frame, validate={'validator': tkGui_misc.hex_integer_validate, 'stringtovalue':tkGui_misc.hex_integer_stringtovalue,
                                                     'min' : 0,
                                                     'max' : 255},label_text = arg_name, labelpos='nw',value = "0")
             elif type(arg_type) == type(StringType()):
@@ -178,7 +178,7 @@ class CommandArgsFrame:
         for e in entry_fields:
             # If ComboBox, rebind the key events to prevent exception
             if isinstance(e, Pmw.ComboBox):
-                gse_misc.rebind_comboBox(e)
+                tkGui_misc.rebind_comboBox(e)
 
             e.pack(side=Tkinter.LEFT)
         #
