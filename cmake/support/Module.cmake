@@ -65,13 +65,16 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
       acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
 
-      # Serializables and topologies generate dictionaries
-      if (${AC_TYPE} STREQUAL "topology" OR ${AC_TYPE} STREQUAL "serializable")
-          setup_module_dicts("${MODULE_NAME}" "${AC_XML}" "${AC_OUTPUTS}")
-      endif()
+      ## # Serializables and topologies generate dictionaries
+      ## if (${AC_TYPE} STREQUAL "topology" OR ${AC_TYPE} STREQUAL "serializable")
+      ##     setup_module_dicts("${MODULE_NAME}" "${AC_XML}" "${AC_OUTPUTS}")
+      ## endif()
       # Generated and detected dependencies
       add_generated_sources(${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${MODULE_NAME})
       fprime_dependencies(${INPUT_FILE_REAL} ${MODULE_NAME} ${LOWER_TYPE})
+
+      # Pass list of autocoder outputs out of the module
+      set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)
     endif()
   endforeach()
 endfunction(generic_autocoder)
@@ -123,11 +126,12 @@ endfunction(enum_autocoder)
 #
 # - **OBJ_NAME:** object name to add dependencies to. 
 # - **AUTOCODER_INPUT_FILES:** files to pass to the autocoder
+# - **SOURCE_FILES:** source file inputs
 # - **LINK_DEPS:** link-time dependecies like -lm or -lpthread
 # - **MOD_DEPS:** CMake module dependencies
 #
 ####
-function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
+function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS MOD_DEPS)
   # If there are  build flags, set them now 
   if (DEFINED BUILD_FLAGS)
       target_compile_definitions(${OBJ_NAME} PUBLIC ${BUILD_FLAGS})
@@ -162,6 +166,9 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES LINK_DEPS MOD_DEPS)
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
+
+  # Register extra targets at the very end, once all of the core functions are properly setup.
+  setup_all_module_targets(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}")
 endfunction(generate_module)
 ####
 # Function `generate_library`:
@@ -195,7 +202,7 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
-  generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
+  generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
   # Install the executable
   install(TARGETS "${MODULE_NAME}"
         RUNTIME DESTINATION "bin/${PLATFORM}"

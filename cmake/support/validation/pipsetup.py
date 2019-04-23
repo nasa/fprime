@@ -32,6 +32,8 @@ def validate_python_setup():
         except pkg_resources.VersionConflict:
             print(dep.strip(), "is not installed version.")
             good = False
+        except pkg_resources.RequirementParseError:
+            pass
     return good
 
 if __name__ == "__main__":
