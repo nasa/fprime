@@ -4,6 +4,21 @@ This document give key pointers to users who wish to move away from the old make
 using the new CMake system. Notably, it provides links for each step in the process for moving from
 the key features of the old make system to the features of the new CMake system.
 
+## `make impl` and `make testcomp` 
+
+The commands `make impl` and `make testcomp` should be runnable outside of tany make system setup.
+These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
+requiring the user to navigate to the directory, generate the make system, and then run these
+commands is less productive then running just the code generator directly.
+
+This is now supported with the `ac_util.sh` wrapper. This can be run with the following commands:
+
+```
+Autocoders/Python/bin/ac_util.sh impl|testcomp <path/to/Ai.xml>
+i.e.
+Autocoders/Python/bin/ac_util.sh impl ./ComLogger/ComLoggerAi.xml
+```
+
 ## Creating Modules: `mod.mk` Moves to CMakeLists.txt
 
 For each place in the old make system where a user defines a `mod.mk`, the user must instead

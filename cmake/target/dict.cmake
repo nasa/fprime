@@ -44,7 +44,7 @@ endfunction(setup_module_dicts)
 # as custom targets. This handles the top-level dictionary target `dict` and registers the steps to
 # perform the generation of the target.  TARGET_NAME should be set to `dict`.
 #
-# **TARGET_NAME:** target name to be generated
+# - **TARGET_NAME:** target name to be generated
 ####
 function(add_global_target TARGET_NAME)
     # If we are generating python dictionaries, then we need to copy the outputs
@@ -69,11 +69,11 @@ endfunction(add_global_target)
 # part of the global `dict` target above.
 #
 #
-# **MODULE_NAME:** name of the module
-# **TARGET_NAME:** name of target to produce
-# **AC_INPUTS:** list of autocoder inputs
-# **SOURCE_FILES:** list of source file inputs
-# **AC_OUTPUTS:** list of autocoder outputs
+# - **MODULE_NAME:** name of the module
+# - **TARGET_NAME:** name of target to produce
+# - **AC_INPUTS:** list of autocoder inputs
+# - **SOURCE_FILES:** list of source file inputs
+# - **AC_OUTPUTS:** list of autocoder outputs
 ####
 function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS)
     # Try to generate dictionaries for every AC input file

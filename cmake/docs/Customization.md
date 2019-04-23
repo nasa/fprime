@@ -19,11 +19,23 @@ See: [API](API.md)
 
 ## Cutsom Build-System Commands (Make Targets)
 
-In order to add a custom build-system command (think make target) the CMake call to add a target
-can be used. This target can then have dependencies added to it and can be run after CMake is setup
-by running the standard build command supplying this target.
+Custom build targets that need to be build against modules, and global targets can be generated 
+using the hook pattern. This pattern involves creating a file with two functions `add_global_target`
+and `add_module_target`. These functions are called to add targets to top-level and each module.
+Then this file ise registered with `register_fprime_target`.
 
-**Example:**
+In the two add functions, the user is expected to call the `add_custom_target` CMake command in
+order to compose the target itself. **Note:** the user may simply call this function directly to
+add targets that don't have both per-module and global steps.
+
+See:
+  - [add_custom_target](https://cmake.org/cmake/help/latest/command/add_custom_target.html) to view
+information on CMake targets.
+  - [Target](support/Target.md) for the format of the target file
+  - [API](API.md) for the syntax of the register call
+  - [dict.cmake](../target/dict.cmake) as an example of adding targets
+
+**Example (Raw Global Target):**
 
 ```
 add_custom_target(
