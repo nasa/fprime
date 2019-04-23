@@ -43,6 +43,12 @@ include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
+# Set the install directory for the package
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "Install dir" FORCE)
+endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+message(STATUS "Default installation directory: ${CMAKE_INSTALL_PREFIX}")
+
 # Library types, used for generating shared objects or static archives
 if (LINK_AS_SHARED_LIBS)
     message(STATUS "Generating shared libraries")
