@@ -1225,7 +1225,7 @@ class StripFrame(AxesFrame):
         # Also create fixed sized circular buffers for x and y data to stream into
         self._axes.add_line(line)
         buffer_capacity = int(self._config.get('strippanel', 'buffer_capacity'))
-        self.__channel_lines[ch_name] = line, gse_misc.CircularBuffer(buffer_capacity), gse_misc.CircularBuffer(buffer_capacity)
+        self.__channel_lines[ch_name] = line, tkGui_misc.CircularBuffer(buffer_capacity), tkGui_misc.CircularBuffer(buffer_capacity)
 
         # Add limit lines.
         if self._config.has_option('channel_max_limit', ch_name):

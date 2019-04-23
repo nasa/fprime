@@ -1,5 +1,11 @@
+####
+# run_deployment.py:
+#
+# Runs a deployment. Starts a GUI, a TCPServer, and the deployment application.
+####
 from __future__ import print_function
 import os
+import re
 import sys
 import time
 import atexit
@@ -36,6 +42,9 @@ def detect_terminal(title):
     '''
     if platform.system() == "Windows":
         return ["cmd.exe", "/C"]
+    elif platform.system() == "Darwin":
+        return [os.path.join(os.path.dirname(__file__), "..", "..", "..",
+                             "bin", "osx", "terminal-wrapper.bash")]
     else:
         terminals = [["gnome-terminal", "--disable-factory", "--title", title, "--"],
             ["xterm", "-hold", "-T", title, "-e"], ["lxterminal", "-t", title, "-e"], ["Konsole", "-e"],
@@ -63,8 +72,9 @@ def find_in(token, deploy, is_file=True, error=None):
     if not os.path.isdir(deploy):
         error_exit("{0} is not a directory".format(deploy), 3)
     for dirpath, dirs, files in os.walk(deploy):
-        if (is_file and token in files) or (not is_file and token in dirs):
-            return os.path.join(dirpath, token)
+        for check in (files if is_file else dirs):
+            if re.match("^" + token + "$", check):
+                return os.path.join(dirpath, check)
     #Fill in default error
     if error is None:
         error = "Failed to find {0} '{1}' under {2}".format("file" if is_file else "directory", token, deploy)
@@ -78,14 +88,14 @@ def get_args(args):
     '''
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument("-g", "--gui", choices=GUIS, dest="gui", type=str,
-                        help="Set the desired GUI system for running the deployment. [default: %default]",
+                        help="Set the desired GUI system for running the deployment. [default: %(default)s]",
                         default="tk")
     parser.add_argument("-p", "--port", dest="port", action="store", type=int,
-                        help="Set the threaded TCP socket server port [default: %default]", default=50000)
+                        help="Set the threaded TCP socket server port [default: %(default)s]", default=50000)
     parser.add_argument("-a", "--addr", dest="addr", action="store", type=str,
-                        help="set the threaded TCP socket server address [default: %default]", default="0.0.0.0")
+                        help="set the threaded TCP socket server address [default: %(default)s]", default="0.0.0.0")
     parser.add_argument("-n", "--no-app", dest="noapp", action="store_true",
-                        help="Disables the compiled app from starting [default: %default]", default=False)
+                        help="Disables the compiled app from starting [default: %(default)s]", default=False)
     parser.add_argument("-d", "--deployment", dest="deploy", action="store", required=False, type=str,
                         help="Path to deployment directory. Will be used to find dictionary and app automatically")
     parser.add_argument("--dictionary", dest="dictionary", action="store", required=False, type=str,
@@ -104,7 +114,10 @@ def get_args(args):
     app = parsed_args.app
     dictionary = parsed_args.dictionary
     # If app is None, search deploy for it
-    if app is None and parsed_args.deploy is not None:
+    if app is None and parsed_args.noapp:
+        # No APP is allow
+        pass
+    elif app is None and parsed_args.deploy is not None:
         basename = os.path.basename(os.path.normpath(parsed_args.deploy))
         app = find_in(basename, parsed_args.deploy, is_file=True,
                       error="Could not find application '{0}' under {1}. Specify -a, build it, or run without using -n."
@@ -112,23 +125,27 @@ def get_args(args):
     elif app is None:
         error_exit("--app or -d must be supplied to run app, or -n supplied to disable app", 2)
         raise Exception("EXIT FAILED")
-        dictionary = parsed_args.dictionary
     elif not os.path.isfile(app):
         error_exit("App {0} is not file".format(app), 2)
         raise Exception("EXIT FAILED")
-    # If dictionary is None, search deploy for it
-    if dictionary is None and parsed_args.deploy is not None:
+    # If dictionary is None, search deploy for it, tk searches for "py_dict"
+    if dictionary is None and parsed_args.deploy is not None and parsed_args.gui == "tk":
         dictionary = find_in("py_dict", parsed_args.deploy, is_file=False,
                       error="Could not find python dictionaries' under {0}. Specify --dictionary or build them."
+                      .format(parsed_args.deploy))
+    # "wx" searches for an XML dictionary
+    elif dictionary is None and parsed_args.deploy is not None and parsed_args.gui == "wx":
+        dictionary = find_in(".*Dictionary.xml", parsed_args.deploy, is_file=True,
+                      error="Could not find XML dictionaries' under {0}. Specify --dictionary or build them."
                       .format(parsed_args.deploy))
     elif dictionary is None:
         error_exit("--dictionary or -d must be supplied to supply dictionary", 2)
         raise Exception("EXIT FAILED")
-    elif not os.path.isdir(dictionary):
+    elif not os.path.isdir(dictionary) and not os.path.isfile(dictionary):
         error_exit("Dictionary {0} is not directory".format(app), 2)
         raise Exception("EXIT FAILED")
     # Fail-safe check
-    if app is None or dictionary is None:
+    if (not parsed_args.noapp and app is None) or dictionary is None:
         error_exit("-d or --app and --dictionary must be supplied.", 3)
         raise Exception("EXIT FAILED")
     # Check and set GUI specifics
@@ -236,8 +253,14 @@ def launch_tk(port, dictionary, address, log_dir):
     :param log_dir: directory to log to
     :return: process
     '''
-    gse_args = ["python", "-u", "-m", "fprime_gds.tkgui.tools.gse", "--port", str(port), "--dictionary", dictionary,
-                "--connect", "--addr", address, "-L", log_dir]
+    gse_args = ["python", "-u", "-m", "fprime_gds.tkgui.tools.gse", "--port", str(port)]
+    if os.path.isfile(dictionary):
+        gse_args.extend(["-x", dictionary])
+    elif os.path.isdir(dictionary):
+        gse_args.extend(["--dictionary", dictionary])
+    else:
+        print("[ERROR] Dictionary invalid, must be XML or PY dicts: {0}".format(dictionary), file=sys.stderr)
+    gse_args.extend(["--connect", "--addr", address, "-L", log_dir])
     return launch_process(gse_args, name="TK GUI")
 
 
@@ -251,8 +274,17 @@ def launch_wx(port, dictionary, address, log_dir, config):
     :param config: configuration to use
     :return: process
     '''
-    gse_args = ["python", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port), "--dictionary", dictionary,
-                "--addr", address, "-L", log_dir, "--config", config]
+    gse_args = ["python", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port)]
+    if os.path.isfile(dictionary):
+        gse_args.extend(["-x", dictionary])
+    elif os.path.isdir(dictionary):
+        gse_args.extend(["--dictionary", dictionary])
+    else:
+        print("[ERROR] Dictionary invalid, must be XML or PY dicts: {0}".format(dictionary), file=sys.stderr)
+    # For OSX, add in the wx wrapper
+    if platform.system() == "Darwin":
+        gse_args.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "bin", "osx", "wx-wrapper.bash"))
+    gse_args.extend(["--addr", address, "-L", log_dir, "--config", config])
     return launch_process(gse_args, name="WX GUI")
 
 
