@@ -52,13 +52,13 @@ function(add_global_target TARGET_NAME)
         return()
     elseif (GENERATE_HERITAGE_PY_DICT)
         add_custom_target(
-            ${TARGET_NAME}
+            ${TARGET_NAME} ALL
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/dict/serializable ${CMAKE_SOURCE_DIR}/py_dict/serializable
             COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/py_dict/serializable/__init__.py
         )
     # Otherwise just add an empty target
     else()
-        add_custom_target(${TARGET_NAME})
+        add_custom_target(${TARGET_NAME} ALL)
     endif()
 endfunction(add_global_target)
 ####

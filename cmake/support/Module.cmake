@@ -65,10 +65,6 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
       acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
 
-      ## # Serializables and topologies generate dictionaries
-      ## if (${AC_TYPE} STREQUAL "topology" OR ${AC_TYPE} STREQUAL "serializable")
-      ##     setup_module_dicts("${MODULE_NAME}" "${AC_XML}" "${AC_OUTPUTS}")
-      ## endif()
       # Generated and detected dependencies
       add_generated_sources(${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${MODULE_NAME})
       fprime_dependencies(${INPUT_FILE_REAL} ${MODULE_NAME} ${LOWER_TYPE})
