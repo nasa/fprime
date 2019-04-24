@@ -1,6 +1,6 @@
      INSTANCE NAME      | BASE ID (HEX) | REQUESTED WINDOW SIZE | DIFFERENCED ID WINDOW SIZE | LARGEST COMPONENT INTERNAL ID | MAX AMOUNT OF IDS
-     CompA_Tester       |    1 (0x1)    |          20           |             20             |             None              |         0
-         CompA          |   21 (0x15)   |          20           |            inf.            |             None              |         0
+     CompA_Tester       |    1 (0x1)    |          20           |             20             |             None              |         0        
+         CompA          |   21 (0x15)   |          20           |            inf.            |             None              |         0        
 -------------------------------------------------------------------------------------------------------------------------------------
 | INSTANCE NAME                 - Name of the instance object.                                                                      |
 | BASE ID (HEX)                 - Base ID set for the instance.                                                                     |
