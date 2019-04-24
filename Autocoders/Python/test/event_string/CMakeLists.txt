@@ -9,7 +9,10 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestLogRecvImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
-
+set(MOD_DEPS
+  Autocoders/Python/test/log_tester
+  Autocoders/Python/test/time_tester
+)
 register_fprime_module()
 
 # Sets MODULE_NAME to unique name based on path

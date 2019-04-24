@@ -17,13 +17,8 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 set(MOD_DEPS
-  "Autocoders_test_command_tester"
-  "Autocoders_test_log_tester"
-  "Autocoders_test_param_tester"
-  "Autocoders_test_telem_tester"
-  "Autocoders_test_time_tester"
+  Autocoders/Python/test/telem_tester
 )
-
 register_fprime_module()
 
 # Sets MODULE_NAME to unique name based on path
@@ -42,6 +37,7 @@ set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/stress/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
-register_fprime_ut()
+#TODO: ULTRA FIX, not uses ac.ini
+#register_fprime_ut()
 
 

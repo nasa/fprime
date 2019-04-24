@@ -9,6 +9,9 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestCommandSourceImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
+set(MOD_DEPS
+  Autocoders/Python/test/command_tester
+) 
 
 register_fprime_module()
 

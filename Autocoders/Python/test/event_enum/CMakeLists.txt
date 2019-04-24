@@ -9,14 +9,13 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestLogRecvImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
-
+set(MOD_DEPS
+  Autocoders/Python/test/command2
+  Autocoders/Python/test/log_tester
+  Autocoders/Python/test/time_tester
+  Os
+)
 register_fprime_module()
-
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Depends on a component defined in another module
-add_dependencies(${MODULE_NAME} "Autocoders_test_log_tester" "Autocoders_test_time_tester")
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
@@ -34,6 +33,7 @@ set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/event_enum/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
+
 register_fprime_ut()
 
 

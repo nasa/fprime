@@ -7,6 +7,10 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TestCommandComponentImpl.cpp"
 )
+set(MOD_DEPS
+  Autocoders/Python/test/command_tester
+  Os
+)
 
 register_fprime_module()
 
@@ -24,8 +28,8 @@ set_target_properties(
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/command2/TestComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()
 

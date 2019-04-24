@@ -9,15 +9,10 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TestCommandSourceImpl.cpp"
 )
-
+set(MOD_DEPS
+  Autocoders/Python/test/command_tester
+)
 register_fprime_module()
-
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Depends on a component defined in another module
-add_dependencies(${MODULE_NAME} "Autocoders_test_command_tester")
-
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})

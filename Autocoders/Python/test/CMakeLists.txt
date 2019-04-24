@@ -3,7 +3,7 @@
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/active_tester")
 # Broken topology
-# add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_multi_inst")

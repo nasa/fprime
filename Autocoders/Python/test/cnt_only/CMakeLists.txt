@@ -26,6 +26,6 @@ set_target_properties(
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Top.cpp"
 )
-register_fprime_ut()
+#register_fprime_ut()
 
 

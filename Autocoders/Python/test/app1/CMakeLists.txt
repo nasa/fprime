@@ -27,6 +27,7 @@ set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/app1/DuckComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Top.cpp"
 )
-register_fprime_ut()
+
+#register_fprime_ut()
 
 
