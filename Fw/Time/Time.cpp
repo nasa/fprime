@@ -220,7 +220,7 @@ namespace Fw {
       FW_ASSERT(minuend.getContext() == subtrahend.getContext(), minuend.getContext(), subtrahend.getContext());
 #endif
       // Assert minuend is greater than subtrahend
-      FW_ASSERT(minuend > subtrahend);
+      FW_ASSERT(minuend >= subtrahend);
 
       U32 seconds = minuend.getSeconds() - subtrahend.getSeconds();
       U32 uSeconds;
