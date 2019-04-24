@@ -108,7 +108,7 @@ namespace Components {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Command response at index "
       << __index
-      << " in command resopnse history\n"
+      << " in command response history\n"
       << "  Expected: " << response << "\n"
       << "  Actual:   " << e.response << "\n";
   }
