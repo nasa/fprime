@@ -151,7 +151,7 @@ class XmlComponentParser(object):
             elif comp_tag.tag == 'import_serializable_type':
                 self.__import_serializable_type_files.append(comp_tag.text)
             elif comp_tag.tag == 'import_dictionary':
-                for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR')]:
+                for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR',"")]:
                     dict_file = os.path.join(possible, comp_tag.text)
                     if os.path.isfile(dict_file) == True:
                         break
