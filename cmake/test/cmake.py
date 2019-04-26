@@ -20,7 +20,7 @@ CMAKE = "cmake"
 MAKE_CALL = "make"
 MAKE_ARGS = ["-j128"]
 
-def register_test(module, name, build_dir=None, options=None, expected=None):
+def register_test(module, name, build_dir=None, options=None, expected=None, targets=None):
     '''
     Registers a test to the given module using the given name. This will create a function of the
     form test_<name> registered to the module ready for autodetect.
@@ -34,8 +34,10 @@ def register_test(module, name, build_dir=None, options=None, expected=None):
         expected = getattr(module, "EXPECTED", [])
     if build_dir is None:
         build_dir = getattr(module, "BUILD_DIR") 
+    if targets is None:
+        targets = getattr(module, "TARGETS", [""])
     name = "test_{0}".format(name.replace("/", "_").replace("-", "_").replace(" ", "_"))
-    setattr(module, name, functools.partial(run_build, build_dir, expected, options=options))
+    setattr(module, name, functools.partial(run_build, build_dir, expected, make_targets=targets, options=options))
  
 
 def run_cmake(build_path, options={}):
