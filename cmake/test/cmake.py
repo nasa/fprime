@@ -40,20 +40,27 @@ def register_test(module, name, build_dir=None, options=None, expected=None, tar
     setattr(module, name, functools.partial(run_build, build_dir, expected, make_targets=targets, options=options))
  
 
-def run_cmake(build_path, options={}):
+def run_cmake(build_path, options={}, capout=False):
     """
     Runs the cmake in the current directory with the given options and build_path
     :param build_path: path to build
     :param options: options to pass CMake
     :return: True if successful, False otherwise
     """
+    keys = {}
     args = [CMAKE]
     for option in options.keys():
         value = options[option]
         args.append("-D{0}={1}".format(option, value))
     args.append(build_path)
-    print("Running:", args)
-    proc = subprocess.Popen(args)
+    if capout:
+        keys["stdout"] = subprocess.PIPE
+        keys["stderr"] = subprocess.PIPE
+    print("Running:", args, "With args:", keys)
+    proc = subprocess.Popen(args, **keys)
+    if capout:
+        stdout, stderr = proc.communicate()
+        return (proc.pid == 0, stdout, stderr)
     return proc.wait() == 0
 
 
