@@ -12,6 +12,7 @@ import cmake
 BUILD_DIR = os.path.join("<FPRIME>", "Ref")
 EXPECTED = [
     os.path.join("bin", platform.system(), "Ref"),
+    os.path.join("<FPRIME>", "Ref", "Top", "RefTopologyAppDictionary.xml"),
     os.path.join("lib", platform.system(), "libDrv_BlockDriver.a"),
     os.path.join("lib", platform.system(), "libSvc_FileUplink.a"),
     os.path.join("lib", platform.system(), "libSvc_CmdSequencer.a"),
