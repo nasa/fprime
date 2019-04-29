@@ -121,6 +121,14 @@ if (( $? != 0 ))
 then
     echo &quot;[ERROR] Autocoder Unit Tests Failed&quot; 1&gt;&amp;2
     exit 1
+fi
+cd ..
+git clean -xdf .
+./mk/ci/cmake-based-ci.bash
+if (( $? != 0 ))
+then
+    echo &quot;[ERROR] CMake CI failed&quot; 1&gt;&amp;2
+    exit 1
 fi</command>
     </hudson.tasks.Shell>
   </builders>
