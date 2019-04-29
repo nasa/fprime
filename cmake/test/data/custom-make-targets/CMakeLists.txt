@@ -18,9 +18,10 @@
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-project(UT-Custom-Execs C CXX)
+project(UT-Custom-Target C CXX)
 set(CMAKE_BUILD_TYPE DEBUG)
 cmake_minimum_required(VERSION 3.5)
+
 
 ##
 # Section 2: F´ Core
@@ -31,22 +32,6 @@ cmake_minimum_required(VERSION 3.5)
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../../../FPrime.cmake")
 
-# Note: when building a deployment outside of the F´ core directories, then the
-# build root must be re-mapped for use with the standard build system components.
-#
-# In this way, the module names can be predicted as an offset from the (new) build
-# root, without breaking the standard locations of F´.
-#
-# Uncomment the following lines, and set them to the BUILD_ROOT of your deployment,
-# which is typically one directory up from the CMakeLists.txt in the deployment dir.
-#set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
-#message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
+# Register Awesome
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/awesome.cmake")
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"  
-)
-# Note: supply non-explicit dependencies here
-set(MOD_DEPS
-    Os
-)
-register_fprime_executable()
