@@ -71,5 +71,6 @@ The continous integration system performs builds and unit-test check on any pull
 * Python 3 support added
 * Gse refactored and renamed to Gds
 * Wx frontend to Gds
+* UdpSender and UdpReceiver components added
 * Purged inaccurate ITAR and Copyright notices
 * Misc. bug fixes
