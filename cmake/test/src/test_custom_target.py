@@ -69,4 +69,5 @@ EXPECTED = [
     os.path.join("awesome", "Svc_PrmDb_is_awesome"),
     os.path.join("awesome", "Svc_PassiveConsoleTextLogger_is_awesome"),
 ]
+TARGETS = ["awesome"]
 cmake.register_test(__name__, "custom-target")
