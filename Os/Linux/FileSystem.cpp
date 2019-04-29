@@ -11,6 +11,7 @@
 #include <stdio.h> // Needed for rename
 #include <string.h>
 #include <limits>
+#include <sys/statvfs.h>
 
 namespace Os {
 
@@ -23,7 +24,7 @@ namespace Os {
 #ifdef __VXWORKS__
 			int mkStat = ::mkdir(path);
 #else
-			int mkStat = ::mkdir(path,S_IRUSR|S_IWRITE);
+			int mkStat = ::mkdir(path,S_IRWXU);
 #endif
 
 			if (-1 == mkStat) {
@@ -99,7 +100,8 @@ namespace Os {
 		} // end removeDirectory
 
 		Status readDirectory(const char* path, const U32 maxNum,
-							 Fw::EightyCharString fileArray[])
+							 Fw::EightyCharString fileArray[],
+							 U32& numFiles)
 		{
 			Status dirStat = OP_OK;
 			DIR * dirPtr = NULL;
@@ -169,6 +171,8 @@ namespace Os {
 				// Only error from closedir is EBADF
 				dirStat = OTHER_ERROR;
 			}
+
+			numFiles = arrayIdx;
 
 			return dirStat;
 		}
@@ -280,7 +284,7 @@ namespace Os {
 
 			U64 fileSize = 0;
 			NATIVE_INT_TYPE chunkSize;
-			
+
 			File source;
 			File destination;
 
@@ -303,7 +307,7 @@ namespace Os {
 				}
 				return fs_status;
 			}
-			
+
 			// Make sure the origin is a regular file
 			if(!S_ISREG(file_info.st_mode)) {
 				return INVALID_PATH;
@@ -319,13 +323,13 @@ namespace Os {
 			if(file_status != File::OP_OK) {
 				return handleFileError(file_status);
 			}
-			
+
 			file_status = destination.open(destPath, File::OPEN_WRITE);
 			if(file_status != File::OP_OK) {
 				return handleFileError(file_status);
 			}
-		   
-			// Set loop limit 
+
+			// Set loop limit
 			const U64 copyLoopLimit = (((U64)fileSize/FILE_SYSTEM_CHUNK_SIZE)) + 2;
 
 			U64 loopCounter = 0;
@@ -381,7 +385,7 @@ namespace Os {
 			}
 
 			size = fileStatStruct.st_size;
-		
+
 			return fileStat;
 		} // end getFileSize
 
@@ -415,7 +419,36 @@ namespace Os {
 			return stat;
 		} // end changeWorkingDirectory
 
-		
+		Status getFreeSpace(const char* path, U64& totalBytes, U64& freeBytes) {
+			Status stat = OP_OK;
+
+			struct statvfs fsStat;
+			int ret = statvfs(path, &fsStat);
+			if (ret) {
+				switch (errno) {
+					case EACCES:
+						stat = NO_PERMISSION;
+						break;
+					case ELOOP:
+					case ENOENT:
+					case ENAMETOOLONG:
+						stat = INVALID_PATH;
+						break;
+					case ENOTDIR:
+						stat = NOT_DIR;
+						break;
+					default:
+						stat = OTHER_ERROR;
+						break;
+				}
+				return stat;
+			}
+
+			totalBytes = (U64) fsStat.f_blocks * (U64) fsStat.f_frsize;
+			freeBytes = (U64) fsStat.f_bfree * (U64) fsStat.f_frsize;
+			return stat;
+		}
+
 		// Public function to get the file count for a given directory.
 		Status getFileCount (const char* directory, U32& fileCount) {
 			Status dirStat = OP_OK;
@@ -423,7 +456,7 @@ namespace Os {
 			struct dirent *direntData = NULL;
 			U32 limitCount;
 			const U64 loopLimit = ((((U64) 1) << 32)-1); // Max value of U32
-		
+
 			fileCount = 0;
 			if((dirPtr = ::opendir(directory)) == NULL) {
 				switch (errno) {
@@ -442,7 +475,7 @@ namespace Os {
 				}
 				return dirStat;
 			}
-			
+
 			// Set errno to 0 so we know why we exited readdir
 			errno = 0;
 			for(limitCount = 0; limitCount < loopLimit; limitCount++) {
@@ -464,7 +497,7 @@ namespace Os {
 			if(limitCount == loopLimit) {
 				dirStat = FILE_LIMIT;
 			}
-		
+
 			if(::closedir(dirPtr) == -1) {
 				// Only error from closedir is EBADF
 				dirStat = OTHER_ERROR;
@@ -473,6 +506,6 @@ namespace Os {
 			return dirStat;
 		} //end getFileCount
 
-	} // end FileSystem namespace 
+	} // end FileSystem namespace
 
 } // end Os namespace

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../ISF/serializable_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<serializable name = "Test" namespace="SRC">
+    <comment>Serializable objects</comment>
+    <import_serializable_type>test/path/one</import_serializable_type>
+    <members>
+    </members>
+</serializable>

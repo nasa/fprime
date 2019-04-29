@@ -4,7 +4,7 @@
        pingRcvr         |   41 (0x29)   |          20           |             20             |               2               |         2        
         chanTlm         |   61 (0x3d)   |          20           |             20             |             None              |         0        
      sendBuffComp       |   81 (0x51)   |          20           |             20             |              14               |         9        
-     recvBuffComp       |  101 (0x65)   |          20           |             20             |               6               |        10        
+     recvBuffComp       |  101 (0x65)   |          20           |             20             |               5               |         9        
         cmdDisp         |  121 (0x79)   |          20           |             20             |              10               |        10        
          prmDb          |  141 (0x8d)   |          20           |             20             |               8               |         8        
     rateGroup2Comp      |  161 (0xa1)   |          20           |             20             |               2               |         2        
@@ -14,12 +14,12 @@
     rateGroup3Comp      |  241 (0xf1)   |          20           |             20             |               2               |         2        
       fileUplink        |  261 (0x105)  |          20           |             20             |               8               |         8        
           SG5           |  281 (0x119)  |          20           |             20             |               3               |         3        
-fileUplinkBufferManager |  301 (0x12d)  |          20           |             20             |               4               |         4        
+fileUplinkBufferManager |  301 (0x12d)  |          20           |             20             |               3               |         3        
           SG4           |  321 (0x141)  |          20           |             20             |               3               |         3        
      fatalAdapter       |  341 (0x155)  |          20           |             20             |               8               |         8        
         health          |  361 (0x169)  |          20           |             20             |               8               |         8        
-       sockGndIf        |  381 (0x17d)  |          20           |             20             |               3               |         3        
-fileDownlinkBufferManag |  401 (0x191)  |          20           |             20             |               4               |         4        
+       sockGndIf        |  381 (0x17d)  |          20           |             20             |               4               |         4        
+fileDownlinkBufferManag |  401 (0x191)  |          20           |             20             |               3               |         3        
           er            |               |                       |                            |                               |                  
       eventLogger       |  421 (0x1a5)  |          20           |             20             |               7               |         7        
        linuxTime        |  441 (0x1b9)  |          20           |             20             |             None              |         0        

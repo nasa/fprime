@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <component name="GndIf" kind="passive" namespace="Svc" modeler="true">
 
@@ -7,9 +7,13 @@
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
+    <import_port_type>Svc/GndIf/GetConnectedPortAi.xml</import_port_type>
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
     <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
+
     <import_dictionary>Svc/GndIf/Events.xml</import_dictionary>
+    <import_dictionary>Svc/GndIf/Commands.xml</import_dictionary>
+
     <ports>
     
 
@@ -23,6 +27,9 @@
         </port>
 
         <port name="downlinkPort" data_type="Fw::Com"  kind="sync_input"    max_number="1">
+        </port>
+
+        <port name="isConnected" data_type="GetConnected"  kind="sync_input"    max_number="1">
         </port>
 
         <port name="Time" data_type="Time"  kind="output" role="TimeGet"    max_number="1">

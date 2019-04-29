@@ -1,4 +1,4 @@
-    <commands opcode_base="$PrmDbOpcodeBase">
+    <commands>
         <command kind="async" opcode="0" mnemonic="PRM_SAVE_FILE" >
             <comment>
             Command to save parameter image to file. Uses file name passed to constructor

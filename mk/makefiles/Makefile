@@ -60,12 +60,15 @@ $(BUILD_ROOT)/mk/bin/ncsl: $(BUILD_ROOT)/mk/tools/ncsl/ncsl.c
 ifneq ("$(BUILD)","") # only define if building binary targets
 
 $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX): $(TARGET_LIBS)
-	$(MKDIR) $(@D)
+	@$(MKDIR) $(@D)
 	@echo Generating version...
-	$(GEN_VERSION) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
-	$(CC) $(COMPILE_ONLY) $(COMPILE_TO) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
+	@$(GEN_VERSION) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
+	@$(CC) $(COMPILE_ONLY) $(COMPILE_TO) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
 	@echo Linking binary...
-	@$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $^ $(LINK_LIBS) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o
+	@$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $(LIBS_START) $^ $(LINK_LIBS) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(LIBS_END) 
+	@$(POST_LINK_BIN) $(POST_LINK_PRE_ARGS) $@ $(POST_LINK_POST_ARGS) 
+	@$(SIZE) $@
+	@$(CKSUM_SH) $@ $@.$(CKSUM_EXT)
 
 endif
 # Module-level code generator targets
@@ -93,61 +96,22 @@ run_ut:
 	test/ut/runtest_$(BUILD) $(OUTPUT_DIR)
 	
 cov:
-	$(GCOV) -o $(OUTPUT_DIR) $(SRC_$(MOD_TARGET)) $(SRC_AC_$(MOD_TARGET)) > $(OUTPUT_DIR)/$(MOD_TARGET)_gcov.txt
+	$(GCOV) -o $(OUTPUT_DIR) $(SRC_$(MOD_TARGET)_$(BUILD)) $(SRC_AC_$(MOD_TARGET)) > $(OUTPUT_DIR)/$(MOD_TARGET)_gcov.txt
 
 comp_report_gen:
 	@$(COMP_REPORT_GEN) $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/*ComponentReport.txt))
 	@$(CAT) ComponentReport.txt
 	
 dict_clean:
-ifeq ($(DICT_GEN),"GLOBAL")
-	@echo "Cleaning dictionary in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable"
-	@$(RM_DIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable
-else
-	@echo "Cleaning dictionary in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)"
-	@$(RM_DIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)
-endif
+	@echo "Cleaning dictionary in $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict/serializable"
+	@$(RM_DIR) $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict/serializable
 
 dict_install: 
-ifeq ($(DICT_GEN),"GLOBAL")
-	@echo "Installing instance dictionaries into $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)"
-	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable
-	@#@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events
-	@#@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels
-	@#@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable/__init__.py
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events/__init__.py
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels/__init__.py
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands/__init__.py
-	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/bin/'default_dict/channels/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels
-	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/bin/default_dict/events/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events
-	@#@$(CP) $(wildcard $(BUILD_ROOT)/Autocoders/bin/default_dict/commands/*.py) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands
-	@#@$(CP_RECURSE) $(wildcard $(BUILD_ROOT)/Autocoders/bin/default_dict/serializable) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)
-	@echo "Installing serializables in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable"
-	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable/__init__.py
-	@$(CP_RECURSE) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable/__init__.py $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/$(DICT_MODULE_SUBDIR)/serializable)) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)
-else
-	@echo "Installing dictionaries into $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)"
-	@echo "Installing commands in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands"
-	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/__init__.py
-	@$(CP) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/__init__.py $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/$(DICT_MODULE_SUBDIR)/commands/*.py)) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/commands
-	@echo "Installing telemetry in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels"
-	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/__init__.py
-	@$(CP) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/__init__.py $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/$(DEFAULT_DICT_MODULE_SUBDIR)/channels/*.py)) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/channels
-	@echo "Installing events in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events"
-	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/__init__.py
-	@$(CP) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/__init__.py $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/$(DEFAULT_DICT_MODULE_SUBDIR)/events/*.py)) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/events
-	@echo "Installing serializables in $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable"
-	@$(MKDIR) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable
-	@$(TOUCH) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable/__init__.py
-	@$(CP_RECURSE) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)/serializable/__init__.py $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/$(DEFAULT_DICT_MODULE_SUBDIR)/serializable)) $(BUILD_ROOT)/$(GDS_MODULE)/generated/$(DEPLOYMENT)
-endif
-
-
+	@echo "Installing instance dictionaries into $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict"
+	@$(MKDIR) $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict/serializable
+	@$(TOUCH) $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict/serializable/__init__.py
+	@echo "Installing serializables in $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict/serializable"
+	@$(CP_RECURSE) $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict/serializable/__init__.py $(foreach module,$($(DEPLOYMENT)_MODULES),$(wildcard $(BUILD_ROOT)/$(module)/$(DICT_MODULE_SUBDIR)/serializable)) $(BUILD_ROOT)/$(DEPLOYMENT)/py_dict
 
 gen_mod_sdds: $(foreach module,$($(DEPLOYMENT)_MODULES),$(subst /,,$(module))_sdd)
 

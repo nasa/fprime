@@ -6,6 +6,7 @@
 
 #ifdef BUILD_UT
 #include <iomanip>
+#include <Fw/Types/EightyCharString.hpp>
 #endif
 
 // Some macros/functions to optimize for architectures
@@ -24,6 +25,17 @@ namespace Fw {
         text = "NOSPEC"; // set to not specified.
     }
 
+#endif
+
+#ifdef BUILD_UT
+    std::ostream& operator<<(std::ostream& os, const Serializable& val) {
+        Fw::EightyCharString out;
+        val.toString(out);
+
+        os << out;
+
+        return os;
+    }
 #endif
 
     SerializeBufferBase::SerializeBufferBase() :
@@ -77,7 +89,7 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 
-#if FW_HAS_16_BIT==1        
+#if FW_HAS_16_BIT==1
     SerializeStatus SerializeBufferBase::serialize(U16 val) {
         if (this->m_serLoc + (NATIVE_UINT_TYPE) sizeof(val) - 1 >= this->getBuffCapacity()) {
             return FW_SERIALIZE_NO_ROOM_LEFT;
@@ -104,7 +116,7 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 #endif
-#if FW_HAS_32_BIT==1        
+#if FW_HAS_32_BIT==1
     SerializeStatus SerializeBufferBase::serialize(U32 val) {
         if (this->m_serLoc + (NATIVE_UINT_TYPE) sizeof(val) - 1 >= this->getBuffCapacity()) {
             return FW_SERIALIZE_NO_ROOM_LEFT;
@@ -144,7 +156,7 @@ namespace Fw {
     }
 #endif
 
-#if FW_HAS_64_BIT==1	
+#if FW_HAS_64_BIT==1
     SerializeStatus SerializeBufferBase::serialize(U64 val) {
         if (this->m_serLoc + (NATIVE_UINT_TYPE) sizeof(val) - 1 >= this->getBuffCapacity()) {
             return FW_SERIALIZE_NO_ROOM_LEFT;
@@ -200,7 +212,7 @@ namespace Fw {
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
     }
-#endif  
+#endif
 
 #if FW_HAS_F64
 
@@ -331,7 +343,7 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 
-#if FW_HAS_16_BIT==1        
+#if FW_HAS_16_BIT==1
     SerializeStatus SerializeBufferBase::deserialize(U16 &val) {
         // check for room
         if (this->getBuffLength() == this->m_deserLoc) {
@@ -364,7 +376,7 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 #endif
-#if FW_HAS_32_BIT==1        
+#if FW_HAS_32_BIT==1
     SerializeStatus SerializeBufferBase::deserialize(U32 &val) {
         // check for room
         if (this->getBuffLength() == this->m_deserLoc) {
@@ -400,9 +412,9 @@ namespace Fw {
         this->m_deserLoc += sizeof(val);
         return FW_SERIALIZE_OK;
     }
-#endif	
+#endif
 
-#if FW_HAS_64_BIT==1     
+#if FW_HAS_64_BIT==1
 
     SerializeStatus SerializeBufferBase::deserialize(U64 &val) {
         // check for room
@@ -587,6 +599,19 @@ namespace Fw {
         this->m_deserLoc = 0;
     }
 
+    SerializeStatus SerializeBufferBase::deserializeSkip(NATIVE_UINT_TYPE numBytesToSkip)
+    {
+        // check for room
+        if (this->getBuffLength() == this->m_deserLoc) {
+            return FW_DESERIALIZE_BUFFER_EMPTY;
+        } else if (this->getBuffLength() - this->m_deserLoc < numBytesToSkip) {
+            return FW_DESERIALIZE_SIZE_MISMATCH;
+        }
+        // update location in buffer to skip the value
+        this->m_deserLoc += numBytesToSkip;
+        return FW_SERIALIZE_OK;
+    }
+
     NATIVE_UINT_TYPE SerializeBufferBase::getBuffLength(void) const {
         return this->m_serLoc;
     }
@@ -626,6 +651,25 @@ namespace Fw {
         // otherwise, set destination buffer to data from deserialization pointer plus size
         SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc],size);
         if (FW_SERIALIZE_OK) {
+            this->m_deserLoc += size;
+        }
+        return stat;
+
+    }
+
+    SerializeStatus SerializeBufferBase::copyRawOffset(SerializeBufferBase& dest, NATIVE_UINT_TYPE size) {
+        // make sure there is sufficient size in destination
+        if (dest.getBuffCapacity() < size + dest.getBuffLength()) {
+            return FW_SERIALIZE_NO_ROOM_LEFT;
+        }
+        // make sure there is sufficient buffer in source
+        if (this->getBuffLeft() < size) {
+            return FW_DESERIALIZE_SIZE_MISMATCH;
+        }
+
+        // otherwise, serialize bytes to destination without writing length
+        SerializeStatus stat = dest.serialize(&this->getBuffAddr()[this->m_deserLoc], size, true);
+        if (stat == FW_SERIALIZE_OK) {
             this->m_deserLoc += size;
         }
         return stat;

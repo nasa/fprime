@@ -1,27 +1,32 @@
 // ====================================================================== 
-// \title  CmdSequencer/test/ut/Tester.hpp
-// \author tim
-// \brief  hpp file for CmdSequencer test harness implementation class
+// \title  Tester.hpp
+// \author Bocchino/Canham
+// \brief  CmdSequencer test interface
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
-#ifndef TESTER_HPP
-#define TESTER_HPP
+#ifndef Svc_Tester_HPP
+#define Svc_Tester_HPP
 
+#include "Fw/Types/MallocAllocator.hpp"
 #include "GTestBase.hpp"
+#include "Os/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/SequenceFiles.hpp"
+#include "Svc/CmdSequencer/test/ut/UnitTest.hpp"
+
+#define ALLOCATOR_ID 100
+#define BUFFER_SIZE 1024
+#define INSTANCE 0
+#define MAX_HISTORY_SIZE 10
+#define QUEUE_DEPTH 10
+#define TIMEOUT 100
 
 namespace Svc {
 
@@ -29,80 +34,222 @@ namespace Svc {
     public CmdSequencerGTestBase
   {
 
+    private:
+
+      // ----------------------------------------------------------------------
+      // Constants 
+      // ----------------------------------------------------------------------
+
+      static const NATIVE_UINT_TYPE TEST_SEQ_BUFFER_SIZE = 255;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Types 
+      // ----------------------------------------------------------------------
+
+      //! Mode for executing commands
+      struct CmdExecMode {
+
+        typedef enum {
+          //! Don't start a new sequence
+          NO_NEW_SEQUENCE,
+          //! Start a new sequence
+          NEW_SEQUENCE
+        } t;
+
+      };
+
+      //! Sequences encoding binary formats
+      struct Sequences {
+
+        //! Construct a Sequences object
+        Sequences(
+            CmdSequencerComponentImpl& component //!< The component under test
+        ) :
+          ampcsSequence(component)
+        {
+
+        }
+            
+        //! The AMPCS sequence
+        AMPCSSequence ampcsSequence;
+
+      };
+
+      struct Interceptors {
+
+        //! Open interceptor
+        class Open {
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Constructors 
+            // ----------------------------------------------------------------------
+
+            Open(void);
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Public instance methods 
+            // ----------------------------------------------------------------------
+
+            //! Enable the interceptor
+            void enable(void);
+
+            //! Disable the interceptor
+            void disable(void);
+
+          private:
+
+            // ----------------------------------------------------------------------
+            // Private instance methods 
+            // ----------------------------------------------------------------------
+
+            //! Intercept an open request
+            //! \return Success or failure
+            bool intercept(
+                Os::File::Status &fileStatus //!< The returned file status
+            );
+
+          private:
+
+            // ----------------------------------------------------------------------
+            // Private static methods 
+            // ----------------------------------------------------------------------
+
+            //! Register function
+            static bool registerFunction(
+                Os::File::Status& fileStatus,
+                const char* fileName,
+                Os::File::Mode mode,
+                void* ptr
+            );
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Public member variables 
+            // ----------------------------------------------------------------------
+           
+            //! File status
+            Os::File::Status fileStatus;
+
+        };
+
+        //! Read interceptor
+        class Read {
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Types 
+            // ----------------------------------------------------------------------
+
+            //! Type of injected errors
+            struct ErrorType {
+
+              typedef enum {
+                NONE, // Don't inject any errors
+                READ, // Bad read status
+                SIZE, // Bad size
+                DATA  // Unexpected data
+              } t;
+
+            };
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Constructors 
+            // ----------------------------------------------------------------------
+
+            Read(void);
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Public instance methods 
+            // ----------------------------------------------------------------------
+
+            //! Enable the interceptor
+            void enable(void);
+
+            //! Disable the interceptor
+            void disable(void);
+
+          private:
+
+            // ----------------------------------------------------------------------
+            // Private instance methods 
+            // ----------------------------------------------------------------------
+
+            //! Intercept an open request
+            //! \return Success or failure
+            bool intercept(
+                Os::File::Status &fileStatus,
+                void *buffer,
+                NATIVE_INT_TYPE &size
+            );
+
+          private:
+
+            // ----------------------------------------------------------------------
+            // Private static methods 
+            // ----------------------------------------------------------------------
+
+            //! Register function
+            static bool registerFunction(
+                Os::File::Status &stat,
+                void *buffer,
+                NATIVE_INT_TYPE &size,
+                bool waitForFull,
+                void *ptr
+            );
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Public member variables 
+            // ----------------------------------------------------------------------
+
+            //! Error type
+            ErrorType::t errorType;
+
+            //! How many read calls to let pass before modifying
+            U32 waitCount;
+
+            //! Read data
+            BYTE data[TEST_SEQ_BUFFER_SIZE];
+
+            //! Read size
+            U32 size;
+
+            //! Status
+            Os::File::Status fileStatus;
+
+        };
+
+      };
+
+    public:
+
       // ----------------------------------------------------------------------
       // Construction and destruction
       // ----------------------------------------------------------------------
 
-    public:
-
       //! Construct object Tester
-      //!
-      Tester(void);
+      Tester(
+          const SequenceFiles::File::Format::t format = 
+          SequenceFiles::File::Format::F_PRIME //!< The file format to use
+      );
 
       //! Destroy object Tester
-      //!
       ~Tester(void);
 
-    public:
-
-      // ---------------------------------------------------------------------- 
-      // Tests
-      // ---------------------------------------------------------------------- 
-
-      // initialize component
-      void initializeTest(void);
-
-      void missingFile(void);
-
-      void badFileCrc(void);
-
-      void emptyFile(void);
-
-      void invalidRecord(void);
-
-      void fileTooLarge(void);
-
-      void lengthZero(void);
-
-      void nominalImmediate(void);
-
-      void nominalRelative(void);
-
-      void nominalTimedRelative(void);
-
-      void nominalImmediatePort(void);
-
-      void cancelCommand(void);
-
-      void manualImmediate(void);
-
-      void manualImmediate2(void);
-
-      void failedCommand(void);
-
-      void pingTest(void);
-
-      void invalidMode(void);
-
-      void noSequence(void);
-
-      void invalidRecordEntries(void);
-
-      void invalidSequenceTime(void);
-
-      void unexpectedCompletion(void);
-
-      void sequenceTimeout(void);
-
-      void invalidManualModes(void);
-
-      void fileLoadErrors(void);
-
-      void dataAfterRecords(void);
-
     private:
-
-      static const NATIVE_UINT_TYPE TEST_SEQ_BUFFER_SIZE = 255;
 
       // ----------------------------------------------------------------------
       // Handlers for typed from ports
@@ -111,101 +258,236 @@ namespace Svc {
       //! Handler for from_seqDone
       //!
       void from_seqDone_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          FwOpcodeType opCode, /*!< Command Op Code*/
-          U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          const NATIVE_INT_TYPE portNum, //!< The port number
+          FwOpcodeType opCode, //!< Command Op Code
+          U32 cmdSeq, //!< Command Sequence
+          Fw::CommandResponse response //!< The command response argument
       );
 
       //! Handler for from_comCmdOut
       //!
       void from_comCmdOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
-          U32 context /*!< Call context value; meaning chosen by user*/
+          const NATIVE_INT_TYPE portNum, //!< The port number
+          Fw::ComBuffer &data, //!< Buffer containing packet data
+          U32 context //!< Call context value; meaning chosen by user
       );
 
       //! Handler for from_pingOut
       //!
       void from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
+          const NATIVE_INT_TYPE portNum, //!< The port number
+          U32 key //!< Value to return to pinger
       );
 
-    private:
+#if VERBOSE
+    protected:
 
       // ----------------------------------------------------------------------
-      // Helper methods
+      // TesterBase interface 
       // ----------------------------------------------------------------------
+
+      //! Handle a text event
+      void textLogIn(
+          const FwEventIdType id, //!< The event ID
+          Fw::Time& timeTag, //!< The time
+          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::TextLogString& text //!< The event string
+      );
+#endif
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Virtual function interface 
+      // ----------------------------------------------------------------------
+
+      //! Execute sequence commands for an automatic sequence
+      virtual void executeCommandsAuto(
+          const char *const fileName, //!< The file name
+          const U32 numCommands, //!< The number of commands in the sequence
+          const U32 bound, //!< The number of commands to run
+          const CmdExecMode::t mode //!< The mode
+      );
+
+      //! Execute sequence commands with a command response error
+      virtual void executeCommandsError(
+          const char *const fileName, //!< The file name
+          const U32 numCommands //!< The number of commands in the sequence
+      );
+
+      //! Execute commands for a manual sequence
+      virtual void executeCommandsManual(
+          const char *const fileName, //!< The file name
+          const U32 numCommands //!< The number of commands in the sequence
+      );
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Tests parameterized by file type
+      // ----------------------------------------------------------------------
+
+      //! Run an automatic sequence by command
+      virtual void parameterizedAutoByCommand(
+          SequenceFiles::File& file, //!< The file
+          const U32 numCommands, //!< The number of commands in the sequence
+          const U32 bound //!< The number of commands to execute
+      );
+
+      //! Inject data read errors
+      void parameterizedDataReadErrors(
+          SequenceFiles::File& file //!< The file
+      );
+
+      //! Inject file errors
+      void parameterizedFileErrors(
+          SequenceFiles::File& file //!< The file
+      );
+
+      //! Inject file open errors
+      void parameterizedFileOpenErrors(
+          SequenceFiles::File& file //!< The file
+      );
+
+      //! Inject header read errors
+      void parameterizedHeaderReadErrors(
+          SequenceFiles::File& file //!< The file
+      );
+
+      //! Run a sequence with failed commands
+      void parameterizedFailedCommands(
+          SequenceFiles::File& file, //!< The file
+          const U32 numCommands //!< The number of commands to run
+      );
+
+      //! Don't load any sequence, then try to run a sequence
+      void parameterizedNeverLoaded(void);
+
+      //! Sequence timeout
+      void parameterizedSequenceTimeout(
+          SequenceFiles::File& file //!< The file
+      );
+
+      //! Start and cancel a sequence
+      void parameterizedCancel(
+          SequenceFiles::File& file, //!< The file
+          const U32 numCommands, //!< The number of commands in the sequence
+          const U32 bound //!< The number of commands to execute
+      );
+
+      //! Run a complete sequence and then issue a command response
+      void parameterizedUnexpectedCommandResponse(
+          SequenceFiles::File& file, //!< The file
+          const U32 numCommands, //!< The number of commands in the sequence
+          const U32 bound //!< The number of commands to execute
+      );
+
+      //! Validate a sequence
+      void parameterizedValidate(
+          SequenceFiles::File& file //!< The file
+      );
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Instance helper methods
+      // ----------------------------------------------------------------------
+
+      //! Cancel a sequence
+      void cancelSequence(
+          const U32 cmdSeq, //!< The command sequence number
+          const char* const fileName //!< The file name
+      );
+
+      //! Clear history and dispatch messages
+      void clearAndDispatch(void);
 
       //! Connect ports
-      //!
       void connectPorts(void);
 
+      //! Go to auto mode
+      void goToAutoMode(
+          const U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Go to manual mode
+      void goToManualMode(
+          const U32 cmdSeq //!< The command sequence number
+      );
+
       //! Initialize components
-      //!
       void initComponents(void);
 
-    private:
+      //! Load a sequence
+      void loadSequence(
+          const char* const fileName //!< The file name
+      );
+
+      //! Run a loaded sequence
+      void runLoadedSequence(void);
+
+      //! Run a sequence by command
+      void runSequence(
+          const U32 cmdSeq, //!< The command sequence number
+          const char* const fileName //!< The file name
+      );
+
+      //! Run a sequence by port call
+      void runSequenceByPortCall(
+          const char* const fileName //!< The file name
+      );
+
+      //! Send a step command
+      void stepSequence(
+          const U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Set the component sequence format
+      void setComponentSequenceFormat(void);
+
+      //! Start a new sequence while checking command buffers
+      void startNewSequence(
+          const char *const fileName //!< The file name
+      );
+
+      //! Start a sequence in manual mode
+      void startSequence(
+          const U32 cmdSeq, //!< The command sequence number
+          const char* const fileName //!< The file name
+      );
+
+      //! Validate a sequence file
+      void validateFile(
+          const U32 cmdSeq, //!< The command sequence number
+          const char* const fileName //!< The file name
+      );
+
+    protected:
 
       // ----------------------------------------------------------------------
       // Variables
       // ----------------------------------------------------------------------
 
       //! The component under test
-      //!
       CmdSequencerComponentImpl component;
 
-      void textLogIn(
-                const FwEventIdType id, //!< The event ID
-                Fw::Time& timeTag, //!< The time
-                const Fw::TextLogSeverity severity, //!< The severity
-                const Fw::TextLogString& text //!< The event string
-            );
+      //! The file format to use
+      const SequenceFiles::File::Format::t format;
 
-      void writeBuffer(const Fw::SerializeBufferBase& buffer, const char* fileName);
+      //! Sequences encoding binary formats
+      Sequences sequences;
 
-      void serializeHeader(U32 size,
-              U32 records,
-              FwTimeBaseStoreType timeBase,
-              FwTimeContextStoreType timeContext,
-              Fw::SerializeBufferBase& destBuffer);
+      //! The allocator
+      Fw::MallocAllocator mallocator;
 
-      void serializeRecord(
-              CmdSequencerComponentImpl::CmdRecordDescriptor desc,
-              const Fw::Time &time,
-              const Fw::ComBuffer &buff,
-              Fw::SerializeBufferBase& destBuffer);
+      //! Open interceptor
+      Interceptors::Open openInterceptor;
 
-      // add CRC to end of buffer
-      void serializeCRC(Fw::SerializeBufferBase& destBuffer);
-
-      // helper to clear history and dispatch messages
-      void clearAndDispatch(void);
-
-      // file intercepters
-      static bool OpenIntercepter(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
-      Os::File::Status m_testOpenStatus;
-
-      // read call modifiers
-
-      static bool ReadIntercepter(Os::File::Status &stat, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr);
-      Os::File::Status m_testReadStatus;
-      // How many read calls to let pass before modifying
-      NATIVE_UINT_TYPE m_readsToWait;
-      // enumeration to tell what kind of error to inject
-      typedef enum {
-          NO_ERRORS, // don't inject any errors
-          FILE_READ_READ_ERROR, // return a bad read status
-          FILE_READ_SIZE_ERROR, // return a bad size
-          FILE_READ_DATA_ERROR  // return unexpected data
-      } FileReadTestType;
-      FileReadTestType m_readTestType;
-      NATIVE_UINT_TYPE m_readSize;
-      BYTE m_readData[TEST_SEQ_BUFFER_SIZE];
+      //! Read interceptor
+      Interceptors::Read readInterceptor;
 
   };
 
-} // end namespace Svc
+}
 
 #endif

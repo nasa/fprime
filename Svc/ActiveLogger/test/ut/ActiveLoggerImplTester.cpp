@@ -1097,5 +1097,12 @@ namespace Svc {
 
         printTextLogHistoryEntry(e, stdout);
     }
-
+    void ActiveLoggerImplTester ::
+      from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum,
+          U32 key
+      )
+    {
+      this->pushFromPortEntry_pingOut(key);
+    }
 } /* namespace SvcTest */

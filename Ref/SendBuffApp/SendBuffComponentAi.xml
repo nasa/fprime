@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="SendBuff" kind="queued" namespace="Ref">
     <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
@@ -19,7 +19,7 @@
             </comment>
         </port>
     </ports>
-    <commands opcode_base = "$SendBuffOpcodeBase">
+    <commands>
         <command kind="async" opcode="0" mnemonic="SB_START_PKTS">
             <comment>
             Command to start sending packets
@@ -72,7 +72,7 @@
              </args>
         </command>
     </commands>
-    <telemetry telemetry_base = "$SendBuffTelemetryBase">
+    <telemetry>
         <channel id="0" name="PacketsSent" data_type="U64" abbrev="R001-0000">
             <comment>
             Number of packets sent
@@ -103,7 +103,7 @@
             </comment>
         </channel>
     </telemetry>
-    <events event_base = "$SendBuffEventsBase">
+    <events>
         <event id="0" name="FirstPacketSent" severity="ACTIVITY_HI" format_string = "First packet ID %d received" >
             <comment>
             First packet send
@@ -151,7 +151,7 @@
             </args>
         </event>
     </events>
-    <parameters parameter_base="$SendBuffParamsBase" opcode_base = "$SendBuffOpcodeBase">
+    <parameters>
         <parameter id="0" set_opcode="10" save_opcode="11" name="parameter3" data_type="U8" default="12">
             <comment>
             A test parameter

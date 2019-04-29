@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Health.hpp
 // \author Tim
 // \brief  hpp file for Health component implementation class
@@ -6,16 +6,9 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
-// 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
-// ====================================================================== 
+// acknowledged.
+//
+// ======================================================================
 
 #include <Svc/Health/HealthComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
@@ -123,8 +116,8 @@ namespace Svc {
                         // increment cycles for the entry
                         this->m_pingTrackerEntries[entry].cycleCount++;
                     } else {
-                        // check to see if it is at warning threshold and decrement cycle count
-                        if (this->m_pingTrackerEntries[entry].cycleCount++ ==
+                        // check to see if it is at warning threshold
+                        if (this->m_pingTrackerEntries[entry].cycleCount ==
                                 this->m_pingTrackerEntries[entry].entry.warnCycles) {
                             Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
                             this->log_WARNING_HI_HLTH_PING_WARN(_arg);
@@ -137,6 +130,8 @@ namespace Svc {
                                 this->log_FATAL_HLTH_PING_LATE(_arg);
                             }
                         } // if at warning or fatal threshold
+
+                        this->m_pingTrackerEntries[entry].cycleCount++;
                     } // if clear entry
                 } // if entry has ping enabled
             } // for each entry

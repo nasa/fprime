@@ -1,0 +1,83 @@
+#if $namespace_list != None
+ #for $namespace in $namespace_list
+namespace ${namespace} {
+ #end for
+#end if
+##
+## Generate optional enum typedef's here...
+##
+#if $len($enum_type_list) > 0:
+#for $e in $enum_type_list:
+#set type_name = $e[0][1]
+#set enum_list = $e[1]
+
+    typedef enum {
+#for $item in $enum_list:
+        $item
+#end for
+        ${type_name}_MAX
+    } ${type_name}; //!< ${type_name} enumeration argument
+#end for
+#end if
+#for ($argname,$type,$modifier,$size,$comment) in $arg_list:
+#if $type == "string":
+
+    class ${argname}String : public Fw::StringBase {
+        public:
+
+            enum {
+                SERIALIZED_SIZE = ${size} + sizeof(FwBuffSizeType) //!< Serialized size of ${argname}String
+            };
+
+            ${argname}String(const char* src); //!< char buffer constructor
+            ${argname}String(const Fw::StringBase& src); //!< other string constructor
+            ${argname}String(const ${argname}String& src); //!< same type string constructor
+            ${argname}String(void); //!< default constructor
+            virtual ~${argname}String(void); //!< destructor
+            const char* toChar(void) const; //!< return internal buffer
+            NATIVE_UINT_TYPE length(void) const; //!< length of string
+
+            const ${argname}String& operator=(const ${argname}String& other); //!< equal operator for other strings
+
+            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< deserialization method
+            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< serialization method
+
+        private:
+            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy buffer, overwriting old string
+            NATIVE_UINT_TYPE getCapacity(void) const ;
+            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+
+            char m_buf[${size}]; //!< buffer for string
+    };
+
+#end if
+#if $type == "buffer":
+
+    class ${argname}Buffer : public Fw::SerializeBufferBase {
+        public:
+
+            enum {
+                SERIALIZED_SIZE = ${size} + sizeof(FwBuffSizeType) //!< serialized size of ${argname}Buffer
+            };
+
+            ${argname}Buffer(const U8 *args, NATIVE_UINT_TYPE size); //!< constructor with other byte array
+            ${argname}Buffer(); //!< default constructor
+            ${argname}Buffer(const ${argname}Buffer& other); //!< constructor with other ${argname}Buffer instance
+            virtual ~${argname}Buffer(); //!< destructor
+            const ${argname}Buffer& operator=(const ${argname}Buffer& other); //!< equal operator
+
+            NATIVE_UINT_TYPE getBuffCapacity(void) const; //!< returns capacity, not current size, of buffer
+            U8* getBuffAddr(void); //!< returns address of internal buffer
+            const U8* getBuffAddr(void) const; //!< returns address of internal buffer, const version
+
+        private:
+            U8 m_data[${size}]; //!< data buffer
+    };
+
+#end if
+#end for
+
+    /// Input $name port description
+    /// $desc
+
+    class Input${name}Port : public Fw::InputPortBase  {

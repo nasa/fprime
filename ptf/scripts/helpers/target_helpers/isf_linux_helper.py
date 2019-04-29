@@ -2,7 +2,7 @@
 
 import scripts.helpers.target_helper
 import scripts.helpers.process_helper
-import commands
+import subprocess
 import os
 import signal
 import time
@@ -12,7 +12,7 @@ class IsfLinuxHelper(scripts.helpers.target_helper.TargetHelper):
         scripts.helpers.helper.Helper.__init__(self)
         self.instance_id = instance_id
         self.started = False
-        if os.environ.has_key("DUAL_RCE"):
+        if "DUAL_RCE" in os.environ:
             self.max_session_id_char = 24
         else:
             self.max_session_id_char = 30
@@ -37,7 +37,7 @@ class IsfLinuxHelper(scripts.helpers.target_helper.TargetHelper):
         title = xterm_name
         arg_list += "-sl","20000","-title",title,"-n",title
             
-        if os.environ.has_key("vxsim_geometry"):
+        if "vxsim_geometry" in os.environ:
             arg_list += "-geometry",os.environ["vxsim_geometry"]
 
         #@todo: new isf Ref execution line here
@@ -58,5 +58,5 @@ class IsfLinuxHelper(scripts.helpers.target_helper.TargetHelper):
             self.linux_helper.kill(signal.SIGKILL)
 
     def wait(self):
-        print "base wait"
+        print("base wait")
 

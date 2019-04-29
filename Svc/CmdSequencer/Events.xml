@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/event_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/event_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <!--===== Svc CmdSequencer Events =========== -->
 
-<events event_base="$CmdSequencerEventsBase">
+<events>
     <event id="0" name="CS_SequenceLoaded" severity="ACTIVITY_LO"
         format_string="Loaded sequence %s">
         <comment>Sequence file was successfully loaded.</comment>

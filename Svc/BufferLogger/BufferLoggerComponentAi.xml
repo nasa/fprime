@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="BufferLogger" kind="active" namespace="Svc" modeler="true">
+
+  <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+  <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+  <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+  <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+  <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+  <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+
+  <import_dictionary>Svc/BufferLogger/Commands.xml</import_dictionary>
+  <import_dictionary>Svc/BufferLogger/Events.xml</import_dictionary>
+  <import_dictionary>Svc/BufferLogger/Telemetry.xml</import_dictionary>
+
+  <ports>
+    <port name="bufferSendIn" kind="async_input" data_type="Fw::BufferSend" max_number="1"></port>
+    <port name="bufferSendOut" kind="output" data_type="Fw::BufferSend" max_number="1"></port>
+    <port name="cmdIn" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"></port>
+    <port name="cmdRegOut" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"></port>
+    <port name="cmdResponseOut" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"></port>
+    <port name="comIn" kind="async_input" data_type="Fw::Com" max_number="1"></port>
+    <port name="eventOut" kind="output" data_type="Fw::Log" max_number="1" role="LogEvent"></port>
+    <port name="eventOutText" data_type="Fw::LogText"  kind="output" role="LogTextEvent" max_number="1"></port>
+    <port name="pingIn" kind="async_input" data_type="Svc::Ping" max_number="1"></port>
+    <port name="pingOut" kind="output" data_type="Svc::Ping" max_number="1"></port>
+    <port name="timeCaller" kind="output" data_type="Fw::Time" max_number="1" role="TimeGet"></port>
+    <port name="schedIn" data_type="Svc::Sched" kind="async_input" max_number="1"></port>
+    <port name="tlmOut" data_type="Fw::Tlm" kind="output" role="Telemetry" max_number="1"></port>
+  </ports>
+
+</component>

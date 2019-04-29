@@ -36,6 +36,12 @@ namespace Svc {
       void initComponents(void);
       void dispatchOne(void);
       void dispatchAll(void);
+      //! Handler for from_pingOut
+      //!
+      void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
+      );
 
       ComLogger comLogger;
   };

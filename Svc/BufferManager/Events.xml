@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
-<!--====================================================================== 
+<!--======================================================================
 
   Svc
   BufferManager
@@ -9,56 +9,32 @@
 
 ======================================================================-->
 
-<events
-  event_base="$BufferManagerIdBase"
->
+<events>
 
   <event
-    id="0"
-    name="BufferManager_AllocationQueueEmpty"
-    severity="WARNING_HI"
-    format_string="Allocation queue empty"
+    id="0x00"
+    name="ClearedErrorState"
+    severity="ACTIVITY_HI"
+    format_string="Cleared activity state"
   >
-    <comment>The Buffer Manager received a request to deallocate a buffer when the allocation queue was empty</comment>
+    <comment>The Buffer Manager has cleared its error state</comment>
   </event>
 
   <event
-    id="1"
-    name="BufferManager_AllocationQueueFull"
+    id="0x01"
+    name="StoreSizeExceeded"
     severity="WARNING_HI"
-    format_string="Allocation queue full"
+    format_string="Exceeded storage size"
   >
-    <comment>The Buffer Manager received an allocation request that, if granted, would cause the allocation queue to overflow</comment>
+    <comment>The Buffer Manager received an allocation request that, if granted, would cause the storage buffer to overflow</comment>
   </event>
 
   <event
-    id="2"
-    name="BufferManager_IDMismatch"
+    id="0x02"
+    name="TooManyBuffers"
     severity="WARNING_HI"
-    format_string="Mismatched deallocation ID: expected %d, saw %d"
+    format_string="Too many active buffers"
   >
-    <comment>The Buffer Manager received a deallocation request whose ID did not match the ID at the end of the allocation queue</comment>
-    <args>
-      <arg
-        name="expected"
-        type="U32"      >
-        <comment>The expected ID value</comment>
-      </arg>
-      <arg
-        name="saw"
-        type="U32"      >
-        <comment>The ID value seen</comment>
-      </arg>
-    </args>
+    <comment>The Buffer Manager received an allocation request that, if granted, would result in too many buffers</comment>
   </event>
-
-  <event
-    id="3"
-    name="BufferManager_StoreSizeExceeded"
-    severity="WARNING_HI"
-    format_string="Store size exceeded"
-  >
-    <comment>The Buffer Manager received an allocation request that, if granted, would exceed the store size</comment>
-  </event>
-
 </events>

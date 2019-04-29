@@ -1,5 +1,6 @@
 import sys
 import os
+import os.path
 
 deployment_title = """
 <HTML>
@@ -72,11 +73,11 @@ md_title = '''
 [$deployment SDD](sdd.md)
 
 ### Modules
-|Module|Link]
-|---|---|
+|Module|SDD|Dictionary|
+|---|---|---|
 '''
 
-md_doc_line ='''|%s|[Link](%s)|
+md_doc_line ='''|%s|[Link](%s)|[Link](%s)|
 '''
 
 
@@ -103,10 +104,10 @@ nav_doc_end = """
 """
 
 if len(sys.argv) < 3:
-    print("%s: Must specify dest file and one module!"%sys.argv[0])
+    print(("%s: Must specify dest file and one module!"%sys.argv[0]))
     
 path_to_dep = "%s/%s"%(os.environ["BUILD_ROOT"],sys.argv[1]) 
-print "Generating HTML files for %s" % path_to_dep
+print("Generating HTML files for %s" % path_to_dep)
 
 open("%s/docs/deployment_title.html"%path_to_dep,"w").write(deployment_title.replace("$deployment",sys.argv[1]))
 open("%s/docs/deployment.html"%path_to_dep,"w").write(deployment_doc.replace("$deployment",sys.argv[1]))
@@ -123,7 +124,9 @@ for module in sys.argv[2:]:
        "../../" + module + "/docs/sdd.md")
     )
     md_doc.write(md_doc_line % (module,
-       "../../" + module + "/docs/sdd.md")
+       "../../" + module + "/docs/sdd.md",
+       "../../" + module + "/docs/" + os.path.basename(module) + ".md"
+       )
     )
 #       "../../" + module +"/docs/dox.html",
 #       "../../" + module +"/docs/scrub.html"))

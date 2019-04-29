@@ -32,7 +32,7 @@ namespace Fw {
         private:
             void copyBuff(const char* buff, NATIVE_UINT_TYPE size);
             NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(void); //!< terminate the string
+            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_LOG_TEXT_BUFFER_SIZE];
     };

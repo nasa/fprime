@@ -1,10 +1,8 @@
 #G *******************************************************************************
 # * Copyright 2006, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship
-# * acknowledged. Any commercial use must be negotiated with the Office
-# * of Technology Transfer at the California Institute of Technology.
+# * acknowledged.
 # *
-# * This software may be subject to U.S. export control laws and
 # * regulations. By accepting this document, the user agrees to comply
 # * with all applicable U.S. export laws and regulations.  User has the 
 # * responsibility to obtain export licenses,
@@ -20,7 +18,7 @@ import os
 import optparse
 import platform
 import xml.sax
-import commands
+import subprocess
 import scripts.helpers.parsers.env_file_parser
 import scripts.helpers.process_helper
 import time
@@ -53,9 +51,9 @@ os.environ['DEPLOYMENT'] = options.deployment
 # Generate session id if not specified
 
 if (options.session_id == None):
-	print "Generating session id."
+	print("Generating session id.")
 	session_id = os.getenv("USER") + "--" + time.strftime("%Y-%m-%d-%H-%M-%S",time.gmtime())
-	print "Session id: " + session_id
+	print("Session id: " + session_id)
 else:
 	session_id = options.session_id
 	
@@ -69,11 +67,11 @@ elif (platform.system().count("CYGWIN")):
 elif (platform.system().count("Darwin")):
 	host = "DARWIN"
 else:
-	print "Platform " + platform.system() + " not supported."
+	print("Platform " + platform.system() + " not supported.")
 	sys.exit(-1)
 
 if options.quiet == None:
-	print "Host: " + host
+	print("Host: " + host)
 
 # get BUILD_ROOT environment variable
 
@@ -82,7 +80,7 @@ build_root = os.getenv("BUILD_ROOT")
 # check to see if host file exists
 host_file = build_root + "/ptf/configurations/host/" + host + ".env"
 if (os.path.isfile(host_file) == False):
-	print "Host configuration file " + host_file + " does not exist"
+	print("Host configuration file " + host_file + " does not exist")
 	sys.exit(-1)
 
 # read host file
@@ -96,21 +94,21 @@ os.environ["SESSION_INTERACTIVE"]="TRUE"
 
 if (options.output_dir == None):
 	if options.quiet == None:
-		print "Generating output directory."
+		print("Generating output directory.")
 	output_dir = os.environ["HOST_DEFAULT_TEST_DIR"] + "/tests." + session_id
 else:
 	output_dir = options.output_dir
 	
 if options.quiet == None:	
-	print "Test output to: " + output_dir
+	print("Test output to: " + output_dir)
 
 # Remove old directory
 if (options.delete_output_dir == True):
 	if (os.path.isdir(output_dir)):
 		# rm dir doesn't seem to do recursive
-		(rmstat,rmstr) = commands.getstatusoutput(os.environ["HOST_RM_DIR"] + " " + output_dir)
+		(rmstat,rmstr) = scripts.helpers.process_helper.getstatusoutput(os.environ["HOST_RM_DIR"] + " " + output_dir)
 		if (rmstat != 0):
-			print "Could not delete" + output_dir + ":" + rmstr
+			print("Could not delete" + output_dir + ":" + rmstr)
 else:
 	if (os.path.isdir(output_dir)):
 		print("Destination output directory already exists!")
@@ -122,7 +120,7 @@ os.environ["TARGET"] = options.target
 # check to see if target file exists
 target_file = build_root + "/ptf/configurations/target/" + options.target + ".env"
 if (os.path.isfile(target_file) == False):
-	print "Target configuration file " + target_file + " does not exist"
+	print("Target configuration file " + target_file + " does not exist")
 	sys.exit(-1)
 
 # read target file 
@@ -133,7 +131,7 @@ os.environ["COMPILER"] = options.compiler
 # check to see if compiler file exists
 compiler_file = build_root + "/ptf/configurations/compiler/" + options.compiler + ".env"
 if (os.path.isfile(compiler_file) == False):
-	print "Compiler configuration file " + target_file + " does not exist"
+	print("Compiler configuration file " + target_file + " does not exist")
 	sys.exit(-1)
 
 # read compiler file 
@@ -145,7 +143,7 @@ os.environ["GDS"] = options.gds
 # check to see if gds file exists
 gds_file = build_root + "/ptf/configurations/gds/" + options.gds + ".env"
 if (os.path.isfile(gds_file) == False):
-	print "GDS configuration file " + gds_file + " does not exist"
+	print("GDS configuration file " + gds_file + " does not exist")
 	sys.exit(-1)
 	
 scripts.helpers.parsers.env_file_parser.EnvFileReader().read_file(gds_file)  
@@ -159,7 +157,7 @@ for arg in sys.argv:
 		if arg.find(".sh") != -1 or arg.find(".py") != -1:
 			# check to see if file exists
 			if os.path.isfile(arg) == False:
-				print "Test file " + arg + " not found."
+				print("Test file " + arg + " not found.")
 				sys.exit(-1)
 
 			# print "Single adding %s" % arg
@@ -168,7 +166,7 @@ for arg in sys.argv:
 		if arg.find(".suite") != -1:
 			# verify that it is a real file
 			if os.path.isfile(arg) == False:
-				print "Suite file " + arg + " not found."
+				print("Suite file " + arg + " not found.")
 				sys.exit(-1)
 				
 			suite_test_list = open(os.path.abspath(arg),'r').readlines()
@@ -188,14 +186,14 @@ for arg in sys.argv:
 						var_end_index = test.find(")")
 	
 						if var_end_index == -1:
-							raise "Environment variable parse error on line %i of file %s" % (suite_line,arg)
+							raise Exception("Environment variable parse error on line %i of file %s" % (suite_line,arg))
 						# extract variable value
 						sub_var = test[var_start_index+2:var_end_index]
 						# look for variable in environment, if there rebuild val
-						if os.environ.has_key(sub_var):
+						if sub_var in os.environ:
 							test = test[0:var_start_index] + os.environ[sub_var] + test[var_end_index+1:]
 						else:
-							raise "Variable %s not found in environment in test suite file %s, line %d" % (sub_var,arg,suite_line)
+							raise Exception("Variable %s not found in environment in test suite file %s, line %d" % (sub_var,arg,suite_line))
 	
 						var_start_index = test.find('$(')
 						
@@ -211,7 +209,7 @@ for arg in sys.argv:
 					elif len(subline) == 1:
 						file_list = test.split()
 					else:
-					    print "Badly formed description in test suite file %s, line %d" %(arg,suite_line)
+					    print("Badly formed description in test suite file %s, line %d" %(arg,suite_line))
 					    sys.exit(-1)
 						
 					script = file_list[0]
@@ -221,7 +219,7 @@ for arg in sys.argv:
 							# check for ENV keyword
 							if entry.count("ENV("):
 								if entry.count("=") == 0:
-									print "Badly formed ENV entry in test suite file %s, line %d. Should be ENV(var=val)" %(arg,suite_line)
+									print("Badly formed ENV entry in test suite file %s, line %d. Should be ENV(var=val)" %(arg,suite_line))
 									sys.exit(-1)
 								# extract environment variable to set
 								(envvar,envval) = entry[4:-1].split("=")
@@ -241,7 +239,7 @@ for arg in sys.argv:
 		if arg.find(".env") != -1:
 			
 			if os.path.isfile(arg) == False:
-				print "ENV config file " + arg + " not found."
+				print("ENV config file " + arg + " not found.")
 				sys.exit(-1)
 			# read env file into environment
 			scripts.helpers.parsers.env_file_parser.EnvFileReader().read_file(arg)  
@@ -260,10 +258,10 @@ current_test_process = None
 def sighandler(signum, frame):
 	if signum == signal.SIGINT:
 		if current_test_process:
-			print "Runtests Received SIGINT! Killing current test " + testname
+			print("Runtests Received SIGINT! Killing current test " + testname)
 			current_test_process.kill()
 			current_test_process.wait()
-			raise "Exiting due to SIGINT."
+			raise Exception("Exiting due to SIGINT.")
 		
 	
 signal.signal(signal.SIGINT, sighandler)
@@ -272,14 +270,14 @@ a_test_failed = False
 
 test_entry = 0
 
-os.makedirs(output_dir,0755)
+os.makedirs(output_dir,0o755)
 summary_file_path = output_dir + "/Summary-%s"%time.strftime("%Y-%m-%d-%H-%M-%S",time.gmtime())
 summary_file = open(summary_file_path,'w')
 
-if os.environ.has_key("TEST_ARCHIVE_DIR"):
+if "TEST_ARCHIVE_DIR" in os.environ:
 	# make archive directory root
 	archive_dir =  os.environ["TEST_ARCHIVE_DIR"] + "/" + os.path.split(output_dir)[1]
-	os.makedirs(archive_dir,0755)
+	os.makedirs(archive_dir,0o755)
 
 for test in test_list:
 	(testdesc, script, envlist) = test
@@ -289,7 +287,7 @@ for test in test_list:
 		
 	os.environ["TSTOUTDIR"] = dirname
 	if options.quiet == None:
-		print "Making directory " + dirname
+		print("Making directory " + dirname)
 	os.makedirs(dirname)
 	# make fake home directory
 	#os.makedirs(dirname + "/FAKE_HOME")
@@ -298,9 +296,9 @@ for test in test_list:
 	# change to output directory and run
 	os.chdir(dirname)
 	if options.quiet == None:
-		print "******************\n" + testdesc + "\n******************"
-		print "Test standard output in: " + dirname + "/" + testname + ".stdout" 
-		print "Test standard error in: " + dirname + "/" + testname + ".stderr" 
+		print("******************\n" + testdesc + "\n******************")
+		print("Test standard output in: " + dirname + "/" + testname + ".stdout") 
+		print("Test standard error in: " + dirname + "/" + testname + ".stderr") 
 
 	summary_file.write("******************\n" + testdesc + "\n******************\n")
 	summary_file.write("Script: %s\n"%script)	
@@ -331,15 +329,15 @@ for test in test_list:
 		summary_file.write("ENV files: %s\n"%" ".join(envlist))
 		for envfile in envlist:
 			if os.path.isfile(envfile) == False:
-				print "Suite ENV config file %s for script %s not found."%(envfile,base + ext)
+				print("Suite ENV config file %s for script %s not found."%(envfile,base + ext))
 				sys.exit(-1)
 			# read env file into environment
 			scripts.helpers.parsers.env_file_parser.EnvFileReader().read_file(envfile,new_env)
 	
 	summary_file.flush()
-	print "Script: ", script
-	print "Test Args: ", test_args
-	print "TestnameL ", testname	
+	print("Script: ", script)
+	print("Test Args: ", test_args)
+	print("TestnameL ", testname)	
 	current_test_process.start(script, test_args, testname + ".stdout", testname + ".stderr", new_env)
 	status = current_test_process.wait()
 	end_time = time.strftime("%Y-%m-%d-%H-%M-%S",time.gmtime())
@@ -356,13 +354,13 @@ for test in test_list:
 	
 	if status == None:
 		outcome = "killed"
-		print "%-60.60s%30.30s"%(testdesc,"KILLED")
+		print("%-60.60s%30.30s"%(testdesc,"KILLED"))
 		summary_file.write("%-60.60s%30.30s\n"%(testdesc,"KILLED"))
 		a_test_failed = True;
 		break
 	elif status == 0:
 		outcome = "passed"
-		print "%-60.60s%30.30s"%(testdesc,"PASSED")
+		print("%-60.60s%30.30s"%(testdesc,"PASSED"))
 		summary_file.write("%-60.60s%30.30s\n"%(testdesc,"PASSED"))
 	else:
 		outcome = "failed"
@@ -374,14 +372,14 @@ for test in test_list:
 			
 		if options.quiet == None:
 #			print testname + " **FAILED**. Status = " + str(status)
-			print "%-60.60s%30.30s"%(testdesc,status_text)
+			print("%-60.60s%30.30s"%(testdesc,status_text))
 		else: 
-			print "%-60.60s%30.30s"%(testdesc,status_text)
+			print("%-60.60s%30.30s"%(testdesc,status_text))
 		summary_file.write("%-60.60s%30.30s\n"%(testdesc,status_text))
 		
 		a_test_failed = True;
 	if options.quiet == None:
-		print "******************\n\n"
+		print("******************\n\n")
 
 	# Write stats file if accessible
 	if os.path.isfile(os.environ["HOST_STAT_FILE"]):
@@ -391,27 +389,27 @@ for test in test_list:
 			stat_file.write(testname + "\t" + outcome + "\t" + start_time + "\t" + end_time + "\t" + os.environ['USER'] + "\t" + socket.gethostname() + "\t\"" + args + "\"\n")
 			stat_file.close()
 		except:
-			print "Unable to write stats file " + os.environ["HOST_STAT_FILE"]
+			print("Unable to write stats file " + os.environ["HOST_STAT_FILE"])
 			
-	if os.environ.has_key("TEST_ARCHIVE_DIR"):
+	if "TEST_ARCHIVE_DIR" in os.environ:
 		os.chdir(output_dir)
 		# copy test data to archive directory
 		cmd = "rsync -aHx %s %s"%(dirname,archive_dir)
 		# print cmd
-		(status,output) = commands.getstatusoutput(cmd)
+		(status,output) = scripts.helpers.process_helper.getstatusoutput(cmd)
 		if status != 0:
-			print "Unable to archive test directory! %s"%output
+			print("Unable to archive test directory! %s"%output)
 		else:
 			summary_file.write("Archived to %s\n"%archive_dir)
 			
 		
-		if os.environ.has_key("TEST_ARCHIVE_REMOVE_SOURCE"):
+		if "TEST_ARCHIVE_REMOVE_SOURCE" in os.environ:
 			# Only remove source if arhcive worked
 			if os.environ["TEST_ARCHIVE_REMOVE_SOURCE"] and status == 0:
 				rm_cmd = "rm -rf %s"%dirname
-				(status,output) = commands.getstatusoutput(rm_cmd)
+				(status,output) = scripts.helpers.process_helper.getstatusoutput(rm_cmd)
 				if status != 0:
-					print "Error deleting source directory %s: %s"%(dirname,output)
+					print("Error deleting source directory %s: %s"%(dirname,output))
 		
 	summary_file.write("******************\n\n")
 	summary_file.flush()	

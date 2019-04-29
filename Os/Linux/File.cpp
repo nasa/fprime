@@ -3,17 +3,31 @@
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+#include <Utils/Hash/libcrc/lib_crc.h> // borrow CRC
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
 #include <cerrno>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-
+#include <limits>
 #include <string.h>
+#include <stdio.h>
+
+//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(x,...)
 
 namespace Os {
 
-    File::File() :m_fd(0),m_mode(OPEN_NO_MODE),m_lastError(0) {
+    File::File() :m_fd(-1),m_mode(OPEN_NO_MODE),m_lastError(0) {
     }
 
     File::~File() {
@@ -32,6 +46,20 @@ namespace Os {
                 flags = O_RDONLY;
                 break;
             case OPEN_WRITE:
+                flags = O_WRONLY | O_CREAT;
+                break;
+            case OPEN_SYNC_WRITE:
+                flags = O_WRONLY | O_CREAT | O_SYNC;
+                break;
+            case OPEN_SYNC_DIRECT_WRITE:
+                flags = O_WRONLY | O_CREAT | O_DSYNC
+#ifdef __linux__
+                        | O_DIRECT;
+#else
+                ;
+#endif
+                break;
+            case OPEN_CREATE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
                 break;
             default:
@@ -39,7 +67,7 @@ namespace Os {
                 break;
         }
 
-        NATIVE_INT_TYPE userFlags = 
+        NATIVE_INT_TYPE userFlags =
 #ifdef __VXWORKS__
         0;
 #else
@@ -68,6 +96,36 @@ namespace Os {
         this->m_mode = mode;
         this->m_fd = fd;
         return stat;
+    }
+
+    File::Status File::prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len) {
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            return NOT_OPENED;
+        }
+
+        File::Status fileStatus = OP_OK;
+
+#ifdef __linux__
+        NATIVE_INT_TYPE stat = posix_fallocate(this->m_fd, offset, len);
+
+        if (stat) {
+            switch (stat) {
+                case ENOSPC:
+                case EFBIG:
+                    fileStatus = NO_SPACE;
+                    break;
+                case EBADF:
+                    fileStatus = DOESNT_EXIST;
+                    break;
+                default:
+                    fileStatus = OTHER_ERROR;
+                    break;
+            }
+        }
+#endif
+
+        return fileStatus;
     }
 
     File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
@@ -172,6 +230,7 @@ namespace Os {
 
         // make sure it has been opened
         if (OPEN_NO_MODE == this->m_mode) {
+            size = 0;
             return NOT_OPENED;
         }
 
@@ -186,6 +245,7 @@ namespace Os {
                buffer
 #endif
                ,size);
+
             if (-1 == writeSize) {
                 switch (errno) {
                     case EINTR: // write was interrupted
@@ -195,6 +255,8 @@ namespace Os {
                         stat = NO_SPACE;
                         break;
                     default:
+                        DEBUG_PRINT("Error %d during write of 0x0%llx, addrMod %d, size %d, sizeMod %d\n",
+                                    errno, (U64) buffer, ((U64) buffer) % 512, size, size % 512);
                         stat = OTHER_ERROR;
                         break;
                 }
@@ -202,6 +264,17 @@ namespace Os {
                 break; // break out of while loop
             } else {
                 size = writeSize;
+
+#ifdef __linux__
+                if ((OPEN_SYNC_DIRECT_WRITE != this->m_mode) && (waitForDone)) {
+                    NATIVE_UINT_TYPE position = lseek(this->m_fd, 0, SEEK_CUR);
+                    sync_file_range(this->m_fd, position - writeSize, writeSize,
+                                    SYNC_FILE_RANGE_WAIT_BEFORE
+                                    | SYNC_FILE_RANGE_WRITE
+                                    | SYNC_FILE_RANGE_WAIT_AFTER);
+                }
+#endif
+
                 break; // break out of while loop
             }
         }
@@ -209,8 +282,91 @@ namespace Os {
         return stat;
     }
 
+    // NOTE(mereweth) - see http://lkml.iu.edu/hypermail/linux/kernel/1005.2/01845.html
+    // recommendation from Linus Torvalds, but doesn't seem to be that fast
+    File::Status File::bulkWrite(const void * buffer, NATIVE_UINT_TYPE &totalSize,
+                                 NATIVE_INT_TYPE chunkSize) {
+
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            totalSize = 0;
+            return NOT_OPENED;
+        }
+
+#ifdef __linux__
+        const NATIVE_UINT_TYPE startPosition = lseek(this->m_fd, 0, SEEK_CUR);
+#endif
+        NATIVE_UINT_TYPE newBytesWritten = 0;
+
+        for (NATIVE_UINT_TYPE idx = 0; idx < totalSize; idx += chunkSize) {
+            NATIVE_INT_TYPE size = chunkSize;
+            // if we're on the last iteration and length isn't a multiple of chunkSize
+            if (idx + chunkSize > totalSize) {
+                size = totalSize - idx;
+            }
+            const NATIVE_INT_TYPE toWrite = size;
+            FW_ASSERT(idx + size <= totalSize, idx + size);
+            const Os::File::Status fileStatus = this->write((U8*) buffer + idx, size, false);
+            if (!(fileStatus == Os::File::OP_OK
+                  && size == static_cast<NATIVE_INT_TYPE>(toWrite))) {
+                totalSize = newBytesWritten;
+                return fileStatus;
+            }
+
+#ifdef __linux__
+            sync_file_range(this->m_fd,
+                            startPosition + newBytesWritten,
+                            chunkSize,
+                            SYNC_FILE_RANGE_WRITE);
+
+            if (newBytesWritten) {
+                sync_file_range(this->m_fd,
+                                startPosition + newBytesWritten - chunkSize,
+                                chunkSize,
+                                SYNC_FILE_RANGE_WAIT_BEFORE
+                                | SYNC_FILE_RANGE_WRITE
+                                | SYNC_FILE_RANGE_WAIT_AFTER);
+
+                posix_fadvise(this->m_fd,
+                              startPosition + newBytesWritten - chunkSize,
+                              chunkSize, POSIX_FADV_DONTNEED);
+            }
+#endif
+
+            newBytesWritten += toWrite;
+        }
+
+        totalSize = newBytesWritten;
+        return OP_OK;
+    }
+
+    File::Status File::flush() {
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            return NOT_OPENED;
+        }
+
+        File::Status stat = OP_OK;
+
+        if (-1 == fsync(this->m_fd)) {
+            switch (errno) {
+                case ENOSPC:
+                    stat = NO_SPACE;
+                    break;
+                default:
+                    stat = OTHER_ERROR;
+                    break;
+            }
+        }
+
+        return stat;
+    }
+
     void File::close(void) {
-        (void)::close(this->m_fd);
+        if ((this->m_fd != -1) and (this->m_mode != OPEN_NO_MODE)) {
+            (void)::close(this->m_fd);
+            this->m_fd = -1;
+        }
         this->m_mode = OPEN_NO_MODE;
     }
 
@@ -222,4 +378,67 @@ namespace Os {
         return strerror(this->m_lastError);
     }
 
+    File::Status File::calculateCRC32(U32 &crc)
+    {
+
+        // make sure it has been opened
+        if (OPEN_NO_MODE == this->m_mode) {
+            crc = 0;
+            return NOT_OPENED;
+        }
+
+        const U32 maxChunkSize = 32;
+        const U32 initialSeed = 0xFFFFFFFF;
+
+        // Seek to beginning of file
+        Status status = seek(0, true);
+        if (status != OP_OK) {
+            crc = 0;
+            return status;
+        }
+
+        U8 file_buffer[maxChunkSize];
+
+        bool endOfFile = false;
+
+        U32 seed = initialSeed;
+        const U32 maxIters = std::numeric_limits<U32>::max(); // loop limit
+        U32 numIters = 0;
+
+        while (!endOfFile && numIters < maxIters) {
+
+            ++numIters;
+            int chunkSize = maxChunkSize;
+
+            status = read(file_buffer, chunkSize, false);
+            if (status == OP_OK) {
+                // chunkSize modified by file.read
+
+                if (chunkSize == 0) {
+                    endOfFile = true;
+                    continue;
+                }
+
+                int chunkIdx = 0;
+
+                while (chunkIdx < chunkSize) {
+                  seed = update_crc_32(seed, file_buffer[chunkIdx]);
+                  chunkIdx++;
+                }
+
+            } else {
+                crc = 0;
+                return status;
+            }
+        }
+
+        if (!endOfFile) {
+            crc = 0;
+            return OTHER_ERROR;
+        }
+        else {
+            crc = seed;
+            return OP_OK;
+        }
+    }
 }

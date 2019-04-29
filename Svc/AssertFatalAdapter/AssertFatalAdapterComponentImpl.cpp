@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 
@@ -23,6 +16,24 @@
 #include <Fw/Types/Assert.hpp>
 #include <assert.h>
 #include <stdio.h>
+
+namespace Fw {
+    void defaultReportAssert
+            (
+            FILE_NAME_ARG file,
+            NATIVE_UINT_TYPE lineNo,
+            NATIVE_UINT_TYPE numArgs,
+            AssertArg arg1,
+            AssertArg arg2,
+            AssertArg arg3,
+            AssertArg arg4,
+            AssertArg arg5,
+            AssertArg arg6,
+            I8* destBuffer,
+            NATIVE_INT_TYPE buffSize
+            );
+
+}
 
 namespace Svc {
 
@@ -112,10 +123,14 @@ namespace Svc {
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
       Fw::LogStringArg fileArg;
-      fileArg.format("%d",file);
+      fileArg.format("0x%08X",file);
 #else
       Fw::LogStringArg fileArg((const char*)file);
 #endif
+
+      I8 msg[FW_ASSERT_TEXT_SIZE];
+      Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
+      fprintf(stderr, "%s\n",(const char*)msg);
 
       switch (numArgs) {
           case 0:
