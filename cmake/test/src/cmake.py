@@ -88,7 +88,7 @@ def assert_exists(expected, start_time):
     """
     for expect in expected:
         expect = expect.replace("<FPRIME>",
-                                os.path.join(os.path.dirname(__file__), "..", ".."))
+                                os.path.join(os.path.dirname(__file__), "..", "..", ".."))
         assert os.path.exists(expect), "CMake build failed to generate '{0}'".format(expect)
         assert os.path.getmtime(expect) >= start_time, "CMake did not recreate/update '{0}'".format(expect)  
 
@@ -112,7 +112,7 @@ def run_build(build_path, expected_outputs, build_directory=None, make_targets=[
     try:
         os.chdir(tmpd)
         build_path = build_path.replace("<FPRIME>",
-                                        os.path.join(os.path.dirname(__file__), "..", ".."))
+                                        os.path.join(os.path.dirname(__file__), "..", "..", ".."))
         assert run_cmake(build_path, options=options), "CMake failed for path '{0}' and options '{1}'".format(build_path, options)
         for target in make_targets:
             assert run_make(target), "Failed to build '{0}' target for '{1}' and options '{2}'".format(target, build_path, options)

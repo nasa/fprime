@@ -30,7 +30,7 @@ def test_tools_validation():
             os.environ["PYTHONHOME"] = ""
             os.environ["PYTHONPATH"] = ""
             os.environ["PATH"] = os.environ.get("PATH", "").replace(python_dir + ":", "").replace(":" + python_dir, "")
-            ret, stdout, stderr = cmake.run_cmake(os.path.join(os.path.dirname(__file__), "..", "..", "Ref"), capout=True)
+            ret, stdout, stderr = cmake.run_cmake(os.path.join(os.path.dirname(__file__), "..", "..", "..", "Ref"), capout=True)
             print(stdout.decode("utf-8"), file=sys.stdout)
             print(stderr.decode("utf-8"), file=sys.stderr)
             all_out = "".join([stdout.decode("utf-8"), stderr.decode("utf-8")])
