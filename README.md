@@ -44,9 +44,7 @@ The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pd
 
 ## Continuous Integration
 
-The continous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.  Current build status can be seen here, but do note some PRs will fail and ask to be resubmitted:
-
-[![Build Status](https://cae-jenkins2.jpl.nasa.gov/buildStatus/icon?job=F_Prime_Infrastructure/fprime-ci)](https://cae-jenkins2.jpl.nasa.gov/job/F_Prime_Infrastructure/job/fprime-ci/)
+The continous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.
 
 ## F Prime Release Notes
 
