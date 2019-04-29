@@ -7,9 +7,9 @@ COPY python/pip_required_build.txt /tmp
 # Note: this is done in one step to prevent extra docker image size.
 ####
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends csh git build-essential && \
+    apt-get install -y --no-install-recommends csh git build-essential cmake && \
     yes | /tmp/ubuntu-packages.sh && \
-    pip install -r /tmp/pip_required_build.txt && \
+    pip install -r /tmp/pip_required_build.txt && pip install pytest && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ####
 # Jenkins:
