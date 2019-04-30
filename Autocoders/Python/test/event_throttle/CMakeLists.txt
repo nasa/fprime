@@ -30,7 +30,6 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
-#TODO: ULTRA FIX
-#register_fprime_ut()
+register_fprime_ut()
 
 
