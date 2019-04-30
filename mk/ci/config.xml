@@ -102,6 +102,7 @@ swcaegitadmin</adminlist>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 export PATH=&quot;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;
+. /opt/fprime-venv/bin/activate
 echo &quot;Merging: origin/${ghprbTargetBranch} into ${ghprbActualCommit}}&quot;
 git merge origin/${ghprbTargetBranch}
 if (( $? != 0 ))
