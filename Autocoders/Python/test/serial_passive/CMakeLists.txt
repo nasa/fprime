@@ -25,7 +25,7 @@ set_target_properties(
 set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/serial_passive/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 #TODO: ULTRA FIX 
 #register_fprime_ut()

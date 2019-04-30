@@ -4,7 +4,7 @@
 
 set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/command1/Test1ComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 
 set(UT_MODULES

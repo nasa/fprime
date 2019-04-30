@@ -27,7 +27,7 @@ set_target_properties(
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${FPRIME_CORE_DIR}/Autocoders/Python/test/port_nogen/ExampleComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()
 
