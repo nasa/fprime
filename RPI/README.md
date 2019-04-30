@@ -31,7 +31,7 @@ If the UART port is not set up correctly, there will be a file open error.
 |IO23|IO25|GPIO|
 |IO24|IO17|GPIO|
 
-**If you wish to see the blinking LED demo, connect an LED to GPIO 22 as follows:**
+**If you wish to see the blinking LED demo, connect an LED to GPIO 21 as follows:**
 
 [Connect an LED](https://thepihut.com/blogs/raspberry-pi-tutorials/27968772-turning-on-an-led-with-your-raspberry-pis-gpio-pins)
  

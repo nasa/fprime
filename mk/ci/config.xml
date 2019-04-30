@@ -102,6 +102,7 @@ swcaegitadmin</adminlist>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 export PATH=&quot;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;
+. /opt/fprime-venv/bin/activate
 echo &quot;Merging: origin/${ghprbTargetBranch} into ${ghprbActualCommit}}&quot;
 git merge origin/${ghprbTargetBranch}
 if (( $? != 0 ))
@@ -121,6 +122,14 @@ if (( $? != 0 ))
 then
     echo &quot;[ERROR] Autocoder Unit Tests Failed&quot; 1&gt;&amp;2
     exit 1
+fi
+cd ..
+git clean -xdf .
+./mk/ci/cmake-based-ci.bash
+if (( $? != 0 ))
+then
+    echo &quot;[ERROR] CMake CI failed&quot; 1&gt;&amp;2
+    exit 1
 fi</command>
     </hudson.tasks.Shell>
   </builders>
@@ -128,8 +137,8 @@ fi</command>
   <buildWrappers>
     <com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper plugin="docker-custom-build-environment@1.7.3">
       <selector class="com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector">
-        <contextPath>mk/</contextPath>
-        <dockerfile>docker/Dockerfile</dockerfile>
+        <contextPath></contextPath>
+        <dockerfile>mk/docker/Dockerfile</dockerfile>
       </selector>
       <dockerHost plugin="docker-commons@1.13"/>
       <dockerRegistryCredentials></dockerRegistryCredentials>

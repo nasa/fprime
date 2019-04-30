@@ -35,6 +35,8 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       else()
           set(AUTOCODE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Autocode")
       endif()
+      #TODO: fix once the autocoder does break on build-root
+      set(TMP_AC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Autocode")
       set(GTEST_SOURCE "${AUTOCODE_DIR}/GTestBase.cpp")
       set(BASE_SOURCE "${AUTOCODE_DIR}/TesterBase.cpp")
       set(GTEST_HEADER "${AUTOCODE_DIR}/GTestBase.hpp")
@@ -42,16 +44,18 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       target_include_directories(${EXE_NAME} PUBLIC ${AUTOCODE_DIR})
       add_custom_command(
         OUTPUT ${GTEST_SOURCE} ${BASE_SOURCE} ${GTEST_HEADER} ${BASE_HEADER}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${AUTOCODE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy ${TEST_SOURCE} ${AUTOCODE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E chdir ${AUTOCODE_DIR} ${CMAKE_COMMAND} -E env pwd
-        COMMAND ${CMAKE_COMMAND} -E chdir ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TMP_AC_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy ${TEST_SOURCE} ${TMP_AC_DIR}
+        COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR} ${CMAKE_COMMAND} -E env pwd
+        COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR}
         ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
-        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${AUTOCODE_DIR} --build_root ${RAW_XML}
-        COMMAND ${CMAKE_COMMAND} -E chdir ${AUTOCODE_DIR}
+        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${TMP_AC_DIR} --build_root ${RAW_XML}
+        COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR}
         ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
-        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${AUTOCODE_DIR} --build_root -u ${RAW_XML}
-        COMMAND ${CMAKE_COMMAND} -E remove ${AUTOCODE_DIR}/Tester.hpp ${AUTOCODE_DIR}/Tester.cpp
+        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${TMP_AC_DIR} --build_root -u ${RAW_XML}
+        COMMAND ${CMAKE_COMMAND} -E remove ${TMP_AC_DIR}/Tester.hpp ${TMP_AC_DIR}/Tester.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${TMP_AC_DIR} ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
         DEPENDS ${TEST_SOURCE}
       )

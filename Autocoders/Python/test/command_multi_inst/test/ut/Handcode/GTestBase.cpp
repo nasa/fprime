@@ -107,7 +107,7 @@ namespace Cmd {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Command response at index "
       << index
-      << " in command resopnse history\n"
+      << " in command response history\n"
       << "  Expected: " << response << "\n"
       << "  Actual:   " << e.response << "\n";
   }
