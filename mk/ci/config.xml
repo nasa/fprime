@@ -136,8 +136,8 @@ fi</command>
   <buildWrappers>
     <com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper plugin="docker-custom-build-environment@1.7.3">
       <selector class="com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector">
-        <contextPath>mk/</contextPath>
-        <dockerfile>docker/Dockerfile</dockerfile>
+        <contextPath></contextPath>
+        <dockerfile>mk/docker/Dockerfile</dockerfile>
       </selector>
       <dockerHost plugin="docker-commons@1.13"/>
       <dockerRegistryCredentials></dockerRegistryCredentials>
