@@ -35,8 +35,10 @@ def test_tools_validation():
             print(stderr.decode("utf-8"), file=sys.stderr)
             all_out = "".join([stdout.decode("utf-8"), stderr.decode("utf-8")])
             assert ret, "Assert that the CMake run has failed"
-        ex_text = "  [VALIDATION] Validation failed for:\n  python;/Users/mstarch/code/fprime-infra/fprime-sw/cmake/support/validation/pipsetup.py"
-        assert ex_text in all_out, "Failed to find tool check error"
+        ex_texts = ["  [VALIDATION] Validation failed for:\n  python;",
+                    "cmake/support/validation/pipsetup.py"]
+        for ex_text in ex_texts:
+            assert ex_text in all_out, "Failed to find tool check error"
     finally:
         os.chdir(owd)
         shutil.rmtree(tmpd)
