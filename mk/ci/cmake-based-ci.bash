@@ -24,8 +24,8 @@ fi
 # Change to the CMake test directory and run CMake UTs
 cd ..
 cd cmake/test/src
-# Note: tool-check cannot be run w/o an vritual env
-pytest --ignore test_tool_check.py --ignore test_custom_target.py --ignore test_validation.py --ignore test_ut.py
+# Note: custom target and validation are currently broken due to unimplemented features
+pytest --ignore test_custom_target.py --ignore test_validation.py  --ignore test_ut.py --ignore test_tools_validation.py
 if (( $? != 0 ))
 then
     echo "[ERROR] Failed to run CMake unit tests"

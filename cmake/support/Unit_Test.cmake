@@ -54,7 +54,8 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
         ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
         ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${TMP_AC_DIR} --build_root -u ${RAW_XML}
         COMMAND ${CMAKE_COMMAND} -E remove ${TMP_AC_DIR}/Tester.hpp ${TMP_AC_DIR}/Tester.cpp
-        COMMAND ${CMAKE_COMMAND} -E rename ${TMP_AC_DIR} ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${TMP_AC_DIR} ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
         DEPENDS ${TEST_SOURCE}
       )

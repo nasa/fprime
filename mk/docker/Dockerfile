@@ -6,7 +6,7 @@ COPY cmake/test/requirements.txt /tmp/cmake_requirements.txt
 # Note: this is done in one step to prevent extra docker image size.
 ####
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends bash git build-essential python3 python3-pip python3-venv && \
+    apt-get install -y --no-install-recommends bash git build-essential cmake python python-setuptools python-pip python3 python3-pip python3-venv && \
     mkdir -p /opt/ && python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
     pip install -r /tmp/AC_requirements.txt && pip install -r /tmp/cmake_requirements.txt  && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -26,4 +26,5 @@ ENV USER jenkins
 # Paths and entrypoinys
 ENV VIRTUAL_ENV "/opt/fprime-venv"
 ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV LANG C.UTF-8
 ENTRYPOINT ["/bin/bash"]

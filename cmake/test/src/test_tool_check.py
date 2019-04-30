@@ -9,7 +9,7 @@ import sys
 import tempfile
 import platform
 import shutil
-import distutils
+import distutils.spawn
 import pytest
 import cmake
 
