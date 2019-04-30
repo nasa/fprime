@@ -18,7 +18,7 @@ F Primeâ€™s component-based architecture enables a high degree of modularit
 
 ### Rapid Deployment
 
-F Prime provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the â€œboilerplateâ€� code required in an F Prime deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
+F Prime provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the boilerplate code required in an F Prime deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
 
 ### Portability
 
@@ -44,9 +44,7 @@ The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pd
 
 ## Continuous Integration
 
-The continous integration system performs builds and unit-test check on any pull-requests created on the FÂ´ core. Thus ensuring that FÂ´ core is stable and well maintained.  Current build status can be seen here, but do note some PRs will fail and ask to be resubmitted:
-
-[![Build Status](https://cae-jenkins2.jpl.nasa.gov/buildStatus/icon?job=F_Prime_Infrastructure/fprime-ci)](https://cae-jenkins2.jpl.nasa.gov/job/F_Prime_Infrastructure/job/fprime-ci/)
+The continous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.
 
 ## F Prime Release Notes
 
@@ -63,4 +61,16 @@ The continous integration system performs builds and unit-test check on any pull
  * Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
  * Added a tutorial [here.](docs/Tutorials/README.md)
  * Updated Svc/BufferManager with bug fix
- * Fixed a bunch of shell permissionss
+ * Fixed a bunch of shell permissions
+ 
+#### Release 1.2
+
+* Better MagicDraw Plugin
+* Prototype CMake build system. See: [CMake Readme](cmake/README.md)
+* Mars Helicopter Project fixes migrated in
+* Python 3 support added
+* Gse refactored and renamed to Gds
+* Wx frontend to Gds
+* UdpSender and UdpReceiver components added
+* Purged inaccurate ITAR and Copyright notices
+* Misc. bug fixes
