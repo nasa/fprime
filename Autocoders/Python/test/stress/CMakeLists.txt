@@ -34,10 +34,17 @@ set_target_properties(
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Autocoders/Python/test/stress/TestComponentAi.xml"
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/stress/TestPtComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
-#TODO: ULTRA FIX, not uses ac.ini
-#register_fprime_ut()
+register_fprime_ut()
+
+# ac.ini needs to be copied into Autocode directory
+add_custom_target(py_ac_test_stress_ac_ini
+   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/Autocode
+   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_LIST_DIR}/Autocode
+)
+add_dependencies(${MODULE_NAME}_exe py_ac_test_stress_ac_ini)
+
 
 
