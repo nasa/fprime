@@ -9,7 +9,6 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Autocoders/Python/test/command_tester
-  Os
 )
 
 register_fprime_module()
@@ -22,6 +21,10 @@ set_target_properties(
   ${MODULE_NAME}
   PROPERTIES
   EXCLUDE_FROM_ALL TRUE
+)
+set(UT_MOD_DEPS
+  Fw_Comp
+  Os
 )
 
 # Add unit test directory

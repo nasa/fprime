@@ -4,7 +4,7 @@ DIRNAME="$(dirname "${BASH_SOURCE}")"
 FPRIME_DIR=`pwd`
 FPRIME_DEP="${FPRIME_DIR}/Ref"
 
-let JOBS=$(( ( RANDOM % 100 )  + 1 ))
+let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
 PREFIX="base-build"
 ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "" "install"
 if (( $? != 0 ))
@@ -13,7 +13,7 @@ then
     exit 1
 fi
 
-let JOBS=$(( ( RANDOM % 100 )  + 1 ))
+let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
 PREFIX="all-uts"
 DIR=$(mktemp -d)
 BUILD_DIR="${DIR}" ${DIRNAME}/scripts/cmake-ut.bash "${FPRIME_DIR}" "check" 
@@ -33,7 +33,7 @@ fi
   cd "${OWD}"
   for target in ${TARGETS}
   do
-    let JOBS=$(( ( RANDOM % 100 )  + 1 ))
+    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     PREFIX="ut-${target}"
     ${DIRNAME}/scripts/cmake-ut.bash "${FPRIME_DIR}" "${target}"
     if (( $? != 0 ))
