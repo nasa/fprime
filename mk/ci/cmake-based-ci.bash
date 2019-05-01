@@ -4,20 +4,23 @@ DIRNAME="$(dirname "${BASH_SOURCE}")"
 FPRIME_DIR=`pwd`
 FPRIME_DEP="${FPRIME_DIR}/Ref"
 
+let JOBS=$(( ( RANDOM % 100 )  + 1 ))
 PREFIX="base-build"
 ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "" "install"
 if (( $? != 0 ))
 then
-    echo "[ERROR] Failed to build: ${PREFIX}"
+    echo "[ERROR] Failed to build (-j${JOBS}): ${PREFIX}"
     exit 1
 fi
 
+let JOBS=$(( ( RANDOM % 100 )  + 1 ))
 PREFIX="all-uts"
 DIR=$(mktemp -d)
 BUILD_DIR="${DIR}" ${DIRNAME}/scripts/cmake-ut.bash "${FPRIME_DIR}" "check" 
 if (( $? != 0 ))
 then
-    echo "[ERROR] Failed to run CMake and process UTs: ${PREFIX}"
+    echo "[ERROR] Failed to run CMake and process UTs (-j${JOBS}): ${PREFIX}"
+    rm -r "${DIR}"
     exit 2
 fi
 # Read the previous build and run each target individually
@@ -30,12 +33,13 @@ fi
   cd "${OWD}"
   for target in ${TARGETS}
   do
+    let JOBS=$(( ( RANDOM % 100 )  + 1 ))
     PREFIX="ut-${target}"
     ${DIRNAME}/scripts/cmake-ut.bash "${FPRIME_DIR}" "${target}"
     if (( $? != 0 ))
     then
         let RET=5
-        echo "[ERROR] Failed to run individual UT for: ${target}"
+        echo "[ERROR] Failed to run individual UT for (-j${JOBS}): ${target}"
     fi
   done
   exit ${RET}
