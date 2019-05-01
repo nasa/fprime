@@ -18,6 +18,10 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Autocoders/Python/test/telem_tester
+  Autocoders/Python/test/log_tester
+  Autocoders/Python/test/param_tester
+  Autocoders/Python/test/command_tester
+  Autocoders/Python/test/time_tester
 )
 register_fprime_module()
 
@@ -40,11 +44,12 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 
 # ac.ini needs to be copied into Autocode directory
-add_custom_target(py_ac_test_stress_ac_ini
-   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/Autocode
-   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_LIST_DIR}/Autocode
-)
-add_dependencies(${MODULE_NAME}_exe py_ac_test_stress_ac_ini)
-
+if (UT_BUILD)
+  add_custom_target(py_ac_test_stress_ac_ini
+     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/Autocode
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_LIST_DIR}/Autocode
+  )
+  add_dependencies(${MODULE_NAME}_exe py_ac_test_stress_ac_ini)
+endif()
 
 

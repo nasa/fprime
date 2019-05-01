@@ -1,11 +1,11 @@
 # Many unit tests were broken before the switch to cmake
 # There are also missing dependencies between test cases.
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/active_tester")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/active_tester")
 # Broken topology
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_multi_inst")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_res")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_string")
