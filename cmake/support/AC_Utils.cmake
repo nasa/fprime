@@ -109,6 +109,12 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
       DEPENDS ${AC_FINAL_XML}
     )
   else()
+    #Setup the output directory
+    get_filename_component(TO_MK_DIR ${AC_FINAL_SOURCE} DIRECTORY)
+    add_custom_command(
+        OUTPUT ${TO_MK_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TO_MK_DIR}
+    ) 
     add_custom_command(
       OUTPUT  ${OUTPUT_PRODUCTS}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
@@ -119,7 +125,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${HPP_NAME} ${AC_FINAL_HEADER}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${HPP_NAME}
-      DEPENDS ${AC_FINAL_XML}
+      DEPENDS ${AC_FINAL_XML} ${TO_MK_DIR}
     )
   endif()
   set(AC_OUTPUTS ${OUTPUT_PRODUCTS} PARENT_SCOPE)

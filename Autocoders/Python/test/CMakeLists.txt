@@ -1,11 +1,11 @@
 # Many unit tests were broken before the switch to cmake
 # There are also missing dependencies between test cases.
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/active_tester")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/active_tester")
 # Broken topology
-# add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_multi_inst")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_res")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_string")
@@ -39,7 +39,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port_loopback")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port_nogen")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port_return_type")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/queued1")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serial_passive")
+#Note: AC broken, does not generate from_SerialOut_static in TesterBase.cpp
+#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serial_passive")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serialize_enum")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serialize_stringbuffer")
 

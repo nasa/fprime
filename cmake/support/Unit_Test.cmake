@@ -37,6 +37,18 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       endif()
       #TODO: fix once the autocoder does break on build-root
       set(TMP_AC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Autocode")
+      get_module_name("${TMP_AC_DIR}")
+      set(AC_TMP_MOD "${MODULE_NAME}_clean")
+      
+      # This creates the temporary Autocoder directory. Since this is used by multiple generations
+      # it must be created on the fly, and cleaned up afterword. The clean-up step here "generates"
+      # a fake source
+      # Add a custom command to make the directory
+      add_custom_command(
+        OUTPUT ${TMP_AC_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TMP_AC_DIR}
+      )    
+      
       set(GTEST_SOURCE "${AUTOCODE_DIR}/GTestBase.cpp")
       set(BASE_SOURCE "${AUTOCODE_DIR}/TesterBase.cpp")
       set(GTEST_HEADER "${AUTOCODE_DIR}/GTestBase.hpp")
@@ -44,7 +56,6 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       target_include_directories(${EXE_NAME} PUBLIC ${AUTOCODE_DIR})
       add_custom_command(
         OUTPUT ${GTEST_SOURCE} ${BASE_SOURCE} ${GTEST_HEADER} ${BASE_HEADER}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy ${TEST_SOURCE} ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR} ${CMAKE_COMMAND} -E env pwd
         COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR}
@@ -57,7 +68,7 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${TMP_AC_DIR} ${AUTOCODE_DIR}
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
-        DEPENDS ${TEST_SOURCE}
+        DEPENDS ${TEST_SOURCE} ${TMP_AC_DIR}
       )
       # Add autocode sources to module
       target_sources(
