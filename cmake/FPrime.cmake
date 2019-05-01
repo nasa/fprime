@@ -79,17 +79,4 @@ register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")
-
-# Add gtest
 include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
-add_subdirectory("${FPRIME_CORE_DIR}/gtest/" "${CMAKE_BINARY_DIR}/F-Prime")
-
-# Module subdirectories
-# Autocoders is first for Cheetah templates
-add_subdirectory("${FPRIME_CORE_DIR}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
-add_subdirectory("${FPRIME_CORE_DIR}/Fw/" "${CMAKE_BINARY_DIR}/F-Prime/Fw")
-add_subdirectory("${FPRIME_CORE_DIR}/Svc/" "${CMAKE_BINARY_DIR}/F-Prime/Svc")
-add_subdirectory("${FPRIME_CORE_DIR}/Os/" "${CMAKE_BINARY_DIR}/F-Prime/Os")
-add_subdirectory("${FPRIME_CORE_DIR}/Drv/" "${CMAKE_BINARY_DIR}/F-Prime/Drv")
-add_subdirectory("${FPRIME_CORE_DIR}/CFDP/" "${CMAKE_BINARY_DIR}/F-Prime/CFDP")
-add_subdirectory("${FPRIME_CORE_DIR}/Utils/" "${CMAKE_BINARY_DIR}/F-Prime/Utils")

@@ -46,16 +46,18 @@ set(CMAKE_BUILD_TYPE DEBUG)
 
 This section includes the `cmake/FPrime.cmake` file from the root of the F prime library. If this
 deployment is treating F prime as a subdirectory or external library, then the
-FPRIME_CURRENT_BUILD_ROOT must be set **after** the call to include FPrime.cmake. This allows the
-deployment to be treated independently from the F prime core code.
+FPRIME_CURRENT_BUILD_ROOT must be set **after** the call to include FPrime-Code.cmake. This allows
+the deployment to be treated independently from the F prime core code.
 
 **Example:**
 ```
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 # Only if external to the core F prime code
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 ```
+**Note:** if custom targets are desired, then they should be registered between the two includes.
 
 ### Section 3: Include Modules and Topologies
 

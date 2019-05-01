@@ -9,3 +9,4 @@ set(CMAKE_BUILD_TYPE DEBUG)
 
 # Include the build for F prime.
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime-Code.cmake")

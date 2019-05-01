@@ -286,8 +286,9 @@ blue/orange in the diagram below.
 These files are supplied by the the deployment or executable being built. This is typically supplied
 by the adaption project of F´. These files supply two critical functions. Primarily, this must
 supply an entry-point of the build system. It contains the standard CMake headers and an inclusion
-of the F´ CMake support file `FPrime.cmake`. This ensures CMake is ready to run, and all the F´
-setup is included. This should look something like the following:
+of the F´ CMake support file `FPrime.cmake` it should also include `FPrime-Code.cmake` to include
+the F´ core code. This ensures CMake is ready to run, and all the F´ setup is included.
+This should look something like the following:
 
 **CMake Headers and F´ Build System**
 
@@ -310,6 +311,7 @@ set(CMAKE_BUILD_TYPE DEBUG)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ```
 
 The secondary function of this file is to include any sub directories that contain adaptation
@@ -338,11 +340,11 @@ with the `Ref` prefix.
 ### 4.2 F´ Core CMake Support Files
 
 These files provide the the core CMake functions used to make components, deployments, and modules.
-In addition `FPrime.cmake` includes the sub directories that compose F´ core components. In that
-way deployments need only include the one CMake file to import all of F´. Functions that automate
-the auto-code function, module dependencies, and various other utilities are included to. Thus
-deployments and executables can follow the same pattern as core F´ components when adding custom
-components of their own.
+In addition `FPrime-Code.cmake` includes the sub directories that compose F´ core components. In
+that way deployments need only include the one CMake file to import all of F´. Functions that
+automate the auto-code function, module dependencies, and various other utilities are included to.
+Thus deployments and executables can follow the same pattern as core F´ components when adding
+custom components of their own.
 
 ### 4.3 F´Core and Adaptation CMakeLists.txt Files
 
