@@ -30,6 +30,7 @@ cmake_minimum_required(VERSION 3.5)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../../../FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../../FPrime-Code.cmake")
 
 # Note: when building a deployment outside of the F´ core directories, then the
 # build root must be re-mapped for use with the standard build system components.

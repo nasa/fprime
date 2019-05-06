@@ -184,8 +184,9 @@ other tools will fail.  This can be done with the following two lines added to t
 `CMakeLists.txt`. However, these lines **must** be added after including F´core subdirectories.
 
 ```
-# **** First Include FPrime.cmake, the core components CMake ***
+# **** First Include FPrime.cmake,FPrime-Code.cmake the core API and components CMakes ***
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 
 # **** Second, override the current BUILD_ROOT ****
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")

@@ -9,7 +9,7 @@ import platform
 import cmake
 
 # Test a normal build, with the ref executable and static libraries
-BUILD_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "custom-targets" )
+BUILD_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "custom-make-targets" )
 EXPECTED = [
     os.path.join("awesome", "everything_is_awesome"),
     os.path.join("awesome", "Drv_BlockDriver_is_awesome"),
@@ -20,7 +20,6 @@ EXPECTED = [
     os.path.join("awesome", "Svc_FileManager_is_awesome"),
     os.path.join("awesome", "Svc_PolyDb_is_awesome"),
     os.path.join("awesome", "Svc_SocketGndIf_is_awesome"),
-    os.path.join("awesome", "Ref_SendBuffApp_is_awesome"),
     os.path.join("awesome", "Fw_FilePacket_is_awesome"),
     os.path.join("awesome", "Svc_Ping_is_awesome"),
     os.path.join("awesome", "Fw_Types_is_awesome"),
@@ -35,7 +34,6 @@ EXPECTED = [
     os.path.join("awesome", "Svc_Cycle_is_awesome"),
     os.path.join("awesome", "Svc_Health_is_awesome"),
     os.path.join("awesome", "Svc_LinuxTime_is_awesome"),
-    os.path.join("awesome", "Ref_PingReceiver_is_awesome"),
     os.path.join("awesome", "Fw_Com_is_awesome"),
     os.path.join("awesome", "Drv_DataTypes_is_awesome"),
     os.path.join("awesome", "Svc_ComLogger_is_awesome"),
@@ -45,9 +43,7 @@ EXPECTED = [
     os.path.join("awesome", "Svc_CmdDispatcher_is_awesome"),
     os.path.join("awesome", "Fw_Log_is_awesome"),
     os.path.join("awesome", "Fw_Tlm_is_awesome"),
-    os.path.join("awesome", "gtest_is_awesome"),
     os.path.join("awesome", "Os_is_awesome"),
-    os.path.join("awesome", "Ref_SignalGen_is_awesome"),
     os.path.join("awesome", "Svc_Sched_is_awesome"),
     os.path.join("awesome", "Svc_Seq_is_awesome"),
     os.path.join("awesome", "Svc_WatchDog_is_awesome"),
@@ -55,8 +51,6 @@ EXPECTED = [
     os.path.join("awesome", "Svc_PolyIf_is_awesome"),
     os.path.join("awesome", "Svc_FileDownlink_is_awesome"),
     os.path.join("awesome", "Fw_ComFile_is_awesome"),
-    os.path.join("awesome", "Ref_RecvBuffApp_is_awesome"),
-    os.path.join("awesome", "codegen_is_awesome"),
     os.path.join("awesome", "Svc_Time_is_awesome"),
     os.path.join("awesome", "Svc_GndIf_is_awesome"),
     os.path.join("awesome", "Fw_Cfg_is_awesome"),

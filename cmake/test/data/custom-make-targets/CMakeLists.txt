@@ -31,7 +31,8 @@ cmake_minimum_required(VERSION 3.5)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../../../FPrime.cmake")
-
 # Register Awesome
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/awesome.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../../FPrime-Code.cmake")
+
 
