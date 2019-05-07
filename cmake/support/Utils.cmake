@@ -98,7 +98,6 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   foreach(TARGET ${TARGETS})
     add_dependencies(${MODULE_NAME} "${TARGET}${BUILD_SUFFIX}")
     target_link_libraries(${MODULE_NAME} "${TARGET}${BUILD_SUFFIX}")
-    add_dict_deps(${MODULE_NAME}  "${TARGET}${BUILD_SUFFIX}")
   endforeach()
 endfunction(fprime_dependencies)
 
