@@ -194,7 +194,6 @@ namespace Os {
                     accSize = 0;
                     break; // break out of while loop
                 } else if (0 == readSize) { // end of file
-                    accSize = 0;
                     break;
                 } else { // partial read so adjust read point and size
                     accSize += readSize;
