@@ -16,14 +16,6 @@
 #include <string.h>
 
 namespace Os {
-    
-    IntervalTimer::IntervalTimer() {
-        memset(&this->m_startTime,0,sizeof(this->m_startTime));
-        memset(&this->m_stopTime,0,sizeof(this->m_stopTime));
-    }
-
-    IntervalTimer::~IntervalTimer() {
-    }
 
     U32 IntervalTimer::getTimerFrequency(void) {
         return 1;
@@ -49,14 +41,6 @@ namespace Os {
         }
 
         return result.upper*1000000 + result.lower / 1000;
-    }
-
-    void IntervalTimer::start() {
-        getRawTime(this->m_startTime);
-    }
-
-    void IntervalTimer::stop() {
-        getRawTime(this->m_stopTime);
     }
 
     IntervalTimer::RawTime IntervalTimer::getDiffRaw(const RawTime& t1, const RawTime& t2) {
