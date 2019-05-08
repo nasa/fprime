@@ -6,6 +6,7 @@
 #
 ####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
