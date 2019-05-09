@@ -84,6 +84,21 @@ option(LINK_AS_SHARED_LIBS "Link F prime with shared libraries." OFF)
 ####
 option(GENERATE_HERITAGE_PY_DICT "Generate F prime python dictionaries instead of XML based dictionaries." OFF)
 
+####
+# `SKIP_TOOLS_CHECK:`
+#
+# For older clients, the check that validates the tool-suite is installed may fail. This option
+# skips the tools check enabling the system to run.
+#
+# **Values:**
+# - ON: skip tools check
+# - OFF: (default) run tools check
+#
+# e.g. `-DSKIP_TOOLS_CHECK=ON`
+####
+option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
+
+
 # Note: document other system options here.
 
 ####
