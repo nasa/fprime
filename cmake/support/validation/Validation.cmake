@@ -50,7 +50,7 @@ endfunction(setup_validation_command)
 
 # Registers the pipsetup check
 if (SKIP_TOOLS_CHECK)
-    message(WARNING "[VALIDATION] User chose to skup tools check.")
+    message(WARNING "[VALIDATION] User chose to skip tools check.")
 else()
     setup_validation_command("SETUP" "python" "${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
 endif()
