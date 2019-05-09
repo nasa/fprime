@@ -77,6 +77,18 @@ use python fragment dictionaries.
 e.g. `-DGENERATE_HERITAGE_PY_DICT=ON`
 
 
+## `SKIP_TOOLS_CHECK:`
+
+For older clients, the check that validates the tool-suite is installed may fail. This option
+skips the tools check enabling the system to run.
+
+**Values:**
+- ON: skip tools check
+- OFF: (default) run tools check
+
+e.g. `-DSKIP_TOOLS_CHECK=ON`
+
+
 ## `PLATFORM:`
 
 Specifies the platform used when building the F prime using the CMake system. See:
