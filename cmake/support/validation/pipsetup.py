@@ -32,7 +32,7 @@ def validate_python_setup():
         except pkg_resources.VersionConflict:
             print(dep.strip(), "is not installed version.")
             good = False
-        except Exceptionpi as e:
+        except Exception as e:
             if "RequirementParseError" not in str(e):
                 raise
     return good
