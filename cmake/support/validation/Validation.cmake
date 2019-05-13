@@ -49,4 +49,8 @@ function(setup_validation_command VALIDATION_TIME)
 endfunction(setup_validation_command)
 
 # Registers the pipsetup check
-setup_validation_command("SETUP" "python" "${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
+if (SKIP_TOOLS_CHECK)
+    message(WARNING "[VALIDATION] User chose to skip tools check.")
+else()
+    setup_validation_command("SETUP" "python" "${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
+endif()

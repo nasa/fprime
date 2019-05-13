@@ -19,14 +19,14 @@
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
 
-# Include validation file first, as it checks that everything is in-order
-include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")
 # Include the Options, and platform files. These are files that change the build
 # setup. Users may need to add items to these files in order to ensure that all
 # specific project builds work as expected.
 include("${CMAKE_CURRENT_LIST_DIR}/Options.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 
+# Include validation file next, as it checks that everything is in-order
+include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")
 # Include the support files that provide all the functions, utilities, and other
 # hidden items in the CMake system. Typically a user should not interact with any
 # of these files, as they are a library that automates FPrime builds.
