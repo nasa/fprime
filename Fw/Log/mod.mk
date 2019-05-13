@@ -20,12 +20,14 @@ SRC = \
 	LogPacket.cpp \
 	LogString.cpp \
 	TextLogString.cpp \
-	AmpcsEvrLogPacket.cpp
+	AmpcsEvrLogPacket.cpp \
+        Log.cpp
 	
 HDR = LogBuffer.hpp \
 	LogPacket.hpp \
 	LogString.hpp \
 	TextLogString.hpp \
-	AmpcsEvrLogPacket.hpp
+	AmpcsEvrLogPacket.hpp \
+        Log.hpp
 
 SUBDIRS = test

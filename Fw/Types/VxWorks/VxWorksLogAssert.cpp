@@ -8,7 +8,7 @@
 #include <Fw/Types/VxWorks/VxWorksLogAssert.hpp>
 #include <stdio.h>
 #include <taskLib.h>
-#include <Os/Log.hpp>
+#include <Fw/Log/Log.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 
@@ -46,22 +46,22 @@ namespace Fw {
 
         switch (numArgs) {
             case 0:
-                Os::Log::logMsg(fileIdFs,reinterpret_cast<POINTER_CAST>(file),lineNo,0,0,0,0);
+                Fw::Log::logMsg(fileIdFs,reinterpret_cast<POINTER_CAST>(file),lineNo,0,0,0,0);
                 break;
             case 1:
-                Os::Log::logMsg(fileIdFs " %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,0,0,0);
+                Fw::Log::logMsg(fileIdFs " %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,0,0,0);
                 break;
             case 2:
-                Os::Log::logMsg(fileIdFs " %d %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,0,0);
+                Fw::Log::logMsg(fileIdFs " %d %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,0,0);
                 break;
             case 3:
-                Os::Log::logMsg(fileIdFs " %d %d %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,arg3,0);
+                Fw::Log::logMsg(fileIdFs " %d %d %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,arg3,0);
                 break;
             case 4:
-                Os::Log::logMsg(fileIdFs " %d %d %d %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,arg3,arg4);
+                Fw::Log::logMsg(fileIdFs " %d %d %d %d\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,arg3,arg4);
                 break;
             default: // can't fit remainder of arguments in log message
-                Os::Log::logMsg(fileIdFs " %d %d %d %d +\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,arg3,arg4);
+                Fw::Log::logMsg(fileIdFs " %d %d %d %d +\n",reinterpret_cast<POINTER_CAST>(file),lineNo,arg1,arg2,arg3,arg4);
                 break;
         }
 
