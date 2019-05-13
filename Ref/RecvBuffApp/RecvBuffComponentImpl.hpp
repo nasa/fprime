@@ -22,6 +22,7 @@ namespace Ref {
 
             // downcall for input port
             void Data_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer &buff);
+            Ref::PacketStat m_stats;
             U32 m_buffsReceived; // !< number of buffers received
             bool m_firstBuffReceived; // !< first buffer received or not
             U32 m_errBuffs; // !< number of buffers with errors received

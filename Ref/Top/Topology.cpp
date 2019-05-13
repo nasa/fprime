@@ -318,7 +318,7 @@ void constructApp(int port_number, char* hostname) {
     pingRcvr.start(0, 100, 10*1024);
 
     // Initialize socket server
-    sockGndIf.startSocketTask(100, port_number, hostname);
+    sockGndIf.startSocketTask(100, 10*1024, port_number, hostname, Svc::SocketGndIfImpl::SEND_UDP);
 
 #if FW_OBJECT_REGISTRATION == 1
     //simpleReg.dump();

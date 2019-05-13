@@ -1,8 +1,0 @@
-multiprocess
-pexpect
-Pmw
-tkintertable
-numpy
-scimath
-scipy
-matplotlib

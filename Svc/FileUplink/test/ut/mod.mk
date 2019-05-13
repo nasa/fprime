@@ -1,14 +1,14 @@
 # ----------------------------------------------------------------------
 # mod.mk 
 # ----------------------------------------------------------------------
-
-TEST_SRC=TesterBase.cpp \
-				 GTestBase.cpp \
+TEST_SRC=Handcode/TesterBase.cpp \
+				 Handcode/GTestBase.cpp \
 				 Tester.cpp \
 				 Main.cpp 
 
 TEST_MODS= \
 	CFDP/Checksum \
+	Svc/Ping \
 	Fw/Buffer \
 	Fw/Comp \
 	Fw/FilePacket \
@@ -18,6 +18,11 @@ TEST_MODS= \
 	Fw/Time \
 	Fw/Tlm \
 	Fw/Types \
+	Utils/Hash \
 	Os \
 	Svc/FileUplink \
 	gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

@@ -1,0 +1,32 @@
+#Autocoders/Python/test/active_tester
+
+
+
+{@Sync_InputPortF32
+<Enter g to go or q to quit:
+>g
+
+<Enter u for unsigned-int and f for float:
+>f
+
+<Enter a float to send to CompA:
+>3.140000
+
+<Comp_A Recieved Input: 3.140000
+>q}
+
+
+{@Async_InputPortU32
+<Enter g to go or q to quit:
+>g
+
+<Enter u for unsigned-int and f for float:
+>u
+
+<Enter an unsigned-integer to send to CompA:
+>10
+
+<Comp_A Recieved Input: 10
+>q}
+
+

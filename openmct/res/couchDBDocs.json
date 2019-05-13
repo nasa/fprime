@@ -1,0 +1,194 @@
+{
+    "docs": [
+        {
+            "_id": "5e9718a1-ae70-47b1-b67f-5723226eee30",
+            "metadata": {
+                "category": "domain object",
+                "type": "example.page",
+                "owner": "admin",
+                "name": "Unnamed Web Page",
+                "created": 1531525380195
+            },
+            "model": {
+                "name": "Unnamed Web Page",
+                "type": "example.page",
+                "location": "mine",
+                "modified": 1531525380121,
+                "url": "https://nasa.github.io/openmct/about-open-mct/",
+                "persisted": 1531525380121
+            }
+        },
+        {
+            "_id": "9fc1cb38-4cce-46d6-8067-a95489c25ec6",
+            "metadata": {
+                "category": "domain object",
+                "type": "example.page",
+                "owner": "admin",
+                "name": "About OpenMCT",
+                "created": 1531525404098
+            },
+            "model": {
+                "name": "About OpenMCT",
+                "type": "example.page",
+                "url": "https://nasa.github.io/openmct/about-open-mct/",
+                "modified": 1531525404071,
+                "location": "mine",
+                "persisted": 1531525404071
+            }
+        },
+        {
+            "_id": "aa2c4884-1f96-4eca-86b7-ce2f2e3c31c1",
+            "metadata": {
+                "category": "domain object",
+                "type": "layout",
+                "owner": "admin",
+                "name": "Example Display Layout",
+                "created": 1532473007348
+            },
+            "model": {
+                "composition": [
+                    "bson.server:lad-table",
+                    "bson.server:SG1_SignalGen_Output",
+                    "bson.server:Sensor1"
+                ],
+                "configuration": {
+                    "layout": {
+                        "panels": {
+                            "bson.server:lad-table": {
+                                "position": [
+                                    0,
+                                    0
+                                ],
+                                "dimensions": [
+                                    24,
+                                    7
+                                ],
+                                "hasFrame": true
+                            },
+                            "bson.server:SG1_SignalGen_Output": {
+                                "position": [
+                                    0,
+                                    7
+                                ],
+                                "dimensions": [
+                                    12,
+                                    8
+                                ],
+                                "hasFrame": true
+                            },
+                            "bson.server:Sensor1": {
+                                "position": [
+                                    12,
+                                    7
+                                ],
+                                "dimensions": [
+                                    12,
+                                    8
+                                ],
+                                "hasFrame": true
+                            }
+                        }
+                    }
+                },
+                "name": "Example Display Layout",
+                "type": "layout",
+                "location": "mine",
+                "modified": 1532473007210,
+                "persisted": 1532473007210
+            }
+        },
+        {
+            "_id": "d50b7b90-85a8-40d2-904b-275b8d31b0a9",
+            "metadata": {
+                "category": "domain object",
+                "type": "layout",
+                "owner": "admin",
+                "name": "Example Display Layout",
+                "created": 1532473083413
+            },
+            "model": {
+                "composition": [
+                    "bson.server:lad-table",
+                    "bson.server:SG1_SignalGen_Output",
+                    "bson.server:Sensor1"
+                ],
+                "configuration": {
+                    "layout": {
+                        "panels": {
+                            "bson.server:lad-table": {
+                                "position": [
+                                    0,
+                                    8
+                                ],
+                                "dimensions": [
+                                    24,
+                                    9
+                                ],
+                                "hasFrame": true
+                            },
+                            "bson.server:SG1_SignalGen_Output": {
+                                "position": [
+                                    0,
+                                    0
+                                ],
+                                "dimensions": [
+                                    12,
+                                    8
+                                ],
+                                "hasFrame": true
+                            },
+                            "bson.server:Sensor1": {
+                                "position": [
+                                    12,
+                                    0
+                                ],
+                                "dimensions": [
+                                    12,
+                                    8
+                                ],
+                                "hasFrame": true
+                            },
+                            "bson": {
+                                "server:lad-table": {
+                                    "hasFrame": true
+                                },
+                                "server:SG1_SignalGen_Output": {
+                                    "hasFrame": true
+                                },
+                                "server:Sensor1": {
+                                    "hasFrame": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "name": "Example Display Layout",
+                "type": "layout",
+                "modified": 1532473081299,
+                "location": "mine",
+                "persisted": 1532473081299
+            }
+        },
+        {
+            "_id": "mine",
+            "metadata": {
+                "category": "domain object",
+                "type": "folder",
+                "owner": "admin",
+                "name": "My Items",
+                "created": 1532473007348
+            },
+            "model": {
+                "name": "My Items",
+                "type": "folder",
+                "composition": [
+                    "9fc1cb38-4cce-46d6-8067-a95489c25ec6",
+                    "d50b7b90-85a8-40d2-904b-275b8d31b0a9"
+                ],
+                "location": "ROOT",
+                "modified": 1532473007271,
+                "persisted": 1532473007271
+            }
+        }
+    ]
+}

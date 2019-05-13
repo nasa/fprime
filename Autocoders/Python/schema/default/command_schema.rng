@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <include href="common_elements.rng"/>
+    <include href="common_types.rng"/>
+
+    <start>
+       <ref name = "command_root_define"></ref>
+    </start>
+
+    <define name = "command_root_define">
+        <element name = "commands">
+
+            <optional>
+                <attribute name = "opcode_base">
+                    <a:documentation>Base at which the opcodes start from.</a:documentation>
+                    <ref name = "base_code_define"></ref>
+                </attribute>
+            </optional>
+
+
+            <oneOrMore>
+                <element name = "command">
+                    <!-- Required Attributes -->
+
+                    <attribute name = "kind">
+                        <a:documentation>Command kind.</a:documentation>
+                        <ref name = "command_kind_define"></ref>
+                    </attribute>
+
+                    <attribute name = "opcode">
+                        <a:documentation>Command opcode.</a:documentation>
+                        <ref name = "id_define"/>
+                    </attribute>
+
+                    <attribute name = "mnemonic">
+                        <a:documentation>Command mnemonic.</a:documentation>
+                        <text/>
+                    </attribute>
+
+                    <!-- Optional Attributes -->
+
+                    <optional>
+                        <attribute name = "priority">
+                            <a:documentation>Priority of the command.</a:documentation>
+                            <data type = "integer"></data>
+                        </attribute>
+                    </optional>
+
+                    <optional>
+                        <attribute name = "full">
+                            <a:documentation>Describes what to do with incoming items if full.</a:documentation>
+                            <ref name = "full_items_define"></ref>
+                        </attribute>
+                    </optional>
+
+
+                    <a:documentation>Defines optional comments and arguments within commands.</a:documentation>
+                    <interleave>
+                        <zeroOrMore>
+                            <ref name = "comment_define"></ref>
+                        </zeroOrMore>
+
+
+                        <optional>
+                            <ref name = "args_define"></ref>
+                        </optional>
+                    </interleave>
+
+
+                </element>
+            </oneOrMore>
+        </element>
+    </define>
+
+
+    <define name = "args_define">
+        <element name = "args">
+            <a:documentation>Command arguments.</a:documentation>
+
+            <zeroOrMore>
+                <ref name = "external_arg_define"></ref>
+            </zeroOrMore>
+
+        </element>
+    </define>
+
+
+
+
+
+
+</grammar>

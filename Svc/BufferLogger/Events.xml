@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--======================================================================
+
+  BufferLogger
+  Events
+
+======================================================================-->
+
+<events>
+
+  <event id="0x00" name="BL_LogFileClosed" severity="DIAGNOSTIC" format_string="File %s closed">
+    <comment>The Buffer Logger closed a log file</comment>
+    <args>
+      <arg name="file" type="string" size="256">
+        <comment>The file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x01" name="BL_LogFileOpenError" severity="WARNING_HI" format_string="Error %d opening file %s">
+    <comment>The Buffer Logger encountered an error opening a log file</comment>
+    <args>
+      <arg name="errornum" type="U32">
+        <comment>The error number returned from the open operation</comment>
+      </arg>
+      <arg name="file" type="string" size="256">
+        <comment>The file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x02" name="BL_LogFileValidationError" severity="WARNING_HI" format_string="Failed creating validation file %s with status %d">
+    <comment>The Buffer Logger encountered an error writing a validation file</comment>
+    <args>
+      <arg name="validationFile" type="string" size="256">
+        <comment>The validation file</comment>
+      </arg>
+      <arg name="status" type="U32">
+        <comment>The Os::Validate::Status return</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x03" name="BL_LogFileWriteError" severity="WARNING_HI" format_string="Error %d while writing %d of %d bytes to %s">
+    <comment>The Buffer Logger encountered an error writing to a log file</comment>
+    <args>
+      <arg name="errornum" type="U32">
+        <comment>The error number returned from the write operation</comment>
+      </arg>
+      <arg name="bytesWritten" type="U32">
+        <comment>The number of bytes successfully written</comment>
+      </arg>
+      <arg name="bytesToWrite" type="U32">
+        <comment>The number of bytes attempted</comment>
+      </arg>
+      <arg name="file" type="string" size="256">
+        <comment>The file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x04" name="BL_Activated" severity="ACTIVITY_LO" format_string="Buffer logger was activated">
+    <comment>Buffer logger was activated</comment>
+  </event>
+
+  <event id="0x05" name="BL_Deativated" severity="ACTIVITY_LO" format_string="Buffer logger was deactivated">
+    <comment>Buffer logger was deactivated</comment>
+  </event>
+
+  <event id="0x06" name="BL_NoLogFileOpenInitError" severity="WARNING_HI" format_string="No log file open command">
+    <comment>No log file open command was received by BufferLogger</comment>
+  </event>
+</events>

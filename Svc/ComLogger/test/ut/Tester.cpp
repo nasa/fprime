@@ -429,7 +429,7 @@ namespace Svc {
       ASSERT_EVENTS_FileWriteError(
           0,
           Os::File::NOT_OPENED,
-          2,
+          0,
           2,
           (char*) fileName
       );
@@ -468,7 +468,7 @@ namespace Svc {
       ASSERT_EVENTS_FileWriteError(
           1,
           Os::File::NOT_OPENED,
-          2,
+          0,
           2,
           (char*) fileName
       );
@@ -553,4 +553,12 @@ namespace Svc {
     file.close();
   }
 
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
+  }
 };

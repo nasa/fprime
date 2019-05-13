@@ -1,0 +1,1281 @@
+// ======================================================================
+// \title  $name/test/ut/TesterBase.cpp
+// \author Auto-generated
+// \brief  cpp file for ${name} component test harness base class
+//
+// \copyright
+// Copyright 2009-2016, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
+\#include <stdlib.h>
+\#include <string.h>
+\#include "TesterBase.hpp"
+
+#if $namespace_list != None
+ #for $namespace in $namespace_list
+namespace ${namespace} {
+ #end for
+#end if
+
+  // ----------------------------------------------------------------------
+  // Construction, initialization, and destruction
+  // ----------------------------------------------------------------------
+
+  ${tester_base} ::
+    ${tester_base}(
+\#if FW_OBJECT_NAMES == 1
+$emit_cpp_params([ $param_compName, $param_maxHistorySize ])
+\#else
+$emit_cpp_params([ $param_maxHistorySize ])
+\#endif
+    ) :
+\#if FW_OBJECT_NAMES == 1
+      Fw::PassiveComponentBase(compName)
+\#else
+      Fw::PassiveComponentBase()
+\#endif
+  {
+#if $has_commands or $has_parameters:
+    // Initialize command history
+    this->cmdResponseHistory = new History<CmdResponse>(maxHistorySize);
+#end if
+#if $has_telemetry:
+    // Initialize telemetry histories
+  #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
+    this->tlmHistory_${tlm_name} =
+      new History<TlmEntry_${tlm_name}>(maxHistorySize);
+  #end for
+#end if
+#if $has_events:
+    // Initialize event histories
+\#if FW_ENABLE_TEXT_LOGGING
+    this->textLogHistory = new History<TextLogEntry>(maxHistorySize);
+\#endif
+  #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
+    #set $params = $get_event_params($event_name)
+    #if len($params) > 0:
+    this->eventHistory_${event_name} =
+      new History<EventEntry_${event_name}>(maxHistorySize);
+    #end if
+  #end for
+#end if
+#if len($typed_user_output_ports) > 0:
+    // Initialize histories for typed user output ports
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    #set $params = $port_params[$instance]
+    #if len($params) > 0:
+    this->fromPortHistory_${instance} =
+      new History<FromPortEntry_${instance}>(maxHistorySize);
+    #end if
+  #end for
+#end if
+#if $has_output_ports:
+    // Clear history
+    this->clearHistory();
+#end if
+  }
+
+  ${tester_base} ::
+    ~${tester_base}(void)
+  {
+#if $has_commands or $has_parameters:
+    // Destroy command history
+    delete this->cmdResponseHistory;
+#end if
+#if $has_telemetry:
+    // Destroy telemetry histories
+  #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
+    delete this->tlmHistory_${tlm_name};
+  #end for
+#end if
+#if $has_events:
+    // Destroy event histories
+\#if FW_ENABLE_TEXT_LOGGING
+    delete this->textLogHistory;
+\#endif
+  #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
+    #set $params = $get_event_params($event_name)
+    #if len($params) > 0:
+    delete this->eventHistory_${event_name};
+    #end if
+  #end for
+#end if
+  }
+
+  void ${tester_base} ::
+    init(
+$emit_cpp_params([ $param_instance ])
+    )
+  {
+#for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+    this->m_param_${prm_name}_valid = Fw::PARAM_UNINIT;
+#end for
+
+    // Initialize base class
+
+		Fw::PassiveComponentBase::init(instance);
+
+#for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
+    // Attach input port $instance
+
+  #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+  #end if
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_from_${instance}();
+        ++_port
+    ) {
+
+  #set $port_name = "from_" + $instance
+      this->m_${port_name}[_port].init();
+      this->m_${port_name}[_port].addCallComp(
+          this,
+          from_${instance}_static
+      );
+      this->m_${port_name}[_port].setPortNum(_port);
+
+\#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      (void) snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_${port_name}[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_${port_name}[_port].setObjName(_portName);
+\#endif
+
+    }
+  #if $role == "LogTextEvent":
+\#endif
+  #end if
+
+#end for
+#for $instance, $type, $direction, $role in $ports:
+  #if $direction == "Input" and $role != "Cmd":
+    // Initialize output port $instance
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_to_${instance}();
+        ++_port
+    ) {
+      this->m_to_${instance}[_port].init();
+
+\#if FW_OBJECT_NAMES == 1
+      char _portName[80];
+      snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_to_${instance}[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_to_${instance}[_port].setObjName(_portName);
+\#endif
+
+    }
+
+  #end if
+#end for
+  }
+
+#if $has_ports:
+  // ----------------------------------------------------------------------
+  // Getters for port counts
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type, $direction, $role in $ports:
+    #if $direction == "Input":
+  NATIVE_INT_TYPE ${tester_base} ::
+    getNum_to_${instance}(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_${instance});
+  }
+
+    #else if $direction == "Output":
+      #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+      #end if
+  NATIVE_INT_TYPE ${tester_base} ::
+    getNum_from_${instance}(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_${instance});
+  }
+      #if $role == "LogTextEvent":
+\#endif
+      #end if
+
+    #end if
+  #end for
+#end if
+#if $has_input_ports:
+  // ----------------------------------------------------------------------
+  // Connectors for to ports
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
+    #set $param_port = $get_param_port($instance, $type)
+  void ${tester_base} ::
+    connect_to_${instance}(
+$emit_cpp_params([ $param_portNum, $param_port ])
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
+    #if $type == "Serial":
+    this->m_to_${instance}[portNum].registerSerialPort($instance);
+    #else:
+    this->m_to_${instance}[portNum].addCallPort($instance);
+    #end if
+  }
+
+  #end for
+#end if
+
+#set $invocation_ports = [ \
+  ($instance, $type) \
+  for $instance, $type, $direction, $role in $ports \
+  if $direction == "Input" and $role != "Cmd" \
+]
+#if len($invocation_ports) > 0:
+  // ----------------------------------------------------------------------
+  // Invocation functions for to ports
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type in $invocation_ports:
+    #set $serial_type = $type == "Serial"
+    #set $return_type = $port_return_type_strs[$instance]
+    #set $void_return_type = $return_type[:4] == "void"
+  ${return_type}${tester_base} ::
+    #if $serial_type
+    invoke_to_${instance}(
+      NATIVE_INT_TYPE portNum, //!< The port number
+      Fw::SerializeBufferBase& Buffer
+    )
+    #else
+    invoke_to_${instance}(
+$emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
+    )
+    #end if
+  {
+    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
+    #if $serial_type:
+    this->m_to_${instance}[portNum].invokeSerial(Buffer);
+    #else
+    FW_ASSERT(portNum < this->getNum_to_${instance}(),static_cast<AssertArg>(portNum));
+      #if $void_return_type
+    this->m_to_${instance}[portNum].invoke(
+      #else:
+    return this->m_to_${instance}[portNum].invoke(
+      #end if
+        $port_arg_strs[$instance]
+    );
+    #end if
+  }
+
+  #end for
+#end if
+#if $has_input_ports:
+  // ----------------------------------------------------------------------
+  // Connection status for to ports
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
+  bool ${tester_base} ::
+    isConnected_to_${instance}(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_${instance}(), static_cast<AssertArg>(portNum));
+    return this->m_to_${instance}[portNum].isConnected();
+  }
+
+  #end for
+#end if
+#if $has_output_ports:
+  // ----------------------------------------------------------------------
+  // Getters for from ports
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
+    #set $namespace = $port_namespaces[$type]
+    #if $role == "LogTextEvent"
+\#if FW_ENABLE_TEXT_LOGGING == 1
+    #end if
+    #if $type == "Serial":
+  ${namespace}::InputSerializePort *${tester_base} ::
+    #else
+  ${namespace}::Input${type}Port *${tester_base} ::
+    #end if
+    get_from_${instance}(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<AssertArg>(portNum));
+    return &this->m_from_${instance}[portNum];
+  }
+    #if $role == "LogTextEvent":
+\#endif
+    #end if
+
+  #end for
+#end if
+#if $has_from_ports:
+  // ----------------------------------------------------------------------
+  // Static functions for from ports
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    #set $params = $port_params[$instance]
+    #set $void_params = len($params) == 0
+    #set $args = $port_arg_strs[$instance]
+    #set $return_type = $port_return_type_strs[$instance]
+    #set $void_return_type = $return_type[:4] == "void"
+  ${return_type}${tester_base} ::
+    from_${instance}_static(
+$emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
+    )
+  {
+    FW_ASSERT(callComp);
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(callComp);
+    #if $void_params and $void_return_type:
+    _testerBase->from_${instance}_handlerBase(portNum);
+    #else if $void_params:
+    return _testerBase->from_${instance}_handlerBase(portNum);
+    #else if $void_return_type:
+    _testerBase->from_${instance}_handlerBase(
+        portNum,
+        $args
+    );
+    #else
+    return _testerBase->from_${instance}_handlerBase(
+        portNum,
+        $args
+    );
+    #end if
+  }
+
+  #end for
+  #for $instance, $sync, $priority, $max_num in $serial_output_ports:
+  void ${tester_base} ::
+    from_${instance}_static(
+      Fw::PassiveComponentBase *const callComp, //!< The component instance
+      const NATIVE_INT_TYPE portNum, //!< The port number
+      Fw::SerializeBufferBase& Buffer //!< serialized data buffer
+    )
+  {
+    FW_ASSERT(callComp);
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(callComp);
+
+    _testerBase->from_${instance}_handlerBase(
+        portNum,
+        Buffer
+    );
+  }
+
+  void ${tester_base} ::
+    from_${instance}_handlerBase(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<AssertArg>(portNum));
+    this->from_${instance}_handler(
+        portNum,
+        Buffer
+    );
+  }
+
+  #end for
+  #if $has_commands or $has_parameters:
+  void ${tester_base} ::
+    from_${CmdStatus_Name}_static(
+        Fw::PassiveComponentBase *const component,
+        const NATIVE_INT_TYPE portNum,
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CommandResponse response
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+    _testerBase->cmdResponseIn(opCode, cmdSeq, response);
+  }
+
+  void ${tester_base} ::
+    from_${CmdReg_Name}_static(
+        Fw::PassiveComponentBase *const component,
+        const NATIVE_INT_TYPE portNum,
+        const FwOpcodeType opCode
+    )
+  {
+
+  }
+
+  #end if
+  #if $has_telemetry:
+  void ${tester_base} ::
+    from_${Tlm_Name}_static(
+        Fw::PassiveComponentBase *const component,
+        NATIVE_INT_TYPE portNum,
+        FwChanIdType id,
+        Fw::Time &timeTag,
+        Fw::TlmBuffer &val
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+    _testerBase->dispatchTlm(id, timeTag, val);
+  }
+
+  #end if
+  #if $has_events:
+  void ${tester_base} ::
+    from_${LogEvent_Name}_static(
+        Fw::PassiveComponentBase *const component,
+        const NATIVE_INT_TYPE portNum,
+        FwEventIdType id,
+        Fw::Time &timeTag,
+        Fw::LogSeverity severity,
+        Fw::LogBuffer &args
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+    _testerBase->dispatchEvents(id, timeTag, severity, args);
+  }
+
+  #end if
+  #if $has_events:
+\#if FW_ENABLE_TEXT_LOGGING == 1
+  void ${tester_base} ::
+    from_${LogTextEvent_Name}_static(
+        Fw::PassiveComponentBase *const component,
+        const NATIVE_INT_TYPE portNum,
+        FwEventIdType id,
+        Fw::Time &timeTag,
+        Fw::TextLogSeverity severity,
+        Fw::TextLogString &text
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+    _testerBase->textLogIn(id,timeTag,severity,text);
+  }
+\#endif
+
+  #end if
+  #if $has_events or $has_telemetry:
+  void ${tester_base} ::
+    from_${Time_Name}_static(
+        Fw::PassiveComponentBase *const component,
+        const NATIVE_INT_TYPE portNum,
+        Fw::Time& time
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+    time = _testerBase->m_testTime;
+  }
+
+  #end if
+  #if $has_parameters:
+
+  Fw::ParamValid ${tester_base} ::
+    from_${ParamGet_Name}_static(
+        Fw::PassiveComponentBase* component,
+        NATIVE_INT_TYPE portNum,
+        FwPrmIdType id,
+        Fw::ParamBuffer &val
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+
+    Fw::SerializeStatus _status;
+    Fw::ParamValid _ret = Fw::PARAM_VALID;
+    val.resetSer();
+
+    const U32 idBase = _testerBase->getIdBase();
+    FW_ASSERT(id >= idBase, id, idBase);
+
+    switch (id - idBase) {
+    #for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+      #for $id in $ids
+      case ${id}:
+      #end for
+      {
+      #if $typeinfo == "ENUM":
+        _status = val.serialize(
+            static_cast<FwEnumStoreType>(_testerBase->m_param_${prm_name})
+        );
+      #else
+        _status = val.serialize(_testerBase->m_param_${prm_name});
+      #end if
+        _ret = _testerBase->m_param_${prm_name}_valid;
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+      }
+        break;
+    #end for
+      default:
+        FW_ASSERT(id);
+        break;
+    }
+
+    return _ret;
+  }
+
+  void ${tester_base} ::
+    from_${ParamSet_Name}_static(
+        Fw::PassiveComponentBase* component,
+        NATIVE_INT_TYPE portNum,
+        FwPrmIdType id,
+        Fw::ParamBuffer &val
+    )
+  {
+    ${tester_base}* _testerBase =
+      static_cast<${tester_base}*>(component);
+
+    Fw::SerializeStatus _status;
+    val.resetDeser();
+
+    // This is exercised completely in autocode,
+    // so just verify that it works. If it doesn't
+    // it probably is an autocoder error.
+
+    const U32 idBase = _testerBase->getIdBase();
+    FW_ASSERT(id >= idBase, id, idBase);
+
+    switch (id - idBase) {
+    #for $ids, $prmname, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+      #for $id in $ids
+      case ${id}:
+      #end for
+      {
+      #if $typeinfo == "enum":
+        FwEnumStoreType ${prmname}Val;
+        _status = val.deserialize(${prmname}Val);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+        FW_ASSERT(
+            ${prmname}Val ==
+            static_cast<FwEnumStoreType>(_testerBase->m_param_${prmname})
+        );
+      #else if $type == "string":
+        Fw::ParamString ${prmname}Val;
+        _status = val.deserialize(${prmname}Val);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status)
+        );
+        FW_ASSERT(
+            ${prmname}Val ==
+            _testerBase->m_param_${prmname}
+        );
+      #else
+        ${type} ${prmname}Val;
+        _status = val.deserialize(${prmname}Val);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+        FW_ASSERT(
+            ${prmname}Val ==
+            _testerBase->m_param_${prmname}
+        );
+      #end if
+        break;
+      }
+
+    #end for
+      default: {
+        FW_ASSERT(id);
+        break;
+      }
+
+    }
+  }
+
+  #end if
+#end if
+#if len($typed_user_output_ports) > 0:
+  // ----------------------------------------------------------------------
+  // Histories for typed from ports
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    clearFromPortHistory(void)
+  {
+    this->fromPortHistorySize = 0;
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    #set $params = $port_params[$instance]
+    #if len($params) > 0:
+    this->fromPortHistory_${instance}->clear();
+    #else
+    this->fromPortHistorySize_${instance} = 0;
+    #end if
+  #end for
+  }
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+  // ----------------------------------------------------------------------
+  // From port: $instance
+  // ----------------------------------------------------------------------
+
+    #set $params = $port_params[$instance]
+  void ${tester_base} ::
+    pushFromPortEntry_${instance}(
+$emit_cpp_port_params($params)
+    )
+  {
+    #if len($params) > 0:
+    FromPortEntry_${instance} _e = {
+      $port_arg_strs[$instance]
+    };
+    this->fromPortHistory_${instance}->push_back(_e);
+    #else:
+    ++this->fromPortHistorySize_${instance};
+    #end if
+    ++this->fromPortHistorySize;
+  }
+
+  #end for
+#end if
+#if len($typed_user_output_ports) > 0:
+  // ----------------------------------------------------------------------
+  // Handler base functions for from ports
+  // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    #set $params = $port_params[$instance]
+    #set $void_params = len($params) == 0
+    #set $args = $port_arg_strs[$instance]
+    #set $return_type = $port_return_type_strs[$instance]
+    #set $void_return_type = $return_type[:4] == "void"
+  ${return_type}${tester_base} ::
+    from_${instance}_handlerBase(
+    #if $type == "Serial":
+$emit_cpp_params([ $param_portNum, $param_Buffer ])
+    #else
+$emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
+    #end if
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_from_${instance}(),static_cast<AssertArg>(portNum));
+    #if $void_params and $void_return_type:
+    this->from_${instance}_handler(portNum);
+    #else if $void_params
+    return this->from_${instance}_handler(portNum);
+    #else if $void_return_type:
+    this->from_${instance}_handler(
+        portNum,
+        $args
+    );
+    #else:
+    return this->from_${instance}_handler(
+        portNum,
+        $args
+    );
+    #end if
+  }
+
+  #end for
+#end if
+#if $has_commands or $has_parameters
+  // ----------------------------------------------------------------------
+  // Command response handling
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    cmdResponseIn(
+        const FwOpcodeType opCode,
+        const U32 seq,
+        const Fw::CommandResponse response
+    )
+  {
+    CmdResponse e = { opCode, seq, response };
+    this->cmdResponseHistory->push_back(e);
+  }
+
+  #for $mnemonic, $opcodes, $sync, $priority, $full, $comment in $commands:
+    #set $params = $command_params[$mnemonic]
+  // ----------------------------------------------------------------------
+  // Command: $mnemonic
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    sendCmd_${mnemonic}(
+$emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemonic))
+    )
+  {
+
+    // Serialize arguments
+
+    Fw::CmdArgBuffer buff;
+    #set $args = $command_args[$mnemonic]
+    #if len($args)
+    Fw::SerializeStatus _status;
+    #end if
+    #for $arg_name, $arg_type, $comment, $is_enum in $args:
+      #if $is_enum == "enum":
+    _status = buff.serialize((FwEnumStoreType) ${arg_name});
+      #else
+    _status = buff.serialize($arg_name);
+      #end if
+    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
+    #end for
+
+    // Call output command port
+
+    FwOpcodeType _opcode;
+    const U32 idBase = this->getIdBase();
+    #if len($opcodes) == 1
+    _opcode = ${component_base}::OPCODE_${mnemonic.upper} + idBase;
+    #else
+    switch (instance) {
+      #set $inst = 0
+      #for $opcode in $opcodes
+       case $inst:
+          _opcode = ${component_base}::OPCODE_${mnemonic.upper}_${inst} + idBase;
+          break;
+         #set $inst = $inst + 1
+      #end for
+       default:
+          FW_ASSERT(0,instance);
+          break;
+    }
+    #end if
+
+    if (this->m_to_${Cmd_Name}[0].isConnected()) {
+      this->m_to_${Cmd_Name}[0].invoke(
+          _opcode,
+          cmdSeq,
+          buff
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
+  #end for
+
+  void ${tester_base} ::
+    sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
+
+    const U32 idBase = this->getIdBase();
+    FwOpcodeType _opcode = opcode + idBase;
+    if (this->m_to_${Cmd_Name}[0].isConnected()) {
+      this->m_to_${Cmd_Name}[0].invoke(
+          _opcode,
+          cmdSeq,
+          args
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
+#end if
+#if $has_output_ports:
+  // ----------------------------------------------------------------------
+  // History
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    clearHistory()
+  {
+  #if $has_commands or $has_parameters:
+    this->cmdResponseHistory->clear();
+  #end if
+  #if $has_telemetry:
+    this->clearTlm();
+  #end if
+  #if $has_events:
+    this->textLogHistory->clear();
+    this->clearEvents();
+  #end if
+  #if len($typed_user_output_ports) > 0:
+    this->clearFromPortHistory();
+  #end if
+  }
+
+#end if
+#if $has_telemetry or $has_events
+  // ----------------------------------------------------------------------
+  // Time
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    setTestTime(const Fw::Time& time)
+  {
+    this->m_testTime = time;
+  }
+
+#end if
+#if $has_telemetry
+  // ----------------------------------------------------------------------
+  // Telemetry dispatch
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    dispatchTlm(
+        const FwChanIdType id,
+        const Fw::Time &timeTag,
+        Fw::TlmBuffer &val
+    )
+  {
+
+    val.resetDeser();
+
+    const U32 idBase = this->getIdBase();
+    FW_ASSERT(id >= idBase, id, idBase);
+
+    switch (id - idBase) {
+
+  #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
+      #set $inst = 0
+      #for $id in $ids
+         #if len($ids) == 1
+      case ${component_base}::CHANNELID_${tlm_name.upper}:
+         #else
+      case ${component_base}::CHANNELID_${tlm_name.upper}_${inst}:
+         #end if
+         #set $inst = $inst + 1
+      #end for
+      {
+    #if $type == "string":
+        Fw::TlmString arg;
+        const Fw::SerializeStatus _status = val.deserialize(arg);
+    #else if $typeinfo == "enum":
+        FwEnumStoreType ${tlm_name}arg;
+        const Fw::SerializeStatus _status = val.deserialize(${tlm_name}arg);
+    #else
+        ${type} arg;
+        const Fw::SerializeStatus _status = val.deserialize(arg);
+    #end if
+        if (_status != Fw::FW_SERIALIZE_OK) {
+          printf("Error deserializing ${tlm_name}: %d\n", _status);
+          return;
+        }
+    #if $typeinfo == "enum":
+        ${component_base}::${type} arg =
+          static_cast<${component_base}::${type}>(${tlm_name}arg);
+    #end if
+        this->tlmInput_${tlm_name}(timeTag, arg);
+        break;
+      }
+
+  #end for
+      default: {
+        FW_ASSERT(0, id);
+        break;
+      }
+
+    }
+
+  }
+
+  void ${tester_base} ::
+    clearTlm(void)
+  {
+    this->tlmSize = 0;
+  #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
+    this->tlmHistory_${tlm_name}->clear();
+  #end for
+  }
+
+  #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
+  // ----------------------------------------------------------------------
+  // Channel: $tlm_name
+  // ----------------------------------------------------------------------
+
+    #set $param_val = $get_param_val_Tlm($type, $typeinfo)
+  void ${tester_base} ::
+    tlmInput_${tlm_name}(
+$emit_cpp_params([ $param_const_timeTag, $param_val ])
+    )
+  {
+    TlmEntry_${tlm_name} e = { timeTag, val };
+    this->tlmHistory_${tlm_name}->push_back(e);
+    ++this->tlmSize;
+  }
+
+  #end for
+#end if
+#if $has_events
+  // ----------------------------------------------------------------------
+  // Event dispatch
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    dispatchEvents(
+        const FwEventIdType id,
+        Fw::Time &timeTag,
+        const Fw::LogSeverity severity,
+        Fw::LogBuffer &args
+    )
+  {
+
+    args.resetDeser();
+
+    const U32 idBase = this->getIdBase();
+    FW_ASSERT(id >= idBase, id, idBase);
+    switch (id - idBase) {
+
+  #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
+    #set $inst = 0
+    #for $id in $ids
+      #if len($ids) == 1
+      case ${component_base}::EVENTID_${event_name.upper}:
+      #else
+      case ${component_base}::EVENTID_${event_name.upper}_${inst}:
+      #end if
+      #set $inst = $inst + 1
+    #end for
+      {
+
+    #set $args = $event_args[$event_name]
+    #if len($args)
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+\#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+#if $severity == "FATAL"
+        FW_ASSERT(_numArgs == $len($args)+1,_numArgs,$len($args)+1);
+        // For FATAL, there is a stack size of 4 and a dummy entry.
+        U8 stackArgLen;
+        _status = args.deserialize(stackArgLen);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+        FW_ASSERT(4 == stackArgLen,stackArgLen);
+		U32 dummyStackArg;
+        _status = args.deserialize(dummyStackArg);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+        FW_ASSERT(0 == dummyStackArg,dummyStackArg);
+#else
+        FW_ASSERT(_numArgs == $len($args),_numArgs,$len($args));
+#end if
+
+\#endif
+    #else
+\#if FW_AMPCS_COMPATIBLE
+        // For AMPCS, decode zero arguments
+        Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        U8 _noArgs;
+        _zero_status = args.deserialize(_noArgs);
+        FW_ASSERT(
+            _zero_status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_zero_status)
+        );
+\#endif
+    #end if
+    #for $arg_name, $type, $comment, $size, $typeinfo in $args:
+      #if $typeinfo == "enum"
+\#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(FwEnumStoreType),_argSize,sizeof(FwEnumStoreType));
+        }
+\#endif
+        #set $type = $component_base + "::" + $type
+        FwEnumStoreType ${arg_name}Int;
+        _status = args.deserialize(${arg_name}Int);
+        ${type} ${arg_name} = static_cast<${type}>(${arg_name}Int);
+      #else if $typeinfo == "string":
+        Fw::LogStringArg ${arg_name};
+        _status = args.deserialize($arg_name);
+      #else
+        ${type} ${arg_name};
+\#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(${type}),_argSize,sizeof(${type}));
+        }
+\#endif
+        _status = args.deserialize($arg_name);
+      #end if
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+
+    #end for
+        this->logIn_${severity}_${event_name}($event_args_str($args));
+
+        break;
+
+      }
+
+  #end for
+      default: {
+        FW_ASSERT(0, id);
+        break;
+      }
+
+    }
+
+  }
+
+  void ${tester_base} ::
+    clearEvents(void)
+  {
+    this->eventsSize = 0;
+  #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
+    #set $params = $event_params[$event_name]
+    #if len($params) > 0:
+    this->eventHistory_${event_name}->clear();
+    #else
+    this->eventsSize_${event_name} = 0;
+    #end if
+  #end for
+  }
+
+\#if FW_ENABLE_TEXT_LOGGING
+
+  // ----------------------------------------------------------------------
+  // Text events
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    textLogIn(
+        const U32 id,
+        Fw::Time &timeTag,
+        const Fw::TextLogSeverity severity,
+        const Fw::TextLogString &text
+    )
+  {
+    TextLogEntry e = { id, timeTag, severity, text };
+    textLogHistory->push_back(e);
+  }
+
+  void ${tester_base} ::
+    printTextLogHistoryEntry(
+        const TextLogEntry& e,
+        FILE* file
+    )
+  {
+    const char *severityString = "UNKNOWN";
+    switch (e.severity) {
+      case Fw::LOG_FATAL:
+        severityString = "FATAL";
+        break;
+      case Fw::LOG_WARNING_HI:
+        severityString = "WARNING_HI";
+        break;
+      case Fw::LOG_WARNING_LO:
+        severityString = "WARNING_LO";
+        break;
+      case Fw::LOG_COMMAND:
+        severityString = "COMMAND";
+        break;
+      case Fw::LOG_ACTIVITY_HI:
+        severityString = "ACTIVITY_HI";
+        break;
+      case Fw::LOG_ACTIVITY_LO:
+        severityString = "ACTIVITY_LO";
+        break;
+      case Fw::LOG_DIAGNOSTIC:
+       severityString = "DIAGNOSTIC";
+        break;
+      default:
+        severityString = "SEVERITY ERROR";
+        break;
+    }
+
+    fprintf(
+        file,
+        "EVENT: (%d) (%d:%d,%d) %s: %s\n",
+        e.id,
+        const_cast<TextLogEntry&>(e).timeTag.getTimeBase(),
+        const_cast<TextLogEntry&>(e).timeTag.getSeconds(),
+        const_cast<TextLogEntry&>(e).timeTag.getUSeconds(),
+        severityString,
+        e.text.toChar()
+    );
+
+  }
+
+  void ${tester_base} ::
+    printTextLogHistory(FILE *file)
+  {
+    for (U32 i = 0; i < this->textLogHistory->size(); ++i) {
+      this->printTextLogHistoryEntry(
+          this->textLogHistory->at(i),
+          file
+      );
+    }
+  }
+
+\#endif
+
+  #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
+    #set $params = $get_event_params($event_name)
+  // ----------------------------------------------------------------------
+  // Event: $event_name
+  // ----------------------------------------------------------------------
+
+  void ${tester_base} ::
+    logIn_${severity}_${event_name}(
+$emit_cpp_params($params)
+    )
+  {
+    #if len($params) > 0:
+    EventEntry_${event_name} e = {
+      $event_args_str($params)
+    };
+    eventHistory_${event_name}->push_back(e);
+    #else:
+    ++this->eventsSize_${event_name};
+    #end if
+    ++this->eventsSize;
+  }
+
+  #end for
+#end if
+#for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+  // ----------------------------------------------------------------------
+  // Parameter $prm_name
+  // ----------------------------------------------------------------------
+
+  #set $param_val = $get_param_val_Param($type, $typeinfo)
+  void ${tester_base} ::
+    paramSet_${prm_name}(
+$emit_cpp_params([ $param_val, $param_valid ])
+    )
+  {
+    this->m_param_${prm_name} = val;
+    this->m_param_${prm_name}_valid = valid;
+  }
+
+  void ${tester_base} ::
+    paramSend_${prm_name}(
+        NATIVE_INT_TYPE instance,
+        U32 cmdSeq
+    )
+  {
+
+    // Build command for parameter set
+
+    Fw::CmdArgBuffer args;
+  #if $typeinfo == "enum":
+    FW_ASSERT(
+        args.serialize(
+            static_cast<FwEnumStoreType>(this->m_param_${prm_name})
+        ) == Fw::FW_SERIALIZE_OK
+    );
+  #else
+    FW_ASSERT(
+        args.serialize(
+            this->m_param_${prm_name}
+        ) == Fw::FW_SERIALIZE_OK
+    );
+  #end if
+    const U32 idBase = this->getIdBase();
+    FwOpcodeType _prmOpcode;
+  #if len($ids) == 1
+    _prmOpcode =  ${component_base}::OPCODE_${prm_name.upper}_SET + idBase;
+  #else
+    #set $inst = 0
+    switch (instance) {
+    #for $id in $ids
+      case $inst:
+         _prmOpcode =  ${component_base}::OPCODE_${prm_name.upper}_${inst}_SET + idBase;
+         break;
+       #set $inst = $inst + 1
+    #end for
+      default:
+         FW_ASSERT(0,instance);
+         break;
+    }
+  #end if
+    if (not this->m_to_${Cmd_Name}[0].isConnected()) {
+      printf("Test Command Output port not connected!\n");
+    }
+    else {
+      this->m_to_${Cmd_Name}[0].invoke(
+          _prmOpcode,
+          cmdSeq,
+          args
+      );
+    }
+
+  }
+
+  void ${tester_base} ::
+    paramSave_${prm_name} (
+        NATIVE_INT_TYPE instance,
+        U32 cmdSeq
+    )
+
+  {
+    Fw::CmdArgBuffer args;
+    FwOpcodeType _prmOpcode;
+    const U32 idBase = this->getIdBase();
+    #if len($ids) == 1
+    _prmOpcode = ${component_base}::OPCODE_${prm_name.upper}_SAVE + idBase;
+    #else
+      #set $inst = 0
+     switch (instance) {
+      #for $id in $ids
+        case $inst:
+          _prmOpcode = ${component_base}::OPCODE_${prm_name.upper}_${inst}_SAVE + idBase;
+          break;
+          #set $inst = $inst + 1
+      #end for
+        default:
+          FW_ASSERT(0,instance);
+          break;
+    }
+    #end if
+    if (not this->m_to_${Cmd_Name}[0].isConnected()) {
+      printf("Test Command Output port not connected!\n");
+    }
+    else {
+      this->m_to_${Cmd_Name}[0].invoke(
+          _prmOpcode,
+          cmdSeq,
+          args
+      );
+    }
+  }
+
+#end for
+#if $namespace_list != None
+ #for $namespace in $namespace_list
+} // end namespace $namespace
+ #end for
+#end if

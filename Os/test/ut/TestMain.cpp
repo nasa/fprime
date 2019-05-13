@@ -3,28 +3,21 @@
 #include <stdio.h>
 
 extern "C" {
-    void startTestTask(int iters);
-    void qtest_block_receive(void);
-    void qtest_nonblock_receive(void);
-    void qtest_nonblock_send(void);
-    void qtest_block_send(void);
-    void qtest_performance(void);
-    void qtest_concurrent(void);
-    void intervalTimerTest(void);
-    void fileSystemTest(void);
-    void validateFileTest(void);
+  void startTestTask(int iters);
+  void qtest_block_receive(void);
+  void qtest_nonblock_receive(void);
+  void qtest_nonblock_send(void);
+  void qtest_block_send(void);
+  void qtest_performance(void);
+  void qtest_concurrent(void);
+  void intervalTimerTest(void);
+  void fileSystemTest(void);
+  void validateFileTest(void);
 }
 
-int main(int argc, char* argv[]) {
-    
-        if( argc != 2 ) {
-           fprintf(stderr, "Run test with test number as argument!\n");
-           exit(1);
-        }
-
-	int testNum = atoi(argv[1]);
-
-	switch(testNum) {
+void run_test(int test_num)
+{
+	switch(test_num) {
 		case 0:
 			startTestTask(10);
 			sleep(15);
@@ -35,18 +28,18 @@ int main(int argc, char* argv[]) {
 		case 2:
 			qtest_nonblock_receive();
 			break;
-                case 3:
-                        qtest_nonblock_send();
-                        break;
-                case 4:
-                        qtest_block_send();
-                        break;
+    case 3:
+      qtest_nonblock_send();
+      break;
+    case 4:
+      qtest_block_send();
+      break;
 		case 5:
 			qtest_performance();
 			break;
-                case 6:
-                        qtest_concurrent();
-                        break;
+    case 6:
+      qtest_concurrent();
+      break;
 		case 7:
 			intervalTimerTest();
 			break;
@@ -57,10 +50,27 @@ int main(int argc, char* argv[]) {
 			validateFileTest();
 			break;
 		default:
-			printf("Huh? %d\n", testNum);
+			fprintf(stderr, "Invalid test number: %d\n", test_num);
 			break;
 	}
-	
-    return 0;
+
 }
 
+int main(int argc, char* argv[]) {
+
+  if( argc != 2 ) {
+    printf("Running all test cases\n");
+
+    for(int i = 0; i < 10; i++)
+    {
+      run_test(i);
+    }
+  }
+  else
+  {
+    int test_num = atoi(argv[1]);
+    run_test(test_num);
+  }
+
+  return 0;
+}

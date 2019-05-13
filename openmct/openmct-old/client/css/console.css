@@ -1,0 +1,81 @@
+/* The css for the command widget only */
+
+body {
+  position: absolute;
+  width: calc(100% - 1em);
+  height: calc(100% - 3em);
+}
+
+.command-console {
+  padding: 1em;
+  background-color: rgb(239, 239, 239);
+  border: solid 1px #c3c3c3;
+  height: calc(100% - 2.5em);
+  position: relative;
+}
+
+.command-console .command-search {
+  height: 90%;
+  width: calc(100% - 2em);
+  position: absolute;
+
+  /*dev*/
+}
+
+.command-console .cmd-input {
+  width: 100%;
+  /*height: 18px;*/
+}
+
+.command-console .cmd-results {
+  width: 100%;
+  max-height: calc(100% - 32px);
+  overflow: auto;
+  position: relative;
+  z-index: 2;
+
+  box-shadow: 1px 2px 8px #888888;
+  border-radius: 2px;
+}
+
+.command-console .cmd-results p {
+  margin: 0;
+  padding: 5px;
+  background-color: white;
+  cursor: pointer;
+  cursor: hand;
+}
+
+
+
+.command-console .command-hist {
+  bottom: 16px;
+  right: 16px;
+  left: 16px;
+  z-index: 1;
+  top: calc(24px + 16px + 16px);
+  position: absolute;
+
+  /*dev*/
+}
+
+.command-console .hist-input {
+  width: 100%;
+  position: absolute;
+  bottom: 16px;
+}
+
+.command-console .hist-results {
+  overflow: auto;
+  width: 100%;
+  position: relative;
+  height: calc(100% - 32px);
+}
+
+.command-console .hist-results p {
+  cursor: pointer;
+  cursor: hand;
+  margin: 0;
+  padding: 5px;
+}
+

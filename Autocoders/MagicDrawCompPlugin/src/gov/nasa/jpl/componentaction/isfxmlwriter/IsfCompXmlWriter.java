@@ -5,7 +5,7 @@ import gov.nasa.jpl.componentaction.ISFComponent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
-
+import java.nio.file.Paths;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -30,6 +30,7 @@ public class IsfCompXmlWriter {
 		try {
 			Writer writer = new FileWriter( outputFile );
 		    VelocityEngine ve = new VelocityEngine();
+                    ve.setProperty("runtime.log", Paths.get(System.getProperty("java.io.tmpdir"), "velocity.log").toString());
 		    ve.setProperty("resource.loader", "file, jar");
 		    ve.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
 		    ve.setProperty("file.resource.loader.path", "./," + pluginDir.toString());

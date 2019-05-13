@@ -138,7 +138,10 @@ namespace Os {
                         return ValidateFile::OTHER_ERROR;
                     case File::OTHER_ERROR:
                         return ValidateFile::OTHER_ERROR;
+                    default:
+                        FW_ASSERT(0, status);
                 }
+                break;
             case HashFileType:
                 switch (status) {
                     case File::OP_OK:
@@ -155,13 +158,23 @@ namespace Os {
                         return ValidateFile::OTHER_ERROR;
                     case File::OTHER_ERROR:
                         return ValidateFile::OTHER_ERROR;
+                    default:
+                        FW_ASSERT(0, status);
                 }
+                break;
+            default:
+                FW_ASSERT(0, type);
         }
 
         return ValidateFile::OTHER_ERROR;
     }
   
     ValidateFile::Status ValidateFile::validate(const char* fileName, const char* hashFileName) {
+        Utils::HashBuffer hashBuffer; // pass by reference - final value is unused
+        return validate(fileName, hashFileName, hashBuffer);
+    }
+
+    ValidateFile::Status ValidateFile::validate(const char* fileName, const char* hashFileName, Utils::HashBuffer &hashBuffer) {
 
         File::Status status;
 
@@ -184,26 +197,32 @@ namespace Os {
             return ValidateFile::VALIDATION_FAIL;
         }
 
+        hashBuffer = savedHash;
+
         return ValidateFile::VALIDATION_OK;
     }
 
-    ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName) {
+    ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName, Utils::HashBuffer &hashBuffer) {
 
         File::Status status;
 
         // Compute the file's hash:
-        Utils::HashBuffer computedHash;
-        status = computeHash(fileName, computedHash);
+        status = computeHash(fileName, hashBuffer);
         if( File::OP_OK != status ) {
             return translateStatus(status, FileType);
         }
 
-        status = writeHash(hashFileName, computedHash);
+        status = writeHash(hashFileName, hashBuffer);
         if( File::OP_OK != status ) {
             return translateStatus(status, HashFileType);
         }
 
         return ValidateFile::VALIDATION_OK;
+    }
+
+    ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName) {
+        Utils::HashBuffer hashBuffer; // pass by reference - final value is unused
+        return createValidation(fileName, hashFileName, hashBuffer);
     }
 
 }

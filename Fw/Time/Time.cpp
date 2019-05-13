@@ -220,18 +220,16 @@ namespace Fw {
       FW_ASSERT(minuend.getContext() == subtrahend.getContext(), minuend.getContext(), subtrahend.getContext());
 #endif
       // Assert minuend is greater than subtrahend
-      FW_ASSERT(minuend > subtrahend);
+      FW_ASSERT(minuend >= subtrahend);
 
       U32 seconds = minuend.getSeconds() - subtrahend.getSeconds();
-      I64 uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
-
-      // Handle if subtrahend's uSecs was larger than minuend's
-      if(uSeconds < 0)
-      {
-        seconds--;
-        uSeconds += 1000000; // microseconds in a second.
+      U32 uSeconds;
+      if (subtrahend.getUSeconds() > minuend.getUSeconds()) {
+          seconds--;
+          uSeconds = minuend.getUSeconds() + 1000000 - subtrahend.getUSeconds();
+      } else {
+          uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
       }
-      FW_ASSERT(uSeconds >= 0, uSeconds);
       return Time(minuend.getTimeBase(), minuend.getContext(), seconds, static_cast<U32>(uSeconds));
     }
 

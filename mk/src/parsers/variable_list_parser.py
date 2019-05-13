@@ -59,7 +59,7 @@ class VariableListParser:
 				if var_loc_end == -1:
 					break
 				subst_var = line[var_loc_start+2:var_loc_end]
-				if not self.variable_dictionary.has_key(subst_var):
+				if subst_var not in self.variable_dictionary:
 					break
 				line = line[0:var_loc_start] + " " + self.variable_dictionary[subst_var] + " " + line[var_loc_end+1:]
 					
@@ -70,7 +70,7 @@ class VariableListParser:
 			# by searching for "="
 			
 			if line.count(equal_token) < 1:
-				raise VariableParseError, "Invalid entry found in %s line %i: \"%s\"" % (file,line_number,line)
+				raise VariableParseError("Invalid entry found in %s line %i: \"%s\"" % (file,line_number,line))
 			(var,value) = line.split(equal_token,1)
 			var = var.strip()
 			value = value.strip()

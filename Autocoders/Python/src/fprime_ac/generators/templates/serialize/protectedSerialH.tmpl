@@ -1,0 +1,14 @@
+protected:
+
+    enum {
+        TYPE_ID = ${uuid} //!< type id
+    };
+
+#for (name,type,size,format,comment,typeinfo) in $members:
+#if $size == None or typeinfo == 'string':
+    ${type} m_${name}; //<! ${name} - ${comment}
+#else
+    ${type} m_${name}[${size}]; //<! ${name} - ${comment}
+
+#end if
+#end for

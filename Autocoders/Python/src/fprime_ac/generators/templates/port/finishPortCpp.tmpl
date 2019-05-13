@@ -1,0 +1,70 @@
+
+Output${name}Port::Output${name}Port(void) :
+            Fw::OutputPortBase(),
+    m_port(0) {
+}
+
+void Output${name}Port::init(void) {
+    Fw::OutputPortBase::init();
+}
+
+void Output${name}Port::addCallPort(Input${name}Port* callPort) {
+    FW_ASSERT(callPort);
+    
+    this->m_port = callPort;
+    this->m_connObj = callPort;
+\#if FW_PORT_SERIALIZATION == 1
+    this->m_serPort = 0;
+\#endif
+}
+
+${return_type}Output${name}Port::invoke(${args_proto_string}) {
+\#if FW_PORT_TRACING == 1
+    this->trace();
+\#endif
+
+\#if FW_PORT_SERIALIZATION            
+    FW_ASSERT(this->m_port||this->m_serPort);
+\#else
+    FW_ASSERT(this->m_port);
+\#endif
+
+#if $ret_flag:
+    return this->m_port->invoke(${args_string});
+#else
+    if (this->m_port) {
+        this->m_port->invoke(${args_string});
+\#if FW_PORT_SERIALIZATION            
+    } else if (this->m_serPort) {
+ #if len($args) > 0:
+        Fw::SerializeStatus status;
+ #end if
+        ${name}PortBuffer _buffer;
+ #set $num = 0
+ #for $arg in $args:
+  #if $enum_marker[$num] == 'ENUM':
+        status = _buffer.serialize(static_cast<NATIVE_INT_TYPE>($arg[0]));
+  #elif $pointer_marker[$num] == True:
+        status = _buffer.serialize(static_cast<void*>($arg[0]));
+  #else:
+        status = _buffer.serialize($arg[0]);
+  #end if
+  #set $num = $num + 1      
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+
+ #end for        
+        status = this->m_serPort->invokeSerial(_buffer);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+    }
+\#else
+    }    
+\#endif
+#end if ## no return value            
+
+} // end Output${name}Port::invoke(...)
+
+#if $namespace_list != None
+ #for $namespace in $namespace_list:
+} // end namespace $namespace
+ #end for
+#end if

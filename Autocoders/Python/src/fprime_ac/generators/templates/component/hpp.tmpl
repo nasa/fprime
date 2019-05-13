@@ -1,0 +1,1295 @@
+// ======================================================================
+// \title  ${name}ComponentAc.hpp
+// \author Auto-generated
+// \brief  hpp file for ${name} component base class
+//
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
+\#ifndef ${name.upper()}_COMP_HPP_
+\#define ${name.upper()}_COMP_HPP_
+
+\#include <Fw/Cfg/Config.hpp>
+\#include <Fw/Port/InputSerializePort.hpp>
+\#include <Fw/Port/OutputSerializePort.hpp>
+\#include <Fw/Comp/ActiveComponentBase.hpp>
+#if $has_guarded_ports or $has_parameters
+\#include <Os/Mutex.hpp>
+#end if
+#if $has_commands or $has_parameters
+\#include <Fw/Cmd/CmdString.hpp>
+#end if
+#if $has_channels
+\#include <Fw/Tlm/TlmString.hpp>
+#end if
+#if $has_channels or $has_events
+\#include <Fw/Time/TimePortAc.hpp>
+#end if
+#if $has_parameters
+\#include <Fw/Prm/PrmString.hpp>
+#end if
+#if $has_events
+\#include <Fw/Log/LogString.hpp>
+#end if
+#if $has_internal_interfaces
+\#include <Fw/Types/InternalInterfaceString.hpp>
+#end if
+#for $t in $types_includes:
+\#include <$t>
+#end for
+#for $t in $c_includes:
+\#include <$t>
+#end for
+#for $t in $port_includes:
+  #if 'LogText' in $t:
+\#if FW_ENABLE_TEXT_LOGGING == 1
+  #end if
+\#include <$t>
+  #if 'LogText' in $t:
+\#endif
+  #end if
+#end for
+#for $t in $ser_includes:
+\#include <$t>
+#end for
+
+#if $namespace_list != None
+ #for $namespace in $namespace_list
+namespace ${namespace} {
+ #end for
+#end if
+
+  //! \class ${name}ComponentBase
+  //! \brief Auto-generated base for ${name} component
+  //!
+  class ${name}ComponentBase :
+#if $kind == "passive":
+    public Fw::PassiveComponentBase
+#else if $kind == "queued":
+    public Fw::QueuedComponentBase
+#else:
+    public Fw::ActiveComponentBase
+#end if
+  {
+
+    // ----------------------------------------------------------------------
+    // Friend classes
+    // ----------------------------------------------------------------------
+
+    //! Friend class for white-box testing
+    //!
+    friend class ${name}ComponentBaseFriend;
+
+#if $has_typed_input_ports:
+  public:
+
+    // ----------------------------------------------------------------------
+    // Getters for typed input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_input_ports:
+    #set $namespace = $port_namespaces[$type]
+    //! Get input port at index
+    //!
+    //! \return ${instance}[portNum]
+    //!
+    $namespace::Input${type}Port* get_${instance}_InputPort(
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    );
+
+  #end for
+#end if
+#if $has_serial_input_ports:
+  public:
+
+    // ----------------------------------------------------------------------
+    // Get serial input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
+    //! Get input port at index
+    //!
+    //! \return ${instance}[portNum]
+    //!
+    Fw::InputSerializePort* get_${instance}_InputPort(
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    );
+
+  #end for
+#end if
+#if $has_typed_output_ports:
+  public:
+
+    // ----------------------------------------------------------------------
+    // Connect typed input ports to typed output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_output_ports:
+    #set $namespace = $port_namespaces[$type]
+    #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+    #end if
+    //! Connect port to ${instance}[portNum]
+    //!
+    void set_${instance}_OutputPort(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        $namespace::Input${type}Port *port $doxygen_post_comment("The port")
+    );
+    #if $role == "LogTextEvent":
+\#endif
+    #end if
+
+  #end for
+\#if FW_PORT_SERIALIZATION
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Connect serialization input ports to typed output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_output_ports:
+    #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+    #end if
+    //! Connect port to ${instance}[portNum]
+    //!
+    void set_${instance}_OutputPort(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::InputSerializePort *port $doxygen_post_comment("The port")
+    );
+    #if $role == "LogTextEvent":
+\#endif
+    #end if
+
+  #end for
+\#endif
+
+#end if
+#if $has_serial_output_ports:
+  public:
+
+    // ----------------------------------------------------------------------
+    // Connect serial input ports to serial output ports
+    // ----------------------------------------------------------------------
+
+\#if FW_PORT_SERIALIZATION
+
+  #for $instance, $sync, $priority, $max_num in $serial_output_ports:
+    //! Connect port to ${instance}[portNum]
+    //!
+    void set_${instance}_OutputPort(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::InputSerializePort *port $doxygen_post_comment("The port")
+    );
+
+  #end for
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Connect serialization input ports to serial output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $max_num in $serial_output_ports:
+    //! Connect port to ${instance}[portNum]
+    //!
+    void set_${instance}_OutputPort(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::InputPortBase *port $doxygen_post_comment("The port")
+    );
+
+  #end for
+\#endif
+
+#end if
+#if $has_commands or $has_parameters:
+  public:
+
+    // ----------------------------------------------------------------------
+    // Command registration
+    // ----------------------------------------------------------------------
+
+    //! \brief Register commands with the Command Dispatcher
+    //!
+    //! Connect the dispatcher first
+    //!
+    void regCommands(void);
+
+#end if
+#if $has_parameters:
+  public:
+
+    // ----------------------------------------------------------------------
+    // Parameter loading
+    // ----------------------------------------------------------------------
+
+    //! \brief Load the parameters from a parameter source
+    //!
+    //! Connect the parameter first
+    //!
+    void loadParameters(void);
+
+#end if
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Component construction, initialization, and destruction
+    // ----------------------------------------------------------------------
+
+\#if FW_OBJECT_NAMES == 1
+    //! Construct a ${name}ComponentBase object
+    //!
+    ${name}ComponentBase(
+        const char* compName $doxygen_post_comment("Component name")
+    );
+\#else
+    //! Construct a ${name}ComponentBase object
+    //!
+    ${name}ComponentBase(void);
+\#endif
+
+    //! Initialize a ${name}ComponentBase object
+    //!
+    void init(
+#if $kind == "passive":
+        NATIVE_INT_TYPE instance = 0 $doxygen_post_comment("The instance number")
+#else if $needs_msg_size:
+        NATIVE_INT_TYPE queueDepth, $doxygen_post_comment("The queue depth")
+        NATIVE_INT_TYPE msgSize, $doxygen_post_comment("The message size")
+        NATIVE_INT_TYPE instance = 0 $doxygen_post_comment("The instance number")
+#else
+        NATIVE_INT_TYPE queueDepth, $doxygen_post_comment("The queue depth")
+        NATIVE_INT_TYPE instance = 0 $doxygen_post_comment("The instance number")
+#end if
+    );
+
+    //! Destroy a ${name}ComponentBase object
+    //!
+    virtual ~${name}ComponentBase(void);
+
+#if $has_guarded_ports
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    //! Mutex operations for guarded ports.
+    // ----------------------------------------------------------------------
+    //! You can override these operations to provide more sophisticated
+    //! synchronization.
+    // ----------------------------------------------------------------------
+
+    //! Lock the guarded mutex
+    //!
+    virtual void lock(void);
+
+    //! Unlock the guarded mutex
+    //!
+    virtual void unLock(void);
+
+#end if
+#if len($handlers_typed) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Handlers to implement for typed input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $handlers_typed:
+    #set $params = $port_params[$instance]
+    #set $return_type = $port_return_type_strs[$instance]
+    //! Handler for input port $instance
+    //
+    virtual ${return_type}${instance}_handler(
+    #if len($params) == 0:
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    #else:
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+$emit_port_params(8, $params)
+    #end if
+    ) = 0;
+
+  #end for
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Port handler base-class functions for typed input ports.
+    // ----------------------------------------------------------------------
+    // Call these functions directly to bypass the corresponding ports.
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $handlers_typed:
+    #set $params = $port_params[$instance]
+    #set $return_type = $port_return_type_strs[$instance]
+    //! Handler base-class function for input port $instance
+    //!
+    ${return_type}${instance}_handlerBase(
+    #if len($params) == 0:
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    #else:
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+$emit_port_params(8, $params)
+    #end if
+    );
+
+  #end for
+#end if
+#if len($handlers_serial) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Handlers to implement for serial input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $full, $max_num in $handlers_serial:
+    //! Handler for input port $instance
+    //!
+    virtual void ${instance}_handler(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+    ) = 0;
+
+  #end for
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Port handler base-class functions for serial input ports.
+    // ----------------------------------------------------------------------
+    // Call these functions directly to bypass the corresponding ports.
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $full, $max_num in $handlers_serial:
+    //! Handler base-class function for input port $instance
+    //!
+    void ${instance}_handlerBase(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+    );
+
+  #end for
+#end if
+#if len($pre_message_hooks_typed) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Pre-message hooks for typed async input ports.
+    // ----------------------------------------------------------------------
+    // Each of these functions is invoked just before processing a message
+    // on the corresponding port. By default they do nothing. You can
+    // override them to provide specific pre-message behavior.
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $pre_message_hooks_typed:
+    #set $params = $port_params[$instance]
+    //! Pre-message hook for async input port $instance
+    //!
+    virtual void ${instance}_preMsgHook(
+    #if len($params) == 0:
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    #else:
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+$emit_port_params(8, $params)
+    #end if
+    );
+
+  #end for
+#end if
+#if len($pre_message_hooks_serial) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Pre-message hooks for serial async input ports.
+    // ----------------------------------------------------------------------
+    // Each of these functions is invoked just before processing a message
+    // on the corresponding port. By default they do nothing. You can
+    // override them to provide specific pre-message behavior.
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $full, $max_num in $pre_message_hooks_serial:
+    #if $sync == "async"
+    //! Pre-message hook for async input port $instance
+    //!
+    virtual void ${instance}_preMsgHook(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+    );
+
+    #end if
+  #end for
+#end if
+#if len($typed_invocation_functions) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Invocation functions for typed output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_invocation_functions:
+    #set $params = $port_params[$instance]
+    #set $return_type = $port_return_type_strs[$instance]
+    //! Invoke output port $instance
+    //!
+    ${return_type}${instance}_out(
+    #if len($params) == 0:
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    #else
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+$emit_port_params(8, $params)
+    #end if
+    );
+
+  #end for
+#end if
+#if len($serial_invocation_functions) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Invocation functions for serial output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $max_num in $serial_invocation_functions:
+    //! Invoke output port $instance
+    //!
+    Fw::SerializeStatus ${instance}_out(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+    );
+
+  #end for
+#end if
+#if $has_input_ports:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Getters for numbers of input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
+    //! Get the number of $instance input ports
+    //!
+    //! \return The number of $instance input ports
+    //!
+    NATIVE_INT_TYPE getNum_${instance}_InputPorts(void);
+
+  #end for
+
+    // ----------------------------------------------------------------------
+    // Enumerations for number of ports
+    // ----------------------------------------------------------------------
+
+    enum {
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
+       NUM_${instance.upper()}_INPUT_PORTS = $max_num,
+  #end for
+    };
+
+#end if
+#if $has_output_ports
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Getters for numbers of output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
+    #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+    #end if
+    //! Get the number of $instance output ports
+    //!
+    //! \return The number of $instance output ports
+    //!
+    NATIVE_INT_TYPE getNum_${instance}_OutputPorts(void);
+    #if $role =="LogTextEvent":
+\#endif
+    #end if
+
+  #end for
+
+    enum {
+  #for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
+       NUM_${instance.upper()}_OUTPUT_PORTS = $max_num,
+  #end for
+    };
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Connection status queries for output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $output_ports:
+    #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+    #end if
+    //! Check whether port $instance is connected
+    //!
+    //! \return Whether port $instance is connected
+    //!
+    bool isConnected_${instance}_OutputPort(
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    );
+    #if $role == "LogTextEvent":
+\#endif
+    #end if
+
+  #end for
+#end if
+#if $kind == "queued":
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Message dispatch
+    // ----------------------------------------------------------------------
+
+    //! Dispatch a message on the queue
+    //!
+    virtual MsgDispatchStatus doDispatch(void);
+
+#end if
+#if len($command_enums) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Command enums
+    // ----------------------------------------------------------------------
+
+  #for $enum_type, $enum_members in $command_enums:
+    typedef enum {
+    #for $member, $init, $comment in $enum_members:
+      ${member}${init}, /* $comment */
+    #end for
+      ${enum_type}_MAX
+    } $enum_type;
+
+  #end for
+#end if
+#if $has_commands or $has_parameters:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Command opcodes
+    // ----------------------------------------------------------------------
+
+    enum {
+  #for $mnemonic, $opcodes, $sync, $priority,$full,$comment in $commands:
+    #set $inst = 0
+    #for $opcode in $opcodes:
+      #if len($opcodes) > 1:
+      OPCODE_${mnemonic.upper}_$inst = ${opcode}, /* $comment */
+      #else
+      OPCODE_${mnemonic.upper} = ${opcode}, /* $comment */
+      #end if
+      #set $inst = $inst + 1
+    #end for
+  #end for
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    #set $inst = 0
+    #for $opcode in $osets:
+      #if len($osets) > 1:
+      OPCODE_${name.upper}_${inst}_SET = ${opcode}, //!< opcode to set parameter $name for instance $inst
+      #else
+      OPCODE_${name.upper}_SET = ${opcode}, //!< opcode to set parameter $name
+      #end if
+      #set $inst = $inst + 1
+    #end for
+    #set $inst = 0
+    #for $opcode in $osavs:
+      #if len($osavs) > 1:
+      OPCODE_${name.upper}_${inst}_SAVE = ${opcode}, //!< opcode to save parameter $name for instance $inst
+      #else
+      OPCODE_${name.upper}_SAVE = ${opcode}, //!< opcode to save parameter $name
+      #end if
+      #set $inst = $inst + 1
+    #end for
+  #end for
+    };
+
+#end if
+#if $has_commands:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Command handlers to implement
+    // ----------------------------------------------------------------------
+
+  #for $mnemonic, $opcode, $sync, $priority,$full,$comment in $commands:
+    #set $params = $command_params[$mnemonic]
+    //! Handler for command $mnemonic
+    /* $comment */
+    virtual void ${mnemonic}_cmdHandler(
+        FwOpcodeType opCode, $doxygen_post_comment("The opcode")
+    #if len($params) == 0:
+        U32 cmdSeq $doxygen_post_comment("The command sequence number")
+    #else
+        U32 cmdSeq, $doxygen_post_comment("The command sequence number")
+$emit_non_port_params(8, $params)
+    #end if
+    ) = 0;
+
+  #end for
+#end if
+#set $mnemonics = [ \
+  $mnemonic \
+  for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands \
+  if $sync == "async" \
+]
+#if len($mnemonics) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Pre-message hooks for async commands.
+    // ----------------------------------------------------------------------
+    // Each of these functions is invoked just before processing the
+    // corresponding command. By default they do nothing. You can
+    // override them to provide specific pre-command behavior.
+    // ----------------------------------------------------------------------
+
+  #for $mnemonic in $mnemonics:
+    //! Pre-message hook for command $mnemonic
+    //!
+    virtual void ${mnemonic}_preMsgHook(
+        FwOpcodeType opCode, $doxygen_post_comment("The opcode")
+        U32 cmdSeq $doxygen_post_comment("The command sequence number")
+    );
+
+  #end for
+#end if
+#if $has_commands:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Command handler base-class functions.
+    // Call these functions directly to bypass the command input port.
+    // ----------------------------------------------------------------------
+
+  #for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands:
+    //! Base-class handler function for command $mnemonic
+    //!
+    void ${mnemonic}_cmdHandlerBase(
+        FwOpcodeType opCode, $doxygen_post_comment("The opcode")
+        U32 cmdSeq, $doxygen_post_comment("The command sequence number")
+        Fw::CmdArgBuffer &args $doxygen_post_comment("The command argument buffer")
+    );
+
+  #end for
+#end if
+#if $has_commands or $has_parameters
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Command response
+    // ----------------------------------------------------------------------
+
+    //! Emit command response
+    //!
+    void cmdResponse_out(
+        FwOpcodeType opCode, $doxygen_post_comment("The opcode")
+        U32 cmdSeq, $doxygen_post_comment("The command sequence number")
+        Fw::CommandResponse response $doxygen_post_comment("The command response")
+    );
+
+#end if
+#if $has_events
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Event IDs
+    // ----------------------------------------------------------------------
+
+    enum {
+  #for $ids, $name, $severity, $format_string, $throttle, $comment in $events:
+      #set inst = 0
+      #for $id in $ids
+        #if len($ids) == 1
+      EVENTID_${name.upper} = $id, /* $comment */
+        #else
+      EVENTID_${name.upper}_${inst} = $id, /* $comment */
+        #end if
+        #set $inst = $inst + 1
+      #end for
+  #end for
+    };
+
+  #set $throttle_values = [ \
+    ($name, $throttle) \
+    for $ids, $name, $severity, $format_string, $throttle, $comment in $events \
+    if $throttle != None \
+  ]
+  #if len($throttle_values) > 0
+    // ----------------------------------------------------------------------
+    // Event Throttle values - sets initial value of countdown variable
+    // ----------------------------------------------------------------------
+
+    enum {
+    #for $name, $throttle in $throttle_values:
+      EVENTID_${name.upper}_THROTTLE = $throttle, $doxygen_post_comment("Throttle reset count for " + $name)
+    #end for
+    };
+
+  #end if
+#end if
+#if len($event_enums) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Event enums
+    // ----------------------------------------------------------------------
+
+  #for $enum_type, $enum_members in $event_enums:
+    typedef enum {
+    #for $member, $init, $comment in $enum_members:
+      ${member}${init}, /* $comment */
+    #end for
+      ${enum_type}_MAX
+    } $enum_type;
+
+  #end for
+#end if
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Event logging functions
+    // ----------------------------------------------------------------------
+
+#for $ids, $name, $severity, $format_string, $throttle, $comment in $events:
+  #set $params = $event_params[$name]
+    //! Log event $name
+    //!
+  #if not $comment is None:
+    /* $comment */
+  #end if
+    void log_${severity}_${name}(
+$emit_non_port_params(8, $params)
+    );
+
+  #if $throttle != None
+    // reset throttle value for ${name}
+    void log_${severity}_${name}_ThrottleClear(void);
+  #end if
+
+#end for
+#if $has_telemetry
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Channel IDs
+    // ----------------------------------------------------------------------
+
+    enum {
+  #for $ids, $name, $type, $size, $update, $comment, $typeinfo in $channels:
+     #set $inst = 0
+     #for $id in $ids
+       #if len($ids) == 1
+      CHANNELID_${name.upper} = $id, //!< Channel ID for $name
+       #else
+      CHANNELID_${name.upper}_${inst} = $id, //!< Channel ID for $name, instance $inst
+       #end if
+       #set $inst = $inst + 1
+     #end for
+  #end for
+    };
+
+#end if
+#if len($channel_enums) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Channel enums
+    // ----------------------------------------------------------------------
+
+  #for $enum_type, $enum_members in $channel_enums:
+    typedef enum {
+    #for $member, $init, $comment in $enum_members:
+      ${member}${init}, /* $comment */
+    #end for
+      ${enum_type}_MAX
+    } $enum_type;
+
+  #end for
+#end if
+#if $has_telemetry:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Telemetry write functions
+    // ----------------------------------------------------------------------
+
+  #for $ids, $name, $type, $size, $update, $comment, $typeinfo in $channels:
+    //! Write telemetry channel $name
+    //!
+    #if not $comment is None
+    /* $comment */
+    #end if
+    #if $type == "string":
+    void tlmWrite_${name}(
+        Fw::TlmString& arg $doxygen_post_comment("The telemetry value")
+    );
+    #else:
+      #if $typeinfo == "enum":
+    void tlmWrite_${name}(
+        ${type} arg $doxygen_post_comment("The telemetry value")
+    );
+      #else:
+        #if $typeinfo == "user":
+    void tlmWrite_${name}(
+        ${type}& arg $doxygen_post_comment("The telemetry value")
+    );
+        #else:
+    void tlmWrite_${name}(
+        ${type} arg $doxygen_post_comment("The telemetry value")
+    );
+        #end if
+      #end if
+    #end if
+
+  #end for
+#end if
+#if $has_telemetry or $has_events:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Time
+    // ----------------------------------------------------------------------
+
+    //! Get the time
+    //!
+    //! \return The current time
+    //!
+    Fw::Time getTime(void);
+
+#end if
+#if len($parameter_enums) > 0:
+  #for $enum_type, $enum_members in $parameter_enums:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Parameter enums
+    // ----------------------------------------------------------------------
+
+    typedef enum {
+    #for $member, $init, $comment in $enum_members:
+      ${member}${init}, /* $comment */
+    #end for
+      ${enum_type}_MAX
+    } $enum_type;
+
+  #end for
+#end if
+#if $has_parameters
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Parameter IDs
+    // ----------------------------------------------------------------------
+
+    enum {
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    #set $inst = 0
+    #for $id in $ids:
+      #if len($ids) > 1
+      PARAMID_${name.upper}_${inst} = ${id},
+      #else
+      PARAMID_${name.upper} = ${id},
+      #end if
+      #set $inst = $inst + 1
+    #end for
+  #end for
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    #if len($ids) > 1
+      PARAMID_${name.upper}, // for notifications
+    #end if
+  #end for
+    };
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Parameter update hook
+    // ----------------------------------------------------------------------
+
+    //! \brief Called whenever a parameter is updated
+    //!
+    //! This function does nothing by default. You may override it.
+    //!
+    virtual void parameterUpdated(
+        FwPrmIdType id $doxygen_post_comment("The parameter ID")
+    );
+
+    // ----------------------------------------------------------------------
+    // Parameter load hook
+    // ----------------------------------------------------------------------
+
+    //! \brief Called whenever a parameters are loaded
+    //!
+    //! This function does nothing by default. You may override it.
+    //!
+    virtual void parametersLoaded();
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Parameter get functions
+    // ----------------------------------------------------------------------
+
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    //! Get parameter $name
+    //!
+    #if not $comment is None
+    /* $comment */
+    #end if
+    //! \return The parameter value
+    //!
+    #if $type == "string":
+    Fw::ParamString paramGet_${name}(
+        Fw::ParamValid& valid $doxygen_post_comment("Whether the parameter is valid")
+    );
+    #else
+    $type paramGet_${name}(
+        Fw::ParamValid& valid $doxygen_post_comment("Whether the parameter is valid")
+    );
+    #end if
+
+  #end for
+#end if
+#if len($internal_interface_enums) > 0:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Internal interface enums
+    // ----------------------------------------------------------------------
+
+  #for $enum_type, $enum_members in $internal_interface_enums:
+    typedef enum {
+    #for $member, $init, $comment in $enum_members:
+      ${member}${init}, /* $comment */
+    #end for
+      ${enum_type}_MAX
+    } $enum_type;
+
+  #end for
+#end if
+#if $has_internal_interfaces:
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Internal interface handlers
+    // ----------------------------------------------------------------------
+
+  #for $name, $priority, $full in $internal_interfaces:
+    #set $params = $internal_interface_params[$name]
+    //! Internal Interface handler for $name
+    //!
+    #if len($params) == 0:
+    virtual void ${name}_internalInterfaceHandler(void) = 0;
+    #else
+    virtual void ${name}_internalInterfaceHandler(
+$emit_non_port_params(8, $params)
+    ) = 0;
+    #end if
+
+ #end for
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Internal interface base-class functions
+    // ----------------------------------------------------------------------
+
+  #for $name, $priority, $full in $internal_interfaces:
+    #set $params = $internal_interface_params[$name]
+    //! Base class function for $name
+    //!
+    #if len($params) == 0:
+    void ${name}_internalInterfaceInvoke(void);
+    #else
+    void ${name}_internalInterfaceInvoke(
+$emit_non_port_params(8, $params)
+    );
+    #end if
+
+  #end for
+#end if
+#if $needs_msg_size:
+
+  PRIVATE:
+    NATIVE_INT_TYPE m_msgSize; //!< store max message size
+#end if
+#if $has_typed_input_ports:
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Typed input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_input_ports:
+    #set $namespace = $port_namespaces[$type]
+    //! Input port $instance
+    //!
+    $namespace::Input${type}Port m_${instance}_InputPort[NUM_${instance.upper()}_INPUT_PORTS];
+
+  #end for
+#end if
+#if $has_serial_input_ports:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Serial input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
+    //! Input port $instance
+    //!
+    Fw::InputSerializePort m_${instance}_InputPort[NUM_${instance.upper()}_INPUT_PORTS];
+
+  #end for
+#end if
+#if $has_typed_output_ports:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Typed output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_output_ports:
+    #set $namespace = $port_namespaces[$type]
+    #if $role == "LogTextEvent":
+\#if FW_ENABLE_TEXT_LOGGING == 1
+    #end if
+    //! Output port $instance
+    //!
+    $namespace::Output${type}Port m_${instance}_OutputPort[NUM_${instance.upper()}_OUTPUT_PORTS];
+    #if $role == "LogTextEvent":
+\#endif
+    #end if
+
+  #end for
+#end if
+#if $has_serial_output_ports:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Serial output ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $max_num in $serial_output_ports:
+    //! Output port $instance
+    //!
+    Fw::OutputSerializePort m_${instance}_OutputPort[NUM_${instance.upper()}_OUTPUT_PORTS];
+
+  #end for
+#end if
+#if $has_typed_input_ports:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Calls for messages received on typed input ports
+    // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_input_ports:
+    #set $params = $port_params[$instance]
+    #set $return_type = $port_return_type_strs[$instance]
+    //! Callback for port $instance
+    //!
+    static ${return_type}m_p_${instance}_in(
+        Fw::PassiveComponentBase* callComp, $doxygen_post_comment("The component instance")
+    #if len($params) == 0:
+        NATIVE_INT_TYPE portNum $doxygen_post_comment("The port number")
+    #else:
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+$emit_port_params(8, $params)
+    #end if
+    );
+
+  #end for
+#end if
+#if $has_serializable_ports:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Call for messages received on serial input ports
+    // ----------------------------------------------------------------------
+
+\#if FW_PORT_SERIALIZATION
+
+  #for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
+
+    //! Serial port callback
+    //!
+    static void m_p_${instance}_in(
+        Fw::PassiveComponentBase* callComp, $doxygen_post_comment("The component instance")
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+    );
+  #end for
+
+\#endif
+
+#end if
+#if $kind == "active":
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Message dispatch functions
+    // ----------------------------------------------------------------------
+
+    //! Called in the message loop to dispatch a message from the queue
+    //!
+    virtual MsgDispatchStatus doDispatch(void);
+
+#end if
+#if $has_guarded_ports or $has_parameters:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Mutexes
+    // ----------------------------------------------------------------------
+
+#end if
+#if $has_guarded_ports
+    //! Mutex for guarded ports
+    //!
+    Os::Mutex m_guardedPortMutex;
+
+#end if
+#if $has_parameters:
+    //! Mutex for locking parameters during sets and saves
+    //!
+    Os::Mutex m_paramLock;
+
+#end if
+#if $has_parameters:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Parameter validity flags
+    // ----------------------------------------------------------------------
+
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    //! True if parameter $name was successfully received
+    //!
+    Fw::ParamValid m_param_${name}_valid;
+
+  #end for
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Parameter variables
+    // ----------------------------------------------------------------------
+
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    //! Parameter $name
+    //!
+    $doxygen_pre_comment($comment)
+    #if $type == "string":
+    Fw::ParamString m_${name};
+    #else
+    ${type} m_${name};
+    #end if
+
+  #end for
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Private parameter get function
+    // ----------------------------------------------------------------------
+
+    //! Get a parameter by ID
+    //!
+    //! \return Whether the parameter is valid
+    //!
+    Fw::ParamValid getParam(
+        FwPrmIdType id, $doxygen_post_comment("The ID")
+        Fw::ParamBuffer& buff $doxygen_post_comment("The paramter value")
+    );
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Parameter set functions
+    // ----------------------------------------------------------------------
+
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    //! Set parameter $name
+    //!
+    //! \return The command response
+    //!
+    Fw::CommandResponse paramSet_${name}(
+        Fw::SerializeBufferBase &val $doxygen_post_comment("The serialization buffer")
+    );
+
+  #end for
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Parameter save functions
+    // ----------------------------------------------------------------------
+
+  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+    //! Save parameter $name
+    //!
+    //! \return The command response
+    //!
+    Fw::CommandResponse paramSave_${name}(void);
+
+  #end for
+#end if
+#set $update_channels = [ \
+  ($name, $type)
+  for $ids, $name, $type, $size, $update, $comment, $typeinfo in $channels \
+  if $update != None and $update != "always" \
+]
+#if len($update_channels) > 0:
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // First update flags for telemetry channels
+    // ----------------------------------------------------------------------
+
+  #for $name, $type in $update_channels:
+    //! Initialized to true; cleared when channel $name is first updated
+    //!
+    bool m_first_update_${name};
+
+  #end for
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Last value storage for telemetry channels
+    // ----------------------------------------------------------------------
+
+  #for $name, $type in $update_channels:
+    //! Records the last emitted value for channel $name
+    //!
+    #if $type == "string":
+    Fw::TlmString m_last_${name};
+    #else:
+    $type m_last_${name};
+    #end if
+
+  #end for
+#end if
+
+#if len($events) > 0
+  PRIVATE:
+    // ----------------------------------------------------------------------
+    // Counter values for event throttling
+    // ----------------------------------------------------------------------
+#for $ids, $name, $severity, $format_string, $throttle, $comment in $events:
+  #if $throttle != None
+    NATIVE_UINT_TYPE m_${name}Throttle; //!< throttle for ${name}
+  #end if
+#end for
+#end if
+
+  };
+
+#if $namespace_list != None
+ #for $namespace in $namespace_list
+} // end namespace $namespace
+ #end for
+#end if
+\#endif

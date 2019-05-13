@@ -1,0 +1,59 @@
+####
+# Module 'CMakeLists.txt':
+#
+# F prime modules setup source files, non-standard module dependencies, unit test source files,
+# unit test module dependencies, and call one of the following functions from the F prime API:
+#
+# Functions:
+# - register_fprime_module: register a typical module/library
+# - register_fprime_executable: register an executable/deployment binary
+# - register_fprime_ut: register a unit test
+#
+# These functions are powered off the following variables:
+# - `SOURCE_FILES:` combined list of source and autocoding files used in `register_fprime_module` and
+# `register_fprime_executable` to provide sources.
+# - `MOD_DEPS:` (optional) module dependencies that cannot be auto-detected, used in
+# `register_fprime_module` and `register_fprime_executable`.
+# - `EXECUTABLE_NAME`: (optional) override default executable name in `register_fprime_executable`
+# - `UT_SOURCE_FILES`: (optional) specify sources for unit tests used with `register_fprime_ut`
+# - `UT_MOD_DEPS`: (optional) specify modules for unit tests used with `register_fprime_ut`
+#
+# See: [API.cmake](API.cmake)
+#
+# **Example:**
+# ```
+# set(SOURCE_FILES
+#   "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherComponentAi.xml"
+#   "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImpl.cpp"
+# )
+#
+# register_fprime_module()
+# set(UT_SOURCE_FILES
+#   "${FPRIME_CORE_DIR}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
+#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
+#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
+# )
+# register_fprime_ut()
+# ```
+####
+# Step 1: fill in source files. Autocoding XML files go here.
+set(SOURCE_FILES
+  ...
+)
+# Step 2: (optional) fill in non-standard module dependencies here.
+set(MOD_DEPS
+  ...
+)
+# Step 3: call `register_fprime_module` or `register_fprime_executable`
+register_fprime_module()
+
+# Step 4: (optional) set UT files
+set(UT_SOURCE_FILES
+  ...
+)
+# Step 5: (optional) set UT dependencies
+set(UT_MOD_DEPS
+  ...
+)
+# Step 6: (optional) register fprime UT
+register_fprime_ut()

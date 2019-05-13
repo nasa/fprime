@@ -10,7 +10,7 @@ import optparse
 
 deployment = os.environ["DEPLOYMENT"]
 
-print "Build Deployment %s"%deployment
+print("Build Deployment %s"%deployment)
 
 parser = optparse.OptionParser()
 

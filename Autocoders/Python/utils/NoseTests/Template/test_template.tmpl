@@ -1,0 +1,128 @@
+import os
+
+import subprocess
+from subprocess import CalledProcessError
+import pexpect
+from pexpect import TIMEOUT, EOF
+import logging
+
+def a_make_test():
+    logging.debug('Checking make')
+
+    if make():
+        logging.debug('make: success')
+        assert True
+    else:
+        logging.debug('make: failure')
+        assert False
+
+def b_make_ut_test():
+    logging.debug('Checking make ut')
+
+    if make_ut():
+        logging.debug('make ut: success')
+        assert True
+    else:
+        logging.debug('make ut: failure')
+        assert False
+
+\## test methods are collected alphabetically. When adding new test methods
+\## define method names according to current order
+\## Ex:
+\## a_make_test() <--- Default Test
+\## b_make_ut()   <--- Default Test
+\## c_test()
+\## d_new_test()
+
+#set $ascii_val = 98
+#for $test_case in $TestModuleValues['test_cases']:
+##Increment character
+#set $ascii_val = $ascii_val + 1
+#set $char = chr($ascii_val)
+def ${char}_${test_case.name}_test():
+    logging.debug("Entering ${char}_${test_case.name}_test()")
+
+    try:
+        \## Spawn executable
+        p = pexpect.spawn("make run_ut")
+
+        logging.debug('`make run_ut` executed.')
+        logging.debug('Executable now running.')
+
+        #for pout, psend in $test_case.ptuples:
+        logging.debug('Expecting: ${pout}')
+
+        p.expect(".*${pout}.*", timeout=3)
+        p.sendline("${psend}")
+
+        logging.debug('Sent: ${psend}')
+        #end for
+
+        logging.debug('No timeout. Asserting test as true.')
+        \## If there was no timeout the pexpect test passed
+        assert True
+
+        \## A timeout occurs when pexpect cannot match the executable
+        \## output with the designated expectation. In this case the
+        \## key expectation is p.expect(expect_string, timeout=3)
+        \## which tests what the method name describes
+    except TIMEOUT as e:
+        print "Timeout Error. Expected Value not returned."
+        print "-------Program Output-------"
+        print p.before
+        print "-------Expected Output-------"
+        print e.get_trace()
+        assert False
+
+
+#end for
+
+def setup_module():
+    appPath = "${TestModuleValues['module_path']}"
+
+    logging.basicConfig(level=logging.${log_level})
+
+    logging.debug('Setting up test module.')
+    logging.debug('Application path: %s' % appPath)
+
+    os.chdir(appPath)
+
+    logging.debug('Setup make')
+    make()
+    logging.debug('Setup make ut')
+    make_ut()
+
+def teardown_module():
+    logging.debug('teardown_module')
+
+    cleanCmds = ['make clean', 'make ut_clean']
+    for cmd in cleanCmds:
+        try:
+            logging.debug('Calling: %s' % cmd)
+            subprocess.check_output(cmd, stderr = subprocess.STDOUT, shell=True)
+        except subprocess.CalledProcessError as e:
+            print "MAKE CLEAN ERROR"
+            print "''''''''''''''''"
+            print e.output
+    os.chdir("{BUILD_ROOT}/Autocoders/Python/test".format(BUILD_ROOT=os.environ.get('BUILD_ROOT')))
+
+def make():
+    try:
+        subprocess.check_output('make', stderr = subprocess.STDOUT, shell=True)
+        return True
+    except CalledProcessError as e:
+       print "MAKE ERROR"
+       print "''''''''''"
+       print e.output
+       return False
+
+def make_ut():
+    try:
+        subprocess.check_output('make ut', stderr = subprocess.STDOUT, shell=True)
+        return True
+    except CalledProcessError as e:
+        print "MAKE UT ERROR"
+        print "'''''''''''''"
+        print e.output
+        return False
+
