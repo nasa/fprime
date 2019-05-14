@@ -12,7 +12,7 @@
 namespace Fw {
 
 //Initial logger is NULL
-Loger* Logger::s_current_logger = NULL;
+Logger* Logger::s_current_logger = NULL;
 
 // Basic log implementation
 void Logger :: logMsg(
@@ -30,7 +30,7 @@ void Logger :: logMsg(
     }
 }
 // Register the logger
-void Logger :: registerLogger(Loger* logger)
+void Logger :: registerLogger(Logger* logger)
 {
     Logger::s_current_logger = logger;
 }

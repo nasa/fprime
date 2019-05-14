@@ -31,6 +31,7 @@ set(MOD_DEPS
   "${CMAKE_THREAD_LIBS_INIT}" 
   Fw/Cfg
   Fw/Types
+  Fw/Logger
   Utils/Hash
 )
 

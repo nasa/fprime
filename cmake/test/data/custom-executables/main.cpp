@@ -1,5 +1,5 @@
-#include <Fw/Log/Log.hpp>
+#include <Fw/Logger/Logger.hpp>
 
 int main(int argc, char** argv) {
-    Fw::Log::logMsg("You Win!\n", 0, 0, 0, 0, 0, 0);
+    Fw::Logger::logMsg("You Win!\n", 0, 0, 0, 0, 0, 0);
 }

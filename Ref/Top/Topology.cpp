@@ -1,7 +1,7 @@
 #include <Components.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Task.hpp>
-#include <Fw/Log/Log.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 
@@ -394,7 +394,7 @@ int main(int argc, char* argv[]) {
 	port_number = 0;
 	option = 0;
 	hostname = NULL;
-        Fw::Log::registerLogger(&osLogger);
+        Fw::Logger::registerLogger(&osLogger);
 	while ((option = getopt(argc, argv, "hp:a:")) != -1){
 		switch(option) {
 			case 'h':
