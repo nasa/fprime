@@ -1,21 +1,18 @@
 /**
- * File: Log.hpp
+ * File: Loger.hpp
  * Description: Framework logging support
  * Author: mstarch
  *
  * This file adds in support to the core 'Fw' package, to separate it from Os and other loggers, and
  * allow the architect of the system to select which core framework logging should be used. 
  */
-#ifndef _Fw_Log_hpp_
-#define _Fw_Log_hpp_
+#ifndef _Fw_Loger_hpp_
+#define _Fw_Loger_hpp_
 
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Obj/ObjBase.hpp>
-#include <Fw/Types/EightyCharString.hpp>
-#include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
-    class Log {
+    class Logger {
         public:
             /**
              * Function called on the logger to log a message. This is abstract virtual method and
@@ -65,10 +62,10 @@ namespace Fw {
              * a subclass of Fw::Log.
              * Log* logger: logger to log to when Fw::Log::logMsg is called.
              */
-            static void registerLogger(Log* logger);
+            static void registerLogger(Logger* logger);
 
             //!< Static logger to use when calling the above 'logMsg' function
-            static Log* s_current_logger;
+            static Logger* s_current_logger;
     };
 }
 

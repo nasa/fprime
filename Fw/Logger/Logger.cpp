@@ -1,5 +1,5 @@
 /**
- * File: Log.cpp
+ * File: Logger.cpp
  * Description: Framework logging implementation
  * Author: mstarch
  *
@@ -7,15 +7,15 @@
  * allow the architect of the system to select which core framework logging should be used. 
  */
 
-#include <Fw/Log/Log.hpp>
+#include <Fw/Logger/Logger.hpp>
 
 namespace Fw {
 
 //Initial logger is NULL
-Log* Log::s_current_logger = NULL;
+Loger* Logger::s_current_logger = NULL;
 
 // Basic log implementation
-void Log :: logMsg(
+void Logger :: logMsg(
     const char* fmt,
     POINTER_CAST a1,
     POINTER_CAST a2,
@@ -25,13 +25,13 @@ void Log :: logMsg(
     POINTER_CAST a6
 ) {
     // Log if capable, otherwise drop
-    if (Log::s_current_logger != NULL) {
-        Log::s_current_logger->log(fmt, a1, a2, a3, a4, a5, a6);
+    if (Logger::s_current_logger != NULL) {
+        Logger::s_current_logger->log(fmt, a1, a2, a3, a4, a5, a6);
     }
 }
 // Register the logger
-void Log :: registerLogger(Log* logger)
+void Logger :: registerLogger(Loger* logger)
 {
-    Log::s_current_logger = logger;
+    Logger::s_current_logger = logger;
 }
 }; //End namespace Fw
