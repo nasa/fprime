@@ -25,7 +25,7 @@ static Fw::SimpleObjRegistry simpleReg;
 #endif
 
 // Component instance pointers
-static NATIVE_INT_TYPE rgDivs[] = {1,2,4};
+static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
 Svc::RateGroupDriverImpl rateGroupDriverComp(
 #if FW_OBJECT_NAMES == 1
                     "RGDvr",
