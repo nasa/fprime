@@ -1,0 +1,38 @@
+<% packet_count = packets.length %>
+<% column_1_packet_count = packet_count / 3 %>
+<% column_2_packet_count = packet_count / 3 %>
+<% column_3_packet_count = packet_count / 3 %>
+<% column_1_packet_count += 1 if ((packet_count % 3) != 0) %>
+<% column_2_packet_count += 1 if ((packet_count % 3) == 2) %>
+
+<% if title.empty? %>
+  <h2>Table of Contents</h2>
+<% else %>
+  <h2><%= title.split[1..-1].join(' ') %></h2>
+<% end %>
+
+<div class="col-md-4">
+  <ul class="list-unstyled">
+    <% packets[0..(column_1_packet_count - 1)].each do |packet| %>
+      <li><a href="#<%= "tlm_#{packet.target_name}_#{packet.packet_name}" %>"><%= "#{packet.target_name} #{packet.packet_name}" %></a></li>
+    <% end %>
+  </ul>
+</div>
+
+<div class="col-md-4">
+  <ul class="list-unstyled">
+    <% packets[column_1_packet_count..(column_1_packet_count + column_2_packet_count - 1)].each do |packet| %>
+      <li><a href="#<%= "tlm_#{packet.target_name}_#{packet.packet_name}" %>"><%= "#{packet.target_name} #{packet.packet_name}" %></a></li>
+    <% end %>
+  </ul>
+</div>
+
+<div class="col-md-4">
+  <ul class="list-unstyled">
+    <% packets[(column_1_packet_count + column_2_packet_count)..-1].each do |packet| %>
+      <li><a href="#<%= "tlm_#{packet.target_name}_#{packet.packet_name}" %>"><%= "#{packet.target_name} #{packet.packet_name}" %></a></li>
+    <% end %>
+  </ul>
+</div>
+
+<div class="clearfix"></div>

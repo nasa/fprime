@@ -1,0 +1,66 @@
+PAGE index.html
+  NO_PDF
+  SECTION ALL header.html.erb 'Command and Telemetry Handbook'
+  SECTION HTML nav.html.erb
+  SECTION ALL title.html.erb 'Command and Telemetry Handbook'
+  SECTION ALL overview.html.erb
+  SECTION ALL footer.html.erb
+
+PAGE command_handbook.html
+  PDF_TOP_MARGIN 20
+  PDF_BOTTOM_MARGIN 15
+  PDF_SIDE_MARGIN 10
+  PDF_HEADER pdf_header.html.erb "Command Handbook"
+  PDF_FOOTER pdf_footer.html.erb "Command Handbook"
+  PDF_COVER pdf_cover.html.erb "Command Handbook"
+  PDF_TOC
+  SECTION ALL header.html.erb 'Command Handbook'
+  SECTION HTML nav.html.erb
+  SECTION HTML title.html.erb 'Command Handbook'
+  CMD_SECTION HTML command_toc.html.erb
+  CMD_SECTION ALL command_packets.html.erb
+  SECTION ALL footer.html.erb
+
+PAGE telemetry_handbook.html
+  PDF_HEADER pdf_header.html.erb "Telemetry Handbook"
+  PDF_FOOTER pdf_footer.html.erb "Telemetry Handbook"
+  PDF_COVER pdf_cover.html.erb "Telemetry Handbook"
+  PDF_TOC
+  SECTION ALL header.html.erb 'Telemetry Handbook'
+  SECTION HTML nav.html.erb
+  SECTION HTML title.html.erb 'Telemetry Handbook'
+  TLM_SECTION HTML telemetry_toc.html.erb
+  TLM_SECTION ALL telemetry_packets.html.erb
+  TLM_SECTION ALL limits_groups.html.erb
+  SECTION ALL footer.html.erb
+
+TARGET_PAGES _cmd_tlm.html
+  PDF_HEADER pdf_header.html.erb "Command and Telemetry Handbook"
+  PDF_FOOTER pdf_footer.html.erb "Command and Telemetry Handbook"
+  PDF_COVER pdf_cover.html.erb "Command and Telemetry Handbook"
+  PDF_TOC
+  SECTION ALL header.html.erb 'Command and Telemetry Handbook'
+  SECTION HTML nav.html.erb
+  SECTION HTML title.html.erb 'Command and Telemetry Handbook'
+  CMD_SECTION HTML command_toc.html.erb 'Commands'
+  TLM_SECTION HTML telemetry_toc.html.erb 'Telemetry'
+  CMD_SECTION ALL command_packets.html.erb
+  TLM_SECTION ALL telemetry_packets.html.erb
+  SECTION ALL footer.html.erb
+
+# Example of creating a handbook for just two targets
+# PAGE inst_and_inst2_handbook.html
+  # TARGET INST
+  # TARGET INST2
+  # PDF_HEADER pdf_header.html.erb "INST and INST2 Command and Telemetry Handbook"
+  # PDF_FOOTER pdf_footer.html.erb "INST and INST2 Command and Telemetry Handbook"
+  # PDF_COVER pdf_cover.html.erb "INST and INST2 Command and Telemetry Handbook"
+  # PDF_TOC
+  # SECTION ALL header.html.erb 'INST and INST2 Command and Telemetry Handbook'
+  # SECTION HTML nav.html.erb
+  # SECTION HTML title.html.erb 'INST and INST2 Command and Telemetry Handbook'
+  # CMD_SECTION HTML command_toc.html.erb 'Commands'
+  # TLM_SECTION HTML telemetry_toc.html.erb 'Telemetry'
+  # CMD_SECTION ALL command_packets.html.erb
+  # TLM_SECTION ALL telemetry_packets.html.erb
+  # SECTION ALL footer.html.erb

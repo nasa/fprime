@@ -1,0 +1,88 @@
+<h1 style="background:#555555;color:white;padding:10px;">Commands</h1>
+<% packets.each do |packet| %>
+  <div id="<%= "cmd_#{packet.target_name}_#{packet.packet_name}" %>">
+    <h2><%= "#{packet.target_name} #{packet.packet_name}" %></h2>
+    <div><span style="font-size:18px;background:#555555;color:white;"><%= packet.hazardous ? 'Hazardous' : '' %></span></div>
+    <div><%= packet.description %></div>
+    <% items = packet.sorted_items.reject{|item| ignored[packet.target_name].include? item.name} %>
+    <% next if items.empty? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Description</th>
+          <th class="text-center">Min</th>
+          <th class="text-center">Max</th>
+          <th class="text-center">Default</th>
+          <th class="text-center">Bit Offset</th>
+          <th class="text-center">Bit Size</th>
+          <th class="text-center">Data Type</th>
+          <th class="text-center">Units</th>
+        </tr>
+      <thead>
+      <tbody>
+        <% items.each do |item| %>
+          <tr>
+            <td>
+              <%= item.name %>
+              <% if item.required %>
+                <div><strong>Required</strong></div>
+              <% end %>
+            </td>
+            <td>
+              <%= item.description %>
+              <% if item.id_value %>
+                <div><strong>Id Value: <%= item.id_value %></strong></div>
+              <% end %>
+              <% if item.states %>
+                <table class="table table-striped table-bordered table-condensed" style="margin-top:10px">
+                  <thead>
+                    <tr><th>State</th><th>Value</th></tr>
+                  </thead>
+                  <tbody>
+                    <% item.states.each do |key, value| %>
+                      <tr>
+                        <td>
+                          <%= key %>
+                          <% if item.hazardous && item.hazardous[key] %>
+                            <div><span style="font-size:18px;background:#555555;color:white;">Hazardous<br/><%= item.hazardous[key] %></span></div>
+                          <% end %>
+                        </td>
+                        <td><%= value %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+              <% if item.array_size or item.read_conversion or item.write_conversion %>
+                <table class="table table-striped table-bordered table-condensed" style="margin-top:10px">
+                  <tbody>
+                  <% if item.array_size %>
+                    <tr><td>Array Bit Size:</td><td><%= item.array_size %></td></tr>
+                  <% end %>
+                  <% if item.read_conversion %>
+                    <tr><td>Read Conversion:</td><td><%= item.read_conversion.to_s.gsub("\n", "<br/>") %></td></tr>
+                  <% end %>
+                  <% if item.write_conversion %>
+                    <tr><td>Write Conversion:</td><td><%= item.write_conversion.to_s.gsub("\n", "<br/>") %></td></tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+            </td>
+            <td class="text-center" style="white-space: nowrap;"><%= item.range.first if item.range %></td>
+            <td class="text-center" style="white-space: nowrap;"><%= item.range.last if item.range %></td>
+            <td class="text-center" style="white-space: nowrap;">
+              <%= item.default %>
+            </td>
+            <td class="text-center"><%= item.bit_offset %></td>
+            <td class="text-center"><%= item.bit_size %></td>
+            <td class="text-center"><%= item.data_type %></td>
+            <td class="text-center"><%= item.units %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <hr></hr>
+<% end %>

@@ -1,0 +1,82 @@
+<h1 style="background:#555555;color:white;padding:10px;">Telemetry Packets</h1>
+<% packets.each do |packet| %>
+  <div id="tlm_<%= "#{packet.target_name}_#{packet.packet_name}" %>">
+    <h2><%= "#{packet.target_name} #{packet.packet_name}" %></h2>
+    <div><%= packet.description %></div>
+    <% items = packet.sorted_items.reject{|item| ignored[packet.target_name].include? item.name} %>
+    <% next if items.empty? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Description</th>
+          <th class="text-center">Bit Offset</th>
+          <th class="text-center">Bit Size</th>
+          <th class="text-center">Data Type</th>
+          <th class="text-center">Units</th>
+          <th class="text-center">Format</th>
+        </tr>
+      <thead>
+      <tbody>
+        <% items.each do |item| %>
+          <tr>
+            <td><%= item.name %></td>
+            <td>
+              <%= item.description %>
+              <% if item.id_value %>
+                <div><strong>Id Value: <%= item.id_value %></strong></div>
+              <% end %>
+              <% if item.states %>
+                <table class="table table-bordered table-condensed" style="margin-top:10px">
+                  <thead>
+                    <tr><th>State</th><th>Value</th></tr>
+                  </thead>
+                  <tbody>
+                    <% item.states.each do |key, value| %>
+                      <% if item.state_colors[key] == :RED %>
+                        <tr style="background:pink"><td><%= key %> (<%= item.state_colors[key] %>)</td><td><%= value %></td>
+                      <% elsif item.state_colors[key] %>
+                        <tr style="background:light<%= item.state_colors[key].downcase %>;"><td><%= key %> (<%= item.state_colors[key] %>)</td><td><%= value %></td>
+                      <% else %>
+                        <tr><td><%= key %></td><td><%= value %></td>
+                      <% end %>
+                    <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+              <% if item.array_size or item.read_conversion or item.write_conversion or item.limits.values or item.limits.response %>
+                <table class="table table-striped table-bordered table-condensed" style="margin-top:10px">
+                  <tbody>
+                  <% if item.array_size %>
+                    <tr><td>Array Bit Size:</td><td><%= item.array_size %></td></tr>
+                  <% end %>
+                  <% if item.read_conversion %>
+                    <tr><td>Read Conversion:</td><td><%= item.read_conversion.to_s.gsub("\n", "<br/>") %></td></tr>
+                  <% end %>
+                  <% if item.write_conversion %>
+                    <tr><td>Write Conversion:</td><td><%= item.write_conversion.to_s.gsub("\n", "<br/>") %></td></tr>
+                  <% end %>
+                  <% if item.limits.values %>
+                    <% item.limits.values.each do |limits_set, values| %>
+                    <tr><td>Limits [<%= limits_set %>]:</td><td><%= "<span style=\"color:red\">RL/#{values[0]}</span> <span style=\"color:goldenrod\">YL/#{values[1]}</span> <span style=\"color:goldenrod\">YH/#{values[2]}</span> <span style=\"color:red\">RH/#{values[3]}</span>#{values[4] ? " <span style=\"color:green\">GL/#{values[4]}</span>": ''}#{values[5] ? " <span style=\"color:green\">GH/#{values[5]}</span>": ''}" %></td></tr>
+                    <% end %>
+                  <% end %>
+                  <% if item.limits.response %>
+                    <tr><td>Limits Response:</td><td><%= item.limits.response.to_s.gsub("\n", "<br/>") %></td></tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+            </td>
+            <td class="text-center"><%= item.bit_offset %></td>
+            <td class="text-center"><%= item.bit_size %></td>
+            <td class="text-center"><%= item.data_type %></td>
+            <td class="text-center"><%= item.units %></td>
+            <td class="text-center"><%= item.format_string %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <hr></hr>
+<% end %>
