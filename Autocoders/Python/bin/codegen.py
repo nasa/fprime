@@ -1270,7 +1270,13 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         #file_list = list()
         #for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
-
+    elif xml_type == "enum":
+        DEBUG.info("Detected ISF Enum XML so Generating hpp, cpp, and py files...")
+        if EnumGenerator.generate_enum(xml_filename):
+            ERROR = False
+        else:
+            ERROR = True
+        PRINT.info("Completed generating files for %s Enum XML...." % xml_filename)
     else:
         PRINT.info("ERROR: Unrecognized dependency type %s!",type)
         sys.exit(-1)

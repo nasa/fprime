@@ -1,0 +1,18 @@
+##
+## Template to stamp out serializable enums .py file
+##
+from models.serialize.IsfTypeExceptions import *
+from models.serialize.type_base import *
+from models.serialize.isf_enum_type import *
+from models.serialize.isf_string_type import *
+from models.serialize.isf_serializable_type import *
+
+def ${name}():
+  return IsfEnumType(
+    "${name}",
+    {
+#for $item_name,$item_value,$item_comment in $items_list:
+      "${item_name}":${item_value},
+#end for
+    }
+  )
