@@ -106,7 +106,7 @@ def main():
         sys.exit(-1)
     else:
         # Handle BUILD_ROOT
-        BUILD_ROOT = os.environ['BUILD_ROOT'] 
+        BUILD_ROOT = os.environ['BUILD_ROOT']
         ModelParser.BUILD_ROOT = BUILD_ROOT
         if CosmosUtil.VERBOSE:
             print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)

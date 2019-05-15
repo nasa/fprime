@@ -219,6 +219,7 @@ class CosmosTopParser():
                     print ("Parsing Commands for instance: " + comp_name)
                 cmds = comp_parser.get_commands()
                 for cmd in cmds:
+                    contains_unsupp_type = False
                     opcode = cmd.get_opcodes()[0]
                     if '0x' in opcode:
                         opcode = int(opcode, 16)
@@ -266,6 +267,8 @@ class CosmosTopParser():
                             l = self.enumFindAndParse(t, "DiebApps")
                             if len(l) == 0:
                                 l = self.enumFindXmlAndParse(t, "DiebApps")
+                            if len(l) == 0:
+                                contains_unsupp_type = True
                             t = (('ENUM', t), l)
                         #
                         # Parse command enum here
@@ -273,8 +276,6 @@ class CosmosTopParser():
                         if type(t) is type(tuple()):
                             enum = t
                             t = t[0][0]
-                        else:
-                            enum = None
 
                         num += 1
                         
@@ -287,7 +288,10 @@ class CosmosTopParser():
                         else:
                             print("Multi-string command " + cmd.get_mnemonic() + " not supported")
                     else:
-                        self.commands.append(cosmos_cmd)
+                        if not contains_unsupp_type:
+                            self.commands.append(cosmos_cmd)
+                        else:
+                            print("Skipping cmd " + cmd.get_mnemonic() + ", contains unsupported type")
                  
                 if CosmosUtil.VERBOSE:
                     print("Finished Parsing Commands for " + comp_name)
@@ -308,6 +312,11 @@ class CosmosTopParser():
                     if type(t) is type(tuple()):
                         enum = t
                         t = t[0][0]
+                    else:
+                        if not t in CosmosUtil.TYPE_DICT.keys():
+                            # Skip channel if has a serializable type / incorrect type
+                            print("Unsupported type " + t + ", skipping Parameter " + n)
+                            continue
                     num += 1
                      
                     # Calculate opcodes
@@ -344,6 +353,7 @@ class CosmosTopParser():
                     print("Parsing Events for " + comp_name)
                 evrs = comp_parser.get_events()
                 for evr in evrs:
+                    contains_unsupp_type = False
                     evr_id =evr.get_ids()[0]
                     if '0x' in evr_id:
                         evr_id = int(evr_id, 16)
@@ -378,6 +388,8 @@ class CosmosTopParser():
                             l = self.enumFindAndParse(t, "DiebApps")
                             if len(l) == 0:
                                 l = self.enumFindXmlAndParse(t, "DiebApps")
+                            if len(l) == 0:
+                                contains_unsupp_type = True
                             t = (('ENUM', t), l)
                         
                         enum = None
@@ -386,7 +398,10 @@ class CosmosTopParser():
                             t = t[0][0]
                          
                         cosmos_evr.add_item(n, t, c, enum)
-                    self.events.append(cosmos_evr)
+                    if not contains_unsupp_type:
+                        self.events.append(cosmos_evr)
+                    else:
+                        print("Skipping evr " + evr.get_name() + ", contains unsupported type")
                 if CosmosUtil.VERBOSE:
                     print("Finished Parsing Events for " + comp_name)
             #
@@ -409,6 +424,11 @@ class CosmosTopParser():
                     if type(t) is type(tuple()):
                         enum = t
                         t = t[0][0]
+                    else:
+                        if not t in CosmosUtil.TYPE_DICT.keys():
+                            # Skip channel if has a serializable type / incorrect type
+                            print("Unsupported type " + t + ", skipping Channel " + n)
+                            continue
                     c = ch.get_comment()
                     limits = ch.get_limits()
                     source = comp_parser.get_xml_filename()
