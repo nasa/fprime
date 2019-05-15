@@ -6,6 +6,7 @@
 #
 ####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
@@ -31,6 +32,7 @@ set(MOD_DEPS
   "${CMAKE_THREAD_LIBS_INIT}" 
   Fw/Cfg
   Fw/Types
+  Fw/Logger
   Utils/Hash
 )
 

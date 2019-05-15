@@ -49,5 +49,6 @@ set(SOURCE_FILES
 # Note: supply non-explicit dependencies here
 set(MOD_DEPS
     Os
+    Fw/Logger
 )
 register_fprime_executable()

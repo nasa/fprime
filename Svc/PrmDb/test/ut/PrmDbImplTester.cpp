@@ -350,7 +350,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         // register interceptor
-        Os::registerOpenInterceptor(this->OpenIntercepter,static_cast<void*>(this));
+        Os::registerOpenInterceptor(this->OpenInterceptor,static_cast<void*>(this));
         this->m_testOpenStatus = Os::File::DOESNT_EXIST;
         // call function to read parameter file
         this->m_impl.readParamFile();
@@ -363,7 +363,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test delimiter read error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // delimiter is first read
         this->m_readsToWait = 0;
         // set read status to bad
@@ -381,7 +381,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test delimeter read size error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // delimiter is first read
         this->m_readsToWait = 0;
         // set read status to okay
@@ -401,7 +401,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test delimeter value error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // delimiter is first read
         this->m_readsToWait = 0;
         // set read status to okay
@@ -422,7 +422,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test record size read error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // size is second read
         this->m_readsToWait = 1;
         // set read status to bad
@@ -441,7 +441,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test record size read size error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // size is second read
         this->m_readsToWait = 1;
         // set read status to okay
@@ -462,7 +462,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test record size value too big error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // size is second read
         this->m_readsToWait = 1;
         // set read status to okay
@@ -484,7 +484,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test parameter ID read error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // ID is third read
         this->m_readsToWait = 2;
         // set read status to bad
@@ -503,7 +503,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test parameter ID read size error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // size is second read
         this->m_readsToWait = 2;
         // set read status to okay
@@ -524,7 +524,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test parameter value read error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // record is fourth read
         this->m_readsToWait = 3;
         // set read status to bad
@@ -543,7 +543,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // Test parameter value read size error
 
         this->clearEvents();
-        Os::registerReadInterceptor(this->ReadIntercepter,static_cast<void*>(this));
+        Os::registerReadInterceptor(this->ReadInterceptor,static_cast<void*>(this));
         // record is fourth read
         this->m_readsToWait = 3;
         // set read status to okay
@@ -569,7 +569,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         // register interceptor
-        Os::registerOpenInterceptor(this->OpenIntercepter,static_cast<void*>(this));
+        Os::registerOpenInterceptor(this->OpenInterceptor,static_cast<void*>(this));
         this->m_testOpenStatus = Os::File::DOESNT_EXIST;
         // dispatch command
         this->sendCmd_PRM_SAVE_FILE(0,12);
@@ -592,7 +592,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // delimiter is first read
         this->m_writesToWait = 0;
         // set read status to bad
@@ -620,7 +620,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // delimiter is first read
         this->m_writesToWait = 0;
         // set write status to okay
@@ -648,7 +648,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // size is second write
         this->m_writesToWait = 1;
         // set write status to bad
@@ -672,7 +672,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // size is second read
         this->m_writesToWait = 1;
         // set read status to okay
@@ -700,7 +700,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // ID is third read
         this->m_writesToWait = 2;
         // set write status to bad
@@ -725,7 +725,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // size is second read
         this->m_writesToWait = 2;
         // set read status to okay
@@ -753,7 +753,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // record is fourth read
         this->m_writesToWait = 3;
         // set read status to bad
@@ -778,7 +778,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         this->clearEvents();
         this->clearHistory();
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // record is fourth read
         this->m_writesToWait = 3;
         // set read status to okay
@@ -811,14 +811,14 @@ void PrmDbImplTester::runFileReadError(void) {
     PrmDbImplTester::~PrmDbImplTester() {
     }
 
-    bool PrmDbImplTester::OpenIntercepter(Os::File::Status& stat, const char* fileName, Os::File::Mode mode, void* ptr) {
+    bool PrmDbImplTester::OpenInterceptor(Os::File::Status& stat, const char* fileName, Os::File::Mode mode, void* ptr) {
         EXPECT_TRUE(ptr);
         PrmDbImplTester* compPtr = static_cast<PrmDbImplTester*>(ptr);
         stat = compPtr->m_testOpenStatus;
         return false;
     }
 
-    bool PrmDbImplTester::ReadIntercepter(Os::File::Status& stat, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr) {
+    bool PrmDbImplTester::ReadInterceptor(Os::File::Status& stat, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr) {
         EXPECT_TRUE(ptr);
         PrmDbImplTester* compPtr = static_cast<PrmDbImplTester*>(ptr);
         if (not compPtr->m_readsToWait--) {
@@ -845,7 +845,7 @@ void PrmDbImplTester::runFileReadError(void) {
         }
     }
 
-    bool PrmDbImplTester::WriteIntercepter(Os::File::Status& stat, const void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr) {
+    bool PrmDbImplTester::WriteInterceptor(Os::File::Status& stat, const void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr) {
         EXPECT_TRUE(ptr);
         PrmDbImplTester* compPtr = static_cast<PrmDbImplTester*>(ptr);
         if (not compPtr->m_writesToWait--) {
