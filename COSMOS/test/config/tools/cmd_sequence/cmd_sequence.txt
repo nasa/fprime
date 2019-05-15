@@ -1,0 +1,2 @@
+# Declare a custom export class
+EXPORTER cmd_sequence_exporter.rb

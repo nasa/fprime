@@ -66,4 +66,4 @@ class RubyWriter(AbstractCosmosWriter.AbstractCosmosWriter):
             fl.close()
                 
             if CosmosUtil.VERBOSE:
-                print "Ruby script " + destination + " Created"
+                print("Ruby script " + destination + " Created")

@@ -76,7 +76,7 @@ class CosmosChannel(BaseCosmosObject.BaseCosmosObject):
         removed only when added to templates
         """
         if not type(limits) == tuple and not len(limits) == 6:
-            print "ERROR: limits formatted incorrectly, should be Tuple length 6"
+            print("ERROR: limits formatted incorrectly, should be Tuple length 6")
             self.limits = (None, None, None, None, None, None)
         else:
             self.limits = limits

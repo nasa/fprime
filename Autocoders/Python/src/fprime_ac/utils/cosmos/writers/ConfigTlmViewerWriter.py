@@ -59,10 +59,10 @@ class ConfigTlmViewerWriter(BaseConfigWriter.BaseConfigWriter):
         if os.path.isfile(fl_loc):
             names = self.read_for_token(fl_loc, self.token, ignored_lines)
             if CosmosUtil.VERBOSE:
-                print "Tlm Viewer Tool Config Altered"
+                print("Tlm Viewer Tool Config Altered")
         else:
             if CosmosUtil.VERBOSE:
-                print "Tlm Viewer Tool Config Created"
+                print("Tlm Viewer Tool Config Created")
                 
         for line in ignored_lines:
             names.append(line.split(" ")[1] + "")

@@ -69,7 +69,7 @@ class PartialWriter(AbstractCosmosWriter.AbstractCosmosWriter):
             fl.close()
                 
             if CosmosUtil.VERBOSE:
-                print destination + " Created"
+                print(destination + " Created")
                 
         for destination in self.leave_alone_destinations.keys():
             if not os.path.exists(destination):
@@ -84,7 +84,7 @@ class PartialWriter(AbstractCosmosWriter.AbstractCosmosWriter):
                 fl.close()
                 
                 if CosmosUtil.VERBOSE:
-                    print destination + " Created"
+                    print(destination + " Created")
             else:
                 if CosmosUtil.VERBOSE:
-                    print destination + " Already exists"
+                    print(destination + " Already exists")

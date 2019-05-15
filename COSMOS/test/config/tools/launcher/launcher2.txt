@@ -1,0 +1,48 @@
+TITLE "Launcher2"
+TOOL_FONT tahoma 12
+LABEL_FONT tahoma 16
+# NUM_COLUMNS 4 # This is the default
+
+TOOL "Command and Telemetry Server" "LAUNCH CmdTlmServer --system system2.txt" "cts.png" --config cmd_tlm_server2.txt
+TOOL "Replay" "LAUNCH Replay --system system2.txt" "replay.png"
+TOOL "Limits Monitor" "LAUNCH LimitsMonitor --system system2.txt" "limits_monitor.png"
+MULTITOOL_START "Simulated Targets" NULL
+  TOOL "tools\ExampleTarget.bat"
+    DONT_CAPTURE_IO # Without this you get an "Unexpected Output" dialog
+  TOOL "tools\ScpiTarget.bat"
+    DONT_CAPTURE_IO # Without this you get an "Unexpected Output" dialog
+MULTITOOL_END
+
+# Example of using a multitool button
+#MULTITOOL_START "COSMOS" NULL
+#  TOOL "LAUNCH CmdTlmServer -x 827 -y 2 -w 756 -t 475 -c cmd_tlm_server2.txt --system system2.txt"
+#  DELAY 5
+#  TOOL "LAUNCH TlmViewer -x 827 -y 517 -w 424 -t 111 --system system2.txt"
+#  TOOL "LAUNCH PacketViewer -x 827 -y 669 -w 422 -t 450 --system system2.txt"
+#  TOOL "LAUNCH ScriptRunner -x 4 -y 2 -w 805 -t 545 --system system2.txt"
+#  TOOL "LAUNCH CmdSender -x 4 -y 586 -w 805 -t 533 --system system2.txt"
+#MULTITOOL_END
+
+DIVIDER
+LABEL "Commanding and Scripting"
+
+TOOL "Command Sender" "LAUNCH CmdSender --system system2.txt" "cmd_sender.png"
+TOOL "Command Sequence" "LAUNCH CmdSequence --system system2.txt" "cmd_sequence.png"
+TOOL "Script Runner" "LAUNCH ScriptRunner --system system2.txt" "script_runner.png"
+TOOL "Test Runner" "LAUNCH TestRunner --system system2.txt" "test_runner.png"
+
+DIVIDER
+LABEL Telemetry
+
+TOOL "Packet Viewer" "LAUNCH PacketViewer --system system2.txt" "packet_viewer.png"
+TOOL "Telemetry Viewer" "LAUNCH TlmViewer --system system2.txt" "tlm_viewer.png"
+TOOL "Telemetry Grapher" "LAUNCH TlmGrapher --system system2.txt" "tlm_grapher.png"
+TOOL "Data Viewer" "LAUNCH DataViewer --system system2.txt" "data_viewer.png"
+
+DIVIDER
+LABEL Utilities
+
+TOOL "Telemetry Extractor" "LAUNCH TlmExtractor --system system2.txt" "tlm_extractor.png"
+TOOL "Command Extractor" "LAUNCH CmdExtractor --system system2.txt" "cmd_extractor.png"
+TOOL "Handbook Creator" "LAUNCH HandbookCreator --system system2.txt" "handbook_creator.png"
+TOOL "Table Manager" "LAUNCH TableManager --system system2.txt" "table_manager.png"

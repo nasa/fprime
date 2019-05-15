@@ -2,7 +2,7 @@
 
 if !($?BUILD_ROOT) then
     set curdir = "${PWD}"
-    setenv BUILD_ROOT `dirname $0`/../..
+    setenv BUILD_ROOT `dirname $0`/../../..
     cd $BUILD_ROOT
     setenv BUILD_ROOT ${PWD}
     cd ${curdir}
@@ -15,6 +15,6 @@ setenv PYTHON_BASE `make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_pytho
 echo "PYTHON_BASE: ${PYTHON_BASE}"
 
 setenv LD_LIBRARY_PATH ${PYTHON_BASE}/lib
-setenv PYTHONPATH ${BUILD_ROOT}/Autocoders/src
+setenv PYTHONPATH ${BUILD_ROOT}/Autocoders/Python/src/fprime_ac
 echo "PYTHONPATH: ${PYTHONPATH}"
-${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Autocoders/bin/cosmosgen.py  $*
+${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Autocoders/Python/bin/cosmosgen.py  $*

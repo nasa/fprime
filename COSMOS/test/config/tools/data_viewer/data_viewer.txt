@@ -1,0 +1,20 @@
+AUTO_START
+
+COMPONENT "Health Status" dump_component.rb
+  PACKET INST HEALTH_STATUS
+
+COMPONENT "ADCS" data_viewer_component.rb
+  PACKET INST ADCS
+
+COMPONENT "Other Packets" data_viewer_component.rb
+  PACKET INST PARAMS
+  PACKET INST IMAGE
+
+# Allow DataViewer to automatically detect a config/data_viewer/data_viewer.txt
+# file in each of the target directories and load the configuration
+# AUTO_TARGET_COMPONENTS
+
+# Explicitly load the INST/config/data_viewer/data_viewer.txt file
+TARGET_COMPONENT INST
+# Explicitly load the INST/config/data_viewer/data_viewer2.txt file
+TARGET_COMPONENT INST data_viewer2.txt

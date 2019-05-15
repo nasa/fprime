@@ -1,0 +1,6 @@
+# This is a segment of the main cmd_tlm_server.txt that will be used with
+# AUTO_INTERFACE_TARGETS or INTERFACE_TARGET
+
+INTERFACE TEMPLATED_INT templated_interface.rb localhost 5025 5025 5.0 nil TEMPLATE 0xA 0xA
+  TARGET TEMPLATED
+  DONT_CONNECT

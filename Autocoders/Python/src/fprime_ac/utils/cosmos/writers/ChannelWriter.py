@@ -13,6 +13,7 @@
 # Copyright 2018, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
+import sys
 
 from utils.cosmos.util import CosmosUtil
 from utils.cosmos.util import CheetahUtil
@@ -44,7 +45,7 @@ class ChannelWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         Generates the file
         """
         if CosmosUtil.VERBOSE:
-            print "Creating Channel Files"
+            print("Creating Channel Files")
         channel_templates = {}
         for ch in self.cmd_tlm_data[0]:
             n = ch.get_ch_name()
@@ -81,14 +82,27 @@ class ChannelWriter(AbstractCosmosWriter.AbstractCosmosWriter):
 
             channel_templates.update({n: c})
 
-        # Write files
-        for name, c in channel_templates.iteritems():
-            c.ch_name = name
-            fl = open(self.destination + name.lower() + ".txt", "w")
-            if CosmosUtil.VERBOSE:
-                print "Channel " + name + " Created"
-            c.ch_name = name.upper()
-            msg = c.__str__()
+        if sys.version_info >= (3,):
+            # Write files
+            for name, c in channel_templates.items():
+                c.ch_name = name
+                fl = open(self.destination + name.lower() + ".txt", "w")
+                if CosmosUtil.VERBOSE:
+                    print("Channel " + name + " Created")
+                c.ch_name = name.upper()
+                msg = c.__str__()
+                
+                fl.writelines(msg)
+                fl.close()
+        else:
+            # Write files
+            for name, c in channel_templates.iteritems():
+                c.ch_name = name
+                fl = open(self.destination + name.lower() + ".txt", "w")
+                if CosmosUtil.VERBOSE:
+                    print("Channel " + name + " Created")
+                c.ch_name = name.upper()
+                msg = c.__str__()
                     
-            fl.writelines(msg)
-            fl.close()
+                fl.writelines(msg)
+                fl.close()

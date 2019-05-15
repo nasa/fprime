@@ -1,0 +1,78 @@
+SCREEN AUTO AUTO 1.0
+
+LABEL "Drag the tlm screen border to change its"
+LABEL "size to see the effect of SPACER widgets"
+
+MATRIXBYCOLUMNS 3
+
+  # ROW 1
+    HORIZONTALBOX
+      LABEL "H Minimum ->"
+    END
+    SETTING BORDERCOLOR blue
+    
+    SPACER 300 200 MINIMUM MINIMUM
+    
+    HORIZONTALBOX
+      LABEL "<- H Minimum "
+    END
+    SETTING BORDERCOLOR red
+
+  # ROW 2
+    HORIZONTALBOX
+      LABEL ""
+    END
+    SETTING BORDERCOLOR green
+    
+    HORIZONTALBOX
+      LABEL "V Minimum above"
+    END
+    SETTING BORDERCOLOR red
+    
+    HORIZONTALBOX
+      LABEL ""
+    END
+    SETTING BORDERCOLOR blue
+
+  # ROW 3
+    HORIZONTALBOX
+      LABEL "V Expanding below"
+    END
+    SETTING BORDERCOLOR red
+    
+    HORIZONTALBOX
+      LABEL "V Expanding below"
+    END
+    SETTING BORDERCOLOR blue
+    
+    HORIZONTALBOX
+      LABEL "V Expanding below"
+    END
+    SETTING BORDERCOLOR green
+
+  # ROW 4
+    SPACER 0 50 FIXED EXPANDING
+    
+    SPACER 0 50 FIXED EXPANDING
+    
+    SPACER 0 50 FIXED EXPANDING
+
+  # ROW 5
+    HORIZONTALBOX
+      LABEL "V Expanding above"
+    END
+    SETTING BORDERCOLOR green
+    
+    HORIZONTALBOX
+      LABEL "V Expanding above"
+    END
+    SETTING BORDERCOLOR red
+    
+    HORIZONTALBOX
+      LABEL "V Expanding above"
+    END
+    SETTING BORDERCOLOR blue
+
+END
+
+

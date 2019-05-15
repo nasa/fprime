@@ -1,0 +1,37 @@
+# Requires for limits responses and custom conversion classes
+REQUIRE example_limits_response.rb
+REQUIRE sim_inst.rb
+
+# Ignored Parameters
+# IGNORE_PARAMETER parameter_name
+IGNORE_PARAMETER CCSDSVER
+IGNORE_PARAMETER CCSDSTYPE
+IGNORE_PARAMETER CCSDSSHF
+IGNORE_PARAMETER CCSDSAPID
+IGNORE_PARAMETER CCSDSSEQFLAGS
+IGNORE_PARAMETER CCSDSSEQCNT
+IGNORE_PARAMETER CCSDSLENGTH
+IGNORE_PARAMETER PKTID
+
+# Ignored Items
+# IGNORE_ITEM item_name
+IGNORE_ITEM CCSDSVER
+IGNORE_ITEM CCSDSTYPE
+IGNORE_ITEM CCSDSSHF
+IGNORE_ITEM CCSDSAPID
+IGNORE_ITEM CCSDSSEQFLAGS
+IGNORE_ITEM CCSDSSEQCNT
+IGNORE_ITEM CCSDSLENGTH
+
+IGNORE_ITEM RECEIVED_COUNT
+IGNORE_ITEM RECEIVED_TIMESECONDS
+IGNORE_ITEM RECEIVED_TIMEFORMATTED
+
+# Explicitly define command and telemetry files
+# If not given then all the files in cmd/tlm will be processed in
+# alphabetical order
+COMMANDS inst_cmds.txt
+TELEMETRY inst_tlm.txt
+
+# Automatically substitute the target name in screen definitions
+AUTO_SCREEN_SUBSTITUTE

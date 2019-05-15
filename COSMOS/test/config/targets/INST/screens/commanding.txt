@@ -1,0 +1,42 @@
+SCREEN AUTO AUTO 0.5
+
+VERTICAL
+  TITLE "<%= @target_name %> Commanding Examples"
+
+  LABELVALUE INST HEALTH_STATUS COLLECTS
+  LABELVALUE INST HEALTH_STATUS COLLECT_TYPE
+  LABELVALUE INST HEALTH_STATUS DURATION
+
+  VERTICALBOX
+    SECTIONHEADER "Send Collect Command:"
+    HORIZONTAL
+      LABEL "Type: "
+      NAMED_WIDGET COLLECT_TYPE COMBOBOX NORMAL SPECIAL
+      LABEL "  Duration: "
+      NAMED_WIDGET DURATION TEXTFIELD 12 "10.0"
+      # Button widgets execute their code directly in the GUI thread
+      # This allows us to directly ask for the text on the named widget
+      BUTTON 'Start Collect' 'target_name = get_target_name("INST"); cmd("#{target_name} COLLECT with TYPE #{get_named_widget("COLLECT_TYPE").text}, DURATION #{get_named_widget("DURATION").text.to_f}")'
+    END
+  END
+  SETTING BACKCOLOR 163 185 163
+
+  VERTICALBOX
+    SECTIONHEADER "Parameter-less Commands:"
+    NAMED_WIDGET ABORT RADIOBUTTON 'Abort' CHECKED
+    NAMED_WIDGET CLEAR RADIOBUTTON 'Clear' UNCHECKED
+    NAMED_WIDGET CHECK CHECKBUTTON 'Ignore Hazardous Checks' # No option is by default UNCHECKED
+    BUTTON 'Send' 'target_name = get_target_name("INST"); if get_named_widget("ABORT").checked? then cmd("#{target_name} ABORT") else if get_named_widget("CHECK").checked? then cmd_no_hazardous_check("#{target_name} CLEAR") else cmd("#{target_name} CLEAR") end end'
+  END
+  SETTING BACKCOLOR 163 185 163
+
+  VERTICALBOX
+    SECTIONHEADER "Run Script:"
+    NAMED_WIDGET SCRIPTNAME COMBOBOX <%= Dir["#{Cosmos::System.paths['PROCEDURES'][0]}/*"].map {|x| File.basename(x) }.join(' ') %>
+    # Here as an example we're using the BACKGROUNDBUTTON which runs all the code in the background.
+    # Note we didn't need to use this here but it's an example of wrapping calls to the GUI in Qt.execute_in_main_thread.
+    # You need to use this button if your code blocks or takes a long time to execute so you don't hang the screen.
+    BACKGROUNDBUTTON 'Run Script' 'Cosmos.run_process("#{Cosmos::USERPATH}/tools/ScriptRunner -r #{Qt.execute_in_main_thread { get_named_widget("SCRIPTNAME").text }}")'
+  END
+  SETTING BACKCOLOR 163 185 163
+END

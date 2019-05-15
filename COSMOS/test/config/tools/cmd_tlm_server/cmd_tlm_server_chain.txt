@@ -1,0 +1,18 @@
+# Using this file WITH LOCALHOST requires changing the ports in system.txt
+# Otherwise don't change the ports!
+
+TITLE 'COSMOS Command and Telemetry Server - Chain Configuration'
+
+# Don't log on the chained server
+PACKET_LOG_WRITER DEFAULT packet_log_writer.rb nil false
+
+# Replace localhost below with the IP Address of the master CmdTlmServer
+# Update the target list below to the full list of targets in your system
+# To make this child unable to send commands change the first 7779 to nil
+INTERFACE CHAININT tcpip_client_interface.rb localhost 7779 7779 10 5 PREIDENTIFIED
+  TARGET INST
+  TARGET INST2
+  TARGET EXAMPLE
+  TARGET TEMPLATED
+  TARGET SYSTEM
+  TARGET DART

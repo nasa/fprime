@@ -1,0 +1,45 @@
+TITLE "Launcher"
+TOOL_FONT tahoma 12
+LABEL_FONT tahoma 16
+NUM_COLUMNS 2
+
+TOOL "Server" "LAUNCH CmdTlmServer" "cts.png" --config cmd_tlm_server.txt
+TOOL "Replay" "LAUNCH Replay" "replay.png"
+TOOL "Limits" "LAUNCH LimitsMonitor" "limits_monitor.png"
+MULTITOOL_START "Targets" NULL
+  TOOL "LAUNCH_TERMINAL ExampleTarget"
+    DONT_CAPTURE_IO # Without this you get an "Unexpected Output" dialog
+  TOOL "LAUNCH_TERMINAL ScpiTarget"
+    DONT_CAPTURE_IO # Without this you get an "Unexpected Output" dialog
+MULTITOOL_END
+# Example of a multitool button
+#MULTITOOL_START "COSMOS"
+#  TOOL "LAUNCH CmdTlmServer -x 827 -y 2 -w 756 -t 475 -c cmd_tlm_server.txt"
+#  DELAY 5
+#  TOOL "LAUNCH TlmViewer -x 827 -y 517 -w 424 -t 111"
+#  TOOL "LAUNCH PacketViewer -x 827 -y 669 -w 422 -t 450"
+#  TOOL "LAUNCH ScriptRunner -x 4 -y 2 -w 805 -t 545"
+#  TOOL "LAUNCH CmdSender -x 4 -y 586 -w 805 -t 533"
+#MULTITOOL_END
+
+DIVIDER
+
+TOOL "CmdSender" "LAUNCH CmdSender" "cmd_sender.png"
+TOOL "CmdSequence" "LAUNCH CmdSequence" "cmd_sequence.png"
+TOOL "ScriptRunner" "LAUNCH ScriptRunner" "script_runner.png"
+TOOL "TestRunner" "LAUNCH TestRunner" "test_runner.png"
+
+DIVIDER
+
+TOOL "PktViewer" "LAUNCH PacketViewer" "packet_viewer.png"
+TOOL "TlmViewer" "LAUNCH TlmViewer" "tlm_viewer.png"
+TOOL "TlmGrapher" "LAUNCH TlmGrapher" "tlm_grapher.png"
+TOOL "DataViewer" "LAUNCH DataViewer" "data_viewer.png"
+
+DIVIDER
+
+TOOL "ConfigEditor" "LAUNCH ConfigEditor" "config_editor.png"
+TOOL "TlmExtractor" "LAUNCH TlmExtractor" "tlm_extractor.png"
+TOOL "Handbooks" "LAUNCH HandbookCreator" "handbook_creator.png"
+TOOL "CmdExtractor" "LAUNCH CmdExtractor" "cmd_extractor.png"
+TOOL "TblManager" "LAUNCH TableManager" "table_manager.png"

@@ -1,0 +1,10 @@
+QMainWindow {
+  background-color: #9a1f20;
+}
+#Label {
+  font-size: 20px;
+}
+#Divider {
+  border: 2px solid #3585b3;
+  border-radius: 1px;
+}

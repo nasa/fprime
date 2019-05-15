@@ -1,0 +1,13 @@
+<% if System.limits.groups.length > 0 %>
+  <h1 style="background:#555555;color:white;padding:10px;">Limits Groups</h1>
+
+  <% System.limits.groups.each do |limits_group_name, limits_group| %>
+    <h2><%= limits_group_name %></h2>
+    <ul>
+    <% limits_group.each do |target_name, packet_name, item_name| %>
+      <li><%= "#{target_name} #{packet_name} #{item_name}" %></li>
+    <% end %>
+    </ul>
+    <hr></hr>
+  <% end %>
+<% end %>

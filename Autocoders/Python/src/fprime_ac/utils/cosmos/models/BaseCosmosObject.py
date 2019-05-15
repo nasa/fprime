@@ -14,7 +14,7 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 class BaseCosmosObject(object):
     """

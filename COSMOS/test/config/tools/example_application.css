@@ -1,0 +1,58 @@
+/* Rename this file to application.css to set a global style */
+QMainWindow {
+  background-color: #d1d1d2;
+}
+QLabel {
+  font-size: 14px;
+  font-family: Arial;
+}
+QPushButton {
+  font-size: 12px;
+  padding: 4px;
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #b1bac4, stop: 1 #767c83);
+}
+QPushButton:hover:!pressed
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4cbdff, stop: 1 #3585b3);
+}
+QPushButton:pressed {
+  background-color: #3585b3
+}
+QTableView {
+  background-color: #d1d1d2;
+}
+QHeaderView::section:horizontal {
+  background-color: #3585b3;
+}
+QHeaderView::section:vertical {
+  background-color: #767c83;
+  color: white;
+}
+QTabWidget:pane { /* The tab widget frame */
+  border-top: 2px solid #C2C7CB;
+}
+QTabWidget::tab-bar {
+  left: 10px; /* move to the right */
+}
+/* Style the tab using the tab sub-control. Note that it reads QTabBar _not_ QTabWidget */
+QTabBar::tab {
+  border: 2px solid #C4C4C3;
+  border-bottom-color: #C2C7CB; /* same as the pane color */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  min-width: 8ex;
+  padding: 2px;
+}
+QTabBar::tab:selected, QTabBar::tab:hover {
+  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fafafa, stop: 0.4 #f4f4f4, stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+}
+QTabBar::tab:selected {
+  border-color: #9B9B9B;
+  border-bottom-color: #C2C7CB; /* same as pane color */
+}
+QTabBar::tab:!selected {
+  margin-top: 2px; /* make non-selected tabs look smaller */
+}
+

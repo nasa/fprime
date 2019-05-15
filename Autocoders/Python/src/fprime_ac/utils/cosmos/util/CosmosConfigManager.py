@@ -14,7 +14,10 @@
 #===============================================================================
 import os
 import sys
-import ConfigParser
+if sys.version_info >= (3,):
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 
 class CosmosConfigManager(ConfigParser.SafeConfigParser):
     """
@@ -35,18 +38,16 @@ class CosmosConfigManager(ConfigParser.SafeConfigParser):
         self._setProps()
        
         # Check for ini file in current working directory with name as deployment
-        util_dir = os.environ['BUILD_ROOT'] + "/Autocoders/src/utils/cosmos/util/"
-        print util_dir
+        util_dir = os.environ['BUILD_ROOT'] + "/Autocoders/Python/src/fprime_ac/utils/cosmos/util/"
         ls = os.listdir(util_dir)
         
-        print deployment
         file = None
         for fl in ls:
             if fl[0:len(deployment)].lower() == deployment.lower() and fl[len(deployment):len(fl)].lower() == '.ini':
                 file = fl
                 
         if file is None:
-            print "ERROR: Could not find configuration file for deployment: %s, \ndefine a *.ini file in %s directory." % (deployment, util_dir)
+            print("ERROR: Could not find configuration file for deployment: %s, \ndefine a *.ini file in %s directory." % (deployment, util_dir))
             sys.exit(-1)
         
         self.read(util_dir + file)

@@ -1,0 +1,9 @@
+File Definition, C:\git\COSMOS\demo\config\targets\INST\tools\table_manager\EventAction_def.txt
+File Binary, C:\git\COSMOS\demo\config\targets\INST\tables/EventAction.dat
+
+EVENT ACTION
+Item, EVENT, ACTION
+1, 0, NEW, 
+2, 0, NEW, 
+3, 0, NEW, 
+

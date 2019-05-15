@@ -160,29 +160,29 @@ class CosmosTopParser():
         bot_dir = os.getcwd()
         os.chdir(CosmosUtil.STARTING_DIRECTORY)    # Parser needs to be in Autocoders/bin directory to be able to find Topology XML
          
-        print "\nUsing XmlParser and XmlTopologyParser instances"
+        print("\nUsing XmlParser and XmlTopologyParser instances")
              
         xml_type = XmlParser.XmlParser(xml_filename)()
  
         if xml_type == "assembly" or xml_type == "deployment":
              
             if CosmosUtil.VERBOSE:
-                print ("Detected ISF Topology XML Files...")
+                print("Detected ISF Topology XML Files...")
             topology = XmlTopologyParser.XmlTopologyParser(xml_filename)
  
             # Name of COSMOS target to be created
             self.deployment = topology.get_deployment()
              
             if CosmosUtil.VERBOSE:
-                print "\nFound assembly or deployment named: " + self.deployment + "\n"
+                print("\nFound assembly or deployment named: " + self.deployment + "\n")
         else:
-            print "ERROR: XML File Not a Topology File"
+            print("ERROR: XML File Not a Topology File")
             sys.exit(-1)
              
         # Change back
         os.chdir(bot_dir)
          
-        print "Finished Reusing XmlParser and XmlTopologyParser instances\n"
+        print("Finished Reusing XmlParser and XmlTopologyParser instances\n")
          
         if overwrite:
             self.channels = []
@@ -190,8 +190,8 @@ class CosmosTopParser():
             self.commands = []
          
          
-        print "Parsing Topology"
-        print "Found %s components.\n" % len(topology.get_instances())
+        print("Parsing Topology")
+        print("Found %s components.\n" % len(topology.get_instances()))
         for inst in topology.get_instances():
             comp_name = inst.get_name()
             comp_type = inst.get_type()
@@ -202,20 +202,21 @@ class CosmosTopParser():
             # If base_id is not set for a component assume it has nothing
             # and skip it.
             if base_id is None:
-                print "Skipping %s:%s component - has not commands or telemetry" % (comp_name, comp_type)
+                print("Skipping %s:%s component - has not commands or telemetry" % (comp_name, comp_type))
                 continue
-                         
+
             if '0x' in base_id:
                 base_id = int(base_id, 16)
             else:
                 base_id = int(base_id)
             comp_parser = inst.get_comp_xml()
+
             #
             # Parse command data here...
             #
             if 'get_commands' in dir(comp_parser):
                 if CosmosUtil.VERBOSE:
-                    print "Parsing Commands for instance: " + comp_name
+                    print ("Parsing Commands for instance: " + comp_name)
                 cmds = comp_parser.get_commands()
                 for cmd in cmds:
                     opcode = cmd.get_opcodes()[0]
@@ -251,7 +252,7 @@ class CosmosTopParser():
                     num = 0
                      
                     if CosmosUtil.VERBOSE:
-                        print "Command " + n + " Found"
+                        print("Command " + n + " Found")
  
                     enum = None
                     for arg in args:
@@ -282,14 +283,14 @@ class CosmosTopParser():
                      
                     if is_multi_string_command:     
                         if CosmosUtil.VERBOSE:
-                            print "Multi-string commands not supported in COSMOS at: " + cmd.get_mnemonic() + " from " + source
+                            print("Multi-string commands not supported in COSMOS at: " + cmd.get_mnemonic() + " from " + source)
                         else:
-                            print "Multi-string command " + cmd.get_mnemonic() + " not supported"
+                            print("Multi-string command " + cmd.get_mnemonic() + " not supported")
                     else:
                         self.commands.append(cosmos_cmd)
                  
                 if CosmosUtil.VERBOSE:
-                    print "Finished Parsing Commands for " + comp_name     
+                    print("Finished Parsing Commands for " + comp_name)
             #
             # Parse parameter data here...
             #        
@@ -340,7 +341,7 @@ class CosmosTopParser():
             #
             if "get_events" in dir(comp_parser):
                 if CosmosUtil.VERBOSE:
-                    print "Parsing Events for " + comp_name
+                    print("Parsing Events for " + comp_name)
                 evrs = comp_parser.get_events()
                 for evr in evrs:
                     evr_id =evr.get_ids()[0]
@@ -359,7 +360,7 @@ class CosmosTopParser():
                     cosmos_evr.set_xml_attributes(s, f)
                          
                     if CosmosUtil.VERBOSE:
-                        print "Event " + n + " Found"
+                        print("Event " + n + " Found")
                     #
                     # Parse event enums here...
                     #
@@ -387,13 +388,13 @@ class CosmosTopParser():
                         cosmos_evr.add_item(n, t, c, enum)
                     self.events.append(cosmos_evr)
                 if CosmosUtil.VERBOSE:
-                    print "Finished Parsing Events for " + comp_name
+                    print("Finished Parsing Events for " + comp_name)
             #
             # Parse channel data here...
             #
             if "get_channels" in dir(comp_parser):
                 if CosmosUtil.VERBOSE:
-                    print "Parsing Channels for " + comp_name
+                    print("Parsing Channels for " + comp_name)
                 channels = comp_parser.get_channels()
                 for ch in channels:
                     ch_id = ch.get_ids()[0]
@@ -417,11 +418,11 @@ class CosmosTopParser():
                     cosmos_ch.set_limits(limits)
                      
                     if CosmosUtil.VERBOSE:
-                        print "Found channel " + n + " with argument type: " + t
+                        print("Found channel " + n + " with argument type: " + t)
                      
                     self.channels.append(cosmos_ch)
                 if CosmosUtil.VERBOSE:
-                    print "Finished Parsing Channels for " + comp_name
+                    print("Finished Parsing Channels for " + comp_name)
         
         # Check command and EVR packets to see if they should apply a negative offset
         # NO CMD OR TLM PACKETS SHOULD BE ADDED ONCE THIS CHECK IS DONE
@@ -430,7 +431,7 @@ class CosmosTopParser():
         for cmd in self.commands:
             CheetahUtil.cmd_update_variable_lengths(cmd)
                     
-        print "Parsed Topology\n"
+        print("Parsed Topology\n")
         
         
     def get_channels(self):

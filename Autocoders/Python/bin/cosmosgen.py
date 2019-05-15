@@ -102,14 +102,14 @@ def main():
     
     # Check for BUILD_ROOT env. variable
     if ('BUILD_ROOT' in os.environ.keys()) == False:
-        print "ERROR: Build root not set to root build path..."
+        print("ERROR: Build root not set to root build path...")
         sys.exit(-1)
     else:
         # Handle BUILD_ROOT
         BUILD_ROOT = os.environ['BUILD_ROOT'] 
         ModelParser.BUILD_ROOT = BUILD_ROOT
         if CosmosUtil.VERBOSE:
-            print ("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
+            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
         
         # Create Cosmos Generator and Parser
         cosmos_gen = CosmosGenerator.CosmosGenerator()
@@ -126,12 +126,12 @@ def main():
             if path[len(path) - 1] == "/":
                 path = path[:len(path) - 1]
             if not os.path.exists(path):
-                print "ERROR: CUSTOM COSMOS PATH " + path + " DOES NOT EXIST"
+                print("ERROR: CUSTOM COSMOS PATH " + path + " DOES NOT EXIST")
                 sys.exit(-1)
             COSMOS_PATH = path
         else:
             COSMOS_PATH = BUILD_ROOT + "/" + path
-        print "COSMOS_PATH: " + COSMOS_PATH
+        print("COSMOS_PATH: " + COSMOS_PATH)
           
     # Remove a target from filesystem
     if opt.target_rm:
@@ -143,7 +143,7 @@ def main():
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        print ("ERROR: Usage: %s [options] xml_filename" % sys.argv[0])
+        print("ERROR: Usage: %s [options] xml_filename" % sys.argv[0])
         return
     else:
         xml_filenames = args[0:]

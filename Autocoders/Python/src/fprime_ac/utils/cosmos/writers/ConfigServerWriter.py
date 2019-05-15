@@ -60,10 +60,10 @@ class ConfigServerWriter(BaseConfigWriter.BaseConfigWriter):
         if os.path.isfile(fl_loc):
             names = self.read_for_token(fl_loc, self.token, ignored_lines)
             if CosmosUtil.VERBOSE:
-                print "Cmd Tlm Server Config Altered"
+                print("Cmd Tlm Server Config Altered")
         else:
             if CosmosUtil.VERBOSE:
-                print "Cmd Tlm Server Config Created"
+                print("Cmd Tlm Server Config Created")
                 
         for line in ignored_lines:
             names.append(line.split(" ")[1])

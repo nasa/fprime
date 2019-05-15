@@ -1,0 +1,27 @@
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="index.html">Command and Telemetry Handbook</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+      <li><a href="command_handbook.html">All Commands</a></li>
+      <li><a href="telemetry_handbook.html">All Telemetry</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Targets <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <% target_names = System.commands.target_names | System.telemetry.target_names %>
+          <% target_names.delete('UNKNOWN') %>
+          <% target_names.each do |target_name| %>
+            <li><a href="<%= target_name.downcase %>_cmd_tlm.html"><%= target_name %></a></li>
+          <% end %>
+        </ul>
+      </li>
+    </ul>
+  </div><!--/.nav-collapse -->
+</div>

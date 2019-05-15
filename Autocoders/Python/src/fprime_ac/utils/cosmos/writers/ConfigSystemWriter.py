@@ -60,10 +60,10 @@ class ConfigSystemWriter(BaseConfigWriter.BaseConfigWriter):
         if os.path.isfile(self.fl_loc):
             names = self.read_for_token(self.fl_loc, self.token, ignored_lines)
             if CosmosUtil.VERBOSE:
-                print "Config_System.txt Altered"
+                print("Config_System.txt Altered")
         else:
             if CosmosUtil.VERBOSE:
-                print "Config_System.txt Created"
+                print("Config_System.txt Created")
             
         for line in ignored_lines:
             names.append(line.split(" ")[1] + self.argument)
@@ -101,7 +101,7 @@ class ConfigSystemWriter(BaseConfigWriter.BaseConfigWriter):
             if not potential_subtarget == "" and not line[0][0] == '#' and line[:len(self.token)] == self.token and not potential_subtarget[0] == '#':
                 if line.split(" ")[1] == self.old_definition:
                     subtargets.append(potential_subtarget)
-                    print "Subtarget " + potential_subtarget + " of " + self.old_definition + " Found"
+                    print("Subtarget " + potential_subtarget + " of " + self.old_definition + " Found")
         
         fl.close()        
         return subtargets

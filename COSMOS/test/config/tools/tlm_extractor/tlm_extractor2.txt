@@ -1,0 +1,2 @@
+<%= render "_adcs_time.txt" %>
+ITEM INST ADCS Q2 RAW

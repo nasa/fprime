@@ -60,7 +60,7 @@ class DataViewerWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         # Open file
         fl = open(self.destination + "data_viewer.txt", "w")
         if CosmosUtil.VERBOSE:
-            print "Data Viewer Created"
+            print("Data Viewer Created")
         
         # Initialize and fill cheetah template
         dv = Data_Viewer.Data_Viewer()

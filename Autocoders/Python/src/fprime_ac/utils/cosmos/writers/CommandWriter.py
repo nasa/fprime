@@ -13,6 +13,7 @@
 # Copyright 2018, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
+import sys
 
 from utils.cosmos.writers import AbstractCosmosWriter
 
@@ -45,7 +46,7 @@ class CommandWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         Generates the file
         """
         if CosmosUtil.VERBOSE:
-            print "Creating Command Files"
+            print("Creating Command Files")
         command_templates = {}
         for cmd in self.cmd_tlm_data[1]:
             n = cmd.get_cmd_name()
@@ -80,13 +81,25 @@ class CommandWriter(AbstractCosmosWriter.AbstractCosmosWriter):
             command_templates.update({n: c})
 
         # Write files
-        for name, c in command_templates.iteritems():
-            c.cmd_name = name
-            fl = open(self.destination + name.lower() + ".txt", "w")
-            if CosmosUtil.VERBOSE:
-                print "Command " + name + " Created"
-            c.cmd_name = name.upper()
-            msg = c.__str__()
+        if sys.version_info >= (3,):
+            for name, c in command_templates.items():
+                c.cmd_name = name
+                fl = open(self.destination + name.lower() + ".txt", "w")
+                if CosmosUtil.VERBOSE:
+                    print("Command " + name + " Created")
+                c.cmd_name = name.upper()
+                msg = c.__str__()
                     
-            fl.writelines(msg)
-            fl.close()
+                fl.writelines(msg)
+                fl.close()
+        else:
+            for name, c in command_templates.iteritems():
+                c.cmd_name = name
+                fl = open(self.destination + name.lower() + ".txt", "w")
+                if CosmosUtil.VERBOSE:
+                    print("Command " + name + " Created")
+                c.cmd_name = name.upper()
+                msg = c.__str__()
+
+                fl.writelines(msg)
+                fl.close()

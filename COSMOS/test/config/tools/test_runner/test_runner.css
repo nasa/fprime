@@ -1,0 +1,45 @@
+QLabel {
+  font-size: 14px;
+}
+QCheckBox {
+  font-size: 14px;
+}
+#PauseOnError {
+  color: blue;
+}
+#ContinueTestCaseAfterError {
+  color: purple;
+}
+#AbortTestingAfterError {
+  color: green;
+}
+#Manual {
+  color: darkblue;
+}
+#LoopTesting {
+  color: magenta;
+}
+#BreakLoopAfterError {
+  color: maroon;
+}
+QPushButton {
+  border: 1px solid #8f8f91;
+  border-radius: 6px;
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7ff, stop: 1 #c0dbff);
+  min-width: 80px;
+  font-size: 14px;
+  padding: 2px 5px;
+}
+QPushButton:hover:!pressed
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7ff, stop: 1 #80abff);
+}
+QPushButton:pressed {
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #c0dbff, stop: 1 #f6f7ff);
+}
+QPushButton:flat {
+  border: none;
+}
+QPushButton:default {
+  border-color: #80abff;
+}

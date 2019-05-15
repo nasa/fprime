@@ -60,7 +60,7 @@ class ChannelScreenWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         # Open file
         fl = open(self.destination + "channels.txt", "w")
         if CosmosUtil.VERBOSE:
-            print "Channel Screen Created"
+            print("Channel Screen Created")
         
         # Initialize and fill cheetah template
         c = Channel_Screen.Channel_Screen()

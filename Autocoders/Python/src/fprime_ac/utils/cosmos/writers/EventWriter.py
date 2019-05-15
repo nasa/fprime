@@ -13,6 +13,7 @@
 # Copyright 2018, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
+import sys
 
 from utils.cosmos.writers import AbstractCosmosWriter
 
@@ -45,7 +46,7 @@ class EventWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         Generates the file
         """
         if CosmosUtil.VERBOSE:
-            print "Creating Event Files"
+            print("Creating Event Files")
         event_templates = {}
         for evr in self.cmd_tlm_data[2]:
             n = evr.get_evr_name()
@@ -82,13 +83,25 @@ class EventWriter(AbstractCosmosWriter.AbstractCosmosWriter):
             event_templates.update({n: e})
 
         # Write files
-        for name, e in event_templates.iteritems():
-            e.evr_name = name
-            fl = open(self.destination + name.lower() + ".txt", "w")
-            if CosmosUtil.VERBOSE:
-                print "Event " + name + " Created"
-            e.evr_name = name.upper()
-            msg = e.__str__()
+        if sys.version_info >= (3,):
+            for name, e in event_templates.items():
+                e.evr_name = name
+                fl = open(self.destination + name.lower() + ".txt", "w")
+                if CosmosUtil.VERBOSE:
+                    print("Event " + name + " Created")
+                e.evr_name = name.upper()
+                msg = e.__str__()
                     
-            fl.writelines(msg)
-            fl.close()
+                fl.writelines(msg)
+                fl.close()
+        else:
+            for name, e in event_templates.iteritems():
+                e.evr_name = name
+                fl = open(self.destination + name.lower() + ".txt", "w")
+                if CosmosUtil.VERBOSE:
+                    print("Event " + name + " Created")
+                e.evr_name = name.upper()
+                msg = e.__str__()
+
+                fl.writelines(msg)
+                fl.close()

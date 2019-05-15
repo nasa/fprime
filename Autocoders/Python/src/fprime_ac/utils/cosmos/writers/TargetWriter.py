@@ -46,7 +46,7 @@ class TargetWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         # Open file
         fl = open(self.destination + "target.txt", "w")
         if CosmosUtil.VERBOSE:
-            print "target.txt Created"
+            print("target.txt Created")
         
         # Initialize and fill cheetah template 
         t = Target.Target()

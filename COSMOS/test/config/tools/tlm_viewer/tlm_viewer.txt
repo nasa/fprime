@@ -1,0 +1,41 @@
+# Automatically pull in screens from all targets
+AUTO_TARGETS
+
+# Create a new dropdown with a few specific sceens
+GROUP "My group"
+  GROUP_SCREEN SYSTEM "status.txt"
+  GROUP_SCREEN INST "hs.txt"
+  GROUP_SCREEN INST2 "hs.txt"
+
+# NEW_COLUMN
+
+# AUTO_TARGET INST
+
+# TARGET INST
+#  SCREEN "adcs.txt"
+#  SCREEN "array.txt"
+#  SCREEN "block.txt"
+#  SCREEN "commanding.txt"
+#  SCREEN "graphs.txt"
+#  SCREEN "ground.txt"
+#  SCREEN "hs.txt"
+#  SCREEN "latest.txt" 480 324
+#    SHOW_ON_STARTUP
+#  SCREEN "other.txt"
+#  SCREEN "tabs.txt"
+
+#TARGET INST2
+#  SCREEN "adcs.txt"
+#  SCREEN "array.txt"
+#  SCREEN "block.txt"
+#  SCREEN "commanding.txt" 898 317
+#    SHOW_ON_STARTUP
+#  SCREEN "graphs.txt"
+#  SCREEN "ground.txt"
+#  SCREEN "hs.txt"
+#  SCREEN "latest.txt"
+#  SCREEN "other.txt"
+#  SCREEN "tabs.txt"
+
+# ADD_SHOW_ON_STARTUP INST ADCS 10 10
+# ADD_SHOW_ON_STARTUP INST HS 500 500

@@ -1,0 +1,8 @@
+SCREEN AUTO AUTO 1.0
+
+VERTICAL
+  TITLE "<%= @target_name %> Instrument Block Data"
+  BLOCK INST IMAGE IMAGE 500 200 "%02X" 4 4 "0x%08X:"
+END
+
+

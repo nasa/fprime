@@ -54,7 +54,7 @@ class TlmExtractorWriter(AbstractCosmosWriter.AbstractCosmosWriter):
         for fl in os.listdir(self.destination):
             if len(fl) > len(self.deployment_name) and fl[:len(self.deployment_name)] == self.deployment_name.lower():
                 os.remove(self.destination + fl)
-        print "Removed Tlm Extractor files"
+        print("Removed Tlm Extractor files")
                     
     def write(self):
         """
@@ -109,4 +109,4 @@ class TlmExtractorWriter(AbstractCosmosWriter.AbstractCosmosWriter):
                     fl.close()
         
         if CosmosUtil.VERBOSE:
-            print "Tlm Extractor config files created"
+            print("Tlm Extractor config files created")
