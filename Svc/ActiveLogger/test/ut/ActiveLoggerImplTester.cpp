@@ -979,7 +979,7 @@ namespace Svc {
 
         // dump file with error on FATAL
 
-        Os::registerOpenInterceptor(this->OpenIntercepter,static_cast<void*>(this));
+        Os::registerOpenInterceptor(this->OpenInterceptor,static_cast<void*>(this));
         this->m_testOpenStatus = Os::File::DOESNT_EXIST;
 
         this->clearEvents();
@@ -1004,7 +1004,7 @@ namespace Svc {
 
         Os::clearOpenInterceptor();
 
-        Os::registerWriteInterceptor(this->WriteIntercepter,static_cast<void*>(this));
+        Os::registerWriteInterceptor(this->WriteInterceptor,static_cast<void*>(this));
         // delimiter is first read
 
         for (NATIVE_INT_TYPE stage = static_cast<NATIVE_INT_TYPE>(ActiveLoggerImpl::LOG_WRITE_FATAL_DELIMETER);
@@ -1058,14 +1058,14 @@ namespace Svc {
 
     }
 
-    bool ActiveLoggerImplTester::OpenIntercepter(Os::File::Status& stat, const char* fileName, Os::File::Mode mode, void* ptr) {
+    bool ActiveLoggerImplTester::OpenInterceptor(Os::File::Status& stat, const char* fileName, Os::File::Mode mode, void* ptr) {
         EXPECT_TRUE(ptr);
         ActiveLoggerImplTester* compPtr = static_cast<ActiveLoggerImplTester*>(ptr);
         stat = compPtr->m_testOpenStatus;
         return false;
     }
 
-    bool ActiveLoggerImplTester::WriteIntercepter(Os::File::Status& stat, const void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr) {
+    bool ActiveLoggerImplTester::WriteInterceptor(Os::File::Status& stat, const void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr) {
         EXPECT_TRUE(ptr);
         ActiveLoggerImplTester* compPtr = static_cast<ActiveLoggerImplTester*>(ptr);
         if (not compPtr->m_writesToWait--) {

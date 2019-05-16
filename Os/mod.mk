@@ -14,7 +14,8 @@ SRC = 			TaskCommon.cpp \
 				MemCommon.cpp \
 				ValidateFileCommon.cpp \
 				ValidatedFile.cpp \
-				FileCommon.cpp
+				FileCommon.cpp \
+				IntervalTimerCommon.cpp
 
 HDR = 			Queue.hpp \
 				IPCQueue.hpp \
