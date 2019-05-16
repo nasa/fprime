@@ -40,7 +40,7 @@ In order to update the Cheetah templates used when generating the COSMOS configu
 
 The only command line argument that the tool takes is the location of Topology XML file.  It should start at the directory of the command line and look like "../../Ref/Top/RefTopologyAppAi.xml"
 
-As the Topology XML files only contain information regarding command and telemetry packets, **all changes to communication protocol and shared command/telemetry packet items should be manually entered into the CosmosUtil module in the util directory and into the command and telemetry header files generated within the deployment's COSMOS cmd_tlm directory respectively**.  The default for these protocols and headers are the fields for the Fprime Reference Application.
+As the Topology XML files only contain information regarding command and telemetry packets, **all changes to communication protocol and shared command/telemetry packet items should be manually entered into the CosmosUtil module in the util directory and into the command and telemetry header files generated within the deployment's COSMOS cmd_tlm directory respectively**.  The default for these protocols and headers are the fields for the Fprime Reference Application. Also, serializable types for command / event arguments and channels are not supported. These will be skipped over in the autocoding process.
 
 In addition to adding targets based on Topology XML files, the tool is able to remove targets via the command-line option "-r TARGET_NAME".  The SYSTEM target should never be deleted, because COSMOS uses it in the background for all other targets.
 
