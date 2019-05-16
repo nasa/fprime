@@ -30,7 +30,9 @@ In Progress
 
 ## 3. Running the Tool
 
-To use the tool, run the run\_cosmosgen.sh script from the command line with the directory for the Topology XML file as the only argument.  In order to update the Cheetah templates used when generating the COSMOS configuration files, there is a script in Autocoders/src/utils/cosmos/templates called compile\_templates.sh that takes no arguments.
+Directly run cosmosgen.py using either Python 2 or Python 3 and make sure that the environment variables PYTHONPATH, BUILD_ROOT and FPRIME_CORE_DIR are properly set. The COSMOS tool also uses the environment variable COSMOS_USERPATH, which must be set to the location of your COSMOS config directory i.e. fprime-sw/COSMOS.
+
+In order to update the Cheetah templates used when generating the COSMOS configuration files, there is a script in Autocoders/src/utils/cosmos/templates called compile\_templates.sh that takes no arguments. The proper version of Cheetah must be used to build the templates when you use either Python 2 or Python 3.
 
 ## 4. Tool Inputs and Outputs
 
