@@ -1,9 +1,0 @@
-  PARAMETER    CCSDSVER        0   3  UINT  0     0   0 "CCSDS primary header version number"
-  PARAMETER    CCSDSTYPE       3   1  UINT  1     1   1 "CCSDS primary header packet type"
-  PARAMETER    CCSDSSHF        4   1  UINT  0     0   0 "CCSDS primary header secondary header flag"
-  ID_PARAMETER CCSDSAPID       5  11  UINT  0  2047 999 "CCSDS primary header application id"
-  PARAMETER    CCSDSSEQFLAGS  16   2  UINT  3     3   3 "CCSDS primary header sequence flags"
-  PARAMETER    CCSDSSEQCNT    18  14  UINT  0 16383   0 "CCSDS primary header sequence count"
-    OVERFLOW TRUNCATE
-  PARAMETER    CCSDSLENGTH    32  16  UINT MIN MAX 12 "CCSDS primary header packet length"
-  ID_PARAMETER PKTID          48  16  UINT MIN MAX <%= id %> "Packet id"

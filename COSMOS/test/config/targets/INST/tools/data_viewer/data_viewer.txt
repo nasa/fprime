@@ -1,2 +1,0 @@
-COMPONENT "INST Health Status" inst_dump_component.rb
-  PACKET INST HEALTH_STATUS
