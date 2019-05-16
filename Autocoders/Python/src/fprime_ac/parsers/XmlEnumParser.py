@@ -73,7 +73,7 @@ class XmlEnumParser(object):
         else:
             self.__namespace = None
         
-        print(self.__name, self.__namespace)
+        print self.__name, self.__namespace
         
         for enum_tag in enum:
             item = enum_tag.attrib
@@ -94,13 +94,13 @@ class XmlEnumParser(object):
 if __name__ == '__main__':
     xmlfile = sys.argv[1]
     xml = XmlParser.XmlParser(xmlfile)
-    print("Type of XML is: %s" % xml())
-    print("Enum XML parse test (%s)" % xmlfile)
+    print "Type of XML is: %s" % xml()
+    print "Enum XML parse test (%s)" % xmlfile
     xml_parser = XmlEnumParser(xmlfile)
-    print("Enum name: %s, namespace: %s" % (xml_parser.get_name(),xml_parser.get_namespace()))
-    print("Items")
+    print "Enum name: %s, namespace: %s" % (xml_parser.get_name(),xml_parser.get_namespace())
+    print "Items"
     for item in xml_parser.get_items():
-        print("%s=%s // %s" % item)
+        print "%s=%s // %s" % item
 
 
 
