@@ -1,4 +1,4 @@
-  ####
+####
 # F prime CMakeLists.txt:
 #
 # SOURCE_FILES: combined list of source and autocoding diles
