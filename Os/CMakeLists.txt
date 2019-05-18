@@ -22,7 +22,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-    
     "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
@@ -51,7 +50,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
-    
     "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
@@ -78,7 +76,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
     "${CMAKE_CURRENT_LIST_DIR}/Linux/IntervalTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-    
     "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
@@ -105,7 +102,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
       "${CMAKE_CURRENT_LIST_DIR}/Linux/IntervalTimer.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
-      
       "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
@@ -117,6 +113,35 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
       "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
     )
+else()
+  # Default Linux
+  set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Pthreads/PriorityBufferQueue.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Linux/IntervalTimer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TaskString.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TaskCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/QueueCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/QueueString.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/IPCQueueCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SimpleQueueRegistry.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/MemCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
+  )
 endif()
 
 set(MOD_DEPS
