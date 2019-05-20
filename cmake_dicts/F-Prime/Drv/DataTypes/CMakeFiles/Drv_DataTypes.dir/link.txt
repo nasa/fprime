@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_DataTypes.a  CMakeFiles/Drv_DataTypes.dir/DataBuffer.cpp.o CMakeFiles/Drv_DataTypes.dir/DataBufferPortAc.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_DataTypes.a

@@ -1,0 +1,8 @@
+# This file references table definitions contained in stand alone
+# files. The syntax is:
+#   TABLEFILE "FileName_def.txt"
+
+TABLEFILE "MCConfigurationTable_fsw1_def.txt"
+TABLEFILE "TLMMonitoringTable_def.txt"
+TABLEFILE "PPSSelectionTable_def.txt"
+

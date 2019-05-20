@@ -1,0 +1,2 @@
+COMMAND DART CLEAR_ERRORS BIG_ENDIAN "Clears error counters and messages"
+  APPEND_ID_PARAMETER PACKET_ID 8 INT 1 1 1 "Packet Id"

@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_ActiveLogger.a  CMakeFiles/Svc_ActiveLogger.dir/ActiveLoggerImpl.cpp.o CMakeFiles/Svc_ActiveLogger.dir/ActiveLoggerComponentAc.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_ActiveLogger.a

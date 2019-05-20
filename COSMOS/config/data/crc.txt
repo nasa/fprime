@@ -3,6 +3,11 @@
 "lib/example_background_task.rb" 0xC4D1FF08
 "lib/example_target.rb" 0x50EC8E71
 "lib/user_version.rb" 0x8F282EE9
+"config/targets/DART/target.txt" 0x6648EE0E
+"config/targets/DART/screens/status.txt" 0xF2501240
+"config/targets/DART/cmd_tlm_server.txt" 0xC8F3CF89
+"config/targets/DART/cmd_tlm/dart_tlm.txt" 0xCD0DBE10
+"config/targets/DART/cmd_tlm/dart_cmds.txt" 0x33D4E659
 "config/targets/SYSTEM/target.txt" 0x07E82776
 "config/targets/SYSTEM/screens/status.txt" 0xDB93FFA7
 "config/targets/SYSTEM/cmd_tlm_server.txt" 0x8D42D962
@@ -49,7 +54,7 @@
 "config/targets/INST/tools/table_manager/McConfigTable_def.txt" 0x5B6FA631
 "config/targets/INST/tools/data_viewer/data_viewer2.txt" 0x7FFA3A8A
 "config/targets/INST/tools/data_viewer/data_viewer.txt" 0xB25E2644
-"config/targets/INST/cmd_tlm/inst_tlm.txt" 0x008F9C71
+"config/targets/INST/cmd_tlm/inst_tlm.txt" 0x83356727
 "config/targets/INST/cmd_tlm/_ccsds_tlm.txt" 0xE833D935
 "config/targets/INST/cmd_tlm/inst_cmds.txt" 0x7E5C780F
 "config/targets/INST/cmd_tlm/_ccsds_cmd.txt" 0x7F5572F3
@@ -77,8 +82,9 @@
 "config/data/hselectoff.gif" 0x8A0C192E
 "config/data/groundon.gif" 0x97D9A501
 "config/data/vswitchon.gif" 0xD747AC45
-"config/system/system.txt" 0xF0FCC1F6
-"config/system/system2.txt" 0x6CC6BC88
+"config/system/system_alt_ports.txt" 0xB5D194B0
+"config/system/system.txt" 0x84099B85
+"config/system/system2.txt" 0x52BFC433
 "config/tools/launcher/launcher2.css" 0x69DA47AB
 "config/tools/launcher/launcher.txt" 0x7060F202
 "config/tools/launcher/launcher2.txt" 0x697956FC
@@ -102,6 +108,7 @@
 "config/tools/tlm_extractor/_adcs_time.txt" 0x3DAD5094
 "config/tools/tlm_extractor/tlm_extractor2.txt" 0x5C780BD2
 "config/tools/cmd_tlm_server/cmd_tlm_server2.txt" 0x2534CD8E
+"config/tools/cmd_tlm_server/cmd_tlm_server_chain.txt" 0x0A7ED710
 "config/tools/cmd_tlm_server/cmd_tlm_server.txt" 0xEE1CB154
 "config/tools/tlm_grapher/README.txt" 0x93B2C07E
 "config/tools/opengl_builder/README.txt" 0x93B2C07E
@@ -122,7 +129,7 @@
 "config/tools/handbook_creator/default_toc.xsl" 0x4122A040
 "config/tools/handbook_creator/handbook_creator.txt" 0xAA806C94
 "config/tools/script_runner/script_runner.txt" 0x1EECD803
-"config/dart/Gemfile" 0x69694DA8
+"config/dart/Gemfile" 0x294591DB
 "tools/TlmExtractor.bat" 0x2B98E027
 "tools/Launcher" 0xFD4E356C
 "tools/CmdSequence" 0x4A13C82C
@@ -257,9 +264,10 @@
 "tools/CmdExtractor" 0x96E82AC3
 "tools/OpenGLBuilder" 0x585EA691
 "tools/CmdSender.bat" 0x2B98E027
-"procedures/cosmos_api_test.rb" 0x40001906
+"procedures/cosmos_api_test.rb" 0x9D13FFA3
 "procedures/example_test.rb" 0xEB8B8E79
 "procedures/test.rb" 0xCE4DA55A
 "procedures/replay_test.rb" 0xBB4D6A36
 "procedures/plot_test.rb" 0xF311D562
 "procedures/run_example_test.rb" 0x0F244140
+"procedures/local_screen_example.rb" 0x677D2019

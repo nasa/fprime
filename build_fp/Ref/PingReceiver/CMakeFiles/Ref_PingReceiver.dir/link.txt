@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../lib/Darwin/libRef_PingReceiver.a  CMakeFiles/Ref_PingReceiver.dir/PingReceiverComponentImpl.cpp.o CMakeFiles/Ref_PingReceiver.dir/PingReceiverComponentAc.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../lib/Darwin/libRef_PingReceiver.a

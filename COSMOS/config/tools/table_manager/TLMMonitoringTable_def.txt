@@ -1,0 +1,31 @@
+TABLE "TLM Monitoring" BIG_ENDIAN TWO_DIMENSIONAL 200 "Telemetry Monitoring Table" 
+  APPEND_PARAMETER "Threshold" 32 UINT MIN MAX 0 "Telemetry item threshold at which point persistance is incremented"
+  APPEND_PARAMETER "Offset" 32 UINT MIN MAX 0 "Offset into the telemetry packet to monitor"
+  APPEND_PARAMETER "Data Size" 32 UINT 0 3 0 "Amount of data to monitor (bytes)"
+    STATE BITS 0 
+    STATE BYTE 1 
+    STATE WORD 2 
+    STATE LONGWORD 3 
+  APPEND_PARAMETER "Bit Mask" 32 UINT MIN MAX 0 "Bit Mask to apply to the Data Size before the value is compared ot the Threshold"
+  APPEND_PARAMETER "Persistence" 32 UINT MIN MAX 0 "Number of times the Threshold must be exceeded before Action is triggered"
+  APPEND_PARAMETER "Type" 32 UINT 0 3 0 "How the Threshold is compared against"
+    STATE LESS_THAN 0 
+    STATE GREATER_THAN 1 
+    STATE EQUAL_TO 2 
+    STATE NOT_EQUAL_TO 3 
+  APPEND_PARAMETER "Action" 32 UINT 0 4 0 "Action to take when Persistance is met"
+    STATE NO_ACTION_REQUIRED 0 
+    STATE INITIATE_RESET 1 
+    STATE CHANGE_MODE_SAFE 2 
+  APPEND_PARAMETER "Group" 32 UINT 1 4 1 "Telemetry group this monitor item belongs to. Groups are automatically enabled due to payload events."
+    STATE ALL_MODES 1 
+    STATE SAFE_MODE 2
+  APPEND_PARAMETER "Signed" 8 UINT 0 2 0 "Whether to treat the Data Size data as signed or unsigned when comparing to the Threshold"
+    STATE NOT_APPLICABLE 0 
+    STATE UNSIGNED 1 
+    STATE SIGNED 2 
+
+#<% 200.times do %>
+#  DEFAULT 0x0 0 BITS 0x0 0 LESS_THAN NO_ACTION_REQUIRED ALL_MODES UNSIGNED 
+#<% end %>
+

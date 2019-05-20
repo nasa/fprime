@@ -1,0 +1,2 @@
+COMMAND EXAMPLE START BIG_ENDIAN "Starts something on the example target"
+  APPEND_ID_PARAMETER PACKET_ID 8 UINT 1 1 1 "Packet id"

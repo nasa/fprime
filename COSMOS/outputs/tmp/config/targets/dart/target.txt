@@ -1,0 +1,7 @@
+# Ignored Parameters
+# IGNORE_PARAMETER parameter_name
+IGNORE_PARAMETER PACKET_ID
+
+# Ignored Items
+# IGNORE_ITEM item_name
+IGNORE_ITEM PACKET_ID

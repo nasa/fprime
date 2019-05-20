@@ -1,0 +1,6 @@
+# This is a segment of the main cmd_tlm_server.txt that will be used with
+# AUTO_INTERFACE_TARGETS or INTERFACE_TARGET
+
+INTERFACE SYSTEM_INT cmd_tlm_server_interface.rb
+  TARGET SYSTEM
+  DISABLE_DISCONNECT

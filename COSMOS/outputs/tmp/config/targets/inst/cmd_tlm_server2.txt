@@ -1,0 +1,7 @@
+# This is a segment of the main cmd_tlm_server.txt that will be used with
+# AUTO_INTERFACE_TARGETS or INTERFACE_TARGET
+
+INTERFACE INST2_INT simulated_target_interface.rb sim_inst.rb
+  TARGET INST2
+  DONT_LOG
+  PROTOCOL READ_WRITE OverrideProtocol

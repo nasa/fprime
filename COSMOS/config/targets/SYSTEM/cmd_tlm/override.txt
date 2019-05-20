@@ -1,2 +1,0 @@
-# You can define additional telemetry packets in the SYSTEM
-# configuration but it isn't recommended.
