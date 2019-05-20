@@ -22,7 +22,7 @@ import sys
 import time
 from optparse import OptionParser
 from lxml import etree
-from parsers import XmlParser
+from fprime_ac.parsers import XmlParser
 #
 # Python extention modules and custom interfaces
 #

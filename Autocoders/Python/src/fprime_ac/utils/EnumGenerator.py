@@ -14,11 +14,11 @@
 
 import sys
 import os
-from parsers import XmlParser
-from parsers import XmlEnumParser
-from generators.templates.enums import enum_cpp
-from generators.templates.enums import enum_hpp
-from generators.templates.enums import enum_py
+from fprime_ac.parsers import XmlParser
+from fprime_ac.parsers import XmlEnumParser
+from fprime_ac.generators.templates.enums import enum_cpp
+from fprime_ac.generators.templates.enums import enum_hpp
+from fprime_ac.generators.templates.enums import enum_py
 
 def open_file(name, type):
     '''
