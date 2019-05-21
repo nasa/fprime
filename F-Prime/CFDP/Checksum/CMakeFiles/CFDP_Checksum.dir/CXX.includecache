@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jishii/Documents/rep_other/fprime-sw/CFDP/Checksum/Checksum.cpp
+CFDP/Checksum/Checksum.hpp
+/Users/jishii/Documents/rep_other/fprime-sw/CFDP/Checksum/CFDP/Checksum/Checksum.hpp
+Fw/Types/Assert.hpp
+/Users/jishii/Documents/rep_other/fprime-sw/CFDP/Checksum/Fw/Types/Assert.hpp
+
+CFDP/Checksum/Checksum.hpp
+Fw/Types/BasicTypes.hpp
+CFDP/Checksum/Fw/Types/BasicTypes.hpp
+
+Fw/Cfg/Config.hpp
+
+Fw/Types/Assert.hpp
+Fw/Cfg/Config.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+
+Fw/Types/BasicTypes.hpp
+Fw/Cfg/Config.hpp
+-
+StandardTypes.hpp
+-
+
+cmake/../Fw/Types/Linux/StandardTypes.hpp
+stdint.h
+-
+

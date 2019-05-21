@@ -39,7 +39,7 @@ def open_file(name, type):
     #
     fp = open(filename,'w')
     if fp == None:
-        print "Could not open file %s" % filename
+        print("Could not open file %s" % filename)
         sys.exit(-1)
     return fp
 
@@ -94,5 +94,5 @@ def generate_enum(xml_file):
 
 if __name__ == '__main__':
     xmlfile = sys.argv[1]
-    print generate_enum(xmlfile)
+    print(generate_enum(xmlfile))
     

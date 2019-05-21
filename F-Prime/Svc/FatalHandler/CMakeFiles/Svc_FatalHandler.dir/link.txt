@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_FatalHandler.a  CMakeFiles/Svc_FatalHandler.dir/FatalHandlerComponentCommonImpl.cpp.o CMakeFiles/Svc_FatalHandler.dir/FatalHandlerComponentLinuxImpl.cpp.o CMakeFiles/Svc_FatalHandler.dir/FatalHandlerComponentAc.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_FatalHandler.a
