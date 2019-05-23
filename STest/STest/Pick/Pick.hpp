@@ -17,9 +17,7 @@
 #include <limits.h>
 
 #include "STest/types/basic_types.h"
-#ifdef MODE_spin
-#include "STest/Pick/Pick_spin.hpp"
-#endif
+
 
 namespace STest {
 
