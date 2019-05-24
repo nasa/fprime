@@ -35,7 +35,7 @@ generated, standard make tools can be run to perform the compiling, assembling, 
 Building a CMake-enabled deployment comes down to just a small number of steps:
 
 1. Make and change to a directory to build in: `mkdir build_dir; cd build_dir`
-2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt`
+2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt>`
 3. Engage OS-specific make system: `make`
 4. Run unit tests: `make check`
 
@@ -124,8 +124,7 @@ make
 Toolchain files are used to setup the tools and packages used to cross-compile code for a separate
 target platform. The cmake toolchain files are placed in [cmake/toolchain](toolchain) and are
 standard CMake toolchain files.
-[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html]
-(https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
+[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html](https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
 Alternatively, the user may specify a path to an external CMake toolchain file. This file specifies
 the path to the tools used to perform the build (i.e. the compilers, libraries, and packages). A
 sample template for setting up new toolchain files can be found at
