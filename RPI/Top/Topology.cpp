@@ -1,7 +1,6 @@
 #include <Components.hpp>
 
 #include <Fw/Types/Assert.hpp>
-#include <Ref/Top/TargetInit.hpp>
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Os/File.hpp>
@@ -201,7 +200,7 @@ void constructApp(int port_number, char* hostname) {
         return;
     }
 
-    if (not ledDrv.open(22,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+    if (not ledDrv.open(21,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
         return;
     }
 
@@ -224,7 +223,7 @@ void constructApp(int port_number, char* hostname) {
     uartDrv.startReadThread(100,10*1024,-1);
 
     // Initialize socket server
-    sockGndIf.startSocketTask(100, port_number, hostname);
+    sockGndIf.startSocketTask(100, 10*1024, port_number, hostname, Svc::SocketGndIfImpl::SEND_UDP);
 
 }
 

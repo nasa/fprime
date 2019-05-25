@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+
+
+
+    <define name = "positive_integer_define">
+        <a:documentation>Positive, non-zero, whole numbers.</a:documentation>
+        <data type = "integer">
+            <param name = "minInclusive">1</param>
+        </data>
+    </define>
+
+    <!-- Raw C++ Type Defines -->
+
+    <define name = "int8_t_define">
+        <a:documentation>Signed 8 bit integer.</a:documentation>
+        <data  type = "int">
+            <param name="minInclusive">-128</param>
+            <param name="maxInclusive">127</param>
+        </data>
+    </define>
+
+    <define name = "uint8_t_define">
+        <a:documentation>Unsigned 8 bit integer</a:documentation>
+        <data  type = "unsignedByte">
+            <param name="minInclusive">0</param>
+            <param name="maxInclusive">255</param>
+        </data>
+    </define>
+
+
+    <define name = "int16_t_define">
+        <a:documentation>Signed 16 bit integer.</a:documentation>
+        <data  type = "int">
+            <param name="minInclusive">-32768</param>
+            <param name="maxInclusive">32767</param>
+        </data>
+    </define>
+
+    <define name = "uint16_t_define">
+        <a:documentation>Unsigned 16 bit integer</a:documentation>
+        <data  type = "int">
+            <param name="minInclusive">0</param>
+            <param name="maxInclusive">65535</param>
+        </data>
+    </define>
+
+    <define name = "int32_t_define">
+        <a:documentation>Signed 32 bit integer.</a:documentation>
+        <data  type = "integer">
+            <param name="minInclusive">-2147483648</param>
+            <param name="maxInclusive">2147483647</param>
+        </data>
+    </define>
+
+    <define name = "uint32_t_define">
+        <a:documentation>Unsigned 32 bit integer</a:documentation>
+        <data  type = "integer">
+            <param name="minInclusive">0</param>
+            <param name="maxInclusive">4294967295</param>
+        </data>
+    </define>
+
+    <define name = "int64_t_define">
+        <a:documentation>Signed 64 bit integer.</a:documentation>
+        <data  type = "integer">
+            <param name="minInclusive">-9223372036854775808</param>
+            <param name="maxInclusive">9223372036854775807</param>
+        </data>
+    </define>
+
+    <define name = "uint64_t_define">
+        <a:documentation>Unsigned 64 bit integer</a:documentation>
+        <data  type = "integer">
+            <param name="minInclusive">0</param>
+            <param name="maxInclusive">18446744073709551615</param>
+        </data>
+    </define>
+
+
+    <!-- User C++ Type defines (Found from BasicTypes.hpp) -->
+
+    <define name = "not_user_cpp_type_define">
+        <a:documentation>Ensures data is not of the names of any other user defined C++ name.</a:documentation>
+        <data type = "string">
+            <except>
+                <choice>
+                    <value>int32_t</value>
+                    <value>uint32_t</value>
+                    <value>I8</value>
+                    <value>U8</value>
+                    <value>I16</value>
+                    <value>U16</value>
+                    <value>I32</value>
+                    <value>U32</value>
+                    <value>I64</value>
+                    <value>U64</value>
+                    <value>F32</value>
+                    <value>F64</value>
+                    <value>NATIVE_INT_TYPE</value>
+                    <value>NATIVE_UINT_TYPE</value>
+                    <value>string</value>
+                </choice>
+            </except>
+        </data>
+    </define>
+
+    <define name = "NATIVE_INT_TYPE_define">
+        <a:documentation>native integer type declaration</a:documentation>
+        <ref name = "int32_t_define">
+        </ref>
+    </define>
+
+
+    <define name = "NATIVE_UINT_TYPE_define">
+        <a:documentation>native unsigned integer type declaration</a:documentation>
+        <ref name = "uint32_t_define">
+        </ref>
+    </define>
+
+    <define name = "I8_define">
+        <a:documentation>8-bit signed integer</a:documentation>
+        <ref name = "int8_t_define">
+        </ref>
+    </define>
+
+
+    <define name = "U8_define">
+        <a:documentation>8-bit unsigned integer</a:documentation>
+        <ref name = "uint8_t_define">
+        </ref>
+    </define>
+
+    <define name = "BYTE_define">
+        <a:documentation>byte type</a:documentation>
+        <ref name = "U8_define">
+        </ref>
+    </define>
+
+    <define name = "I16_define">
+        <ref name = "int16_t_define">
+            <a:documentation>16-bit signed integer</a:documentation>
+        </ref>
+    </define>
+
+    <define name = "U16_define">
+        <a:documentation>16-bit unsigned integer</a:documentation>
+        <ref name = "uint16_t_define">
+        </ref>
+    </define>
+
+    <define name = "I32_define">
+        <a:documentation>32-bit signed integer</a:documentation>
+        <ref name = "int32_t_define">
+        </ref>
+    </define>
+
+
+    <define name = "U32_define">
+        <a:documentation>16-bit unsigned integer</a:documentation>
+        <ref name = "uint32_t_define">
+        </ref>
+    </define>
+
+    <define name = "I64_define">
+        <a:documentation>64-bit unsigned integer</a:documentation>
+        <ref name = "int64_t_define">
+        </ref>
+    </define>
+
+    <define name = "U64_define">
+        <a:documentation>64-bit unsigned integer</a:documentation>
+        <ref name = "uint64_t_define">
+        </ref>
+    </define>
+
+
+    <define name = "F32_define">
+        <a:documentation>32 bit float</a:documentation>
+        <data  type = "float">
+        </data>
+    </define>
+
+    <define name = "F64_define">
+        <a:documentation>64 bit float</a:documentation>
+        <data  type = "double">
+        </data>
+    </define>
+
+
+</grammar>

@@ -122,9 +122,9 @@ def diff_files(xml_list):
         tag_to_object[xml_path].sort()
         for pickled_obj in tag_to_object[xml_path]:
             tag_obj = pickle.loads(pickled_obj)
-            print tag_object_to_string(tag_obj)
-            print "\n"
-        print "\n"
+            print(tag_object_to_string(tag_obj))
+            print("\n")
+        print("\n")
            
            
     

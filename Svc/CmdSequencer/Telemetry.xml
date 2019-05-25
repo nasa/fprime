@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/channel_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/channel_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <!--====== Svc/CmdSequencer Telemetry =====-->
 
 <telemetry>
-  <channel id="0" name="CS_LoadCommands" data_type="U32" abbrev="T001-1234">
+  <channel id="0" name="CS_LoadCommands" data_type="U32" abbrev="CSEQ-0000">
     <comment>The number of Load commands executed</comment>
   </channel>
-  <channel id="1" name="CS_CancelCommands" data_type="U32" abbrev="T001-1235">
+  <channel id="1" name="CS_CancelCommands" data_type="U32" abbrev="CSEQ-0001">
     <comment>The number of Cancel commands executed</comment>
   </channel>
-  <channel id="2" name="CS_Errors" data_type="U32" abbrev="T001-1236">
+  <channel id="2" name="CS_Errors" data_type="U32" abbrev="CSEQ-0002">
     <comment>The number of errors that have occurred</comment>
   </channel>
-  <channel id="3" name="CS_CommandsExecuted" data_type="U32" abbrev="T001-1237">
+  <channel id="3" name="CS_CommandsExecuted" data_type="U32" abbrev="CSEQ-0003">
     <comment>The number of commands executed across all sequences.</comment>
   </channel>
-  <channel id="4" name="CS_SequencesCompleted" data_type="U32" abbrev="T001-1238">
+  <channel id="4" name="CS_SequencesCompleted" data_type="U32" abbrev="CSEQ-0004">
     <comment>The number of sequences completed.</comment>
   </channel>  
 </telemetry>

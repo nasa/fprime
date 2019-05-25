@@ -1,62 +1,71 @@
 // ====================================================================== 
 // \title  BufferManager.hpp
 // \author bocchino
-// \brief  hpp file for BufferManager component implementation class
+// \brief  BufferManager component interface
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright (C) 2015-2017, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
-
-#include "Svc/BufferManager/BufferManager.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
-#include <iostream>
-#include <stdio.h>
-
-using namespace std;
+#include "Svc/BufferManager/BufferManager.hpp"
 
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Warnings::State
   // ----------------------------------------------------------------------
 
-  BufferManager ::
-    BufferManager(
-        const char *const compName,
-        const U32 storeSize,
-        const U32 allocationQueueSize
-    ) :
-      BufferManagerComponentBase(compName),
-      store(storeSize),
-      allocationQueue(allocationQueueSize)
+  BufferManager::Warnings::State ::
+    State(void) :
+      storeSizeExceeded(false),
+      tooManyBuffers(false)
   {
 
   }
 
-  void BufferManager ::
-    init(
-        const NATIVE_INT_TYPE instance
-    ) 
+  // ----------------------------------------------------------------------
+  // Warnings 
+  // ----------------------------------------------------------------------
+
+  BufferManager::Warnings ::
+    Warnings(BufferManager& bufferManager) :
+      bufferManager(bufferManager)
   {
-    BufferManagerComponentBase::init(instance);
+
   }
 
-  BufferManager ::
-    ~BufferManager(void)
+  void BufferManager::Warnings ::
+    update(const Status::t status)
   {
-
+    switch (status) {
+      case Status::SUCCESS:
+        if (this->state.storeSizeExceeded || this->state.tooManyBuffers) {
+          this->bufferManager.log_ACTIVITY_HI_ClearedErrorState();
+        }
+        this->state.storeSizeExceeded = false;
+        this->state.tooManyBuffers = false;
+        break;
+      case Status::STORE_SIZE_EXCEEDED:
+        if (!this->state.storeSizeExceeded) {
+          this->bufferManager.log_WARNING_HI_StoreSizeExceeded();
+          this->state.storeSizeExceeded = true;
+        }
+        break;
+      case Status::TOO_MANY_BUFFERS:
+        if (!this->state.tooManyBuffers) {
+          this->bufferManager.log_WARNING_HI_TooManyBuffers();
+          this->state.tooManyBuffers = true;
+        }
+        break;
+      default:
+        FW_ASSERT(0);
+        break;
+    }
   }
 
   // ----------------------------------------------------------------------
@@ -64,12 +73,12 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferManager::Store :: 
-    Store(
-        const U32 size
-    ) : 
+    Store(const U32 size) : 
       totalSize(size),
       memoryBase(new U8[size]),
-      freeIndex(0)
+      freeIndex(0),
+      padSize(0),
+      allocatedSize(0)
   {
     
   }
@@ -88,29 +97,54 @@ namespace Svc {
 
   BufferManager::Store::Status BufferManager::Store ::
     allocate(
-        const U32 n,
+        const U32 s,
         U8* &result
     )
   {
-    FW_ASSERT(this->freeIndex + n >= this->freeIndex);
-    if (this->freeIndex + n > this->totalSize) {
-      result = 0;
-      return STAT_FAIL;
+    Status status = SUCCESS;
+    U32 newPadSize = 0;
+    FW_ASSERT(this->allocatedSize <= this->totalSize);
+    FW_ASSERT(this->freeIndex <= this->totalSize);
+    if (this->freeIndex + s > this->totalSize) {
+      // Pad size for wraparound allocation
+      newPadSize = this->totalSize - this->freeIndex;
     }
-    result = &this->memoryBase[this->freeIndex];
-    this->freeIndex += n;
-    return STAT_OK;
+    if (this->allocatedSize + s + newPadSize > this->totalSize) {
+      // Allocation too large
+      status = FAILURE;
+      result = 0;
+    }
+    else {
+      if (this->freeIndex + s > this->totalSize) {
+        // Wraparound allocation
+        FW_ASSERT(this->padSize == 0, this->padSize);
+        this->padSize = newPadSize;
+        this->allocatedSize += newPadSize;
+        this->freeIndex = 0;
+      }
+      result = &this->memoryBase[this->freeIndex];
+      this->allocatedSize += s;
+      this->freeIndex += s;
+      FW_ASSERT(this->allocatedSize <= this->totalSize);
+      FW_ASSERT(this->freeIndex <= this->totalSize);
+    }
+    return status;
   }
 
-  BufferManager::Store::Status BufferManager::Store ::
-    free(const U32 n)
+  void BufferManager::Store ::
+    free(
+        const U32 size,
+        U8 *const address
+    )
   {
-    if (n > freeIndex) {
-      this->freeIndex = 0;
-      return STAT_FAIL;
+    FW_ASSERT(this->allocatedSize >= size, this->allocatedSize, size);
+    this->allocatedSize -= size;
+    if (address == this->memoryBase) {
+      // Wraparound allocation
+      FW_ASSERT(this->allocatedSize >= padSize, this->allocatedSize, padSize);
+      this->allocatedSize -= this->padSize;
+      this->padSize = 0;
     }
-    this->freeIndex -= n;
-    return STAT_OK;
   }
 
   // ----------------------------------------------------------------------
@@ -118,9 +152,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferManager::AllocationQueue :: 
-    AllocationQueue(
-        const U32 size
-    ) : 
+    AllocationQueue(const U32 size) : 
       totalSize(size),
       data(new Entry[size]),
       nextId(0),
@@ -179,7 +211,7 @@ namespace Svc {
     e.size = size;
     this->allocateIndex = this->getNextIndex(this->allocateIndex);
     ++this->allocationSize;
-    return Allocate::STAT_OK;
+    return Allocate::SUCCESS;
   }
 
   BufferManager::AllocationQueue::Free::Status 
@@ -205,20 +237,37 @@ namespace Svc {
     }
     this->freeIndex = this->getNextIndex(this->freeIndex);
     --this->allocationSize;
-    return Free::STAT_OK;
+    return Free::SUCCESS;
+  }
+
+  // ----------------------------------------------------------------------
+  // Construction, initialization, and destruction 
+  // ----------------------------------------------------------------------
+
+  BufferManager ::
+    BufferManager(
+        const char *const compName,
+        const U32 storeSize,
+        const U32 maxNumBuffers
+    ) :
+      BufferManagerComponentBase(compName),
+      warnings(*this),
+      store(storeSize),
+      allocationQueue(maxNumBuffers)
+  {
+
   }
 
   void BufferManager ::
-    sendTelemetry(void)
+    init(const NATIVE_INT_TYPE instance) 
   {
-    const U32 allocatedSize = this->store.getAllocatedSize();
-    this->tlmWrite_BufferManager_AllocatedSize(
-        const_cast<U32&>(allocatedSize)
-    );
-    const U32 numAllocatedBuffers = this->allocationQueue.getAllocationSize();
-    this->tlmWrite_BufferManager_NumAllocatedBuffers(
-        const_cast<U32&>(numAllocatedBuffers)
-    );
+    BufferManagerComponentBase::init(instance);
+  }
+
+  BufferManager ::
+    ~BufferManager(void)
+  {
+
   }
 
   // ----------------------------------------------------------------------
@@ -236,60 +285,62 @@ namespace Svc {
     Fw::Buffer buffer;
     buffer.set(this->getInstance(), 0, 0, size);
 
+    Warnings::Status::t warningStatus = Warnings::Status::SUCCESS;
+
     {
       const Store::Status status = 
         this->store.allocate(size, address);
-      if (status == BufferManager::Store::STAT_FAIL) {
-        this->log_WARNING_HI_BufferManager_StoreSizeExceeded();
-        return buffer;
+      if (status == BufferManager::Store::FAILURE) {
+        warningStatus = Warnings::Status::STORE_SIZE_EXCEEDED;
       }
     }
 
-    {
+    if (warningStatus == Warnings::Status::SUCCESS) {
       const AllocationQueue::Allocate::Status status =
         this->allocationQueue.allocate(size, id);
       if (status == AllocationQueue::Allocate::FULL) {
-        this->store.free(size);
-        this->log_WARNING_HI_BufferManager_AllocationQueueFull();
-        return buffer;
+        this->store.free(size, address);
+        warningStatus = Warnings::Status::TOO_MANY_BUFFERS;
       }
     }
 
-    this->sendTelemetry();
+    if (warningStatus == Warnings::Status::SUCCESS) {
+      buffer.setbufferID(id);
+      buffer.setdata(reinterpret_cast<U64>(address));
+    }
 
-    buffer.setbufferID(id);
-    buffer.setdata(reinterpret_cast<U64>(address));
-
+    this->warnings.update(warningStatus);
     return buffer;
   }
 
   void BufferManager ::
     bufferSendIn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer &buffer
     )
   {
+
     const U32 instance = static_cast<U32>(this->getInstance());
     FW_ASSERT(buffer.getmanagerID() == instance);
 
     const U32 expectedId = buffer.getbufferID();
+    U8 *const address = reinterpret_cast<U8*>(buffer.getdata());
     U32 sawId = 0;
     U32 size = 0;
 
-    const AllocationQueue::Free::Status status =
-      this->allocationQueue.free(expectedId, sawId, size);
+    {
+      const AllocationQueue::Free::Status status =
+        this->allocationQueue.free(expectedId, sawId, size);
+      FW_ASSERT(
+          status == AllocationQueue::Free::SUCCESS,
+          status, expectedId, sawId, size
+      );
+    }
 
-    if (status == AllocationQueue::Free::EMPTY) {
-      this->log_WARNING_HI_BufferManager_AllocationQueueEmpty();
+    {
+      this->store.free(size, address);
     }
-    else if (status == AllocationQueue::Free::ID_MISMATCH) {
-      this->log_WARNING_HI_BufferManager_IDMismatch(expectedId, sawId);
-    }
-    else {
-      const Store::Status status = this->store.free(size);
-      FW_ASSERT(status == Store::STAT_OK);
-      this->sendTelemetry();
-    }
+
   }
 
 }

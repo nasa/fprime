@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <errno.h>
@@ -207,10 +200,19 @@ namespace Svc {
   void Tester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     pushFromPortEntry_bufferSendOut(buffer);
+  }
+
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
   }
 
   // ----------------------------------------------------------------------
@@ -273,6 +275,18 @@ namespace Svc {
     this->component.set_LogText_OutputPort(
         0, 
         this->get_from_LogText(0)
+    );
+
+    // pingIn
+    this->connect_to_pingIn(
+        0,
+        this->component.get_pingIn_InputPort(0)
+    );
+
+    // pingOut
+    this->component.set_pingOut_OutputPort(
+        0,
+        this->get_from_pingOut(0)
     );
 
   }

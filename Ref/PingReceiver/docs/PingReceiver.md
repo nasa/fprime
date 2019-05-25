@@ -6,7 +6,7 @@
 
 |Mnemonic|ID|Description|Arg Name|Arg Type|Comment
 |---|---|---|---|---|---|
-|PR_StopPings|0 (0x0)|Command to disable ping response| | |   
+|PR_StopPings|0 (0x0)|Command to disable ping response| | |
 
 ## Telemetry Channel List
 
@@ -20,4 +20,4 @@
 |---|---|---|---|---|---|---|
 |PR_PingsDisabled|0 (0x0)|Disabled ping responses| | | | |
 |PR_PingReceived|1 (0x1)|Got ping| | | | |
-| | | |code|U32||Ping code|    
+| | | |code|U32||Ping code|

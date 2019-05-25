@@ -1,0 +1,6 @@
+    private:
+        CompFuncPtr m_func; //!< pointer to port callback function
+\#if FW_PORT_SERIALIZATION == 1        
+        Fw::SerializeStatus invokeSerial(Fw::SerializeBufferBase &buffer); //!< invoke the port with serialized arguments
+\#endif
+};

@@ -40,7 +40,7 @@ Component,InputPorts,OutputPorts,Commands,Channels,Events,Parameters
 
 
 for file in sys.argv[1:]:
-    print "Parsing file %s"%file
+    print("Parsing file %s"%file)
     input_ports = 0
     output_ports = 0
     commands = 0

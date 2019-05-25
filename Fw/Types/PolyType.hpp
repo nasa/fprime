@@ -150,7 +150,7 @@ namespace Fw {
 
             enum {
                 SERIALIZED_TYPE_ID = FW_TYPEID_POLY, //!< typeid for PolyType
-                SERIALIZED_SIZE = sizeof(Type) + sizeof(PolyVal) + sizeof(NATIVE_INT_TYPE) //!< stored serialized size
+                SERIALIZED_SIZE = sizeof(FwEnumStoreType) + sizeof(PolyVal) //!< stored serialized size
             };
 
 

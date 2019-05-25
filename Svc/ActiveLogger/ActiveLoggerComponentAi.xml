@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 
 <component name="ActiveLogger" kind="active" namespace="Svc">
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
-    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Svc/Fatal/FatalEventPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_dictionary>Svc/ActiveLogger/ActiveLoggerCmdDict.xml</import_dictionary>

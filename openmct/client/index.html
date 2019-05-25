@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BSON Telemetry Server</title>
+    <link rel="stylesheet" href="openmct/platform/commonUI/general/res/css/startup-base.css">
+    <link rel="stylesheet" href="openmct/platform/commonUI/general/res/css/openmct.css">
+    <link rel="icon" type="image/png" href="openmct/platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="openmct/platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="openmct/platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="openmct/platform/commonUI/general/res/images/favicons/favicon.ico">
+    <script src="openmct/openmct.js"></script>
+    <script src="lib/http.js"></script>
+    <script src="dictionary-plugin.js"></script>
+    <script src="historical-telemetry-plugin.js"></script>
+    <script src="realtime-telemetry-plugin.js"></script>
+    <script src="limit-plugin.js"></script>
+    <script src="node_modules/vue/dist/vue.min.js"></script>
+    <script src="plugins/VueLADTable/plugin.js"></script>
+    <script src="plugins/VueLADTable/TableController.js"></script>
+    <script src="plugins/VueLADTable/TableRowController.js"></script>
+    <script src="plugins/VueLADTable/TableView.js"></script>
+    <script src="plugins/Persistence/PersistencePlugin.js"></script>
+    <script src="plugins/Persistence/PersistenceProvider.js"></script>
+    <script src="plugins/FprimeResourceProvider/FprimeResourcePlugin.js"></script>
+    <script src="plugins/TelemStatusIndicator/TelemStatusIndicator.js"></script>
+</head>
+<body>
+    <div class="l-splash-holder s-splash-holder">
+        <div class="l-splash s-splash"></div>
+    </div>
+    <script>
+
+        http.get('config.json')
+            .then(function (response) {
+                return response.data;
+            })
+            .then(function (config) {
+                openmct.setAssetPath('openmct/');
+
+                var defaults = {
+                    namespace: 'bson.server'
+                };
+
+                // Install custom F' resources
+                openmct.install(FprimeResourcePlugin({
+                    namespace: 'resources',
+                    bsonNamespace: defaults.namespace,
+                    url: '/dictionary'
+                }));
+                openmct.install(LADPlugin());
+                openmct.install(TelemStatusIndicator());
+
+                // Install general framework plugins
+                if (config.type === 'localstorage') {
+                    openmct.install(openmct.plugins.LocalStorage());
+                } else if (config.type === 'couchdb') {
+                    openmct.install(openmct.plugins.CouchDB(config.url));
+                } else if (config.type === 'elasticsearch') {
+                    openmct.install(openmct.plugins.Elasticsearch(config.url));
+                } else if (config.type === 'embedded') {
+                    openmct.install(PersistencePlugin(window.location.origin));
+                    //add a simple connection state indicator for the embedded database
+                    openmct.install(openmct.plugins.URLIndicator({
+                        url: window.location.origin + "/persistence/",
+                        iconClass: 'icon-database',
+                        interval: 5000,
+                        label: 'Embedded Database'
+                    }))
+                }
+
+                openmct.install(openmct.plugins.MyItems());
+                openmct.install(openmct.plugins.UTCTimeSystem());
+                openmct.install(openmct.plugins.Snow()); //light visual theme
+                openmct.install(openmct.plugins.ImportExport())
+
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = now.getMonth();
+                var day = now.getDate();
+                openmct.install(openmct.plugins.Conductor({
+                    menuOptions: [
+                        {
+                            timeSystem: 'utc',
+                            clock: 'local',
+                            clockOffsets: {
+                                start: - 15 * 60 * 1000,
+                                end: 0
+                            }
+                        },
+                        {
+                            timeSystem: 'utc',
+                            bounds: {
+                                start: Date.UTC(year, month, day),
+                                end: Date.UTC(year, month, day + 1, 0, 0, 0, -1)
+                            },
+                            zoomOutLimit: 1000 * 60 * 60 * 24 * 7,
+                            zoomInLimit: 1000 * 30
+                        }
+                    ]
+                }));
+
+                var defaults = {
+                    namespace: 'bson.server'
+                };
+
+                // Install client plugins for streaming and historical telemetry
+                openmct.install(DictionaryPlugin({
+                    namespace: defaults.namespace,
+                    url: '/dictionary',
+                    name: 'BSON Server'
+                }));
+                openmct.install(HistoricalTelemetryPlugin({
+                    url: '/history',
+                    namespace: defaults.namespace
+                }));
+                openmct.install(RealtimeTelemetryPlugin({
+                    namespace: defaults.namespace,
+                    url: location.origin.replace('http', 'ws') + '/realtime'
+                }));
+                openmct.install(LimitPlugin());
+                openmct.install(openmct.plugins.AutoflowView({type: 'bson.packet'}));
+
+                openmct.start();
+            });
+    </script>
+</body>
+</html>

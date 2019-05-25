@@ -1,0 +1,30 @@
+<events>
+    <!-- A test event -->
+    <event id="100" name="SomeEvent" severity="ACTIVITY_HI" format_string = "My Event %d %f %s %s %d" >
+        <comment>
+        A test event
+        </comment>
+        <args>
+            <arg name="arg1" type="I32">
+                <comment>The I32 event argument</comment>
+            </arg>
+            <arg name="arg2" type="F32">
+                <comment>The F32 event argument</comment>
+            </arg>
+            <arg name="arg3" type="U32">
+                <comment>The U32 event argument</comment>
+            </arg>
+            <arg name="arg4" type="string" size="12">
+                <comment>The string event argument</comment>
+            </arg>
+            <arg name="arg5" type="ENUM">
+                <enum name="SomeEventEnum">
+                    <item name="EVENT_MEMB1"/>
+                    <item name="EVENT_MEMB2" value="7" comment="This member is important"/>
+                    <item name="EVENT_MEMB3" value="15"/>
+                </enum>
+                <comment>The enum event argument</comment>
+            </arg>
+        </args>
+    </event>
+</events>

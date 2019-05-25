@@ -21,7 +21,7 @@ def main(argv=None):
     #        print("Not starting binary.")
     #        nobin = True
     
-    python_bin = os.environ["PYTHON_BASE"] + "/bin/python"
+    python_bin = "python"
     
     for port in range(start_port,end_port):
         if not utils.PortFinder.IsPortUsed(port):
@@ -73,8 +73,9 @@ def main(argv=None):
     
     pi_bin = "%s/RPI/%s/RPI"%(build_root,os.environ["OUTPUT_DIR"])
     
+    # run as root
     if not nobin:
-        REF_args = [python_bin,"%s/Gse/bin/pexpect_runner.py"%build_root,"RPI.log","RPI Application",pi_bin,"-p","%d"%used_port,"-a",addr]
+        REF_args = [python_bin, "%s/Gse/bin/pexpect_runner.py"%build_root,"RPI.log","RPI Application","sudo",pi_bin,"-p","%d"%used_port,"-a",addr]
         REF = subprocess.Popen(REF_args)
     
     GUI.wait()

@@ -21,7 +21,7 @@ class Deployment:
         # read deployment XML file
         deployment_file = msl_root + "/ptf/configurations/deployment/" + options.deployment + ".xml"
         if (os.path.isfile(deployment_file) == False):
-            print "Deployment configuration file " + target_file + " does not exist"
+            print("Deployment configuration file " + target_file + " does not exist")
             sys.exit(-1)        
             
         deployment_cfg_handler = scripts.helpers.xml_readers.env_xml_reader.EnvXMLHandler()   
@@ -30,12 +30,12 @@ class Deployment:
         # retrieve dictionary
         deployment_component_dictionary = deployment_cfg_handler.getDict()
         
-        for component in deployment_component_dictionary.keys():
+        for component in list(deployment_component_dictionary.keys()):
             # parse xml files into environment
             component_file = "/ptf/configurations/" + component + "/" + deployment_component_dictionary[component]
   
             if (os.path.isfile(component_file) == False):
-                print "Deployment component configuration file " + target_file + " does not exist"
+                print("Deployment component configuration file " + target_file + " does not exist")
                 sys.exit(-1)
                         
             deployment_component_cfg_handler = scripts.helpers.xml_readers.env_xml_reader.EnvXMLHandler()
@@ -58,7 +58,7 @@ class Deployment:
                 self.target_helper = scripts.helpers.target_helper_factory.TargetHelperFactory().getTargetHelper()
                 self.target_helper.start_target()
             else:
-                print "Unknown component type " + component + " in deployment " + deployment + "\n"
+                print("Unknown component type " + component + " in deployment " + deployment + "\n")
                 assert("Unknown component")
                 
     def exit(self):

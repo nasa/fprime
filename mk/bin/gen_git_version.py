@@ -6,20 +6,20 @@ import os
 import getpass
 
 if len(sys.argv) != 2:
-    print "Should be %s <output version file>"
+    print("Should be %s <output version file>")
     sys.exit(-1)
 
 output_file = sys.argv[1]
 
-print "Writing version to %s"%output_file
+print("Writing version to %s"%output_file)
 
-hash = subprocess.check_output(["git","log","--pretty=format:%h","-n","1"])
+hash = subprocess.check_output(["git","log","--pretty=format:%h","-n","1","--abbrev=8"]).decode("ascii")
 try:
-    tag = subprocess.check_output(["git","describe","--abbrev=0","--tags"]).strip()
+    tag = subprocess.check_output(["git","describe","--abbrev=0","--tags"]).decode("ascii").strip()
 except:
     tag = "NOTAG"
     
-branch = subprocess.check_output(["git","rev-parse","--abbrev-ref","HEAD"]).strip()
+branch = subprocess.check_output(["git","rev-parse","--abbrev-ref","HEAD"]).decode("ascii").strip()
 user = getpass.getuser()
 
 version_file_contents = """

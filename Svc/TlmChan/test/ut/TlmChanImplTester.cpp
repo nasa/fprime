@@ -294,5 +294,12 @@ namespace Svc {
 //            dumpTlmEntry(&m_impl.m_tlmEntries[1].buckets[bucket]);
 //        }
     }
-
+    void TlmChanImplTester ::
+      from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum,
+          U32 key
+      )
+    {
+      this->pushFromPortEntry_pingOut(key);
+    }
 } /* namespace SvcTest */

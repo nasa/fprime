@@ -1,0 +1,113 @@
+// ======================================================================
+// \title  ${name}ComponentImpl.hpp
+// \author $user
+// \brief  hpp file for ${name} component implementation class
+//
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
+\#ifndef ${name}_HPP
+\#define ${name}_HPP
+
+\#include "${include_path}/${include_name}ComponentAc.hpp"
+
+#if $namespace_list != None
+  #for $namespace in $namespace_list
+namespace ${namespace} {
+  #end for
+#end if
+
+  class ${name}ComponentImpl :
+    public $component_base
+  {
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Construction, initialization, and destruction
+      // ----------------------------------------------------------------------
+
+      //! Construct object $name
+      //!
+      ${name}ComponentImpl(
+\#if FW_OBJECT_NAMES == 1
+$emit_non_port_params([ $param_compName ])
+\#else
+          void
+\#endif
+      );
+
+      //! Initialize object $name
+      //!
+      void init(
+$emit_non_port_params($params_init_hpp)
+      );
+
+      //! Destroy object $name
+      //!
+      ~${name}ComponentImpl(void);
+
+#if len($typed_user_input_ports) > 0:
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Handler implementations for user-defined typed input ports
+      // ----------------------------------------------------------------------
+
+  #for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_user_input_ports:
+      //! Handler implementation for $instance
+      //!
+      void ${instance}_handler(
+$emit_port_params([ $param_portNum ] + $port_params[$instance])
+      );
+
+  #end for
+#end if
+#if len($serial_input_ports) > 0:
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Handler implementations for user-defined serial input ports
+      // ----------------------------------------------------------------------
+
+  #for $instance, $sync, $priority, $full, $max_num in $serial_input_ports:
+      //! Handler implementation for $instance
+      //!
+      void ${instance}_handler(
+        NATIVE_INT_TYPE portNum, $doxygen_post_comment("The port number")
+        Fw::SerializeBufferBase &Buffer $doxygen_post_comment("The serialization buffer")
+      );
+
+  #end for
+#end if
+#if $has_commands:
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Command handler implementations
+      // ----------------------------------------------------------------------
+
+  #for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands:
+    #set $params = $command_params[$mnemonic]
+      //! Implementation for $mnemonic command handler
+      //! $comment
+      void ${mnemonic}_cmdHandler(
+$emit_non_port_params([ $param_opCode, $param_cmdSeq ] + $params)
+      );
+
+  #end for
+#end if
+
+    };
+
+#if $namespace_list != None
+  #for $namespace in $namespace_list
+} // end namespace $namespace
+  #end for
+#end if
+
+\#endif

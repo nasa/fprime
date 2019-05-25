@@ -30,6 +30,11 @@ namespace Fw {
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
             virtual void toString(StringBase& text) const; //!< generate text from serializable
 #endif
+
+#ifdef BUILD_UT
+            friend std::ostream& operator<<(std::ostream& os, const Serializable& val);
+#endif
+
         protected:
             Serializable(); //!< Default constructor
             virtual ~Serializable(); //!< destructor
@@ -47,15 +52,15 @@ namespace Fw {
             SerializeStatus serialize(U8 val); //!< serialize 8-bit unsigned int
             SerializeStatus serialize(I8 val); //!< serialize 8-bit signed int
 
-#if FW_HAS_16_BIT==1        
+#if FW_HAS_16_BIT==1
             SerializeStatus serialize(U16 val); //!< serialize 16-bit unsigned int
             SerializeStatus serialize(I16 val); //!< serialize 16-bit signed int
 #endif
-#if FW_HAS_32_BIT==1        
+#if FW_HAS_32_BIT==1
             SerializeStatus serialize(U32 val); //!< serialize 32-bit unsigned int
             SerializeStatus serialize(I32 val); //!< serialize 32-bit signed int
 #endif
-#if FW_HAS_64_BIT==1		
+#if FW_HAS_64_BIT==1
             SerializeStatus serialize(U64 val); //!< serialize 64-bit unsigned int
             SerializeStatus serialize(I64 val); //!< serialize 64-bit signed int
 #endif
@@ -78,16 +83,16 @@ namespace Fw {
             SerializeStatus deserialize(U8 &val); //!< deserialize 8-bit unsigned int
             SerializeStatus deserialize(I8 &val); //!< deserialize 8-bit signed int
 
-#if FW_HAS_16_BIT==1        
+#if FW_HAS_16_BIT==1
             SerializeStatus deserialize(U16 &val); //!< deserialize 16-bit unsigned int
             SerializeStatus deserialize(I16 &val); //!< deserialize 16-bit signed int
 #endif
 
-#if FW_HAS_32_BIT==1        
+#if FW_HAS_32_BIT==1
             SerializeStatus deserialize(U32 &val); //!< deserialize 32-bit unsigned int
             SerializeStatus deserialize(I32 &val); //!< deserialize 32-bit signed int
 #endif
-#if FW_HAS_64_BIT==1        
+#if FW_HAS_64_BIT==1
             SerializeStatus deserialize(U64 &val); //!< deserialize 64-bit unsigned int
             SerializeStatus deserialize(I64 &val); //!< deserialize 64-bit signed int
 #endif
@@ -112,6 +117,7 @@ namespace Fw {
             void resetSer(void); //!< reset to beginning of buffer to reuse for serialization
             void resetDeser(void); //!< reset deserialization to beginning
 
+            SerializeStatus deserializeSkip(NATIVE_UINT_TYPE numBytesToSkip); //!< Skips the number of specified bytes for deserialization
             virtual NATIVE_UINT_TYPE getBuffCapacity(void) const = 0; //!< returns capacity, not current size, of buffer
             NATIVE_UINT_TYPE getBuffLength() const; //!< returns current buffer size
             NATIVE_UINT_TYPE getBuffLeft() const; //!< returns how much deserialization buffer is left
@@ -123,6 +129,9 @@ namespace Fw {
             SerializeStatus setBuffLen(NATIVE_UINT_TYPE length); //!< sets buffer length manually after filling with data
             SerializeStatus copyRaw(SerializeBufferBase& dest, NATIVE_UINT_TYPE size); //!< directly copies buffer without looking for a size in the stream.
                                                                                       // Will increment deserialization pointer
+            SerializeStatus copyRawOffset(SerializeBufferBase& dest, NATIVE_UINT_TYPE size); //!< directly copies buffer without looking for a size in the stream.
+                                                                                    // Will increment deserialization pointer
+
 
 #ifdef BUILD_UT
             bool operator==(const SerializeBufferBase& other) const;

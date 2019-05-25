@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  BufferAccumulator
+  Commands
+
+======================================================================-->
+
+<commands>
+
+  <command kind="async" opcode="0x00" mnemonic="BA_SetMode">
+    <comment>Set the mode</comment>
+    <args>
+      <arg name="mode" type="ENUM">
+        <enum name="OpState">
+          <item name="ACCUMULATE"/>
+          <item name="DRAIN"/>
+        </enum>
+      </arg>
+    </args>
+  </command>
+
+</commands>

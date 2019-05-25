@@ -8,7 +8,7 @@
 #ifndef ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
 #define ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
 
-#include <Svc/ActiveLogger/test/ut/GTestBase.hpp>
+#include <GTestBase.hpp>
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Os/File.hpp>
 
@@ -80,7 +80,12 @@ namespace Svc {
                       const Fw::TextLogString& text //!< The event string
                       );
 
-
+            //! Handler for from_pingOut
+            //!
+            void from_pingOut_handler(
+                const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                U32 key /*!< Value to return to pinger*/
+            );
     };
 
 } /* namespace Svc */

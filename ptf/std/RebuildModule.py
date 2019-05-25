@@ -10,7 +10,7 @@ import optparse
 
 module = os.environ["MODULE"]
 
-print "Build Module %s"%module
+print("Build Module %s"%module)
 
 parser = optparse.OptionParser()
 

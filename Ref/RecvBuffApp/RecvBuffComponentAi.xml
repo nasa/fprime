@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="RecvBuff" kind="passive" namespace="Ref">
     <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
+    <import_serializable_type>Ref/RecvBuffApp/PacketStatSerializableAi.xml</import_serializable_type>
     <comment>A rate group active component with input and output scheduler ports</comment>
     <ports>
         <!-- Input data buffer port -->
@@ -12,32 +13,27 @@
         </port>
     </ports>
     <telemetry>
-        <channel id="0" name="NumPkts" data_type="U32" format_string="%d" abbrev="R002-1000">
+        <channel id="0" name="PktState" data_type="Ref::PacketStat">
             <comment>
-            Number of packets received
+            Packet Statistics
             </comment>
         </channel>
-        <channel id="1" name="NumErrPkts" data_type="U32" abbrev="R002-2000" update="on_change"  high_yellow="1" high_red="2">
-            <comment>
-            Number of packets received with errors
-            </comment>
-        </channel>
-        <channel id="2" name="Sensor1" data_type="F32" abbrev="R002-3000">
+        <channel id="1" name="Sensor1" data_type="F32" format_string = "%4.2fV" abbrev="R002-3000">
             <comment>
             Value of Sensor1
             </comment>
         </channel>
-        <channel id="3" name="Sensor2" data_type="F32" abbrev="R002-4000">
+        <channel id="2" name="Sensor2" data_type="F32" abbrev="R002-4000">
             <comment>
             Value of Sensor3
             </comment>
         </channel>
-        <channel id="4" name="Parameter1" data_type="U32" abbrev="R002-5000" update="on_change">
+        <channel id="3" name="Parameter1" data_type="U32" abbrev="R002-5000" update="on_change">
             <comment>
             Readback of Parameter1
             </comment>
         </channel>
-        <channel id="5" name="Parameter2" data_type="I16" abbrev="R002-6000" update="on_change" low_red="-3" low_orange="-2" low_yellow = "-1" high_yellow="1" high_orange="2" high_red="3">
+        <channel id="4" name="Parameter2" data_type="I16" abbrev="R002-6000" update="on_change" low_red="-3" low_orange="-2" low_yellow = "-1" high_yellow="1" high_orange="2" high_red="3">
             <comment>
             Readback of Parameter2
             </comment>

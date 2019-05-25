@@ -23,7 +23,7 @@ public class IsfPortXmlWriter {
 	public static void write(ISFPort port, String fileName, String outDir, File pluginDir) {
 		//String tmplDir = "ISFXmlTemplates/";
 		String templateFile = fileName + ".vm";
-		String jarPath = "jar:file:" + pluginDir.toString() + "/MyPlugin.jar";
+		String jarPath = "jar:file:" + pluginDir.toString() + "/FpCompAuto.jar";
 		String outputFile = outDir + "/" + port.getName() + fileName + ".xml";
 		// String outputFile = outDir + "/" + port.getNamespace() + port.getName() + fileName + ".xml";
 		System.out.println("Writing to file: " + outputFile);
