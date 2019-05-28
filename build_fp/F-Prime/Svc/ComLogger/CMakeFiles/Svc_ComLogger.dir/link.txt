@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_ComLogger.a  CMakeFiles/Svc_ComLogger.dir/ComLogger.cpp.o CMakeFiles/Svc_ComLogger.dir/ComLoggerComponentAc.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_ComLogger.a
