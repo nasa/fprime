@@ -1,0 +1,34 @@
+TABLE "MC Configuration" BIG_ENDIAN ONE_DIMENSIONAL "Memory Control Configuration Table"
+  APPEND_PARAMETER "Scrub Region 1 Start Addr" 32 UINT 0 0x03FFFFFB 0
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 1 End Addr" 32 UINT 0 0x03FFFFFF 0x03FFFFFF
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 1 Error Check Size" 32 UINT 0 0x03FFFFFB 0x10000
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 1 Throttle Count" 32 UINT 0 0x03FFFFFF 6000
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 1 Throttle Ticks" 32 UINT 0 0x0FFFFFFFF 2
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 2 Start Addr" 32 UINT 0 0x03FFFFB 0
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 2 End Addr" 32 UINT 0 0x03FFFFF 0x03FFFFF
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 2 Error Check Size" 32 UINT 0 0x03FFFFF 0x10000
+    FORMAT_STRING "0x%0X"
+  APPEND_PARAMETER "Scrub Region 2 Throttle Count" 32 UINT 0 0x03FFFFF 6000
+  APPEND_PARAMETER "Scrub Region 2 Throttle Ticks" 32 UINT 0 0x0FFFFFFFF 2
+  APPEND_PARAMETER "Dump Packet Throttle (sec)" 32 UINT 0 0x0FFFFFFFF 2 "Number of seconds to wait between dumping large packets"
+  APPEND_PARAMETER "Memory Scrubbing" 8 UINT 0 1 1
+    STATE DISABLE 0
+    STATE ENABLE 1
+  APPEND_PARAMETER "SIOC Memory Config" 8 UINT 1 3 3
+    GENERIC_WRITE_CONVERSION_START
+      if packet.read("Memory Scrubbing") == 'DISABLE'
+        packet.get_item("SIOC Memory Config").range = (10..20)
+      else
+        packet.get_item("SIOC Memory Config").range = (1..3)
+      end
+      value
+    GENERIC_WRITE_CONVERSION_END
+  APPEND_PARAMETER "Binary" 32 STRING 0xDEADBEEF "Binary string"
+  APPEND_PARAMETER "Pad" 16 UINT 0 0 0

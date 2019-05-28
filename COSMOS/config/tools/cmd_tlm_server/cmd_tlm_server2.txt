@@ -1,0 +1,42 @@
+TITLE 'COSMOS Command and Telemetry Server - Demo Configuration 2'
+
+# PACKET_LOG_WRITER Parameter Notes
+# nil:use default log names
+# true: logging enabled
+# nil: Don't cycle logs based on time
+# 2000000000: Create new log after 2 Billion bytes
+# nil: Use the default log directory
+# false: Log synchronously - more efficient
+PACKET_LOG_WRITER DEFAULT packet_log_writer.rb nil true nil 2000000000 nil false
+# PACKET_LOG_WRITER SYSTEMLOG packet_log_writer.rb system
+
+# Explicitly declare these interfaces since we're using name substitution
+INTERFACE_TARGET INST cmd_tlm_server.txt # Use cmd_tlm_server.txt in targets/INST
+INTERFACE_TARGET INST2 cmd_tlm_server2.txt # Use cmd_tlm_server2.txt in targets/INST
+
+# Here is an example of declaring the interface directly
+INTERFACE SYSTEM_INT cmd_tlm_server_interface.rb
+  TARGET SYSTEM
+  DISABLE_DISCONNECT
+  # LOG SYSTEMLOG
+  # DONT_LOG
+  # DONT_CONNECT
+  # DONT_RECONNECT
+  # RECONNECT_DELAY 15.0
+  # LOG_RAW
+
+# Auto interface the rest of the targets by using their cmd_tlm_server.txt file
+AUTO_INTERFACE_TARGETS
+
+ROUTER INST_ROUTER tcpip_server_interface.rb 3055 3055 10.0 nil LENGTH 32 16 7
+  ROUTE INST_INT
+  # DONT_CONNECT
+  # DONT_RECONNECT
+  # DISABLE_DISCONNECT
+  # RECONNECT_DELAY 15.0
+  # LOG_RAW
+
+BACKGROUND_TASK example_background_task.rb
+
+# Open the metadata dialog when the server starts
+# COLLECT_METADATA

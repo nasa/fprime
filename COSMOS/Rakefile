@@ -72,10 +72,12 @@ def create_crc_file(official)
   puts "Created config/data/crc.txt with #{count} CRCs"
 end
 
+desc 'Updates the config/data/crc.txt file with USER_MODIFIED (unofficial)'
 task :crc do
   create_crc_file(false)
 end
 
+desc 'Updates the config/data/crc.txt file (official)'
 task :crc_official do
   create_crc_file(true)
 end
