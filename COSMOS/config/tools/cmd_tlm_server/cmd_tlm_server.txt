@@ -8,7 +8,6 @@
 TITLE 'COSMOS Command and Telemetry Server'
 
 # Explicitly declare these interfaces since we're using name substitution
-INTERFACE_TARGET REF
 
 # Auto interface the rest of the targets by using their cmd_tlm_server.txt file
 AUTO_INTERFACE_TARGETS

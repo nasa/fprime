@@ -6,4 +6,3 @@
 # Tool Documentation: http://cosmosrb.com/docs/tlm_viewer/
 
 # Explicitly load the TARGET_NAME/screens/ files
-AUTO_TARGET REF
