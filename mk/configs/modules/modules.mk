@@ -34,7 +34,8 @@ CFDP_GTEST_MODULES := \
 	CFDP/Checksum/GTest
 	
 UTILS_MODULES := \
-	Utils/Hash
+	Utils/Hash \
+	Utils/Types
         
 SVC_MODULES := \
 	Svc/BufferAccumulator \
@@ -71,7 +72,8 @@ SVC_MODULES := \
     Svc/FatalHandler \
 	Svc/FileManager \
 	Svc/UdpSender \
-	Svc/UdpReceiver
+	Svc/UdpReceiver \
+	Svc/GroundInterface
 	
 
 DEMO_DRV_MODULES := \
