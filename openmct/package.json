@@ -20,7 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "bson": "1.0.4",
+    "bson": "1.0.5",
     "commander": "2.11.0",
     "express": "4.15.2",
     "express-ws": "3.0.0",
