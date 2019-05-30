@@ -22,6 +22,7 @@ set(UT_MOD_DEPS
 )
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FakeLogger.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/LoggerRules.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
 )
 # STest Includes for this UT
