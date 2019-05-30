@@ -11,5 +11,5 @@ then
     export BUILD_ROOT="`cd ${DIRNAME}/../..; pwd`"
 fi
 DEPLOY=`cd ${DIRNAME}/..; pwd;`
-${BUILD_ROOT}/Gds/bin/run_deployment.sh --deploy "${DEPLOY}" --no-app
+${BUILD_ROOT}/Gds/bin/run_deployment.sh --deploy "${DEPLOY}" --no-app "$@"
 
