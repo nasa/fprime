@@ -46,7 +46,7 @@ class CommandHistory(flask_restful.Resource):
         Return the command history object
         """
         args = self.parser.parse_args()
-        return {"history": self.history.retrieve(args.starttime), "dictionary": self.dictionary}
+        return {"history": self.history.retrieve(args.get("starttime", None)), "dictionary": self.dictionary}
 
 
 class Command(flask_restful.Resource):

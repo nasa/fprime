@@ -28,7 +28,7 @@ import fprime_gds.common.decoders.event_decoder
 import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.pkt_decoder
 # Misc system components
-import fprime_gds.common.logger
+import fprime_gds.common.logger.data_logger
 import fprime_gds.common.distributor.distributor
 import fprime_gds.common.client_socket.client_socket
 
@@ -81,6 +81,7 @@ class StandardPipeline:
         # Setup dictionaries encoders and decoders
         self.load_dictionaries(dictionary, packet_spec)
         self.setup_coders()
+        self.setup_history()
 
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
@@ -104,8 +105,8 @@ class StandardPipeline:
         """
         # Create encoders and decoders using dictionaries
         self.command_encoder = fprime_gds.common.encoders.cmd_encoder.CmdEncoder()
-        self.event_decoder = fprime_gds.common.encoders.event_decoder.EventDecoder(self.event_dict)
-        self.channel_decoder = fprime_gds.common.encoders.ch_decoder.ChDecoder(self.channel_dict)
+        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(self.event_dict)
+        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(self.channel_dict)
         if self.packet_dict is not None:
             self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(self.packet_dict, self.channel_dict)
         else:
@@ -118,9 +119,7 @@ class StandardPipeline:
         """
         # Setup log file location
         dts = datetime.datetime.now()
-        log_dir = os.path.join(prefix, "{:4d}-{:2d}-{:2d}T{:2d}:{:2}:{:2}.{:3d}"
-                               .format(dts.year, dts.month, dts.day, dts.hour, dts.minute, dts.second,
-                                       int(dts.microsecond/1000)))
+        log_dir = os.path.join(prefix, dts.strftime("%Y-%m-%dT%H:%M:%S.%f"))
         # Make the directories if they do not exit
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
@@ -142,7 +141,7 @@ class StandardPipeline:
         self.event_hist = fprime_gds.common.history.ram.RamHistory()
         self.channel_hist = fprime_gds.common.history.ram.RamHistory()
         # Register histories
-        self.event_decider.register(self.event_hist)
+        self.event_decoder.register(self.event_hist)
         self.channel_decoder.register(self.channel_hist)
         # Register
         if self.packet_decoder is not None:
@@ -206,7 +205,7 @@ class StandardPipeline:
         Getter for command dictionary.
         :return: command dictionary
         """
-        return self.cmd_dict
+        return self.command_dict
 
     def get_event_history(self):
         """
