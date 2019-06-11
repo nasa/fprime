@@ -1,0 +1,94 @@
+<!--
+index.static:
+
+This HTML document sets up the most basic of UIs for the F prime webified GUI layer. This GUI layer is built with the
+Bootstrap for CSS.
+
+
+This GUI provides the following items:
+
+1. Events panel showing events in the system
+2. Channels panel showing latest channel readings
+3. Commands panel allowing for commanding of the system
+
+Note: Bootstrap is used, as it can be run as a CSS framework without many node and JavaScript packages.
+-->
+<!doctype html>
+<html>
+    <head>
+        <!-- Using CDNs for bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Using CDNs for JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <!-- JavaScript GDS files -->
+        <script type="module" src="js/gds.js"></script>
+        <script type="module" src="js/loader.js"></script>
+    </head>
+    <body>
+        <!-- Global tab navigation: Commands, Events, Channels-->
+        <ul class="nav nav-tabs" id="etcTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="command-tab" data-toggle="tab" href="#command" role="tab" aria-controls="command" aria-selected="true">Commands</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="event-tab" data-toggle="tab" href="#event" role="tab" aria-controls="event" aria-selected="false">Events</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="channel-tab" data-toggle="tab" href="#channel" role="tab" aria-controls="channel" aria-selected="false">Channels</a>
+            </li>
+        </ul>
+
+        <!-- Place the content of the above tabs here -->
+        <div class="tab-content" id="etcTabContent">
+            <div class="tab-pane fade show active" id="command" role="tabpanel" aria-labelledby="command-tab">
+                <div class="container-fluid">
+                    <h2>F Prime Commanding</h2>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div id="command-list" class="list-group" role="tablist"></div>
+                        </div>
+                        <div class="col-sm-9">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="event" role="tabpanel" aria-labelledby="event-tab">
+                <h2>F Prime Events</h2>
+                <p>This is a place for placing F prime events</p>
+            </div>
+            <div class="tab-pane fade" id="channel" role="tabpanel" aria-labelledby="channel-tab">
+                <h2>F Prime Channels</h2>
+                <p>This is a place for placing F prime channels</p>
+            </div>
+        </div>
+
+        <!-- Templates used to render the rest of the document -->
+        <div id="command-list-item-template" hidden>
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ command.mnemonic }}</h5>
+                    <small>Opcode 0x{{ command.id.toString(16) }}</small>
+                </div>
+                <p class="mb-1">{{ command.description }}</p>
+            </a>
+        </div>
+        <div id="command-input-template">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Mnemonic</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Mnemonic" aria-label="Mnemonic" aria-describedby="basic-addon1">
+            </div>
+        </div>
+        <div id="argument-input-template" hidden>
+            <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                    <span class="form-group-text" id="basic-addon1">{{ argument.name }}</span>
+                </div>
+                <input type="text" class="form-control" placeholder="{{ argument.name }}" aria-label="{{ argument.name }}" aria-describedby="basic-addon1">
+            </div>
+        </div>
+    </body>
+</html>
