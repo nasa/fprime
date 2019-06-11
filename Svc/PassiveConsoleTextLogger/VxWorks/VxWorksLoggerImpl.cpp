@@ -1,7 +1,7 @@
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/Log.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <Fw/Cfg/Config.hpp>
 
 enum {
@@ -55,7 +55,7 @@ namespace Svc {
         // null terminate
         logBuffers[logEntry][FW_LOG_TEXT_BUFFER_SIZE - 1] = 0;
 
-        Os::Log::logMsg("EVENT: (%d) (%d:%d,%d) %s: %s\n",
+        Fw::Logger::logMsg("EVENT: (%d) (%d:%d,%d) %s: %s\n",
 //          printf("EVENT: (%d) (%d:%d,%d) %s: %s\n",
             (POINTER_CAST)id,
             (POINTER_CAST)timeTag.getTimeBase(),

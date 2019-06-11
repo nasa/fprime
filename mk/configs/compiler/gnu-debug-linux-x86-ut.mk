@@ -14,7 +14,7 @@ CXXFLAGS :=	$(DEBUG) \
 			$(COVERAGE) \
 			$(UT_FLAGS)
 
-# for e.g. *Intercepter functions in Os/Stubs
+# for e.g. *Interceptor functions in Os/Stubs
 LINK_BIN_FLAGS := -z muldefs $(LINK_BIN_FLAGS) $(COVERAGE) 
 
 COMPILER := linux-x86-debug-gnu-ut

@@ -12,6 +12,7 @@ set(SOURCE_FILES
 )
 # Note: supply non-explicit dependencies here
 set(MOD_DEPS
+  Fw/Logger
   Svc/PassiveConsoleTextLogger
   Svc/SocketGndIf
   Svc/LinuxTime
