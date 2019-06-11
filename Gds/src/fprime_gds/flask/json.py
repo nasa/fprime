@@ -8,12 +8,6 @@ import enum
 
 import flask.json
 
-import fprime_gds.common.templates.ch_template
-import fprime_gds.common.templates.cmd_template
-import fprime_gds.common.templates.event_template
-
-import fprime.common.models.serialize.type_base
-import fprime.common.models.serialize.serializable_type
 
 class GDSJsonEncoder(flask.json.JSONEncoder):
     """
@@ -26,29 +20,21 @@ class GDSJsonEncoder(flask.json.JSONEncoder):
         :param obj: obj to encode
         :return: JSON
         """
-        # If it is an object that is ours, handle it
-        if isinstance(obj, (fprime_gds.common.templates.ch_template.ChTemplate,
-                            fprime_gds.common.templates.cmd_template.CmdTemplate,
-                            fprime_gds.common.templates.event_template.EventTemplate)):
-            return self.get_all(obj)
-        # Recursively handle serialize types
-        elif isinstance(obj, fprime.common.models.serialize.serializable_type.SerializableType):
-            members = {}
-            for member in obj.mem_list:
-                members[member[0]] = {"data": member[1], "format": member[2], "description": member[3]}
-            return members
-        # Check for f prime types
-        elif isinstance(obj, fprime.common.models.serialize.type_base.BaseType):
-            return {"value": obj.val, "type": str(obj)}
+        # Object may already define a method for this, if so call it
+        if hasattr(obj, "to_jsonable"):
+            return obj.to_jsonable()
         # Dictionaries are "iterable", must handle them first
         elif isinstance(obj, collections.Mapping):
             return flask.json.JSONEncoder.default(self, obj)
-        # Handle null objects
-        elif obj is None:
-            return "unset"
-        # Enumerations
+        # Enumerations, just return the list of values
         elif isinstance(obj, enum.Enum):
-            return str(obj)
+            enum_dict = {
+                "value": str(obj),
+                "values": {}
+            }
+            for enum_val in type(obj):
+                enum_dict["values"][str(enum_val)] = enum_val.value
+            return enum_dict
         # Lists and iterables
         try:
             return list(iter(obj))
@@ -56,22 +42,4 @@ class GDSJsonEncoder(flask.json.JSONEncoder):
             pass
         return flask.json.JSONEncoder.default(self, obj)
 
-    def get_all(self, obj):
-        """
-        Any getters defined on the object are copied-over verbatim
-        :param obj: object to harvest
-        :return: new object filled with getters
-        """
-        out_dict = {}
-        for attr in [attr for attr in dir(obj) if attr.startswith("get_")]:
-            item = getattr(obj, attr)()
-            # Special handling for arguments
-            if attr == "get_args":
-                args = []
-                for arg_spec in item:
-                    args.append({"name": arg_spec[0], "description": arg_spec[1],
-                                 "value": arg_spec[2].val, "type": str(arg_spec[2])})
-                # Fill in our special handling
-                item = args
-            out_dict[attr.replace("get_", "")] = item
-        return out_dict
+

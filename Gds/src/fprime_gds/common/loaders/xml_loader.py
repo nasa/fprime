@@ -310,7 +310,7 @@ class XmlLoader(dict_loader.DictLoader):
                 print("Trying to parse string type, but found %s field"%
                       self.STR_LEN_TAG)
                 return None
-            return StringType(max_string_len=xml_item.get(self.STR_LEN_TAG))
+            return StringType(max_string_len=int(xml_item.get(self.STR_LEN_TAG), 0))
         else:
             # First try Serialized types:
             result = self.get_serializable_type(type_name, xml_tree)

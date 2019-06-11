@@ -23,6 +23,23 @@
 ####
 import flask_restful
 import flask_restful.reqparse
+import fprime.common.models.serialize.type_exceptions
+
+class CommandDictionary(flask_restful.Resource):
+    """
+    Command dictionary endpoint. Will return dictionary when hit with a GET.
+    """
+    def __init__(self, dictionary):
+        """
+        Constructor used to setup for dictionary.
+        """
+        self.dictionary = dictionary
+
+    def get(self):
+        """
+        Returns the dictionary object
+        """
+        return self.dictionary
 
 
 class CommandHistory(flask_restful.Resource):
@@ -30,7 +47,7 @@ class CommandHistory(flask_restful.Resource):
     Command history reurning both the full list of available commands and the global history of all
     of these commands that have run.
     """
-    def __init__(self, history, dictionary):
+    def __init__(self, history):
         """
         Constructor: setup the parser for incoming command runs
         :param history: history object holding commands
@@ -39,27 +56,27 @@ class CommandHistory(flask_restful.Resource):
         self.parser = flask_restful.reqparse.RequestParser()
         self.parser.add_argument("start-time")
         self.history = history
-        self.dictionary = dictionary
 
     def get(self):
         """
         Return the command history object
         """
         args = self.parser.parse_args()
-        return {"history": self.history.retrieve(args.get("starttime", None)), "dictionary": self.dictionary}
+        return {"history": self.history.retrieve(args.get("starttime", None))}
 
 
 class Command(flask_restful.Resource):
     """
     Command object used to send commands into the GDS.
     """
-    def __init__(self):
+    def __init__(self, sender):
         """
         Constructor: setup the parser for incoming command runs
         """
         self.parser = flask_restful.reqparse.RequestParser()
-        self.parser.add_argument("key")
-        self.parser.add_Argument("args")
+        self.parser.add_argument("key", required=True, help="Protection key. Must be: 0xfeedcafe.")
+        self.parser.add_argument("arguments", action="append", help="Argument list to pass to command.")
+        self.sender = sender
 
     def put(self, command):
         """
@@ -67,7 +84,16 @@ class Command(flask_restful.Resource):
         @param command: command identification
         """
         args = self.parser.parse_args()
-        if int(args.key) != 0xfeedcafe:
-            flask_restful.abort(403, "{0} is invalid command key. Supply 0xfeedcafe to run command")
-        #TODO: call into GDS here
+        key = args.get("key", None)
+        arg_list = args.get("arguments", [])
+        # Error checking
+        if key is None or int(key, 0) != 0xfeedcafe:
+            flask_restful.abort(403, message="{} is invalid command key. Supply 0xfeedcafe to run command.".format(key))
+        if arg_list is None:
+            arg_list = []
+        try:
+            self.sender.send_command(command, arg_list)
+        except fprime.common.models.serialize.type_exceptions.NotInitializedException:
+            flask_restful.abort(403, message="Did not supply all required arguments.")
+        return {"message": "success"}
 

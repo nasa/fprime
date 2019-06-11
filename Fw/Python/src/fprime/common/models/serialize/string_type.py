@@ -45,7 +45,6 @@ class StringType(type_base.BaseType):
         self._check_val(val)
         self.__val = val
 
-
     def serialize(self):
         """
         """

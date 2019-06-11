@@ -31,7 +31,8 @@ import fprime_gds.common.decoders.pkt_decoder
 import fprime_gds.common.logger.data_logger
 import fprime_gds.common.distributor.distributor
 import fprime_gds.common.client_socket.client_socket
-
+# Sendable commands
+import fprime_gds.common.data_types.cmd_data
 
 class StandardPipeline:
     """
@@ -185,6 +186,32 @@ class StandardPipeline:
             self.packet_dict = packet_loader.get_id_dict(packet_spec, channel_name_dict)
         else:
             self.packet_dict = None
+
+    def connect(self, address, port):
+        """
+        Connects to the middleware layer
+        :param address: address of middleware
+        :param port: port of middleware
+        """
+        self.client_socket.connect(address, port)
+        self.client_socket.register_to_server(fprime_gds.common.client_socket.client_socket.GUI_TAG)
+
+    def send_command(self, command, args):
+        """
+        Sends commands to the encoder and history.
+        :param command: command id from dictionary to get command template
+        :paran args: arguments to process
+        """
+        command_template = self.command_dict[command]
+        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
+        self.command_hist.data_callback(cmd_data)
+        self.command_encoder.data_callback(cmd_data)
+
+    def disconnect(self):
+        """
+        Disconnect from socket
+        """
+        self.client_socket.disconnect()
 
     def get_event_dictionary(self):
         """

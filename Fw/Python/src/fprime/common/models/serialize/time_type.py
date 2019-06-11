@@ -110,6 +110,15 @@ class TimeType(type_base.BaseType):
         if (time_base not in valid_vals):
             raise TypeRangeException(time_base)
 
+    def to_jsonable(self):
+        """
+        JSONable object format
+        """
+        return {"type": self.__repr__(),
+                "base": self.__timeBase,
+                "context": self.__timeContext,
+                "seconds": self.seconds,
+                "microseconds": self.useconds}
     @property
     def timeBase(self):
         return TimeBase(self.__timeBase.val)
