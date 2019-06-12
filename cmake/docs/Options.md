@@ -19,6 +19,11 @@ noted if the option differs.
 - Generate heritage python dictionaries
 - Manually specify the build platform
 
+Note: this file also sets up the following "build type" for use by the user. These build types
+      are in addition to the standard cmake build types.
+
+      TESTING: build the unit tests and setup the "make check" target
+
 @author mstarch
 
 
@@ -87,6 +92,14 @@ skips the tools check enabling the system to run.
 - OFF: (default) run tools check
 
 e.g. `-DSKIP_TOOLS_CHECK=ON`
+
+
+## `TESTING:`
+
+Testing build type used to build UTs and setting up the `make check` target. If the unit testing
+is desired run with this build type.
+
+e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 
 
 ## `PLATFORM:`

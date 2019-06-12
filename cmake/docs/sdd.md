@@ -421,7 +421,8 @@ Registering unit tests uses the same process as above with the exception that th
 `UT_SOURCE_FILES` and `UT_MOD_DEPS`. This allows the same file to define both a module or
 executable and unit test without overriding perviously used variables.
 
-Unit tests must be built with a platform defining the `UT_BUILD` variable. This prevents the
+Unit tests must be built with a cmake build type of "TESTING". This allows for the building of the
+unit-tests and setting up the `make check` target. This prevents the
 unit-tests from bogging down a normal build, and allows for specialized compilation flags for UTs.
 They are registered with a `make check` target to allow them to be run at once. Individual UTs can
 be run from the `bin` directory if needed. It is advised that the user build from top-level F´ as
@@ -433,7 +434,7 @@ deployment's unit-tests.
 ```
 mkdir build_ut
 cd build_ut
-cmake .. -DPLATFORM=ut/Linux
+cmake .. -DCMAKE_BUILD_TYPE=TESTING
 make -j32
 ```
 
