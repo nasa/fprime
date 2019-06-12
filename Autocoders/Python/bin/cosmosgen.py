@@ -53,9 +53,8 @@ def pinit():
     usage = "usage: %prog [options] [xml_topology_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = '''
-This script reads F' topology XML and produces .txt files that configure a COSMOS target.
-These can be used to send commands and receive telemetry within the COSMOS system.
-'''
+This script reads F' topology XML and produces .txt and ruby files that configure a COSMOS target.
+These can be used to send commands and receive telemetry within the COSMOS system. Full documentation for this tool can be found at Autocoders/Python/src/fprime_ac/utils/cosmos'''
     program_license = "Copyright 2018 user_name (California Institute of Technology)                                            \
                 ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
 

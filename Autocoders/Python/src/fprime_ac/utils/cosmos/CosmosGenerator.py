@@ -74,6 +74,7 @@ class CosmosGenerator:
         self.make_directory(base_directory + "system/")
         self.make_directory(base_directory + "tools/cmd_tlm_server/")
         self.make_directory(base_directory + "tools/tlm_viewer/")
+        self.make_directory(base_directory + "tools/tlm_extractor/")
         self.make_directory(base_directory + "tools/data_viewer/")
         self.make_directory(base_directory + "targets/" + target.upper())
         self.make_directory(base_directory + "targets/" + target.upper() + "/screens/")
