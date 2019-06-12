@@ -1,0 +1,25 @@
+8 May 2018   COSMOS INSTALLATION NOTES
+==========   =========================
+These are installation notes to document
+what was done on the MAC to get COSMOS up
+and running.
+
+These where executed on a Mac OSX 10.13.4 High Sierra mac os.
+
+Steps
+1. Make sure mac ports is installed.
+2. Execute: sudo port install qt4-mac
+3. Execute: sudo port install ruby24
+4. Execute: sudo port select --set ruby ruby24
+5. Execute: sudo gem install ruby-termios
+6. Execute: sudo gem install cosmos -v "4.3"
+
+You should have a working install and can now create
+a sample COSMOS directory structure where you can
+configure and run cosmos. To create a test area do
+this:
+
+cosmos demo test
+
+you will now have a test folder that is explained
+on the web page http://cosmosrb.com/.
