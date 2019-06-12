@@ -15,12 +15,10 @@
 
 import os
 import sys
-import glob
 
 # Parsers to read the XML
 from parsers import XmlParser
 from parsers import XmlTopologyParser
-from parsers import XmlEnumParser
 
 from utils.cosmos.models import CosmosCommand
 from utils.cosmos.models import CosmosChannel
@@ -28,7 +26,6 @@ from utils.cosmos.models import CosmosEvent
 
 from utils.cosmos.util import CosmosUtil
 from utils.cosmos.util import CheetahUtil
-from docutils.parsers.rst.states import build_regexp
 
 class CosmosTopParser():
     """
@@ -45,109 +42,6 @@ class CosmosTopParser():
         self.events = []
         self.commands = []
         self.deployment = None
-        self.build_root = build_root
-        
-        
-    def isSimpleType(self,t):
-        """
-        Returns True if this is type of F[32|64],U[8|16|32|64],I[8|16|32|64],string, or ENUM,
-        otherwise return False
-        @param: t is the name of the type of argument
-        """
-        if type(t) is type(tuple()):
-            t = t[0][0]
-    
-        if (("F32" == t) or
-            ("F64" == t) or
-            ("U8"   == t) or
-            ("U16"  == t) or 
-            ("U32"  == t) or 
-            ("U64"  == t) or 
-            ("I8"   == t) or 
-            ("I16"  == t) or 
-            ("I32"  == t) or 
-            ("I64"  == t) or
-            ("bool" == t) or
-            ("string" == t) or
-            ("ENUM" == t)):
-            return True
-        else:
-            return False
-
-    def enumFindAndParse(self, enum_name, search_top_dir):
-        """
-        Returns a list of tuple's of (identifier, value, comment) if enum of enum_name is found,
-        otherwise returns None object.
-        
-        Only searches under the search_top_dir directory!!  These are under BUILD_ROOT.
-        """
-        enum_list = []
-        #
-        # Iterate over component collections
-        #
-        os.chdir(self.build_root)
-        #
-        # Only search DiebApps for now!
-        #
-        for collection_dir in glob.glob(search_top_dir):
-            if os.path.isdir(collection_dir):
-                bdir = self.build_root + os.sep + collection_dir
-                os.chdir(bdir)
-                for component_dir in glob.glob('*'):
-                    if os.path.isdir(component_dir):
-                        dir = bdir + os.sep + component_dir
-                        os.chdir(dir)
-                        enum_files = glob.glob("*EnumAi.txt")
-                        if len(enum_files) > 0:
-                            for efile in enum_files:
-                                if os.path.isfile(efile):
-                                    if enum_name == efile.split('EnumAi.txt')[0]:
-                                        lines = open(efile, 'r').readlines()[5:]
-                                        lines = filter(lambda x: x!='\n', lines)
-                                        for l in range(0,len(lines),3):
-                                            l1 = lines[l].strip('\n')
-                                            l2 = lines[l+1].strip('\n')
-                                            l3 = lines[l+2].strip('\n')
-                                            enum_list.append((l1,l2,l3))
-                                        return enum_list
-                        os.chdir('..')
-                os.chdir(self.build_root)
-        return enum_list
-
-
-    def enumFindXmlAndParse(self, enum_name, search_top_dir):
-        """
-        Returns a list of tuple's of (identifier, value, comment) if enum of enum_name is found,
-        otherwise returns None object.
-        
-        Only searches under the search_top_dir directory!!  These are under BUILD_ROOT.
-        """
-        enum_list = []
-        #
-        # Iterate over component collections
-        #
-        os.chdir(self.build_root)
-        #
-        # Only search DiebApps for now!
-        #
-        for collection_dir in glob.glob(search_top_dir):
-            if os.path.isdir(collection_dir):
-                bdir = self.build_root + os.sep + collection_dir
-                os.chdir(bdir)
-                for component_dir in glob.glob('*'):
-                    if os.path.isdir(component_dir):
-                        dir = bdir + os.sep + component_dir
-                        os.chdir(dir)
-                        enum_files = glob.glob("*EnumAi.xml")
-                        if len(enum_files) > 0:
-                            for efile in enum_files:
-                                if os.path.isfile(efile):
-                                    xml = XmlEnumParser.XmlEnumParser(efile)
-                                    enum_list = xml.get_items()
-                        os.chdir('..')
-                os.chdir(self.build_root)
-        return enum_list
-
                 
     def parse_topology(self, xml_filename, overwrite = True):
         """
@@ -219,7 +113,6 @@ class CosmosTopParser():
                     print ("Parsing Commands for instance: " + comp_name)
                 cmds = comp_parser.get_commands()
                 for cmd in cmds:
-                    contains_unsupp_type = False
                     opcode = cmd.get_opcodes()[0]
                     if '0x' in opcode:
                         opcode = int(opcode, 16)
@@ -254,29 +147,17 @@ class CosmosTopParser():
                      
                     if CosmosUtil.VERBOSE:
                         print("Command " + n + " Found")
- 
-                    enum = None
+
                     for arg in args:
                         n = arg.get_name()
                         t = arg.get_type()
                         c = arg.get_comment()
-                        #
-                        # Handle enum case where it is defined in ext. *EnumAi.txt or *EnumAi.xml files
-                        #
-                        if not self.isSimpleType(t):
-                            l = self.enumFindAndParse(t, "DiebApps")
-                            if len(l) == 0:
-                                l = self.enumFindXmlAndParse(t, "DiebApps")
-                            if len(l) == 0:
-                                contains_unsupp_type = True
-                            t = (('ENUM', t), l)
                         #
                         # Parse command enum here
                         #
                         if type(t) is type(tuple()):
                             enum = t
                             t = t[0][0]
-
                         num += 1
                         
                         if not is_multi_string_command:        
@@ -288,10 +169,7 @@ class CosmosTopParser():
                         else:
                             print("Multi-string command " + cmd.get_mnemonic() + " not supported")
                     else:
-                        if not contains_unsupp_type:
-                            self.commands.append(cosmos_cmd)
-                        else:
-                            print("Skipping cmd " + cmd.get_mnemonic() + ", contains unsupported type")
+                        self.commands.append(cosmos_cmd)
                  
                 if CosmosUtil.VERBOSE:
                     print("Finished Parsing Commands for " + comp_name)
@@ -381,17 +259,6 @@ class CosmosTopParser():
                         t = arg.get_type()
                         s = arg.get_size()
                         c = arg.get_comment()
-                        #
-                        # Handle enum case where it is define in ext. *EnumAi.txt or *EnumAi.xml files
-                        #
-                        if not self.isSimpleType(t):
-                            l = self.enumFindAndParse(t, "DiebApps")
-                            if len(l) == 0:
-                                l = self.enumFindXmlAndParse(t, "DiebApps")
-                            if len(l) == 0:
-                                contains_unsupp_type = True
-                            t = (('ENUM', t), l)
-                        
                         enum = None
                         if type(t) is type(tuple()):
                             enum = t
