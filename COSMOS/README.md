@@ -6,7 +6,7 @@ This tool found in Autocoders/bin at cosmosgen.py autocodes all of the configura
 
 COSMOS is a "User Interface for Command and Control of Embedded Systems" made in Ruby that lets users send commands / view telemetry within special customizable COSMOS tools configured in text files using COSMOS syntax documented [here](http://cosmosrb.com/docs/home/).  Some of these tools include a cmd\_tlm server application that can handle server, client, serial, UDP, and potentially any other format through Ruby [scripts](http://cosmosrb.com/docs/scripting/), a data\_viewer application that displays a continuous stream of telemetry text data, and a tlm\_viewer application that has users create GUI [screens](http://cosmosrb.com/docs/screens/) that display telemetry data statically.
 
-Our tool uses [Cheetah templates](https://pythonhosted.org/Cheetah/) found [here](../Autocoders/src/utils/cosmos/templates) in order to Autocode the COSMOS configuration files.  The entire COSMOS/config/targets/TARGET\_NAME/ directory is created by the autocoder, however there are also a few other files within the COSMOS/config directory/ that the autocoder will append to if it already exists.
+Our tool uses [Cheetah templates](https://pythonhosted.org/Cheetah/) found [here](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates) in order to Autocode the COSMOS configuration files.  The entire COSMOS/config/targets/TARGET\_NAME/ directory is created by the autocoder, however there are also a few other files within the COSMOS/config directory/ that the autocoder will append to if it already exists.
 
 To **delete** a target, run the autocoder with -r TARGET_NAME, and it will remove it from all the autocoded files.
 
@@ -133,44 +133,44 @@ Classes within the tool are broken down into lowest-level model and writer class
 #### 6.1.2 The Autocoders/src/utils/cosmos Directory
 |Name|Description|Link
 |---|---|---|
-|CosmosGenerator.py|Class that takes Writer class instances and calls their write() methods to generate COSMOS config files|[.py](../Autocoders/src/utils/cosmos/CosmosGenerator.py)|
-|CosmosTopParser.py|Class that takes an XML Parser instance and organizes its cmd and tlm data into COSMOS model classes for ease of Cheetah templating|[.py](../Autocoders/src/utils/cosmos/CosmosTopParser.py)|
+|CosmosGenerator.py|Class that takes Writer class instances and calls their write() methods to generate COSMOS config files|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/CosmosGenerator.py)|
+|CosmosTopParser.py|Class that takes an XML Parser instance and organizes its cmd and tlm data into COSMOS model classes for ease of Cheetah templating|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/CosmosTopParser.py)|
 
 #### 6.1.3 The Autocoders/src/utils/cosmos/models Directory
 |Name|Description|Link
 |---|---|---|
-|BaseCosmosObject.py|Base class containing all shared data between Channels, Commands, and Events|[.py](../Autocoders/src/utils/cosmos/models/BaseCosmosObject.py)|
-|CosmosChannel.py|Class representing a telemetry channel that encapsulates all the data it needs in the Cheetah templates|[.py](../Autocoders/src/utils/cosmos/models/CosmosChannel.py)|
-|CosmosCommand.py|Class representing a telemetry command that encapsulates all the data it needs in the Cheetah templates|[.py](../Autocoders/src/utils/cosmos/models/CosmosCommand.py)|
-|CosmosEvent.py|Class representing a telemetry event that encapsulates all the data it needs in the Cheetah templates|[.py](../Autocoders/src/utils/cosmos/models/CosmosEvent.py)|
+|BaseCosmosObject.py|Base class containing all shared data between Channels, Commands, and Events|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/models/BaseCosmosObject.py)|
+|CosmosChannel.py|Class representing a telemetry channel that encapsulates all the data it needs in the Cheetah templates|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/models/CosmosChannel.py)|
+|CosmosCommand.py|Class representing a telemetry command that encapsulates all the data it needs in the Cheetah templates|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/models/CosmosCommand.py)|
+|CosmosEvent.py|Class representing a telemetry event that encapsulates all the data it needs in the Cheetah templates|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/models/CosmosEvent.py)|
 
 #### 6.1.4 The Autocoders/src/utils/cosmos/util Directory
 |Name|Description|Link
 |---|---|---|
-|CheetahUtil.py|Contains constants and methods that affect the way data is outputted to the Cheetah templates|[.py](../Autocoders/src/utils/cosmos/util/CheetahUtil.py)
+|CheetahUtil.py|Contains constants and methods that affect the way data is outputted to the Cheetah templates|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/util/CheetahUtil.py)
 
-|CosmosConfigManager.py|Sets the default deployment server interface variables, can be altered via .ini files with deployment name in same directory|[.py](../Autocoders/src/utils/cosmos/util/CosmosConfigManager.py)|
-|CosmosUtil.py|Contains all the hardcoded data regarding interfaces and protocols i.e. port number, header-bit-length|[.py](../Autocoders/src/utils/cosmos/util/CosmosUtil.py)|
+|CosmosConfigManager.py|Sets the default deployment server interface variables, can be altered via .ini files with deployment name in same directory|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/util/CosmosConfigManager.py)|
+|CosmosUtil.py|Contains all the hardcoded data regarding interfaces and protocols i.e. port number, header-bit-length|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/util/CosmosUtil.py)|
 
 #### 6.1.5 The Autocoders/src/utils/cosmos/writers Directory
 |Name|Description|Link
 |---|---|---|
-|AbstractCosmosWriter.py|Abstract class containing the definition of the write() method shared by all other writer classes|[.py](../Autocoders/src/utils/cosmos/writers/AbstractCosmosWriter.py)|
-|BaseConfigWriter.py|Base class encapsulating all data shared between config files that must have lines appended to and removed rather than just having all its contents created new every time the autocoding tool is run|[.py](../Autocoders/src/utils/cosmos/writers/BaseConfigWriter.py)|
-|ChannelScreenWriter.py|Class that writes the channel screen config file for the tlm\_viewer application|[.py](../Autocoders/bin/writers/ChannelScreenWriter.py) [docs](http://cosmosrb.com/docs/screens/) [.tmpl](../Autocoders/src/utils/cosmos/templates/channel\_screen.tmpl)|
-|ChannelWriter.py|Class that writes the channel config file for the cmd\_tlm\_server application|[.py](../Autocoders/bin/writers/ChannelWriter.py) [docs](http://cosmosrb.com/docs/telemetry/) [.tmpl](../Autocoders/src/utils/cosmos/templates/channel.tmpl)|
-|CommandWriter.py|Class that writes the command config file for the cmd\_tlm\_server application|[.py](../Autocoders/bin/writers/CommandWriter.py) [docs](http://cosmosrb.com/docs/command/) [.tmpl](../Autocoders/src/utils/cosmos/templates/command.tmpl)|
-|ConfigDataViewerWriter.py|Class that writes the data\_viewer tool config file|[.py](../Autocoders/bin/writers/ConfigDataViewerWriter.py) [docs](http://cosmosrb.com/docs/data_viewer/) [.tmpl](../Autocoders/src/utils/cosmos/templates/data\_viewer\_config.tmpl)|
-|ConfigServerWriter.py|Class that writes the cmd\_tlm\_server tool config file|[.py](../Autocoders/bin/writers/ConfigServerWriter.py) [docs](http://cosmosrb.com/docs/interfaces/) [.tmpl](../Autocoders/src/utils/cosmos/templates/server\_config.tmpl)|
-|ConfigSystemWriter.py|Class that writes the system tool config file|[.py](../Autocoders/bin/writers/ConfigSystemWriter.py) [docs](http://cosmosrb.com/docs/system/) [.tmpl](../Autocoders/src/utils/cosmos/templates/system.tmpl)|
-|ConfigTlmViewerWriter.py|Class that writes the tlm\_viewer tool config file|[.py](../Autocoders/bin/writers/ConfigTlmViewerWriter.py) [docs](http://cosmosrb.com/docs/tlm_viewer/) [.tmpl](../Autocoders/src/utils/cosmos/templates/tlm\_viewer\_config.tmpl)|
-|DataViewerWriter.py|Class that writes the data\_viewer config file for the data\_viewer application|[.py](../Autocoders/bin/writers/DataViewerWriter.py) [docs](http://cosmosrb.com/docs/data_viewer/) [.tmpl](../Autocoders/src/utils/cosmos/templates/data\_viewer.tmpl)|
-|EventWriter.py|Class that writes the event config file for the cmd\_tlm\_server application|[.py](../Autocoders/bin/writers/EventWriter.py) [docs](http://cosmosrb.com/docs/telemetry/) [.tmpl](../Autocoders/src/utils/cosmos/templates/event.tmpl)|
-|PartialWriter.py|Class that prints out user-input files for applications|[.py](../Autocoders/bin/writers/PartialWriter.py) [.tmpl](../Autocoders/src/utils/cosmos/templates/channel\_partial.tmpl) [.tmpl](../Autocoders/src/utils/cosmos/templates/command\_partial.tmpl) [.tmpl](../Autocoders/src/utils/cosmos/templates/data\_viewer\_partial.tmpl) [.tmpl](../Autocoders/src/utils/cosmos/templates/event\_partial.tmpl)|
-|RubyWriter.py|Class that prints out user-input files for applications|[.py](../Autocoders/bin/writers/RubyWriter.py) [.tmpl](../Autocoders/src/utils/cosmos/templates/ruby\_evr\_dump\_component.tmpl) [.tpml](../Autocoders/src/utils/cosmos/templates/ruby\_multi\_string\_tlm\_item\_conversion.tmpl) [.tmpl](../Autocoders/src/utils/cosmos/templates/ruby\_ref\_protocol.tmpl)|
-|ServerWriter.py|Class that writes the server config file|[.py](../Autocoders/bin/writers/ServerWriter.py) [docs](http://cosmosrb.com/docs/interfaces/) [.tmpl](../Autocoders/src/utils/cosmos/templates/cosmos\_server.tmpl)|
-|TargetWriter.py|Class that writes the target config file|[.py](../Autocoders/bin/writers/TargetWriter.py) [docs](http://cosmosrb.com/docs/system/) [.tmpl](../Autocoders/src/utils/cosmos/templates/target.tmpl)|
-|TlmExtractor.py|Class that writes the tlm extractor config files in the tools/tlm\_extractor directory|[.py](../Autocoders/bin/writers/TlmExtractor.py) [docs](http://cosmosrb.com/docs/tlm\_extractor/) [.tmpl](../Autocoders/src/utils/cosmos/templates/tlm\_extractor.tmpl)|
+|AbstractCosmosWriter.py|Abstract class containing the definition of the write() method shared by all other writer classes|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/AbstractCosmosWriter.py)|
+|BaseConfigWriter.py|Base class encapsulating all data shared between config files that must have lines appended to and removed rather than just having all its contents created new every time the autocoding tool is run|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/BaseConfigWriter.py)|
+|ChannelScreenWriter.py|Class that writes the channel screen config file for the tlm\_viewer application|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ChannelScreenWriter.py) [docs](http://cosmosrb.com/docs/screens/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/channel\_screen.tmpl)|
+|ChannelWriter.py|Class that writes the channel config file for the cmd\_tlm\_server application|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ChannelWriter.py) [docs](http://cosmosrb.com/docs/telemetry/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/channel.tmpl)|
+|CommandWriter.py|Class that writes the command config file for the cmd\_tlm\_server application|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/CommandWriter.py) [docs](http://cosmosrb.com/docs/command/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/command.tmpl)|
+|ConfigDataViewerWriter.py|Class that writes the data\_viewer tool config file|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ConfigDataViewerWriter.py) [docs](http://cosmosrb.com/docs/data_viewer/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/data\_viewer\_config.tmpl)|
+|ConfigServerWriter.py|Class that writes the cmd\_tlm\_server tool config file|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ConfigServerWriter.py) [docs](http://cosmosrb.com/docs/interfaces/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/server\_config.tmpl)|
+|ConfigSystemWriter.py|Class that writes the system tool config file|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ConfigSystemWriter.py) [docs](http://cosmosrb.com/docs/system/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/system.tmpl)|
+|ConfigTlmViewerWriter.py|Class that writes the tlm\_viewer tool config file|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ConfigTlmViewerWriter.py) [docs](http://cosmosrb.com/docs/tlm_viewer/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/tlm\_viewer\_config.tmpl)|
+|DataViewerWriter.py|Class that writes the data\_viewer config file for the data\_viewer application|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/DataViewerWriter.py) [docs](http://cosmosrb.com/docs/data_viewer/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/data\_viewer.tmpl)|
+|EventWriter.py|Class that writes the event config file for the cmd\_tlm\_server application|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/EventWriter.py) [docs](http://cosmosrb.com/docs/telemetry/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/event.tmpl)|
+|PartialWriter.py|Class that prints out user-input files for applications|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/PartialWriter.py) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/channel\_partial.tmpl) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/command\_partial.tmpl) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/data\_viewer\_partial.tmpl) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/event\_partial.tmpl)|
+|RubyWriter.py|Class that prints out user-input files for applications|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/RubyWriter.py) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/ruby\_evr\_dump\_component.tmpl) [.tpml](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/ruby\_multi\_string\_tlm\_item\_conversion.tmpl) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/ruby\_ref\_protocol.tmpl)|
+|ServerWriter.py|Class that writes the server config file|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/ServerWriter.py) [docs](http://cosmosrb.com/docs/interfaces/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/cosmos\_server.tmpl)|
+|TargetWriter.py|Class that writes the target config file|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/TargetWriter.py) [docs](http://cosmosrb.com/docs/system/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/target.tmpl)|
+|TlmExtractor.py|Class that writes the tlm extractor config files in the tools/tlm\_extractor directory|[.py](../Autocoders/Python/src/fprime_ac/utils/cosmos/writers/TlmExtractor.py) [docs](http://cosmosrb.com/docs/tlm\_extractor/) [.tmpl](../Autocoders/Python/src/fprime_ac/utils/cosmos/templates/tlm\_extractor.tmpl)|
 
 ### 6.2 Helper Ruby Scripts
 |Name|Description|Link
