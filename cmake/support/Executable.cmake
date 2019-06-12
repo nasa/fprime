@@ -15,7 +15,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 function(add_dict_target)
     # If we are generating python dictionaries, then we need to copy the outputs
-    if (UT_BUILD)
+    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     elseif (GENERATE_HERITAGE_PY_DICT)
         add_custom_target(

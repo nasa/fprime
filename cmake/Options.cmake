@@ -18,6 +18,11 @@
 # - Generate heritage python dictionaries
 # - Manually specify the build platform
 #
+# Note: this file also sets up the following "build type" for use by the user. These build types
+#       are in addition to the standard cmake build types.
+#
+#       TESTING: build the unit tests and setup the "make check" target
+# 
 # @author mstarch
 ####
 
@@ -101,6 +106,29 @@ option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
 
 # Note: document other system options here.
 
+
+####
+# `TESTING:`
+#
+# Testing build type used to build UTs and setting up the `make check` target. If the unit testing
+# is desired run with this build type.
+#
+# e.g. `-DCMAKE_BUILD_TYPE=TESTING`
+####
+SET(CMAKE_CXX_FLAGS_TESTING "-DBUILD_UT -DPROTECTED=public -DPRIVATE=public"
+    CACHE STRING "Testing C++ flags." FORCE)
+SET(CMAKE_C_FLAGS_TESTING "-DBUILD_UT -DPROTECTED=public -DPRIVATE=public"
+    CACHE STRING "Testing C flags." FORCE)
+SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
+SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
+MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_TESTING
+    CMAKE_C_FLAGS_TESTING
+    CMAKE_EXE_LINKER_FLAGS_TESTING
+    CMAKE_SHARED_LINKER_FLAGS_TESTING )
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING" )
+    set(BUILD_SUFFIX "_ut")
+endif()
 ####
 # `PLATFORM:`
 #
