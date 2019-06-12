@@ -114,7 +114,7 @@ class EventTemplate(data_template.DataTemplate):
         return self.format_str
 
     def get_description(self):
-        self.event_description
+        self.description
 
     def get_args(self):
         '''
