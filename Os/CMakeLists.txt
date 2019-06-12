@@ -5,6 +5,14 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+set(MOD_DEPS
+  "${CMAKE_THREAD_LIBS_INIT}" 
+  Fw/Cfg
+  Fw/Types
+  Fw/Logger
+  Utils/Hash
+)
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
@@ -61,6 +69,10 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
+  # Shard libraries need an -rt dependency for mq libs
+  if (LINK_AS_SHARED_LIBS)
+      list(APPEND MOD_DEPS "-lrt")
+  endif()
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
   set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
@@ -87,7 +99,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
     set(SOURCE_FILES
       "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
@@ -112,10 +124,11 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
       "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
-    )
+   )
 else()
   # Default Linux
   set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
@@ -142,15 +155,11 @@ else()
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
+  # Shard libraries need an -rt dependency for mq libs
+  if (LINK_AS_SHARED_LIBS)
+      list(APPEND MOD_DEPS "-lrt")
+  endif()
 endif()
-
-set(MOD_DEPS
-  "${CMAKE_THREAD_LIBS_INIT}" 
-  Fw/Cfg
-  Fw/Types
-  Fw/Logger
-  Utils/Hash
-)
 
 register_fprime_module()
 
