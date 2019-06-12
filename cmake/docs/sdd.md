@@ -301,7 +301,6 @@ This should look something like the following:
 ##
 cmake_minimum_required(VERSION 3.5)
 project(FPrime-Ref C CXX)
-set(CMAKE_BUILD_TYPE DEBUG)
 
 ##
 # Section 2: F´ Core
