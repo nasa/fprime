@@ -15,12 +15,12 @@
 #===============================================================================
 import sys
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
-from utils.cosmos.templates import Command
+from fprime_ac.utils.cosmos.templates import Command
 
-from utils.cosmos.util import CosmosUtil
-from utils.cosmos.util import CheetahUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CheetahUtil
 
 class CommandWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """

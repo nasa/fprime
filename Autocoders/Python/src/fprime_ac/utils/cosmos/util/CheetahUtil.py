@@ -18,7 +18,7 @@ import sys
 import time
 import datetime
 
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 """
 This class contains static data and methods should be altered in order to change the behavior of

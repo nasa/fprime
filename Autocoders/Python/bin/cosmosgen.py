@@ -20,9 +20,9 @@ from optparse import OptionParser
 from models import ModelParser
 from utils import ConfigManager
 
-from utils.cosmos import CosmosGenerator
-from utils.cosmos import CosmosTopParser
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos import CosmosGenerator
+from fprime_ac.utils.cosmos import CosmosTopParser
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 # Needs to be initialized to create the other parsers
 CONFIG = ConfigManager.ConfigManager.getInstance()

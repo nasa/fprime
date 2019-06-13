@@ -16,12 +16,12 @@
 
 import os
 
-from utils.cosmos.writers import BaseConfigWriter
+from fprime_ac.utils.cosmos.writers import BaseConfigWriter
 
-from utils.cosmos.util import CheetahUtil
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CheetahUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
-from utils.cosmos.templates import Config_Server
+from fprime_ac.utils.cosmos.templates import Config_Server
 
 class ConfigServerWriter(BaseConfigWriter.BaseConfigWriter):
     """

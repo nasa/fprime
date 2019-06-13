@@ -17,12 +17,12 @@
 
 import os
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
-from utils.cosmos.templates import Partial_Channel
-from utils.cosmos.templates import Partial_Command
-from utils.cosmos.templates import Partial_Data_Viewer
-from utils.cosmos.templates import Partial_Event
+from fprime_ac.utils.cosmos.templates import Partial_Channel
+from fprime_ac.utils.cosmos.templates import Partial_Command
+from fprime_ac.utils.cosmos.templates import Partial_Data_Viewer
+from fprime_ac.utils.cosmos.templates import Partial_Event
 
 from utils.cosmos.util import CosmosUtil
 

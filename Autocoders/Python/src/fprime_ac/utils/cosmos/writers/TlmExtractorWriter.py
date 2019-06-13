@@ -18,12 +18,12 @@
 
 import os
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
-from utils.cosmos.templates import Tlm_Extractor
+from fprime_ac.utils.cosmos.templates import Tlm_Extractor
 
-from utils.cosmos.util import CheetahUtil
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CheetahUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 class TlmExtractorWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """

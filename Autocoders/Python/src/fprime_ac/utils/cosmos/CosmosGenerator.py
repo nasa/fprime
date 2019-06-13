@@ -18,20 +18,20 @@ import os
 import shutil
 
 # Cosmos file writer class
-from utils.cosmos.writers import ChannelWriter
-from utils.cosmos.writers import CommandWriter
-from utils.cosmos.writers import ConfigSystemWriter
-from utils.cosmos.writers import ServerWriter
-from utils.cosmos.writers import ChannelScreenWriter
-from utils.cosmos.writers import DataViewerWriter
-from utils.cosmos.writers import EventWriter
-from utils.cosmos.writers import ConfigDataViewerWriter
-from utils.cosmos.writers import ConfigTlmViewerWriter
-from utils.cosmos.writers import ConfigServerWriter
-from utils.cosmos.writers import TargetWriter
-from utils.cosmos.writers import PartialWriter
-from utils.cosmos.writers import RubyWriter
-from utils.cosmos.writers import TlmExtractorWriter
+from fprime_ac.utils.cosmos.writers import ChannelWriter
+from fprime_ac.utils.cosmos.writers import CommandWriter
+from fprime_ac.utils.cosmos.writers import ConfigSystemWriter
+from fprime_ac.utils.cosmos.writers import ServerWriter
+from fprime_ac.utils.cosmos.writers import ChannelScreenWriter
+from fprime_ac.utils.cosmos.writers import DataViewerWriter
+from fprime_ac.utils.cosmos.writers import EventWriter
+from fprime_ac.utils.cosmos.writers import ConfigDataViewerWriter
+from fprime_ac.utils.cosmos.writers import ConfigTlmViewerWriter
+from fprime_ac.utils.cosmos.writers import ConfigServerWriter
+from fprime_ac.utils.cosmos.writers import TargetWriter
+from fprime_ac.utils.cosmos.writers import PartialWriter
+from fprime_ac.utils.cosmos.writers import RubyWriter
+from fprime_ac.utils.cosmos.writers import TlmExtractorWriter
 
 from utils.cosmos.util import CosmosUtil
 

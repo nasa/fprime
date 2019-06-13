@@ -17,7 +17,7 @@
 
 import re
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
 class BaseConfigWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """

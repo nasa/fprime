@@ -17,13 +17,13 @@
 
 import os
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
-from utils.cosmos.templates import Ruby_Evr_Dump_Component
-from utils.cosmos.templates import Ruby_Multi_String_Tlm_Item_Conversion
-from utils.cosmos.templates import Ruby_FPrime_Protocol
+from fprime_ac.utils.cosmos.templates import Ruby_Evr_Dump_Component
+from fprime_ac.utils.cosmos.templates import Ruby_Multi_String_Tlm_Item_Conversion
+from fprime_ac.utils.cosmos.templates import Ruby_FPrime_Protocol
 
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 class RubyWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """
