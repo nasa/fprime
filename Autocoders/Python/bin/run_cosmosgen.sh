@@ -19,4 +19,5 @@ setenv PYTHONPATH ${BUILD_ROOT}/Autocoders/Python/src/fprime_ac
 echo "PYTHONPATH: ${PYTHONPATH}"
 ${PYTHON_BASE}/bin/python ${BUILD_ROOT}/Autocoders/Python/bin/cosmosgen.py  $*
 
-echo "Build vars set"
+echo "Build vars set, running cosmosgen.py"
+python "${BUILD_ROOT}/Autocoders/Python/bin/JSONDictionaryGen.py" "$@"
