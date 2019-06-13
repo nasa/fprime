@@ -24,7 +24,7 @@ from fprime_ac.utils.cosmos.templates import Partial_Command
 from fprime_ac.utils.cosmos.templates import Partial_Data_Viewer
 from fprime_ac.utils.cosmos.templates import Partial_Event
 
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 class PartialWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """

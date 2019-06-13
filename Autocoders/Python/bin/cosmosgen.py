@@ -17,8 +17,8 @@ import os
 import sys
 
 from optparse import OptionParser
-from models import ModelParser
-from utils import ConfigManager
+from fprime_ac.models import ModelParser
+from fprime_ac.utils import ConfigManager
 
 from fprime_ac.utils.cosmos import CosmosGenerator
 from fprime_ac.utils.cosmos import CosmosTopParser
@@ -49,12 +49,19 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
-
+    
+    # Format build root for program description
+    if ('BUILD_ROOT' in os.environ.keys()) == True:
+        root_dir = os.environ["BUILD_ROOT"]
+    else:
+        print("ERROR: Build root not set to root build path...")
+        sys.exit(-1)
+    
     usage = "usage: %prog [options] [xml_topology_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = '''
 This script reads F' topology XML and produces .txt and ruby files that configure a COSMOS target.
-These can be used to send commands and receive telemetry within the COSMOS system. Full documentation for this tool can be found at Autocoders/Python/src/fprime_ac/utils/cosmos'''
+These can be used to send commands and receive telemetry within the COSMOS system. Full documentation for this tool can be found at %sAutocoders/Python/src/fprime_ac/utils/cosmos''' % root_dir
     program_license = "Copyright 2018 user_name (California Institute of Technology)                                            \
                 ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
 

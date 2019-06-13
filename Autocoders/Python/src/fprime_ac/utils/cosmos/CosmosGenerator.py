@@ -33,7 +33,7 @@ from fprime_ac.utils.cosmos.writers import PartialWriter
 from fprime_ac.utils.cosmos.writers import RubyWriter
 from fprime_ac.utils.cosmos.writers import TlmExtractorWriter
 
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
 class CosmosGenerator:
     """
