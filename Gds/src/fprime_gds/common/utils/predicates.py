@@ -101,7 +101,7 @@ class within_range_pred:
 
 
 # Set Predicates
-class is_a_member_of_pred:
+class is_a_member_of:
     """
     A predicate that evaluates if the argument is equivalent to any member in the set
     :param collection: To return true, the predicate must be called on an object that is equivalent to any object in this collection
