@@ -24,7 +24,9 @@ class IntegrationTestAPI:
         """
         pass
         
-    # Command functions 
+    ###################################################################################
+    ##  History Functions
+    ###################################################################################
     def assert_send_command(self, command, args):
         """
         Sends a command and asserts that the command was translated successfully. If the command is in conflict
@@ -37,7 +39,9 @@ class IntegrationTestAPI:
         """
         pass
 
-    # Telemetry functions
+    ###################################################################################
+    ##  Telemetry Functions
+    ###################################################################################
     def await_telemetry(self, channel, val_pred=None, fsw_time_pred=None, history=None, timeout=5):
         """
         This function will first search the history for a telemetry update that satisfies the specified constraints. 
@@ -80,7 +84,9 @@ class IntegrationTestAPI:
         """
         pass
 
-    # Event Asserts
+    ###################################################################################
+    ##  Event Functions
+    ###################################################################################
     def await_event(self, event, args=None, fsw_time_pred=None, history=None, timeout=5):
         """
         This function will first search the history for an event that satisfies the specified constraints. 
@@ -122,8 +128,9 @@ class IntegrationTestAPI:
         """
         pass
 
-    # Combined functions
-
+    ###################################################################################
+    ##  Combined Functions
+    ###################################################################################
     def send_and_await_telemetry(self, command, args, channel, timeout=5):
         """
         Sends the specified command and awaits the specified telemetry.
