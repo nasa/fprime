@@ -14,6 +14,11 @@ class less_than:
     """
     def __init__(self, value):
         pass
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
+        pass
 
 class greater_than_pred:
     """
@@ -21,6 +26,11 @@ class greater_than_pred:
     :param value: To return true, the predicate must be called on an object that is less than this value
     """
     def __init__(self, value):
+        pass
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
         pass
 
 class equal_to_pred:
@@ -30,6 +40,11 @@ class equal_to_pred:
     """
     def __init__(self, value):
         pass
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
+        pass
 
 class not_equal_to_pred:
     """
@@ -37,6 +52,11 @@ class not_equal_to_pred:
     :param value: To return true, the predicate must be called on an object that is not equal to this value
     """
     def __init__(self, value):
+        pass
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
         pass
 
 class greater_than_or_equals_pred:
@@ -46,6 +66,11 @@ class greater_than_or_equals_pred:
     """
     def __init__(self, value):
         pass
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
+        pass
 
 class less_than_or_equals_pred:
     """
@@ -53,6 +78,11 @@ class less_than_or_equals_pred:
     :param value: To return true, the predicate must be called on an object that is less than or equal to this value
     """
     def __init__(self, value):
+        pass
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
         pass
         
 class within_range_pred:
@@ -62,6 +92,11 @@ class within_range_pred:
     :param upper: To return true, the predicate must be called on an object that is less than this value
     """
     def __init__(self, lower, upper):
+        pass
+    """
+    :param actual: the value to evaluate
+    """
+    def __call__(self, actual):
         pass
 
 
@@ -73,6 +108,11 @@ class is_a_member_of_pred:
     """
     def __init__(self, collection):
         pass
+    """
+    :param object: the object to search for then evaluate
+    """
+    def __call__(self, object):
+        pass
 
 class is_not_a_member_of:
     """
@@ -80,6 +120,11 @@ class is_not_a_member_of:
     :param collection: To return true, the predicate must be called on an object that is not equivalent to any object in this collection
     """
     def __init__(self, collection):
+        pass
+    """
+    :param object: the object to search for then evaluate
+    """
+    def __call__(self, object):
         pass
 
 
@@ -91,6 +136,11 @@ class invert:
     """
     def __init__(self, pred):
         pass
+    """
+    :param object: the object or value to evaluate
+    """
+    def __call__(self, object):
+        pass
         
 
 class satisfies_all:
@@ -101,6 +151,11 @@ class satisfies_all:
     """
     def __init__(self, pred_list):
         pass
+    """
+    :param object: the object or value to evaluate
+    """
+    def __call__(self, object):
+        pass
 
 class satisfies_any:
     """
@@ -109,6 +164,11 @@ class satisfies_any:
     :param pred_list: a list of predicates
     """
     def __init__(self, pred_list):
+        pass
+    """
+    :param object: the object or value to evaluate
+    """
+    def __call__(self, object):
         pass
 
 
@@ -119,6 +179,11 @@ class true_predicate:
     """
     __init__(self):
         pass
+    """
+    :param object: the object or value to evaluate
+    """
+    def __call__(self, object):
+        return True
 
 class event_predicate:
     """
@@ -151,5 +216,3 @@ class telemetry_predicate:
     """
     def __call__(self, telemetry):
         pass
-
-
