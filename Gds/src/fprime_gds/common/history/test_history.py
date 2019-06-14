@@ -43,6 +43,13 @@ class TestHistory:
         """
         pass
 
+    def size(self):
+        """
+        Accessor for the number of objects in the history
+        :return: the number of objects
+        """
+        pass
+
     ###################################################################################
     ##  TestHistory Functions
     ###################################################################################
@@ -97,7 +104,7 @@ class TestHistory:
     def find_latest(self, search_pred):
         """
         Searches for the last instance of an object that satisfies the given predicate in a history.
-        :param search_pred: A predicate that the search will use to choose an object. 
+        :param search_pred: A predicate ththe number of onat the search will use to choose an object. 
         :return: the last object to satisfy the given predicate.
         """
         pass
@@ -115,5 +122,7 @@ class TestHistory:
         Counts how many objects satisfy the given predicate.
         :param search_pred: 
         :return: the number of objects that satisfy the predicate
+        """
+        pass
 
     
