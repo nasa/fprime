@@ -104,7 +104,7 @@ class TestHistory:
     def find_latest(self, search_pred):
         """
         Searches for the last instance of an object that satisfies the given predicate in a history.
-        :param search_pred: A predicate ththe number of onat the search will use to choose an object. 
+        :param search_pred: A predicate that the search will use to choose an object. 
         :return: the last object to satisfy the given predicate.
         """
         pass
@@ -120,7 +120,7 @@ class TestHistory:
     def count(self, search_pred):
         """
         Counts how many objects satisfy the given predicate.
-        :param search_pred: 
+        :param search_pred: A predicate that the search will use to choose an object. 
         :return: the number of objects that satisfy the predicate
         """
         pass
