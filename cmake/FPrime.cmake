@@ -19,6 +19,13 @@
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
 
+# Set build type, if unser
+if(NOT CMAKE_BUILD_TYPE) 
+    set(CMAKE_BUILD_TYPE DEBUG)
+else()
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+endif()
+
 # Include the Options, and platform files. These are files that change the build
 # setup. Users may need to add items to these files in order to ensure that all
 # specific project builds work as expected.

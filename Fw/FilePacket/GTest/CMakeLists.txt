@@ -6,7 +6,7 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-if (UT_BUILD)
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
     set(SOURCE_FILES
       "${CMAKE_CURRENT_LIST_DIR}/CancelPacket.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DataPacket.cpp"

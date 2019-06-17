@@ -296,7 +296,7 @@ endfunction(register_fprime_executable)
 # unit test name, autocoding and source inputs for the unit test, and (optionally) any
 # non-standard link dependencies.
 #
-# **Note:** This is ONLY run when the platform sets UT_BUILD to TRUE
+# **Note:** This is ONLY run when the build type is  TESTING
 #
 # Required variables (defined in calling scope):
 #
@@ -373,7 +373,7 @@ endfunction(register_fprime_executable)
 ####
 function(register_fprime_ut)
     #### CHECK UT BUILD ####
-    if (NOT UT_BUILD)
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     endif()
     get_module_name(${CMAKE_CURRENT_LIST_DIR})

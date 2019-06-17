@@ -56,6 +56,7 @@ class CmdData(sys_data.SysData):
         Returns:
             An initialized CmdData object
         '''
+        self.id = cmd_temp.get_id()
         self.template = cmd_temp
         self.arg_vals = cmd_args
 

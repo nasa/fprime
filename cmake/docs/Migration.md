@@ -125,7 +125,7 @@ cd ..
 
 ```
 mkdir build_ut
-cmake ../Ref -DPLATFORM=ut/Linux
+cmake ../Ref -DCMAKE_BUILD_TYPE=TESTING
 cd ..
 ```
 
