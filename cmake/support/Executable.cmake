@@ -53,6 +53,10 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
       "${EXECUTABLE_NAME}"
       "${SOURCE_FILES}" # Added to suppress warning if module only has autocode
   )
+  # CMake object type
+  if (NOT DEFINED FPRIME_OBJECT_TYPE)
+      set(FPRIME_OBJECT_TYPE "Executable")
+  endif()
   # Install the executable
   generate_module(${EXECUTABLE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
   install(TARGETS "${EXECUTABLE_NAME}"
