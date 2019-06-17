@@ -12,4 +12,4 @@ then
 fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 export PYTHONPATH="${BUILD_ROOT}/Fw/Python/src:${BUILD_ROOT}/Gds/src"
-python -m fprime_gds.executables.run_deployment "$@"
+python -m fprime_gds.executables.tcpserver "$@"
