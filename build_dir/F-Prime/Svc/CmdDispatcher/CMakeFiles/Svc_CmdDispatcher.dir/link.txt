@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_CmdDispatcher.a  CMakeFiles/Svc_CmdDispatcher.dir/CommandDispatcherImpl.cpp.o CMakeFiles/Svc_CmdDispatcher.dir/CommandDispatcherComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_CmdDispatcher.a

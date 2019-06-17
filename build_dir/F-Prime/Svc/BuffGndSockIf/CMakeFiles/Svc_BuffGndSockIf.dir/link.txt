@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_BuffGndSockIf.a  CMakeFiles/Svc_BuffGndSockIf.dir/BuffGndSockIfImpl.cpp.o CMakeFiles/Svc_BuffGndSockIf.dir/BuffGndSockIfComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_BuffGndSockIf.a

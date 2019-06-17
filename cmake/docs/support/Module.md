@@ -29,6 +29,7 @@ generated into a library.
 
 - **OBJ_NAME:** object name to add dependencies to.
 - **AUTOCODER_INPUT_FILES:** files to pass to the autocoder
+- **SOURCE_FILES:** source file inputs
 - **LINK_DEPS:** link-time dependecies like -lm or -lpthread
 - **MOD_DEPS:** CMake module dependencies
 

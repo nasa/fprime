@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_FileUplink.a  CMakeFiles/Svc_FileUplink.dir/FileUplink.cpp.o CMakeFiles/Svc_FileUplink.dir/File.cpp.o CMakeFiles/Svc_FileUplink.dir/Warnings.cpp.o CMakeFiles/Svc_FileUplink.dir/FileUplinkComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_FileUplink.a

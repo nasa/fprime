@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_PassiveConsoleTextLogger.a  CMakeFiles/Svc_PassiveConsoleTextLogger.dir/ConsoleTextLoggerImplCommon.cpp.o CMakeFiles/Svc_PassiveConsoleTextLogger.dir/Stub/PrintfLoggerImplStub.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_PassiveConsoleTextLogger.a

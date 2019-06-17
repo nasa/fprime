@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/Darwin/libRef_RecvBuffApp.a  CMakeFiles/Ref_RecvBuffApp.dir/RecvBuffComponentImpl.cpp.o CMakeFiles/Ref_RecvBuffApp.dir/PacketStatSerializableAc.cpp.o CMakeFiles/Ref_RecvBuffApp.dir/RecvBuffComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/Darwin/libRef_RecvBuffApp.a

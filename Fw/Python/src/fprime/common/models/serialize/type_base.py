@@ -37,6 +37,14 @@ class BaseType(object):
         Abstract getSize interface
         """
         raise AbstractMethodException("getSize")
+
+    def to_jsonable(self):
+        """
+        Converts this type to a JSON serializable object
+        """
+        if hasattr(self, "val"):
+            return {"value": self.val, "type": str(self)}
+        raise AbstractMethodException("to_jsonable")
 #
 #
 def deserialize(Class):
