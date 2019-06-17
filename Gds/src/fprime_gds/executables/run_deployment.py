@@ -5,6 +5,7 @@
 ####
 from __future__ import print_function
 import os
+import io
 import re
 import sys
 import time
@@ -223,6 +224,14 @@ def launch_process(cmd, stdout=None, stderr=None, name=None, pgroup=False):
     time.sleep(5)
     proc.poll()
     if proc.returncode is not None:
+        # Look for remaps in the stderr object
+        if stderr == subprocess.STDOUT:
+            stderr = stdout
+        # Check if stderr is a file that is readable, if so read it and output to stderr stream
+        if isinstance(stderr, io.TextIOWrapper) and stderr.seekable() and stderr.readable():
+            stderr.seek(0)
+            print(stderr.read(), file=sys.stderr)
+        # Regardless of sucessfully printing errors, print a known error and exit
         error_exit("Failed to start {0}".format(name), 1)
         raise Exception("FAILED TO EXIT")
     return proc
@@ -237,7 +246,7 @@ def launch_tts(port, address, logs):
     :return: process
     '''
     # Open log, and prepare to close it cleanly on exit
-    tts_log = open(os.path.join(logs, "ThreadedTCP.log"), 'w')
+    tts_log = open(os.path.join(logs, "ThreadedTCP.log"), 'w+')
     atexit.register(lambda: tts_log.close())
     # Launch the tcp server
     tts_cmd = ["python", "-u", "-m", "fprime_gds.executables.tcpserver", "--port", str(port), "--host", str(address)]
