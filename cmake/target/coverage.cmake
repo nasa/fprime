@@ -1,18 +1,39 @@
 ####
 # coverage.cmake:
 #
-# Coverage target adds in gcov endpoint for calculating the coverage of F prime modules.
-# This means that the following functions are defined:
+# Coverage target adds in gcov endpoint for calculating the coverage of F prime modules. This
+# coverage requires the system supply a `gcov` target and the code be built with the `TESTING`
+# build type.  This means the  following things to be setup:
+# 
+# 1. `gcov` must be available on the path
+# 2. `-DCMAKE_BUILD_TYPE=TESTING` must be supplied
+# 
+# Once the CMake build directory has been created the user can run the CMake targers
+# `<MODULE>_coverage` where <MODULE> is the name of the module to generate coverage for. These
+# _coverage targets perform the following steps:
 #
-# - `add_global_target`: global coverarge setup
-# - `add_module_target`: adds sub-targets for '<MODULE_NAME>_coverage'
+# 1. Build and run UT dependencies using the `<MODULE>_check` target
+# 2. Run the `gcov` program on the Module's source files
+# 3. Copy the .gcov reports into a "coverage" subdirectory of the module's source
+#
+# These targets can be run using the build system as shown in the example below:
+# 
+# **Example**
+# ```
+# make Svc_CmdDispatcher_Cmd
+# ```
+# **Note:** although a globale `coverage` target is created, it typically should not be used as
+# CTest provides better global coverage with the `Coverage` target.
+#
+# ## Detailed Function Desceiptions
+# 
+# The following functions are used to register the _coverage targets into the target system. They
+# are required for the system to register custom targets.
 ####
 ####
-# Dict function `add_global_target`:
+#  Function `add_global_target`:
 #
-# Add target for the `dict` custom target. Dictionaries are built-in targets, but they are defined
-# as custom targets. This handles the top-level dictionary target `dict` and registers the steps to
-# perform the generation of the target.  TARGET_NAME should be set to `dict`.
+#  Adds a global target. Note: only run for "TESTING" builds.
 #
 # - **TARGET_NAME:** target name to be generated
 ####
@@ -26,10 +47,7 @@ endfunction(add_global_target)
 ####
 # Dict function `add_module_target`:
 #
-# Adds a module-by-module target for procducing dictionaries. These dictionaries take the outputs
-# from the autocoder and copies them into the correct directory. These outputs are then handled as
-# part of the global `dict` target above.
-#
+# Creats each module's coverage targets.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
@@ -42,6 +60,13 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
     if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" OR NOT "${FPRIME_OBJECT_TYPE}" STREQUAL "Library")
         return()
     endif()
+    # Test for the 'gcov' program or bail with WARNING
+    find_program(GCOV_EXE "gcov")
+    if (DEFINED GCOV_EXE-NOTFOUND)
+        message(WARNING "Failed to find 'gcov' program for calculating coverage")
+        return()
+    endif()
+
     set(COV_FILES "")
     foreach(SRC_IN ${SOURCE_FILES};${AC_OUTPUTS})
         get_filename_component(EXTN ${SRC_IN} EXT)
@@ -56,7 +81,7 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
     add_custom_target(
         ${TARGET_NAME}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
-        COMMAND gcov -o CMakeFiles/${MODULE_NAME}.dir/ ${COV_FILES} 
+        COMMAND ${GCOV_EXE} -o CMakeFiles/${MODULE_NAME}.dir/ ${COV_FILES} 
         COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
     )
     add_dependencies(${TARGET_NAME} ${MODULE_NAME}_check)
