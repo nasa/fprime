@@ -1,8 +1,8 @@
 """
 predicates.py:
 
-This file contains basic predicates as well as event and telemetry predicates
-used by the gds_test_api.py
+This file contains basic predicates as well as event and telemetry predicates used by the
+gds_test_api.py. The predicates are organized by type and can be used to search histories.
 
 :author: koran
 """
@@ -121,8 +121,7 @@ class within_range_pred:
 
 class is_a_member_of:
     """
-    A predicate that evaluates if the argument is equivalent to any member in
-    the set
+    A predicate that evaluates if the argument is equivalent to any member in the set
     :param collection: To return true, the predicate must be called on an object that is equivalent to any object in this collection
     """
     def __init__(self, collection):
@@ -137,8 +136,7 @@ class is_a_member_of:
 
 class is_not_a_member_of:
     """
-    A predicate that evaluates if the argument is not equivalent to all
-    members in the set
+    A predicate that evaluates if the argument is not equivalent to all members in the set
     :param collection: To return true, the predicate must be called on an object that is not equivalent to any object in this collection
     """
     def __init__(self, collection):
@@ -157,8 +155,8 @@ class is_not_a_member_of:
 
 class invert:
     """
-    A predicate that negates a given predicate. This predicate can be used
-    like a NOT gate when combining predicates.
+    A predicate that negates a given predicate. This predicate can be used like a NOT
+    gate when combining predicates.
     :param pred: The predicate to be negated.
     """
     def __init__(self, pred):
@@ -173,7 +171,8 @@ class invert:
 
 class satisfies_all:
     """
-    A predicate that evaluates if the argument satisfies all predicates in the given list. This predicate can be used like an AND gate of N elements when combining predicates.
+    A predicate that evaluates if the argument satisfies all predicates in the given list.
+    This predicate can be used like an AND gate of N elements when combining predicates.
     :param pred_list: a list of predicates
     """
     def __init__(self, pred_list):
@@ -188,9 +187,8 @@ class satisfies_all:
 
 class satisfies_any:
     """
-    A predicate that evaluates if the argument satisfies any predicate in the
-    given list. This predicate can be used like an OR gate of N elements when
-    combining predicates.
+    A predicate that evaluates if the argument satisfies any predicate in the given list.
+    This predicate can be used like an OR gate of N elements when combining predicates.
     :param pred_list: a list of predicates
     """
     def __init__(self, pred_list):
@@ -208,8 +206,8 @@ class satisfies_any:
 
 class true_predicate:
     """
-    used by event predicate and telemetry predicate as a placeholder when some
-    predicates may not be specified.
+    used by event predicate and telemetry predicate as a placeholder when some predicates
+    may not be specified.
     """
     def __init__(self):
         pass
@@ -223,8 +221,8 @@ class true_predicate:
 
 class event_predicate:
     """
-    A predicate for specifying an EventData object from data_types.event_data. 
-    This predicate can be used to search a history
+    A predicate for specifying an EventData object from data_types.event_data. This
+    predicate can be used to search a history.
     :param id_pred: If specified, the object's id field must satisfy the given predicate for the telemetry predicate to evaluate to true.
     :param id_value: If specified, the object's value_obj field must satisfy the given predicate for the telemetry predicate to evaluate to true.
     :param time_pred: If specified, the object's time field must satisfy the given predicate for the telemetry predicate to evaluate to true.
@@ -245,8 +243,8 @@ class event_predicate:
 
 class telemetry_predicate:
     """
-    A predicate for specifying a ChData object from data_types.ch_data.
-    This predicate can be used to search a history
+    A predicate for specifying a ChData object from data_types.ch_data. This predicate
+    can be used to search a history.
     :param id_pred: If specified, the object's id field must satisfy the given predicate for the telemetry predicate to evaluate to true.
     :param id_value: If specified, the object's value_obj field must satisfy the given predicate for the telemetry predicate to evaluate to true.
     :param time_pred: If specified, the object's time field must satisfy the given predicate for the telemetry predicate to evaluate to true.

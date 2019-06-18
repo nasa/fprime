@@ -1,33 +1,37 @@
 """
 gds_test_api.py:
 
-This file contains basic asserts that can support integration tests on an FPrime deployment. 
-This API uses the standard pipeline to get access to commands, events, telemetry and dictionaries. 
+This file contains basic asserts that can support integration tests on an FPrime
+deployment. This API uses the standard pipeline to get access to commands, events,
+telemetry and dictionaries.
 
 :author: koran
 """
 
+
 class IntegrationTestAPI:
     """
-    Class used to collect basic assertions that would be used on a GDS Pipeline to carry out integration tests.
+    Class used to collect basic assertions that would be used on a GDS Pipeline to carry
+    out integration tests.
     :param pipeline: a pipeline object providing access to basic GDS functionality
     """
+
     def __init__(self, pipeline):
         self.pipeline = pipeline
-        # these histories are owned by the GDS and will not be modified by the Test API. 
+        # these are owned by the GDS and will not be modified by the test API.
         self.aggregate_command_history = pipeline.get_command_history()
         self.aggregate_telemetry_history = pipeline.get_telemetry_history()
         self.aggregate_event_history = pipeline.get_event_history()
 
-        # these histories are owned by IntegrationTestAPI and can be modified by the test API. 
-        #TODO implement test-case histories once they are supported by gds helper. 
+        # these histories are owned by the TestAPI and are modified by the API.
+        # TODO implement test-case histories once, supported by gds helper.
         self.command_history = None
         self.telemetry_history = None
         self.event_history = None
 
-    ###################################################################################
-    ##  History Functions
-    ###################################################################################
+    ######################################################################################
+    #   History Functions
+    ######################################################################################
     def get_command_test_history():
         """
         Accessor for IntegrationTestAPI's command history
@@ -51,38 +55,45 @@ class IntegrationTestAPI:
 
     def clear_histories(self, fsw_time_stamp=None):
         """
-        Clears the IntegrationTestAPI's histories. Because the command history is not correlated to a flight software timestamp, it will 
-        be cleared entirely. This function can be used to set up test case so that the IntegrationTestAPI's histories only contain objects received 
-        during that test.
-        Note: this will not clear user-created sub-histories nor the aggregate histories (histories owned by the gds)
-        :param fsw_time_stamp: If specified, event and telemetry histories will be cleared up until the timestamp. 
+        Clears the IntegrationTestAPI's histories. Because the command history is not
+        correlated to a flight software timestamp, it will be cleared entirely. This
+        function can be used to set up test case so that the IntegrationTestAPI's
+        histories only contain objects received during that test.Note: this will not
+        clear user-created sub-histories nor the aggregate histories (histories owned
+        by the gds)
+
+        :param fsw_time_stamp: If specified, event and telemetry histories will be cleared up until the timestamp.
         """
         pass
-        
-    ###################################################################################
-    ##  Command Asserts
-    ###################################################################################
+
+    ######################################################################################
+    #   Command Asserts
+    ######################################################################################
     def assert_send_command(self, command, args):
         """
-        Sends a command and asserts that the command was translated successfully. If the command is in conflict
-        with the flight dictionary, this will raise a test error. 
-        Note: this assert does not check that the command was received by flight software, only that the command
-        and arguments were valid with respect to the flight dictionary
+        Sends a command and asserts that the command was translated. If the command is in
+        conflict with the flight dictionary, this will raise a test error. Note: This
+        assert does not check that the command was  received by flight software, only that
+        the command and arguments were valid with respect to the flight dictionary.
+
         :param command: Either the command id or a command mnemonic to specify the type of command
         :param args: A list of command arguments to send
         :return: If the assert is successful, will return an instance of CmdData from data_types.cmd_data
         """
         pass
 
-    ###################################################################################
-    ##  Telemetry Functions
-    ###################################################################################
+    ######################################################################################
+    #   Telemetry Functions
+    ######################################################################################
     def get_telemetry_predicate(self, channel=None, val_pred=None, fsw_time_pred=None):
         """
-        This function will translate the channel ID, and construct a telemetry_predicate object. It is used as a 
-        helper by the IntegrationTestAPI, but could also be helpful to a user of the test API. If channel is 
-        already an instance of channel_predicate, it will be returned immediately. The provided implementation of 
-        telemetry_predicate evaluates true when all specified constraints are satisfied. If a specific constraint isn't specified, then
+        This function will translate the channel ID, and construct a telemetry_predicate
+        object. It is used as a helper by the IntegrationTestAPI, but could also be
+        helpful to a user of the test API. If channel is already an instance of
+        channel_predicate, it will be returned immediately. The provided implementation
+        of telemetry_predicate evaluates true when all specified constraints are
+        satisfied. If a specific constraint isn't specified, then it will be ignored.
+
         :param channel: If specified, a channel id, channel mnemonic, or a predicate to call on the channel field to specify the telemetry channel
         :param val_pred: If specified, the telemetry update must have a value that satisfies this predicate.
         :param fsw_time_pred: If specified, the telemetry update must have a  timestamp that satisfies this predicate.
@@ -90,39 +101,50 @@ class IntegrationTestAPI:
         """
         pass
 
-    def await_telemetry(self, channel, val_pred=None, fsw_time_pred=None, history=None, timeout=5):
+    def await_telemetry(
+        self, channel, val_pred=None, fsw_time_pred=None, history=None, timeout=5
+    ):
         """
-        This function will first search the history for a telemetry update that satisfies the specified constraints. 
-        Then, if no update was found, await_telemetry will wait for a valid telemetry update until the timeout. 
+        This function will first search the history for a telemetry update that satisfies
+        the specified constraints. Then, if no update was found, await_telemetry will
+        wait for a valid telemetry update until the timeout.
+
         :param channel: A channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
         :param val_pred: If specified, the telemetry update must have a value that satisfies this predicate.
         :param fsw_time_pred: If specified, the telemetry update must have a flight software timestamp that satisfies this predicate.
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history.
-        :param timeout: The maximum time to wait for 
+        :param timeout: The maximum time to wait for
         :return: If the search is successful, will return the instance of ChData from data_types.ch_data that satisfied the assert, otherwise will return None.
         """
         pass
 
     def await_telemetry_sequence(self, channels, history=None, timeout=5):
         """
-        This function will first search the history then await future updates to find every specified channel in a sequence. 
-        Note: This function will enforce that each element of the sequence comes in order with respect to the flight software timestamps.
-        Note: This function will return a list of what it finds regardless of whether or not it finds all elements. 
+        This function will first search the history then await future updates to find
+        every specified channel in a sequence. Note: This function will enforce that each
+        element of the sequence comes in order with respect to the flight software
+        timestamps. Note: This function will return a list of what it finds regardless of
+        whether or not it finds all elements.
+
         :param channels: A list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
-        :param timeout: The maximum time to wait for 
-        :return: will return the sequence of ChData objects to satisfy the search from data_types.ch_data. If the sequence was only partially satisfied, then it will return that sub-list. 
+        :param timeout: The maximum time to wait for
+        :return: will return the sequence of ChData objects to satisfy the search from data_types.ch_data. If the sequence was only partially satisfied, then it will return that sub-list.
         """
         pass
 
-    ###################################################################################
-    ##  Telemetry Asserts
-    ###################################################################################
-    def assert_receive_telemetry(self, channel, val_pred=None, fsw_time_pred=None, history=None, timeout=0):
+    ######################################################################################
+    #   Telemetry Asserts
+    ######################################################################################
+    def assert_receive_telemetry(
+        self, channel, val_pred=None, fsw_time_pred=None, history=None, timeout=0
+    ):
         """
-        Asserts that a specified telemetry update was received. This function will first search the history then await future 
-        updates to find every specified channel in a sequence. If no valid update was received, then 
-        received before the timeout, this call will assert failure.
+        Asserts that a specified telemetry update was received. This function will first
+        search the history then await future updates to find every specified channel in a
+        sequence. If no valid update was received, then received before the timeout, this
+        call will assert failure.
+
         :param channel: Either a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel.
         :param val_pred: If specified, a valid telemetry update must have a value that satisfies this predicate.
         :param fsw_time_pred: If specified, a valid telemetry update must have a flight software timestamp that satisfies this predicate.
@@ -134,23 +156,29 @@ class IntegrationTestAPI:
 
     def assert_telemetry_sequence(self, channels, history=None, timeout=0):
         """
-        Asserts that a sequence of Telemetry updates was received. This function will first search the history then await future 
-        updates to find every specified channel update in a sequence. 
-        Note: This function will enforce that each element of the sequence comes in order with respect to the flight software 
-        timestamps. If the specification of timestamp predicates is not sequential, the timestamps will likely fail. It is 
-        reccomended (but not enforced) not to specify timestamps for this assert.
+        Asserts that a sequence of Telemetry updates was received. This function will
+        first search the history then await future updates to find every specified
+        channel update in a sequence. Note: This function will enforce that each element
+        of the sequence comes in order with respect to the flight software timestamps. If
+        the specification of timestamp predicates is not sequential, the timestamps will
+        likely fail. It is reccomended (but not enforced) not to specify timestamps for
+        this assert.
+
         :param channels: A list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
-        :param timeout: The maximum time to wait for 
+        :param timeout: The maximum time to wait for
         :return: If the assert is successful, will return the sequence of ChData objects to satisfy the search from data_types.ch_data
         """
         pass
 
-    def assert_telemetry_count(self, count_pred, channels=None, history=None, timeout=0):
+    def assert_telemetry_count(
+        self, count_pred, channels=None, history=None, timeout=0
+    ):
         """
-        An assert on the number of telemetry updates received. If the history doesn't have the correct update 
-        count, the call will await until a correct count is achieved or the timeout, at which point it will 
-        assert failure.
+        An assert on the number of telemetry updates received. If the history doesn't
+        have the correct update count, the call will await until a correct count is
+        achieved or the timeout, at which point it will assert failure.
+
         :param count_pred: A predicate to determine whether the correct amount has been received.
         :param channels: A channel specifier or a list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel. If specified, an event will only be counted if it satisfies at least one channel on this list.
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
@@ -159,17 +187,19 @@ class IntegrationTestAPI:
         """
         pass
 
-    ###################################################################################
-    ##  Event Functions
-    ###################################################################################
+    ######################################################################################
+    #   Event Functions
+    ######################################################################################
     def get_event_predicate(self, event=None, args=None, fsw_time_pred=None):
         """
-        This function will translate the event ID, and construct an event_predicate object. It is used as a 
-        helper by the IntegrationTestAPI, but could also be helpful to a user of the test API. If event is 
-        already an instance of event_predicate, it will be returned immediately. The provided implementation of 
-        event_predicate evaluates true if and only if all specified constraints are satisfied. If a specific 
-        constraint isn't specified, then it will not effect the outcome. If no constraints are specified, the
-        predicate will always return true. 
+        This function will translate the event ID, and construct an event_predicate
+        object. It is used as a helper by the IntegrationTestAPI, but could also be
+        helpful to a user of the test API. If event is already an instance of
+        event_predicate, it will be returned immediately. The provided implementation of
+        event_predicate evaluates true if and only if all specified constraints are
+        satisfied. If a specific constraint isn't specified, then it will not effect the
+        outcome. If no constraints are specified, the predicate will always return true.
+
         :param event: If specified, either the event id, an event mnemonic, or an event_predicate to specify the event
         :param args: If specified, a valid event message must have arguments matching the given list of args. Include None to ignore an element.
         :param fsw_time_pred: If specified, the event must have a timestamp that satisfies this predicate.
@@ -177,39 +207,50 @@ class IntegrationTestAPI:
         """
         pass
 
-    def await_event(self, event, args=None, fsw_time_pred=None, history=None, timeout=5):
+    def await_event(
+        self, event, args=None, fsw_time_pred=None, history=None, timeout=5
+    ):
         """
-        This function will first search the history for an event that satisfies the specified constraints. 
-        Then, if no message was found, await_event will wait for a valid event message until the timeout. 
+        This function will first search the history for an event that satisfies the
+        specified constraints. Then, if no message was found, await_event will wait for a
+        valid event message until the timeout.
+
         :param event: TODO
         :param args: If specified, the event message must have arguments matching the given list of args. Include None to ignore an element.
         :param fsw_time_pred: If specified, the telemetry update must have a flight software timestamp that satisfies this predicate.
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history.
-        :param timeout: The maximum time to wait for 
+        :param timeout: The maximum time to wait for
         :return: If the search is successful, will return the instance of EventData from data_types.event_data that satisfied the assert, otherwise will return None.
         """
         pass
 
     def await_event_sequence(self, command, args, events, timeout=5):
         """
-        This function will first search the history then await future updates to find every specified event in a sequence. 
-        Note: This function will enforce that each element of the sequence comes in order with respect to the flight software timestamps.
-        Note: This function will return a list of what it finds regardless of whether or not it finds all elements. 
+        This function will first search the history then await future updates to find
+        every specified event in a sequence. Note: This function will enforce that each
+        element of the sequence comes in order with respect to the flight software
+        timestamps. Note: This function will return a list of what it finds regardless of
+        whether or not it finds all elements.
+
         :param channels: TODO
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
-        :param timeout: The maximum time to wait for 
-        :return: will return the sequence of EventData objects to satisfy the search from data_types.event_data. If the sequence was only partially satisfied, then a sub-list will be returned. 
+        :param timeout: The maximum time to wait for
+        :return: will return the sequence of EventData objects to satisfy the search from data_types.event_data. If the sequence was only partially satisfied, then a sub-list will be returned.
         """
         pass
 
-    ###################################################################################
-    ##  Event Asserts
-    ###################################################################################
-    def assert_receive_event(self, event, args=None, fsw_time_pred=None, history=None, timeout=0):
+    ######################################################################################
+    #   Event Asserts
+    ######################################################################################
+    def assert_receive_event(
+        self, event, args=None, fsw_time_pred=None, history=None, timeout=0
+    ):
         """
-        Asserts that a specified event was received. This function will search the current history, and, 
-        if necessary, wait for an message that satisfies the specified constraints. If no valid event was 
-        received before the timeout, this call will assert failure.
+        Asserts that a specified event was received. This function will search the
+        current history, and, if necessary, wait for an message that satisfies the
+        specified constraints. If no valid event was received before the timeout,
+        this call will assert failure.
+
         :param event: Either the event id, an event mnemonic, or an event_predicate to specify the event type
         :param args: If specified, a valid event message must have arguments matching the given list of args. Include None to ignore an element.
         :param fsw_time_pred: If specified, a valid event must have a flight software timestamp that satisfies this predicate.
@@ -227,8 +268,10 @@ class IntegrationTestAPI:
 
     def assert_event_count(self, count_pred, events=None, history=None, timeout=0):
         """
-        An assert on the number of events received. If the history doesn't have the correct event count, the
-        call will await until a correct count is achieved or the timeout at which point it will assert failure.
+        An assert on the number of events received. If the history doesn't have the
+        correct event count, the call will await until a correct count is achieved or the
+        timeout at which point it will assert failure.
+
         :param count_pred: A predicate to determine whether the correct amount has been received.
         :param event_list: TODO
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
@@ -237,18 +280,19 @@ class IntegrationTestAPI:
         """
         pass
 
-    ###################################################################################
-    ##  Combined Functions
-    ###################################################################################
+    ######################################################################################
+    #   Combined Functions
+    ######################################################################################
     def send_and_await_telemetry(self, command, args, channels, timeout=5):
         """
-        Sends the specified command and awaits the specified telemetry update or sequence of updates.
-        This function will enforce that each element of the sequence comes in order with respect to the 
-        flight software timestamps. If the specification of timestamp predicates is not sequential, the 
-        timestamps will likely fail. 
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Sends the specified command and awaits the specified telemetry update or sequence
+        of updates. This function will enforce that each element of the sequence comes in
+        order with respect to the flight software timestamps. If the specification of
+        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
+        is reccomended (but not enforced) not to specify timestamps for this assert.
+
         :param command: Either the command id or a command mnemonic to specify the type of command
-        :param args: A list of command arguments to send 
+        :param args: A list of command arguments to send
         :param channels: Either a single channel specifier, or a list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
         :param timeout: The maximum time to wait for
         :return: If the search is successful, will return the list of ChData objects to satisfy the search from data_types.ch_data, otherwise will return None.
@@ -257,14 +301,15 @@ class IntegrationTestAPI:
 
     def send_and_await_event(self, command, args, events, timeout=5):
         """
-        Sends the specified command and awaits the specified event message or sequence of messages. 
-        This function will enforce that each element of the sequence comes in order with respect to the
-        flight software timestamps. If the specification of timestamp predicates is not sequential, the 
-        timestamps will likely fail. 
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Sends the specified command and awaits the specified event message or sequence of
+        messages. This function will enforce that each element of the sequence comes in
+        order with respect to the flight software timestamps. If the specification of
+        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
+        is reccomended (but not enforced) not to specify timestamps for this assert.
+
         :param command: Either the command id or a command mnemonic to specify the type of command
-        :param args: A list of command arguments to send 
-        :param events:  Either a single event specifier, or a list of event specifiers, where an event specifier is an event id, event mnemonic, or an event_predicate to specify the type of event 
+        :param args: A list of command arguments to send
+        :param events:  Either a single event specifier, or a list of event specifiers, where an event specifier is an event id, event mnemonic, or an event_predicate to specify the type of event
         :param timeout: The maximum time to wait for
         :return: If the search is successful, will return the instance of EventData from data_types.event_data, otherwise will return None.
         """
