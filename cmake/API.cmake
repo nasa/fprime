@@ -383,7 +383,7 @@ function(register_fprime_ut)
     elseif(DEFINED UT_NAME)
         set(UT_NAME ${UT_NAME})
     else()
-    	set(UT_NAME "${MODULE_NAME}_exe")
+        set(UT_NAME "${MODULE_NAME}_ut_exe")
     endif()
     # SOURCE_FILES is supplied as the first positional -OR- as the list 'SOURCE_FILES'
     if (${ARGC} GREATER 1)

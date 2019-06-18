@@ -46,7 +46,6 @@ EXPECTED = [
     os.path.join("lib", platform.system(), "libSvc_CmdDispatcher.a"),
     os.path.join("lib", platform.system(), "libFw_Log.a"),
     os.path.join("lib", platform.system(), "libFw_Tlm.a"),
-    os.path.join("lib", platform.system(), "libgtest.a"),
     os.path.join("lib", platform.system(), "libOs.a"),
     os.path.join("lib", platform.system(), "libRef_SignalGen.a"),
     os.path.join("lib", platform.system(), "libSvc_Sched.a"),
