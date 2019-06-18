@@ -38,7 +38,6 @@
 # ```
 # project(Ref C CXX)
 # cmake_minimum_required(VERSION 3.5)
-# set(CMAKE_BUILD_TYPE DEBUG)
 # ```
 #
 # ### Section 2: Include F prime Core Build System
@@ -87,7 +86,6 @@
 project(<OPTIONAL> C CXX)
 cmake_minimum_required(VERSION 3.5)
 # Optional: set CMake build type
-set(CMAKE_BUILD_TYPE DEBUG)
 
 ##
 # Section 2: F´ Core

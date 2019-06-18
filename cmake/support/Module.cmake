@@ -151,7 +151,6 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
       get_module_name(${MOD_DEP})
       add_dependencies(${OBJ_NAME} ${MODULE_NAME})
       target_link_libraries(${OBJ_NAME} ${MODULE_NAME})
-      add_dict_deps(${OBJ_NAME} ${MODULE_NAME})
   endforeach()
   
   # Remove empty source from target

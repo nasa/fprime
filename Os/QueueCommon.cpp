@@ -1,4 +1,5 @@
 #include <Os/Queue.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <string.h>
 
 namespace Os {
@@ -36,6 +37,13 @@ namespace Os {
             return recvStat;
         }
     }
+
+    Queue::QueueStatus Queue::create(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
+        FW_ASSERT(depth > 0, depth);
+        FW_ASSERT(msgSize > 0, depth);
+        return createInternal(name, depth, msgSize);
+    }
+
 
 #if FW_QUEUE_REGISTRATION
 

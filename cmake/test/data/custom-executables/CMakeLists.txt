@@ -19,7 +19,6 @@
 # project definition.
 ##
 project(UT-Custom-Execs C CXX)
-set(CMAKE_BUILD_TYPE DEBUG)
 cmake_minimum_required(VERSION 3.5)
 
 ##
@@ -49,5 +48,6 @@ set(SOURCE_FILES
 # Note: supply non-explicit dependencies here
 set(MOD_DEPS
     Os
+    Fw/Logger
 )
 register_fprime_executable()

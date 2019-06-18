@@ -224,7 +224,7 @@ management and F Prime autocoding capabilities. This requires three variables de
 unit test name, autocoding and source inputs for the unit test, and (optionally) any
 non-standard link dependencies.
 
-**Note:** This is ONLY run when the platform sets UT_BUILD to TRUE
+**Note:** This is ONLY run when the build type is  TESTING
 
 Required variables (defined in calling scope):
 

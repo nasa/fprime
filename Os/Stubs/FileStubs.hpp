@@ -21,21 +21,21 @@ namespace Os {
     // read in a sequence of reads to be modified while allowing previous
     // ones to complete normally.
 
-    typedef bool (*OpenIntercepter)(Os::File::Status &status, const char* fileName, Os::File::Mode mode, void* ptr);
-    typedef bool (*ReadIntercepter)(Os::File::Status &status, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr);
-    typedef bool (*WriteIntercepter)(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
-    typedef bool (*SeekIntercepter)(Os::File::Status &status, NATIVE_INT_TYPE offset, bool absolute, void* ptr);
+    typedef bool (*OpenInterceptor)(Os::File::Status &status, const char* fileName, Os::File::Mode mode, void* ptr);
+    typedef bool (*ReadInterceptor)(Os::File::Status &status, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr);
+    typedef bool (*WriteInterceptor)(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
+    typedef bool (*SeekInterceptor)(Os::File::Status &status, NATIVE_INT_TYPE offset, bool absolute, void* ptr);
 
-    void registerReadInterceptor(ReadIntercepter funcPtr, void* ptr);
+    void registerReadInterceptor(ReadInterceptor funcPtr, void* ptr);
     void clearReadInterceptor(void);
 
-    void registerWriteInterceptor(WriteIntercepter funcPtr, void* ptr);
+    void registerWriteInterceptor(WriteInterceptor funcPtr, void* ptr);
     void clearWriteInterceptor(void);
 
-    void registerOpenInterceptor(OpenIntercepter funcPtr, void* ptr);
+    void registerOpenInterceptor(OpenInterceptor funcPtr, void* ptr);
     void clearOpenInterceptor(void);
 
-    void registerSeekInterceptor(SeekIntercepter funcPtr, void* ptr);
+    void registerSeekInterceptor(SeekInterceptor funcPtr, void* ptr);
     void clearSeekInterceptor(void);
 
     void setLastError(NATIVE_INT_TYPE error);
