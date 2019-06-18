@@ -200,7 +200,7 @@ class StandardPipeline:
         """
         Sends commands to the encoder and history.
         :param command: command id from dictionary to get command template
-        :paran args: arguments to process
+        :param args: arguments to process
         """
         command_template = self.command_dict[command]
         cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
@@ -254,3 +254,34 @@ class StandardPipeline:
         :return: command history
         """
         return self.command_hist
+
+    ###########################################################################
+    #   Subscriber functions
+    ###########################################################################
+    def register_event_history(self, history):
+        """
+        Registers a history with the event decoder.
+        """
+        self.event_decoder.register(history)
+
+    def remove_event_history(self, history):
+        """
+        Removes a history from the event decoder. Will raise an error if the
+        history was not previously registered.
+        """
+        # TODO: add removal functionality to the decoders.
+        pass
+
+    def register_telemetry_history(self, history):
+        """
+        Registers a history with the telemetry decoder.
+        """
+        self.channel_decoder.register(history)
+
+    def remove_telemetry_history(self, history):
+        """
+        Removes a history from the telemetry decoder. Will raise an error if the
+        history was not previously registered.
+        """
+        # TODO: add removal functionality to the decoders.
+        pass
