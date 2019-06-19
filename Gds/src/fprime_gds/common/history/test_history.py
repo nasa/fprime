@@ -1,7 +1,7 @@
 """
 test_history.py:
 
-A chronological history that relies on predicates to provide filtering,
+A history that relies on predicates to provide filtering,
 searching, and datastructure operations
 
 :author: koran
@@ -21,7 +21,8 @@ class TestHistory:
     def __init__(self, filter_pred=None, log=None):
         """
         Constructor used to set-up history and, optionally, a log file
-        :param filter_pred: If specified, the history will ignore (drop) objects that don't satisfy the filter predicate.
+        :param filter_pred: If specified, the history will ignore (drop) objects that
+            don't satisfy the filter predicate.
         :param log: If specified, the history will log objects to the file destination.
         """
         pass
@@ -36,7 +37,8 @@ class TestHistory:
     def retrieve(self, start_pred=None):
         """
         Retrieve objects from this history
-        :param start_pred: If specified, will return a list of only the first object to satisfy this predicate and all following objects
+        :param start_pred: If specified, will return a list of only the first object to
+            satisfy this predicate and all following objects
         :return: a list of objects
         """
         return self.objects
@@ -44,7 +46,8 @@ class TestHistory:
     def clear(self, start_pred=None):
         """
         Clears objects from history
-        :param start_pred: If specified, will clear all objects before the first to satisfy the start_predicate
+        :param start_pred: If specified, will clear all objects before the first to
+            satisfy the start_predicate
         """
         pass
 
