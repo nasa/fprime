@@ -104,9 +104,19 @@ class ConfigManager(configparser.SafeConfigParser):
         self.__prop['schema']["deployment"]             = '/Autocoders/Python/schema/default/topology_schema.rng'
         self.__prop['schema']["internal_interfaces"]    = '/Autocoders/Python/schema/default/internal_interface_schema.rng'
         self.__prop['schema']["interface"]              = '/Autocoders/Python/schema/default/interface_schema.rng'
-        self.__prop['schema']["serializable"]              = '/Autocoders/Python/schema/default/serializable_schema.rng'
-        self.__prop['schema']["parameters"]              = '/Autocoders/Python/schema/default/parameters_schema.rng'
+        self.__prop['schema']["serializable"]           = '/Autocoders/Python/schema/default/serializable_schema.rng'
+        self.__prop['schema']["parameters"]             = '/Autocoders/Python/schema/default/parameters_schema.rng'
+        self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
         self._setSectionDefaults('schema')
+        ################################################################
+        # Schematron parameters here.
+        ################################################################
+        self.__prop['schematron'] = dict()
+        self.__prop['schematron']["test"]               = '/Autocoders/Python/schema/default/test_schematron.rng'
+        self.__prop['schematron']["chan_id"]            = '/Autocoders/Python/schema/default/channel_id_schematron.rng'
+        self.__prop['schematron']["cmd_op"]             = '/Autocoders/Python/schema/default/command_op_schematron.rng'
+        self.__prop['schematron']["evr_id"]             = '/Autocoders/Python/schema/default/event_id_schematron.rng'
+        self._setSectionDefaults('schematron')
         ################################################################
         # component parameters here.
         ################################################################

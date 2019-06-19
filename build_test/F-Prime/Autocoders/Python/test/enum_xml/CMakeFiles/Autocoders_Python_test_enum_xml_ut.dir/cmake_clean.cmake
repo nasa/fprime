@@ -1,0 +1,22 @@
+file(REMOVE_RECURSE
+  "ExampleEnumAc.cpp"
+  "ExampleEnumAc.hpp"
+  "ExampleEnumSerializableAc.cpp"
+  "ExampleEnumSerializableAc.hpp"
+  "ExampleEnumPortAc.cpp"
+  "ExampleEnumPortAc.hpp"
+  "ExampleEnumComponentAc.cpp"
+  "ExampleEnumComponentAc.hpp"
+  "."
+  "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o"
+  "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o"
+  "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o"
+  "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o"
+  "../../../../../lib/Darwin/libAutocoders_Python_test_enum_xml_ut.pdb"
+  "../../../../../lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

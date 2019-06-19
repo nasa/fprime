@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_FileManager.a  CMakeFiles/Svc_FileManager.dir/FileManager.cpp.o CMakeFiles/Svc_FileManager.dir/FileManagerComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_FileManager.a

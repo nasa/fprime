@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_LinuxTimer.a  CMakeFiles/Svc_LinuxTimer.dir/LinuxTimerComponentImplTaskDelay.cpp.o CMakeFiles/Svc_LinuxTimer.dir/LinuxTimerComponentImplCommon.cpp.o CMakeFiles/Svc_LinuxTimer.dir/LinuxTimerComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_LinuxTimer.a

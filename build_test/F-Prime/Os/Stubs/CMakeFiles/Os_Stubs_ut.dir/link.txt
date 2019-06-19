@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libOs_Stubs_ut.a  CMakeFiles/Os_Stubs_ut.dir/Linux/FileStub.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libOs_Stubs_ut.a

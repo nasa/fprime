@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Log.a  CMakeFiles/Fw_Log.dir/LogBuffer.cpp.o CMakeFiles/Fw_Log.dir/LogPacket.cpp.o CMakeFiles/Fw_Log.dir/LogString.cpp.o CMakeFiles/Fw_Log.dir/TextLogString.cpp.o CMakeFiles/Fw_Log.dir/LogPortAc.cpp.o CMakeFiles/Fw_Log.dir/LogTextPortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Log.a

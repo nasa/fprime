@@ -37,7 +37,19 @@ namespace ${namespace} {
 
     typedef enum {
 #for $item_name,$item_value,$item_comment in $items_list:
-        ${item_name} = ${item_value},  //!< ${item_comment}
+#if not $item_value == ""
+#if not item_comment == ""
+    ${item_name} = ${item_value}, //!< ${item_comment}
+#else
+    ${item_name} = ${item_value},
+#end if
+#else
+#if not item_comment == ""
+    ${item_name}, //!< ${item_comment}
+#else
+    ${item_name},
+#end if
+#end if
 #end for
         } t;
   

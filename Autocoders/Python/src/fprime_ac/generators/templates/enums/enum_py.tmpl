@@ -12,7 +12,11 @@ def ${name}():
     "${name}",
     {
 #for $item_name,$item_value,$item_comment in $items_list:
+#if not $item_value == ""
       "${item_name}":${item_value},
+#else
+    "${item_name}",
+#end if
 #end for
     }
   )

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_Health.a  CMakeFiles/Svc_Health.dir/HealthComponentImpl.cpp.o CMakeFiles/Svc_Health.dir/Stub/HealthComponentStubChecks.cpp.o CMakeFiles/Svc_Health.dir/HealthComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_Health.a

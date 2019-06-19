@@ -21,6 +21,7 @@
 // ======================================================================
 
 \#include <string.h>
+\#include <limits.h>
 \#include "Fw/Types/Assert.hpp"
 \#include "${name}EnumAc.hpp"
 
@@ -57,12 +58,58 @@ namespace ${namespace} {
   
   const ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
   {
+#for $item_name,$item_value,$item_comment in $items_list:
+#if not $item_value == ""
+#set $manual_values = True
+#else
+#set $manual_values = False
+#end if
+#end for
+#if $manual_values == True
+    FW_ASSERT(#slurp
+#set $value_iter = 0
+#for $item_name,$item_value,$item_comment in $items_list:
+#if $value_iter == len($items_list) - 1
+a == $item_value#slurp
+#else
+a == $item_value || #slurp
+#end if
+#set $value_iter = $value_iter + 1
+#end for
+, static_cast<t>(a));
+#else
+    FW_ASSERT(a > 0 && a <= $max_value, static_cast<t>(a));
+#end if
     this->e = static_cast<t>(a);
     return *this;
   }
   
   const ${name}& ${name} :: operator=(const NATIVE_UINT_TYPE a)
   {
+#for $item_name,$item_value,$item_comment in $items_list:
+#if not $item_value == ""
+#set $manual_values = True
+#else
+#set $manual_values = False
+#end if
+#end for
+#if $manual_values == True
+    FW_ASSERT(#slurp
+#set $value_iter = 0
+#for $item_name,$item_value,$item_comment in $items_list:
+#if int($item_value) > -1
+#if $value_iter == len($items_list) - 1
+a == $item_value#slurp
+#else
+a == $item_value || #slurp
+#end if
+#end if
+#set $value_iter = $value_iter + 1
+#end for
+, static_cast<t>(a));
+#else
+    FW_ASSERT(a > 0 && a <= $max_value, static_cast<t>(a));
+#end if
     this->e = static_cast<t>(a);
     return *this;
   }

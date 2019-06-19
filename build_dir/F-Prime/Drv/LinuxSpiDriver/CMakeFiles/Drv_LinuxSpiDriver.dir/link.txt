@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_LinuxSpiDriver.a  CMakeFiles/Drv_LinuxSpiDriver.dir/LinuxSpiDriverComponentImplCommon.cpp.o CMakeFiles/Drv_LinuxSpiDriver.dir/LinuxSpiDriverComponentImplStub.cpp.o CMakeFiles/Drv_LinuxSpiDriver.dir/LinuxSpiDriverComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_LinuxSpiDriver.a

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../../lib/Darwin/libFw_SerializableFile_test_TestSerializable_ut.a  CMakeFiles/Fw_SerializableFile_test_TestSerializable_ut.dir/TestSerializableAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../../lib/Darwin/libFw_SerializableFile_test_TestSerializable_ut.a

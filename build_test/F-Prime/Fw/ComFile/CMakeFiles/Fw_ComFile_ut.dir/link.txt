@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_ComFile_ut.a  CMakeFiles/Fw_ComFile_ut.dir/FileBuffer.cpp.o CMakeFiles/Fw_ComFile_ut.dir/FilePacket.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_ComFile_ut.a

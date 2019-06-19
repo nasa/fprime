@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_ComLogger_ut.a  CMakeFiles/Svc_ComLogger_ut.dir/ComLogger.cpp.o CMakeFiles/Svc_ComLogger_ut.dir/ComLoggerComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_ComLogger_ut.a

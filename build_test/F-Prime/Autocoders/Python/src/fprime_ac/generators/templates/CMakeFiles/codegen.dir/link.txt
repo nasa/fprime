@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../../../../lib/Darwin/libcodegen.a  CMakeFiles/codegen.dir/__/__/__/__/__/__/cmake/support/src/empty.c.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../../../../lib/Darwin/libcodegen.a

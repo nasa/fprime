@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Port.a  CMakeFiles/Fw_Port.dir/InputPortBase.cpp.o CMakeFiles/Fw_Port.dir/InputSerializePort.cpp.o CMakeFiles/Fw_Port.dir/OutputPortBase.cpp.o CMakeFiles/Fw_Port.dir/OutputSerializePort.cpp.o CMakeFiles/Fw_Port.dir/PortBase.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Port.a

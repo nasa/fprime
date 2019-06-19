@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Tlm.a  CMakeFiles/Fw_Tlm.dir/TlmBuffer.cpp.o CMakeFiles/Fw_Tlm.dir/TlmPacket.cpp.o CMakeFiles/Fw_Tlm.dir/TlmString.cpp.o CMakeFiles/Fw_Tlm.dir/TlmPortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Tlm.a

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_enum1port_ut.a  CMakeFiles/Autocoders_Python_test_enum1port_ut.dir/DrvTimingSignalPortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_enum1port_ut.a

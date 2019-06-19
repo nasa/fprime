@@ -23,7 +23,8 @@ BASIC_DEPENDENCIES = {
     "events":       ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Log"],
     "telemetry":    ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Tlm"],
     "parameters":   ["Fw_Cfg", "Fw_Types", "Fw_Prm"],
-    "internal_interfaces": []
+    "internal_interfaces": [],
+    "enum": []
 }
 # Component type importations
 KIND_DEPENDENCIES = {
@@ -101,7 +102,7 @@ def print_fprime_dependencies(input_file, current_library, import_base):
 def read_fprime_import(import_type, root):
     """
     Read an FPrime dependency port/type. These are typically ports, serializables, and components.
-    :param import_type: "import_port_type", "import_component_type", "import_serializable_type"
+    :param import_type: "import_port_type", "import_component_type", "import_serializable_type", "import_enum_type"
     :param root: root XML to parse
     :return: dependency mined from this item
     """
@@ -129,7 +130,7 @@ def read_xml_file(input_file, import_base):
     if kind in KIND_DEPENDENCIES:
         dependencies.update(KIND_DEPENDENCIES[kind])
     # Import component/serialzable/port types
-    for import_type in ["import_port_type", "import_component_type", "import_serializable_type", "include_header"]:
+    for import_type in ["import_port_type", "import_component_type", "import_serializable_type", "include_header", "import_enum_type"]:
         dependencies.update(read_fprime_import(import_type, root))
     # Other items based on what tags are declared here specifically
     for extra in BASIC_DEPENDENCIES.keys():

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../lib/Darwin/libCFDP_Checksum_GTest_ut.a  CMakeFiles/CFDP_Checksum_GTest_ut.dir/Checksums.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../lib/Darwin/libCFDP_Checksum_GTest_ut.a

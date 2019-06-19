@@ -8,6 +8,8 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/PacketStatSerializableAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/PacketRecvStatusEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SchemaTest.xml"
   "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
 )
 set(MOD_DEPS "")

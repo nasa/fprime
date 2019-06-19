@@ -1,0 +1,2265 @@
+Start testing: Jun 19 07:47 PDT
+----------------------------------------------------------
+1/64 Testing: Autocoders_Python_templates_ut_exe
+1/64 Test: Autocoders_Python_templates_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_templates_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/templates
+"Autocoders_Python_templates_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_templates_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_templates_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/64 Testing: Autocoders_Python_test_command_multi_inst_ut_exe
+2/64 Test: Autocoders_Python_test_command_multi_inst_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_command_multi_inst_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command_multi_inst
+"Autocoders_Python_test_command_multi_inst_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_command_multi_inst_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_command_multi_inst_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/64 Testing: Autocoders_Python_test_command_res_ut_exe
+3/64 Test: Autocoders_Python_test_command_res_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_command_res_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command_res
+"Autocoders_Python_test_command_res_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from Test
+[ RUN      ] Test.CmdResidual
+[       OK ] Test.CmdResidual (0 ms)
+[----------] 1 test from Test (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_command_res_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_command_res_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/64 Testing: Autocoders_Python_test_command_string_ut_exe
+4/64 Test: Autocoders_Python_test_command_string_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_command_string_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command_string
+"Autocoders_Python_test_command_string_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_command_string_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_command_string_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/64 Testing: Autocoders_Python_test_command_tester_ut_exe
+5/64 Test: Autocoders_Python_test_command_tester_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_command_tester_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command_tester
+"Autocoders_Python_test_command_tester_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_command_tester_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_command_tester_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/64 Testing: Autocoders_Python_test_command1_ut_exe
+6/64 Test: Autocoders_Python_test_command1_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_command1_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command1
+"Autocoders_Python_test_command1_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_command1_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_command1_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/64 Testing: Autocoders_Python_test_command2_ut_exe
+7/64 Test: Autocoders_Python_test_command2_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_command2_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command2
+"Autocoders_Python_test_command2_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from Test
+[ RUN      ] Test.Miscellaneous
+[       OK ] Test.Miscellaneous (0 ms)
+[----------] 1 test from Test (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_command2_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_command2_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/64 Testing: Autocoders_Python_test_comp_diff_namespace_ut_exe
+8/64 Test: Autocoders_Python_test_comp_diff_namespace_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_comp_diff_namespace_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/comp_diff_namespace
+"Autocoders_Python_test_comp_diff_namespace_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_comp_diff_namespace_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_comp_diff_namespace_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/64 Testing: Autocoders_Python_test_event_enum_ut_exe
+9/64 Test: Autocoders_Python_test_event_enum_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_event_enum_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event_enum
+"Autocoders_Python_test_event_enum_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_event_enum_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_event_enum_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/64 Testing: Autocoders_Python_test_event_multi_inst_ut_exe
+10/64 Test: Autocoders_Python_test_event_multi_inst_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_event_multi_inst_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event_multi_inst
+"Autocoders_Python_test_event_multi_inst_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_event_multi_inst_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_event_multi_inst_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/64 Testing: Autocoders_Python_test_event_string_ut_exe
+11/64 Test: Autocoders_Python_test_event_string_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_event_string_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event_string
+"Autocoders_Python_test_event_string_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_event_string_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_event_string_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/64 Testing: Autocoders_Python_test_event_throttle_ut_exe
+12/64 Test: Autocoders_Python_test_event_throttle_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_event_throttle_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event_throttle
+"Autocoders_Python_test_event_throttle_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from EventThrottleTest
+[ RUN      ] EventThrottleTest.ThrottleTest
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+EVENT: (100) (0:0,0) DIAGNOSTIC: (TestLog) SomeEvent : My Event 1 2.000000 
+Sending event args 1, 2.000000, 3
+[       OK ] EventThrottleTest.ThrottleTest (1 ms)
+[----------] 1 test from EventThrottleTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (1 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_event_throttle_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_event_throttle_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/64 Testing: Autocoders_Python_test_event1_ut_exe
+13/64 Test: Autocoders_Python_test_event1_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_event1_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event1
+"Autocoders_Python_test_event1_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_event1_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_event1_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/64 Testing: Autocoders_Python_test_event2_ut_exe
+14/64 Test: Autocoders_Python_test_event2_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_event2_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event2
+"Autocoders_Python_test_event2_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_event2_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_event2_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/64 Testing: Autocoders_Python_test_ext_dict_ut_exe
+15/64 Test: Autocoders_Python_test_ext_dict_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_ext_dict_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/ext_dict
+"Autocoders_Python_test_ext_dict_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_ext_dict_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_ext_dict_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/64 Testing: Autocoders_Python_test_interface1_ut_exe
+16/64 Test: Autocoders_Python_test_interface1_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_interface1_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/interface1
+"Autocoders_Python_test_interface1_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_interface1_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_interface1_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/64 Testing: Autocoders_Python_test_log_tester_ut_exe
+17/64 Test: Autocoders_Python_test_log_tester_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_log_tester_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/log_tester
+"Autocoders_Python_test_log_tester_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_log_tester_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_log_tester_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/64 Testing: Autocoders_Python_test_log1_ut_exe
+18/64 Test: Autocoders_Python_test_log1_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_log1_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/log1
+"Autocoders_Python_test_log1_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_log1_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_log1_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/64 Testing: Autocoders_Python_test_noargport_ut_exe
+19/64 Test: Autocoders_Python_test_noargport_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_noargport_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/noargport
+"Autocoders_Python_test_noargport_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_noargport_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_noargport_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/64 Testing: Autocoders_Python_test_param_enum_ut_exe
+20/64 Test: Autocoders_Python_test_param_enum_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_param_enum_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/param_enum
+"Autocoders_Python_test_param_enum_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_param_enum_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_param_enum_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/64 Testing: Autocoders_Python_test_param_multi_inst_ut_exe
+21/64 Test: Autocoders_Python_test_param_multi_inst_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_param_multi_inst_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/param_multi_inst
+"Autocoders_Python_test_param_multi_inst_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_param_multi_inst_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_param_multi_inst_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/64 Testing: Autocoders_Python_test_param_string_ut_exe
+22/64 Test: Autocoders_Python_test_param_string_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_param_string_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/param_string
+"Autocoders_Python_test_param_string_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_param_string_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_param_string_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/64 Testing: Autocoders_Python_test_param_tester_ut_exe
+23/64 Test: Autocoders_Python_test_param_tester_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_param_tester_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/param_tester
+"Autocoders_Python_test_param_tester_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_param_tester_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_param_tester_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/64 Testing: Autocoders_Python_test_param2_ut_exe
+24/64 Test: Autocoders_Python_test_param2_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_param2_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/param2
+"Autocoders_Python_test_param2_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_param2_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_param2_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/64 Testing: Autocoders_Python_test_pass_by_attrib_ut_exe
+25/64 Test: Autocoders_Python_test_pass_by_attrib_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_pass_by_attrib_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/pass_by_attrib
+"Autocoders_Python_test_pass_by_attrib_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_pass_by_attrib_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_pass_by_attrib_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/64 Testing: Autocoders_Python_test_port_loopback_ut_exe
+26/64 Test: Autocoders_Python_test_port_loopback_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_port_loopback_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/port_loopback
+"Autocoders_Python_test_port_loopback_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_port_loopback_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_port_loopback_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/64 Testing: Autocoders_Python_test_port_nogen_ut_exe
+27/64 Test: Autocoders_Python_test_port_nogen_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_port_nogen_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/port_nogen
+"Autocoders_Python_test_port_nogen_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_port_nogen_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_port_nogen_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/64 Testing: Autocoders_Python_test_serialize_stringbuffer_ut_exe
+28/64 Test: Autocoders_Python_test_serialize_stringbuffer_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_serialize_stringbuffer_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/serialize_stringbuffer
+"Autocoders_Python_test_serialize_stringbuffer_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_serialize_stringbuffer_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_serialize_stringbuffer_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/64 Testing: Autocoders_Python_test_serialize_user_ut_exe
+29/64 Test: Autocoders_Python_test_serialize_user_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_serialize_user_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/serialize_user
+"Autocoders_Python_test_serialize_user_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_serialize_user_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_serialize_user_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/64 Testing: Autocoders_Python_test_serialize3_ut_exe
+30/64 Test: Autocoders_Python_test_serialize3_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_serialize3_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/serialize3
+"Autocoders_Python_test_serialize3_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_serialize3_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_serialize3_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/64 Testing: Autocoders_Python_test_stress_ut_exe
+31/64 Test: Autocoders_Python_test_stress_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_stress_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/stress
+"Autocoders_Python_test_stress_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_stress_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_stress_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/64 Testing: Autocoders_Python_test_string_port_ut_exe
+32/64 Test: Autocoders_Python_test_string_port_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_string_port_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/string_port
+"Autocoders_Python_test_string_port_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_string_port_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_string_port_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/64 Testing: Autocoders_Python_test_telem_tester_ut_exe
+33/64 Test: Autocoders_Python_test_telem_tester_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_telem_tester_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/telem_tester
+"Autocoders_Python_test_telem_tester_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_telem_tester_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_telem_tester_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/64 Testing: Autocoders_Python_test_time_tester_ut_exe
+34/64 Test: Autocoders_Python_test_time_tester_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_time_tester_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/time_tester
+"Autocoders_Python_test_time_tester_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_time_tester_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_time_tester_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/64 Testing: Autocoders_Python_test_tlm_enum_ut_exe
+35/64 Test: Autocoders_Python_test_tlm_enum_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_tlm_enum_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_enum
+"Autocoders_Python_test_tlm_enum_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_tlm_enum_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_tlm_enum_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/64 Testing: Autocoders_Python_test_tlm_multi_inst_ut_exe
+36/64 Test: Autocoders_Python_test_tlm_multi_inst_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_tlm_multi_inst_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_multi_inst
+"Autocoders_Python_test_tlm_multi_inst_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_tlm_multi_inst_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_tlm_multi_inst_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+37/64 Testing: Autocoders_Python_test_tlm_onchange_ut_exe
+37/64 Test: Autocoders_Python_test_tlm_onchange_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_tlm_onchange_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_onchange
+"Autocoders_Python_test_tlm_onchange_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_tlm_onchange_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_tlm_onchange_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/64 Testing: Autocoders_Python_test_tlm_string_ut_exe
+38/64 Test: Autocoders_Python_test_tlm_string_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_tlm_string_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_string
+"Autocoders_Python_test_tlm_string_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_tlm_string_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_tlm_string_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/64 Testing: Autocoders_Python_test_tlm1_ut_exe
+39/64 Test: Autocoders_Python_test_tlm1_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_tlm1_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm1
+"Autocoders_Python_test_tlm1_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_tlm1_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_tlm1_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/64 Testing: Autocoders_Python_test_tlm2_ut_exe
+40/64 Test: Autocoders_Python_test_tlm2_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_tlm2_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm2
+"Autocoders_Python_test_tlm2_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Autocoders_Python_test_tlm2_ut_exe" end time: Jun 19 07:47 PDT
+"Autocoders_Python_test_tlm2_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/64 Testing: Fw_Log_ut_exe
+41/64 Test: Fw_Log_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Fw_Log_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/Log
+"Fw_Log_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from FwLogTest
+[ RUN      ] FwLogTest.LogPacketSerialize
+[       OK ] FwLogTest.LogPacketSerialize (0 ms)
+[----------] 1 test from FwLogTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Fw_Log_ut_exe" end time: Jun 19 07:47 PDT
+"Fw_Log_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/64 Testing: Logger_Rules_Testing
+42/64 Test: Logger_Rules_Testing
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Logger_Rules_Testing"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/Logger
+"Logger_Rules_Testing" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 4 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 4 tests from LoggerTests
+[ RUN      ] LoggerTests.RandomLoggerTests
+Ran 10000 steps.
+[       OK ] LoggerTests.RandomLoggerTests (23 ms)
+[ RUN      ] LoggerTests.BassicGoodLogger
+[       OK ] LoggerTests.BassicGoodLogger (0 ms)
+[ RUN      ] LoggerTests.BassicBadLogger
+[       OK ] LoggerTests.BassicBadLogger (0 ms)
+[ RUN      ] LoggerTests.BassicRegLogger
+[       OK ] LoggerTests.BassicRegLogger (0 ms)
+[----------] 4 tests from LoggerTests (23 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test case ran. (23 ms total)
+[  PASSED  ] 4 tests.
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"Logger_Rules_Testing" end time: Jun 19 07:47 PDT
+"Logger_Rules_Testing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/64 Testing: Fw_Time_ut_exe
+43/64 Test: Fw_Time_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Fw_Time_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/Time
+"Fw_Time_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 3 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 3 tests from TimeTestNominal
+[ RUN      ] TimeTestNominal.InstantiateTest
+(0,2,1)
+[       OK ] TimeTestNominal.InstantiateTest (0 ms)
+[ RUN      ] TimeTestNominal.MathTest
+[       OK ] TimeTestNominal.MathTest (0 ms)
+[ RUN      ] TimeTestNominal.CopyTest
+[       OK ] TimeTestNominal.CopyTest (0 ms)
+[----------] 3 tests from TimeTestNominal (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test case ran. (1 ms total)
+[  PASSED  ] 3 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Fw_Time_ut_exe" end time: Jun 19 07:47 PDT
+"Fw_Time_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/64 Testing: Fw_Tlm_ut_exe
+44/64 Test: Fw_Tlm_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Fw_Tlm_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/Tlm
+"Fw_Tlm_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from FwTlmTest
+[ RUN      ] FwTlmTest.TlmPacketSerialize
+[       OK ] FwTlmTest.TlmPacketSerialize (0 ms)
+[----------] 1 test from FwTlmTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Fw_Tlm_ut_exe" end time: Jun 19 07:47 PDT
+"Fw_Tlm_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/64 Testing: Fw_Types_ut_exe
+45/64 Test: Fw_Types_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Fw_Types_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/Types
+"Fw_Types_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 5 tests from 2 test cases.
+[----------] Global test environment set-up.
+[----------] 1 test from SerializationTest
+[ RUN      ] SerializationTest.Serialization1
+Testing Serialization code
+U8 Test
+Val: in: 10 out: 10 stat1: 0 stat2: 0
+I8 Test
+Val: in: -10 out: -10 stat1: 0 stat2: 0
+U16 Test
+Val: in: 1000 out: 1000 stat1: 0 stat2: 0
+I16 test
+Val: in: -1000 out: -1000 stat1: 0 stat2: 0
+U32 Test
+Val: in: 100000 out: 100000 stat1: 0 stat2: 0
+I32 Test
+Val: in: -100000 out: -100000 stat1: 0 stat2: 0
+U64 Test
+Val: in: 10000000 out: 10000000 stat1: 0 stat2: 0
+I64 Test
+Val: in: -10000000 out: -10000000 stat1: 0 stat2: 0
+F32 Test
+Val: in: 100.199997 out: 100.199997 stat1: 0 stat2: 0
+F64 Test
+Val: in: -100.232145 out: -100.232145 stat1: 0 stat2: 0
+bool Test
+Val: in: TRUE out: TRUE stat1: 0 stat2: 0
+Skip deserialization Tests
+
+Deserialization Tests
+i64t1 in stat: 0
+Buffer contents: [0a][f6][03][e8][fc][18][00][01][86][a0][ff][fe][79][60][00][00][00][00][00][98][96][80][ff][ff][ff][ff][ff][67][69][80][42][c8][66][66][c0][59][0e][db][78][26][8b][a6][ff]
+i64t1 in stat: 0
+
+Reset and deserialize again.
+[       OK ] SerializationTest.Serialization1 (1 ms)
+[----------] 1 test from SerializationTest (1 ms total)
+
+[----------] 4 tests from TypesTest
+[ RUN      ] TypesTest.CheckAssertTest
+Assert Tests
+[       OK ] TypesTest.CheckAssertTest (0 ms)
+[ RUN      ] TypesTest.PolyTest
+U8 PolyType Test
+[       OK ] TypesTest.PolyTest (0 ms)
+[ RUN      ] TypesTest.EightyCharTest
+Stream: doodie
+[       OK ] TypesTest.EightyCharTest (0 ms)
+[ RUN      ] TypesTest.StringFormatTest
+Formatted: Int 10 String foo
+[       OK ] TypesTest.StringFormatTest (0 ms)
+[----------] 4 tests from TypesTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test cases ran. (1 ms total)
+[  PASSED  ] 5 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Fw_Types_ut_exe" end time: Jun 19 07:47 PDT
+"Fw_Types_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/64 Testing: Fw_FilePacket_ut_exe
+46/64 Test: Fw_FilePacket_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Fw_FilePacket_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/FilePacket
+"Fw_FilePacket_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 5 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 5 tests from FilePacket
+[ RUN      ] FilePacket.Header
+[       OK ] FilePacket.Header (0 ms)
+[ RUN      ] FilePacket.StartPacket
+[       OK ] FilePacket.StartPacket (0 ms)
+[ RUN      ] FilePacket.DataPacket
+[       OK ] FilePacket.DataPacket (0 ms)
+[ RUN      ] FilePacket.EndPacket
+[       OK ] FilePacket.EndPacket (0 ms)
+[ RUN      ] FilePacket.CancelPacket
+[       OK ] FilePacket.CancelPacket (0 ms)
+[----------] 5 tests from FilePacket (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test case ran. (0 ms total)
+[  PASSED  ] 5 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Fw_FilePacket_ut_exe" end time: Jun 19 07:47 PDT
+"Fw_FilePacket_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/64 Testing: Fw_SerializableFile_ut_exe
+47/64 Test: Fw_SerializableFile_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Fw_SerializableFile_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Fw/SerializableFile
+"Fw_SerializableFile_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+Testing save... Passed
+Testing load... Passed
+Testing compare... Passed
+Testing bad save... Passed
+Testing bad load... Passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Fw_SerializableFile_ut_exe" end time: Jun 19 07:47 PDT
+"Fw_SerializableFile_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/64 Testing: Svc_ActiveLogger_ut_exe
+48/64 Test: Svc_ActiveLogger_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_ActiveLogger_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/ActiveLogger
+"Svc_ActiveLogger_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 8 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 8 tests from ActiveLoggerTest
+[ RUN      ] ActiveLoggerTest.NominalEventSend
+
+***************************************
+TESTCASE 100.1.1: Nominal Event Logging
+***************************************
+
+***************************************
+(RQ)       AL-001
+***************************************
+[       OK ] ActiveLoggerTest.NominalEventSend (0 ms)
+[ RUN      ] ActiveLoggerTest.FilteredEventSend
+
+***************************************
+TESTCASE 100.1.2: Nominal Event Filtering
+***************************************
+
+***************************************
+(RQ)       AL-004
+***************************************
+
+***************************************
+(RQ)       AL-005
+***************************************
+
+***************************************
+(RQ)       AL-006
+***************************************
+
+***************************************
+(RQ)       AL-004
+***************************************
+
+***************************************
+(RQ)       AL-005
+***************************************
+
+***************************************
+(RQ)       AL-006
+***************************************
+
+***************************************
+(RQ)       AL-004
+***************************************
+
+***************************************
+(RQ)       AL-005
+***************************************
+
+***************************************
+(RQ)       AL-006
+***************************************
+
+***************************************
+(RQ)       AL-004
+***************************************
+
+***************************************
+(RQ)       AL-005
+***************************************
+
+***************************************
+(RQ)       AL-006
+***************************************
+
+***************************************
+(RQ)       AL-004
+***************************************
+
+***************************************
+(RQ)       AL-005
+***************************************
+
+***************************************
+(RQ)       AL-006
+***************************************
+
+***************************************
+(RQ)       AL-004
+***************************************
+
+***************************************
+(RQ)       AL-005
+***************************************
+
+***************************************
+(RQ)       AL-006
+***************************************
+[       OK ] ActiveLoggerTest.FilteredEventSend (0 ms)
+[ RUN      ] ActiveLoggerTest.FilterIdTest
+
+***************************************
+TESTCASE 100.1.3: Filter events by ID
+***************************************
+
+***************************************
+(RQ)       AL-007
+***************************************
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 1 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 1 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 2 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 2 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 3 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 3 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 4 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 4 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 5 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 5 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 6 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 6 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 7 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 7 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 8 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 8 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 9 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 9 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 10 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 10 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 11 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 11 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 12 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 12 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 13 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 13 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 14 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 14 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 15 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 15 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 16 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 16 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 17 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 17 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 18 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 18 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 19 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 19 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 20 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 20 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 21 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 21 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 22 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 22 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 23 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 23 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 24 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 24 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 25 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 25 is filtered.
+EVENT: (4) (0:0,0) WARNING_LO: (ActiveLoggerImpl) ALOG_ID_FILTER_LIST_FULL : ID filter list is full. Cannot filter 26 .
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 1 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 2 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 3 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 4 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 5 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 6 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 7 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 8 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 9 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 10 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 11 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 12 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 13 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 14 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 15 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 16 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 17 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 18 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 19 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 20 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 21 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 22 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 23 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 24 removed.
+EVENT: (5) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_REMOVED : ID filter ID 25 removed.
+EVENT: (6) (0:0,0) WARNING_LO: (ActiveLoggerImpl) ALOG_ID_FILTER_NOT_FOUND : ID filter ID 10 not found.
+[       OK ] ActiveLoggerTest.FilterIdTest (0 ms)
+[ RUN      ] ActiveLoggerTest.FilterDumpTest
+
+***************************************
+TESTCASE 100.1.3: Dump filter values
+***************************************
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 4 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 13 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 4000 is filtered.
+EVENT: (2) (0:0,0) ACTIVITY_LO: (ActiveLoggerImpl) ALOG_SEVERITY_FILTER_STATE : 0 filter state. Recv: 1 Send: 0
+EVENT: (2) (0:0,0) ACTIVITY_LO: (ActiveLoggerImpl) ALOG_SEVERITY_FILTER_STATE : 1 filter state. Recv: 0 Send: 0
+EVENT: (2) (0:0,0) ACTIVITY_LO: (ActiveLoggerImpl) ALOG_SEVERITY_FILTER_STATE : 2 filter state. Recv: 1 Send: 1
+EVENT: (2) (0:0,0) ACTIVITY_LO: (ActiveLoggerImpl) ALOG_SEVERITY_FILTER_STATE : 3 filter state. Recv: 0 Send: 0
+EVENT: (2) (0:0,0) ACTIVITY_LO: (ActiveLoggerImpl) ALOG_SEVERITY_FILTER_STATE : 4 filter state. Recv: 1 Send: 1
+EVENT: (2) (0:0,0) ACTIVITY_LO: (ActiveLoggerImpl) ALOG_SEVERITY_FILTER_STATE : 5 filter state. Recv: 1 Send: 1
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 4 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 13 is filtered.
+EVENT: (3) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_ID_FILTER_ENABLED : ID 4000 is filtered.
+[       OK ] ActiveLoggerTest.FilterDumpTest (0 ms)
+[ RUN      ] ActiveLoggerTest.InvalidCommands
+
+***************************************
+TESTCASE 100.2.1: Off-Nominal Invalid Commands
+***************************************
+[       OK ] ActiveLoggerTest.InvalidCommands (0 ms)
+[ RUN      ] ActiveLoggerTest.FatalTesting
+
+***************************************
+TESTCASE 100.2.2: Off-Nominal FATAL processing
+***************************************
+[       OK ] ActiveLoggerTest.FatalTesting (0 ms)
+[ RUN      ] ActiveLoggerTest.CircularBufferDump
+
+***************************************
+TESTCASE 100.1.3: File dump of event circular buffers
+***************************************
+
+***************************************
+(RQ)       AL-002
+***************************************
+
+***************************************
+Write FATAL
+***************************************
+
+***************************************
+Write WARNING HI
+***************************************
+
+***************************************
+Write WARNING LO
+***************************************
+
+***************************************
+Write COMMAND
+***************************************
+
+***************************************
+Write ACTIVITY HI
+***************************************
+
+***************************************
+Write ACTIVITY LO
+***************************************
+
+***************************************
+Write DIAGNOSTIC
+***************************************
+
+***************************************
+(RQ)       AL-003
+***************************************
+EVENT: (1) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_COMPLETE : Event buffer write complete. Wrote 145 records.
+
+***************************************
+Verify FATAL
+***************************************
+
+***************************************
+Verify WARNING HI
+***************************************
+
+***************************************
+Verify WARNING LO
+***************************************
+
+***************************************
+Verify COMMAND
+***************************************
+
+***************************************
+Verify ACTIVITY_HI
+***************************************
+
+***************************************
+Verify ACTIVITY_LO
+***************************************
+
+***************************************
+Verify DIAGNOSTIC
+***************************************
+[       OK ] ActiveLoggerTest.CircularBufferDump (2 ms)
+[ RUN      ] ActiveLoggerTest.CircularBufferDumpWithErrors
+
+***************************************
+TESTCASE 100.2.3: File dump of event circular buffers with errors
+***************************************
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 0 with error 1
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 1 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 2 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 3 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 4 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 5 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 6 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 7 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 8 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 9 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 10 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 11 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 12 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 13 with error 5
+EVENT: (0) (0:0,0) WARNING_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_ERR : Event buffer write failed in stage 14 with error 5
+EVENT: (1) (0:0,0) ACTIVITY_HI: (ActiveLoggerImpl) ALOG_FILE_WRITE_COMPLETE : Event buffer write complete. Wrote 7 records.
+[       OK ] ActiveLoggerTest.CircularBufferDumpWithErrors (6 ms)
+[----------] 8 tests from ActiveLoggerTest (9 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test case ran. (9 ms total)
+[  PASSED  ] 8 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_ActiveLogger_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_ActiveLogger_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/64 Testing: Svc_ActiveRateGroup_ut_exe
+49/64 Test: Svc_ActiveRateGroup_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_ActiveRateGroup_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/ActiveRateGroup
+"Svc_ActiveRateGroup_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 3 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 3 tests from ActiveRateGroupTest
+[ RUN      ] ActiveRateGroupTest.NominalSchedule
+
+***************************************
+TESTCASE 101.1.1: Run nominal rate group execution
+***************************************
+
+***************************************
+(RQ)       ARG-001
+***************************************
+
+***************************************
+(RQ)       ARG-002
+***************************************
+
+***************************************
+(RQ)       ARG-003
+***************************************
+
+***************************************
+TESTCASE 101.1.1: Run nominal rate group execution
+***************************************
+
+***************************************
+(RQ)       ARG-001
+***************************************
+
+***************************************
+(RQ)       ARG-002
+***************************************
+
+***************************************
+(RQ)       ARG-003
+***************************************
+
+***************************************
+TESTCASE 101.1.1: Run nominal rate group execution
+***************************************
+
+***************************************
+(RQ)       ARG-001
+***************************************
+
+***************************************
+(RQ)       ARG-002
+***************************************
+
+***************************************
+(RQ)       ARG-003
+***************************************
+[       OK ] ActiveRateGroupTest.NominalSchedule (1 ms)
+[ RUN      ] ActiveRateGroupTest.CycleOverrun
+
+***************************************
+TESTCASE 101.2.1: Run cycle slip scenario
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+TESTCASE 101.2.1: Run cycle slip scenario
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+TESTCASE 101.2.1: Run cycle slip scenario
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+
+***************************************
+(RQ)       ARG-004
+***************************************
+[       OK ] ActiveRateGroupTest.CycleOverrun (1 ms)
+[ RUN      ] ActiveRateGroupTest.PingPort
+[       OK ] ActiveRateGroupTest.PingPort (0 ms)
+[----------] 3 tests from ActiveRateGroupTest (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test case ran. (2 ms total)
+[  PASSED  ] 3 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_ActiveRateGroup_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_ActiveRateGroup_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/64 Testing: Svc_BufferManager_ut_exe
+50/64 Test: Svc_BufferManager_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_BufferManager_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/BufferManager
+"Svc_BufferManager_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from Test
+[ RUN      ] Test.ThreeBufferProblem
+[       OK ] Test.ThreeBufferProblem (0 ms)
+[----------] 1 test from Test (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_BufferManager_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_BufferManager_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/64 Testing: Svc_ComLogger_ut_exe
+51/64 Test: Svc_ComLogger_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_ComLogger_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/ComLogger
+"Svc_ComLogger_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 5 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 5 tests from Test
+[ RUN      ] Test.testLogging
+[       OK ] Test.testLogging (4 ms)
+[ RUN      ] Test.testLoggingNoLength
+[       OK ] Test.testLoggingNoLength (3 ms)
+[ RUN      ] Test.openError
+[       OK ] Test.openError (1 ms)
+[ RUN      ] Test.writeError
+[       OK ] Test.writeError (2 ms)
+[ RUN      ] Test.closeFileCommand
+[       OK ] Test.closeFileCommand (1 ms)
+[----------] 5 tests from Test (11 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test case ran. (11 ms total)
+[  PASSED  ] 5 tests.
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_ComLogger_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_ComLogger_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/64 Testing: Svc_CmdDispatcher_ut_exe
+52/64 Test: Svc_CmdDispatcher_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_CmdDispatcher_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/CmdDispatcher
+"Svc_CmdDispatcher_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 7 tests from 2 test cases.
+[----------] Global test environment set-up.
+[----------] 2 tests from CmdDispTestNominal
+[ RUN      ] CmdDispTestNominal.NominalDispatch
+
+***************************************
+TESTCASE 102.1.1: Nominal Dispatch
+***************************************
+
+***************************************
+Dispatch a series of commands and verify they are dispatched correctly.
+***************************************
+EVENT: (0) (0:0,0) DIAGNOSTIC: (CmdDispImpl) OpCodeRegistered : Opcode 0x0000 registered to port 1 slot 0
+EVENT: (0) (0:0,0) DIAGNOSTIC: (CmdDispImpl) OpCodeRegistered : Opcode 0x0001 registered to port 1 slot 1
+EVENT: (0) (0:0,0) DIAGNOSTIC: (CmdDispImpl) OpCodeRegistered : Opcode 0x0002 registered to port 1 slot 2
+EVENT: (0) (0:0,0) DIAGNOSTIC: (CmdDispImpl) OpCodeRegistered : Opcode 0x0003 registered to port 1 slot 3
+
+***************************************
+(RQ)       CD-003
+***************************************
+
+***************************************
+(RQ)       CD-001
+***************************************
+
+***************************************
+(RQ)       CD-002
+***************************************
+
+***************************************
+(RQ)       CD-004
+***************************************
+[       OK ] CmdDispTestNominal.NominalDispatch (0 ms)
+[ RUN      ] CmdDispTestNominal.NopTest
+
+***************************************
+TESTCASE 102.1.2: NO_OP Command Test
+***************************************
+
+***************************************
+Verify the test NO_OP commands by dispatching them.
+***************************************
+[       OK ] CmdDispTestNominal.NopTest (0 ms)
+[----------] 2 tests from CmdDispTestNominal (0 ms total)
+
+[----------] 5 tests from CmdDispTestOffNominal
+[ RUN      ] CmdDispTestOffNominal.InvalidOpcodeDispatch
+
+***************************************
+TESTCASE 102.2.1: Off-nominal Dispatch
+***************************************
+
+***************************************
+Verify the correct handling of unregistered opcodes.
+***************************************
+[       OK ] CmdDispTestOffNominal.InvalidOpcodeDispatch (0 ms)
+[ RUN      ] CmdDispTestOffNominal.FailedCommand
+
+***************************************
+TESTCASE 102.2.2: Off-nominal Failed command
+***************************************
+
+***************************************
+Verify that failed commands operate correctly
+***************************************
+[       OK ] CmdDispTestOffNominal.FailedCommand (1 ms)
+[ RUN      ] CmdDispTestOffNominal.InvalidCommand
+
+***************************************
+TESTCASE 102.2.3: Off-nominal Invalid Command
+***************************************
+
+***************************************
+Verify that malformed commands are detected.
+***************************************
+[       OK ] CmdDispTestOffNominal.InvalidCommand (0 ms)
+[ RUN      ] CmdDispTestOffNominal.CommandOverflow
+
+***************************************
+TESTCASE 102.2.4: Off-nominal Command Overflow
+***************************************
+
+***************************************
+Verify error case where there are too many outstanding commands.
+***************************************
+[       OK ] CmdDispTestOffNominal.CommandOverflow (0 ms)
+[ RUN      ] CmdDispTestOffNominal.ClearSequenceTracker
+
+***************************************
+TESTCASE 102.1.3: Clear Command Tracker
+***************************************
+
+***************************************
+Verify command to clear command tracker.
+***************************************
+[       OK ] CmdDispTestOffNominal.ClearSequenceTracker (0 ms)
+[----------] 5 tests from CmdDispTestOffNominal (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 2 test cases ran. (1 ms total)
+[  PASSED  ] 7 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_CmdDispatcher_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_CmdDispatcher_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/64 Testing: Svc_CmdSequencer_ut_exe
+53/64 Test: Svc_CmdSequencer_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_CmdSequencer_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/CmdSequencer
+"Svc_CmdSequencer_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 67 tests from 8 test cases.
+[----------] Global test environment set-up.
+[----------] 2 tests from AMPCS
+[ RUN      ] AMPCS.MissingCRC
+[       OK ] AMPCS.MissingCRC (7 ms)
+[ RUN      ] AMPCS.MissingFile
+[       OK ] AMPCS.MissingFile (7 ms)
+[----------] 2 tests from AMPCS (14 ms total)
+
+[----------] 1 test from Health
+[ RUN      ] Health.Ping
+[       OK ] Health.Ping (0 ms)
+[----------] 1 test from Health (0 ms total)
+
+[----------] 26 tests from Immediate
+[ RUN      ] Immediate.AutoByCommand
+[       OK ] Immediate.AutoByCommand (1 ms)
+[ RUN      ] Immediate.AutoByCommandAMPCS
+[       OK ] Immediate.AutoByCommandAMPCS (2 ms)
+[ RUN      ] Immediate.AutoByPort
+[       OK ] Immediate.AutoByPort (0 ms)
+[ RUN      ] Immediate.AutoByPortAMPCS
+[       OK ] Immediate.AutoByPortAMPCS (1 ms)
+[ RUN      ] Immediate.Cancel
+[       OK ] Immediate.Cancel (1 ms)
+[ RUN      ] Immediate.CancelAMPCS
+[       OK ] Immediate.CancelAMPCS (1 ms)
+[ RUN      ] Immediate.FailedCommands
+[       OK ] Immediate.FailedCommands (1 ms)
+[ RUN      ] Immediate.FailedCommandsAMPCS
+[       OK ] Immediate.FailedCommandsAMPCS (1 ms)
+[ RUN      ] Immediate.FileErrors
+[       OK ] Immediate.FileErrors (2 ms)
+[ RUN      ] Immediate.FileErrorsAMPCS
+[       OK ] Immediate.FileErrorsAMPCS (3 ms)
+[ RUN      ] Immediate.InvalidManualCommands
+[       OK ] Immediate.InvalidManualCommands (0 ms)
+[ RUN      ] Immediate.InvalidManualCommandsAMPCS
+[       OK ] Immediate.InvalidManualCommandsAMPCS (1 ms)
+[ RUN      ] Immediate.LoadOnInit
+[       OK ] Immediate.LoadOnInit (1 ms)
+[ RUN      ] Immediate.LoadRunRun
+[       OK ] Immediate.LoadRunRun (1 ms)
+[ RUN      ] Immediate.LoadOnInitAMPCS
+[       OK ] Immediate.LoadOnInitAMPCS (1 ms)
+[ RUN      ] Immediate.Manual
+[       OK ] Immediate.Manual (1 ms)
+[ RUN      ] Immediate.ManualAMPCS
+[       OK ] Immediate.ManualAMPCS (1 ms)
+[ RUN      ] Immediate.NeverLoaded
+[       OK ] Immediate.NeverLoaded (0 ms)
+[ RUN      ] Immediate.NewSequence
+[       OK ] Immediate.NewSequence (0 ms)
+[ RUN      ] Immediate.NewSequenceAMPCS
+[       OK ] Immediate.NewSequenceAMPCS (1 ms)
+[ RUN      ] Immediate.SequenceTimeout
+[       OK ] Immediate.SequenceTimeout (1 ms)
+[ RUN      ] Immediate.SequenceTimeoutAMPCS
+[       OK ] Immediate.SequenceTimeoutAMPCS (1 ms)
+[ RUN      ] Immediate.UnexpectedCommandResponse
+[       OK ] Immediate.UnexpectedCommandResponse (1 ms)
+[ RUN      ] Immediate.UnexpectedCommandResponseAMPCS
+[       OK ] Immediate.UnexpectedCommandResponseAMPCS (1 ms)
+[ RUN      ] Immediate.Validate
+[       OK ] Immediate.Validate (0 ms)
+[ RUN      ] Immediate.ValidateAMPCS
+[       OK ] Immediate.ValidateAMPCS (1 ms)
+[----------] 26 tests from Immediate (25 ms total)
+
+[----------] 10 tests from ImmediateEOS
+[ RUN      ] ImmediateEOS.AutoByCommand
+[       OK ] ImmediateEOS.AutoByCommand (1 ms)
+[ RUN      ] ImmediateEOS.AutoByPort
+[       OK ] ImmediateEOS.AutoByPort (1 ms)
+[ RUN      ] ImmediateEOS.Cancel
+[       OK ] ImmediateEOS.Cancel (0 ms)
+[ RUN      ] ImmediateEOS.FileErrors
+[       OK ] ImmediateEOS.FileErrors (2 ms)
+[ RUN      ] ImmediateEOS.InvalidManualCommands
+[       OK ] ImmediateEOS.InvalidManualCommands (0 ms)
+[ RUN      ] ImmediateEOS.Manual
+[       OK ] ImmediateEOS.Manual (1 ms)
+[ RUN      ] ImmediateEOS.NewSequence
+[       OK ] ImmediateEOS.NewSequence (1 ms)
+[ RUN      ] ImmediateEOS.SequenceTimeout
+[       OK ] ImmediateEOS.SequenceTimeout (0 ms)
+[ RUN      ] ImmediateEOS.UnexpectedCommandResponse
+[       OK ] ImmediateEOS.UnexpectedCommandResponse (1 ms)
+[ RUN      ] ImmediateEOS.Validate
+[       OK ] ImmediateEOS.Validate (0 ms)
+[----------] 10 tests from ImmediateEOS (7 ms total)
+
+[----------] 16 tests from InvalidFiles
+[ RUN      ] InvalidFiles.BadCRC
+[       OK ] InvalidFiles.BadCRC (1 ms)
+[ RUN      ] InvalidFiles.BadCRCAMPCS
+[       OK ] InvalidFiles.BadCRCAMPCS (1 ms)
+[ RUN      ] InvalidFiles.BadRecordDescriptor
+[       OK ] InvalidFiles.BadRecordDescriptor (1 ms)
+[ RUN      ] InvalidFiles.BadRecordDescriptorAMPCS
+[       OK ] InvalidFiles.BadRecordDescriptorAMPCS (2 ms)
+[ RUN      ] InvalidFiles.BadTimeBase
+[       OK ] InvalidFiles.BadTimeBase (0 ms)
+[ RUN      ] InvalidFiles.BadTimeContext
+[       OK ] InvalidFiles.BadTimeContext (1 ms)
+[ RUN      ] InvalidFiles.DataAfterRecords
+[       OK ] InvalidFiles.DataAfterRecords (1 ms)
+[ RUN      ] InvalidFiles.EmptyFile
+[       OK ] InvalidFiles.EmptyFile (0 ms)
+[ RUN      ] InvalidFiles.EmptyFileAMPCS
+[       OK ] InvalidFiles.EmptyFileAMPCS (1 ms)
+[ RUN      ] InvalidFiles.FileTooLarge
+[       OK ] InvalidFiles.FileTooLarge (1 ms)
+[ RUN      ] InvalidFiles.FileTooLargeAMPCS
+[       OK ] InvalidFiles.FileTooLargeAMPCS (1 ms)
+[ RUN      ] InvalidFiles.MissingCRC
+[       OK ] InvalidFiles.MissingCRC (1 ms)
+[ RUN      ] InvalidFiles.MissingFile
+[       OK ] InvalidFiles.MissingFile (6 ms)
+[ RUN      ] InvalidFiles.SizeFieldTooLarge
+[       OK ] InvalidFiles.SizeFieldTooLarge (1 ms)
+[ RUN      ] InvalidFiles.SizeFieldTooSmall
+[       OK ] InvalidFiles.SizeFieldTooSmall (1 ms)
+[ RUN      ] InvalidFiles.USecFieldTooShort
+[       OK ] InvalidFiles.USecFieldTooShort (1 ms)
+[----------] 16 tests from InvalidFiles (20 ms total)
+
+[----------] 4 tests from Mixed
+[ RUN      ] Mixed.AutoByCommand
+[       OK ] Mixed.AutoByCommand (1 ms)
+[ RUN      ] Mixed.AutoByCommandAMPCS
+[       OK ] Mixed.AutoByCommandAMPCS (1 ms)
+[ RUN      ] Mixed.Validate
+[       OK ] Mixed.Validate (1 ms)
+[ RUN      ] Mixed.ValidateAMPCS
+[       OK ] Mixed.ValidateAMPCS (1 ms)
+[----------] 4 tests from Mixed (4 ms total)
+
+[----------] 4 tests from NoFiles
+[ RUN      ] NoFiles.Init
+[       OK ] NoFiles.Init (0 ms)
+[ RUN      ] NoFiles.InitAMPCS
+[       OK ] NoFiles.InitAMPCS (0 ms)
+[ RUN      ] NoFiles.NoSequenceActive
+[       OK ] NoFiles.NoSequenceActive (0 ms)
+[ RUN      ] NoFiles.NoSequenceActiveAMPCS
+[       OK ] NoFiles.NoSequenceActiveAMPCS (0 ms)
+[----------] 4 tests from NoFiles (0 ms total)
+
+[----------] 4 tests from Relative
+[ RUN      ] Relative.AutoByCommand
+[       OK ] Relative.AutoByCommand (1 ms)
+[ RUN      ] Relative.AutoByCommandAMPCS
+[       OK ] Relative.AutoByCommandAMPCS (2 ms)
+[ RUN      ] Relative.Validate
+[       OK ] Relative.Validate (0 ms)
+[ RUN      ] Relative.ValidateAMPCS
+[       OK ] Relative.ValidateAMPCS (2 ms)
+[----------] 4 tests from Relative (5 ms total)
+
+[----------] Global test environment tear-down
+[==========] 67 tests from 8 test cases ran. (75 ms total)
+[  PASSED  ] 67 tests.
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_CmdSequencer_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_CmdSequencer_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/64 Testing: Svc_FileDownlink_ut_exe
+54/64 Test: Svc_FileDownlink_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_FileDownlink_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/FileDownlink
+"Svc_FileDownlink_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 4 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 4 tests from FileDownlink
+[ RUN      ] FileDownlink.Downlink
+[       OK ] FileDownlink.Downlink (1 ms)
+[ RUN      ] FileDownlink.FileOpenError
+[       OK ] FileDownlink.FileOpenError (0 ms)
+[ RUN      ] FileDownlink.CancelDownlink
+[       OK ] FileDownlink.CancelDownlink (0 ms)
+[ RUN      ] FileDownlink.CancelInIdleMode
+[       OK ] FileDownlink.CancelInIdleMode (0 ms)
+[----------] 4 tests from FileDownlink (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test case ran. (1 ms total)
+[  PASSED  ] 4 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_FileDownlink_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_FileDownlink_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/64 Testing: Svc_FileManager_ut_exe
+55/64 Test: Svc_FileManager_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_FileManager_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/FileManager
+"Svc_FileManager_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 10 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 10 tests from Test
+[ RUN      ] Test.createDirectorySucceed
+[       OK ] Test.createDirectorySucceed (13 ms)
+[ RUN      ] Test.createDirectoryFail
+[       OK ] Test.createDirectoryFail (11 ms)
+[ RUN      ] Test.moveFileSucceed
+[       OK ] Test.moveFileSucceed (20 ms)
+[ RUN      ] Test.moveFileFail
+[       OK ] Test.moveFileFail (5 ms)
+[ RUN      ] Test.removeDirectorySucceed
+[       OK ] Test.removeDirectorySucceed (12 ms)
+[ RUN      ] Test.removeDirectoryFail
+[       OK ] Test.removeDirectoryFail (4 ms)
+[ RUN      ] Test.removeFileSucceed
+[       OK ] Test.removeFileSucceed (14 ms)
+[ RUN      ] Test.removeFileFail
+[       OK ] Test.removeFileFail (4 ms)
+[ RUN      ] Test.shellCommandSucceed
+[       OK ] Test.shellCommandSucceed (19 ms)
+[ RUN      ] Test.shellCommandFail
+[       OK ] Test.shellCommandFail (12 ms)
+[----------] 10 tests from Test (114 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test case ran. (114 ms total)
+[  PASSED  ] 10 tests.
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_FileManager_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_FileManager_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/64 Testing: Svc_FileUplink_ut_exe
+56/64 Test: Svc_FileUplink_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_FileUplink_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/FileUplink
+"Svc_FileUplink_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 11 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 11 tests from FileUplink
+[ RUN      ] FileUplink.SendFile
+[       OK ] FileUplink.SendFile (2 ms)
+[ RUN      ] FileUplink.BadChecksum
+[       OK ] FileUplink.BadChecksum (1 ms)
+[ RUN      ] FileUplink.FileOpenError
+[       OK ] FileUplink.FileOpenError (0 ms)
+[ RUN      ] FileUplink.FileWriteError
+[       OK ] FileUplink.FileWriteError (0 ms)
+[ RUN      ] FileUplink.StartPacketInDataMode
+[       OK ] FileUplink.StartPacketInDataMode (1 ms)
+[ RUN      ] FileUplink.DataPacketInStartMode
+[       OK ] FileUplink.DataPacketInStartMode (0 ms)
+[ RUN      ] FileUplink.EndPacketInStartMode
+[       OK ] FileUplink.EndPacketInStartMode (0 ms)
+[ RUN      ] FileUplink.PacketOutOfBounds
+[       OK ] FileUplink.PacketOutOfBounds (0 ms)
+[ RUN      ] FileUplink.PacketOutOfOrder
+[       OK ] FileUplink.PacketOutOfOrder (1 ms)
+[ RUN      ] FileUplink.CancelPacketInStartMode
+[       OK ] FileUplink.CancelPacketInStartMode (0 ms)
+[ RUN      ] FileUplink.CancelPacketInDataMode
+[       OK ] FileUplink.CancelPacketInDataMode (1 ms)
+[----------] 11 tests from FileUplink (6 ms total)
+
+[----------] Global test environment tear-down
+[==========] 11 tests from 1 test case ran. (6 ms total)
+[  PASSED  ] 11 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_FileUplink_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_FileUplink_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/64 Testing: Svc_LinuxTime_ut_exe
+57/64 Test: Svc_LinuxTime_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_LinuxTime_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/LinuxTime
+"Svc_LinuxTime_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from Test
+[ RUN      ] Test.GetTime
+[       OK ] Test.GetTime (0 ms)
+[----------] 1 test from Test (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_LinuxTime_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_LinuxTime_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/64 Testing: Svc_PolyDb_ut_exe
+58/64 Test: Svc_PolyDb_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_PolyDb_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/PolyDb
+"Svc_PolyDb_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from CmdDispTestNominal
+[ RUN      ] CmdDispTestNominal.NominalReadWrite
+
+***************************************
+TESTCASE 104.1.1: PolyDb Nominal Read/Write Test
+***************************************
+
+***************************************
+Read and write values to the database while varyingthe measurement statuses.
+***************************************
+
+***************************************
+(RQ)       PDB-001
+***************************************
+
+***************************************
+(RQ)       PDB-003
+***************************************
+
+***************************************
+(RQ)       PDB-002
+***************************************
+
+***************************************
+(RQ)       PDB-004
+***************************************
+[       OK ] CmdDispTestNominal.NominalReadWrite (0 ms)
+[----------] 1 test from CmdDispTestNominal (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_PolyDb_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_PolyDb_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/64 Testing: Svc_PrmDb_ut_exe
+59/64 Test: Svc_PrmDb_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_PrmDb_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/PrmDb
+"Svc_PrmDb_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 6 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 6 tests from ParameterDbTest
+[ RUN      ] ParameterDbTest.NominalPopulateTest
+
+***************************************
+TESTCASE 105.1.1: Nominal populate test
+***************************************
+
+***************************************
+Write values to the parameter database and verify that they were written correctly
+***************************************
+
+***************************************
+(RQ)       PDB-003
+***************************************
+
+***************************************
+(RQ)       PDB-002
+***************************************
+[       OK ] ParameterDbTest.NominalPopulateTest (0 ms)
+[ RUN      ] ParameterDbTest.NominalFileSaveTest
+
+***************************************
+TESTCASE 105.1.2: Nominal file save test
+***************************************
+
+***************************************
+Write values to the parameter database and save them to a file.
+***************************************
+
+***************************************
+(RQ)       PDB-004
+***************************************
+[       OK ] ParameterDbTest.NominalFileSaveTest (1 ms)
+[ RUN      ] ParameterDbTest.NominalFileLoadTest
+
+***************************************
+TESTCASE 105.1.3: Nominal file load test
+***************************************
+
+***************************************
+Read values from the created file and verify they are correct.
+***************************************
+
+***************************************
+(RQ)       PDB-001
+***************************************
+[       OK ] ParameterDbTest.NominalFileLoadTest (0 ms)
+[ RUN      ] ParameterDbTest.PrmMissingExtraParamsTest
+
+***************************************
+TESTCASE 105.2.1: Missing and too many parameters test
+***************************************
+
+***************************************
+Attempt to read a non-existent parameter and write too many parameters
+***************************************
+[       OK ] ParameterDbTest.PrmMissingExtraParamsTest (0 ms)
+[ RUN      ] ParameterDbTest.PrmFileReadError
+
+***************************************
+TESTCASE 105.2.2: File read errors
+***************************************
+
+***************************************
+Induce errors at various stages of reading the file
+***************************************
+[       OK ] ParameterDbTest.PrmFileReadError (0 ms)
+[ RUN      ] ParameterDbTest.PrmFileWriteError
+
+***************************************
+TESTCASE 105.2.3: File write errors
+***************************************
+
+***************************************
+Induce errors at various stages of writing the file
+***************************************
+[       OK ] ParameterDbTest.PrmFileWriteError (3 ms)
+[----------] 6 tests from ParameterDbTest (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test case ran. (4 ms total)
+[  PASSED  ] 6 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_PrmDb_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_PrmDb_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+60/64 Testing: Svc_RateGroupDriver_ut_exe
+60/64 Test: Svc_RateGroupDriver_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_RateGroupDriver_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/RateGroupDriver
+"Svc_RateGroupDriver_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from RateGroupDriverTest
+[ RUN      ] RateGroupDriverTest.NominalSchedule
+
+***************************************
+TESTCASE 106.1.1: Nominal Execution
+***************************************
+
+***************************************
+Call the port with enough ticks that the internal rollover value will roll over.
+Verify that the output ports are being called correctly.
+
+***************************************
+
+***************************************
+(RQ)       RGD-001
+***************************************
+[       OK ] RateGroupDriverTest.NominalSchedule (0 ms)
+[----------] 1 test from RateGroupDriverTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_RateGroupDriver_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_RateGroupDriver_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/64 Testing: Svc_TlmChan_ut_exe
+61/64 Test: Svc_TlmChan_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Svc_TlmChan_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Svc/TlmChan
+"Svc_TlmChan_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 4 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 4 tests from TlmChanTest
+[ RUN      ] TlmChanTest.NominalChannelTest
+
+***************************************
+TESTCASE 107.1.1: Nominal channelized telemetry
+***************************************
+
+***************************************
+Write a single channel and verify it is read back and pushed correctly.
+***************************************
+
+***************************************
+(RQ)       TLC-001
+***************************************
+
+***************************************
+(RQ)       TLC-002
+***************************************
+
+***************************************
+(RQ)       TLC-004
+***************************************
+
+***************************************
+(RQ)       TLC-003
+***************************************
+[       OK ] TlmChanTest.NominalChannelTest (0 ms)
+[ RUN      ] TlmChanTest.MultiChannelTest
+
+***************************************
+TESTCASE 107.1.2: Nominal Multi-channel channelized telemetry
+***************************************
+
+***************************************
+Write multiple channels and verify they are read back and pushed correctly.
+***************************************
+Slot: 0
+Entry  Ptr: 0x7ffee10baf08 id: 0x00000300 bucket: 10 next: 0x7ffee10bb410
+Entry  Ptr: 0x7ffee10bb410 id: 0x00000102 bucket: 17 next: 0x0
+Slot: 1
+Entry  Ptr: 0x7ffee10bafc0 id: 0x00000301 bucket: 11 next: 0x7ffee10bb4c8
+Entry  Ptr: 0x7ffee10bb4c8 id: 0x00000103 bucket: 18 next: 0x0
+Slot: 2
+Entry  Ptr: 0x7ffee10bb580 id: 0x00000104 bucket: 19 next: 0x0
+Slot: 3
+Entry  Ptr: 0x7ffee10bb638 id: 0x00000105 bucket: 20 next: 0x0
+Slot: 4
+Entry  Ptr: 0x7ffee10bb078 id: 0x00000400 bucket: 12 next: 0x0
+Slot: 5
+Entry  Ptr: 0x7ffee10bac28 id: 0x00001100 bucket: 6 next: 0x7ffee10bb130
+Entry  Ptr: 0x7ffee10bb130 id: 0x00000401 bucket: 13 next: 0x0
+Slot: 6
+Entry  Ptr: 0x7ffee10bace0 id: 0x00001101 bucket: 7 next: 0x7ffee10bb1e8
+Entry  Ptr: 0x7ffee10bb1e8 id: 0x00000402 bucket: 14 next: 0x0
+Slot: 7
+Entry  Ptr: 0x7ffee10ba7d8 id: 0x00001000 bucket: 0 next: 0x7ffee10bad98
+Entry  Ptr: 0x7ffee10bad98 id: 0x00001102 bucket: 8 next: 0x0
+Slot: 8
+Entry  Ptr: 0x7ffee10ba890 id: 0x00001001 bucket: 1 next: 0x7ffee10bae50
+Entry  Ptr: 0x7ffee10bae50 id: 0x00001103 bucket: 9 next: 0x0
+Slot: 9
+Entry  Ptr: 0x7ffee10ba948 id: 0x00001002 bucket: 2 next: 0x0
+Slot: 10
+Entry  Ptr: 0x7ffee10baa00 id: 0x00001003 bucket: 3 next: 0x0
+Slot: 11
+Entry  Ptr: 0x7ffee10baab8 id: 0x00001004 bucket: 4 next: 0x0
+Slot: 12
+Entry  Ptr: 0x7ffee10bab70 id: 0x00001005 bucket: 5 next: 0x0
+Slot: 13
+Entry  Ptr: 0x7ffee10bb2a0 id: 0x00000100 bucket: 15 next: 0x0
+Slot: 14
+Entry  Ptr: 0x7ffee10bb358 id: 0x00000101 bucket: 16 next: 0x0
+
+[       OK ] TlmChanTest.MultiChannelTest (1 ms)
+[ RUN      ] TlmChanTest.OffNominal
+
+***************************************
+TESTCASE 107.2.1: Off-nominal channelized telemetry
+***************************************
+
+***************************************
+Attempt to read a channel that hasn't been written.
+***************************************
+[       OK ] TlmChanTest.OffNominal (0 ms)
+[ RUN      ] TlmChanTest.TooManyChannels
+
+***************************************
+Too Many Channel Test
+***************************************
+[       OK ] TlmChanTest.TooManyChannels (0 ms)
+[----------] 4 tests from TlmChanTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test case ran. (1 ms total)
+[  PASSED  ] 4 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Svc_TlmChan_ut_exe" end time: Jun 19 07:47 PDT
+"Svc_TlmChan_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/64 Testing: Os_pthreads
+62/64 Test: Os_pthreads
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Os_pthreads"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Os
+"Os_pthreads" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+Creating queue.
+Test empty queue...
+Passed.
+Test full queue...
+Pushing 0.
+Pushing 1.
+Pushing 2.
+Pushing 3.
+Pushing 4.
+Passed.
+Test weird size...
+Passed.
+Test pop...
+Popping 5.
+Popping 4.
+Popping 3.
+Popping 2.
+Popping 1.
+Passed.
+Test priorities...
+Pushing 'hello' at priority 9.
+Pushing 'how are you' at priority 4.
+Pushing 'pretty good' at priority 100.
+Pushing 'cosmic bro' at priority 4.
+Pushing 'kthxbye' at priority 9.
+Popped 'pretty good' at priority 100. Expected 'pretty good' at priority 100.
+Popped 'hello' at priority 9. Expected 'hello' at priority 9.
+Popped 'kthxbye' at priority 9. Expected 'kthxbye' at priority 9.
+Popped 'how are you' at priority 4. Expected 'how are you' at priority 4.
+Popped 'cosmic bro' at priority 4. Expected 'cosmic bro' at priority 4.
+Passed.
+Test done.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Os_pthreads" end time: Jun 19 07:47 PDT
+"Os_pthreads" time elapsed: 00:00:00
+----------------------------------------------------------
+
+63/64 Testing: Os_pthreads_max_heap
+63/64 Test: Os_pthreads_max_heap
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Os_pthreads_max_heap"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Os
+"Os_pthreads_max_heap" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+Creating heap.
+Testing empty...
+Passed.
+Testing push...
+Passed.
+Testing pop...
+Passed.
+Testing random...
+Passed.
+Testing no priority...
+Passed.
+Testing mixed priority...
+Passed.
+Test done.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Os_pthreads_max_heap" end time: Jun 19 07:47 PDT
+"Os_pthreads_max_heap" time elapsed: 00:00:00
+----------------------------------------------------------
+
+64/64 Testing: CFDP_Checksum_ut_exe
+64/64 Test: CFDP_Checksum_ut_exe
+Command: "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/CFDP_Checksum_ut_exe"
+Directory: /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/CFDP/Checksum
+"CFDP_Checksum_ut_exe" start time: Jun 19 07:47 PDT
+Output:
+----------------------------------------------------------
+[==========] Running 5 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 5 tests from Checksum
+[ RUN      ] Checksum.OnePacket
+[       OK ] Checksum.OnePacket (0 ms)
+[ RUN      ] Checksum.TwoPacketsAligned
+[       OK ] Checksum.TwoPacketsAligned (0 ms)
+[ RUN      ] Checksum.TwoPacketsUnaligned1
+[       OK ] Checksum.TwoPacketsUnaligned1 (0 ms)
+[ RUN      ] Checksum.TwoPacketsUnaligned2
+[       OK ] Checksum.TwoPacketsUnaligned2 (0 ms)
+[ RUN      ] Checksum.ThreePackets
+[       OK ] Checksum.ThreePackets (0 ms)
+[----------] 5 tests from Checksum (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test case ran. (0 ms total)
+[  PASSED  ] 5 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"CFDP_Checksum_ut_exe" end time: Jun 19 07:47 PDT
+"CFDP_Checksum_ut_exe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jun 19 07:47 PDT

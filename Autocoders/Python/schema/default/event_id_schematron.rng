@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "UNIQUE_ID_EVR">
+    <rule context="event">
+        <assert test="count(//event/@id[. = current()/@id]) = 1">Event ID's should be unique.</assert>
+    </rule>
+</pattern>
+</schema>

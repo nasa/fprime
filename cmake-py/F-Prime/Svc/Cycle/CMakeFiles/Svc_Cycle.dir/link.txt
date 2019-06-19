@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_Cycle.a  CMakeFiles/Svc_Cycle.dir/TimerVal.cpp.o CMakeFiles/Svc_Cycle.dir/CyclePortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_Cycle.a

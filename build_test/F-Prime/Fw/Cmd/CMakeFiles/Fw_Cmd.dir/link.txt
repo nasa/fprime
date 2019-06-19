@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Cmd.a  CMakeFiles/Fw_Cmd.dir/CmdArgBuffer.cpp.o CMakeFiles/Fw_Cmd.dir/CmdPacket.cpp.o CMakeFiles/Fw_Cmd.dir/CmdString.cpp.o CMakeFiles/Fw_Cmd.dir/CmdPortAc.cpp.o CMakeFiles/Fw_Cmd.dir/CmdRegPortAc.cpp.o CMakeFiles/Fw_Cmd.dir/CmdResponsePortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Cmd.a
