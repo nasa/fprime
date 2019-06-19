@@ -32,24 +32,32 @@ class IntegrationTestAPI:
     ######################################################################################
     #   History Functions
     ######################################################################################
-    def get_command_test_history():
+    def get_command_test_history(self):
         """
         Accessor for IntegrationTestAPI's command history
         :return: a history of CmdData Objects
         """
         pass
 
-    def get_telemetry_test_history():
+    def get_telemetry_test_history(self):
         """
         Accessor for IntegrationTestAPI's telemetry history
         :return: a history of ChData Objects
         """
         pass
 
-    def get_event_test_history():
+    def get_event_test_history(self):
         """
         Accessor for IntegrationTestAPI's event history
         :return: a history of EventData Objects
+        """
+        pass
+
+    def get_latest_fsw_time(self):
+        """
+        Finds the latest flight software time received by either the event or telemetry
+        history.
+        :return: a flight software timestamp
         """
         pass
 
@@ -67,7 +75,7 @@ class IntegrationTestAPI:
         pass
 
     ######################################################################################
-    #   Command Asserts
+    #   Command Asserts and Functions
     ######################################################################################
     def assert_send_command(self, command, args):
         """
@@ -82,9 +90,52 @@ class IntegrationTestAPI:
         """
         pass
 
+    def send_and_await_telemetry(self, command, args, channels, timeout=5):
+        """
+        Sends the specified command and awaits the specified telemetry update or sequence
+        of updates. This function will enforce that each element of the sequence occurred
+        in order with respect to the flight software timestamps. If the specification of
+        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
+        is reccomended (but not enforced) not to specify timestamps for this assert.
+
+        :param command: Either the command id or a command mnemonic to specify the type of command
+        :param args: A list of command arguments to send
+        :param channels: Either a single channel specifier, or a sequence of channel specifiers, where a channel specifier is an id, mnemonic, or a telemetry_predicate
+        :param timeout: The maximum time to wait for
+        :return: If the search is successful, will return the list of ChData objects to satisfy the search, otherwise will return None.
+        """
+        pass
+
+    def send_and_await_event(self, command, args, events, timeout=5):
+        """
+        Sends the specified command and awaits the specified event message or sequence of
+        messages. This function will enforce that each element of the sequence occurred
+        in order with respect to the flight software timestamps. If the specification of
+        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
+        is reccomended (but not enforced) not to specify timestamps for this assert.
+
+        :param command: Either the command id or a command mnemonic to specify the type of command
+        :param args: A list of command arguments to send
+        :param events:  Either a single event specifier, or a sequence of event specifiers, where an event specifier is an id, mnemonic, or an event_predicate
+        :param timeout: The maximum time to wait for
+        :return: If the search is successful, will return the instance of EventData, otherwise will return None.
+        """
+        pass
+
     ######################################################################################
     #   Telemetry Functions
     ######################################################################################
+    def translate_telemetry_name(self, channel):
+        """
+        This function will translate the given mnemonic into an ID as defined by the
+        flight software dictionary. This call will raise an error if the channel given
+        is not in the dictionary.
+
+        :param channel: Either the channel id or the channel mnemonic
+        :return: The channel ID
+        """
+        pass
+
     def get_telemetry_predicate(self, channel=None, val_pred=None, fsw_time_pred=None):
         """
         This function will translate the channel ID, and construct a telemetry_predicate
@@ -190,6 +241,17 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Event Functions
     ######################################################################################
+    def translate_event_name(self, event):
+        """
+        This function will translate the given mnemonic into an ID as defined by the
+        flight software dictionary. This call will raise an error if the event given is
+        not in the dictionary.
+
+        :param event: Either the event id or the event mnemonic
+        :return: The event ID
+        """
+        pass
+
     def get_event_predicate(self, event=None, args=None, fsw_time_pred=None):
         """
         This function will translate the event ID, and construct an event_predicate
@@ -288,40 +350,5 @@ class IntegrationTestAPI:
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
         :param timeout: If specified, the assert will behave as an await statement after searching available history. Negative values are ignored.
         :return: If the assert is successful, this call will return the number that satisfied the count predicate.
-        """
-        pass
-
-    ######################################################################################
-    #   Combined Functions
-    ######################################################################################
-    def send_and_await_telemetry(self, command, args, channels, timeout=5):
-        """
-        Sends the specified command and awaits the specified telemetry update or sequence
-        of updates. This function will enforce that each element of the sequence occurred
-        in order with respect to the flight software timestamps. If the specification of
-        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
-        is reccomended (but not enforced) not to specify timestamps for this assert.
-
-        :param command: Either the command id or a command mnemonic to specify the type of command
-        :param args: A list of command arguments to send
-        :param channels: Either a single channel specifier, or a sequence of channel specifiers, where a channel specifier is an id, mnemonic, or a telemetry_predicate
-        :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the list of ChData objects to satisfy the search, otherwise will return None.
-        """
-        pass
-
-    def send_and_await_event(self, command, args, events, timeout=5):
-        """
-        Sends the specified command and awaits the specified event message or sequence of
-        messages. This function will enforce that each element of the sequence occurred
-        in order with respect to the flight software timestamps. If the specification of
-        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
-        is reccomended (but not enforced) not to specify timestamps for this assert.
-
-        :param command: Either the command id or a command mnemonic to specify the type of command
-        :param args: A list of command arguments to send
-        :param events:  Either a single event specifier, or a sequence of event specifiers, where an event specifier is an id, mnemonic, or an event_predicate
-        :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the instance of EventData, otherwise will return None.
         """
         pass
