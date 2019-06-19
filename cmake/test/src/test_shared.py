@@ -16,7 +16,7 @@ elif platform.system() == "Darwin":
 
 # Test a normal build, with the ref executable and static libraries
 BUILD_DIR = os.path.join("<FPRIME>", "Ref")
-OPTIONS = {"LINK_AS_SHARED_LIBS": "ON"}
+OPTIONS = {"BUILD_SHARED_LIBS": "ON"}
 EXPECTED = [
     os.path.join("bin", platform.system(), "Ref"),
     os.path.join("<FPRIME>", "Ref", "Top", "RefTopologyAppDictionary.xml"),

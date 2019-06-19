@@ -192,7 +192,6 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
   # Add the library name
   add_library(
     ${MODULE_NAME}
-    ${FPRIME_LIB_TYPE}
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )

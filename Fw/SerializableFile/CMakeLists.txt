@@ -16,7 +16,7 @@ set(MOD_DEPS
   Fw/Types
 )
 # For shared libraries, Os must exist in the module list
-if (LINK_AS_SHARED_LIBS)
+if (BUILD_SHARED_LIBS)
     list(APPEND MOD_DEPS "Os")
 endif()
 register_fprime_module()

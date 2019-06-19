@@ -59,22 +59,6 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 option(GENERATE_AC_IN_SOURCE "Ac.cpp and Ac.hpp are placed with source files." OFF)
 
 ####
-# `LINK_AS_SHARED_LIBS:`
-#
-# This option swiches the default link option from static linkage to using a shared-object linkage.
-# It implies that instead of static archive files, shared objects will be built instead. This will
-# mean smaller binaries, partial-updates are possible, and more rigorous project process must be
-# used.
-#
-# **Values:**
-# - ON: generate shared libraries with shared-linkage.
-# - OFF: (default) generate static libraries with static-linkage.
-#
-# e.g. `-DLINK_AS_SHARED_LIBS=ON`
-####
-option(LINK_AS_SHARED_LIBS "Link F prime with shared libraries." OFF)
-
-####
 # `GENERATE_HERITAGE_PY_DICT:`
 #
 # This option switches from generating XML dictionaries to generating the heritage python

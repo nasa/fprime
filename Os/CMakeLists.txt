@@ -71,7 +71,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
   # Shard libraries need an -rt dependency for mq libs
-  if (LINK_AS_SHARED_LIBS)
+  if (BUILD_SHARED_LIBS)
       list(APPEND MOD_DEPS "-lrt")
   endif()
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
@@ -157,7 +157,7 @@ else()
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
   # Shard libraries need an -rt dependency for mq libs
-  if (LINK_AS_SHARED_LIBS)
+  if (BUILD_SHARED_LIBS)
       list(APPEND MOD_DEPS "-lrt")
   endif()
 endif()

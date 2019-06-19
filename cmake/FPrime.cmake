@@ -57,14 +57,6 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STRE
 endif()
 message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
 
-# Library types, used for generating shared objects or static archives
-if (LINK_AS_SHARED_LIBS)
-    message(STATUS "Generating shared libraries")
-    set(FPRIME_LIB_TYPE "SHARED")
-else()
-    message(STATUS "Generating static libraries")
-    set(FPRIME_LIB_TYPE "STATIC")
-endif()
 # Let user know on the choice of dictionaries
 if (GENERATE_HERITAGE_PY_DICT)
     message(STATUS "Generating Heritage Python Dictionaries")
