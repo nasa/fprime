@@ -76,9 +76,9 @@ class IntegrationTestAPI:
         assert does not check that the command was  received by flight software, only that
         the command and arguments were valid with respect to the flight dictionary.
 
-        :param command: Either the command id or a command mnemonic to specify the type of command
+        :param command: Either the command id or a command mnemonic to define the type of command
         :param args: A list of command arguments to send
-        :return: If the assert is successful, will return an instance of CmdData from data_types.cmd_data
+        :return: If the assert is successful, will return an instance of CmdData
         """
         pass
 
@@ -90,7 +90,7 @@ class IntegrationTestAPI:
         This function will translate the channel ID, and construct a telemetry_predicate
         object. It is used as a helper by the IntegrationTestAPI, but could also be
         helpful to a user of the test API. If channel is already an instance of
-        channel_predicate, it will be returned immediately. The provided implementation
+        telemetry_predicate, it will be returned immediately. The provided implementation
         of telemetry_predicate evaluates true when all specified constraints are
         satisfied. If a specific constraint isn't specified, then it will be ignored.
 
@@ -109,27 +109,27 @@ class IntegrationTestAPI:
         the specified constraints. Then, if no update was found, await_telemetry will
         wait for a valid telemetry update until the timeout.
 
-        :param channel: A channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
+        :param channel: A channel id, channel mnemonic, or a telemetry_predicate to specify the telemetry channel
         :param val_pred: If specified, the telemetry update must have a value that satisfies this predicate.
         :param fsw_time_pred: If specified, the telemetry update must have a flight software timestamp that satisfies this predicate.
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history.
         :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the instance of ChData from data_types.ch_data that satisfied the assert, otherwise will return None.
+        :return: If the search is successful, will return the instance of ChData from that satisfied the assert, otherwise will return None.
         """
         pass
 
     def await_telemetry_sequence(self, channels, history=None, timeout=5):
         """
         This function will first search the history then await future updates to find
-        every specified channel in a sequence. Note: This function will enforce that each
-        element of the sequence comes in order with respect to the flight software
+        every specified channel in a sequence. This function will enforce that each
+        element of the sequence occurred in order with respect to the flight software
         timestamps. Note: This function will return a list of what it finds regardless of
         whether or not it finds all elements.
 
-        :param channels: A list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
+        :param channels: A list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a telemetry_predicate
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
         :param timeout: The maximum time to wait for
-        :return: will return the sequence of ChData objects to satisfy the search from data_types.ch_data. If the sequence was only partially satisfied, then it will return that sub-list.
+        :return: will return the sequence of ChData objects to satisfy the search. If the sequence was only partially satisfied, then it will return that sub-list.
         """
         pass
 
@@ -145,12 +145,12 @@ class IntegrationTestAPI:
         sequence. If no valid update was received, then received before the timeout, this
         call will assert failure.
 
-        :param channel: Either a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel.
+        :param channel: Either a channel id, channel mnemonic, or a telemetry_predicate to specify the telemetry channel.
         :param val_pred: If specified, a valid telemetry update must have a value that satisfies this predicate.
         :param fsw_time_pred: If specified, a valid telemetry update must have a flight software timestamp that satisfies this predicate.
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
         :param timeout: If specified, the assert will behave as an await statement after searching available history. Negative values are ignored.
-        :return: If the assert is successful, will return the instance of ChData from data_types.ch_data that satisfied the assert.
+        :return: If the assert is successful, will return the instance of ChData that satisfied the assert.
         """
         pass
 
@@ -158,13 +158,13 @@ class IntegrationTestAPI:
         """
         Asserts that a sequence of Telemetry updates was received. This function will
         first search the history then await future updates to find every specified
-        channel update in a sequence. Note: This function will enforce that each element
-        of the sequence comes in order with respect to the flight software timestamps. If
-        the specification of timestamp predicates is not sequential, the timestamps will
-        likely fail. It is reccomended (but not enforced) not to specify timestamps for
-        this assert.
+        channel update in a sequence. This function will enforce that each element of the
+        sequence occurred in order with respect to the flight software timestamps. If the
+        specification of timestamp predicates is not sequential, the timestamps will
+        likely fail. Note: It is reccomended (but not enforced) not to specify timestamps
+        for this assert.
 
-        :param channels: A list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
+        :param channels: A list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a telemetry_predicate
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
         :param timeout: The maximum time to wait for
         :return: If the assert is successful, will return the sequence of ChData objects to satisfy the search from data_types.ch_data
@@ -180,7 +180,7 @@ class IntegrationTestAPI:
         achieved or the timeout, at which point it will assert failure.
 
         :param count_pred: A predicate to determine whether the correct amount has been received.
-        :param channels: A channel specifier or a list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel. If specified, an event will only be counted if it satisfies at least one channel on this list.
+        :param channels: A channel specifier or a list of channel specifiers, where a channel specifier is an id, mnemonic, or a telemetry_predicate. If specified, an update will only be counted if it satisfies at least one channel on this list.
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
         :param timeout: If specified, the assert will behave as an await statement after searching available history. Negative values are ignored.
         :return: If the assert is successful, this call will return a list of the objects counted to satisfy the count predicate
@@ -215,27 +215,27 @@ class IntegrationTestAPI:
         specified constraints. Then, if no message was found, await_event will wait for a
         valid event message until the timeout.
 
-        :param event: TODO
+        :param event: Either the event id, an event mnemonic, or an event_predicate to specify the event type
         :param args: If specified, the event message must have arguments matching the given list of args. Include None to ignore an element.
         :param fsw_time_pred: If specified, the telemetry update must have a flight software timestamp that satisfies this predicate.
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history.
         :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the instance of EventData from data_types.event_data that satisfied the assert, otherwise will return None.
+        :return: If the search is successful, will return the instance of EventData that satisfied the assert, otherwise will return None.
         """
         pass
 
-    def await_event_sequence(self, command, args, events, timeout=5):
+    def await_event_sequence(self, events, history=None, timeout=5):
         """
-        This function will first search the history then await future updates to find
-        every specified event in a sequence. Note: This function will enforce that each
-        element of the sequence comes in order with respect to the flight software
-        timestamps. Note: This function will return a list of what it finds regardless of
-        whether or not it finds all elements.
+        This function will first search the history then await future messages to find
+        every specified event in a sequence. This function will enforce that each element
+        of the sequence occurred in order with respect to the flight software timestamps.
+        Note: This function will return a list of events regardless of whether or not it
+        finds all elements.
 
-        :param channels: TODO
+        :param events: A list of event specifiers, where an event specifier is an id, mnemonic, or an event_predicate
         :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
         :param timeout: The maximum time to wait for
-        :return: will return the sequence of EventData objects to satisfy the search from data_types.event_data. If the sequence was only partially satisfied, then a sub-list will be returned.
+        :return: will return the sequence of EventData objects to satisfy the search. If the sequence was only partially satisfied, then it will return that sub-list.
         """
         pass
 
@@ -256,13 +256,24 @@ class IntegrationTestAPI:
         :param fsw_time_pred: If specified, a valid event must have a flight software timestamp that satisfies this predicate.
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
         :param timeout: If specified, the assert will behave as an await statement after searching available history. Negative values are ignored.
-        :return: If the assert is successful, this call will return the instance of EventData from data_types.event_data that satisfied the assert.
+        :return: If the assert is successful, this call will return the instance of EventData that satisfied the assert.
         """
         pass
 
     def assert_event_sequence(self, events=None, history=None, timeout=0):
         """
-        TODO
+        Asserts that a sequence of event messages was received. This function will
+        first search the history then await future messages to find every specified
+        event in a sequence. This function will enforce that each element of the sequence
+        occurred in order with respect to the flight software timestamps. If the
+        specification of timestamp predicates is not sequential, the timestamps will
+        likely fail. Note: It is reccomended (but not enforced) not to specify timestamps
+        for this assert.
+
+        :param events: A list of event specifiers, where a channel specifier is an id, mnemonic, or an event_predicate
+        :param history: If specified, will search and await the given history instead of the IntegrationTestAPI's history
+        :param timeout: The maximum time to wait for
+        :return: If the assert is successful, will return the sequence of ChData objects to satisfy the search from data_types.ch_data
         """
         pass
 
@@ -273,7 +284,7 @@ class IntegrationTestAPI:
         timeout at which point it will assert failure.
 
         :param count_pred: A predicate to determine whether the correct amount has been received.
-        :param event_list: TODO
+        :param events: An event specifier or a list of event specifiers. Where a specifier is an id, mnemonic or telemetry_predicate. If specified, an event will only be counted if it satisfies at least one specifier on this list.
         :param history: If specified, the assert will substitute the given history for the IntegrationTestAPI's history.
         :param timeout: If specified, the assert will behave as an await statement after searching available history. Negative values are ignored.
         :return: If the assert is successful, this call will return the number that satisfied the count predicate.
@@ -286,31 +297,31 @@ class IntegrationTestAPI:
     def send_and_await_telemetry(self, command, args, channels, timeout=5):
         """
         Sends the specified command and awaits the specified telemetry update or sequence
-        of updates. This function will enforce that each element of the sequence comes in
-        order with respect to the flight software timestamps. If the specification of
+        of updates. This function will enforce that each element of the sequence occurred
+        in order with respect to the flight software timestamps. If the specification of
         timestamp predicates is not sequential, the timestamps will likely fail. Note: It
         is reccomended (but not enforced) not to specify timestamps for this assert.
 
         :param command: Either the command id or a command mnemonic to specify the type of command
         :param args: A list of command arguments to send
-        :param channels: Either a single channel specifier, or a list of channel specifiers, where a channel specifier is a channel id, channel mnemonic, or a channel_predicate to specify the telemetry channel
+        :param channels: Either a single channel specifier, or a sequence of channel specifiers, where a channel specifier is an id, mnemonic, or a telemetry_predicate
         :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the list of ChData objects to satisfy the search from data_types.ch_data, otherwise will return None.
+        :return: If the search is successful, will return the list of ChData objects to satisfy the search, otherwise will return None.
         """
         pass
 
     def send_and_await_event(self, command, args, events, timeout=5):
         """
         Sends the specified command and awaits the specified event message or sequence of
-        messages. This function will enforce that each element of the sequence comes in
-        order with respect to the flight software timestamps. If the specification of
+        messages. This function will enforce that each element of the sequence occurred
+        in order with respect to the flight software timestamps. If the specification of
         timestamp predicates is not sequential, the timestamps will likely fail. Note: It
         is reccomended (but not enforced) not to specify timestamps for this assert.
 
         :param command: Either the command id or a command mnemonic to specify the type of command
         :param args: A list of command arguments to send
-        :param events:  Either a single event specifier, or a list of event specifiers, where an event specifier is an event id, event mnemonic, or an event_predicate to specify the type of event
+        :param events:  Either a single event specifier, or a sequence of event specifiers, where an event specifier is an id, mnemonic, or an event_predicate
         :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the instance of EventData from data_types.event_data, otherwise will return None.
+        :return: If the search is successful, will return the instance of EventData, otherwise will return None.
         """
         pass
