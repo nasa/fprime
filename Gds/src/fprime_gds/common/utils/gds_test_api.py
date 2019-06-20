@@ -29,9 +29,23 @@ class IntegrationTestAPI:
         self.telemetry_history = None
         self.event_history = None
 
+    def log_test_message(self):
+        """
+        TODO: Define what a test log should look like and describe its parameters.
+        """
+        pass
+
+    def start_test_case(self, name):
+        """
+        TODO: Define what should happen at the start of each test case and what parameters
+              would be included.
+        """
+        pass
+
     ######################################################################################
     #   History Functions
     ######################################################################################
+
     def get_command_test_history(self):
         """
         Accessor for IntegrationTestAPI's command history
@@ -76,22 +90,8 @@ class IntegrationTestAPI:
         pass
 
     ######################################################################################
-    #   Command Asserts and Functions
+    #   Command Functions
     ######################################################################################
-    def assert_send_command(self, command, args):
-        """
-        Sends a command and asserts that the command was translated. If the command is in
-        conflict with the flight dictionary, this will raise a test error. Note: This
-        assert does not check that the command was  received by flight software, only that
-        the command and arguments were valid with respect to the flight dictionary.
-
-        :param command: Either the command id or a command mnemonic to define the type of
-            command
-        :param args: A list of command arguments to send
-        :return: If the assert is successful, will return an instance of CmdData
-        """
-        pass
-
     def send_and_await_telemetry(self, command, args, channels, timeout=5):
         """
         Sends the specified command and awaits the specified telemetry update or sequence
@@ -128,6 +128,36 @@ class IntegrationTestAPI:
         :param timeout: The maximum time to wait for
         :return: If the search is successful, will return the instance of EventData,
             otherwise will return None.
+        """
+        pass
+
+    ######################################################################################
+    #   Command Asserts
+    ######################################################################################
+
+    def assert_send_command(self, command, args):
+        """
+        Sends a command and asserts that the command was translated. If the command is in
+        conflict with the flight dictionary, this will raise a test error. Note: This
+        assert does not check that the command was  received by flight software, only that
+        the command and arguments were valid with respect to the flight dictionary.
+
+        :param command: Either the command id or a command mnemonic to define the type of
+            command
+        :param args: A list of command arguments to send
+        :return: If the assert is successful, will return an instance of CmdData
+        """
+        pass
+
+    def send_and_assert_telemetry(self, command, args, channels, timeout=5):
+        """
+        TODO: Define what a send and assert should look like and describe its parameters.
+        """
+        pass
+
+    def send_and_assert_event(self, command, args, events, timeout=5):
+        """
+        TODO: Define what a send and assert should look like and describe its parameters.
         """
         pass
 
