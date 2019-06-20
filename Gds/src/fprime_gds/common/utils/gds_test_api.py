@@ -7,6 +7,7 @@ telemetry and dictionaries.
 
 :author: koran
 """
+import predicates
 
 
 class IntegrationTestAPI:
@@ -51,21 +52,21 @@ class IntegrationTestAPI:
         Accessor for IntegrationTestAPI's command history
         :return: a history of CmdData Objects
         """
-        pass
+        return self.command_history
 
     def get_telemetry_test_history(self):
         """
         Accessor for IntegrationTestAPI's telemetry history
         :return: a history of ChData Objects
         """
-        pass
+        return self.telemetry_history
 
     def get_event_test_history(self):
         """
         Accessor for IntegrationTestAPI's event history
         :return: a history of EventData Objects
         """
-        pass
+        return self.event_history
 
     def get_latest_fsw_time(self):
         """
@@ -73,7 +74,9 @@ class IntegrationTestAPI:
         history.
         :return: a flight software timestamp
         """
-        pass
+        e_time = self.event_history[-1].get_time()
+        t_time = self.telemetry_history[-1].get_time()
+        return max(e_time, t_time)
 
     def clear_histories(self, fsw_time_stamp=None):
         """
@@ -87,7 +90,12 @@ class IntegrationTestAPI:
         :param fsw_time_stamp: If specified, event and telemetry histories will be
             cleared up until the timestamp.
         """
-        pass
+        fsw_pred = predicates.greater_than(fsw_time_stamp)
+        e_pred = predicates.event_predicate(time_pred=fsw_pred)
+        self.event_history.clear(e_pred)
+        t_pred = predicates.telemetry_predicate(time_pred=fsw_pred)
+        self.command_history.clear(t_pred)
+        self.command_history.clear()
 
     ######################################################################################
     #   Command Functions
@@ -134,6 +142,18 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Command Asserts
     ######################################################################################
+    def translate_command_name(self, command):
+        """
+        This function will translate the given mnemonic into an ID as defined by the
+        flight software dictionary. This call will raise an error if the command given
+        is not in the dictionary.
+
+        :param channel: Either the channel id or the channel mnemonic
+        :return: The comand ID
+        """
+        cmd_dict = self.pipeline.get_command_dictionary()
+        # TODO investigate dictionary structure/implementation to make sure we get the
+        # correct version of the dictionary.
 
     def assert_send_command(self, command, args):
         """
@@ -147,7 +167,15 @@ class IntegrationTestAPI:
         :param args: A list of command arguments to send
         :return: If the assert is successful, will return an instance of CmdData
         """
-        pass
+        try:
+            command = self.translate_command_name(command)
+            # TODO: catch the key error and assert failure.
+            self.pipeline.send_command(command, args)
+        except KeyError:
+            # TODO: Print readable test log messages describing the input that caused the
+            # error
+            assert False
+        assert True
 
     def send_and_assert_telemetry(self, command, args, channels, timeout=5):
         """
