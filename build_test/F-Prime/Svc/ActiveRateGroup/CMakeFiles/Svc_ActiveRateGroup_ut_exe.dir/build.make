@@ -156,11 +156,11 @@ bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Tlm_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Log_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Com_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Time_ut.a
+bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libSvc_Ping_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libSvc_Cycle_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libOs_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libUtils_Hash_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libSvc_Sched_ut.a
-bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libSvc_Ping_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Port_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Obj_ut.a
 bin/Darwin/Svc_ActiveRateGroup_ut_exe: lib/Darwin/libFw_Logger_ut.a

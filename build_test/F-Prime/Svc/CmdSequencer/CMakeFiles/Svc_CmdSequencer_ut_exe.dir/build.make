@@ -700,9 +700,9 @@ bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Log_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Cmd_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Com_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Time_ut.a
-bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libSvc_Sched_ut.a
-bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libSvc_Ping_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libSvc_Seq_ut.a
+bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libSvc_Ping_ut.a
+bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libSvc_Sched_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Port_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Obj_ut.a
 bin/Darwin/Svc_CmdSequencer_ut_exe: lib/Darwin/libFw_Logger_ut.a

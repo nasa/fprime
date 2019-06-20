@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_GndIf.a  CMakeFiles/Svc_GndIf.dir/GetConnectedPortAc.cpp.o CMakeFiles/Svc_GndIf.dir/GndIfComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_GndIf.a

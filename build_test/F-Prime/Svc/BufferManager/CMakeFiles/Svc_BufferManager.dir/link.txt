@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_BufferManager.a  CMakeFiles/Svc_BufferManager.dir/BufferManager.cpp.o CMakeFiles/Svc_BufferManager.dir/BufferManagerComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_BufferManager.a

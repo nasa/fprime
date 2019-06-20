@@ -28,28 +28,28 @@ The CXX compiler identification is AppleClang, found in "/Users/jishii/Documents
 Determining if the C compiler works passed with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_dca81/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dca81.dir/build.make CMakeFiles/cmTC_dca81.dir/build
-Building C object CMakeFiles/cmTC_dca81.dir/testCCompiler.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_dca81.dir/testCCompiler.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_dca81
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dca81.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_dca81.dir/testCCompiler.c.o  -o cmTC_dca81 
+Run Build Command(s):/usr/bin/make cmTC_b1ff0/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b1ff0.dir/build.make CMakeFiles/cmTC_b1ff0.dir/build
+Building C object CMakeFiles/cmTC_b1ff0.dir/testCCompiler.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_b1ff0.dir/testCCompiler.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_b1ff0
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b1ff0.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_b1ff0.dir/testCCompiler.c.o  -o cmTC_b1ff0 
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_5c43d/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_5c43d.dir/build.make CMakeFiles/cmTC_5c43d.dir/build
-Building C object CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c
+Run Build Command(s):/usr/bin/make cmTC_0647c/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_0647c.dir/build.make CMakeFiles/cmTC_0647c.dir/build
+Building C object CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c
 Apple LLVM version 10.0.1 (clang-1001.0.46.4)
 Target: x86_64-apple-darwin18.6.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
 clang: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
- "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o -x c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c
+ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o -x c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c
 clang -cc1 version 10.0.1 (clang-1001.0.46.4) default target x86_64-apple-darwin18.6.0
 ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/local/include"
 ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/Library/Frameworks"
@@ -60,14 +60,14 @@ ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX1
  /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include
  /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks (framework directory)
 End of search list.
-Linking C executable cmTC_5c43d
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5c43d.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o  -o cmTC_5c43d 
+Linking C executable cmTC_0647c
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0647c.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o  -o cmTC_0647c 
 Apple LLVM version 10.0.1 (clang-1001.0.46.4)
 Target: x86_64-apple-darwin18.6.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
- "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_5c43d -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
+ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_0647c -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-450.3
 BUILD 18:45:16 Apr  4 2019
 configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em
@@ -94,16 +94,16 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_5c43d/fast ]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_5c43d.dir/build.make CMakeFiles/cmTC_5c43d.dir/build]
-  ignore line: [Building C object CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_0647c/fast ]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_0647c.dir/build.make CMakeFiles/cmTC_0647c.dir/build]
+  ignore line: [Building C object CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c]
   ignore line: [Apple LLVM version 10.0.1 (clang-1001.0.46.4)]
   ignore line: [Target: x86_64-apple-darwin18.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
   ignore line: [clang: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]]
-  ignore line: [ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o -x c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c]
+  ignore line: [ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o -x c /opt/local/share/cmake-3.14/Modules/CMakeCCompilerABI.c]
   ignore line: [clang -cc1 version 10.0.1 (clang-1001.0.46.4) default target x86_64-apple-darwin18.6.0]
   ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/local/include"]
   ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/Library/Frameworks"]
@@ -114,14 +114,14 @@ Parsed C implicit link information from above output:
   ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include]
   ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks (framework directory)]
   ignore line: [End of search list.]
-  ignore line: [Linking C executable cmTC_5c43d]
-  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5c43d.dir/link.txt --verbose=1]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o  -o cmTC_5c43d ]
+  ignore line: [Linking C executable cmTC_0647c]
+  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0647c.dir/link.txt --verbose=1]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o  -o cmTC_0647c ]
   ignore line: [Apple LLVM version 10.0.1 (clang-1001.0.46.4)]
   ignore line: [Target: x86_64-apple-darwin18.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_5c43d -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_0647c -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
     arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-lto_library] ==> ignore, skip following value
@@ -134,11 +134,11 @@ Parsed C implicit link information from above output:
     arg [-syslibroot] ==> ignore
     arg [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_5c43d] ==> ignore
+    arg [cmTC_0647c] ==> ignore
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_5c43d.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_0647c.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lSystem] ==> lib [System]
     arg [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
   Library search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/lib]
@@ -157,13 +157,13 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_dfa94/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dfa94.dir/build.make CMakeFiles/cmTC_dfa94.dir/build
-Building C object CMakeFiles/cmTC_dfa94.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c11 -o CMakeFiles/cmTC_dfa94.dir/feature_tests.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.c
-Linking C executable cmTC_dfa94
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dfa94.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_dfa94.dir/feature_tests.c.o  -o cmTC_dfa94 
+Run Build Command(s):/usr/bin/make cmTC_c4052/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c4052.dir/build.make CMakeFiles/cmTC_c4052.dir/build
+Building C object CMakeFiles/cmTC_c4052.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c11 -o CMakeFiles/cmTC_c4052.dir/feature_tests.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.c
+Linking C executable cmTC_c4052
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c4052.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_c4052.dir/feature_tests.c.o  -o cmTC_c4052 
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -175,13 +175,13 @@ Linking C executable cmTC_dfa94
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_97c0e/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_97c0e.dir/build.make CMakeFiles/cmTC_97c0e.dir/build
-Building C object CMakeFiles/cmTC_97c0e.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c99 -o CMakeFiles/cmTC_97c0e.dir/feature_tests.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.c
-Linking C executable cmTC_97c0e
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_97c0e.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_97c0e.dir/feature_tests.c.o  -o cmTC_97c0e 
+Run Build Command(s):/usr/bin/make cmTC_8d0dd/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_8d0dd.dir/build.make CMakeFiles/cmTC_8d0dd.dir/build
+Building C object CMakeFiles/cmTC_8d0dd.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c99 -o CMakeFiles/cmTC_8d0dd.dir/feature_tests.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.c
+Linking C executable cmTC_8d0dd
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8d0dd.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_8d0dd.dir/feature_tests.c.o  -o cmTC_8d0dd 
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -193,13 +193,13 @@ Linking C executable cmTC_97c0e
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_21a8c/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_21a8c.dir/build.make CMakeFiles/cmTC_21a8c.dir/build
-Building C object CMakeFiles/cmTC_21a8c.dir/feature_tests.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c90 -o CMakeFiles/cmTC_21a8c.dir/feature_tests.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.c
-Linking C executable cmTC_21a8c
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_21a8c.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_21a8c.dir/feature_tests.c.o  -o cmTC_21a8c 
+Run Build Command(s):/usr/bin/make cmTC_6714f/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_6714f.dir/build.make CMakeFiles/cmTC_6714f.dir/build
+Building C object CMakeFiles/cmTC_6714f.dir/feature_tests.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c90 -o CMakeFiles/cmTC_6714f.dir/feature_tests.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.c
+Linking C executable cmTC_6714f
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6714f.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_6714f.dir/feature_tests.c.o  -o cmTC_6714f 
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -209,28 +209,28 @@ Linking C executable cmTC_21a8c
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_e13d1/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e13d1.dir/build.make CMakeFiles/cmTC_e13d1.dir/build
-Building CXX object CMakeFiles/cmTC_e13d1.dir/testCXXCompiler.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_e13d1.dir/testCXXCompiler.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_e13d1
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e13d1.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_e13d1.dir/testCXXCompiler.cxx.o  -o cmTC_e13d1 
+Run Build Command(s):/usr/bin/make cmTC_0b1de/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_0b1de.dir/build.make CMakeFiles/cmTC_0b1de.dir/build
+Building CXX object CMakeFiles/cmTC_0b1de.dir/testCXXCompiler.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_0b1de.dir/testCXXCompiler.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_0b1de
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0b1de.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_0b1de.dir/testCXXCompiler.cxx.o  -o cmTC_0b1de 
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_991d4/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_991d4.dir/build.make CMakeFiles/cmTC_991d4.dir/build
-Building CXX object CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp
+Run Build Command(s):/usr/bin/make cmTC_3adc0/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3adc0.dir/build.make CMakeFiles/cmTC_3adc0.dir/build
+Building CXX object CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp
 Apple LLVM version 10.0.1 (clang-1001.0.46.4)
 Target: x86_64-apple-darwin18.6.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
 clang: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
- "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -stdlib=libc++ -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdeprecated-macro -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fcxx-exceptions -fexceptions -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp
+ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -stdlib=libc++ -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdeprecated-macro -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fcxx-exceptions -fexceptions -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp
 clang -cc1 version 10.0.1 (clang-1001.0.46.4) default target x86_64-apple-darwin18.6.0
 ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include/c++/v1"
 ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/local/include"
@@ -243,14 +243,14 @@ ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX1
  /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include
  /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks (framework directory)
 End of search list.
-Linking CXX executable cmTC_991d4
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_991d4.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_991d4 
+Linking CXX executable cmTC_3adc0
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3adc0.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_3adc0 
 Apple LLVM version 10.0.1 (clang-1001.0.46.4)
 Target: x86_64-apple-darwin18.6.0
 Thread model: posix
 InstalledDir: /Library/Developer/CommandLineTools/usr/bin
- "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_991d4 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
+ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_3adc0 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-450.3
 BUILD 18:45:16 Apr  4 2019
 configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em
@@ -279,16 +279,16 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_991d4/fast ]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_991d4.dir/build.make CMakeFiles/cmTC_991d4.dir/build]
-  ignore line: [Building CXX object CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_3adc0/fast ]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3adc0.dir/build.make CMakeFiles/cmTC_3adc0.dir/build]
+  ignore line: [Building CXX object CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -v -Wl,-v -o CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp]
   ignore line: [Apple LLVM version 10.0.1 (clang-1001.0.46.4)]
   ignore line: [Target: x86_64-apple-darwin18.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
   ignore line: [clang: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]]
-  ignore line: [ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -stdlib=libc++ -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdeprecated-macro -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fcxx-exceptions -fexceptions -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [ "/Library/Developer/CommandLineTools/usr/bin/clang" -cc1 -triple x86_64-apple-macosx10.14.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mthread-model posix -mdisable-fp-elim -fno-strict-return -masm-verbose -munwind-tables -target-sdk-version=10.14 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 450.3 -v -coverage-notes-file /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.gcno -resource-dir /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -stdlib=libc++ -Wno-atomic-implicit-seq-cst -Wno-framework-include-private-from-public -Wno-atimport-in-framework-header -Wno-quoted-include-in-framework-header -fdeprecated-macro -fdebug-compilation-dir /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fobjc-runtime=macosx-10.14.0 -fcxx-exceptions -fexceptions -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/local/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp]
   ignore line: [clang -cc1 version 10.0.1 (clang-1001.0.46.4) default target x86_64-apple-darwin18.6.0]
   ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include/c++/v1"]
   ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/local/include"]
@@ -301,14 +301,14 @@ Parsed CXX implicit link information from above output:
   ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include]
   ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks (framework directory)]
   ignore line: [End of search list.]
-  ignore line: [Linking CXX executable cmTC_991d4]
-  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_991d4.dir/link.txt --verbose=1]
-  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_991d4 ]
+  ignore line: [Linking CXX executable cmTC_3adc0]
+  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3adc0.dir/link.txt --verbose=1]
+  ignore line: [/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_3adc0 ]
   ignore line: [Apple LLVM version 10.0.1 (clang-1001.0.46.4)]
   ignore line: [Target: x86_64-apple-darwin18.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Library/Developer/CommandLineTools/usr/bin]
-  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_991d4 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Library/Developer/CommandLineTools/usr/bin/ld" -demangle -lto_library /Library/Developer/CommandLineTools/usr/lib/libLTO.dylib -dynamic -arch x86_64 -macosx_version_min 10.14.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -o cmTC_3adc0 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
     arg [/Library/Developer/CommandLineTools/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-lto_library] ==> ignore, skip following value
@@ -321,11 +321,11 @@ Parsed CXX implicit link information from above output:
     arg [-syslibroot] ==> ignore
     arg [/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_991d4] ==> ignore
+    arg [cmTC_3adc0] ==> ignore
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_991d4.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_3adc0.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lc++] ==> lib [c++]
     arg [-lSystem] ==> lib [System]
     arg [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a] ==> lib [/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
@@ -345,13 +345,13 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++1z] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_8f3f6/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_8f3f6.dir/build.make CMakeFiles/cmTC_8f3f6.dir/build
-Building CXX object CMakeFiles/cmTC_8f3f6.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++1z -o CMakeFiles/cmTC_8f3f6.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_8f3f6
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8f3f6.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_8f3f6.dir/feature_tests.cxx.o  -o cmTC_8f3f6 
+Run Build Command(s):/usr/bin/make cmTC_c1863/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c1863.dir/build.make CMakeFiles/cmTC_c1863.dir/build
+Building CXX object CMakeFiles/cmTC_c1863.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++1z -o CMakeFiles/cmTC_c1863.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_c1863
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c1863.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_c1863.dir/feature_tests.cxx.o  -o cmTC_c1863 
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -416,13 +416,13 @@ Linking CXX executable cmTC_8f3f6
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_1b660/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_1b660.dir/build.make CMakeFiles/cmTC_1b660.dir/build
-Building CXX object CMakeFiles/cmTC_1b660.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++14 -o CMakeFiles/cmTC_1b660.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_1b660
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1b660.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_1b660.dir/feature_tests.cxx.o  -o cmTC_1b660 
+Run Build Command(s):/usr/bin/make cmTC_40c9b/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_40c9b.dir/build.make CMakeFiles/cmTC_40c9b.dir/build
+Building CXX object CMakeFiles/cmTC_40c9b.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++14 -o CMakeFiles/cmTC_40c9b.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_40c9b
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_40c9b.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_40c9b.dir/feature_tests.cxx.o  -o cmTC_40c9b 
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -487,13 +487,13 @@ Linking CXX executable cmTC_1b660
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_f9659/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f9659.dir/build.make CMakeFiles/cmTC_f9659.dir/build
-Building CXX object CMakeFiles/cmTC_f9659.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++11 -o CMakeFiles/cmTC_f9659.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_f9659
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9659.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_f9659.dir/feature_tests.cxx.o  -o cmTC_f9659 
+Run Build Command(s):/usr/bin/make cmTC_707b1/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_707b1.dir/build.make CMakeFiles/cmTC_707b1.dir/build
+Building CXX object CMakeFiles/cmTC_707b1.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++11 -o CMakeFiles/cmTC_707b1.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_707b1
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_707b1.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_707b1.dir/feature_tests.cxx.o  -o cmTC_707b1 
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -558,13 +558,13 @@ Linking CXX executable cmTC_f9659
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_59fee/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_59fee.dir/build.make CMakeFiles/cmTC_59fee.dir/build
-Building CXX object CMakeFiles/cmTC_59fee.dir/feature_tests.cxx.o
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++98 -o CMakeFiles/cmTC_59fee.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_59fee
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_59fee.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_59fee.dir/feature_tests.cxx.o  -o cmTC_59fee 
+Run Build Command(s):/usr/bin/make cmTC_c8545/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c8545.dir/build.make CMakeFiles/cmTC_c8545.dir/build
+Building CXX object CMakeFiles/cmTC_c8545.dir/feature_tests.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -std=c++98 -o CMakeFiles/cmTC_c8545.dir/feature_tests.cxx.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_c8545
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c8545.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/c++    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_c8545.dir/feature_tests.cxx.o  -o cmTC_c8545 
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -627,25 +627,25 @@ Linking CXX executable cmTC_59fee
 Determining if the include file pthread.h exists passed with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_a0de0/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_a0de0.dir/build.make CMakeFiles/cmTC_a0de0.dir/build
-Building C object CMakeFiles/cmTC_a0de0.dir/CheckIncludeFile.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_a0de0.dir/CheckIncludeFile.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_a0de0
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a0de0.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_a0de0.dir/CheckIncludeFile.c.o  -o cmTC_a0de0 
+Run Build Command(s):/usr/bin/make cmTC_26da6/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_26da6.dir/build.make CMakeFiles/cmTC_26da6.dir/build
+Building C object CMakeFiles/cmTC_26da6.dir/CheckIncludeFile.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_26da6.dir/CheckIncludeFile.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_26da6
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_26da6.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_26da6.dir/CheckIncludeFile.c.o  -o cmTC_26da6 
 
 
 Determining if the pthread_create exist passed with the following output:
 Change Dir: /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_dcddc/fast 
-/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dcddc.dir/build.make CMakeFiles/cmTC_dcddc.dir/build
-Building C object CMakeFiles/cmTC_dcddc.dir/CheckSymbolExists.c.o
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_dcddc.dir/CheckSymbolExists.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_dcddc
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dcddc.dir/link.txt --verbose=1
-/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_dcddc.dir/CheckSymbolExists.c.o  -o cmTC_dcddc 
+Run Build Command(s):/usr/bin/make cmTC_cc547/fast 
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cc547.dir/build.make CMakeFiles/cmTC_cc547.dir/build
+Building C object CMakeFiles/cmTC_cc547.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk   -o CMakeFiles/cmTC_cc547.dir/CheckSymbolExists.c.o   -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_cc547
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cc547.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_cc547.dir/CheckSymbolExists.c.o  -o cmTC_cc547 
 
 File /Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */

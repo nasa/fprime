@@ -57,16 +57,16 @@ include F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_tes
 # Include the compile flags for this target's objects.
 include F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
 
-F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp: F-Prime/Autocoders/Python/test/enum_xml
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ExampleEnumAc.cpp, ExampleEnumAc.hpp"
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E env PYTHONPATH=/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/src:/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/utils BUILD_ROOT=/Users/jishii/Documents/rep_other/fprime-sw/cmake/.. PYTHON_AUTOCODER_DIR=/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python DICTIONARY_DIR= FPRIME_CORE_DIR=/Users/jishii/Documents/rep_other/fprime-sw/cmake/.. /Users/jishii/Documents/rep_other/fprime-sw/cmake/../Autocoders/Python/bin/codegen.py --build_root /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml/ExampleEnumAi.xml
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E copy ExampleEnumAc.cpp /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E copy ExampleEnumAc.hpp /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.hpp
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E remove ExampleEnumAc.cpp
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E remove ExampleEnumAc.hpp
+F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp: F-Prime/Autocoders/Python/test/enum_xml
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Enum1EnumAc.cpp, Enum1EnumAc.hpp"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E env PYTHONPATH=/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/src:/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/utils BUILD_ROOT=/Users/jishii/Documents/rep_other/fprime-sw/cmake/.. PYTHON_AUTOCODER_DIR=/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python DICTIONARY_DIR= FPRIME_CORE_DIR=/Users/jishii/Documents/rep_other/fprime-sw/cmake/.. /Users/jishii/Documents/rep_other/fprime-sw/cmake/../Autocoders/Python/bin/codegen.py --build_root /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml/Enum1EnumAi.xml
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E copy Enum1EnumAc.cpp /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E copy Enum1EnumAc.hpp /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.hpp
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E remove Enum1EnumAc.cpp
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E chdir /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml /opt/local/bin/cmake -E remove Enum1EnumAc.hpp
 
-F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.hpp: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp
-	@$(CMAKE_COMMAND) -E touch_nocreate F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.hpp
+F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.hpp: F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp
+	@$(CMAKE_COMMAND) -E touch_nocreate F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.hpp
 
 F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumSerializableAc.cpp: F-Prime/Autocoders/Python/test/enum_xml
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating ExampleEnumSerializableAc.cpp, ExampleEnumSerializableAc.hpp"
@@ -105,22 +105,35 @@ F-Prime/Autocoders/Python/test/enum_xml:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating ."
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /opt/local/bin/cmake -E make_directory /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml
 
-F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
-F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o"
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.o: ../Autocoders/Python/test/enum_xml/ExampleEnumImpl.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.o"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.o -c /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml/ExampleEnumImpl.cpp
 
-F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.i"
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp > CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.i
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.i"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml/ExampleEnumImpl.cpp > CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.i
 
-F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.s"
-	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.s
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.s"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/enum_xml/ExampleEnumImpl.cpp -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.s
+
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.o"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp
+
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.i"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp > CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.i
+
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.s"
+	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.s
 
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumSerializableAc.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o"
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumSerializableAc.cpp
 
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.i: cmake_force
@@ -133,7 +146,7 @@ F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_x
 
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumPortAc.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o"
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumPortAc.cpp
 
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.i: cmake_force
@@ -146,7 +159,7 @@ F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_x
 
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/flags.make
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumComponentAc.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o"
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && /Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o -c /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumComponentAc.cpp
 
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.i: cmake_force
@@ -159,7 +172,8 @@ F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_x
 
 # Object files for target Autocoders_Python_test_enum_xml_ut
 Autocoders_Python_test_enum_xml_ut_OBJECTS = \
-"CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o" \
+"CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.o" \
+"CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.o" \
 "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o" \
 "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o" \
 "CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o"
@@ -167,13 +181,14 @@ Autocoders_Python_test_enum_xml_ut_OBJECTS = \
 # External object files for target Autocoders_Python_test_enum_xml_ut
 Autocoders_Python_test_enum_xml_ut_EXTERNAL_OBJECTS =
 
-lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumAc.cpp.o
+lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumImpl.cpp.o
+lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/Enum1EnumAc.cpp.o
 lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumSerializableAc.cpp.o
 lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumPortAc.cpp.o
 lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/ExampleEnumComponentAc.cpp.o
 lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/build.make
 lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a: F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX static library ../../../../../lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jishii/Documents/rep_other/fprime-sw/build_test/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library ../../../../../lib/Darwin/libAutocoders_Python_test_enum_xml_ut.a"
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && $(CMAKE_COMMAND) -P CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/cmake_clean_target.cmake
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/link.txt --verbose=$(VERBOSE)
 
@@ -186,8 +201,8 @@ F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_x
 	cd /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml && $(CMAKE_COMMAND) -P CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/cmake_clean.cmake
 .PHONY : F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/clean
 
-F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.cpp
-F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumAc.hpp
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.cpp
+F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/Enum1EnumAc.hpp
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumSerializableAc.cpp
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumSerializableAc.hpp
 F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir/depend: F-Prime/Autocoders/Python/test/enum_xml/ExampleEnumPortAc.cpp

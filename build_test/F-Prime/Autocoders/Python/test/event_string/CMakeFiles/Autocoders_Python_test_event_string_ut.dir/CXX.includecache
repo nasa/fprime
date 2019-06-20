@@ -232,14 +232,6 @@ Autocoders/Python/test/event_string/TestLogImpl.hpp
 stdio.h
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/event_string/TestLogRecvImpl.cpp
-Autocoders/Python/test/event_string/TestLogRecvImpl.hpp
--
-stdio.h
--
-Fw/Log/LogString.hpp
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/event_string/main.cpp
 Autocoders/Python/test/event_string/TestLogImpl.hpp
 -
@@ -260,16 +252,6 @@ Autocoders/Python/test/event_string/TestComponentAc.hpp
 Fw/Types/Assert.hpp
 -
 Fw/Types/EightyCharString.hpp
--
-
-/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event_string/TestPortAc.cpp
-Fw/Cfg/Config.hpp
--
-Fw/Types/Assert.hpp
--
-Fw/Types/Serializable.hpp
--
-Autocoders/Python/test/event_string/TestPortAc.hpp
 -
 
 F-Prime/Autocoders/Python/test/event_string/TestComponentAc.hpp

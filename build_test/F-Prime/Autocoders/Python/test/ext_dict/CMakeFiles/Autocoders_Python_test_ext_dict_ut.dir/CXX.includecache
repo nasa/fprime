@@ -286,6 +286,18 @@ Autocoders/Python/test/ext_dict/ExampleComponentImpl.hpp
 stdio.h
 -
 
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/ext_dict/Example2SerializableAc.cpp
+Autocoders/Python/test/ext_dict/Example2SerializableAc.hpp
+-
+Fw/Types/Assert.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+Fw/Types/EightyCharString.hpp
+-
+cstring
+-
+
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/ext_dict/ExampleComponentAc.cpp
 stdio.h
 -
@@ -306,6 +318,18 @@ Fw/Types/Assert.hpp
 Fw/Types/Serializable.hpp
 -
 Autocoders/Python/test/ext_dict/ExamplePortAc.hpp
+-
+
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/ext_dict/ExampleSerializableAc.cpp
+Autocoders/Python/test/ext_dict/ExampleSerializableAc.hpp
+-
+Fw/Types/Assert.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+Fw/Types/EightyCharString.hpp
+-
+cstring
 -
 
 F-Prime/Autocoders/Python/test/ext_dict/Example2SerializableAc.hpp

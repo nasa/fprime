@@ -296,16 +296,6 @@ Autocoders/Python/templates/ExampleComponentImpl.hpp
 stdio.h
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/templates/AnotherPortAc.cpp
-Fw/Cfg/Config.hpp
--
-Fw/Types/Assert.hpp
--
-Fw/Types/Serializable.hpp
--
-Autocoders/Python/templates/AnotherPortAc.hpp
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/templates/ExampleComponentAc.cpp
 stdio.h
 -

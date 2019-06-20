@@ -162,16 +162,6 @@ Fw/Types/StringType.hpp
 Fw/Cfg/Config.hpp
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/pass_by_attrib/Msg1PortAc.cpp
-Fw/Cfg/Config.hpp
--
-Fw/Types/Assert.hpp
--
-Fw/Types/Serializable.hpp
--
-Autocoders/Python/test/pass_by_attrib/Msg1PortAc.hpp
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/pass_by_attrib/PassByComponentAc.cpp
 stdio.h
 -

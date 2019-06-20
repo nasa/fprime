@@ -1,0 +1,24 @@
+#ifndef EXAMPLE_ENUM_IMPL_HPP
+#define EXAMPLE_ENUM_IMPL_HPP
+
+#include <Autocoders/Python/test/enum_xml/ExampleEnumComponentAc.hpp>
+
+namespace Example {
+
+	class ExampleEnumImpl : public Component1ComponentBase  {
+    public:
+
+		// Only called by derived class
+		ExampleEnumImpl(const char* compName);
+		~ExampleEnumImpl(void);
+		void init(NATIVE_INT_TYPE queueDepth);
+
+    private:
+		// downcall for input ports
+        void OutputPort1_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
+        void InputPort1_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
+	};
+
+};
+
+#endif

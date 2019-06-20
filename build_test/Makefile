@@ -454,6 +454,19 @@ Autocoders_Python_test_enum_return_port_ut/fast:
 .PHONY : Autocoders_Python_test_enum_return_port_ut/fast
 
 #=============================================================================
+# Target rules for targets named Autocoders_Python_test_enum_xml_ut_exe
+
+# Build rule for target.
+Autocoders_Python_test_enum_xml_ut_exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Autocoders_Python_test_enum_xml_ut_exe
+.PHONY : Autocoders_Python_test_enum_xml_ut_exe
+
+# fast build rule for target.
+Autocoders_Python_test_enum_xml_ut_exe/fast:
+	$(MAKE) -f F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut_exe.dir/build.make F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut_exe.dir/build
+.PHONY : Autocoders_Python_test_enum_xml_ut_exe/fast
+
+#=============================================================================
 # Target rules for targets named Autocoders_Python_test_enum_xml_ut
 
 # Build rule for target.
@@ -2581,6 +2594,7 @@ help:
 	@echo "... Autocoders_Python_test_comp_diff_namespace_ut"
 	@echo "... Autocoders_Python_test_comp_no_namespace_ut"
 	@echo "... Autocoders_Python_test_enum_return_port_ut"
+	@echo "... Autocoders_Python_test_enum_xml_ut_exe"
 	@echo "... Autocoders_Python_test_enum_xml_ut"
 	@echo "... Autocoders_Python_test_enum1port_ut"
 	@echo "... Autocoders_Python_test_event_enum_ut_exe"

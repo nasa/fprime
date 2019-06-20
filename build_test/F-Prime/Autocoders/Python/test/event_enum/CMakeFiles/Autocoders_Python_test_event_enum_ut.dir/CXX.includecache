@@ -232,12 +232,6 @@ Autocoders/Python/test/event_enum/TestLogImpl.hpp
 stdio.h
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/event_enum/TestLogRecvImpl.cpp
-Autocoders/Python/test/event_enum/TestLogRecvImpl.hpp
--
-stdio.h
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/event_enum/main.cpp
 Autocoders/Python/test/event_enum/TestLogImpl.hpp
 -

@@ -40,3 +40,13 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   endif()
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/Darwin" TYPE EXECUTABLE FILES "/Users/jishii/Documents/rep_other/fprime-sw/build_test/bin/Darwin/Autocoders_Python_test_enum_xml_ut_exe")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/Darwin/Autocoders_Python_test_enum_xml_ut_exe" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/Darwin/Autocoders_Python_test_enum_xml_ut_exe")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/Library/Developer/CommandLineTools/usr/bin/strip" -u -r "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/Darwin/Autocoders_Python_test_enum_xml_ut_exe")
+    endif()
+  endif()
+endif()
+

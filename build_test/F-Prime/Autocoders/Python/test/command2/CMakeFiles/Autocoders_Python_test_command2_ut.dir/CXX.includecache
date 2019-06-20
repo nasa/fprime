@@ -204,6 +204,16 @@ Fw/Types/Assert.hpp
 Fw/Types/EightyCharString.hpp
 -
 
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command2/TestPortAc.cpp
+Fw/Cfg/Config.hpp
+-
+Fw/Types/Assert.hpp
+-
+Fw/Types/Serializable.hpp
+-
+Autocoders/Python/test/command2/TestPortAc.hpp
+-
+
 F-Prime/Autocoders/Python/test/command2/TestComponentAc.hpp
 Fw/Cfg/Config.hpp
 -

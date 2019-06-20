@@ -218,14 +218,6 @@ Autocoders/Python/test/tlm_string/TestTelemImpl.hpp
 stdio.h
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/tlm_string/TestTelemRecvImpl.cpp
-Autocoders/Python/test/tlm_string/TestTelemRecvImpl.hpp
--
-stdio.h
--
-Fw/Tlm/TlmString.hpp
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/tlm_string/main.cpp
 Autocoders/Python/test/tlm_string/TestTelemImpl.hpp
 -
@@ -246,16 +238,6 @@ Autocoders/Python/test/tlm_string/TestComponentAc.hpp
 Fw/Types/Assert.hpp
 -
 Fw/Types/EightyCharString.hpp
--
-
-/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_string/TestPortAc.cpp
-Fw/Cfg/Config.hpp
--
-Fw/Types/Assert.hpp
--
-Fw/Types/Serializable.hpp
--
-Autocoders/Python/test/tlm_string/TestPortAc.hpp
 -
 
 F-Prime/Autocoders/Python/test/telem_tester/TelemTestComponentAc.hpp

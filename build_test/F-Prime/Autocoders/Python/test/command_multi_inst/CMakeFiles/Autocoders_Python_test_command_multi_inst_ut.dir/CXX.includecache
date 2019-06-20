@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-../cmake/../Autocoders/Python/test/command1/TestCommandSourceImpl.hpp
-Autocoders/Python/test/command_tester/CommandTestComponentAc.hpp
--
-
 ../cmake/../Autocoders/Python/test/command_multi_inst/TestCommand1Impl.hpp
 Autocoders/Python/test/command_multi_inst/Test1ComponentAc.hpp
 -
@@ -212,12 +208,6 @@ Autocoders/Python/test/command_multi_inst/TestCommand1Impl.hpp
 stdio.h
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/command_multi_inst/TestCommandSourceImpl.cpp
-Autocoders/Python/test/command1/TestCommandSourceImpl.hpp
--
-stdio.h
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/command_multi_inst/main.cpp
 Autocoders/Python/test/command_multi_inst/TestCommand1Impl.hpp
 -
@@ -236,6 +226,16 @@ Autocoders/Python/test/command_multi_inst/Test1ComponentAc.hpp
 Fw/Types/Assert.hpp
 -
 Fw/Types/EightyCharString.hpp
+-
+
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/command_multi_inst/Test2PortAc.cpp
+Fw/Cfg/Config.hpp
+-
+Fw/Types/Assert.hpp
+-
+Fw/Types/Serializable.hpp
+-
+Autocoders/Python/test/command_multi_inst/Test2PortAc.hpp
 -
 
 F-Prime/Autocoders/Python/test/command_multi_inst/Test1ComponentAc.hpp

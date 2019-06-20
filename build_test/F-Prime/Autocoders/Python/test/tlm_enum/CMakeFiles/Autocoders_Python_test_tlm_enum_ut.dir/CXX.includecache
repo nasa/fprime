@@ -218,12 +218,6 @@ Autocoders/Python/test/tlm_enum/TestTelemImpl.hpp
 stdio.h
 -
 
-/Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/tlm_enum/TestTelemRecvImpl.cpp
-Autocoders/Python/test/tlm_enum/TestTelemRecvImpl.hpp
--
-stdio.h
--
-
 /Users/jishii/Documents/rep_other/fprime-sw/Autocoders/Python/test/tlm_enum/main.cpp
 Autocoders/Python/test/tlm_enum/TestTelemImpl.hpp
 -

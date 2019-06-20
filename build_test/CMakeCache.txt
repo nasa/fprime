@@ -48,7 +48,7 @@ Autocoders_Python_test_enum1port_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;genera
 Autocoders_Python_test_enum_return_port_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
 
 //Dependencies for the target
-Autocoders_Python_test_enum_xml_ut_LIB_DEPENDS:STATIC=general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Comp_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
+Autocoders_Python_test_enum_xml_ut_LIB_DEPENDS:STATIC=general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Comp_ut;general;Os_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
 
 //Dependencies for the target
 Autocoders_Python_test_event1_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Comp_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Autocoders_Python_test_log_tester_ut;general;Autocoders_Python_test_time_tester_ut;
@@ -166,9 +166,6 @@ Autocoders_Python_test_tlm_string_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;gener
 
 //Dependencies for the target
 CFDP_Checksum_GTest_ut_LIB_DEPENDS:STATIC=general;gtest_ut;general;CFDP_Checksum_ut;
-
-//Dependencies for the target
-CFDP_Checksum_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;
 
 //Dependencies for the target
 CFDP_Checksum_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;
@@ -384,13 +381,7 @@ CMAKE_STRIP:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Dependencies for the target
-Drv_BlockDriver_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;general;Svc_Cycle;general;Drv_DataTypes;general;Svc_Sched;
-
-//Dependencies for the target
-Drv_BlockDriver_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Sched_ut;general;Svc_Ping_ut;general;Svc_Cycle_ut;general;Drv_DataTypes_ut;
-
-//Dependencies for the target
-Drv_DataTypes_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
+Drv_BlockDriver_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Cycle_ut;general;Svc_Ping_ut;general;Svc_Sched_ut;general;Drv_DataTypes_ut;
 
 //Dependencies for the target
 Drv_DataTypes_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
@@ -420,31 +411,16 @@ FPrime_BINARY_DIR:STATIC=/Users/jishii/Documents/rep_other/fprime-sw/build_test
 FPrime_SOURCE_DIR:STATIC=/Users/jishii/Documents/rep_other/fprime-sw
 
 //Dependencies for the target
-Fw_Buffer_LIB_DEPENDS:STATIC=general;Fw_Types;general;Fw_Cfg;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Fw_Buffer_ut_LIB_DEPENDS:STATIC=general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Fw_Cmd_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Com;
 
 //Dependencies for the target
 Fw_Cmd_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Com_ut;
 
 //Dependencies for the target
-Fw_ComFile_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;
-
-//Dependencies for the target
 Fw_ComFile_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;
 
 //Dependencies for the target
-Fw_Com_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Fw_Com_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Fw_Comp_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;general;Fw_Obj;general;Fw_Port;
 
 //Dependencies for the target
 Fw_Comp_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_Obj_ut;general;Fw_Port_ut;
@@ -453,13 +429,7 @@ Fw_Comp_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_O
 Fw_FilePacket_GTest_ut_LIB_DEPENDS:STATIC=general;gtest_ut;general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_Types_GTest_ut;general;CFDP_Checksum_ut;general;CFDP_Checksum_GTest_ut;general;Fw_FilePacket_ut;general;Fw_Comp_ut;general;Fw_Port_ut;
 
 //Dependencies for the target
-Fw_FilePacket_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;general;CFDP_Checksum;general;Fw_Buffer;
-
-//Dependencies for the target
 Fw_FilePacket_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;general;CFDP_Checksum_ut;general;Fw_Buffer_ut;
-
-//Dependencies for the target
-Fw_Log_LIB_DEPENDS:STATIC=general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Com;
 
 //Dependencies for the target
 Fw_Log_ut_LIB_DEPENDS:STATIC=general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Com_ut;
@@ -468,28 +438,13 @@ Fw_Log_ut_LIB_DEPENDS:STATIC=general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Ty
 Fw_Logger_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;
 
 //Dependencies for the target
-Fw_Obj_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;
-
-//Dependencies for the target
 Fw_Obj_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;
-
-//Dependencies for the target
-Fw_Port_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;general;Fw_Obj;
 
 //Dependencies for the target
 Fw_Port_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_Logger_ut;general;Fw_Obj_ut;
 
 //Dependencies for the target
-Fw_Prm_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Fw_Prm_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Fw_SerializableFile_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;
-
-//Dependencies for the target
-Fw_SerializableFile_test_TestSerializable_LIB_DEPENDS:STATIC=general;Fw_Types;general;Fw_Cfg;general;Fw_Cfg;general;Fw_Types;general;Fw_Comp;general;Fw_Port;
 
 //Dependencies for the target
 Fw_SerializableFile_test_TestSerializable_ut_LIB_DEPENDS:STATIC=general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_Comp_ut;general;Fw_Port_ut;
@@ -498,22 +453,13 @@ Fw_SerializableFile_test_TestSerializable_ut_LIB_DEPENDS:STATIC=general;Fw_Types
 Fw_SerializableFile_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;
 
 //Dependencies for the target
-Fw_Time_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Fw_Time_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Fw_Tlm_LIB_DEPENDS:STATIC=general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Com;
 
 //Dependencies for the target
 Fw_Tlm_ut_LIB_DEPENDS:STATIC=general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Com_ut;
 
 //Dependencies for the target
 Fw_Types_GTest_ut_LIB_DEPENDS:STATIC=general;gtest_ut;general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_Comp_ut;general;Fw_Port_ut;
-
-//Dependencies for the target
-Fw_Types_LIB_DEPENDS:STATIC=general;Fw_Cfg;
 
 //Dependencies for the target
 Fw_Types_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;
@@ -528,12 +474,6 @@ GENERATE_HERITAGE_PY_DICT:BOOL=OFF
 LINK_AS_SHARED_LIBS:BOOL=OFF
 
 //Dependencies for the target
-Os_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;general;Utils_Hash;
-
-//Dependencies for the target
-Os_Stubs_LIB_DEPENDS:STATIC=general;Fw_Cfg;general;Fw_Types;
-
-//Dependencies for the target
 Os_Stubs_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;
 
 //Dependencies for the target
@@ -543,103 +483,52 @@ Os_ut_LIB_DEPENDS:STATIC=general;Fw_Cfg_ut;general;Fw_Types_ut;general;Fw_Logger
 SKIP_TOOLS_CHECK:BOOL=OFF
 
 //Dependencies for the target
-Svc_ActiveLogger_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;general;Svc_Fatal;
-
-//Dependencies for the target
 Svc_ActiveLogger_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;general;Svc_Fatal_ut;
 
 //Dependencies for the target
-Svc_ActiveRateGroup_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Cycle;general;Svc_Sched;general;Svc_Ping;
-
-//Dependencies for the target
-Svc_ActiveRateGroup_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Cycle_ut;general;Svc_Sched_ut;general;Svc_Ping_ut;
-
-//Dependencies for the target
-Svc_AssertFatalAdapter_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Fw_Log;general;Fw_Com;general;Fw_Time;general;Fw_Types;general;Fw_Cfg;
+Svc_ActiveRateGroup_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;general;Svc_Cycle_ut;general;Svc_Sched_ut;
 
 //Dependencies for the target
 Svc_AssertFatalAdapter_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
 
 //Dependencies for the target
-Svc_BuffGndSockIf_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Fw_Log;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Buffer;
-
-//Dependencies for the target
 Svc_BuffGndSockIf_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Buffer_ut;
-
-//Dependencies for the target
-Svc_BufferManager_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Buffer;
 
 //Dependencies for the target
 Svc_BufferManager_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Buffer_ut;
 
 //Dependencies for the target
-Svc_CmdDispatcher_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;
-
-//Dependencies for the target
 Svc_CmdDispatcher_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;
 
 //Dependencies for the target
-Svc_CmdSequencer_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Seq;general;Svc_Ping;general;Svc_Sched;
-
-//Dependencies for the target
-Svc_CmdSequencer_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Sched_ut;general;Svc_Ping_ut;general;Svc_Seq_ut;
-
-//Dependencies for the target
-Svc_ComLogger_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;
+Svc_CmdSequencer_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Seq_ut;general;Svc_Ping_ut;general;Svc_Sched_ut;
 
 //Dependencies for the target
 Svc_ComLogger_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;
 
 //Dependencies for the target
-Svc_Cycle_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Os;
-
-//Dependencies for the target
 Svc_Cycle_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Os_ut;
-
-//Dependencies for the target
-Svc_FatalHandler_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Fatal;
 
 //Dependencies for the target
 Svc_FatalHandler_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Fatal_ut;general;Fw_Logger_ut;
 
 //Dependencies for the target
-Svc_Fatal_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Svc_Fatal_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Svc_FileDownlink_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;general;Fw_Buffer;general;Os;general;Fw_FilePacket;general;Utils_Hash;general;CFDP_Checksum;
 
 //Dependencies for the target
 Svc_FileDownlink_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Buffer_ut;general;Svc_Ping_ut;general;Os_ut;general;Fw_FilePacket_ut;general;Utils_Hash_ut;general;CFDP_Checksum_ut;
 
 //Dependencies for the target
-Svc_FileManager_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;general;Os;general;Fw_FilePacket;general;Utils_Hash;general;CFDP_Checksum;
-
-//Dependencies for the target
 Svc_FileManager_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;general;Os_ut;general;Fw_FilePacket_ut;general;Utils_Hash_ut;general;CFDP_Checksum_ut;
 
 //Dependencies for the target
-Svc_FileUplink_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Buffer;general;Svc_Ping;general;Os;general;Fw_Buffer;general;Fw_FilePacket;general;Utils_Hash;general;CFDP_Checksum;
-
-//Dependencies for the target
-Svc_FileUplink_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;general;Fw_Buffer_ut;general;Os_ut;general;Fw_Buffer_ut;general;Fw_FilePacket_ut;general;Utils_Hash_ut;general;CFDP_Checksum_ut;
-
-//Dependencies for the target
-Svc_GndIf_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Comp;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Fw_Buffer;
+Svc_FileUplink_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Buffer_ut;general;Svc_Ping_ut;general;Os_ut;general;Fw_Buffer_ut;general;Fw_FilePacket_ut;general;Utils_Hash_ut;general;CFDP_Checksum_ut;
 
 //Dependencies for the target
 Svc_GndIf_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Comp_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Fw_Buffer_ut;
 
 //Dependencies for the target
-Svc_Health_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;general;Svc_Sched;general;Svc_WatchDog;
-
-//Dependencies for the target
-Svc_Health_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_WatchDog_ut;general;Svc_Sched_ut;general;Svc_Ping_ut;
-
-//Dependencies for the target
-Svc_LinuxTime_LIB_DEPENDS:STATIC=general;Svc_Time;
+Svc_Health_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Sched_ut;general;Svc_Ping_ut;general;Svc_WatchDog_ut;
 
 //Dependencies for the target
 Svc_LinuxTime_ut_LIB_DEPENDS:STATIC=general;Svc_Time_ut;
@@ -648,85 +537,43 @@ Svc_LinuxTime_ut_LIB_DEPENDS:STATIC=general;Svc_Time_ut;
 Svc_LinuxTimer_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Cycle_ut;
 
 //Dependencies for the target
-Svc_PassiveConsoleTextLogger_LIB_DEPENDS:STATIC=general;Svc_PassiveTextLogger;
-
-//Dependencies for the target
 Svc_PassiveConsoleTextLogger_ut_LIB_DEPENDS:STATIC=general;Fw_Logger_ut;general;Svc_PassiveTextLogger_ut;
-
-//Dependencies for the target
-Svc_PassiveTextLogger_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Fw_Log;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
 
 //Dependencies for the target
 Svc_PassiveTextLogger_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Log_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
 
 //Dependencies for the target
-Svc_Ping_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Svc_Ping_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Svc_PolyDb_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_PolyIf;
 
 //Dependencies for the target
 Svc_PolyDb_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_PolyIf_ut;
 
 //Dependencies for the target
-Svc_PolyIf_LIB_DEPENDS:STATIC=general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Svc_PolyIf_ut_LIB_DEPENDS:STATIC=general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Svc_PrmDb_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Prm;general;Fw_Log;general;Fw_Cmd;general;Fw_Com;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Ping;
 
 //Dependencies for the target
 Svc_PrmDb_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Prm_ut;general;Fw_Log_ut;general;Fw_Cmd_ut;general;Fw_Com_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;
 
 //Dependencies for the target
-Svc_RateGroupDriver_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Cycle;
-
-//Dependencies for the target
 Svc_RateGroupDriver_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Cycle_ut;
-
-//Dependencies for the target
-Svc_Sched_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
 
 //Dependencies for the target
 Svc_Sched_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
 
 //Dependencies for the target
-Svc_Seq_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Svc_Seq_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Svc_SocketGndIf_LIB_DEPENDS:STATIC=general;Svc_GndIf;general;Fw_Buffer;
 
 //Dependencies for the target
 Svc_SocketGndIf_ut_LIB_DEPENDS:STATIC=general;Svc_GndIf_ut;general;Fw_Buffer_ut;
 
 //Dependencies for the target
-Svc_Time_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Fw_Time;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Svc_Time_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Fw_Time_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Svc_TlmChan_LIB_DEPENDS:STATIC=general;Fw_Comp;general;Os;general;Fw_Tlm;general;Fw_Com;general;Fw_Port;general;Fw_Types;general;Fw_Cfg;general;Svc_Sched;general;Svc_Ping;
 
 //Dependencies for the target
 Svc_TlmChan_ut_LIB_DEPENDS:STATIC=general;Fw_Comp_ut;general;Os_ut;general;Fw_Tlm_ut;general;Fw_Com_ut;general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;general;Svc_Ping_ut;general;Svc_Sched_ut;
 
 //Dependencies for the target
-Svc_WatchDog_LIB_DEPENDS:STATIC=general;Fw_Port;general;Fw_Types;general;Fw_Cfg;
-
-//Dependencies for the target
 Svc_WatchDog_ut_LIB_DEPENDS:STATIC=general;Fw_Port_ut;general;Fw_Types_ut;general;Fw_Cfg_ut;
-
-//Dependencies for the target
-Utils_Hash_LIB_DEPENDS:STATIC=general;Fw_Types;
 
 //Dependencies for the target
 Utils_Hash_ut_LIB_DEPENDS:STATIC=general;Fw_Types_ut;

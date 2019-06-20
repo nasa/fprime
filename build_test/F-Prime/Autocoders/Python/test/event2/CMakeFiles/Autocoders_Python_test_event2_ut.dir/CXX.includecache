@@ -226,6 +226,16 @@ Fw/Types/Assert.hpp
 Fw/Types/EightyCharString.hpp
 -
 
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/event2/TestPortAc.cpp
+Fw/Cfg/Config.hpp
+-
+Fw/Types/Assert.hpp
+-
+Fw/Types/Serializable.hpp
+-
+Autocoders/Python/test/event2/TestPortAc.hpp
+-
+
 F-Prime/Autocoders/Python/test/event1/TestPortAc.hpp
 cstring
 -
@@ -288,6 +298,26 @@ Fw/Log/LogTextPortAc.hpp
 Fw/Time/TimePortAc.hpp
 -
 Autocoders/Python/test/event2/QuaternionSerializableAc.hpp
+-
+
+F-Prime/Autocoders/Python/test/event2/TestPortAc.hpp
+cstring
+-
+cstdio
+-
+Fw/Cfg/Config.hpp
+-
+Fw/Port/InputPortBase.hpp
+-
+Fw/Port/OutputPortBase.hpp
+-
+Fw/Comp/PassiveComponentBase.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+Fw/Types/Serializable.hpp
+-
+Fw/Types/StringType.hpp
 -
 
 F-Prime/Fw/Log/LogPortAc.hpp

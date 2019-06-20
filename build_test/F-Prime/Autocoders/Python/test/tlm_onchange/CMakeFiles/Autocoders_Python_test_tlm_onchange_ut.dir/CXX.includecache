@@ -228,6 +228,18 @@ Autocoders/Python/test/time_tester/TestTimeImpl.hpp
 Fw/Obj/SimpleObjRegistry.hpp
 -
 
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_onchange/QuaternionSerializableAc.cpp
+Autocoders/Python/test/tlm_onchange/QuaternionSerializableAc.hpp
+-
+Fw/Types/Assert.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+Fw/Types/EightyCharString.hpp
+-
+cstring
+-
+
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_onchange/TestComponentAc.cpp
 stdio.h
 -
@@ -238,16 +250,6 @@ Autocoders/Python/test/tlm_onchange/TestComponentAc.hpp
 Fw/Types/Assert.hpp
 -
 Fw/Types/EightyCharString.hpp
--
-
-/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/tlm_onchange/TestPortAc.cpp
-Fw/Cfg/Config.hpp
--
-Fw/Types/Assert.hpp
--
-Fw/Types/Serializable.hpp
--
-Autocoders/Python/test/tlm_onchange/TestPortAc.hpp
 -
 
 F-Prime/Autocoders/Python/test/telem_tester/TelemTestComponentAc.hpp

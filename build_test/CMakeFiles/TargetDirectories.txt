@@ -167,6 +167,7 @@
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/edit_cache.dir
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/install/local.dir
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/test.dir
+/Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut_exe.dir
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum_xml/CMakeFiles/Autocoders_Python_test_enum_xml_ut.dir
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum1port/CMakeFiles/list_install_components.dir
 /Users/jishii/Documents/rep_other/fprime-sw/build_test/F-Prime/Autocoders/Python/test/enum1port/CMakeFiles/rebuild_cache.dir
