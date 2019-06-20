@@ -6,12 +6,26 @@ gds_test_api.py. The predicates are organized by type and can be used to search 
 
 :author: koran
 """
-##################################################################
+from data_types.event_data import EventData
+from data_types.ch_data import ChData
+
+##########################################################################################
+# Parent Class
+##########################################################################################
+class predicate:
+    """
+    A parent class to ensure that all predicates are callable
+    """
+    def __call__(self, object):
+        # TODO raise not-implemented error
+        pass
+
+##########################################################################################
 # Basic predicates
-##################################################################
+##########################################################################################
 
 
-class less_than:
+class less_than(predicate):
     """
     A predicate that evaluates a less-than comparison
     :param value: To return true, the predicate must be called on an object that is less
@@ -27,7 +41,7 @@ class less_than:
         pass
 
 
-class greater_than_pred:
+class greater_than(predicate):
     """
     A predicate that evaluates a greater-than comparison
     :param value: To return true, the predicate must be called on an object that is less
@@ -43,7 +57,7 @@ class greater_than_pred:
         pass
 
 
-class equal_to_pred:
+class equal_to(predicate):
     """
     A predicate that evaluates an equivalent comparison
     :param value: To return true, the predicate must be called on an object that is equal
@@ -59,7 +73,7 @@ class equal_to_pred:
         pass
 
 
-class not_equal_to_pred:
+class not_equal_to(predicate):
     """
     A predicate that evaluates a not-equivalent comparison
     :param value: To return true, the predicate must be called on an object that is not
@@ -75,7 +89,7 @@ class not_equal_to_pred:
         pass
 
 
-class greater_than_or_equals_pred:
+class greater_than_or_equals(predicate):
     """
     A predicate that evaluates greater-than-or-equals comparison
     :param value: To return true, the predicate must be called on an object that is
@@ -91,7 +105,7 @@ class greater_than_or_equals_pred:
         pass
 
 
-class less_than_or_equals_pred:
+class less_than_or_equals(predicate):
     """
     A predicate that evaluates a less-than-or-equals comparison
     :param value: To return true, the predicate must be called on an object that is less
@@ -107,7 +121,7 @@ class less_than_or_equals_pred:
         pass
 
 
-class within_range_pred:
+class within_range(predicate):
     """
     A predicate that evaluates if the argument is between the two values
     :param lower: To return true, the predicate must be called on an object that is
@@ -124,12 +138,12 @@ class within_range_pred:
     def __call__(self, actual):
         pass
 
-##################################################################
+##########################################################################################
 # Set predicates
-##################################################################
+##########################################################################################
 
 
-class is_a_member_of:
+class is_a_member_of(predicate):
     """
     A predicate that evaluates if the argument is equivalent to any member in the set
     :param collection: To return true, the predicate must be called on an object that is
@@ -145,7 +159,7 @@ class is_a_member_of:
         pass
 
 
-class is_not_a_member_of:
+class is_not_a_member_of(predicate):
     """
     A predicate that evaluates if the argument is not equivalent to all members in the set
     :param collection: To return true, the predicate must be called on an object that is
@@ -161,11 +175,11 @@ class is_not_a_member_of:
         pass
 
 
-##################################################################
+##########################################################################################
 # Logic predicates
-##################################################################
+##########################################################################################
 
-class invert:
+class invert(predicate):
     """
     A predicate that negates a given predicate. This predicate can be used like a NOT
     gate when combining predicates.
@@ -181,7 +195,7 @@ class invert:
         pass
 
 
-class satisfies_all:
+class satisfies_all(predicate):
     """
     A predicate that evaluates if the argument satisfies all predicates in the given list.
     This predicate can be used like an AND gate of N elements when combining predicates.
@@ -197,7 +211,7 @@ class satisfies_all:
         pass
 
 
-class satisfies_any:
+class satisfies_any(predicate):
     """
     A predicate that evaluates if the argument satisfies any predicate in the given list.
     This predicate can be used like an OR gate of N elements when combining predicates.
@@ -212,12 +226,12 @@ class satisfies_any:
     def __call__(self, object):
         pass
 
-##################################################################
+##########################################################################################
 # Test API predicates
-##################################################################
+##########################################################################################
 
 
-class true_predicate:
+class true_predicate(predicate):
     """
     used by event predicate and telemetry predicate as a placeholder when some predicates
     may not be specified.
@@ -232,7 +246,7 @@ class true_predicate:
         return True
 
 
-class event_predicate:
+class event_predicate(predicate):
     """
     A predicate for specifying an EventData object from data_types.event_data. This
     predicate can be used to search a history.
@@ -245,7 +259,9 @@ class event_predicate:
         predicate for the telemetry predicate to evaluate to true.
     """
     def __init__(self, id_pred=None, args_pred=None, time_pred=None):
-        pass
+        self.id_p = id_pred
+        self.args_pred = args_pred
+        self.time_pred = time_pred
 
     """
     The event_predicate checks that the telemetry object is an instance of
@@ -256,10 +272,15 @@ class event_predicate:
     :param event: an instance of EventData
     """
     def __call__(self, event):
-        pass
+        if(not isinstance(event, EventData)):
+            pass  # TODO raise test error.
+        e_id = self.id_p(event.get_id())
+        e_args = self.args_pred(event.get_args())
+        e_time = self.time_pred(event.get_time())
+        return e_id and e_args and e_time
 
 
-class telemetry_predicate:
+class telemetry_predicate(predicate):
     """
     A predicate for specifying a ChData object from data_types.ch_data. This predicate
     can be used to search a history.
@@ -271,7 +292,9 @@ class telemetry_predicate:
         predicate for the telemetry predicate to evaluate to true.
     """
     def __init__(self, id_pred=None, value_pred=None, time_pred=None):
-        pass
+        self.id_p = id_pred
+        self.value_pred = value_pred
+        self.time_pred = time_pred
 
     """
     The telemetry_predicate checks that the telemetry object is an instance of
@@ -281,4 +304,9 @@ class telemetry_predicate:
     :param telemetry: an instance of ChData
     """
     def __call__(self, telemetry):
-        pass
+        if(not isinstance(telemetry, ChData)):
+            pass  # TODO raise test error.
+        t_id = self.id_p(telemetry.get_id())
+        t_val = self.value_pred(telemetry.get_val())
+        t_time = self.time_pred(telemetry.get_time())
+        return t_id and t_args and t_time
