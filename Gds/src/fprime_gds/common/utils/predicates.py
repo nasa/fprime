@@ -6,25 +6,51 @@ gds_test_api.py. The predicates are organized by type and can be used to search 
 
 :author: koran
 """
+from inspect import signature
+
 from data_types.event_data import EventData
 from data_types.ch_data import ChData
+
 
 ##########################################################################################
 # Parent Class
 ##########################################################################################
 class predicate:
     """
-    A parent class to ensure that all predicates are callable
+    A parent class to ensure that all predicates are callable, and return readable strings
     """
     def __call__(self, object):
         # TODO raise not-implemented error
         pass
+    """
+    Should return a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO raise not-implemented error
+        pass
+
+
+def is_predicate(pred):
+    """
+    a helper function to determine if an object can be used as a predicate.
+
+    :return: a boolean value of whether the function is a predicate instance or has
+        __str__ and __call__ methods.
+    """
+    if isinstance(pred, predicate):
+        return True
+    if callable(pred):
+        sig = signature(pred.__call__)
+        arg_count = len(sig.parameters)
+        if arg_count == 1:  # TODO weigh what value this should actually be.
+            if hasattr(pred, '__str__'):
+                return True
+    return False
+
 
 ##########################################################################################
 # Basic predicates
 ##########################################################################################
-
-
 class less_than(predicate):
     """
     A predicate that evaluates a less-than comparison
@@ -32,13 +58,13 @@ class less_than(predicate):
         than this value
     """
     def __init__(self, value):
-        pass
+        self.upper_limit = value
 
     """
     :param actual: the value to compare
     """
     def __call__(self, actual):
-        pass
+        return actual < self.upper_limit
 
 
 class greater_than(predicate):
@@ -48,13 +74,13 @@ class greater_than(predicate):
         than this value
     """
     def __init__(self, value):
-        pass
+        self.lower_limit = value
 
     """
     :param actual: the value to compare
     """
     def __call__(self, actual):
-        pass
+        return actual > self.lower_limit
 
 
 class equal_to(predicate):
@@ -64,13 +90,13 @@ class equal_to(predicate):
         to this value
     """
     def __init__(self, value):
-        pass
+        self.expected = value
 
     """
     :param actual: the value to compare
     """
     def __call__(self, actual):
-        pass
+        return actual == self.expected
 
 
 class not_equal_to(predicate):
@@ -80,29 +106,13 @@ class not_equal_to(predicate):
         equal to this value
     """
     def __init__(self, value):
-        pass
+        self.expected = value
 
     """
     :param actual: the value to compare
     """
     def __call__(self, actual):
-        pass
-
-
-class greater_than_or_equals(predicate):
-    """
-    A predicate that evaluates greater-than-or-equals comparison
-    :param value: To return true, the predicate must be called on an object that is
-        greater than or equal to this value
-    """
-    def __init__(self, value):
-        pass
-
-    """
-    :param actual: the value to compare
-    """
-    def __call__(self, actual):
-        pass
+        return actual != self.expected
 
 
 class less_than_or_equals(predicate):
@@ -112,13 +122,30 @@ class less_than_or_equals(predicate):
         than or equal to this value
     """
     def __init__(self, value):
-        pass
+        self.upper_limit = value
 
     """
     :param actual: the value to compare
     """
     def __call__(self, actual):
-        pass
+        return actual <= self.upper_limit
+
+
+class greater_than_or_equals(predicate):
+    """
+    A predicate that evaluates greater-than-or-equals comparison
+    :param value: To return true, the predicate must be called on an object that is
+        greater than or equal to this value
+    """
+    def __init__(self, value):
+        self.lower_limit = value
+
+    """
+    :param actual: the value to compare
+    """
+    def __call__(self, actual):
+        return actual >= self.lower_limit
+
 
 
 class within_range(predicate):
@@ -130,19 +157,19 @@ class within_range(predicate):
         than this value
     """
     def __init__(self, lower, upper):
-        pass
+        self.upper_limit = upper
+        self.lower_limit = lower
 
     """
     :param actual: the value to evaluate
     """
     def __call__(self, actual):
-        pass
+        return actual >= self.lower_limit and actual <= upper_limit
+
 
 ##########################################################################################
 # Set predicates
 ##########################################################################################
-
-
 class is_a_member_of(predicate):
     """
     A predicate that evaluates if the argument is equivalent to any member in the set
@@ -150,13 +177,17 @@ class is_a_member_of(predicate):
         equivalent to any object in this collection
     """
     def __init__(self, collection):
-        pass
+        self.set = []
+        self.set.append(collection)
 
     """
-    :param object: the object to search for then evaluate
+    :param item: the object to search for then evaluate
     """
-    def __call__(self, object):
-        pass
+    def __call__(self, item):
+        for x in self.set:
+            if item == x:
+                return True
+        return False
 
 
 class is_not_a_member_of(predicate):
@@ -166,18 +197,31 @@ class is_not_a_member_of(predicate):
         not equivalent to any object in this collection
     """
     def __init__(self, collection):
-        pass
+        self.set = []
+        self.set.append(collection)
 
     """
-    :param object: the object to search for then evaluate
+    :param item: the object to search for then evaluate
     """
-    def __call__(self, object):
-        pass
+    def __call__(self, item):
+        for x in self.set:
+            if item == x:
+                return False
+        return True
 
 
 ##########################################################################################
 # Logic predicates
 ##########################################################################################
+class always_true(predicate):
+    """
+    used as a placeholder by other predicates. This is like a logical TRUE signal.
+
+    :param object: the object or value to evaluate
+    """
+    def __call__(self, object):
+        return True
+
 
 class invert(predicate):
     """
@@ -186,13 +230,14 @@ class invert(predicate):
     :param pred: The predicate to be negated.
     """
     def __init__(self, pred):
-        pass
+        if is_predicate(pred):
+            self.pred = pred
 
     """
-    :param object: the object or value to evaluate
+    :param item: the object or value to evaluate
     """
-    def __call__(self, object):
-        pass
+    def __call__(self, item):
+        return not self.pred(item)
 
 
 class satisfies_all(predicate):
@@ -202,13 +247,19 @@ class satisfies_all(predicate):
     :param pred_list: a list of predicates
     """
     def __init__(self, pred_list):
-        pass
+        self.p_list = []
+        for pred in pred_list:
+            if is_predicate(pred):
+                self.p_list.append(pred)
 
     """
-    :param object: the object or value to evaluate
+    :param item: the object or value to evaluate
     """
-    def __call__(self, object):
-        pass
+    def __call__(self, item):
+        for pred in self.p_list:
+            if not pred(item):
+                return False
+        return True
 
 
 class satisfies_any(predicate):
@@ -218,38 +269,29 @@ class satisfies_any(predicate):
     :param pred_list: a list of predicates
     """
     def __init__(self, pred_list):
-        pass
+        self.p_list = []
+        for pred in pred_list:
+            if is_predicate(pred):
+                self.p_list.append(pred)
 
     """
-    :param object: the object or value to evaluate
+    :param item: the object or value to evaluate
     """
-    def __call__(self, object):
-        pass
+    def __call__(self, item):
+        for pred in self.p_list:
+            if pred(item):
+                return True
+        return False
+
 
 ##########################################################################################
 # Test API predicates
 ##########################################################################################
-
-
-class true_predicate(predicate):
-    """
-    used by event predicate and telemetry predicate as a placeholder when some predicates
-    may not be specified.
-    """
-    def __init__(self):
-        pass
-
-    """
-    :param object: the object or value to evaluate
-    """
-    def __call__(self, object):
-        return True
-
-
 class event_predicate(predicate):
     """
     A predicate for specifying an EventData object from data_types.event_data. This
-    predicate can be used to search a history.
+    predicate can be used to search a history. If arguments passed into this constructor
+    are not subclasses of predicate, they will be ignored.
 
     :param id_pred: If specified, the object's id field must satisfy the given predicate
         for the telemetry predicate to evaluate to true.
@@ -259,9 +301,16 @@ class event_predicate(predicate):
         predicate for the telemetry predicate to evaluate to true.
     """
     def __init__(self, id_pred=None, args_pred=None, time_pred=None):
-        self.id_p = id_pred
-        self.args_pred = args_pred
-        self.time_pred = time_pred
+        true_pred = always_true()
+        self.id_pred = true_pred
+        self.args_pred = true_pred
+        self.time_pred = true_pred
+        if is_predicate(id_pred):
+            self.id_pred = id_pred
+        if is_predicate(args_pred):
+            self.args_pred = args_pred
+        if is_predicate(time_pred):
+            self.time_pred = time_pred
 
     """
     The event_predicate checks that the telemetry object is an instance of
@@ -274,7 +323,7 @@ class event_predicate(predicate):
     def __call__(self, event):
         if(not isinstance(event, EventData)):
             pass  # TODO raise test error.
-        e_id = self.id_p(event.get_id())
+        e_id = self.id_pred(event.get_id())
         e_args = self.args_pred(event.get_args())
         e_time = self.time_pred(event.get_time())
         return e_id and e_args and e_time
@@ -283,7 +332,9 @@ class event_predicate(predicate):
 class telemetry_predicate(predicate):
     """
     A predicate for specifying a ChData object from data_types.ch_data. This predicate
-    can be used to search a history.
+    can be used to search a history. If arguments passed into this constructor are not
+    subclasses of predicate, they will be ignored.
+
     :param id_pred: If specified, the object's id field must satisfy the given predicate
         for the telemetry predicate to evaluate to true.
     :param id_value: If specified, the object's value_obj field must satisfy the given
@@ -292,21 +343,29 @@ class telemetry_predicate(predicate):
         predicate for the telemetry predicate to evaluate to true.
     """
     def __init__(self, id_pred=None, value_pred=None, time_pred=None):
-        self.id_p = id_pred
-        self.value_pred = value_pred
-        self.time_pred = time_pred
+        true_pred = always_true()
+        self.id_pred = true_pred
+        self.value_pred = true_pred
+        self.time_pred = true_pred
+        if is_predicate(id_pred):
+            self.id_pred = id_pred
+        if is_predicate(value_pred):
+            self.value_pred = value_pred
+        if is_predicate(time_pred):
+            self.time_pred = time_pred
 
     """
     The telemetry_predicate checks that the telemetry object is an instance of
     ChData and will raise an error if the check fails. Then
     telemetry_predicate will evaluate whether telemetry's ChData fields
     satisfy the id_pred, value_pred and time_pred specified.
+
     :param telemetry: an instance of ChData
     """
     def __call__(self, telemetry):
         if(not isinstance(telemetry, ChData)):
             pass  # TODO raise test error.
-        t_id = self.id_p(telemetry.get_id())
+        t_id = self.id_pred(telemetry.get_id())
         t_val = self.value_pred(telemetry.get_val())
         t_time = self.time_pred(telemetry.get_time())
-        return t_id and t_args and t_time
+        return t_id and t_val and t_time
