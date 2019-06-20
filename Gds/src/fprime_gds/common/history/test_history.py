@@ -6,6 +6,7 @@ searching, and datastructure operations
 
 :author: koran
 """
+from utils import predicates
 
 
 class TestHistory:
@@ -25,14 +26,23 @@ class TestHistory:
             don't satisfy the filter predicate.
         :param log: If specified, the history will log objects to the file destination.
         """
-        pass
+        self.objects = []
+
+        if predicates.is_predicate(filter_pred):
+            self.filter = filter_pred
+        else:
+            # TODO raise error
+            pass
+        # TODO implement logging
 
     def data_callback(self, data_object):
         """
-        Data callback to push an object on the history
+        Data callback to push an object on the history. This callback will only add
+        data_objects that satisfy the filter predicate.
         :param data_object: object to store
         """
-        pass
+        if(self.filter(data_object)):
+            self.objects.append(data_object)
 
     def retrieve(self, start_pred=None):
         """
@@ -41,7 +51,21 @@ class TestHistory:
             satisfy this predicate and all following objects
         :return: a list of objects
         """
-        return self.objects
+        index = 0
+        if predicates.is_predicate(start_pred):
+            while not start_pred(self.objects[index]):
+                index += 1
+        return self.objects[index:]
+
+    def __get_item__(self, index):
+        """
+        __get_item__ is a special method in python that allows using brackets.
+        Example: item = history[2] # this would return the second item in the history.
+
+        :param index: the index of the array to return.
+        :return: the item at the index specified.
+        """
+        return self.objects[index]
 
     def clear(self, start_pred=None):
         """
@@ -49,14 +73,25 @@ class TestHistory:
         :param start_pred: If specified, will clear all objects before the first to
             satisfy the start_predicate
         """
-        pass
+        index = 0
+        if predicates.is_predicate(start_pred):
+            while not start_pred(self.objects[index]):
+                index += 1
+        # TODO remove up until index
 
     def size(self):
         """
         Accessor for the number of objects in the history
         :return: the number of objects
         """
-        pass
+        return self.__len__()
+
+    def __len__(self):
+        """
+        Accessor for the number of objects in the history
+        :return: the number of objects
+        """
+        return len(self.objects)
 
     ###########################################################################
     #   Search Functions
