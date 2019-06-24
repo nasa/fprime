@@ -28,11 +28,14 @@ class TestHistory:
         """
         self.objects = []
 
+        self.filter = predicates.always_true()
         if predicates.is_predicate(filter_pred):
             self.filter = filter_pred
         else:
             # TODO raise error
             pass
+
+        self.retrieved_cursor = 0
         # TODO implement logging
 
     def data_callback(self, data_object):
@@ -44,17 +47,27 @@ class TestHistory:
         if(self.filter(data_object)):
             self.objects.append(data_object)
 
-    def retrieve(self, start_pred=None):
+    def retrieve(self, start=None):
         """
-        Retrieve objects from this history
-        :param start_pred: If specified, will return a list of only the first object to
-            satisfy this predicate and all following objects
+        Retrieve objects from this history. If a starting point is specified,
+        will return a sub-list of all objects beginning at start to the latest object.
+        Note: if no item satisfies the start predicate or the index is greater than
+        the length of the history, an empty list will be returned.
+        
+        :param start: first object to retrieve. can either be an index or a predicate.
         :return: a list of objects in chronological order
         """
-        index = 0
-        if predicates.is_predicate(start_pred):
-            while not start_pred(self.objects[index]):
+        if start is None:
+            index = 0
+        elif predicates.is_predicate(start):
+            index = 0
+            while index < self.size() and not start(self.objects[index]):
                 index += 1
+        else:
+            index = start
+
+        self.retrieved_cursor = self.size()
+
         return self.objects[index:]
 
     def retrieve_new(self):
@@ -65,28 +78,47 @@ class TestHistory:
         objects in a chronological order according to the timestamps.
 
         :return: a list of objects in chronological order starting with the earliest
-            object added since the last call to retrieve or retrieve new.
+            object added since the last call to retrieve or retrieve_new.
         """
-        pass
+        index = self.retrieved_cursor
+        self.retrieved_cursor = self.size()
+        return self.objects[index:]
 
-    def clear(self, start_pred=None):
+    def clear(self, start=None):
         """
-        Clears objects from history
-        :param start_pred: If specified, will clear all objects before the first to
-            satisfy the start_predicate
+        Clears objects from history. A clear that specifies a starting point will clear
+        the history such that start becomes the earliest element in the history after
+        objects are removed. If the start is specified as a predicate, start will be the
+        earliest object to satisfy the predicate.
+        Note: if no item satisfies the start predicate or the index is greater than
+        the length of the history, all items will be cleared.
+
+        :param start: clear all objects before start. start can either be an index or a
+            predicate.
         """
-        index = 0
-        if predicates.is_predicate(start_pred):
-            while not start_pred(self.objects[index]):
+        if start is None:
+            index = self.size()
+        elif predicates.is_predicate(start):
+            index = 0
+            while not start(self.objects[index]) and index < self.size():
                 index += 1
-        # TODO remove up until index
+        else:
+            index = start
+
+        self.retrieved_cursor -= index
+        if self.retrieved_cursor < 0:
+            self.retrieved_cursor = 0
+
+        del self.objects[:index]
+
+        
 
     def size(self):
         """
         Accessor for the number of objects in the history
         :return: the number of objects
         """
-        return self.__len__()
+        return len(self.objects)
 
     ###########################################################################
     #   Python Special Methods
@@ -96,7 +128,7 @@ class TestHistory:
         Accessor for the number of objects in the history
         :return: the number of objects
         """
-        return len(self.objects)
+        return self.size()
 
     def __getitem__(self, index):
         """
