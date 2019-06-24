@@ -100,6 +100,27 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Command Functions
     ######################################################################################
+    def translate_command_name(self, command):
+        """
+        This function will translate the given mnemonic into an ID as defined by the
+        flight software dictionary. This call will raise an error if the command given
+        is not in the dictionary.
+
+        :param channel: Either the channel id or the channel mnemonic
+        :return: The comand ID
+        """
+        cmd_dict = self.pipeline.get_command_dictionary()
+        # TODO investigate dictionary structure/implementation to make sure we get the
+        # correct version of the dictionary.
+
+    def send_command(self, command, args):
+        """
+        Sends the specified command.
+        :param command:
+        """
+        command = self.translate_command_name(command)
+        self.pipeline.send_command(command, args)
+
     def send_and_await_telemetry(self, command, args, channels, timeout=5):
         """
         Sends the specified command and awaits the specified telemetry update or sequence
@@ -118,7 +139,6 @@ class IntegrationTestAPI:
         :return: If the search is successful, will return the list of ChData objects to
             satisfy the search, otherwise will return None.
         """
-        pass
 
     def send_and_await_event(self, command, args, events, timeout=5):
         """
@@ -142,19 +162,6 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Command Asserts
     ######################################################################################
-    def translate_command_name(self, command):
-        """
-        This function will translate the given mnemonic into an ID as defined by the
-        flight software dictionary. This call will raise an error if the command given
-        is not in the dictionary.
-
-        :param channel: Either the channel id or the channel mnemonic
-        :return: The comand ID
-        """
-        cmd_dict = self.pipeline.get_command_dictionary()
-        # TODO investigate dictionary structure/implementation to make sure we get the
-        # correct version of the dictionary.
-
     def assert_send_command(self, command, args):
         """
         Sends a command and asserts that the command was translated. If the command is in

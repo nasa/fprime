@@ -110,8 +110,7 @@ class TestHistory:
             self.retrieved_cursor = 0
 
         del self.objects[:index]
-
-        
+      
 
     def size(self):
         """
