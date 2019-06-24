@@ -1,7 +1,7 @@
 """
 test_history.py:
 
-A history that relies on predicates to provide filtering,
+A chronological history that relies on predicates to provide filtering,
 searching, and datastructure operations
 
 :author: koran
@@ -49,7 +49,7 @@ class TestHistory:
         Retrieve objects from this history
         :param start_pred: If specified, will return a list of only the first object to
             satisfy this predicate and all following objects
-        :return: a list of objects
+        :return: a list of objects in chronological order
         """
         index = 0
         if predicates.is_predicate(start_pred):
@@ -57,15 +57,17 @@ class TestHistory:
                 index += 1
         return self.objects[index:]
 
-    def __get_item__(self, index):
+    def retrieve_new(self):
         """
-        __get_item__ is a special method in python that allows using brackets.
-        Example: item = history[2] # this would return the second item in the history.
+        Retrieves a chronological order of objects that haven't been accessed through
+        retrieve or retrieve_new before. The objects accessed through retrieve_new
+        could include objects that were previously accessed if they fall between new
+        objects in a chronological order according to the timestamps.
 
-        :param index: the index of the array to return.
-        :return: the item at the index specified.
+        :return: a list of objects in chronological order starting with the earliest
+            object added since the last call to retrieve or retrieve new.
         """
-        return self.objects[index]
+        pass
 
     def clear(self, start_pred=None):
         """
@@ -86,12 +88,25 @@ class TestHistory:
         """
         return self.__len__()
 
+    ###########################################################################
+    #   Python Special Methods
+    ###########################################################################
     def __len__(self):
         """
         Accessor for the number of objects in the history
         :return: the number of objects
         """
         return len(self.objects)
+
+    def __getitem__(self, index):
+        """
+        __get_item__ is a special method in python that allows using brackets.
+        Example: item = history[2] # this would return the second item in the history.
+
+        :param index: the index of the array to return.
+        :return: the item at the index specified.
+        """
+        return self.objects[index]
 
     ###########################################################################
     #   Search Functions
