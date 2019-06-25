@@ -19,7 +19,7 @@ These functions are powered off the following variables:
 - `UT_SOURCE_FILES`: (optional) specify sources for unit tests used with `register_fprime_ut`
 - `UT_MOD_DEPS`: (optional) specify modules for unit tests used with `register_fprime_ut`
 
-See: [API.cmake](API.cmake)
+See: [API.md](API.md)
 
 **Example:**
 ```

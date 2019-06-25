@@ -30,6 +30,7 @@ TEST_MODS = Svc/CmdDispatcher \
 			Fw/Com \
 			Svc/Sched \
 			Svc/Ping \
+			Fw/Logger \
 			Os \
 			gtest
 

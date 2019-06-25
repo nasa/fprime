@@ -13,7 +13,7 @@ shift
 DIR="${BUILD_DIR:-$(mktemp -d)}"
 (
     echo "[INFO] Running UT: ${UT}"
-    BUILD_DIR="${DIR}" CARGS="-DPLATFORM=ut/$(uname -s)" "${DIRNAME}"/cmake-build.bash "${TARGET}" "${UT}" > "${DIR}/ut.out" 2> >(tee -a "${DIR}/ut.err" >&2) || exit 3
+    BUILD_DIR="${DIR}" CARGS="-DCMAKE_BUILD_TYPE=TESTING" "${DIRNAME}"/cmake-build.bash "${TARGET}" "${UT}" > "${DIR}/ut.out" 2> >(tee -a "${DIR}/ut.err" >&2) || exit 3
     cd "$DIR"
     if [[ "${UT}" != "check" ]]
     then

@@ -143,6 +143,9 @@ void constructApp(int port_number, char* hostname) {
     health.regCommands();
     rpiDemo.regCommands();
 
+    // set sequencer timeout
+    cmdSeq.setTimeout(30);
+
     // read parameters
     prmDb.readParamFile();
 

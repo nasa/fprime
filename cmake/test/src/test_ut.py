@@ -10,7 +10,7 @@ import cmake
 
 # Test a normal build, with the ref executable and static libraries
 BUILD_DIR = os.path.join("<FPRIME>", "Ref")
-OPTIONS = {"PLATFORM": os.path.join("ut", platform.system())}
+OPTIONS = {"CMAKE_BUILD_TYPE": "TESTING"}
 TARGETS = ["all", "check"]
 EXPECTED = [
     os.path.join("bin", "ut", platform.system(), "Ref"),
