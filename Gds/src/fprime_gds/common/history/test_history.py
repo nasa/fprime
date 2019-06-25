@@ -53,7 +53,7 @@ class TestHistory:
         will return a sub-list of all objects beginning at start to the latest object.
         Note: if no item satisfies the start predicate or the index is greater than
         the length of the history, an empty list will be returned.
-        
+
         :param start: first object to retrieve. can either be an index or a predicate.
         :return: a list of objects in chronological order
         """
@@ -110,7 +110,6 @@ class TestHistory:
             self.retrieved_cursor = 0
 
         del self.objects[:index]
-      
 
     def size(self):
         """
@@ -138,40 +137,3 @@ class TestHistory:
         :return: the item at the index specified.
         """
         return self.objects[index]
-
-    ###########################################################################
-    #   Search Functions
-    ###########################################################################
-    def find_earliest(self, search_pred):
-        """
-        Searches for the first instance of an object that satisfies the given predicate
-        in a history
-        :param search_pred: A predicate to call on each object in the history
-        :return: the first object to satisfy the given predicate
-        """
-        pass
-
-    def find_latest(self, search_pred):
-        """
-        Searches for the last instance of an object that satisfies the given predicate in
-        a history
-        :param search_pred: A predicate that the search will use to choose an object
-        :return: the last object to satisfy the given predicate
-        """
-        pass
-
-    def find_all(self, search_pred):
-        """
-        Searches for all instances in the history that satisfy the given predicate
-        :param search_pred: A predicate that the search will use to choose an object
-        :return: an array of all objects to satisfy the given predicate
-        """
-        pass
-
-    def count(self, search_pred, start_pred=None):
-        """
-        Counts how many objects satisfy the given predicate
-        :param search_pred: A predicate that the search will use to choose an object
-        :return: the number of objects that satisfy the predicate
-        """
-        pass
