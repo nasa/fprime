@@ -23,7 +23,7 @@ class predicate:
         # TODO raise not-implemented error
         pass
     """
-    Should return a string outlining the evaluation done by the predicate.
+    Returns a string outlining the evaluation done by the predicate.
     """
     def __str__(self, object):
         # TODO raise not-implemented error
@@ -66,6 +66,13 @@ class less_than(predicate):
     def __call__(self, actual):
         return actual < self.upper_limit
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 class greater_than(predicate):
     """
@@ -81,6 +88,13 @@ class greater_than(predicate):
     """
     def __call__(self, actual):
         return actual > self.lower_limit
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
 
 
 class equal_to(predicate):
@@ -98,6 +112,13 @@ class equal_to(predicate):
     def __call__(self, actual):
         return actual == self.expected
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 class not_equal_to(predicate):
     """
@@ -113,6 +134,13 @@ class not_equal_to(predicate):
     """
     def __call__(self, actual):
         return actual != self.expected
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
 
 
 class less_than_or_equals(predicate):
@@ -130,6 +158,13 @@ class less_than_or_equals(predicate):
     def __call__(self, actual):
         return actual <= self.upper_limit
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 class greater_than_or_equals(predicate):
     """
@@ -146,6 +181,12 @@ class greater_than_or_equals(predicate):
     def __call__(self, actual):
         return actual >= self.lower_limit
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
 
 
 class within_range(predicate):
@@ -164,7 +205,14 @@ class within_range(predicate):
     :param actual: the value to evaluate
     """
     def __call__(self, actual):
-        return actual >= self.lower_limit and actual <= upper_limit
+        return actual >= self.lower_limit and actual <= self.upper_limit
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
 
 
 ##########################################################################################
@@ -189,6 +237,13 @@ class is_a_member_of(predicate):
                 return True
         return False
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 class is_not_a_member_of(predicate):
     """
@@ -209,6 +264,13 @@ class is_not_a_member_of(predicate):
                 return False
         return True
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 ##########################################################################################
 # Logic predicates
@@ -221,6 +283,13 @@ class always_true(predicate):
     """
     def __call__(self, object):
         return True
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
 
 
 class invert(predicate):
@@ -238,6 +307,13 @@ class invert(predicate):
     """
     def __call__(self, item):
         return not self.pred(item)
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
 
 
 class satisfies_all(predicate):
@@ -261,6 +337,13 @@ class satisfies_all(predicate):
                 return False
         return True
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 class satisfies_any(predicate):
     """
@@ -283,10 +366,42 @@ class satisfies_any(predicate):
                 return True
         return False
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 ##########################################################################################
 # Test API predicates
 ##########################################################################################
+class args_predicate(predicate):
+    """
+    A predicate for evaluating argument fields.
+    :param args: a list of expected arguments.
+    """
+    def __init__(self, args):
+        self.expected = args
+
+    """
+    Evaluates if the given argument array is equivalent. If a given argument is none, it
+    will be ignored.
+    """
+    def __call__(self, actual):
+        for arg in self.expected:
+            # TODO finish impelmentation
+            pass
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
+
 class event_predicate(predicate):
     """
     A predicate for specifying an EventData object from data_types.event_data. This
@@ -295,7 +410,7 @@ class event_predicate(predicate):
 
     :param id_pred: If specified, the object's id field must satisfy the given predicate
         for the telemetry predicate to evaluate to true.
-    :param id_value: If specified, the object's value_obj field must satisfy the given
+    :param args_pred: If specified, the object's arguments field must satisfy the given
         predicate for the telemetry predicate to evaluate to true.
     :param time_pred: If specified, the object's time field must satisfy the given
         predicate for the telemetry predicate to evaluate to true.
@@ -328,6 +443,13 @@ class event_predicate(predicate):
         e_time = self.time_pred(event.get_time())
         return e_id and e_args and e_time
 
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
+
 
 class telemetry_predicate(predicate):
     """
@@ -337,7 +459,7 @@ class telemetry_predicate(predicate):
 
     :param id_pred: If specified, the object's id field must satisfy the given predicate
         for the telemetry predicate to evaluate to true.
-    :param id_value: If specified, the object's value_obj field must satisfy the given
+    :param Value_pred: If specified, the object's value_obj field must satisfy the given
         predicate for the telemetry predicate to evaluate to true.
     :param time_pred: If specified, the object's time field must satisfy the given
         predicate for the telemetry predicate to evaluate to true.
@@ -369,3 +491,10 @@ class telemetry_predicate(predicate):
         t_val = self.value_pred(telemetry.get_val())
         t_time = self.time_pred(telemetry.get_time())
         return t_id and t_val and t_time
+
+    """
+    Returns a string outlining the evaluation done by the predicate.
+    """
+    def __str__(self, object):
+        # TODO return a string
+        pass
