@@ -43,31 +43,6 @@ class IntegrationTestAPI:
         """
         pass
 
-    ######################################################################################
-    #   History Functions
-    ######################################################################################
-
-    def get_command_test_history(self):
-        """
-        Accessor for IntegrationTestAPI's command history
-        :return: a history of CmdData Objects
-        """
-        return self.command_history
-
-    def get_telemetry_test_history(self):
-        """
-        Accessor for IntegrationTestAPI's telemetry history
-        :return: a history of ChData Objects
-        """
-        return self.telemetry_history
-
-    def get_event_test_history(self):
-        """
-        Accessor for IntegrationTestAPI's event history
-        :return: a history of EventData Objects
-        """
-        return self.event_history
-
     def get_latest_fsw_time(self):
         """
         Finds the latest flight software time received by either the event or telemetry
@@ -139,6 +114,7 @@ class IntegrationTestAPI:
         :return: If the search is successful, will return the list of ChData objects to
             satisfy the search, otherwise will return None.
         """
+        pass
 
     def send_and_await_event(self, command, args, events, timeout=5):
         """
@@ -249,7 +225,12 @@ class IntegrationTestAPI:
         :return: If the search is successful, will return the instance of ChData from
             that satisfied the assert, otherwise will return None.
         """
-        pass
+        t_pred = self.get_telemetry_predicate(channel, val_pred, fsw_time_pred)
+
+        if history is None:
+            history = self.get_telemetry_test_history()
+
+        return self.await_history_item(history, t_pred, timeout)
 
     def await_telemetry_sequence(self, channels, history=None, timeout=5):
         """
@@ -294,7 +275,10 @@ class IntegrationTestAPI:
         :return: If the assert is successful, will return the instance of ChData that
             satisfied the assert.
         """
-        pass
+        t_pred = self.get_telemetry_predicate(channel, val_pred, fsw_time_pred)
+        result = self.await_telemetry(t_pred, history=history, timeout=timeout)
+        assert t_pred(result)
+        return result
 
     def assert_telemetry_sequence(self, channels, history=None, timeout=0):
         """
@@ -336,7 +320,24 @@ class IntegrationTestAPI:
         :return: If the assert is successful, this call will return a list of the objects
             counted to satisfy the count predicate
         """
-        pass
+        if channels is None:
+            search = None
+        elif isinstance(channels, list):
+            t_preds = []
+            for channel in channels:
+                t_preds.append(self.get_telemetry_predicate(channel=channel))
+            search = predicates.satisfies_any(t_preds)
+        else:
+            search = self.get_telemetry_predicate(channel=channels)
+
+        if history is None:
+            history = self.get_telemetry_test_history()
+
+        found = self.await_history_count(count_pred, history, search)
+        if found is None:
+            assert False
+        assert count_pred(len(found))
+        return found
 
     ######################################################################################
     #   Event Functions
@@ -415,15 +416,7 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_event_test_history()
 
-        for evr in history.retrieve():
-            if e_pred(evr):
-                return evr
-
-        if timeout > 0:
-            # TODO await the history.
-            pass
-
-        return None
+        return self.await_history_item(history, e_pred, timeout)
 
     def await_event_sequence(self, events, history=None, timeout=5):
         """
@@ -502,7 +495,7 @@ class IntegrationTestAPI:
         :param count_pred: A predicate to determine whether the correct amount has been
             received.
         :param events: An event specifier or a list of event specifiers. Where a
-            specifier is an id, mnemonic or telemetry_predicate. If specified, an event
+            specifier is an id, mnemonic or event_predicate. If specified, an event
             will only be counted if it satisfies at least one specifier on this list.
         :param history: If specified, the assert will substitute the given history for
             the IntegrationTestAPI's history.
@@ -511,4 +504,101 @@ class IntegrationTestAPI:
         :return: If the assert is successful, this call will return a list of the objects
             counted to satisfy the count predicate
         """
-        pass
+        if events is None:
+            search = None
+        elif isinstance(events, list):
+            e_preds = []
+            for event in events:
+                e_preds.append(self.get_event_predicate(event=event))
+            search = predicates.satisfies_any(e_preds)
+        else:
+            search = self.get_event_predicate(event=events)
+
+        if history is None:
+            history = self.get_event_test_history()
+
+        found = self.await_history_count(count_pred, history, search)
+        if found is None:
+            assert False
+        assert count_pred(len(found))
+        return found
+
+    ######################################################################################
+    #   History Functions
+    ######################################################################################
+    def get_command_test_history(self):
+        """
+        Accessor for IntegrationTestAPI's command history
+        :return: a history of CmdData Objects
+        """
+        return self.command_history
+
+    def get_telemetry_test_history(self):
+        """
+        Accessor for IntegrationTestAPI's telemetry history
+        :return: a history of ChData Objects
+        """
+        return self.telemetry_history
+
+    def get_event_test_history(self):
+        """
+        Accessor for IntegrationTestAPI's event history
+        :return: a history of EventData Objects
+        """
+        return self.event_history
+
+    def await_history_item(self, history, search_pred, timeout=5):
+        """
+        Awaits a single item in a history. First searches the history for the item, then
+        waits until the item is found or the timeout is reached. Used as helpers for the
+        test api.
+
+        :param history: a history to await on.
+        :param search_pred: a predicate to await with
+        :param timeout: how long to await an item.
+
+        :return: If found, a data object, otherwise, None
+        """
+        current = history.retrieve()
+        for item in current:
+            if search_pred(item):
+                return item
+
+        # TODO implement await
+
+        return None
+
+    def await_history_count(self, count_pred, history, search_pred=None, timeout=5):
+        """
+        Awaits for an amount of items in a history.First searches the history for the
+        items, then waits until more are found to satisfy the count predicate or the
+        timeout is reached. Used as helpers for the test api.
+
+        :param count_pred: a predicate to determine if the correct amount has been
+            reached.
+        :param history: a history to await on.
+        :param search_pred: a predicate to collect and count with. If not specified, all
+            items will be counted.
+        :param timeout: how long to await an item.
+
+        :return: If found, a list data objects, otherwise, None
+        """
+        count = 0
+        objects = []
+        if search_pred is None:
+            search_pred = predicates.always_true()
+            history.size()
+            objects = history.retrieve()
+        else:
+            current = history.retrieve()
+            for item in current:
+                if search_pred(item):
+                    count += 1
+                    objects.append(item)
+
+        if count_pred(count):
+            return objects
+
+        # TODO implement await
+
+        return None
