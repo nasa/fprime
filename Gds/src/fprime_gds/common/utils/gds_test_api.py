@@ -362,15 +362,33 @@ class IntegrationTestAPI:
         satisfied. If a specific constraint isn't specified, then it will not effect the
         outcome. If no constraints are specified, the predicate will always return true.
 
-        :param event: If specified, either the event id, an event mnemonic, or an
-            event_predicate to specify the event
+        :param event: If specified, either the event id, an event mnemonic, or a
+            predicate to specify the event
         :param args: If specified, a valid event message must have arguments matching the
             given list of args. Include None to ignore an element.
         :param fsw_time_pred: If specified, the event must have a timestamp that
             satisfies this predicate.
         :return: an instance of event_predicate
         """
-        pass
+        if isinstance(event, predicates.event_predicate):
+            return event
+
+        e_pred = None
+        a_pred = None
+        t_pred = None
+
+        if predicates.is_predicate(event):
+            e_pred = event
+        else:
+            event = self.translate_event_name(event)
+            e_pred = predicates.equal_to(event)
+
+        # TODO argument list predicate.
+
+        if predicates.is_predicate(fsw_time_pred):
+            t_pred = fsw_time_pred
+
+        return predicates.event_predicate(e_pred, a_pred, t_pred)
 
     def await_event(
         self, event, args=None, fsw_time_pred=None, history=None, timeout=5
@@ -392,7 +410,20 @@ class IntegrationTestAPI:
         :return: If the search is successful, will return the instance of EventData that
             satisfied the assert, otherwise will return None.
         """
-        pass
+        e_pred = self.get_event_predicate(event, args, fsw_time_pred)
+
+        if history is None:
+            history = self.get_event_test_history()
+
+        for evr in history.retrieve():
+            if e_pred(evr):
+                return evr
+
+        if timeout > 0:
+            # TODO await the history.
+            pass
+
+        return None
 
     def await_event_sequence(self, events, history=None, timeout=5):
         """
@@ -437,7 +468,10 @@ class IntegrationTestAPI:
         :return: If the assert is successful, this call will return the instance of
             EventData that satisfied the assert.
         """
-        pass
+        e_pred = self.get_event_predicate(event, args, fsw_time_pred)
+        result = self.await_event(e_pred, history=history, timeout=timeout)
+        assert e_pred(result)
+        return result
 
     def assert_event_sequence(self, events=None, history=None, timeout=0):
         """
