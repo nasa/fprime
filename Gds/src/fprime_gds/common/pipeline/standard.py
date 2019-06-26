@@ -139,8 +139,8 @@ class StandardPipeline:
         """
         # Create histories
         self.command_hist = fprime_gds.common.history.ram.RamHistory()
-        self.event_hist = fprime_gds.common.history.ram.RamHistory()
-        self.channel_hist = fprime_gds.common.history.ram.RamHistory()
+        self.event_hist = fprime_gds.common.history.test.TestHistory()
+        self.channel_hist = fprime_gds.common.history.test.TestHistory()
         # Register histories
         self.event_decoder.register(self.event_hist)
         self.channel_decoder.register(self.channel_hist)
