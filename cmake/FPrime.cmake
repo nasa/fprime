@@ -83,7 +83,11 @@ else()
 endif()
 
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+# Ignore GTest for non-test builds
+if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
+    include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+endif()

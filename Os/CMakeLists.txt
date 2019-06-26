@@ -15,6 +15,7 @@ set(MOD_DEPS
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"

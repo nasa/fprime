@@ -125,7 +125,6 @@ endfunction(enum_autocoder)
 # - **SOURCE_FILES:** source file inputs
 # - **LINK_DEPS:** link-time dependecies like -lm or -lpthread
 # - **MOD_DEPS:** CMake module dependencies
-#
 ####
 function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS MOD_DEPS)
   # If there are  build flags, set them now 
@@ -197,6 +196,9 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
+  if (NOT DEFINED FPRIME_OBJECT_TYPE)
+      set(FPRIME_OBJECT_TYPE "Library")
+  endif()
   generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
   # Install the executable
   install(TARGETS "${MODULE_NAME}"
