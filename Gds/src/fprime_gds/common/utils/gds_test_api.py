@@ -7,9 +7,10 @@ telemetry and dictionaries.
 
 :author: koran
 """
-import predicates
-import signal
 import time
+import signal
+
+import predicates
 
 
 class IntegrationTestAPI:
@@ -32,7 +33,7 @@ class IntegrationTestAPI:
         self.telemetry_history = None
         self.event_history = None
 
-    def log_test_message(self):
+    def log_test_message(self, msg):
         """
         TODO: Define what a test log should look like and describe its parameters.
         """
@@ -68,9 +69,9 @@ class IntegrationTestAPI:
             cleared up until the timestamp.
         """
         fsw_pred = predicates.greater_than(fsw_time_stamp)
-        e_pred = predicates.event_predicate(time_pred=fsw_pred)
+        e_pred = predicates.event_predicate(fsw_time_pred=fsw_pred)
         self.event_history.clear(e_pred)
-        t_pred = predicates.telemetry_predicate(time_pred=fsw_pred)
+        t_pred = predicates.telemetry_predicate(fsw_time_pred=fsw_pred)
         self.command_history.clear(t_pred)
         self.command_history.clear()
 
@@ -200,7 +201,13 @@ class IntegrationTestAPI:
         return predicates.event_predicate(c_pred, v_pred, t_pred)
 
     def await_telemetry(
-        self, channel, val_pred=None, fsw_time_pred=None, history=None, start=None, timeout=5
+        self,
+        channel,
+        val_pred=None,
+        fsw_time_pred=None,
+        history=None,
+        start=None,
+        timeout=5,
     ):
         """
         TODO
@@ -219,10 +226,10 @@ class IntegrationTestAPI:
         seq_preds = []
         for channel in channels:
             seq_preds.append(self.get_telemetry_predicate(channel))
-        
+
         if history is None:
             history = self.get_telemetry_test_history()
-        
+
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
     def await_telemetry_count(
@@ -250,7 +257,13 @@ class IntegrationTestAPI:
     #   Telemetry Asserts
     ######################################################################################
     def assert_telemetry(
-        self, channel, val_pred=None, fsw_time_pred=None, history=None, start=None, timeout=0
+        self,
+        channel,
+        val_pred=None,
+        fsw_time_pred=None,
+        history=None,
+        start=None,
+        timeout=0,
     ):
         """
         Asserts that a specified telemetry update was received. This function will first
@@ -258,7 +271,9 @@ class IntegrationTestAPI:
         sequence. If no valid update was received, then received before the timeout, this
         call will assert failure.
         """
-        result = self.await_telemetry(channel, val_pred, fsw_time_pred, history, start, timeout)
+        result = self.await_telemetry(
+            channel, val_pred, fsw_time_pred, history, start, timeout
+        )
         assert t_pred(result)
         return result
 
@@ -278,7 +293,6 @@ class IntegrationTestAPI:
         assert len(events) == len(results)
         return results
 
-
     def assert_telemetry_count(
         self, count_pred, channels=None, history=None, start=None, timeout=0
     ):
@@ -287,7 +301,9 @@ class IntegrationTestAPI:
         have the correct update count, the call will await until a correct count is
         achieved or the timeout, at which point it will assert failure.
         """
-        results = self.await_telemetry_count(count_pred, channels, history, start, timeout)
+        results = self.await_telemetry_count(
+            count_pred, channels, history, start, timeout
+        )
         if results is None:
             assert False
         assert count_pred(len(results))
@@ -360,13 +376,15 @@ class IntegrationTestAPI:
         seq_preds = []
         for event in events:
             seq_preds.append(self.get_event_predicate(event))
-        
+
         if history is None:
             history = self.get_event_test_history()
-        
+
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
-    def await_event_count(self, count_pred, events=None, history=None, start=None, timeout=5):
+    def await_event_count(
+        self, count_pred, events=None, history=None, start=None, timeout=5
+    ):
         """
         Will search the specified history until an amount of events is found. By default only searches future history.
         """
@@ -384,7 +402,6 @@ class IntegrationTestAPI:
             history = self.get_event_test_history()
 
         return self.find_history_count(count_pred, history, search, start, timeout)
-
 
     ######################################################################################
     #   Event Asserts
@@ -418,7 +435,9 @@ class IntegrationTestAPI:
         assert len(events) == len(results)
         return results
 
-    def assert_event_count(self, count_pred, events=None, history=None, start=None, timeout=0):
+    def assert_event_count(
+        self, count_pred, events=None, history=None, start=None, timeout=0
+    ):
         """
         An assert on the number of events received. If the history doesn't have the
         correct event count, the call will await until a correct count is achieved or the
@@ -493,7 +512,7 @@ class IntegrationTestAPI:
                 return None
         else:
             return None
-        
+
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
         This function can both search and await for a sequence of elements in a history.
@@ -532,7 +551,9 @@ class IntegrationTestAPI:
         else:
             return None
 
-    def find_history_count(self, count_pred, history, search_pred=None, start=None, timeout=0):
+    def find_history_count(
+        self, count_pred, history, search_pred=None, start=None, timeout=0
+    ):
         """
         This function can both search and await for an amount of items in a history. First searches the history for the
         items, then waits until more are found to satisfy the count predicate or the
