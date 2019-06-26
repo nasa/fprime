@@ -12,7 +12,7 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS "")
 # For shared libraries, Os must exist in the module list
-if (LINK_AS_SHARED_LIBS)
+if (BUILD_SHARED_LIBS)
     list(APPEND MOD_DEPS "Fw/Cmd")
 endif()
 register_fprime_module()

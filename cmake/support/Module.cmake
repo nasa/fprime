@@ -192,7 +192,6 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
   # Add the library name
   add_library(
     ${MODULE_NAME}
-    ${FPRIME_LIB_TYPE}
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
@@ -200,12 +199,16 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
       set(FPRIME_OBJECT_TYPE "Library")
   endif()
   generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
-  # Install the executable
-  install(TARGETS "${MODULE_NAME}"
-        RUNTIME DESTINATION "bin/${PLATFORM}"
-        LIBRARY DESTINATION "lib/${PLATFORM}"
-        ARCHIVE DESTINATION "lib/static/${PLATFORM}"
-        OPTIONAL)
+  # Install the executable, if not excluded and not testing
+  get_target_property(IS_EXCLUDE_FROM_ALL "${MODULE_NAME}" "EXCLUDE_FROM_ALL")
+  if ("${IS_EXCLUDE_FROM_ALL}" STREQUAL "IS_EXCLUDE_FROM_ALL-NOTFOUND" AND
+      NOT CMAKE_BUILD_TYPE STREQUAL "TESTING") 
+      install(TARGETS "${MODULE_NAME}"
+          RUNTIME DESTINATION "bin/${PLATFORM}"
+          LIBRARY DESTINATION "lib/${PLATFORM}"
+          ARCHIVE DESTINATION "lib/static/${PLATFORM}"
+      )
+  endif()
   # Link library list output on per-module basis
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${MODULE_NAME})
