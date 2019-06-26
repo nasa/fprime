@@ -57,10 +57,10 @@ class IntegrationTestAPI:
         """
         Clears the IntegrationTestAPI's histories. Because the command history is not
         correlated to a flight software timestamp, it will be cleared entirely. This
-        function can be used to set up test case so that the IntegrationTestAPI's
-        histories only contain objects received during that test.Note: this will not
-        clear user-created sub-histories nor the aggregate histories (histories owned
-        by the gds)
+        function can be used to set up test cases so that the IntegrationTestAPI's
+        histories only contain objects received during that test.
+        Note: this will not clear user-created sub-histories nor the aggregate histories
+        (histories owned by the gds)
 
         :param fsw_time_stamp: If specified, event and telemetry histories will be
             cleared up until the timestamp.
@@ -103,17 +103,6 @@ class IntegrationTestAPI:
         in order with respect to the flight software timestamps. If the specification of
         timestamp predicates is not sequential, the timestamps will likely fail. Note: It
         is reccomended (but not enforced) not to specify timestamps for this assert.
-
-        :param command: Either the command id or a command mnemonic to specify the type
-            of command
-        :param args: A list of command arguments to send
-        :param channels: Either a single channel specifier, or a sequence of channel
-            specifiers, where a channel specifier is an id, mnemonic, or a
-            telemetry_predicate
-        :param start: an indictor of when to start the search. See history.retrieve()
-        :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the list of ChData objects to
-            satisfy the search, otherwise will return None.
         """
         pass
 
@@ -124,16 +113,6 @@ class IntegrationTestAPI:
         in order with respect to the flight software timestamps. If the specification of
         timestamp predicates is not sequential, the timestamps will likely fail. Note: It
         is reccomended (but not enforced) not to specify timestamps for this assert.
-
-        :param command: Either the command id or a command mnemonic to specify the type
-            of command
-        :param args: A list of command arguments to send
-        :param events:  Either a single event specifier, or a sequence of event
-            specifiers, where an event specifier is an id, mnemonic, or an event_predicate
-        :param start: an indictor of when to start the search. See history.retrieve()
-        :param timeout: The maximum time to wait for
-        :return: If the search is successful, will return the instance of EventData,
-            otherwise will return None.
         """
         pass
 
@@ -197,7 +176,26 @@ class IntegrationTestAPI:
         of telemetry_predicate evaluates true when all specified constraints are
         satisfied. If a specific constraint isn't specified, then it will be ignored.
         """
-        pass
+        if isinstance(channel, predicates.telemetry_predicate):
+            return channel
+
+        c_pred = None
+        v_pred = None
+        t_pred = None
+
+        if predicates.is_predicate(channel):
+            c_pred = event
+        else:
+            channel = self.translate_event_name(channel)
+            c_pred = predicates.equal_to(channel)
+
+        if predicates.is_predicate(val_pred):
+            v_pred = val_pred
+
+        if predicates.is_predicate(fsw_time_pred):
+            t_pred = fsw_time_pred
+
+        return predicates.event_predicate(c_pred, v_pred, t_pred)
 
     def await_telemetry(
         self, channel, val_pred=None, fsw_time_pred=None, history=None, start=None, timeout=5
@@ -249,7 +247,7 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Telemetry Asserts
     ######################################################################################
-    def assert_receive_telemetry(
+    def assert_telemetry(
         self, channel, val_pred=None, fsw_time_pred=None, history=None, start=None, timeout=0
     ):
         """
@@ -389,7 +387,7 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Event Asserts
     ######################################################################################
-    def assert_receive_event(
+    def assert_event(
         self, event, args=None, fsw_time_pred=None, history=None, start=None, timeout=0
     ):
         """
