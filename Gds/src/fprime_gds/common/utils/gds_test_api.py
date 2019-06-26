@@ -8,6 +8,8 @@ telemetry and dictionaries.
 :author: koran
 """
 import predicates
+import signal
+import time
 
 
 class IntegrationTestAPI:
@@ -452,6 +454,12 @@ class IntegrationTestAPI:
         """
         return self.event_history
 
+    class TimeoutException(Exception):
+        pass
+
+    def _timeout_sig_handler(self, signum, frame):
+        raise self.TimeoutException()
+
     def find_history_item(self, search_pred, history, start=None, timeout=0):
         """
         Awaits a single item in a history. First searches the history for the item, then
@@ -470,10 +478,22 @@ class IntegrationTestAPI:
             if search_pred(item):
                 return item
 
-        # TODO implement await
-
-        return None
-
+        if timeout:
+            try:
+                signal.signal(signal.SIGALRM, self._timeout_sig_handler)
+                signal.alarm(timeout)
+                while True:
+                    new_items = history.retrieve_new(start)
+                    for item in new_items:
+                        if search_pred(item):
+                            return item
+                    time.sleep(0.1)
+            except self.TimeoutException:
+                # TODO Final check?
+                return None
+        else:
+            return None
+        
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
         This function can both search and await for a sequence of elements in a history.
@@ -481,6 +501,10 @@ class IntegrationTestAPI:
         current = history.retrieve(start)
         objects = []
         seq_preds = seq_preds.copy()
+
+        if len(seq_preds) == 0:
+            return []
+
         for item in current:
             if seq_preds[0](item):
                 objects.append(item)
@@ -488,9 +512,25 @@ class IntegrationTestAPI:
                 if len(seq_preds) == 0:
                     return objects
 
-        # TODO implement await
-
-        return None
+        if timeout:
+            try:
+                signal.signal(signal.SIGALRM, self._timeout_sig_handler)
+                signal.alarm(timeout)
+                while True:
+                    new_items = history.retrieve_new(start)
+                    for item in new_items:
+                        if seq_preds[0](item):
+                            objects.append(item)
+                            seq_preds.pop(0)
+                            if len(seq_preds) == 0:
+                                signal.alarm(0)
+                                return objects
+                    time.sleep(0.1)
+            except self.TimeoutException:
+                # TODO Final check?
+                return None
+        else:
+            return None
 
     def find_history_count(self, count_pred, history, search_pred=None, start=None, timeout=0):
         """
@@ -507,22 +547,34 @@ class IntegrationTestAPI:
 
         :return: If found a correct amount is found, a list data objects, otherwise, None
         """
-        count = 0
         objects = []
         if search_pred is None:
             search_pred = predicates.always_true()
-            count = history.size()
             objects = history.retrieve(start)
         else:
             current = history.retrieve(start)
             for item in current:
                 if search_pred(item):
-                    count += 1
                     objects.append(item)
 
-        if count_pred(count):
+        if count_pred(len(objects)):
             return objects
 
-        # TODO implement await
-
-        return None
+        if timeout:
+            try:
+                signal.signal(signal.SIGALRM, self._timeout_sig_handler)
+                signal.alarm(timeout)
+                while True:
+                    new_items = history.retrieve_new(start)
+                    for item in new_items:
+                        if search_pred(item):
+                            objects.append(item)
+                            if count_pred(len(objects)):
+                                signal.alarm(0)
+                                return objects
+                    time.sleep(0.1)
+            except self.TimeoutException:
+                # TODO Final check?
+                return None
+        else:
+            return None
