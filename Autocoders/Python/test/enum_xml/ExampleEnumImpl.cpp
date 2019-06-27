@@ -20,7 +20,7 @@ namespace Example {
 		}
 
 		void ExampleEnumImpl:: ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1) {
-			printf("Component received input.");
-			// this->m_ExEnumOut_OutputPort[0](portNum, cmd, str);
+			//printf("%s Invoked ExEnumIn_handler(%d, %d, %d, %d, %d, %d);\n", this->getObjName(), portNum, enum1, serial1.arg1, serial1.arg2, serial1.arg3);
+			this->ExEnumOut_out(0, enum1, serial1);
 		}
 };

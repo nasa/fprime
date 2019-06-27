@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
     enum1 = 0;
     enum2 = 2;
     
+    FW_ASSERT(false);
     FW_ASSERT(enum1 == Example::Enum1::Item1);
     FW_ASSERT(enum2 == Example::Enum1::Item3);
     
