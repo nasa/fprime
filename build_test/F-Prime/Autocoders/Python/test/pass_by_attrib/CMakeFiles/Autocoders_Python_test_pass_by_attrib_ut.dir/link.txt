@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_pass_by_attrib_ut.a  CMakeFiles/Autocoders_Python_test_pass_by_attrib_ut.dir/Msg1PortAc.cpp.o CMakeFiles/Autocoders_Python_test_pass_by_attrib_ut.dir/PassByComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_pass_by_attrib_ut.a

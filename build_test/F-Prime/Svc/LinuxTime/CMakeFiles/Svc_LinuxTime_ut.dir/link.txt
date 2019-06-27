@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_LinuxTime_ut.a  CMakeFiles/Svc_LinuxTime_ut.dir/LinuxTimeImpl.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_LinuxTime_ut.a

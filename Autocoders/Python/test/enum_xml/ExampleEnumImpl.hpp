@@ -1,7 +1,7 @@
 #ifndef EXAMPLE_ENUM_IMPL_HPP
 #define EXAMPLE_ENUM_IMPL_HPP
 
-#include <Autocoders/Python/test/enum_xml/ExampleEnumComponentAc.hpp>
+#include <Autocoders/Python/test/enum_xml/Component1ComponentAc.hpp>
 
 namespace Example {
 
@@ -14,9 +14,7 @@ namespace Example {
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:
-		// downcall for input ports
-        void OutputPort1_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
-        void InputPort1_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
+        void ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
 	};
 
 };

@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Time.a  CMakeFiles/Fw_Time.dir/Time.cpp.o CMakeFiles/Fw_Time.dir/TimePortAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Time.a

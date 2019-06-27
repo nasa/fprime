@@ -1,2 +1,0 @@
-rm: test_file: No such file or directory
-rm: test_file: No such file or directory

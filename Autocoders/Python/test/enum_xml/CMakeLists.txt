@@ -4,9 +4,9 @@
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Enum1EnumAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/ExampleEnumSerializableAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/ExampleEnumPortAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/ExampleEnumComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Serial1SerializableAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Port1PortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Component1ComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/ExampleEnumImpl.cpp"
 )
 set(UT_SOURCE_FILES

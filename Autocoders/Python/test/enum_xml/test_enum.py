@@ -14,7 +14,39 @@ from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
 
+import filecmp
 import logging
+import time
+
+def remove_headers(filename):
+    """
+    Remove header comment so that date doesn't
+    mess up the file comparison
+    """
+    with open(filename, "r+") as f:
+        lines = f.readlines()
+        f.seek(0)
+        num = 0
+        for line in lines:
+            if not (num == 0 and ('*' in line or '//' in line)):
+                # Don't want to print empty first line
+                if num != 0 or line.strip():
+                    f.write(line)
+                    num += 1
+
+        f.truncate()
+
+def compare_genfile(filename):
+    """
+    Compares genfile with expected genfile
+    """
+    print(filename)
+    
+    remove_headers(filename)
+
+    if not (filecmp.cmp(filename,"templates/{}".format(filename))):
+        print("ERROR: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename))
+        assert False
 
 def test_enum():
     """
@@ -22,20 +54,30 @@ def test_enum():
     """
     try:
         ## Spawn executable
-        p = pexpect.spawn("make")
+        p = pexpect.spawn("python ../../bin/codegen.py Enum1EnumAi.xml Serial1SerializableAi.xml")
         
-        logging.debug('`g++` executed.')
-        #logging.debug('Executable now running.')
+        # Expect all of the filenames + expect output does not contain ERROR
+        p.expect("(?=.*Serial1SerializableAi.xml)(?=.*Enum1EnumAi.xml).*", timeout=5)
         
-        #for pout, psend in $test_case.ptuples:
-        #logging.debug('Expecting: ${pout}')
+        # pexpect doesn't like to generate 8 files in 1 command so I split the work in half
+        p2 = pexpect.spawn("python ../../bin/codegen.py Port1PortAi.xml Component1ComponentAi.xml")
+        p2.expect("(?=.*Port1PortAi.xml)(?=.*Component1ComponentAi.xml)(?!.*ERROR).*", timeout=5)
         
-        p.expect("1", timeout=3)
-        p.sendline("2")
+        # Give time to generate files
+        time.sleep(3)
+
+        # Test whether all generated files match expected
+        compare_genfile('Enum1EnumAc.cpp')
+        compare_genfile('Enum1EnumAc.hpp')
+        compare_genfile('Serial1SerializableAc.cpp')
+        compare_genfile('Serial1SerializableAc.hpp')
+        compare_genfile('Port1PortAc.cpp')
+        compare_genfile('Port1PortAc.hpp')
+        compare_genfile('Component1ComponentAc.cpp')
+        compare_genfile('Component1ComponentAc.hpp')
         
-        #logging.debug('Sent: ${psend}')
-        #end for
-        
+#        p3 = pexpect.spawn("cd ../../../../build_test/ && cmake .. && make check -j 32", timeout = 15)
+
         logging.debug('No timeout. Asserting test as true.')
         ## If there was no timeout the pexpect test passed
         assert True
@@ -51,3 +93,9 @@ def test_enum():
         print ("-------Expected Output-------")
         print (e.get_trace())
         assert False
+    except EOF as e:
+        print("EOF Error. Pattern was not matched. Either codegen.py output contains error, or missing file(s) Serial1SerializableAi.xml, Port1PortAi.xml, Component1ComponentAi.xml, or Enum1EnumAi.xml in Autocoders/Python/test/enum_xml")
+        print ("-------Program Output-------")
+        print (p.before)
+        assert False
+

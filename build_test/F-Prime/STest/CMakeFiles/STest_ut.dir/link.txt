@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/Darwin/libSTest_ut.a  CMakeFiles/STest_ut.dir/STest/Random/bsd_random.c.o CMakeFiles/STest_ut.dir/STest/Random/Random.cpp.o CMakeFiles/STest_ut.dir/STest/Pick/Pick_default.cpp.o CMakeFiles/STest_ut.dir/STest/Pick/Pick.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/Darwin/libSTest_ut.a

@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_param2_ut.a  CMakeFiles/Autocoders_Python_test_param2_ut.dir/QuaternionSerializableAc.cpp.o CMakeFiles/Autocoders_Python_test_param2_ut.dir/TestPortAc.cpp.o CMakeFiles/Autocoders_Python_test_param2_ut.dir/TestComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_param2_ut.a

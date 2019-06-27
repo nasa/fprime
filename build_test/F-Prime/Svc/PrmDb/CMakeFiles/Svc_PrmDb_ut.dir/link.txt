@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_PrmDb_ut.a  CMakeFiles/Svc_PrmDb_ut.dir/PrmDbImpl.cpp.o CMakeFiles/Svc_PrmDb_ut.dir/PrmDbComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_PrmDb_ut.a

@@ -19,16 +19,8 @@ namespace Example {
 			Component1ComponentBase::init(queueDepth);
 		}
 
-		// Internal call - implemented by hand.
-		// downcall for output port OutputPort1
-		void ExampleEnumImpl:: OutputPort1_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1) {
-			printf("*** %d %s: OutputPort1_Port1_handler down-call\n", portNum, this->m_objName);
+		void ExampleEnumImpl:: ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1) {
+			printf("Component received input.");
 			// this->m_ExEnumOut_OutputPort[0](portNum, cmd, str);
-		}
-
-		// downcall for input port InputPort1
-		void ExampleEnumImpl::InputPort1_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1) {
-			printf("*** %d %s: InputPort1_Port1_handler down-call\n", portNum, this->m_objName);
-			// printf("*** %s: arg1 = %d arg2 = %s\n", this->m_objName, cmd, str.toChar());
 		}
 };

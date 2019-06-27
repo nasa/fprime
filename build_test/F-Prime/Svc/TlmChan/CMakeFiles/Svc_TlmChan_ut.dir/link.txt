@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_TlmChan_ut.a  CMakeFiles/Svc_TlmChan_ut.dir/TlmChanImpl.cpp.o CMakeFiles/Svc_TlmChan_ut.dir/TlmChanImplGet.cpp.o CMakeFiles/Svc_TlmChan_ut.dir/TlmChanImplRecv.cpp.o CMakeFiles/Svc_TlmChan_ut.dir/TlmChanImplTask.cpp.o CMakeFiles/Svc_TlmChan_ut.dir/TlmChanComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_TlmChan_ut.a

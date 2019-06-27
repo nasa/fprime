@@ -1394,6 +1394,7 @@ def main():
             #PRINT.info("BUILD_ROOT set to %s"%BUILD_ROOT)
 
     for xml_filename in xml_filenames:
+        print(xml_filename)
 
         xml_filename = os.path.basename(xml_filename)
         xml_type = XmlParser.XmlParser(xml_filename)()
@@ -1422,11 +1423,13 @@ def main():
             dependency_parser = the_parsed_topology_xml
         elif xml_type == "enum":
             DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
+            curdir = os.getcwd()
             if EnumGenerator.generate_enum(xml_filename):
                 ERROR = False
+                PRINT.info("Completed generating files for %s Enum XML...." % xml_filename)
             else:
                 ERROR = True
-                PRINT.info("Completed generating files for %s Enum XML...." % xml_filename)
+            os.chdir(curdir)
         else:
             PRINT.info("Invalid XML found...this format not supported")
             ERROR=True

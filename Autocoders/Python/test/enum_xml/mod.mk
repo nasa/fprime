@@ -13,8 +13,10 @@
 
  # There are some standard files that are included for reference
 
- SRC = ExampleEnumComponentAi.xml \
-	   ExampleEnumPortAi.xml
+ SRC = Component1ComponentAi.xml \
+	   Enum1EnumPortAi.xml \
+       Port1PortAi.xml \
+       Serial1SerializableAi.xml
 
 
   SUBDIRS = test
