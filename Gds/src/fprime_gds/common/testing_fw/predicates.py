@@ -8,26 +8,27 @@ gds_test_api.py. The predicates are organized by type and can be used to search 
 """
 from inspect import signature
 
-from data_types.event_data import EventData
 from data_types.ch_data import ChData
+from data_types.event_data import EventData
 
 
 ##########################################################################################
 # Parent Class
 ##########################################################################################
 class predicate:
-    """
-    A parent class to ensure that all predicates are callable, and return readable strings
-    """
-    def __call__(self, object):
-        # TODO raise not-implemented error
-        pass
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO raise not-implemented error
-        pass
+    def __call__(self, item):
+        """
+        A parent class to ensure that all predicates are callable, and return readable strings
+        """
+        raise NotImplementedError(
+            "This predicate did not override __call__(self, object)"
+        )
+
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        raise NotImplementedError("This predicate did not override __str__(self)")
 
 
 def is_predicate(pred):
@@ -35,7 +36,7 @@ def is_predicate(pred):
     a helper function to determine if an object can be used as a predicate.
 
     :return: a boolean value of whether the function is a predicate instance or has
-        __str__ and __call__ methods.
+        both __str__ and __call__ methods.
     """
     if isinstance(pred, predicate):
         return True
@@ -43,7 +44,7 @@ def is_predicate(pred):
         sig = signature(pred.__call__)
         arg_count = len(sig.parameters)
         if arg_count == 1:  # TODO weigh what value this should actually be.
-            if hasattr(pred, '__str__'):
+            if hasattr(pred, "__str__"):
                 return True
     return False
 
@@ -52,370 +53,377 @@ def is_predicate(pred):
 # Basic predicates
 ##########################################################################################
 class less_than(predicate):
-    """
-    A predicate that evaluates a less-than comparison
-    :param value: To return true, the predicate must be called on an object that is less
-        than this value
-    """
     def __init__(self, value):
+        """
+        A predicate that evaluates a less-than comparison
+        :param value: To return true, the predicate must be called on an object that is less
+            than this value
+        """
+
         self.upper_limit = value
 
-    """
-    :param actual: the value to compare
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to compare
+        """
         return actual < self.upper_limit
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is less than {}".format(
+            self.upper_limit
+        )
 
 
 class greater_than(predicate):
-    """
-    A predicate that evaluates a greater-than comparison
-    :param value: To return true, the predicate must be called on an object that is less
-        than this value
-    """
     def __init__(self, value):
+        """
+        A predicate that evaluates a greater-than comparison
+        :param value: To return true, the predicate must be called on an object that is less
+            than this value
+        """
         self.lower_limit = value
 
-    """
-    :param actual: the value to compare
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to compare
+        """
         return actual > self.lower_limit
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is greater than {}".format(
+            self.lower_limit
+        )
 
 
 class equal_to(predicate):
-    """
-    A predicate that evaluates an equivalent comparison
-    :param value: To return true, the predicate must be called on an object that is equal
-        to this value
-    """
     def __init__(self, value):
+        """
+        A predicate that evaluates an equivalent comparison
+        :param value: To return true, the predicate must be called on an object that is equal
+            to this value
+        """
         self.expected = value
 
-    """
-    :param actual: the value to compare
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to compare
+        """
         return actual == self.expected
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is equal to {}".format(
+            self.expected
+        )
 
 
 class not_equal_to(predicate):
-    """
-    A predicate that evaluates a not-equivalent comparison
-    :param value: To return true, the predicate must be called on an object that is not
-        equal to this value
-    """
     def __init__(self, value):
+        """
+        A predicate that evaluates a not-equivalent comparison
+        :param value: To return true, the predicate must be called on an object that is not
+            equal to this value
+        """
         self.expected = value
 
-    """
-    :param actual: the value to compare
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to compare
+        """
         return actual != self.expected
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is not equal to {}.".format(
+            self.expected
+        )
 
 
 class less_than_or_equals(predicate):
-    """
-    A predicate that evaluates a less-than-or-equals comparison
-    :param value: To return true, the predicate must be called on an object that is less
-        than or equal to this value
-    """
     def __init__(self, value):
+        """
+        A predicate that evaluates a less-than-or-equals comparison
+        :param value: To return true, the predicate must be called on an object that is less
+            than or equal to this value
+        """
         self.upper_limit = value
 
-    """
-    :param actual: the value to compare
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to compare
+        """
         return actual <= self.upper_limit
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is at most {}.".format(
+            self.upper_limit
+        )
 
 
 class greater_than_or_equals(predicate):
-    """
-    A predicate that evaluates greater-than-or-equals comparison
-    :param value: To return true, the predicate must be called on an object that is
-        greater than or equal to this value
-    """
     def __init__(self, value):
+        """
+        A predicate that evaluates greater-than-or-equals comparison
+        :param value: To return true, the predicate must be called on an object that is
+            greater than or equal to this value
+        """
         self.lower_limit = value
 
-    """
-    :param actual: the value to compare
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to compare
+        """
         return actual >= self.lower_limit
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is at least {}.".format(
+            self.lower_limit
+        )
 
 
 class within_range(predicate):
-    """
-    A predicate that evaluates if the argument is between the two values
-    :param lower: To return true, the predicate must be called on an object that is
-        greater than this value
-    :param upper: To return true, the predicate must be called on an object that is less
-        than this value
-    """
     def __init__(self, lower, upper):
+        """
+        A predicate that evaluates if the argument is between the two values
+        :param lower: To return true, the predicate must be called on an object that is
+            greater than this value
+        :param upper: To return true, the predicate must be called on an object that is less
+            than this value
+        """
         self.upper_limit = upper
         self.lower_limit = lower
 
-    """
-    :param actual: the value to evaluate
-    """
     def __call__(self, actual):
+        """
+        :param actual: the value to evaluate
+        """
         return actual >= self.lower_limit and actual <= self.upper_limit
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is within {} and {}.".format(
+            self.lower_limit, self.upper_limit
+        )
 
 
 ##########################################################################################
 # Set predicates
 ##########################################################################################
 class is_a_member_of(predicate):
-    """
-    A predicate that evaluates if the argument is equivalent to any member in the set
-    :param collection: To return true, the predicate must be called on an object that is
-        equivalent to any object in this collection
-    """
     def __init__(self, collection):
-        self.set = []
-        self.set.append(collection)
+        """
+        Constructs a predicate that evaluates if the argument is equivalent to any member in the set
+        :param collection: To return true, the predicate must be called on an object that is
+            equivalent to any object in this list
+        """
+        self.set = collection
 
-    """
-    :param item: the object to search for then evaluate
-    """
     def __call__(self, item):
+        """
+        Evaluates the predicate
+        :param item: the object to search for then evaluate
+        """
         for x in self.set:
             if item == x:
                 return True
         return False
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is a member of {}.".format(self.set)
 
 
 class is_not_a_member_of(predicate):
-    """
-    A predicate that evaluates if the argument is not equivalent to all members in the set
-    :param collection: To return true, the predicate must be called on an object that is
-        not equivalent to any object in this collection
-    """
     def __init__(self, collection):
-        self.set = []
-        self.set.append(collection)
+        """
+        Constructs a predicate that evaluates if the argument is not equivalent to all members in the set
+        :param collection: To return true, the predicate must be called on an object that is
+            not equivalent to any object in this collection
+        """
+        self.set = collection
 
-    """
-    :param item: the object to search for then evaluate
-    """
     def __call__(self, item):
+        """
+        :param item: the object to search for then evaluate
+        """
         for x in self.set:
             if item == x:
                 return False
         return True
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item is not a member of {}.".format(
+            self.set
+        )
 
 
 ##########################################################################################
 # Logic predicates
 ##########################################################################################
 class always_true(predicate):
+    def __call__(self, object):
     """
     used as a placeholder by other predicates. This is like a logical TRUE signal.
-
     :param object: the object or value to evaluate
     """
-    def __call__(self, object):
         return True
 
+    def __str__(self):
     """
     Returns a string outlining the evaluation done by the predicate.
     """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+        return "This predicate always evaluates True."
 
 
 class invert(predicate):
-    """
-    A predicate that negates a given predicate. This predicate can be used like a NOT
-    gate when combining predicates.
-    :param pred: The predicate to be negated.
-    """
     def __init__(self, pred):
+        """
+        A predicate that negates a given predicate. This predicate can be used like a NOT
+        gate when combining predicates.
+        :param pred: The predicate to be negated.
+        """
         if is_predicate(pred):
             self.pred = pred
 
-    """
-    :param item: the object or value to evaluate
-    """
     def __call__(self, item):
+        """
+        :param item: the object or value to evaluate
+        """
         return not self.pred(item)
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate inverts the value of {}.".format(self.pred)
 
 
 class satisfies_all(predicate):
-    """
-    A predicate that evaluates if the argument satisfies all predicates in the given list.
-    This predicate can be used like an AND gate of N elements when combining predicates.
-    :param pred_list: a list of predicates
-    """
     def __init__(self, pred_list):
+        """
+        A predicate that evaluates if the argument satisfies all predicates in the given list.
+        This predicate can be used like an AND gate of N elements when combining predicates.
+        :param pred_list: a list of predicates
+        """
         self.p_list = []
         for pred in pred_list:
             if is_predicate(pred):
                 self.p_list.append(pred)
 
-    """
-    :param item: the object or value to evaluate
-    """
     def __call__(self, item):
+        """
+        :param item: the object or value to evaluate
+        """
         for pred in self.p_list:
             if not pred(item):
                 return False
         return True
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item satisfies all predicates in the list {}.".format(
+            self.p_list
+        )
 
 
 class satisfies_any(predicate):
-    """
-    A predicate that evaluates if the argument satisfies any predicate in the given list.
-    This predicate can be used like an OR gate of N elements when combining predicates.
-    :param pred_list: a list of predicates
-    """
     def __init__(self, pred_list):
+        """
+        A predicate that evaluates if the argument satisfies any predicate in the given list.
+        This predicate can be used like an OR gate of N elements when combining predicates.
+        :param pred_list: a list of predicates
+        """
         self.p_list = []
         for pred in pred_list:
             if is_predicate(pred):
                 self.p_list.append(pred)
 
-    """
-    :param item: the object or value to evaluate
-    """
     def __call__(self, item):
+        """
+        :param item: the object or value to evaluate
+        """
         for pred in self.p_list:
             if pred(item):
                 return True
         return False
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an item satisfies any predicates in the list {}.".format(
+            self.p_list
+        )
 
 
 ##########################################################################################
 # Test API predicates
 ##########################################################################################
 class args_predicate(predicate):
-    """
-    A predicate for evaluating argument fields.
-    :param args: a list of expected arguments.
-    """
     def __init__(self, args):
+        """
+        A predicate for evaluating argument fields.
+        :param args: a list of expected arguments.
+        """
         self.expected = args
 
-    """
-    Evaluates if the given argument array is equivalent. If a given argument is none, it
-    will be ignored.
-    """
     def __call__(self, actual):
+        """
+        Evaluates if the given argument array is equivalent. If a given argument is none, it
+        will be ignored.
+        """
         for arg in self.expected:
             # TODO finish impelmentation
             pass
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "This predicate evaluates if an args list conforms with the given template {}.".format(
+            self.args
+        )
 
 
 class event_predicate(predicate):
-    """
-    A predicate for specifying an EventData object from data_types.event_data. This
-    predicate can be used to search a history. If arguments passed into this constructor
-    are not subclasses of predicate, they will be ignored.
-
-    :param id_pred: If specified, the object's id field must satisfy the given predicate
-        for the telemetry predicate to evaluate to true.
-    :param args_pred: If specified, the object's arguments field must satisfy the given
-        predicate for the telemetry predicate to evaluate to true.
-    :param time_pred: If specified, the object's time field must satisfy the given
-        predicate for the telemetry predicate to evaluate to true.
-    """
     def __init__(self, id_pred=None, args_pred=None, time_pred=None):
+        """
+        A predicate for specifying an EventData object from data_types.event_data. This
+        predicate can be used to search a history. If arguments passed into this constructor
+        are not subclasses of predicate, they will be ignored.
+
+        :param id_pred: If specified, the object's id field must satisfy the given predicate
+            for the telemetry predicate to evaluate to true.
+        :param args_pred: If specified, the object's arguments field must satisfy the given
+            predicate for the telemetry predicate to evaluate to true.
+        :param time_pred: If specified, the object's time field must satisfy the given
+            predicate for the telemetry predicate to evaluate to true.
+        """
         true_pred = always_true()
         self.id_pred = true_pred
         self.args_pred = true_pred
@@ -427,44 +435,43 @@ class event_predicate(predicate):
         if is_predicate(time_pred):
             self.time_pred = time_pred
 
-    """
-    The event_predicate checks that the telemetry object is an instance of
-    EventData and will raise an error if the check fails. Then
-    event_predicate will evaluate whether event's EventData fields satisfy the
-    id_pred, value_pred, and time_pred specified.
-
-    :param event: an instance of EventData
-    """
     def __call__(self, event):
-        if(not isinstance(event, EventData)):
+        """
+        The event_predicate checks that the telemetry object is an instance of
+        EventData and will raise an error if the check fails. Then
+        event_predicate will evaluate whether event's EventData fields satisfy the
+        id_pred, value_pred, and time_pred specified.
+
+        :param event: an instance of EventData
+        """
+        if not isinstance(event, EventData):
             pass  # TODO raise test error.
         e_id = self.id_pred(event.get_id())
         e_args = self.args_pred(event.get_args())
         e_time = self.time_pred(event.get_time())
         return e_id and e_args and e_time
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        raise NotImplementedError("This predicate did not override __str__(self)")
 
 
 class telemetry_predicate(predicate):
-    """
-    A predicate for specifying a ChData object from data_types.ch_data. This predicate
-    can be used to search a history. If arguments passed into this constructor are not
-    subclasses of predicate, they will be ignored.
-
-    :param id_pred: If specified, the object's id field must satisfy the given predicate
-        for the telemetry predicate to evaluate to true.
-    :param Value_pred: If specified, the object's value_obj field must satisfy the given
-        predicate for the telemetry predicate to evaluate to true.
-    :param time_pred: If specified, the object's time field must satisfy the given
-        predicate for the telemetry predicate to evaluate to true.
-    """
     def __init__(self, id_pred=None, value_pred=None, time_pred=None):
+        """
+        A predicate for specifying a ChData object from data_types.ch_data. This predicate
+        can be used to search a history. If arguments passed into this constructor are not
+        subclasses of predicate, they will be ignored.
+
+        :param id_pred: If specified, the object's id field must satisfy the given predicate
+            for the telemetry predicate to evaluate to true.
+        :param Value_pred: If specified, the object's value_obj field must satisfy the given
+            predicate for the telemetry predicate to evaluate to true.
+        :param time_pred: If specified, the object's time field must satisfy the given
+            predicate for the telemetry predicate to evaluate to true.
+        """
         true_pred = always_true()
         self.id_pred = true_pred
         self.value_pred = true_pred
@@ -476,25 +483,24 @@ class telemetry_predicate(predicate):
         if is_predicate(time_pred):
             self.time_pred = time_pred
 
-    """
-    The telemetry_predicate checks that the telemetry object is an instance of
-    ChData and will raise an error if the check fails. Then
-    telemetry_predicate will evaluate whether telemetry's ChData fields
-    satisfy the id_pred, value_pred and time_pred specified.
-
-    :param telemetry: an instance of ChData
-    """
     def __call__(self, telemetry):
-        if(not isinstance(telemetry, ChData)):
+        """
+        The telemetry_predicate checks that the telemetry object is an instance of
+        ChData and will raise an error if the check fails. Then
+        telemetry_predicate will evaluate whether telemetry's ChData fields
+        satisfy the id_pred, value_pred and time_pred specified.
+
+        :param telemetry: an instance of ChData
+        """
+        if not isinstance(telemetry, ChData):
             pass  # TODO raise test error.
         t_id = self.id_pred(telemetry.get_id())
         t_val = self.value_pred(telemetry.get_val())
         t_time = self.time_pred(telemetry.get_time())
         return t_id and t_val and t_time
 
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
-    def __str__(self, object):
-        # TODO return a string
-        pass
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        raise NotImplementedError("This predicate did not override __str__(self)")
