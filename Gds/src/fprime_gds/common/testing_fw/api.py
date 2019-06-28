@@ -10,7 +10,8 @@ telemetry and dictionaries.
 import time
 import signal
 
-import predicates
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.history.test import TestHistory
 
 
 class IntegrationTestAPI:
@@ -24,14 +25,16 @@ class IntegrationTestAPI:
         self.pipeline = pipeline
         # these are owned by the GDS and will not be modified by the test API.
         self.aggregate_command_history = pipeline.get_command_history()
-        self.aggregate_telemetry_history = pipeline.get_telemetry_history()
+        self.aggregate_telemetry_history = pipeline.get_channel_history()
         self.aggregate_event_history = pipeline.get_event_history()
 
         # these histories are owned by the TestAPI and are modified by the API.
         # TODO implement test-case histories once, supported by gds helper.
-        self.command_history = None
-        self.telemetry_history = None
-        self.event_history = None
+        self.command_history = TestHistory()
+        self.telemetry_history = TestHistory()
+        self.pipeline.register_telemetry_history(self.telemetry_history)
+        self.event_history = TestHistory()
+        self.pipeline.register_event_history(self.event_history)
 
     def log_test_message(self, msg):
         """
@@ -502,7 +505,7 @@ class IntegrationTestAPI:
                 signal.signal(signal.SIGALRM, self._timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
-                    new_items = history.retrieve_new(start)
+                    new_items = history.retrieve_new()
                     for item in new_items:
                         if search_pred(item):
                             return item
@@ -536,7 +539,7 @@ class IntegrationTestAPI:
                 signal.signal(signal.SIGALRM, self._timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
-                    new_items = history.retrieve_new(start)
+                    new_items = history.retrieve_new()
                     for item in new_items:
                         if seq_preds[0](item):
                             objects.append(item)
@@ -586,7 +589,7 @@ class IntegrationTestAPI:
                 signal.signal(signal.SIGALRM, self._timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
-                    new_items = history.retrieve_new(start)
+                    new_items = history.retrieve_new()
                     for item in new_items:
                         if search_pred(item):
                             objects.append(item)
