@@ -15,10 +15,10 @@ class HistoryTestCases(unittest.TestCase):
     def setUp(self):
         self.tHistory = TestHistory()
 
-    def assert_lists_equal(self, listA, listB):
-        assert len(listA) == len(listB), "assert that both lists to compare are of equal length({}, {})".format(len(listA), len(listB))
-        for i in range(len(listA)):
-            assert listA[i] == listB[i], "assert that element {} of the lists are equal ({} == {})".format(i, listA[i], listB[i])
+    def assert_lists_equal(self, expected, actual):
+        assert len(expected) == len(actual), "the given list should have had the length {}, but instead had {}".format(len(expected), len(actual))
+        for i in range(len(expected)):
+            assert expected[i] == actual[i], "the {} element of the expected list should be {}, but was {}.".format(i, expected[i], actual[i])
 
     def test_push_and_retrieve(self):
         tList = []
