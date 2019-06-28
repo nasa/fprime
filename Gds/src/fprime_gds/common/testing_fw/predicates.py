@@ -285,16 +285,16 @@ class is_not_a_member_of(predicate):
 ##########################################################################################
 class always_true(predicate):
     def __call__(self, object):
-    """
-    used as a placeholder by other predicates. This is like a logical TRUE signal.
-    :param object: the object or value to evaluate
-    """
+        """
+        used as a placeholder by other predicates. This is like a logical TRUE signal.
+        :param object: the object or value to evaluate
+        """
         return True
 
     def __str__(self):
-    """
-    Returns a string outlining the evaluation done by the predicate.
-    """
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
         return "This predicate always evaluates True."
 
 
