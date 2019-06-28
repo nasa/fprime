@@ -11,10 +11,10 @@ from fprime_gds.common.testing_fw import predicates
 
 
 class PredicateTestCase(unittest.TestCase):
-    """
-    Tests for the predicate class and it's functionality.
-    """
     def check_str(self, pred):
+        """
+        Tests for the predicate class and it's functionality.
+        """
         try:
             pred.__str__()
             assert True, "predicate provides string summary: {}".format(str(pred))

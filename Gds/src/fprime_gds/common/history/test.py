@@ -6,7 +6,7 @@ searching, and datastructure operations
 
 :author: koran
 """
-from utils import predicates
+from fprime_gds.common.testing_fw import predicates
 
 
 class TestHistory:
