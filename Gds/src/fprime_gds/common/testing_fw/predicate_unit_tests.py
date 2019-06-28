@@ -10,7 +10,7 @@ sys.path.insert(0, fprimeName)
 from fprime_gds.common.testing_fw import predicates
 
 
-class PredicateTestCase(unittest.TestCase):
+class PredicateTestCases(unittest.TestCase):
     def check_str(self, pred):
         """
         Tests for the predicate class and it's functionality.

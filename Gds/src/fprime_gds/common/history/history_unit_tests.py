@@ -11,7 +11,7 @@ from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 
 
-class HistoryTestCase(unittest.TestCase):
+class HistoryTestCases(unittest.TestCase):
     def setUp(self):
         self.tHistory = TestHistory()
 
