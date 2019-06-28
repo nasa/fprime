@@ -114,6 +114,54 @@ class HistoryTestCase(unittest.TestCase):
 
         self.assert_lists_equal(tList, self.tHistory.retrieve_new())
 
+    def test_history_retrieve_new_after_clear(self):
+        tList = []
+        for i in range(50):
+            self.tHistory.data_callback(i)
+            tList.append(i)
+
+        self.assert_lists_equal(tList, self.tHistory.retrieve())
+        tList.clear()
+
+        for i in range(50):
+            self.tHistory.data_callback(i)
+            tList.append(i)
+
+        self.tHistory.clear(75)
+
+        self.assert_lists_equal(tList[25:], self.tHistory.retrieve_new())
+        tList.clear()
+
+    def test_history_iterable(self):
+        for i in range(50):
+            self.tHistory.data_callback(i)
+        tList = []
+        for item in self.tHistory:
+            tList.append(item)
+        self.assert_lists_equal(tList, self.tHistory.retrieve_new())
+
+    def test_history_length(self):
+        assert len(self.tHistory) == 0, "starting history is empty"
+        for i in range(50):
+            self.tHistory.data_callback(i)
+        assert len(self.tHistory) == 50, "starting history is empty"
+        self.tHistory.clear(25)
+        assert len(self.tHistory) == 25, "starting history is empty"
+
+    def test_history_filter(self):
+        class is_even(predicates.predicate):
+            def __call__(self, item):
+                return item % 2 == 0
+            def __str__(self):
+                return "Decides if a value is even"
+
+        pred = is_even()
+        self.tHistory = TestHistory(filter_pred=pred)
+        for i in range(50):
+            self.tHistory.data_callback(i)
+        assert len(self.tHistory) == 25
+        self.assert_lists_equal(range(0, 50, 2), self.tHistory.retrieve())
+
 
 if __name__ == '__main__':
     unittest.main()
