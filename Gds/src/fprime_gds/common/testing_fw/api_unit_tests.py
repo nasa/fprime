@@ -1,7 +1,7 @@
 import os
 import sys
 import time
-import thread
+import _thread
 import unittest
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, '../../../')
@@ -9,7 +9,9 @@ fprimeName = os.path.join(filename, '../../../../../Fw/Python/src')
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
 
-from fprime_gds.common.testing_fw import api
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.history.test import TestHistory
+from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 
 
 class dummyPipeline():
@@ -19,9 +21,9 @@ class dummyPipeline():
     """
     def __init__(self):
         # History stores for each above type
-        self.command_hist = None
-        self.event_hist = None
-        self.channel_hist = None
+        self.command_hist = TestHistory()
+        self.event_hist = TestHistory()
+        self.channel_hist = TestHistory()
         self.event_subscribers = []
         self.channel_subscribers = []
 
@@ -37,6 +39,7 @@ class dummyPipeline():
 
     def send_command(self, command, args):
         # TODO construct CmdData and enqueue command history
+        pass
 
     def get_event_history(self):
         return self.event_hist
@@ -81,14 +84,14 @@ class APITestCases(unittest.TestCase):
         self.pipeline = dummyPipeline()
         self.api = IntegrationTestAPI(self.pipeline)
 
-    def fill_history(callback, items, timestep=0):
-        for items in items:
+    def fill_history(self, callback, items, timestep=0):
+        for item in items:
             if(timestep):
                 time.sleep(timestep)
             callback(item)
 
     def fill_history_async(self, callback, items, timestep=1):
-        thread.start_new_thread(self.fill_history, (callback, items, timestep))
+        _thread.start_new_thread(self.fill_history, (callback, items, timestep))
 
     def assert_lists_equal(self, listA, listB):
         assert len(listA) == len(listB), "assert that both lists to compare are of equal length({}, {})".format(len(listA), len(listB))
@@ -96,7 +99,18 @@ class APITestCases(unittest.TestCase):
             assert listA[i] == listB[i], "assert that element {} of the lists are equal ({} == {})".format(i, listA[i], listB[i])
 
     def test_history_search(self):
-        assert False, "congrats, you set up the class correctly."
+        listA = range(0,50)
+        self.fill_history_async(self.pipeline.enqueue_event, listA, .1)
+        print("waiting for queue to fill")
+        pred = predicates.equal_to(10)
+        results = self.api.await_event_count(pred)
+        assert pred(len(results)), "the correct amount of objects was received"
+        print("received 10 objects: ")
+        print(results)
+        time.sleep(4.1)
+        evr_hist = self.api.get_event_test_history()
+        item_count = len(evr_hist)
+        assert item_count == 50, "Were the correct number of items in the history? ({},{})".format(item_count, 50)
 
 
 if __name__ == '__main__':
