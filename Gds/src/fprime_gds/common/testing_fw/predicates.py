@@ -149,7 +149,7 @@ class not_equal_to(predicate):
         )
 
 
-class less_than_or_equals(predicate):
+class less_than_or_equal_to(predicate):
     def __init__(self, value):
         """
         A predicate that evaluates a less-than-or-equals comparison
@@ -173,7 +173,7 @@ class less_than_or_equals(predicate):
         )
 
 
-class greater_than_or_equals(predicate):
+class greater_than_or_equal_to(predicate):
     def __init__(self, value):
         """
         A predicate that evaluates greater-than-or-equals comparison

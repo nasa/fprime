@@ -99,15 +99,15 @@ class PredicateTestCases(unittest.TestCase):
         assert not pred(1), "one is not not equal to one"
         self.check_str(pred)
 
-    def test_less_than_or_equals(self):
-        pred = predicates.less_than_or_equals(1)
+    def test_less_than_or_equal_to(self):
+        pred = predicates.less_than_or_equal_to(1)
         assert pred(1), "one is less than or equal to 1"
         assert pred(-1), "negative one is less than or equal to 1"
         assert not pred(10), "ten is not less than or equal to 1"
         self.check_str(pred)
     
-    def test_greater_than_or_equals(self):
-        pred = predicates.greater_than_or_equals(1)
+    def test_greater_than_or_equal_to(self):
+        pred = predicates.greater_than_or_equal_to(1)
         assert pred(1), "one is greater than or equal to 1"
         assert pred(10), "ten is greater than or equal to 1"
         assert not pred(-1), "negative is not greater than or equal to 1"
