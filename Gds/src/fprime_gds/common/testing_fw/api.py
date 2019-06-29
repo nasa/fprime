@@ -292,7 +292,7 @@ class IntegrationTestAPI:
         results = self.await_telemetry_sequence(channels, history, start, timeout)
         if results is None:
             assert False
-        assert len(events) == len(results)
+        assert len(channels) == len(results)
         return results
 
     def assert_telemetry_count(
