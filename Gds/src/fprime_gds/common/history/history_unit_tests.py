@@ -1,9 +1,10 @@
 import unittest
 import sys
 import os
+
 filename = os.path.dirname(__file__)
-gdsName = os.path.join(filename, '../../../')
-fprimeName = os.path.join(filename, '../../../../../Fw/Python/src')
+gdsName = os.path.join(filename, "../../../")
+fprimeName = os.path.join(filename, "../../../../../Fw/Python/src")
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
 
@@ -16,9 +17,17 @@ class HistoryTestCases(unittest.TestCase):
         self.tHistory = TestHistory()
 
     def assert_lists_equal(self, expected, actual):
-        assert len(expected) == len(actual), "the given list should have had the length {}, but instead had {}".format(len(expected), len(actual))
+        assert len(expected) == len(
+            actual
+        ), "the given list should have had the length {}, but instead had {}".format(
+            len(expected), len(actual)
+        )
         for i in range(len(expected)):
-            assert expected[i] == actual[i], "the {} element of the expected list should be {}, but was {}.".format(i, expected[i], actual[i])
+            assert (
+                expected[i] == actual[i]
+            ), "the {} element of the expected list should be {}, but was {}.".format(
+                i, expected[i], actual[i]
+            )
 
     def test_push_and_retrieve(self):
         tList = []
@@ -69,7 +78,7 @@ class HistoryTestCases(unittest.TestCase):
         self.assert_lists_equal(tList, self.tHistory.retrieve())
         self.tHistory.clear(100)
         self.assert_lists_equal(tList[100:], self.tHistory.retrieve())
-    
+
     def test_push_and_clear_predicate(self):
         tList = []
         for i in range(50):
@@ -92,7 +101,7 @@ class HistoryTestCases(unittest.TestCase):
         assert self.tHistory.size() == 50, "starting history is empty"
         self.tHistory.clear(25)
         assert self.tHistory.size() == 25, "starting history is empty"
-    
+
     def test_history_retrieve_new(self):
         tList = []
         for i in range(50):
@@ -152,6 +161,7 @@ class HistoryTestCases(unittest.TestCase):
         class is_even(predicates.predicate):
             def __call__(self, item):
                 return item % 2 == 0
+
             def __str__(self):
                 return "Decides if a value is even"
 
@@ -163,5 +173,5 @@ class HistoryTestCases(unittest.TestCase):
         self.assert_lists_equal(range(0, 50, 2), self.tHistory.retrieve())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
