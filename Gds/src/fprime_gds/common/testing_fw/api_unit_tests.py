@@ -170,7 +170,7 @@ class APITestCases(unittest.TestCase):
         self.fill_history_async(self.tHistory.data_callback, listA, 0.1)
         result = self.api.find_history_item(pred, self.tHistory, timeout=1)
         assert (
-            result == None
+            result is None
         ), "The search should have returned None, but found {}".format(result)
 
     def test_find_history_sequence(self):
