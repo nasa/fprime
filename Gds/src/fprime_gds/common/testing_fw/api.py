@@ -29,7 +29,6 @@ class IntegrationTestAPI:
         self.aggregate_event_history = pipeline.get_event_history()
 
         # these histories are owned by the TestAPI and are modified by the API.
-        # TODO implement test-case histories once, supported by gds helper.
         self.command_history = TestHistory()
         self.telemetry_history = TestHistory()
         self.pipeline.register_telemetry_history(self.telemetry_history)
