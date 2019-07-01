@@ -158,26 +158,30 @@ class StandardPipeline:
         if os.path.isdir(dictionary):
             # Events
             event_loader = fprime_gds.common.loaders.event_py_loader.EventPyLoader()
-            self.event_dict = event_loader.get_id_dict(os.path.join(dictionary, "events"))
+            self.event_id_dict = event_loader.get_id_dict(os.path.join(dictionary, "events"))
+            self.event_name_dict = event_loader.get_name_dict(os.path.join(dictionary, "events"))
             # Commands
             command_loader = fprime_gds.common.loaders.cmd_py_loader.CmdPyLoader()
-            self.command_dict = command_loader.get_name_dict(os.path.join(dictionary, "commands"))
+            self.command_id_dict = command_loader.get_id_dict(os.path.join(dictionary, "commands"))
+            self.command_name_dict = command_loader.get_name_dict(os.path.join(dictionary, "commands"))
             # Channels
             channel_loader = fprime_gds.common.loaders.ch_py_loader.ChPyLoader()
-            self.channel_dict = channel_loader.get_id_dict(os.path.join(dictionary, "channels"))
-            channel_name_dict = channel_loader.get_name_dict(os.path.join(dictionary, "channels"))
+            self.channel_id_dict = channel_loader.get_id_dict(os.path.join(dictionary, "channels"))
+            self.channel_name_dict = channel_loader.get_name_dict(os.path.join(dictionary, "channels"))
         # XML dictionaries
         elif os.path.isfile(dictionary):
             # Events
             event_loader = fprime_gds.common.loaders.event_xml_loader.EventXmlLoader()
-            self.event_dict = event_loader.get_id_dict(dictionary)
+            self.event_id_dict = event_loader.get_id_dict(dictionary)
+            self.event_name_dict = event_loader.get_name_dict(dictionary)
             # Commands
             command_loader = fprime_gds.common.loaders.cmd_xml_loader.CmdXmlLoader()
-            self.command_dict = command_loader.get_name_dict(dictionary)
+            self.command_id_dict = command_loader.get_id_dict(dictionary)
+            self.command_name_dict = command_loader.get_name_dict(dictionary)
             # Channels
             channel_loader = fprime_gds.common.loaders.ch_xml_loader.ChXmlLoader()
-            self.channel_dict = channel_loader.get_id_dict(dictionary)
-            channel_name_dict = channel_loader.get_name_dict(dictionary)
+            self.channel_id_dict = channel_loader.get_id_dict(dictionary)
+            self.channel_name_dict = channel_loader.get_name_dict(dictionary)
         else:
             raise Exception("[ERROR] Dictionary '{}' does not exist.".format(dictionary))
         # Check for packet specification
@@ -213,26 +217,47 @@ class StandardPipeline:
         """
         self.client_socket.disconnect()
 
-    def get_event_dictionary(self):
+    def get_event_id_dictionary(self):
         """
         Getter for event dictionary.
-        :return: event dictionary
+        :return: event dictionary keyed by event IDs
         """
-        return self.event_dict
+        return self.event_id_dict
 
-    def get_channel_dictionary(self):
+    def get_event_name_dictionary(self):
+        """
+        Getter for event dictionary.
+        :return: event dictionary keyed by event mnemonics
+        """
+        return self.event_name_dict
+
+    def get_channel_id_dictionary(self):
         """
         Getter for channel dictionary.
-        :return: channel dictionary
+        :return: channel dictionary keyed by channel IDs
         """
-        return self.channel_dict
+        return self.channel_id_dict
 
-    def get_command_dictionary(self):
+    def get_channel_name_dictionary(self):
+        """
+        Getter for channel dictionary.
+        :return: channel dictionary keyed by channel mnemonics
+        """
+        return self.channel_name_dict
+
+    def get_command_id_dictionary(self):
         """
         Getter for command dictionary.
-        :return: command dictionary
+        :return: command dictionary keyed by command IDs
         """
-        return self.command_dict
+        return self.command_id_dict
+
+    def get_command_name_dictionary(self):
+        """
+        Getter for command dictionary.
+        :return: command dictionary keyed by command mnemonics
+        """
+        return self.command_name_dict
 
     def get_event_history(self):
         """

@@ -35,6 +35,9 @@ class IntegrationTestAPI:
         self.event_history = TestHistory()
         self.pipeline.register_event_history(self.event_history)
 
+        # Initialize latest time. Will be updated whenever a time query is made. 
+        self.latest_time = -1
+
     def log_test_message(self, msg):
         """
         TODO: Define what a test log should look like and describe its parameters.
@@ -55,9 +58,18 @@ class IntegrationTestAPI:
         history.
         :return: a flight software timestamp
         """
-        e_time = self.event_history[-1].get_time()
-        t_time = self.telemetry_history[-1].get_time()
-        return max(e_time, t_time)
+        events = self.aggregate_event_history.retrieve()
+        e_time = -1
+        if len(events) > 0:
+            e_time = events[-1].get_time()
+
+        channels = self.aggregate_telemetry_history.retrieve()
+        t_time = -1
+        if len(channels) > 0:
+            t_time = channels[-1].get_time()
+
+        self.latest_time = max(e_time, t_time, self.latest_time)
+        return self.latest_time
 
     def clear_histories(self, fsw_time_stamp=None):
         """
@@ -90,7 +102,7 @@ class IntegrationTestAPI:
         :param channel: Either the channel id or the channel mnemonic
         :return: The comand ID
         """
-        cmd_dict = self.pipeline.get_command_dictionary()
+        cmd_dict = self.pipeline.get_command_name_dictionary()
         # TODO investigate dictionary structure/implementation to make sure we get the
         # correct version of the dictionary.
 
