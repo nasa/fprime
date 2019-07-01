@@ -194,7 +194,38 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
     def test_args_predicates(self):
-        raise NotImplementedError("This predicate test case has yet to be implemented.")
+        a_list = ['a', 'p','p','l','e']
+        pred = predicates.args_predicate(['a', 'p','p','l','e'])
+        assert pred(a_list), "The list {} should have been accepted".format(a_list)
+        a_list[4] = 'r'
+        assert not pred(a_list), "The list {} should not have been accepted".format(a_list)
+        a_list = ['a', 'p','p','l']
+        assert not pred(a_list), "The list {} should not have been accepted".format(a_list)
+
+        a_list = ['a', 'p','p','l','e']
+        pred = predicates.args_predicate(['a','p','p','l',None])
+        assert pred(a_list), "The list {} should have been accepted".format(a_list)
+        a_list[4] = 7
+        assert pred(a_list), "The list {} should have been accepted".format(a_list)
+        a_list[4] = 'r'
+        assert pred(a_list), "The list {} should have been accepted".format(a_list)
+
+        l_pred = predicates.within_range(0, 10)
+        pred = predicates.args_predicate([l_pred, 2, 3, 4, 5, 6])
+
+        n_list = [1, 2, 3, 4, 5, 6]
+        assert pred(n_list), "The list {} should have been accepted".format(n_list)
+
+        for i in range(0,10):
+            n_list[0] = i
+            assert pred(n_list), "The list {} should have been accepted".format(n_list)
+        n_list[0] = -5
+        assert not pred(n_list), "The list {} should not have been accepted".format(n_list)
+        n_list[0] = 15
+        assert not pred(n_list), "The list {} should not have been accepted".format(n_list)
+
+        pred = predicates.args_predicate(8)
+        assert pred(8), "The value 8 should have been accepted."
 
     def test_telemetry_predicates(self):
         raise NotImplementedError("This predicate test case has yet to be implemented.")
