@@ -46,7 +46,8 @@ class IntegrationTestAPI:
         TODO: Define what should happen at the start of each test case and what parameters
               would be included.
         """
-        pass
+        self.log_test_message("Starting new test case: {}".format(name))
+        self.clear_histories()
 
     def get_latest_fsw_time(self):
         """
@@ -103,13 +104,17 @@ class IntegrationTestAPI:
 
     def send_and_await_telemetry(self, command, args, channels, start=None, timeout=5):
         """
-        Sends the specified command and awaits the specified telemetry update or sequence
-        of updates. This function will enforce that each element of the sequence occurred
-        in order with respect to the flight software timestamps. If the specification of
-        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
-        is reccomended (but not enforced) not to specify timestamps for this assert.
+        Sends the specified command and awaits the specified telemetry update or sequence of updates. This
+        function will enforce that each element of the sequence occurred in order with respect to the flight
+        software timestamps. If the specification of timestamp predicates is not sequential, the timestamps
+        will likely fail.
+        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
         """
-        pass
+        self.send_command(command, args)
+        if isinstance(channels, list):
+            self.await_telemetry_sequence(channels, start=start, timeout=timeout)
+        else:
+            self.await_telemetry(channels, start=start, timeout=timeout)
 
     def send_and_await_event(self, command, args, events, start=None, timeout=5):
         """
@@ -119,7 +124,11 @@ class IntegrationTestAPI:
         timestamp predicates is not sequential, the timestamps will likely fail. Note: It
         is reccomended (but not enforced) not to specify timestamps for this assert.
         """
-        pass
+        self.send_command(command, args)
+        if isinstance(events, list):
+            self.await_event_sequence(events, start=start, timeout=timeout)
+        else:
+            self.await_event(events, start=start, timeout=timeout)
 
     ######################################################################################
     #   Command Asserts
@@ -150,13 +159,21 @@ class IntegrationTestAPI:
         """
         TODO: Define what a send and assert should look like and describe its parameters.
         """
-        pass
+        self.send_command(command, args)
+        if isinstance(channels, list):
+            self.assert_telemetry_sequence(channels, start=start, timeout=timeout)
+        else:
+            self.assert_telemetry(channels, start=start, timeout=timeout)
 
     def send_and_assert_event(self, command, args, events, start=None, timeout=5):
         """
         TODO: Define what a send and assert should look like and describe its parameters.
         """
-        pass
+        self.send_command(command, args)
+        if isinstance(events, list):
+            self.assert_event_sequence(events, start=start, timeout=timeout)
+        else:
+            self.assert_event(events, start=start, timeout=timeout)
 
     ######################################################################################
     #   Telemetry Functions
@@ -276,7 +293,7 @@ class IntegrationTestAPI:
         result = self.await_telemetry(
             channel, val_pred, fsw_time_pred, history, start, timeout
         )
-        assert t_pred(result)
+        assert result is not None
         return result
 
     def assert_telemetry_sequence(self, channels, history=None, start=None, timeout=0):
