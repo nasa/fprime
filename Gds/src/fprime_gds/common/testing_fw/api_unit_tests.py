@@ -41,25 +41,31 @@ class dummyPipeline:
 
     def send_command(self, command, args):
         # TODO construct CmdData and enqueue command history
-        pass
+        return {}
 
     def get_event_id_dictionary(self):
-        return self.event_id_dict
+        # TODO provide a unit test dictionary to test with
+        return {}
 
     def get_event_name_dictionary(self):
-        return self.event_name_dict
+        # TODO provide a unit test dictionary to test with
+        return {}
 
     def get_channel_id_dictionary(self):
-        return self.channel_id_dict
+        # TODO provide a unit test dictionary to test with
+        return {}
 
     def get_channel_name_dictionary(self):
-        return self.channel_name_dict
+        # TODO provide a unit test dictionary to test with
+        return {}
 
     def get_command_id_dictionary(self):
-        return self.command_id_dict
+        # TODO provide a unit test dictionary to test with
+        return {}
 
     def get_command_name_dictionary(self):
-        return self.command_name_dict
+        # TODO provide a unit test dictionary to test with
+        return {}
 
     def register_event_history(self, history):
         self.event_subscribers.append(history)

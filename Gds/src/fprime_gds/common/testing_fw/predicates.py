@@ -387,19 +387,32 @@ class satisfies_any(predicate):
 class args_predicate(predicate):
     def __init__(self, args):
         """
-        A predicate for evaluating argument fields.
+        A predicate for evaluating argument fields. Arguments can be specified by value, by predicate or as
+        don't care (None). By inserting None into the argument list, args_predicate will accept any response given
+        for that argument index.
         :param args: a list of expected arguments.
         """
-        self.expected = args
+        self.arg_spec = []
+        ignored = always_true()
+        for arg in args:
+            if arg is None:
+                self.arg_spec.append(ignored)
+            elif is_predicate(arg):
+                self.arg_spec.append(arg)
+            else:
+                self.arg_spec.append(equal_to(arg))
 
     def __call__(self, actual):
         """
         Evaluates if the given argument array is equivalent. If a given argument is none, it
         will be ignored.
         """
-        for arg in self.expected:
-            # TODO finish impelmentation
-            pass
+        if len(actual) != len(self.arg_spec):
+            return False
+        for i in range(len(self.arg_spec)):
+            if not self.arg_spec[i](actual[i]):
+                return False
+        return True
 
     def __str__(self):
         """
