@@ -102,7 +102,20 @@ class IntegrationTestAPI:
         :param channel: Either the channel id or the channel mnemonic
         :return: The comand ID
         """
-        cmd_dict = self.pipeline.get_command_name_dictionary()
+        if is instance(command, str):
+            cmd_dict = self.pipeline.get_command_name_dictionary()
+            if command in cmd_dict:
+                return cmd_dict.get(command, "id")
+            else:
+                raise KeyError("The given command mnemonic, {}, was not in the dictionary".format(command))
+        else:
+            cmd_dict = self.pipeline.get_command_id_dictionary()
+            if command in cmd_dict:
+                return command
+            else:
+                raise KeyError("The given command id, {}, was not in the dictionary".format(command))
+
+            
         # TODO investigate dictionary structure/implementation to make sure we get the
         # correct version of the dictionary.
 
@@ -199,7 +212,18 @@ class IntegrationTestAPI:
         :param channel: Either the channel id or the channel mnemonic
         :return: The channel ID
         """
-        pass
+        if is instance(channel, str):
+            ch_dict = self.pipeline.get_channel_name_dictionary()
+            if channel in ch_dict:
+                return ch_dict.get(channel, "id")
+            else:
+                raise KeyError("The given channel mnemonic, {}, was not in the dictionary".format(channel))
+        else:
+            ch_dict = self.pipeline.get_channel_id_dictionary()
+            if channel in ch_dict:
+                return channel
+            else:
+                raise KeyError("The given channel id, {}, was not in the dictionary".format(channel))
 
     def get_telemetry_predicate(self, channel=None, val_pred=None, fsw_time_pred=None):
         """
@@ -349,7 +373,18 @@ class IntegrationTestAPI:
         flight software dictionary. This call will raise an error if the event given is
         not in the dictionary.
         """
-        pass
+        if is instance(event, str):
+            event_dict = self.pipeline.get_event_name_dictionary()
+            if event in event_dict:
+                return event_dict.get(event, "id")
+            else:
+                raise KeyError("The given event mnemonic, {}, was not in the dictionary".format(event))
+        else:
+            event_dict = self.pipeline.get_event_id_dictionary()
+            if event in event_dict:
+                return event
+            else:
+                raise KeyError("The given event id, {}, was not in the dictionary".format(event))
 
     def get_event_predicate(self, event=None, args=None, fsw_time_pred=None):
         """
