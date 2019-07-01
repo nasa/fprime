@@ -388,12 +388,14 @@ class args_predicate(predicate):
     def __init__(self, args):
         """
         A predicate for evaluating argument fields. Arguments can be specified by value, by predicate or as
-        don't care (None). By inserting None into the argument list, args_predicate will accept any response given
-        for that argument index.
+        don't care (None). By inserting None into the argument list, args_predicate will accept any response
+        given for that argument index.
         :param args: a list of expected arguments.
         """
         self.arg_spec = []
         ignored = always_true()
+        if not isinstance(args, list):
+            args = [args]
         for arg in args:
             if arg is None:
                 self.arg_spec.append(ignored)
@@ -404,9 +406,10 @@ class args_predicate(predicate):
 
     def __call__(self, actual):
         """
-        Evaluates if the given argument array is equivalent. If a given argument is none, it
-        will be ignored.
+        Determines if the given array satisfies the given argument specification.
         """
+        if not isinstance(actual, list):
+            actual = [actual]
         if len(actual) != len(self.arg_spec):
             return False
         for i in range(len(self.arg_spec)):
@@ -418,7 +421,7 @@ class args_predicate(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an args list conforms with the given template {}.".format(
+        return "This predicate evaluates if an argument list satisfies a given set of specifiers: {}.".format(
             self.args
         )
 
