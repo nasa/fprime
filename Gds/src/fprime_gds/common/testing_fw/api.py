@@ -46,9 +46,11 @@ class IntegrationTestAPI:
 
     def start_test_case(self, name):
         """
-        TODO: Define what should happen at the start of each test case and what parameters
-              would be included.
+        To be called at the start of a test case. This function inserts a log message to denote a new test
+        case is beginning, records the latest time stamp in case the user clears the aggregate histories, and
+        then clears the API's histories.
         """
+        self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
         self.log_test_message("Starting new test case: {}".format(name))
         self.clear_histories()
 
@@ -114,10 +116,6 @@ class IntegrationTestAPI:
                 return command
             else:
                 raise KeyError("The given command id, {}, was not in the dictionary".format(command))
-
-            
-        # TODO investigate dictionary structure/implementation to make sure we get the
-        # correct version of the dictionary.
 
     def send_command(self, command, args):
         """
@@ -243,7 +241,7 @@ class IntegrationTestAPI:
 
         if predicates.is_predicate(channel):
             c_pred = event
-        else:
+        elif channel is not None:
             channel = self.translate_event_name(channel)
             c_pred = predicates.equal_to(channel)
 
@@ -405,11 +403,14 @@ class IntegrationTestAPI:
 
         if predicates.is_predicate(event):
             e_pred = event
-        else:
+        elif event is not None:
             event = self.translate_event_name(event)
             e_pred = predicates.equal_to(event)
 
-        # TODO argument list predicate.
+        if predicates.is_predicate(args):
+            a_pred = args
+        elif args is not None:
+            a_pred = predicates.args_predicate(args)
 
         if predicates.is_predicate(fsw_time_pred):
             t_pred = fsw_time_pred
