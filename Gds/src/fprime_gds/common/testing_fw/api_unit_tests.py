@@ -13,6 +13,7 @@ sys.path.insert(0, fprimeName)
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI
+from fprime_gds.common.pipeline import standard
 
 
 class dummyPipeline:
@@ -66,6 +67,15 @@ class dummyPipeline:
     def get_command_name_dictionary(self):
         # TODO provide a unit test dictionary to test with
         return {}
+        
+    def get_event_history(self):
+        return self.event_hist
+
+    def get_channel_history(self):
+        return self.channel_hist
+
+    def get_command_history(self):
+        return self.command_hist
 
     def register_event_history(self, history):
         self.event_subscribers.append(history)
@@ -295,6 +305,16 @@ class APITestCases(unittest.TestCase):
         assert (
             results is None
         ), "The search should have returned None, but found {}".format(results)
+
+    def test_instantiate_pipeline(self):
+        pipeline = standard.StandardPipeline()
+        pipeline.setup('/home/kevin/software/fprime-sw/Ref/gds.ini', '/home/kevin/software/fprime-sw/Ref/Top/RefTopologyAppDictionary.xml')
+        pipeline.connect('127.0.0.1', 50000)
+        self.api = self.api = IntegrationTestAPI(self.pipeline)
+        pred = predicates.greater_than(20)
+        result = self.api.await_telemetry_count(pred, timeout=10)
+        print(result)
+        assert result is not None
 
 
 if __name__ == "__main__":
