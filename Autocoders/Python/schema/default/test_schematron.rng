@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schema
-    xmlns="http://purl.oclc.org/dsdl/schematron">
-<pattern id = "TESTINGSCHEMATRON">
-    <rule context="channel">
-        <assert test="@id">Message.</assert>
-    </rule>
-</pattern>
-</schema>

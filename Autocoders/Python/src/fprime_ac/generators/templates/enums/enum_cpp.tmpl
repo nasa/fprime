@@ -69,10 +69,10 @@ namespace ${namespace} {
     FW_ASSERT(#slurp
 #set $value_iter = 0
 #for $item_name,$item_value,$item_comment in $items_list:
-#if $value_iter == len($items_list) - 1
+#if $value_iter == 0
 a == $item_value#slurp
 #else
-a == $item_value || #slurp
+ || a == $item_value#slurp
 #end if
 #set $value_iter = $value_iter + 1
 #end for
@@ -98,13 +98,13 @@ a == $item_value || #slurp
 #set $value_iter = 0
 #for $item_name,$item_value,$item_comment in $items_list:
 #if int($item_value) > -1
-#if $value_iter == len($items_list) - 1
+#if $value_iter == 0
 a == $item_value#slurp
 #else
-a == $item_value || #slurp
-#end if
+ || a == $item_value#slurp
 #end if
 #set $value_iter = $value_iter + 1
+#end if
 #end for
 , static_cast<t>(a));
 #else

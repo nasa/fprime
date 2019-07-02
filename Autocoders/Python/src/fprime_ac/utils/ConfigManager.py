@@ -109,15 +109,6 @@ class ConfigManager(configparser.SafeConfigParser):
         self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
-        # Schematron parameters here.
-        ################################################################
-        self.__prop['schematron'] = dict()
-        self.__prop['schematron']["test"]               = '/Autocoders/Python/schema/default/test_schematron.rng'
-        self.__prop['schematron']["chan_id"]            = '/Autocoders/Python/schema/default/channel_id_schematron.rng'
-        self.__prop['schematron']["cmd_op"]             = '/Autocoders/Python/schema/default/command_op_schematron.rng'
-        self.__prop['schematron']["evr_id"]             = '/Autocoders/Python/schema/default/event_id_schematron.rng'
-        self._setSectionDefaults('schematron')
-        ################################################################
         # component parameters here.
         ################################################################
         self.__prop['component'] = dict()

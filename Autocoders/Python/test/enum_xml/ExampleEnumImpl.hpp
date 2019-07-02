@@ -15,6 +15,7 @@ namespace Example {
 
     private:
         void ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
+        void EnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
 	};
 
 };

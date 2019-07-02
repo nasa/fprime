@@ -23,7 +23,6 @@ import time
 from fprime_ac.utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
-from lxml import isoschematron
 try:
     import configparser
 except ImportError:
@@ -167,11 +166,6 @@ class XmlComponentParser(object):
                     
                 # Validate new imports using their root tag as a key to find what schema to use
                 self.validate_xml(dict_element_tree, 'schema', dict_element_tree.getroot().tag.lower())
-                
-                # Validate ID and Opcode uniqueness with Schematron
-                self.validate_xml(dict_element_tree, 'schematron', 'chan_id')
-                self.validate_xml(dict_element_tree, 'schematron', 'evr_id')
-                self.validate_xml(dict_element_tree, 'schematron', 'cmd_op')
 
                 # add to list of imported dictionaries for make dependencies later
                 self.__import_dictionary_files.append(comp_tag.text)
@@ -970,8 +964,6 @@ class XmlComponentParser(object):
         validator_file_handler.close()
         if validator_type == 'schema':
             validator_compiled = etree.RelaxNG(validator_parsed)
-        elif validator_type == 'schematron':
-            validator_compiled = isoschematron.Schematron(validator_parsed)
         
         # Validate XML file
         if not validator_compiled.validate(parsed_xml_tree):

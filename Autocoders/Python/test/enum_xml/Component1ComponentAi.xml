@@ -8,6 +8,7 @@
     <comment>A demonstration component with enums</comment>
     <ports>
         <port name="ExEnumIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
-        <port name="ExEnumOut" kind="output" data_type="Example::Port1" max_number="1"/>
+        <port name="EnumIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
+        <port name="EnumOut" kind="output" data_type="Example::Port1" max_number="1"/>
     </ports>
 </component>
