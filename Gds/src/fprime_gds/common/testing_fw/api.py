@@ -286,7 +286,7 @@ class IntegrationTestAPI:
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
     def await_telemetry_count(
-        self, count_pred, channels=None, history=None, start=None, timeout=5
+        self, count, channels=None, history=None, start=None, timeout=5
     ):
         """
         TODO
@@ -304,7 +304,7 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_telemetry_test_history()
 
-        return self.find_history_count(count_pred, history, search, start, timeout)
+        return self.find_history_count(count, history, search, start, timeout)
 
     ######################################################################################
     #   Telemetry Asserts
@@ -347,7 +347,7 @@ class IntegrationTestAPI:
         return results
 
     def assert_telemetry_count(
-        self, count_pred, channels=None, history=None, start=None, timeout=0
+        self, count, channels=None, history=None, start=None, timeout=0
     ):
         """
         An assert on the number of telemetry updates received. If the history doesn't
@@ -355,10 +355,14 @@ class IntegrationTestAPI:
         achieved or the timeout, at which point it will assert failure.
         """
         results = self.await_telemetry_count(
-            count_pred, channels, history, start, timeout
+            count, channels, history, start, timeout
         )
         if results is None:
             assert False
+        if predicates.is_predicate(count):
+            count_pred = count
+        elif isinstance(count, int):
+            count_pred = predicates.equal_to(count)
         assert count_pred(len(results))
         return results
 
@@ -450,7 +454,7 @@ class IntegrationTestAPI:
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
     def await_event_count(
-        self, count_pred, events=None, history=None, start=None, timeout=5
+        self, count, events=None, history=None, start=None, timeout=5
     ):
         """
         Will search the specified history until an amount of events is found. By default only searches future history.
@@ -468,7 +472,7 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_event_test_history()
 
-        return self.find_history_count(count_pred, history, search, start, timeout)
+        return self.find_history_count(count, history, search, start, timeout)
 
     ######################################################################################
     #   Event Asserts
@@ -503,16 +507,20 @@ class IntegrationTestAPI:
         return results
 
     def assert_event_count(
-        self, count_pred, events=None, history=None, start=None, timeout=0
+        self, count, events=None, history=None, start=None, timeout=0
     ):
         """
         An assert on the number of events received. If the history doesn't have the
         correct event count, the call will await until a correct count is achieved or the
         timeout at which point it will assert failure.
         """
-        results = self.await_event_count(count_pred, event, history, start, timeout)
+        results = self.await_event_count(count, event, history, start, timeout)
         if results is None:
             assert False
+        if predicates.is_predicate(count):
+            count_pred = count
+        elif isinstance(count, int):
+            count_pred = predicates.equal_to(count)
         assert count_pred(len(results))
         return results
 
@@ -619,14 +627,14 @@ class IntegrationTestAPI:
             return None
 
     def find_history_count(
-        self, count_pred, history, search_pred=None, start=None, timeout=0
+        self, count, history, search_pred=None, start=None, timeout=0
     ):
         """
         This function can both search and await for an amount of items in a history. First searches the history for the
         items, then waits until more are found to satisfy the count predicate or the
         timeout is reached. Used as a helper for the test api.
 
-        :param count_pred: a predicate to determine if a correct amount has been reached.
+        :param count: either an exact value (int), or a predicate to determine if a correct amount has been reached.
         :param history: a history to await on.
         :param search_pred: a predicate to collect and count with. If not specified, all
             items will be counted.
@@ -635,6 +643,13 @@ class IntegrationTestAPI:
 
         :return: If found a correct amount is found, a list data objects, otherwise, None
         """
+        if predicates.is_predicate(count):
+            count_pred = count
+        elif isinstance(count, int):
+            count_pred = predicates.equal_to(count)
+        else:
+            raise TypeError("Find history must receive a predicate or an integer")
+
         objects = []
         if search_pred is None:
             search_pred = predicates.always_true()
