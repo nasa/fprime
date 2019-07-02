@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/Darwin/libRef_SignalGen.a  CMakeFiles/Ref_SignalGen.dir/SignalGen.cpp.o CMakeFiles/Ref_SignalGen.dir/SignalGenComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/Darwin/libRef_SignalGen.a

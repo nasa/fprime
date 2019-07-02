@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../../../../lib/Darwin/libcodegen.a  CMakeFiles/codegen.dir/Users/jishii/Documents/rep_other/fprime-sw/cmake/support/src/empty.c.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../../../../lib/Darwin/libcodegen.a
