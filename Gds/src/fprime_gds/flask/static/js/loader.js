@@ -51,7 +51,7 @@ export class Loader {
         return new Promise(function(resolve, reject) {
             // Attempt to load each endpoint tracking number of pending loads
             var pending = 0;
-            for (var endpoint in _self.endpoints) {
+            for (let endpoint in _self.endpoints) {
                 endpoint = _self.endpoints[endpoint];
                 // Send out request if not loaded, and update the pending count
                 if (endpoint["startup"] == true && typeof(endpoint["data"]) === "undefined") {
@@ -80,24 +80,55 @@ export class Loader {
         if (typeof(method) === "undefined") {
             method = "GET";
         }
-        // Default the data argument to null
-        if (typeof(data) === "undefined") {
-            data = "";
-        }
         // Kick-back a promise for this load
         return new Promise(function (resolve, reject) {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 // Parse as JSON or send back raw error
                 if (this.readyState == 4 && this.status == 200) {
-                    resolve(JSON.parse(this.responseText).content);
+                    let dataObj = JSON.parse(this.responseText);
+                    resolve(dataObj);
                 } else if(this.readyState == 4) {
                     reject(this.responseText);
                 }
             };
             xhttp.open(method, endpoint, true);
-            xhttp.setRequestHeader("Content-Type", "application/json")
-            xhttp.send(JSON.stringify(data));
+            data = JSON.stringify(data);
+            if (typeof(data) === "undefined") {
+                xhttp.send();
+            } else {
+                xhttp.setRequestHeader("Content-Type", "application/json")
+                xhttp.send(data);
+            }
         });
+    }
+
+    /**
+     * Register a polling function to receive updates and post updates to the callback function.
+     * @param endpoint: enpoint to load
+     * @param callback: callback to return resulting data to.
+     */
+    registerPoller(endpoint, callback) {
+        let _self = this;
+        let inProgress = false; // Used to prevent re-entrant requests
+        let handler = function()
+        {
+            // Don't request if already requesting
+            if (!inProgress) {
+                inProgress = true;
+                _self.load(endpoint).then(
+                    function(data) {
+                        inProgress = false;
+                        callback(data);
+                    }
+                ).catch(console.error);
+            }
+        };
+        // Clear old intervals
+        if ("interval" in this.endpoints[endpoint]) {
+            clearInterval(this.endpoints[endpoint]["interval"]);
+        }
+        this.endpoints[endpoint]["interval"] = setInterval(handler, 1000);
+        handler();
     }
  }

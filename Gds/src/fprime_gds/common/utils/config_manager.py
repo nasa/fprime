@@ -78,6 +78,7 @@ class ConfigManager(configparser.SafeConfigParser):
         # Set default properties
         self.__prop   = dict()
         self._set_defaults()
+        self.file_path = None
 
 
     def set_configs(self, f):
@@ -89,6 +90,7 @@ class ConfigManager(configparser.SafeConfigParser):
         Args:
             f (string): Path to a file object to read
         '''
+        self.file_path = f
         self.readfp(open(f))
 
 
@@ -145,6 +147,13 @@ class ConfigManager(configparser.SafeConfigParser):
             # Other types can be added later
             raise ConfigNonexistentException(type_str)
 
+
+    def get_file_path(self):
+        '''
+        Return file loaded for this configuration
+        :return: file path
+        '''
+        return self.file_path
 
     def _set_defaults(self):
         '''
