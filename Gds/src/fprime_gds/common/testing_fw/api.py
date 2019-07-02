@@ -104,7 +104,7 @@ class IntegrationTestAPI:
         :param channel: Either the channel id or the channel mnemonic
         :return: The comand ID
         """
-        if is instance(command, str):
+        if isinstance(command, str):
             cmd_dict = self.pipeline.get_command_name_dictionary()
             if command in cmd_dict:
                 return cmd_dict.get(command, "id")
@@ -210,7 +210,7 @@ class IntegrationTestAPI:
         :param channel: Either the channel id or the channel mnemonic
         :return: The channel ID
         """
-        if is instance(channel, str):
+        if isinstance(channel, str):
             ch_dict = self.pipeline.get_channel_name_dictionary()
             if channel in ch_dict:
                 return ch_dict.get(channel, "id")
@@ -371,7 +371,7 @@ class IntegrationTestAPI:
         flight software dictionary. This call will raise an error if the event given is
         not in the dictionary.
         """
-        if is instance(event, str):
+        if isinstance(event, str):
             event_dict = self.pipeline.get_event_name_dictionary()
             if event in event_dict:
                 return event_dict.get(event, "id")
