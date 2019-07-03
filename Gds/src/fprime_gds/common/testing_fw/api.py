@@ -424,25 +424,14 @@ class IntegrationTestAPI:
         if isinstance(event, predicates.event_predicate):
             return event
 
-        e_pred = None
-        a_pred = None
-        t_pred = None
-
-        if predicates.is_predicate(event):
-            e_pred = event
-        elif event is not None:
+        if not predicates.is_predicate(event) and event is not None:
             event = self.translate_event_name(event)
-            e_pred = predicates.equal_to(event)
+            event = predicates.equal_to(event)
 
-        if predicates.is_predicate(args):
-            a_pred = args
-        elif args is not None:
+        if not predicates.is_predicate(args) and args is not None:
             a_pred = predicates.args_predicate(args)
 
-        if predicates.is_predicate(fsw_time_pred):
-            t_pred = fsw_time_pred
-
-        return predicates.event_predicate(e_pred, a_pred, t_pred)
+        return predicates.event_predicate(event, args, fsw_time_pred)
 
     def await_event(
         self, event, args=None, fsw_time_pred=None, history=None, start=None, timeout=5
