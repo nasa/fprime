@@ -52,9 +52,12 @@ class StandardPipeline:
         self.distributor = None
         self.client_socket = None
         # Dictionary items
-        self.command_dict = None
-        self.event_dict = None
-        self.channel_dict = None
+        self.command_id_dict = None
+        self.event_id_dict = None
+        self.channel_id_dict = None
+        self.command_name_dict = None
+        self.event_name_dict = None
+        self.channel_name_dict = None
         self.packet_dict = None
         # Encoder and decoder items
         self.command_encoder = None
@@ -106,10 +109,10 @@ class StandardPipeline:
         """
         # Create encoders and decoders using dictionaries
         self.command_encoder = fprime_gds.common.encoders.cmd_encoder.CmdEncoder()
-        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(self.event_dict)
-        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(self.channel_dict)
+        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(self.event_id_dict)
+        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(self.channel_id_dict)
         if self.packet_dict is not None:
-            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(self.packet_dict, self.channel_dict)
+            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(self.packet_dict, self.channel_id_dict)
         else:
             self.packet_decoder = None
 
