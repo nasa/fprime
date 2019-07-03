@@ -387,10 +387,10 @@ class satisfies_any(predicate):
 class args_predicate(predicate):
     def __init__(self, args):
         """
-        A predicate for evaluating argument fields. Arguments can be specified by value, by predicate or as
-        don't care (None). By inserting None into the argument list, args_predicate will accept any response
-        given for that argument index.
-        :param args: a list of expected arguments.
+        A predicate for evaluating argument fields. Arguments can be specified by value, by
+        predicate or as don't care (None). By inserting None into the argument list, args_predicate
+        will accept any response given for that argument index.
+        :param args: a list of expected arguments (list of values, predicates and None)
         """
         self.arg_spec = []
         ignored = always_true()
@@ -461,7 +461,7 @@ class event_predicate(predicate):
         :param event: an instance of EventData
         """
         if not isinstance(event, EventData):
-            pass  # TODO raise test error.
+            return False
         e_id = self.id_pred(event.get_id())
         e_args = self.args_pred(event.get_args())
         e_time = self.time_pred(event.get_time())
@@ -509,7 +509,7 @@ class telemetry_predicate(predicate):
         :param telemetry: an instance of ChData
         """
         if not isinstance(telemetry, ChData):
-            pass  # TODO raise test error.
+            return False
         t_id = self.id_pred(telemetry.get_id())
         t_val = self.value_pred(telemetry.get_val())
         t_time = self.time_pred(telemetry.get_time())
