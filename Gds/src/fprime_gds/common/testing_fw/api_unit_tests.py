@@ -14,6 +14,7 @@ from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 from fprime_gds.common.pipeline import standard
+from fprime_gds.common.utils import config_manager
 
 
 class dummyPipeline:
@@ -39,6 +40,9 @@ class dummyPipeline:
     def connect(self, address, port):
         self.address = address
         self.port = port
+    
+    def disconnect(self):
+        pass
 
     def send_command(self, command, args):
         # TODO construct CmdData and enqueue command history
@@ -308,14 +312,20 @@ class APITestCases(unittest.TestCase):
 
     def test_instantiate_pipeline(self):
         pipeline = standard.StandardPipeline()
-        pipeline.setup('/home/kevin/software/fprime-sw/Ref/gds.ini', '/home/kevin/software/fprime-sw/Ref/Top/RefTopologyAppDictionary.xml')
+        GDS_CONFIG = config_manager.ConfigManager()
+        pipeline.setup(GDS_CONFIG, '/home/kevin/software/fprime-sw/Ref/Top/RefTopologyAppDictionary.xml')
         pipeline.connect('127.0.0.1', 50000)
-        self.api = self.api = IntegrationTestAPI(self.pipeline)
-        pred = predicates.greater_than(20)
-        result = self.api.await_telemetry_count(pred, timeout=10)
-        print(result)
-        assert result is not None
-
+        self.api = self.api = IntegrationTestAPI(pipeline)
+        pred = predicates.greater_than(10)
+        results = self.api.await_telemetry_count(pred, timeout=25)
+        for result in results:
+            print("received: {}".format(result.get_str()))
+        try:
+            assert result is not None
+        except:
+            pipeline.disconnect()
+            raise
+        pipeline.disconnect()
 
 if __name__ == "__main__":
     unittest.main()
