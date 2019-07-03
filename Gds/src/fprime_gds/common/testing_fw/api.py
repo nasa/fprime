@@ -507,7 +507,7 @@ class IntegrationTestAPI:
 
         Args:
             count: either an exact amount (int) or a predicate to specify how many objects to find
-            events: an event specifier or list of event specifiers (mnemonic, id, or predicate)
+            events: an event specifier or list of event specifiers (mnemonic, ID, or predicate)
             history: if given, a substitute history that the function will search and await
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
@@ -571,8 +571,6 @@ class IntegrationTestAPI:
             an ordered list of EventData objects that satisfied the sequence
         """
         results = self.await_event_sequence(events, history, start, timeout)
-        if results is None:
-            assert False
         assert len(events) == len(results)
         return results
 
