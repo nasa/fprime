@@ -204,11 +204,13 @@ class IntegrationTestAPI:
     def translate_telemetry_name(self, channel):
         """
         This function will translate the given mnemonic into an ID as defined by the
-        flight software dictionary. This call will raise an error if the channel given
-        is not in the dictionary.
+        flight software dictionary. This call will raise an error if the channel given is
+        not in the dictionary.
 
-        :param channel: Either the channel id or the channel mnemonic
-        :return: The channel ID
+        Args:
+            event: a mnemonic or id to specify the type of event
+        Returns:
+            the channel ID
         """
         if isinstance(channel, str):
             ch_dict = self.pipeline.get_channel_name_dictionary()
@@ -223,14 +225,22 @@ class IntegrationTestAPI:
             else:
                 raise KeyError("The given channel id, {}, was not in the dictionary".format(channel))
 
-    def get_telemetry_predicate(self, channel=None, val_pred=None, fsw_time_pred=None):
+    def get_telemetry_predicate(self, channel=None, value=None, fsw_time_pred=None):
         """
-        This function will translate the channel ID, and construct a telemetry_predicate
-        object. It is used as a helper by the IntegrationTestAPI, but could also be
-        helpful to a user of the test API. If channel is already an instance of
-        telemetry_predicate, it will be returned immediately. The provided implementation
-        of telemetry_predicate evaluates true when all specified constraints are
-        satisfied. If a specific constraint isn't specified, then it will be ignored.
+        This function will translate the channel ID, and construct a telemetry_predicate object. It
+        is used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the
+        test API. If  channel is already an instance of telemetry_predicate, it will be returned
+        immediately. The provided implementation of telemetry_predicate evaluates true if and only
+        if all specified constraints are satisfied. If a specific constraint isn't specified, then
+        it will not effect the outcome. If no constraints are specified, the predicate will always
+        return true.
+
+        Args:
+            channel: an optional mnemonic (str), id (int), or predicate to specify the channel type
+            value: optional value (object/number) or predicate to specify the value field
+            fsw_time_pred: an optional predicate to specify the flight software timestamp
+        Returns:
+            an instance of telemetry_predicate
         """
         if isinstance(channel, predicates.telemetry_predicate):
             return channel
@@ -245,8 +255,10 @@ class IntegrationTestAPI:
             channel = self.translate_event_name(channel)
             c_pred = predicates.equal_to(channel)
 
-        if predicates.is_predicate(val_pred):
-            v_pred = val_pred
+        if predicates.is_predicate(value):
+            v_pred = value
+        elif value is not None:
+            v_pred = predicates.equal_to(value)
 
         if predicates.is_predicate(fsw_time_pred):
             t_pred = fsw_time_pred
@@ -254,18 +266,24 @@ class IntegrationTestAPI:
         return predicates.event_predicate(c_pred, v_pred, t_pred)
 
     def await_telemetry(
-        self,
-        channel,
-        val_pred=None,
-        fsw_time_pred=None,
-        history=None,
-        start=None,
-        timeout=5,
+        self, channel, value=None, fsw_time_pred=None, history=None, start=None, timeout=5,
     ):
         """
-        TODO
+        A search for a single telemetry update received. If the history doesn't have the
+        correct update, the call will await until a correct update is received or the
+        timeout, at which point it will return None.
+
+        Args:
+            channel: a channel specifier (mnemonic, id, or predicate)
+            value: optional value (object/number) or predicate to specify the value field
+            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            the data EChData object found during the search, otherwise, None
         """
-        t_pred = self.get_telemetry_predicate(channel, val_pred, fsw_time_pred)
+        t_pred = self.get_telemetry_predicate(channel, value, fsw_time_pred)
 
         if history is None:
             history = self.get_telemetry_test_history()
@@ -310,13 +328,7 @@ class IntegrationTestAPI:
     #   Telemetry Asserts
     ######################################################################################
     def assert_telemetry(
-        self,
-        channel,
-        val_pred=None,
-        fsw_time_pred=None,
-        history=None,
-        start=None,
-        timeout=0,
+        self, channel, value=None, fsw_time_pred=None, history=None, start=None, timeout=0,
     ):
         """
         Asserts that a specified telemetry update was received. This function will first
@@ -325,7 +337,7 @@ class IntegrationTestAPI:
         call will assert failure.
         """
         result = self.await_telemetry(
-            channel, val_pred, fsw_time_pred, history, start, timeout
+            channel, value, fsw_time_pred, history, start, timeout
         )
         assert result is not None
         return result
@@ -374,13 +386,18 @@ class IntegrationTestAPI:
         This function will translate the given mnemonic into an ID as defined by the
         flight software dictionary. This call will raise an error if the event given is
         not in the dictionary.
+
+        Args:
+            event: a mnemonic (str) or ID (int) to specify the type of event
+        Returns:
+            the event ID (int)
         """
         if isinstance(event, str):
             event_dict = self.pipeline.get_event_name_dictionary()
             if event in event_dict:
                 return event_dict.get(event, "id")
             else:
-                raise KeyError("The given event mnemonic, {}, was not in the dictionary".format(event))
+                raise KeyError("The given event mnemonic, {}, wstringas not in the dictionary".format(event))
         else:
             event_dict = self.pipeline.get_event_id_dictionary()
             if event in event_dict:
@@ -390,13 +407,19 @@ class IntegrationTestAPI:
 
     def get_event_predicate(self, event=None, args=None, fsw_time_pred=None):
         """
-        This function will translate the event ID, and construct an event_predicate
-        object. It is used as a helper by the IntegrationTestAPI, but could also be
-        helpful to a user of the test API. If event is already an instance of
-        event_predicate, it will be returned immediately. The provided implementation of
-        event_predicate evaluates true if and only if all specified constraints are
-        satisfied. If a specific constraint isn't specified, then it will not effect the
-        outcome. If no constraints are specified, the predicate will always return true.
+        This function will translate the event ID, and construct an event_predicate object. It is
+        used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the test
+        API. If event is already an instance of event_predicate, it will be returned immediately.
+        The provided implementation of event_predicate evaluates true if and only if all specified
+        constraints are satisfied. If a specific constraint isn't specified, then it will not
+        effect the outcome. If no constraints are specified, the predicate will always return true.
+
+        Args:
+            event: an optional mnemonic (str), id (int), or predicate to specify the event type
+            args: optional list of expected arguments (list of values, predicates, or None to ignore)
+            fsw_time_pred: an optional predicate to specify the flight software timestamp
+        Returns:
+            an instance of event_predicate
         """
         if isinstance(event, predicates.event_predicate):
             return event
@@ -425,9 +448,19 @@ class IntegrationTestAPI:
         self, event, args=None, fsw_time_pred=None, history=None, start=None, timeout=5
     ):
         """
-        This function will first search the history for an event that satisfies the
-        specified constraints. Then, if no message was found, await_event will wait for a
-        valid event message until the timeout.
+        A search for a single event message received. If the history doesn't have the
+        correct message, the call will await until a correct message is received or the
+        timeout, at which point it will return None.
+
+        Args:
+            event: an event specifier (mnemonic, id, or predicate)
+            args: a list of expected arguments (list of values, predicates, or None for don't care)
+            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            the data EventData object found during the search, otherwise, None
         """
         e_pred = self.get_event_predicate(event, args, fsw_time_pred)
 
@@ -438,11 +471,20 @@ class IntegrationTestAPI:
 
     def await_event_sequence(self, events, history=None, start=None, timeout=5):
         """
-        This function will first search the history then await future messages to find
-        every specified event in a sequence. This function will enforce that each element
-        of the sequence occurred in order with respect to the flight software timestamps.
-        Note: This function will return a list of events regardless of whether or not it
-        finds all elements.
+        A search for a sequence of event messages. If the history doesn't have the complete
+        sequence, the call will await until the sequence is completed or the timeout, at
+        which point it will assert failure.
+        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: This function will always return a list of events the user should check if the
+        sequence was completed.
+
+        Args:
+            events: an ordered list of event specifiers (mnemonic, id, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            an ordered list of EventData objects that satisfied the sequence
         """
         seq_preds = []
         for event in events:
@@ -457,7 +499,20 @@ class IntegrationTestAPI:
         self, count, events=None, history=None, start=None, timeout=5
     ):
         """
-        Will search the specified history until an amount of events is found. By default only searches future history.
+        A search on the number of events received. If the history doesn't have the correct event
+        count, the call will await until a correct count is achieved or the timeout at which point
+        it will return.
+        Note: this search will always return a list of objects. The user should check if the search
+        was completed.
+
+        Args:
+            count: either an exact amount (int) or a predicate to specify how many objects to find
+            events: an event specifier or list of event specifiers (mnemonic, id, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            a list of the EventData objects that were counted
         """
         if events is None:
             search = None
@@ -481,24 +536,39 @@ class IntegrationTestAPI:
         self, event, args=None, fsw_time_pred=None, history=None, start=None, timeout=0
     ):
         """
-        Asserts that a specified event was received. This function will search the
-        current history, and, if necessary, wait for an message that satisfies the
-        specified constraints. If no valid event was received before the timeout,
-        this call will assert failure.
+        An assert on a single event message received. If the history doesn't have the
+        correct message, the call will await until a correct message is received or the
+        timeout, at which point it will assert failure.
+
+        Args:
+            event: an event specifier (mnemonic, id, or predicate)
+            args: a list of expected arguments (list of values, predicates, or None for don't care)
+            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            the data EventData object found during the search
         """
+        pred = self.get_event_predicate(event, args, fsw_time_pred)
         result = self.await_event(event, args, fsw_time_pred, history, start, timeout)
-        assert result is not None
+        assert pred(result)
         return result
 
     def assert_event_sequence(self, events, history=None, start=None, timeout=0):
         """
-        Asserts that a sequence of event messages was received. This function will
-        first search the history then await future messages to find every specified
-        event in a sequence. This function will enforce that each element of the sequence
-        occurred in order with respect to the flight software timestamps. If the
-        specification of timestamp predicates is not sequential, the timestamps will
-        likely fail. Note: It is reccomended (but not enforced) not to specify timestamps
-        for this assert.
+        Asserts that a sequence of event messages is received. If the history doesn't have the
+        complete sequence, the call will await until the sequence is completed or the timeout, at
+        which point it will assert failure.
+        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+
+        Args:
+            events: an ordered list of event specifiers (mnemonic, id, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            an ordered list of EventData objects that satisfied the sequence
         """
         results = self.await_event_sequence(events, history, start, timeout)
         if results is None:
@@ -512,11 +582,18 @@ class IntegrationTestAPI:
         """
         An assert on the number of events received. If the history doesn't have the
         correct event count, the call will await until a correct count is achieved or the
-        timeout at which point it will assert failure.
+        timeout, at which point it will assert failure.
+
+        Args:
+            count: either an exact amount (int) or a predicate to specify how many objects to find
+            events: optional event specifier or list of specifiers (mnemonic, id, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            a list of the EventData objects that were counted
         """
-        results = self.await_event_count(count, event, history, start, timeout)
-        if results is None:
-            assert False
+        results = self.await_event_count(count, events, history, start, timeout)
         if predicates.is_predicate(count):
             count_pred = count
         elif isinstance(count, int):
@@ -530,21 +607,24 @@ class IntegrationTestAPI:
     def get_command_test_history(self):
         """
         Accessor for IntegrationTestAPI's command history
-        :return: a history of CmdData Objects
+        Returns:
+            a history of CmdData objects
         """
         return self.command_history
 
     def get_telemetry_test_history(self):
         """
         Accessor for IntegrationTestAPI's telemetry history
-        :return: a history of ChData Objects
+        Returns:
+            a history of ChData objects
         """
         return self.telemetry_history
 
     def get_event_test_history(self):
         """
         Accessor for IntegrationTestAPI's event history
-        :return: a history of EventData Objects
+        Returns:
+            a history of EventData objects
         """
         return self.event_history
 
@@ -556,16 +636,17 @@ class IntegrationTestAPI:
 
     def find_history_item(self, search_pred, history, start=None, timeout=0):
         """
-        Awaits a single item in a history. First searches the history for the item, then
-        waits until the item is found or the timeout is reached. Used as helpers for the
-        test api.
+        This function can both search and await for an element in a history. The function will
+        return the first valid object it finds. The search will return when an object is found, or
+        the timeout is reached.
 
-        :param history: a history to await on.
-        :param search_pred: a predicate to await with
-        :param start: an indictor of when to start the search. See history.retrieve()
-        :param timeout: how long to await the search in seconds.
-
-        :return: If found, a data object, otherwise, None
+        Args:
+            search_pred: a predicate to specify a history item.
+            history: the history that the function will search and await
+            start: an index or predicate to specify the earliest item from the history to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            the data object found during the search, otherwise, None
         """
         current = history.retrieve(start)
         for item in current:
@@ -583,17 +664,29 @@ class IntegrationTestAPI:
                             return item
                     time.sleep(0.1)
             except self.TimeoutException:
-                # TODO Final check?
                 return None
         else:
             return None
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
-        This function can both search and await for a sequence of elements in a history.
+        This function can both search and await for a sequence of elements in a history. The
+        function will return a list of the history objects to satisfy the sequence search. The
+        search will return when an order of data objects is found that satisfies the entire
+        sequence, or the timeout occurs.
+        Note: this search will always return a list of objects. The user should check if the search
+        was completed.
+
+        Args:
+            seq_preds: an ordered list of predicate objects to specify a sequence
+            history: the history that the function will search and await
+            start: an index or predicate to specify the earliest item from the history to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            a list of data objects that satisfied the sequence
         """
         current = history.retrieve(start)
-        objects = []
+        sequence = []
         seq_preds = seq_preds.copy()
 
         if len(seq_preds) == 0:
@@ -601,10 +694,10 @@ class IntegrationTestAPI:
 
         for item in current:
             if seq_preds[0](item):
-                objects.append(item)
+                sequence.append(item)
                 seq_preds.pop(0)
                 if len(seq_preds) == 0:
-                    return objects
+                    return sequence
 
         if timeout:
             try:
@@ -614,34 +707,35 @@ class IntegrationTestAPI:
                     new_items = history.retrieve_new()
                     for item in new_items:
                         if seq_preds[0](item):
-                            objects.append(item)
+                            sequence.append(item)
                             seq_preds.pop(0)
                             if len(seq_preds) == 0:
                                 signal.alarm(0)
-                                return objects
+                                return sequence
                     time.sleep(0.1)
             except self.TimeoutException:
-                # TODO Final check?
-                return None
+                return sequence
         else:
-            return None
+            return sequence
 
     def find_history_count(
         self, count, history, search_pred=None, start=None, timeout=0
     ):
         """
-        This function can both search and await for an amount of items in a history. First searches the history for the
-        items, then waits until more are found to satisfy the count predicate or the
-        timeout is reached. Used as a helper for the test api.
+        This function can both search and await for a number of elements in a history. The function
+        will return a list of the history objects to satisfy the search. The search will return
+        when a correct count of data objects is found, or the timeout occurs.
+        Note: this search will always return a list of objects. The user should check if the search
+        was completed.
 
-        :param count: either an exact value (int), or a predicate to determine if a correct amount has been reached.
-        :param history: a history to await on.
-        :param search_pred: a predicate to collect and count with. If not specified, all
-            items will be counted.
-        :param start: an indictor of when to start the search. See history.retrieve()
-        :param timeout: the maximum time, in seconds, to wait and search.
-
-        :return: If found a correct amount is found, a list data objects, otherwise, None
+        Args:
+            count: either an exact amount (int) or a predicate to specify how many objects to find
+            history: the history that the function will search and await
+            search_pred: a predicate to specify which items to count. If left blank, all will count
+            start: an index or predicate to specify the earliest item from the history to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            a list of data objects that were counted during the search
         """
         if predicates.is_predicate(count):
             count_pred = count
@@ -677,7 +771,6 @@ class IntegrationTestAPI:
                                 return objects
                     time.sleep(0.1)
             except self.TimeoutException:
-                # TODO Final check?
-                return None
+                return objects
         else:
-            return None
+            return objects
