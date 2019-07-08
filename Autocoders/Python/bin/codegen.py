@@ -1394,7 +1394,6 @@ def main():
             #PRINT.info("BUILD_ROOT set to %s"%BUILD_ROOT)
 
     for xml_filename in xml_filenames:
-        print(xml_filename)
 
         xml_filename = os.path.basename(xml_filename)
         xml_type = XmlParser.XmlParser(xml_filename)()
