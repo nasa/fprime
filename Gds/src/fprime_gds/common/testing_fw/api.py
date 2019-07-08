@@ -86,9 +86,9 @@ class IntegrationTestAPI:
             cleared up until the timestamp.
         """
         fsw_pred = predicates.greater_than(fsw_time_stamp)
-        e_pred = predicates.event_predicate(fsw_time_pred=fsw_pred)
+        e_pred = predicates.event_predicate(time_pred=fsw_pred)
         self.event_history.clear(e_pred)
-        t_pred = predicates.telemetry_predicate(fsw_time_pred=fsw_pred)
+        t_pred = predicates.telemetry_predicate(time_pred=fsw_pred)
         self.command_history.clear(t_pred)
         self.command_history.clear()
 
@@ -225,7 +225,7 @@ class IntegrationTestAPI:
             else:
                 raise KeyError("The given channel id, {}, was not in the dictionary".format(channel))
 
-    def get_telemetry_predicate(self, channel=None, value=None, fsw_time_pred=None):
+    def get_telemetry_predicate(self, channel=None, value=None, time_pred=None):
         """
         This function will translate the channel ID, and construct a telemetry_predicate object. It
         is used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the
@@ -238,35 +238,24 @@ class IntegrationTestAPI:
         Args:
             channel: an optional mnemonic (str), id (int), or predicate to specify the channel type
             value: optional value (object/number) or predicate to specify the value field
-            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            time_pred: an optional predicate to specify the flight software timestamp
         Returns:
             an instance of telemetry_predicate
         """
         if isinstance(channel, predicates.telemetry_predicate):
             return channel
 
-        c_pred = None
-        v_pred = None
-        t_pred = None
-
-        if predicates.is_predicate(channel):
-            c_pred = event
-        elif channel is not None:
+        if not predicates.is_predicate(channel) and channel is not None:
             channel = self.translate_event_name(channel)
-            c_pred = predicates.equal_to(channel)
+            channel = predicates.equal_to(channel)
 
-        if predicates.is_predicate(value):
-            v_pred = value
-        elif value is not None:
-            v_pred = predicates.equal_to(value)
+        if not predicates.is_predicate(value) and value is not None:
+            value = predicates.equal_to(value)
 
-        if predicates.is_predicate(fsw_time_pred):
-            t_pred = fsw_time_pred
-
-        return predicates.event_predicate(c_pred, v_pred, t_pred)
+        return predicates.event_predicate(channel, value, time_pred)
 
     def await_telemetry(
-        self, channel, value=None, fsw_time_pred=None, history=None, start=None, timeout=5,
+        self, channel, value=None, time_pred=None, history=None, start=None, timeout=5,
     ):
         """
         A search for a single telemetry update received. If the history doesn't have the
@@ -276,14 +265,14 @@ class IntegrationTestAPI:
         Args:
             channel: a channel specifier (mnemonic, id, or predicate)
             value: optional value (object/number) or predicate to specify the value field
-            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            time_pred: an optional predicate to specify the flight software timestamp
             history: if given, a substitute history that the function will search and await
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
             the data EChData object found during the search, otherwise, None
         """
-        t_pred = self.get_telemetry_predicate(channel, value, fsw_time_pred)
+        t_pred = self.get_telemetry_predicate(channel, value, time_pred)
 
         if history is None:
             history = self.get_telemetry_test_history()
@@ -328,7 +317,7 @@ class IntegrationTestAPI:
     #   Telemetry Asserts
     ######################################################################################
     def assert_telemetry(
-        self, channel, value=None, fsw_time_pred=None, history=None, start=None, timeout=0,
+        self, channel, value=None, time_pred=None, history=None, start=None, timeout=0,
     ):
         """
         Asserts that a specified telemetry update was received. This function will first
@@ -337,7 +326,7 @@ class IntegrationTestAPI:
         call will assert failure.
         """
         result = self.await_telemetry(
-            channel, value, fsw_time_pred, history, start, timeout
+            channel, value, time_pred, history, start, timeout
         )
         assert result is not None
         return result
@@ -405,7 +394,7 @@ class IntegrationTestAPI:
             else:
                 raise KeyError("The given event id, {}, was not in the dictionary".format(event))
 
-    def get_event_predicate(self, event=None, args=None, fsw_time_pred=None):
+    def get_event_predicate(self, event=None, args=None, time_pred=None):
         """
         This function will translate the event ID, and construct an event_predicate object. It is
         used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the test
@@ -417,7 +406,7 @@ class IntegrationTestAPI:
         Args:
             event: an optional mnemonic (str), id (int), or predicate to specify the event type
             args: optional list of expected arguments (list of values, predicates, or None to ignore)
-            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            time_pred: an optional predicate to specify the flight software timestamp
         Returns:
             an instance of event_predicate
         """
@@ -431,10 +420,10 @@ class IntegrationTestAPI:
         if not predicates.is_predicate(args) and args is not None:
             a_pred = predicates.args_predicate(args)
 
-        return predicates.event_predicate(event, args, fsw_time_pred)
+        return predicates.event_predicate(event, args, time_pred)
 
     def await_event(
-        self, event, args=None, fsw_time_pred=None, history=None, start=None, timeout=5
+        self, event, args=None, time_pred=None, history=None, start=None, timeout=5
     ):
         """
         A search for a single event message received. If the history doesn't have the
@@ -444,14 +433,14 @@ class IntegrationTestAPI:
         Args:
             event: an event specifier (mnemonic, id, or predicate)
             args: a list of expected arguments (list of values, predicates, or None for don't care)
-            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            time_pred: an optional predicate to specify the flight software timestamp
             history: if given, a substitute history that the function will search and await
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
             the data EventData object found during the search, otherwise, None
         """
-        e_pred = self.get_event_predicate(event, args, fsw_time_pred)
+        e_pred = self.get_event_predicate(event, args, time_pred)
 
         if history is None:
             history = self.get_event_test_history()
@@ -522,7 +511,7 @@ class IntegrationTestAPI:
     #   Event Asserts
     ######################################################################################
     def assert_event(
-        self, event, args=None, fsw_time_pred=None, history=None, start=None, timeout=0
+        self, event, args=None, time_pred=None, history=None, start=None, timeout=0
     ):
         """
         An assert on a single event message received. If the history doesn't have the
@@ -532,15 +521,15 @@ class IntegrationTestAPI:
         Args:
             event: an event specifier (mnemonic, id, or predicate)
             args: a list of expected arguments (list of values, predicates, or None for don't care)
-            fsw_time_pred: an optional predicate to specify the flight software timestamp
+            time_pred: an optional predicate to specify the flight software timestamp
             history: if given, a substitute history that the function will search and await
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
             the data EventData object found during the search
         """
-        pred = self.get_event_predicate(event, args, fsw_time_pred)
-        result = self.await_event(event, args, fsw_time_pred, history, start, timeout)
+        pred = self.get_event_predicate(event, args, time_pred)
+        result = self.await_event(event, args, time_pred, history, start, timeout)
         assert pred(result)
         return result
 
