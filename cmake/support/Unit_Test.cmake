@@ -7,7 +7,14 @@
 # opposed to the standard CMake call. The CMake test support functions are still used.
 #
 ####
+# Bail if not testing
+if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" )
+    return()
+endif()
+
+# Enable testing, setup CTest, etc.
 enable_testing()
+include( CTest )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 ####
@@ -101,6 +108,9 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # MOD_DEPS = All other module inputs DEPS_INPUT
     split_source_files("${UT_SOURCES_INPUT}")
     split_dependencies("${MOD_DEPS_INPUT}")
+    if (NOT DEFINED FPRIME_OBJECT_TYPE)
+        set(FPRIME_OBJECT_TYPE "Unit-Test")
+    endif()
     generate_executable(${UT_EXE_NAME} "${SOURCE_FILES}" "${MOD_DEPS_INPUT}")
     # Generate the UTs w/ autocoding and add the other sources  
     unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}")
@@ -113,6 +123,13 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
+    
+    # Check target for this module
+    if (NOT TARGET "${MODULE_NAME}_check")
+	    add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND})
+    endif()
+	add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
+    
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
 	    print_dependencies(${UT_EXE_NAME})

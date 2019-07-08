@@ -38,6 +38,8 @@ Building a CMake-enabled deployment comes down to just a small number of steps:
 2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt>`
 3. Engage OS-specific make system: `make`
 4. Run unit tests: `make check`
+5. Run F´ specific targets like dictionariy generation, and module coverage: 
+[Targets](./docs/targets/Targets.md) 
 
 Further information on each step is provided below.
 

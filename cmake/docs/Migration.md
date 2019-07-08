@@ -141,5 +141,5 @@ make check
 ```
 ## Global Build Options:
  - Options: [Options](Options.md) describes the CMake system options.
-
+ - Targets: [Targets](targets/Targets.md) describes built in support targets like `dict`
 

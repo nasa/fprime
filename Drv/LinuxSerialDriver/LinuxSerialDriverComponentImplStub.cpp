@@ -39,7 +39,8 @@ namespace Drv {
   }
 
   bool LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
-
+    //TODO
+    return false;
   }
 
   void LinuxSerialDriverComponentImpl ::
