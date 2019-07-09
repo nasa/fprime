@@ -81,30 +81,29 @@ class FileDecoder(decoder.Decoder):
         #decode_api still needs work I think
 
         #Decode file here
-        packetType = PacketType.(unpack('B', data[:1])[0]).name
+        packetType = PacketType(unpack('B', data[:1])[0]).name
         seqID = unpack('I', data[1:5])[0]
         
         #Packet Type determines the variables following the seqID
-        if (packetType == 'START') {  #Packet Type is START
+        if (packetType == 'START'):  #Packet Type is START
             size = unpack('I', data[5:9])[0]
             sourcePath = unpack('10s', data[5:15])[0]
             destPath = unpack('10s', data[15:25])[0]
             return file_data.StartPacketData(packetType, seqID, size, sourcePath, destPath)
-        }
-        else if (packetType == 'DATA') {   #Packet Type is DATA
+
+        elif (packetType == 'DATA'):   #Packet Type is DATA
             offset = unpack('I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
-        }
-        else if (packetType == 'END') {   #Packet Type is END
+
+        elif (packetType == 'END'):   #Packet Type is END
             hashValue = unpack('I', data[5:9])[0]
             return file_data.EndPacketData(packetType, seqID, hashValue)
-        }
-        else if (packetType == 'CANCEL') {   #Packet Type is CANCEL
+
+        elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
             return file_data.CancelPacketData(packetType, seqID)
-        }
 
         return file_data.FileData(packetType, seqID)
 
