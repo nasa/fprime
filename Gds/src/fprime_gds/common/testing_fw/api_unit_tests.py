@@ -41,7 +41,7 @@ class dummyPipeline:
     def connect(self, address, port):
         self.address = address
         self.port = port
-    
+
     def disconnect(self):
         pass
 
@@ -72,7 +72,7 @@ class dummyPipeline:
     def get_command_name_dictionary(self):
         # TODO provide a unit test dictionary to test with
         return {}
-        
+
     def get_event_history(self):
         return self.event_hist
 
@@ -93,7 +93,7 @@ class dummyPipeline:
 
     def remove_telemetry_history(self, history):
         self.channel_subscribers.remove(history)
-    
+
     def register_command_history(self, history):
         self.command_subscribers.append(history)
 
@@ -217,26 +217,26 @@ class APITestCases(unittest.TestCase):
         self.fill_history(self.tHistory.data_callback, range(0, 50))
         results = self.api.find_history_sequence(sequence, self.tHistory)
         assert (
-            results is not None
-        ), "The search should have found a sequence, but returned None"
+            len(results) == len(sequence)
+        ), "The search should have found {}, but returned {}".format(range(30, 40, 2), results)
         self.assert_lists_equal(range(30, 40, 2), results)
 
         results = self.api.find_history_sequence(sequence, self.tHistory, start=34)
         assert (
-            results is None
-        ), "The search should have returned None, but found {}".format(results)
+            len(results) != len(sequence)
+        ), "The search should have returned an incomplete list, but found {}".format(results)
 
         self.fill_history(self.tHistory.data_callback, range(0, 50))
         results = self.api.find_history_sequence(sequence, self.tHistory, start=34)
         assert (
-            results is not None
-        ), "The search should have found a sequence, but returned None"
+            len(results) == len(sequence)
+        ), "The search should have found {}, but returned {}".format(range(30, 40, 2), results)
         self.assert_lists_equal(range(30, 40, 2), results)
 
         results = self.api.find_history_sequence(sequence, self.tHistory, start=90)
         assert (
-            results is None
-        ), "The search should have returned None, but found {}".format(results)
+            len(results) != len(sequence)
+        ), "The search should have returned an incomplete list, but found {}".format(results)
 
     def test_find_history_sequence_timeout(self):
         sequence = []
@@ -262,8 +262,8 @@ class APITestCases(unittest.TestCase):
             sequence, self.tHistory, start=90, timeout=1
         )
         assert (
-            results is None
-        ), "The search should have returned None, but found {}".format(results)
+            len(results) != len(sequence)
+        ), "The search should have returned an incomplete list, but found {}".format(results)
 
     def test_find_history_count(self):
         count_pred = predicates.greater_than_or_equal_to(10)
@@ -292,8 +292,8 @@ class APITestCases(unittest.TestCase):
 
         results = self.api.find_history_count(count_pred, self.tHistory)
         assert (
-            results is None
-        ), "The search should have returned None, but found {}".format(results)
+            len(results) < 10
+        ), "The search should have returned an incomplete list, but found {}".format(results)
 
         results = self.api.find_history_count(
             count_pred, self.tHistory, search_pred, timeout=2
@@ -314,8 +314,8 @@ class APITestCases(unittest.TestCase):
             count_pred, self.tHistory, search_pred, timeout=1
         )
         assert (
-            results is None
-        ), "The search should have returned None, but found {}".format(results)
+            len(results) < 10
+        ), "The search should have returned an incomplete list, but found {}".format(results)
 
     def test_instantiate_pipeline(self):
         pipeline = standard.StandardPipeline()

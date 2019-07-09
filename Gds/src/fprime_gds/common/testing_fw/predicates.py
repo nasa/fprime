@@ -8,8 +8,8 @@ gds_test_api.py. The predicates are organized by type and can be used to search 
 """
 from inspect import signature
 
-from data_types.ch_data import ChData
-from data_types.event_data import EventData
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.event_data import EventData
 
 
 ##########################################################################################
