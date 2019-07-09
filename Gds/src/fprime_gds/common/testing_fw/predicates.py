@@ -390,7 +390,9 @@ class args_predicate(predicate):
         A predicate for evaluating argument fields. Arguments can be specified by value, by
         predicate or as don't care (None). By inserting None into the argument list, args_predicate
         will accept any response given for that argument index.
-        :param args: a list of expected arguments (list of values, predicates and None)
+        
+        Args:
+            args: a list of expected arguments (list of values, predicates and None)
         """
         self.arg_spec = []
         ignored = always_true()
@@ -429,16 +431,15 @@ class args_predicate(predicate):
 class event_predicate(predicate):
     def __init__(self, id_pred=None, args_pred=None, time_pred=None):
         """
-        A predicate for specifying an EventData object from data_types.event_data. This
-        predicate can be used to search a history. If arguments passed into this constructor
-        are not subclasses of predicate, they will be ignored.
+        A predicate for specifying an EventData object from data_types.event_data. This predicate
+        can be used to search a history. If arguments passed into this constructor are not
+        subclasses of predicate, they will be ignored. If an argument is unspecified, the predicate
+        will ignore that field when evaluating an EventData object.
 
-        :param id_pred: If specified, the object's id field must satisfy the given predicate
-            for the telemetry predicate to evaluate to true.
-        :param args_pred: If specified, the object's arguments field must satisfy the given
-            predicate for the telemetry predicate to evaluate to true.
-        :param time_pred: If specified, the object's time field must satisfy the given
-            predicate for the telemetry predicate to evaluate to true.
+        Args:
+            id_pred: optional predicate to call on the EventData instance's id field
+            args_pred: optional predicate to call on the EventData instance's arguments
+            time_pred: optional predicate to call on the EventData instance's timestamp
         """
         true_pred = always_true()
         self.id_pred = true_pred
@@ -453,12 +454,12 @@ class event_predicate(predicate):
 
     def __call__(self, event):
         """
-        The event_predicate checks that the telemetry object is an instance of
-        EventData and will raise an error if the check fails. Then
-        event_predicate will evaluate whether event's EventData fields satisfy the
-        id_pred, value_pred, and time_pred specified.
+        The event_predicate checks that the telemetry object is an instance of EventData and will
+        raise an error if the check fails. Then event_predicate will evaluate whether event's
+        EventData fields satisfy the id_pred, value_pred, and time_pred specified.
 
-        :param event: an instance of EventData
+        Args:
+            event: an instance of EventData (object)
         """
         if not isinstance(event, EventData):
             return False
@@ -477,16 +478,15 @@ class event_predicate(predicate):
 class telemetry_predicate(predicate):
     def __init__(self, id_pred=None, value_pred=None, time_pred=None):
         """
-        A predicate for specifying a ChData object from data_types.ch_data. This predicate
-        can be used to search a history. If arguments passed into this constructor are not
-        subclasses of predicate, they will be ignored.
+        A predicate for specifying a ChData object from data_types.ch_data. This predicate can be
+        used to search a history. If arguments passed into this constructor are not subclasses of
+        predicate, they will be ignored.If an argument is unspecified, the predicate will ignore
+        that field when evaluating an EventData object.
 
-        :param id_pred: If specified, the object's id field must satisfy the given predicate
-            for the telemetry predicate to evaluate to true.
-        :param Value_pred: If specified, the object's value_obj field must satisfy the given
-            predicate for the telemetry predicate to evaluate to true.
-        :param time_pred: If specified, the object's time field must satisfy the given
-            predicate for the telemetry predicate to evaluate to true.
+        Args:
+            id_pred: optional predicate to call on the ChData instance's id field
+            value_pred: optional predicate to call on the ChData instance's id field
+            time_pred: optional predicate to call on the ChData instance's timestamp
         """
         true_pred = always_true()
         self.id_pred = true_pred
@@ -501,12 +501,12 @@ class telemetry_predicate(predicate):
 
     def __call__(self, telemetry):
         """
-        The telemetry_predicate checks that the telemetry object is an instance of
-        ChData and will raise an error if the check fails. Then
-        telemetry_predicate will evaluate whether telemetry's ChData fields
-        satisfy the id_pred, value_pred and time_pred specified.
+        The telemetry_predicate checks that the telemetry object is an instance of ChData and will
+        raise an error if the check fails. Then telemetry_predicate will evaluate whether
+        telemetry's ChData fields satisfy the id_pred, value_pred and time_pred specified.
 
-        :param telemetry: an instance of ChData
+        Args:
+            telemetry: an instance of ChData (object)
         """
         if not isinstance(telemetry, ChData):
             return False
