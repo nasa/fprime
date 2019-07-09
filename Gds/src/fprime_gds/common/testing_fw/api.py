@@ -18,7 +18,8 @@ class IntegrationTestAPI:
     """
     Class used to collect basic assertions that would be used on a GDS Pipeline to carry
     out integration tests.
-    :param pipeline: a pipeline object providing access to basic GDS functionality
+    Args:
+        pipeline: a pipeline object providing access to basic GDS functionality
     """
 
     def __init__(self, pipeline):
@@ -35,20 +36,26 @@ class IntegrationTestAPI:
         self.event_history = TestHistory()
         self.pipeline.register_event_history(self.event_history)
 
-        # Initialize latest time. Will be updated whenever a time query is made. 
+        # Initialize latest time. Will be updated whenever a time query is made.
         self.latest_time = -1
 
     def log_test_message(self, msg):
         """
-        TODO: Define what a test log should look like and describe its parameters.
+        A user-accessible message for logging messages to the test log.
+        Args:
+            msg: a user-provided message to add to the test log.
         """
+        # TODO: Define what a test log should look like and describe its parameters.
         pass
 
     def start_test_case(self, name):
         """
-        To be called at the start of a test case. This function inserts a log message to denote a new test
-        case is beginning, records the latest time stamp in case the user clears the aggregate histories, and
-        then clears the API's histories.
+        To be called at the start of a test case. This function inserts a log message to denote a
+        new test case is beginning, records the latest time stamp in case the user clears the
+        aggregate histories, and then clears the API's histories.
+
+        Args:
+            name: the name of the test case
         """
         self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
         self.log_test_message("Starting new test case: {}".format(name))
@@ -56,9 +63,10 @@ class IntegrationTestAPI:
 
     def get_latest_fsw_time(self):
         """
-        Finds the latest flight software time received by either the event or telemetry
-        history.
-        :return: a flight software timestamp
+        Finds the latest flight software time received by either history.
+
+        Returns:
+            a flight software timestamp
         """
         events = self.aggregate_event_history.retrieve()
         e_time = -1
@@ -73,22 +81,22 @@ class IntegrationTestAPI:
         self.latest_time = max(e_time, t_time, self.latest_time)
         return self.latest_time
 
-    def clear_histories(self, fsw_time_stamp=None):
+    def clear_histories(self, time_stamp=None):
         """
-        Clears the IntegrationTestAPI's histories. Because the command history is not
-        correlated to a flight software timestamp, it will be cleared entirely. This
-        function can be used to set up test cases so that the IntegrationTestAPI's
-        histories only contain objects received during that test.
-        Note: this will not clear user-created sub-histories nor the aggregate histories
-        (histories owned by the gds)
+        Clears the IntegrationTestAPI's histories. Because the command history is not correlated to
+        a flight software timestamp, it will be cleared entirely. This function can be used to set
+        up test cases so that the IntegrationTestAPI's histories only contain objects received
+        during that test.
+        Note: this will not clear user-created sub-histories nor the aggregate histories (histories
+        owned by the gds)
 
-        :param fsw_time_stamp: If specified, event and telemetry histories will be
-            cleared up until the timestamp.
+        Args:
+            time_stamp: If specified, histories are only cleared before the timestamp.
         """
-        fsw_pred = predicates.greater_than(fsw_time_stamp)
-        e_pred = predicates.event_predicate(time_pred=fsw_pred)
+        time_pred = predicates.greater_than_or_equal_to(time_stamp)
+        e_pred = predicates.event_predicate(time_pred=time_pred)
         self.event_history.clear(e_pred)
-        t_pred = predicates.telemetry_predicate(time_pred=fsw_pred)
+        t_pred = predicates.telemetry_predicate(time_pred=time_pred)
         self.command_history.clear(t_pred)
         self.command_history.clear()
 
@@ -97,76 +105,104 @@ class IntegrationTestAPI:
     ######################################################################################
     def translate_command_name(self, command):
         """
-        This function will translate the given mnemonic into an ID as defined by the
-        flight software dictionary. This call will raise an error if the command given
-        is not in the dictionary.
+        This function will translate the given mnemonic into an ID as defined by the flight
+        software dictionary. This call will raise an error if the command given is not in the
+        dictionary.
 
-        :param channel: Either the channel id or the channel mnemonic
-        :return: The comand ID
+        Args:
+            channel: Either the channel id (int) or the channel mnemonic (str)
+
+        Returns:
+            The comand ID (int)
         """
         if isinstance(command, str):
             cmd_dict = self.pipeline.get_command_name_dictionary()
             if command in cmd_dict:
                 return cmd_dict.get(command, "id")
             else:
-                raise KeyError("The given command mnemonic, {}, was not in the dictionary".format(command))
+                raise KeyError(
+                    "The given command mnemonic, {}, was not in the dictionary".format(
+                        command
+                    )
+                )
         else:
             cmd_dict = self.pipeline.get_command_id_dictionary()
             if command in cmd_dict:
                 return command
             else:
-                raise KeyError("The given command id, {}, was not in the dictionary".format(command))
+                raise KeyError(
+                    "The given command id, {}, was not in the dictionary".format(
+                        command
+                    )
+                )
 
     def send_command(self, command, args):
         """
         Sends the specified command.
-        :param command:
+        Args:
+            command: the mnemonic (str) or ID (int) of the command to send
+            args: a list of command arguments.
         """
         command = self.translate_command_name(command)
         self.pipeline.send_command(command, args)
 
     def send_and_await_telemetry(self, command, args, channels, start=None, timeout=5):
         """
-        Sends the specified command and awaits the specified telemetry update or sequence of updates. This
-        function will enforce that each element of the sequence occurred in order with respect to the flight
-        software timestamps. If the specification of timestamp predicates is not sequential, the timestamps
-        will likely fail.
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Sends the specified command and awaits the specified channel update or sequence of
+        updates. See await_telemetry and await_telemetry_sequence for full details.
+        Note: If awaiting a sequence avoid specifying timestamps.
+
+        Args:
+            command: the mnemonic (str) or ID (int) of the command to send
+            args: a list of command arguments.
+            channels: a single or a sequence of channel specs (event_predicates, mnemonics, or IDs)
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+
+        Returns:
+            The event or events found by the search
         """
         self.send_command(command, args)
         if isinstance(channels, list):
-            self.await_telemetry_sequence(channels, start=start, timeout=timeout)
+            return self.await_telemetry_sequence(channels, start=start, timeout=timeout)
         else:
-            self.await_telemetry(channels, start=start, timeout=timeout)
+            return self.await_telemetry(channels, start=start, timeout=timeout)
 
     def send_and_await_event(self, command, args, events, start=None, timeout=5):
         """
         Sends the specified command and awaits the specified event message or sequence of
-        messages. This function will enforce that each element of the sequence occurred
-        in order with respect to the flight software timestamps. If the specification of
-        timestamp predicates is not sequential, the timestamps will likely fail. Note: It
-        is reccomended (but not enforced) not to specify timestamps for this assert.
+        messages. See await_event and await event sequence for full details.
+        Note: If awaiting a sequence avoid specifying timestamps.
+
+        Args:
+            command: the mnemonic (str) or ID (int) of the command to send
+            args: a list of command arguments.
+            events: a single or a sequence of event specifiers (event_predicates, mnemonics, or IDs)
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+
+        Returns:
+            The event or events found by the search
         """
         self.send_command(command, args)
         if isinstance(events, list):
-            self.await_event_sequence(events, start=start, timeout=timeout)
+            return self.await_event_sequence(events, start=start, timeout=timeout)
         else:
-            self.await_event(events, start=start, timeout=timeout)
+            return self.await_event(events, start=start, timeout=timeout)
 
     ######################################################################################
     #   Command Asserts
     ######################################################################################
     def assert_send_command(self, command, args):
         """
-        Sends a command and asserts that the command was translated. If the command is in
-        conflict with the flight dictionary, this will raise a test error. Note: This
-        assert does not check that the command was  received by flight software, only that
-        the command and arguments were valid with respect to the flight dictionary.
+        Sends a command and asserts that the command was translated. If the command is in conflict
+        with the flight dictionary, this will raise a test error. Note: This assert does not check
+        that the command was  received by flight software, only that the command and arguments were
+        valid with respect to the flight dictionary.
 
-        :param command: Either the command id or a command mnemonic to define the type of
-            command
-        :param args: A list of command arguments to send
-        :return: If the assert is successful, will return an instance of CmdData
+        Args:
+            command: Either the command id(int) or a mnemonic(str) to define the command type
+            args: A list of command arguments to send
         """
         try:
             command = self.translate_command_name(command)
@@ -180,50 +216,81 @@ class IntegrationTestAPI:
 
     def send_and_assert_telemetry(self, command, args, channels, start=None, timeout=5):
         """
-        TODO: Define what a send and assert should look like and describe its parameters.
+        Sends the specified command and asserts on the specified channel update or sequence of
+        updates. See await_telemetry and await_telemetry_sequence for full details.
+        Note: If awaiting a sequence avoid specifying timestamps.
+
+        Args:
+            command: the mnemonic (str) or ID (int) of the command to send
+            args: a list of command arguments.
+            channels: a single or a sequence of channel specs (event_predicates, mnemonics, or IDs)
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+
+        Returns:
+            The event or events found by the search
         """
         self.send_command(command, args)
         if isinstance(channels, list):
-            self.assert_telemetry_sequence(channels, start=start, timeout=timeout)
+            return self.assert_telemetry_sequence(channels, start=start, timeout=timeout)
         else:
-            self.assert_telemetry(channels, start=start, timeout=timeout)
+            return self.assert_telemetry(channels, start=start, timeout=timeout)
 
     def send_and_assert_event(self, command, args, events, start=None, timeout=5):
         """
-        TODO: Define what a send and assert should look like and describe its parameters.
+        Sends the specified command and asserts on the specified event message or sequence of
+        messages. See assert_event and assert event sequence for full details.
+
+        Args:
+            command: the mnemonic (str) or ID (int) of the command to send
+            args: a list of command arguments.
+            events: a single or a sequence of event specifiers (event_predicates, mnemonics, or IDs)
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+
+        Returns:
+            The event or events found by the search
         """
         self.send_command(command, args)
         if isinstance(events, list):
-            self.assert_event_sequence(events, start=start, timeout=timeout)
+            return self.assert_event_sequence(events, start=start, timeout=timeout)
         else:
-            self.assert_event(events, start=start, timeout=timeout)
+            return self.assert_event(events, start=start, timeout=timeout)
 
     ######################################################################################
     #   Telemetry Functions
     ######################################################################################
     def translate_telemetry_name(self, channel):
         """
-        This function will translate the given mnemonic into an ID as defined by the
-        flight software dictionary. This call will raise an error if the channel given is
-        not in the dictionary.
+        This function will translate the given mnemonic into an ID as defined by the flight
+        software dictionary. This call will raise an error if the channel given is not in the
+        dictionary.
 
         Args:
-            event: a mnemonic or id to specify the type of event
+            channel: a channel mnemonic (str) or id (int)
         Returns:
-            the channel ID
+            the channel ID (int)
         """
         if isinstance(channel, str):
             ch_dict = self.pipeline.get_channel_name_dictionary()
             if channel in ch_dict:
                 return ch_dict.get(channel, "id")
             else:
-                raise KeyError("The given channel mnemonic, {}, was not in the dictionary".format(channel))
+                raise KeyError(
+                    "The given channel mnemonic, {}, was not in the dictionary".format(
+                        channel
+                    )
+                )
         else:
             ch_dict = self.pipeline.get_channel_id_dictionary()
             if channel in ch_dict:
                 return channel
             else:
-                raise KeyError("The given channel id, {}, was not in the dictionary".format(channel))
+                raise KeyError(
+                    "The given channel id, {}, was not in the dictionary".format(
+                        channel
+                    )
+                )
 
     def get_telemetry_predicate(self, channel=None, value=None, time_pred=None):
         """
@@ -237,7 +304,7 @@ class IntegrationTestAPI:
 
         Args:
             channel: an optional mnemonic (str), id (int), or predicate to specify the channel type
-            value: optional value (object/number) or predicate to specify the value field
+            value: an optional value (object/number) or predicate to specify the value field
             time_pred: an optional predicate to specify the flight software timestamp
         Returns:
             an instance of telemetry_predicate
@@ -246,16 +313,16 @@ class IntegrationTestAPI:
             return channel
 
         if not predicates.is_predicate(channel) and channel is not None:
-            channel = self.translate_event_name(channel)
+            channel = self.translate_channel_name(channel)
             channel = predicates.equal_to(channel)
 
         if not predicates.is_predicate(value) and value is not None:
             value = predicates.equal_to(value)
 
-        return predicates.event_predicate(channel, value, time_pred)
+        return predicates.telemetry_predicate(channel, value, time_pred)
 
     def await_telemetry(
-        self, channel, value=None, time_pred=None, history=None, start=None, timeout=5,
+        self, channel, value=None, time_pred=None, history=None, start=None, timeout=5
     ):
         """
         A search for a single telemetry update received. If the history doesn't have the
@@ -270,7 +337,7 @@ class IntegrationTestAPI:
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
-            the data EChData object found during the search, otherwise, None
+            the ChData object found during the search, otherwise, None
         """
         t_pred = self.get_telemetry_predicate(channel, value, time_pred)
 
@@ -281,7 +348,20 @@ class IntegrationTestAPI:
 
     def await_telemetry_sequence(self, channels, history=None, start=None, timeout=5):
         """
-        TODO
+        A search for a sequence of telemetry updates. If the history doesn't have the complete
+        sequence, the call will await until the sequence is completed or the timeout, at
+        which point it will return the list of found channel updates.
+        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: This function will always return a list of updates. The user should check if the
+        sequence was completed.
+
+        Args:
+            channels: an ordered list of channel specifiers (mnemonic, id, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            an ordered list of ChData objects that satisfies the sequence
         """
         seq_preds = []
         for channel in channels:
@@ -296,7 +376,20 @@ class IntegrationTestAPI:
         self, count, channels=None, history=None, start=None, timeout=5
     ):
         """
-        TODO
+        A search on the number of telemetry updates received. If the history doesn't have the
+        correct number, the call will await until a correct count is achieved or the timeout, at
+        which point it will return.
+        Note: this search will always return a list of objects. The user should check if the search
+        was completed.
+
+        Args:
+            count: either an exact amount (int) or a predicate to specify how many objects to find
+            channels: a channel specifier or list of channel specifiers (mnemonic, ID, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            a list of the ChData objects that were counted
         """
         if channels is None:
             search = None
@@ -317,13 +410,22 @@ class IntegrationTestAPI:
     #   Telemetry Asserts
     ######################################################################################
     def assert_telemetry(
-        self, channel, value=None, time_pred=None, history=None, start=None, timeout=0,
+        self, channel, value=None, time_pred=None, history=None, start=None, timeout=0
     ):
         """
-        Asserts that a specified telemetry update was received. This function will first
-        search the history then await future updates to find every specified channel in a
-        sequence. If no valid update was received, then received before the timeout, this
-        call will assert failure.
+        An assert on a single telemetry update received. If the history doesn't have the
+        correct update, the call will await until a correct update is received or the
+        timeout, at which point it will assert failure.
+
+        Args:
+            channel: a channel specifier (mnemonic, id, or predicate)
+            value: optional value (object/number) or predicate to specify the value field
+            time_pred: an optional predicate to specify the flight software timestamp
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            the ChData object found during the search
         """
         result = self.await_telemetry(
             channel, value, time_pred, history, start, timeout
@@ -333,13 +435,20 @@ class IntegrationTestAPI:
 
     def assert_telemetry_sequence(self, channels, history=None, start=None, timeout=0):
         """
-        Asserts that a sequence of Telemetry updates was received. This function will
-        first search the history then await future updates to find every specified
-        channel update in a sequence. This function will enforce that each element of the
-        sequence occurred in order with respect to the flight software timestamps. If the
-        specification of timestamp predicates is not sequential, the timestamps will
-        likely fail. Note: It is reccomended (but not enforced) not to specify timestamps
-        for this assert.
+        A search for a sing sequence of telemetry updates messages. If the history doesn't have the
+        complete sequence, the call will await until the sequence is completed or the timeout, at
+        which point it will return the list of found channel updates.
+        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: This function will always return a list of updates the user should check if the
+        sequence was completed.
+
+        Args:
+            channels: an ordered list of channel specifiers (mnemonic, id, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            an ordered list of ChData objects that satisfies the sequence
         """
         results = self.await_telemetry_sequence(channels, history, start, timeout)
         if results is None:
@@ -351,13 +460,20 @@ class IntegrationTestAPI:
         self, count, channels=None, history=None, start=None, timeout=0
     ):
         """
-        An assert on the number of telemetry updates received. If the history doesn't
-        have the correct update count, the call will await until a correct count is
-        achieved or the timeout, at which point it will assert failure.
+        An assert on the number of channel updates received. If the history doesn't have the
+        correct update count, the call will await until a correct count is achieved or the
+        timeout, at which point it will assert failure.
+
+        Args:
+            count: either an exact amount (int) or a predicate to specify how many objects to find
+            channels: a channel specifier or list of channel specifiers (mnemonic, ID, or predicate)
+            history: if given, a substitute history that the function will search and await
+            start: an optional index or predicate to specify the earliest item to search
+            timeout: the number of seconds to wait before terminating the search (int)
+        Returns:
+            a list of the ChData objects that were counted
         """
-        results = self.await_telemetry_count(
-            count, channels, history, start, timeout
-        )
+        results = self.await_telemetry_count(count, channels, history, start, timeout)
         if results is None:
             assert False
         if predicates.is_predicate(count):
@@ -377,7 +493,7 @@ class IntegrationTestAPI:
         not in the dictionary.
 
         Args:
-            event: a mnemonic (str) or ID (int) to specify the type of event
+            event: an event mnemonic (str) or ID (int)
         Returns:
             the event ID (int)
         """
@@ -386,13 +502,19 @@ class IntegrationTestAPI:
             if event in event_dict:
                 return event_dict.get(event, "id")
             else:
-                raise KeyError("The given event mnemonic, {}, wstringas not in the dictionary".format(event))
+                raise KeyError(
+                    "The given event mnemonic, {}, was not in the dictionary".format(
+                        event
+                    )
+                )
         else:
             event_dict = self.pipeline.get_event_id_dictionary()
             if event in event_dict:
                 return event
             else:
-                raise KeyError("The given event id, {}, was not in the dictionary".format(event))
+                raise KeyError(
+                    "The given event id, {}, was not in the dictionary".format(event)
+                )
 
     def get_event_predicate(self, event=None, args=None, time_pred=None):
         """
@@ -405,7 +527,7 @@ class IntegrationTestAPI:
 
         Args:
             event: an optional mnemonic (str), id (int), or predicate to specify the event type
-            args: optional list of expected arguments (list of values, predicates, or None to ignore)
+            args: an optional list of arguments (list of values, predicates, or None to ignore)
             time_pred: an optional predicate to specify the flight software timestamp
         Returns:
             an instance of event_predicate
@@ -418,7 +540,7 @@ class IntegrationTestAPI:
             event = predicates.equal_to(event)
 
         if not predicates.is_predicate(args) and args is not None:
-            a_pred = predicates.args_predicate(args)
+            args = predicates.args_predicate(args)
 
         return predicates.event_predicate(event, args, time_pred)
 
@@ -438,7 +560,7 @@ class IntegrationTestAPI:
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
-            the data EventData object found during the search, otherwise, None
+            the EventData object found during the search, otherwise, None
         """
         e_pred = self.get_event_predicate(event, args, time_pred)
 
@@ -451,7 +573,7 @@ class IntegrationTestAPI:
         """
         A search for a sequence of event messages. If the history doesn't have the complete
         sequence, the call will await until the sequence is completed or the timeout, at
-        which point it will assert failure.
+        which point it will return the list of found events.
         Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
         Note: This function will always return a list of events the user should check if the
         sequence was completed.
@@ -462,7 +584,7 @@ class IntegrationTestAPI:
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
-            an ordered list of EventData objects that satisfied the sequence
+            an ordered list of EventData objects that satisfies the sequence
         """
         seq_preds = []
         for event in events:
@@ -478,7 +600,7 @@ class IntegrationTestAPI:
     ):
         """
         A search on the number of events received. If the history doesn't have the correct event
-        count, the call will await until a correct count is achieved or the timeout at which point
+        count, the call will await until a correct count is achieved or the timeout, at which point
         it will return.
         Note: this search will always return a list of objects. The user should check if the search
         was completed.
@@ -526,7 +648,7 @@ class IntegrationTestAPI:
             start: an optional index or predicate to specify the earliest item to search
             timeout: the number of seconds to wait before terminating the search (int)
         Returns:
-            the data EventData object found during the search
+            the EventData object found during the search
         """
         pred = self.get_event_predicate(event, args, time_pred)
         result = self.await_event(event, args, time_pred, history, start, timeout)
@@ -535,7 +657,7 @@ class IntegrationTestAPI:
 
     def assert_event_sequence(self, events, history=None, start=None, timeout=0):
         """
-        Asserts that a sequence of event messages is received. If the history doesn't have the
+        An assert that a sequence of event messages is received. If the history doesn't have the
         complete sequence, the call will await until the sequence is completed or the timeout, at
         which point it will assert failure.
         Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
