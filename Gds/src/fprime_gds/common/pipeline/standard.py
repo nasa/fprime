@@ -39,9 +39,9 @@ class StandardPipeline:
     Class used to encapsulate all of the components of a standard pipeline. The life-cycle of this class follows the
     basic steps:
        1. setup: creates objects needed to read from middle-ware layer and provide data up the stack
-       2. register: consumers from this pipeline should register to recieve decoder callbacks
+       2. register: consumers from this pipeline should register to receive decoder callbacks
        3. run: this pipeline should either take over the standard thread of execution, or be executed on another thread
-       4. terminate: called to shutdown the piepline
+       4. terminate: called to shutdown the pipeline
     This class provides for basic log files as a fallback for storing events as well. These logs are stored in a given
     directory, which is created on the initialization of this class.
     """
@@ -68,6 +68,7 @@ class StandardPipeline:
         self.command_hist = None
         self.event_hist = None
         self.channel_hist = None
+        self.command_subscribers = []
 
     def setup(self, config, dictionary, logging_prefix=os.path.expanduser("~"), packet_spec=None):
         """
@@ -212,6 +213,8 @@ class StandardPipeline:
         command_template = self.command_dict[command]
         cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
         self.command_hist.data_callback(cmd_data)
+        for hist in self.command_subscribers:
+            hist.data_callback(cmd_data)
         self.command_encoder.data_callback(cmd_data)
 
     def disconnect(self):
@@ -294,8 +297,8 @@ class StandardPipeline:
 
     def remove_event_history(self, history):
         """
-        Removes a history from the event decoder. Will raise an error if the
-        history was not previously registered.
+        Removes a history from the event decoder. Will raise an error if the history was not
+        previously registered.
         """
         # TODO: add removal functionality to the decoders.
         pass
@@ -308,8 +311,21 @@ class StandardPipeline:
 
     def remove_telemetry_history(self, history):
         """
-        Removes a history from the telemetry decoder. Will raise an error if the
-        history was not previously registered.
+        Removes a history from the telemetry decoder. Will raise an error if the history was not
+        previously registered.
         """
         # TODO: add removal functionality to the decoders.
         pass
+
+    def register_command_history(self, history):
+        """
+        Registers a history with the standard pipeline.
+        """
+        self.command_subscribers.append(history)
+
+    def remove_command_history(self, history):
+        """
+        Removes a history that is subscribed to command data. Will raise an error if the history
+        was not previously registered.
+        """
+        self.command_subscribers.remove(history)

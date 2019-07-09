@@ -31,6 +31,7 @@ class IntegrationTestAPI:
 
         # these histories are owned by the TestAPI and are modified by the API.
         self.command_history = TestHistory()
+        self.pipeline.register_command_history(self.command_history)
         self.telemetry_history = TestHistory()
         self.pipeline.register_telemetry_history(self.telemetry_history)
         self.event_history = TestHistory()
@@ -97,7 +98,7 @@ class IntegrationTestAPI:
         e_pred = predicates.event_predicate(time_pred=time_pred)
         self.event_history.clear(e_pred)
         t_pred = predicates.telemetry_predicate(time_pred=time_pred)
-        self.command_history.clear(t_pred)
+        self.telemetry_history.clear(t_pred)
         self.command_history.clear()
 
     ######################################################################################

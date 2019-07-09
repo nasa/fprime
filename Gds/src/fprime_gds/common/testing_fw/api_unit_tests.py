@@ -30,6 +30,7 @@ class dummyPipeline:
         self.channel_hist = TestHistory()
         self.event_subscribers = []
         self.channel_subscribers = []
+        self.command_subscribers = []
 
     def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
         self.config = config
@@ -92,6 +93,12 @@ class dummyPipeline:
 
     def remove_telemetry_history(self, history):
         self.channel_subscribers.remove(history)
+    
+    def register_command_history(self, history):
+        self.command_subscribers.append(history)
+
+    def remove_command_history(self, history):
+        self.command_subscribers.remove(history)
 
     def enqueue_event(self, event):
         """
