@@ -45,7 +45,7 @@ class TestHistory:
         Args:
             data_object: object to store
         """
-        if(self.filter(data_object)):
+        if self.filter(data_object):
             self.objects.append(data_object)
 
     def retrieve(self, start=None):
