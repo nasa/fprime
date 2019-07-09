@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SG4:SignalGen Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Command: SG4:SignalGen</b></h1>
+
+
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Mnemonic</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "3">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">SignalGen_Settings</td>
+			<td rowspan="4">321 (0x141)</td>
+			<td rowspan="4">Signal Generator Settings</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>Frequency</td>
+						<td>U32</td>
+						<td></td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>Amplitude</td>
+						<td>U32</td>
+						<td></td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>Phase</td>
+						<td>U32</td>
+						<td></td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">SignalGen_Toggle</td>
+			<td rowspan="1">322 (0x142)</td>
+			<td rowspan="1">Toggle Signal Generator On/Off.</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">SignalGen_Skip</td>
+			<td rowspan="1">323 (0x143)</td>
+			<td rowspan="1">Skip next sample</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

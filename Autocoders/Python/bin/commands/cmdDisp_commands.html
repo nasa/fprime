@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>cmdDisp:CommandDispatcher Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Command: cmdDisp:CommandDispatcher</b></h1>
+
+
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Mnemonic</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "3">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CMD_NO_OP</td>
+			<td rowspan="1">121 (0x79)</td>
+			<td rowspan="1">No-op command</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">CMD_NO_OP_STRING</td>
+			<td rowspan="2">122 (0x7a)</td>
+			<td rowspan="2">No-op string command</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>arg1</td>
+						<td>Fw::CmdStringArg</td>
+						<td>The String command argument</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">CMD_TEST_CMD_1</td>
+			<td rowspan="4">123 (0x7b)</td>
+			<td rowspan="4">No-op command</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>arg1</td>
+						<td>I32</td>
+						<td>The I32 command argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg2</td>
+						<td>F32</td>
+						<td>The F32 command argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>arg3</td>
+						<td>U8</td>
+						<td>The U8 command argument</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CMD_CLEAR_TRACKING</td>
+			<td rowspan="1">124 (0x7c)</td>
+			<td rowspan="1">Clear command tracking info to recover from components not returning status</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

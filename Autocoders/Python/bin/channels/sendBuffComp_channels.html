@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>sendBuffComp:SendBuff Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Telemetry Channels: sendBuffComp:SendBuff</b></h1>
+<table>
+  <tr>
+     <th>Channel Name</th>
+     <th>ID</th>
+     <th>Type</th>
+     <th>Description</th>
+ </tr>
+
+ <tr>
+    <td>PacketsSent</td>
+    <td>81 (0x51)</td>
+    <td>U64</td>
+    <td>Number of packets sent</td>
+ </tr>
+ <tr>
+    <td>NumErrorsInjected</td>
+    <td>82 (0x52)</td>
+    <td>U32</td>
+    <td>Number of errors injected</td>
+ </tr>
+ <tr>
+    <td>Parameter3</td>
+    <td>83 (0x53)</td>
+    <td>U8</td>
+    <td>Readback of Parameter3</td>
+ </tr>
+ <tr>
+    <td>Parameter4</td>
+    <td>84 (0x54)</td>
+    <td>F32</td>
+    <td>Readback of Parameter4</td>
+ </tr>
+ <tr>
+    <td>SendState</td>
+    <td>85 (0x55)</td>
+    <td>ActiveState</td>
+    <td>Readback of Parameter4</td>
+ </tr>
+</table>
+</body>
+</html>

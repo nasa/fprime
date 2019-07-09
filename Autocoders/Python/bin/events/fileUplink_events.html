@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>fileUplink:FileUplink Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: fileUplink:FileUplink</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">FileUplink_BadChecksum</td>
+			<td rowspan="4">261 (0x105)</td>
+			<td rowspan="4">During receipt of a file, the computed checksum value did not match the stored value</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The file name</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>computed</td>
+						<td>U32</td>
+						<td></td>
+						<td>The computed value</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>read</td>
+						<td>U32</td>
+						<td></td>
+						<td>The value read</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">FileUplink_FileOpenError</td>
+			<td rowspan="2">262 (0x106)</td>
+			<td rowspan="2">An error occurred opening a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The name of the file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">FileUplink_FileReceived</td>
+			<td rowspan="2">263 (0x107)</td>
+			<td rowspan="2">The File Uplink component successfully received a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The name of the file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">FileUplink_FileWriteError</td>
+			<td rowspan="2">264 (0x108)</td>
+			<td rowspan="2">An error occurred writing to a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The name of the file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">FileUplink_InvalidReceiveMode</td>
+			<td rowspan="3">265 (0x109)</td>
+			<td rowspan="3">The File Uplink component received a packet with a type that was invalid for the current receive mode</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>packetType</td>
+						<td>U32</td>
+						<td></td>
+						<td>The type of the packet received</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>mode</td>
+						<td>U32</td>
+						<td></td>
+						<td>The receive mode</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">FileUplink_PacketOutOfBounds</td>
+			<td rowspan="3">266 (0x10a)</td>
+			<td rowspan="3">During receipt of a file, the File Uplink component encountered a packet with offset and size out of bounds for the current file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>packetIndex</td>
+						<td>U32</td>
+						<td></td>
+						<td>The sequence index of the packet</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The name of the file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">FileUplink_PacketOutOfOrder</td>
+			<td rowspan="3">267 (0x10b)</td>
+			<td rowspan="3">The File Uplink component encountered an out-of-order packet during file receipt</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>packetIndex</td>
+						<td>U32</td>
+						<td></td>
+						<td>The sequence index of the out-of-order packet</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>lastPacketIndex</td>
+						<td>U32</td>
+						<td></td>
+						<td>The sequence index of the last packet received before the out-of-order packet</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">FileUplink_UplinkCanceled</td>
+			<td rowspan="1">268 (0x10c)</td>
+			<td rowspan="1">The File Uplink component received a CANCEL packet</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

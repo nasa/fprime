@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>cmdSeq:CmdSequencer Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Command: cmdSeq:CmdSequencer</b></h1>
+
+
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Mnemonic</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "3">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">CS_RUN</td>
+			<td rowspan="2">541 (0x21d)</td>
+			<td rowspan="2">Run a command sequence file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::CmdStringArg</td>
+						<td>The name of the sequence file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">CS_VALIDATE</td>
+			<td rowspan="2">542 (0x21e)</td>
+			<td rowspan="2">Validate a command sequence file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::CmdStringArg</td>
+						<td>The name of the sequence file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CS_CANCEL</td>
+			<td rowspan="1">543 (0x21f)</td>
+			<td rowspan="1">Cancel a command sequence</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CS_START</td>
+			<td rowspan="1">544 (0x220)</td>
+			<td rowspan="1">Start running a command sequence</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CS_STEP</td>
+			<td rowspan="1">545 (0x221)</td>
+			<td rowspan="1">Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CS_AUTO</td>
+			<td rowspan="1">546 (0x222)</td>
+			<td rowspan="1">Set the run mode to AUTO.</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">CS_MANUAL</td>
+			<td rowspan="1">547 (0x223)</td>
+			<td rowspan="1">Set the run mode to MANUAL.</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>cmdDisp:CommandDispatcher Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: cmdDisp:CommandDispatcher</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">OpCodeRegistered</td>
+			<td rowspan="4">121 (0x79)</td>
+			<td rowspan="4">Op code registered event</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>Opcode</td>
+						<td>U32</td>
+						<td></td>
+						<td>The opcode to register</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>port</td>
+						<td>I32</td>
+						<td></td>
+						<td>The registration port</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>slot</td>
+						<td>I32</td>
+						<td></td>
+						<td>The dispatch slot it was placed in</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">OpCodeDispatched</td>
+			<td rowspan="3">122 (0x7a)</td>
+			<td rowspan="3">Op code dispatched event</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>Opcode</td>
+						<td>U32</td>
+						<td></td>
+						<td>The opcode dispatched</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>port</td>
+						<td>I32</td>
+						<td></td>
+						<td>The port dispatched to</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">OpCodeCompleted</td>
+			<td rowspan="2">123 (0x7b)</td>
+			<td rowspan="2">Op code completed event</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Opcode</td>
+						<td>U32</td>
+						<td></td>
+						<td>The I32 command argument</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">OpCodeError</td>
+			<td rowspan="3">124 (0x7c)</td>
+			<td rowspan="3">Op code completed with error event</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>Opcode</td>
+						<td>U32</td>
+						<td></td>
+						<td>The opcode with the error</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>error</td>
+						<td>ErrorResponse</td>
+						<td></td>
+						<td>The error value</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">MalformedCommand</td>
+			<td rowspan="2">125 (0x7d)</td>
+			<td rowspan="2">Received a malformed command packet</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Status</td>
+						<td>CmdSerError</td>
+						<td></td>
+						<td>The deserialization error</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">InvalidCommand</td>
+			<td rowspan="2">126 (0x7e)</td>
+			<td rowspan="2">Received an invalid opcode</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Opcode</td>
+						<td>U32</td>
+						<td></td>
+						<td>Invalid opcode</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">TooManyCommands</td>
+			<td rowspan="2">127 (0x7f)</td>
+			<td rowspan="2">Exceeded the number of commands that can be simultaneously executed</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Opcode</td>
+						<td>U32</td>
+						<td></td>
+						<td>The opcode that overflowed the list</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">NoOpReceived</td>
+			<td rowspan="1">128 (0x80)</td>
+			<td rowspan="1">The command dispatcher has successfully recieved a NO-OP command</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">NoOpStringReceived</td>
+			<td rowspan="2">129 (0x81)</td>
+			<td rowspan="2">The command dispatcher has successfully recieved a NO-OP command from GUI with a string</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>message</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The NO-OP string that is generated</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">TestCmd1Args</td>
+			<td rowspan="4">130 (0x82)</td>
+			<td rowspan="4">This log event message returns the TEST_CMD_1 arguments.</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>arg1</td>
+						<td>I32</td>
+						<td></td>
+						<td>Arg1</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg2</td>
+						<td>F32</td>
+						<td></td>
+						<td>Arg2</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>arg3</td>
+						<td>U8</td>
+						<td></td>
+						<td>Arg3</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>sockGndIf:GndIf Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: sockGndIf:GndIf</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">NoConnectionToServer</td>
+			<td rowspan="2">381 (0x17d)</td>
+			<td rowspan="2">The thread will try to re-connect until a connection is made</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>PortNumber</td>
+						<td>U32</td>
+						<td></td>
+						<td>The port number running the socket server</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ConnectedToServer</td>
+			<td rowspan="2">382 (0x17e)</td>
+			<td rowspan="2">The socket thread will continuously read until disconnected or terminated</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>PortNumber</td>
+						<td>U32</td>
+						<td></td>
+						<td>The port number running the socket server</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">LostConnectionToServer</td>
+			<td rowspan="2">383 (0x17f)</td>
+			<td rowspan="2">The socket thread will continuously try to reconnect to socket server if connection dropped by server</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>PortNumber</td>
+						<td>U32</td>
+						<td></td>
+						<td>The port number running the socket server</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">GNDIF_ReceiveError</td>
+			<td rowspan="3">384 (0x180)</td>
+			<td rowspan="3">Error in GndIf receiving packet</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>error</td>
+						<td>GNDIF_RECEIVE_ERROR</td>
+						<td></td>
+						<td>The error code</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>PortNumber</td>
+						<td>U32</td>
+						<td></td>
+						<td>The port number running the socket server</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

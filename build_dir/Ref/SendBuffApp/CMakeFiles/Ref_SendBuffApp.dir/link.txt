@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/Darwin/libRef_SendBuffApp.a  CMakeFiles/Ref_SendBuffApp.dir/SendBuffComponentImpl.cpp.o CMakeFiles/Ref_SendBuffApp.dir/SendBuffComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/Darwin/libRef_SendBuffApp.a

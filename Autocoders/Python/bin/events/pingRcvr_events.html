@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>pingRcvr:PingReceiver Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: pingRcvr:PingReceiver</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">PR_PingsDisabled</td>
+			<td rowspan="1">41 (0x29)</td>
+			<td rowspan="1">Disabled ping responses</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PR_PingReceived</td>
+			<td rowspan="2">42 (0x2a)</td>
+			<td rowspan="2">Got ping</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>code</td>
+						<td>U32</td>
+						<td></td>
+						<td>Ping code</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>health:Health Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Command: health:Health</b></h1>
+
+
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Mnemonic</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "3">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">HLTH_ENABLE</td>
+			<td rowspan="2">361 (0x169)</td>
+			<td rowspan="2">A command to enable or disable health checks</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>enable</td>
+						<td>HealthEnabled</td>
+						<td>whether or not health checks are enabled</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">HLTH_PING_ENABLE</td>
+			<td rowspan="3">362 (0x16a)</td>
+			<td rowspan="3">Ignore a particular ping entry</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::CmdStringArg</td>
+						<td>The entry to enable/disable</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>enable</td>
+						<td>PingEnabled</td>
+						<td>whether or not a port is pinged</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">HLTH_CHNG_PING</td>
+			<td rowspan="4">363 (0x16b)</td>
+			<td rowspan="4">Change ping value</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::CmdStringArg</td>
+						<td>The entry to modify</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>warningValue</td>
+						<td>U32</td>
+						<td>Ping warning threshold</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>fatalValue</td>
+						<td>U32</td>
+						<td>Ping fatal threshold</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

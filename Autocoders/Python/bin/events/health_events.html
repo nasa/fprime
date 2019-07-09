@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>health:Health Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: health:Health</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">HLTH_PING_WARN</td>
+			<td rowspan="2">361 (0x169)</td>
+			<td rowspan="2">Warn that a ping target is longer than the warning value</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry passing the warning level</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">HLTH_PING_LATE</td>
+			<td rowspan="2">362 (0x16a)</td>
+			<td rowspan="2">Declare FATAL since task is no longer responding</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry passing the warning level</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">HLTH_PING_WRONG_KEY</td>
+			<td rowspan="3">363 (0x16b)</td>
+			<td rowspan="3">Declare FATAL since task is no longer responding</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry passing the warning level</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>badKey</td>
+						<td>U32</td>
+						<td></td>
+						<td>The incorrect key value</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">HLTH_CHECK_ENABLE</td>
+			<td rowspan="2">364 (0x16c)</td>
+			<td rowspan="2">Report checking turned on or off</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>enabled</td>
+						<td>HealthIsEnabled</td>
+						<td></td>
+						<td>If health checking is enabled</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">HLTH_CHECK_PING</td>
+			<td rowspan="3">365 (0x16d)</td>
+			<td rowspan="3">Report a particular entry on or off</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>enabled</td>
+						<td>HealthPingIsEnabled</td>
+						<td></td>
+						<td>If health pinging is enabled for a particular entry</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry passing the warning level</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">HLTH_CHECK_LOOKUP_ERROR</td>
+			<td rowspan="2">366 (0x16e)</td>
+			<td rowspan="2">Entry was not found</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry passing the warning level</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">HLTH_PING_UPDATED</td>
+			<td rowspan="4">367 (0x16f)</td>
+			<td rowspan="4">Report changed ping</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry changed</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>warn</td>
+						<td>U32</td>
+						<td></td>
+						<td>The new warning value</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>fatal</td>
+						<td>U32</td>
+						<td></td>
+						<td>The new FATAL value</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">HLTH_PING_INVALID_VALUES</td>
+			<td rowspan="4">368 (0x170)</td>
+			<td rowspan="4">Report changed ping</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>entry</td>
+						<td>Fw::LogStringArg&</td>
+						<td>40</td>
+						<td>The entry changed</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>warn</td>
+						<td>U32</td>
+						<td></td>
+						<td>The new warning value</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>fatal</td>
+						<td>U32</td>
+						<td></td>
+						<td>The new FATAL value</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

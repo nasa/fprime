@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>eventLogger:ActiveLogger Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Command: eventLogger:ActiveLogger</b></h1>
+
+
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Mnemonic</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "3">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">ALOG_SET_EVENT_REPORT_FILTER</td>
+			<td rowspan="3">421 (0x1a5)</td>
+			<td rowspan="3">Set filter for reporting events. Events are not stored in component.</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>FilterLevel</td>
+						<td>InputFilterLevel</td>
+						<td>Filter level</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>FilterEnable</td>
+						<td>InputFilterEnabled</td>
+						<td>Filter state</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">ALOG_SET_EVENT_SEND_FILTER</td>
+			<td rowspan="3">422 (0x1a6)</td>
+			<td rowspan="3">Set filter for sending events. Event will not be sent as a buffer.</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>FilterLevel</td>
+						<td>SendFilterLevel</td>
+						<td>Filter level</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>FilterEnable</td>
+						<td>SendFilterEnabled</td>
+						<td>Severity filter state</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ALOG_DUMP_EVENT_LOG</td>
+			<td rowspan="2">423 (0x1a7)</td>
+			<td rowspan="2">Dump circular buffers of events to a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>filename</td>
+						<td>Fw::CmdStringArg</td>
+						<td></td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">ALOG_SET_ID_FILTER</td>
+			<td rowspan="3">424 (0x1a8)</td>
+			<td rowspan="3">Filter a particular ID</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>ID</td>
+						<td>U32</td>
+						<td></td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>IdFilterEnable</td>
+						<td>IdFilterEnabled</td>
+						<td>ID filter state</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">ALOG_DUMP_FILTER_STATE</td>
+			<td rowspan="1">425 (0x1a9)</td>
+			<td rowspan="1">Dump the filter states via events</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

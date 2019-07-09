@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Buffer.a  CMakeFiles/Fw_Buffer.dir/BufferSerializableAc.cpp.o CMakeFiles/Fw_Buffer.dir/BufferGetPortAc.cpp.o CMakeFiles/Fw_Buffer.dir/BufferSendPortAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Buffer.a

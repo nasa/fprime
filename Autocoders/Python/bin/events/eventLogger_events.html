@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>eventLogger:ActiveLogger Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: eventLogger:ActiveLogger</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">ALOG_FILE_WRITE_ERR</td>
+			<td rowspan="3">421 (0x1a5)</td>
+			<td rowspan="3">Failed to write circular buffer</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>stage</td>
+						<td>LogWriteError</td>
+						<td></td>
+						<td>The write stage</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>error</td>
+						<td>I32</td>
+						<td></td>
+						<td>The error code</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ALOG_FILE_WRITE_COMPLETE</td>
+			<td rowspan="2">422 (0x1a6)</td>
+			<td rowspan="2">Evemt log file write complete</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>records</td>
+						<td>U32</td>
+						<td></td>
+						<td>number of records written</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">ALOG_SEVERITY_FILTER_STATE</td>
+			<td rowspan="4">423 (0x1a7)</td>
+			<td rowspan="4">Dump severity filter state</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>severity</td>
+						<td>EventFilterState</td>
+						<td></td>
+						<td>The severity level</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>recvEnabled</td>
+						<td>bool</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>sendEnabled</td>
+						<td>bool</td>
+						<td></td>
+						<td></td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ALOG_ID_FILTER_ENABLED</td>
+			<td rowspan="2">424 (0x1a8)</td>
+			<td rowspan="2">Indicate ID is filtered</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>ID</td>
+						<td>U32</td>
+						<td></td>
+						<td>The ID filtered</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ALOG_ID_FILTER_LIST_FULL</td>
+			<td rowspan="2">425 (0x1a9)</td>
+			<td rowspan="2">Attempted to add ID to full ID filter ID</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>ID</td>
+						<td>U32</td>
+						<td></td>
+						<td>The ID filtered</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ALOG_ID_FILTER_REMOVED</td>
+			<td rowspan="2">426 (0x1aa)</td>
+			<td rowspan="2">Removed an ID from the filter</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>ID</td>
+						<td>U32</td>
+						<td></td>
+						<td>The ID removed</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">ALOG_ID_FILTER_NOT_FOUND</td>
+			<td rowspan="2">427 (0x1ab)</td>
+			<td rowspan="2">ID not in filter</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>ID</td>
+						<td>U32</td>
+						<td></td>
+						<td>The ID removed</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>prmDb:PrmDb Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: prmDb:PrmDb</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PrmIdNotFound</td>
+			<td rowspan="2">141 (0x8d)</td>
+			<td rowspan="2">Parameter ID not found in database.</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Id</td>
+						<td>U32</td>
+						<td></td>
+						<td>The parameter ID</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PrmIdUpdated</td>
+			<td rowspan="2">142 (0x8e)</td>
+			<td rowspan="2">Parameter ID updated in database</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Id</td>
+						<td>U32</td>
+						<td></td>
+						<td>The parameter ID</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PrmDbFull</td>
+			<td rowspan="2">143 (0x8f)</td>
+			<td rowspan="2">Parameter database is full</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Id</td>
+						<td>U32</td>
+						<td></td>
+						<td>The parameter ID</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PrmIdAdded</td>
+			<td rowspan="2">144 (0x90)</td>
+			<td rowspan="2">Parameter ID added to database</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>Id</td>
+						<td>U32</td>
+						<td></td>
+						<td>The parameter ID</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">PrmFileWriteError</td>
+			<td rowspan="4">145 (0x91)</td>
+			<td rowspan="4">Failed to write parameter file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>stage</td>
+						<td>PrmWriteError</td>
+						<td></td>
+						<td>The write stage</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>record</td>
+						<td>I32</td>
+						<td></td>
+						<td>The record that had the failure</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>error</td>
+						<td>I32</td>
+						<td></td>
+						<td>The error code</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PrmFileSaveComplete</td>
+			<td rowspan="2">146 (0x92)</td>
+			<td rowspan="2">Save of parameter file completed</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>records</td>
+						<td>U32</td>
+						<td></td>
+						<td>The number of records saved</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">PrmFileReadError</td>
+			<td rowspan="4">147 (0x93)</td>
+			<td rowspan="4">Failed to read parameter file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>stage</td>
+						<td>PrmReadError</td>
+						<td></td>
+						<td>The write stage</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>record</td>
+						<td>I32</td>
+						<td></td>
+						<td>The record that had the failure</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>error</td>
+						<td>I32</td>
+						<td></td>
+						<td>The error code</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">PrmFileLoadComplete</td>
+			<td rowspan="2">148 (0x94)</td>
+			<td rowspan="2">Load of parameter file completed</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>records</td>
+						<td>U32</td>
+						<td></td>
+						<td>The number of records loaded</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

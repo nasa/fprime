@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>fileDownlink:FileDownlink Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+<h1><b>Events: fileDownlink:FileDownlink</b></h1>
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Event Name</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "4">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Size</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">FileDownlink_FileOpenError</td>
+			<td rowspan="2">501 (0x1f5)</td>
+			<td rowspan="2">An error occurred opening a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>60</td>
+						<td>The name of the file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="2">FileDownlink_FileReadError</td>
+			<td rowspan="2">502 (0x1f6)</td>
+			<td rowspan="2">An error occurred reading a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;border-bottom: 2px solid black;">
+						<td>fileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>60</td>
+						<td>The name of the file</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">FileDownlink_FileSent</td>
+			<td rowspan="3">503 (0x1f7)</td>
+			<td rowspan="3">The File Downlink component successfully sent a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>sourceFileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>60</td>
+						<td>The source file name</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>destFileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>60</td>
+						<td>The destination file name</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="3">FileDownlink_DownlinkCanceled</td>
+			<td rowspan="3">504 (0x1f8)</td>
+			<td rowspan="3">The File Downlink component canceled downlink of a file</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>sourceFileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>60</td>
+						<td>The source file name</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>destFileName</td>
+						<td>Fw::LogStringArg&</td>
+						<td>60</td>
+						<td>The destination file name</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+</body>
+</html>

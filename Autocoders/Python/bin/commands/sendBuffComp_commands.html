@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>sendBuffComp:SendBuff Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Command: sendBuffComp:SendBuff</b></h1>
+
+
+
+<table>
+	<thead>
+		<tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">
+			<th rowspan = "2">Mnemonic</th>
+			<th rowspan = "2">ID</th>
+			<th rowspan = "2">Description</th>
+			<th rowspan = "1" colspan = "3">Arguments</th>
+		</tr>
+		<tr style = "border-right: 2px solid black; ">
+			<th>Argument</th>
+			<th>Type</th>
+			<th>Description</th>
+		<tr>
+	</thead>
+	<tbody>
+
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">SB_START_PKTS</td>
+			<td rowspan="1">81 (0x51)</td>
+			<td rowspan="1">Command to start sending packets</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="1">SB_INJECT_PKT_ERROR</td>
+			<td rowspan="1">82 (0x52)</td>
+			<td rowspan="1">Send a bad packet</td>
+				<td></td>
+				<td></td>
+				<td></td>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="4">SB_GEN_FATAL</td>
+			<td rowspan="4">83 (0x53)</td>
+			<td rowspan="4">Generate a FATAL EVR</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>arg1</td>
+						<td>U32</td>
+						<td>First FATAL Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg2</td>
+						<td>U32</td>
+						<td>Second FATAL Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>arg3</td>
+						<td>U32</td>
+						<td>Third FATAL Argument</td>
+					</tr>
+		</tr>
+		<tr style = "border: 2px solid black;">
+			<td rowspan="7">SB_GEN_ASSERT</td>
+			<td rowspan="7">84 (0x54)</td>
+			<td rowspan="7">Generate an ASSERT</td>
+					<tr style = "border-right: 2px solid black;border-top: 2px solid black;">
+						<td>arg1</td>
+						<td>U32</td>
+						<td>First ASSERT Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg2</td>
+						<td>U32</td>
+						<td>Second ASSERT Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg3</td>
+						<td>U32</td>
+						<td>Third ASSERT Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg4</td>
+						<td>U32</td>
+						<td>Fourth ASSERT Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;">
+						<td>arg5</td>
+						<td>U32</td>
+						<td>Fifth ASSERT Argument</td>
+					</tr>
+					<tr style = "border-right: 2px solid black;border-bottom: 2px solid black;">
+						<td>arg6</td>
+						<td>U32</td>
+						<td>Sixth ASSERT Argument</td>
+					</tr>
+		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

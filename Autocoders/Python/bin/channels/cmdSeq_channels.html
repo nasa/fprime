@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>cmdSeq:CmdSequencer Component Dictionary</title>
+</head>
+<body>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+html {
+    font-family: Arial, sans-serif ;
+    font-size: 90% ;
+}
+</style>
+
+
+<h1><b>Telemetry Channels: cmdSeq:CmdSequencer</b></h1>
+<table>
+  <tr>
+     <th>Channel Name</th>
+     <th>ID</th>
+     <th>Type</th>
+     <th>Description</th>
+ </tr>
+
+ <tr>
+    <td>CS_LoadCommands</td>
+    <td>541 (0x21d)</td>
+    <td>U32</td>
+    <td>The number of Load commands executed</td>
+ </tr>
+ <tr>
+    <td>CS_CancelCommands</td>
+    <td>542 (0x21e)</td>
+    <td>U32</td>
+    <td>The number of Cancel commands executed</td>
+ </tr>
+ <tr>
+    <td>CS_Errors</td>
+    <td>543 (0x21f)</td>
+    <td>U32</td>
+    <td>The number of errors that have occurred</td>
+ </tr>
+ <tr>
+    <td>CS_CommandsExecuted</td>
+    <td>544 (0x220)</td>
+    <td>U32</td>
+    <td>The number of commands executed across all sequences.</td>
+ </tr>
+ <tr>
+    <td>CS_SequencesCompleted</td>
+    <td>545 (0x221)</td>
+    <td>U32</td>
+    <td>The number of sequences completed.</td>
+ </tr>
+</table>
+</body>
+</html>
