@@ -160,7 +160,7 @@ class IntegrationTestAPI:
             timeout: the number of seconds to wait before terminating the search (int)
 
         Returns:
-            The event or events found by the search
+            The channel update or updates found by the search
         """
         self.send_command(command, args)
         if isinstance(channels, list):
@@ -228,7 +228,7 @@ class IntegrationTestAPI:
             timeout: the number of seconds to wait before terminating the search (int)
 
         Returns:
-            The event or events found by the search
+            The channel update or updates found by the search
         """
         self.send_command(command, args)
         if isinstance(channels, list):
