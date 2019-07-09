@@ -110,4 +110,4 @@ class FileDecoder(decoder.Decoder):
 
 if __name__ == "__main__":
     pass
-    
+
