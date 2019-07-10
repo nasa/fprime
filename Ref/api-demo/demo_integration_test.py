@@ -32,19 +32,18 @@ class TestRefAppClass(object):
         self.api.start_test_case(method.__name__)
 
     def test_is_streaming(self):
-        pred = predicates.greater_than(0)
-        results = self.api.await_telemetry_count(pred, timeout=5)
+        pred = predicates.greater_than_or_equal_to(5)
+        results = self.api.assert_telemetry_count(pred, timeout=10)
         for result in results:
             print("received channel update: {}".format(result.get_str()))
-        assert pred(len(results))
 
     def test_send_command(self):
         self.api.send_command("CMD_NO_OP", [])
         assert self.api.get_command_test_history().size() == 1
+        print(self.api.get_command_test_history()[0])
 
-    def test_send_and_await_no_op(self):
+    def test_send_and_assert_no_op(self):
         evrs = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
-        results = self.api.send_and_await_event("CMD_NO_OP", events=evrs)
-        assert len(results) == 3
+        results = self.api.send_and_assert_event("CMD_NO_OP", events=evrs)
         for event in results:
             print(event)
