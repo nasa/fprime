@@ -465,7 +465,7 @@ class event_predicate(predicate):
             return False
         e_id = self.id_pred(event.get_id())
         e_args = self.args_pred(event.get_args())
-        e_time = self.time_pred(event.get_time())
+        e_time = self.time_pred(event.get_time().useconds)
         return e_id and e_args and e_time
 
     def __str__(self):
@@ -512,7 +512,7 @@ class telemetry_predicate(predicate):
             return False
         t_id = self.id_pred(telemetry.get_id())
         t_val = self.value_pred(telemetry.get_val())
-        t_time = self.time_pred(telemetry.get_time())
+        t_time = self.time_pred(telemetry.get_time().useconds)
         return t_id and t_val and t_time
 
     def __str__(self):
