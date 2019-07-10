@@ -101,7 +101,7 @@ class TestHistory:
             index = self.size()
         elif predicates.is_predicate(start):
             index = 0
-            while not start(self.objects[index]) and index < self.size():
+            while index < self.size() and not start(self.objects[index]):
                 index += 1
         else:
             index = start
