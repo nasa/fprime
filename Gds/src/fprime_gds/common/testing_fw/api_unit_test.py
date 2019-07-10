@@ -320,15 +320,16 @@ class APITestCases(unittest.TestCase):
     def test_instantiate_pipeline(self):
         pipeline = standard.StandardPipeline()
         GDS_CONFIG = config_manager.ConfigManager()
-        pipeline.setup(GDS_CONFIG, '/home/kevin/software/fprime-sw/Ref/Top/RefTopologyAppDictionary.xml')
+        path = '/home/kevin/software/fprime-sw/Ref/Top/RefTopologyAppDictionary.xml'
+        pipeline.setup(GDS_CONFIG, path)
         pipeline.connect('127.0.0.1', 50000)
-        self.api = self.api = IntegrationTestAPI(pipeline)
+        self.api = IntegrationTestAPI(pipeline)
         pred = predicates.greater_than(10)
         results = self.api.await_telemetry_count(pred, timeout=25)
         for result in results:
             print("received: {}".format(result.get_str()))
         try:
-            assert result is not None
+            assert pred(len(results))
         except:
             pipeline.disconnect()
             raise
