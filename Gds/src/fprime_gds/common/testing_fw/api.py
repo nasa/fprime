@@ -10,6 +10,7 @@ telemetry and dictionaries.
 import time
 import signal
 
+from fprime.common.models.serialize.time_type import TimeType
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 
@@ -38,7 +39,7 @@ class IntegrationTestAPI:
         self.pipeline.register_event_history(self.event_history)
 
         # Initialize latest time. Will be updated whenever a time query is made.
-        self.latest_time = -1
+        self.latest_time = TimeType().useconds
 
     def log_test_message(self, msg):
         """
@@ -47,7 +48,7 @@ class IntegrationTestAPI:
             msg: a user-provided message to add to the test log.
         """
         # TODO: Define what a test log should look like and describe its parameters.
-        pass
+        print(msg)
 
     def start_test_case(self, name):
         """
@@ -59,7 +60,7 @@ class IntegrationTestAPI:
             name: the name of the test case
         """
         self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
-        self.log_test_message("Starting new test case: {}".format(name))
+        self.log_test_message("\n[STARTING CASE] {}".format(name))
         self.clear_histories()
 
     def get_latest_fsw_time(self):
@@ -67,17 +68,17 @@ class IntegrationTestAPI:
         Finds the latest flight software time received by either history.
 
         Returns:
-            a flight software timestamp
+            a flight software timestamp (TimeType)
         """
         events = self.aggregate_event_history.retrieve()
-        e_time = -1
+        e_time = TimeType().useconds
         if len(events) > 0:
-            e_time = events[-1].get_time()
+            e_time = events[-1].get_time().useconds
 
         channels = self.aggregate_telemetry_history.retrieve()
-        t_time = -1
+        t_time = TimeType().useconds
         if len(channels) > 0:
-            t_time = channels[-1].get_time()
+            t_time = channels[-1].get_time().useconds
 
         self.latest_time = max(e_time, t_time, self.latest_time)
         return self.latest_time
@@ -94,11 +95,16 @@ class IntegrationTestAPI:
         Args:
             time_stamp: If specified, histories are only cleared before the timestamp.
         """
-        time_pred = predicates.greater_than_or_equal_to(time_stamp)
-        e_pred = predicates.event_predicate(time_pred=time_pred)
-        self.event_history.clear(e_pred)
-        t_pred = predicates.telemetry_predicate(time_pred=time_pred)
-        self.telemetry_history.clear(t_pred)
+        if time_stamp is not None:
+            time_pred = predicates.greater_than_or_equal_to(time_stamp)
+            e_pred = predicates.event_predicate(time_pred=time_pred)
+            self.event_history.clear(e_pred)
+            t_pred = predicates.telemetry_predicate(time_pred=time_pred)
+            self.telemetry_history.clear(t_pred)
+        else:
+            self.event_history.clear()
+            self.telemetry_history.clear()
+        
         self.command_history.clear()
 
     ######################################################################################
@@ -119,7 +125,7 @@ class IntegrationTestAPI:
         if isinstance(command, str):
             cmd_dict = self.pipeline.get_command_name_dictionary()
             if command in cmd_dict:
-                return cmd_dict.get(command, "id")
+                return cmd_dict[command].get_id()
             else:
                 raise KeyError(
                     "The given command mnemonic, {}, was not in the dictionary".format(
@@ -137,7 +143,7 @@ class IntegrationTestAPI:
                     )
                 )
 
-    def send_command(self, command, args):
+    def send_command(self, command, args=[]):
         """
         Sends the specified command.
         Args:
@@ -147,7 +153,7 @@ class IntegrationTestAPI:
         command = self.translate_command_name(command)
         self.pipeline.send_command(command, args)
 
-    def send_and_await_telemetry(self, command, args, channels, start=None, timeout=5):
+    def send_and_await_telemetry(self, command, args=[], channels=[], start=None, timeout=5):
         """
         Sends the specified command and awaits the specified channel update or sequence of
         updates. See await_telemetry and await_telemetry_sequence for full details.
@@ -169,7 +175,7 @@ class IntegrationTestAPI:
         else:
             return self.await_telemetry(channels, start=start, timeout=timeout)
 
-    def send_and_await_event(self, command, args, events, start=None, timeout=5):
+    def send_and_await_event(self, command, args=[], events=[], start=None, timeout=5):
         """
         Sends the specified command and awaits the specified event message or sequence of
         messages. See await_event and await event sequence for full details.
@@ -194,7 +200,7 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Command Asserts
     ######################################################################################
-    def assert_send_command(self, command, args):
+    def assert_send_command(self, command, args=[]):
         """
         Sends a command and asserts that the command was translated. If the command is in conflict
         with the flight dictionary, this will raise a test error. Note: This assert does not check
@@ -215,7 +221,7 @@ class IntegrationTestAPI:
             assert False
         assert True
 
-    def send_and_assert_telemetry(self, command, args, channels, start=None, timeout=5):
+    def send_and_assert_telemetry(self, command, args=[], channels=[], start=None, timeout=5):
         """
         Sends the specified command and asserts on the specified channel update or sequence of
         updates. See await_telemetry and await_telemetry_sequence for full details.
@@ -237,7 +243,7 @@ class IntegrationTestAPI:
         else:
             return self.assert_telemetry(channels, start=start, timeout=timeout)
 
-    def send_and_assert_event(self, command, args, events, start=None, timeout=5):
+    def send_and_assert_event(self, command, args=[], events=[], start=None, timeout=5):
         """
         Sends the specified command and asserts on the specified event message or sequence of
         messages. See assert_event and assert event sequence for full details.
@@ -275,7 +281,7 @@ class IntegrationTestAPI:
         if isinstance(channel, str):
             ch_dict = self.pipeline.get_channel_name_dictionary()
             if channel in ch_dict:
-                return ch_dict.get(channel, "id")
+                return ch_dict[channel].get_id()
             else:
                 raise KeyError(
                     "The given channel mnemonic, {}, was not in the dictionary".format(
@@ -501,7 +507,7 @@ class IntegrationTestAPI:
         if isinstance(event, str):
             event_dict = self.pipeline.get_event_name_dictionary()
             if event in event_dict:
-                return event_dict.get(event, "id")
+                return event_dict[event].get_id()
             else:
                 raise KeyError(
                     "The given event mnemonic, {}, was not in the dictionary".format(
