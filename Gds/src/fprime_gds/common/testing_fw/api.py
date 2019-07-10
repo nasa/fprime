@@ -17,13 +17,17 @@ from fprime_gds.common.history.test import TestHistory
 
 class IntegrationTestAPI:
     """
-    Class used to collect basic assertions that would be used on a GDS Pipeline to carry
-    out integration tests.
-    Args:
-        pipeline: a pipeline object providing access to basic GDS functionality
+    A value used to begin searches after the current contents in a history and only search future
+    items
     """
+    NOW = "NOW"
 
     def __init__(self, pipeline):
+        """
+        Initializes API: constructs and registers test histories.
+        Args:
+            pipeline: a pipeline object providing access to basic GDS functionality
+        """
         self.pipeline = pipeline
         # these are owned by the GDS and will not be modified by the test API.
         self.aggregate_command_history = pipeline.get_command_history()
@@ -104,7 +108,7 @@ class IntegrationTestAPI:
         else:
             self.event_history.clear()
             self.telemetry_history.clear()
-        
+
         self.command_history.clear()
 
     ######################################################################################
@@ -153,7 +157,7 @@ class IntegrationTestAPI:
         command = self.translate_command_name(command)
         self.pipeline.send_command(command, args)
 
-    def send_and_await_telemetry(self, command, args=[], channels=[], start=None, timeout=5):
+    def send_and_await_telemetry(self, command, args=[], channels=[], timeout=5):
         """
         Sends the specified command and awaits the specified channel update or sequence of
         updates. See await_telemetry and await_telemetry_sequence for full details.
@@ -169,13 +173,14 @@ class IntegrationTestAPI:
         Returns:
             The channel update or updates found by the search
         """
+        start = self.telemetry_history.size()
         self.send_command(command, args)
         if isinstance(channels, list):
             return self.await_telemetry_sequence(channels, start=start, timeout=timeout)
         else:
             return self.await_telemetry(channels, start=start, timeout=timeout)
 
-    def send_and_await_event(self, command, args=[], events=[], start=None, timeout=5):
+    def send_and_await_event(self, command, args=[], events=[], timeout=5):
         """
         Sends the specified command and awaits the specified event message or sequence of
         messages. See await_event and await event sequence for full details.
@@ -191,6 +196,7 @@ class IntegrationTestAPI:
         Returns:
             The event or events found by the search
         """
+        start = self.event_history.size()
         self.send_command(command, args)
         if isinstance(events, list):
             return self.await_event_sequence(events, start=start, timeout=timeout)
@@ -221,7 +227,7 @@ class IntegrationTestAPI:
             assert False
         assert True
 
-    def send_and_assert_telemetry(self, command, args=[], channels=[], start=None, timeout=5):
+    def send_and_assert_telemetry(self, command, args=[], channels=[], timeout=5):
         """
         Sends the specified command and asserts on the specified channel update or sequence of
         updates. See await_telemetry and await_telemetry_sequence for full details.
@@ -237,13 +243,14 @@ class IntegrationTestAPI:
         Returns:
             The channel update or updates found by the search
         """
+        start = self.telemetry_history.size()
         self.send_command(command, args)
         if isinstance(channels, list):
             return self.assert_telemetry_sequence(channels, start=start, timeout=timeout)
         else:
             return self.assert_telemetry(channels, start=start, timeout=timeout)
 
-    def send_and_assert_event(self, command, args=[], events=[], start=None, timeout=5):
+    def send_and_assert_event(self, command, args=[], events=[], timeout=5):
         """
         Sends the specified command and asserts on the specified event message or sequence of
         messages. See assert_event and assert event sequence for full details.
@@ -258,6 +265,7 @@ class IntegrationTestAPI:
         Returns:
             The event or events found by the search
         """
+        start = self.event_history.size()
         self.send_command(command, args)
         if isinstance(events, list):
             return self.assert_event_sequence(events, start=start, timeout=timeout)
@@ -320,7 +328,7 @@ class IntegrationTestAPI:
             return channel
 
         if not predicates.is_predicate(channel) and channel is not None:
-            channel = self.translate_channel_name(channel)
+            channel = self.translate_telemetry_name(channel)
             channel = predicates.equal_to(channel)
 
         if not predicates.is_predicate(value) and value is not None:
@@ -329,7 +337,7 @@ class IntegrationTestAPI:
         return predicates.telemetry_predicate(channel, value, time_pred)
 
     def await_telemetry(
-        self, channel, value=None, time_pred=None, history=None, start=None, timeout=5
+        self, channel, value=None, time_pred=None, history=None, start="NOW", timeout=5
     ):
         """
         A search for a single telemetry update received. If the history doesn't have the
@@ -353,7 +361,7 @@ class IntegrationTestAPI:
 
         return self.find_history_item(history, t_pred, start, timeout)
 
-    def await_telemetry_sequence(self, channels, history=None, start=None, timeout=5):
+    def await_telemetry_sequence(self, channels, history=None, start="NOW", timeout=5):
         """
         A search for a sequence of telemetry updates. If the history doesn't have the complete
         sequence, the call will await until the sequence is completed or the timeout, at
@@ -380,7 +388,7 @@ class IntegrationTestAPI:
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
     def await_telemetry_count(
-        self, count, channels=None, history=None, start=None, timeout=5
+        self, count, channels=None, history=None, start="NOW", timeout=5
     ):
         """
         A search on the number of telemetry updates received. If the history doesn't have the
@@ -552,7 +560,7 @@ class IntegrationTestAPI:
         return predicates.event_predicate(event, args, time_pred)
 
     def await_event(
-        self, event, args=None, time_pred=None, history=None, start=None, timeout=5
+        self, event, args=None, time_pred=None, history=None, start="NOW", timeout=5
     ):
         """
         A search for a single event message received. If the history doesn't have the
@@ -576,7 +584,7 @@ class IntegrationTestAPI:
 
         return self.find_history_item(history, e_pred, start, timeout)
 
-    def await_event_sequence(self, events, history=None, start=None, timeout=5):
+    def await_event_sequence(self, events, history=None, start="NOW", timeout=5):
         """
         A search for a sequence of event messages. If the history doesn't have the complete
         sequence, the call will await until the sequence is completed or the timeout, at
@@ -603,7 +611,7 @@ class IntegrationTestAPI:
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
     def await_event_count(
-        self, count, events=None, history=None, start=None, timeout=5
+        self, count, events=None, history=None, start="NOW", timeout=5
     ):
         """
         A search on the number of events received. If the history doesn't have the correct event
@@ -753,6 +761,9 @@ class IntegrationTestAPI:
         Returns:
             the data object found during the search, otherwise, None
         """
+        if start == self.NOW:
+            start = history.size()
+
         current = history.retrieve(start)
         for item in current:
             if search_pred(item):
@@ -790,6 +801,9 @@ class IntegrationTestAPI:
         Returns:
             a list of data objects that satisfied the sequence
         """
+        if start == self.NOW:
+            start = history.size()
+
         current = history.retrieve(start)
         sequence = []
         seq_preds = seq_preds.copy()
@@ -848,6 +862,9 @@ class IntegrationTestAPI:
             count_pred = predicates.equal_to(count)
         else:
             raise TypeError("Find history must receive a predicate or an integer")
+
+        if start == self.NOW:
+            start = history.size()
 
         objects = []
         if search_pred is None:
