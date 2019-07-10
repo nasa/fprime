@@ -1,5 +1,6 @@
 import os
 import sys
+
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, "../../Gds/src")
 fprimeName = os.path.join(filename, "../../Fw/Python/src")
@@ -13,15 +14,14 @@ from fprime_gds.common.utils.config_manager import ConfigManager
 
 
 class TestRefAppClass(object):
-
     @classmethod
     def setup_class(cls):
         cls.pipeline = StandardPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
-        path = os.path.join(filename, '../Top/RefTopologyAppDictionary.xml')
+        path = os.path.join(filename, "../Top/RefTopologyAppDictionary.xml")
         cls.pipeline.setup(config, path)
-        cls.pipeline.connect('127.0.0.1', 50000)
+        cls.pipeline.connect("127.0.0.1", 50000)
         cls.api = IntegrationTestAPI(cls.pipeline)
 
     @classmethod
@@ -34,7 +34,11 @@ class TestRefAppClass(object):
     def test_is_streaming(self):
         results = self.api.assert_telemetry_count(5, timeout=10)
         for result in results:
-            print("received channel {} update: {}".format(result.get_id(), result.get_str()))
+            print(
+                "received channel {} update: {}".format(
+                    result.get_id(), result.get_str()
+                )
+            )
 
     def test_send_command(self):
         self.api.send_command("CMD_NO_OP", [])
@@ -42,11 +46,11 @@ class TestRefAppClass(object):
         print(self.api.get_command_test_history()[0])
 
     def test_send_and_assert_no_op(self):
-        evrs = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
-        results = self.api.send_and_assert_event("CMD_NO_OP", events=evrs)
+        evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
+        results = self.api.send_and_assert_event("CMD_NO_OP", events=evr_seq)
         for event in results:
             print("[{}] EVR {}".format(event.get_time().useconds, event))
-        results = self.api.send_and_assert_event("CMD_NO_OP", events=evrs)
+        results = self.api.send_and_assert_event("CMD_NO_OP", events=evr_seq)
         for event in results:
             print("[{}] EVR {}".format(event.get_time().useconds, event))
 
@@ -58,5 +62,10 @@ class TestRefAppClass(object):
         last = 0
         for tlm in results:
             print("[{}] EVR {}".format(tlm.get_time().useconds, tlm))
-            assert tlm.get_val() > last
-            last = tlm.get_val()
+            recent = tlm.get_val()
+            assert (
+                recent > last
+            ), "BD_Cycles should increase, but {} is not greater than {}.".format(
+                recent, last
+            )
+            last = recent
