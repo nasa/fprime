@@ -210,7 +210,7 @@ class StandardPipeline:
         :param command: command id from dictionary to get command template
         :param args: arguments to process
         """
-        command_template = self.command_dict[command]
+        command_template = self.command_id_dict[command]
         cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
         self.command_hist.data_callback(cmd_data)
         for hist in self.command_subscribers:
