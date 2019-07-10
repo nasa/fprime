@@ -32,10 +32,9 @@ class TestRefAppClass(object):
         self.api.start_test_case(method.__name__)
 
     def test_is_streaming(self):
-        pred = predicates.greater_than_or_equal_to(5)
-        results = self.api.assert_telemetry_count(pred, timeout=10)
+        results = self.api.assert_telemetry_count(5, timeout=10)
         for result in results:
-            print("received channel update: {}".format(result.get_str()))
+            print("received channel {} update: {}".format(result.get_id(), result.get_str()))
 
     def test_send_command(self):
         self.api.send_command("CMD_NO_OP", [])
@@ -46,4 +45,18 @@ class TestRefAppClass(object):
         evrs = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
         results = self.api.send_and_assert_event("CMD_NO_OP", events=evrs)
         for event in results:
-            print(event)
+            print("[{}] EVR {}".format(event.get_time().useconds, event))
+        results = self.api.send_and_assert_event("CMD_NO_OP", events=evrs)
+        for event in results:
+            print("[{}] EVR {}".format(event.get_time().useconds, event))
+
+    def test_bd_cycles_ascending(self):
+        tlm = []
+        for i in range(0, 10):
+            tlm.append("BD_Cycles")
+        results = self.api.assert_telemetry_sequence(tlm, timeout=20)
+        last = 0
+        for tlm in results:
+            print("[{}] EVR {}".format(tlm.get_time().useconds, tlm))
+            assert tlm.get_val() > last
+            last = tlm.get_val()
