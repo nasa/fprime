@@ -935,5 +935,5 @@ class IntegrationTestAPI:
             assert True, pred_msg
         else:
             msg = name + " Assertion failed!\n" + pred_msg
-            self.__log(msg, TestLogger.Red)
+            self.__log(msg, TestLogger.RED)
             assert False, pred_msg
