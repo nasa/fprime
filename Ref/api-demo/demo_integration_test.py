@@ -35,11 +35,10 @@ class TestRefAppClass(object):
     def test_is_streaming(self):
         results = self.api.assert_telemetry_count(5, timeout=10)
         for result in results:
-            print(
-                "received channel {} update: {}".format(
-                    result.get_id(), result.get_str()
-                )
+            msg = "received channel {} update: {}".format(
+                result.get_id(), result.get_str()
             )
+            print(msg)
 
     def test_send_command(self):
         self.api.send_command("CMD_NO_OP", [])
@@ -62,11 +61,11 @@ class TestRefAppClass(object):
         results = self.api.assert_telemetry_sequence(tlm, timeout=20)
         last = 0
         for tlm in results:
-            print("[{}] EVR {}".format(tlm.get_time().useconds, tlm))
+            msg = "[{}] EVR {}".format(tlm.get_time().useconds, tlm)
+            print(msg)
             recent = tlm.get_val()
-            assert (
-                recent > last
-            ), "BD_Cycles should increase, but {} is not greater than {}.".format(
+            msg = "BD_Cycles should increase, but {} is not greater than {}.".format(
                 recent, last
             )
+            assert recent > last, msg
             last = recent
