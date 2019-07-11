@@ -15,7 +15,7 @@ https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode
 import time
 import datetime
 from openpyxl import Workbook
-from openpyxl.styles import PatternFill, Font
+from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.cell import WriteOnlyCell
 
 
@@ -40,6 +40,8 @@ class TestLogger:
     ITALICS = "ITALICS"
     UNDERLINED = "UNDERLINED"
 
+    __align = Alignment(vertical='top', wrap_text=True)
+
     def __init__(self, filename):
         """
         Constructs a TestLogger
@@ -54,6 +56,8 @@ class TestLogger:
         self.filename = filename
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
+        self.worksheet.column_dimensions['A'].width = 20
+        self.worksheet.column_dimensions['C'].width = 120
         header = []
         header.append(self.__get_cell("Time", style=self.BOLD))
         header.append(self.__get_cell("Sender", style=self.BOLD))
@@ -75,10 +79,12 @@ class TestLogger:
             cell.fill = PatternFill("solid", fgColor=color)
         if style is not None:
             cell.font = Font(
+                name='Courier',
                 bold=(style == self.BOLD),
                 italic=(style == self.ITALICS),
                 underline=("single" if style == self.UNDERLINED else "none"),
             )
+        cell.alignment = self.__align
         return cell
 
     def log_message(self, message, sender="NA", color=None, style=None):
