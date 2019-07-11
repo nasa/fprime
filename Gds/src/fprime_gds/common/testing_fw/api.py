@@ -61,16 +61,17 @@ class IntegrationTestAPI:
             self.logger.close_log()
             self.logger = None
 
-    def log_test_message(self, msg):
+    def log_test_message(self, msg, color=None):
         """
         User-accessible function to log user messages to the test log.
         Args:
             msg: a user-provided message to add to the test log.
+            color: a string containing a color hex code "######"
         """
         if self.logger is None:
             print(msg)
         else:
-            self.logger.log_message(msg, "API user", self.logger.WHITE)
+            self.logger.log_message(msg, "Test API user", color)
 
     def start_test_case(self, name):
         """
