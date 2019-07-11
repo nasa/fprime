@@ -106,7 +106,8 @@ class FileDecoder(decoder.Decoder):
             #CANCEL Packets have no data
             return file_data.CancelPacketData(packetType, seqID)
 
-        return file_data.FileData(packetType, seqID)
+        #The data was not determined to be any of the packet types so return none
+        return None
 
 if __name__ == "__main__":
     pass
