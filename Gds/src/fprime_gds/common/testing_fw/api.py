@@ -131,7 +131,6 @@ class IntegrationTestAPI:
             self.__log(msg, TestLogger.WHITE)
 
         self.command_history.clear()
-        
 
     ######################################################################################
     #   Command Functions
@@ -170,10 +169,10 @@ class IntegrationTestAPI:
             command: the mnemonic (str) or ID (int) of the command to send
             args: a list of command arguments.
         """
-        command = self.translate_command_name(command)
-        self.pipeline.send_command(command, args)
         msg = "Sending Command:  {} {}".format(command, args)
         self.__log(msg, TestLogger.PURPLE)
+        command = self.translate_command_name(command)
+        self.pipeline.send_command(command, args)
 
     def send_and_await_telemetry(self, command, args=[], channels=[], timeout=5):
         """
@@ -775,7 +774,7 @@ class IntegrationTestAPI:
         current = history.retrieve(start)
         for item in current:
             if search_pred(item):
-                self.__log("History search found the specified item: {}".format(item))
+                self.__log("History search found the specified item: {}".format(item), TestLogger.YELLOW)
                 return item
 
         if timeout:
@@ -787,12 +786,12 @@ class IntegrationTestAPI:
                     for item in new_items:
                         if search_pred(item):
                             signal.alarm(0)
-                            self.__log("History search found the specified item: {}".format(item))
+                            self.__log("History search found the specified item: {}".format(item), TestLogger.YELLOW)
                             return item
                     time.sleep(0.1)
             except self.TimeoutException:
                 self.__log("History search timed out")
-        self.__log("History search failed to find the specified item")
+        self.__log("History search failed to find the specified item", TestLogger.YELLOW)
         return None
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
@@ -828,7 +827,7 @@ class IntegrationTestAPI:
                 sequence.append(item)
                 seq_preds.pop(0)
                 if len(seq_preds) == 0:
-                    self.__log("Sequence search found the last item.")
+                    self.__log("Sequence search found the last item.", TestLogger.YELLOW)
                     return sequence
 
         if timeout:
@@ -844,12 +843,13 @@ class IntegrationTestAPI:
                             seq_preds.pop(0)
                             if len(seq_preds) == 0:
                                 signal.alarm(0)
-                                self.__log("Sequence search found the last item.")
+                                self.__log("Sequence search found the last item.", TestLogger.YELLOW)
                                 return sequence
                     time.sleep(0.1)
             except self.TimeoutException:
                 self.__log("Sequence search timed out")
-        self.__log("Sequence search failed to find a complete sequence")
+        self.__log("Sequence search failed to find a complete sequence", TestLogger.YELLOW)
+        
         return sequence
 
     def find_history_count(
@@ -893,7 +893,8 @@ class IntegrationTestAPI:
                     objects.append(item)
 
         if count_pred(len(objects)):
-            self.__log("Count search found a correct number of items: {}".format(len(objects)))
+            msg = "Count search found a correct number of items: {}".format(len(objects))
+            self.__log(msg, TestLogger.YELLOW)
             return objects
 
         if timeout:
@@ -908,12 +909,14 @@ class IntegrationTestAPI:
                             objects.append(item)
                             if count_pred(len(objects)):
                                 signal.alarm(0)
-                                self.__log("Count search found a correct number of items: {}".format(len(objects)))
+                                msg = "Count search found a correct number of items: {}".format(len(objects))
+                                self.__log(msg, TestLogger.YELLOW)
                                 return objects
                     time.sleep(0.1)
             except self.TimeoutException:
                 self.__log("Count search timed out")
-        self.__log("Count search failed to find the correct number of objects")
+        msg = "Count search failed to find the correct number of objects"
+        self.__log(msg, TestLogger.YELLOW)
         return objects
 
     def __log(self, message, color=None, style=None, sender="Test API"):
@@ -925,10 +928,12 @@ class IntegrationTestAPI:
             self.logger.log_message(message, sender, color, style)
 
     def __assert_pred(self, name, predicate, value):
-        self.__log("Beginning Predicate Assert: " + name)
-        msg = "F({}) is true, where F(x) = {}".format(value, predicate)
+        pred_msg = "assert F({}), where F(x) evaluates\n\t {}".format(value, predicate)
         if predicate(value):
-            self.__log("Assertion successful: {}".format(msg), TestLogger.GREEN)
+            msg = name + " Assertion was successful.\n" + pred_msg
+            self.__log(msg, TestLogger.GREEN)
+            assert True, pred_msg
         else:
-            self.__log("Assertion failed: {}".format(msg), TestLogger.RED)
-        assert predicate(value)
+            msg = name + " Assertion failed!\n" + pred_msg
+            self.__log(msg, TestLogger.Red)
+            assert False, pred_msg
