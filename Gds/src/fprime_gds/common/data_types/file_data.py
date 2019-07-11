@@ -1,8 +1,8 @@
 '''
-@brief Class to store data from a specific event
+@brief Class to store data from each specific file_data type
 
-@date Created July 2, 2018
-@author R. Joseph Paetz
+@date Created July 10, 2019
+@author Blake A. HarrimanS
 
 @bug No known bugs
 '''
@@ -10,11 +10,12 @@
 from fprime_gds.common.data_types import sys_data
 from fprime.common.models.serialize import time_type
 
+#Takes care of the START packets that the file_decoder will receive
 class StartPacketData(sys_data.SysData):
     '''
     The StartPacketData class stores the start packet information
     '''
-
+    #Initializes the start packet data with all of the necessary information
     def __init__(self, packetType, seqID, size, sourcePath, destPath):
         '''
         Constructor.
@@ -36,20 +37,12 @@ class StartPacketData(sys_data.SysData):
         self.sourcePath = sourcePath
         self.destPath = destPath
 
-
-    def __str__(self):
-        '''
-        Convert the event data to a string
-
-        Returns:
-            String version of the channel data
-        '''
-        return self.get_str()
-
+#Takes care of the DATA packets that the file_decoder will receive
 class DataPacketData(sys_data.SysData):
     '''
     The DataPacketData class stores the data packet information
     '''
+    #Initializes the data packet data with all of the necessary information
     def __init__(self, packetType, seqID, offset, length, dataVar):
         '''
         Constructor.
@@ -72,10 +65,12 @@ class DataPacketData(sys_data.SysData):
         self.length = length
         self.dataVar = dataVar
 
+#Takes care of the END packets that the file_decoder will receive
 class EndPacketData(sys_data.SysData):
     '''
     The EndPacketData class stores the end packet information
     '''
+    #Initializes the end packet data with all of the necessary information
     def __init__(self, packetType, seqID, hashValue):
         '''
         Constructor.
@@ -94,10 +89,12 @@ class EndPacketData(sys_data.SysData):
         self.seqID = seqID
         self.hashValue = hashValue
 
+#Takes care of the CANCEL packets that the file_decoder will receive
 class CancelPacketData(sys_data.SysData):
     '''
     The CancelPacketData class stores the cancel packet information
     '''
+    #Initializes the cancel packet data with all of the necessary information
     def __init__(self, packetType, seqID):
         '''
         Constructor.
