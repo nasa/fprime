@@ -41,6 +41,8 @@ class TestLogger:
     UNDERLINED = "UNDERLINED"
 
     __align = Alignment(vertical='top', wrap_text=True)
+    __font_name = 'courier'
+    __time_fmt = "%H:%M:%S.%f"#"%m/%d/%Y %H:%M:%S.%f"
 
     def __init__(self, filename):
         """
@@ -56,8 +58,12 @@ class TestLogger:
         self.filename = filename
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
-        self.worksheet.column_dimensions['A'].width = 20
+
+        ts = time.time()
+        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
+        self.worksheet.column_dimensions['A'].width = len(timestring) + 1
         self.worksheet.column_dimensions['C'].width = 120
+
         header = []
         header.append(self.__get_cell("Time", style=self.BOLD))
         header.append(self.__get_cell("Sender", style=self.BOLD))
@@ -77,13 +83,13 @@ class TestLogger:
         cell = WriteOnlyCell(self.worksheet, value=string)
         if color is not None:
             cell.fill = PatternFill("solid", fgColor=color)
-        if style is not None:
-            cell.font = Font(
-                name='Courier',
-                bold=(style == self.BOLD),
-                italic=(style == self.ITALICS),
-                underline=("single" if style == self.UNDERLINED else "none"),
-            )
+        cell.font = Font(
+            name=self.__font_name,
+            bold=(style == self.BOLD),
+            italic=(style == self.ITALICS),
+            underline=("single" if style == self.UNDERLINED else "none"),
+        )
+            
         cell.alignment = self.__align
         return cell
 
@@ -98,7 +104,7 @@ class TestLogger:
             style: a string choosing 1 of 3 formatting options (ITALICS, BOLD, UNDERLINED)
         """
         ts = time.time()
-        timestring = datetime.datetime.fromtimestamp(ts).strftime("%m/%d/%Y %H:%M:%S")
+        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
 
         row = []
         row.append(self.__get_cell(timestring, color, style))
