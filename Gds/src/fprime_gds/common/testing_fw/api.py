@@ -68,7 +68,7 @@ class IntegrationTestAPI:
             msg: a user-provided message to add to the test log.
             color: a string containing a color hex code "######"
         """
-        self.__log(msg, color, "Test API user")
+        self.__log(msg, color, sender="Test API user")
 
     def start_test_case(self, name):
         """
@@ -79,8 +79,9 @@ class IntegrationTestAPI:
         Args:
             name: the name of the test case
         """
+        msg = "[STARTING CASE] {}".format(name)
+        self.__log(msg, TestLogger.GRAY, TestLogger.BOLD)
         self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
-        self.log_test_message("\n[STARTING CASE] {}".format(name))
         self.clear_histories()
 
     def get_latest_fsw_time(self):
@@ -121,11 +122,16 @@ class IntegrationTestAPI:
             self.event_history.clear(e_pred)
             t_pred = predicates.telemetry_predicate(time_pred=time_pred)
             self.telemetry_history.clear(t_pred)
+            msg = "Clearing Test Histories after {} us".format(time_stamp)
+            self.__log(msg, TestLogger.WHITE)
         else:
             self.event_history.clear()
             self.telemetry_history.clear()
+            msg = "Clearing Test Histories"
+            self.__log(msg, TestLogger.WHITE)
 
         self.command_history.clear()
+        
 
     ######################################################################################
     #   Command Functions
@@ -166,6 +172,8 @@ class IntegrationTestAPI:
         """
         command = self.translate_command_name(command)
         self.pipeline.send_command(command, args)
+        msg = "Sending Command:  {} {}".format(command, args)
+        self.__log(msg, TestLogger.PURPLE)
 
     def send_and_await_telemetry(self, command, args=[], channels=[], timeout=5):
         """
@@ -342,6 +350,9 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_telemetry_test_history()
 
+        msg = "Awaiting a single telemetry update: {}".format(t_pred)
+        self.__log(msg, TestLogger.YELLOW)
+
         return self.find_history_item(history, t_pred, start, timeout)
 
     def await_telemetry_sequence(self, channels, history=None, start="NOW", timeout=5):
@@ -367,6 +378,9 @@ class IntegrationTestAPI:
 
         if history is None:
             history = self.get_telemetry_test_history()
+
+        msg = "Awaiting a sequence of {} telemetry updates.".format(len(seq_preds))
+        self.__log(msg, TestLogger.YELLOW)
 
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
@@ -402,6 +416,9 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_telemetry_test_history()
 
+        msg = "Awaiting a count ({}) of telemetry updates.".format(count)
+        self.__log(msg, TestLogger.YELLOW)
+
         return self.find_history_count(count, history, search, start, timeout)
 
     ######################################################################################
@@ -425,10 +442,11 @@ class IntegrationTestAPI:
         Returns:
             the ChData object found during the search
         """
+        pred = self.get_telemetry_predicate(channel, value, time_pred)
         result = self.await_telemetry(
             channel, value, time_pred, history, start, timeout
         )
-        assert result is not None
+        self.__assert_pred("Telemetry Received", pred, result)
         return result
 
     def assert_telemetry_sequence(self, channels, history=None, start=None, timeout=0):
@@ -451,7 +469,8 @@ class IntegrationTestAPI:
         results = self.await_telemetry_sequence(channels, history, start, timeout)
         if results is None:
             assert False
-        assert len(channels) == len(results)
+        len_pred = predicates.equal_to(len(channels))
+        self.__assert_pred("Telemetry Sequence", len_pred, len(results))
         return results
 
     def assert_telemetry_count(
@@ -478,7 +497,7 @@ class IntegrationTestAPI:
             count_pred = count
         elif isinstance(count, int):
             count_pred = predicates.equal_to(count)
-        assert count_pred(len(results))
+        self.__assert_pred("Telemetry Count", count_pred, len(results))
         return results
 
     ######################################################################################
@@ -561,6 +580,9 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_event_test_history()
 
+        msg = "Awaiting a single telemetry update: {}".format(e_pred)
+        self.__log(msg, TestLogger.YELLOW)
+
         return self.find_history_item(history, e_pred, start, timeout)
 
     def await_event_sequence(self, events, history=None, start="NOW", timeout=5):
@@ -586,6 +608,9 @@ class IntegrationTestAPI:
 
         if history is None:
             history = self.get_event_test_history()
+
+        msg = "Awaiting a sequence of {} event messages.".format(len(seq_preds))
+        self.__log(msg, TestLogger.YELLOW)
 
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
@@ -621,6 +646,9 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_event_test_history()
 
+        msg = "Awaiting a count ({}) of event messages.".format(count)
+        self.__log(msg, TestLogger.YELLOW)
+
         return self.find_history_count(count, history, search, start, timeout)
 
     ######################################################################################
@@ -646,7 +674,7 @@ class IntegrationTestAPI:
         """
         pred = self.get_event_predicate(event, args, time_pred)
         result = self.await_event(event, args, time_pred, history, start, timeout)
-        assert pred(result)
+        self.__assert_pred("Event Received", pred, result)
         return result
 
     def assert_event_sequence(self, events, history=None, start=None, timeout=0):
@@ -665,7 +693,8 @@ class IntegrationTestAPI:
             an ordered list of EventData objects that satisfied the sequence
         """
         results = self.await_event_sequence(events, history, start, timeout)
-        assert len(events) == len(results)
+        len_pred = predicates.equal_to(len(events))
+        self.__assert_pred("Event Sequence", len_pred, len(results))
         return results
 
     def assert_event_count(
@@ -690,7 +719,7 @@ class IntegrationTestAPI:
             count_pred = count
         elif isinstance(count, int):
             count_pred = predicates.equal_to(count)
-        assert count_pred(len(results))
+        self.__assert_pred("Event Count", count_pred, len(results))
         return results
 
     ######################################################################################
@@ -746,6 +775,7 @@ class IntegrationTestAPI:
         current = history.retrieve(start)
         for item in current:
             if search_pred(item):
+                self.__log("History search found the specified item: {}".format(item))
                 return item
 
         if timeout:
@@ -756,12 +786,14 @@ class IntegrationTestAPI:
                     new_items = history.retrieve_new()
                     for item in new_items:
                         if search_pred(item):
+                            signal.alarm(0)
+                            self.__log("History search found the specified item: {}".format(item))
                             return item
                     time.sleep(0.1)
             except self.TimeoutException:
-                return None
-        else:
-            return None
+                self.__log("History search timed out")
+        self.__log("History search failed to find the specified item")
+        return None
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
@@ -792,9 +824,11 @@ class IntegrationTestAPI:
 
         for item in current:
             if seq_preds[0](item):
+                self.__log("Sequence search found the next item: {}".format(item))
                 sequence.append(item)
                 seq_preds.pop(0)
                 if len(seq_preds) == 0:
+                    self.__log("Sequence search found the last item.")
                     return sequence
 
         if timeout:
@@ -805,16 +839,18 @@ class IntegrationTestAPI:
                     new_items = history.retrieve_new()
                     for item in new_items:
                         if seq_preds[0](item):
+                            self.__log("Sequence search found the next item: {}".format(item))
                             sequence.append(item)
                             seq_preds.pop(0)
                             if len(seq_preds) == 0:
                                 signal.alarm(0)
+                                self.__log("Sequence search found the last item.")
                                 return sequence
                     time.sleep(0.1)
             except self.TimeoutException:
-                return sequence
-        else:
-            return sequence
+                self.__log("Sequence search timed out")
+        self.__log("Sequence search failed to find a complete sequence")
+        return sequence
 
     def find_history_count(
         self, count, history, search_pred=None, start=None, timeout=0
@@ -853,9 +889,11 @@ class IntegrationTestAPI:
             current = history.retrieve(start)
             for item in current:
                 if search_pred(item):
+                    self.__log("Count search counted another item: {}".format(item))
                     objects.append(item)
 
         if count_pred(len(objects)):
+            self.__log("Count search found a correct number of items: {}".format(len(objects)))
             return objects
 
         if timeout:
@@ -866,20 +904,31 @@ class IntegrationTestAPI:
                     new_items = history.retrieve_new()
                     for item in new_items:
                         if search_pred(item):
+                            self.__log("Count search counted another item: {}".format(item))
                             objects.append(item)
                             if count_pred(len(objects)):
                                 signal.alarm(0)
+                                self.__log("Count search found a correct number of items: {}".format(len(objects)))
                                 return objects
                     time.sleep(0.1)
             except self.TimeoutException:
-                return objects
-        else:
-            return objects
+                self.__log("Count search timed out")
+        self.__log("Count search failed to find the correct number of objects")
+        return objects
 
-    def __log(message, color=None, sender="Test API", style=None):
+    def __log(self, message, color=None, style=None, sender="Test API"):
+        if not isinstance(message, str):
+            message = str(message)
         if self.logger is None:
             print(message)
         else:
-            if color is None:
-                color = self.logger.GRAY
             self.logger.log_message(message, sender, color, style)
+
+    def __assert_pred(self, name, predicate, value):
+        self.__log("Beginning Predicate Assert: " + name)
+        msg = "F({}) is true, where F(x) = {}".format(value, predicate)
+        if predicate(value):
+            self.__log("Assertion successful: {}".format(msg), TestLogger.GREEN)
+        else:
+            self.__log("Assertion failed: {}".format(msg), TestLogger.RED)
+        assert predicate(value)
