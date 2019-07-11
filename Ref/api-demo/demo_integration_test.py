@@ -22,11 +22,12 @@ class TestRefAppClass(object):
         path = os.path.join(filename, "../Top/RefTopologyAppDictionary.xml")
         cls.pipeline.setup(config, path)
         cls.pipeline.connect("127.0.0.1", 50000)
-        cls.api = IntegrationTestAPI(cls.pipeline)
+        cls.api = IntegrationTestAPI(cls.pipeline, "./demo_log.xlsx")
 
     @classmethod
     def teardown_class(cls):
         cls.pipeline.disconnect()
+        cls.api.teardown()
 
     def setup_method(self, method):
         self.api.start_test_case(method.__name__)
