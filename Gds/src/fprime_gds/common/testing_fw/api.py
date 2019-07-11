@@ -68,10 +68,7 @@ class IntegrationTestAPI:
             msg: a user-provided message to add to the test log.
             color: a string containing a color hex code "######"
         """
-        if self.logger is None:
-            print(msg)
-        else:
-            self.logger.log_message(msg, "Test API user", color)
+        self.__log(msg, color, "Test API user")
 
     def start_test_case(self, name):
         """
@@ -150,21 +147,15 @@ class IntegrationTestAPI:
             if command in cmd_dict:
                 return cmd_dict[command].get_id()
             else:
-                raise KeyError(
-                    "The given command mnemonic, {}, was not in the dictionary".format(
-                        command
-                    )
-                )
+                msg = "The command mnemonic, {}, wasn't in the dictionary".format(command)
+                raise KeyError(msg)
         else:
             cmd_dict = self.pipeline.get_command_id_dictionary()
             if command in cmd_dict:
                 return command
             else:
-                raise KeyError(
-                    "The given command id, {}, was not in the dictionary".format(
-                        command
-                    )
-                )
+                msg = "The command id, {}, wasn't in the dictionary".format(command)
+                raise KeyError(msg)
 
     def send_command(self, command, args=[]):
         """
@@ -225,27 +216,6 @@ class IntegrationTestAPI:
     ######################################################################################
     #   Command Asserts
     ######################################################################################
-    def assert_send_command(self, command, args=[]):
-        """
-        Sends a command and asserts that the command was translated. If the command is in conflict
-        with the flight dictionary, this will raise a test error. Note: This assert does not check
-        that the command was  received by flight software, only that the command and arguments were
-        valid with respect to the flight dictionary.
-
-        Args:
-            command: Either the command id(int) or a mnemonic(str) to define the command type
-            args: A list of command arguments to send
-        """
-        try:
-            command = self.translate_command_name(command)
-            # TODO: catch the key error and assert failure.
-            self.pipeline.send_command(command, args)
-        except KeyError:
-            # TODO: Print readable test log messages describing the input that caused the
-            # error
-            assert False
-        assert True
-
     def send_and_assert_telemetry(self, command, args=[], channels=[], timeout=5):
         """
         Sends the specified command and asserts on the specified channel update or sequence of
@@ -310,21 +280,15 @@ class IntegrationTestAPI:
             if channel in ch_dict:
                 return ch_dict[channel].get_id()
             else:
-                raise KeyError(
-                    "The given channel mnemonic, {}, was not in the dictionary".format(
-                        channel
-                    )
-                )
+                msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(channel)
+                raise KeyError(msg)
         else:
             ch_dict = self.pipeline.get_channel_id_dictionary()
             if channel in ch_dict:
                 return channel
             else:
-                raise KeyError(
-                    "The given channel id, {}, was not in the dictionary".format(
-                        channel
-                    )
-                )
+                msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(channel)
+                raise KeyError(msg)
 
     def get_telemetry_predicate(self, channel=None, value=None, time_pred=None):
         """
@@ -536,19 +500,15 @@ class IntegrationTestAPI:
             if event in event_dict:
                 return event_dict[event].get_id()
             else:
-                raise KeyError(
-                    "The given event mnemonic, {}, was not in the dictionary".format(
-                        event
-                    )
-                )
+                msg = "The event mnemonic, {}, wasn't in the dictionary".format(event)
+                raise KeyError(msg)
         else:
             event_dict = self.pipeline.get_event_id_dictionary()
             if event in event_dict:
                 return event
             else:
-                raise KeyError(
-                    "The given event id, {}, was not in the dictionary".format(event)
-                )
+                msg = "The event id, {}, wasn't in the dictionary".format(event)
+                raise KeyError(msg)
 
     def get_event_predicate(self, event=None, args=None, time_pred=None):
         """
@@ -763,7 +723,7 @@ class IntegrationTestAPI:
     class TimeoutException(Exception):
         pass
 
-    def _timeout_sig_handler(self, signum, frame):
+    def __timeout_sig_handler(self, signum, frame):
         raise self.TimeoutException()
 
     def find_history_item(self, search_pred, history, start=None, timeout=0):
@@ -790,7 +750,7 @@ class IntegrationTestAPI:
 
         if timeout:
             try:
-                signal.signal(signal.SIGALRM, self._timeout_sig_handler)
+                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
                     new_items = history.retrieve_new()
@@ -839,7 +799,7 @@ class IntegrationTestAPI:
 
         if timeout:
             try:
-                signal.signal(signal.SIGALRM, self._timeout_sig_handler)
+                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
                     new_items = history.retrieve_new()
@@ -900,7 +860,7 @@ class IntegrationTestAPI:
 
         if timeout:
             try:
-                signal.signal(signal.SIGALRM, self._timeout_sig_handler)
+                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
                     new_items = history.retrieve_new()
@@ -915,3 +875,11 @@ class IntegrationTestAPI:
                 return objects
         else:
             return objects
+
+    def __log(message, color=None, sender="Test API", style=None):
+        if self.logger is None:
+            print(message)
+        else:
+            if color is None:
+                color = self.logger.GRAY
+            self.logger.log_message(message, sender, color, style)
