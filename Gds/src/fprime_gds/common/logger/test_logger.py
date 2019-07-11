@@ -23,14 +23,14 @@ class TestLogger:
     """
     User-accessible colors. Can be used for the color arguments
     """
-    BROWN = "996633"
-    RED = "FF6666"
-    ORANGE = "FF9900"
-    YELLOW = "FFFF66"
-    GREEN = "66FF66"
-    BLUE = "6666FF"
-    PURPLE = "9933FF"
-    GRAY = "C0C0C0"
+    BROWN = "E6CCB3"
+    RED = "FF9999"
+    ORANGE = "FFCC99"
+    YELLOW = "FFFF99"
+    GREEN = "ADEBAD"
+    BLUE = "99CCFF"
+    PURPLE = "CC99FF"
+    GRAY = "D9D9D9"
     WHITE = "FFFFFF"
 
     """
@@ -55,12 +55,12 @@ class TestLogger:
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
         header = []
-        header.append(self.__get_cell__("Time", style=self.BOLD))
-        header.append(self.__get_cell__("Sender", style=self.BOLD))
-        header.append(self.__get_cell__("Message", style=self.BOLD))
+        header.append(self.__get_cell("Time", style=self.BOLD))
+        header.append(self.__get_cell("Sender", style=self.BOLD))
+        header.append(self.__get_cell("Message", style=self.BOLD))
         self.worksheet.append(header)
 
-    def __get_cell__(self, string, color=None, style=None):
+    def __get_cell(self, string, color=None, style=None):
         """
         Helper method for log message. This method takes a string as well as color and style
         arguments to create a write-only cell.
@@ -95,9 +95,9 @@ class TestLogger:
         timestring = datetime.datetime.fromtimestamp(ts).strftime("%m/%d/%Y %H:%M:%S")
 
         row = []
-        row.append(self.__get_cell__(timestring, color, style))
-        row.append(self.__get_cell__(sender, color, style))
-        row.append(self.__get_cell__(message, color, style))
+        row.append(self.__get_cell(timestring, color, style))
+        row.append(self.__get_cell(sender, color, style))
+        row.append(self.__get_cell(message, color, style))
         self.worksheet.append(row)
 
     def close_log(self):
