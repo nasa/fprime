@@ -10,9 +10,10 @@ telemetry and dictionaries.
 import time
 import signal
 
-from fprime.common.models.serialize.time_type import TimeType
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
+from fprime_gds.common.logger.test_logger import TestLogger
+from fprime.common.models.serialize.time_type import TimeType
 
 
 class IntegrationTestAPI:
@@ -22,7 +23,7 @@ class IntegrationTestAPI:
     """
     NOW = "NOW"
 
-    def __init__(self, pipeline):
+    def __init__(self, pipeline, logname=None):
         """
         Initializes API: constructs and registers test histories.
         Args:
@@ -45,14 +46,30 @@ class IntegrationTestAPI:
         # Initialize latest time. Will be updated whenever a time query is made.
         self.latest_time = TimeType().useconds
 
+        # Initialize the logger
+        if logname is not None:
+            self.logger = TestLogger(logname)
+        else:
+            self.logger = None
+
+    def teardown(self):
+        """
+        To be called once at the end of the API's use. Closes the test log and clears histories.
+        """
+        self.clear_histories()
+        self.logger.close_log()
+        self.logger = None
+
     def log_test_message(self, msg):
         """
-        A user-accessible message for logging messages to the test log.
+        User-accessible function to log user messages to the test log.
         Args:
             msg: a user-provided message to add to the test log.
         """
-        # TODO: Define what a test log should look like and describe its parameters.
-        print(msg)
+        if self.logger is None:
+            print(msg)
+        else:
+            self.logger.log_message(msg, "API user", self.logger.WHITE)
 
     def start_test_case(self, name):
         """
