@@ -57,8 +57,9 @@ class IntegrationTestAPI:
         To be called once at the end of the API's use. Closes the test log and clears histories.
         """
         self.clear_histories()
-        self.logger.close_log()
-        self.logger = None
+        if self.logger is not None:
+            self.logger.close_log()
+            self.logger = None
 
     def log_test_message(self, msg):
         """
