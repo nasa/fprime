@@ -69,3 +69,12 @@ class TestRefAppClass(object):
             )
             assert recent > last, msg
             last = recent
+
+    def test_assert_telemetry(self):
+        result = self.api.assert_telemetry("BD_Cycles", timeout=5)
+        val_pred = predicates.greater_than(result.get_val())
+        result = self.api.assert_telemetry("BD_Cycles", value=val_pred, timeout=5)
+        val_pred = predicates.greater_than(result.get_val())
+        result = self.api.assert_telemetry("BD_Cycles", value=val_pred, timeout=5)
+        val_pred = predicates.greater_than(result.get_val())
+        result = self.api.assert_telemetry("BD_Cycles", value=val_pred, timeout=5)
