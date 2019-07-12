@@ -849,7 +849,6 @@ class IntegrationTestAPI:
             except self.TimeoutException:
                 self.__log("Sequence search timed out")
         self.__log("Sequence search failed to find a complete sequence", TestLogger.YELLOW)
-        
         return sequence
 
     def find_history_count(
@@ -923,7 +922,7 @@ class IntegrationTestAPI:
         if not isinstance(message, str):
             message = str(message)
         if self.logger is None:
-            print(message)
+            print("[{}] {}".format(sender, message))
         else:
             self.logger.log_message(message, sender, color, style)
 
