@@ -30,6 +30,12 @@ class predicate:
         """
         raise NotImplementedError("This predicate did not override __str__(self)")
 
+    def __repr__(self):
+        """
+        Unless manually overwritten by a subclass both repr and str will return the same string.
+        """
+        return str(self)
+
 
 def is_predicate(pred):
     """
@@ -483,13 +489,13 @@ class event_predicate(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        msg = "True IFF: x is an EventData object, "
+        msg = "True IFF: x is an EventData object"
         if not isinstance(self.id_pred, always_true):
-            msg += "x's id satisfies ({}), ".format(self.id_pred)
+            msg += " and x's id satisfies ({})".format(self.id_pred)
         if not isinstance(self.args_pred, always_true):
-            msg += "x's args satisfy ({}), ".format(self.args_pred)
+            msg += " and x's args satisfy ({})".format(self.args_pred)
         if not isinstance(self.time_pred, always_true):
-            msg += "x's time satisfies ({}) ".format(self.time_pred)
+            msg += " and x's time satisfies ({})".format(self.time_pred)
         return msg
 
 
@@ -538,11 +544,11 @@ class telemetry_predicate(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        msg = "True IFF: x is a ChData object, "
+        msg = "True IFF: x is a ChData object"
         if not isinstance(self.id_pred, always_true):
-            msg += "x's id satisfies ({}), ".format(self.id_pred)
+            msg += " and x's id satisfies ({})".format(self.id_pred)
         if not isinstance(self.value_pred, always_true):
-            msg += "x's value satisfies ({}), ".format(self.value_pred)
+            msg += " and x's value satisfies ({})".format(self.value_pred)
         if not isinstance(self.time_pred, always_true):
-            msg += "x's time satisfies ({}) ".format(self.time_pred)
+            msg += " and x's time satisfies ({})".format(self.time_pred)
         return msg
