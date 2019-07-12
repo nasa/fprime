@@ -1,6 +1,6 @@
-import unittest
-import sys
 import os
+import sys
+import unittest
 
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, "../../../")
@@ -9,6 +9,14 @@ sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
 
 from fprime_gds.common.testing_fw import predicates
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.string_type import StringType
+
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.templates.ch_template import ChTemplate
+from fprime_gds.common.data_types.event_data import EventData
+from fprime_gds.common.templates.event_template import EventTemplate
 
 
 class PredicateTestCases(unittest.TestCase):
@@ -18,6 +26,7 @@ class PredicateTestCases(unittest.TestCase):
         """
         try:
             pred.__str__()
+            print(pred)
             assert True, "predicate provides string summary: {}".format(str(pred))
         except NotImplementedError:
             assert False, "invoking str(pred) was not supported"
@@ -30,17 +39,15 @@ class PredicateTestCases(unittest.TestCase):
 
         try:
             pred.__call__(2)
+            assert False, "invoking an incomplete subclass didn't raise NotImplementedError"
         except NotImplementedError:
-            assert (
-                True
-            ), "invoking __call__ on an incomplete subclass of predicate raised the correct error"
+            assert True, "invoking an incomplete subclass raised NotImplementedError"
 
         try:
             str(pred)
+            assert False, "invoking an incomplete subclass didn't raise NotImplementedError"
         except NotImplementedError:
-            assert (
-                True
-            ), "invoking __str__ on an incomplete subclass of predicate raised the correct error"
+            assert True, "invoking an incomplete subclass raised NotImplementedError"
 
     def test_Implemented(self):
         pred = predicates.less_than(2)
@@ -228,7 +235,42 @@ class PredicateTestCases(unittest.TestCase):
         assert pred(8), "The value 8 should have been accepted."
 
     def test_telemetry_predicates(self):
-        raise NotImplementedError("This predicate test case has yet to be implemented.")
+        temp1 = ChTemplate(1, "Test Channel 1", "Predicate_Tester", I32Type())
+        temp2 = ChTemplate(2, "Test Channel 2", "Predicate_Tester", StringType())
+        update1 = ChData(I32Type(20), TimeType(), temp1)
+        update2 = ChData(StringType("apple"), TimeType(), temp2)
+
+        pred = predicates.telemetry_predicate()
+        assert pred(update1), "If no fields are specified a ChData object should return true"
+        assert pred(update2), "If no fields are specified a ChData object should return true"
+        assert not pred("diff object"), "Anything that's not a ChData object should be False"
+        assert not pred(5), "Anything that's not a ChData object should be False"
+        self.check_str(pred)
+
+        id_pred = predicates.equal_to(1)
+        pred = predicates.telemetry_predicate(id_pred=id_pred)
+        assert pred(update1), "This predicate on the ID 1 should return true"
+        assert not pred(update2), "This predicate on the ID 2 should return false"
+        self.check_str(pred)
+
+        val_pred = predicates.equal_to("apple")
+        pred = predicates.telemetry_predicate(value_pred=val_pred)
+        assert not pred(update1), "This predicate on the value 20 should return False"
+        assert pred(update2), "This predicate on the value \"apple\" should return True"
+        self.check_str(pred)
+
+        time_pred = predicates.equal_to(0)
+        pred = predicates.telemetry_predicate(time_pred=time_pred)
+        assert pred(update1), "This predicate on the time 0 should return True"
+        assert pred(update2), "This predicate on the time 0 should return True"
+        self.check_str(pred)
+
+        val_pred = predicates.within_range(10, 30)
+        pred = predicates.telemetry_predicate(id_pred=id_pred, value_pred=val_pred, time_pred=time_pred)
+        assert pred(update1), "Specifying all fields should return True for update 1"
+        assert not pred(update2), "Specifying all fields should return False for update 2"
+        self.check_str(pred)
+
 
     def test_event_predicates(self):
         raise NotImplementedError("This predicate test case has yet to be implemented.")
