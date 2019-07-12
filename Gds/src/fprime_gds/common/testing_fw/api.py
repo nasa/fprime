@@ -352,7 +352,7 @@ class IntegrationTestAPI:
         msg = "Awaiting a single telemetry update: {}".format(t_pred)
         self.__log(msg, TestLogger.YELLOW)
 
-        return self.find_history_item(history, t_pred, start, timeout)
+        return self.find_history_item(t_pred, history, start, timeout)
 
     def await_telemetry_sequence(self, channels, history=None, start="NOW", timeout=5):
         """
@@ -582,7 +582,7 @@ class IntegrationTestAPI:
         msg = "Awaiting a single telemetry update: {}".format(e_pred)
         self.__log(msg, TestLogger.YELLOW)
 
-        return self.find_history_item(history, e_pred, start, timeout)
+        return self.find_history_item(e_pred, history, start, timeout)
 
     def await_event_sequence(self, events, history=None, start="NOW", timeout=5):
         """
@@ -928,12 +928,12 @@ class IntegrationTestAPI:
             self.logger.log_message(message, sender, color, style)
 
     def __assert_pred(self, name, predicate, value):
-        pred_msg = "assert F({}), where F(x) evaluates\n\t {}".format(value, predicate)
+        pred_msg = predicates.get_descriptive_string(value, predicate)
         if predicate(value):
-            msg = name + " Assertion was successful.\n" + pred_msg
+            msg = name + " Assertion was successful.\nassert " + pred_msg
             self.__log(msg, TestLogger.GREEN)
             assert True, pred_msg
         else:
-            msg = name + " Assertion failed!\n" + pred_msg
+            msg = name + " Assertion failed!\nassert " + pred_msg
             self.__log(msg, TestLogger.RED)
             assert False, pred_msg
