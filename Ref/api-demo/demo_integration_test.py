@@ -55,9 +55,7 @@ class TestRefAppClass(object):
             print("[{}] EVR {}".format(event.get_time().useconds, event))
 
     def test_bd_cycles_ascending(self):
-        tlm = []
-        for i in range(0, 10):
-            tlm.append("BD_Cycles")
+        tlm = ["BD_Cycles"] * 10
         results = self.api.assert_telemetry_sequence(tlm, timeout=20)
         last = 0
         for tlm in results:
