@@ -317,23 +317,5 @@ class APITestCases(unittest.TestCase):
             len(results) < 10
         ), "The search should have returned an incomplete list, but found {}".format(results)
 
-    def test_instantiate_pipeline(self):
-        pipeline = standard.StandardPipeline()
-        GDS_CONFIG = config_manager.ConfigManager()
-        path = '/home/kevin/software/fprime-sw/Ref/Top/RefTopologyAppDictionary.xml'
-        pipeline.setup(GDS_CONFIG, path)
-        pipeline.connect('127.0.0.1', 50000)
-        self.api = IntegrationTestAPI(pipeline)
-        pred = predicates.greater_than(10)
-        results = self.api.await_telemetry_count(pred, timeout=25)
-        for result in results:
-            print("received: {}".format(result.get_str()))
-        try:
-            assert pred(len(results))
-        except:
-            pipeline.disconnect()
-            raise
-        pipeline.disconnect()
-
 if __name__ == "__main__":
     unittest.main()
