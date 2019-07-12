@@ -454,7 +454,7 @@ class event_predicate(predicate):
 
         Args:
             id_pred: optional predicate to call on the EventData instance's id field
-            args_pred: optional predicate to call on the EventData instance's arguments
+            args_pred: optional predicate to call on a list of the EventData 's argument values
             time_pred: optional predicate to call on the EventData instance's timestamp
         """
         true_pred = always_true()
@@ -480,8 +480,11 @@ class event_predicate(predicate):
         if not isinstance(event, EventData):
             return False
         if self.id_pred(event.get_id()):
-            if self.args_pred(event.get_args()):
-                if self.time_pred(event.get_time().useconds):
+            if self.time_pred(event.get_time().useconds):
+                args = []
+                for arg in event.get_args():
+                    args.append(arg.val)
+                if self.args_pred(args):
                     return True
         return False
 
