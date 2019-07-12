@@ -16,6 +16,14 @@ from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 from fprime_gds.common.pipeline import standard
 from fprime_gds.common.utils import config_manager
 
+# these imports are needed to generate data objects.
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.string_type import StringType
+
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.event_data import EventData
+
 
 class dummyPipeline:
     """

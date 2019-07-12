@@ -1,0 +1,53 @@
+<dictionary topology="TestFWUnitTesting">
+  <enums>
+  </enums>
+  <serializables>
+  </serializables>
+  <commands>
+    <command component="apiTester" mnemonic="NO_OP" opcode="0x29">
+      <args/>
+    </command>
+    <command component="apiTester" mnemonic="SB_START_PKTS" opcode="0x51">
+      <args/>
+    </command>
+    <command component="apiTester" mnemonic="SB_INJECT_PKT_ERROR" opcode="0x52">
+      <args/>
+    </command>
+    <command component="apiTester" mnemonic="SB_GEN_FATAL" opcode="0x53">
+      <args>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+      </args>
+    </command>
+    <command component="apiTester" mnemonic="CS_VALIDATE" opcode="0x21e">
+      <args>
+        <arg name="fileName" len="240" type="string"/>
+      </args>
+    </command>
+  </commands>
+  <events>
+    <event component="apiTester" name="RateGroupStarted" id="0x15" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="apiTester" name="RateGroupCycleSlip" id="0x16" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_RecordInvalid" id="0x221" severity="WARNING_HI" format_string="Sequence file %s: Record %d invalid. Err: %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="recordNumber" type="U32"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+  </events>
+  <channels>
+    <channel component="apiTester" name="Command Counter" id="0" description="Counts number of commands sent by the unit test" type="I32"/>
+    <channel component="apiTester" name="Oscillator" id="1" description="Oscillates over time" type="U32"/>
+    <channel component="apiTester" name="Counter" id="2" description="Number of pings received" type="U32"/>
+  </channels>
+  <parameters>
+  </parameters>
+</dictionary>
