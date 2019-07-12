@@ -43,11 +43,20 @@ def is_predicate(pred):
     if callable(pred):
         sig = signature(pred.__call__)
         arg_count = len(sig.parameters)
-        if arg_count == 1:  # TODO weigh what value this should actually be.
+        if arg_count == 1:
             if hasattr(pred, "__str__"):
                 return True
     return False
 
+def get_descriptive_string(value, predicate):
+    """
+    a helper function that formats a predicate and argument in a nice human-readable format
+
+    Args:
+        value: the argument of the predicate
+        predicate: a predicate function
+    """
+    return "F({}), where F(x) evaluates\n\t {}".format(value, predicate)
 
 ##########################################################################################
 # Basic predicates
@@ -66,15 +75,16 @@ class less_than(predicate):
         """
         :param actual: the value to compare
         """
-        return actual < self.upper_limit
+        try:
+            return actual < self.upper_limit
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is less than {}".format(
-            self.upper_limit
-        )
+        return "x < {}".format(self.upper_limit)
 
 
 class greater_than(predicate):
@@ -90,15 +100,16 @@ class greater_than(predicate):
         """
         :param actual: the value to compare
         """
-        return actual > self.lower_limit
+        try:
+            return actual > self.lower_limit
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is greater than {}".format(
-            self.lower_limit
-        )
+        return "x > {}".format(self.lower_limit)
 
 
 class equal_to(predicate):
@@ -114,15 +125,16 @@ class equal_to(predicate):
         """
         :param actual: the value to compare
         """
-        return actual == self.expected
+        try:
+            return actual == self.expected
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is equal to {}".format(
-            self.expected
-        )
+        return "x == {}".format(self.expected)
 
 
 class not_equal_to(predicate):
@@ -138,15 +150,16 @@ class not_equal_to(predicate):
         """
         :param actual: the value to compare
         """
-        return actual != self.expected
+        try:
+            return actual != self.expected
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is not equal to {}.".format(
-            self.expected
-        )
+        return "x != {}".format(self.expected)
 
 
 class less_than_or_equal_to(predicate):
@@ -162,15 +175,16 @@ class less_than_or_equal_to(predicate):
         """
         :param actual: the value to compare
         """
-        return actual <= self.upper_limit
+        try:
+            return actual <= self.upper_limit
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is at most {}.".format(
-            self.upper_limit
-        )
+        return "x <= {}".format(self.upper_limit)
 
 
 class greater_than_or_equal_to(predicate):
@@ -186,15 +200,16 @@ class greater_than_or_equal_to(predicate):
         """
         :param actual: the value to compare
         """
-        return actual >= self.lower_limit
+        try:
+            return actual >= self.lower_limit
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is at least {}.".format(
-            self.lower_limit
-        )
+        return "x >= {}".format(self.lower_limit)
 
 
 class within_range(predicate):
@@ -213,15 +228,16 @@ class within_range(predicate):
         """
         :param actual: the value to evaluate
         """
-        return actual >= self.lower_limit and actual <= self.upper_limit
+        try:
+            return actual >= self.lower_limit and actual <= self.upper_limit
+        except TypeError:
+            return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is within {} and {}.".format(
-            self.lower_limit, self.upper_limit
-        )
+        return "{} <= x <= {}".format(self.lower_limit, self.upper_limit)
 
 
 ##########################################################################################
@@ -250,7 +266,7 @@ class is_a_member_of(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is a member of {}.".format(self.set)
+        return "x \u2208 {}".format(self.set)
 
 
 class is_not_a_member_of(predicate):
@@ -275,9 +291,7 @@ class is_not_a_member_of(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item is not a member of {}.".format(
-            self.set
-        )
+        return "x \u2209 {}".format(self.set)
 
 
 ##########################################################################################
@@ -295,7 +309,7 @@ class always_true(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate always evaluates True."
+        return "True"
 
 
 class invert(predicate):
@@ -318,7 +332,7 @@ class invert(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate inverts the value of {}.".format(self.pred)
+        return "\u02DC({}).".format(self.pred)
 
 
 class satisfies_all(predicate):
@@ -346,9 +360,7 @@ class satisfies_all(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item satisfies all predicates in the list {}.".format(
-            self.p_list
-        )
+        return "\u2200 P \u2208 A : P(x) is True, when A is {}".format(self.p_list)
 
 
 class satisfies_any(predicate):
@@ -376,9 +388,7 @@ class satisfies_any(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an item satisfies any predicates in the list {}.".format(
-            self.p_list
-        )
+        return "\u2203 P \u2208 A : P(x) is True, when A is {}".format(self.p_list)
 
 
 ##########################################################################################
@@ -390,7 +400,7 @@ class args_predicate(predicate):
         A predicate for evaluating argument fields. Arguments can be specified by value, by
         predicate or as don't care (None). By inserting None into the argument list, args_predicate
         will accept any response given for that argument index.
-        
+
         Args:
             args: a list of expected arguments (list of values, predicates and None)
         """
@@ -423,8 +433,8 @@ class args_predicate(predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "This predicate evaluates if an argument list satisfies a given set of specifiers: {}.".format(
-            self.args
+        return "True IFF \u2200 pi \u2208 P and xi \u2208 x; pi(xi) is True. Where P is {}".format(
+            self.arg_spec
         )
 
 
@@ -463,16 +473,24 @@ class event_predicate(predicate):
         """
         if not isinstance(event, EventData):
             return False
-        e_id = self.id_pred(event.get_id())
-        e_args = self.args_pred(event.get_args())
-        e_time = self.time_pred(event.get_time().useconds)
-        return e_id and e_args and e_time
+        if self.id_pred(event.get_id()):
+            if self.args_pred(event.get_args()):
+                if self.time_pred(event.get_time().useconds):
+                    return True
+        return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        raise NotImplementedError("This predicate did not override __str__(self)")
+        msg = "True IFF: x is an EventData object, "
+        if not isinstance(self.id_pred, always_true):
+            msg += "x's id satisfies ({}), ".format(self.id_pred)
+        if not isinstance(self.args_pred, always_true):
+            msg += "x's args satisfy ({}), ".format(self.args_pred)
+        if not isinstance(self.time_pred, always_true):
+            msg += "x's time satisfies ({}) ".format(self.time_pred)
+        return msg
 
 
 class telemetry_predicate(predicate):
@@ -510,13 +528,21 @@ class telemetry_predicate(predicate):
         """
         if not isinstance(telemetry, ChData):
             return False
-        t_id = self.id_pred(telemetry.get_id())
-        t_val = self.value_pred(telemetry.get_val())
-        t_time = self.time_pred(telemetry.get_time().useconds)
-        return t_id and t_val and t_time
+        if self.id_pred(telemetry.get_id()):
+            if self.value_pred(telemetry.get_val()):
+                if self.time_pred(telemetry.get_time().useconds):
+                    return True
+        return False
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        raise NotImplementedError("This predicate did not override __str__(self)")
+        msg = "True IFF: x is a ChData object, "
+        if not isinstance(self.id_pred, always_true):
+            msg += "x's id satisfies ({}), ".format(self.id_pred)
+        if not isinstance(self.value_pred, always_true):
+            msg += "x's value satisfies ({}), ".format(self.value_pred)
+        if not isinstance(self.time_pred, always_true):
+            msg += "x's time satisfies ({}) ".format(self.time_pred)
+        return msg
