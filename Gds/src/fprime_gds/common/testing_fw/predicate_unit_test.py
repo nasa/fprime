@@ -13,10 +13,11 @@ from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.i32_type import I32Type
 from fprime.common.models.serialize.string_type import StringType
 
-from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.data_types.event_data import EventData
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.utils.event_severity import EventSeverity
 from fprime_gds.common.templates.event_template import EventTemplate
+from fprime_gds.common.data_types.event_data import EventData
 
 
 class PredicateTestCases(unittest.TestCase):
@@ -241,16 +242,16 @@ class PredicateTestCases(unittest.TestCase):
         update2 = ChData(StringType("apple"), TimeType(), temp2)
 
         pred = predicates.telemetry_predicate()
-        assert pred(update1), "If no fields are specified a ChData object should return true"
-        assert pred(update2), "If no fields are specified a ChData object should return true"
+        assert pred(update1), "If no fields are specified a ChData object should return True"
+        assert pred(update2), "If no fields are specified a ChData object should return True"
         assert not pred("diff object"), "Anything that's not a ChData object should be False"
         assert not pred(5), "Anything that's not a ChData object should be False"
         self.check_str(pred)
 
         id_pred = predicates.equal_to(1)
         pred = predicates.telemetry_predicate(id_pred=id_pred)
-        assert pred(update1), "This predicate on the ID 1 should return true"
-        assert not pred(update2), "This predicate on the ID 2 should return false"
+        assert pred(update1), "This predicate on the ID 1 should return True"
+        assert not pred(update2), "This predicate on the ID 2 should return False"
         self.check_str(pred)
 
         val_pred = predicates.equal_to("apple")
@@ -266,14 +267,62 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
         val_pred = predicates.within_range(10, 30)
-        pred = predicates.telemetry_predicate(id_pred=id_pred, value_pred=val_pred, time_pred=time_pred)
+        pred = predicates.telemetry_predicate(id_pred, val_pred, time_pred)
         assert pred(update1), "Specifying all fields should return True for update 1"
         assert not pred(update2), "Specifying all fields should return False for update 2"
         self.check_str(pred)
 
-
     def test_event_predicates(self):
-        raise NotImplementedError("This predicate test case has yet to be implemented.")
+        args1_def = [
+            ("name", "string", StringType()),
+            ("age", "int", I32Type())
+        ]
+        temp1 = EventTemplate(1, "Test Msg 1", "Predicate Tester", args1_def, EventSeverity.ACTIVITY_LO, "")
+        args1 = (StringType("John"), I32Type(35))
+        msg1 = EventData(args1, TimeType(), temp1)
+        args2_def = [
+            ("description", "string", StringType()),
+            ("count", "int", I32Type())
+        ]
+        temp2 = EventTemplate(2, "Test Msg 2", "Predicate Tester", args2_def, EventSeverity.ACTIVITY_HI, "")
+        args2 = (StringType("Dozen"), I32Type(12))
+        msg2 = EventData(args2, TimeType(), temp2)
+
+        pred = predicates.event_predicate()
+        assert pred(msg1), "If no fields are specified an EventData object should return True"
+        assert pred(msg2), "If no fields are specified an EventData object should return True"
+        assert not pred("diff object"), "Anything that's not an EventData object should be False"
+        assert not pred(5), "Anything that's not a EventData object should be False"
+        self.check_str(pred)
+
+        id_pred = predicates.equal_to(1)
+        pred = predicates.event_predicate(id_pred=id_pred)
+        assert pred(msg1), "This predicate on the ID 1 should return True"
+        assert not pred(msg2), "This predicate on the ID 2 should return False"
+        self.check_str(pred)
+
+        args_pred = predicates.args_predicate([None, None])
+        pred = predicates.event_predicate(args_pred=args_pred)
+        assert pred(msg1), "This predicate should return True, as it expects an event with 2 args"
+        assert pred(msg2), "This predicate should return True, as it expects an event with 2 args"
+        self.check_str(pred)
+
+        args_pred = predicates.args_predicate(["John", 35])
+        pred = predicates.event_predicate(args_pred=args_pred)
+        assert pred(msg1), "This predicate should return True as msg1 has args (str John, int32 35)"
+        assert not pred(msg2), "This predicate should return False as msg2 has args (str Dozen, int32 12)"
+        self.check_str(pred)
+
+        time_pred = predicates.equal_to(0)
+        pred = predicates.event_predicate(time_pred=time_pred)
+        assert pred(msg1), "This predicate on the time 0 should return True"
+        assert pred(msg2), "This predicate on the time 0 should return True"
+        self.check_str(pred)
+
+        pred = predicates.event_predicate(id_pred, args_pred, time_pred)
+        assert pred(msg1), "Specifying all fields should return True for msg1"
+        assert not pred(msg2), "Specifying all fields should return False for msg2"
+        self.check_str(pred)
 
 
 if __name__ == "__main__":
