@@ -13,8 +13,8 @@ sys.path.insert(0, fprimeName)
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI
-from fprime_gds.common.pipeline import standard
-from fprime_gds.common.utils import config_manager
+from fprime_gds.common.pipeline.standard import StandardPipeline
+from fprime_gds.common.utils.config_manager import ConfigManager
 
 # these imports are needed to generate data objects.
 from fprime.common.models.serialize.time_type import TimeType
@@ -25,61 +25,26 @@ from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.data_types.event_data import EventData
 
 
-class dummyPipeline:
+class UTPipeline(StandardPipeline):
     """
     This pipeline shares many of the same calls available in pipeline.standard. It
     is used by this testcase to feed simulated data to the test api.
     """
 
-    def __init__(self):
-        # History stores for each above type
-        self.command_hist = TestHistory()
-        self.event_hist = TestHistory()
-        self.channel_hist = TestHistory()
-        self.event_subscribers = []
-        self.channel_subscribers = []
-        self.command_subscribers = []
-
-    def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
-        self.config = config
-        self.dictionary = dictionary
-        self.logging = logging_prefix
-        self.packet_spec = packet_spec
-
     def connect(self, address, port):
-        self.address = address
-        self.port = port
+        pass
 
     def disconnect(self):
         pass
 
     def send_command(self, command, args):
-        # TODO construct CmdData and enqueue command history
-        return {}
+        command_template = self.command_id_dict[command]
+        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
+        self.command_hist.data_callback(cmd_data)
+        for hist in self.command_subscribers:
+            hist.data_callback(cmd_data)
 
-    def get_event_id_dictionary(self):
-        # TODO provide a unit test dictionary to test with
-        return {}
-
-    def get_event_name_dictionary(self):
-        # TODO provide a unit test dictionary to test with
-        return {}
-
-    def get_channel_id_dictionary(self):
-        # TODO provide a unit test dictionary to test with
-        return {}
-
-    def get_channel_name_dictionary(self):
-        # TODO provide a unit test dictionary to test with
-        return {}
-
-    def get_command_id_dictionary(self):
-        # TODO provide a unit test dictionary to test with
-        return {}
-
-    def get_command_name_dictionary(self):
-        # TODO provide a unit test dictionary to test with
-        return {}
+        # TODO Add command responses
 
     def get_event_history(self):
         return self.event_hist
@@ -90,44 +55,26 @@ class dummyPipeline:
     def get_command_history(self):
         return self.command_hist
 
-    def register_event_history(self, history):
-        self.event_subscribers.append(history)
-
-    def remove_event_history(self, history):
-        self.event_subscribers.remove(history)
-
-    def register_telemetry_history(self, history):
-        self.channel_subscribers.append(history)
-
-    def remove_telemetry_history(self, history):
-        self.channel_subscribers.remove(history)
-
-    def register_command_history(self, history):
-        self.command_subscribers.append(history)
-
-    def remove_command_history(self, history):
-        self.command_subscribers.remove(history)
-
     def enqueue_event(self, event):
         """
         Used by the unit test to feed simulated data objects into the pipeline
         """
-        self.event_hist.data_callback(event)
-        for history in self.event_subscribers:
-            history.data_callback(event)
+        self.event_decoder.send_to_all(event)
 
     def enqueue_telemetry(self, channel):
         """
         Used by the unit test to feed simulated data objects into the pipeline
         """
-        self.channel_hist.data_callback(channel)
-        for history in self.channel_subscribers:
-            history.data_callback(channel)
+        self.channel_decoder.send_to_all(channel)
 
 
 class APITestCases(unittest.TestCase):
     def setUp(self):
-        self.pipeline = dummyPipeline()
+        self.pipeline = UTPipeline()
+        config = ConfigManager()
+        filename = os.path.dirname(__file__)
+        path = os.path.join(filename, "./UnitTestDictionary.xml")
+        self.pipeline.setup(config, path)
         self.api = IntegrationTestAPI(self.pipeline)
         self.tHistory = TestHistory()
 
@@ -324,6 +271,7 @@ class APITestCases(unittest.TestCase):
         assert (
             len(results) < 10
         ), "The search should have returned an incomplete list, but found {}".format(results)
+
 
 if __name__ == "__main__":
     unittest.main()
