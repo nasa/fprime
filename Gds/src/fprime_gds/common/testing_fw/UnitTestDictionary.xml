@@ -4,49 +4,60 @@
   <serializables>
   </serializables>
   <commands>
-    <command component="apiTester" mnemonic="NO_OP" opcode="0x29">
+    <command component="apiTester" mnemonic="TEST_CMD_1" opcode="0x01">
       <args/>
     </command>
-    <command component="apiTester" mnemonic="SB_START_PKTS" opcode="0x51">
-      <args/>
-    </command>
-    <command component="apiTester" mnemonic="SB_INJECT_PKT_ERROR" opcode="0x52">
-      <args/>
-    </command>
-    <command component="apiTester" mnemonic="SB_GEN_FATAL" opcode="0x53">
+    <command component="apiTester" mnemonic="TEST_CMD_2" opcode="0x02">
       <args>
         <arg name="arg1" type="U32"/>
         <arg name="arg2" type="U32"/>
-        <arg name="arg3" type="U32"/>
-      </args>
+      <args/>
     </command>
-    <command component="apiTester" mnemonic="CS_VALIDATE" opcode="0x21e">
+    <command component="apiTester" mnemonic="TEST_CMD_3" opcode="0x03">
       <args>
-        <arg name="fileName" len="240" type="string"/>
+        <arg name="message" len="240" type="string"/>
       </args>
     </command>
   </commands>
   <events>
-    <event component="apiTester" name="RateGroupStarted" id="0x15" severity="DIAGNOSTIC" format_string="Rate group started.">
+    <event component="apiTester" name="Command Received" id="0x01" severity="DIAGNOSTIC" format_string="Received a cmd with opcode %d">
+      <args>
+        <arg name="opcode" type="U32"/>
       <args/>
     </event>
-    <event component="apiTester" name="RateGroupCycleSlip" id="0x16" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+    <event component="apiTester" name="HistorySizeUpdate" id="0x2" severity="DIAGNOSTIC" format_string="The history sizes are now: EVR(%d) CMD(%d) CH(%d)">
       <args>
-        <arg name="cycle" type="U32"/>
+        <arg name="evr_size" type="U32"/>
+        <arg name="cmd_size" type="U32"/>
+        <arg name="ch_size" type="U32"/>
       </args>
     </event>
-    <event component="cmdSeq" name="CS_RecordInvalid" id="0x221" severity="WARNING_HI" format_string="Sequence file %s: Record %d invalid. Err: %d">
-      <args>
-        <arg name="fileName" len="60" type="string"/>
-        <arg name="recordNumber" type="U32"/>
-        <arg name="error" type="I32"/>
+    <event component="apiTester" name="SeverityCommand" id="0x3" severity="COMMAND" format_string="Unit Test EVR with COMMAND Severity">
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityActivityLO" id="0x4" severity="ACTIVITY_LO" format_string="Unit Test EVR with ACTIVITY_LO Severity">
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityActivityHI" id="0x5" severity="ACTIVITY_HI" format_string="Unit Test EVR with ACTIVITY_HI Severity">
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityWarningLO" id="0x6" severity="WARNING_LO" format_string="Unit Test EVR with WARNING_LO Severity">
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityWarningHI" id="0x7" severity="WARNING_HI" format_string="Unit Test EVR with WARNING_HI Severity">
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityDiagnostic" id="0x8" severity="DIAGNOSTIC" format_string="Unit Test EVR with DIAGNOSTIC Severity">
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityFatal" id="0x9" severity="FATAL" format_string="Unit Test EVR with FATAL Severity">
       </args>
     </event>
   </events>
   <channels>
-    <channel component="apiTester" name="Command Counter" id="0" description="Counts number of commands sent by the unit test" type="I32"/>
-    <channel component="apiTester" name="Oscillator" id="1" description="Oscillates over time" type="U32"/>
-    <channel component="apiTester" name="Counter" id="2" description="Number of pings received" type="U32"/>
+    <channel component="apiTester" name="CommandCounter" id="1" description="Counts number of commands sent by the unit test" type="U32"/>
+    <channel component="apiTester" name="Oscillator" id="2" description="Oscillates over time" type="I32"/>
+    <channel component="apiTester" name="Counter" id="3" description="Counts over time" type="U32"/>
   </channels>
   <parameters>
   </parameters>
