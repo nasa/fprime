@@ -19,7 +19,7 @@
     </command>
   </commands>
   <events>
-    <event component="apiTester" name="Command Received" id="0x01" severity="DIAGNOSTIC" format_string="Received a cmd with opcode %d">
+    <event component="apiTester" name="CommandReceived" id="0x01" severity="DIAGNOSTIC" format_string="Received a cmd with opcode %d">
       <args>
         <arg name="opcode" type="U32"/>
       </args>
