@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import math
 import _thread
 import unittest
 
@@ -19,9 +20,11 @@ from fprime_gds.common.utils.config_manager import ConfigManager
 # these imports are needed to generate data objects.
 from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.string_type import StringType
 
 from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.data_types.event_data import EventData
 
 
@@ -30,6 +33,9 @@ class UTPipeline(StandardPipeline):
     This pipeline shares many of the same calls available in pipeline.standard. It
     is used by this testcase to feed simulated data to the test api.
     """
+    def __init__(self):
+        self.command_count = 0
+        StandardPipeline.__init__(self)
 
     def connect(self, address, port):
         pass
@@ -39,12 +45,26 @@ class UTPipeline(StandardPipeline):
 
     def send_command(self, command, args):
         command_template = self.command_id_dict[command]
-        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
+        cmd_data = CmdData(tuple(args), command_template)
         self.command_hist.data_callback(cmd_data)
         for hist in self.command_subscribers:
             hist.data_callback(cmd_data)
 
-        # TODO Add command responses
+        ev_temp = self.event_name_dict["CommandReceived"]
+        event = EventData((U32Type(cmd_data.get_id()),), TimeType(), ev_temp)
+        self.enqueue_event(event)
+
+        ev_temp = self.event_name_dict["HistorySizeUpdate"]
+        evr_size = U32Type(len(self.event_hist.retrieve()))
+        cmd_size = U32Type(len(self.command_hist.retrieve()))
+        ch_size = U32Type(len(self.channel_hist.retrieve()))
+        event = EventData((evr_size, cmd_size, ch_size), TimeType(), ev_temp)
+        self.enqueue_event(event)
+
+        self.command_count += 1
+        ch_temp = self.channel_name_dict["CommandCounter"]
+        update = ChData(U32Type(self.command_count), TimeType(), ch_temp)
+        self.enqueue_telemetry(update)
 
     def get_event_history(self):
         return self.event_hist
@@ -78,6 +98,10 @@ class APITestCases(unittest.TestCase):
         self.api = IntegrationTestAPI(self.pipeline)
         self.tHistory = TestHistory()
 
+    def tearDown(self):
+        self.pipeline.disconnect()
+        self.api.teardown()
+
     def fill_history(self, callback, items, timestep=0):
         for item in items:
             if timestep:
@@ -99,6 +123,20 @@ class APITestCases(unittest.TestCase):
             ), "the {} element of the expected list should be {}, but was {}.".format(
                 i, expected[i], actual[i]
             )
+    def get_counter_sequence(self, length):
+        seq = []
+        for i in range(0, length):
+            ch_temp = self.pipeline.get_channel_name_dictionary()["Counter"]
+            seq.append(ChData(U32Type(i), TimeType(), ch_temp))
+        return seq
+
+    def get_oscillator_sequence(self, length):
+        seq = []
+        for i in range(0, length):
+            ch_temp = self.pipeline.get_channel_name_dictionary()["Oscillator"]
+            val = int(round(1000*math.sin(math.radians(i))))
+            seq.append(ChData(I32Type(val), TimeType(), ch_temp))
+        return seq  
 
     def test_dummy_pipeline(self):
         listA = range(0, 50)
@@ -271,6 +309,73 @@ class APITestCases(unittest.TestCase):
         assert (
             len(results) < 10
         ), "The search should have returned an incomplete list, but found {}".format(results)
+
+#    def test_get_latest_fsw_time(self):
+#        raise NotImplementedError("This test is not yet implemented.")
+#
+#    def test_clear_histories(self):
+#        raise NotImplementedError("This test is not yet implemented.")
+
+    def test_translate_command_name(self):
+        assert self.api.translate_command_name("TEST_CMD_1") == 1
+        assert self.api.translate_command_name("TEST_CMD_2") == 2
+        assert self.api.translate_command_name("TEST_CMD_3") == 3
+        assert self.api.translate_command_name(1) == 1
+        assert self.api.translate_command_name(2) == 2
+        assert self.api.translate_command_name(3) == 3
+        try:
+            self.api.translate_command_name("DOES_NOT_EXIST")
+            assert False, "the api should have raised a KeyError"
+        except KeyError:
+            assert True, "the api raised the correct error"
+        try:
+            self.api.translate_command_name(0)
+            assert False, "the api should have raised a KeyError"
+        except KeyError:
+            assert True, "the api raised the correct error"
+
+    def test_send_command(self):
+        args1 = []
+        self.api.send_command("TEST_CMD_1", args1)
+        self.api.send_command(1, args1)
+        args2 = ["0x01", "0x02"]
+        self.api.send_command("TEST_CMD_2", args2)
+        self.api.send_command(2, args2)
+        args3 = ["test message for the test command"]
+        self.api.send_command("TEST_CMD_3", args3)
+        self.api.send_command(3, args3)
+        hist = self.api.get_command_test_history()
+        assert hist.size() == 6
+        for cmd in hist:
+            print(cmd)
+
+    def test_send_and_await_telemetry(self):
+        result = self.api.send_and_await_telemetry("TEST_CMD_1", channels="CommandCounter")
+        assert result is not None, "the search should find the telemetry generated by UTPipeline"
+
+        self.api.clear_histories()
+
+        seq = ["CommandCounter"] + ["Counter"] * 5
+        self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_counter_sequence(10), 0.01)
+        results1 = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
+        assert len(results1) == 6, "Should have gotten 6 results out of the await"
+
+        seq = ["CommandCounter"] + ["Counter"] * 5
+        self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_counter_sequence(10), 0.01)
+        results2 = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
+        assert len(results2) == 6, "Should have gotten 6 results out of the await"
+
+        for i in range(0, 6):
+            assert results1[i] != results2[i], "These sequences should be unique items"
+
+        self.api.clear_histories()
+
+        seq = ["CommandCounter"] + ["Oscillator"] * 5
+        self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_oscillator_sequence(10), 0.01)
+        results = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
+        assert len(results) == 6, "Should have gotten 6 results out of the await"
+
+
 
 
 if __name__ == "__main__":
