@@ -85,6 +85,7 @@ def compare_genfile(filename):
 def test_enum():
     """
     Tests that enum xml is being generated correctly
+    This test requires PYTONPATH, BUILD_ROOT, and FPRIME_CORE_DIR build vars to be set
     """
     try:
         expect_step = "enum and serializable"
