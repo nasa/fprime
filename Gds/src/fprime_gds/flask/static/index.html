@@ -65,7 +65,7 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
         <!-- Templates used to render the rest of the document -->
         <div id="event-list-template" hidden>
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  data-bind="for event in events">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  repeat="for event in events">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{ event.template.name }}</h5>
                         <small>Event Id 0x{{ event.id.toString(16) }}</small>
@@ -76,7 +76,7 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
         </div>
         <div id="command-hist-template" hidden>
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  data-bind="for command in commandHistory">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  click-action="activeCommand" repeat="for command in commandHistory">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{ command.template.name }}</h5>
                         <small>Event Id 0x{{ command.id.toString(16) }}</small>
@@ -90,7 +90,7 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
                 <tr>
                     <th>Channel ID</th><th>Channel Name</th><th>Channel Value</th><th>Last Update Time</th>
                 </tr>
-                <tr data-bind="for channel in channels">
+                <tr repeat="for channel in channels">
                     <td>0x{{ channel.id.toString(16) }}</td>
                     <td>{{ channel.template.name }}</td>
                     <td>{{ channel.val }}</td>
@@ -100,7 +100,8 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
         </div>
         <div id="command-list-template" hidden>
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  data-bind="for command in commands">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  click-action="activeCommand" repeat="for command in commands"
+                 value-bind="argument">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{ command.mnemonic }}</h5>
                         <small>Opcode 0x{{ command.id.toString(16) }}</small>
@@ -109,7 +110,7 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
                 </a>
             </div>
         </div>
-        <div id="command-input-template" hidden>
+        <div id="command-input-template" hidden data-bind="activeCommand">
             <h2>{{ activeCommand.mnemonic }}</h2>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -117,7 +118,7 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
                 </div>
                 <input type="text" class="form-control" placeholder="Mnemonic" aria-label="Mnemonic" aria-describedby="basic-addon1">
             </div>
-            <div class="input-group mb-3" data-bind="for argument in activeArgs">
+            <div class="input-group mb-3" repeat="for argument in activeCommand.args">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1">{{ argument.name }}</span>
                 </div>
@@ -129,10 +130,10 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
                 </div>
                 <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-danger" type="button">Clear</button>
+                    <button id="btn-clear" class="btn btn-outline-danger" type="button">Clear</button>
                 </div>
                 <div class="input-group-append">
-                    <button class="btn btn-outline-success" type="button">Send</button>
+                    <button id="btn-send"  class="btn btn-outline-success" type="button">Send</button>
                 </div>
             </div>
         </div>
