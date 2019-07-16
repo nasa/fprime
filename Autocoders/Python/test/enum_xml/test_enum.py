@@ -95,17 +95,17 @@ def test_enum():
         print("\nEnum XML autocoded")
         
         pserial = pexpect.spawn("python ../../bin/codegen.py Serial1SerializableAi.xml")
-        pserial.expect("(?=.*Serial1SerializableAi.xml)(?!.*ERROR).*", timeout=5)
+        pserial.expect("(?=.*Serial1SerializableAc.cpp)(?=.*Serial1SerializableAc.hpp)(?!.*ERROR).*", timeout=5)
         print("Serializable XML autocoded")
         
         expect_step = "port and component"
         
         pport = pexpect.spawn("python ../../bin/codegen.py Port1PortAi.xml")
-        pport.expect("(?=.*Port1PortAi.xml)(?!.*ERROR).*", timeout=5)
+        pport.expect("(?=.*Port1PortAc.cpp)(?=.*Port1PortAc.hpp)(?!.*ERROR).*", timeout=5)
         print("Port XML autocoded")
         
         pcomp = pexpect.spawn("python ../../bin/codegen.py Component1ComponentAi.xml")
-        pcomp.expect("(?=.*Component1ComponentAi.xml)(?!.*ERROR).*", timeout=5)
+        pcomp.expect("(?=.*Component1)(?=.*Port1)(?=.*Serial1)(?!.*ERROR).*", timeout=5)
         print("Component XML autocoded\n")
         
         expect_step = "genfile"
