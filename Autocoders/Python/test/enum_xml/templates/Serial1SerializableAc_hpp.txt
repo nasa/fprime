@@ -1,0 +1,71 @@
+#ifndef SERIAL1_HPP_
+#define SERIAL1_HPP_
+
+#include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/Serializable.hpp>
+#if FW_SERIALIZABLE_TO_STRING
+#include <Fw/Types/StringType.hpp>
+#include <stdio.h> // snprintf
+#ifdef BUILD_UT
+#include <iostream>
+#include <Fw/Types/EightyCharString.hpp>
+#endif
+#endif
+#include <Autocoders/Python/test/enum_xml/Enum1EnumAc.hpp>
+
+namespace Example {
+
+class Serial1 : public Fw::Serializable {
+
+
+public:
+
+    enum {
+        SERIALIZED_SIZE =
+        sizeof(U32) +
+        sizeof(U32) +
+        Example::Enum1::SERIALIZED_SIZE
+    }; //!< serializable size of Serial1
+
+    Serial1(void); //!< Default constructor
+    Serial1(const Serial1* src); //!< pointer copy constructor
+    Serial1(const Serial1& src); //!< reference copy constructor
+    Serial1(U32 Member1, U32 Member2, const Example::Enum1& Member3); //!< constructor with arguments
+    const Serial1& operator=(const Serial1& src); //!< equal operator
+    bool operator==(const Serial1& src) const; //!< equality operator
+#ifdef BUILD_UT
+    // to support GoogleTest framework in unit tests
+    friend std::ostream& operator<<(std::ostream& os, const Serial1& obj);
+#endif
+
+    void set(U32 Member1, U32 Member2, const Example::Enum1& Member3); //!< set values
+
+    U32 getMember1(void); //!< get member Member1
+    U32 getMember2(void); //!< get member Member2
+    Example::Enum1 getMember3(void); //!< get member Member3
+
+    void setMember1(U32 val); //!< set member Member1
+    void setMember2(U32 val); //!< set member Member2
+    void setMember3(Example::Enum1 val); //!< set member Member3
+
+
+    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialization function
+    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
+    void toString(Fw::StringBase& text) const; //!< generate text from serializable
+#endif
+protected:
+
+    enum {
+        TYPE_ID = 0x8BBBB46C //!< type id
+    };
+
+    U32 m_Member1; //<! Member1 - Example member 1
+    U32 m_Member2; //<! Member2 - Example member 2
+    Example::Enum1 m_Member3; //<! Member3 - Example enum member
+private:
+
+};
+} // end namespace Example
+#endif /* SERIAL1_HPP_ */
+

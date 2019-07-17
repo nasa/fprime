@@ -74,10 +74,19 @@ def compare_genfile(filename):
         filename = "DefaultDict/serializable/{}".format(filename)
 
     remove_headers(filename)
+
+    if ".cpp" in filename:
+        filename2 = filename.split(".")[0] + "_cpp.txt"
+    elif ".hpp" in filename:
+        filename2 = filename.split(".")[0] + "_cpp.txt"
+    elif ".py" in filename:
+        filename2 = filename
+    else:
+        print("Unrecognized file name extention for file {}".format(filename))
         
-    if not (filecmp.cmp(filename,"templates/{}".format(filename))):
-        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename))
-        diff_lines = file_diff(filename, "templates/{}".format(filename))
+    if not (filecmp.cmp(filename,"templates/{}".format(filename2))):
+        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename2))
+        diff_lines = file_diff(filename, "templates/{}".format(filename2))
         print("WARNING: the following lines from " + filename + " differ from the template: " + str(diff_lines))
     else:
         print("{} is consistent with expected template".format(filename))
@@ -86,9 +95,27 @@ def test_enum():
     """
     Tests that enum xml is being generated correctly
     This test requires PYTONPATH, BUILD_ROOT, and FPRIME_CORE_DIR build vars to be set
+
+    @TODO: This test and others need the cmake setup instructions.
     """
     try:
         expect_step = "enum and serializable"
+
+        # Check required environmental variables are set
+        if "PYTHONPATH" in os.environ.keys():
+            print("\nFound PYTHONPATH = {}".format(os.environ['PYTHONPATH']))
+        else:
+            assert(True)
+        
+        if "BUILD_ROOT" in os.environ.keys():
+            print("Found BUILD_ROOT = {}".format(os.environ['BUILD_ROOT']))
+        else:
+            assert(True)
+        
+        if "FPRIME_CORE_DIR" in os.environ.keys():
+            print("Found FPRIME_CORE_DIR = {}".format(os.environ['FPRIME_CORE_DIR']))
+        else:
+            assert(True)
         
         ## Spawn executable
         penum = pexpect.spawn("python ../../bin/codegen.py Enum1EnumAi.xml")
@@ -122,7 +149,6 @@ def test_enum():
         compare_genfile("Port1PortAc.cpp")
         compare_genfile("Port1PortAc.hpp")
         compare_genfile("Component1ComponentAc.cpp")
-        compare_genfile("Component1ComponentAc.hpp")
         compare_genfile("Component1ComponentAc.hpp")
         compare_genfile("Enum1.py")
         

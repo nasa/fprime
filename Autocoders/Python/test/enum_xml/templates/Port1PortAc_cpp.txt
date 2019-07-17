@@ -1,0 +1,141 @@
+#include <Fw/Cfg/Config.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/Serializable.hpp>
+
+#include <Example/Port1PortAc.hpp>
+namespace Example {
+
+
+    namespace {
+
+        class Port1PortBuffer : public Fw::SerializeBufferBase {
+
+            public:
+                NATIVE_UINT_TYPE getBuffCapacity(void) const {
+                    return sizeof(m_buff);
+                }
+
+                U8* getBuffAddr(void) {
+                    return m_buff;
+                }
+
+                const U8* getBuffAddr(void) const {
+                    return m_buff;
+                }
+
+        private:
+
+            U8 m_buff[InputPort1Port::SERIALIZED_SIZE];
+
+        };
+
+    }
+    InputPort1Port::InputPort1Port(void) :
+        Fw::InputPortBase(),
+        m_func(0) {
+    }
+
+    void InputPort1Port::init(void) {
+        Fw::InputPortBase::init();
+    }
+
+    void InputPort1Port::addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr) {
+        FW_ASSERT(callComp);
+        FW_ASSERT(funcPtr);
+
+        this->m_comp = callComp;
+        this->m_func = funcPtr;
+        this->m_connObj = callComp;
+    }
+
+    // call virtual logging function for component
+    void InputPort1Port::invoke(Example::Enum1 Arg1, Example::Serial1 Arg2) {
+
+#if FW_PORT_TRACING == 1
+        this->trace();
+#endif
+        FW_ASSERT(this->m_comp);
+        FW_ASSERT(this->m_func);
+        this->m_func(this->m_comp, this->m_portNum, Arg1, Arg2);
+    }
+
+#if FW_PORT_SERIALIZATION == 1    
+    Fw::SerializeStatus InputPort1Port::invokeSerial(Fw::SerializeBufferBase &buffer) {
+        Fw::SerializeStatus _status;
+#if FW_PORT_TRACING == 1
+        this->trace();
+#endif
+        FW_ASSERT(this->m_comp);
+        FW_ASSERT(this->m_func);
+
+
+        Example::Enum1 Arg1;
+        _status = buffer.deserialize(Arg1);
+        if (Fw::FW_SERIALIZE_OK != _status) {
+            return _status;
+        }
+
+        Example::Serial1 Arg2;
+        _status = buffer.deserialize(Arg2);
+        if (Fw::FW_SERIALIZE_OK != _status) {
+            return _status;
+        }
+
+        this->m_func(this->m_comp, this->m_portNum, Arg1, Arg2);
+    
+        return Fw::FW_SERIALIZE_OK;
+    }
+#endif
+
+OutputPort1Port::OutputPort1Port(void) :
+            Fw::OutputPortBase(),
+    m_port(0) {
+}
+
+void OutputPort1Port::init(void) {
+    Fw::OutputPortBase::init();
+}
+
+void OutputPort1Port::addCallPort(InputPort1Port* callPort) {
+    FW_ASSERT(callPort);
+    
+    this->m_port = callPort;
+    this->m_connObj = callPort;
+#if FW_PORT_SERIALIZATION == 1
+    this->m_serPort = 0;
+#endif
+}
+
+void OutputPort1Port::invoke(Example::Enum1 Arg1, Example::Serial1 Arg2) {
+#if FW_PORT_TRACING == 1
+    this->trace();
+#endif
+
+#if FW_PORT_SERIALIZATION            
+    FW_ASSERT(this->m_port||this->m_serPort);
+#else
+    FW_ASSERT(this->m_port);
+#endif
+
+    if (this->m_port) {
+        this->m_port->invoke(Arg1, Arg2);
+#if FW_PORT_SERIALIZATION            
+    } else if (this->m_serPort) {
+        Fw::SerializeStatus status;
+        Port1PortBuffer _buffer;
+        status = _buffer.serialize(Arg1);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+
+        status = _buffer.serialize(Arg2);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+
+        status = this->m_serPort->invokeSerial(_buffer);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
+    }
+#else
+    }    
+#endif
+
+} // end OutputPort1Port::invoke(...)
+
+} // end namespace Example
