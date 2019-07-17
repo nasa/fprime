@@ -66,15 +66,6 @@ class UTPipeline(StandardPipeline):
         update = ChData(U32Type(self.command_count), TimeType(), ch_temp)
         self.enqueue_telemetry(update)
 
-    def get_event_history(self):
-        return self.event_hist
-
-    def get_channel_history(self):
-        return self.channel_hist
-
-    def get_command_history(self):
-        return self.command_hist
-
     def enqueue_event(self, event):
         """
         Used by the unit test to feed simulated data objects into the pipeline
@@ -123,6 +114,7 @@ class APITestCases(unittest.TestCase):
             ), "the {} element of the expected list should be {}, but was {}.".format(
                 i, expected[i], actual[i]
             )
+
     def get_counter_sequence(self, length):
         seq = []
         for i in range(0, length):
@@ -134,9 +126,24 @@ class APITestCases(unittest.TestCase):
         seq = []
         for i in range(0, length):
             ch_temp = self.pipeline.get_channel_name_dictionary()["Oscillator"]
-            val = int(round(1000*math.sin(math.radians(i))))
+            val = int(round(10*math.sin(math.radians(i))))
             seq.append(ChData(I32Type(val), TimeType(), ch_temp))
-        return seq  
+        return seq
+
+    def get_severity_event(self, severity):
+        name = "Severity" + severity
+        temp = self.pipeline.get_event_name_dictionary()[name]
+        event = EventData(tuple(), TimeType(), temp)
+        return event
+
+    def get_severity_sequence(self, length, severity="DIAGNOSTIC"):
+        seq = []
+        for i in range(0, length):
+            seq.append(self.get_severity_event(severity))
+        return seq
+
+    class AssertionFailure(Exception):
+        pass
 
     def test_dummy_pipeline(self):
         listA = range(0, 50)
@@ -147,7 +154,7 @@ class APITestCases(unittest.TestCase):
         assert pred(len(results)), "the correct amount of objects was received"
         print("received 10 objects: ")
         print(results)
-        time.sleep(0.6)
+        time.sleep(1)
         evr_hist = self.api.get_event_test_history()
         item_count = len(evr_hist)
         assert (
@@ -310,11 +317,11 @@ class APITestCases(unittest.TestCase):
             len(results) < 10
         ), "The search should have returned an incomplete list, but found {}".format(results)
 
-#    def test_get_latest_fsw_time(self):
-#        raise NotImplementedError("This test is not yet implemented.")
-#
-#    def test_clear_histories(self):
-#        raise NotImplementedError("This test is not yet implemented.")
+    def test_get_latest_fsw_time(self):
+        raise NotImplementedError("This test is not yet implemented.")
+
+    def test_clear_histories(self):
+        raise NotImplementedError("This test is not yet implemented.")
 
     def test_translate_command_name(self):
         assert self.api.translate_command_name("TEST_CMD_1") == 1
@@ -360,7 +367,6 @@ class APITestCases(unittest.TestCase):
         results1 = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
         assert len(results1) == 6, "Should have gotten 6 results out of the await"
 
-        seq = ["CommandCounter"] + ["Counter"] * 5
         self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_counter_sequence(10), 0.01)
         results2 = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
         assert len(results2) == 6, "Should have gotten 6 results out of the await"
@@ -375,7 +381,279 @@ class APITestCases(unittest.TestCase):
         results = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
         assert len(results) == 6, "Should have gotten 6 results out of the await"
 
+    def test_send_and_await_event(self):
+        result = self.api.send_and_await_event("TEST_CMD_1", events="CommandReceived")
+        assert result is not None, "the search should have found the CommandReceived Event"
 
+        self.api.clear_histories()
+
+        seq = ["CommandReceived"] + ["SeverityDIAGNOSTIC"] * 5
+        self.fill_history_async(self.pipeline.enqueue_event, self.get_severity_sequence(10), 0.01)
+        results1 = self.api.send_and_await_event("TEST_CMD_1", events=seq)
+        assert len(results1) == 6, "Should have gotten 6 results out of the await"
+
+        self.fill_history_async(self.pipeline.enqueue_event, self.get_severity_sequence(10), 0.01)
+        results2 = self.api.send_and_await_event("TEST_CMD_1", events=seq)
+        assert len(results2) == 6, "Should have gotten 6 results out of the await"
+
+        for i in range(0, 6):
+            assert results1[i] != results2[i], "These sequences should be unique items"
+
+    def test_send_and_assert_telemetry(self):
+        self.api.send_and_assert_telemetry("TEST_CMD_1", channels="CommandCounter")
+
+        self.api.clear_histories()
+
+        seq = ["CommandCounter"] + ["Counter"] * 5
+        self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_counter_sequence(10), 0.01)
+        results1 = self.api.send_and_assert_telemetry("TEST_CMD_1", channels=seq, timeout=5)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_counter_sequence(10), 0.01)
+        results2 = self.api.send_and_assert_telemetry("TEST_CMD_1", channels=seq, timeout=5)
+
+        for i in range(0, 6):
+            assert results1[i] != results2[i], "These sequences should be unique items"
+
+        self.api.clear_histories()
+
+        seq = ["CommandCounter"] + ["Oscillator"] * 5
+        self.fill_history_async(self.pipeline.enqueue_telemetry, self.get_oscillator_sequence(10), 0.01)
+        self.api.send_and_assert_telemetry("TEST_CMD_1", channels=seq, timeout=5)
+
+    def test_send_and_assert_event(self):
+        self.api.send_and_assert_event("TEST_CMD_1", events="CommandReceived")
+
+        self.api.clear_histories()
+
+        seq = ["CommandReceived"] + ["SeverityDIAGNOSTIC"] * 5
+        self.fill_history_async(self.pipeline.enqueue_event, self.get_severity_sequence(10), 0.01)
+        results1 = self.api.send_and_assert_event("TEST_CMD_1", events=seq, timeout=5)
+
+        self.fill_history_async(self.pipeline.enqueue_event, self.get_severity_sequence(10), 0.01)
+        results2 = self.api.send_and_assert_event("TEST_CMD_1", events=seq, timeout=5)
+
+        for i in range(0, 6):
+            assert results1[i] != results2[i], "These sequences should be unique items"
+
+    def test_translate_telemetry_name(self):
+        assert self.api.translate_telemetry_name("CommandCounter") == 1
+        assert self.api.translate_telemetry_name("Oscillator") == 2
+        assert self.api.translate_telemetry_name("Counter") == 3
+        assert self.api.translate_telemetry_name(1) == 1
+        assert self.api.translate_telemetry_name(2) == 2
+        assert self.api.translate_telemetry_name(3) == 3
+        try:
+            self.api.translate_command_name("DOES_NOT_EXIST")
+            assert False, "the api should have raised a KeyError"
+        except KeyError:
+            assert True, "the api raised the correct error"
+        try:
+            self.api.translate_command_name(0)
+            assert False, "the api should have raised a KeyError"
+        except KeyError:
+            assert True, "the api raised the correct error"
+
+    def test_get_telemetry_predicate(self):
+        pred = predicates.telemetry_predicate()
+        result = self.api.get_telemetry_predicate(pred)
+        assert pred == result, "should return when channel is already telem_pred"
+
+        update = self.get_counter_sequence(1)[0]
+        pred = self.api.get_telemetry_predicate(update.get_id(), update.get_val())
+        assert pred(update), "predicate should return true when fields are specified"
+
+    def test_await_telemetry(self):
+        seq = self.get_counter_sequence(20)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, seq[0:10], 0.01)
+        result = self.api.await_telemetry("Counter", 8)
+        assert result is not None, "Await should have found a correct channel update: {}".format(result)
+
+        time.sleep(1)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, seq[10:20], 0.01)
+        result = self.api.await_telemetry("Counter", 8)
+        assert result is None, "Await should not have found an update: {}".format(result)
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, seq, 0.1)
+        result = self.api.await_telemetry("Counter", 15, timeout=1)
+        assert result is None, "Await should not have found an update: {}".format(result)
+
+    def test_await_telemetry_sequence(self):
+        count_seq = self.get_counter_sequence(20)
+        sin_seq = self.get_oscillator_sequence(100)
+
+        search_seq = []
+        for i in range(15, 20):
+            pred = self.api.get_telemetry_predicate("Counter", i)
+            search_seq.append(pred)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        results = self.api.await_telemetry_sequence(search_seq)
+
+        assert len(results) == len(search_seq), "lists should have the same length"
+        for i in range(0, len(results)):
+            msg = predicates.get_descriptive_string(results[i], search_seq[i])
+            assert search_seq[i](results[i]), msg
+
+        time.sleep(1)
+
+        results = self.api.await_telemetry_sequence(search_seq)
+        assert len(results) < len(search_seq), "repeating the search should not complete"
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.07)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        results = self.api.await_telemetry_sequence(search_seq, timeout=1)
+        assert len(results) < len(search_seq), "repeating the search should not complete"
+
+    def test_await_telemetry_count(self):
+        count_seq = self.get_counter_sequence(20)
+        sin_seq = self.get_oscillator_sequence(100)
+
+        pred = predicates.greater_than_or_equal_to(10)
+        search_pred = self.api.get_telemetry_predicate("Counter", pred)
+        count_pred = predicates.within_range(10, 20)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        results = self.api.await_telemetry_count(count_pred, search_pred)
+
+        msg = predicates.get_descriptive_string(len(results), count_pred)
+        assert count_pred(len(results)), msg
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        results = self.api.await_telemetry_count(100)
+        assert len(results) == 100, "await count should have found 100 items"
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.02)
+        results = self.api.await_telemetry_count(100, timeout=1)
+        assert len(results) < 100, "await count should have found fewer 100 items"
+
+    def test_assert_telemetry(self):
+        seq = self.get_counter_sequence(20)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, seq[0:10], 0.01)
+        self.api.assert_telemetry("Counter", 8, timeout=1)
+
+        time.sleep(1)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, seq[10:20], 0.01)
+        try:
+            self.api.assert_telemetry("Counter", 8, start="NOW", timeout=1)
+            raise self.AssertionFailure()
+        except AssertionError:
+            assert True, "api raised the correct error"
+        except self.AssertionFailure:
+            assert False, "api failed to raise an assertion error"
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, seq, 0.1)
+        try:
+            self.api.assert_telemetry("Counter", 15, timeout=1)
+            raise self.AssertionFailure()
+        except AssertionError:
+            assert True, "api raised the correct error"
+        except self.AssertionFailure:
+            assert False, "api failed to raise an assertion error"
+
+    def test_assert_telemetry_sequence(self):
+        count_seq = self.get_counter_sequence(20)
+        sin_seq = self.get_oscillator_sequence(100)
+
+        search_seq = []
+        for i in range(15, 20):
+            pred = self.api.get_telemetry_predicate("Counter", i)
+            search_seq.append(pred)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        self.api.assert_telemetry_sequence(search_seq, start="NOW", timeout=5)
+        self.api.assert_telemetry_sequence(search_seq)
+
+        time.sleep(1)
+        try:
+            self.api.assert_telemetry_sequence(search_seq, start="NOW", timeout=5)
+            raise self.AssertionFailure()
+        except AssertionError:
+            assert True, "api raised the correct error"
+        except self.AssertionFailure:
+            assert False, "api failed to raise an assertion error"
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.07)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        try:
+            self.api.assert_telemetry_sequence(search_seq, start="NOW", timeout=1)
+            raise self.AssertionFailure()
+        except AssertionError:
+            assert True, "api raised the correct error"
+        except self.AssertionFailure:
+            assert False, "api failed to raise an assertion error"
+
+    def test_assert_telemetry_count(self):
+        count_seq = self.get_counter_sequence(20)
+        sin_seq = self.get_oscillator_sequence(100)
+
+        pred = predicates.greater_than_or_equal_to(10)
+        search_pred = self.api.get_telemetry_predicate("Counter", pred)
+        count_pred = predicates.within_range(10, 20)
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        self.api.assert_telemetry_count(count_pred, search_pred, timeout=2)
+        self.api.assert_telemetry_count(count_pred, search_pred)
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        self.api.assert_telemetry_count(100, timeout=2)
+        try:
+            self.api.assert_telemetry_count(100)
+            raise self.AssertionFailure()
+        except AssertionError:
+            assert True, "api raised the correct error"
+        except self.AssertionFailure:
+            assert False, "api failed to raise an assertion error"
+
+        self.api.clear_histories()
+
+        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.02)
+        try:
+            self.api.assert_telemetry_count(100, timeout=1)
+            raise self.AssertionFailure()
+        except AssertionError:
+            assert True, "api raised the correct error"
+        except self.AssertionFailure:
+            assert False, "api failed to raise an assertion error"
+
+    def test_await_event(self):
+        raise NotImplementedError("Test Case is not yet implemented")
+
+    def test_await_event_sequence(self):
+        raise NotImplementedError("Test Case is not yet implemented")
+
+    def test_await_event_count(self):
+        raise NotImplementedError("Test Case is not yet implemented")
+
+    def test_assert_event(self):
+        raise NotImplementedError("Test Case is not yet implemented")
+
+    def test_assert_event_sequence(self):
+        raise NotImplementedError("Test Case is not yet implemented")
+
+    def test_assert_event_count(self):
+        raise NotImplementedError("Test Case is not yet implemented")
 
 
 if __name__ == "__main__":
