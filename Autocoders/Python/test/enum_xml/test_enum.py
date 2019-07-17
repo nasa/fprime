@@ -110,20 +110,22 @@ def test_enum():
         if "PYTHONPATH" in os.environ.keys():
             print("\nFound PYTHONPATH = {}".format(os.environ['PYTHONPATH']))
         else:
-            assert(True)
+            assert False
         
         if "BUILD_ROOT" in os.environ.keys():
             print("Found BUILD_ROOT = {}".format(os.environ['BUILD_ROOT']))
         else:
-            assert(True)
+            assert False
         
         if "FPRIME_CORE_DIR" in os.environ.keys():
             print("Found FPRIME_CORE_DIR = {}".format(os.environ['FPRIME_CORE_DIR']))
         else:
-            assert(True)
+            assert False
         
         ## Spawn executable
-        penum = pexpect.spawn("python ../../bin/codegen.py Enum1EnumAi.xml")
+        cmd = "python " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        cmd = cmd + os.sep + "Python" + os.sep + "bin" + os.sep + "codegen.py Enum1EnumAi.xml" 
+        penum = pexpect.spawn(cmd)
         penum.expect("(?=.*Enum1EnumAi.xml)(?!.*ERROR).*", timeout=5)
         print("\nEnum XML autocoded")
         
@@ -136,7 +138,7 @@ def test_enum():
         pport = pexpect.spawn("python ../../bin/codegen.py Port1PortAi.xml")
         pport.expect("(?=.*Port1PortAc.cpp)(?=.*Port1PortAc.hpp)(?!.*ERROR).*", timeout=5)
         print("Port XML autocoded")
-        
+
         pcomp = pexpect.spawn("python ../../bin/codegen.py Component1ComponentAi.xml")
         pcomp.expect("(?=.*Component1)(?=.*Port1)(?=.*Serial1)(?!.*ERROR).*", timeout=5)
         print("Component XML autocoded\n")
