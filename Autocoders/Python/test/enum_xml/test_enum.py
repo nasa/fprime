@@ -51,18 +51,23 @@ def file_len(fname):
 def remove_headers(filename):
     """
     Remove header comment so that date doesn't
-    mess up the file comparison
+    mess up the file comparison - also removes all docstrings
     """
     with open(filename, "r+") as f:
         lines = f.readlines()
         f.seek(0)
         num = 0
+        skip_docstring = False
         for line in lines:
-            if not (num == 0 and ('*' in line or '//' in line)):
-                # Don't want to print empty first line
-                if num != 0 or line.strip():
-                    f.write(line)
-                    num += 1
+            if not skip_docstring:
+                if not (num == 0 and ('*' in line or '//' in line or "'''" in line or '"""' in line)):
+                    # Don't want to print empty first line
+                    if num != 0 or line.strip():
+                        f.write(line)
+                        num += 1
+                            
+            if "'''" in line or '"""' in line:
+                skip_docstring = not skip_docstring
 
         f.truncate()
 
