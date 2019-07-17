@@ -64,17 +64,18 @@ class IntegrationTestAPI:
     ######################################################################################
     #   API Functions
     ######################################################################################
-    def start_test_case(self, name):
+    def start_test_case(self, case_name, case_id):
         """
         To be called at the start of a test case. This function inserts a log message to denote a
         new test case is beginning, records the latest time stamp in case the user clears the
         aggregate histories, and then clears the API's histories.
 
         Args:
-            name: the name of the test case
+            case_name: the name of the test case (str)
+            case_id: a short identifier to denote the test case (str or number)
         """
-        msg = "[STARTING CASE] {}".format(name)
-        self.__log(msg, TestLogger.GRAY, TestLogger.BOLD)
+        msg = "[STARTING CASE] {}".format(case_name)
+        self.__log(msg, TestLogger.GRAY, TestLogger.BOLD, case_id=case_id)
         self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
         self.clear_histories()
 
@@ -921,13 +922,13 @@ class IntegrationTestAPI:
         self.__log(msg, TestLogger.YELLOW)
         return objects
 
-    def __log(self, message, color=None, style=None, sender="Test API"):
+    def __log(self, message, color=None, style=None, sender="Test API", case_id=None):
         if not isinstance(message, str):
             message = str(message)
         if self.logger is None:
             print("[{}] {}".format(sender, message))
         else:
-            self.logger.log_message(message, sender, color, style)
+            self.logger.log_message(message, sender, color, style, case_id)
 
     def __assert_pred(self, name, predicate, value):
         pred_msg = predicates.get_descriptive_string(value, predicate)
