@@ -62,13 +62,50 @@ class TestLogger:
         ts = time.time()
         timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
         self.worksheet.column_dimensions['A'].width = len(timestring) + 1
-        self.worksheet.column_dimensions['C'].width = 120
+        self.worksheet.column_dimensions['D'].width = 120
 
         header = []
         header.append(self.__get_cell("Time", style=self.BOLD))
+        header.append(self.__get_cell("Case ID", style=self.BOLD))
         header.append(self.__get_cell("Sender", style=self.BOLD))
         header.append(self.__get_cell("Message", style=self.BOLD))
         self.worksheet.append(header)
+
+        self.case_id = "NA"
+
+    def log_message(self, message, sender="NA", color=None, style=None, case_id=None):
+        """
+        Logs a message to the TestLog. Each message will include a timestamp beforehand.
+        Note: Once specified, the test case's case_id will persist in the logs until it is
+        specified again.
+
+        Args:
+            message: a message to log (str).
+            sender: a short string describing who created the log message
+            color: a string object containing a color hex code "######"
+            style: a string choosing 1 of 3 formatting options (ITALICS, BOLD, UNDERLINED)
+            case_id: a short identifier to denote which test case the log message belongs to
+        """
+        ts = time.time()
+        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
+
+        if case_id is not None:
+            if not isinstance(case_id, str):
+                case_id = str(case_id)
+            self.case_id = case_id
+
+        row = []
+        row.append(self.__get_cell(timestring, color, style))
+        row.append(self.__get_cell(self.case_id, color, style))
+        row.append(self.__get_cell(sender, color, style))
+        row.append(self.__get_cell(message, color, style))
+        self.worksheet.append(row)
+
+    def close_log(self):
+        """
+        Saves the write-only workbook. Should be called only once when the log is completed.
+        """
+        self.workbook.save(filename=self.filename)
 
     def __get_cell(self, string, color=None, style=None):
         """
@@ -89,31 +126,5 @@ class TestLogger:
             italic=(style == self.ITALICS),
             underline=("single" if style == self.UNDERLINED else "none"),
         )
-            
         cell.alignment = self.__align
         return cell
-
-    def log_message(self, message, sender="NA", color=None, style=None):
-        """
-        Logs a message to the TestLog. Each message will include a timestamp beforehand.
-
-        Args:
-            message: a message to log (str).
-            sender: a short string describing who created the log message
-            color: a string object containing a color hex code "######"
-            style: a string choosing 1 of 3 formatting options (ITALICS, BOLD, UNDERLINED)
-        """
-        ts = time.time()
-        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
-
-        row = []
-        row.append(self.__get_cell(timestring, color, style))
-        row.append(self.__get_cell(sender, color, style))
-        row.append(self.__get_cell(message, color, style))
-        self.worksheet.append(row)
-
-    def close_log(self):
-        """
-        Saves the write-only workbook. Should be called only once when the log is completed.
-        """
-        self.workbook.save(filename=self.filename)
