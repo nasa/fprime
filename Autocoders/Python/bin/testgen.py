@@ -39,7 +39,6 @@ from fprime_ac.parsers import XmlParser
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
-from fprime_ac.parsers import XmlTopologyParser
 
 from lxml import etree
 
