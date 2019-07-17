@@ -17,15 +17,15 @@ import os
 import sys
 
 # Parsers to read the XML
-from parsers import XmlParser
-from parsers import XmlTopologyParser
+from fprime_ac.parsers import XmlParser
+from fprime_ac.parsers import XmlTopologyParser
 
-from utils.cosmos.models import CosmosCommand
-from utils.cosmos.models import CosmosChannel
-from utils.cosmos.models import CosmosEvent
+from fprime_ac.utils.cosmos.models import CosmosCommand
+from fprime_ac.utils.cosmos.models import CosmosChannel
+from fprime_ac.utils.cosmos.models import CosmosEvent
 
-from utils.cosmos.util import CosmosUtil
-from utils.cosmos.util import CheetahUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CheetahUtil
 
 class CosmosTopParser():
     """

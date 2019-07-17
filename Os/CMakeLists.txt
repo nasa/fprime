@@ -15,6 +15,7 @@ set(MOD_DEPS
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/Queue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/BufferQueueCommon.cpp"
@@ -70,7 +71,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
   # Shard libraries need an -rt dependency for mq libs
-  if (LINK_AS_SHARED_LIBS)
+  if (BUILD_SHARED_LIBS)
       list(APPEND MOD_DEPS "-lrt")
   endif()
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
@@ -156,15 +157,17 @@ else()
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
   # Shard libraries need an -rt dependency for mq libs
-  if (LINK_AS_SHARED_LIBS)
+  if (BUILD_SHARED_LIBS)
       list(APPEND MOD_DEPS "-lrt")
   endif()
 endif()
 
 register_fprime_module()
 
-# Add stubs directory
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
+# Add stubs directory for testing builds
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
+endif()
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

@@ -14,12 +14,12 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 
-from utils.cosmos.util import CheetahUtil
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CheetahUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
-from utils.cosmos.templates import Channel_Screen
+from fprime_ac.utils.cosmos.templates import Channel_Screen
 
 class ChannelScreenWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """

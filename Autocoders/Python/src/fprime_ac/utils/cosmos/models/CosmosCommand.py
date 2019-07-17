@@ -14,9 +14,9 @@
 #===============================================================================
 
 # Contains all Cosmos utility methods and interface / protocol variable data that isnt autocoded
-from utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
 
-from utils.cosmos.models import BaseCosmosObject
+from fprime_ac.utils.cosmos.models import BaseCosmosObject
 
 class CosmosCommand(BaseCosmosObject.BaseCosmosObject):
     """

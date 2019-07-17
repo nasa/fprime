@@ -14,13 +14,13 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 
-from utils.cosmos.writers import AbstractCosmosWriter
+from fprime_ac.utils.cosmos.writers import AbstractCosmosWriter
 
-from utils.cosmos.util import CheetahUtil
-from utils.cosmos.util import CosmosUtil
-from utils.cosmos.util import CosmosConfigManager
+from fprime_ac.utils.cosmos.util import CheetahUtil
+from fprime_ac.utils.cosmos.util import CosmosUtil
+from fprime_ac.utils.cosmos.util import CosmosConfigManager
 
-from utils.cosmos.templates import Server
+from fprime_ac.utils.cosmos.templates import Server
 
 class ServerWriter(AbstractCosmosWriter.AbstractCosmosWriter):
     """
