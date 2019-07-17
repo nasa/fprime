@@ -16,7 +16,7 @@ class StartPacketData(sys_data.SysData):
     The StartPacketData class stores the start packet information
     '''
     #Initializes the start packet data with all of the necessary information
-    def __init__(self, packetType, seqID, size, sourcePath, destPath):
+    def __init__(self, packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath):
         '''
         Constructor.
 
@@ -24,7 +24,9 @@ class StartPacketData(sys_data.SysData):
             packetType: The type of packet the object is
             seqID: The ID that identifies this specific object being created
             size: The size of the object
+            lengthSP: The length of the source path
             sourcePath: The path that the file is coming from
+            lengthDP: The length of the destination path
             destPath: The path that the file is ending up at
 
         Returns:
@@ -34,7 +36,9 @@ class StartPacketData(sys_data.SysData):
         self.packetType = packetType
         self.seqID = seqID
         self.size = size
+        self.lengthSP = lengthSP
         self.sourcePath = sourcePath
+        self.lengthDP = lengthDP
         self.destPath = destPath
 
 #Takes care of the DATA packets that the file_decoder will receive
