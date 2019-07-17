@@ -19,6 +19,8 @@ class GTestCppWriter(GTestWriterBase.GTestWriterBase):
     """
     A writer for generating component gtest base implemetation files.
     """
+    
+    FILE_NAME = "GTestBase.cpp"
 
     def __init__(self):
         self.initBase("GTestCpp")
@@ -27,7 +29,7 @@ class GTestCppWriter(GTestWriterBase.GTestWriterBase):
         return self.emitNonPortParamsCpp(8, params)
 
     def initFilesWrite(self, obj):
-        self.openFile("GTestBase.cpp")
+        self.openFile(self.FILE_NAME)
 
     def startSourceFilesWrite(self, obj):
         c = cpp.cpp()
@@ -49,3 +51,6 @@ class GTestCppWriter(GTestWriterBase.GTestWriterBase):
         self.protectedWrite(obj)
         self.privateWrite(obj)
         self.finishSourceFilesWrite(obj)
+
+    def toString(self):
+        return self.FILE_NAME

@@ -19,6 +19,8 @@ class ComponentTestHWriter(TestWriterBase.TestWriterBase):
     """
     A writer for generating component test header files.
     """
+    
+    FILE_NAME = "TesterBase.hpp"
 
     def __init__(self):
         self.initBase("ComponentTestH")
@@ -30,7 +32,7 @@ class ComponentTestHWriter(TestWriterBase.TestWriterBase):
         return self.emitPortParamsHpp(10, params)
 
     def initFilesWrite(self, obj):
-        self.openFile("TesterBase.hpp")
+        self.openFile(self.FILE_NAME)
 
     def startSourceFilesWrite(self, obj):
         c = hpp.hpp()
@@ -54,3 +56,6 @@ class ComponentTestHWriter(TestWriterBase.TestWriterBase):
         self.protectedWrite(obj)
         self.privateWrite(obj)
         self.finishSourceFilesWrite(obj)
+
+    def toString(self):
+        return self.FILE_NAME

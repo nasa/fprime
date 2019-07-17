@@ -19,6 +19,8 @@ class GTestHWriter(GTestWriterBase.GTestWriterBase):
     """
     A writer for generating gtest header files.
     """
+    
+    FILE_NAME = "GTestBase.hpp"
 
     def __init__(self):
         self.initBase("GTestH")
@@ -35,7 +37,7 @@ class GTestHWriter(GTestWriterBase.GTestWriterBase):
         return str
 
     def initFilesWrite(self, obj):
-        self.openFile("GTestBase.hpp")
+        self.openFile(self.FILE_NAME)
 
     def startSourceFilesWrite(self, obj):
         c = hpp.hpp()
@@ -58,3 +60,6 @@ class GTestHWriter(GTestWriterBase.GTestWriterBase):
         self.protectedWrite(obj)
         self.privateWrite(obj)
         self.finishSourceFilesWrite(obj)
+
+    def toString(self):
+        return self.FILE_NAME

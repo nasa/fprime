@@ -21,6 +21,8 @@ class TestImplCppWriter(TestImplWriterBase.TestImplWriterBase):
     """
     A writer class for generating test implementation cpp files.
     """
+    
+    FILE_NAME = "Tester.cpp"
 
     def __init__(self):
         self.initBase("TestImplCpp")
@@ -32,7 +34,7 @@ class TestImplCppWriter(TestImplWriterBase.TestImplWriterBase):
         return self.emitNonPortParamsCpp(8, params)
 
     def initFilesWrite(self, obj):
-        self.openFile("Tester.cpp")
+        self.openFile(self.FILE_NAME)
 
     def startSourceFilesWrite(self, obj):
         c = cpp.cpp()
@@ -52,3 +54,6 @@ class TestImplCppWriter(TestImplWriterBase.TestImplWriterBase):
         self.protectedWrite(obj)
         self.privateWrite(obj)
         self.finishSourceFilesWrite(obj)
+
+    def toString(self):
+        return self.FILE_NAME

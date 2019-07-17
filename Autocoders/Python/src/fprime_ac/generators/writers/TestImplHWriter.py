@@ -23,6 +23,7 @@ class TestImplHWriter(TestImplWriterBase.TestImplWriterBase):
     A writer class for generating test implementation header files.
     """
     __config   = None
+    FILE_NAME = "Tester.hpp"
 
     def __init__(self):
         self.__config = ConfigManager.ConfigManager.getInstance()
@@ -35,7 +36,7 @@ class TestImplHWriter(TestImplWriterBase.TestImplWriterBase):
         return self.emitNonPortParamsHpp(10, params)
 
     def initFilesWrite(self, obj):
-        self.openFile("Tester.hpp")
+        self.openFile(self.FILE_NAME)
 
     def startSourceFilesWrite(self, obj):
         c = hpp.hpp()
@@ -55,3 +56,6 @@ class TestImplHWriter(TestImplWriterBase.TestImplWriterBase):
         self.protectedWrite(obj)
         self.privateWrite(obj)
         self.finishSourceFilesWrite(obj)
+
+    def toString(self):
+        return self.FILE_NAME

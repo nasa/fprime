@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<commands>
+  <command kind="sync" opcode="0x00" mnemonic="Test_Cmd0">
+    <comment>Test Cmd0</comment>
+    <args>
+      <arg name="arg1" type="string" size = "40"/>
+    </args>
+  </command>
+
+  <command kind="sync" opcode="0x01" mnemonic="Test_Cmd1">
+    <comment>Test Cmd1</comment>
+  </command>
+
+  <command kind="sync" opcode="0x02" mnemonic="Test_Cmd2">
+    <comment>Test Cmd2</comment>
+    <args>
+      <arg name="arg1" type="ENUM">
+        <enum name="enum1">
+          <item name="item1"/>
+          <item name="item2"/>
+        </enum>
+      </arg>
+    </args>
+  </command>
+
+</commands>

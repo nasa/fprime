@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 #===============================================================================
-# NAME: codegen.py
+# NAME: cosmosgen.py
 #
-# DESCRIPTION: This script is used to generate components, ports and connectors
-# from XML definition files.
+# DESCRIPTION: A tool for autocoding component XML files into unit test cpp/hpp files.
 #
+# AUTHOR: Jordan Ishii
+# EMAIL:  jordan.ishii@jpl.nasa.gov
+# DATE CREATED: July 8, 2019
+#
+# Copyright 2018, California Institute of Technology.
+# ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 
 import os
@@ -44,8 +49,6 @@ from fprime_ac.generators.writers import GTestHWriter
 from fprime_ac.generators.writers import GTestCppWriter
 from fprime_ac.generators.writers import TestImplHWriter
 from fprime_ac.generators.writers import TestImplCppWriter
-
-#@todo: from src.parsers import assembly_parser
 
 #Generators to produce the code
 from fprime_ac.generators import GenFactory
@@ -87,6 +90,8 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
+    
+    current_dir = os.getcwd()
 
     usage = "usage: %prog [options] [xml_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
@@ -96,21 +101,21 @@ def pinit():
     parser.add_option("-b", "--build_root", dest="build_root_flag",
         help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
         action="store_true", default=False)
+        
+    parser.add_option("-p", "--path", dest="work_path", type="string",
+        help="Switch to new working directory (def: %s)." % current_dir,
+        action="store", default=current_dir)
 
     parser.add_option("-v", "--verbose", dest="verbose_flag",
         help="Enable verbose mode showing more runtime detail (def: False)",
         action="store_true", default=False)
 
-    parser.add_option("-u", "--unit-test", dest="unit_test",
-        help="Enable generation of unit test component files (def: True)",
-        action="store_true", default=True)
-
     return parser
 
 def parse_component(the_parsed_component_xml, xml_filename, opt , topology_model = None):
     """
-    Creates a component meta-model, configures visitors and
-    generates the component files.  Nothing is returned.
+    Creates a component meta-model and generates the
+    component files.  Nothing is returned.
     """
     global BUILD_ROOT
     #
@@ -148,30 +153,15 @@ def parse_component(the_parsed_component_xml, xml_filename, opt , topology_model
     generator = CompFactory.CompFactory.getInstance()
     component_model = generator.create(the_parsed_component_xml, parsed_port_xml_list, parsed_serializable_xml_list)
 
-    #
-    # Configure and create the visitors that will generate the code.
-    #
-    generator = GenFactory.GenFactory.getInstance()
-    #
-    # Configure each visitor here.
-    #
-    if "Ai" in xml_filename:
-        base = xml_filename.split("Ai")[0]
-        h_instance_test_name = base + "_Test_H"
-        cpp_instance_test_name = base + "_Test_Cpp"
-        h_instance_gtest_name = base + "_GTest_H"
-        cpp_instance_gtest_name = base + "_GTest_Cpp"
-        h_instance_test_impl_name = base + "_TestImpl_H"
-        cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
-    else:
+    if not "Ai" in xml_filename:
         PRINT.info("Missing Ai at end of file name...")
         raise IOError
 
     return component_model
 
-def write_tests(opt, component_model):
+def generate_tests(opt, component_model):
     unitTestFiles = []
-    PRINT.info("Enabled generation of unit test component files...")
+    print("Generating test files for " + component_model.get_xml_filename())
     # h_instance_test_name ComponentTestHWriter
     unitTestFiles.append(ComponentTestHWriter.ComponentTestHWriter())
     
@@ -196,18 +186,22 @@ def write_tests(opt, component_model):
     #
     for file in unitTestFiles:
         file.write(component_model)
+        if VERBOSE:
+            print("Generated %s"%file.toString())
+
+    print("Generated test files for " + component_model.get_xml_filename())
 
 
 def search_for_file(file_type, file_path):
     '''
-        Searches for a given included port or serializable by looking in three places:
-        - The specified BUILD_ROOT
-        - The F Prime core
-        - The exact specified path
-        @param file_type: type of file searched for
-        @param file_path: path to look for based on offset
-        @return: full path of file
-        '''
+    Searches for a given included port or serializable by looking in three places:
+    - The specified BUILD_ROOT
+    - The F Prime core
+    - The exact specified path
+    @param file_type: type of file searched for
+    @param file_path: path to look for based on offset
+    @return: full path of file
+    '''
     core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
     for possible in [BUILD_ROOT, core, None]:
         if not possible is None:
@@ -225,6 +219,9 @@ def main():
     """
     Main program.
     """
+    global VERBOSE
+    global ERROR
+    global DEPLOYMENT
     
     Parser = pinit()
     (opt, args) = Parser.parse_args()
@@ -232,12 +229,23 @@ def main():
     CONFIG = ConfigManager.ConfigManager.getInstance()
     ERROR = False
     
+    # Check that the specified working directory exists. Remember, the
+    # default working directory is the current working directory which
+    # always exists. We are basically only checking for when the user
+    # specifies an alternate working directory.
+    
+    if os.path.exists(opt.work_path) == False:
+        Parser.error('Specified path does not exist (%s)!' % opt.work_path)
+    
+    working_dir = opt.work_path
+    
     #
     # Handle command line arguments
     #
     
     # Get the current working directory so that we can return to it at end
     STARTING_DIRECTORY = os.getcwd()
+    os.chdir(working_dir)
     
     # Check for BUILD_ROOT env. variable
     if ('BUILD_ROOT' in os.environ.keys()) == False:
@@ -258,9 +266,21 @@ def main():
         return
     else:
         xml_filenames = args[0:]
+
+    #
+    # Check for BUILD_ROOT variable for XML port searches
+    #
+    if opt.build_root_flag == True:
+        # Check for BUILD_ROOT env. variable
+        if ('BUILD_ROOT' in list(os.environ.keys())) == False:
+            PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
+            sys.exit(-1)
+        else:
+            BUILD_ROOT = os.environ['BUILD_ROOT']
+            ModelParser.BUILD_ROOT = BUILD_ROOT
     
     #
-    # Create XML Parser and write COSMOS files for Topology
+    # Write tests
     #
     for xml_filename in xml_filenames:
         #
@@ -275,7 +295,8 @@ def main():
             DEBUG.info("Detected Component XML so Generating Component C++ Files...")
             the_parsed_component_xml = XmlComponentParser.XmlComponentParser(xml_filename)
             component_model = parse_component(the_parsed_component_xml, xml_filename, opt)
-            write_tests(opt, component_model)
+            print("\nGenerating tests...")
+            generate_tests(opt, component_model)
         else:
             PRINT.info("Invalid XML found...this format not supported")
             ERROR=True

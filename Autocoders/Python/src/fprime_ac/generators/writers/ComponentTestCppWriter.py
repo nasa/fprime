@@ -19,6 +19,8 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
     """
     A writer for generating component implemetation files.
     """
+    
+    FILE_NAME = "TesterBase.cpp"
 
     def __init__(self):
         self.initBase("ComponentTestCpp")
@@ -30,7 +32,7 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
         return self.emitPortParamsCpp(8, params)
 
     def initFilesWrite(self, obj):
-        self.openFile("TesterBase.cpp")
+        self.openFile(self.FILE_NAME)
 
     def startSourceFilesWrite(self, obj):
         c = cpp.cpp()
@@ -50,3 +52,6 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
         self.protectedWrite(obj)
         self.privateWrite(obj)
         self.finishSourceFilesWrite(obj)
+
+    def toString(self):
+        return self.FILE_NAME
