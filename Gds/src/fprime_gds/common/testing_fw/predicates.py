@@ -54,6 +54,7 @@ def is_predicate(pred):
                 return True
     return False
 
+
 def get_descriptive_string(value, predicate):
     """
     a helper function that formats a predicate and argument in a nice human-readable format
@@ -63,6 +64,7 @@ def get_descriptive_string(value, predicate):
         predicate: a predicate function
     """
     return "F({}), where F(x) evaluates\n\t {}".format(value, predicate)
+
 
 ##########################################################################################
 # Basic predicates
@@ -278,7 +280,8 @@ class is_a_member_of(predicate):
 class is_not_a_member_of(predicate):
     def __init__(self, collection):
         """
-        Constructs a predicate that evaluates if the argument is not equivalent to all members in the set
+        Constructs a predicate that evaluates if the argument is not equivalent to all members in
+        the set
         :param collection: To return true, the predicate must be called on an object that is
             not equivalent to any object in this collection
         """
