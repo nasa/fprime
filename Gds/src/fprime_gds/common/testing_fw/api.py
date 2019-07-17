@@ -61,15 +61,9 @@ class IntegrationTestAPI:
             self.logger.close_log()
             self.logger = None
 
-    def log_test_message(self, msg, color=None):
-        """
-        User-accessible function to log user messages to the test log.
-        Args:
-            msg: a user-provided message to add to the test log.
-            color: a string containing a color hex code "######"
-        """
-        self.__log(msg, color, sender="Test API user")
-
+    ######################################################################################
+    #   API Functions
+    ######################################################################################
     def start_test_case(self, name):
         """
         To be called at the start of a test case. This function inserts a log message to denote a
@@ -83,6 +77,15 @@ class IntegrationTestAPI:
         self.__log(msg, TestLogger.GRAY, TestLogger.BOLD)
         self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
         self.clear_histories()
+
+    def log_test_message(self, msg, color=None):
+        """
+        User-accessible function to log user messages to the test log.
+        Args:
+            msg: a user-provided message to add to the test log.
+            color: a string containing a color hex code "######"
+        """
+        self.__log(msg, color, sender="Test API user")
 
     def get_latest_fsw_time(self):
         """
@@ -131,6 +134,30 @@ class IntegrationTestAPI:
             self.__log(msg, TestLogger.WHITE)
 
         self.command_history.clear()
+
+    def get_command_test_history(self):
+        """
+        Accessor for IntegrationTestAPI's command history
+        Returns:
+            a history of CmdData objects
+        """
+        return self.command_history
+
+    def get_telemetry_test_history(self):
+        """
+        Accessor for IntegrationTestAPI's telemetry history
+        Returns:
+            a history of ChData objects
+        """
+        return self.telemetry_history
+
+    def get_event_test_history(self):
+        """
+        Accessor for IntegrationTestAPI's event history
+        Returns:
+            a history of EventData objects
+        """
+        return self.event_history
 
     ######################################################################################
     #   Command Functions
@@ -330,9 +357,9 @@ class IntegrationTestAPI:
         self, channel, value=None, time_pred=None, history=None, start="NOW", timeout=5
     ):
         """
-        A search for a single telemetry update received. If the history doesn't have the
-        correct update, the call will await until a correct update is received or the
-        timeout, at which point it will return None.
+        A search for a single telemetry update received. By default, the call will only await
+        until a correct update is found. The user can specify that await also searches the current
+        history by specifying a value for start. On timeout, the search will return None.
 
         Args:
             channel: a channel specifier (mnemonic, id, or predicate)
@@ -356,9 +383,10 @@ class IntegrationTestAPI:
 
     def await_telemetry_sequence(self, channels, history=None, start="NOW", timeout=5):
         """
-        A search for a sequence of telemetry updates. If the history doesn't have the complete
-        sequence, the call will await until the sequence is completed or the timeout, at
-        which point it will return the list of found channel updates.
+        A search for a sequence of telemetry updates. By default, the call will only await until
+        the sequence is completed. The user can specify that await also searches the history by
+        specifying a value for start. On timeout, the search will return the list of found
+        channel updates regardless of whether the sequence is complete.
         Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
         Note: This function will always return a list of updates. The user should check if the
         sequence was completed.
@@ -387,9 +415,10 @@ class IntegrationTestAPI:
         self, count, channels=None, history=None, start="NOW", timeout=5
     ):
         """
-        A search on the number of telemetry updates received. If the history doesn't have the
-        correct number, the call will await until a correct count is achieved or the timeout, at
-        which point it will return.
+        A search on the number of telemetry updates received. By default, the call will only await
+        until a correct count is achieved. The user can specify that await also searches the current
+        history by specifying a value for start. On timeout, the search will return the list of
+        found channel updates regardless of whether a correct count is achieved.
         Note: this search will always return a list of objects. The user should check if the search
         was completed.
 
@@ -556,9 +585,9 @@ class IntegrationTestAPI:
         self, event, args=None, time_pred=None, history=None, start="NOW", timeout=5
     ):
         """
-        A search for a single event message received. If the history doesn't have the
-        correct message, the call will await until a correct message is received or the
-        timeout, at which point it will return None.
+        A search for a single event message received. By default, the call will only await until a
+        correct message is found. The user can specify that await also searches the current history
+        by specifying a value for start. On timeout, the search will return None.
 
         Args:
             event: an event specifier (mnemonic, id, or predicate)
@@ -582,9 +611,10 @@ class IntegrationTestAPI:
 
     def await_event_sequence(self, events, history=None, start="NOW", timeout=5):
         """
-        A search for a sequence of event messages. If the history doesn't have the complete
-        sequence, the call will await until the sequence is completed or the timeout, at
-        which point it will return the list of found events.
+        A search for a sequence of event messages. By default, the call will only await until
+        the sequence is completed. The user can specify that await also searches the history by
+        specifying a value for start. On timeout, the search will return the list of found
+        event messages regardless of whether the sequence is complete.
         Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
         Note: This function will always return a list of events the user should check if the
         sequence was completed.
@@ -613,9 +643,10 @@ class IntegrationTestAPI:
         self, count, events=None, history=None, start="NOW", timeout=5
     ):
         """
-        A search on the number of events received. If the history doesn't have the correct event
-        count, the call will await until a correct count is achieved or the timeout, at which point
-        it will return.
+        A search on the number of events received. By default, the call will only await until a
+        correct count is achieved. The user can specify that this await also searches the current
+        history by specifying a value for start. On timeout, the search will return the list of
+        found event messages regardless of whether a correct count is achieved.
         Note: this search will always return a list of objects. The user should check if the search
         was completed.
 
@@ -718,32 +749,8 @@ class IntegrationTestAPI:
         return results
 
     ######################################################################################
-    #   History Functions
+    #   History Searches
     ######################################################################################
-    def get_command_test_history(self):
-        """
-        Accessor for IntegrationTestAPI's command history
-        Returns:
-            a history of CmdData objects
-        """
-        return self.command_history
-
-    def get_telemetry_test_history(self):
-        """
-        Accessor for IntegrationTestAPI's telemetry history
-        Returns:
-            a history of ChData objects
-        """
-        return self.telemetry_history
-
-    def get_event_test_history(self):
-        """
-        Accessor for IntegrationTestAPI's event history
-        Returns:
-            a history of EventData objects
-        """
-        return self.event_history
-
     class TimeoutException(Exception):
         pass
 
