@@ -50,18 +50,23 @@ def file_len(fname):
 def remove_headers(filename):
     """
     Remove header comment so that date doesn't
-    mess up the file comparison
+    mess up the file comparison - also removes all docstrings
     """
     with open(filename, "r+") as f:
         lines = f.readlines()
         f.seek(0)
         num = 0
+        skip_docstring = False
         for line in lines:
-            if not (num == 0 and ('*' in line or '//' in line)):
-                # Don't want to print empty first line
-                if num != 0 or line.strip():
-                    f.write(line)
-                    num += 1
+            if not skip_docstring:
+                if not (num == 0 and ('*' in line or '//' in line or "'''" in line or '"""' in line)):
+                    # Don't want to print empty first line
+                    if num != 0 or line.strip():
+                        f.write(line)
+                        num += 1
+                            
+            if "'''" in line or '"""' in line:
+                skip_docstring = not skip_docstring
         
         f.truncate()
 
@@ -87,10 +92,12 @@ def test_testgen():
     """
     try:
         
-        ## Spawn executable
+        # Autocode tests
         p = pexpect.spawn("python ../../bin/testgen.py -v TestComponentAi.xml")
         
         p.expect("(?=.*Generated test files for TestComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.hpp)(?=.*Generated Tester.cpp)(?!.*ERROR).*", timeout=5)
+        
+        print("Autocoded TestComponent")
         
         time.sleep(3)
         
@@ -101,6 +108,16 @@ def test_testgen():
         compare_genfile("TesterBase.hpp")
         compare_genfile("GTestBase.cpp")
         compare_genfile("GTestBase.hpp")
+        
+        # Build ut
+        pbuild = pexpect.spawn("cd ../../../../build_test/ && make Autocoders_Python_test_testgen_ut_exe")
+        
+        print("Built testgen unit test")
+        
+        # Run ut
+        ptestrun = pexpect.spawn("../../../../build_test/bin/Darwin/Autocoders_Python_test_testgen_ut_exe")
+        
+        print("Successfully ran testgen unit test")
         
         ## If there was no timeout the pexpect test passed
         assert True

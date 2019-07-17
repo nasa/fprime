@@ -50,18 +50,23 @@ def file_len(fname):
 def remove_headers(filename):
     """
     Remove header comment so that date doesn't
-    mess up the file comparison
+    mess up the file comparison - also removes all docstrings
     """
     with open(filename, "r+") as f:
         lines = f.readlines()
         f.seek(0)
         num = 0
+        skip_docstring = False
         for line in lines:
-            if not (num == 0 and ('*' in line or '//' in line)):
-                # Don't want to print empty first line
-                if num != 0 or line.strip():
-                    f.write(line)
-                    num += 1
+            if not skip_docstring:
+                if not (num == 0 and ('*' in line or '//' in line or "'''" in line or '"""' in line)):
+                    # Don't want to print empty first line
+                    if num != 0 or line.strip():
+                        f.write(line)
+                        num += 1
+                            
+            if "'''" in line or '"""' in line:
+                skip_docstring = not skip_docstring
         
         f.truncate()
 
@@ -89,9 +94,13 @@ def test_dictgen():
         
         p_pymod.expect("(?=.*Generated component dicts for DictGen::TestComponent)(?=.*Generated tests for topology TestTopology)(?!.*ERROR).*", timeout=5)
         
+        print("Autocoded TestTopology using pymod dictgen tool")
+        
         p_gds = pexpect.spawn("python ../../bin/gds_dictgen.py -v TestTopologyAppAi.xml")
         
         p_gds.expect("(?=.*Generated XML dictionary TestTopologyAppDictionary.xml)(?!.*ERROR).*", timeout=5)
+        
+        print("Autocoded TestTopology using gds dictgen tool")
         
         time.sleep(3)
         
