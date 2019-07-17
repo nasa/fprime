@@ -102,10 +102,15 @@ class FileDecoder(decoder.Decoder):
             sourcePath = data[10:lengthSP + 10]
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             print(lengthDP)
-            destPath = data[lengthSP + 10: lengthSP + lengthDP + 11]
+            destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
             print(sourcePath)
             print(destPath)
+
+            #Create the log file where the soucePath and lengthDP will be placed
             self.create_log_file(sourcePath, lengthDP)
+
+            #Create the destination file where the DATA packet data will be stored
+            self.create_dest_file(destPath)
 
             return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
 
@@ -113,6 +118,7 @@ class FileDecoder(decoder.Decoder):
             offset = unpack('I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
+
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
         elif (packetType == 'END'):   #Packet Type is END
@@ -148,9 +154,55 @@ class FileDecoder(decoder.Decoder):
             pass
 
         new_log = log_path + '/log_file'
-        new_file = open(new_log, 'w')
+        new_file = open(new_log, 'a')
         new_file.write('Source Path: ' + str(sourcePath) + '\n')
         new_file.write('Destination Size: ' + str(lengthDP))
+
+    def create_dest_file(self, destPath):
+        #First, create the file_downlink folder if it does not already exist
+        log_path = os.getcwd() + '/file_downlink/'
+        if not (os.path.exists(log_path)):
+            try:
+                os.makedirs(log_path)
+            except OSError:
+                pass
+            else:
+                pass
+
+        #Get rid of all the leading '/'
+        location = 0
+        lengthPath = len(str(destPath[0:])) - 1
+        for x in str(destPath[0:]):
+            if (str(destPath[0]) == '/'):
+                destPath = destPath[1:]
+                lengthPath = lengthPath - 1
+
+        print(destPath)
+        #Figure out where the last '/' is in the string
+        location = 0
+        x = 0
+        new_dest_path = log_path + destPath
+        for x in range(len(str(new_dest_path[0:]))):
+            if str(new_dest_path[x]) == '/':
+                location = x
+
+        #We need to create the directory first before we create/open the file so make a temp string
+        #without the file at the end of it
+        temp_dest_path = new_dest_path[0:location + 1]
+        print('temp dest path: ' + str(temp_dest_path))
+
+        print(new_dest_path)
+        #Create the directory if it does not already exist and then create/open the file
+        if not (os.path.exists(temp_dest_path)):
+            try:
+                os.makedirs(temp_dest_path)
+            except OSError:
+                pass
+            else:
+                pass
+        else:
+            print('this path already exists')
+        new_file = open(new_dest_path, 'a')
 
 
 
