@@ -466,8 +466,6 @@ class IntegrationTestAPI:
             an ordered list of ChData objects that satisfies the sequence
         """
         results = self.await_telemetry_sequence(channels, history, start, timeout)
-        if results is None:
-            assert False
         len_pred = predicates.equal_to(len(channels))
         self.__assert_pred("Telemetry Sequence", len_pred, len(results))
         return results
@@ -490,8 +488,6 @@ class IntegrationTestAPI:
             a list of the ChData objects that were counted
         """
         results = self.await_telemetry_count(count, channels, history, start, timeout)
-        if results is None:
-            assert False
         if predicates.is_predicate(count):
             count_pred = count
         elif isinstance(count, int):
