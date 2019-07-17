@@ -31,19 +31,19 @@
         <arg name="ch_size" type="U32"/>
       </args>
     </event>
-    <event component="apiTester" name="SeverityCommand" id="0x3" severity="COMMAND" format_string="Unit Test EVR with COMMAND Severity">
+    <event component="apiTester" name="SeverityCOMMAND" id="0x3" severity="COMMAND" format_string="Unit Test EVR with COMMAND Severity">
     </event>
-    <event component="apiTester" name="SeverityActivityLO" id="0x4" severity="ACTIVITY_LO" format_string="Unit Test EVR with ACTIVITY_LO Severity">
+    <event component="apiTester" name="SeverityACTIVITY_LO" id="0x4" severity="ACTIVITY_LO" format_string="Unit Test EVR with ACTIVITY_LO Severity">
     </event>
-    <event component="apiTester" name="SeverityActivityHI" id="0x5" severity="ACTIVITY_HI" format_string="Unit Test EVR with ACTIVITY_HI Severity">
+    <event component="apiTester" name="SeverityACTIVITY_HI" id="0x5" severity="ACTIVITY_HI" format_string="Unit Test EVR with ACTIVITY_HI Severity">
     </event>
-    <event component="apiTester" name="SeverityWarningLO" id="0x6" severity="WARNING_LO" format_string="Unit Test EVR with WARNING_LO Severity">
+    <event component="apiTester" name="SeverityWARNING_LO" id="0x6" severity="WARNING_LO" format_string="Unit Test EVR with WARNING_LO Severity">
     </event>
-    <event component="apiTester" name="SeverityWarningHI" id="0x7" severity="WARNING_HI" format_string="Unit Test EVR with WARNING_HI Severity">
+    <event component="apiTester" name="SeverityWARNING_HI" id="0x7" severity="WARNING_HI" format_string="Unit Test EVR with WARNING_HI Severity">
     </event>
-    <event component="apiTester" name="SeverityDiagnostic" id="0x8" severity="DIAGNOSTIC" format_string="Unit Test EVR with DIAGNOSTIC Severity">
+    <event component="apiTester" name="SeverityDIAGNOSTIC" id="0x8" severity="DIAGNOSTIC" format_string="Unit Test EVR with DIAGNOSTIC Severity">
     </event>
-    <event component="apiTester" name="SeverityFatal" id="0x9" severity="FATAL" format_string="Unit Test EVR with FATAL Severity">
+    <event component="apiTester" name="SeverityFATAL" id="0x9" severity="FATAL" format_string="Unit Test EVR with FATAL Severity">
     </event>
   </events>
   <channels>
