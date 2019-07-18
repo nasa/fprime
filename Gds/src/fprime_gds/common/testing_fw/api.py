@@ -197,7 +197,7 @@ class IntegrationTestAPI:
             command: the mnemonic (str) or ID (int) of the command to send
             args: a list of command arguments.
         """
-        msg = "Sending Command:  {} {}".format(command, args)
+        msg = "Sending Command: {} {}".format(command, args)
         self.__log(msg, TestLogger.PURPLE)
         command = self.translate_command_name(command)
         self.pipeline.send_command(command, args)
