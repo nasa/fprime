@@ -41,15 +41,17 @@ class TestLogger:
     UNDERLINED = "UNDERLINED"
 
     __align = Alignment(vertical='top', wrap_text=True)
-    __font_name = 'courier'
-    __time_fmt = "%H:%M:%S.%f"#"%m/%d/%Y %H:%M:%S.%f"
+    __font_name = 'calibri'
+    __time_fmt = "%H:%M:%S.%f"
 
-    def __init__(self, filename):
+    def __init__(self, filename, time_format=None, font_name=None):
         """
         Constructs a TestLogger
 
         Args:
-            workbook: either a filename or an existing workbook object for the logger to log to.
+            filename: a filename for the logger to log to.
+            time_format: an optional string to specify how the timestamp should be formatted. See datetime.strftime
+            font_name: an optional string to specify the font
         """
         if not isinstance(filename, str):
             raise TypeError(
@@ -59,10 +61,26 @@ class TestLogger:
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
 
+        if time_format is None:
+            self.time_format = self.__time_fmt
+        else:
+            self.time_format = time_format
+
+        if font_name is None:
+            self.font_name = self.__font_name
+        else:
+            self.font_name = font_name
+
+
         ts = time.time()
-        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
+        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.time_format)
         self.worksheet.column_dimensions['A'].width = len(timestring) + 1
         self.worksheet.column_dimensions['D'].width = 120
+
+        top = []
+        date_string = datetime.datetime.fromtimestamp(ts).strftime("%H:%M:%S.%f on %m/%d/%Y")
+        top.append(self.__get_cell("Test began at " + date_string, style=self.BOLD))
+        self.worksheet.append(top)
 
         header = []
         header.append(self.__get_cell("Time", style=self.BOLD))
@@ -87,7 +105,7 @@ class TestLogger:
             case_id: a short identifier to denote which test case the log message belongs to
         """
         ts = time.time()
-        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.__time_fmt)
+        timestring = datetime.datetime.fromtimestamp(ts).strftime(self.time_format)
 
         if case_id is not None:
             if not isinstance(case_id, str):
@@ -121,7 +139,7 @@ class TestLogger:
         if color is not None:
             cell.fill = PatternFill("solid", fgColor=color)
         cell.font = Font(
-            name=self.__font_name,
+            name=self.font_name,
             bold=(style == self.BOLD),
             italic=(style == self.ITALICS),
             underline=("single" if style == self.UNDERLINED else "none"),
