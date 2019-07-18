@@ -37,11 +37,11 @@ class IntegrationTestAPI:
 
         # these histories are owned by the TestAPI and are modified by the API.
         self.command_history = TestHistory()
-        self.pipeline.register_command_history(self.command_history)
+        self.pipeline.register_command_consumer(self.command_history)
         self.telemetry_history = TestHistory()
-        self.pipeline.register_telemetry_history(self.telemetry_history)
+        self.pipeline.register_telemetry_consumer(self.telemetry_history)
         self.event_history = TestHistory()
-        self.pipeline.register_event_history(self.event_history)
+        self.pipeline.register_event_consumer(self.event_history)
 
         # Initialize latest time. Will be updated whenever a time query is made.
         self.latest_time = TimeType().useconds
@@ -51,6 +51,10 @@ class IntegrationTestAPI:
             self.logger = TestLogger(logname)
         else:
             self.logger = None
+        
+        # A predicate used as a filter to choose which EVR's to log automatically
+        self.event_log_filter = self.get_event_predicate()
+        self.pipeline.register_event_consumer(self)
 
     def teardown(self):
         """
@@ -135,6 +139,18 @@ class IntegrationTestAPI:
             self.__log(msg, TestLogger.WHITE)
 
         self.command_history.clear()
+
+    def set_event_log_filter(self, event=None, args=None, time_pred=None):
+        """
+        Constructs an event predicate that is then used to filter which EVR's are interlaced in the
+        test logs. This method replaces the current filter.
+
+        Args:
+            event: an optional mnemonic (str), id (int), or predicate to specify the event type
+            args: an optional list of arguments (list of values, predicates, or None to ignore)
+            time_pred: an optional predicate to specify the flight software timestamp
+        """
+        self.event_log_filter = self.get_event_predicate(event, args, time_pred)
 
     def get_command_test_history(self):
         """
@@ -922,6 +938,9 @@ class IntegrationTestAPI:
         self.__log(msg, TestLogger.YELLOW)
         return objects
 
+    ######################################################################################
+    #   API Helper Methods
+    ######################################################################################
     def __log(self, message, color=None, style=None, sender="Test API", case_id=None):
         if not isinstance(message, str):
             message = str(message)
@@ -940,3 +959,14 @@ class IntegrationTestAPI:
             msg = name + " Assertion failed!\nassert " + pred_msg
             self.__log(msg, TestLogger.RED)
             assert False, pred_msg
+
+    def data_callback(self, data_object):
+        """
+        Data callback used by the api to subscribe to EVR's
+
+        Args:
+            data_object: object to store
+        """
+        if self.event_log_filter(data_object):
+            msg = "GDS received EVR: {}".format(data_object)
+            self.__log(msg, TestLogger.BLUE)
