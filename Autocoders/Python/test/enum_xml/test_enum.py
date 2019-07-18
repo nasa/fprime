@@ -83,7 +83,7 @@ def compare_genfile(filename):
     if ".cpp" in filename:
         filename2 = filename.split(".")[0] + "_cpp.txt"
     elif ".hpp" in filename:
-        filename2 = filename.split(".")[0] + "_cpp.txt"
+        filename2 = filename.split(".")[0] + "_hpp.txt"
     elif ".py" in filename:
         filename2 = filename
     else:
@@ -104,6 +104,12 @@ def test_enum():
     @TODO: This test and others need the cmake setup instructions.
     """
     try:
+        # Need to cd into test directory in order to run codegen, will return after completion
+        curdir = os.getcwd()
+        testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        testdir = testdir + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml"
+        os.chdir(testdir)
+        
         expect_step = "enum and serializable"
 
         # Check required environmental variables are set
@@ -124,22 +130,29 @@ def test_enum():
         
         ## Spawn executable
         cmd = "python " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
-        cmd = cmd + os.sep + "Python" + os.sep + "bin" + os.sep + "codegen.py Enum1EnumAi.xml" 
+        cmd = cmd + os.sep + "Python" + os.sep + "bin" + os.sep + "codegen.py Enum1EnumAi.xml"
         penum = pexpect.spawn(cmd)
         penum.expect("(?=.*Enum1EnumAi.xml)(?!.*ERROR).*", timeout=5)
         print("\nEnum XML autocoded")
         
-        pserial = pexpect.spawn("python ../../bin/codegen.py Serial1SerializableAi.xml")
+        cmd = "python " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        cmd = cmd + os.sep + "Python" + os.sep + "bin" + os.sep + "codegen.py Serial1SerializableAi.xml"
+        print(cmd)
+        pserial = pexpect.spawn(cmd)
         pserial.expect("(?=.*Serial1SerializableAc.cpp)(?=.*Serial1SerializableAc.hpp)(?!.*ERROR).*", timeout=5)
         print("Serializable XML autocoded")
         
         expect_step = "port and component"
         
-        pport = pexpect.spawn("python ../../bin/codegen.py Port1PortAi.xml")
+        cmd = "python " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        cmd = cmd + os.sep + "Python" + os.sep + "bin" + os.sep + "codegen.py Port1PortAi.xml"
+        pport = pexpect.spawn(cmd)
         pport.expect("(?=.*Port1PortAc.cpp)(?=.*Port1PortAc.hpp)(?!.*ERROR).*", timeout=5)
         print("Port XML autocoded")
 
-        pcomp = pexpect.spawn("python ../../bin/codegen.py Component1ComponentAi.xml")
+        cmd = "python " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        cmd = cmd + os.sep + "Python" + os.sep + "bin" + os.sep + "codegen.py Component1ComponentAi.xml"
+        pcomp = pexpect.spawn(cmd)
         pcomp.expect("(?=.*Component1)(?=.*Port1)(?=.*Serial1)(?!.*ERROR).*", timeout=5)
         print("Component XML autocoded\n")
         
@@ -161,7 +174,10 @@ def test_enum():
         
         expect_step = "cmake"
         
-        pbuild = pexpect.spawn("cd ../../../../build_test/ && make Autocoders_Python_test_enum_xml_ut_exe")
+        #
+        cmd = "cd " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
+        cmd = cmd + " && make Autocoders_Python_test_enum_xml_ut_exe"
+        pbuild = pexpect.spawn(cmd)
         
         print("\nRunning Test Cases...")
         
@@ -177,7 +193,9 @@ def test_enum():
         enum2_literal_data = [-8324876, 21, 2000999333, 2, -1952875139, 2]
         serial1_data = [0, 10, 67, 4837, 82739845, 3434534]
         serial2_data = [22839745, 3453, 2, 1, 9808973, 99]
-        ptestrun = pexpect.spawn("../../../../build_test/bin/Darwin/Autocoders_Python_test_enum_xml_ut_exe")
+        cmd = os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
+        cmd = cmd + "bin" + os.sep + "Darwin" + os.sep + "Autocoders_Python_test_enum_xml_ut_exe"
+        ptestrun = pexpect.spawn(cmd)
         
         ptestrun.expect(".*run or q to quit: ", timeout=3)
         ptestrun.sendline("e")
@@ -256,6 +274,8 @@ def test_enum():
         
         ptestrun.expect(r".*Completed.*", timeout=3)
         print("Finished running test cases, enum xml test passed")
+        
+        os.chdir(curdir)
         
         ## If there was no timeout the pexpect test passed
         assert True
