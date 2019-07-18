@@ -448,7 +448,7 @@ class args_predicate(predicate):
 
 
 class event_predicate(predicate):
-    def __init__(self, id_pred=None, args_pred=None, time_pred=None):
+    def __init__(self, id_pred=None, args_pred=None, severity_pred=None, time_pred=None):
         """
         A predicate for specifying an EventData object from data_types.event_data. This predicate
         can be used to search a history. If arguments passed into this constructor are not
@@ -458,16 +458,20 @@ class event_predicate(predicate):
         Args:
             id_pred: optional predicate to call on the EventData instance's id field
             args_pred: optional predicate to call on a list of the EventData 's argument values
+            severity_pred: optional predicate to call on the EvenetData instances severity field
             time_pred: optional predicate to call on the EventData instance's timestamp
         """
         true_pred = always_true()
         self.id_pred = true_pred
         self.args_pred = true_pred
+        self.severity_pred = true_pred
         self.time_pred = true_pred
         if is_predicate(id_pred):
             self.id_pred = id_pred
         if is_predicate(args_pred):
             self.args_pred = args_pred
+        if is_predicate(severity_pred):
+            self.severity_pred = severity_pred
         if is_predicate(time_pred):
             self.time_pred = time_pred
 
@@ -484,11 +488,12 @@ class event_predicate(predicate):
             return False
         if self.id_pred(event.get_id()):
             if self.time_pred(event.get_time().useconds):
-                args = []
-                for arg in event.get_args():
-                    args.append(arg.val)
-                if self.args_pred(args):
-                    return True
+                if self.severity_pred(event.get_severity()):
+                    args = []
+                    for arg in event.get_args():
+                        args.append(arg.val)
+                    if self.args_pred(args):
+                        return True
         return False
 
     def __str__(self):

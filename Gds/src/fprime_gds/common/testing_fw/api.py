@@ -13,6 +13,7 @@ import signal
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 from fprime_gds.common.logger.test_logger import TestLogger
+from fprime_gds.common.utils.event_severity import EventSeverity
 from fprime.common.models.serialize.time_type import TimeType
 
 
@@ -348,8 +349,9 @@ class IntegrationTestAPI:
         test API. If  channel is already an instance of telemetry_predicate, it will be returned
         immediately. The provided implementation of telemetry_predicate evaluates true if and only
         if all specified constraints are satisfied. If a specific constraint isn't specified, then
-        it will not effect the outcome. If no constraints are specified, the predicate will always
-        return true.
+        it will not effect the outcome; this means all arguments are optional. If no constraints
+        are specified, the predicate will always return true.
+
 
         Args:
             channel: an optional mnemonic (str), id (int), or predicate to specify the channel type
@@ -570,19 +572,21 @@ class IntegrationTestAPI:
                 msg = "The event id, {}, wasn't in the dictionary".format(event)
                 raise KeyError(msg)
 
-    def get_event_predicate(self, event=None, args=None, time_pred=None):
+    def get_event_predicate(self, event=None, args=None, severity=None, time_pred=None):
         """
         This function will translate the event ID, and construct an event_predicate object. It is
         used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the test
         API. If event is already an instance of event_predicate, it will be returned immediately.
         The provided implementation of event_predicate evaluates true if and only if all specified
         constraints are satisfied. If a specific constraint isn't specified, then it will not
-        effect the outcome. If no constraints are specified, the predicate will always return true.
+        effect the outcome; this means all arguments are optional. If no constraints are specified,
+        the predicate will always return true.
 
         Args:
-            event: an optional mnemonic (str), id (int), or predicate to specify the event type
-            args: an optional list of arguments (list of values, predicates, or None to ignore)
-            time_pred: an optional predicate to specify the flight software timestamp
+            event: mnemonic (str), id (int), or predicate to specify the event type
+            args: list of arguments (list of values, predicates, or None to ignore)
+            severity: an EventSeverity enum or a predicate to specify the event severity
+            time_pred: predicate to specify the flight software timestamp
         Returns:
             an instance of event_predicate
         """
@@ -596,10 +600,15 @@ class IntegrationTestAPI:
         if not predicates.is_predicate(args) and args is not None:
             args = predicates.args_predicate(args)
 
+        if not predicates.is_predicate(severity) and severity is not None:
+            if not isinstance(severity, EventSeverity):
+                raise TypeMismatchException("EventSeverity", type(severity))
+            severity = predicates.equal_to(severity)
+
         return predicates.event_predicate(event, args, time_pred)
 
     def await_event(
-        self, event, args=None, time_pred=None, history=None, start="NOW", timeout=5
+        self, event, args=None, severity=None, time_pred=None, history=None, start="NOW", timeout=5
     ):
         """
         A search for a single event message received. By default, the call will only await until a
@@ -609,6 +618,7 @@ class IntegrationTestAPI:
         Args:
             event: an event specifier (mnemonic, id, or predicate)
             args: a list of expected arguments (list of values, predicates, or None for don't care)
+            severity: an EventSeverity enum or a predicate to specify the event severity
             time_pred: an optional predicate to specify the flight software timestamp
             history: if given, a substitute history that the function will search and await
             start: an optional index or predicate to specify the earliest item to search
@@ -616,7 +626,7 @@ class IntegrationTestAPI:
         Returns:
             the EventData object found during the search, otherwise, None
         """
-        e_pred = self.get_event_predicate(event, args, time_pred)
+        e_pred = self.get_event_predicate(event, args, severity, time_pred)
 
         if history is None:
             history = self.get_event_test_history()
@@ -698,7 +708,7 @@ class IntegrationTestAPI:
     #   Event Asserts
     ######################################################################################
     def assert_event(
-        self, event, args=None, time_pred=None, history=None, start=None, timeout=0
+        self, event, args=None, severity=None, time_pred=None, history=None, start=None, timeout=0
     ):
         """
         An assert on a single event message received. If the history doesn't have the
@@ -708,6 +718,7 @@ class IntegrationTestAPI:
         Args:
             event: an event specifier (mnemonic, id, or predicate)
             args: a list of expected arguments (list of values, predicates, or None for don't care)
+            severity: an EventSeverity enum or a predicate to specify the event severity
             time_pred: an optional predicate to specify the flight software timestamp
             history: if given, a substitute history that the function will search and await
             start: an optional index or predicate to specify the earliest item to search
@@ -715,8 +726,8 @@ class IntegrationTestAPI:
         Returns:
             the EventData object found during the search
         """
-        pred = self.get_event_predicate(event, args, time_pred)
-        result = self.await_event(event, args, time_pred, history, start, timeout)
+        pred = self.get_event_predicate(event, args, severity, time_pred)
+        result = self.await_event(event, args, severity, time_pred, history, start, timeout)
         self.__assert_pred("Event Received", pred, result)
         return result
 
@@ -968,5 +979,5 @@ class IntegrationTestAPI:
             data_object: object to store
         """
         if self.event_log_filter(data_object):
-            msg = "GDS received EVR: {}".format(data_object)
+            msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)

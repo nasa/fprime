@@ -46,6 +46,9 @@ class EventData(sys_data.SysData):
 
     def get_time(self):
         return self.time
+    
+    def get_severity(self):
+        return self.template.get_severity()
 
     @staticmethod
     def get_empty_obj(event_temp):
