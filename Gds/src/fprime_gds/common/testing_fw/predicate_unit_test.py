@@ -313,13 +313,20 @@ class PredicateTestCases(unittest.TestCase):
         assert not pred(msg2), "This predicate should return False as msg2 has args (str Dozen, int32 12)"
         self.check_str(pred)
 
+        severity_pred = predicates.equal_to(EventSeverity.ACTIVITY_LO)
+        pred = predicates.event_predicate(severity_pred=severity_pred)
+        assert severity_pred(msg1.get_severity())
+        assert pred(msg1), "This predicate should return True as msg1 has an ACTIVITY_LO severity"
+        assert not pred(msg2), "This predicate should return False as msg2 has an ACTIVITY_HI severity"
+        self.check_str(pred)
+
         time_pred = predicates.equal_to(0)
         pred = predicates.event_predicate(time_pred=time_pred)
         assert pred(msg1), "This predicate on the time 0 should return True"
         assert pred(msg2), "This predicate on the time 0 should return True"
         self.check_str(pred)
 
-        pred = predicates.event_predicate(id_pred, args_pred, time_pred)
+        pred = predicates.event_predicate(id_pred, args_pred, severity_pred, time_pred)
         assert pred(msg1), "Specifying all fields should return True for msg1"
         assert not pred(msg2), "Specifying all fields should return False for msg2"
         self.check_str(pred)
