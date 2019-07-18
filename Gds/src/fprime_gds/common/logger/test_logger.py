@@ -14,6 +14,7 @@ https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode
 """
 import time
 import datetime
+import threading
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.cell import WriteOnlyCell
@@ -50,7 +51,7 @@ class TestLogger:
 
         Args:
             filename: a filename for the logger to log to.
-            time_format: an optional string to specify how the timestamp should be formatted. See datetime.strftime
+            time_format: an optional string to specify the timestamp format. See datetime.strftime
             font_name: an optional string to specify the font
         """
         if not isinstance(filename, str):
@@ -71,7 +72,6 @@ class TestLogger:
         else:
             self.font_name = font_name
 
-
         ts = time.time()
         timestring = datetime.datetime.fromtimestamp(ts).strftime(self.time_format)
         self.worksheet.column_dimensions['A'].width = len(timestring) + 1
@@ -79,7 +79,7 @@ class TestLogger:
 
         top = []
         date_string = datetime.datetime.fromtimestamp(ts).strftime("%H:%M:%S.%f on %m/%d/%Y")
-        top.append(self.__get_cell("Test began at " + date_string, style=self.BOLD))
+        top.append(self.__get_cell("Test began at " + date_string))
         self.worksheet.append(top)
 
         header = []
@@ -90,6 +90,8 @@ class TestLogger:
         self.worksheet.append(header)
 
         self.case_id = "NA"
+
+        self.lock = threading.Lock()
 
     def log_message(self, message, sender="NA", color=None, style=None, case_id=None):
         """
@@ -117,7 +119,12 @@ class TestLogger:
         row.append(self.__get_cell(self.case_id, color, style))
         row.append(self.__get_cell(sender, color, style))
         row.append(self.__get_cell(message, color, style))
-        self.worksheet.append(row)
+
+        self.lock.acquire()
+        try:
+            self.worksheet.append(row)
+        finally:
+            self.lock.release() 
 
     def close_log(self):
         """
