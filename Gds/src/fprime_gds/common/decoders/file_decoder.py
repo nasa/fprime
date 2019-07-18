@@ -45,7 +45,7 @@ class TestConsumer:
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
 
-    def __init__(self):
+    def __init__(self, file_dest_data = ''):
         '''
         FileDecoder class constructor
 
@@ -56,7 +56,20 @@ class FileDecoder(decoder.Decoder):
         Returns:
             An initialized FileDecoder object.
         '''
+        #This is used to keep track of the destination file across the class
+        self._file_dest_data = file_dest_data
+
         super(FileDecoder, self).__init__()
+
+
+    #Getter for the destination file
+    def get_file(self):
+        return self._file_dest_data
+
+    #Setter for the destination file
+    def set_file(self, x):
+        self._file_dest_data = x
+
 
 
     def data_callback(self, data):
@@ -95,16 +108,11 @@ class FileDecoder(decoder.Decoder):
         
         #Packet Type determines the variables following the seqID
         if (packetType == 'START'):  #Packet Type is START
-            print(data)
             size = unpack('I', data[5:9])[0]
             lengthSP = unpack('B', data[9])[0] #Length of the source path
-            print(lengthSP)
             sourcePath = data[10:lengthSP + 10]
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
-            print(lengthDP)
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
-            print(sourcePath)
-            print(destPath)
 
             #Create the log file where the soucePath and lengthDP will be placed
             self.create_log_file(sourcePath, lengthDP)
@@ -118,6 +126,8 @@ class FileDecoder(decoder.Decoder):
             offset = unpack('I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
+            file_dest = self.get_file() #retrieve the file destination
+            file_dest.write(dataVar)    #write the data information to the destination file
 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
@@ -133,17 +143,36 @@ class FileDecoder(decoder.Decoder):
         return None
 
     def create_log_file(self, sourcePath, lengthDP):
-        #Write the source path and dest path size to a log file
-        print(os.getcwd())
+        '''
+        Creates the log file which contains information about the source
+        path and length
+
+        This function allows for the decode_api method to use its START
+        packets to create log files that are available to be viewed by
+        the user.  The log contains the source path the user entered
+        as well as the length of the destination path.
+
+        Args:
+            sourcePath: the source path that the user has entered into
+            the program
+            lengthDP: the length of the destination path.
+
+        Returns:
+            None
+        '''
+
+        #Create the file_decoder_logs folder if it does not already exist
         log_path = os.getcwd() + '/file_decoder_logs'
-        try:  
-            os.makedirs(log_path)
-        except OSError:  
-            pass
-        else:  
-            pass
+        if not (os.path.exists(log_path)):
+            try:  
+                os.makedirs(log_path)
+            except OSError:  
+                pass
+            else:  
+                pass
 
         #Get the current date time to create a new log file folder
+        #Use the dates and time as the folder name
         time = datetime.datetime.now()
         log_path = log_path + '/' + str(time.year) + '_' + str(time.month) + '_' + str(time.day) + '_' + str(time.hour) + '_' + str(time.minute)
         try:  
@@ -153,12 +182,31 @@ class FileDecoder(decoder.Decoder):
         else:  
             pass
 
+        #Create a new file to write to
         new_log = log_path + '/log_file'
         new_file = open(new_log, 'a')
         new_file.write('Source Path: ' + str(sourcePath) + '\n')
         new_file.write('Destination Size: ' + str(lengthDP))
 
+
     def create_dest_file(self, destPath):
+        '''
+        Creates the destination file that contains the contents of
+        the data varaible
+        
+        This function creates the file that the decode_api function
+        can write to.  The method also creates the folder and path
+        that the file will be put into.  It also creates and opens
+        the appendable file to be used
+
+        Args:
+            destPath: the destination path the user inputs which is
+            used to create the folder path and file
+
+        Returns:
+            None
+        '''
+
         #First, create the file_downlink folder if it does not already exist
         log_path = os.getcwd() + '/file_downlink/'
         if not (os.path.exists(log_path)):
@@ -170,15 +218,11 @@ class FileDecoder(decoder.Decoder):
                 pass
 
         #Get rid of all the leading '/'
-        location = 0
-        lengthPath = len(str(destPath[0:])) - 1
         for x in str(destPath[0:]):
             if (str(destPath[0]) == '/'):
                 destPath = destPath[1:]
-                lengthPath = lengthPath - 1
 
-        print(destPath)
-        #Figure out where the last '/' is in the string
+        #Figure out where the last '/' is in the file path (if any)
         location = 0
         x = 0
         new_dest_path = log_path + destPath
@@ -189,9 +233,7 @@ class FileDecoder(decoder.Decoder):
         #We need to create the directory first before we create/open the file so make a temp string
         #without the file at the end of it
         temp_dest_path = new_dest_path[0:location + 1]
-        print('temp dest path: ' + str(temp_dest_path))
 
-        print(new_dest_path)
         #Create the directory if it does not already exist and then create/open the file
         if not (os.path.exists(temp_dest_path)):
             try:
@@ -200,9 +242,13 @@ class FileDecoder(decoder.Decoder):
                 pass
             else:
                 pass
-        else:
-            print('this path already exists')
-        new_file = open(new_dest_path, 'a')
+        
+        #Create/open the new file
+        data_file = open(new_dest_path, 'a')
+
+        #Set the file using the setter for other functions to be able to use the new file
+        self.set_file(data_file)
+
 
 
 
