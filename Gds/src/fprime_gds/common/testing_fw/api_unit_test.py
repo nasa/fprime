@@ -1,8 +1,8 @@
+import math
 import os
 import sys
+import threading
 import time
-import math
-import _thread
 import unittest
 
 filename = os.path.dirname(__file__)
@@ -100,7 +100,9 @@ class APITestCases(unittest.TestCase):
             callback(item)
 
     def fill_history_async(self, callback, items, timestep=1):
-        _thread.start_new_thread(self.fill_history, (callback, items, timestep))
+        t = threading.Thread(target=self.fill_history, args=(callback, items, timestep))
+        t.start()
+        return t
 
     def assert_lists_equal(self, expected, actual):
         assert len(expected) == len(
@@ -614,9 +616,11 @@ class APITestCases(unittest.TestCase):
 
         self.api.clear_histories()
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         self.api.assert_telemetry_count(100, timeout=2)
+        t1.join()
+        t2.join()
         try:
             self.api.assert_telemetry_count(100)
             raise self.AssertionFailure()
