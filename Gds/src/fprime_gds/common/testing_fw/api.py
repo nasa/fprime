@@ -605,7 +605,7 @@ class IntegrationTestAPI:
                 raise TypeMismatchException("EventSeverity", type(severity))
             severity = predicates.equal_to(severity)
 
-        return predicates.event_predicate(event, args, time_pred)
+        return predicates.event_predicate(event, args, severity, time_pred)
 
     def await_event(
         self, event, args=None, severity=None, time_pred=None, history=None, start="NOW", timeout=5
