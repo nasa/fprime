@@ -411,11 +411,11 @@ class args_predicate(predicate):
         will accept any response given for that argument index.
 
         Args:
-            args: a list of expected arguments (list of values, predicates and None)
+            args: a list of expected arguments (list of values, predicates, and None)
         """
         self.arg_spec = []
         ignored = always_true()
-        if not isinstance(args, list):
+        if not isinstance(args, (list, tuple)):
             args = [args]
         for arg in args:
             if arg is None:
@@ -429,7 +429,7 @@ class args_predicate(predicate):
         """
         Determines if the given array satisfies the given argument specification.
         """
-        if not isinstance(actual, list):
+        if not isinstance(actual, (list, tuple)):
             actual = [actual]
         if len(actual) != len(self.arg_spec):
             return False
@@ -505,6 +505,8 @@ class event_predicate(predicate):
             msg += " and x's id satisfies ({})".format(self.id_pred)
         if not isinstance(self.args_pred, always_true):
             msg += " and x's args satisfy ({})".format(self.args_pred)
+        if not isinstance(self.severity_pred, always_true):
+            msg += " and x's severity satisfies ({})".format(self.severity_pred)
         if not isinstance(self.time_pred, always_true):
             msg += " and x's time satisfies ({})".format(self.time_pred)
         return msg
