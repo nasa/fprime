@@ -981,3 +981,38 @@ class IntegrationTestAPI:
         if self.event_log_filter(data_object):
             msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)
+
+    def __history_search(history, name="generic history search", search_pred=None, start=None, timeout=0):
+        ##########################################
+        # Search-specific argument parsing (init)
+        ##########################################
+
+        if start == self.NOW:
+            start = history.size()
+        elif isinstance(start, TimeType):
+            # TODO start = some predicate for timestamp
+            pass
+
+        current = history.retrieve(start)
+        ###########################################
+        # Search-specific search on current items
+        ###########################################
+
+        if timeout:
+            try:
+                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
+                signal.alarm(timeout)
+                while True:
+                    new_items = history.retrieve_new()
+                    for item in new_items:
+                        ###########################################
+                        # Search-specific incremental search on future items
+                        ###########################################
+                    time.sleep(0.1)
+            except self.TimeoutException:
+                self.__log(name + " timed out and ended unsuccessfully.", TestLogger.YELLOW)
+            finally:
+                signal.alarm(0)
+        ###########################################
+        # Search-specific return
+        ###########################################
