@@ -18,10 +18,10 @@ from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.utils.config_manager import ConfigManager
 
 # these imports are needed to generate data objects.
-from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.i32_type import I32Type
 from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.time_type import TimeType
 
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.data_types.cmd_data import CmdData
@@ -93,6 +93,9 @@ class APITestCases(unittest.TestCase):
         self.pipeline.disconnect()
         self.api.teardown()
 
+    ######################################################################################
+    #   Test Case Helper Methods
+    ######################################################################################
     def fill_history(self, callback, items, timestep=0):
         for item in items:
             if timestep:
@@ -145,8 +148,15 @@ class APITestCases(unittest.TestCase):
         return seq
 
     class AssertionFailure(Exception):
+        """
+        Used to differentiate between and AssertionError in test cases that intentionally raise an
+        assertion error.
+        """
         pass
 
+    ######################################################################################
+    #   Test Cases
+    ######################################################################################
     def test_dummy_pipeline(self):
         listA = range(0, 50)
         self.fill_history_async(self.pipeline.enqueue_event, listA, 0.01)
@@ -520,19 +530,22 @@ class APITestCases(unittest.TestCase):
         search_pred = self.api.get_telemetry_predicate("Counter", pred)
         count_pred = predicates.within_range(10, 20)
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         results = self.api.await_telemetry_count(count_pred, search_pred)
-
         msg = predicates.get_descriptive_string(len(results), count_pred)
         assert count_pred(len(results)), msg
+        t1.join()
+        t2.join()
 
         self.api.clear_histories()
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         results = self.api.await_telemetry_count(100)
         assert len(results) == 100, "await count should have found 100 items"
+        t1.join()
+        t2.join()
 
         self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
         self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.02)
@@ -640,6 +653,39 @@ class APITestCases(unittest.TestCase):
             assert True, "api raised the correct error"
         except self.AssertionFailure:
             assert False, "api failed to raise an assertion error"
+
+    def test_translate_event_name(self):
+        assert self.api.translate_event_name("CommandReceived") == 1
+        assert self.api.translate_event_name("HistorySizeUpdate") == 2
+        assert self.api.translate_event_name("SeverityCOMMAND") == 3
+        assert self.api.translate_event_name("SeverityACTIVITY_LO") == 4
+        assert self.api.translate_event_name("SeverityACTIVITY_HI") == 5
+        assert self.api.translate_event_name("SeverityWARNING_LO") == 6
+        assert self.api.translate_event_name("SeverityWARNING_HI") == 7
+        assert self.api.translate_event_name("SeverityDIAGNOSTIC") == 8
+        assert self.api.translate_event_name("SeverityFATAL") == 9
+        for i in range(1, 10):
+            assert self.api.translate_event_name(i) == i
+
+        try:
+            self.api.translate_event_name("DOES_NOT_EXIST")
+            assert False, "the api should have raised a KeyError"
+        except KeyError:
+            assert True, "the api raised the correct error"
+        try:
+            self.api.translate_event_name(0)
+            assert False, "the api should have raised a KeyError"
+        except KeyError:
+            assert True, "the api raised the correct error"
+
+    def test_get_event_predicate(self):
+        pred = predicates.event_predicate()
+        result = self.api.get_event_predicate(pred)
+        assert pred == result, "should return when channel is already event_pred"
+
+        message = self.get_severity_event("FATAL")
+        pred = self.api.get_event_predicate(message.get_id(), message.get_args(), message.get_severity())
+        assert pred(message), "predicate should return true when fields are specified"
 
     def test_await_event(self):
         raise NotImplementedError("Test Case is not yet implemented")
