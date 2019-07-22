@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_PassiveTextLogger.a  CMakeFiles/Svc_PassiveTextLogger.dir/PassiveTextLoggerComponentAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_PassiveTextLogger.a

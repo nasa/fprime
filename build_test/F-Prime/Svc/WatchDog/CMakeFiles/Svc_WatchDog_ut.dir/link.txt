@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_WatchDog_ut.a  CMakeFiles/Svc_WatchDog_ut.dir/WatchDogPortAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_WatchDog_ut.a

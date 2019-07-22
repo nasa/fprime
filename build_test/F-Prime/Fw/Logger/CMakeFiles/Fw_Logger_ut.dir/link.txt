@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Logger_ut.a  CMakeFiles/Fw_Logger_ut.dir/Logger.cpp.o CMakeFiles/Fw_Logger_ut.dir/LogAssert.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Logger_ut.a
