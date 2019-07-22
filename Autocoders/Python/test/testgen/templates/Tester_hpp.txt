@@ -1,0 +1,65 @@
+#ifndef TESTER_HPP
+#define TESTER_HPP
+
+#include "GTestBase.hpp"
+#include "Autocoders/Python/test/testgen/TestComponentComponentImpl.hpp"
+
+namespace TestGen {
+
+  class Tester :
+    public TestComponentGTestBase
+  {
+
+      // ----------------------------------------------------------------------
+      // Construction and destruction
+      // ----------------------------------------------------------------------
+
+    public:
+
+      //! Construct object Tester
+      //!
+      Tester(void);
+
+      //! Destroy object Tester
+      //!
+      ~Tester(void);
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Tests
+      // ----------------------------------------------------------------------
+
+      //! To do
+      //!
+      void toDo(void);
+
+    private:
+
+      // ----------------------------------------------------------------------
+      // Helper methods
+      // ----------------------------------------------------------------------
+
+      //! Connect ports
+      //!
+      void connectPorts(void);
+
+      //! Initialize components
+      //!
+      void initComponents(void);
+
+    private:
+
+      // ----------------------------------------------------------------------
+      // Variables
+      // ----------------------------------------------------------------------
+
+      //! The component under test
+      //!
+      TestComponentComponentImpl component;
+
+  };
+
+} // end namespace TestGen
+
+#endif

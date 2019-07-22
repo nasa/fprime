@@ -1,0 +1,95 @@
+#include "Tester.hpp"
+
+#define INSTANCE 0
+#define MAX_HISTORY_SIZE 10
+#define QUEUE_DEPTH 10
+
+namespace TestGen {
+
+  // ----------------------------------------------------------------------
+  // Construction and destruction 
+  // ----------------------------------------------------------------------
+
+  Tester ::
+    Tester(void) : 
+#if FW_OBJECT_NAMES == 1
+      TestComponentGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("TestComponent")
+#else
+      TestComponentGTestBase(MAX_HISTORY_SIZE),
+      component()
+#endif
+  {
+    this->initComponents();
+    this->connectPorts();
+  }
+
+  Tester ::
+    ~Tester(void) 
+  {
+    
+  }
+
+  // ----------------------------------------------------------------------
+  // Tests 
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    toDo(void) 
+  {
+    // TODO
+  }
+
+  // ----------------------------------------------------------------------
+  // Helper methods 
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    connectPorts(void) 
+  {
+
+    // CmdDisp
+    this->connect_to_CmdDisp(
+        0,
+        this->component.get_CmdDisp_InputPort(0)
+    );
+
+    // aport
+    this->connect_to_aport(
+        0,
+        this->component.get_aport_InputPort(0)
+    );
+
+    // bport
+    this->connect_to_bport(
+        0,
+        this->component.get_bport_InputPort(0)
+    );
+
+    // CmdReg
+    this->component.set_CmdReg_OutputPort(
+        0, 
+        this->get_from_CmdReg(0)
+    );
+
+    // CmdStatus
+    this->component.set_CmdStatus_OutputPort(
+        0, 
+        this->get_from_CmdStatus(0)
+    );
+
+
+
+
+  }
+
+  void Tester ::
+    initComponents(void) 
+  {
+    this->init();
+    this->component.init(
+        QUEUE_DEPTH, INSTANCE
+    );
+  }
+
+} // end namespace TestGen
