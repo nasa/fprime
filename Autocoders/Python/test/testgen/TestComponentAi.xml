@@ -6,11 +6,8 @@
  Only valid for active components input.
  Note  kind attribute of component can be ether active or passive.
  -->
-<component name="TestComponent" kind="passive" namespace="TestGen">
+<component name="TestComponent" kind="active" namespace="TestGen">
     <import_port_type>Autocoders/Python/test/testgen/TestPortAi.xml</import_port_type>
-    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
-    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
-    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
     <comment>A component with a single command</comment>
     
     <commands opcode_base="0x10">
@@ -33,13 +30,16 @@
         </command>
     </commands>
     <ports>
-        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
-        <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
-        <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"/>
-        <port name="aport" data_type="TestGen::TestPort" kind="sync_input" >
+        <port name="aport" data_type="TestGen::TestPort" kind="async_input" max_number="1">
             <comment>
                 A test port
             </comment>
         </port>
+        <port name="bport" data_type="TestGen::TestPort" kind="async_input" max_number="1">
+            <comment>
+                A test port
+            </comment>
+        </port>
+        <port name="bportOut" kind="output" data_type="TestGen::TestPort" max_number="1"/>
     </ports>
 </component>

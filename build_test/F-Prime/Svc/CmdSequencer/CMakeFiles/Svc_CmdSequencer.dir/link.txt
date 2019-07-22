@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_CmdSequencer.a  CMakeFiles/Svc_CmdSequencer.dir/CmdSequencerImpl.cpp.o CMakeFiles/Svc_CmdSequencer.dir/Events.cpp.o CMakeFiles/Svc_CmdSequencer.dir/FPrimeSequence.cpp.o CMakeFiles/Svc_CmdSequencer.dir/Sequence.cpp.o CMakeFiles/Svc_CmdSequencer.dir/formats/AMPCSSequence.cpp.o CMakeFiles/Svc_CmdSequencer.dir/CmdSequencerComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_CmdSequencer.a

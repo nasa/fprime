@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Comp_ut.a  CMakeFiles/Fw_Comp_ut.dir/ActiveComponentBase.cpp.o CMakeFiles/Fw_Comp_ut.dir/PassiveComponentBase.cpp.o CMakeFiles/Fw_Comp_ut.dir/QueuedComponentBase.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Comp_ut.a

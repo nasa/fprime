@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_PolyDb.a  CMakeFiles/Svc_PolyDb.dir/PolyDbImpl.cpp.o CMakeFiles/Svc_PolyDb.dir/PolyDbComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_PolyDb.a

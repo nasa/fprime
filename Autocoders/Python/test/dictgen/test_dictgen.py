@@ -77,8 +77,8 @@ def compare_genfile(filename):
     remove_headers(filename)
 
     if not (filecmp.cmp(filename,"templates/{}".format(filename))):
-        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename))
-        diff_lines = file_diff(filename, "templates/{}".format(filename))
+        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename + ".txt"))
+        diff_lines = file_diff(filename, "templates/{}".format(filename) + ".txt")
         print("WARNING: the following lines from " + filename + " differ from the template: " + str(diff_lines))
     else:
         print("{} is consistent with expected template".format(filename))
@@ -89,14 +89,22 @@ def test_dictgen():
     """
     try:
         
+        # cd into test directory to find test files (code/test/dictgen can only find files this way)
+        curdir = os.getcwd()
+        testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        testdir = testdir + "Python" + os.sep + "test" + os.sep + "dictgen"
+        os.chdir(testdir)
+        
+        bindir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
+        
         ## Spawn executable
-        p_pymod = pexpect.spawn("python ../../bin/pymod_dictgen.py -v TestTopologyAppAi.xml")
+        p_pymod = pexpect.spawn("python " + bindir + "pymod_dictgen.py -v TestTopologyAppAi.xml")
         
         p_pymod.expect("(?=.*Generated component dicts for DictGen::TestComponent)(?=.*Generated tests for topology TestTopology)(?!.*ERROR).*", timeout=5)
         
         print("Autocoded TestTopology using pymod dictgen tool")
         
-        p_gds = pexpect.spawn("python ../../bin/gds_dictgen.py -v TestTopologyAppAi.xml")
+        p_gds = pexpect.spawn("python " + bindir + "gds_dictgen.py -v TestTopologyAppAi.xml")
         
         p_gds.expect("(?=.*Generated XML dictionary TestTopologyAppDictionary.xml)(?!.*ERROR).*", timeout=5)
         

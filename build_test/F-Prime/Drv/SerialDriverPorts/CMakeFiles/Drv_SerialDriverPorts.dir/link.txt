@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_SerialDriverPorts.a  CMakeFiles/Drv_SerialDriverPorts.dir/SerialReadPortAc.cpp.o CMakeFiles/Drv_SerialDriverPorts.dir/SerialWritePortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_SerialDriverPorts.a

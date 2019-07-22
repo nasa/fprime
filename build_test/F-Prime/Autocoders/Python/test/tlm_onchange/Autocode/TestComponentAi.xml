@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="TestTlm" kind="passive" namespace="Tlm">
+    <import_port_type>Autocoders/Python/test/tlm_onchange/TestPortAi.xml</import_port_type>
+    <import_serializable_type>Autocoders/Python/test/tlm_onchange/QuaternionSerializableAi.xml</import_serializable_type>
+    <comment>A component with a single telemetry channel</comment>
+    <ports>
+        <port name="aport" data_type="Another::Test" kind="sync_input" >
+            <comment>
+            A test port
+            </comment>
+        </port>
+    </ports>
+    <telemetry>
+    	<channel id="100" name="somechan" data_type="U32" update="on_change" abbrev="T001-1234">
+    		<comment>
+    		A test channel
+    		</comment>
+    	</channel>
+        <channel id="101" name="enumchan" abbrev="A444-7654" data_type="ENUM" update="on_change" >
+            <enum name="SomeEnum">
+                <item name="MEM1"/>
+                <item name="MEM2" value="7" comment="A comment"/>
+                <item name="MEM3" value="15"/>
+            </enum>
+            <comment>
+            A test channel
+            </comment>
+        </channel>
+        <channel id="102" name="quatchan" abbrev="A444-7654" data_type="U32" update="on_change" >
+            <comment>
+            A quaternion channel
+            </comment>
+        </channel>
+        <channel id="103" name="stringchan" abbrev="A444-7654" data_type="U32" update="on_change" >
+            <comment>
+            A string channel
+            </comment>
+        </channel>
+    </telemetry>
+</component>
+

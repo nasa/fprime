@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_LinuxSerialDriver.a  CMakeFiles/Drv_LinuxSerialDriver.dir/LinuxSerialDriverComponentImplCommon.cpp.o CMakeFiles/Drv_LinuxSerialDriver.dir/LinuxSerialDriverComponentImplStub.cpp.o CMakeFiles/Drv_LinuxSerialDriver.dir/LinuxSerialDriverComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_LinuxSerialDriver.a

@@ -31,10 +31,10 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
     def emitCppPortParams(self, params):
         return self.emitPortParamsCpp(8, params)
 
-    def initFilesWrite(self, obj):
+    def _initFilesWrite(self, obj):
         self.openFile(self.FILE_NAME)
 
-    def startSourceFilesWrite(self, obj):
+    def _startSourceFilesWrite(self, obj):
         c = cpp.cpp()
         self.initTest(obj, c)
         c.emit_cpp_params = self.emitCppParams
@@ -43,8 +43,11 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
         self._writeTmpl(c, "startSourceFilesWrite")
 
     def write(self, obj):
-        self.initFilesWrite(obj)
-        self.startSourceFilesWrite(obj)
+        """
+        Calls all of the write methods so that full file is made
+        """
+        self._initFilesWrite(obj)
+        self._startSourceFilesWrite(obj)
         self.includes1Write(obj)
         self.includes2Write(obj)
         self.namespaceWrite(obj)

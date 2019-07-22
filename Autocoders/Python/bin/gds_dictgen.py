@@ -46,11 +46,6 @@ VERBOSE = False
 PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
 
-# After catching exception this is set True
-# so a clean up routine deletes *_ac_*.[ch]
-# and *_ac_*.xml files within module.
-ERROR = False
-
 # Build Root environmental variable if one exists.
 BUILD_ROOT = None
 
@@ -70,48 +65,29 @@ def pinit():
     
     current_dir = os.getcwd()
     
-    # Format build root for program description
-    if ('BUILD_ROOT' in os.environ.keys()) == True:
-        root_dir = os.environ["BUILD_ROOT"]
-    else:
-        print("ERROR: Build root not set to root build path...")
-        sys.exit(-1)
-    
     usage = "usage: %prog [options] [xml_topology_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = '''
         This script reads F' topology XML and produces GDS XML Dictionaries.
         '''
     program_license = "Copyright 2018 user_name (California Institute of Technology) \
-    ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
+ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
     
     parser = OptionParser(usage, version=vers, epilog=program_longdesc,description=program_license)
     
-    parser.add_option("-b", "--build_root", dest="build_root_flag",
-        help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
-        action="store_true", default=False)
-
-    parser.add_option("-p", "--path", dest="work_path", type="string",
-        help="Switch to new working directory (def: %s)." % current_dir,
-        action="store", default=current_dir)
+    parser.add_option("-b", "--build_root", dest="build_root_overwrite", type="string", help="Overwrite environment variable BUILD_ROOT", default=None)
         
-    parser.add_option("-v", "--verbose", dest="verbose_flag",
-        help="Enable verbose mode showing more runtime detail (def: False)",
-        action="store_true", default=False)
+    parser.add_option("-v", "--verbose", dest="verbose_flag", help="Enable verbose mode showing more runtime detail (def: False)", action="store_true", default=None)
                       
     return parser
 
 
 def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
     DEBUG.debug("Topology xml type description file: %s" % xml_filename)
-    generator = TopoFactory.TopoFactory.getInstance()
-    topology_model = generator.create(the_parsed_topology_xml)
+    model = TopoFactory.TopoFactory.getInstance()
+    topology_model = model.create(the_parsed_topology_xml)
 
     generator = GenFactory.GenFactory.getInstance()
-
-    if not "Ai" in xml_filename:
-        PRINT.info("Missing Ai at end of file name...")
-        raise IOError
     
     #uses the topology model to process the items
     #create list of used parsed component xmls
@@ -464,76 +440,62 @@ def main():
     """
     Main program.
     """
-    global ERROR   # prevent local creation of variable
     global VERBOSE # prevent local creation of variable
     global BUILD_ROOT # environmental variable if set
     global DEPLOYMENT # deployment set in topology xml only and used to install new instance dicts
     
-    ERROR = False
     CONFIG = ConfigManager.ConfigManager.getInstance()
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag
-    
-    # Check that the specified working directory exists. Remember, the
-    # default working directory is the current working directory which
-    # always exists. We are basically only checking for when the user
-    # specifies an alternate working directory.
-    
-    if os.path.exists(opt.work_path) == False:
-        Parser.error('Specified path does not exist (%s)!' % opt.work_path)
-    
-    working_dir = opt.work_path
-
-    # Get the current working directory so that we can return to it when
-    # the program completes. We always want to return to the place where
-    # we started.
-
-    starting_directory = os.getcwd()
-    os.chdir(working_dir)
 
     #
-    #  Parse the input Component XML file and create internal meta-model
+    #  Parse the input Topology XML filename
     #
     if len(args) == 0:
         PRINT.info("Usage: %s [options] xml_filename" % sys.argv[0])
         return
+    elif len(args) == 1:
+        xml_filename = args[0]
     else:
-        xml_filenames = args[0:]
+        print("ERROR: Too many filenames, should only have one")
+        return
+
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if opt.build_root_flag == True:
-        # Check for BUILD_ROOT env. variable
-        if ('BUILD_ROOT' in list(os.environ.keys())) == False:
-            PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
-            sys.exit(-1)
-        else:
-            BUILD_ROOT = os.environ['BUILD_ROOT']
-            ModelParser.BUILD_ROOT = BUILD_ROOT
-
-    for xml_filename in xml_filenames:
-    
-        xml_filename = os.path.basename(xml_filename)
-        xml_type = XmlParser.XmlParser(xml_filename)()
-    
-        if xml_type == "assembly" or xml_type == "deployment":
-            DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
-            the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
-            DEPLOYMENT = the_parsed_topology_xml.get_deployment()
-            print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
-            generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt)
-        else:
-            PRINT.info("Invalid XML found...this format not supported")
-            ERROR=True
-
-    # Always return to directory where we started.
-    os.chdir(starting_directory)
-
-    if ERROR == True:
-        sys.exit(-1)
+    if not opt.build_root_overwrite == None:
+        BUILD_ROOT = opt.build_root_overwrite
+        ModelParser.BUILD_ROOT = BUILD_ROOT
+        if VERBOSE:
+            print("BUILD_ROOT set to %s" % BUILD_ROOT)
     else:
-        sys.exit(0)
+        if ('BUILD_ROOT' in os.environ.keys()) == False:
+            print("ERROR: Build root not set to root build path...")
+            sys.exit(-1)
+        BUILD_ROOT = os.environ['BUILD_ROOT']
+        ModelParser.BUILD_ROOT = BUILD_ROOT
+        if VERBOSE:
+            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
+
+    if not "Ai" in xml_filename:
+        PRINT.info("Missing Ai at end of file name...")
+        raise IOError
+    
+    xml_filename = os.path.basename(xml_filename)
+    xml_type = XmlParser.XmlParser(xml_filename)()
+
+    if xml_type == "assembly" or xml_type == "deployment":
+        DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
+        the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
+        DEPLOYMENT = the_parsed_topology_xml.get_deployment()
+        print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
+        generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt)
+    else:
+        PRINT.info("Invalid XML found...this format not supported")
+        sys.exit(-1)
+
+    sys.exit(0)
 
 
 if __name__ == '__main__':

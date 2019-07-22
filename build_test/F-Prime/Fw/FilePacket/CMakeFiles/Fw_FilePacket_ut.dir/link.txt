@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_FilePacket_ut.a  CMakeFiles/Fw_FilePacket_ut.dir/CancelPacket.cpp.o CMakeFiles/Fw_FilePacket_ut.dir/DataPacket.cpp.o CMakeFiles/Fw_FilePacket_ut.dir/EndPacket.cpp.o CMakeFiles/Fw_FilePacket_ut.dir/FilePacket.cpp.o CMakeFiles/Fw_FilePacket_ut.dir/Header.cpp.o CMakeFiles/Fw_FilePacket_ut.dir/PathName.cpp.o CMakeFiles/Fw_FilePacket_ut.dir/StartPacket.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_FilePacket_ut.a

@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jishii/Documents/split_repo/fprime-sw/STest/STest/Random/bsd_random.c
+bsd_random.h
+/Users/jishii/Documents/split_repo/fprime-sw/STest/STest/Random/bsd_random.h
+
+/Users/jishii/Documents/split_repo/fprime-sw/STest/STest/Random/bsd_random.h
+sys/cdefs.h
+-
+stdint.h
+-
+stdio.h
+-
+stdlib.h
+-
+

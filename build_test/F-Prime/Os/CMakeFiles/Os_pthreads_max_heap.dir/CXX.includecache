@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../cmake/../Fw/Cfg/Config.hpp
+
+../cmake/../Fw/Types/Assert.hpp
+Fw/Cfg/Config.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+
+../cmake/../Fw/Types/BasicTypes.hpp
+Fw/Cfg/Config.hpp
+-
+StandardTypes.hpp
+-
+
+../cmake/../Fw/Types/Linux/StandardTypes.hpp
+stdint.h
+-
+
+../cmake/../Os/Pthreads/MaxHeap/MaxHeap.hpp
+Fw/Types/BasicTypes.hpp
+../cmake/../Os/Pthreads/MaxHeap/Fw/Types/BasicTypes.hpp
+
+/Users/jishii/Documents/split_repo/fprime-sw/Os/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp
+Os/Pthreads/MaxHeap/MaxHeap.hpp
+/Users/jishii/Documents/split_repo/fprime-sw/Os/Pthreads/MaxHeap/test/ut/Os/Pthreads/MaxHeap/MaxHeap.hpp
+Fw/Types/Assert.hpp
+-
+stdio.h
+-
+string.h
+-
+

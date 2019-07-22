@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_FatalHandler.a  CMakeFiles/Svc_FatalHandler.dir/FatalHandlerComponentCommonImpl.cpp.o CMakeFiles/Svc_FatalHandler.dir/FatalHandlerComponentLinuxImpl.cpp.o CMakeFiles/Svc_FatalHandler.dir/FatalHandlerComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_FatalHandler.a

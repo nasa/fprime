@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="TestTlm" kind="passive" namespace="Tlm">
+    <import_port_type>Autocoders/Python/test/tlm1/TestPortAi.xml</import_port_type>
+    <comment>A component with a single telemetry channel</comment>
+    <ports>
+        <port name="aport" data_type="Another::Test" kind="sync_input" >
+            <comment>
+            A test port
+            </comment>
+        </port>
+    </ports>
+    <telemetry>
+    	<channel id="100" name="somechan" data_type="U32" abbrev="T001-1234" high_yellow="10" high_red="20">
+    		<comment>
+    		A test channel
+    		</comment>
+    	</channel>
+    </telemetry>
+</component>
+

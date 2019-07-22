@@ -17,6 +17,7 @@ import sys
 import time
 import glob
 import logging
+import argparse
 
 
 from optparse import OptionParser
@@ -63,11 +64,6 @@ DEBUG = logging.getLogger('debug')
 # Used by unit test to disable things.
 TEST = False
 
-# After catching exception this is set True
-# so a clean up routine deletes *_ac_*.[ch]
-# and *_ac_*.xml files within module.
-ERROR = False
-
 # Configuration manager object.
 CONFIG = ConfigManager.ConfigManager.getInstance()
 
@@ -95,24 +91,17 @@ def pinit():
 
     usage = "usage: %prog [options] [xml_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
+    program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
 
-    parser = OptionParser(usage, version=vers)
+    parser = OptionParser(usage, version=vers, epilog=program_longdesc)
 
-    parser.add_option("-b", "--build_root", dest="build_root_flag",
-        help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
-        action="store_true", default=False)
-        
-    parser.add_option("-p", "--path", dest="work_path", type="string",
-        help="Switch to new working directory (def: %s)." % current_dir,
-        action="store", default=current_dir)
+    parser.add_option("-b", "--build_root", dest="build_root_overwrite", type="string", help="Overwrite environment variable BUILD_ROOT", default=None)
 
-    parser.add_option("-v", "--verbose", dest="verbose_flag",
-        help="Enable verbose mode showing more runtime detail (def: False)",
-        action="store_true", default=False)
+    parser.add_option("-v", "--verbose", dest="verbose_flag", help="Enable verbose mode showing more runtime detail (def: False)", action="store_true", default=False)
 
     return parser
 
-def parse_component(the_parsed_component_xml, xml_filename, opt , topology_model = None):
+def parse_component(the_parsed_component_xml, xml_filename, opt):
     """
     Creates a component meta-model and generates the
     component files.  Nothing is returned.
@@ -150,12 +139,8 @@ def parse_component(the_parsed_component_xml, xml_filename, opt , topology_model
         parsed_serializable_xml_list.append(xml_parser_obj)
         del(xml_parser_obj)
 
-    generator = CompFactory.CompFactory.getInstance()
-    component_model = generator.create(the_parsed_component_xml, parsed_port_xml_list, parsed_serializable_xml_list)
-
-    if not "Ai" in xml_filename:
-        PRINT.info("Missing Ai at end of file name...")
-        raise IOError
+    model = CompFactory.CompFactory.getInstance()
+    component_model = model.create(the_parsed_component_xml, parsed_port_xml_list, parsed_serializable_xml_list)
 
     return component_model
 
@@ -220,43 +205,17 @@ def main():
     Main program.
     """
     global VERBOSE
-    global ERROR
+    global BUILD_ROOT
     global DEPLOYMENT
     
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag
     CONFIG = ConfigManager.ConfigManager.getInstance()
-    ERROR = False
-    
-    # Check that the specified working directory exists. Remember, the
-    # default working directory is the current working directory which
-    # always exists. We are basically only checking for when the user
-    # specifies an alternate working directory.
-    
-    if os.path.exists(opt.work_path) == False:
-        Parser.error('Specified path does not exist (%s)!' % opt.work_path)
-    
-    working_dir = opt.work_path
     
     #
     # Handle command line arguments
     #
-    
-    # Get the current working directory so that we can return to it at end
-    STARTING_DIRECTORY = os.getcwd()
-    os.chdir(working_dir)
-    
-    # Check for BUILD_ROOT env. variable
-    if ('BUILD_ROOT' in os.environ.keys()) == False:
-        print("ERROR: Build root not set to root build path...")
-        sys.exit(-1)
-    else:
-        # Handle BUILD_ROOT
-        BUILD_ROOT = os.environ['BUILD_ROOT']
-        ModelParser.BUILD_ROOT = BUILD_ROOT
-        if VERBOSE:
-            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
     
     #
     #  Parse the input Topology XML filename
@@ -264,50 +223,54 @@ def main():
     if len(args) == 0:
         print("ERROR: Usage: %s [options] xml_filename" % sys.argv[0])
         return
+    elif len(args) == 1:
+        xml_filename = args[0]
     else:
-        xml_filenames = args[0:]
+        print("ERROR: Too many filenames, should only have one")
+        return
 
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if opt.build_root_flag == True:
-        # Check for BUILD_ROOT env. variable
-        if ('BUILD_ROOT' in list(os.environ.keys())) == False:
-            PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
+    if not opt.build_root_overwrite == None:
+        BUILD_ROOT = opt.build_root_overwrite
+        ModelParser.BUILD_ROOT = BUILD_ROOT
+        if VERBOSE:
+            print("BUILD_ROOT set to %s" % BUILD_ROOT)
+    else:
+        if ('BUILD_ROOT' in os.environ.keys()) == False:
+            print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
-        else:
-            BUILD_ROOT = os.environ['BUILD_ROOT']
-            ModelParser.BUILD_ROOT = BUILD_ROOT
+        BUILD_ROOT = os.environ['BUILD_ROOT']
+        ModelParser.BUILD_ROOT = BUILD_ROOT
+        if VERBOSE:
+            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
     
     #
-    # Write tests
+    # Write test component
     #
-    for xml_filename in xml_filenames:
-        #
-        # Create python dictionaries
-        #
-        
-        xml_filename = os.path.basename(xml_filename)
-        xml_type = XmlParser.XmlParser(xml_filename)()
-        
-        # Only Components can be inputted
-        if xml_type == "component":
-            DEBUG.info("Detected Component XML so Generating Component C++ Files...")
-            the_parsed_component_xml = XmlComponentParser.XmlComponentParser(xml_filename)
-            component_model = parse_component(the_parsed_component_xml, xml_filename, opt)
-            print("\nGenerating tests...")
-            generate_tests(opt, component_model)
-        else:
-            PRINT.info("Invalid XML found...this format not supported")
-            ERROR=True
-
-    # Always return to directory where we started.
-    os.chdir(STARTING_DIRECTORY)
-
-    if ERROR == True:
-        sys.exit(-1)
+    if not "Ai" in xml_filename:
+        PRINT.info("Missing Ai at end of file name...")
+        raise IOError
+    #
+    # Create python dictionaries
+    #
+    
+    xml_filename = os.path.basename(xml_filename)
+    xml_type = XmlParser.XmlParser(xml_filename)()
+    
+    # Only Components can be inputted
+    if xml_type == "component":
+        DEBUG.info("Detected Component XML so GeneratingComponent C++ Files...")
+        the_parsed_component_xml = XmlComponentParser.XmlComponentParser(xml_filename)
+        component_model = parse_component(the_parsed_component_xml, xml_filename, opt)
+        print("\nGenerating tests...")
+        generate_tests(opt, component_model)
     else:
-        sys.exit(0)
+        PRINT.info("Invalid XML found...this format not supported")
+        sys.exit(-1)
+
+    sys.exit(0)
 
 
 if __name__ == '__main__':

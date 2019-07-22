@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_BlockDriver_ut.a  CMakeFiles/Drv_BlockDriver_ut.dir/BlockDriverImpl.cpp.o CMakeFiles/Drv_BlockDriver_ut.dir/BlockDriverComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_BlockDriver_ut.a

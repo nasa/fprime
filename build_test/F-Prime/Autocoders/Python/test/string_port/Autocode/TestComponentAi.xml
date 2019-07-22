@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="TestComponent" kind="active" namespace="ExampleComponents">
+    <import_port_type>Autocoders/Python/test/string_port/TestPortAi.xml</import_port_type>
+    <comment>An example component</comment>
+    <ports>
+        <port name="testIn" data_type="AnotherExample::Test" kind="async_input" priority="2" max_number="6">
+            <comment>
+            Example input port
+            </comment>
+        </port>
+        <port name="testOut" data_type="AnotherExample::Test" kind="output" max_number="4">
+            <comment>
+            Example output port
+            </comment>
+        </port>
+    </ports>
+</component>
+

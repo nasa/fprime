@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_DataTypes_ut.a  CMakeFiles/Drv_DataTypes_ut.dir/DataBuffer.cpp.o CMakeFiles/Drv_DataTypes_ut.dir/DataBufferPortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_DataTypes_ut.a

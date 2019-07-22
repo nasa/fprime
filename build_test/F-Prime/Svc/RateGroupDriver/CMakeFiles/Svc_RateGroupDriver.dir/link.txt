@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_RateGroupDriver.a  CMakeFiles/Svc_RateGroupDriver.dir/RateGroupDriverImpl.cpp.o CMakeFiles/Svc_RateGroupDriver.dir/RateGroupDriverComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_RateGroupDriver.a

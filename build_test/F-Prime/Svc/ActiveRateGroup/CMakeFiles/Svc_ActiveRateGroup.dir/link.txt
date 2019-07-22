@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_ActiveRateGroup.a  CMakeFiles/Svc_ActiveRateGroup.dir/ActiveRateGroupImpl.cpp.o CMakeFiles/Svc_ActiveRateGroup.dir/ActiveRateGroupComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_ActiveRateGroup.a

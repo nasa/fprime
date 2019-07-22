@@ -35,10 +35,10 @@ class TestImplHWriter(TestImplWriterBase.TestImplWriterBase):
     def emitNonPortParams(self, params):
         return self.emitNonPortParamsHpp(10, params)
 
-    def initFilesWrite(self, obj):
+    def _initFilesWrite(self, obj):
         self.openFile(self.FILE_NAME)
 
-    def startSourceFilesWrite(self, obj):
+    def _startSourceFilesWrite(self, obj):
         c = hpp.hpp()
         self.init(obj, c)
         self.initTestImpl(obj, c)
@@ -47,8 +47,11 @@ class TestImplHWriter(TestImplWriterBase.TestImplWriterBase):
         self._writeTmpl(c, "startSourceFilesWrite")
 
     def write(self, obj):
-        self.initFilesWrite(obj)
-        self.startSourceFilesWrite(obj)
+        """
+        Calls all of the write methods so that full file is made
+        """
+        self._initFilesWrite(obj)
+        self._startSourceFilesWrite(obj)
         self.includes1Write(obj)
         self.includes2Write(obj)
         self.namespaceWrite(obj)

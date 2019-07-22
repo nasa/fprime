@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_FileDownlink.a  CMakeFiles/Svc_FileDownlink.dir/FileDownlink.cpp.o CMakeFiles/Svc_FileDownlink.dir/File.cpp.o CMakeFiles/Svc_FileDownlink.dir/Warnings.cpp.o CMakeFiles/Svc_FileDownlink.dir/FileDownlinkComponentAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_FileDownlink.a

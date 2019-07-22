@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_GpioDriverPorts.a  CMakeFiles/Drv_GpioDriverPorts.dir/GpioWritePortAc.cpp.o CMakeFiles/Drv_GpioDriverPorts.dir/GpioReadPortAc.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_GpioDriverPorts.a

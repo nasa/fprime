@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../cmake/../Fw/Cfg/Config.hpp
+
+../cmake/../Fw/Logger/LogAssert.hpp
+Fw/Types/Assert.hpp
+-
+
+../cmake/../Fw/Logger/Logger.hpp
+Fw/Types/BasicTypes.hpp
+-
+
+../cmake/../Fw/Types/Assert.hpp
+Fw/Cfg/Config.hpp
+-
+Fw/Types/BasicTypes.hpp
+-
+
+../cmake/../Fw/Types/BasicTypes.hpp
+Fw/Cfg/Config.hpp
+-
+StandardTypes.hpp
+-
+
+../cmake/../Fw/Types/Linux/StandardTypes.hpp
+stdint.h
+-
+
+/Users/jishii/Documents/split_repo/fprime-sw/Fw/Logger/LogAssert.cpp
+Fw/Logger/LogAssert.hpp
+-
+Fw/Logger/Logger.hpp
+-
+
+/Users/jishii/Documents/split_repo/fprime-sw/Fw/Logger/Logger.cpp
+Fw/Logger/Logger.hpp
+-
+
