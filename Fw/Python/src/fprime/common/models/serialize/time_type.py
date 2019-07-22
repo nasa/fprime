@@ -23,6 +23,7 @@ import time
 from datetime import *
 from pytz import *
 from enum import Enum
+import math
 
 # Custom Python Modules
 from fprime.common.models.serialize.type_exceptions import *
@@ -99,7 +100,7 @@ class TimeType(type_base.BaseType):
 
     def _check_time_base(self, time_base):
         '''
-        Checks if a given microsecond value is valid.
+        Checks if a given TimeBase value is valid.
 
         Args:
             time_base (int): The value to check
@@ -366,7 +367,7 @@ class TimeType(type_base.BaseType):
         generate new TimeType instances. It is not meant to be used to modify an existing timestamp.
         Note: Present implementation doesn't enforce that a TimeType be positive
         '''
-        # num = math.max(num, 0) # TODO decide behavior on whether to allow negative TimeStamp objects
+        # num = math.max(num, 0) # TODO decide behavior on whether to allow negative TimeStamps
         self.seconds = int(math.floor(num))
         self.useconds = int(round((num - self.seconds) * 1000000))
 
@@ -376,7 +377,7 @@ class TimeType(type_base.BaseType):
         fields using the given number. The new TimeType's time_base and time_context will be
         preserved from the calling object.
         '''
-        tType = TimeType(self.time_base, self.time_context)
+        tType = TimeType(self.__timeBase.val, self.__timeContext.val)
         tType.__set_float(num)
         return tType
 
@@ -413,16 +414,16 @@ class TimeType(type_base.BaseType):
         num = self.__get_float() // other
         return self.__get_type_from_float(num)
 
+    '''
+    The following Python special methods add support for reflected arithmetic operations on
+    TimeTypes.
+    '''
     def __radd__(self, other):
         if isinstance(other, TimeType):
             other = other.__get_float()
         num = other + self.__get_float()
         return self.__get_type_from_float(num)
 
-    '''
-    The following Python special methods add support for reflected arithmetic operations on
-    TimeTypes.
-    '''
     def __rsub__(self, other):
         if isinstance(other, TimeType):
             other = other.__get_float()
