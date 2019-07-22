@@ -5,7 +5,6 @@
 #include "Autocoders/Python/test/testgen/Tester.cpp"
 #include "Autocoders/Python/test/testgen/Tester.hpp"
 #include <Autocoders/Python/test/testgen/TestComponentComponentImpl.hpp>
-#include <Autocoders/Python/test/testgen/TestComponentComponentImpl.cpp>
     
 // Very minimal to test autocoder. Some day they'll be actual unit test code
     
