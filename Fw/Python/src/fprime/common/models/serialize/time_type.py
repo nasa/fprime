@@ -221,6 +221,8 @@ class TimeType(type_base.BaseType):
         Returns:
             Negative, 0, or positive for t1<t2, t1==t2, t1>t2 respectively
         '''
+        def cmp(x, y):
+            return ((x > y) - (x < y))  # added to support Python 2/3
 
         # Compare Base
         base_cmp = cmp(t1.__timeBase.val, t2.__timeBase.val)
