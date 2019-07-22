@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Cfg_ut.a  CMakeFiles/Fw_Cfg_ut.dir/ConfigCheck.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Cfg_ut.a

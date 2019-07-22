@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libDrv_SpiDriverPorts.a  CMakeFiles/Drv_SpiDriverPorts.dir/SpiReadWritePortAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libDrv_SpiDriverPorts.a

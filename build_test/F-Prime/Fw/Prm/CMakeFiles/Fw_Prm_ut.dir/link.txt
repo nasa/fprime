@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libFw_Prm_ut.a  CMakeFiles/Fw_Prm_ut.dir/PrmBuffer.cpp.o CMakeFiles/Fw_Prm_ut.dir/PrmString.cpp.o CMakeFiles/Fw_Prm_ut.dir/PrmGetPortAc.cpp.o CMakeFiles/Fw_Prm_ut.dir/PrmSetPortAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libFw_Prm_ut.a

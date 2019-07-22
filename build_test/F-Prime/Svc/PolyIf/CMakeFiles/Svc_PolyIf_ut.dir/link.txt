@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/Darwin/libSvc_PolyIf_ut.a  CMakeFiles/Svc_PolyIf_ut.dir/PolyPortAc.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/Darwin/libSvc_PolyIf_ut.a
