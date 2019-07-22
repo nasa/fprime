@@ -487,7 +487,7 @@ class event_predicate(predicate):
         if not isinstance(event, EventData):
             return False
         if self.id_pred(event.get_id()):
-            if self.time_pred(event.get_time().useconds):
+            if self.time_pred(event.get_time()):
                 if self.severity_pred(event.get_severity()):
                     args = []
                     for arg in event.get_args():
@@ -549,7 +549,7 @@ class telemetry_predicate(predicate):
             return False
         if self.id_pred(telemetry.get_id()):
             if self.value_pred(telemetry.get_val()):
-                if self.time_pred(telemetry.get_time().useconds):
+                if self.time_pred(telemetry.get_time()):
                     return True
         return False
 
