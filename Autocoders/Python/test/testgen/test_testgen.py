@@ -127,9 +127,9 @@ def compare_genfile(filename):
     
     remove_headers(filename)
 
-    if not (filecmp.cmp(filename,"templates/{}".format(filename) + ".txt")):
-        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename + ".txt"))
-        diff_lines = file_diff(filename, "templates/{}".format(filename)  + ".txt")
+    if not (filecmp.cmp(filename,"templates/{}".format(filename).replace(".", "_") + ".txt")):
+        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename.replace(".", "_") + ".txt"))
+        diff_lines = file_diff(filename, "templates/{}".format(filename).replace(".", "_") + ".txt")
         print("WARNING: the following lines from " + filename + " differ from the template: " + str(diff_lines))
     else:
         print("{} is consistent with expected template".format(filename))
