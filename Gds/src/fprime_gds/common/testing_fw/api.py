@@ -780,10 +780,108 @@ class IntegrationTestAPI:
     #   History Searches
     ######################################################################################
     class TimeoutException(Exception):
+        """
+        This exception is used by the history searches to signal the end of the user-specified timeout.
+        """
         pass
+
+    class __HistorySearcher():
+        """
+        This class defines the calls made by the __history_search helper method and has a unique
+        implementation for each type of search provided by the api.
+        """
+        def __init__(self):
+            self.ret_val = None
+            raise NotImplementedError()
+
+        def search_current_history(self, items):
+            """
+            Searches the scoped existing history
+            Return:
+                True if the search was satisfied, False otherwise
+            """
+            raise NotImplementedError()
+
+        def incremental_search(self, item):
+            """
+            Searches one awaited item at a time
+            Return:
+                True if the search was satisfied, False otherwise
+            """
+            raise NotImplementedError()
+
+        def get_return_value(self):
+            """
+            Returns the result of the search whether the search is successful or not
+            """
+            return self.ret_val
+
 
     def __timeout_sig_handler(self, signum, frame):
         raise self.TimeoutException()
+
+    def __search_test_history(self, searcher, name, history, start=None, timeout=0):
+        """
+        This helper method contains the common logic to all search methods in the test API. This
+        means searches on both the event and channel histories rely on this helper. Each history
+        search is performed on both current history items and then on items that have yet to be
+        added to the history. The API defines these two scopes using the variables start and
+        timeout. They have several useful behaviors.
+        
+        start is used to pick the earliest item to search in the current history. start can be
+        specified as either a predicate to search for the first item, an index of the history, the
+        API variable NOW, or an instance of the TimeType timestamp object. The behavior of NOW is
+        to ignore the current history and only search awaited items until the timestamp. The
+        behavior of giving a timetype is to only search items that happened at or after the
+        specified timestamp.
+
+        timeout is a specification of how long to await future items in seconds. Specifying a
+        timeout of 0 will ignore all future items. The timeout specifies an increment of time
+        relative to the local clock, not the embedded application's clock.
+        Note: the API does not try to check for edge cases where the final item in a search is
+        received as the search times out. The user should ensure that their timeouts are sufficient
+        to complete any awaiting searches.
+
+        Finally, the test API supports the ability to substitute a history object for any search.
+        This is part of why history must be specified for each search
+
+        Args:
+            searcher: an instance of __HistorySearcher to execute search-specific logic
+            name: a string name to differentiate the type of search
+            history: the TestHistory object to conduct the search on
+            start: an index, a predicate, the NOW variable, or a TimeType timestamp to pick the
+                first item to search
+            timeout: the number of seconds to await future updates
+        """
+        if start == self.NOW:
+            start = history.size()
+        elif isinstance(start, TimeType):
+            time_pred = predicates.greater_than_or_equal_to(start)
+            e_pred = self.get_telemetry_predicate(time_pred=time_pred)
+            t_pred = self.get_event_predicate(time_pred=time_pred)
+            start = predicates.satisfies_any([e_pred, t_pred])
+
+        current = history.retrieve(start)
+        if searcher.search_current_history(current):
+            return searcher.get_return_value()
+
+        if timeout:
+            try:
+                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
+                signal.alarm(timeout)
+                while True:
+                    new_items = history.retrieve_new()
+                    for item in new_items:
+                        if searcher.incremental_search(current):
+                            return searcher.get_return_value()
+                    time.sleep(0.1)
+            except self.TimeoutException:
+                self.__log(name + " timed out and ended unsuccessfully.", TestLogger.YELLOW)
+            finally:
+                signal.alarm(0)
+        else:
+            self.__log(name + " timed out and ended unsuccessfully.", TestLogger.YELLOW)
+        return searcher.get_return_value()
 
     def find_history_item(self, search_pred, history, start=None, timeout=0):
         """
@@ -799,31 +897,27 @@ class IntegrationTestAPI:
         Returns:
             the data object found during the search, otherwise, None
         """
-        if start == self.NOW:
-            start = history.size()
+        class __ItemSearcher(self.__HistorySearcher):
+            def __init__(self, search_pred):
+                self.search_pred = search_pred
+                self.ret_val = None
 
-        current = history.retrieve(start)
-        for item in current:
-            if search_pred(item):
-                self.__log("History search found the specified item: {}".format(item), TestLogger.YELLOW)
-                return item
+            def search_current_history(self, items):
+                for item in items:
+                    if self.incremental_search(item):
+                        return True
+                return False
 
-        if timeout:
-            try:
-                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
-                signal.alarm(timeout)
-                while True:
-                    new_items = history.retrieve_new()
-                    for item in new_items:
-                        if search_pred(item):
-                            signal.alarm(0)
-                            self.__log("History search found the specified item: {}".format(item), TestLogger.YELLOW)
-                            return item
-                    time.sleep(0.1)
-            except self.TimeoutException:
-                self.__log("History search timed out")
-        self.__log("History search failed to find the specified item", TestLogger.YELLOW)
-        return None
+            def incremental_search(self, item):
+                if self.search_pred(item):
+                    msg = "History search found the specified item: {}".format(item)
+                    self.__log(msg, TestLogger.YELLOW)
+                    self.ret_val = item
+                    return True
+                return False
+
+        searcher = __ItemSearcher(search_pred)
+        return self.__search_test_history(searcher, "Item Search", history, start, timeout)
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
@@ -842,6 +936,41 @@ class IntegrationTestAPI:
         Returns:
             a list of data objects that satisfied the sequence
         """
+        class __SequenceSearcher(self.__HistorySearcher):
+            def __init__(self, seq_preds):
+                self.seq_preds = seq_preds.copy()
+                self.ret_val = []
+
+            def search_current_history(self, items):
+                if len(self.seq_preds) == 0:
+                    msg = "Sequence search finished, because the sequence specified had no items."
+                    self.__log(msg, TestLogger.YELLOW)
+                    return True
+
+                for item in items:
+                    if self.seq_preds[0](item):
+                        self.__log("Sequence search found the next item: {}".format(item))
+                        self.ret_val.append(item)
+                        self.seq_preds.pop(0)
+                        if len(self.seq_preds) == 0:
+                            self.__log("Sequence search found the last item.", TestLogger.YELLOW)
+                            return True
+                return False
+
+            def incremental_search(self, item):
+                if self.seq_preds[0](item):
+                    self.__log("Sequence search found the next item: {}".format(item))
+                    self.ret_val.append(item)
+                    self.seq_preds.pop(0)
+                    if len(seq_preds) == 0:
+                        signal.alarm(0)
+                        self.__log("Sequence search found the last item.", TestLogger.YELLOW)
+                        return sequence
+                return False
+
+        searcher = __SequenceSearcher(seq_preds)
+        return self.__search_test_history(searcher, "Sequence Search", history, start, timeout)
+        
         if start == self.NOW:
             start = history.size()
 
@@ -982,40 +1111,4 @@ class IntegrationTestAPI:
             msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)
 
-    def __history_search(self, searcher, history, name="history search", start=None, timeout=0):
-        ##########################################
-        # Search-specific argument parsing (init)
-        ##########################################
-
-        if start == self.NOW:
-            start = history.size()
-        elif isinstance(start, TimeType):
-            time_pred = predicates.greater_than_or_equal_to(start)
-            e_pred = self.get_telemetry_predicate(time_pred=time_pred)
-            t_pred = self.get_event_predicate(time_pred=time_pred)
-            start = predicates.satisfies_any([e_pred, t_pred])
-
-        current = history.retrieve(start)
-        ###########################################
-        # Search-specific search on current items
-        ###########################################
-
-        if timeout:
-            try:
-                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
-                signal.alarm(timeout)
-                while True:
-                    new_items = history.retrieve_new()
-                    for item in new_items:
-                        pass
-                        ###########################################
-                        # Search-specific incremental search on future items
-                        ###########################################
-                    time.sleep(0.1)
-            except self.TimeoutException:
-                self.__log(name + " timed out and ended unsuccessfully.", TestLogger.YELLOW)
-            finally:
-                signal.alarm(0)
-        ###########################################
-        # Search-specific return
-        ###########################################
+    
