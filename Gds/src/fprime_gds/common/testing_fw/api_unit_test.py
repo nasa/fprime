@@ -88,6 +88,7 @@ class APITestCases(unittest.TestCase):
         self.pipeline.setup(config, path)
         self.api = IntegrationTestAPI(self.pipeline)
         self.tHistory = TestHistory()
+        self.t0 = TimeType()
 
     def tearDown(self):
         self.pipeline.disconnect()
@@ -100,6 +101,8 @@ class APITestCases(unittest.TestCase):
         for item in items:
             if timestep:
                 time.sleep(timestep)
+            if isinstance(item, ChData) or isinstance(item, EventData):
+                item.time = self.t0 + time.time()
             callback(item)
 
     def fill_history_async(self, callback, items, timestep=1):
@@ -149,7 +152,7 @@ class APITestCases(unittest.TestCase):
 
     class AssertionFailure(Exception):
         """
-        Used to differentiate between and AssertionError in test cases that intentionally raise an
+        Used to differentiate an AssertionError in test cases that intentionally raise an
         assertion error.
         """
         pass
@@ -330,10 +333,87 @@ class APITestCases(unittest.TestCase):
         ), "The search should have returned an incomplete list, but found {}".format(results)
 
     def test_get_latest_fsw_time(self):
-        raise NotImplementedError("This test is not yet implemented.")
+        ts0 = self.api.get_latest_time()
+        assert ts0 == 0, "The starting timestamp should be zero."
+
+        time.sleep(0.1)
+
+        ts0 = self.api.get_latest_time()
+        assert ts0 == 0, "The starting timestamp should still be zero."
+
+        count_seq = self.get_counter_sequence(100)
+        event_seq = self.get_severity_sequence(100)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.02)
+        t2 = self.fill_history_async(self.pipeline.enqueue_event, event_seq, 0.02)
+
+        last = ts0
+        for i in range(1, 10):
+            time.sleep(0.1)
+            tsi = self.api.get_latest_time()
+            assert tsi > last, "Iter {}: {} should be greater than {}".format(i, tsi, last)
+            last = tsi
+
+        t1.join()
+        t2.join()
+
+        tsn_1 = self.api.get_latest_time()
+        assert tsn_1 > last, "The final timestamp, {}, should be greater than {}.".format(tsn_1, last)
+
+        time.sleep(0.1)
+
+        tsn_2 = self.api.get_latest_time()
+        assert tsn_2 == tsn_1, "The timestamp should not have changed, while no data was streaming."
 
     def test_clear_histories(self):
-        raise NotImplementedError("This test is not yet implemented.")
+        eventHistory = self.api.get_event_test_history()
+        channelHistory = self.api.get_telemetry_test_history()
+        commandHistory = self.api.get_command_test_history()
+
+        self.api.clear_histories()
+        assert eventHistory.size() == 0, "eventHistory should be empty"
+        assert channelHistory.size() == 0, "channelHistory should be empty"
+
+        count_seq = self.get_counter_sequence(100)
+        event_seq = self.get_severity_sequence(100)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.02)
+        t2 = self.fill_history_async(self.pipeline.enqueue_event, event_seq, 0.02)
+        t1.join()
+        t2.join()
+
+        sizeE = eventHistory.size()
+        iE = sizeE // 2
+        firstE = eventHistory[iE]
+        timeE = firstE.get_time()
+
+        sizeC = channelHistory.size()
+        iC = 0
+        for i in range(0, channelHistory.size()):
+            if channelHistory[i].get_time() >= timeE:
+                iC = i
+                break
+        firstC = channelHistory[iC]
+
+        self.api.clear_histories(timeE)
+        msg = "The event history should have been reduced by {} elements".format(iE)
+        assert sizeE - iE == eventHistory.size(), msg
+        msg = "The element with the timestamp should be first in the history"
+        assert firstE is eventHistory[0], msg
+        msg = "The channel history should have been reduced by {} elements".format(iC)
+        assert sizeC - iC == channelHistory.size(), msg
+        msg = "The first element in the history should be the first with a valid time"
+        assert firstC is channelHistory[0], msg
+
+        args1 = []
+        self.api.send_command("TEST_CMD_1", args1)
+        assert commandHistory.size() > 0, "history size should be greater than 0"
+        assert channelHistory.size() > 0, "history size should be greater than 0"
+        assert eventHistory.size() > 0, "history size should be greater than 0"
+
+        self.api.clear_histories()
+
+        assert commandHistory.size() == 0, "history size should be 0"
+        assert channelHistory.size() == 0, "history size should be 0"
+        assert eventHistory.size() == 0, "history size should be 0"
 
     def test_translate_command_name(self):
         assert self.api.translate_command_name("TEST_CMD_1") == 1

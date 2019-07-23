@@ -45,7 +45,7 @@ class IntegrationTestAPI:
         self.pipeline.register_event_consumer(self.event_history)
 
         # Initialize latest time. Will be updated whenever a time query is made.
-        self.latest_time = TimeType().useconds
+        self.latest_time = TimeType()
 
         # Initialize the logger
         if logname is not None:
@@ -81,7 +81,7 @@ class IntegrationTestAPI:
         """
         msg = "[STARTING CASE] {}".format(case_name)
         self.__log(msg, TestLogger.GRAY, TestLogger.BOLD, case_id=case_id)
-        self.get_latest_fsw_time()  # called in case aggregate histories are cleared by the user
+        self.get_latest_time()  # called in case aggregate histories are cleared by the user
         self.clear_histories()
 
     def log_test_message(self, msg, color=None):
@@ -93,7 +93,7 @@ class IntegrationTestAPI:
         """
         self.__log(msg, color, sender="Test API user")
 
-    def get_latest_fsw_time(self):
+    def get_latest_time(self):
         """
         Finds the latest flight software time received by either history.
 
@@ -101,14 +101,14 @@ class IntegrationTestAPI:
             a flight software timestamp (TimeType)
         """
         events = self.aggregate_event_history.retrieve()
-        e_time = TimeType().useconds
+        e_time = TimeType()
         if len(events) > 0:
-            e_time = events[-1].get_time().useconds
+            e_time = events[-1].get_time()
 
         channels = self.aggregate_telemetry_history.retrieve()
         t_time = TimeType().useconds
         if len(channels) > 0:
-            t_time = channels[-1].get_time().useconds
+            t_time = channels[-1].get_time()
 
         self.latest_time = max(e_time, t_time, self.latest_time)
         return self.latest_time
@@ -120,7 +120,7 @@ class IntegrationTestAPI:
         up test cases so that the IntegrationTestAPI's histories only contain objects received
         during that test.
         Note: this will not clear user-created sub-histories nor the aggregate histories (histories
-        owned by the gds)
+        owned by the GDS)
 
         Args:
             time_stamp: If specified, histories are only cleared before the timestamp.
@@ -131,7 +131,7 @@ class IntegrationTestAPI:
             self.event_history.clear(e_pred)
             t_pred = predicates.telemetry_predicate(time_pred=time_pred)
             self.telemetry_history.clear(t_pred)
-            msg = "Clearing Test Histories after {} us".format(time_stamp)
+            msg = "Clearing Test Histories after {}".format(time_stamp)
             self.__log(msg, TestLogger.WHITE)
         else:
             self.event_history.clear()
@@ -982,7 +982,7 @@ class IntegrationTestAPI:
             msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)
 
-    def __history_search(history, name="generic history search", search_pred=None, start=None, timeout=0):
+    def __history_search(self, searcher, history, name="history search", start=None, timeout=0):
         ##########################################
         # Search-specific argument parsing (init)
         ##########################################
@@ -990,8 +990,10 @@ class IntegrationTestAPI:
         if start == self.NOW:
             start = history.size()
         elif isinstance(start, TimeType):
-            # TODO start = some predicate for timestamp
-            pass
+            time_pred = predicates.greater_than_or_equal_to(start)
+            e_pred = self.get_telemetry_predicate(time_pred=time_pred)
+            t_pred = self.get_event_predicate(time_pred=time_pred)
+            start = predicates.satisfies_any([e_pred, t_pred])
 
         current = history.retrieve(start)
         ###########################################
@@ -1005,6 +1007,7 @@ class IntegrationTestAPI:
                 while True:
                     new_items = history.retrieve_new()
                     for item in new_items:
+                        pass
                         ###########################################
                         # Search-specific incremental search on future items
                         ###########################################
