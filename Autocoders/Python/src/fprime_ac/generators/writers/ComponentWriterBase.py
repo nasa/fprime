@@ -307,11 +307,11 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         relative_path = self.relativePath(obj)
         if self.__config.get("includes","comp_include_path") == "None":
             if relative_path != None:
-                c.comp_include_path = relative_path
+                c.comp_include_path = relative_path.replace("/test/ut","")
             else:
                 c.comp_include_path = obj.get_namespace()
         else:
-            c.comp_include_path = self.__config.get("includes","comp_include_path")
+            c.comp_include_path = self.__config.get("includes","comp_include_path").replace("/test/ut","")
         c.include_path = c.comp_include_path
 
     def initEventParams(self, obj, c):
@@ -469,7 +469,9 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
     def initPortIncludes(self, obj, c):
         c.port_includes = list()
         for include in self.__model_parser.uniqueList(obj.get_xml_port_files()):
-            c.port_includes.append(include.replace("PortAi.xml","PortAc.hpp"))
+            include = include.replace("PortAi.xml","PortAc.hpp")
+            include = include.replace("/test/ut", "")
+            c.port_includes.append(include)
 
     def initPortInputTypes(self, obj, c):
         '''
@@ -792,7 +794,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             for si in obj.get_serializables()
         ]
         s_includes = [
-            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","")
+            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","").replace("/test/ut")
             for sinc in ser_includes
         ]
         c.ser_includes = s_includes

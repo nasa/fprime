@@ -288,7 +288,6 @@ def main():
     # Create python dictionaries
     #
         
-    xml_filename = os.path.basename(xml_filename)
     xml_type = XmlParser.XmlParser(xml_filename)()
     
     # Only Topologies can be inputted

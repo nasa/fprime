@@ -1,7 +1,7 @@
 #ifndef MathSender_TESTER_BASE_HPP
 #define MathSender_TESTER_BASE_HPP
 
-#include <Autocoders/Python/test/testgen/test/ut///Users/jishii/Documents/split_repo/fprime-sw/Autocoders/Python/test/testgen/MathSenderComponentAc.hpp>
+#include <Autocoders/Python/test/testgen/MathSenderComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <stdio.h>

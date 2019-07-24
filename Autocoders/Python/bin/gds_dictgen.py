@@ -482,7 +482,6 @@ def main():
         PRINT.info("Missing Ai at end of file name...")
         raise IOError
     
-    xml_filename = os.path.basename(xml_filename)
     xml_type = XmlParser.XmlParser(xml_filename)()
 
     if xml_type == "assembly" or xml_type == "deployment":

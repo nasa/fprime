@@ -7,6 +7,13 @@ Checks that the dictgen tools are properly generating python/xml dicts and.
 """
 
 import os
+import sys
+
+sys.path.append(os.environ['BUILD_ROOT'] + os.sep + "Fw" + os.sep + "Python" + os.sep +"src")
+sys.path.append(os.environ['BUILD_ROOT'] + os.sep + "Gds" + os.sep + "src") # Add GDS modules
+from fprime_gds.common.loaders.xml_loader import XmlLoader
+
+from fprime_ac.parsers import XmlTopologyParser
 
 import subprocess
 from subprocess import CalledProcessError
@@ -83,6 +90,192 @@ def compare_genfile(filename):
     else:
         print("{} is consistent with expected template".format(filename))
 
+def remove_non_src_files(files):
+    src_files = []
+    for file in files:
+        if file[:4] == "Inst":
+            src_files.append(file)
+
+    return src_files
+
+def check_generated_files(testdir):
+    # Check that everything from parsed topology was generated
+    topology = XmlTopologyParser.XmlTopologyParser("TestTopologyAppAi.xml").get_instances()
+    
+    inst1 = topology[0]
+    inst2 = topology[1]
+    inst1_events = [o.get_name() for o in inst1.get_comp_xml().get_events()]
+    inst2_events = [o.get_name() for o in inst2.get_comp_xml().get_events()]
+    inst1_commands = [o.get_mnemonic() for o in inst1.get_comp_xml().get_commands()]
+    inst2_commands = [o.get_mnemonic() for o in inst2.get_comp_xml().get_commands()]
+    inst1_channels = [o.get_name() for o in inst1.get_comp_xml().get_channels()]
+    inst2_channels = [o.get_name() for o in inst2.get_comp_xml().get_channels()]
+    inst1_parameters = [o.get_name() for o in inst1.get_comp_xml().get_parameters()]
+    inst2_parameters = [o.get_name() for o in inst2.get_comp_xml().get_parameters()]
+    
+    dict_parser = XmlLoader()
+    parsed_dict = dict_parser.get_xml_tree("TestTopologyAppDictionary.xml")
+    parsed_commands = dict_parser.get_xml_section("commands", parsed_dict)
+    parsed_events = dict_parser.get_xml_section("events", parsed_dict)
+    parsed_commands = dict_parser.get_xml_section("commands", parsed_dict)
+    parsed_channels = dict_parser.get_xml_section("channels", parsed_dict)
+    parsed_parameters = dict_parser.get_xml_section("parameters", parsed_dict)
+    
+    # Check that all items are the same from the topology and the generated dict
+    for event in parsed_events:
+        evr_comp = event.values()[0]
+        evr_name = event.values()[1]
+        
+        if evr_comp == "Inst1":
+            if not evr_name in inst1_events:
+                print("ERROR: Event in Inst1 not found: {}".format(evr_name))
+                assert False
+        elif evr_comp == "Inst2":
+            if not evr_name in inst2_events:
+                print("ERROR: Event in Inst2 not found: {}".format(evr_name))
+                assert False
+        else:
+            print("ERROR: Invalid component name {}".format(evr_comp))
+            assert False
+            
+        if not len(inst1_events) + len(inst2_events) == len(parsed_events):
+            print("ERROR: Not all events in topology were found in generated dict")
+            assert False
+    for command in parsed_commands:
+        cmd_comp = command.values()[0]
+        cmd_name = command.values()[1]
+        
+        if cmd_comp == "Inst1":
+            if not cmd_name in inst1_commands:
+                print("ERROR: Command in Inst1 not found: {}".format(cmd_name))
+                assert False
+        elif cmd_comp == "Inst2":
+            if not cmd_name in inst2_commands:
+                print("ERROR: Command in Inst2 not found: {}".format(cmd_name))
+                assert False
+        else:
+            print("ERROR: Invalid component name {}".format(cmd_comp))
+            assert False
+            
+        if not len(inst1_commands) + len(inst2_commands) == len(parsed_commands):
+            print("ERROR: Not all commands in topology were found in generated dict")
+            assert False
+    for channel in parsed_channels:
+        chan_comp = channel.values()[0]
+        chan_name = channel.values()[1]
+        
+        if chan_comp == "Inst1":
+            if not chan_name in inst1_channels:
+                print("ERROR: Channel in Inst1 not found: {}".format(chan_name))
+                assert False
+        elif chan_comp == "Inst2":
+            if not chan_name in inst2_channels:
+                print("ERROR: Channel in Inst2 not found: {}".format(chan_name))
+                assert False
+        else:
+            print("ERROR: Invalid component name {}".format(chan_comp))
+            assert False
+
+        if not len(inst1_channels) + len(inst2_channels) == len(parsed_channels):
+            print("ERROR: Not all channels in topology were found in generated dict")
+            assert False
+    for parameter in parsed_parameters:
+        param_comp = parameter.values()[0]
+        param_name = parameter.values()[1]
+        
+        if param_comp == "Inst1":
+            if not param_name in inst1_parameters:
+                print("ERROR: Parameter in Inst1 not found: {}".format(param_name))
+                assert False
+        elif param_comp == "Inst2":
+            if not param_name in inst2_parameters:
+                print("ERROR: Parameter in Inst2 not found: {}".format(param_name))
+                assert False
+        else:
+            print("ERROR: Invalid component name {}".format(param_comp))
+            assert False
+
+        if not len(inst1_parameters) + len(inst2_parameters) == len(parsed_parameters):
+            print("ERROR: Not all parameter in topology were found in generated dict")
+            assert False
+
+    print("Generated Dictionary consistent with Topology")
+
+    ##################################################
+    # Check Pymodule consistency
+    
+    # Check commands
+    expected_cmd_modules = ["Inst1_" + o + ".py" for o in inst1_commands] + ["Inst2_" + o + ".py" for o in inst2_commands]
+    if os.path.exists(testdir + os.sep + "commands"):
+        files = os.listdir(testdir + os.sep + "commands")
+        files = remove_non_src_files(files)
+        for mod in expected_cmd_modules:
+            if not mod in files:
+                print("ERROR: python module {} not found in dictgen/commands".format(mod))
+                assert False
+            
+        if not len(expected_cmd_modules) == len(files):
+            print("ERROR: Not all command python modules were generated")
+            assert False
+    else:
+        if not len(expected_cmd_modules) == 0:
+            print("ERROR: Command python modules were not generated")
+            assert False
+
+    # Check channels
+    expected_chan_modules = ["Inst1_" + o + ".py" for o in inst1_channels] + ["Inst2_" + o + ".py" for o in inst2_channels]
+    if os.path.exists(testdir + os.sep + "channels"):
+        files = os.listdir(testdir + os.sep + "channels")
+        files = remove_non_src_files(files)
+        for mod in expected_chan_modules:
+            if not mod in files:
+                print("ERROR: python module {} not found in dictgen/channels".format(mod))
+                assert False
+        
+        if not len(expected_chan_modules) == len(files):
+            print("ERROR: Not all channel python modules were generated")
+            assert False
+    else:
+        if not len(expected_chan_modules) == 0:
+            print("ERROR: Channel python modules were not generated")
+            assert False
+        
+    # Check events
+    expected_evr_modules = ["Inst1_" + o + ".py" for o in inst1_events] + ["Inst2_" + o + ".py" for o in inst2_events]
+    if os.path.exists(testdir + os.sep + "events"):
+        files = os.listdir(testdir + os.sep + "events")
+        files = remove_non_src_files(files)
+        for mod in expected_evr_modules:
+            if not mod in files:
+                print("ERROR: python module {} not found in dictgen/events".format(mod))
+                assert False
+        
+        if not len(expected_evr_modules) == len(files):
+            print("ERROR: Not all event python modules were generated")
+            assert False
+    else:
+        if not len(expected_evr_modules) == 0:
+            print("ERROR: Event python modules were not generated")
+            assert False
+        
+    # Check parameters
+    expected_param_modules = ["Inst1_" + o + ".py" for o in inst1_parameters] + ["Inst2_" + o + ".py" for o in inst2_parameters]
+    if os.path.exists(testdir + os.sep + "parameters"):
+        files = os.listdir(testdir + os.sep + "parameters")
+        files = remove_non_src_files(files)
+        for mod in expected_param_modules:
+            if not mod in files:
+                print("ERROR: python module {} not found in dictgen/parameters".format(mod))
+                assert False
+        
+        if not len(expected_param_modules) == len(files):
+            print("ERROR: Not all parameter python modules were generated")
+            assert False
+    else:
+        if not len(expected_param_modules) == 0:
+            print("ERROR: Parameter python modules were not generated")
+            assert False
+
 def test_dictgen():
     """
     Tests that tests are being generated correctly
@@ -131,6 +324,8 @@ def test_dictgen():
         compare_genfile("events/Inst2_Test_Evr1.py")
         compare_genfile("events/Inst2_Test_Evr2.py")
         
+        check_generated_files(testdir)
+
         ## If there was no timeout the pexpect test passed
         assert True
         

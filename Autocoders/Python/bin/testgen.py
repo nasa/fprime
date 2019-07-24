@@ -49,6 +49,7 @@ from fprime_ac.generators.writers import GTestHWriter
 from fprime_ac.generators.writers import GTestCppWriter
 from fprime_ac.generators.writers import TestImplHWriter
 from fprime_ac.generators.writers import TestImplCppWriter
+from fprime_ac.generators.writers import TestMainWriter
 
 #Generators to produce the code
 from fprime_ac.generators import GenFactory
@@ -164,6 +165,8 @@ def generate_tests(opt, component_model):
     # cpp_instance_test_impl_name TestImplCppVisitor
     unitTestFiles.append(TestImplCppWriter.TestImplCppWriter())
     
+    unitTestFiles.append(TestMainWriter.TestMainWriter())
+    
     #
     # The idea here is that each of these generators is used to create
     # a certain portion of each output file.
@@ -196,7 +199,7 @@ def search_for_file(file_type, file_path):
             DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
             return checker
     else:
-        PRINT.info("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
+        print("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
         sys.exit(-1)
 
 def main():
@@ -254,8 +257,7 @@ def main():
     #
     # Create python dictionaries
     #
-    
-    xml_filename = os.path.basename(xml_filename)
+    print(xml_filename)
     xml_type = XmlParser.XmlParser(xml_filename)()
     
     # Only Components can be inputted

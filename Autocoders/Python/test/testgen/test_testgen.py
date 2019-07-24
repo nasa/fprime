@@ -28,10 +28,10 @@ def add_tester_section(filename, methodname, section_type):
             
             if skip_lines <= 0:
                 if methodname in line:
-                    if section_type == "SECTION_BODY":
-                        skip_lines = 2 # Skip the method header + open bracket
-                    elif section_type == "IMPORTS":
-                        skip_lines = 1
+                    if section_type == "TESTER_METHODS":
+                        skip_lines = 2 # Skip to todo method init
+                    if section_type == "TESTER_HEADERS":
+                        skip_lines = 2 # Skip to todo method def
                     fileopen.write(line)
                 else:
                     fileopen.write(line)
@@ -47,23 +47,17 @@ def add_tester_section(filename, methodname, section_type):
 
 def write_tester_lines(fileopen, section_type):
     testgen_dir = "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
-    if section_type == "SECTION_BODY":
-        fileopen.write("\t\tTestGen::TestComponentComponentImpl* inst1 = 0;\n")
-        fileopen.write("\t\tTestGen::TestComponentComponentImpl* inst2 = 0;\n")
-        fileopen.write("\t\tinst1 = new TestGen::TestComponentComponentImpl(\"inst1\");\n")
-        fileopen.write("\t\tinst2 = new TestGen::TestComponentComponentImpl(\"inst2\");\n")
-        fileopen.write("\t\tinst1->set_bportOut_OutputPort(0, inst2->get_bport_InputPort(0));\n")
-        fileopen.write("\t\tinst2->set_bportOut_OutputPort(0, inst1->get_bport_InputPort(0));\n")
-        fileopen.write("\t\tinst1->init(100, 0);\n")
-        fileopen.write("\t\tinst2->init(100, 0);\n")
-        fileopen.write("\t\tinst1->start(0, 100, 10 * 1024);\n")
-        fileopen.write("\t\tinst2->start(0, 100, 10 * 1024);\n")
-        fileopen.write("\t\tinst1->get_bport_InputPort(0)->invoke(1, 2.5, 10);\n")
-    elif section_type == "IMPORTS":
-        fileopen.write("#include <" + testgen_dir + "TestComponentAc.hpp>\n")
-        fileopen.write("#include <" + testgen_dir + "TestPortAc.hpp>\n")
-        fileopen.write("#include <" + testgen_dir + "TestComponentComponentImpl.hpp>\n")
-        fileopen.write("#include <" + testgen_dir + "TestComponentComponentImpl.cpp>\n")
+    if section_type == "TESTER_METHODS":
+        with open(testdir + "__tester_handcoded_methods.txt", "r") as methodstub:
+            for line in methodstub:
+                fileopen.write(line)
+    if section_type == "TESTER_HEADERS":
+        fileopen.write("\t\t//! Test operation command\n")
+        fileopen.write("\t\t//!\n")
+        fileopen.write("\t\tvoid testAddCommand(void);\n")
+        fileopen.write("\t\tvoid testSubCommand(void);\n")
+        fileopen.write("\t\tvoid testMultCommand(void);\n")
+        fileopen.write("\t\tvoid testDivCommand(void);\n")
 
 def file_diff(file1, file2):
     """
@@ -127,9 +121,9 @@ def compare_genfile(filename):
     
     remove_headers(filename)
 
-    if not (filecmp.cmp(filename,"templates/{}".format(filename).replace(".", "_") + ".txt")):
-        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/enum_xml/templates/{}".format(filename, filename.replace(".", "_") + ".txt"))
-        diff_lines = file_diff(filename, "templates/{}".format(filename).replace(".", "_") + ".txt")
+    if not (filecmp.cmp(filename, testdir + "templates" + os.sep + "{}".format(filename).replace(".", "_") + ".txt")):
+        print("WARNING: {} generated incorrectly according to Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml" + os.sep + "templates" + os.sep + "{}".format(filename, filename.replace(".", "_") + ".txt"))
+        diff_lines = file_diff(filename, testdir + "templates" + os.sep + "{}".format(filename).replace(".", "_") + ".txt")
         print("WARNING: the following lines from " + filename + " differ from the template: " + str(diff_lines))
     else:
         print("{} is consistent with expected template".format(filename))
@@ -139,29 +133,38 @@ def test_testgen():
     Tests that tests are being generated correctly
     """
     try:
+        global testdir
         
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
         curdir = os.getcwd()
         testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + "Python" + os.sep + "test" + os.sep + "testgen"
+        testdir = testdir + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
+        testutdir = testdir + "test" + os.sep + "ut"
         os.chdir(testdir)
         
         bindir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
         
         # Autocode component and port
-        pport = pexpect.spawn("python " + bindir + "codegen.py -v TestPortAi.xml")
-        pport.expect("(?=.*Generating code filename: TestPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: TestPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*")
-        pcomp = pexpect.spawn("python " + bindir + "codegen.py -v TestComponentAi.xml")
-        pcomp.expect("(?=.*TestComponent)(?=.*TestPort)(?!.*ERROR).*")
+        pport1 = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathOpPortAi.xml")
+        pport1.expect("(?=.*Generating code filename: MathOpPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathOpPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*")
+        pport2 = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathResultPortAi.xml")
+        pport2.expect("(?=.*Generating code filename: MathResultPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathResultPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*")
+        pcomp = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathSenderComponentAi.xml")
+        pcomp.expect("(?=.*MathSender)(?=.*MathOp)(?=.*MathResult)(?!.*ERROR).*")
+        
+        os.chdir(testutdir)
         
         # Autocode tests
-        p = pexpect.spawn("python " + bindir + "testgen.py -v TestComponentAi.xml")
+        p = pexpect.spawn("python " + bindir + "testgen.py -v " + testdir + "MathSenderComponentAi.xml")
         
-        p.expect("(?=.*Generated test files for TestComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.hpp)(?=.*Generated Tester.cpp)(?!.*ERROR).*", timeout=5)
+        p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.hpp)(?=.*Generated Tester.cpp)(?!.*ERROR).*", timeout=5)
         
         print("Autocoded TestComponent")
         
         time.sleep(3)
+
+        add_tester_section("Tester.cpp", "// Tests", "TESTER_METHODS")
+        add_tester_section("Tester.hpp", "//! To do", "TESTER_HEADERS")
         
         # Test whether all generated files match expected
         compare_genfile("Tester.cpp")
@@ -170,9 +173,6 @@ def test_testgen():
         compare_genfile("TesterBase.hpp")
         compare_genfile("GTestBase.cpp")
         compare_genfile("GTestBase.hpp")
-        
-        add_tester_section("Tester.cpp", '#include "Tester.hpp"', "IMPORTS")
-        add_tester_section("Tester.cpp", "toDo(void)", "SECTION_BODY")
         
         builddir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
         # Build ut
@@ -183,6 +183,8 @@ def test_testgen():
         utdir = builddir + "bin" + os.sep + "Darwin" + os.sep + "Autocoders_Python_test_testgen_ut_exe"
         # Run ut
         ptestrun = pexpect.spawn(utdir)
+        
+        ptestrun.expect("(?!.*FAILED)(?!.*ASSERT).*");
         
         print("Successfully ran testgen unit test")
         

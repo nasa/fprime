@@ -2,7 +2,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Autocoders/Python/test/testgen/test/ut/MathSenderComponentImpl.hpp"
+#include "Autocoders/Python/test/testgen/MathSenderComponentImpl.hpp"
 
 namespace Ref {
 
@@ -32,6 +32,12 @@ namespace Ref {
 
       //! To do
       //!
+		//! Test operation command
+		//!
+		void testAddCommand(void);
+		void testSubCommand(void);
+		void testMultCommand(void);
+		void testDivCommand(void);
       void toDo(void);
 
     private:
