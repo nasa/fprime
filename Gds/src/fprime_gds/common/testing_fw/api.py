@@ -52,7 +52,7 @@ class IntegrationTestAPI:
             self.logger = TestLogger(logname)
         else:
             self.logger = None
-        
+
         # A predicate used as a filter to choose which EVR's to log automatically
         self.event_log_filter = self.get_event_predicate()
         self.pipeline.register_event_consumer(self)
@@ -91,7 +91,7 @@ class IntegrationTestAPI:
             msg: a user-provided message to add to the test log.
             color: a string containing a color hex code "######"
         """
-        self.__log(msg, color, sender="Test API user")
+        self.__log(msg, color, sender="API user")
 
     def get_latest_time(self):
         """
@@ -187,7 +187,7 @@ class IntegrationTestAPI:
         dictionary.
 
         Args:
-            channel: Either the channel id (int) or the channel mnemonic (str)
+            command: Either the command id (int) or the command mnemonic (str)
 
         Returns:
             The comand ID (int)
@@ -781,7 +781,7 @@ class IntegrationTestAPI:
     ######################################################################################
     class TimeoutException(Exception):
         """
-        This exception is used by the history searches to signal the end of the user-specified timeout.
+        This exception is used by the history searches to signal the end of the timeout.
         """
         pass
 
@@ -816,7 +816,6 @@ class IntegrationTestAPI:
             """
             return self.ret_val
 
-
     def __timeout_sig_handler(self, signum, frame):
         raise self.TimeoutException()
 
@@ -827,7 +826,7 @@ class IntegrationTestAPI:
         search is performed on both current history items and then on items that have yet to be
         added to the history. The API defines these two scopes using the variables start and
         timeout. They have several useful behaviors.
-        
+
         start is used to pick the earliest item to search in the current history. start can be
         specified as either a predicate to search for the first item, an index of the history, the
         API variable NOW, or an instance of the TimeType timestamp object. The behavior of NOW is
@@ -851,7 +850,7 @@ class IntegrationTestAPI:
             history: the TestHistory object to conduct the search on
             start: an index, a predicate, the NOW variable, or a TimeType timestamp to pick the
                 first item to search
-            timeout: the number of seconds to await future updates
+            timeout: the number of seconds to await future items
         """
         if start == self.NOW:
             start = history.size()
@@ -971,9 +970,10 @@ class IntegrationTestAPI:
         self, count, history, search_pred=None, start=None, timeout=0
     ):
         """
-        This function can both search and await for a number of elements in a history. The function
-        will return a list of the history objects to satisfy the search. The search will return
-        when a correct count of data objects is found, or the timeout occurs.
+        This function first counts all valid items in the current history, then can await until a
+        valid number of elements is received by the history. The function will return a list of the
+        history objects counted by the search. The search will return when a correct count of data
+        objects is found, or the timeout occurs.
         Note: this search will always return a list of objects. The user should check if the search
         was completed.
 
