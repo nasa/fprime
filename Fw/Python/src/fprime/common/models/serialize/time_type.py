@@ -365,9 +365,9 @@ class TimeType(type_base.BaseType):
         a helper method that takes a float and sets a TimeType's seconds and useconds fields.
         Note: This method is private because it is only used by the _get_type_from_float helper to
         generate new TimeType instances. It is not meant to be used to modify an existing timestamp.
-        Note: Present implementation doesn't enforce that a TimeType be positive
+        Note: Present implementation will set any negative result to 0
         '''
-        # num = math.max(num, 0) # TODO decide behavior on whether to allow negative TimeStamps
+        num = max(num, 0)
         self.seconds = int(math.floor(num))
         self.useconds = int(round((num - self.seconds) * 1000000))
 
