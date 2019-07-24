@@ -20,6 +20,7 @@ from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import *
 import traceback
 import datetime
+import filecmp
 import os
 
 #More info about File packets can be found at fprime-sw/Fw/FilePacket/docs/sdd.md
@@ -45,7 +46,7 @@ class TestConsumer:
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
 
-    def __init__(self, file_dest_data = ''):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = ''):
         '''
         FileDecoder class constructor
 
@@ -59,6 +60,9 @@ class FileDecoder(decoder.Decoder):
         #This is used to keep track of the destination file across the class
         self._file_dest_data = file_dest_data
 
+        self._source_path = source_path
+        self._dest_path = dest_path
+
         super(FileDecoder, self).__init__()
 
 
@@ -69,6 +73,24 @@ class FileDecoder(decoder.Decoder):
     #Setter for the destination file
     def set_file(self, x):
         self._file_dest_data = x
+
+
+    '''
+    TEST GETTERS AND SETTERS TO BE TAKEN OUT LATER!!!!!!!!!!!!!!!!!!!!!!
+    '''
+
+    def get_source_path(self):
+        return self._source_path
+
+    def set_source_path(self, x):
+        self._source_path = x
+
+    def get_dest_path(self):
+        return self._dest_path
+
+    def set_dest_path(self, x):
+        self._dest_path = x
+
 
 
 
@@ -114,6 +136,8 @@ class FileDecoder(decoder.Decoder):
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
 
+            self.set_source_path(sourcePath)
+
             #Create the log file where the soucePath and lengthDP will be placed
             self.create_log_file(sourcePath, lengthDP)
 
@@ -136,6 +160,14 @@ class FileDecoder(decoder.Decoder):
             file_dest = self.get_file()
             hashValue = unpack('I', data[5:9])[0]
             file_dest.close()
+
+            s = self.get_source_path()
+            d = self.get_dest_path()
+
+            print(s)
+            print(d)
+            print(filecmp.cmp(s, d))
+
             return file_data.EndPacketData(packetType, seqID, hashValue)
 
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
@@ -249,6 +281,8 @@ class FileDecoder(decoder.Decoder):
         
         #Create/open the new file
         data_file = open(new_dest_path, 'a')
+
+        self.set_dest_path(new_dest_path)
 
         #Set the file using the setter for other functions to be able to use the new file
         self.set_file(data_file)
