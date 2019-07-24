@@ -66,6 +66,7 @@ class TestRefAppClass(object):
             msg = "The delay, {}, between the two events should be below {}".format(delay, max_delay)
             assert delay < max_delay, msg
         self.api.log_test_message("assert_command helper completed successfully")
+        return results
 
     def test_send_command(self):
         self.assert_command("CMD_NO_OP", max_delay=0.0001)
