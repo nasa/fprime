@@ -872,7 +872,7 @@ class IntegrationTestAPI:
                 while True:
                     new_items = history.retrieve_new()
                     for item in new_items:
-                        if searcher.incremental_search(current):
+                        if searcher.incremental_search(item):
                             return searcher.get_return_value()
                     time.sleep(0.1)
             except self.TimeoutException:
@@ -880,7 +880,7 @@ class IntegrationTestAPI:
             finally:
                 signal.alarm(0)
         else:
-            self.__log(name + " timed out and ended unsuccessfully.", TestLogger.YELLOW)
+            self.__log(name + " ended unsuccessfully.", TestLogger.YELLOW)
         return searcher.get_return_value()
 
     def find_history_item(self, search_pred, history, start=None, timeout=0):
@@ -898,7 +898,8 @@ class IntegrationTestAPI:
             the data object found during the search, otherwise, None
         """
         class __ItemSearcher(self.__HistorySearcher):
-            def __init__(self, search_pred):
+            def __init__(self, log, search_pred):
+                self.log = log
                 self.search_pred = search_pred
                 self.ret_val = None
 
@@ -911,12 +912,12 @@ class IntegrationTestAPI:
             def incremental_search(self, item):
                 if self.search_pred(item):
                     msg = "History search found the specified item: {}".format(item)
-                    self.__log(msg, TestLogger.YELLOW)
+                    self.log(msg, TestLogger.YELLOW)
                     self.ret_val = item
                     return True
                 return False
 
-        searcher = __ItemSearcher(search_pred)
+        searcher = __ItemSearcher(self.__log, search_pred)
         return self.__search_test_history(searcher, "Item Search", history, start, timeout)
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
@@ -937,79 +938,34 @@ class IntegrationTestAPI:
             a list of data objects that satisfied the sequence
         """
         class __SequenceSearcher(self.__HistorySearcher):
-            def __init__(self, seq_preds):
-                self.seq_preds = seq_preds.copy()
+            def __init__(self, log, seq_preds):
+                self.log = log
                 self.ret_val = []
+                self.seq_preds = seq_preds.copy()
 
             def search_current_history(self, items):
                 if len(self.seq_preds) == 0:
-                    msg = "Sequence search finished, because the sequence specified had no items."
-                    self.__log(msg, TestLogger.YELLOW)
+                    msg = "Sequence search finished, as the specified sequence had 0 items."
+                    self.log(msg, TestLogger.YELLOW)
                     return True
 
                 for item in items:
-                    if self.seq_preds[0](item):
-                        self.__log("Sequence search found the next item: {}".format(item))
-                        self.ret_val.append(item)
-                        self.seq_preds.pop(0)
-                        if len(self.seq_preds) == 0:
-                            self.__log("Sequence search found the last item.", TestLogger.YELLOW)
-                            return True
+                    if self.incremental_search(item):
+                        return True
                 return False
 
             def incremental_search(self, item):
                 if self.seq_preds[0](item):
-                    self.__log("Sequence search found the next item: {}".format(item))
+                    self.log("Sequence search found the next item: {}".format(item))
                     self.ret_val.append(item)
                     self.seq_preds.pop(0)
-                    if len(seq_preds) == 0:
-                        signal.alarm(0)
-                        self.__log("Sequence search found the last item.", TestLogger.YELLOW)
-                        return sequence
+                    if len(self.seq_preds) == 0:
+                        self.log("Sequence search found the last item.", TestLogger.YELLOW)
+                        return True
                 return False
 
-        searcher = __SequenceSearcher(seq_preds)
+        searcher = __SequenceSearcher(self.__log, seq_preds)
         return self.__search_test_history(searcher, "Sequence Search", history, start, timeout)
-        
-        if start == self.NOW:
-            start = history.size()
-
-        current = history.retrieve(start)
-        sequence = []
-        seq_preds = seq_preds.copy()
-
-        if len(seq_preds) == 0:
-            return []
-
-        for item in current:
-            if seq_preds[0](item):
-                self.__log("Sequence search found the next item: {}".format(item))
-                sequence.append(item)
-                seq_preds.pop(0)
-                if len(seq_preds) == 0:
-                    self.__log("Sequence search found the last item.", TestLogger.YELLOW)
-                    return sequence
-
-        if timeout:
-            try:
-                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
-                signal.alarm(timeout)
-                while True:
-                    new_items = history.retrieve_new()
-                    for item in new_items:
-                        if seq_preds[0](item):
-                            self.__log("Sequence search found the next item: {}".format(item))
-                            sequence.append(item)
-                            seq_preds.pop(0)
-                            if len(seq_preds) == 0:
-                                signal.alarm(0)
-                                self.__log("Sequence search found the last item.", TestLogger.YELLOW)
-                                return sequence
-                    time.sleep(0.1)
-            except self.TimeoutException:
-                self.__log("Sequence search timed out")
-        self.__log("Sequence search failed to find a complete sequence", TestLogger.YELLOW)
-        return sequence
 
     def find_history_count(
         self, count, history, search_pred=None, start=None, timeout=0
@@ -1030,53 +986,46 @@ class IntegrationTestAPI:
         Returns:
             a list of data objects that were counted during the search
         """
-        if predicates.is_predicate(count):
-            count_pred = count
-        elif isinstance(count, int):
-            count_pred = predicates.equal_to(count)
-        else:
-            raise TypeError("Find history must receive a predicate or an integer")
+        class __CountSearcher(self.__HistorySearcher):
+            def __init__(self, log, count, search_pred):
+                self.log = log
+                self.ret_val = []
+                if predicates.is_predicate(count):
+                    self.count_pred = count
+                elif isinstance(count, int):
+                    self.count_pred = predicates.equal_to(count)
+                else:
+                    raise TypeError("Find history must receive a predicate or an integer")
+                self.search_pred = search_pred
 
-        if start == self.NOW:
-            start = history.size()
-
-        objects = []
-        if search_pred is None:
-            search_pred = predicates.always_true()
-            objects = history.retrieve(start)
-        else:
-            current = history.retrieve(start)
-            for item in current:
-                if search_pred(item):
-                    self.__log("Count search counted another item: {}".format(item))
-                    objects.append(item)
-
-        if count_pred(len(objects)):
-            msg = "Count search found a correct number of items: {}".format(len(objects))
-            self.__log(msg, TestLogger.YELLOW)
-            return objects
-
-        if timeout:
-            try:
-                signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
-                signal.alarm(timeout)
-                while True:
-                    new_items = history.retrieve_new()
-                    for item in new_items:
+            def search_current_history(self, items):
+                if self.search_pred is None:
+                    self.search_pred = predicates.always_true()
+                    self.ret_val = items
+                else:
+                    for item in items:
                         if search_pred(item):
-                            self.__log("Count search counted another item: {}".format(item))
-                            objects.append(item)
-                            if count_pred(len(objects)):
-                                signal.alarm(0)
-                                msg = "Count search found a correct number of items: {}".format(len(objects))
-                                self.__log(msg, TestLogger.YELLOW)
-                                return objects
-                    time.sleep(0.1)
-            except self.TimeoutException:
-                self.__log("Count search timed out")
-        msg = "Count search failed to find the correct number of objects"
-        self.__log(msg, TestLogger.YELLOW)
-        return objects
+                            self.log("Count search counted another item: {}".format(item))
+                            self.ret_val.append(item)
+
+                if self.count_pred(len(self.ret_val)):
+                    msg = "Count search found a correct amount: {}".format(len(self.ret_val))
+                    self.log(msg, TestLogger.YELLOW)
+                    return True
+                return False
+
+            def incremental_search(self, item):
+                if self.search_pred(item):
+                    self.log("Count search counted another item: {}".format(item))
+                    self.ret_val.append(item)
+                    if self.count_pred(len(self.ret_val)):
+                        msg = "Count search found a correct amount: {}".format(len(self.ret_val))
+                        self.log(msg, TestLogger.YELLOW)
+                        return True
+                return False
+
+        searcher = __CountSearcher(self.__log, count, search_pred)
+        return self.__search_test_history(searcher, "Count Search", history, start, timeout)
 
     ######################################################################################
     #   API Helper Methods
@@ -1110,5 +1059,3 @@ class IntegrationTestAPI:
         if self.event_log_filter(data_object):
             msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)
-
-    
