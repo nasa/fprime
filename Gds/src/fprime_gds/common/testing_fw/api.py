@@ -141,17 +141,19 @@ class IntegrationTestAPI:
 
         self.command_history.clear()
 
-    def set_event_log_filter(self, event=None, args=None, time_pred=None):
+    def set_event_log_filter(self, event=None, args=None, severity=None, time_pred=None):
         """
         Constructs an event predicate that is then used to filter which EVR's are interlaced in the
-        test logs. This method replaces the current filter.
+        test logs. This method replaces the current filter. Calling this method with no arguments
+        will effectively reset the filter.
 
         Args:
             event: an optional mnemonic (str), id (int), or predicate to specify the event type
             args: an optional list of arguments (list of values, predicates, or None to ignore)
+            severity: an EventSeverity enum or a predicate to specify the event severity
             time_pred: an optional predicate to specify the flight software timestamp
         """
-        self.event_log_filter = self.get_event_predicate(event, args, time_pred)
+        self.event_log_filter = self.get_event_predicate(event, args, severity, time_pred)
 
     def get_command_test_history(self):
         """
