@@ -3,7 +3,7 @@ import sys
 import os
 
 filename = os.path.dirname(__file__)
-gdsName = os.path.join(filename, "../../../")
+gdsName = os.path.join(filename, "../../../../src")
 fprimeName = os.path.join(filename, "../../../../../Fw/Python/src")
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
