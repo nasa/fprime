@@ -105,7 +105,7 @@ class FileDecoder(decoder.Decoder):
         #Decode file here
         packetType = PacketType(unpack('B', data[:1])[0]).name
         seqID = unpack('I', data[1:5])[0]
-        
+
         #Packet Type determines the variables following the seqID
         if (packetType == 'START'):  #Packet Type is START
             size = unpack('I', data[5:9])[0]
@@ -128,11 +128,14 @@ class FileDecoder(decoder.Decoder):
             dataVar = data[11:]
             file_dest = self.get_file() #retrieve the file destination
             file_dest.write(dataVar)    #write the data information to the destination file
+            self.set_file(file_dest)    #Set the updated file
 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
         elif (packetType == 'END'):   #Packet Type is END
+            file_dest = self.get_file()
             hashValue = unpack('I', data[5:9])[0]
+            file_dest.close()
             return file_data.EndPacketData(packetType, seqID, hashValue)
 
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
@@ -187,6 +190,7 @@ class FileDecoder(decoder.Decoder):
         new_file = open(new_log, 'a')
         new_file.write('Source Path: ' + str(sourcePath) + '\n')
         new_file.write('Destination Size: ' + str(lengthDP))
+        new_file.close()
 
 
     def create_dest_file(self, destPath):
