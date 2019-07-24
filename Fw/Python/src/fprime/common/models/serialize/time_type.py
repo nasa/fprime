@@ -310,7 +310,7 @@ class TimeType(type_base.BaseType):
     '''
     The following Python special methods add support for rich comparison of TimeTypes to other
     TimeTypes and numbers.
-    Note: comparisons support comparring to numbers or other instances of TimeType. If comparing to
+    Note: comparisons support comparing to numbers or other instances of TimeType. If comparing to
     another TimeType, these comparisons use the provided compare method. See TimeType.compare for
     a description of this behavior.
     '''
