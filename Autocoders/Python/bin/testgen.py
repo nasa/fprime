@@ -49,7 +49,7 @@ from fprime_ac.generators.writers import GTestHWriter
 from fprime_ac.generators.writers import GTestCppWriter
 from fprime_ac.generators.writers import TestImplHWriter
 from fprime_ac.generators.writers import TestImplCppWriter
-from fprime_ac.generators.writers import TestMainWriter
+#from fprime_ac.generators.writers import TestMainWriter
 
 #Generators to produce the code
 from fprime_ac.generators import GenFactory
@@ -165,8 +165,8 @@ def generate_tests(opt, component_model):
     # cpp_instance_test_impl_name TestImplCppVisitor
     unitTestFiles.append(TestImplCppWriter.TestImplCppWriter())
     
-    unitTestFiles.append(TestMainWriter.TestMainWriter())
-    
+#    unitTestFiles.append(TestMainWriter.TestMainWriter())
+
     #
     # The idea here is that each of these generators is used to create
     # a certain portion of each output file.

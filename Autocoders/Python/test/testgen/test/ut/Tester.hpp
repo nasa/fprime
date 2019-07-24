@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  MathSender/test/ut/Tester.hpp
+// \author jishii
+// \brief  hpp file for MathSender test harness implementation class
+//
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
@@ -32,12 +44,6 @@ namespace Ref {
 
       //! To do
       //!
-		//! Test operation command
-		//!
-		void testAddCommand(void);
-		void testSubCommand(void);
-		void testMultCommand(void);
-		void testDivCommand(void);
       void toDo(void);
 
     private:
