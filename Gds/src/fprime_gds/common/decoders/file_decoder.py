@@ -272,7 +272,7 @@ class FileDecoder(decoder.Decoder):
                 pass
         
         #Create/open the new file
-        data_file = open(new_dest_path, 'w')
+        data_file = open(new_dest_path, 'w+')
 
         #Set the file using the setter for other functions to be able to use the new file
         self.set_file(data_file)
