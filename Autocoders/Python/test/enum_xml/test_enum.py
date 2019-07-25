@@ -194,7 +194,7 @@ def test_enum():
         serial1_data = [0, 10, 67, 4837, 82739845, 3434534]
         serial2_data = [22839745, 3453, 2, 1, 9808973, 99]
         cmd = os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
-        cmd = cmd + "bin" + os.sep + "Darwin" + os.sep + "Autocoders_Python_test_enum_xml_ut_exe"
+        cmd = cmd + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_enum_xml_ut_exe"
         ptestrun = pexpect.spawn(cmd)
         
         ptestrun.expect(".*run or q to quit: ", timeout=3)
