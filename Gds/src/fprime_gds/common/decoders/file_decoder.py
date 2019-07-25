@@ -20,7 +20,6 @@ from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import *
 import traceback
 import datetime
-import filecmp
 import os
 
 #More info about File packets can be found at fprime-sw/Fw/FilePacket/docs/sdd.md
@@ -136,8 +135,6 @@ class FileDecoder(decoder.Decoder):
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
 
-            self.set_source_path(sourcePath)
-
             #Create the log file where the soucePath and lengthDP will be placed
             self.create_log_file(sourcePath, lengthDP)
 
@@ -147,12 +144,14 @@ class FileDecoder(decoder.Decoder):
             return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
 
         elif (packetType == 'DATA'):   #Packet Type is DATA
-            offset = unpack('I', data[5:9])[0]
+            offset = unpack('>I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
+            print(offset)
             file_dest = self.get_file() #retrieve the file destination
+            file_dest.seek(offset, 0)
             file_dest.write(dataVar)    #write the data information to the destination file
-            self.set_file(file_dest)    #Set the updated file
+            #self.set_file(file_dest)    #Set the updated file
 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
@@ -160,13 +159,6 @@ class FileDecoder(decoder.Decoder):
             file_dest = self.get_file()
             hashValue = unpack('I', data[5:9])[0]
             file_dest.close()
-
-            s = self.get_source_path()
-            d = self.get_dest_path()
-
-            print(s)
-            print(d)
-            print(filecmp.cmp(s, d))
 
             return file_data.EndPacketData(packetType, seqID, hashValue)
 
@@ -280,9 +272,7 @@ class FileDecoder(decoder.Decoder):
                 pass
         
         #Create/open the new file
-        data_file = open(new_dest_path, 'a')
-
-        self.set_dest_path(new_dest_path)
+        data_file = open(new_dest_path, 'w')
 
         #Set the file using the setter for other functions to be able to use the new file
         self.set_file(data_file)
