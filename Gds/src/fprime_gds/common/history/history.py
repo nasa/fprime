@@ -16,9 +16,6 @@ class History:
     calls in this History class.
     """
 
-    ###########################################################################
-    #   History Functions
-    ###########################################################################
     def __init__(self):
         """
         Constructor used to set-up  a history.
