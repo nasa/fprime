@@ -165,7 +165,7 @@ def test_testgen():
         print(os.getcwd())
         
         # Autocode tests
-        p = pexpect.spawn("python " + bindir + "testgen.py -v -m " + testdir + "MathSenderComponentAi.xml")
+        p = pexpect.spawn("python " + bindir + "testgen.py -v -m -f " + testdir + "MathSenderComponentAi.xml")
         
         p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.hpp)(?=.*Generated Tester.cpp)(?!.*ERROR).*", timeout=5)
         
