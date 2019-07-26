@@ -456,9 +456,6 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_telemetry_test_history()
 
-        msg = "Awaiting a single telemetry update: {}".format(t_pred)
-        self.__log(msg, TestLogger.YELLOW)
-
         return self.find_history_item(t_pred, history, start, timeout)
 
     def await_telemetry_sequence(self, channels, history=None, start="NOW", timeout=5):
@@ -485,9 +482,6 @@ class IntegrationTestAPI:
 
         if history is None:
             history = self.get_telemetry_test_history()
-
-        msg = "Awaiting a sequence of {} telemetry updates.".format(len(seq_preds))
-        self.__log(msg, TestLogger.YELLOW)
 
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
@@ -523,9 +517,6 @@ class IntegrationTestAPI:
 
         if history is None:
             history = self.get_telemetry_test_history()
-
-        msg = "Awaiting a count ({}) of telemetry updates.".format(count)
-        self.__log(msg, TestLogger.YELLOW)
 
         return self.find_history_count(count, history, search, start, timeout)
 
@@ -693,9 +684,6 @@ class IntegrationTestAPI:
         if history is None:
             history = self.get_event_test_history()
 
-        msg = "Awaiting a single telemetry update: {}".format(e_pred)
-        self.__log(msg, TestLogger.YELLOW)
-
         return self.find_history_item(e_pred, history, start, timeout)
 
     def await_event_sequence(self, events, history=None, start="NOW", timeout=5):
@@ -722,9 +710,6 @@ class IntegrationTestAPI:
 
         if history is None:
             history = self.get_event_test_history()
-
-        msg = "Awaiting a sequence of {} event messages.".format(len(seq_preds))
-        self.__log(msg, TestLogger.YELLOW)
 
         return self.find_history_sequence(seq_preds, history, start, timeout)
 
@@ -759,10 +744,7 @@ class IntegrationTestAPI:
             search = self.get_event_predicate(event=events)
 
         if history is None:
-            history = self.get_event_test_history()
-
-        msg = "Awaiting a count ({}) of event messages.".format(count)
-        self.__log(msg, TestLogger.YELLOW)
+            history = self.get_event_test_history()        
 
         return self.find_history_count(count, history, search, start, timeout)
 
@@ -927,6 +909,7 @@ class IntegrationTestAPI:
             return searcher.get_return_value()
 
         if timeout:
+            self.__log(name + " now awaiting for at most {} s.".format(timeout))
             try:
                 signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
                 signal.alarm(timeout)
@@ -963,6 +946,8 @@ class IntegrationTestAPI:
                 self.log = log
                 self.search_pred = search_pred
                 self.ret_val = None
+                msg = "Beginning an item search for an item that satisfies:\n    {}".format(self.search_pred)
+                self.log(msg, TestLogger.YELLOW)
 
             def search_current_history(self, items):
                 for item in items:
@@ -979,7 +964,7 @@ class IntegrationTestAPI:
                 return False
 
         searcher = __ItemSearcher(self.__log, search_pred)
-        return self.__search_test_history(searcher, "Item Search", history, start, timeout)
+        return self.__search_test_history(searcher, "Item search", history, start, timeout)
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
@@ -1003,6 +988,8 @@ class IntegrationTestAPI:
                 self.log = log
                 self.ret_val = []
                 self.seq_preds = seq_preds.copy()
+                msg = "Beginning a sequence search of {} items.".format(len(self.seq_preds))
+                self.log(msg, TestLogger.YELLOW)
 
             def search_current_history(self, items):
                 if len(self.seq_preds) == 0:
@@ -1026,7 +1013,7 @@ class IntegrationTestAPI:
                 return False
 
         searcher = __SequenceSearcher(self.__log, seq_preds)
-        return self.__search_test_history(searcher, "Sequence Search", history, start, timeout)
+        return self.__search_test_history(searcher, "Sequence search", history, start, timeout)
 
     def find_history_count(
         self, count, history, search_pred=None, start=None, timeout=0
@@ -1056,9 +1043,10 @@ class IntegrationTestAPI:
                     self.count_pred = count
                 elif isinstance(count, int):
                     self.count_pred = predicates.equal_to(count)
-                else:
-                    raise TypeError("Find history must receive a predicate or an integer")
                 self.search_pred = search_pred
+
+                msg = "Beginning a count search for an amount of items ({}).".format(self.count_pred)
+                self.log(msg, TestLogger.YELLOW)
 
             def search_current_history(self, items):
                 if self.search_pred is None:
@@ -1087,7 +1075,7 @@ class IntegrationTestAPI:
                 return False
 
         searcher = __CountSearcher(self.__log, count, search_pred)
-        return self.__search_test_history(searcher, "Count Search", history, start, timeout)
+        return self.__search_test_history(searcher, "Count search", history, start, timeout)
 
     ######################################################################################
     #   API Helper Methods
