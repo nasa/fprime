@@ -23,7 +23,7 @@ class TestRefAppClass(object):
         path = os.path.join(filename, "../Top/RefTopologyAppDictionary.xml")
         cls.pipeline.setup(config, path)
         cls.pipeline.connect("127.0.0.1", 50000)
-        cls.api = IntegrationTestAPI(cls.pipeline, "./demo_log.xlsx")
+        cls.api = IntegrationTestAPI(cls.pipeline, "./")
         cls.case_list = [] # TODO find a better way to do this. 
 
     @classmethod
@@ -57,7 +57,7 @@ class TestRefAppClass(object):
         Return:
             returns a list of the EventData objects found by the search
         """
-        self.api.log_test_message("Starting assert_command helper")
+        self.api.log("Starting assert_command helper")
         cmd_id = self.api.translate_command_name(command)
         events = []
         events.append(self.api.get_event_predicate("OpCodeDispatched", [cmd_id, None]))
@@ -67,7 +67,7 @@ class TestRefAppClass(object):
             delay = results[1].get_time() - results[0].get_time()
             msg = "The delay, {}, between the two events should be below {}".format(delay, max_delay)
             assert delay < max_delay, msg
-        self.api.log_test_message("assert_command helper completed successfully")
+        self.api.log("assert_command helper completed successfully")
         return results
 
     def test_send_command(self):
@@ -77,7 +77,7 @@ class TestRefAppClass(object):
         assert self.api.get_command_test_history().size() == 2
 
     def test_send_and_assert_no_op(self):
-        length = 10000
+        length = 10
         failed = 0
         evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
         any_reordered = False
@@ -92,33 +92,33 @@ class TestRefAppClass(object):
                 for item in items:
                     if last is not None:
                         if item.get_time() < last.get_time():
-                            self.api.log_test_message("during iteration #{}, a reordered event was detected: {}".format(i, item), "FF9999")
+                            self.api.log("during iteration #{}, a reordered event was detected: {}".format(i, item), "FF9999")
                             any_reordered = True
                             reordered = True
                             break
                 if not reordered:
-                    self.api.log_test_message("during iteration #{}, a dropped event was detected".format(i), "FF9999")
+                    self.api.log("during iteration #{}, a dropped event was detected".format(i), "FF9999")
                     dropped = True
                 failed += 1
             else:
-                self.api.log_test_message("Send and assert #{} was successful.".format(i), "ADEBAD")
+                self.api.log("Send and assert #{} was successful.".format(i), "ADEBAD")
             self.api.clear_histories()
 
         if not any_reordered:
-            self.api.log_test_message("All searched events were ordered.", "ADEBAD")
+            self.api.log("All searched events were ordered.", "ADEBAD")
         else:
-            self.api.log_test_message("Event messages were reordered.", "FF9999")
+            self.api.log("Event messages were reordered.", "FF9999")
 
         if not dropped:
-            self.api.log_test_message("No expected events were dropped", "ADEBAD")
+            self.api.log("No expected events were dropped", "ADEBAD")
         else:
-            self.api.log_test_message("At least one event was dropped.", "FF9999")
+            self.api.log("At least one event was dropped.", "FF9999")
 
         if failed == 0:
-            self.api.log_test_message("All {} send and assert sequences were received correctly".format(length), "ADEBAD")
+            self.api.log("All {} send and assert sequences were received correctly".format(length), "ADEBAD")
         else:
             msg = "{} out of {} send and assert no_op searches failed".format(failed, length)
-            self.api.log_test_message(msg, "FF9999")
+            self.api.log(msg, "FF9999")
 
         assert not any_reordered, "at least one event was received out of order."
         assert not dropped, "at least one event was dropped or not sent."
@@ -126,7 +126,7 @@ class TestRefAppClass(object):
 
 
     def test_bd_cycles_ascending(self):
-        length = 3600
+        length = 10
         count_pred = predicates.greater_than(length - 1)
         results = self.api.await_telemetry_count(count_pred, "BD_Cycles", timeout=length)
         last = None
@@ -138,34 +138,34 @@ class TestRefAppClass(object):
                 result_time = result.get_time()
                 if result_time - last_time > 1.5:
                     msg = "Double buffering may have caused an update to be skipped in FSW between {} and {}".format(last_time.to_readable(), result_time.to_readable())
-                    self.api.log_test_message(msg, "FFCC99")
+                    self.api.log(msg, "FFCC99")
                 elif result_time < last_time:
                     msg = "There is potential reorder error between {} and {}".format(last_time, result_time)
-                    self.api.log_test_message(msg, "FF9999")
+                    self.api.log(msg, "FF9999")
                     reordered = True
 
                 if not result.get_val() > last.get_val():
                     msg = "There is either a counter rollover, or a potential reorder error between {} and {}".format(result_time, last_time)
-                    self.api.log_test_message(msg, "FFCC99")
+                    self.api.log(msg, "FFCC99")
                     ascending = False
 
             last = result
 
         if ascending:
-            self.api.log_test_message("All BD_Cycles updates increased in value", "ADEBAD")
+            self.api.log("All BD_Cycles updates increased in value", "ADEBAD")
         else:
-            self.api.log_test_message("Channel updates were potentially reordered. Two non-ascending values were found", "FF9999")
+            self.api.log("Channel updates were potentially reordered. Two non-ascending values were found", "FF9999")
 
         if not reordered:
-            self.api.log_test_message("All BD_Cycles updates were ordered.", "ADEBAD")
+            self.api.log("All BD_Cycles updates were ordered.", "ADEBAD")
         else:
-            self.api.log_test_message("Channel updates were potentially reordered.", "FF9999")
+            self.api.log("Channel updates were potentially reordered.", "FF9999")
 
         if count_pred(len(results)):
-            self.api.log_test_message("The search found all the updates", "ADEBAD")
+            self.api.log("The search found all the updates", "ADEBAD")
         else:
             msg = "Double buffering may have caused an update to be skipped in FSW. exp: {} counted: {}".format(length, len(results))
-            self.api.log_test_message(msg, "FF9999")
+            self.api.log(msg, "FF9999")
 
         self.api.assert_telemetry_count(0, "RgCycleSlips")
         assert ascending, "Not BD_Cycles increased in value, See test log."

@@ -24,11 +24,12 @@ class IntegrationTestAPI:
     """
     NOW = "NOW"
 
-    def __init__(self, pipeline, logname=None):
+    def __init__(self, pipeline, logpath=None):
         """
         Initializes API: constructs and registers test histories.
         Args:
             pipeline: a pipeline object providing access to basic GDS functionality
+            logpath: an optional output destination for the api test log
         """
         self.pipeline = pipeline
         # these are owned by the GDS and will not be modified by the test API.
@@ -48,8 +49,8 @@ class IntegrationTestAPI:
         self.latest_time = TimeType()
 
         # Initialize the logger
-        if logname is not None:
-            self.logger = TestLogger(logname)
+        if logpath is not None:
+            self.logger = TestLogger(logpath)
         else:
             self.logger = None
 
@@ -196,7 +197,7 @@ class IntegrationTestAPI:
         subhist = TestHistory(event_filter)
         self.pipeline.register_event_consumer(subhist)
         return subhist
-    
+
     def remove_event_subhistory(self, subhist):
         """
         De-registers the subhistory from the GDS. Once called, the given subhistory will stop
@@ -208,7 +209,7 @@ class IntegrationTestAPI:
             True if the subhistory was removed, False otherwise
         """
         return self.pipeline.remove_event_consumer(subhist)
-    
+
     def get_telemetry_subhistory(self, telemetry_filter=None):
         """
         Returns a new instance of TestHistory that will be updated with new telemetry updates as
