@@ -54,6 +54,8 @@ class TestRefAppClass(object):
             args: a list of command arguments.
             max_delay: the maximum allowable delay between dispatch and completion (int/float)
             timeout: the number of seconds to wait before terminating the search (int)
+        Return:
+            returns a list of the EventData objects found by the search
         """
         self.api.log_test_message("Starting assert_command helper")
         cmd_id = self.api.translate_command_name(command)
@@ -69,30 +71,103 @@ class TestRefAppClass(object):
         return results
 
     def test_send_command(self):
-        self.assert_command("CMD_NO_OP", max_delay=0.0001)
+        self.assert_command("CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 1
-        self.assert_command("CMD_NO_OP", max_delay=0.0001)
+        self.assert_command("CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 2
 
     def test_send_and_assert_no_op(self):
+        length = 10000
+        failed = 0
         evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
-        results = self.api.send_and_assert_event("CMD_NO_OP", events=evr_seq)
-        for event in results:
-            print("[{}] EVR {}".format(event.get_time().useconds, event))
-        results = self.api.send_and_assert_event("CMD_NO_OP", events=evr_seq)
-        for event in results:
-            print("[{}] EVR {}".format(event.get_time().useconds, event))
+        any_reordered = False
+        dropped = False
+        for i in range(0, length):
+            start = self.api.get_event_test_history().size()
+            results = self.api.send_and_await_event("CMD_NO_OP", events=evr_seq)
+            if len(results) < 3:
+                items = self.api.get_event_test_history().retrieve(start)
+                last = None
+                reordered = False
+                for item in items:
+                    if last is not None:
+                        if item.get_time() < last.get_time():
+                            self.api.log_test_message("during iteration #{}, a reordered event was detected: {}".format(i, item), "FF9999")
+                            any_reordered = True
+                            reordered = True
+                            break
+                if not reordered:
+                    self.api.log_test_message("during iteration #{}, a dropped event was detected".format(i), "FF9999")
+                    dropped = True
+                failed += 1
+            else:
+                self.api.log_test_message("Send and assert #{} was successful.".format(i), "ADEBAD")
+            self.api.clear_histories()
+
+        if not any_reordered:
+            self.api.log_test_message("All searched events were ordered.", "ADEBAD")
+        else:
+            self.api.log_test_message("Event messages were reordered.", "FF9999")
+
+        if not dropped:
+            self.api.log_test_message("No expected events were dropped", "ADEBAD")
+        else:
+            self.api.log_test_message("At least one event was dropped.", "FF9999")
+
+        if failed == 0:
+            self.api.log_test_message("All {} send and assert sequences were received correctly".format(length), "ADEBAD")
+        else:
+            msg = "{} out of {} send and assert no_op searches failed".format(failed, length)
+            self.api.log_test_message(msg, "FF9999")
+
+        assert not any_reordered, "at least one event was received out of order."
+        assert not dropped, "at least one event was dropped or not sent."
+        assert failed == 0, "at least one iteration failed."
+
 
     def test_bd_cycles_ascending(self):
-        tlm = ["BD_Cycles"] * 3
-        results = self.api.assert_telemetry_sequence(tlm, timeout=20)
-        last = 0
-        for tlm in results:
-            msg = "[{}] EVR {}".format(tlm.get_time().useconds, tlm)
-            print(msg)
-            recent = tlm.get_val()
-            msg = "BD_Cycles should increase, but {} is not greater than {}.".format(
-                recent, last
-            )
-            assert recent > last, msg
-            last = recent
+        length = 3600
+        count_pred = predicates.greater_than(length - 1)
+        results = self.api.await_telemetry_count(count_pred, "BD_Cycles", timeout=length)
+        last = None
+        reordered = False
+        ascending = True
+        for result in results:
+            if last is not None:
+                last_time = last.get_time()
+                result_time = result.get_time()
+                if result_time - last_time > 1.5:
+                    msg = "Double buffering may have caused an update to be skipped in FSW between {} and {}".format(last_time.to_readable(), result_time.to_readable())
+                    self.api.log_test_message(msg, "FFCC99")
+                elif result_time < last_time:
+                    msg = "There is potential reorder error between {} and {}".format(last_time, result_time)
+                    self.api.log_test_message(msg, "FF9999")
+                    reordered = True
+
+                if not result.get_val() > last.get_val():
+                    msg = "There is either a counter rollover, or a potential reorder error between {} and {}".format(result_time, last_time)
+                    self.api.log_test_message(msg, "FFCC99")
+                    ascending = False
+
+            last = result
+
+        if ascending:
+            self.api.log_test_message("All BD_Cycles updates increased in value", "ADEBAD")
+        else:
+            self.api.log_test_message("Channel updates were potentially reordered. Two non-ascending values were found", "FF9999")
+
+        if not reordered:
+            self.api.log_test_message("All BD_Cycles updates were ordered.", "ADEBAD")
+        else:
+            self.api.log_test_message("Channel updates were potentially reordered.", "FF9999")
+
+        if count_pred(len(results)):
+            self.api.log_test_message("The search found all the updates", "ADEBAD")
+        else:
+            msg = "Double buffering may have caused an update to be skipped in FSW. exp: {} counted: {}".format(length, len(results))
+            self.api.log_test_message(msg, "FF9999")
+
+        self.api.assert_telemetry_count(0, "RgCycleSlips")
+        assert ascending, "Not BD_Cycles increased in value, See test log."
+        assert not reordered, "Channel updates were potentially reordered or not ascending. See test log."
+        # assert count_pred(len(results)), "Channel updates were dropped. See test log."
