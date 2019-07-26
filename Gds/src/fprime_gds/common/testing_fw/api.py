@@ -57,6 +57,9 @@ class IntegrationTestAPI:
         self.event_log_filter = self.get_event_predicate()
         self.pipeline.register_event_consumer(self)
 
+        # Used by the data_callback method to detect if EVR's have been received out of order.
+        self.last_evr = None
+
     def teardown(self):
         """
         To be called once at the end of the API's use. Closes the test log and clears histories.
@@ -604,7 +607,8 @@ class IntegrationTestAPI:
 
         if not predicates.is_predicate(severity) and severity is not None:
             if not isinstance(severity, EventSeverity):
-                raise TypeMismatchException("EventSeverity", type(severity))
+                msg = "Given severity was not a valid Severity Enum Value: {} ({})".format(severity, type(severity))
+                raise TypeError(msg)
             severity = predicates.equal_to(severity)
 
         return predicates.event_predicate(event, args, severity, time_pred)
@@ -1053,7 +1057,7 @@ class IntegrationTestAPI:
 
     def data_callback(self, data_object):
         """
-        Data callback used by the api to subscribe to EVR's
+        Data callback used by the api to subscribe to EVR's also logs if EVR's are received out of order.
 
         Args:
             data_object: object to store
@@ -1061,3 +1065,9 @@ class IntegrationTestAPI:
         if self.event_log_filter(data_object):
             msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)
+        if self.last_evr is not None and data_object.get_time() < self.last_evr.get_time():
+            msg = "API detected out of order evrs!\nReceived Second:{}".format()
+            msg = msg + "\nReceived First:{}".format(self.last_evr.get_str(verbose=True))
+            msg = msg + "\nReceived Second:{}".format(self.data_object.get_str(verbose=True))
+            self.__log(msg, TestLogger.ORANGE)
+        self.last_evr = data_object
