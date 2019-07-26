@@ -1,18 +1,18 @@
 """
 test_history.py:
 
-A chronological history that relies on predicates to provide filtering, searching, and data
-structure operations
+A chronologically-ordered history that relies on predicates to provide filtering, searching, and
+data structure operations
 
 :author: koran
 """
 from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.history.history import History
 
-
-class TestHistory:
+class TestHistory(History):
     """
-    A chronological history to support the GDS test api. This is intended to be registered with the
-    decoders in order to handle incoming objects, and store them for retrieval.
+    A chronological history to support the GDS test api. This history adds support for specifying
+    start with predicates and python's bracket notation.
     """
 
     ###########################################################################
@@ -116,7 +116,7 @@ class TestHistory:
         """
         Accessor for the number of objects in the history
         Returns:
-            the number of objects
+            the number of objects (int)
         """
         return len(self.objects)
 
