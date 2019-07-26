@@ -299,9 +299,10 @@ class StandardPipeline:
         """
         Removes a history from the event decoder. Will raise an error if the history was not
         previously registered.
+        Returns:
+            a boolean indicating if the history was removed.
         """
-        # TODO: add removal functionality to the decoders.
-        pass
+        return self.event_decoder.deregister(history)
 
     def register_telemetry_consumer(self, history):
         """
@@ -309,13 +310,14 @@ class StandardPipeline:
         """
         self.channel_decoder.register(history)
 
-    def remove_telemetry_history(self, history):
+    def remove_telemetry_consumer(self, history):
         """
         Removes a history from the telemetry decoder. Will raise an error if the history was not
         previously registered.
+        Returns:
+            a boolean indicating if the history was removed.
         """
-        # TODO: add removal functionality to the decoders.
-        pass
+        return self.channel_decoder.deregister(history)
 
     def register_command_consumer(self, history):
         """
@@ -327,5 +329,11 @@ class StandardPipeline:
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+        Returns:
+            a boolean indicating if the history was removed.
         """
-        self.command_subscribers.remove(history)
+        try:
+            self.command_subscribers.remove(history)
+            return True
+        except ValueError:
+            return False

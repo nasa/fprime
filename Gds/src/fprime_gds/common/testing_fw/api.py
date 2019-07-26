@@ -87,7 +87,7 @@ class IntegrationTestAPI:
         self.get_latest_time()  # called in case aggregate histories are cleared by the user
         self.clear_histories()
 
-    def log_test_message(self, msg, color=None):
+    def log(self, msg, color=None):
         """
         User-accessible function to log user messages to the test log.
         Args:
@@ -181,6 +181,61 @@ class IntegrationTestAPI:
             a history of EventData objects
         """
         return self.event_history
+    
+    def get_event_subhistory(self, event_filter=None):
+        """
+        Returns a new instance of TestHistory that will be updated with new events as they come in.
+        Specifying a filter will only enqueue events that satisfy the filter in this new sub-history.
+        The returned history can be substituted into the await and assert methods of this API.
+
+        Args:
+            event_filter: an optional predicate to filter a subhistory.
+        Returns:
+            an instance of TestHistory
+        """
+        subhist = TestHistory(event_filter)
+        self.pipeline.register_event_consumer(subhist)
+        return subhist
+    
+    def remove_event_subhistory(self, subhist):
+        """
+        De-registers the subhistory from the GDS. Once called, the given subhistory will stop
+        receiving event messages.
+
+        Args:
+            subhist: a TestHistory instance that is subscribed to event messages
+        Returns:
+            True if the subhistory was removed, False otherwise
+        """
+        return self.pipeline.remove_event_consumer(subhist)
+    
+    def get_telemetry_subhistory(self, telemetry_filter=None):
+        """
+        Returns a new instance of TestHistory that will be updated with new telemetry updates as
+        they come in. Specifying a filter will only enqueue updates that satisfy the filter in this
+        new sub-history. The returned history can be substituted into the await and assert methods
+        of this API.
+
+        Args:
+            telemetry_filter: an optional predicate used to filter a subhistory.
+        Returns:
+            an instance of TestHistory
+        """
+        hist = TestHistory(telemetry_filter)
+        self.pipeline.register_telemetry_consumer(hist)
+        return hist
+
+    def remove_telemetry_subhistory(self, subhist):
+        """
+        De-registers the subhistory from the GDS. Once called, the given subhistory will stop
+        receiving telemetry updates.
+
+        Args:
+            subhist: a TestHistory instance that is subscribed to event messages
+        Returns:
+            True if the subhistory was removed, False otherwise
+        """
+        return self.pipeline.remove_telemetry_consumer(subhist)
 
     ######################################################################################
     #   Command Functions
@@ -754,7 +809,7 @@ class IntegrationTestAPI:
         """
         results = self.await_event_sequence(events, history, start, timeout)
         len_pred = predicates.equal_to(len(events))
-        self.__assert_pred("Event Sequence", len_pred, len(results))
+        self.__assert_pred("Event Sequence length", len_pred, len(results))
         return results
 
     def assert_event_count(
@@ -1066,8 +1121,8 @@ class IntegrationTestAPI:
             msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE)
         if self.last_evr is not None and data_object.get_time() < self.last_evr.get_time():
-            msg = "API detected out of order evrs!\nReceived Second:{}".format()
+            msg = "API detected out of order evrs!"
             msg = msg + "\nReceived First:{}".format(self.last_evr.get_str(verbose=True))
-            msg = msg + "\nReceived Second:{}".format(self.data_object.get_str(verbose=True))
+            msg = msg + "\nReceived Second:{}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.ORANGE)
         self.last_evr = data_object

@@ -138,7 +138,7 @@ class APITestCases(unittest.TestCase):
             seq.append(ChData(I32Type(val), TimeType(), ch_temp))
         return seq
 
-    def get_severity_event(self, severity):
+    def get_severity_event(self, severity="DIAGNOSTIC"):
         name = "Severity" + severity
         temp = self.pipeline.get_event_name_dictionary()[name]
         event = EventData(tuple(), TimeType(), temp)
@@ -161,21 +161,20 @@ class APITestCases(unittest.TestCase):
     #   Test Cases
     ######################################################################################
     def test_dummy_pipeline(self):
-        listA = range(0, 50)
-        self.fill_history_async(self.pipeline.enqueue_event, listA, 0.01)
+        length = 15
+        event_list = self.get_severity_sequence(length)
+        t1 = self.fill_history_async(self.pipeline.enqueue_event, event_list, 0.1)
         print("waiting for queue to fill")
-        pred = predicates.equal_to(10)
+        pred = predicates.greater_than_or_equal_to(length // 2)
         results = self.api.await_event_count(pred)
         assert pred(len(results)), "the correct amount of objects was received"
-        print("received 10 objects: ")
-        print(results)
-        time.sleep(1)
+        t1.join()
         evr_hist = self.api.get_event_test_history()
         item_count = len(evr_hist)
         assert (
-            item_count == 50
+            item_count == length
         ), "Were the correct number of items in the history? ({},{})".format(
-            item_count, 50
+            item_count, length
         )
 
     def test_find_history_item(self):
@@ -414,6 +413,64 @@ class APITestCases(unittest.TestCase):
         assert commandHistory.size() == 0, "history size should be 0"
         assert channelHistory.size() == 0, "history size should be 0"
         assert eventHistory.size() == 0, "history size should be 0"
+
+    def test_registering_and_removing_subhistories(self):
+        # Verifying that retrieving a subhistory for events behaves as expected
+        event_hist = self.api.get_event_test_history()
+        self.pipeline.enqueue_event(self.get_severity_event())
+        assert event_hist.size() == 1, "There should be one event in the api's history"
+
+        event_subhist = self.api.get_event_subhistory()
+        assert event_subhist.size() == 0, "There should be no events in the subhistory"
+
+        self.pipeline.enqueue_event(self.get_severity_event())
+
+        assert event_hist.size() == 2, "There should be two events in the api's history"
+        assert event_subhist.size() == 1, "There should be one event in the subhistory"
+
+        assert self.api.remove_event_subhistory(event_subhist), "remove should succeed"
+
+        self.pipeline.enqueue_event(self.get_severity_event())
+
+        assert event_hist.size() == 3, "There should be three events in the api's history"
+        assert event_subhist.size() == 1, "There should be one event in the subhistory"
+
+        self.api.clear_histories()
+
+        assert event_hist.size() == 0, "There should be no events in the api's history"
+        assert event_subhist.size() == 1, "There should be one event in the subhistory"
+
+        assert not self.api.remove_event_subhistory(event_subhist), "should not remove twice"
+
+        # same checks, but for telemetry
+        telem_seq = self.get_counter_sequence(3)
+        telem_hist = self.api.get_telemetry_test_history()
+        self.pipeline.enqueue_telemetry(telem_seq[0])
+        assert telem_hist.size() == 1, "There should be one update in the api's history"
+
+        telem_subhist = self.api.get_telemetry_subhistory()
+        assert telem_subhist.size() == 0, "There should be no updates in the subhistory"
+
+        self.pipeline.enqueue_telemetry(telem_seq[1])
+
+        assert telem_hist.size() == 2, "There should be two updates in the api's history"
+        assert telem_subhist.size() == 1, "There should be one update in the subhistory"
+
+        assert self.api.remove_telemetry_subhistory(telem_subhist), "remove should succeed"
+
+        self.pipeline.enqueue_telemetry(telem_seq[2])
+
+        assert telem_hist.size() == 3, "There should be three updates in the api's history"
+        assert telem_subhist.size() == 1, "There should be one update in the subhistory"
+
+        self.api.clear_histories()
+
+        assert telem_hist.size() == 0, "There should be no updates in the api's history"
+        assert telem_subhist.size() == 1, "There should be one update in the subhistory"
+
+        assert not self.api.remove_telemetry_subhistory(telem_subhist), "should not remove twice"
+
+
 
     def test_translate_command_name(self):
         assert self.api.translate_command_name("TEST_CMD_1") == 1
