@@ -49,7 +49,7 @@ from fprime_ac.generators.writers import GTestHWriter
 from fprime_ac.generators.writers import GTestCppWriter
 from fprime_ac.generators.writers import TestImplHWriter
 from fprime_ac.generators.writers import TestImplCppWriter
-#from fprime_ac.generators.writers import TestMainWriter
+from fprime_ac.generators.writers import TestMainWriter
 
 #Generators to produce the code
 from fprime_ac.generators import GenFactory
@@ -96,6 +96,10 @@ def pinit():
     parser = OptionParser(usage, version=vers, epilog=program_longdesc)
 
     parser.add_option("-b", "--build_root", dest="build_root_overwrite", type="string", help="Overwrite environment variable BUILD_ROOT", default=None)
+    
+    parser.add_option("-m", "--maincpp", dest="maincpp",
+                      help="Autocodes main.cpp file with proper test cases",
+                      action="store_true", default=False)
 
     parser.add_option("-v", "--verbose", dest="verbose_flag", help="Enable verbose mode showing more runtime detail (def: False)", action="store_true", default=False)
 
@@ -165,8 +169,6 @@ def generate_tests(opt, component_model):
     # cpp_instance_test_impl_name TestImplCppVisitor
     unitTestFiles.append(TestImplCppWriter.TestImplCppWriter())
     
-#    unitTestFiles.append(TestMainWriter.TestMainWriter())
-
     #
     # The idea here is that each of these generators is used to create
     # a certain portion of each output file.
@@ -175,6 +177,40 @@ def generate_tests(opt, component_model):
         file.write(component_model)
         if VERBOSE:
             print("Generated %s"%file.toString())
+
+    time.sleep(3)
+    
+    if opt.maincpp:
+        testdir = BUILD_ROOT + os.sep + "Autocoders" + os.sep + "Python" + os.sep
+        testdir += "test" + os.sep + "testgen" + os.sep + "test" + os.sep + "ut" + os.sep
+    
+        testhpp = open(testdir + "Tester.hpp", "r")
+    
+        find_tests = False
+        test_cases = []
+        for line in testhpp:
+            if "// Tests" in line:
+                find_tests = True
+            elif "private:" in line:
+                find_tests = False
+            
+            if find_tests:
+                if "void " in line:
+                    name = line[line.index("void ") + 5:].replace("(void);", "").strip()
+                    test_cases.append(name)
+        
+        if len(test_cases) > 1:
+            test_cases.remove("toDo")
+        
+        main_writer = TestMainWriter.TestMainWriter()
+            
+        main_writer.add_test_cases(test_cases)
+        main_writer.write(component_model)
+
+    else:
+        TestMainWriter.TestMainWriter().write(component_model)
+
+    print("Generated TestMain.cpp")
 
     print("Generated test files for " + component_model.get_xml_filename())
 

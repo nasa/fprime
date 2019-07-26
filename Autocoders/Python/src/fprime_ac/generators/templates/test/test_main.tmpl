@@ -1,0 +1,17 @@
+// ----------------------------------------------------------------------
+// TestMain.cpp
+// ----------------------------------------------------------------------
+
+\#include "Tester.hpp"
+
+#for $test_name, $method_name in $test_cases
+TEST(Nominal, ${test_name}) {
+    Ref::Tester tester;
+    tester.${method_name}();
+}
+#end for
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

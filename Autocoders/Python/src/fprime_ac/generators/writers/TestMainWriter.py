@@ -37,7 +37,21 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
     def _startSourceFilesWrite(self, obj):
         c = test_main.test_main()
         self.initTest(obj, c)
+        
+        if not hasattr(self, "test_cases"):
+            self.test_cases = []
+            self.test_cases.append("toDo")
+        
+        tclist = []
+        for case in self.test_cases:
+            tclist.append( (case[0].capitalize() + case[1:], case) )
+        
+        c.test_cases = tclist
+        
         self._writeTmpl(c, "startSourceFilesWrite")
+    
+    def add_test_cases(self, test_cases):
+        self.test_cases = test_cases
     
     def write(self, obj):
         """

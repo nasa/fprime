@@ -12,10 +12,18 @@ import subprocess
 from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
+from optparse import OptionParser
 
+import shutil
 import filecmp
 import logging
 import time
+
+# Version label for now
+class Version:
+    id      = "0.1"
+    comment = "Initial prototype"
+VERSION = Version()
 
 def add_tester_section(filename, methodname, section_type):
     with open(filename, "r+") as fileopen:
@@ -132,17 +140,17 @@ def test_testgen():
     """
     Tests that tests are being generated correctly
     """
+    global testdir
+
     try:
-        global testdir
-        
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
         curdir = os.getcwd()
-        testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        testdir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
         testdir = testdir + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
         testutdir = testdir + "test" + os.sep + "ut"
         os.chdir(testdir)
         
-        bindir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
+        bindir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
         
         # Autocode component and port
         pport1 = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathOpPortAi.xml")
@@ -154,14 +162,16 @@ def test_testgen():
         
         os.chdir(testutdir)
         
+        print(os.getcwd())
+        
         # Autocode tests
-        p = pexpect.spawn("python " + bindir + "testgen.py -v " + testdir + "MathSenderComponentAi.xml")
+        p = pexpect.spawn("python " + bindir + "testgen.py -v -m " + testdir + "MathSenderComponentAi.xml")
         
         p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.hpp)(?=.*Generated Tester.cpp)(?!.*ERROR).*", timeout=5)
         
         print("Autocoded TestComponent")
         
-        time.sleep(3)
+        time.sleep(1)
 
         add_tester_section("Tester.cpp", "// Tests", "TESTER_METHODS")
         add_tester_section("Tester.hpp", "//! To do", "TESTER_HEADERS")
@@ -174,13 +184,27 @@ def test_testgen():
         compare_genfile("GTestBase.cpp")
         compare_genfile("GTestBase.hpp")
         
-        builddir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
+        rootdir = os.environ['BUILD_ROOT']
+        os.chdir(rootdir)
+        
+        if not os.path.exists(os.environ['BUILD_ROOT'] + os.sep + "build_test"):
+            os.mkdir(os.environ['BUILD_ROOT'] + os.sep + "build_test")
+
+        builddir = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
+        os.chdir(builddir)
+        
+        if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep + "Makefile"):
+            pcmake = pexpect.spawn("cmake .. -DCMAKE_BUILD_TYPE=TESTING")
+            pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
+            print("Successfully ran cmake for testgen test")
+        
         # Build ut
-        pbuild = pexpect.spawn("cd " + builddir + " && make Autocoders_Python_test_testgen_ut_exe")
+        pbuild = pexpect.spawn("make Autocoders_Python_test_testgen_ut_exe -j32")
+        pbuild.expect("(?=.*Built target Autocoders_Python_test_testgen_ut_exe)")
         
         print("Built testgen unit test")
         
-        utdir = builddir + "bin" + os.sep + "Darwin" + os.sep + "Autocoders_Python_test_testgen_ut_exe"
+        utdir = builddir + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_testgen_ut_exe"
         # Run ut
         ptestrun = pexpect.spawn(utdir)
         

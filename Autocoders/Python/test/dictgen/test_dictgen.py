@@ -112,6 +112,7 @@ def check_generated_files(testdir):
     inst2_channels = [o.get_name() for o in inst2.get_comp_xml().get_channels()]
     inst1_parameters = [o.get_name() for o in inst1.get_comp_xml().get_parameters()]
     inst2_parameters = [o.get_name() for o in inst2.get_comp_xml().get_parameters()]
+    print(str(dir(inst1_channels)) + " " + str(type(inst1_channels)))
     
     dict_parser = XmlLoader()
     parsed_dict = dict_parser.get_xml_tree("TestTopologyAppDictionary.xml")
@@ -120,6 +121,8 @@ def check_generated_files(testdir):
     parsed_commands = dict_parser.get_xml_section("commands", parsed_dict)
     parsed_channels = dict_parser.get_xml_section("channels", parsed_dict)
     parsed_parameters = dict_parser.get_xml_section("parameters", parsed_dict)
+    
+    print(str(dir(parsed_channels)) + " " + str(type(parsed_channels)))
     
     # Check that all items are the same from the topology and the generated dict
     for event in parsed_events:
@@ -284,11 +287,11 @@ def test_dictgen():
         
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
         curdir = os.getcwd()
-        testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        testdir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
         testdir = testdir + "Python" + os.sep + "test" + os.sep + "dictgen"
         os.chdir(testdir)
         
-        bindir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
+        bindir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
         
         ## Spawn executable
         p_pymod = pexpect.spawn("python " + bindir + "pymod_dictgen.py -v TestTopologyAppAi.xml")
