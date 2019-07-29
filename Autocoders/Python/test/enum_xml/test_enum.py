@@ -174,10 +174,23 @@ def test_enum():
         
         expect_step = "cmake"
         
-        #
-        cmd = "cd " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
-        cmd = cmd + " && make Autocoders_Python_test_enum_xml_ut_exe"
-        pbuild = pexpect.spawn(cmd)
+        rootdir = os.environ['BUILD_ROOT']
+        os.chdir(rootdir)
+        
+        if not os.path.exists(os.environ['BUILD_ROOT'] + os.sep + "build_test"):
+            os.mkdir(os.environ['BUILD_ROOT'] + os.sep + "build_test")
+
+        builddir = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
+        os.chdir(builddir)
+
+        if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml" + os.sep + "Makefile"):
+            pcmake = pexpect.spawn("cmake .. -DCMAKE_BUILD_TYPE=TESTING")
+            pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
+            print("Successfully ran cmake for testgen test")
+
+        # Build ut
+        pbuild = pexpect.spawn("make Autocoders_Python_test_enum_xml_ut_exe -j32")
+        pbuild.expect("(?=.*Built target Autocoders_Python_test_enum_xml_ut_exe)")
         
         print("\nRunning Test Cases...")
         
@@ -193,7 +206,7 @@ def test_enum():
         enum2_literal_data = [-8324876, 21, 2000999333, 2, -1952875139, 2]
         serial1_data = [0, 10, 67, 4837, 82739845, 3434534]
         serial2_data = [22839745, 3453, 2, 1, 9808973, 99]
-        cmd = os.sep + os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
+        cmd = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
         cmd = cmd + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_enum_xml_ut_exe"
         ptestrun = pexpect.spawn(cmd)
         
