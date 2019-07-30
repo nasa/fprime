@@ -60,8 +60,8 @@ class TestLogger:
                 "Test Logger requires a filename where the output can be saved."
             )
         self.start_time = time.time()
-        date_string = datetime.datetime.fromtimestamp(self.start_time).strftime("%H:%M:%S")
-        self.filename = os.path.join(output_path, "TestLog{}.xlsx".format(date_string))
+        date_string = datetime.datetime.fromtimestamp(self.start_time).strftime("%Y-%m-%dT%H:%M:%S")
+        self.filename = os.path.join(output_path, "TestLog_{}.xlsx".format(date_string))
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
 
