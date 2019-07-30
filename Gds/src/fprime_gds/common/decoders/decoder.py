@@ -55,10 +55,28 @@ class Decoder(object):
         registered consumer.
 
         Args:
-            consumer_obj: Object to regiser to the decoder. Must implement a
+            consumer_obj: Object to register to the decoder. Must implement a
                           data_callback function.
         '''
         self.__consumers.append(consumer_obj)
+    
+    def deregister(self, consumer_obj):
+        '''
+        Function called to remove a registered consumer from this decoder
+
+        Once called, a registered item will no longer receive updates from this decoder.
+
+        Args:
+            consumer_obj: Object to deregister from the decoder. Must implement a
+                          data_callback function.
+        Return:
+            a boolean indicating if the consumer was removed
+        '''
+        try:
+            self.__consumers.remove(consumer_obj)
+            return True
+        except ValueError:
+            return False
 
 
     def decode_api(self, data):
