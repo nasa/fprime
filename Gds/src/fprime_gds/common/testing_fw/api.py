@@ -55,7 +55,7 @@ class IntegrationTestAPI:
             self.logger = None
 
         # A predicate used as a filter to choose which EVR's to log automatically
-        self.event_log_filter = self.get_event_predicate()
+        self.event_log_filter = self.get_event_pred()
         self.pipeline.register_event_consumer(self)
 
         # Used by the data_callback method to detect if EVR's have been received out of order.
@@ -157,7 +157,7 @@ class IntegrationTestAPI:
             severity: an EventSeverity enum or a predicate to specify the event severity
             time_pred: an optional predicate to specify the flight software timestamp
         """
-        self.event_log_filter = self.get_event_predicate(event, args, severity, time_pred)
+        self.event_log_filter = self.get_event_pred(event, args, severity, time_pred)
 
     def get_command_test_history(self):
         """
@@ -403,7 +403,7 @@ class IntegrationTestAPI:
                 msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(channel)
                 raise KeyError(msg)
 
-    def get_telemetry_predicate(self, channel=None, value=None, time_pred=None):
+    def get_telemetry_pred(self, channel=None, value=None, time_pred=None):
         """
         This function will translate the channel ID, and construct a telemetry_predicate object. It
         is used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the
@@ -451,7 +451,7 @@ class IntegrationTestAPI:
         Returns:
             the ChData object found during the search, otherwise, None
         """
-        t_pred = self.get_telemetry_predicate(channel, value, time_pred)
+        t_pred = self.get_telemetry_pred(channel, value, time_pred)
 
         if history is None:
             history = self.get_telemetry_test_history()
@@ -478,7 +478,7 @@ class IntegrationTestAPI:
         """
         seq_preds = []
         for channel in channels:
-            seq_preds.append(self.get_telemetry_predicate(channel))
+            seq_preds.append(self.get_telemetry_pred(channel))
 
         if history is None:
             history = self.get_telemetry_test_history()
@@ -510,10 +510,10 @@ class IntegrationTestAPI:
         elif isinstance(channels, list):
             t_preds = []
             for channel in channels:
-                t_preds.append(self.get_telemetry_predicate(channel=channel))
+                t_preds.append(self.get_telemetry_pred(channel=channel))
             search = predicates.satisfies_any(t_preds)
         else:
-            search = self.get_telemetry_predicate(channel=channels)
+            search = self.get_telemetry_pred(channel=channels)
 
         if history is None:
             history = self.get_telemetry_test_history()
@@ -541,7 +541,7 @@ class IntegrationTestAPI:
         Returns:
             the ChData object found during the search
         """
-        pred = self.get_telemetry_predicate(channel, value, time_pred)
+        pred = self.get_telemetry_pred(channel, value, time_pred)
         result = self.await_telemetry(
             channel, value, time_pred, history, start, timeout
         )
@@ -624,7 +624,7 @@ class IntegrationTestAPI:
                 msg = "The event id, {}, wasn't in the dictionary".format(event)
                 raise KeyError(msg)
 
-    def get_event_predicate(self, event=None, args=None, severity=None, time_pred=None):
+    def get_event_pred(self, event=None, args=None, severity=None, time_pred=None):
         """
         This function will translate the event ID, and construct an event_predicate object. It is
         used as a helper by the IntegrationTestAPI, but could also be helpful to a user of the test
@@ -679,7 +679,7 @@ class IntegrationTestAPI:
         Returns:
             the EventData object found during the search, otherwise, None
         """
-        e_pred = self.get_event_predicate(event, args, severity, time_pred)
+        e_pred = self.get_event_pred(event, args, severity, time_pred)
 
         if history is None:
             history = self.get_event_test_history()
@@ -706,7 +706,7 @@ class IntegrationTestAPI:
         """
         seq_preds = []
         for event in events:
-            seq_preds.append(self.get_event_predicate(event))
+            seq_preds.append(self.get_event_pred(event))
 
         if history is None:
             history = self.get_event_test_history()
@@ -738,10 +738,10 @@ class IntegrationTestAPI:
         elif isinstance(events, list):
             e_preds = []
             for event in events:
-                e_preds.append(self.get_event_predicate(event=event))
+                e_preds.append(self.get_event_pred(event=event))
             search = predicates.satisfies_any(e_preds)
         else:
-            search = self.get_event_predicate(event=events)
+            search = self.get_event_pred(event=events)
 
         if history is None:
             history = self.get_event_test_history()        
@@ -770,7 +770,7 @@ class IntegrationTestAPI:
         Returns:
             the EventData object found during the search
         """
-        pred = self.get_event_predicate(event, args, severity, time_pred)
+        pred = self.get_event_pred(event, args, severity, time_pred)
         result = self.await_event(event, args, severity, time_pred, history, start, timeout)
         self.__assert_pred("Event Received", pred, result)
         return result
@@ -900,8 +900,8 @@ class IntegrationTestAPI:
             start = history.size()
         elif isinstance(start, TimeType):
             time_pred = predicates.greater_than_or_equal_to(start)
-            e_pred = self.get_telemetry_predicate(time_pred=time_pred)
-            t_pred = self.get_event_predicate(time_pred=time_pred)
+            e_pred = self.get_telemetry_pred(time_pred=time_pred)
+            t_pred = self.get_event_pred(time_pred=time_pred)
             start = predicates.satisfies_any([e_pred, t_pred])
 
         current = history.retrieve(start)
