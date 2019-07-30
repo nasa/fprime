@@ -104,8 +104,9 @@ class ConfigManager(configparser.SafeConfigParser):
         self.__prop['schema']["deployment"]             = '/Autocoders/Python/schema/default/topology_schema.rng'
         self.__prop['schema']["internal_interfaces"]    = '/Autocoders/Python/schema/default/internal_interface_schema.rng'
         self.__prop['schema']["interface"]              = '/Autocoders/Python/schema/default/interface_schema.rng'
-        self.__prop['schema']["serializable"]              = '/Autocoders/Python/schema/default/serializable_schema.rng'
-        self.__prop['schema']["parameters"]              = '/Autocoders/Python/schema/default/parameters_schema.rng'
+        self.__prop['schema']["serializable"]           = '/Autocoders/Python/schema/default/serializable_schema.rng'
+        self.__prop['schema']["parameters"]             = '/Autocoders/Python/schema/default/parameters_schema.rng'
+        self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
         # component parameters here.

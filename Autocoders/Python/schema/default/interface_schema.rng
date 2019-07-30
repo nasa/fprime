@@ -68,11 +68,17 @@
 
             <zeroOrMore>
                 <element name = "import_serializable_type">
-                    <a:documentation>Imports serlializable types.</a:documentation>
+                    <a:documentation>Imports serializable types.</a:documentation>
                     <data type="anyURI"></data>
                 </element>
             </zeroOrMore>
 
+            <zeroOrMore>
+                <element name = "import_enum_type">
+                    <a:documentation>Imports enum types.</a:documentation>
+                    <data type="anyURI"></data>
+                </element>
+            </zeroOrMore>
 
             <zeroOrMore>
                 <ref name = "args_define"></ref>
