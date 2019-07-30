@@ -4,8 +4,8 @@ import time
 from enum import Enum
 
 filename = os.path.dirname(__file__)
-gdsName = os.path.join(filename, "../../Gds/src")
-fprimeName = os.path.join(filename, "../../Fw/Python/src")
+gdsName = os.path.join(filename, "../../../Gds/src")
+fprimeName = os.path.join(filename, "../../../Fw/Python/src")
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
 
@@ -23,10 +23,10 @@ class TestRefAppClass(object):
         cls.pipeline = StandardPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
-        path = os.path.join(filename, "../Top/RefTopologyAppDictionary.xml")
+        path = os.path.join(filename, "../../Top/RefTopologyAppDictionary.xml")
         cls.pipeline.setup(config, path)
         cls.pipeline.connect("127.0.0.1", 50000)
-        cls.api = IntegrationTestAPI(cls.pipeline, "./")
+        cls.api = IntegrationTestAPI(cls.pipeline, "./logs")
         cls.case_list = [] # TODO find a better way to do this. 
 
     @classmethod
@@ -231,6 +231,8 @@ class TestRefAppClass(object):
             self.api.clear_histories()
             self.api.send_command("CMD_NO_OP")
             self.api.send_command("CMD_NO_OP")
+
+            time.sleep(0.5)
 
             self.api.assert_event_count(zero, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
