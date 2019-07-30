@@ -111,9 +111,6 @@ class TestLogger:
         ts = time.time()
         timestring = datetime.datetime.fromtimestamp(ts).strftime(self.time_format)
 
-        # print the log
-        print("{} [{}] {}".format(timestring, sender, message))
-
         if case_id is not None:
             if not isinstance(case_id, str):
                 case_id = str(case_id)
@@ -127,9 +124,10 @@ class TestLogger:
 
         self.lock.acquire()
         try:
+            print("{} [{}] {}".format(timestring, sender, message))
             self.worksheet.append(row)
         finally:
-            self.lock.release() 
+            self.lock.release()
 
     def close_log(self):
         """
