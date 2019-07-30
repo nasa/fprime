@@ -1,5 +1,7 @@
 import os
 import sys
+import time
+from enum import Enum
 
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, "../../Gds/src")
@@ -8,9 +10,10 @@ sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
 
 from fprime_gds.common.pipeline.standard import StandardPipeline
-from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 from fprime_gds.common.utils.config_manager import ConfigManager
+from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 class TestRefAppClass(object):
@@ -60,15 +63,53 @@ class TestRefAppClass(object):
         self.api.log("Starting assert_command helper")
         cmd_id = self.api.translate_command_name(command)
         events = []
-        events.append(self.api.get_event_predicate("OpCodeDispatched", [cmd_id, None]))
-        events.append(self.api.get_event_predicate("OpCodeCompleted", [cmd_id]))
+        events.append(self.api.get_event_pred("OpCodeDispatched", [cmd_id, None]))
+        events.append(self.api.get_event_pred("OpCodeCompleted", [cmd_id]))
         results = self.api.send_and_assert_event(command, args, events)
         if max_delay is not None:
             delay = results[1].get_time() - results[0].get_time()
-            msg = "The delay, {}, between the two events should be below {}".format(delay, max_delay)
+            msg = "The delay, {}, between the two events should be < {}".format(delay, max_delay)
             assert delay < max_delay, msg
         self.api.log("assert_command helper completed successfully")
         return results
+
+    """
+    This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
+    """
+    FilterSeverity = Enum('FilterSeverity' , 'WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC')
+
+    def set_event_filter(self, severity, enabled):
+        """
+        This helper will send a command that updates the given severity filter on the ActiveLogger
+        Component in the Ref App.
+        Args:
+            severity: A valid FilterSeverity Enum Value (str) or an instance of FilterSeverity
+            enabled: a boolean of whether or not to enable the given severity
+        Return:
+            boolean of wether the report filter was set successfully.
+        """
+        enabled = "ENABLED" if enabled else "DISABLED"
+        if isinstance(severity, self.FilterSeverity):
+            severity = severity.name
+        else:
+            severity = self.FilterSeverity[severity].name
+        try:
+            self.api.send_command("ALOG_SET_EVENT_REPORT_FILTER", ["INPUT_" + severity, "INPUT_" + enabled])
+            self.api.send_command("ALOG_SET_EVENT_SEND_FILTER", ["SEND_" + severity, "SEND_" + enabled])
+            return True
+        except AssertionError:
+            return False
+
+    def set_default_filters(self):
+        """
+        Sets the default send filters on the ref aps ActiveLogger
+        """
+        self.set_event_filter("COMMAND", True)
+        self.set_event_filter("ACTIVITY_LO", True)
+        self.set_event_filter("ACTIVITY_HI", True)
+        self.set_event_filter("WARNING_LO", True)
+        self.set_event_filter("WARNING_HI", True)
+        self.set_event_filter("DIAGNOSTIC", False)
 
     def test_send_command(self):
         self.assert_command("CMD_NO_OP", max_delay=0.1)
@@ -77,16 +118,15 @@ class TestRefAppClass(object):
         assert self.api.get_command_test_history().size() == 2
 
     def test_send_and_assert_no_op(self):
-        length = 10
+        length = 5
         failed = 0
         evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
         any_reordered = False
         dropped = False
         for i in range(0, length):
-            start = self.api.get_event_test_history().size()
-            results = self.api.send_and_await_event("CMD_NO_OP", events=evr_seq)
+            results = self.api.send_and_await_event("CMD_NO_OP", events=evr_seq, timeout=2)
             if len(results) < 3:
-                items = self.api.get_event_test_history().retrieve(start)
+                items = self.api.get_event_test_history().retrieve()
                 last = None
                 reordered = False
                 for item in items:
@@ -96,6 +136,7 @@ class TestRefAppClass(object):
                             any_reordered = True
                             reordered = True
                             break
+                    last = item
                 if not reordered:
                     self.api.log("during iteration #{}, a dropped event was detected".format(i), "FF9999")
                     dropped = True
@@ -124,9 +165,8 @@ class TestRefAppClass(object):
         assert not dropped, "at least one event was dropped or not sent."
         assert failed == 0, "at least one iteration failed."
 
-
     def test_bd_cycles_ascending(self):
-        length = 10
+        length = 5
         count_pred = predicates.greater_than(length - 1)
         results = self.api.await_telemetry_count(count_pred, "BD_Cycles", timeout=length)
         last = None
@@ -170,4 +210,29 @@ class TestRefAppClass(object):
         self.api.assert_telemetry_count(0, "RgCycleSlips")
         assert ascending, "Not BD_Cycles increased in value, See test log."
         assert not reordered, "Channel updates were potentially reordered or not ascending. See test log."
-        # assert count_pred(len(results)), "Channel updates were dropped. See test log."
+
+    def test_active_logger_filter(self):
+        self.set_default_filters()
+        try: 
+            cmd_events = self.api.get_event_pred(severity=EventSeverity.COMMAND)
+            actHI_events = self.api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
+            pred = predicates.greater_than(0)
+            zero = predicates.equal_to(0)
+
+            self.assert_command("CMD_NO_OP")
+            self.assert_command("CMD_NO_OP")
+
+            time.sleep(3)
+            
+            self.api.assert_event_count(pred, cmd_events)
+            self.api.assert_event_count(pred, actHI_events)
+            
+            self.set_event_filter(self.FilterSeverity.COMMAND, False)
+            self.api.clear_histories()
+            self.api.send_command("CMD_NO_OP")
+            self.api.send_command("CMD_NO_OP")
+
+            self.api.assert_event_count(zero, cmd_events)
+            self.api.assert_event_count(pred, actHI_events)
+        finally:
+            self.set_default_filters()
