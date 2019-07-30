@@ -602,13 +602,13 @@ class APITestCases(unittest.TestCase):
         except KeyError:
             assert True, "the api raised the correct error"
 
-    def test_get_telemetry_predicate(self):
+    def test_get_telemetry_pred(self):
         pred = predicates.telemetry_predicate()
-        result = self.api.get_telemetry_predicate(pred)
+        result = self.api.get_telemetry_pred(pred)
         assert pred == result, "should return when channel is already telem_pred"
 
         update = self.get_counter_sequence(1)[0]
-        pred = self.api.get_telemetry_predicate(update.get_id(), update.get_val())
+        pred = self.api.get_telemetry_pred(update.get_id(), update.get_val())
         assert pred(update), "predicate should return true when fields are specified"
 
     def test_await_telemetry(self):
@@ -635,7 +635,7 @@ class APITestCases(unittest.TestCase):
 
         search_seq = []
         for i in range(15, 20):
-            pred = self.api.get_telemetry_predicate("Counter", i)
+            pred = self.api.get_telemetry_pred("Counter", i)
             search_seq.append(pred)
 
         self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
@@ -664,7 +664,7 @@ class APITestCases(unittest.TestCase):
         sin_seq = self.get_oscillator_sequence(100)
 
         pred = predicates.greater_than_or_equal_to(10)
-        search_pred = self.api.get_telemetry_predicate("Counter", pred)
+        search_pred = self.api.get_telemetry_pred("Counter", pred)
         count_pred = predicates.within_range(10, 20)
 
         t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
@@ -722,7 +722,7 @@ class APITestCases(unittest.TestCase):
 
         search_seq = []
         for i in range(15, 20):
-            pred = self.api.get_telemetry_predicate("Counter", i)
+            pred = self.api.get_telemetry_pred("Counter", i)
             search_seq.append(pred)
 
         self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
@@ -756,7 +756,7 @@ class APITestCases(unittest.TestCase):
         sin_seq = self.get_oscillator_sequence(100)
 
         pred = predicates.greater_than_or_equal_to(10)
-        search_pred = self.api.get_telemetry_predicate("Counter", pred)
+        search_pred = self.api.get_telemetry_pred("Counter", pred)
         count_pred = predicates.within_range(10, 20)
 
         self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
@@ -815,13 +815,13 @@ class APITestCases(unittest.TestCase):
         except KeyError:
             assert True, "the api raised the correct error"
 
-    def test_get_event_predicate(self):
+    def test_get_event_pred(self):
         pred = predicates.event_predicate()
-        result = self.api.get_event_predicate(pred)
+        result = self.api.get_event_pred(pred)
         assert pred == result, "should return when channel is already event_pred"
 
         message = self.get_severity_event("FATAL")
-        pred = self.api.get_event_predicate(message.get_id(), message.get_args(), message.get_severity())
+        pred = self.api.get_event_pred(message.get_id(), message.get_args(), message.get_severity())
         assert pred(message), "predicate should return true when fields are specified"
 """
     def test_await_event(self):
