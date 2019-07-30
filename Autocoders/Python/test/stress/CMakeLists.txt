@@ -49,7 +49,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/Autocode
      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_LIST_DIR}/Autocode
   )
-  add_dependencies(${MODULE_NAME}_exe py_ac_test_stress_ac_ini)
+  add_dependencies(${MODULE_NAME}_ut_exe py_ac_test_stress_ac_ini)
 endif()
 
 

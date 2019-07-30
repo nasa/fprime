@@ -52,19 +52,11 @@ set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
 # Set the install directory for the package
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
   set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "Install dir" FORCE)
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-message(STATUS "Default installation directory: ${CMAKE_INSTALL_PREFIX}")
-
-# Library types, used for generating shared objects or static archives
-if (LINK_AS_SHARED_LIBS)
-    message(STATUS "Generating shared libraries")
-    set(FPRIME_LIB_TYPE "SHARED")
-else()
-    message(STATUS "Generating static libraries")
-    set(FPRIME_LIB_TYPE "STATIC")
 endif()
+message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
+
 # Let user know on the choice of dictionaries
 if (GENERATE_HERITAGE_PY_DICT)
     message(STATUS "Generating Heritage Python Dictionaries")
@@ -83,7 +75,11 @@ else()
 endif()
 
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+# Ignore GTest for non-test builds
+if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
+    include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+endif()
