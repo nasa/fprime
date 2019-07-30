@@ -92,8 +92,16 @@ class XmlSerializeParser(object):
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
 
-         #Validate new imports using their root tag as a key to find what schema to use
-        file_handler = open(os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower()) , 'r')
+        #Validate new imports using their root tag as a key to find what schema to use
+        for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR',"")]:
+            rng_file = os.path.join(possible, self.__config.get('schema' , element_tree.getroot().tag.lower()).lstrip("/"))
+            if os.path.isfile(rng_file) == True:
+                break
+        else:
+            stri = "ERROR: Could not find specified RNG file %s." % rng_file
+            PRINT.info(stri)
+            raise IOError(stri)
+        file_handler = open(rng_file, 'r')
         relax_parsed = etree.parse(file_handler)
         file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
