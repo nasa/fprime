@@ -80,19 +80,32 @@ class UTPipeline(StandardPipeline):
 
 
 class APITestCases(unittest.TestCase):
-    def setUp(self):
-        self.pipeline = UTPipeline()
+    @classmethod
+    def setUpClass(cls):
+        cls.pipeline = UTPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
         path = os.path.join(filename, "./UnitTestDictionary.xml")
-        self.pipeline.setup(config, path)
-        self.api = IntegrationTestAPI(self.pipeline)
+        cls.pipeline.setup(config, path)
+        log_path = os.path.join(filename, "./logs")
+        cls.api = IntegrationTestAPI(cls.pipeline, log_path)
+        cls.case_list = [] # TODO find a better way to do this.
+        cls.threads = []
+
+    def setUp(self):
+        for t in self.threads:
+            t.join()
+        self.threads.clear()
+        count = len(self.case_list)
+        self.api.start_test_case(self._testMethodName, count)
+        self.case_list.append(1)
         self.tHistory = TestHistory()
         self.t0 = TimeType()
 
-    def tearDown(self):
-        self.pipeline.disconnect()
-        self.api.teardown()
+    @classmethod
+    def tearDownClass(cls):
+        cls.pipeline.disconnect()
+        cls.api.teardown()
 
     ######################################################################################
     #   Test Case Helper Methods
@@ -333,12 +346,11 @@ class APITestCases(unittest.TestCase):
 
     def test_get_latest_fsw_time(self):
         ts0 = self.api.get_latest_time()
-        assert ts0 == 0, "The starting timestamp should be zero."
 
         time.sleep(0.1)
 
-        ts0 = self.api.get_latest_time()
-        assert ts0 == 0, "The starting timestamp should still be zero."
+        ts1 = self.api.get_latest_time()
+        assert ts0 is ts1, "The starting timestamp should not have changed if no dataobjects were enqueued"
 
         count_seq = self.get_counter_sequence(100)
         event_seq = self.get_severity_sequence(100)
@@ -469,8 +481,6 @@ class APITestCases(unittest.TestCase):
         assert telem_subhist.size() == 1, "There should be one update in the subhistory"
 
         assert not self.api.remove_telemetry_subhistory(telem_subhist), "should not remove twice"
-
-
 
     def test_translate_command_name(self):
         assert self.api.translate_command_name("TEST_CMD_1") == 1
