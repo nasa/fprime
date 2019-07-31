@@ -92,8 +92,8 @@ class IntegrationTestAPI:
         """
         User-accessible function to log user messages to the test log.
         Args:
-            msg: a user-provided message to add to the test log.
-            color: a string containing a color hex code "######"
+            msg: a user-provided message to add to the test log. (str)
+            color: a string containing a color hex code "######" (str)
         """
         self.__log(msg, color, sender="API user")
 
@@ -110,12 +110,55 @@ class IntegrationTestAPI:
             e_time = events[-1].get_time()
 
         channels = self.aggregate_telemetry_history.retrieve()
-        t_time = TimeType().useconds
+        t_time = TimeType()
         if len(channels) > 0:
             t_time = channels[-1].get_time()
 
         self.latest_time = max(e_time, t_time, self.latest_time)
         return self.latest_time
+
+    def test_assert(self, value, msg="", expect=False):
+        """
+        this assert gives the user the ability to add formatted assert messages to the test log and
+        raise an assertion.
+        Args:
+            value: a boolean value that determines if the assert is successful.
+            msg: a string describing what is checked by the assert.
+            expect: when True, the call will behave as an expect, and will skip the assert (boolean)
+        Return:
+            True if the assert was successful, False otherwise
+        """
+        if not expect:
+            ast_msg = "User assertion"
+            fail_color = TestLogger.RED
+        else:
+            ast_msg = "User expectation"
+            fail_color = TestLogger.ORANGE
+
+        if value:
+            ast_msg = ast_msg + " succeeded: " + msg
+            self.__log(ast_msg, TestLogger.GREEN)
+        else:
+            ast_msg = ast_msg + " failed: " + msg
+            self.__log(ast_msg, fail_color)
+
+        if not expect:
+            assert value, ast_msg
+        return value
+
+    def predicate_assert(self, predicate, value, msg="", expect=False):
+        """
+        API assert gives the user the ability to add formatted assert messages to the test log and
+        raise an assertion.
+        Args:
+            value: the value to be evaluated by the predicate. (object)
+            predicate: an instance of predicate that will decided if the test passes (predicate)
+            msg: a string describing what is checked by the assert. (str)
+            expect: when True, the call will behave as an expect, and will skip the assert (boolean)
+        Return:
+            True if the assert was successful, False otherwise
+        """
+        return self.__assert_pred("User", predicate, value, msg, expect)
 
     def clear_histories(self, time_stamp=None):
         """
@@ -182,7 +225,7 @@ class IntegrationTestAPI:
             a history of EventData objects
         """
         return self.event_history
-    
+
     def get_event_subhistory(self, event_filter=None):
         """
         Returns a new instance of TestHistory that will be updated with new events as they come in.
@@ -542,10 +585,9 @@ class IntegrationTestAPI:
             the ChData object found during the search
         """
         pred = self.get_telemetry_pred(channel, value, time_pred)
-        result = self.await_telemetry(
-            channel, value, time_pred, history, start, timeout
-        )
-        self.__assert_pred("Telemetry Received", pred, result)
+        result = self.await_telemetry(channel, value, time_pred, history, start, timeout)
+        msg = "checks if item search found a correct update"
+        self.__assert_pred("Telemetry received", pred, result, msg)
         return result
 
     def assert_telemetry_sequence(self, channels, history=None, start=None, timeout=0):
@@ -567,7 +609,8 @@ class IntegrationTestAPI:
         """
         results = self.await_telemetry_sequence(channels, history, start, timeout)
         len_pred = predicates.equal_to(len(channels))
-        self.__assert_pred("Telemetry Sequence", len_pred, len(results))
+        msg = "checks if sequence search found every update"
+        self.__assert_pred("Telemetry sequence", len_pred, len(results), msg)
         return results
 
     def assert_telemetry_count(
@@ -588,11 +631,9 @@ class IntegrationTestAPI:
             a list of the ChData objects that were counted
         """
         results = self.await_telemetry_count(count, channels, history, start, timeout)
-        if predicates.is_predicate(count):
-            count_pred = count
-        elif isinstance(count, int):
-            count_pred = predicates.equal_to(count)
-        self.__assert_pred("Telemetry Count", count_pred, len(results))
+        count_pred = count if predicates.is_predicate(count) else predicates.equal_to(count)
+        msg = "checks if count search found a correct amount of updates"
+        self.__assert_pred("Telemetry count", count_pred, len(results), msg)
         return results
 
     ######################################################################################
@@ -772,7 +813,8 @@ class IntegrationTestAPI:
         """
         pred = self.get_event_pred(event, args, severity, time_pred)
         result = self.await_event(event, args, severity, time_pred, history, start, timeout)
-        self.__assert_pred("Event Received", pred, result)
+        msg = "checks if item search found a correct event"
+        self.__assert_pred("Event received", pred, result, msg)
         return result
 
     def assert_event_sequence(self, events, history=None, start=None, timeout=0):
@@ -792,7 +834,8 @@ class IntegrationTestAPI:
         """
         results = self.await_event_sequence(events, history, start, timeout)
         len_pred = predicates.equal_to(len(events))
-        self.__assert_pred("Event Sequence length", len_pred, len(results))
+        msg = "checks if sequence search found every event"
+        self.__assert_pred("Event sequence", len_pred, len(results), msg)
         return results
 
     def assert_event_count(
@@ -813,11 +856,9 @@ class IntegrationTestAPI:
             a list of the EventData objects that were counted
         """
         results = self.await_event_count(count, events, history, start, timeout)
-        if predicates.is_predicate(count):
-            count_pred = count
-        elif isinstance(count, int):
-            count_pred = predicates.equal_to(count)
-        self.__assert_pred("Event Count", count_pred, len(results))
+        count_pred = count if predicates.is_predicate(count) else predicates.equal_to(count)
+        msg = "checks if count search found a correct amount of events"
+        self.__assert_pred("Event count", count_pred, len(results), msg)
         return results
 
     ######################################################################################
@@ -1039,10 +1080,7 @@ class IntegrationTestAPI:
             def __init__(self, log, count, search_pred):
                 self.log = log
                 self.ret_val = []
-                if predicates.is_predicate(count):
-                    self.count_pred = count
-                elif isinstance(count, int):
-                    self.count_pred = predicates.equal_to(count)
+                self.count_pred = count if predicates.is_predicate(count) else predicates.equal_to(count)
                 self.search_pred = search_pred
 
                 msg = "Beginning a count search for an amount of items ({}).".format(self.count_pred)
@@ -1081,6 +1119,16 @@ class IntegrationTestAPI:
     #   API Helper Methods
     ######################################################################################
     def __log(self, message, color=None, style=None, sender="Test API", case_id=None):
+        """
+        Logs and prints an API Message. If the API isn't using a Logger, then only a message will
+        be printed.
+        Args:
+            message: a string containing the message to log
+            color: a color hex code (str)
+            style: a style option from test logger (str) ["BOLD", "ITALICS", "UNDERLINED"]
+            sender: a marker for where the message originated
+            case_id: a tag for the current test case. Only needs to be set when a new case starts
+        """
         if not isinstance(message, str):
             message = str(message)
         if self.logger is None:
@@ -1088,27 +1136,45 @@ class IntegrationTestAPI:
         else:
             self.logger.log_message(message, sender, color, style, case_id)
 
-    def __assert_pred(self, name, predicate, value):
+    def __assert_pred(self, name, predicate, value, msg="", expect=False):
+        """
+        Helper to assert that a value satisfies a predicate. Includes arguments to provide more
+        descriptive messages in the logs.
+        Args:
+            name: short name describing the check
+            predicate: an instance of predicate to determine if the assert is successful
+            value: the object evaluated by the predicate
+            msg: a string message to describe what the assert is checking
+            expect: a boolean value: True will be have as an expect and not raise an assertion.
+        Returns:
+            True if the assertion was successful, False otherwise
+        """
+        name = name + (" expectation" if expect else " assertion")
         pred_msg = predicates.get_descriptive_string(value, predicate)
         if predicate(value):
-            msg = name + " Assertion was successful.\nassert " + pred_msg
-            self.__log(msg, TestLogger.GREEN)
-            assert True, pred_msg
+            ast_msg = name + " succeeded: {}\nassert ".format(msg) + pred_msg
+            self.__log(ast_msg, TestLogger.GREEN)
+            if not expect:
+                assert True, pred_msg
+            return True
         else:
-            msg = name + " Assertion failed!\nassert " + pred_msg
-            self.__log(msg, TestLogger.RED)
-            assert False, pred_msg
+            ast_msg = name + " failed: {}\nassert ".format(msg) + pred_msg
+            if not expect:
+                self.__log(ast_msg, TestLogger.RED)
+                assert False, pred_msg
+            else:
+                self.__log(ast_msg, TestLogger.ORANGE)
+            return False
 
     def data_callback(self, data_object):
         """
-        Data callback used by the api to subscribe to EVR's also logs if EVR's are received out of order.
-
+        Data callback used by the api to log Evr's and detect when they are received out of order.
         Args:
             data_object: object to store
         """
         if self.event_log_filter(data_object):
-            msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
-            self.__log(msg, TestLogger.BLUE)
+            msg = "Received EVR: {}".format(data_object.get_str(verbose=True))
+            self.__log(msg, TestLogger.BLUE, sender="GDS")
         if self.last_evr is not None and data_object.get_time() < self.last_evr.get_time():
             msg = "API detected out of order evrs!"
             msg = msg + "\nReceived First:{}".format(self.last_evr.get_str(verbose=True))

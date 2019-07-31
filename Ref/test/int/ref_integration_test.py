@@ -76,7 +76,7 @@ class TestRefAppClass(object):
     """
     This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
     """
-    FilterSeverity = Enum('FilterSeverity' , 'WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC')
+    FilterSeverity = Enum('FilterSeverity', 'WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC')
 
     def set_event_filter(self, severity, enabled):
         """
@@ -125,45 +125,32 @@ class TestRefAppClass(object):
         dropped = False
         for i in range(0, length):
             results = self.api.send_and_await_event("CMD_NO_OP", events=evr_seq, timeout=2)
-            if len(results) < 3:
+            msg = "Send and assert NO_OP Trial #{}".format(i)
+            if not self.api.test_assert(len(results) == 3,msg, True):
                 items = self.api.get_event_test_history().retrieve()
                 last = None
                 reordered = False
                 for item in items:
                     if last is not None:
                         if item.get_time() < last.get_time():
-                            self.api.log("during iteration #{}, a reordered event was detected: {}".format(i, item), "FF9999")
+                            self.api.log("during iteration #{}, a reordered event was detected: {}".format(i, item))
                             any_reordered = True
                             reordered = True
                             break
                     last = item
                 if not reordered:
-                    self.api.log("during iteration #{}, a dropped event was detected".format(i), "FF9999")
+                    self.api.log("during iteration #{}, a dropped event was detected".format(i))
                     dropped = True
                 failed += 1
-            else:
-                self.api.log("Send and assert #{} was successful.".format(i), "ADEBAD")
             self.api.clear_histories()
 
-        if not any_reordered:
-            self.api.log("All searched events were ordered.", "ADEBAD")
-        else:
-            self.api.log("Event messages were reordered.", "FF9999")
+        case = True
+        case &= self.api.test_assert(not any_reordered, "Expected no events to be reordered.", True)
+        case &= self.api.test_assert(not dropped, "Expected no events to be dropped.", True)
+        msg = "{} sequences failed out of {}".format(failed, length)
+        case &= self.api.test_assert(failed == 0, msg, True)
 
-        if not dropped:
-            self.api.log("No expected events were dropped", "ADEBAD")
-        else:
-            self.api.log("At least one event was dropped.", "FF9999")
-
-        if failed == 0:
-            self.api.log("All {} send and assert sequences were received correctly".format(length), "ADEBAD")
-        else:
-            msg = "{} out of {} send and assert no_op searches failed".format(failed, length)
-            self.api.log(msg, "FF9999")
-
-        assert not any_reordered, "at least one event was received out of order."
-        assert not dropped, "at least one event was dropped or not sent."
-        assert failed == 0, "at least one iteration failed."
+        assert case, "Expected all checks to pass (reordering, dropped events, all passed). See log."
 
     def test_bd_cycles_ascending(self):
         length = 5
@@ -177,43 +164,30 @@ class TestRefAppClass(object):
                 last_time = last.get_time()
                 result_time = result.get_time()
                 if result_time - last_time > 1.5:
-                    msg = "Double buffering may have caused an update to be skipped in FSW between {} and {}".format(last_time.to_readable(), result_time.to_readable())
-                    self.api.log(msg, "FFCC99")
+                    msg = "FSW didn't send an update between {} and {}".format(last_time.to_readable(), result_time.to_readable())
+                    self.api.log(msg)
                 elif result_time < last_time:
                     msg = "There is potential reorder error between {} and {}".format(last_time, result_time)
-                    self.api.log(msg, "FF9999")
+                    self.api.log(msg)
                     reordered = True
-
-                if not result.get_val() > last.get_val():
-                    msg = "There is either a counter rollover, or a potential reorder error between {} and {}".format(result_time, last_time)
-                    self.api.log(msg, "FFCC99")
+        
+                if not result.get_val() > last.get_val(): 
+                    msg = "Not all updates ascended: First ({}) Second ({})".format(last.get_val(), result.get_val())
+                    self.api.log(msg)
                     ascending = False
 
             last = result
 
-        if ascending:
-            self.api.log("All BD_Cycles updates increased in value", "ADEBAD")
-        else:
-            self.api.log("Channel updates were potentially reordered. Two non-ascending values were found", "FF9999")
-
-        if not reordered:
-            self.api.log("All BD_Cycles updates were ordered.", "ADEBAD")
-        else:
-            self.api.log("Channel updates were potentially reordered.", "FF9999")
-
-        if count_pred(len(results)):
-            self.api.log("The search found all the updates", "ADEBAD")
-        else:
-            msg = "Double buffering may have caused an update to be skipped in FSW. exp: {} counted: {}".format(length, len(results))
-            self.api.log(msg, "FF9999")
-
+        case = True
+        case &= self.api.test_assert(ascending, "Expected all updates to ascend.", True)
+        case &= self.api.test_assert(not reordered, "Expected no updates to be dropped.", True)
+        self.api.predicate_assert(count_pred, len(results), "Expected > {} updates".format(length-1), True)
         self.api.assert_telemetry_count(0, "RgCycleSlips")
-        assert ascending, "Not BD_Cycles increased in value, See test log."
-        assert not reordered, "Channel updates were potentially reordered or not ascending. See test log."
+        assert case, "Expected all checks to pass (ascending, reordering). See log."
 
     def test_active_logger_filter(self):
         self.set_default_filters()
-        try: 
+        try:
             cmd_events = self.api.get_event_pred(severity=EventSeverity.COMMAND)
             actHI_events = self.api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
             pred = predicates.greater_than(0)
@@ -222,11 +196,11 @@ class TestRefAppClass(object):
             self.assert_command("CMD_NO_OP")
             self.assert_command("CMD_NO_OP")
 
-            time.sleep(3)
-            
+            time.sleep(0.5)
+
             self.api.assert_event_count(pred, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
-            
+
             self.set_event_filter(self.FilterSeverity.COMMAND, False)
             self.api.clear_histories()
             self.api.send_command("CMD_NO_OP")
