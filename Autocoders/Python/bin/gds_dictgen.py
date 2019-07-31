@@ -1,15 +1,14 @@
 #!/bin/env python
 #===============================================================================
-# NAME: cosmosgen.py
+# NAME: gds_dictgen.py
 #
-# DESCRIPTION: A tool for autocoding topology XML files into cosmos targets in
-# COSMOS directory.
+# DESCRIPTION: A tool for generating GDS xml dictionaries.
 #
 # AUTHOR: Jordan Ishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
-# DATE CREATED: June 6, 2018
+# DATE CREATED: July 6, 2019
 #
-# Copyright 2018, California Institute of Technology.
+# Copyright 2019, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 
@@ -60,20 +59,16 @@ VERSION = Version()
 
 def pinit():
     """
-        Initialize the option parser and return it.
-        """
+    Initialize the option parser and return it.
+    """
     
     current_dir = os.getcwd()
     
     usage = "usage: %prog [options] [xml_topology_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
-    program_longdesc = '''
-        This script reads F' topology XML and produces GDS XML Dictionaries.
-        '''
-    program_license = "Copyright 2018 user_name (California Institute of Technology) \
-ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
+    program_longdesc = '''This script reads F' topology XML and produces GDS XML Dictionaries.'''
     
-    parser = OptionParser(usage, version=vers, epilog=program_longdesc,description=program_license)
+    parser = OptionParser(usage, version=vers, epilog=program_longdesc)
     
     parser.add_option("-b", "--build_root", dest="build_root_overwrite", type="string", help="Overwrite environment variable BUILD_ROOT", default=None)
         
@@ -82,8 +77,12 @@ ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
     return parser
 
 
-def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
-    DEBUG.debug("Topology xml type description file: %s" % xml_filename)
+def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
+    """
+    Generates GDS XML dictionary from parsed topology XML
+    """
+    if VERBOSE:
+        print("Topology xml type description file: %s" % xml_filename)
     model = TopoFactory.TopoFactory.getInstance()
     topology_model = model.create(the_parsed_topology_xml)
 
@@ -102,7 +101,7 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
     xml_list = []
     for parsed_xml_type in parsed_xml_dict:
         if parsed_xml_dict[parsed_xml_type] == None:
-            PRINT.info("XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
+            print("ERROR: XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
             raise Exception()
         xml_list.append(parsed_xml_dict[parsed_xml_type])
 
@@ -169,13 +168,20 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
                     member_elem.attrib["type"] = type_name
                     members_elem.append(member_elem)
                 serializable_elem.append(members_elem)
-                serializable_list.append(serializable_elem)
+                
+                dup = False
+                for ser in serializable_list:
+                    if ser.attrib["type"] == serializable_elem.attrib["type"]:
+                        dup = True
+                if not dup:
+                    serializable_list.append(serializable_elem)
 
 
         # check for commands
         if (parsed_xml_dict[comp_type].get_commands() != None):
             for command in parsed_xml_dict[comp_type].get_commands():
-                PRINT.debug("Processing Command %s"%command.get_mnemonic())
+                if VERBOSE:
+                    print("Processing Command %s"%command.get_mnemonic())
                 command_elem = etree.Element("command")
                 command_elem.attrib["component"] = comp_name
                 command_elem.attrib["mnemonic"] = command.get_mnemonic()
@@ -219,7 +225,8 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
         # check for channels
         if (parsed_xml_dict[comp_type].get_channels() != None):
             for chan in parsed_xml_dict[comp_type].get_channels():
-                PRINT.debug("Processing Channel %s"%chan.get_name())
+                if VERBOSE:
+                    print("Processing Channel %s"%chan.get_name())
                 channel_elem = etree.Element("channel")
                 channel_elem.attrib["component"] = comp_name
                 channel_elem.attrib["name"] = chan.get_name()
@@ -277,7 +284,8 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
         # check for events
         if (parsed_xml_dict[comp_type].get_events() != None):
             for event in parsed_xml_dict[comp_type].get_events():
-                PRINT.debug("Processing Event %s"%event.get_name())
+                if VERBOSE:
+                    print("Processing Event %s"%event.get_name())
                 event_elem = etree.Element("event")
                 event_elem.attrib["component"] = comp_name
                 event_elem.attrib["name"] = event.get_name()
@@ -328,7 +336,8 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
         # check for parameters
         if (parsed_xml_dict[comp_type].get_parameters() != None):
             for parameter in parsed_xml_dict[comp_type].get_parameters():
-                PRINT.debug("Processing Parameter %s"%chan.get_name())
+                if VERBOSE:
+                    print("Processing Parameter %s"%chan.get_name())
                 param_default = None
                 command_elem_set = etree.Element("command")
                 command_elem_set.attrib["component"] = comp_name
@@ -397,7 +406,36 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
                 param_elem.attrib["default"] = param_default
 
                 parameter_list.append(param_elem)
-                    
+    
+    # Remove duplicates from enum list
+    temp_enum_list = []
+    for enum_elem in enum_list:
+        temp_enum_list.append(enum_elem)
+    for enum_elem in temp_enum_list:
+        should_remove = False
+        for temp_enum in enum_list:
+            # Skip over comparisons between same exact element
+            if(id(enum_elem) == id(temp_enum)):
+                continue
+
+            # Check all attributes
+            if temp_enum.attrib["type"] == enum_elem.attrib["type"]:
+                should_remove = True
+            if not len(temp_enum.getchildren()) == len(enum_elem.getchildren()) and should_remove:
+                should_remove = False
+            children1 = temp_enum.getchildren()
+            children2 = enum_elem.getchildren()
+            if children1 and children2:
+                i = 0
+                while i < len(children1) and i < len(children2):
+                    if not children1[i].attrib["name"] == children2[i].attrib["name"] and should_remove:
+                        should_remove = False
+                    i += 1
+            if should_remove:
+                break
+        if should_remove:
+            enum_list.remove(enum_elem)
+
     topology_dict.append(enum_list)
     topology_dict.append(serializable_list)
     topology_dict.append(command_list)
@@ -406,10 +444,12 @@ def generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt):
     topology_dict.append(parameter_list)
     
     fileName = the_parsed_topology_xml.get_xml_filename().replace("Ai.xml","Dictionary.xml")
-    print("Generating XML dictionary %s"%fileName)
+    if VERBOSE:
+        print("Generating XML dictionary %s"%fileName)
     fd = open(fileName,"wb") #Note: binary forces the same encoding of the source files
     fd.write(etree.tostring(topology_dict,pretty_print=True))
-    print("Generated XML dictionary %s"%fileName)
+    if VERBOSE:
+        print("Generated XML dictionary %s"%fileName)
     
     return(topology_model)
 
@@ -433,7 +473,8 @@ def search_for_file(file_type, file_path):
             DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
             return checker
     else:
-        PRINT.info("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
+        if VERBOSE:
+            print("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
         sys.exit(-1)
 
 def main():
@@ -453,7 +494,7 @@ def main():
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        PRINT.info("Usage: %s [options] xml_filename" % sys.argv[0])
+        print("Usage: %s [options] xml_filename" % sys.argv[0])
         return
     elif len(args) == 1:
         xml_filename = args[0]
@@ -479,17 +520,18 @@ def main():
             print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
 
     if not "Ai" in xml_filename:
-        PRINT.info("Missing Ai at end of file name...")
+        print("ERROR: Missing Ai at end of file name...")
         raise IOError
     
     xml_type = XmlParser.XmlParser(xml_filename)()
 
     if xml_type == "assembly" or xml_type == "deployment":
-        DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
+        if VERBOSE:
+            print("Detected Topology XML so Generating Topology C++ Files...")
         the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
         DEPLOYMENT = the_parsed_topology_xml.get_deployment()
         print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
-        generate_xml_dicts(the_parsed_topology_xml, xml_filename, opt)
+        generate_xml_dict(the_parsed_topology_xml, xml_filename, opt)
     else:
         PRINT.info("Invalid XML found...this format not supported")
         sys.exit(-1)

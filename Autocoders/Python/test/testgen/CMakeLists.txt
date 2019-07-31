@@ -16,7 +16,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/GTestBase.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentImpl.hpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_module()
 register_fprime_ut()

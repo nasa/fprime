@@ -27,17 +27,14 @@ from fprime_gds.common.models.common import command
 
 COMPONENT = "DictGen::TestComponent"
 
-MNEMONIC = "Inst2_TEST_CMD_1"
+MNEMONIC = "Inst1_Test_Cmd2"
 
-OP_CODE  = 0x115
+OP_CODE  = 0x2
 
-CMD_DESCRIPTION = "A test command"
+CMD_DESCRIPTION = "Test Cmd1"
 
 # Set arguments list with default values here.
 ARGUMENTS = [
-    ("arg1","The I32 command argument",I32Type()),
-    ("arg2","The F32 command argument",F32Type()),
-    ("arg3","The U8 command argument",U8Type()),
     ]
 
 if __name__ == '__main__':

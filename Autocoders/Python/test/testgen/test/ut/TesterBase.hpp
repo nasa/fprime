@@ -1,15 +1,3 @@
-// ======================================================================
-// \title  MathSender/test/ut/TesterBase.hpp
-// \author Auto-generated
-// \brief  hpp file for MathSender component test harness base class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
-// ======================================================================
-
 #ifndef MathSender_TESTER_BASE_HPP
 #define MathSender_TESTER_BASE_HPP
 

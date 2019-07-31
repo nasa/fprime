@@ -27,15 +27,15 @@ from fprime_gds.common.models.common import command
 
 COMPONENT = "DictGen::TestComponent"
 
-MNEMONIC = "Inst1_Test_Cmd2"
+MNEMONIC = "Inst1_Test_Cmd1"
 
-OP_CODE  = 0x3
+OP_CODE  = 0x1
 
-CMD_DESCRIPTION = "Test Cmd2"
+CMD_DESCRIPTION = "Test Cmd0"
 
 # Set arguments list with default values here.
 ARGUMENTS = [
-    ("arg1","",EnumType("enum1",{"item1":0,"item2":1,})),
+    ("arg1","",StringType(max_string_len=40)),
     ]
 
 if __name__ == '__main__':

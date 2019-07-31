@@ -20,22 +20,28 @@ from fprime.common.models.serialize.i64_type import *
 from fprime.common.models.serialize.string_type import *
 from fprime.common.models.serialize.serializable_type import *
 
-from fprime_gds.common.models.common import event
-# Each file represents the information for a single event
-# These module variables are used to instance the event object within the Gse
+from fprime_gds.common.models.common import command
+# Each file represents the information for a single command
+# These module variables are used to instance the command object within the Gse
 
+import Ref.PacketStat
 
 COMPONENT = "DictGen::TestComponent"
 
-NAME = "Inst2_Test_Evr2"
-ID  = 0x17
-SEVERITY = "WARNING_HI"
-FORMAT_STRING = "Arg1 %s Arg2 %d"
-EVENT_DESCRIPTION = "Test evr2"
+MNEMONIC = "Inst2_Test_Cmd0"
+
+OP_CODE  = 0x115
+
+CMD_DESCRIPTION = "A test command"
 
 # Set arguments list with default values here.
 ARGUMENTS = [
-    ("arg1","Test arg1",StringType(max_string_len=256)),
-    ("arg2","Test arg2",U32Type()),
+    ("arg1","The I32 command argument",I32Type()),
+    ("arg2","The F32 command argument",Ref.PacketStat.PacketStat()),
+    ("arg3","The U8 command argument",U8Type()),
     ]
 
+if __name__ == '__main__':
+    testcmd = command.Command(COMPONENT, MNEMONIC, OP_CODE, CMD_DESCRIPTION, ARGUMENTS)
+    data = testcmd.serialize()
+    type_base.showBytes(data)

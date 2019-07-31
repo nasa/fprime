@@ -1,15 +1,3 @@
-// ======================================================================
-// \title  MathSender/test/ut/TesterBase.cpp
-// \author Auto-generated
-// \brief  cpp file for MathSender component test harness base class
-//
-// \copyright
-// Copyright 2009-2016, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
-// ======================================================================
-
 #include <stdlib.h>
 #include <string.h>
 #include "TesterBase.hpp"

@@ -1,5 +1,5 @@
 """
-test_enum.py:
+test_testgen.py:
 
 Checks that the testgen tool is properly generating its test cpp/hpp.
 
@@ -7,6 +7,7 @@ Checks that the testgen tool is properly generating its test cpp/hpp.
 """
 
 import os
+import sys
 
 import subprocess
 from subprocess import CalledProcessError
@@ -25,17 +26,29 @@ class Version:
     comment = "Initial prototype"
 VERSION = Version()
 
-def add_tester_section(filename, methodname, section_type):
+def add_tester_section(filename, section_flag, section_type):
+    """
+    Append Tester.cpp/hpp with the appropriate test cases
+    for the math component
+    """
     with open(filename, "r+") as fileopen:
         lines = fileopen.readlines()
+        
+        # Don't duplicate the test cases
+        if "testAddCommand(void)" in str(lines):
+            return
+        
+        # Starting at line 0, rewrite Tester.cpp/hpp with test cases
         fileopen.seek(0)
         skip_lines = 0
         for line in lines:
             if not line:
                 break
             
+            # Skip_lines allows user to print out test cases at an
+            # offset from method argument "section_flag"
             if skip_lines <= 0:
-                if methodname in line:
+                if section_flag in line:
                     if section_type == "TESTER_METHODS":
                         skip_lines = 2 # Skip to todo method init
                     if section_type == "TESTER_HEADERS":
@@ -54,8 +67,13 @@ def add_tester_section(filename, methodname, section_type):
         fileopen.truncate()
 
 def write_tester_lines(fileopen, section_type):
+    """
+    Write test cases inside "fileopen" at whatever location
+    "fileopen" is currently pointing to
+    """
     testgen_dir = "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
     if section_type == "TESTER_METHODS":
+        # Test case method initializations found in local file
         with open(testdir + "__tester_handcoded_methods.txt", "r") as methodstub:
             for line in methodstub:
                 fileopen.write(line)
@@ -75,6 +93,7 @@ def file_diff(file1, file2):
     with open(file1, "r") as file1open:
         with open(file2, "r") as file2open:
             count = 0
+            # Compare line by line until a file hits EOF
             while(1):
                 line1 = file1open.readline()
                 line2 = file2open.readline()
@@ -83,15 +102,19 @@ def file_diff(file1, file2):
                 elif not line1 == line2:
                     diff_lines.add(count)
                 count += 1
-    return diff_lines
 
-
+    # Warn user if one file is longer than the other
     if file_len(file1) < file_len(file2):
         print("WARNING: " + file2 + " has more lines than " + file1)
     elif file_len(file1) < file_len(file2):
         print("WARNING: " + file1 + " has more lines than " + file2)
 
+    return diff_lines
+
 def file_len(fname):
+    """
+    Helper method to get number of lines in file
+    """
     with open(fname) as f:
         for i, l in enumerate(f):
             pass
@@ -106,6 +129,7 @@ def remove_headers(filename):
         lines = f.readlines()
         f.seek(0)
         num = 0
+        # Skip_docstring removes all lines in between two """ characters
         skip_docstring = False
         for line in lines:
             if not skip_docstring:
@@ -164,17 +188,24 @@ def test_testgen():
         
         print(os.getcwd())
         
-        # Autocode tests
-        p = pexpect.spawn("python " + bindir + "testgen.py -v -m -f " + testdir + "MathSenderComponentAi.xml")
-        
-        p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.hpp)(?=.*Generated Tester.cpp)(?!.*ERROR).*", timeout=5)
-        
+#        # Autocode tests
+#        p = pexpect.spawn("python " + bindir + "testgen.py -v -f " + testdir + "MathSenderComponentAi.xml")
+#
+#        p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.cpp)(?=.*Generated Tester.hpp)(?!.*ERROR).*", timeout=5)
+
         print("Autocoded TestComponent")
         
         time.sleep(1)
 
         add_tester_section("Tester.cpp", "// Tests", "TESTER_METHODS")
         add_tester_section("Tester.hpp", "//! To do", "TESTER_HEADERS")
+        
+        time.sleep(1)
+        
+        # Run testgen again to generate main with test cases
+        p2 = pexpect.spawn("python " + bindir + "testgen.py -v -m " + testdir + "MathSenderComponentAi.xml")
+        
+        p2.expect("(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated TestMain.cpp)(?!.*ERROR).*", timeout=5)
         
         # Test whether all generated files match expected
         compare_genfile("Tester.cpp")
@@ -183,34 +214,55 @@ def test_testgen():
         compare_genfile("TesterBase.hpp")
         compare_genfile("GTestBase.cpp")
         compare_genfile("GTestBase.hpp")
+        compare_genfile("TestMain.cpp")
         
         rootdir = os.environ['BUILD_ROOT']
         os.chdir(rootdir)
         
+        # Create build dir for unit tests if it doesn't exist
         if not os.path.exists(os.environ['BUILD_ROOT'] + os.sep + "build_test"):
             os.mkdir(os.environ['BUILD_ROOT'] + os.sep + "build_test")
 
         builddir = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
         os.chdir(builddir)
         
+        # Run cmake to configure testgen test
         if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep + "Makefile"):
             pcmake = pexpect.spawn("cmake .. -DCMAKE_BUILD_TYPE=TESTING")
             pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
             print("Successfully ran cmake for testgen test")
         
-        # Build ut
+        # Build testgen ut
         pbuild = pexpect.spawn("make Autocoders_Python_test_testgen_ut_exe -j32")
         pbuild.expect("(?=.*Built target Autocoders_Python_test_testgen_ut_exe)")
         
         print("Built testgen unit test")
-        
+
         utdir = builddir + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_testgen_ut_exe"
+        
         # Run ut
         ptestrun = pexpect.spawn(utdir)
+        
+        print(ptestrun.read().decode("ascii"))
         
         ptestrun.expect("(?!.*FAILED)(?!.*ASSERT).*");
         
         print("Successfully ran testgen unit test")
+        
+        # Remove generated files
+        os.chdir(testdir)
+        if os.path.exists("MathOpPortAc.cpp"):
+            os.remove("MathOpPortAc.cpp")
+        if os.path.exists("MathOpPortAc.hpp"):
+            os.remove("MathOpPortAc.hpp")
+        if os.path.exists("MathResultPortAc.cpp"):
+            os.remove("MathResultPortAc.cpp")
+        if os.path.exists("MathResultPortAc.hpp"):
+            os.remove("MathResultPortAc.hpp")
+        if os.path.exists("MathSenderComponentAc.cpp"):
+            os.remove("MathSenderComponentAc.cpp")
+        if os.path.exists("MathSenderComponentAc.hpp"):
+            os.remove("MathSenderComponentAc.hpp")
         
         os.chdir(curdir)
         

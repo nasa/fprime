@@ -24,19 +24,20 @@ from fprime_gds.common.models.common import command
 # Each file represents the information for a single command
 # These module variables are used to instance the command object within the Gse
 
+import Ref.PacketStat
 
 COMPONENT = "DictGen::TestComponent"
 
-MNEMONIC = "Inst2_TEST_CMD_1"
+MNEMONIC = "Inst1_Test_Cmd0"
 
-OP_CODE  = 0x115
+OP_CODE  = 0x101
 
 CMD_DESCRIPTION = "A test command"
 
 # Set arguments list with default values here.
 ARGUMENTS = [
     ("arg1","The I32 command argument",I32Type()),
-    ("arg2","The F32 command argument",F32Type()),
+    ("arg2","The F32 command argument",Ref.PacketStat.PacketStat()),
     ("arg3","The U8 command argument",U8Type()),
     ]
 

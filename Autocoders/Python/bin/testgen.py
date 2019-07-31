@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 #===============================================================================
-# NAME: cosmosgen.py
+# NAME: testgen.py
 #
-# DESCRIPTION: A tool for autocoding component XML files into unit test cpp/hpp files.
+# DESCRIPTION: A tool for autocoding component XML files into a test component
+# with unit test cpp/hpp files.
 #
 # AUTHOR: Jordan Ishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
 # DATE CREATED: July 8, 2019
 #
-# Copyright 2018, California Institute of Technology.
+# Copyright 2019, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
 
@@ -141,7 +142,7 @@ def parse_component(the_parsed_component_xml, xml_filename, opt):
         # check to make sure that the serializables don't have things that channels and parameters can't have
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
-            PRINT.info("ERROR: Component include serializables cannot use user-defined types. file: " % serializable_file)
+            print("ERROR: Component include serializables cannot use user-defined types. file: " % serializable_file)
             sys.exit(-1)
 
         parsed_serializable_xml_list.append(xml_parser_obj)
@@ -153,25 +154,36 @@ def parse_component(the_parsed_component_xml, xml_filename, opt):
     return component_model
 
 def generate_tests(opt, component_model):
+    """
+    Generates test component cpp/hpp files
+    """
     unitTestFiles = []
-    print("Generating test files for " + component_model.get_xml_filename())
-    # h_instance_test_name ComponentTestHWriter
+    
+    if VERBOSE:
+        print("Generating test files for " + component_model.get_xml_filename())
+    
+    # TesterBase.hpp
     unitTestFiles.append(ComponentTestHWriter.ComponentTestHWriter())
     
-    # cpp_instance_test_name ComponentTestCppWriter
+    # TesterBase.cpp
     unitTestFiles.append(ComponentTestCppWriter.ComponentTestCppWriter())
     
-    # h_instance_gtest_name GTestHWriter
+    # GTestBase.hpp
     unitTestFiles.append(GTestHWriter.GTestHWriter())
     
-    # cpp_instance_gtest_name GTestCppVisitor
+    # GTestbase.cpp
     unitTestFiles.append(GTestCppWriter.GTestCppWriter())
+
+    if not os.path.exists("Tester.hpp") or opt.force_tester:
+        if os.path.exists("Tester.hpp"):
+            os.remove("Tester.hpp")
+            os.remove("Tester.cpp")
+
+        # Tester.hpp
+        unitTestFiles.append(TestImplHWriter.TestImplHWriter())
     
-    # h_instance_test_impl_name TestImplHVisitor
-    unitTestFiles.append(TestImplHWriter.TestImplHWriter())
-    
-    # cpp_instance_test_impl_name TestImplCppVisitor
-    unitTestFiles.append(TestImplCppWriter.TestImplCppWriter())
+        # Tester.cpp
+        unitTestFiles.append(TestImplCppWriter.TestImplCppWriter())
     
     #
     # The idea here is that each of these generators is used to create
@@ -184,64 +196,54 @@ def generate_tests(opt, component_model):
 
     time.sleep(3)
 
-    if not os.path.exists("Tester.hpp") or opt.force_tester:
-        if opt.maincpp:
-            testhpp = open("Tester.hpp", "r")
+    ############################################################
+    # Parses Tester.hpp file and uses all method definitions
+    # between "// Tests" comment and "private:" descriptor to
+    # generate TEST stubs in TestMain.cpp class
     
-            find_tests = False
-            test_cases = []
-            for line in testhpp:
-                if "// Tests" in line:
-                    find_tests = True
-                elif "private:" in line:
-                    find_tests = False
-            
-                if find_tests:
-                    if "void " in line:
-                        name = line[line.index("void ") + 5:].replace("(void);", "").strip()
-                        test_cases.append(name)
-        
-            if len(test_cases) > 1:
-                test_cases.remove("toDo")
-        
-            main_writer = TestMainWriter.TestMainWriter()
-            
-            main_writer.add_test_cases(test_cases)
-            main_writer.write(component_model)
+    if opt.maincpp:
+        testhpp = open("Tester.hpp", "r")
 
-        else:
-            TestMainWriter.TestMainWriter().write(component_model)
+        find_tests = False
+        test_cases = []
+        override_dict = {}
+        override_name = None # // @Testname: decorator comment
+        for line in testhpp:
+            if "// Tests" in line:
+                find_tests = True
+            elif "private:" in line:
+                find_tests = False
+            
+            if find_tests:
+                if "// @Testname:" in line:
+                    # Remove whitespace
+                    comment = "".join(line.split())
+                    override_name = line[line.index("// @Testname:") + 13:].strip()
+                    # Store location of all names to override
+                    override_dict[override_name] = len(test_cases)
+                elif "void " in line:
+                    # Parse method name out of definition
+                    name = line[line.index("void ") + 5:].replace("(void);", "").strip()
+                    test_cases.append(name)
+
+        if len(test_cases) > 1:
+            test_cases.remove("toDo")
+    
+        main_writer = TestMainWriter.TestMainWriter()
+        
+        main_writer.add_test_cases(test_cases)
+        main_writer.override_names(override_dict)
+        main_writer.write(component_model)
+        if VERBOSE:
+            print("Generated TestMain.cpp")
     else:
-        if opt.maincpp:
-            testhpp = open("Tester.hpp", "r")
-            
-            find_tests = False
-            test_cases = []
-            for line in testhpp:
-                if "// Tests" in line:
-                    find_tests = True
-                elif "private:" in line:
-                    find_tests = False
-                
-                if find_tests:
-                    if "void " in line:
-                        name = line[line.index("void ") + 5:].replace("(void);", "").strip()
-                        test_cases.append(name)
-    
-            if len(test_cases) > 1:
-                test_cases.remove("toDo")
-            
-            main_writer = TestMainWriter.TestMainWriter()
-            
-            main_writer.add_test_cases(test_cases)
-            main_writer.write(component_model)
-                    
-        else:
+        if not os.path.exists("TestMain.cpp"):
             TestMainWriter.TestMainWriter().write(component_model)
+            if VERBOSE:
+                print("Generated TestMain.cpp")
 
-    print("Generated TestMain.cpp")
-
-    print("Generated test files for " + component_model.get_xml_filename())
+    if VERBOSE:
+        print("Generated test files for " + component_model.get_xml_filename())
 
 
 def search_for_file(file_type, file_path):
@@ -317,7 +319,7 @@ def main():
     # Write test component
     #
     if not "Ai" in xml_filename:
-        PRINT.info("Missing Ai at end of file name...")
+        print("ERROR: Missing Ai at end of file name...")
         raise IOError
     #
     # Create python dictionaries
@@ -327,13 +329,15 @@ def main():
     
     # Only Components can be inputted
     if xml_type == "component":
-        DEBUG.info("Detected Component XML so GeneratingComponent C++ Files...")
+        if VERBOSE:
+            print("Detected Component XML so GeneratingComponent C++ Files...")
         the_parsed_component_xml = XmlComponentParser.XmlComponentParser(xml_filename)
         component_model = parse_component(the_parsed_component_xml, xml_filename, opt)
-        print("\nGenerating tests...")
+        if VERBOSE:
+            print("\nGenerating tests...")
         generate_tests(opt, component_model)
     else:
-        PRINT.info("Invalid XML found...this format not supported")
+        print("ERROR: Invalid XML found...this format not supported")
         sys.exit(-1)
 
     sys.exit(0)

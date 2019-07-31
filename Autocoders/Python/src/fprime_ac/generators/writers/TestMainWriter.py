@@ -11,14 +11,15 @@
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
+import sys
 
 from fprime_ac.generators.writers import TestWriterBase
 from fprime_ac.generators.templates.test import test_main
 
 class TestMainWriter(TestWriterBase.TestWriterBase):
     """
-        A writer for generating component implemetation files.
-        """
+    A writer for generating component implemetation files.
+    """
     
     FILE_NAME = "TestMain.cpp"
     
@@ -44,7 +45,10 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
         
         tclist = []
         for case in self.test_cases:
-            tclist.append( (case[0].capitalize() + case[1:], case) )
+            if not type(case) is tuple:
+                tclist.append( (case[0].capitalize() + case[1:], case) )
+            else:
+                tclist.append( (case[0][0].capitalize() + case[0][1:], case[1]) )
         
         c.test_cases = tclist
         
@@ -53,10 +57,18 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
     def add_test_cases(self, test_cases):
         self.test_cases = test_cases
     
+    def override_names(self, override_dict):
+        for key in override_dict.keys():
+            if len(self.test_cases) > override_dict[key]:
+                self.test_cases[override_dict[key]] = (key, self.test_cases[override_dict[key]])
+            else:
+                print("ERROR: // @Testcase: decorator in Tester.hpp incorrectly formatted")
+                sys.exit(-1)
+    
     def write(self, obj):
         """
-            Calls all of the write methods so that full file is made
-            """
+        Calls all of the write methods so that full file is made
+        """
         self._initFilesWrite(obj)
         self._startSourceFilesWrite(obj)
         self.includes1Write(obj)

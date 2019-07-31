@@ -1,15 +1,3 @@
-// ======================================================================
-// \title  MathSender/test/ut/GTestBase.cpp
-// \author Auto-generated
-// \brief  cpp file for MathSender component Google Test harness base class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
-// ======================================================================
-
 #include "GTestBase.hpp"
 
 namespace Ref {

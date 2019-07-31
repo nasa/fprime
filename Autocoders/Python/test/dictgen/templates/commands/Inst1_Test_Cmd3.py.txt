@@ -27,7 +27,7 @@ from fprime_gds.common.models.common import command
 
 COMPONENT = "DictGen::TestComponent"
 
-MNEMONIC = "Inst1_Test_Cmd2"
+MNEMONIC = "Inst1_Test_Cmd3"
 
 OP_CODE  = 0x3
 
