@@ -1,8 +1,8 @@
 <!--
-index.static:
+index.html:
 
 This HTML document sets up the most basic of UIs for the F prime webified GUI layer. This GUI layer is built with the
-Bootstrap for CSS.
+Bootstrap CSS, but without the paired JavaScript packages.
 
 
 This GUI provides the following items:
@@ -12,24 +12,131 @@ This GUI provides the following items:
 3. Commands panel allowing for commanding of the system
 
 Note: Bootstrap is used, as it can be run as a CSS framework without many node and JavaScript packages.
+Note: Vue.js annotations are used, as Vue is the data-to-view framework of choice.  It can be run with a single JS
+      dependency, without need for WebPack or other module loaders.
 -->
 <!doctype html>
 <html>
     <head>
-        <!-- Using CDNs for bootstrap -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <!-- Using CDNs for JS portions of Bootstrap -->
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="css/third-party/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
+        <link rel="stylesheet" href="css/third-party/vue-select.css">
+        <!-- Development mode -Vue- should it be needed for debug purposes -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <!-- Third-party JavaScript files, hosted locally to remove internet dependence -->
+        <!--script src="js/third-party/vue.min.js"></script-->
+        <script src="js/third-party/sorttable.js"></script>
         <!-- JavaScript GDS files -->
         <script type="module" src="js/gds.js"></script>
-        <script type="module" src="js/loader.js"></script>
-        <script type="module" src="js/simple-templates.js"></script>
     </head>
     <body>
+        <div id="commands">
+            <command-input v-bind:commands="commands" ref="input" v-bind:loader="loader"></command-input>
+        </div>
+        <div id="channels">
+            <channel-table v-bind:channels="channels"></channel-table>
+        </div>
+        <div id="events">
+            <event-list v-bind:events="events"></event-list>
+        </div>
+        <div hidden>
+            <!--
+            Command Templates:
 
-        <!-- Global tab navigation: Commands, Events, Channels-->
+            Some such thing.
+            -->
+            <template id="command-input-template">
+                <div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="mnemonic">Mnemonic</label>
+                            <v-select id="mnemonic" style="flex: 1 1 auto;" :clearable="false" :searchable="true"
+                                      :filterable="true"  label="mnemonic" :options="commandList" v-model="selected">
+                            </v-select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col" v-for="argument in selected.args">
+                            <label :for="argument.name">{{ argument.name }}</label>
+                            <input type="text" :id="argument.name" class="form-control"
+                                 :placeholder="argument.name"
+                                 v-model="argument.value">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="button" class="col btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
+                        <button type="button" :disabled="active" class="col btn btn-success" v-on:click="sendCommand">
+                            Send Command
+                        </button>
+                    </div>
+                    <!--div class="form-row">
+                        <label for="rawcmd">Raw Command</label>
+                        <input id=rawcmd" type="text" class="form-control" v-model="raw">
+                    </div-->
+                </div>
+            </template>
+            <!--
+            Event Templates:
+
+            These templates provide for event listing items.
+            -->
+            <template id="event-list-template">
+                <div>
+                    Filter <input type="input" v-model="matching"></input>
+                    <div class="list-group">
+                        <event-item v-for="event in calculateFilteredEvents"
+                                    v-bind:event="event"></event-item>
+                    </div>
+                </div>
+            </template>
+            <template id="event-item-template">
+                <a href="#"
+                   v-bind:class="calculateItemStyle">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ event.template.name }}</h5>
+                        <small>Event Id 0x{{ event.id.toString(16) }}</small>
+                    </div>
+                    <p class="mb-1">{{ event.str }}</p>
+                </a>
+            </template>
+            <!--
+            Channel Templates:
+
+            These templates display a channel table.  It takes all channels supplied in a list, and prints a row for
+            each channel. If this list contains duplicates, then the display will contain duplicates. This can be fixed
+            -->
+            <template id="channel-table-template">
+                <div>
+                <table  class="sortable table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Channel ID</th><th>Channel Name</th><th>Channel Value</th><th>Last Update Time</th>
+                        <th class="sorttable_nosort">Filter <input type="input" v-model="matching"></input></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr is="channel-row"
+                            v-for="chan in calculateFilteredChannels"
+                            v-bind:key="chan.id"
+                            v-bind:channel="chan">
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </template>
+            <template id="channel-row-template">
+                <tr v-bind:class="calculateRowStyle">
+                    <td>0x{{ channel.id.toString(16) }}</td>
+                    <td>{{ channel.template.name }}</td>
+                    <td>{{ channel.val }}</td>
+                    <td colspan="2">{{ calculateChannelTime }}</td>
+                </tr>
+            </template>
+        </div>
+    </body>
+</html>
+        <!-- Global tab navigation: Commands, Events, Channels
         <ul class="nav nav-tabs" id="etcTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="command-tab" data-toggle="tab" href="#command" role="tab" aria-controls="command" aria-selected="true">Commands</a>
@@ -42,7 +149,7 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
             </li>
         </ul>
 
-        <!-- Place the content of the above tabs here -->
+         Place the content of the above tabs here
         <div class="tab-content" id="etcTabContent">
             <div class="tab-pane fade show active" id="command" role="tabpanel" aria-labelledby="command-tab">
                 <div class="row">
@@ -62,80 +169,88 @@ Note: Bootstrap is used, as it can be run as a CSS framework without many node a
             </div>
         </div>
 
-        <!-- Templates used to render the rest of the document -->
-        <div id="event-list-template" hidden>
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  repeat="for event in events">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ event.template.name }}</h5>
-                        <small>Event Id 0x{{ event.id.toString(16) }}</small>
+        Templates used to render the rest of the document
+        <div id="template-cold-storage" hidden>
+            <div id="event-list-template">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  repeat="for event in events">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ event.template.name }}</h5>
+                            <small>Event Id 0x{{ event.id.toString(16) }}</small>
+                        </div>
+                        <p class="mb-1">{{ event.str }}</p>
+                    </a>
+                </div>
+            </div>
+            <div id="command-hist-template">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  click-action="activeCommand" repeat="for command in commandHistory">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ command.template.name }}</h5>
+                            <small>Event Id 0x{{ command.id.toString(16) }}</small>
+                        </div>
+                        <p class="mb-1">{{ command.str }}</p>
+                    </a>
+                </div>
+            </div>
+            <div id="channel-table-template">
+                <table class="table table-bordered table-responsive table-striped">
+                    <tr>
+                        <th>Channel ID</th><th>Channel Name</th><th>Channel Value</th><th>Last Update Time</th>
+                    </tr>
+                    <tr repeat="for channel in channels">
+                        <td>0x{{ channel.id.toString(16) }}</td>
+                        <td>{{ channel.template.name }}</td>
+                        <td>{{ channel.val }}</td>
+                        <td>{{ channel.time }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div id="command-list-template">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  click-action="activeCommand" repeat="for command in commands"
+                     if="command.mnemonic.indexOf(cmdFilter) != -1">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ command.mnemonic }}</h5>
+                            <small>Opcode 0x{{ command.id.toString(16) }}</small>
+                        </div>
+                        <p class="mb-1">{{ command.description }}</p>
+                    </a>
+                </div>
+            </div>
+            <div id="command-input-template" data-bind="activeCommand">
+                <h2>{{ activeCommand.mnemonic }}</h2>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Mnemonic</span>
                     </div>
-                    <p class="mb-1">{{ event.str }}</p>
-                </a>
-            </div>
-        </div>
-        <div id="command-hist-template" hidden>
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  click-action="activeCommand" repeat="for command in commandHistory">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ command.template.name }}</h5>
-                        <small>Event Id 0x{{ command.id.toString(16) }}</small>
+                    <input type="text" class="form-control" placeholder="Mnemonic" aria-label="Mnemonic" aria-describedby="basic-addon1" value="{{ activeCommand.mnemonic }}"
+                        data-bind="cmdFilter">
+                </div>
+                <div class="input-group mb-3" repeat="for argument in activeCommand.args">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon2">{{ argument.name }}</span>
                     </div>
-                    <p class="mb-1">{{ command.str }}</p>
-                </a>
-            </div>
-        </div>
-        <div id="channel-table-template" hidden>
-            <table class="table table-bordered table-responsive table-striped">
-                <tr>
-                    <th>Channel ID</th><th>Channel Name</th><th>Channel Value</th><th>Last Update Time</th>
-                </tr>
-                <tr repeat="for channel in channels">
-                    <td>0x{{ channel.id.toString(16) }}</td>
-                    <td>{{ channel.template.name }}</td>
-                    <td>{{ channel.val }}</td>
-                    <td>{{ channel.time }}</td>
-                </tr>
-            </table>
-        </div>
-        <div id="command-list-template" hidden>
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  click-action="activeCommand" repeat="for command in commands"
-                 value-bind="argument">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ command.mnemonic }}</h5>
-                        <small>Opcode 0x{{ command.id.toString(16) }}</small>
+                     I can use a closure to capture argument, or I can use replace of names to give arg's address, or I can
+                     use JS object properties, or I can use member variables to store the argument, or I can do recursive templates.
+
+                    <input type="text" class="input-control" placeholder="{{ argument.name }}" aria-label="{{ argument.name }}" aria-describedby="basic-addon2"
+                     data-bind="argument" value="{{ argument.value }}">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Raw Command</span>
                     </div>
-                    <p class="mb-1">{{ (command.description == null)? "" : command.description }}</p>
-                </a>
-            </div>
-        </div>
-        <div id="command-input-template" hidden data-bind="activeCommand">
-            <h2>{{ activeCommand.mnemonic }}</h2>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Mnemonic</span>
-                </div>
-                <input type="text" class="form-control" placeholder="Mnemonic" aria-label="Mnemonic" aria-describedby="basic-addon1">
-            </div>
-            <div class="input-group mb-3" repeat="for argument in activeCommand.args">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">{{ argument.name }}</span>
-                </div>
-                <input type="text" class="input-control" placeholder="{{ argument.name }}" aria-label="{{ argument.name }}" aria-describedby="basic-addon1">
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Raw Command</span>
-                </div>
-                <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                <div class="input-group-append">
-                    <button id="btn-clear" class="btn btn-outline-danger" type="button">Clear</button>
-                </div>
-                <div class="input-group-append">
-                    <button id="btn-send"  class="btn btn-outline-success" type="button">Send</button>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1"
+                           value="{{ activeCommand.assembleRaw() }}">
+                    <div class="input-group-append">
+                        <button id="btn-clear" class="btn btn-outline-danger" type="button">Clear</button>
+                    </div>
+                    <div class="input-group-append">
+                        <button id="btn-send"  class="btn btn-outline-success" type="button">Send</button>
+                    </div>
                 </div>
             </div>
         </div>
     </body>
-</html>
+</html>-->

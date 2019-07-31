@@ -6,7 +6,7 @@
 #
 #  GET /commands: list all commandsi history available to the GUI. Note: this also prvides a full
 #                 command listing.
-#  PUT /commands/<command>: issue a command through the GDS
+#  PUT /commands/<command>: issue a command through the GDS 
 #      Data: {
 #                "key": "0xfeedcafe", # A key preventing accedential issuing of a command
 #                "args": {
