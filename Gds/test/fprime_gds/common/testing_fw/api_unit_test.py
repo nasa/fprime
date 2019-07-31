@@ -94,7 +94,8 @@ class APITestCases(unittest.TestCase):
 
     def setUp(self):
         for t in self.threads:
-            t.join()
+            if t.isAlive():
+                t.join()
         self.threads.clear()
         count = len(self.case_list)
         self.api.start_test_case(self._testMethodName, count)
@@ -648,8 +649,8 @@ class APITestCases(unittest.TestCase):
             pred = self.api.get_telemetry_pred("Counter", i)
             search_seq.append(pred)
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         results = self.api.await_telemetry_sequence(search_seq)
 
         assert len(results) == len(search_seq), "lists should have the same length"
@@ -657,17 +658,19 @@ class APITestCases(unittest.TestCase):
             msg = predicates.get_descriptive_string(results[i], search_seq[i])
             assert search_seq[i](results[i]), msg
 
-        time.sleep(1)
 
         results = self.api.await_telemetry_sequence(search_seq)
         assert len(results) < len(search_seq), "repeating the search should not complete"
 
         self.api.clear_histories()
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.07)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         results = self.api.await_telemetry_sequence(search_seq, timeout=1)
         assert len(results) < len(search_seq), "repeating the search should not complete"
+
+        t1.join()
+        t2.join()
 
     def test_await_telemetry_count(self):
         count_seq = self.get_counter_sequence(20)
