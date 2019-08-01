@@ -19,7 +19,7 @@ import threading
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.cell import WriteOnlyCell
-
+from openpyxl.utils.exceptions import WorkbookAlreadySaved
 
 class TestLogger:
     """
@@ -64,6 +64,7 @@ class TestLogger:
         self.filename = os.path.join(output_path, "TestLog_{}.xlsx".format(date_string))
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
+        self.ws_saved = False
 
         if time_format is None:
             self.time_format = self.__time_fmt
@@ -117,8 +118,12 @@ class TestLogger:
         self.lock.acquire()
         try:
             print("{} [{}] {}".format(timestring, sender, message))
-            row = self.__get_ws_row(strings, color, style)
-            self.worksheet.append(row)
+            if not self.ws_saved:
+                row = self.__get_ws_row(strings, color, style)
+                self.worksheet.append(row)
+        except WorkbookAlreadySaved:
+            self.ws_saved = True
+            print("{} [{}] {}".format(timestring, "TestLogger", "Workbook has already been saved."))
         finally:
             self.lock.release()
 
@@ -127,6 +132,7 @@ class TestLogger:
         Saves the write-only workbook. Should be called only once when the log is completed.
         """
         self.workbook.save(filename=self.filename)
+        self.ws_saved = True
 
     def __get_cell(self, string, color=None, style=None):
         """
