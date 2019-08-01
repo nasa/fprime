@@ -1,8 +1,8 @@
 """
-test_history.py:
+test.py:
 
-A chronologically-ordered history that relies on predicates to provide filtering, searching, and
-data structure operations
+A receive-ordered history that relies on predicates to provide filtering, searching, and
+retrieval operations
 
 :author: koran
 """
@@ -11,7 +11,7 @@ from fprime_gds.common.history.history import History
 
 class TestHistory(History):
     """
-    A chronological history to support the GDS test api. This history adds support for specifying
+    A receive-ordered history to support the GDS test api. This history adds support for specifying
     start with predicates and python's bracket notation.
     """
 
@@ -29,11 +29,11 @@ class TestHistory(History):
         self.objects = []
 
         self.filter = predicates.always_true()
-        if predicates.is_predicate(filter_pred):
-            self.filter = filter_pred
-        else:
-            # TODO raise error
-            pass
+        if filter_pred is not None:
+            if predicates.is_predicate(filter_pred):
+                self.filter = filter_pred
+            else:
+                raise TypeError("The given filter was an instance of predicate.")
 
         self.retrieved_cursor = 0
 
@@ -56,21 +56,15 @@ class TestHistory(History):
         the history, an empty list will be returned.
 
         Args:
-            start: first object to retrieve. can either be an index or a predicate.
+            start: optional first object to retrieve. can either be an index (int) or a predicate.
         Returns:
             a list of objects in chronological order
         """
-        if start is None:
-            index = 0
-        elif predicates.is_predicate(start):
-            index = 0
-            while index < self.size() and not start(self.objects[index]):
-                index += 1
+        if start is not None:
+            index = self.__get_index(start)
         else:
-            index = start
-
+            index = 0
         self.retrieved_cursor = self.size()
-
         return self.objects[index:]
 
     def retrieve_new(self):
@@ -97,14 +91,10 @@ class TestHistory(History):
         Args:
             start: clear all objects before start. start can either be an index or a predicate.
         """
-        if start is None:
-            index = self.size()
-        elif predicates.is_predicate(start):
-            index = 0
-            while index < self.size() and not start(self.objects[index]):
-                index += 1
+        if start is not None:
+            index = self.__get_index(start)
         else:
-            index = start
+            index = self.size()
 
         self.retrieved_cursor -= index
         if self.retrieved_cursor < 0:
@@ -142,3 +132,20 @@ class TestHistory(History):
             the item at the index specified.
         """
         return self.objects[index]
+
+    def __get_index(self, start):
+        """
+        finds the index that start specifies
+        Args:
+            start: an indicator of a position in an order can be a predicate or an index in
+                the ordering
+        Returns:
+            the index in the given list that start refers to
+        """
+        if predicates.is_predicate(start):
+            index = 0
+            while index < self.size() and not start(self.objects[index]):
+                index += 1
+            return index
+        else:
+            return start
