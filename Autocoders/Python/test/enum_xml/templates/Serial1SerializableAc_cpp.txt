@@ -1,0 +1,160 @@
+#include <Example/Serial1SerializableAc.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/BasicTypes.hpp>
+#if FW_SERIALIZABLE_TO_STRING
+#include <Fw/Types/EightyCharString.hpp>
+#endif
+#include <cstring>
+namespace Example {
+// public methods
+
+Serial1::Serial1(void): Serializable() {
+
+}
+
+Serial1::Serial1(const Serial1& src) : Serializable() {
+    this->set(src.m_Member1, src.m_Member2, src.m_Member3);
+}
+
+Serial1::Serial1(const Serial1* src) : Serializable() {
+    FW_ASSERT(src);
+    this->set(src->m_Member1, src->m_Member2, src->m_Member3);
+}
+
+Serial1::Serial1(U32 Member1, U32 Member2, const Example::Enum1& Member3) : Serializable() {
+    this->set(Member1, Member2, Member3);
+}
+
+const Serial1& Serial1::operator=(const Serial1& src) {
+    this->set(src.m_Member1, src.m_Member2, src.m_Member3);
+    return src;
+}
+
+bool Serial1::operator==(const Serial1& src) const {
+    return (
+        (src.m_Member1 == this->m_Member1) &&
+        (src.m_Member2 == this->m_Member2) &&
+        (src.m_Member3 == this->m_Member3) &&
+        true);
+}
+
+void Serial1::set(U32 Member1, U32 Member2, const Example::Enum1& Member3) {
+    this->m_Member1 = Member1;
+    this->m_Member2 = Member2;
+    this->m_Member3 = Member3;
+}
+
+U32 Serial1::getMember1(void) {
+    return this->m_Member1;
+}
+
+U32 Serial1::getMember2(void) {
+    return this->m_Member2;
+}
+
+Example::Enum1 Serial1::getMember3(void) {
+    return this->m_Member3;
+}
+
+void Serial1::setMember1(U32 val) {
+    this->m_Member1 = val;
+}
+void Serial1::setMember2(U32 val) {
+    this->m_Member2 = val;
+}
+void Serial1::setMember3(Example::Enum1 val) {
+    this->m_Member3 = val;
+}
+Fw::SerializeStatus Serial1::serialize(Fw::SerializeBufferBase& buffer) const {
+    Fw::SerializeStatus stat;
+
+#if FW_SERIALIZATION_TYPE_ID
+    // serialize type ID
+    stat = buffer.serialize((U32)Serial1::TYPE_ID);
+#endif
+
+    stat = buffer.serialize(this->m_Member1);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    stat = buffer.serialize(this->m_Member2);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    stat = buffer.serialize(this->m_Member3);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    return stat;
+}
+
+Fw::SerializeStatus Serial1::deserialize(Fw::SerializeBufferBase& buffer) {
+    Fw::SerializeStatus stat;
+
+#if FW_SERIALIZATION_TYPE_ID
+    U32 typeId;
+
+    stat = buffer.deserialize(typeId);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+
+    if (typeId != Serial1::TYPE_ID) {
+        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
+    }
+#endif
+
+    stat = buffer.deserialize(this->m_Member1);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    stat = buffer.deserialize(this->m_Member2);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    stat = buffer.deserialize(this->m_Member3);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    return stat;
+}
+
+#if FW_SERIALIZABLE_TO_STRING  || BUILD_UT
+
+void Serial1::toString(Fw::StringBase& text) const {
+
+    static const char * formatString =
+       "("
+       "Member1 = %u, "
+       "Member2 = %u, "
+       "Member3 = %s"
+       ")";
+
+    // declare strings to hold any serializable toString() arguments
+
+
+    Fw::EightyCharString Member3Str;
+    this->m_Member3.toString(Member3Str);
+
+    char outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
+    (void)snprintf(outputString,FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE,formatString
+       ,this->m_Member1
+       ,this->m_Member2
+       ,Member3Str.toChar()
+    );
+    outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE-1] = 0; // NULL terminate
+
+    text = outputString;
+}
+
+#endif
+
+#ifdef BUILD_UT
+    std::ostream& operator<<(std::ostream& os, const Serial1& obj) {
+        Fw::EightyCharString str;
+        obj.toString(str);
+        os << str.toChar();
+        return os;
+    }
+#endif
+} // end namespace Example

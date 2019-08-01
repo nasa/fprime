@@ -55,20 +55,6 @@ project development practices.
 e.g. `-DGENERATE_AC_IN_SOURCE=ON`
 
 
-## `LINK_AS_SHARED_LIBS:`
-
-This option swiches the default link option from static linkage to using a shared-object linkage.
-It implies that instead of static archive files, shared objects will be built instead. This will
-mean smaller binaries, partial-updates are possible, and more rigorous project process must be
-used.
-
-**Values:**
-- ON: generate shared libraries with shared-linkage.
-- OFF: (default) generate static libraries with static-linkage.
-
-e.g. `-DLINK_AS_SHARED_LIBS=ON`
-
-
 ## `GENERATE_HERITAGE_PY_DICT:`
 
 This option switches from generating XML dictionaries to generating the heritage python

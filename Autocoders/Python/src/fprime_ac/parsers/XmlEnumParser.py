@@ -20,9 +20,10 @@ import logging
 import os
 import sys
 import time
+from fprime_ac.utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
-from parsers import XmlParser
+from fprime_ac.parsers import XmlParser
 #
 # Python extention modules and custom interfaces
 #
@@ -34,12 +35,14 @@ from parsers import XmlParser
 # Global logger init. below.
 PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
+ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
 class XmlEnumParser(object):
     """
     An XML parser class that uses lxml.etree to consume an XML
     enum type documents.  The class is instanced with an XML file name.
     """
+
     def __init__(self, xml_file=None):
         """
         Given a well formed XML file (xml_file), read it and turn it into
@@ -47,6 +50,12 @@ class XmlEnumParser(object):
         """
         self.__name = ""
         self.__namespace = None
+
+        self.__xml_filename = xml_file
+        self.__items = []
+        
+        self.Config = ConfigManager.ConfigManager.getInstance()
+
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(stri)
@@ -58,6 +67,21 @@ class XmlEnumParser(object):
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
+        
+        #Validate against current schema. if more are imported later in the process, they will be reevaluated
+        relax_file_handler = open(ROOTDIR + self.Config.get('schema' , 'enum') , 'r')
+        relax_parsed = etree.parse(relax_file_handler)
+        relax_file_handler.close()
+        relax_compiled = etree.RelaxNG(relax_parsed)
+        
+        self.check_enum_values(element_tree)
+
+        # 2/3 conversion
+        if not relax_compiled.validate(element_tree):
+            msg = "XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.Config.get('schema' , 'enum'))
+            PRINT.info(msg)
+            print(element_tree)
+            raise Exception(msg)
         
         enum = element_tree.getroot()
         if enum.tag != "enum":
@@ -72,14 +96,61 @@ class XmlEnumParser(object):
         else:
             self.__namespace = None
         
-        print(self.__name)
-        print(self.__namespace)
+        print(self.__name + " " + self.__namespace)
         
         for enum_tag in enum:
             item = enum_tag.attrib
             if not 'comment' in item:
                 item['comment'] = ""
+            
+            if not 'value' in item:
+                item['value'] = ""
+            
             self.__items.append((item['name'],item['value'],item['comment']))
+
+    def check_enum_values(self, element_tree):
+        """
+        Raises exception in case that enum items are inconsistent
+        in whether they include attribute 'value'
+        """
+        if not self.is_attribute_consistent(element_tree, 'value'):
+            msg = "If one enum item has a value attribute, all items should have a value attribute"
+            PRINT.info(msg)
+            print(element_tree)
+            raise Exception(msg)
+        
+    def is_attribute_consistent(self, element_tree, val_name):
+        """
+        Returns true if either all or none of the enum items
+        contain a given value
+        """
+        has_value = 0
+        total = 0
+        for enum_item in element_tree.iter():
+            if enum_item.tag == 'item':
+                total += 1
+                if val_name in enum_item.keys():
+                    has_value += 1
+        
+        is_consistent = True
+        if not (has_value == 0 or has_value == total):
+            is_consistent = False
+
+        return is_consistent
+    
+    def get_max_value(self):
+        # Assumes that items have already been checked for consistency,
+        # self.__items stores a list of tuples with index 1 being the value
+        if not self.__items[0][1] == "":
+            max_value = self.__items[0][1]
+
+            for item in self.__items:
+                max_value = max(max_value, item[1])
+
+        else:
+            max_value = str(len(self.__items) - 1)
+
+        return max_value
 
     def get_name(self):
         return self.__name

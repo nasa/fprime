@@ -69,6 +69,14 @@ class ChData(sys_data.SysData):
         '''
         return self.pkt
 
+    def get_id(self):
+        '''
+        Return the channel ID
+
+        Returns:
+            the channel's id number
+        '''
+        return self.id
 
     def get_val(self):
         '''

@@ -56,6 +56,11 @@ def run_cmake(build_path, options={}, capout=False):
     if capout:
         keys["stdout"] = subprocess.PIPE
         keys["stderr"] = subprocess.PIPE
+    # If the output is not sent into the terminal, route the output to no-op discarder or the
+    # process will block on pytests' inability to handle all the output silently
+    elif not "-s" in sys.argv and not "--capture=no" in sys.argv:
+        keys["stdout"] = subprocess.DEVNULL
+        keys["stderr"] = subprocess.DEVNULL
     print("Running:", args, "With args:", keys)
     proc = subprocess.Popen(args, **keys)
     if capout:
