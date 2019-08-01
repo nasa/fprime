@@ -35,6 +35,7 @@ class UTPipeline(StandardPipeline):
     """
     def __init__(self):
         self.command_count = 0
+        self.t0 = TimeType()
         StandardPipeline.__init__(self)
 
     def connect(self, address, port):
@@ -51,19 +52,19 @@ class UTPipeline(StandardPipeline):
             hist.data_callback(cmd_data)
 
         ev_temp = self.event_name_dict["CommandReceived"]
-        event = EventData((U32Type(cmd_data.get_id()),), TimeType(), ev_temp)
+        event = EventData((U32Type(cmd_data.get_id()),), self.t0 + time.time(), ev_temp)
         self.enqueue_event(event)
 
         ev_temp = self.event_name_dict["HistorySizeUpdate"]
         evr_size = U32Type(len(self.event_hist.retrieve()))
         cmd_size = U32Type(len(self.command_hist.retrieve()))
         ch_size = U32Type(len(self.channel_hist.retrieve()))
-        event = EventData((evr_size, cmd_size, ch_size), TimeType(), ev_temp)
+        event = EventData((evr_size, cmd_size, ch_size), self.t0 + time.time(), ev_temp)
         self.enqueue_event(event)
 
         self.command_count += 1
         ch_temp = self.channel_name_dict["CommandCounter"]
-        update = ChData(U32Type(self.command_count), TimeType(), ch_temp)
+        update = ChData(U32Type(self.command_count), self.t0 + time.time(), ch_temp)
         self.enqueue_telemetry(update)
 
     def enqueue_event(self, event):
@@ -116,11 +117,13 @@ class APITestCases(unittest.TestCase):
             if timestep:
                 time.sleep(timestep)
             if isinstance(item, ChData) or isinstance(item, EventData):
-                item.time = self.t0 + time.time()
+                if item.time == 0:
+                    item.time = self.t0 + time.time()
             callback(item)
 
     def fill_history_async(self, callback, items, timestep=1):
         t = threading.Thread(target=self.fill_history, args=(callback, items, timestep))
+        self.threads.append(t)
         t.start()
         return t
 
@@ -658,7 +661,8 @@ class APITestCases(unittest.TestCase):
             msg = predicates.get_descriptive_string(results[i], search_seq[i])
             assert search_seq[i](results[i]), msg
 
-
+        t1.join()
+        t2.join()
         results = self.api.await_telemetry_sequence(search_seq)
         assert len(results) < len(search_seq), "repeating the search should not complete"
 
