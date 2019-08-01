@@ -14,7 +14,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command1")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command2")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/comp_diff_namespace")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/comp_no_namespace")
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/dictgen")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum_return_port")
 #Note: is currently set up as a pytest, uses console input so shouldn't be run as ut
 #add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum_xml")
