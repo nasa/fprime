@@ -26,7 +26,8 @@ class TestRefAppClass(object):
         path = os.path.join(filename, "../../Top/RefTopologyAppDictionary.xml")
         cls.pipeline.setup(config, path)
         cls.pipeline.connect("127.0.0.1", 50000)
-        cls.api = IntegrationTestAPI(cls.pipeline, "./logs")
+        logpath = os.path.join(filename, "./logs")
+        cls.api = IntegrationTestAPI(cls.pipeline, logpath)
         cls.case_list = [] # TODO find a better way to do this. 
 
     @classmethod
