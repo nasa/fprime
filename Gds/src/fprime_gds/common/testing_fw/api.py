@@ -14,6 +14,8 @@ from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 from fprime_gds.common.logger.test_logger import TestLogger
 from fprime_gds.common.utils.event_severity import EventSeverity
+from fprime_gds.common.history.chrono import ChronologicalHistory
+
 from fprime.common.models.serialize.time_type import TimeType
 
 
@@ -24,12 +26,13 @@ class IntegrationTestAPI:
     """
     NOW = "NOW"
 
-    def __init__(self, pipeline, logpath=None):
+    def __init__(self, pipeline, logpath=None, fsw_order=True):
         """
         Initializes API: constructs and registers test histories.
         Args:
             pipeline: a pipeline object providing access to basic GDS functionality
             logpath: an optional output destination for the api test log
+            fsw_order: a flag to determine whether the API histories will maintain FSW time order.
         """
         self.pipeline = pipeline
         # these are owned by the GDS and will not be modified by the test API.
@@ -38,12 +41,18 @@ class IntegrationTestAPI:
         self.aggregate_event_history = pipeline.get_event_history()
 
         # these histories are owned by the TestAPI and are modified by the API.
-        self.command_history = TestHistory()
+        self.fsw_ordered = fsw_order
+        if fsw_order:
+            self.command_history = ChronologicalHistory()
+            self.telemetry_history = ChronologicalHistory()
+            self.event_history = ChronologicalHistory()
+        else:
+            self.command_history = TestHistory()
+            self.telemetry_history = TestHistory()
+            self.event_history = TestHistory()
         self.pipeline.register_command_consumer(self.command_history)
-        self.telemetry_history = TestHistory()
-        self.pipeline.register_telemetry_consumer(self.telemetry_history)
-        self.event_history = TestHistory()
         self.pipeline.register_event_consumer(self.event_history)
+        self.pipeline.register_telemetry_consumer(self.telemetry_history)
 
         # Initialize latest time. Will be updated whenever a time query is made.
         self.latest_time = TimeType()
@@ -228,7 +237,7 @@ class IntegrationTestAPI:
         """
         return self.event_history
 
-    def get_event_subhistory(self, event_filter=None):
+    def get_event_subhistory(self, event_filter=None, fsw_order=True):
         """
         Returns a new instance of TestHistory that will be updated with new events as they come in.
         Specifying a filter will only enqueue events that satisfy the filter in this new
@@ -237,10 +246,14 @@ class IntegrationTestAPI:
 
         Args:
             event_filter: an optional predicate to filter a subhistory.
+            fsw_order: a flag to determine whether this subhistory will maintain FSW time order.
         Returns:
             an instance of TestHistory
         """
-        subhist = TestHistory(event_filter)
+        if fsw_order:
+            subhist = ChronologicalHistory(event_filter)
+        else:
+            subhist = TestHistory(event_filter)
         self.pipeline.register_event_consumer(subhist)
         return subhist
 
@@ -256,7 +269,7 @@ class IntegrationTestAPI:
         """
         return self.pipeline.remove_event_consumer(subhist)
 
-    def get_telemetry_subhistory(self, telemetry_filter=None):
+    def get_telemetry_subhistory(self, telemetry_filter=None, fsw_order=True):
         """
         Returns a new instance of TestHistory that will be updated with new telemetry updates as
         they come in. Specifying a filter will only enqueue updates that satisfy the filter in this
@@ -265,12 +278,16 @@ class IntegrationTestAPI:
 
         Args:
             telemetry_filter: an optional predicate used to filter a subhistory.
+            fsw_order: a flag to determine whether this subhistory will maintain FSW time order.
         Returns:
             an instance of TestHistory
         """
-        hist = TestHistory(telemetry_filter)
-        self.pipeline.register_telemetry_consumer(hist)
-        return hist
+        if fsw_order:
+            subhist = ChronologicalHistory(telemetry_filter)
+        else:
+            subhist = TestHistory(telemetry_filter)
+        self.pipeline.register_telemetry_consumer(subhist)
+        return subhist
 
     def remove_telemetry_subhistory(self, subhist):
         """
@@ -889,6 +906,7 @@ class IntegrationTestAPI:
 
         def __init__(self):
             self.ret_val = None
+            self.repeats = False
             raise NotImplementedError()
 
         def search_current_history(self, items):
@@ -912,6 +930,12 @@ class IntegrationTestAPI:
             Returns the result of the search whether the search is successful or not
             """
             return self.ret_val
+
+        def requires_repeats(self):
+            """
+            Returns a flag to determine if the history searcher needs repeated data objects when receive order does not match chronological order.
+            """
+            return self.repeats
 
     class TimeoutException(Exception):
         """
@@ -969,11 +993,15 @@ class IntegrationTestAPI:
 
         if timeout:
             self.__log(name + " now awaiting for at most {} s.".format(timeout))
+            check_repeats = isinstance(history, ChronologicalHistory)
             try:
                 signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
-                    new_items = history.retrieve_new()
+                    if check_repeats:
+                        new_items = history.retrieve_new(searcher.requires_repeats())
+                    else:
+                        new_items = history.retrieve_new()
                     for item in new_items:
                         if searcher.incremental_search(item):
                             return searcher.get_return_value()
@@ -1007,6 +1035,7 @@ class IntegrationTestAPI:
             def __init__(self, log, search_pred):
                 self.log = log
                 self.search_pred = search_pred
+                self.repeats = False
                 self.ret_val = None
                 msg = "Beginning an item search for an item that satisfies:\n    {}".format(
                     self.search_pred
@@ -1055,6 +1084,7 @@ class IntegrationTestAPI:
                 self.log = log
                 self.ret_val = []
                 self.seq_preds = seq_preds.copy()
+                self.repeats = True
                 msg = "Beginning a sequence search of {} items.".format(
                     len(self.seq_preds)
                 )
@@ -1113,12 +1143,12 @@ class IntegrationTestAPI:
             def __init__(self, log, count, search_pred):
                 self.log = log
                 self.ret_val = []
-                self.count_pred = (
-                    count
-                    if predicates.is_predicate(count)
-                    else predicates.equal_to(count)
-                )
+                if predicates.is_predicate(count):
+                    self.count_pred = count
+                else: 
+                    self.count_pred = predicates.equal_to(count)
                 self.search_pred = search_pred
+                self.repeats = False
 
                 msg = "Beginning a count search for an amount of items ({}).".format(
                     self.count_pred
