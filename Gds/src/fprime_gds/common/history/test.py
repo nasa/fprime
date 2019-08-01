@@ -9,12 +9,12 @@ retrieval operations
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.history import History
 
+
 class TestHistory(History):
     """
     A receive-ordered history to support the GDS test api. This history adds support for specifying
     start with predicates and python's bracket notation.
     """
-
     ###########################################################################
     #   History Functions
     ###########################################################################

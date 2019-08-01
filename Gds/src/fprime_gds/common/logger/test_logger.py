@@ -84,11 +84,8 @@ class TestLogger:
         top.append(self.__get_cell("Test began at " + date_string))
         self.worksheet.append(top)
 
-        header = []
-        header.append(self.__get_cell("Time", style=self.BOLD))
-        header.append(self.__get_cell("Case ID", style=self.BOLD))
-        header.append(self.__get_cell("Sender", style=self.BOLD))
-        header.append(self.__get_cell("Message", style=self.BOLD))
+        labels = ["Log Time", "Case ID", "Sender", "Message"]
+        header = self.__get_ws_row(labels, style=self.BOLD)
         self.worksheet.append(header)
 
         self.case_id = "NA"
@@ -116,15 +113,11 @@ class TestLogger:
                 case_id = str(case_id)
             self.case_id = case_id
 
-        row = []
-        row.append(self.__get_cell(timestring, color, style))
-        row.append(self.__get_cell(self.case_id, color, style))
-        row.append(self.__get_cell(sender, color, style))
-        row.append(self.__get_cell(message, color, style))
-
+        strings = [timestring, self.case_id, sender, message]
         self.lock.acquire()
         try:
             print("{} [{}] {}".format(timestring, sender, message))
+            row = self.__get_ws_row(strings, color, style)
             self.worksheet.append(row)
         finally:
             self.lock.release()
@@ -156,3 +149,9 @@ class TestLogger:
         )
         cell.alignment = self.__align
         return cell
+
+    def __get_ws_row(self, strings, color=None, style=None):
+        row = []
+        for string in strings:
+            row.append(self.__get_cell(string, color, style))
+        return row
