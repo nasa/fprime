@@ -119,7 +119,7 @@ class TestRefAppClass(object):
         assert self.api.get_command_test_history().size() == 2
 
     def test_send_and_assert_no_op(self):
-        length = 5
+        length = 100
         failed = 0
         evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
         any_reordered = False
@@ -154,7 +154,7 @@ class TestRefAppClass(object):
         assert case, "Expected all checks to pass (reordering, dropped events, all passed). See log."
 
     def test_bd_cycles_ascending(self):
-        length = 5
+        length = 60
         count_pred = predicates.greater_than(length - 1)
         results = self.api.await_telemetry_count(count_pred, "BD_Cycles", timeout=length)
         last = None
