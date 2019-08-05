@@ -28,7 +28,15 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-class ConfigManager(configparser.SafeConfigParser):
+# For Python determination
+import six
+
+if six.PY2:
+    parent = configparser.SafeConfigParser
+else:
+    parent = configparser.ConfigParser
+
+class ConfigManager(parent):
     """
     This class provides a single entrypoint for all configurable properties,
     namely the self.Prop dictionary.
@@ -41,7 +49,8 @@ class ConfigManager(configparser.SafeConfigParser):
         """
         Constructor.
         """
-        configparser.SafeConfigParser.__init__(self)
+        if six.PY2:
+            configparser.SafeConfigParser.__init__(self)
         configparser.ConfigParser.__init__(self)
         configparser.RawConfigParser.__init__(self)
         self.__prop   = dict()

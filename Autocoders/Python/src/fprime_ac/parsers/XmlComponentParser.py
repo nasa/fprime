@@ -30,6 +30,9 @@ except ImportError:
 #from __builtin__ import None
 from pickle import NONE
 
+# For Python determination
+import six
+
 #
 # Python extension modules and custom interfaces
 #
@@ -82,7 +85,10 @@ class XmlComponentParser(object):
         constants_file = ROOTDIR + os.sep + self.Config.get('constants','constants_file')
         ## make sure it is a real file
         if os.path.isfile(constants_file):
-            self.__const_parser = configparser.SafeConfigParser()
+            if six.PY2:
+                self.__const_parser = configparser.SafeConfigParser()
+            else:
+                self.__const_parser = configparser.ConfigParser()
             self.__const_parser.read(constants_file)
         else:
             self.__const_parser = None
