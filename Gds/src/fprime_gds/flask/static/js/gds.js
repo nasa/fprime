@@ -6,7 +6,7 @@
 import {Loader} from "./loader.js"
 import {ChannelView}  from "./vue-support/channel.js"
 import {EventView}  from "./vue-support/event.js"
-import {CommandView}  from "./vue-support/command.js"
+import {TabETCVue}  from "./vue-support/tabetc.js"
 
 //import {SimpleTemplate} from "./simple-templates.js";
 let loader = new Loader();
@@ -16,15 +16,17 @@ let loader = new Loader();
  */
 function setupBindings() {
     //Setup a channel view, in this case the one supported by Vue.js from vue-support package
-    let channelView = new ChannelView("#channels");
-    loader.registerPoller("channels", function (data) {channelView.updateChannels(data["history"]);});
+  //  let channelView = new ChannelView("#channels");
+
 
     //Setup an event view, in this case the one supported by Vue.js from vue-support package
-    let eventView = new EventView("#events");
-    loader.registerPoller("events", function (data) {eventView.updateEvents(data["history"]);});
+  //  let eventView = new EventView("#events");
+  //  loader.registerPoller("events", function (data) {eventView.updateEvents(data["history"]);});
 
 
-    let commandView = new CommandView("#commands", loader.endpoints["command-dict"].data, loader);
+    let tabView = new TabETCVue("#tabetc", loader.endpoints["command-dict"].data, loader);
+    loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
+    loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
 }
 
 

@@ -31,16 +31,36 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
         <script type="module" src="js/gds.js"></script>
     </head>
     <body>
-        <div id="commands">
-            <command-input v-bind:commands="commands" ref="input" v-bind:loader="loader"></command-input>
+        <div id="tabetc" class="container">
+            <tabbed-etc
+                    v-bind:commands="commands"
+                    v-bind:loader="loader"
+                    v-bind:events="events"
+                    v-bind:channels="channels"
+            ></tabbed-etc>
         </div>
-        <div id="channels">
-            <channel-table v-bind:channels="channels"></channel-table>
-        </div>
-        <div id="events">
-            <event-list v-bind:events="events"></event-list>
-        </div>
+
         <div hidden>
+            <!-- Tabbed and routed Command Component -->
+            <template id="tabetc-template">
+                <div>
+                    <div class="nav nav-tabs">
+                        <div v-for="tab in tabs" class="nav-item">
+                            <div v-bind:class="['nav-link', { active: currentTab == tab }]"
+                                v-bind:key="tab"
+                                v-on:click="currentTab = tab">{{ tab }}</div>
+                        </div>
+                    </div>
+                    <h1>F´ Ground Control Interface: {{ currentTab }}</h1>
+                    <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
+                    <command-input v-bind:commands="commands" v-bind:loader="loader"
+                       v-show="currentTab == 'Commanding'"></command-input>
+                    <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
+                    <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
+                </div>
+            </template>
+
+
             <!--
             Command Templates:
 
@@ -48,6 +68,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="command-input-template">
                 <div>
+                    <h3>{{ selected.mnemonic }}</h3>
                     <div class="form-row">
                         <div class="form-group col">
                             <label for="mnemonic">Mnemonic</label>

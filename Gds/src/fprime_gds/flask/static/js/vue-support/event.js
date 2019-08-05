@@ -57,6 +57,27 @@ Vue.component("event-list", {
             }
     }
 });
+/**
+ * Some such
+ * @type {{updateEvents(*): void}}
+ */
+export let EventMixins = {
+    /**
+     * Update the list of events with the supplied new list of events.
+     * @param newEvents: new full list of events to render
+     */
+    updateEvents(newEvents) {
+        //TODO: make this efficient by appending to vue's data only
+        this.vue.events = newEvents;
+    },
+    /**
+     * Sets up the needed event data items.
+     * @return [] an empty list to fill with events
+     */
+    setupEvents() {
+        return {"events": []};
+    }
+};
 
 /**
  * EventView:
@@ -72,19 +93,11 @@ export class EventView {
      * @param elemid: HTML ID of the element to render to
      */
     constructor(elemid) {
+        Object.assign(EventView.prototype, EventMixins);
         this.vue = new Vue({
             el: elemid,
-            data: {
-                events: [],
-            }
+            data: this.setupEvents()
         });
     }
-    /**
-     * Update the list of events with the supplied new list of events.
-     * @param newEvents: new full list of events to render
-     */
-    updateEvents(newEvents) {
-        //TODO: make this efficient by appending to vue's data only
-        this.vue.events = newEvents;
-    }
+
 }

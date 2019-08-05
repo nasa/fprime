@@ -89,28 +89,7 @@ Vue.component("channel-table", {
     }
 });
 
-/**
- * ChannelView:
- *
- * A wrapper for the channel-list viewable. This particular instance is supported by Vue.js in order to render the
- * channels as a table.
- *
- * @author mstarch
- */
-export class ChannelView {
-    /**
-     * Creates a ChannelView that delegates to a Vue.js view.
-     * @param elemid: HTML ID of the element to render to
-     */
-    constructor(elemid) {
-        this.vue = new Vue({
-            el: elemid,
-            data: {
-                channels: [],
-            }
-        });
-    }
-
+export let ChannelMixins = {
     /**
      * Make the list of channels unique for display purposes.
      * @param channels: channels to make unique
@@ -126,8 +105,7 @@ export class ChannelView {
             chanList.push(chanSet[chanItem]);
         }
         return chanList;
-    }
-
+    },
     /**
      * Update the list of channels with the supplied new list of channels.
      * @param newChannels: new full list of channels to render
@@ -135,5 +113,36 @@ export class ChannelView {
     updateChannels(newChannels) {
         let unique = this.uniqueify(newChannels);
         this.vue.channels = unique;
+    },
+    /**
+     * Sets up the needed channel data items.
+     * @return [] an empty list to fill with channels
+     */
+    setupChannels() {
+        return {"channels": []};
     }
+}
+
+/**
+ * ChannelView:
+ *
+ * A wrapper for the channel-list viewable. This particular instance is supported by Vue.js in order to render the
+ * channels as a table.
+ *
+ * @author mstarch
+ */
+export class ChannelView {
+    /**
+     * Creates a ChannelView that delegates to a Vue.js view.
+     * @param elemid: HTML ID of the element to render to
+     */
+    constructor(elemid) {
+        Object.assign(ChannelView.prototype, ChannelMixins);
+        this.vue = new Vue({
+            el: elemid,
+            data: this.setupChannels()
+        });
+    }
+
+
 }
