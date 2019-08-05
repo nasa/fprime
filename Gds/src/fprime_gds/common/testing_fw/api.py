@@ -213,6 +213,10 @@ class IntegrationTestAPI:
         """
         self.event_log_filter = self.get_event_pred(event, args, severity, time_pred)
 
+
+    ######################################################################################
+    #   History Functions
+    ######################################################################################
     def get_command_test_history(self):
         """
         Accessor for IntegrationTestAPI's command history
@@ -236,38 +240,6 @@ class IntegrationTestAPI:
             a history of EventData objects
         """
         return self.event_history
-
-    def get_event_subhistory(self, event_filter=None, fsw_order=True):
-        """
-        Returns a new instance of TestHistory that will be updated with new events as they come in.
-        Specifying a filter will only enqueue events that satisfy the filter in this new
-        sub-history. The returned history can be substituted into the await and assert methods of
-        this API.
-
-        Args:
-            event_filter: an optional predicate to filter a subhistory.
-            fsw_order: a flag to determine whether this subhistory will maintain FSW time order.
-        Returns:
-            an instance of TestHistory
-        """
-        if fsw_order:
-            subhist = ChronologicalHistory(event_filter)
-        else:
-            subhist = TestHistory(event_filter)
-        self.pipeline.register_event_consumer(subhist)
-        return subhist
-
-    def remove_event_subhistory(self, subhist):
-        """
-        De-registers the subhistory from the GDS. Once called, the given subhistory will stop
-        receiving event messages.
-
-        Args:
-            subhist: a TestHistory instance that is subscribed to event messages
-        Returns:
-            True if the subhistory was removed, False otherwise
-        """
-        return self.pipeline.remove_event_consumer(subhist)
 
     def get_telemetry_subhistory(self, telemetry_filter=None, fsw_order=True):
         """
@@ -300,6 +272,38 @@ class IntegrationTestAPI:
             True if the subhistory was removed, False otherwise
         """
         return self.pipeline.remove_telemetry_consumer(subhist)
+
+    def get_event_subhistory(self, event_filter=None, fsw_order=True):
+        """
+        Returns a new instance of TestHistory that will be updated with new events as they come in.
+        Specifying a filter will only enqueue events that satisfy the filter in this new
+        sub-history. The returned history can be substituted into the await and assert methods of
+        this API.
+
+        Args:
+            event_filter: an optional predicate to filter a subhistory.
+            fsw_order: a flag to determine whether this subhistory will maintain FSW time order.
+        Returns:
+            an instance of TestHistory
+        """
+        if fsw_order:
+            subhist = ChronologicalHistory(event_filter)
+        else:
+            subhist = TestHistory(event_filter)
+        self.pipeline.register_event_consumer(subhist)
+        return subhist
+
+    def remove_event_subhistory(self, subhist):
+        """
+        De-registers the subhistory from the GDS. Once called, the given subhistory will stop
+        receiving event messages.
+
+        Args:
+            subhist: a TestHistory instance that is subscribed to event messages
+        Returns:
+            True if the subhistory was removed, False otherwise
+        """
+        return self.pipeline.remove_event_consumer(subhist)
 
     ######################################################################################
     #   Command Functions

@@ -13,7 +13,7 @@ from fprime_gds.common.data_types.event_data import EventData
 
 
 ##########################################################################################
-# Parent Class
+# Base class/helpers
 ##########################################################################################
 class predicate:
     def __call__(self, item):
@@ -67,7 +67,7 @@ def get_descriptive_string(value, predicate):
 
 
 ##########################################################################################
-# Basic predicates
+# Comparison predicates
 ##########################################################################################
 class less_than(predicate):
     def __init__(self, value):
