@@ -27,6 +27,7 @@ function setupBindings() {
     let tabView = new TabETCVue("#tabetc", loader.endpoints["command-dict"].data, loader);
     loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
     loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
+    loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
 }
 
 

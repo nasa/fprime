@@ -5,12 +5,34 @@
  */
 // Setup component for select
 import "../third-party/vue-select.js"
+import {timeToString,filter} from "./utils.js";
 
 Vue.component('v-select', VueSelect.VueSelect);
 
+/**
+ * channel-row:
+ *
+ * A vue component designed to render exactly on row of the channel lising. It includes both the massage functions used
+ * to transform data for display purposes (e.g. getChanTime) and also the colorization code used to colorize these lists
+ * based on the channel's bounds.
+ */
+Vue.component("command-item", {
+    props:["command"],
+    template: "#command-item-template",
+    computed: {
+        /**
+         * Produces the channel's time in the form of a string.
+         * @return {string} seconds.microseconds
+         */
+        calculateCommandTime: function() {
+            return timeToString(this.command.time);
+        }
+    }
+});
+
 
 Vue.component("command-input", {
-    props:["commands", "loader"],
+    props:["commands", "loader", "cmdhist"],
     data: function() {return {"matching": "", "selected": {"mnemonic":"NON_SELECTED", "args":[]}, "active": false}},
     template: "#command-input-template",
     methods: {
@@ -36,15 +58,24 @@ Vue.component("command-input", {
     },
     computed: {
         /**
-         * Calculate selected object from the given ID.
-         * @return command associated from selectedId
+         *
+         * @return {unknown[]}
          */
-        /*selected: function() {
-           return this.commands[this.selectedId];
-        },*/
         commandList: function() {
             return Object.values(this.commands);
         },
+        /**
+         *
+         * @return {*[]}
+         */
+        calculateFilteredCommandHistory: function() {
+            return filter(this.cmdhist, this.matching,
+                function (command)
+                {
+                    return timeToString(command.time) +
+                        "0x" + command.id.toString(16) + command.template.mnemonic + command.args;
+                });
+        }
         /*raw: {
             set: function(value) {
                 //TODO: fix this to do better tokenizing
@@ -92,10 +123,10 @@ export let CommandMixins = {
      * input.
      * @param commands: command dictionary object
      * @param loader: f prime endpoint loader with the ability to connect to the f prime REST endpoint.
-     * @return {{loader: loader object used to load endpoints, commands: command dictionary object}}
+     * @return {{loader: loader object  loads endpoints, commands: command dictionary object, history: empty list}}
      */
     setupCommands(commands, loader) {
-        return {"commands": commands, "loader": loader};
+        return {"commands": commands, "loader": loader, "cmdhist":[]};
     },
     /**
      * Initialize the commanding input to have an active command. This ensures that a valid command is setup once the
@@ -126,6 +157,13 @@ export let CommandMixins = {
             return false;
         }
         return false;
+    },
+    /**
+     * Updates the command history displayed by this command object. This will store the command history as an active.
+     * @param cmdhist: command history to set
+     */
+    updateCommandHistory(cmdhist) {
+        this.vue.cmdhist = cmdhist;
     }
 };
 /**

@@ -37,6 +37,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     v-bind:loader="loader"
                     v-bind:events="events"
                     v-bind:channels="channels"
+                    v-bind:cmdhist="cmdhist"
             ></tabbed-etc>
         </div>
 
@@ -44,16 +45,18 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <!-- Tabbed and routed Command Component -->
             <template id="tabetc-template">
                 <div>
-                    <div class="nav nav-tabs">
-                        <div v-for="tab in tabs" class="nav-item">
-                            <div v-bind:class="['nav-link', { active: currentTab == tab }]"
-                                v-bind:key="tab"
-                                v-on:click="currentTab = tab">{{ tab }}</div>
-                        </div>
-                    </div>
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                        <span class="navbar-brand">F´</span>
+                            <div class="navbar-nav">
+                                <div v-for="tab in tabs"
+                                    v-bind:class="['nav-item', 'nav-link', { active: currentTab == tab }]"
+                                    v-bind:key="tab"
+                                    v-on:click="currentTab = tab">{{ tab }}</div>
+                            </div>
+                    </nav>
                     <h1>F´ Ground Control Interface: {{ currentTab }}</h1>
                     <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
-                    <command-input v-bind:commands="commands" v-bind:loader="loader"
+                    <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
                        v-show="currentTab == 'Commanding'"></command-input>
                     <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
                     <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
@@ -68,7 +71,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="command-input-template">
                 <div>
-                    <h3>{{ selected.mnemonic }}</h3>
+                    <h2>Command Sending: {{ selected.mnemonic }}</h2>
                     <div class="form-row">
                         <div class="form-group col">
                             <label for="mnemonic">Mnemonic</label>
@@ -95,7 +98,24 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         <label for="rawcmd">Raw Command</label>
                         <input id=rawcmd" type="text" class="form-control" v-model="raw">
                     </div-->
+                    <div>
+                        <h2>Command History</h2>
+                        Filter <input type="input" v-model="matching"></input>
+                        <div class="list-group">
+                            <command-item v-for="histCommand in calculateFilteredCommandHistory"
+                                        v-bind:command="histCommand"></command-item>
+                        </div>
+                    </div>
                 </div>
+            </template>
+            <template id="command-item-template">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{calculateCommandTime + " " + command.template.mnemonic }}</h5>
+                        <small>Command Id 0x{{ command.id.toString(16) }}</small>
+                    </div>
+                    <p class="mb-1">Arguments: {{ command.args }}</p>
+                </a>
             </template>
             <!--
             Event Templates:
@@ -157,121 +177,3 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
         </div>
     </body>
 </html>
-        <!-- Global tab navigation: Commands, Events, Channels
-        <ul class="nav nav-tabs" id="etcTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="command-tab" data-toggle="tab" href="#command" role="tab" aria-controls="command" aria-selected="true">Commands</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="event-tab" data-toggle="tab" href="#event" role="tab" aria-controls="event" aria-selected="false">Events</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="channel-tab" data-toggle="tab" href="#channel" role="tab" aria-controls="channel" aria-selected="false">Channels</a>
-            </li>
-        </ul>
-
-         Place the content of the above tabs here
-        <div class="tab-content" id="etcTabContent">
-            <div class="tab-pane fade show active" id="command" role="tabpanel" aria-labelledby="command-tab">
-                <div class="row">
-                    <div id="command-list-container" class="col-4"></div>
-                    <div  class="col-8">
-                        <div id="command-input-container"></div>
-                        <div id="command-hist-container"></div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="tab-pane fade" id="event" role="tabpanel" aria-labelledby="event-tab">
-                <div id="event-container"></div>
-            </div>
-            <div class="tab-pane fade" id="channel" role="tabpanel" aria-labelledby="channel-tab">
-                <div id="channel-container"></div>
-            </div>
-        </div>
-
-        Templates used to render the rest of the document
-        <div id="template-cold-storage" hidden>
-            <div id="event-list-template">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  repeat="for event in events">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ event.template.name }}</h5>
-                            <small>Event Id 0x{{ event.id.toString(16) }}</small>
-                        </div>
-                        <p class="mb-1">{{ event.str }}</p>
-                    </a>
-                </div>
-            </div>
-            <div id="command-hist-template">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start "  click-action="activeCommand" repeat="for command in commandHistory">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ command.template.name }}</h5>
-                            <small>Event Id 0x{{ command.id.toString(16) }}</small>
-                        </div>
-                        <p class="mb-1">{{ command.str }}</p>
-                    </a>
-                </div>
-            </div>
-            <div id="channel-table-template">
-                <table class="table table-bordered table-responsive table-striped">
-                    <tr>
-                        <th>Channel ID</th><th>Channel Name</th><th>Channel Value</th><th>Last Update Time</th>
-                    </tr>
-                    <tr repeat="for channel in channels">
-                        <td>0x{{ channel.id.toString(16) }}</td>
-                        <td>{{ channel.template.name }}</td>
-                        <td>{{ channel.val }}</td>
-                        <td>{{ channel.time }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div id="command-list-template">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  click-action="activeCommand" repeat="for command in commands"
-                     if="command.mnemonic.indexOf(cmdFilter) != -1">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ command.mnemonic }}</h5>
-                            <small>Opcode 0x{{ command.id.toString(16) }}</small>
-                        </div>
-                        <p class="mb-1">{{ command.description }}</p>
-                    </a>
-                </div>
-            </div>
-            <div id="command-input-template" data-bind="activeCommand">
-                <h2>{{ activeCommand.mnemonic }}</h2>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Mnemonic</span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Mnemonic" aria-label="Mnemonic" aria-describedby="basic-addon1" value="{{ activeCommand.mnemonic }}"
-                        data-bind="cmdFilter">
-                </div>
-                <div class="input-group mb-3" repeat="for argument in activeCommand.args">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon2">{{ argument.name }}</span>
-                    </div>
-                     I can use a closure to capture argument, or I can use replace of names to give arg's address, or I can
-                     use JS object properties, or I can use member variables to store the argument, or I can do recursive templates.
-
-                    <input type="text" class="input-control" placeholder="{{ argument.name }}" aria-label="{{ argument.name }}" aria-describedby="basic-addon2"
-                     data-bind="argument" value="{{ argument.value }}">
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Raw Command</span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1"
-                           value="{{ activeCommand.assembleRaw() }}">
-                    <div class="input-group-append">
-                        <button id="btn-clear" class="btn btn-outline-danger" type="button">Clear</button>
-                    </div>
-                    <div class="input-group-append">
-                        <button id="btn-send"  class="btn btn-outline-success" type="button">Send</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>-->

@@ -12,7 +12,7 @@ import {EventMixins} from "./event.js";
 
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "events", "channels"],
+    props:["commands", "loader", "cmdhist", "events", "channels"],
     data: function () {
         return {"currentTab": "Commanding", "tabs": ["Commanding", "Events", "Channels"]}
     }

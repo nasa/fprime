@@ -128,7 +128,7 @@ export class Loader {
         if ("interval" in this.endpoints[endpoint]) {
             clearInterval(this.endpoints[endpoint]["interval"]);
         }
-        this.endpoints[endpoint]["interval"] = setInterval(handler, 1000);
+        this.endpoints[endpoint]["interval"] = setInterval(handler, 10000);
         handler();
     }
  }
