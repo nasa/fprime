@@ -2,7 +2,7 @@
 ## Overview
 The Gds consists of a collection of classes and tools that provide an interface for fprime deployments, allowing users to view telemetry and events and send commands.
 
-The GDS WX GUI is an almost completely rewritten version of the fprime Gse. Both the Gse and Gds
+The GDS WX GUI is an almost completely rewritten version of the fprime GSE UI. Both the GSE and GDS
 use the ThreadedTCPServer to receive data from the fprime deployment. They also
 have very similar looking GUIs, start up scripts, and command line arguments.
 However, The infrastructure supporting each one is very different.
@@ -35,10 +35,10 @@ and can be easily modified.
 The Gds was designed to have flexible configurations of consumers for its various data decoders. This has been used to support several additional tools.
 
 ### GDS Standard Pipeline
-The standard pipeline can be thought of as a Python helper-layer to instantiate the GDS and connect to an FPrime deployment. The pipeline provides event, telemetry and command histories, sending commands and registering consumers to the GDS decoders. The Standard Pipeline and can be found [here](src/fprime_gds/common/pipeline/standard.py).
+The standard pipeline can be thought of as a Python helper-layer to instantiate the GDS and connect to an FPrime deployment. The pipeline provides event, telemetry and command histories, sending commands and registering consumers to the GDS decoders. The Standard Pipeline can be found [here](src/fprime_gds/common/pipeline/standard.py).
 
 ### GDS Integration Test API
-The Integration Test API is a tool that provides the ability to write integration-level tests for an FPrime deployment using the GDS. The tool provides history searches/asserts, command sending, a detailed test log, sub-histories and convenient access to GDS data objects. The test API comes with separate documentation and its own user guide and is built on top of the Standard Pipeline.
+The Integration Test API is a tool that provides the ability to write integration-level tests for an FPrime deployment using the GDS. The tool provides history searches/asserts, command sending, a detailed test log, sub-histories and convenient access to GDS data objects. The test API comes with separate documentation and its own [user guide](docs/testAPI/user_guide.md) and is built on top of the Standard Pipeline.
 
 ### GDS WX GUI
 The WX GUI is a user interface developed with the WX-Python. It uses the GDS to support a simple UI with command, event, and telemetry interfaces.
