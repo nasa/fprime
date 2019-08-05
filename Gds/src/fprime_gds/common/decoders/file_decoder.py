@@ -18,6 +18,10 @@ from fprime_gds.common.data_types import file_data
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import *
+#from timeout import timeout
+import multiprocessing as mp
+from multiprocessing import Process
+import time
 import traceback
 import datetime
 import os
@@ -41,11 +45,11 @@ class TestConsumer:
         #new_file.write(str(data))
         #print(type(data))
 
+
 #Main FileDecoder class
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
-
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = ''):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', time = 1):
         '''
         FileDecoder class constructor
 
@@ -61,6 +65,7 @@ class FileDecoder(decoder.Decoder):
 
         self._source_path = source_path
         self._dest_path = dest_path
+        self.time = time
 
         super(FileDecoder, self).__init__()
 
@@ -90,9 +95,7 @@ class FileDecoder(decoder.Decoder):
     def set_dest_path(self, x):
         self._dest_path = x
 
-
-
-
+    #@timeout(120)
     def data_callback(self, data):
         '''
         Function called to pass data to the decoder class
@@ -121,19 +124,24 @@ class FileDecoder(decoder.Decoder):
             Parsed version of the file data in the form of a File object
             or None if the data is not decodable
         '''
-        #decode_api still needs work I think
 
         #Decode file here
         packetType = PacketType(unpack('B', data[:1])[0]).name
-        seqID = unpack('I', data[1:5])[0]
+        seqID = unpack('>I', data[1:5])[0]
 
         #Packet Type determines the variables following the seqID
         if (packetType == 'START'):  #Packet Type is START
-            size = unpack('I', data[5:9])[0]
+            start_time = time.time() #Get start time to check for timeout error
+
+            size = unpack('>I', data[5:9])[0]
             lengthSP = unpack('B', data[9])[0] #Length of the source path
             sourcePath = data[10:lengthSP + 10]
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
+            
+            finish_time = time.time() #Get finish time to check if the decoding exceeded timeout duration
+            if (finish_time - start_time > 120):
+                    raise Exception("Timeout Error")
 
             #Create the log file where the soucePath and lengthDP will be placed
             self.create_log_file(sourcePath, lengthDP)
@@ -144,20 +152,24 @@ class FileDecoder(decoder.Decoder):
             return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
 
         elif (packetType == 'DATA'):   #Packet Type is DATA
+            start_time = time.time() #Get start time to check for timeout error
+
             offset = unpack('>I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
-            print(offset)
             file_dest = self.get_file() #retrieve the file destination
             file_dest.seek(offset, 0)
             file_dest.write(dataVar)    #write the data information to the destination file
-            #self.set_file(file_dest)    #Set the updated file
+            
+            finish_time = time.time() #Get finish time to check if the decoding exceeded timeout duration
+            if (finish_time - start_time > 3):
+                raise Exception("Timeout Error")
 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
         elif (packetType == 'END'):   #Packet Type is END
-            file_dest = self.get_file()
-            hashValue = unpack('I', data[5:9])[0]
+            start_time = time.time()
+            hashValue = unpack('>I', data[5:9])[0]
             file_dest.close()
 
             return file_data.EndPacketData(packetType, seqID, hashValue)
@@ -282,4 +294,3 @@ class FileDecoder(decoder.Decoder):
 
 if __name__ == "__main__":
     pass
-
