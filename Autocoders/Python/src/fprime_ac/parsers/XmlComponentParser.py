@@ -952,7 +952,7 @@ class XmlComponentParser(object):
 
     def validate_xml(self, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
-        if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
+        if not self.Config.has_option(validator_type, validator_name):
             msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
             PRINT.info(msg)
             print(msg)
