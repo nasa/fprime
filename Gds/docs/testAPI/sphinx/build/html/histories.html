@@ -1,0 +1,686 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Histories &mdash; Integration Test API Documentation 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Predicates" href="predicates.html" />
+    <link rel="prev" title="Integration Test API" href="integration_test_api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Integration Test API Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="integration_test_api.html">Integration Test API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Histories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-fprime_gds.common.history.history">History superclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#chronological-history">Chronological History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#test-history">Test History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#ram-history">Ram History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predicates.html">Predicates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_logger.html">Test Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="standard_pipeline.html">Standard Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_type.html">TimeType Serializable</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Integration Test API Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Histories</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/histories.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="histories">
+<h1>Histories<a class="headerlink" href="#histories" title="Permalink to this headline">¶</a></h1>
+<p>Presently there are several implementations of history within the GDS. They are all documented here.</p>
+</div>
+<div class="section" id="module-fprime_gds.common.history.history">
+<span id="history-superclass"></span><h1>History superclass<a class="headerlink" href="#module-fprime_gds.common.history.history" title="Permalink to this headline">¶</a></h1>
+<p>history.py:</p>
+<p>An ordered history that defines what interfaces a history should have within the GDS</p>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>koran</p>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fprime_gds.common.history.history.History">
+<em class="property">class </em><code class="sig-prename descclassname">fprime_gds.common.history.history.</code><code class="sig-name descname">History</code><a class="headerlink" href="#fprime_gds.common.history.history.History" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An ordered history to support the GDS. Histories are intended to be registered with decoders in
+order to handle incoming objects and store them for retrieval. The default behavior of a
+history is to maintain objects in the order they were enqueued. However, should a sub-history
+want to maintain a different order, this should be made clear to the user and still support the
+calls in this History class.</p>
+<dl class="method">
+<dt id="fprime_gds.common.history.history.History.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.history.History.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor used to set-up  a history.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.history.History.data_callback">
+<code class="sig-name descname">data_callback</code><span class="sig-paren">(</span><em class="sig-param">data_object</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.history.History.data_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data callback to push an object on the history.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_object: object to store</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.history.History.retrieve">
+<code class="sig-name descname">retrieve</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.history.History.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve objects from this history. If a starting point is specified, will return a
+sub-list of all objects beginning at starting point in the order to the latest object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>start: a position in the history’s order. Start should always be able to be specified</dt><dd><p>by an index (int).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>an ordered list of objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.history.History.retrieve_new">
+<code class="sig-name descname">retrieve_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.history.History.retrieve_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves an ordered list of objects that have been enqueued since the last call to
+retrieve or retrieve_new.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>an ordered list of objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.history.History.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.history.History.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears objects from history. A clear that specifies a starting point will clear the history
+such that start becomes the earliest (with respect to the history’s order) element in the
+history after objects are removed.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>start: a position in the history’s order. Start should always be able to be specified</dt><dd><p>by an index (int).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.history.History.size">
+<code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.history.History.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of objects in the history
+Returns:</p>
+<blockquote>
+<div><p>the number of objects (int)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fprime_gds.common.history.history.History.__weakref__">
+<code class="sig-name descname">__weakref__</code><a class="headerlink" href="#fprime_gds.common.history.history.History.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="chronological-history">
+<h1>Chronological History<a class="headerlink" href="#chronological-history" title="Permalink to this headline">¶</a></h1>
+<p>ChronologicalHistory is the primary history of the Test API.</p>
+<span class="target" id="module-fprime_gds.common.history.chrono"></span><p>chrono.py:</p>
+<p>A chronologically-ordered history that relies on predicates to provide filtering, searching, and
+retrieval operations. This history will re-order itself based on FSW time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>koran</p>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory">
+<em class="property">class </em><code class="sig-prename descclassname">fprime_gds.common.history.chrono.</code><code class="sig-name descname">ChronologicalHistory</code><span class="sig-paren">(</span><em class="sig-param">filter_pred=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fprime_gds.common.history.history.History" title="fprime_gds.common.history.history.History"><code class="xref py py-class docutils literal notranslate"><span class="pre">fprime_gds.common.history.history.History</span></code></a></p>
+<p>A chronological history to support the GDS test api. This history adds support for specifying
+start with predicates and python’s bracket notation.</p>
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filter_pred=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor used to set-up history. If the history is given a filter, it will ignore (drop)
+objects that don’t satisfy the filter predicate.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>filter_pred: an optional predicate to filter incoming data_objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.data_callback">
+<code class="sig-name descname">data_callback</code><span class="sig-paren">(</span><em class="sig-param">data_object</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.data_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data callback to push an object on the history. This callback will only add data_objects
+that satisfy the filter predicate.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_object: object to store</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.retrieve">
+<code class="sig-name descname">retrieve</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve objects from this history. If a starting point is specified, will return a
+sub-list of all objects beginning at start to the latest object.
+Note: if no item satisfies the start predicate or the index is greater than the length of
+the history, an empty list will be returned.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start: optional first object to retrieve. can either be an index (int) or a predicate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>a list of objects in chronological order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.retrieve_new">
+<code class="sig-name descname">retrieve_new</code><span class="sig-paren">(</span><em class="sig-param">repeats=False</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.retrieve_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a chronological order of objects that haven’t been accessed through retrieve or
+retrieve_new before.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>a list of objects in chronological order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears objects from history. A clear that specifies a starting point will clear the history
+such that start becomes the earliest element in the history after objects are removed. If
+the start is specified as a predicate, start will be the earliest object to satisfy the
+predicate.
+Note: if no item satisfies the start predicate or the index is greater than the length of
+the history, all items will be cleared.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>start: start: an optional indicator for the first item to remove. Can be a predicate, a</dt><dd><p>TimeType or an index in the ordering</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.size">
+<code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of objects in the history
+Returns:</p>
+<blockquote>
+<div><p>the number of objects (int)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.__len__">
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of objects in the history
+Returns:</p>
+<blockquote>
+<div><p>the number of objects</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory.__getitem__">
+<code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">index</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>__get_item__ is a special method in python that allows using brackets.
+Example: item = history[2] # this would return the second item in the history.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>index: the index of the array to return.</p>
+</dd>
+<dt>Returns:</dt><dd><p>the item at the index specified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory._ChronologicalHistory__clear_list">
+<code class="sig-name descname">_ChronologicalHistory__clear_list</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">ordered</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory._ChronologicalHistory__clear_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the index that start specifies
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>start: an optional indicator for the first item to remove. Can be a predicate, a</dt><dd><p>TimeType or an index in the ordering</p>
+</dd>
+</dl>
+<p>ordered: the list to clear</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>the index in the given list that start refers to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory._ChronologicalHistory__get_index">
+<code class="sig-name descname">_ChronologicalHistory__get_index</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">ordered</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory._ChronologicalHistory__get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the index that start specifies
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>start: an indicator of a position in an order can be a predicate, a TimeType time</dt><dd><p>stamp or an index in the ordering</p>
+</dd>
+</dl>
+<p>ordered: the list to clear</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>the index in the given list that start refers to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.chrono.ChronologicalHistory._ChronologicalHistory__insert_chrono">
+<code class="sig-name descname">_ChronologicalHistory__insert_chrono</code><span class="sig-paren">(</span><em class="sig-param">data_object</em>, <em class="sig-param">ordered</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.chrono.ChronologicalHistory._ChronologicalHistory__insert_chrono" title="Permalink to this definition">¶</a></dt>
+<dd><p>traverses the existing order (back to front) and inserts the data object in the correct
+position chronologically.
+Args:</p>
+<blockquote>
+<div><p>data_object: an item to insert in the history. Must have a get_time() method.
+ordered: a list to insert the item into.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>the index that the item was inserted at (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="test-history">
+<h1>Test History<a class="headerlink" href="#test-history" title="Permalink to this headline">¶</a></h1>
+<p>Test History is an optional history for the IntegrationTestAPI. It supports predicate searching and maintains the object order it was enqueued with.</p>
+<span class="target" id="module-fprime_gds.common.history.test"></span><p>test.py:</p>
+<p>A receive-ordered history that relies on predicates to provide filtering, searching, and
+retrieval operations</p>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>koran</p>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fprime_gds.common.history.test.TestHistory">
+<em class="property">class </em><code class="sig-prename descclassname">fprime_gds.common.history.test.</code><code class="sig-name descname">TestHistory</code><span class="sig-paren">(</span><em class="sig-param">filter_pred=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fprime_gds.common.history.history.History" title="fprime_gds.common.history.history.History"><code class="xref py py-class docutils literal notranslate"><span class="pre">fprime_gds.common.history.history.History</span></code></a></p>
+<p>A receive-ordered history to support the GDS test api. This history adds support for specifying
+start with predicates and python’s bracket notation.</p>
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filter_pred=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor used to set-up history. If the history is given a filter, it will ignore (drop)
+objects that don’t satisfy the filter predicate.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>filter_pred: an optional predicate to filter incoming data_objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.data_callback">
+<code class="sig-name descname">data_callback</code><span class="sig-paren">(</span><em class="sig-param">data_object</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.data_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data callback to push an object on the history. This callback will only add data_objects
+that satisfy the filter predicate.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_object: object to store</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.retrieve">
+<code class="sig-name descname">retrieve</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve objects from this history. If a starting point is specified, will return a
+sub-list of all objects beginning at start to the latest object.
+Note: if no item satisfies the start predicate or the index is greater than the length of
+the history, an empty list will be returned.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start: optional first object to retrieve. can either be an index (int) or a predicate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>a list of objects in chronological order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.retrieve_new">
+<code class="sig-name descname">retrieve_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.retrieve_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a chronological order of objects that haven’t been accessed through retrieve or
+retrieve_new before.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>a list of objects in chronological order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears objects from history. A clear that specifies a starting point will clear the history
+such that start becomes the earliest element in the history after objects are removed. If
+the start is specified as a predicate, start will be the earliest object to satisfy the
+predicate.
+Note: if no item satisfies the start predicate or the index is greater than the length of
+the history, all items will be cleared.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start: clear all objects before start. start can either be an index or a predicate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.size">
+<code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of objects in the history
+Returns:</p>
+<blockquote>
+<div><p>the number of objects (int)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.__len__">
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of objects in the history
+Returns:</p>
+<blockquote>
+<div><p>the number of objects</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory.__getitem__">
+<code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">index</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>__get_item__ is a special method in python that allows using brackets.
+Example: item = history[2] # this would return the second item in the history.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>index: the index of the array to return.</p>
+</dd>
+<dt>Returns:</dt><dd><p>the item at the index specified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.test.TestHistory._TestHistory__get_index">
+<code class="sig-name descname">_TestHistory__get_index</code><span class="sig-paren">(</span><em class="sig-param">start</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.test.TestHistory._TestHistory__get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the index that start specifies
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>start: an indicator of a position in an order can be a predicate or an index in</dt><dd><p>the ordering</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>the index in the given list that start refers to</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="ram-history">
+<h1>Ram History<a class="headerlink" href="#ram-history" title="Permalink to this headline">¶</a></h1>
+<p>Ram history is used by the Standard Pipeline making it the default history for several GDS Tools.</p>
+<span class="target" id="module-fprime_gds.common.history.ram"></span><p>ram.py:</p>
+<p>A simple implementation of of a history that maintains items in RAM. This is used for simplicity, but isn’t exactly
+robust nor persistent. Given that it is in thr RAM, it is driven from the the decoders object, which should run off the
+middle-ware layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>lestarch</p>
+</dd>
+</dl>
+<dl class="class">
+<dt id="fprime_gds.common.history.ram.RamHistory">
+<em class="property">class </em><code class="sig-prename descclassname">fprime_gds.common.history.ram.</code><code class="sig-name descname">RamHistory</code><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fprime_gds.common.history.history.History" title="fprime_gds.common.history.history.History"><code class="xref py py-class docutils literal notranslate"><span class="pre">fprime_gds.common.history.history.History</span></code></a></p>
+<p>Chronological variant of history.  This is intended to be registered with the decoders in order
+to handle incoming objects, and store them for retrieval.</p>
+<dl class="method">
+<dt id="fprime_gds.common.history.ram.RamHistory.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor used to set-up in-memory store for history</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.ram.RamHistory.data_callback">
+<code class="sig-name descname">data_callback</code><span class="sig-paren">(</span><em class="sig-param">data_object</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory.data_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data callback to store
+:param data_object: object to store</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.ram.RamHistory.retrieve">
+<code class="sig-name descname">retrieve</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve objects from this history
+:param start: return all objects newer than given start time
+:return: a list of objects</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.ram.RamHistory.retrieve_new">
+<code class="sig-name descname">retrieve_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory.retrieve_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a chronological order of objects that haven’t been accessed through retrieve or
+retrieve_new before.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>a list of objects in chronological order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.ram.RamHistory.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears objects from RamHistory. A clear that specifies a starting point will clear the
+history such that the element at the start index becomes the earliest element in the
+history after objects are removed.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start: a position in the history’s order (int).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime_gds.common.history.ram.RamHistory.size">
+<code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime_gds.common.history.ram.RamHistory.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of objects in the history
+Returns:</p>
+<blockquote>
+<div><p>the number of objects (int)</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="predicates.html" class="btn btn-neutral float-right" title="Predicates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="integration_test_api.html" class="btn btn-neutral float-left" title="Integration Test API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Kevin Oran
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

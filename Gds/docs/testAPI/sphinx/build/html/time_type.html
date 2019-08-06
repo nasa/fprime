@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>TimeType Serializable &mdash; Integration Test API Documentation 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Standard Pipeline" href="standard_pipeline.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Integration Test API Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="integration_test_api.html">Integration Test API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="histories.html">Histories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="histories.html#module-fprime_gds.common.history.history">History superclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="histories.html#chronological-history">Chronological History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="histories.html#test-history">Test History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="histories.html#ram-history">Ram History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predicates.html">Predicates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_logger.html">Test Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="standard_pipeline.html">Standard Pipeline</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TimeType Serializable</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Integration Test API Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>TimeType Serializable</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/time_type.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="timetype-serializable">
+<h1>TimeType Serializable<a class="headerlink" href="#timetype-serializable" title="Permalink to this headline">¶</a></h1>
+<p>The TimeType object from the framework code has been modified to be easier to compare and do math operations on.</p>
+<span class="target" id="module-fprime.common.models.serialize.time_type"></span><p>&#64;file time_tag.py
+&#64;brief Class used to parse and store time tags sent with serialized data</p>
+<p>This Class is used to parse, store, and create human readable strings for the
+time tags sent with serialized data in the fprime architecture.</p>
+<p>&#64;date Created Dec 16, 2015
+&#64;author: dinkel</p>
+<p>&#64;date Updated June 18, 2018
+&#64;author R. Joseph Paetz (<a class="reference external" href="mailto:rpaetz&#37;&#52;&#48;jpl&#46;nasa&#46;gov">rpaetz<span>&#64;</span>jpl<span>&#46;</span>nasa<span>&#46;</span>gov</a>)</p>
+<p>&#64;date Updated July 22, 2019
+&#64;author Kevin C Oran (<a class="reference external" href="mailto:kevin&#46;c&#46;oran&#37;&#52;&#48;jpl&#46;nasa&#46;gov">kevin<span>&#46;</span>c<span>&#46;</span>oran<span>&#64;</span>jpl<span>&#46;</span>nasa<span>&#46;</span>gov</a>)</p>
+<p>&#64;bug No known bugs</p>
+<dl class="class">
+<dt id="fprime.common.models.serialize.time_type.TimeBase">
+<em class="property">class </em><code class="sig-prename descclassname">fprime.common.models.serialize.time_type.</code><code class="sig-name descname">TimeBase</code><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fprime.common.models.serialize.time_type.TimeType">
+<em class="property">class </em><code class="sig-prename descclassname">fprime.common.models.serialize.time_type.</code><code class="sig-name descname">TimeType</code><span class="sig-paren">(</span><em class="sig-param">time_base=0</em>, <em class="sig-param">time_context=0</em>, <em class="sig-param">seconds=0</em>, <em class="sig-param">useconds=0</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">fprime.common.models.serialize.type_base.BaseType</span></code></p>
+<p>Representation of the time type</p>
+<p>Used to parse, store, and create human readable versions of the time tags
+included in serialized output from fprime_gds systems</p>
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">time_base=0</em>, <em class="sig-param">time_context=0</em>, <em class="sig-param">seconds=0</em>, <em class="sig-param">useconds=0</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+<dl>
+<dt>Args</dt><dd><dl class="simple">
+<dt>time_base (int): Time base index for the time tag. Must be a valid</dt><dd><p>integer for a TimeBase Enum value.</p>
+</dd>
+</dl>
+<p>time_context (int): Time context for the time tag
+seconds (int): Seconds elapsed since specified time base
+useconds (int): Microseconds since start of current second. Must</p>
+<blockquote>
+<div><p>be in range [0, 999999] inclusive</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>An initialized TimeType object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType._check_useconds">
+<code class="sig-name descname">_check_useconds</code><span class="sig-paren">(</span><em class="sig-param">useconds</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType._check_useconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given microsecond value is valid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>usecs (int): The value to check</p>
+</dd>
+<dt>Returns:</dt><dd><p>None if valid, raises TypeRangeException if not valid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType._check_time_base">
+<code class="sig-name descname">_check_time_base</code><span class="sig-paren">(</span><em class="sig-param">time_base</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType._check_time_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given TimeBase value is valid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>time_base (int): The value to check</p>
+</dd>
+<dt>Returns:</dt><dd><p>Returns if valid, raises TypeRangeException if not valid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.to_jsonable">
+<code class="sig-name descname">to_jsonable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.to_jsonable" title="Permalink to this definition">¶</a></dt>
+<dd><p>JSONable object format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes the time type</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Byte array containing serialized time type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.deserialize">
+<code class="sig-name descname">deserialize</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">offset</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserializes a serialized time type in data starting at offset.</p>
+<p>Internal values to the object are updated.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: binary data containing the time tag (type = bytearray)
+offset: Index in data where time tag starts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.getSize">
+<code class="sig-name descname">getSize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.getSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the size of the time type object when serialized</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The size of the time type object when serialized</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.compare">
+<em class="property">static </em><code class="sig-name descname">compare</code><span class="sig-paren">(</span><em class="sig-param">t1</em>, <em class="sig-param">t2</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares two TimeType objects</p>
+<p>This function sorts times in the order of: timeBase, secs, usecs, and
+then timeContext.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Negative, 0, or positive for t1&lt;t2, t1==t2, t1&gt;t2 respectively</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__str__">
+<code class="sig-name descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the time type object for printing</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A string representing the time type object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.to_readable">
+<code class="sig-name descname">to_readable</code><span class="sig-paren">(</span><em class="sig-param">time_zone=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.to_readable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string of the time object in a human readable format</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>time_zone (tzinfo, default=None): Time zone to convert the TimeType</dt><dd><p>object to before printing. Timezone also displayed.
+If time_zone=None, local timezone is used.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>A human readable string reperesenting the time type object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.get_datetime">
+<code class="sig-name descname">get_datetime</code><span class="sig-paren">(</span><em class="sig-param">tz=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.get_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the python datetime object for UTC time</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>tz (tzinfo, default=None): timezone to create the datetime object</dt><dd><p>in. If tz=None, local time zone used.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>datetime object for the time type or None if the time couldn’t
+be determined.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__repr__">
+<code class="sig-name descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return repr(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__lt__">
+<code class="sig-name descname">__lt__</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__lt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&lt;value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__le__">
+<code class="sig-name descname">__le__</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__le__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&lt;=value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__eq__">
+<code class="sig-name descname">__eq__</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self==value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__ne__">
+<code class="sig-name descname">__ne__</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self!=value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__gt__">
+<code class="sig-name descname">__gt__</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__gt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&gt;value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType.__ge__">
+<code class="sig-name descname">__ge__</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType.__ge__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&gt;=value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType._TimeType__get_float">
+<code class="sig-name descname">_TimeType__get_float</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType._TimeType__get_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>a helper method that gets the current TimeType as a float where the non-fraction is seconds
+and the fraction is microseconds. This enables comparisons with numbers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType._TimeType__get_type_from_float">
+<code class="sig-name descname">_TimeType__get_type_from_float</code><span class="sig-paren">(</span><em class="sig-param">num</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType._TimeType__get_type_from_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>a helper method that returns a new instance of TimeType and sets the seconds and useconds
+fields using the given number. The new TimeType’s time_base and time_context will be
+preserved from the calling object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fprime.common.models.serialize.time_type.TimeType._TimeType__set_float">
+<code class="sig-name descname">_TimeType__set_float</code><span class="sig-paren">(</span><em class="sig-param">num</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.TimeType._TimeType__set_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>a helper method that takes a float and sets a TimeType’s seconds and useconds fields.
+Note: This method is private because it is only used by the _get_type_from_float helper to
+generate new TimeType instances. It is not meant to be used to modify an existing timestamp.
+Note: Present implementation will set any negative result to 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="fprime.common.models.serialize.time_type.ser_deser_test">
+<code class="sig-prename descclassname">fprime.common.models.serialize.time_type.</code><code class="sig-name descname">ser_deser_test</code><span class="sig-paren">(</span><em class="sig-param">t_base</em>, <em class="sig-param">t_context</em>, <em class="sig-param">secs</em>, <em class="sig-param">usecs</em>, <em class="sig-param">should_err=False</em><span class="sig-paren">)</span><a class="headerlink" href="#fprime.common.models.serialize.time_type.ser_deser_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test serialization/deserialization of TimeType objects.</p>
+<p>This test function creates a time type object with the given parameters and
+then serializes it and deserializes it. Also prints it for visual inspection
+of the formatted output.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>t_base (int): Time base for the new time type object
+t_context (int): Time context for the new time type object
+secs (int): Seconds value for the new time type object
+usecs (int): Seconds value for the new time type object
+should_err (int): True if error expected, else False</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if test passed, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="standard_pipeline.html" class="btn btn-neutral float-left" title="Standard Pipeline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Kevin Oran
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
