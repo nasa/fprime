@@ -66,6 +66,7 @@ class XmlTopologyParser(object):
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.__comp_type_file_header = {} #used to gather header file locations. Optional arg
         #
+        self.Config = self.__config
         self.__base_id = None
         self.__base_id_window = None
 
