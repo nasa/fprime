@@ -96,6 +96,21 @@ def compare_genfile(filename):
     else:
         print("{} is consistent with expected template".format(filename))
 
+def toggle_cmakelist_enumxml(should_include):
+    with open("CMakeLists.txt", "r+") as cmakelists:
+        lines = cmakelists.readlines()
+        cmakelists.seek(0)
+    
+        for line in lines:
+            if "/enum_xml" in line:
+                if should_include:
+                    cmakelists.write("\tadd_fprime_subdirectory(\"${CMAKE_CURRENT_LIST_DIR}/enum_xml\")\n")
+                else:
+                    cmakelists.write("#add_fprime_subdirectory(\"${CMAKE_CURRENT_LIST_DIR}/enum_xml\")\n")
+            else:
+                cmakelists.write(line)
+        cmakelists.close()
+
 def test_enum():
     """
     Tests that enum xml is being generated correctly
@@ -104,14 +119,6 @@ def test_enum():
     @TODO: This test and others need the cmake setup instructions.
     """
     try:
-        # Need to cd into test directory in order to run codegen, will return after completion
-        curdir = os.getcwd()
-        testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml"
-        os.chdir(testdir)
-        
-        expect_step = "enum and serializable"
-
         # Check required environmental variables are set
         if "PYTHONPATH" in os.environ.keys():
             print("\nFound PYTHONPATH = {}".format(os.environ['PYTHONPATH']))
@@ -127,6 +134,23 @@ def test_enum():
             print("Found FPRIME_CORE_DIR = {}".format(os.environ['FPRIME_CORE_DIR']))
         else:
             assert False
+        
+
+        curdir = os.getcwd()
+        
+        # Need to cd into test directory in order to add test to CMakeList
+        testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        testdir = testdir + os.sep + "Python" + os.sep + "test" + os.sep
+        os.chdir(testdir)
+
+        toggle_cmakelist_enumxml(True)
+        
+        # Need to cd into test directory in order to run codegen, will return after completion
+        enumtestdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
+        enumtestdir = enumtestdir + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml"
+        os.chdir(enumtestdir)
+        
+        expect_step = "enum and serializable"
         
         ## Spawn executable
         cmd = "python " + os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
@@ -287,6 +311,9 @@ def test_enum():
         
         ptestrun.expect(r".*Completed.*", timeout=3)
         print("Finished running test cases, enum xml test passed")
+        
+        os.chdir(testdir)
+        toggle_cmakelist_enumxml(False)
         
         os.chdir(curdir)
         

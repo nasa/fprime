@@ -31,6 +31,9 @@ except ImportError:
 #from __builtin__ import None
 from pickle import NONE
 
+# For Python determination
+import six
+
 #
 # Python extension modules and custom interfaces
 #
@@ -65,6 +68,13 @@ class XmlComponentParser(object):
         self.__instances = None # Stores number of detected instances based on id base values
 
         #
+        if os.path.isfile(xml_file) == False:
+            stri = "ERROR: Could not find specified XML file %s." % xml_file
+            PRINT.info(stri)
+            raise IOError(stri)
+        
+        fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         #
         self.Config = ConfigManager.ConfigManager.getInstance()
@@ -76,18 +86,13 @@ class XmlComponentParser(object):
         constants_file = ROOTDIR + os.sep + self.Config.get('constants','constants_file')
         ## make sure it is a real file
         if os.path.isfile(constants_file):
-            self.__const_parser = configparser.SafeConfigParser()
+            if six.PY2:
+                self.__const_parser = configparser.SafeConfigParser()
+            else:
+                self.__const_parser = configparser.ConfigParser()
             self.__const_parser.read(constants_file)
         else:
             self.__const_parser = None
-
-        #
-        if os.path.isfile(xml_file) == False:
-            stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise IOError(stri)
-
-        fd = open(xml_file,'r')
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)

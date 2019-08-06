@@ -52,6 +52,13 @@ class XmlTopologyParser(object):
         self.__name = None
         self.__deployment = None
         self.__comment = ""
+        if os.path.isfile(xml_file) == False:
+            stri = "ERROR: Could not find specified XML file %s." % xml_file
+            PRINT.info(stri)
+            raise IOError(stri)
+        
+        fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         self.__instances = []
         self.__connections = []
@@ -63,15 +70,6 @@ class XmlTopologyParser(object):
         self.__base_id_window = None
 
         self.__prepend_instance_name = False #Used to turn off prepending instance name in the situation where instance dicts are being generated and only one instance of an object is created
-        
-        self.Config = self.__config
-
-        if os.path.isfile(xml_file) == False:
-            stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise IOError(stri)
-
-        fd = open(xml_file,'r')
         element_tree = etree.parse(fd)
 
         #Validate against schema

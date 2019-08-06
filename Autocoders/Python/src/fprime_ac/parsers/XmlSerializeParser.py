@@ -79,17 +79,17 @@ class XmlSerializeParser(object):
         # Type ID for serialized type
         self.__type_id = None
         #
+        if os.path.isfile(xml_file) == False:
+            stri = "ERROR: Could not find specified XML file %s." % xml_file
+            PRINT.info(stri)
+            raise
+        fd = open(xml_file,'r')
+#        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
         self.__config       = ConfigManager.ConfigManager.getInstance()
 
         #
-        if os.path.isfile(xml_file) == False:
-            stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise
-
-        fd = open(xml_file,'r')
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)

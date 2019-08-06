@@ -61,14 +61,14 @@ class XmlPortsParser(object):
         self.__enum_list_items = []
         self.__modifier = None
         #
-        self.__xml_filename = xml_file
-        #
         if os.path.isfile(xml_file) == False:
             str = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(str)
             raise IOError(str)
-
         fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
+        self.__xml_filename = xml_file
+        #
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
