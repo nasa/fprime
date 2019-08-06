@@ -78,14 +78,13 @@ class SomeTestCases(unittest.TestCase):
 # used when this unit test were to be run as a python module
 if __name__ == "__main__":
     unittest.main()
-
 ~~~~
 
 ## Integration Test API Organization
 
 ### Integration Test API Outline
 
-The actual Test API is a very long document that has helpful doc-strings, but these don't convey its organization while skimming. Below is a table of how the API is organized with a brief summary of each section:
+The actual Test API is a very long class that has helpful doc-strings, but these don't convey its organization while skimming. Below is a table of how the API is organized with a brief summary of each section:
 
 | Test API Section| Section Description| Methods|
 | :----| :----| :----|
@@ -99,20 +98,37 @@ The actual Test API is a very long document that has helpful doc-strings, but th
 | Event Asserts| These functions search and assert for event messages.| assert_event, assert_event_sequence, assert_event_count|
 | History Searches| These functions implement the various searches in the API. They aren't meant for the user, but are mentioned to highlight where searches are actually performed.| __search_test_history, find_history_item, find_history_sequence, find_history_count|
 
-
 For detailed descriptions of the API's methods see the IntegrationTestAPI's sphinx documentation [here](TODO). One thing to note about the API's implementation is that the API uses layering so that all searches can be defined by common arguments and share similar behaviors. A diagram of this layering is provided below.
 
-TODO Search Layering Diagram
+![Diagram of GDS Search Layering](assets/APISearchLayering.png)
 
+This table outlines the additional functionality provided by each layer in the search hierarchy.
 
+|Layer Name| Diagram Row| Delegated Functionality|
+| :---| ---:| :---|
+| Assert Layer| 1| This layer adds an assert to the end of the search to check if the search completed successfully.|
+| Await Layer| 2| This layer differentiates whether the particular search is acting on the event or telemetry history.|
+| Search Type Layer| 3| This layer determines what kind of search is being conducted. The API provides 3 types: item, count, and sequence.|
+| Search Helper| 4| The search helper provides the logic, logging, search scoping. and sub-history functionality for all three searches.|
 
 ### Integration Test Classes
 
-TODO Search Layering Diagram
+The API uses several classes to support its features. They were organized within the already-present GDS class folder structure. A component view of the Integration Test API and its relationship to the Integration Tests and the GDS is shown in the diagram below. For simplicity, the predicates library has been left out, but it can be used by Integration tests and is used by the Test API and Test History layers.
+![Component View of the Test Framework](assets/TestFwComponentView.png)
 
-## API Features the user should be aware of
+## Important API Features
 
 ### Specifying Search Scope (start, timeout)
+All searches in the Integration Test API rely on two common variables to define the scope of what is searched: start and timeout. Start is also used to specify the earliest item to remain when histories are only partially cleared.
+
+The start argument specifies the starting point in an existing history. Start can be either an index in the history's ordering, a predicate, or a TimeType timestamp. Because the Test API's histories support re-ordering, the TimeType timestamp is the most reliable marker for start. A predicate can also be used to specify a start. For example, if the assert is only to begin after a certain EVR was received then an event_predicate instance could be used to find the first element to search. If start is not specified, see the particular API function to learn the default behavior.
+
+The timeout argument specifies how long (in seconds) a search should await until the search criteria is met. Searches that await a yet-to-be-received item can only specify how long to await via timeout.
+
+![Search Scope diagram](assets/APISearchScope.png)
+
+#### Default Search Scope for await and assert calls
+Because all search calls in the API can modify their search scope in the same way. The API doesn't use
 
 ### Substituting a history (history)
 
