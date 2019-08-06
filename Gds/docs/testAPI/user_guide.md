@@ -1,6 +1,6 @@
 # GDS Integration Test API User Guide
 
-The GDS Integration Test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](TODO) for the IntegrationTestAPI's sphinx-generated documentation.
+The GDS Integration Test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](sphinx/build/html/index.html) for the IntegrationTestAPI's sphinx-generated documentation.
 
 ## Quick Start
 
@@ -100,7 +100,7 @@ The actual Test API is a very long class that has helpful doc-strings, but these
 | Event Asserts| These functions search and assert for event messages.| assert_event, assert_event_sequence, assert_event_count|
 | History Searches| These functions implement the various searches in the API. They aren't meant for the user, but are mentioned to highlight where searches are actually performed.| __search_test_history, find_history_item, find_history_sequence, find_history_count|
 
-For detailed descriptions of the API's methods see the IntegrationTestAPI's sphinx documentation [here](TODO). One thing to note about the API's implementation is that the API uses layering so that all searches can be defined by common arguments and share similar behaviors. A diagram of this layering is provided below. In the diagram, each box is an API call. The arrows show how the calls are layered.
+For detailed descriptions of the API's methods see the IntegrationTestAPI's sphinx documentation [here](sphinx/build/html/index.html). One thing to note about the API's implementation is that the API uses layering so that all searches can be defined by common arguments and share similar behaviors. A diagram of this layering is provided below. In the diagram, each box is an API call. The arrows show how the calls are layered.
 
 ![Diagram of GDS Search Layering](assets/APISearchLayering.png)
 
