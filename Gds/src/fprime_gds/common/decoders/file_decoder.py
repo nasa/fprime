@@ -49,7 +49,7 @@ class TestConsumer:
 #Main FileDecoder class
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', time = 1):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', start_time = 0, finish_time = 0, first_time = True):
         '''
         FileDecoder class constructor
 
@@ -62,10 +62,11 @@ class FileDecoder(decoder.Decoder):
         '''
         #This is used to keep track of the destination file across the class
         self._file_dest_data = file_dest_data
-
         self._source_path = source_path
         self._dest_path = dest_path
-        self.time = time
+        self.start_time = start_time
+        self.finish_time = finish_time
+        self.first_time = first_time
 
         super(FileDecoder, self).__init__()
 
@@ -103,6 +104,10 @@ class FileDecoder(decoder.Decoder):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
+        if (self.first_time):
+            self.start_time = time.time()
+            self.first_time = False
+
         result = self.decode_api(data)
 
         # Make sure we don't send None data
@@ -125,23 +130,23 @@ class FileDecoder(decoder.Decoder):
             or None if the data is not decodable
         '''
 
+        self.finish_time = time.time()
+        print(self.finish_time - self.start_time)
+        if (self.finish_time - self.start_time > 3):
+            print("I have timed out")
+            raise Exception("Timeout Error has occured")
+
         #Decode file here
         packetType = PacketType(unpack('B', data[:1])[0]).name
         seqID = unpack('>I', data[1:5])[0]
 
         #Packet Type determines the variables following the seqID
         if (packetType == 'START'):  #Packet Type is START
-            start_time = time.time() #Get start time to check for timeout error
-
             size = unpack('>I', data[5:9])[0]
             lengthSP = unpack('B', data[9])[0] #Length of the source path
             sourcePath = data[10:lengthSP + 10]
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
-            
-            finish_time = time.time() #Get finish time to check if the decoding exceeded timeout duration
-            if (finish_time - start_time > 120):
-                    raise Exception("Timeout Error")
 
             #Create the log file where the soucePath and lengthDP will be placed
             self.create_log_file(sourcePath, lengthDP)
@@ -149,33 +154,33 @@ class FileDecoder(decoder.Decoder):
             #Create the destination file where the DATA packet data will be stored
             self.create_dest_file(destPath)
 
+            self.start_time = time.time()
+
             return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
 
         elif (packetType == 'DATA'):   #Packet Type is DATA
-            start_time = time.time() #Get start time to check for timeout error
-
             offset = unpack('>I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
             file_dest = self.get_file() #retrieve the file destination
             file_dest.seek(offset, 0)
             file_dest.write(dataVar)    #write the data information to the destination file
-            
-            finish_time = time.time() #Get finish time to check if the decoding exceeded timeout duration
-            if (finish_time - start_time > 3):
-                raise Exception("Timeout Error")
+
+            self.start_time = time.time()
 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
         elif (packetType == 'END'):   #Packet Type is END
-            start_time = time.time()
             hashValue = unpack('>I', data[5:9])[0]
+            file_dest = self.get_file()
             file_dest.close()
+            self.first_time = True
 
             return file_data.EndPacketData(packetType, seqID, hashValue)
 
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
+            self.first_time = True
             return file_data.CancelPacketData(packetType, seqID)
 
         #The data was not determined to be any of the packet types so return none
