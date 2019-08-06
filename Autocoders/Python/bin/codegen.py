@@ -1261,7 +1261,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     if type == "interface":
         file_list = parser.get_include_header_files() + parser.get_includes_serial_files() + parser.get_include_enum_files()
     elif type == "component":
-        file_list = parser.get_port_type_files() + parser.get_header_files() + parser.get_serializable_type_files() + parser.get_imported_dictionary_files() + get_enum_type_files()
+        file_list = parser.get_port_type_files() + parser.get_header_files() + parser.get_serializable_type_files() + parser.get_imported_dictionary_files() + parser.get_enum_type_files()
     elif type == "serializable":
         file_list = parser.get_include_header_files() + parser.get_includes() + parser.get_include_enums()
     elif type == "assembly" or  type == "deployment":

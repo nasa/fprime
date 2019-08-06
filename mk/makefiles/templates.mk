@@ -14,6 +14,7 @@ compile-templates:
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/impl && $(MAKE) -f Makefile
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/topology && $(MAKE) -f Makefile
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/test_impl && $(MAKE) -f Makefile
+	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/enums && $(MAKE) -f Makefile
 
 clean-templates:
 	@echo "Cleaning templates"
@@ -30,4 +31,5 @@ clean-templates:
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/impl && $(MAKE) -f Makefile clean
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/topology && $(MAKE) -f Makefile clean
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/test_impl && $(MAKE) -f Makefile clean
+	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/enums && $(MAKE) -f Makefile clean
 	
