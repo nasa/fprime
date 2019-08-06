@@ -210,7 +210,7 @@ def test_enum():
         if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml" + os.sep + "Makefile"):
             pcmake = pexpect.spawn("cmake .. -DCMAKE_BUILD_TYPE=TESTING")
             pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
-            print("Successfully ran cmake for testgen test")
+            print("Successfully ran cmake for enum xml test")
 
         # Build ut
         pbuild = pexpect.spawn("make Autocoders_Python_test_enum_xml_ut_exe -j32")
