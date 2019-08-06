@@ -23,6 +23,7 @@ import time
 from fprime_ac.utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
+from lxml import isoschematron
 from fprime_ac.parsers import XmlParser
 #
 # Python extention modules and custom interfaces
@@ -71,6 +72,8 @@ class XmlEnumParser(object):
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
         
+        self.validate_xml(xml_file, element_tree, 'schematron', 'enum_value')
+        
         self.check_enum_values(element_tree)
 
         # 2/3 conversion
@@ -104,6 +107,30 @@ class XmlEnumParser(object):
                 item['value'] = ""
             
             self.__items.append((item['name'],item['value'],item['comment']))
+
+    def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
+        # Check that validator is valid
+        if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
+            msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
+            PRINT.info(msg)
+            print(msg)
+            raise Exception(msg)
+                                
+        # Create proper xml validator tool
+        validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
+        validator_parsed = etree.parse(validator_file_handler)
+        validator_file_handler.close()
+        if validator_type == 'schema':
+            validator_compiled = etree.RelaxNG(validator_parsed)
+        elif validator_type == 'schematron':
+            validator_compiled = isoschematron.Schematron(validator_parsed)
+                                                
+        # Validate XML file
+        if not validator_compiled.validate(parsed_xml_tree):
+            msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+            PRINT.info(msg)
+            print(parsed_xml_tree)
+            raise Exception(msg)
 
     def check_enum_values(self, element_tree):
         """

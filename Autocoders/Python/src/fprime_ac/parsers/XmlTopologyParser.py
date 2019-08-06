@@ -22,6 +22,11 @@ import sys
 import time
 from optparse import OptionParser
 from lxml import etree
+from lxml import isoschematron
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
 #from builtins import file
@@ -58,6 +63,8 @@ class XmlTopologyParser(object):
         self.__base_id_window = None
 
         self.__prepend_instance_name = False #Used to turn off prepending instance name in the situation where instance dicts are being generated and only one instance of an object is created
+        
+        self.Config = self.__config
 
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
@@ -79,6 +86,8 @@ class XmlTopologyParser(object):
             PRINT.info(msg)
             print(element_tree)
             raise Exception(msg)
+        
+        self.validate_xml(xml_file, element_tree, 'schematron', 'top_unique')
 
         for e in element_tree.iter():
             c = None
@@ -233,6 +242,30 @@ class XmlTopologyParser(object):
                 id_window = self.__max_id_window(inst)
                 inst.set_base_max_id_window(id_window)
                 DEBUG.info("Setting Instance name: %s, type: %s, kind: %s, maximum ID space required: %s" % (name, type, inst.get_kind(), inst.get_base_max_id_window()))
+
+    def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
+        # Check that validator is valid
+        if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
+            msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
+            PRINT.info(msg)
+            print(msg)
+            raise Exception(msg)
+        
+        # Create proper xml validator tool
+        validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
+        validator_parsed = etree.parse(validator_file_handler)
+        validator_file_handler.close()
+        if validator_type == 'schema':
+            validator_compiled = etree.RelaxNG(validator_parsed)
+        elif validator_type == 'schematron':
+            validator_compiled = isoschematron.Schematron(validator_parsed)
+    
+        # Validate XML file
+        if not validator_compiled.validate(parsed_xml_tree):
+            msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+            PRINT.info(msg)
+            print(parsed_xml_tree)
+            raise Exception(msg)
 
     def get_root(self):
         """
