@@ -15,10 +15,3 @@ Welcome to Integration Test API Documentation's documentation!
    test_logger
    standard_pipeline
    time_type
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
