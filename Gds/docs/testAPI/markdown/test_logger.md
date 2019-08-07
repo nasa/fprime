@@ -64,10 +64,16 @@ Args:
     color: a string object containing a color hex code “######”
     style: a string choosing 1 of 3 formatting options (ITALICS, BOLD, UNDERLINED)
 
-
-#### __weakref__()
-list of weak references to the object (if defined)
-
-
 #### close_log()
 Saves the write-only workbook. Should be called only once when the log is completed.
+
+|Quick Links|
+|:----------|
+|[Integration Test API User Guide](../user_guide.md)|
+|[GDS Overview](../../../README.md)|
+|[Integration Test API](integration_test_api.md)|
+|[Histories](histories.md)|
+|[Predicates](predicates.md)|
+|[Test Logger](test_logger.md)|
+|[Standard Pipeline](standard_pipeline.md)|
+|[TimeType Serializable](time_type.md)|
