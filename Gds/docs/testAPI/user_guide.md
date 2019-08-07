@@ -1,10 +1,10 @@
 # GDS Integration Test API User Guide
 
-The GDS Integration Test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](sphinx/build/html/index.html) for the IntegrationTestAPI's sphinx-generated documentation.
+The GDS integration test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](markdown/contents.md) for the IntegrationTestAPI's sphinx-generated documentation.
 
 ## Quick Start
 
-To work with the Integration Test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet <strong>DOES NOT</strong> run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
+To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet <strong>DOES NOT</strong> run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
 
 ~~~~{.python}
 from fprime_gds.common.pipeline.standard import StandardPipeline
@@ -100,7 +100,7 @@ The actual Test API is a very long class that has helpful doc-strings, but these
 | Event Asserts| These functions search and assert for event messages.| assert_event, assert_event_sequence, assert_event_count|
 | History Searches| These functions implement the various searches in the API. They aren't meant for the user, but are mentioned to highlight where searches are actually performed.| __search_test_history, find_history_item, find_history_sequence, find_history_count|
 
-For detailed descriptions of the API's methods see the IntegrationTestAPI's sphinx documentation [here](sphinx/build/html/index.html). One thing to note about the API's implementation is that the API uses layering so that all searches can be defined by common arguments and share similar behaviors. A diagram of this layering is provided below. In the diagram, each box is an API call. The arrows show how the calls are layered.
+For detailed descriptions of the API's methods see the IntegrationTestAPI's sphinx documentation [here](markdown/contents.md). One thing to note about the API's implementation is that the API uses layering so that all searches can be defined by common arguments and share similar behaviors. A diagram of this layering is provided below. In the diagram, each box is an API call. The arrows show how the calls are layered.
 
 ![Diagram of GDS Search Layering](assets/APISearchLayering.png)
 
@@ -115,14 +115,14 @@ The table below outlines the additional functionality provided by each layer in 
 
 ### Integration Test Classes
 
-The API uses several classes to support its features. They were organized within the already-present GDS class folder structure. A component view of the Integration Test API and its relationship to the Integration Tests and the GDS is shown in the diagram below. For simplicity, the predicates library has been left out, but it can be used by Integration tests and is used by the Test API and Test History layers.
+The API uses several classes to support its features. They were organized within the already-present GDS class folder structure. A component view of the integration test API and its relationship to the Integration Tests and the GDS is shown in the diagram below. For simplicity, the predicates library has been left out, but it can be used by Integration tests and is used by the Test API and Test History layers.
 ![Component View of the Test Framework](assets/TestFwComponentView.png)
 
 ## Important API Features
 
-### Specifying Search Scope (start, timeout)
+### Specifying Search Scope (start and timeout arguments)
 
-All searches in the Integration Test API can be configured to search part of the existing history (Current Search Scope) and/or part of the future history (Future Search Scope). The API relies on two common variables to define the scope of what is searched: `start` and `timeout`.
+All searches in the integration test API can be configured to search part of the existing history (Current Search Scope) and/or part of the future history (Future Search Scope). The API relies on two common variables to define the scope of what is searched: `start` and `timeout`.
 
 The `start` argument specifies the Current Search Scope in an existing history. `start` is used to choose the earliest item that the search will evaluate in a given history's ordering. `start` can be either an index in the history's ordering, a predicate, or a TimeType timestamp. Because the Test API's histories support re-ordering, the TimeType timestamp is the most reliable marker for `start`. A predicate can also be used to specify a `start`. For example, if the assert is only to begin after a certain EVR was received then an event_predicate instance could be used to find the first element to search. If `start` is not specified, see the particular API function to learn the default behavior. For convenience, the API includes a member variable, `NOW`, that will begin the search after all existing history when `NOW` is passed as the `start` argument.
 
@@ -132,18 +132,28 @@ The `timeout` argument specifies the Future Search Scope (FSS) in seconds. FSS i
 
 All search methods can either be configured with CSS, FSS, or both.
 
+### Types of searches
+
+The integration test API defines three types of searches: item, count, and sequence. Each of these searches has an [assert version and an await version](#default-search-scope-for-await-and-assert-calls) as well as a version for both telemetry and event versions. This means the API has a total of 12 search calls.
+
+| Search Type| Description|
+| :---| :---|
+| item search| an item search is searching for a specific item in the history. The result will return a single data object|
+| count search| a count search is searching for a number of items in history. The result is a group of items that isn't necessarily ordered according to the history. |
+| sequence search| TODO|
+
 #### Default Search Scope for await and assert calls
 
-For any given combination of search type (item, count, sequence) and search behavior (await or assert), the API allows the user to reconfigure the search scope with CSS, FSS, or both. Because all search calls in the API can manipulate this scope, the API doesn't provide different combinations of search scopes as different API calls. However, the API does provide default arguments for its searches and name its searches accordingly. This was done to satisfy the common request to support await functionality explicitly even though this behavior is already being provided by all search types.
+The integration test API provides to versions of each type of search: the await version will always return results and the assert version will search and then assert on whether the search completed successfully. For any given combination of search type (item, count, sequence) and search behavior (await or assert), the API allows the user to reconfigure the search scope with CSS, FSS, or both. Because all search calls in the API can manipulate this scope, the API doesn't provide different combinations of search scopes as different API calls. However, the API does provide default arguments for its searches and name its searches accordingly. This was done to satisfy the common request to support await functionality explicitly even though this behavior is already being provided by all search types.
 
 | Prefix| Default Behavior|
 | :---| :---|
 | `await_`| By default, all search-only calls begin with `await_` and will only search for future data objects for at most 5 seconds|
 | `assert_`| By default, all search and assert calls begin with `assert_` and will search all current data objects from the beginning of the history|
 
-### Substituting a history (history)
+### Substituting a history (history argument)
 
-Another useful feature in the Integration test API is the ability to create filtered sub-histories and substitute them into any regular API call. This feature provides the user with the ability to manage their own histories. The API methods that support this are get_telemetry_subhistory, remove_telemetry_subhistory, get_event_subhistory, remove_event_subhistory. There are several behaviors to know when creating sub-histories.
+Another useful feature in the integration test API is the ability to create filtered sub-histories and substitute them into any regular API call. This feature provides the user with the ability to manage their own histories. The API methods that support this are get_telemetry_subhistory, remove_telemetry_subhistory, get_event_subhistory, remove_event_subhistory. There are several behaviors to know when creating sub-histories.
 
 - When creating a sub-history, the get_ calls allow the user to specify whether the history will be ordered by receive order or by flight software time (FSW) order. This is done with the `fsw_order` argument (ordered by FSW time is default).
 - When creating a sub-history, the get_ calls allow the user to optionally specify a predicate filter to determine which items to allow into the sub-history (allows all by default). These filters should be a predicate composed of either telemetry_predicate's or event_predicate's depending on the type of sub-history.
@@ -152,7 +162,7 @@ Another useful feature in the Integration test API is the ability to create filt
 
 Removing a sub-history is currently permanent as sub-histories can not be re-registered. Removing a sub-history will unsubscribe it from the GDS and it will no longer receive new data objects.
 
-### Data object specifiers (event and channel)
+### Data object specifiers (event and channel arguments)
 
 Throughout the API specifying an event message or channel update to search for is very flexible. This is because all search types use predicates to specify a single or multiple objects when searching. The word used to describe this overloading behavior in the API is `specifier`. The phrases to look for in doc-strings are channel specifiers and event specifiers.
 
@@ -160,14 +170,12 @@ Providing this flexibility in the `event` and `channel` arguments is done via th
 
 In addition to specifying values by value or predicate, the get_event_predicate and get_telemetry_predicate calls also access the deployment dictionary to allow the user to specify a data object type by mnemonic or ID.
 
-### Types of searches (item, count, sequence)
-
 ### API Test Log
 
-When an output location is specified, the Integration Test API will generate a formatted test log as a .xlsx file.
+When an output location is specified, the integration test API will generate a formatted test log as a .xlsx file.
 There are four columns in this file. They are summarized in the table below:
 
-| Column| Description|
+| Log Column| Description|
 | :---| :---|
 | Log Time| A time stamp of when the message was logged. Format "HH:mm:ss.us"|
 | Case ID| An identifier for a test case. This field will help navigate when looking through long logs.|
@@ -194,7 +202,7 @@ The following table summarizes the color meanings from API-generated messages.
 
 ### Predicates
 
-A user of the Integration Test API should be familiar with the [predicates library](../../src/fprime_gds/common/testing_fw/predicates.py) used by the API. The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, user of the API can very easily create their own predicates. Below is a table of how predicates are organized with a brief summary of each section:
+A user of the integration test API should be familiar with the [predicates library](../../src/fprime_gds/common/testing_fw/predicates.py) used by the API. The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, user of the API can very easily create their own predicates. Below is a table of how predicates are organized with a brief summary of each section:
 
 | Predicate Section| Section Description| Functions/predicates|
 | :----| :----| :----|
@@ -205,6 +213,8 @@ A user of the Integration Test API should be familiar with the [predicates libra
 | Test API Predicates| These predicates operate specifically on the fields on the ChData and EventData objects. They are used by the API to specify event and telemetry messages.| args_predicate, event_predicate, telemetry_predicate|
 
 ## Usage Patterns
+
+### Sending Commands
 
 ### Using history markers
 
@@ -242,13 +252,13 @@ In this document, idiosyncrasies refer to needed-improvements and future feature
 
 ### Implementing ERT ordering in Chronological History and in the GDS (future)
 
-### Adding CSV Logger to Test Log
+### Adding CSV Logger to Test Log (make an issue)
 
 ### Color-coding interlaced Events in the API Log
 
 ### Moving StandardPipeline to API constructor
 
-Presently, a user of the Integration Test API needs to instantiate the GDS manually before instantiating the API. This code should really be moved to inside the API. To do this, the IntegrationTestAPI's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L27) should be modified to include the pipeline instantiation and the API's [teardown](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L64) method should be modified to disconnect from the FPrime deployment.
+Presently, a user of the integration test API needs to instantiate the GDS manually before instantiating the API. This code should really be moved to inside the API. To do this, the IntegrationTestAPI's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L27) should be modified to include the pipeline instantiation and the API's [teardown](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L64) method should be modified to disconnect from the FPrime deployment.
 
 #### Modification to the Integration Test API
 
@@ -257,7 +267,7 @@ Presently, a user of the Integration Test API needs to instantiate the GDS manua
 from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.utils.config_manager import ConfigManager
 
-# ~ Integration Test API constructor on ~line 29 of api.py
+# ~ IntegrationTestAPI constructor on ~line 29 of api.py
 def __init__(self, dict_path, address, port, log_prefix=None, fsw_order=True):
     """
     Initializes API: constructs and registers test histories.
@@ -275,7 +285,7 @@ def __init__(self, dict_path, address, port, log_prefix=None, fsw_order=True):
 
     # ... the rest of IntegrationTestAPI.__init__
 
-# ~ Integration Test API constructor on ~line 73 of api.py
+# ~ IntegrationTestAPI teardown on ~line 73 of api.py
 def teardown(self):
     """
     To be called once at the end of the API's use. Disconnects from the deployment,
