@@ -4,7 +4,7 @@ The GDS integration test API is a GDS Tool that provides useful functions and as
 
 ## Quick Start
 
-To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet <strong>DOES NOT</strong> run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
+To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
 
 ~~~~{.python}
 from fprime_gds.common.pipeline.standard import StandardPipeline
@@ -14,12 +14,12 @@ from fprime_gds.common.testing_fw import predicates   # Recommended, but not req
 
 # instantiate the GDS and connect to the Deployment
 pipeline = StandardPipeline()
-dict_path = "/path/to/AppDictionary.xml"
+dict_path = "/path/to/AppDictionary.xml"  # user must replace with an actual path
 pipeline.setup(ConfigManager(), dict_path)
-pipeline.connect("127.0.0.1", 50000)
+pipeline.connect("127.0.0.1", 50000)  # user must replace with actual address and port
 
 # instantiate Test API
-log_path = "/path/to/api/output/directory"
+log_path = "/path/to/api/output/directory"  # user must replace with an actual path
 api = IntegrationTestAPI(pipeline, log_path)
 
 # user can now use the Test API
@@ -30,10 +30,10 @@ api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 
 To use the test API with a testing framework like unittest or pytest there are four methods that should be called.
 <ol>
-<li>First, the test framework should call a <strong>one-time</strong> setup method to instantiate the API and connect to the deployment.</li>
+<li>First, the test framework should call a **one-time** setup method to instantiate the API and connect to the deployment.</li>
 <li>Second, the framework should call a setup method for each test case to call the API's start_test_case method that clears histories, and logs messages to denote test-case boundaries.</li>
 <li>Third, the framework should call any number of associated test cases.</li>
-<li>Finally, the test framework should call a <strong>one-time</strong> teardown method to save the API at.</li>
+<li>Finally, the test framework should call a **one-time** teardown method to save the API at.</li>
 </ol>
 
 Below is an example of these steps using unittest. For an example of this using pytest, see the Ref App [integration tests](../../../Ref/test/int/ref_integration_test.py).
@@ -43,6 +43,7 @@ import unittest
 from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI
+from fprime_gds.common.testing_fw import predicates   # Recommended, but not required
 
 class SomeTestCases(unittest.TestCase):
     @classmethod
@@ -52,12 +53,12 @@ class SomeTestCases(unittest.TestCase):
 
         # instantiate the GDS and connect to the deployment
         cls.pipeline = StandardPipeline()
-        dict_path = "/path/to/AppDictionary.xml"
+        dict_path = "/path/to/AppDictionary.xml"  # user must replace with an actual path
         cls.pipeline.setup(ConfigManager(), dict_path)
         cls.pipeline.connect("127.0.0.1", 50000)
 
         # instantiate Test API
-        log_path = "/path/to/api/output/directory"
+        log_path = "/path/to/api/output/directory"  # user must replace with an actual path
         cls.api = IntegrationTestAPI(cls.pipeline, log_path)
 
     def setUp(self):
@@ -81,6 +82,57 @@ class SomeTestCases(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 ~~~~
+
+## Usage Patterns
+
+All usage patterns are written such that they would be compatible with the test framework example described above: each test case can assume that the histories were recently emptied and that the `self.api` field is a connected instance of the integration test API. For simplicity, usage examples will rely on mock flight software dictionaries that were used in the integration test API unit tests. This dictionary can be found [here](../../test/fprime_gds/common/testing_fw/UnitTestDictionary.xml).
+
+If a user would like to play with the test API in a unit testing environment they could append their own test cases to the unit tests [here](../../test/fprime_gds/common/testing_fw/api_unit_test.py). 
+**NOTE**: there is no F Prime deployment in these unit tests so data objects need to be added manually.
+
+If a user would like to experiment with integration tests on an actual F Prime application, they could modify the Ref app [integration tests](../../../Ref/test/int/ref_integration_test.py).
+**NOTE**: running integration tests requires building and running the Ref app.
+
+### Sending Commands
+
+The Integration Test API provides several methods for sending commands to the user. The most simple is the send_command method. **NOTE**: The command arguments [must be strings](#-GDS-arguments-should-allow-non-string-types) (str) instead of a literal.
+~~~~{.python}
+def test_send_command(self):
+    self.api.send_command("TEST_CMD_1") # sending a command via mnemonic
+    self.api.send_command(0x01)         # sending the same command via opcode
+
+    self.api.send_command("TEST_CMD_2", ["235", "43"]) # sending a command with arguments"
+~~~~
+
+### Searching for Telemetry
+
+### Searching for Events
+
+### Asserting on Telemetry
+
+### Asserting on Events
+
+### Sending and Searching/Asserting
+
+### Using predicates effectively
+
+### Using sub-histories
+
+### Search returns
+
+### Using TimeTypes
+
+### Recording a point in the histories
+
+## Anti-patterns
+
+### Asserting None
+
+### Specifying sequence timeStamps
+
+### No-scope search
+
+## API Usage Requirements
 
 ## Integration Test API Organization
 
@@ -117,7 +169,6 @@ The table below outlines the additional functionality provided by each layer in 
 
 The API uses several classes to support its features. They were organized within the already-present GDS class folder structure. A component view of the integration test API and its relationship to the Integration Tests and the GDS is shown in the diagram below. For simplicity, the predicates library has been left out, but it can be used by Integration tests and is used by the Test API and Test History layers.
 ![Component View of the Test Framework](assets/TestFwComponentView.png)
-
 ## Important API Features
 
 ### Specifying Search Scope (start and timeout arguments)
@@ -140,7 +191,7 @@ The integration test API defines three types of searches: item, count, and seque
 | :---| :---|
 | item search| an item search is searching for a specific item in the history. The result will return a single data object|
 | count search| a count search is searching for a number of items in history. The result is a group of items that isn't necessarily ordered according to the history. |
-| sequence search| TODO|
+| sequence search| a sequence search is searching for an ordered sequence of items in the history. The result is an ordered list of items that is ordered with respect to the given history's order.|
 
 #### Default Search Scope for await and assert calls
 
@@ -212,34 +263,6 @@ A user of the integration test API should be familiar with the [predicates libra
 | Logic Predicates| These predicates can be used to combine/manipulate other predicates with basic boolean logic.| always_true, invert (not), satisfies_all (and), satisfies_any (or)|
 | Test API Predicates| These predicates operate specifically on the fields on the ChData and EventData objects. They are used by the API to specify event and telemetry messages.| args_predicate, event_predicate, telemetry_predicate|
 
-## Usage Patterns
-
-### Sending Commands
-
-### Using history markers
-
-### Using send and assert
-
-### Using predicates effectively
-
-### Using sub-histories
-
-### Search returns
-
-### Using TimeTypes
-
-## Anti-patterns
-
-### Asserting None
-
-### Specifying sequence timeStamps
-
-### Search order
-
-### No-scope search
-
-## API Usage Requirements
-
 ## Known bugs
 
 ## Idiosyncrasies
@@ -248,7 +271,7 @@ In this document, idiosyncrasies refer to needed-improvements and future feature
 
 ### Timeout implementation
 
-### Better History Markers (future)
+### Better History Timestamps (future)
 
 ### Implementing ERT ordering in Chronological History and in the GDS (future)
 
@@ -316,6 +339,8 @@ api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 ### Using GDS Prefix to output the test Logs (future)
 
 ### Better test markers using decorators
+
+### GDS arguments should allow non-string types
 
 ### FPrime CI/CD Test Runner
 
