@@ -18,9 +18,9 @@ from fprime_gds.common.data_types import file_data
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import *
-#from timeout import timeout
 import multiprocessing as mp
 from multiprocessing import Process
+import threading
 import time
 import traceback
 import datetime
@@ -49,7 +49,7 @@ class TestConsumer:
 #Main FileDecoder class
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', start_time = 0, finish_time = 0, first_time = True):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 120.0, first_time = True, timer = threading.Timer):
         '''
         FileDecoder class constructor
 
@@ -64,9 +64,9 @@ class FileDecoder(decoder.Decoder):
         self._file_dest_data = file_dest_data
         self._source_path = source_path
         self._dest_path = dest_path
-        self.start_time = start_time
-        self.finish_time = finish_time
+        self.timeout_duration = timeout_duration
         self.first_time = first_time
+        self.timer = timer
 
         super(FileDecoder, self).__init__()
 
@@ -96,7 +96,6 @@ class FileDecoder(decoder.Decoder):
     def set_dest_path(self, x):
         self._dest_path = x
 
-    #@timeout(120)
     def data_callback(self, data):
         '''
         Function called to pass data to the decoder class
@@ -104,8 +103,10 @@ class FileDecoder(decoder.Decoder):
         Args:
             data: Binary data to decode and pass to registered consumers
         '''
+        #The first time through the loop requires a special case for the timeout to not fail
         if (self.first_time):
-            self.start_time = time.time()
+            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+            self.timer.start()
             self.first_time = False
 
         result = self.decode_api(data)
@@ -130,11 +131,8 @@ class FileDecoder(decoder.Decoder):
             or None if the data is not decodable
         '''
 
-        self.finish_time = time.time()
-        print(self.finish_time - self.start_time)
-        if (self.finish_time - self.start_time > 3):
-            print("I have timed out")
-            raise Exception("Timeout Error has occured")
+        #If the program gets to the next packet before reaching the timeout duration, then cancel the timer
+        self.timer.cancel()
 
         #Decode file here
         packetType = PacketType(unpack('B', data[:1])[0]).name
@@ -154,7 +152,9 @@ class FileDecoder(decoder.Decoder):
             #Create the destination file where the DATA packet data will be stored
             self.create_dest_file(destPath)
 
-            self.start_time = time.time()
+            #Start a timer to check for a timeout error
+            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+            self.timer.start()
 
             return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
 
@@ -165,8 +165,11 @@ class FileDecoder(decoder.Decoder):
             file_dest = self.get_file() #retrieve the file destination
             file_dest.seek(offset, 0)
             file_dest.write(dataVar)    #write the data information to the destination file
+            file_dest.flush()
 
-            self.start_time = time.time()
+            #Start a timer to check for a timeout error
+            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+            self.timer.start()
 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
 
@@ -174,6 +177,7 @@ class FileDecoder(decoder.Decoder):
             hashValue = unpack('>I', data[5:9])[0]
             file_dest = self.get_file()
             file_dest.close()
+            print("Successfully finished downlink")
             self.first_time = True
 
             return file_data.EndPacketData(packetType, seqID, hashValue)
@@ -231,6 +235,7 @@ class FileDecoder(decoder.Decoder):
         new_file = open(new_log, 'a')
         new_file.write('Source Path: ' + str(sourcePath) + '\n')
         new_file.write('Destination Size: ' + str(lengthDP))
+        new_file.flush()
         new_file.close()
 
 
@@ -293,6 +298,11 @@ class FileDecoder(decoder.Decoder):
 
         #Set the file using the setter for other functions to be able to use the new file
         self.set_file(data_file)
+    
+
+    #Small function that is called to check if the decoder has timed out
+    def check_timeout(self, start_time):
+        print("Timeout Error: The state machine has been reset to idle")
 
 
 
