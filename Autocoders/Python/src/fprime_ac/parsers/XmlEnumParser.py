@@ -50,17 +50,20 @@ class XmlEnumParser(object):
         """
         self.__name = ""
         self.__namespace = None
+
         self.__xml_filename = xml_file
         self.__items = []
         
         self.Config = ConfigManager.ConfigManager.getInstance()
-        
+
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(stri)
             raise
-
         fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
+        self.__xml_filename = xml_file
+        self.__items = []
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)

@@ -269,8 +269,6 @@ class TopoFactory:
             if id > highest_ID:
                 highest_ID = id
 
-
-
         if highest_ID != None:
             return highest_ID + 1
 
