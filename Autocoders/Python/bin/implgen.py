@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 #===============================================================================
-# NAME: testgen.py
+# NAME: implgen.py
 #
-# DESCRIPTION: A tool for autocoding component XML files into a test component
-# with unit test cpp/hpp files.
+# DESCRIPTION: A tool for autocoding component XMl files to generate impl cpp/hpp files.
 #
 # AUTHOR: Jordan Ishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
@@ -43,14 +42,8 @@ from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 
 from lxml import etree
-
-from fprime_ac.generators.writers import ComponentTestHWriter
-from fprime_ac.generators.writers import ComponentTestCppWriter
-from fprime_ac.generators.writers import GTestHWriter
-from fprime_ac.generators.writers import GTestCppWriter
-from fprime_ac.generators.writers import TestImplHWriter
-from fprime_ac.generators.writers import TestImplCppWriter
-from fprime_ac.generators.writers import TestMainWriter
+from fprime_ac.generators.writers import ImplCppWriter
+from fprime_ac.generators.writers import ImplHWriter
 
 #Generators to produce the code
 from fprime_ac.generators import GenFactory
@@ -89,25 +82,17 @@ def pinit():
     """
     
     current_dir = os.getcwd()
-
+    
     usage = "usage: %prog [options] [xml_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
-
+    
     parser = OptionParser(usage, version=vers, epilog=program_longdesc)
-
+    
     parser.add_option("-b", "--build_root", dest="build_root_overwrite", type="string", help="Overwrite environment variable BUILD_ROOT", default=None)
     
-    parser.add_option("-m", "--maincpp", dest="maincpp",
-        help="Autocodes main.cpp file with proper test cases",
-        action="store_true", default=False)
-                      
-    parser.add_option("-f", "--force_tester", dest="force_tester",
-        help="Forces the generation of Tester.hpp and Tester.cpp",
-        action="store_true", default = False)
-
     parser.add_option("-v", "--verbose", dest="verbose_flag", help="Enable verbose mode showing more runtime detail (def: False)", action="store_true", default=False)
-
+    
     return parser
 
 def parse_component(the_parsed_component_xml, xml_filename, opt):
@@ -117,14 +102,14 @@ def parse_component(the_parsed_component_xml, xml_filename, opt):
     """
     global BUILD_ROOT
     #
-
+    
     parsed_port_xml_list = []
-
+    
     #
     # Configure the meta-model for the component
     #
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
-
+    
     for port_file in port_type_files_list:
         port_file = search_for_file("Port", port_file)
         xml_parser_obj = XmlPortsParser.XmlPortsParser(port_file)
@@ -144,7 +129,7 @@ def parse_component(the_parsed_component_xml, xml_filename, opt):
         if len(xml_parser_obj.get_include_header_files()):
             print("ERROR: Component include serializables cannot use user-defined types. file: " % serializable_file)
             sys.exit(-1)
-
+        
         parsed_serializable_xml_list.append(xml_parser_obj)
         del(xml_parser_obj)
 
@@ -153,97 +138,37 @@ def parse_component(the_parsed_component_xml, xml_filename, opt):
 
     return component_model
 
-def generate_tests(opt, component_model):
+def generate_impl_files(opt, component_model):
     """
-    Generates test component cpp/hpp files
+    Generates impl cpp/hpp files
     """
-    unitTestFiles = []
+    implFiles = []
     
     if VERBOSE:
-        print("Generating test files for " + component_model.get_xml_filename())
-    
-    # TesterBase.hpp
-    unitTestFiles.append(ComponentTestHWriter.ComponentTestHWriter())
-    
-    # TesterBase.cpp
-    unitTestFiles.append(ComponentTestCppWriter.ComponentTestCppWriter())
-    
-    # GTestBase.hpp
-    unitTestFiles.append(GTestHWriter.GTestHWriter())
-    
-    # GTestbase.cpp
-    unitTestFiles.append(GTestCppWriter.GTestCppWriter())
+        print("Generating impl files for " + component_model.get_xml_filename())
 
-    if not os.path.exists("Tester.hpp") or opt.force_tester:
-        if os.path.exists("Tester.hpp"):
-            os.remove("Tester.hpp")
-            os.remove("Tester.cpp")
+    # ComponentImpl.cpp
+    implFiles.append(ImplCppWriter.ImplCppWriter())
 
-        # Tester.hpp
-        unitTestFiles.append(TestImplHWriter.TestImplHWriter())
-    
-        # Tester.cpp
-        unitTestFiles.append(TestImplCppWriter.TestImplCppWriter())
+    # ComponentImpl.h
+    implFiles.append(ImplHWriter.ImplHWriter())
     
     #
     # The idea here is that each of these generators is used to create
     # a certain portion of each output file.
     #
-    for file in unitTestFiles:
+    for file in implFiles:
+        file.setFileName(component_model)
+        if os.path.exists(file.toString()):
+            print("WARNING: " + file.toString() + " already exists! Exiting...")
+            sys.exit(-1)
+        
         file.write(component_model)
         if VERBOSE:
             print("Generated %s"%file.toString())
 
-    time.sleep(3)
-
-    ############################################################
-    # Parses Tester.hpp file and uses all method definitions
-    # between "// Tests" comment and "private:" descriptor to
-    # generate TEST stubs in TestMain.cpp class
-    
-    if opt.maincpp:
-        testhpp = open("Tester.hpp", "r")
-
-        find_tests = False
-        test_cases = []
-        override_dict = {}
-        override_name = None # // @Testname: decorator comment
-        for line in testhpp:
-            if "// Tests" in line:
-                find_tests = True
-            elif "private:" in line:
-                find_tests = False
-            
-            if find_tests:
-                if "// @Testname:" in line:
-                    # Remove whitespace
-                    comment = "".join(line.split())
-                    override_name = line[line.index("// @Testname:") + 13:].strip()
-                    # Store location of all names to override
-                    override_dict[override_name] = len(test_cases)
-                elif "void " in line:
-                    # Parse method name out of definition
-                    name = line[line.index("void ") + 5:].replace("(void);", "").strip()
-                    test_cases.append(name)
-
-        if len(test_cases) > 1:
-            test_cases.remove("toDo")
-    
-        main_writer = TestMainWriter.TestMainWriter()
-        
-        main_writer.add_test_cases(test_cases)
-        main_writer.override_names(override_dict)
-        main_writer.write(component_model)
-        if VERBOSE:
-            print("Generated TestMain.cpp")
-    else:
-        if not os.path.exists("TestMain.cpp"):
-            TestMainWriter.TestMainWriter().write(component_model)
-            if VERBOSE:
-                print("Generated TestMain.cpp")
-
     if VERBOSE:
-        print("Generated test files for " + component_model.get_xml_filename())
+        print("Generated impl files for " + component_model.get_xml_filename())
 
 
 def search_for_file(file_type, file_path):
@@ -297,7 +222,7 @@ def main():
     else:
         print("ERROR: Too many filenames, should only have one")
         return
-
+    
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
@@ -335,11 +260,11 @@ def main():
         component_model = parse_component(the_parsed_component_xml, xml_filename, opt)
         if VERBOSE:
             print("\nGenerating tests...")
-        generate_tests(opt, component_model)
+        generate_impl_files(opt, component_model)
     else:
         print("ERROR: Invalid XML found...this format not supported")
         sys.exit(-1)
-
+    
     sys.exit(0)
 
 
