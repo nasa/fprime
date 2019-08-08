@@ -34,11 +34,7 @@ namespace Ref {
       //!
 		//! Test operation command
 		//!
-      // @Testname:YAYAYA
 		void testAddCommand(void);
-      
-      // @Testname:YezzusFrezzeUs
-      
 		void testSubCommand(void);
 		void testMultCommand(void);
 		void testDivCommand(void);

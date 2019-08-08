@@ -16,6 +16,7 @@ from pexpect import TIMEOUT, EOF
 from optparse import OptionParser
 
 import shutil
+import tempfile
 import filecmp
 import logging
 import time
@@ -188,10 +189,10 @@ def test_testgen():
         
         print(os.getcwd())
         
-#        # Autocode tests
-#        p = pexpect.spawn("python " + bindir + "testgen.py -v -f " + testdir + "MathSenderComponentAi.xml")
-#
-#        p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.cpp)(?=.*Generated Tester.hpp)(?!.*ERROR).*", timeout=5)
+        # Autocode tests
+        p = pexpect.spawn("python " + bindir + "testgen.py -v -f " + testdir + "MathSenderComponentAi.xml")
+
+        p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.cpp)(?=.*Generated Tester.hpp)(?!.*ERROR).*", timeout=5)
 
         print("Autocoded TestComponent")
         
@@ -215,59 +216,63 @@ def test_testgen():
         compare_genfile("GTestBase.cpp")
         compare_genfile("GTestBase.hpp")
         compare_genfile("TestMain.cpp")
+            
         
-        rootdir = os.environ['BUILD_ROOT']
-        os.chdir(rootdir)
-        
-        # Create build dir for unit tests if it doesn't exist
-        if not os.path.exists(os.environ['BUILD_ROOT'] + os.sep + "build_test"):
-            os.mkdir(os.environ['BUILD_ROOT'] + os.sep + "build_test")
+        try:
+            rootdir = tempfile.mkdtemp() + os.sep
+            os.chdir(rootdir)
+            
+            # Create build dir for unit tests if it doesn't exist
+            if not os.path.exists(rootdir):
+                os.mkdir(rootdir)
 
-        builddir = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
-        os.chdir(builddir)
-        
-        # Run cmake to configure testgen test
-        if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep + "Makefile"):
-            pcmake = pexpect.spawn("cmake .. -DCMAKE_BUILD_TYPE=TESTING")
-            pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
-            print("Successfully ran cmake for testgen test")
-        
-        # Build testgen ut
-        pbuild = pexpect.spawn("make Autocoders_Python_test_testgen_ut_exe -j32")
-        pbuild.expect("(?=.*Built target Autocoders_Python_test_testgen_ut_exe)")
-        
-        print("Built testgen unit test")
+            builddir = rootdir
+            os.chdir(builddir)
+            
+            # Run cmake to configure testgen test
+            if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep + "Makefile"):
+                pcmake = pexpect.spawn("cmake {} -DCMAKE_BUILD_TYPE=TESTING".format(os.environ["BUILD_ROOT"]))
+                pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
+                print("Successfully ran cmake for testgen test")
+            
+            # Build testgen ut
+            pbuild = pexpect.spawn("make Autocoders_Python_test_testgen_ut_exe -j32")
+            pbuild.expect("(?=.*Built target Autocoders_Python_test_testgen_ut_exe)")
+            
+            print("Built testgen unit test")
 
-        utdir = builddir + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_testgen_ut_exe"
-        
-        # Run ut
-        ptestrun = pexpect.spawn(utdir)
-        
-        print(ptestrun.read().decode("ascii"))
-        
-        ptestrun.expect("(?!.*FAILED)(?!.*ASSERT).*");
-        
-        print("Successfully ran testgen unit test")
-        
-        # Remove generated files
-        os.chdir(testdir)
-        if os.path.exists("MathOpPortAc.cpp"):
-            os.remove("MathOpPortAc.cpp")
-        if os.path.exists("MathOpPortAc.hpp"):
-            os.remove("MathOpPortAc.hpp")
-        if os.path.exists("MathResultPortAc.cpp"):
-            os.remove("MathResultPortAc.cpp")
-        if os.path.exists("MathResultPortAc.hpp"):
-            os.remove("MathResultPortAc.hpp")
-        if os.path.exists("MathSenderComponentAc.cpp"):
-            os.remove("MathSenderComponentAc.cpp")
-        if os.path.exists("MathSenderComponentAc.hpp"):
-            os.remove("MathSenderComponentAc.hpp")
-        
-        os.chdir(curdir)
-        
-        ## If there was no timeout the pexpect test passed
-        assert True
+            utdir = builddir + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_testgen_ut_exe"
+            
+            # Run ut
+            ptestrun = pexpect.spawn(utdir)
+            
+            print(ptestrun.read().decode("ascii"))
+            
+            ptestrun.expect("(?!.*FAILED)(?!.*ASSERT).*");
+            
+            print("Successfully ran testgen unit test")
+            
+            # Remove generated files
+            os.chdir(testdir)
+            if os.path.exists("MathOpPortAc.cpp"):
+                os.remove("MathOpPortAc.cpp")
+            if os.path.exists("MathOpPortAc.hpp"):
+                os.remove("MathOpPortAc.hpp")
+            if os.path.exists("MathResultPortAc.cpp"):
+                os.remove("MathResultPortAc.cpp")
+            if os.path.exists("MathResultPortAc.hpp"):
+                os.remove("MathResultPortAc.hpp")
+            if os.path.exists("MathSenderComponentAc.cpp"):
+                os.remove("MathSenderComponentAc.cpp")
+            if os.path.exists("MathSenderComponentAc.hpp"):
+                os.remove("MathSenderComponentAc.hpp")
+            
+            ## If there was no timeout the pexpect test passed
+            assert True
+        finally:
+            shutil.rmtree(rootdir)
+                
+            os.chdir(curdir)
         
     ## A timeout occurs when pexpect cannot match the executable
     ## output with the designated expectation. In this case the

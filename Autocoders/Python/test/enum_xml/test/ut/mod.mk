@@ -16,7 +16,3 @@
 TEST_SRC = Handcode/GTestBase.cpp Handcode/TesterBase.cpp Tester.cpp main.cpp
 
 TEST_MODS = Autocoders/Python/test/command2 Fw/Cmd Fw/Comp Fw/Port Fw/Prm Fw/Time Fw/Tlm Fw/Types Fw/Log Fw/Obj Os Fw/Com gtest
-
-
-
-COMPARGS = -I$(CURDIR)/test/ut/Handcode
