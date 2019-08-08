@@ -664,11 +664,25 @@ api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 
 ### Using GDS Prefix to output the test Logs (future)
 
-### Better test markers using decorators
+### Better test identifiers using decorators
 
 ### GDS arguments should allow non-string types
 
 ### FPrime CI/CD Test Runner
+
+During the development of the API it became apparent that the Test Runner would have bled into the scope of other testing efforts at the time. So the test API work de-scoped developing a test runner script. However, because discussions were had on what the Test Runnner should do, the requirements for the Test Runner are still captured here.
+
+- The Test Runner shall collect artifacts to record the condition of the tests.
+  - History logs
+  - Copies of the FSW dictionaries
+  - A copy of the FSW binary
+- The Test Runner shall collect files to record the results of the tests.
+  - Test logs
+  - Test reports
+- The Test Runner shall support specifying a deployment directory to discover and run Integration Tests.
+- The Test Runner should be usable by CI/CD setup.
+- The Test Runner should support different test configurations
+- The Test Runner should have a Command Line Interface
 
 ## API Unit Tests
 
