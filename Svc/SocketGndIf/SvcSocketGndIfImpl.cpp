@@ -454,6 +454,7 @@ namespace Svc {
         U32 packet_size = 0;
         U32 buffer_size = fwBuffer.getsize();
         U32 net_buffer_size = htonl(buffer_size+4);
+
         //Write message header
         if (this->useDefaultHeader) {
             strncpy(buf, "A5A5 GUI ", sizeof(buf));
