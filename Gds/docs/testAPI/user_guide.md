@@ -364,11 +364,27 @@ self.api.remove_event_subhistory(ert_subhist)
 
 ### Search returns
 
+API calls that perform a search and do not end by raising and Assertion Error will return the results of the search. This is so that the user can find some event or channel updates then perform additional checks on the results or use the results to specify a future search.
+
+Here is an example of awaiting a counter sequence and verifying that the sequence always ascends.
+
+~~~~{.python}
+search_seq = ["Counter"] * 5
+results = self.api.await_telemetry_sequence(search_seq)
+
+last = None
+for update in results:
+    if last is not None:
+        assert update.get_val() > last.get_val()
+    last = update
+~~~~
+
 ### Using TimeTypes
 
 ### Recording a point in the histories
 
 ## Anti-patterns
+
 ***
 
 ### Asserting None and awaiting counts
@@ -409,9 +425,11 @@ gt_pred("string") # evaluates False: String is not a value that is greater than 
 ~~~~
 
 ## API Usage Requirements
+
 ***
 
 ## Integration Test API Organization
+
 ***
 
 ### Integration Test API Outline
@@ -449,6 +467,7 @@ The API uses several classes to support its features. They were organized within
 ![Component View of the Test Framework](assets/TestFwComponentView.png)
 
 ## Important API Features
+
 ***
 
 ### Specifying Search Scope (start and timeout arguments)
@@ -544,9 +563,11 @@ A user of the integration test API should be familiar with the [predicates libra
 | Test API Predicates| These predicates operate specifically on the fields on the ChData and EventData objects. They are used by the API to specify event and telemetry messages.| args_predicate, event_predicate, telemetry_predicate|
 
 ## Known bugs
+
 ***
 
 ## Idiosyncrasies
+
 ***
 In this document, idiosyncrasies refer to needed-improvements and future features that should/could be in the Test API. The API in its present state is functional, but these were identified as nice-to-haves or potential issues to be revised later.
 
@@ -573,6 +594,7 @@ else:
     self.__log(name + " ended unsuccessfully.", TestLogger.YELLOW)
 return searcher.get_return_value()
 ~~~~
+
 **NOTE**: The above code hasn't been tested and may have issues if `time.time() + timeout` overflows or if the system time changes.
 
 ### Better History Timestamps (future)
@@ -649,7 +671,9 @@ api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 ### FPrime CI/CD Test Runner
 
 ## API Unit Tests
+
 ***
 
 ## Reference Application Integration Tests
+
 ***
