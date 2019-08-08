@@ -48,6 +48,89 @@ Directory containing all autocoder RelaxNG and Schematron XML schemas. Schemas a
 
 Directory containing all python code for the autocoder tools. Codegen uses the visitor pattern to generate its output files, and the generators for the visitor pattern are found in generators while the visitors are found in generators/visitors. The directory generators/writers contain the modules that perform serial writes for the testgen and dictgen tools. They are alternatives to the visitors, but currently there are only writers for the test component and dictionary files. Generators/templates contains all the cheetah templates required to run the autocoder. In a fresh repo, these should be built either by making F Prime, making the autocoder unit tests, or manually running cheetah compile within the templates directory. The parsers directory contains all the custom autocoder XML parser modules that the autocoder uses to create models from raw F Prime XML. Lastly, utils/cosmos contains the modules used by the cosmosgen tool. There is a readme file within this directory that explains what all of this code does.
 
+#### src/generators/
+| File | Description |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| AbstractGenerator.py | Defines the interface for each portion or the code to be generated |
+| ChannelBody.py | Main entry point of channel class body |
+| ChannelHeader.py | Main entry point of channel class header |
+| CommandBody.py | Main entry point of command class body  |
+| CommandHeader.py | Main entry point of command class header |
+| DictBody.py | Main entry point of dict class body |
+| DictHeader.py | Main entry point of dict class header |
+| DictStart.py | Main entry point of start of dict class code |
+| EventBody.py | Main entry point of event class body |
+| EventHeader.py | Main entry point of event class header |
+| FinishSource.py | Main entry point of end of file code |
+| formatters.py | Contains various routines to output formatted strings for code generation |
+| GenFactory.py | Factory for instancing the interface and connecting appropriate visitors |
+| HtmlDocPage.py | Main entry point for generation of html documentation for grnd interfaces |
+| HtmlStartPage.py | Main entry point for generation of html documentation for grnd interfaces |
+| Includes1.py | Main entry point for generation of a first set of include statements |
+| Includes2.py | Main entry point for generation of a second set of include statements |
+| InitFiles.py | Main entry point for generation of initializing code |
+| InstanceDictBody.py | Main entry point for generation of instance dict body |
+| InstanceDictHeader.py | Main entry point for generation of instance dict header |
+| InstanceDictStart.py | Main entry point for generation of start of instance dict class code |
+| MdDocPage.py | Main entry point of markdown documentation for ground interfaces |
+| MdStartPage.py | Main entry point for start of code for markdown documentation |
+| Namespace.py | Main entry point for generation of initialization code |
+| Private.py | Main entry point for generation of private code within a class |
+| Protected.py | Main entry point for generation of private code within a class |
+| Public.py | Main entry point for generation of private code within a class |
+| StartChannel.py | Main entry point for start of code for channel class |
+| StartCommand.py | Main entry point for start of code for command class |
+| StartEvent.py | Main entry point for start of code for event class |
+| StartSource.py | Main entry point for start of code |
+
+#### src/models/
+| File | Description |
+| --- | ----------- |
+| Arg.py | Argument meta-model that is instanced as an association to port instances |
+| Channel.py | Channel meta-model - list of channels |
+| Command.py | Command meta-model - list of commands |
+| CompFactory.py | Factory class for instancing the component and building port and arg config |
+| Component.py | Component meta-model and main interface for code generation queries |
+| Event.py | Event meta-model - list of event |
+| InternalInterface.py | Internal interface meta-model - list of internal interfaces |
+| ModelParser.py | Contains various routines for parsing the meta-model object and returning lists, dicts, etc. for visitors to utilize in mapping to code |
+| Parameter.py | Parameter meta-model - list of parameters |
+| Port.py | Port meta-model contained within a component class |
+| PortFactory.py | Factory class for instancing the port interface type and building up port and arg config |
+| Serialize.py | Serializable meta-model |
+| TopoFactory.py | Factory class for instancing topology meta-model |
+| Topology.py | Topology meta-model and main interface for code generation queries |
+
+#### src/parsers/
+| File | Description |
+| --- | ----------- |
+| AbstractParser.py | Defines the shared interfaces for parsing, validation and getter methods for component, port, and topology xml |
+| XmlComponentParser.py | Parses XML component description files |
+| XmlEnumParser.py | Parses XML enum description files |
+| XmlParser.py | Parent class of the rest of the XmlParser classes |
+| XmlPortsParser.py | Parses XML port description files |
+| XmlSerializeParser.py | Parses XML serialize description files |
+| XmlTopologyParser.py | Topology XML topology description files |
+
+#### src/utils/
+| File | Description |
+| --- | ----------- |
+| ac_cli_helpers.py | Contains helper methods to parse arguments and to run the autocoder CLI and pass any arguments it needs |
+| AddSysPath.py | Contains a function that adds a directory to the Python sys.path value - copied from Python cookbook |
+| CaltechHeader.py | Contains the caltech header that should be used in autocoder classes |
+| ConfigManager.py | Simple configuration class patterned after the Keck observation sequencer GUI and the Tahoe CalVal pipeline |
+| DictTypeConverter.py | Contains methods to convert types to dictionary types and to replace special characters in format strings |
+| DiffAndRename.py | Mainly used for difference and rename routines |
+| DumpObj.py | Contains methods to print nicely formatted overviews of objects |
+| EnumDictCheck.py | A structure used to report enumeration size errors |
+| EnumGenerator.py | Generator to produce serializable enums |
+| Logger.py | Sets up the logging for all other scripts based on the Python logging module - not a standalone file |
+| ParseC.py | Contains a set of Python functions that parse C code |
+| pyparsing.py | Python parser methods created externally by Paul T. McGuire |
+| TypesList.py | Contains types_list and port_types_list which contain types allowed in commands/telemetry/parameters/events |
+| VersionFile.py | Check if file exists, and creates a backup copy using an appended versioning string - copied directly from the language cookbook |
+| XmlParser.py | General XML parser class based on the Python xml2obj recipe |
+
 ### templates/
 
 Directory containing a sample unit test for testing components. There are sample F Prime XML files, a sample Impl.cpp file, and the ut itself.
