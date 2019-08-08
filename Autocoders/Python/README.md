@@ -26,6 +26,10 @@ GDS Dictgen is a tool for generating GDS XML Dictionaries that are named *Topolo
 
 Pymod Dictgen is a tool for generation python modules for the GDS. The tool takes topology XML as input, and it generates command, event, channel, and parameter python modules within their own respective directories. The output path can be changed with command line option -o/--dict_dir. Pymod dictgen supports absolute paths to inputted files, so you are able to call testgen on any file and the directories will be generated in the directory that pymod dictgen was called from.
 
+### implgen.py
+
+Implgen is a tool that takes in component XML and generates ComponentImpl.cpp/hpp files. It is formatted in a very similar way to testgen.py. It generates the Impl files within whatever directory it was ran, and it has its own pytest in Autocoders/Python/test/implgen. Implgen also allows for absolute paths.
+
 ### tlmLayout.py
 
 Takes as input a telemetry layout in tab-delimited format and generates .hpp files of the packet layout(s) and a table that can be used to form the packet(s).
