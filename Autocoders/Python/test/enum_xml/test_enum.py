@@ -17,6 +17,8 @@ from pexpect import TIMEOUT, EOF
 import filecmp
 import logging
 import time
+import tempfile
+import shutil
 
 def file_diff(file1, file2):
     """
@@ -96,21 +98,6 @@ def compare_genfile(filename):
     else:
         print("{} is consistent with expected template".format(filename))
 
-def toggle_cmakelist_enumxml(should_include):
-    with open("CMakeLists.txt", "r+") as cmakelists:
-        lines = cmakelists.readlines()
-        cmakelists.seek(0)
-    
-        for line in lines:
-            if "/enum_xml" in line:
-                if should_include:
-                    cmakelists.write("\tadd_fprime_subdirectory(\"${CMAKE_CURRENT_LIST_DIR}/enum_xml\")\n")
-                else:
-                    cmakelists.write("#add_fprime_subdirectory(\"${CMAKE_CURRENT_LIST_DIR}/enum_xml\")\n")
-            else:
-                cmakelists.write(line)
-        cmakelists.close()
-
 def test_enum():
     """
     Tests that enum xml is being generated correctly
@@ -142,8 +129,6 @@ def test_enum():
         testdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
         testdir = testdir + os.sep + "Python" + os.sep + "test" + os.sep
         os.chdir(testdir)
-
-        toggle_cmakelist_enumxml(True)
         
         # Need to cd into test directory in order to run codegen, will return after completion
         enumtestdir = os.sep + os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
@@ -197,128 +182,125 @@ def test_enum():
         compare_genfile("Enum1.py")
         
         expect_step = "cmake"
-        
-        rootdir = os.environ['BUILD_ROOT']
-        os.chdir(rootdir)
-        
-        if not os.path.exists(os.environ['BUILD_ROOT'] + os.sep + "build_test"):
-            os.mkdir(os.environ['BUILD_ROOT'] + os.sep + "build_test")
+        try:
+            builddir = tempfile.mkdtemp() + os.sep
+            os.chdir(builddir)
 
-        builddir = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
-        os.chdir(builddir)
-
-        if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml" + os.sep + "Makefile"):
-            pcmake = pexpect.spawn("cmake .. -DCMAKE_BUILD_TYPE=TESTING")
+            pcmake = pexpect.spawn("cmake {} -DCMAKE_BUILD_TYPE=TESTING".format(os.environ["BUILD_ROOT"]))
             pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
             print("Successfully ran cmake for testgen test")
 
-        # Build ut
-        pbuild = pexpect.spawn("make Autocoders_Python_test_enum_xml_ut_exe -j32")
-        pbuild.expect("(?=.*Built target Autocoders_Python_test_enum_xml_ut_exe)")
-        
-        print("\nRunning Test Cases...")
-        
-        ## Runs enum xml test and communicate through standard output to
-        ## complete all test cases. Both test cases are creating 2 enums
-        ## and a serializable, and then they invoke the ports and check
-        ## serialization
-        enum_dict = {1: -1952875139, 2: 2, 3: 2000999333, 4: 21, 5: -8324876}
-        tc_data = [1, 2, 1, 2, 1, 2]
-        enum1_data = [1, 2, 4, 3, 2, 5]
-        enum2_data = [5, 4, 2, 3, 3, 1]
-        enum1_literal_data = [-1952875139, 2, 2000999333, 21, -8324876, 3]
-        enum2_literal_data = [-8324876, 21, 2000999333, 2, -1952875139, 2]
-        serial1_data = [0, 10, 67, 4837, 82739845, 3434534]
-        serial2_data = [22839745, 3453, 2, 1, 9808973, 99]
-        cmd = os.environ['BUILD_ROOT'] + os.sep + "build_test" + os.sep
-        cmd = cmd + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_enum_xml_ut_exe"
-        ptestrun = pexpect.spawn(cmd)
-        
-        ptestrun.expect(".*run or q to quit: ", timeout=3)
-        ptestrun.sendline("e")
-        for i in range(0, 6):
-            ptestrun.expect(r".*Enter test case \(1-2\): ", timeout=3)
-            ptestrun.sendline(str(tc_data[i]))
-            print("Running test case {}".format(str(tc_data[i])))
+            # Build ut
+            pbuild = pexpect.spawn("make Autocoders_Python_test_enum_xml_ut_exe -j32")
+            pbuild.expect("(?=.*Built target Autocoders_Python_test_enum_xml_ut_exe)")
             
-            # For half of the tests use integer literals and half use the actual enum
-            # to define the enum (21 vs Example::Enum1.Item3)
-            if (tc_data[i] == 1):
-                print("Using enum1 with integer literal value {}, enum2 with value {}, serializable with arg1 value {}, serializable with arg2 value {}".format(str(enum1_literal_data[i]), str(enum2_literal_data[i]), str(serial1_data[i]), str(serial2_data[i])))
-                
-                ptestrun.expect(r".*first enum item number.*", timeout=3)
-                ptestrun.sendline(str(enum1_literal_data[i]))
-                ptestrun.expect(r".*second enum item number.*", timeout=3)
-                ptestrun.sendline(str(enum2_literal_data[i]))
-            else:
-                print("Using enum1 with enum object value {}, enum2 with value {}, serializable with arg1 value {}, serializable with arg2 value {}".format(str(enum1_data[i]), str(enum2_data[i]), str(serial1_data[i]), str(serial2_data[i])))
-                
-                ptestrun.expect(r".*first enum item number.*", timeout=3)
-                ptestrun.sendline(str(enum1_data[i]))
-                ptestrun.expect(r".*second enum item number.*", timeout=3)
-                ptestrun.sendline(str(enum2_data[i]))
+            print("\nRunning Test Cases...")
             
-            ptestrun.expect(r".*serializable arg1: ", timeout=3)
-            ptestrun.sendline(str(serial1_data[i]))
-            ptestrun.expect(r".*serializable arg2: ", timeout=3)
-            ptestrun.sendline(str(serial2_data[i]))
+            ## Runs enum xml test and communicate through standard output to
+            ## complete all test cases. Both test cases are creating 2 enums
+            ## and a serializable, and then they invoke the ports and check
+            ## serialization
+            enum_dict = {1: -1952875139, 2: 2, 3: 2000999333, 4: 21, 5: -8324876}
+            tc_data = [1, 2, 1, 2, 1, 2]
+            enum1_data = [1, 2, 4, 3, 2, 5]
+            enum2_data = [5, 4, 2, 3, 3, 1]
+            enum1_literal_data = [-1952875139, 2, 2000999333, 21, -8324876, 3]
+            enum2_literal_data = [-8324876, 21, 2000999333, 2, -1952875139, 2]
+            serial1_data = [0, 10, 67, 4837, 82739845, 3434534]
+            serial2_data = [22839745, 3453, 2, 1, 9808973, 99]
+            cmd = builddir
+            cmd = cmd + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_enum_xml_ut_exe"
+            ptestrun = pexpect.spawn(cmd)
+            
+            ptestrun.expect(".*run or q to quit: ", timeout=3)
+            ptestrun.sendline("e")
+            for i in range(0, 6):
+                ptestrun.expect(r".*Enter test case \(1-2\): ", timeout=3)
+                ptestrun.sendline(str(tc_data[i]))
+                print("Running test case {}".format(str(tc_data[i])))
+                
+                # For half of the tests use integer literals and half use the actual enum
+                # to define the enum (21 vs Example::Enum1.Item3)
+                if (tc_data[i] == 1):
+                    print("Using enum1 with integer literal value {}, enum2 with value {}, serializable with arg1 value {}, serializable with arg2 value {}".format(str(enum1_literal_data[i]), str(enum2_literal_data[i]), str(serial1_data[i]), str(serial2_data[i])))
+                    
+                    ptestrun.expect(r".*first enum item number.*", timeout=3)
+                    ptestrun.sendline(str(enum1_literal_data[i]))
+                    ptestrun.expect(r".*second enum item number.*", timeout=3)
+                    ptestrun.sendline(str(enum2_literal_data[i]))
+                else:
+                    print("Using enum1 with enum object value {}, enum2 with value {}, serializable with arg1 value {}, serializable with arg2 value {}".format(str(enum1_data[i]), str(enum2_data[i]), str(serial1_data[i]), str(serial2_data[i])))
+                    
+                    ptestrun.expect(r".*first enum item number.*", timeout=3)
+                    ptestrun.sendline(str(enum1_data[i]))
+                    ptestrun.expect(r".*second enum item number.*", timeout=3)
+                    ptestrun.sendline(str(enum2_data[i]))
+                
+                ptestrun.expect(r".*serializable arg1: ", timeout=3)
+                ptestrun.sendline(str(serial1_data[i]))
+                ptestrun.expect(r".*serializable arg2: ", timeout=3)
+                ptestrun.sendline(str(serial2_data[i]))
 
-            # Check serialize tests
-            expect_step = "cmake_serialize"
-            ptestrun.expect(r".*Serialize enums \(y\/n\):.*", timeout=3)
-            ptestrun.sendline("y")
+                # Check serialize tests
+                expect_step = "cmake_serialize"
+                ptestrun.expect(r".*Serialize enums \(y\/n\):.*", timeout=3)
+                ptestrun.sendline("y")
 
-            # Check deserialize tests
-            expect_step = "cmake_deserialize"
-            ptestrun.expect(r"(?=.*Serialized enum1)(?=.*Serialized enum2)(?=.*Deserialize enums \(y\/n\):).*", timeout=3)
-            ptestrun.sendline("y")
+                # Check deserialize tests
+                expect_step = "cmake_deserialize"
+                ptestrun.expect(r"(?=.*Serialized enum1)(?=.*Serialized enum2)(?=.*Deserialize enums \(y\/n\):).*", timeout=3)
+                ptestrun.sendline("y")
 
-            # Check enums == saved version pre-serialize
-            expect_step = "cmake_checksave"
-            ptestrun.expect(r"(?=.*Deserialized enum1)(?=.*Deserialized enum2)(?=.*Run enum check \(y\/n\):).*", timeout=3)
-            ptestrun.sendline("y")
+                # Check enums == saved version pre-serialize
+                expect_step = "cmake_checksave"
+                ptestrun.expect(r"(?=.*Deserialized enum1)(?=.*Deserialized enum2)(?=.*Run enum check \(y\/n\):).*", timeout=3)
+                ptestrun.sendline("y")
 
-            # Check serializable with enum arg
-            expect_step = "cmake_serializable"
-            ptestrun.expect(r"(?=.*Successful enum1 check)(?=.*Successful enum2 check)(?=.*Create serializable \(y\):).*", timeout=3)
-            ptestrun.sendline("y")
+                # Check serializable with enum arg
+                expect_step = "cmake_serializable"
+                ptestrun.expect(r"(?=.*Successful enum1 check)(?=.*Successful enum2 check)(?=.*Create serializable \(y\):).*", timeout=3)
+                ptestrun.sendline("y")
 
-            # Invoke ports
-            expect_step = "cmake_invoke"
-            if tc_data[i] == 1:
-                ptestrun.expect(r"(?=.*Created serializable with enum arg)(?=.*enum should be used to invoke inst1 \(1-2\))", timeout = 3)
-            elif tc_data[i] == 2:
-                ptestrun.expect(r"(?=.*Created serializable with enum arg)(?=.*enum should be used to invoke inst1 \(1-2\))", timeout = 3)
-            ptestrun.sendline(str((i % 2) + 1)) # 1 or 2
-            # Prompt for inst2 and check inst1 invoke
-            if tc_data[i] == 1:
-                ptestrun.expect(r"(?=.*enum should be used to invoke inst2 \(1-2\))(?=.*inst1 Invoked ExEnumIn_handler\(0, {}, {}, {}, {}\))(?=.*inst2 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum1_literal_data[i] if (i % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i], enum1_literal_data[i] if (i % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i]), timeout=3)
-            elif tc_data[i] == 2:
-                ptestrun.expect(r"(?=.*enum should be used to invoke inst2 \(1-2\))(?=.*inst1 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum_dict[enum1_data[i]] if (i % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]], enum_dict[enum1_data[i]] if (i % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]]), timeout=3)
-            ptestrun.sendline(str(((i + 1) % 2) + 1)) # 1 or 2
+                # Invoke ports
+                expect_step = "cmake_invoke"
+                if tc_data[i] == 1:
+                    ptestrun.expect(r"(?=.*Created serializable with enum arg)(?=.*enum should be used to invoke inst1 \(1-2\))", timeout = 3)
+                elif tc_data[i] == 2:
+                    ptestrun.expect(r"(?=.*Created serializable with enum arg)(?=.*enum should be used to invoke inst1 \(1-2\))", timeout = 3)
+                ptestrun.sendline(str((i % 2) + 1)) # 1 or 2
+                # Prompt for inst2 and check inst1 invoke
+                if tc_data[i] == 1:
+                    ptestrun.expect(r"(?=.*enum should be used to invoke inst2 \(1-2\))(?=.*inst1 Invoked ExEnumIn_handler\(0, {}, {}, {}, {}\))(?=.*inst2 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum1_literal_data[i] if (i % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i], enum1_literal_data[i] if (i % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i]), timeout=3)
+                elif tc_data[i] == 2:
+                    ptestrun.expect(r"(?=.*enum should be used to invoke inst2 \(1-2\))(?=.*inst1 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum_dict[enum1_data[i]] if (i % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]], enum_dict[enum1_data[i]] if (i % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]]), timeout=3)
+                ptestrun.sendline(str(((i + 1) % 2) + 1)) # 1 or 2
 
-            # Ensure that inst2 properly invoked then loop back or quit
-            if tc_data[i] == 1:
-                ptestrun.expect(r"(?=.*run or q to quit: )(?=.*inst2 Invoked ExEnumIn_handler\(0, {}, {}, {}, {}\))(?=.*inst1 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum1_literal_data[i] if ((i + 1) % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i], enum1_literal_data[i] if ((i + 1) % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i]), timeout=3)
-            else:
-                ptestrun.expect(r"(?=.*run or q to quit: )(?=.*inst2 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum_dict[enum1_data[i]] if ((i + 1) % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]], enum_dict[enum1_data[i]] if ((i + 1) % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]]), timeout=3)
-            if i == 5: # quit on 5
-                ptestrun.sendline("q")
-            else:
-                ptestrun.sendline("e")
+                # Ensure that inst2 properly invoked then loop back or quit
+                if tc_data[i] == 1:
+                    ptestrun.expect(r"(?=.*run or q to quit: )(?=.*inst2 Invoked ExEnumIn_handler\(0, {}, {}, {}, {}\))(?=.*inst1 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum1_literal_data[i] if ((i + 1) % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i], enum1_literal_data[i] if ((i + 1) % 2) + 1 == 1 else enum2_literal_data[i], serial1_data[i], serial2_data[i], enum2_literal_data[i]), timeout=3)
+                else:
+                    ptestrun.expect(r"(?=.*run or q to quit: )(?=.*inst2 Invoked EnumIn_handler\(0, {}, {}, {}, {}\)).*".format(enum_dict[enum1_data[i]] if ((i + 1) % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]], enum_dict[enum1_data[i]] if ((i + 1) % 2) + 1 == 1 else enum_dict[enum2_data[i]], serial1_data[i], serial2_data[i], enum_dict[enum2_data[i]]), timeout=3)
+                if i == 5: # quit on 5
+                    ptestrun.sendline("q")
+                else:
+                    ptestrun.sendline("e")
 
-        print("Finished test case {}".format(str(tc_data[i])))
-        
-        ptestrun.expect(r".*Completed.*", timeout=3)
-        print("Finished running test cases, enum xml test passed")
-        
-        os.chdir(testdir)
-        toggle_cmakelist_enumxml(False)
-        
-        os.chdir(curdir)
-        
-        ## If there was no timeout the pexpect test passed
-        assert True
+            print("Finished test case {}".format(str(tc_data[i])))
+            
+            ptestrun.expect(r".*Completed.*", timeout=3)
+            print("Finished running test cases, enum xml test passed")
+            
+            # Remove autogenerated files
+            os.chdir(enumtestdir)
+            shutil.rmtree("DefaultDict")
+            
+            ## If there was no timeout the pexpect test passed
+            assert True
+
+        finally:
+            shutil.rmtree(builddir)
+                
+            os.chdir(curdir)
         
     ## A timeout occurs when pexpect cannot match the executable
     ## output with the designated expectation. In this case the

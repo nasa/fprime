@@ -9,10 +9,13 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Component1ComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/ExampleEnumImpl.cpp"
 )
-set(UT_SOURCE_FILES
+register_fprime_module()
+set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
-register_fprime_module()
-register_fprime_ut()
+set(EXECUTABLE_NAME "Autocoders_Python_test_enum_xml_ut_exe")
+set(MOD_DEPS
+  "${CMAKE_CURRENT_LIST_DIR}")
+register_fprime_executable()
 
 

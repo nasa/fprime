@@ -1,10 +1,10 @@
 #include "Tester.hpp"
 
-TEST(Nominal, YAYAYA) {
+TEST(Nominal, TestAddCommand) {
     Ref::Tester tester;
     tester.testAddCommand();
 }
-TEST(Nominal, YezzusFrezzeUs) {
+TEST(Nominal, TestSubCommand) {
     Ref::Tester tester;
     tester.testSubCommand();
 }
