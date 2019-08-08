@@ -3,6 +3,7 @@
 The GDS integration test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](markdown/contents.md) for the IntegrationTestAPI's sphinx-generated documentation.
 
 ## Quick Start
+***
 
 To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
 
@@ -34,7 +35,6 @@ To use the test API with a testing framework like unittest or pytest there are f
 2. Second, the framework should call a setup method for each test case to call the API's start_test_case method that clears histories, and logs messages to denote test-case boundaries.
 3. Third, the framework should call any number of associated test cases.
 4. Finally, the test framework should call a **one-time** teardown method to save the API at.
-
 
 Below is an example of these steps using unittest. For an example of this using pytest, see the Ref App [integration tests](../../../Ref/test/int/ref_integration_test.py).
 
@@ -84,6 +84,7 @@ if __name__ == "__main__":
 ~~~~
 
 ## Usage Patterns
+***
 
 All usage patterns are written such that they would be compatible with the test framework example described above: each test case assumes that the histories were recently emptied and that the `self.api` field is a connected instance of the integration test API. For simplicity, usage examples will rely on mock flight software dictionaries that were used in the integration test API unit tests. This dictionary can be found [here](../../test/fprime_gds/common/testing_fw/UnitTestDictionary.xml).
 
@@ -253,22 +254,15 @@ result = self.api.send_and_assert_event("TEST_CMD_1", events="CommandReceived")
 ### Using predicates effectively
 
 The API uses predicates to identify valid values in searches and filter data objects into histories.
-The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. First an example of how predicates can be used and combined.
+The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. First an example of how predicates can be used to specify channel update values.
 
-**NOTE**:  Predicates may compare a value to another, but their purpose isn't to compare two objects, rather to identify objects that satisfy a certain property. If a user uses a greater_than predicate to see if a string is greater than a numeric value, 8, the predicate will return False. The correct interpretation is that the string is not in the set of values that are greater than 8. It is incorrect to say the string is less than 8
-
-~~~~{.python}
-from fprime_gds.common.testing_fw import predicates
-
-int_pred = predicates.greater_than(8)
-int_pred(9)        # evaluates True
-int_pred(7)        # evaluates False
-int_pred("string") # evaluates False: String is not a value that is greater than 8
-~~~~
+#### Combining Predicates
 
 The test API has two methods to help create event and telemetry predicates. These methods overload argument types.
 
-The event_preid
+#### Specifying data objects
+
+
 ### Using sub-histories
 
 ### Search returns
@@ -278,18 +272,50 @@ The event_preid
 ### Recording a point in the histories
 
 ## Anti-patterns
+***
 
-### Asserting None
+### Asserting None and awaiting counts
 
 ### Specifying sequence timeStamps
 
 ### No-scope search
 
-### Using not on comparison predicates
+### Interpreting predicates correctly
+
+Predicates may compare a value to another, but their purpose isn't to compare two objects, rather to identify objects that satisfy a certain property. If a user uses a greater_than predicate to see if a string is greater than a numeric value, 8, the predicate will return False. The correct interpretation is that the string is not in the set of values that are greater than 8. It is incorrect to say the string is less than 8.
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+
+gt_pred = predicates.greater_than(8)
+gt_pred(9)        # evaluates True
+gt_pred(7)        # evaluates False
+gt_pred("string") # evaluates False: String is not a value that is greater than 8
+
+lte_pred = predicates.less_than_or_equal_to(8)
+lte_pred(8)        # evaluates True
+lte_pred(7)        # evaluates True
+lte_pred("string") # evaluates False: String is not a value that is less than 8
+~~~~
+
+**Takeaway**: using invert to try to convert a greater_then predicate to a less_than_or_equal_to predicate will introduce false positives if the user isn't aware of the implications
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+
+gt_pred = predicates.greater_than(8)
+lte_pred = predicates.less_than_or_equal_to(8)
+not_lte_pred = predicates.invert(lte_pred) # inverts how a predicate evaluates.
+
+not_lte_pred("string") # evaluates True: because "string" is not a value that is less than 8
+gt_pred("string") # evaluates False: String is not a value that is greater than 8
+~~~~
 
 ## API Usage Requirements
+***
 
 ## Integration Test API Organization
+***
 
 ### Integration Test API Outline
 
@@ -326,6 +352,7 @@ The API uses several classes to support its features. They were organized within
 ![Component View of the Test Framework](assets/TestFwComponentView.png)
 
 ## Important API Features
+***
 
 ### Specifying Search Scope (start and timeout arguments)
 
@@ -420,9 +447,10 @@ A user of the integration test API should be familiar with the [predicates libra
 | Test API Predicates| These predicates operate specifically on the fields on the ChData and EventData objects. They are used by the API to specify event and telemetry messages.| args_predicate, event_predicate, telemetry_predicate|
 
 ## Known bugs
+***
 
 ## Idiosyncrasies
-
+***
 In this document, idiosyncrasies refer to needed-improvements and future features that should/could be in the Test API. The API in its present state is functional, but these were identified as nice-to-haves or potential issues to be revised later.
 
 ### Timeout implementation
@@ -524,5 +552,7 @@ api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 ### FPrime CI/CD Test Runner
 
 ## API Unit Tests
+***
 
 ## Reference Application Integration Tests
+***
