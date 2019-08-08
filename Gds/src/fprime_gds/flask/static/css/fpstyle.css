@@ -1,0 +1,17 @@
+/**
+ * FP Backgrounds:
+ *
+ * F prime background colors are used to set the color of the various items in the system. This means highlighting
+ * Events, and  Channels based on severity.
+
+
+/**
+ * Based on work from: https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3 these CSS items
+ * help make the file input looks like other buttons. Thus allowing it to play nicely with the other bootstrap buttons
+ * being used by the project.
+ */
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}

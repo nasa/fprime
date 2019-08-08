@@ -15,6 +15,7 @@ import signal
 import subprocess
 import shutil
 import distutils.spawn
+import webbrowser
 import fprime_gds.executables.cli
 
 # Try to import each GUI type, and if it can be imported
@@ -226,7 +227,10 @@ def launch_html(port, dictionary, address, log_dir, config):
     gse_env = copy.copy(os.environ).update(
         {"DICTIONARY": str(dictionary), "FLASK_APP": "fprime_gds.flask.app", "FSW_PORT": str(port)})
     gse_args = ["python", "-u", "-m", "flask", "run"]
-    return launch_process(gse_args, name="HTML GUI", env=gse_env)
+    ret = launch_process(gse_args, name="HTML GUI", env=gse_env)
+    time.sleep(2)
+    webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
+    return ret
 
 def launch_app(app, port, address, log_dir):
     '''

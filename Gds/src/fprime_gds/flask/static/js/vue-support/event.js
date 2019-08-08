@@ -1,65 +1,69 @@
-import {filter, timeToString} from "./utils.js";
-
 /**
- * channel-row:
+ * vue-support/event.js:
  *
- * A vue component designed to render exactly on row of the channel lising. It includes both the massage functions used
- * to transform data for display purposes (e.g. getChanTime) and also the colorization code used to colorize these lists
- * based on the channel's bounds.
+ * Event listing support for F´ that sets up the Vue.js components used to display events. These components allow the
+ * user to render events. This file also provides EventMixins, which are the core functions needed to convert events to
+ * something Vue.js can display. These should be mixed with any F´ objects wrapping Vue.js component creation.
+ *
+ * @author mstarch
  */
-Vue.component("event-item", {
-    props:["event"],
-    template: "#event-item-template",
-    computed: {
-        /**
-         * Use the row's values and bounds to colorize the row. This function will color red and yellow items using
-         * the boot-strap "warning" and "danger" calls.
-         * @return {string}: style-class to use
-         */
-        calculateItemStyle: function () {
-            let severity = {
-                "Severity.FATAL":      "list-group-item-danger",
-                "Severity.WARNING_HI": "list-group-item-warning",
-                "Severity.WARNING_LO": "list-group-item-warning",
-                "Severity.ACTIVITY_HI": "list-group-item-success",
-                "Severity.ACTIVITY_LO": "list-group-item-dark",
-                "Severity.COMMAND":     "list-group-item-primary",
-                "Severity.DIAGNOSTIC":  ""
-            }
-            return "list-group-item list-group-item-action flex-column align-items-start " +
-                severity[this.event.template.severity.value];
-        },
-        /**
-         * Produces the channel's time in the form of a string.
-         * @return {string} seconds.microseconds
-         */
-        calculateEventTime: function() {return timeToString(this.event.time)}
-    }
-});
-
-
+import {filter, timeToString} from "./utils.js";
 /**
  * events-list:
  *
- *
+ * Renders lists as a colorized table. This is a thin-wrapper to pass events to the fp-table component. It supplies the
+ * needed method to configure fp-table to render events.
  */
 Vue.component("event-list", {
     props:["events"],
-    data: function() {return {"matching": ""}},
     template: "#event-list-template",
-    computed: {
-        calculateFilteredEvents: function() {
-            return filter(this.events, this.matching,
-                function (event)
-                {
-                    return "0x" + event.id.toString(16) + event.template.name + event.args;
-                });
+    methods: {
+        /**
+         * Takes in a given event item, and harvests out the column values for display in the fp-table.
+         * @param item: event object to harvest
+         * @return {[string, *, *, void | string, *]}
+         */
+        columnify: function (item) {
+            //TODO: where are the arguments to place in the fmt string? Where did it go my friend?  Vladivostok? Paris?
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.name,
+                item.template.severity.value.replace("Severity.", ""), item.template.format_str];
+        },
+        /**
+         * Use the row's values and bounds to colorize the row. This function will color red and yellow items using
+         * the boot-strap "warning" and "danger" calls.
+         * @param item: item passed in with which to calculate style
+         * @return {string}: style-class to use
+         */
+        style: function (item) {
+            let severity = {
+                "Severity.FATAL":      "table-danger",
+                "Severity.WARNING_HI": "table-item-warning",
+                "Severity.WARNING_LO": "table-warning",
+                "Severity.ACTIVITY_HI": "table-success",
+                "Severity.ACTIVITY_LO": "table-active",
+                "Severity.COMMAND":     "table-info",
+                "Severity.DIAGNOSTIC":  ""
             }
+            return severity[item.template.severity.value];
+        },
+        /**
+         * Take the given item and converting it to a unique key by merging the id and time together with a prefix
+         * indicating the type of the item. Also strip spaces.
+         * @param item: item to convert
+         * @return {string} unique key
+         */
+        keyify(item) {
+            return "evt-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
+        }
     }
 });
 /**
- * Some such
- * @type {{updateEvents(*): void}}
+ * EventMixins:
+ *
+ * This set of functions should be mixed in as member functions to the F´ wrappers around the above Vue.js component.
+ * These provide the functions required to update events on the fly.
+ *
+ * Note: to mixin these functions: Object.assign(EventMixins)
  */
 export let EventMixins = {
     /**
@@ -82,8 +86,8 @@ export let EventMixins = {
 /**
  * EventView:
  *
- * A wrapper for the event-list viewable. This particular instance is supported by Vue.js in order to render the
- * events as a list of bootstrap list items.
+ * A wrapper for the event-list viewable. This is stand-alone and could be used anywhere that an events list is needed.
+ * It will setup the Vue.js component and mixin the above needed functions.
  *
  * @author mstarch
  */

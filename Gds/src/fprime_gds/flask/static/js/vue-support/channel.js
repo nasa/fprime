@@ -1,22 +1,39 @@
 /**
  * vue-support/channel.js:
  *
- * This file contains the necessary Vue definitions for displaying the channel table for F´.
+ * This file contains the necessary Vue definitions for displaying the channel table for F´. It also has the channel
+ * mixin definitions to use channel Vue components in other compositions.
  *
  * @author mstarch
  */
 import {filter, timeToString} from "./utils.js"
+import "./fptable.js";
 /**
- * channel-row:
+ * channel-table:
  *
- * A vue component designed to render exactly on row of the channel lising. It includes both the massage functions used
- * to transform data for display purposes (e.g. getChanTime) and also the colorization code used to colorize these lists
- * based on the channel's bounds.
+ * Manages the full channel table. This includes calculating the filtered channels based on a given filtering function.
  */
-Vue.component("channel-row", {
-    props:["channel"],
-    template: "#channel-row-template",
-    computed: {
+Vue.component("channel-table", {
+    props:["channels"],
+    template: "#channel-table-template",
+    // Defined methods
+    methods: {
+        /**
+         * Returns a list of column values for the input channel item. These items will be rendered.
+         * @param item: channel item to convert to column values
+         * @return {*[]}
+         */
+        columnify: function(item) {
+            return ["0x" + item.id.toString(16), item.template.name, item.val, timeToString(item.time)]
+        },
+        /**
+         * Converts a channel to a unique rendering key. For channels, ids are unique, and thus just use that.
+         * @param item: channel item to provide
+         * @return {*}
+         */
+        keyify(item) {
+            return item.id;
+        },
         /**
          * Use the row's values and bounds to colorize the row. This function will color red and yellow items using
          * the boot-strap "warning" and "danger" calls.
@@ -46,49 +63,21 @@ Vue.component("channel-row", {
             return "";
         },
         /**
-         * Produces the channel's time in the form of a string.
-         * @return {string} seconds.microseconds
+         * Converts an item to a name for use with the views functionality.
+         * @param item: the channel item to convert to its name
+         * @return item name
          */
-        calculateChannelTime: function() {return timeToString(this.channel.time)}
+        itemToName: function(item) {
+            return item.template.name;
+        }
     }
 });
 /**
- * channel-table:
+ * ChannelMixins:
  *
- * Manages the full channel table. This includes calculating the filtered channels based on a given filtering function.
+ * These functions mixin to allow the use of the above channel view. This means that it will collapse a list of readings
+ * to a unique set of channels.
  */
-Vue.component("channel-table", {
-    props:["channels"],
-    data: function() {return {"matching": ""}},
-    template: "#channel-table-template",
-    computed: {
-        /**
-         * Calculates the filtered list of channels.
-         */
-        calculateFilteredChannels: function() {
-            return filter(this.channels, this.matching,
-                function (channel)
-                {
-                    return "0x" + channel.id.toString(16) + channel.template.name + channel.val;
-                });
-        }
-    },
-    // Update function, making table sortable after it is rendered
-    updated: function() {
-        this.$nextTick(function() {
-            // Check existance of the third party library
-            if (typeof(sorttable) !== "undefined") {
-                let tables = this.$el.getElementsByTagName("table");
-                for (let i = 0; i < tables.length; i++) {
-                    sorttable.makeSortable(tables[i]);
-                }
-            } else {
-                console.warn("sortable.js not found, not attempting to sort tables");
-            }
-        })
-    }
-});
-
 export let ChannelMixins = {
     /**
      * Make the list of channels unique for display purposes.
@@ -116,12 +105,12 @@ export let ChannelMixins = {
     },
     /**
      * Sets up the needed channel data items.
-     * @return [] an empty list to fill with channels
+     * @return {"channels": []} an empty list to fill with channels
      */
     setupChannels() {
         return {"channels": []};
     }
-}
+};
 
 /**
  * ChannelView:
@@ -143,6 +132,4 @@ export class ChannelView {
             data: this.setupChannels()
         });
     }
-
-
 }

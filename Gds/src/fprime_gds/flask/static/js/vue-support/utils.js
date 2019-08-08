@@ -8,6 +8,11 @@
  * @return {[]}
  */
 export function filter(items, matching, ifun) {
+    // Support multiple filters
+    if (!Array.isArray(matching)) {
+        matching = [matching];
+    }
+
     // Convert object to string using given ifun function, or JSON.stringify
     let stringer = ifun;
     if (typeof(stringer) === "undefined") {
@@ -16,9 +21,17 @@ export function filter(items, matching, ifun) {
     let output = [];
     // Loop over the items, only adding to output list if we match
     for (let i = 0; i < items.length; i++) {
+        let j = 0;
         let item = items[i];
-        if (typeof(matching) === "undefined" ||
-            stringer(item).toLowerCase().indexOf(matching.toLowerCase()) != -1) {
+        for (j = 0; j < matching.length; j++) {
+            // All filters must match (ANDed).  Throw out non-matching.
+            if (typeof (matching[j]) !== "undefined" &&
+                stringer(item).toLowerCase().indexOf(matching[j].toLowerCase()) == -1) {
+                break;
+            }
+        }
+        // Made it all the way through the loop, add item
+        if (j == matching.length) {
             output.push(item);
         }
     }

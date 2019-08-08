@@ -10,6 +10,12 @@ import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
 
+/**
+ * tabbed-ect:
+ *
+ * This component sets up a tabbed view for Events, Channels (Telemetry), and Commands. This is a composite of the
+ * component-views that were composed into a tabbed-view.
+ */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
     props:["commands", "loader", "cmdhist", "events", "channels"],
@@ -21,9 +27,15 @@ Vue.component("tabbed-etc", {
 /**
  * TabETC:
  *
- * Class implementing the vue-items used to do a tabbed version of the F´  setup.
+ * Class implementing the vue-items used to do a tabbed version of the F´ setup.
  */
 export class TabETCVue {
+    /**
+     * Constructs the tabbed element from the input variables.
+     * @param element: HTML element ID to render to
+     * @param commands: commands list to render in a drop down
+     * @param loader: loader used to handel F prime REST
+     */
     constructor(element, commands, loader) {
         //Mixin functions for each of the components
         Object.assign(TabETCVue.prototype, CommandMixins);
@@ -43,6 +55,4 @@ export class TabETCVue {
         // Initialize the commands portion
         this.initializeCommands();
     }
-
-
 }

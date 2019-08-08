@@ -54,6 +54,18 @@ Vue.component("command-input", {
                 {"key":0xfeedcafe, "arguments": values})
                 .then(function() {_self.active = false;})
                 .catch(function(err) {console.error("[ERROR] Failed to send command: " + err)});
+        },
+        columnify: function(item) {
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.mnemonic, item.args];
+        },
+        /**
+         * Take the given item and converting it to a unique key by merging the id and time together with a prefix
+         * indicating the type of the item. Also strip spaces.
+         * @param item: item to convert
+         * @return {string} unique key
+         */
+        keyify(item) {
+            return "cmd-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         }
     },
     computed: {
@@ -63,40 +75,7 @@ Vue.component("command-input", {
          */
         commandList: function() {
             return Object.values(this.commands);
-        },
-        /**
-         *
-         * @return {*[]}
-         */
-        calculateFilteredCommandHistory: function() {
-            return filter(this.cmdhist, this.matching,
-                function (command)
-                {
-                    return timeToString(command.time) +
-                        "0x" + command.id.toString(16) + command.template.mnemonic + command.args;
-                });
         }
-        /*raw: {
-            set: function(value) {
-                //TODO: fix this to do better tokenizing
-                let tokens = value.split(",");
-                if (tokens.length == 0 || !(tokens[0] in this.commands)) {
-                    return;
-                }
-                this.selected = this.commands[tokens[0]];
-                for (let i = 1; i < tokens.length && (i - 1) < this.selected.args.length; i++) {
-                    this.selected.args[i-1].value = tokens[i];
-                }
-            },
-            get: function () {
-                let ret = this.selected.mnemonic;
-                for (let i = 0; i < this.selected.args.length; i++) {
-                    ret += ",";
-                    ret += (this.selected.args[i].value == null) ? "" : this.selected.args[i].value;
-                }
-                return ret;
-            }
-        }*/
     }
 });
 /**
