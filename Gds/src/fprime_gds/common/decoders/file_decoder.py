@@ -25,6 +25,7 @@ import time
 import traceback
 import datetime
 import os
+import random
 
 #More info about File packets can be found at fprime-sw/Fw/FilePacket/docs/sdd.md
 #Enum class for Packet Types
@@ -49,24 +50,41 @@ class TestConsumer:
 #Main FileDecoder class
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 120.0, first_time = True, timer = threading.Timer):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 3.0, first_time = True, timer = threading.Timer, state = 'IDLE'):
         '''
         FileDecoder class constructor
 
         Args:
-            file: Files.  Take in the file packet as an argument for the constructor
-            to be decoded later on in this script
+            file_dest_data: This is the file which will be written to by the program
+
+            source_path: This is the source path of the file that the user inputs to be downlinked
+            
+            dest_path: This is the name and path of the file that will be written to
+            
+            timeout_duration: This is used to keep track of how long the program should wait before throwing
+            a timeout exception:
+            
+            first_time: For the first packet that is sent to be decoded there is a special case where
+            this boolean is needed for the downlink to work.
+            
+            timer: This is used to keep track of whether or not a timeout has occured.  The timer is started
+            and then canceled if the next packet is sent before the timer is started.  If the timer is started,
+            then that means the program took too long to cancel it and a timeout has occured.
+            
+            state: The state of the machine.  It can either be in IDLE (the default) or DATA (when data is being
+            manipulated and written to the file)
 
         Returns:
             An initialized FileDecoder object.
         '''
-        #This is used to keep track of the destination file across the class
+        
         self._file_dest_data = file_dest_data
         self._source_path = source_path
         self._dest_path = dest_path
         self.timeout_duration = timeout_duration
         self.first_time = first_time
         self.timer = timer
+        self.state = state
 
         super(FileDecoder, self).__init__()
 
@@ -146,42 +164,71 @@ class FileDecoder(decoder.Decoder):
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
 
-            #Create the log file where the soucePath and lengthDP will be placed
-            self.create_log_file(sourcePath, lengthDP)
+            if (self.state == 'IDLE'):
+                #Create the log file where the soucePath and lengthDP will be placed
+                self.create_log_file(sourcePath, lengthDP)
 
-            #Create the destination file where the DATA packet data will be stored
-            self.create_dest_file(destPath)
+                #Create the destination file where the DATA packet data will be stored
+                self.create_dest_file(destPath)
 
-            #Start a timer to check for a timeout error
-            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
-            self.timer.start()
+                #Start a timer to check for a timeout error
+                self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+                self.timer.start()
+                self.state = 'DATA'
 
-            return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
+                return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
+            elif (self.state == 'DATA'):
+                print("Warning: Found a START packet in the middle of the file.  Closing current file and opening a new one")
+                file_dest = self.get_file()
+                file_dest.close()
+
+                #Create the log file where the soucePath and lengthDP will be placed
+                self.create_log_file(sourcePath, lengthDP)
+
+                #Create the destination file where the DATA packet data will be stored
+                self.create_dest_file(destPath)
+
+                #Start a timer to check for a timeout error
+                self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+                self.timer.start()
+
+                return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
+
+            return None
 
         elif (packetType == 'DATA'):   #Packet Type is DATA
-            offset = unpack('>I', data[5:9])[0]
-            length = unpack('BB', data[9:11])[0]
-            dataVar = data[11:]
-            file_dest = self.get_file() #retrieve the file destination
-            file_dest.seek(offset, 0)
-            file_dest.write(dataVar)    #write the data information to the destination file
-            file_dest.flush()
+            if (self.state == 'DATA'):
+                offset = unpack('>I', data[5:9])[0]
+                length = unpack('BB', data[9:11])[0]
+                dataVar = data[11:]
+                file_dest = self.get_file() #retrieve the file destination
+                file_dest.seek(offset, 0)
+                file_dest.write(dataVar)    #write the data information to the destination file
+                file_dest.flush()
 
-            #Start a timer to check for a timeout error
-            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
-            self.timer.start()
+                #Start a timer to check for a timeout error
+                self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+                self.timer.start()
+                
+                return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
+            elif (self.state == 'IDLE'):
+                return None
 
-            return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
-
+            return None
         elif (packetType == 'END'):   #Packet Type is END
-            hashValue = unpack('>I', data[5:9])[0]
-            file_dest = self.get_file()
-            file_dest.close()
-            print("Successfully finished downlink")
-            self.first_time = True
+            if (self.state == 'DATA'):
+                hashValue = unpack('>I', data[5:9])[0]
+                file_dest = self.get_file()
+                file_dest.close()
+                print("Successfully finished downlink")
+                self.first_time = True
+                self.state = 'IDLE'
 
-            return file_data.EndPacketData(packetType, seqID, hashValue)
-
+                return file_data.EndPacketData(packetType, seqID, hashValue)
+            elif (self.state == 'IDLE'):
+                return None
+            
+            return None
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
             self.first_time = True
@@ -303,6 +350,9 @@ class FileDecoder(decoder.Decoder):
     #Small function that is called to check if the decoder has timed out
     def check_timeout(self, start_time):
         print("Timeout Error: The state machine has been reset to idle")
+        file_dest = self.get_file()
+        file_dest.close()
+        self.state = 'IDLE'
 
 
 
