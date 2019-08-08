@@ -50,7 +50,7 @@ class TestConsumer:
 #Main FileDecoder class
 class FileDecoder(decoder.Decoder):
     '''Decoder class for file data'''
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 3.0, first_time = True, timer = threading.Timer, state = 'IDLE'):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 120.0, first_time = True, timer = threading.Timer, state = 'IDLE'):
         '''
         FileDecoder class constructor
 
@@ -97,22 +97,6 @@ class FileDecoder(decoder.Decoder):
     def set_file(self, x):
         self._file_dest_data = x
 
-
-    '''
-    TEST GETTERS AND SETTERS TO BE TAKEN OUT LATER!!!!!!!!!!!!!!!!!!!!!!
-    '''
-
-    def get_source_path(self):
-        return self._source_path
-
-    def set_source_path(self, x):
-        self._source_path = x
-
-    def get_dest_path(self):
-        return self._dest_path
-
-    def set_dest_path(self, x):
-        self._dest_path = x
 
     def data_callback(self, data):
         '''
