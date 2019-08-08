@@ -28,7 +28,15 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-class ConfigManager(configparser.SafeConfigParser):
+# For Python determination
+import six
+
+if six.PY2:
+    parent = configparser.SafeConfigParser
+else:
+    parent = configparser.ConfigParser
+
+class ConfigManager(parent):
     """
     This class provides a single entrypoint for all configurable properties,
     namely the self.Prop dictionary.
@@ -41,7 +49,8 @@ class ConfigManager(configparser.SafeConfigParser):
         """
         Constructor.
         """
-        configparser.SafeConfigParser.__init__(self)
+        if six.PY2:
+            configparser.SafeConfigParser.__init__(self)
         configparser.ConfigParser.__init__(self)
         configparser.RawConfigParser.__init__(self)
         self.__prop   = dict()
@@ -104,8 +113,9 @@ class ConfigManager(configparser.SafeConfigParser):
         self.__prop['schema']["deployment"]             = '/Autocoders/Python/schema/default/topology_schema.rng'
         self.__prop['schema']["internal_interfaces"]    = '/Autocoders/Python/schema/default/internal_interface_schema.rng'
         self.__prop['schema']["interface"]              = '/Autocoders/Python/schema/default/interface_schema.rng'
-        self.__prop['schema']["serializable"]              = '/Autocoders/Python/schema/default/serializable_schema.rng'
-        self.__prop['schema']["parameters"]              = '/Autocoders/Python/schema/default/parameters_schema.rng'
+        self.__prop['schema']["serializable"]           = '/Autocoders/Python/schema/default/serializable_schema.rng'
+        self.__prop['schema']["parameters"]             = '/Autocoders/Python/schema/default/parameters_schema.rng'
+        self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
         # component parameters here.

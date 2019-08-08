@@ -19,6 +19,7 @@ from optparse import OptionParser
 from fprime_ac.utils import Logger
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils import DictTypeConverter
+from fprime_ac.utils import EnumGenerator
 
 
 # Meta-model for Component only generation
@@ -1140,7 +1141,7 @@ def generate_serializable(the_serial_xml, opt):
     n = the_serial_xml.get_name()
     ns = the_serial_xml.get_namespace()
     c = the_serial_xml.get_comment()
-    i = the_serial_xml.get_includes()
+    i = the_serial_xml.get_includes() + the_serial_xml.get_include_enums()
     i2 = the_serial_xml.get_include_header_files()
     m = the_serial_xml.get_members()
     t = the_serial_xml.get_typeid()
@@ -1258,11 +1259,11 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     # assemble list of files
 
     if type == "interface":
-        file_list = parser.get_include_header_files() + parser.get_includes_serial_files()
+        file_list = parser.get_include_header_files() + parser.get_includes_serial_files() + parser.get_include_enum_files()
     elif type == "component":
-        file_list = parser.get_port_type_files() + parser.get_header_files() + parser.get_serializable_type_files() + parser.get_imported_dictionary_files()
+        file_list = parser.get_port_type_files() + parser.get_header_files() + parser.get_serializable_type_files() + parser.get_imported_dictionary_files() + parser.get_enum_type_files()
     elif type == "serializable":
-        file_list = parser.get_include_header_files() + parser.get_includes()
+        file_list = parser.get_include_header_files() + parser.get_includes() + parser.get_include_enums()
     elif type == "assembly" or  type == "deployment":
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
@@ -1270,7 +1271,6 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         #file_list = list()
         #for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
-
     else:
         PRINT.info("ERROR: Unrecognized dependency type %s!",type)
         sys.exit(-1)
@@ -1420,6 +1420,15 @@ def main():
             print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
             generate_topology(the_parsed_topology_xml, xml_filename, opt)
             dependency_parser = the_parsed_topology_xml
+        elif xml_type == "enum":
+            DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
+            curdir = os.getcwd()
+            if EnumGenerator.generate_enum(xml_filename):
+                ERROR = False
+                PRINT.info("Completed generating files for %s Enum XML...." % xml_filename)
+            else:
+                ERROR = True
+            os.chdir(curdir)
         else:
             PRINT.info("Invalid XML found...this format not supported")
             ERROR=True

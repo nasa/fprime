@@ -1,0 +1,6 @@
+# Setup with Cmake
+To run unit tests in Autocoders/Python/test, you must use the cmake system. In the top level fprime-sw directory, create an out-of-source build directory with 'mkdir build_test'. This test assumes that you are creating this specific directory name in this specific location. Within this directory, run 'cmake ../ -DCMAKE_BUILD_TYPE=TESTING'. This builds all of the tests. Pytest tests are currently commented out in Autocoders/Python/test/CMakeList.txt, and you must uncomment them in order for them to build, although they use standard out and cannot be run fully from the cmake system. These tests depend on 3 environment variables: BUILD_ROOT, FPRIME_CORE_DIR (usually same as build root), and PYTHONPATH (should point to Autocoders/Python/src).
+# Running Pytest Tests
+Uncomment the pytest directory from Autocoders/Python/test. Run 'make check' within your build test directory. This will hang once it finishes building your pytest and tries to run it. Break out (you've already built the test executable and that is all you need), and then return to Autocoders/Python/test and run pytest.
+# Running Remaining Tests
+Uncomment all the pytest directories from Autocoders/Python/test and then run 'make check' within your build test directory.
