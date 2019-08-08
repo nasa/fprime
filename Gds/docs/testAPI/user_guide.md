@@ -226,10 +226,49 @@ results = self.api.assert_event_sequence(evr_seq)
 
 ### Sending and Searching/Asserting
 
-The Test API provides 4 versions of send and assert
+The Test API provides 4 versions of send and search to enable searching for telemetry and events following a command. Internally, these calls record the current position of the history, then send a command then begin a search from the recorded position. All 4 versions support both item and sequence searches depending on whether the channels/events arguments are a list.
+
+~~~~{.python}
+# sends "TEST_CMD_1" then awaits a "CommandCounter" channel update
+result = self.api.send_and_await_telemetry("TEST_CMD_1", channels="CommandCounter")
+
+# sends "TEST_CMD_1" then awaits a sequence of "CommandCounter" then five "Counter" updates
+seq = ["CommandCounter"] + ["Counter"] * 5
+results = self.api.send_and_await_telemetry("TEST_CMD_1", channels=seq)
+
+# sends "TEST_CMD_1" then awaits and asserts a "CommandCounter" channel update
+result = self.api.send_and_assert_telemetry("TEST_CMD_1", channels="CommandCounter")
+
+# sends "TEST_CMD_1" then awaits a "CommandReceived" event
+result = self.api.send_and_await_event("TEST_CMD_1", events="CommandReceived")
+
+# sends "TEST_CMD_1" then awaits a sequence of "CommandReceived" then five "SeverityDIAGNOSTIC" events
+seq = ["CommandReceived"] + ["SeverityDIAGNOSTIC"] * 5
+results = self.api.send_and_await_event("TEST_CMD_1", events=seq)
+
+# sends "TEST_CMD_1" then awaits and asserts "CommandReceived" event
+result = self.api.send_and_assert_event("TEST_CMD_1", events="CommandReceived")
+~~~~
 
 ### Using predicates effectively
 
+The API uses predicates to identify valid values in searches and filter data objects into histories.
+The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. First an example of how predicates can be used and combined.
+
+**NOTE**:  Predicates may compare a value to another, but their purpose isn't to compare two objects, rather to identify objects that satisfy a certain property. If a user uses a greater_than predicate to see if a string is greater than a numeric value, 8, the predicate will return False. The correct interpretation is that the string is not in the set of values that are greater than 8. It is incorrect to say the string is less than 8
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+
+int_pred = predicates.greater_than(8)
+int_pred(9)        # evaluates True
+int_pred(7)        # evaluates False
+int_pred("string") # evaluates False: String is not a value that is greater than 8
+~~~~
+
+The test API has two methods to help create event and telemetry predicates. These methods overload argument types.
+
+The event_preid
 ### Using sub-histories
 
 ### Search returns
@@ -245,6 +284,8 @@ The Test API provides 4 versions of send and assert
 ### Specifying sequence timeStamps
 
 ### No-scope search
+
+### Using not on comparison predicates
 
 ## API Usage Requirements
 
@@ -385,6 +426,29 @@ A user of the integration test API should be familiar with the [predicates libra
 In this document, idiosyncrasies refer to needed-improvements and future features that should/could be in the Test API. The API in its present state is functional, but these were identified as nice-to-haves or potential issues to be revised later.
 
 ### Timeout implementation
+
+Presently timeouts are using the signal library and throw an exception to end the search. This timeout behavior can be modified very easily by changing the [__search_test_history](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/6cd4c8007a7f562d5b0b616eb494270ac5c7b95d/Gds/src/fprime_gds/common/testing_fw/api.py#L911) method. All searches use this method to accomplish scoping, logging and history substitution. Changing the timeout to something like below  would be better.
+
+~~~~{.python}
+# in IntegrationTestAPI's __search_test_history method on ~line 912 of api.py
+if timeout:
+    self.__log(name + " now awaiting for at most {} s.".format(timeout))
+    end_time = time.time() + timeout
+    while True:
+        new_items = history.retrieve_new()
+        for item in new_items:
+            if searcher.incremental_search(item):
+                return searcher.get_return_value()
+        if time.time() >= end_time:
+            msg = name + " timed out and ended unsuccessfully."
+            self.__log(msg, TestLogger.YELLOW)
+            break
+        time.sleep(0.1)
+else:
+    self.__log(name + " ended unsuccessfully.", TestLogger.YELLOW)
+return searcher.get_return_value()
+~~~~
+**NOTE**: The above code hasn't been tested and may have issues if `time.time() + timeout` overflows or if the system time changes.
 
 ### Better History Timestamps (future)
 
