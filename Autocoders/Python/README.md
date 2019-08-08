@@ -56,10 +56,6 @@ Directory containing a sample unit test for testing components. There are sample
 
 Directory containing all unit tests invoked by the cmake system. List of working unit tests are present within CMakeLists.txt. The directories testgen, dictgen, schematron, and enum_xml contain pytests which should be run using pytest rather than cmake. Testgen and enum_xml additionally contain unit tests, but they are set up within cmake to be built as utilities rather than unit tests, so they will not be invoked when running all unit tests in cmake. Dependencies and file i/o within these unit tests prevent them from being successfully run outside of their pytests, so this should be kept this way.
 
-### utils/
-
-Contains a couple of nose tests which are no longer up-to-date.
-
 ### CMakeLists.txt
 
 Cmake file that is present in all parts of directory tree to be built by cmake. If cmake was invoked with type testing, templates and test get built. The src directory is always built as well.
