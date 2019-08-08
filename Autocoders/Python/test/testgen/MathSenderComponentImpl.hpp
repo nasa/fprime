@@ -1,14 +1,14 @@
-// ====================================================================== 
-// \title  MathSenderImpl.hpp
-// \author tcanham
+// ======================================================================
+// \title  MathSenderComponentImpl.hpp
+// \author jishii
 // \brief  hpp file for MathSender component implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef MathSender_HPP
 #define MathSender_HPP
@@ -64,7 +64,7 @@ namespace Ref {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for MS_DO_MATH command handler

@@ -51,6 +51,8 @@ from fprime_ac.generators.writers import GTestCppWriter
 from fprime_ac.generators.writers import TestImplHWriter
 from fprime_ac.generators.writers import TestImplCppWriter
 from fprime_ac.generators.writers import TestMainWriter
+from fprime_ac.generators.writers import ImplCppWriter
+from fprime_ac.generators.writers import ImplHWriter
 
 #Generators to produce the code
 from fprime_ac.generators import GenFactory
@@ -173,6 +175,12 @@ def generate_tests(opt, component_model):
     
     # GTestbase.cpp
     unitTestFiles.append(GTestCppWriter.GTestCppWriter())
+
+    # ComponentImpl.cpp
+    unitTestFiles.append(ImplCppWriter.ImplCppWriter())
+
+    # ComponentImpl.h
+    unitTestFiles.append(ImplHWriter.ImplHWriter())
 
     if not os.path.exists("Tester.hpp") or opt.force_tester:
         if os.path.exists("Tester.hpp"):
