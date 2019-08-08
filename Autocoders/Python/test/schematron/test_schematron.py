@@ -8,6 +8,7 @@ Checks that the schematron RNG schema files for topology, component, and diction
 
 import os
 import sys
+import shutil
 
 sys.path.append(os.environ['BUILD_ROOT'] + os.sep + "Fw" + os.sep + "Python" + os.sep +"src")
 sys.path.append(os.environ['BUILD_ROOT'] + os.sep + "Gds" + os.sep + "src") # Add GDS modules
@@ -88,6 +89,10 @@ def test_schematron():
             p_test_dict.expect("(?=.*comp_uniqueness_schematron.rng)(?!.*ERROR).*", timeout=5)
             print("Autocoded Test{}ComponentAi.xml and correctly failed on component XML ID/opcode check.".format(type))
 
+        shutil.rmtree("DefaultDict")
+        os.remove("Enum1EnumAc.cpp")
+        os.remove("Enum1EnumAc.hpp")
+    
         ## If there was no timeout the pexpect test passed
         assert True
         
