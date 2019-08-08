@@ -986,10 +986,15 @@ class XmlComponentParser(object):
         
         # Validate XML file
         if not validator_compiled.validate(parsed_xml_tree):
-            msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
-            PRINT.info(msg)
-            print(parsed_xml_tree)
-            raise Exception(msg)
+            if validator_type == 'schema':
+                msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
+                print(parsed_xml_tree)
+                raise Exception(msg)
+            else:
+                msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
+                print(parsed_xml_tree)
 
     def is_component(self):
         """
