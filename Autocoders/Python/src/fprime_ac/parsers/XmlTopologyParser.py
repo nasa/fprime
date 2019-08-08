@@ -47,6 +47,13 @@ class XmlTopologyParser(object):
         self.__name = None
         self.__deployment = None
         self.__comment = ""
+        if os.path.isfile(xml_file) == False:
+            stri = "ERROR: Could not find specified XML file %s." % xml_file
+            PRINT.info(stri)
+            raise IOError(stri)
+        
+        fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         self.__instances = []
         self.__connections = []
@@ -58,13 +65,6 @@ class XmlTopologyParser(object):
         self.__base_id_window = None
 
         self.__prepend_instance_name = False #Used to turn off prepending instance name in the situation where instance dicts are being generated and only one instance of an object is created
-
-        if os.path.isfile(xml_file) == False:
-            stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise IOError(stri)
-
-        fd = open(xml_file,'r')
         element_tree = etree.parse(fd)
 
         #Validate against schema
@@ -73,15 +73,12 @@ class XmlTopologyParser(object):
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
 
-        try:
-            # 2/3 conversion
-            relax_compiled.validate(element_tree)
-        except Exception as e:
-            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file ,ROOTDIR + self.__config.get('schema' , 'assembly')))
-            PRINT.info(e)
-            PRINT.info(relax_compiled.error_log)
-            PRINT.info(relax_compiled.error_log.last_error)
-            raise e
+        # 2/3 conversion
+        if not relax_compiled.validate(element_tree):
+            msg = "XML file {} is not valid according to schema {}.".format(xml_file ,ROOTDIR + self.__config.get('schema' , 'assembly'))
+            PRINT.info(msg)
+            print(element_tree)
+            raise Exception(msg)
 
         for e in element_tree.iter():
             c = None

@@ -99,9 +99,9 @@ option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
 #
 # e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 ####
-SET(CMAKE_CXX_FLAGS_TESTING "-DBUILD_UT -DPROTECTED=public -DPRIVATE=public -fprofile-arcs -ftest-coverage"
+SET(CMAKE_CXX_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C++ flags." FORCE)
-SET(CMAKE_C_FLAGS_TESTING "-DBUILD_UT -DPROTECTED=public -DPRIVATE=public -fprofile-arcs -ftest-coverage"
+SET(CMAKE_C_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C flags." FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
 SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)

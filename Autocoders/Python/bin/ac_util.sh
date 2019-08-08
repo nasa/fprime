@@ -13,8 +13,8 @@
 # *
 DIRNAME="`dirname $0`"
 # Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
-BUILD_ROOT="`cd ${DIRNAME}/../../..; pwd`"
-export PYTHONPATH="${DIRNAME}:${BUILD_ROOT}/Fw/Python/src:${DIRNAME}/../src"
+export FPRIME_CORE_DIR="`cd ${DIRNAME}/../../..; pwd`"
+export PYTHONPATH="${DIRNAME}:${FPRIME_CORE_DIR}/Fw/Python/src:${DIRNAME}/../src"
 # Run command utility
 CMD="$1"
 shift
@@ -24,5 +24,5 @@ then
     echo "[ERROR] '${CMD}' is not an autocoder utility. Valid utilities: ${UTILS}"
     exit 1
 fi
-BUILD_ROOT="${BUILD_ROOT}" python -m utils.${CMD} "$@"
+python -m utils.${CMD} "$@"
 

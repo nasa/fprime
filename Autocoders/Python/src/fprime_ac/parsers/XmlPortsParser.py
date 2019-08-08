@@ -51,6 +51,7 @@ class XmlPortsParser(object):
         """
         self.__root = None
         self.__include_serializable_files = []
+        self.__include_enum_files = []
         self.__include_header_files = []
         #
         self.__config       = ConfigManager.ConfigManager.getInstance()
@@ -60,14 +61,14 @@ class XmlPortsParser(object):
         self.__enum_list_items = []
         self.__modifier = None
         #
-        self.__xml_filename = xml_file
-        #
         if os.path.isfile(xml_file) == False:
             str = "ERROR: Could not find specified XML file %s." % xml_file
             PRINT.info(str)
             raise IOError(str)
-
         fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
+        self.__xml_filename = xml_file
+        #
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
@@ -79,15 +80,12 @@ class XmlPortsParser(object):
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
 
-        try:
-            # 2/3 conversion
-            relax_compiled.validate(element_tree)
-        except Exception as e:
-            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.__config.get('schema' , 'interface')))
-            PRINT.info(e)
-            PRINT.info(relax_compiled.error_log)
-            PRINT.info(relax_compiled.error_log.last_error)
-            raise e
+        # 2/3 conversion
+        if not relax_compiled.validate(element_tree):
+            msg = "XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.__config.get('schema' , 'interface'))
+            PRINT.info(msg)
+            print(element_tree)
+            raise Exception(msg)
 
         interface = element_tree.getroot()
         if interface.tag != "interface":
@@ -110,6 +108,8 @@ class XmlPortsParser(object):
                 self.__include_header_files.append(interface_tag.text)
             elif interface_tag.tag == 'import_serializable_type':
                 self.__include_serializable_files.append(interface_tag.text)
+            elif interface_tag.tag == 'import_enum_type':
+                self.__include_enum_files.append(interface_tag.text)
             elif interface_tag.tag == 'args':
                 for arg in interface_tag:
                     if arg.tag != 'arg':
@@ -218,6 +218,12 @@ class XmlPortsParser(object):
         Return a list of all imported Serializable XML files.
         """
         return self.__include_serializable_files
+    
+    def get_include_enum_files(self):
+        """
+        Return a list of all imported enum XML files.
+        """
+        return self.__include_enum_files
 
     def get_interface(self):
         """

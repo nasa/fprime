@@ -75,44 +75,6 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
   endforeach()
 endfunction(generic_autocoder)
 
-# TODO: enumerations don't work super well with the system.  Don't use.
-function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
-  # Search for enum txt files
-  foreach(INPUT_FILE ${AUTOCODER_INPUT_FILES})
-    string(REGEX MATCH "([a-zA-Z0-9\-_]+)EnumAi.txt" ENUM_TXT "${INPUT_FILE}")
-    if(NOT ${ENUM_TXT} STREQUAL "")
-      # Extract enum name
-      string(REGEX REPLACE "([a-zA-Z0-9\-_]+)(EnumAi.txt)" "\\1" ENUM_NAME "${ENUM_TXT}")
-      message(STATUS "\tFound enum: ${ENUM_NAME}")
-
-      # Add enum header and source
-      string(CONCAT ENUM_HEADER ${ENUM_NAME} "EnumAc.hpp")
-      string(CONCAT ENUM_SOURCE ${ENUM_NAME} "EnumAc.cpp")
-      string(CONCAT ENUM_PY ${ENUM_NAME} ".py")
-      # AC files may be considered source files, or they may be considered build artifacts. This is set via
-      # cmake configuration and controls the location of the output.
-      if (GENERATE_AC_IN_SOURCE)
-          set(ENUM_FINAL_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-      else()
-          set(ENUM_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
-      endif()
-      # Invoke autocoder to produce enum header
-      add_custom_command(
-        OUTPUT ${ENUM_FINAL_DIR}/${ENUM_HEADER} ${ENUM_FINAL_DIR}/${ENUM_SOURCE}
-        COMMAND ${CMAKE_COMMAND} -E env SHELL_AUTOCODER_DIR=${SHELL_AUTOCODER_DIR}
-        ${FPRIME_CORE_DIR}/cmake/wrapper/enumgen.sh ${CMAKE_CURRENT_SOURCE_DIR}/${ENUM_TXT} ${ENUM_FINAL_DIR}
-        DEPENDS ${ENUM_TXT}
-      )
-
-      # Add autocode to module
-      target_sources(
-        ${MODULE_NAME}
-        PRIVATE ${ENUM_FINAL_DIR}/${ENUM_SOURCE} ${ENUM_FINAL_DIR}/${ENUM_HEADER}
-      )
-    endif()
-  endforeach()
-endfunction(enum_autocoder)
-
 ####
 # Function `generate_module`:
 #

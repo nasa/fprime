@@ -54,7 +54,13 @@
                         <data type="anyURI"></data>
                     </element>
                 </zeroOrMore>
-
+                
+                <zeroOrMore>
+                    <element name = "import_enum_type">
+                        <a:documentation>Import enum XML files.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
 
                 <optional>
                     <!-- Optional Comments -->
