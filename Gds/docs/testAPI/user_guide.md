@@ -254,16 +254,113 @@ result = self.api.send_and_assert_event("TEST_CMD_1", events="CommandReceived")
 ### Using predicates effectively
 
 The API uses predicates to identify valid values in searches and filter data objects into histories.
-The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. First an example of how predicates can be used to specify channel update values.
+The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. When using predicates, it is important to understand that a predicate is used to determine if a value belongs to a set of values that satisfies a rule. Not satisfying a rule [**DOES NOT** imply](#-Interpreting-predicates-correctly) that a value satisfies a second complimentary rule.
 
 #### Combining Predicates
 
-The test API has two methods to help create event and telemetry predicates. These methods overload argument types.
+One pattern is to have multiple predicate specifications and want to combine these.
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+
+gt_pred = predicates.greater_than(8)
+eq_pred = predicates.equal_to("some_string")
+
+# satisfies any will evaluate true if any of it's predicates are valid
+or_pred = predicates.satisfies_any([gt_pred, eq_pred])
+
+or_pred(121)           # evaluates True
+or_pred("some_string") # evaluates True
+
+rng_pred = predicates.within_range(0, 100)
+ne_pred = predicates.not_equal_to(50)
+
+# a valid value must be within the range 0 to 100 and must not be 50.
+and_pred = predicates.satisfies_all([rng_pred, ne_pred])
+
+or_pred(15) # evaluates True
+or_pred(50) # evaluates False
+~~~~
+
+#### Set Predicates
+
+Another pattern is to specify a collection and check if the value is a member of that collection.
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+
+is_in_pred = predicates.is_a_member_of(["A", 2, False])
+isnt_in_pred = predicates.is_not_a_member_of(["A", 3])
+eq_pred = predicates.equal_to("some_string")
+or_pred = predicates.satisfies_any([gt_pred, eq_pred])
+
+is_in_pred(2)     # evaluates True
+is_in_pred(False) # evaluates True
+
+is_in_pred("A")   # evaluates True
+isnt_in_pred("A") # evaluates False
+~~~~
+
+This pattern is useful for creating filters. For example, if we want to search or filter for certain event severities.
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.utils.event_severity import EventSeverity
+
+severities = []
+severities.append(EventSeverity.FATAL)
+severities.append(EventSeverity.WARNING_HI)
+sev_pred = predicates.is_a_member_of(severities)
+
+# event pred will now identify any event with either Fatal or HI Warning severity
+event_pred = self.api.get_event_pred(severity=sev_pred)
+~~~~
 
 #### Specifying data objects
 
+The test API has two methods to help create event and telemetry predicates: `api.get_telemetry_pred` and `api.get_event_pred`. These methods overload argument types such that fields can be specified as a value (becomes an equal_to predicate) or they can be specified by user-created predicates. To specify the type of event/telemetry, the helpers can accept both mnemonics (str) or ids (int).
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.utils.event_severity import EventSeverity
+
+# both predicates will now identify any event with a command severity
+sev_pred = predicates.equal_to(EventSeverity.COMMAND)
+event_pred1 = self.api.get_event_pred(severity=sev_pred)
+event_pred2 = self.api.get_event_pred(severity=EventSeverity.COMMAND)
+
+# both predicates will now identify any "CommandCounter" Update
+ch_pred1 = self.api.get_telemetry_pred("CommandCounter")
+ch_pred2 = self.api.get_telemetry_pred(1)
+~~~~
 
 ### Using sub-histories
+
+One patterns that the API supports is creating a sub-history of telemetry or event objects. There are several [behaviors](#-Substituting-a-history-(history-argument)) to understand with sub-histories that are outlined in the API features section. Below is an example of how to create sub-histories, search on sub-histories, and remove sub-histories. Sub-histories can be created for both telemetry and event data objects.
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.utils.event_severity import EventSeverity
+
+# Creates an event sub-history with the default object ordering (fsw_order).
+fsw_subhist = self.api.get_event_subhistory()
+
+# Creates a filtered sub-history with all events of COMMAND severity
+event_filter = self.api.get_event_pred(severity=EventSeverity.COMMAND)
+filt_subhist = self.api.get_event_subhistory(event_filter)
+
+# Creates an event sub-history with ERT ordering
+ert_subhist = self.api.get_event_subhistory(fsw_order=False)
+
+# Substitutes a sub-history into an API assert
+result = self.api.assert_event("SeverityCOMMAND", history=filt_subhist)
+
+# If a sub-history hasn't been removed. It can also be awaited on.
+results = self.api.await_event_count(5, history=fsw_subhist)
+
+# De-register a sub-history from the GDS
+self.api.remove_event_subhistory(ert_subhist)
+~~~~
 
 ### Search returns
 
@@ -282,7 +379,7 @@ The test API has two methods to help create event and telemetry predicates. Thes
 
 ### Interpreting predicates correctly
 
-Predicates may compare a value to another, but their purpose isn't to compare two objects, rather to identify objects that satisfy a certain property. If a user uses a greater_than predicate to see if a string is greater than a numeric value, 8, the predicate will return False. The correct interpretation is that the string is not in the set of values that are greater than 8. It is incorrect to say the string is less than 8.
+Predicates may compare a value to another, but their purpose isn't to compare two objects, rather to identify objects that satisfy a certain property or rule. If a user uses a greater_than predicate to see if a string is greater than a numeric value, 8, the predicate will return False. The correct interpretation is that the string is not in the set of values that are greater than 8. It is incorrect to say the string is less than 8.
 
 ~~~~{.python}
 from fprime_gds.common.testing_fw import predicates
@@ -298,7 +395,7 @@ lte_pred(7)        # evaluates True
 lte_pred("string") # evaluates False: String is not a value that is less than 8
 ~~~~
 
-**Takeaway**: using invert to try to convert a greater_then predicate to a less_than_or_equal_to predicate will introduce false positives if the user isn't aware of the implications
+**Takeaway**: using invert to try to convert a greater_then predicate to a less_than_or_equal_to predicate will introduce false positives if the user isn't aware of what a predicate is describing
 
 ~~~~{.python}
 from fprime_gds.common.testing_fw import predicates
@@ -394,7 +491,7 @@ Another useful feature in the integration test API is the ability to create filt
 - A new subhistory WILL be registered with the GDS to automatically receive data objects from its respective decoder (event/telemetry).
 - A new subhistory will NOT be managed by the Test API. It will not be cleared nor de-registered when a test case ends.
 
-Removing a sub-history is currently permanent as sub-histories can not be re-registered. Removing a sub-history will unsubscribe it from the GDS and it will no longer receive new data objects.
+Removing a sub-history is currently permanent as th API doesn't provide for sub-histories to be re-registered. Removing a sub-history will unsubscribe it from the GDS and it will no longer receive new data objects.
 
 ### Data object specifiers (event and channel arguments)
 
