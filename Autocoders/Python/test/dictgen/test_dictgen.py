@@ -43,7 +43,6 @@ def file_diff(file1, file2):
                     diff_lines.add(count)
                 count += 1
 
-    # Warn user if one file is longer than the other
     if file_len(file1) < file_len(file2):
         print("WARNING: " + file2 + " has more lines than " + file1)
     elif file_len(file1) < file_len(file2):
@@ -89,7 +88,7 @@ def compare_genfile(filename):
     Compares genfile with expected genfile
     """
     remove_headers(filename)
-
+    
     if not (filecmp.cmp(filename,"templates/{}".format(filename + ".txt"))):
         print("WARNING: {} generated incorrectly according to Autocoders/Python/test/dictgen/templates/{}".format(filename, filename + ".txt"))
         diff_lines = file_diff(filename, "templates/{}".format(filename) + ".txt")
@@ -432,7 +431,6 @@ def check_generated_files(testdir):
         else:
             print("ERROR: Invalid component name {}".format(chan_comp))
             assert False
-
         # Type check
         chan_type = channel.attrib["type"]
         if not (chan_type in inst1_channel_types or chan_type in inst2_channel_types):
@@ -455,7 +453,6 @@ def check_generated_files(testdir):
         else:
             print("ERROR: Invalid component name {}".format(param_comp))
             assert False
-
         # Type check
         param_type = parameter.attrib["type"]
         if not (param_type in inst1_parameter_types or param_type in inst2_parameter_types):
@@ -478,6 +475,8 @@ def check_generated_files(testdir):
             if not mod in files:
                 print("ERROR: python module {} not found in dictgen/commands".format(mod))
                 assert False
+    
+        print(len(expected_cmd_modules), len(files))
             
         if not len(expected_cmd_modules) == len(files):
             print("ERROR: Not all command python modules were generated")
@@ -532,6 +531,7 @@ def check_generated_files(testdir):
             if not mod in files:
                 print("ERROR: python module {} not found in dictgen/parameters".format(mod))
                 assert False
+
 
 
         if not len(expected_param_modules) == len(files):
@@ -649,7 +649,7 @@ def test_dictgen():
         
         ## Spawn executable
         p_pymod = pexpect.spawn("python " + bindir + "pymod_dictgen.py -v TestTopologyAppAi.xml")
-        
+
         p_pymod.expect("(?=.*Generated component dicts for DictGen::TestComponent)(?=.*Generated pymods for topology TestTopology)(?!.*ERROR).*", timeout=5)
         
         print("Autocoded TestTopology using pymod_dictgen dictgen tool")
