@@ -2,6 +2,8 @@
 
 The GDS integration test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an F Prime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](markdown/contents.md) for the IntegrationTestAPI's sphinx-generated documentation.
 
+This integration test API was developed by Kevin Oran in the summer of 2019.
+
 ## Quick Start
 
 ***
@@ -379,6 +381,35 @@ for update in results:
     last = update
 ~~~~
 
+### Assert Helpers
+
+Another feature provided to the user is the ability to raise asserts with formatted assert messages reflected in the test logs.
+
+~~~~{.python}
+from fprime_gds.common.testing_fw import predicates
+
+# assert on values that can be evaluated as True or False
+self.api.test_assert(2 < 3, "The number two should be less than three")
+
+# assert a predicate on a value the log message will be more descriptive.
+lt_pred = predicates.less_than(3)
+self.api.predicate_assert(lt_pred, 2, "The number two should be less than three")
+~~~~
+
+Assert helpers can be configured not to raise an assertion error. They will also return True if the assertion passed or False if it failed. This can be used to perform multiple checks. This behavior is referred to as expecting instead of asserting.
+
+~~~~{.python}
+# a variable to accumulate whether all checks were successful
+all_passed = True
+all_passed &= self.api.test_assert(1 < 3, "1 should be less than 3", expect=True)
+all_passed &= self.api.test_assert(2 < 3, "2 should be less than 3", expect=True)
+# this call will not raise an assert, but will return False
+all_passed &= self.api.test_assert(3 < 3, "3 should not be less than 3", expect=True)
+
+# checks that previous expectations passed.
+self.api.test_assert(all_passed, "All checks should have passed, see log")
+~~~~
+
 ### Using TimeTypes
 
 The TimeType serializable stores timestamp information for both events and telemetry. As part of the development for the integration test API, the TimeType object was updated to support rich comparison and math operations. These are implemented with python special methods and are compatible with floating point numbers.
@@ -661,8 +692,6 @@ The following table summarizes the color meanings from API-generated messages.
 | Gray| gray indicates the beginning of a new test case.|
 | White| white or blank fill is used for diagnostic messages.|
 
-### Assert Helpers
-
 ### Predicates
 
 The integration test API uses predicates for filtering, searching and asserting. A predicate is a callable class that evaluates if an object/value satisfies a certain property. Predicates used by the API are defined [here](../../src/fprime_gds/common/testing_fw/predicates.py). The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, a user of the API can very easily create their own. Below is a table of how predicates are organized with a brief summary of each section:
@@ -812,7 +841,7 @@ In order to properly support ERT ordering, I recommend:
     - `__insert_chrono()` [helper](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L165)
     - `__get_index()` [helper](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L206)
 
-#### Better History Markers (future)
+#### Better History Markers
 
 As part of the work to add ERT and have chronological histories work for both ERT and FSW orders, histories should be updated to have a `get_current_marker()` method. This will allow the histories to specify the best way to mark a position with respect to their own implementations. For reference: ChronologicalHistories should use a TimeType, Ram and Test History should use an index.
 
