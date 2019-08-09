@@ -1,12 +1,12 @@
 # GDS Integration Test API User Guide
 
-The GDS integration test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](markdown/contents.md) for the IntegrationTestAPI's sphinx-generated documentation.
+The GDS integration test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an F Prime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](markdown/contents.md) for the IntegrationTestAPI's sphinx-generated documentation.
 
 ## Quick Start
 
 ***
 
-To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
+To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an F Prime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
 
 ~~~~{.python}
 from fprime_gds.common.pipeline.standard import StandardPipeline
@@ -293,8 +293,6 @@ from fprime_gds.common.testing_fw import predicates
 
 is_in_pred = predicates.is_a_member_of(["A", 2, False])
 isnt_in_pred = predicates.is_not_a_member_of(["A", 3])
-eq_pred = predicates.equal_to("some_string")
-or_pred = predicates.satisfies_any([gt_pred, eq_pred])
 
 is_in_pred(2)     # evaluates True
 is_in_pred(False) # evaluates True
@@ -424,7 +422,7 @@ for result in results:
 
 ### Recording a point in the histories
 
-**NOTE** There is an [issue](#-Latest-Time-Getter-is-incorrect) with how get_latest_time() is implemented. Getting history markers should be updated to be more robust.
+**NOTE** There is an [issue](#-Latest-FSW-Time-Getter-is-incorrect) with how get_latest_time() is implemented. Getting history markers should be updated to be more robust.
 
 If a user wants to record a marker, send some commands and then come back and evaluate items after that marker, then they can do the following: This all will return the latest FSW TimeStamp when the histories are ordered by FSW time.
 
@@ -440,6 +438,7 @@ results = self.api.assert_telemetry("Counter", start=fsw_start)
 ~~~~
 
 If using receive-ordered histories, this point should be marked as an index.
+
 ~~~~{.python}
 # if using re-ordered histories
 ro_start = self.api.get_telemetry_test_history().size()
@@ -479,9 +478,25 @@ time.sleep(5)
 self.api.assert_telemetry_count(0)
 ~~~~
 
-### Specifying sequence timestamps
+### Specifying sequence searches with timestamps
+
+The doc-strings in the API recommend not specifying FSW timestamps when searching for sequences. This is simply because the timestamps can change depending on when tests are run. the easiest way to verify timing is to process timestamps after a search is completed.
 
 ### No-scope search
+
+Because searches allow the user to define the [existing and future scope to search](), it is possible to completely de-scope a search.
+
+~~~~{.python}
+# setting timeout to zero on await functions w/o a start, results in no scope
+self.api.await_telemetry_count(5, timeout=0)
+
+# setting start to END on assert functions w/o a timeout, results in no scope
+self.api.assert_telemetry_count(5, start="END")
+
+# setting start to END and timeout to zero on any search, results in no scope
+self.api.assert_telemetry_count(5, start="END", timeout=0)
+self.api.await_telemetry_count(5, start="END", timeout=0)
+~~~~
 
 ### Interpreting predicates correctly
 
@@ -518,9 +533,13 @@ gt_pred("string") # evaluates False: String is not a value that is greater than 
 
 ***
 
-openpyxl
-sphinx
-sphinx-markdown-builder
+The following libraries were added to the [GDS pip requirements file](../../../mk/python/pip_required_gds.txt).
+
+| Library| Provides|
+| :--| :--|
+|openpyxl| ability to create formatted .xlsx files|
+|sphinx| ability to generate code documentation
+|sphinx-markdown-builder| ability to output code docs as markdown files|
 
 ## Integration Test API Organization
 
@@ -557,7 +576,7 @@ The table below outlines the additional functionality provided by each layer in 
 
 ### Integration Test Classes
 
-The API uses several classes to support its features. They were organized within the already-present GDS class folder structure. A component view of the integration test API and its relationship to the Integration Tests and the GDS is shown in the diagram below. For simplicity, the predicates library has been left out, but it can be used by Integration tests and is used by the Test API and Test History layers.
+The API uses several classes to support its features. They were organized within the already-present GDS class folder structure. A component view of the integration test API and its relationship to the Integration Tests and the GDS is shown in the diagram below. For simplicity, the predicates library has been left out, but it can be used by Integration tests and is presently used by the Test API and Test History layers.
 ![Component View of the Test Framework](assets/TestFwComponentView.png)
 
 ## Important API Features
@@ -660,21 +679,94 @@ The integration test API uses predicates for filtering, searching and asserting.
 
 ***
 
-### Latest Time Getter is incorrect
+### Latest FSW Time Getter is incorrect
 
 Because it was demonstrated that data objects can come in a different receive order than they were created in FSW, the `get_latest_time()` method is not correct. When implemented, it was assumed that all history items would be enqueued in the same order that they were created. This is no longer a safe assumption. Effectively `get_latest_time()` is returns an approximation of the latest time.
 
 I see two options to address this:
+
 1. Replacing the Ram Histories in the GDS with Chronological Histories
 2. Having the TestAPI be subscribed to all data objects and calculate latest time as items are enqueued.
 
-### openpyxl has thrown WorkbookAlreadySaved error
+### The openpyxl library has thrown WorkbookAlreadySaved error
 
-While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](../../src/fprime_gds/common/logger/test_logger.py) was updated to catch the exception to prevent tests from failing due to the logger.
+While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](../../src/fprime_gds/common/logger/test_logger.py) was updated to [catch the exception](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L124) to prevent tests from failing due to the logger.
+
+~~~~
+___________________________________ APITestCases.test_find_history_item _________________________________
+
+self = <WriteOnlyWorksheet "Sheet">, row = [<Cell 'Sheet'.A1>, <Cell 'Sheet'.A1>, <Cell 'Sheet'.A1>, <Cell 'Sheet'.A1>]
+
+    def append(self, row):
+        """
+        :param row: iterable containing values to append
+        :type row: iterable
+        """
+    
+        if (not isgenerator(row) and
+            not isinstance(row, (list, tuple, range))
+            ):
+            self._invalid_row(row)
+    
+        self._max_row += 1
+    
+        if self.writer is None:
+            self.writer = self._write_header()
+            next(self.writer)
+    
+        try:
+>           self.writer.send(row)
+E           StopIteration
+
+/usr/lib/python3/dist-packages/openpyxl/writer/write_only.py:241: StopIteration
+
+During handling of the above exception, another exception occurred:
+
+self = <api_unit_test.APITestCases testMethod=test_find_history_item>
+
+    def setUp(self):
+        for t in self.threads:
+            if t.isAlive():
+                t.join()
+        self.threads.clear()
+        count = len(self.case_list)
+>       self.api.start_test_case(self._testMethodName, count)
+
+test/fprime_gds/common/testing_fw/api_unit_test.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/fprime_gds/common/testing_fw/api.py:96: in start_test_case
+    self.__log(msg, TestLogger.GRAY, TestLogger.BOLD, case_id=case_id)
+src/fprime_gds/common/testing_fw/api.py:1214: in __log
+    self.logger.log_message(message, sender, color, style, case_id)
+src/fprime_gds/common/logger/test_logger.py:121: in log_message
+    self.worksheet.append(row)
+/usr/lib/python3/dist-packages/openpyxl/writer/write_only.py:243: in append
+    self._already_saved()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <WriteOnlyWorksheet "Sheet">
+
+    def _already_saved(self):
+>       raise WorkbookAlreadySaved('Workbook has already been saved and cannot be modified or saved anymore.')
+E       openpyxl.utils.exceptions.WorkbookAlreadySaved: Workbook has already been saved and cannot be modified or saved anymore.
+
+/usr/lib/python3/dist-packages/openpyxl/writer/write_only.py:247: WorkbookAlreadySaved
+------------------------------------------ Captured stdout call ---------------------------------
+10:46:08.703826 [Test API] [STARTING CASE] test_find_history_item
+~~~~
 
 To fully resolve this would require being able to reproduce the issue and explain why the test log failed. However, the test logger should at least have a reliable csv format that won't stop logging if the xml logger fails.
 
-Alternatively, The whole test logger could be replaced with python logging, but the formatting is very nice and would be nice to keep around.
+#### Adding CSV Logger to Test Logger
+
+Recommendation for adding a csv logger to the TestLogger class:
+
+1. Set up the csv log file in the constructor [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L49).
+2. Add a `_log_csv_row()` helper along similar lines to the `_get_ws_row()` helper [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L159)
+3. Log the start time at the top of the file like the excel output does [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L85).
+4. Log the column headers to csv like the excel does [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L88).
+5. Log messages in the lock block [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/logger/test_logger.py#L119).
+
 
 ## Idiosyncrasies
 
@@ -708,19 +800,29 @@ return searcher.get_return_value()
 
 **NOTE**: The above code hasn't been tested and may have issues if the system time changes: `time.time()`.
 
-### Implementing ERT ordering in Chronological History and in the GDS (future)
+### Implementing ERT ordering in Chronological History and in the GDS
+
+In order to properly support ERT ordering, I recommend:
+
+1. Add a TimeType field to the [SysData](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/data_types/sys_data.py#L19) class and add an accessor for `get_ert_time()`.
+2. Have the GDS record ERT at some point.
+3. Preserve the use of the `fsw_order` argument in the test API's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L29) and [sub-history](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L244) functions by passing the fsw_order argument to the chronological [history constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L23).
+4. Modify chronological history to choose whether to use `get_time()` or `get_ert_time()` for its ordering/returning operations:
+    - [clearing history](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L111)
+    - `__insert_chrono()` [helper](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L165)
+    - `__get_index()` [helper](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/history/chrono.py#L206)
 
 #### Better History Markers (future)
 
 As part of the work to add ERT and have chronological histories work for both ERT and FSW orders, histories should be updated to have a `get_current_marker()` method. This will allow the histories to specify the best way to mark a position with respect to their own implementations. For reference: ChronologicalHistories should use a TimeType, Ram and Test History should use an index.
 
-### Adding CSV Logger to Test Log (make an issue)
-
 ### Color-coding interlaced Events in the API Log
+
+One feature that wasn't completed this summer was to color-code interlaced event logs based on severity. Presently, interlacing events are implemented by making the API a consumer of the event decoder in the GDS and then filtering events. Modifying the color of these log messages can be done [here](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L1258).
 
 ### Moving StandardPipeline to API constructor
 
-Presently, a user of the integration test API needs to instantiate the GDS manually before instantiating the API. This code should really be moved to inside the API. To do this, the IntegrationTestAPI's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L27) should be modified to include the pipeline instantiation and the API's [teardown](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L64) method should be modified to disconnect from the FPrime deployment.
+Presently, a user of the integration test API needs to instantiate the GDS manually before instantiating the API. This code should really be moved to inside the API. To do this, the IntegrationTestAPI's [constructor](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L27) should be modified to include the pipeline instantiation and the API's [teardown](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/d0309a9e265b8650ca6be03b9132dfdc682e0622/Gds/src/fprime_gds/common/testing_fw/api.py#L64) method should be modified to disconnect from the F Prime deployment.
 
 #### Modification to the Integration Test API
 
@@ -775,13 +877,19 @@ api = IntegrationTestAPI( dict_path, server_ip, port, log_prefix)
 api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 ~~~~
 
-### Using GDS Prefix to output the test Logs (future)
+### Using GDS Prefix to output the test Logs
+
+Currently the StandardPipeline (GDS Helper layer) uses a path to a directory to specify an output location for log directories. When GDS instantiation is [moved inside](#-Moving-StandardPipeline-to-API-constructor) of IntegrationTestAPI's constructor, this prefix and directory should be used to output test logs as well.
 
 ### Better test identifiers using decorators
 
-### GDS arguments should allow non-string types
+When a new test case [is started](https://github.jpl.nasa.gov/FPRIME/fprime-sw/blob/717bc6fab85c53680108fc961cad6338e779816f/Gds/src/fprime_gds/common/testing_fw/api.py#L85), the API user can specify a `case_id` that will be used in the logs to identify the current test case without scrolling to the test case header. Future uses of the API should investigate using decorators to specify an ID to put in this column. Present tests just use a counter and assign a numbr to each test case.
 
-### FPrime CI/CD Test Runner
+### GDS command arguments should allow non-string types
+
+Presently, the GDS doesn't accept command arguments that aren't strings. This is kind of annoying and means the test API is more flexible about 
+
+### F Prime CI/CD Test Runner
 
 During the development of the API it became apparent that the Test Runner would have bled into the scope of other testing efforts at the time. So the test API work de-scoped developing a test runner script. However, because discussions were had on what the Test Runner should do, the requirements for the Test Runner are still captured here.
 
@@ -797,6 +905,8 @@ During the development of the API it became apparent that the Test Runner would 
 - The Test Runner should support different test configurations
 - The Test Runner should have a Command Line Interface
 
-## Generating Documentation
+## Generating Code Documentation
 
 ***
+
+If the API is modified and a developer wants to generate new documentation, they can navigate to the sphinx directory and run the command `make markdown` to create new code docs. The files will be in `fprime-sw/Gds/docs/testAPI/sphinx/build/markdown` they should be moved to `fprime-sw/Gds/docs/testAPI/markdown` and committed there.
