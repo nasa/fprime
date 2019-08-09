@@ -3,6 +3,7 @@
 The GDS integration test API is a GDS Tool that provides useful functions and asserts for creating integration-level tests on an FPrime deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. See [this link](markdown/contents.md) for the IntegrationTestAPI's sphinx-generated documentation.
 
 ## Quick Start
+
 ***
 
 To work with the integration test API, the user must first create an instance of the StandardPipeline and then instantiate the API. This is boiler plate code that should be [moved inside the TestAPI](#moving-standardpipeline-to-api-constructor). The following code snippet accomplishes directing the GDS to a deployment dictionary, connecting to a running deployment, and finally instantiating the test API. This snippet **DOES NOT** run the GDS TCP Server or run an FPrime deployment. An example script to run the Ref App deployment without a GDS Tool can be found [here](../../../Ref/scripts/run_ref_for_int_test.sh).
@@ -84,6 +85,7 @@ if __name__ == "__main__":
 ~~~~
 
 ## Usage Patterns
+
 ***
 
 All usage patterns are written such that they would be compatible with the test framework example described above: each test case assumes that the histories were recently emptied and that the `self.api` field is a connected instance of the integration test API. For simplicity, usage examples will rely on mock flight software dictionaries that were used in the integration test API unit tests. This dictionary can be found [here](../../test/fprime_gds/common/testing_fw/UnitTestDictionary.xml).
@@ -251,7 +253,7 @@ results = self.api.send_and_await_event("TEST_CMD_1", events=seq)
 result = self.api.send_and_assert_event("TEST_CMD_1", events="CommandReceived")
 ~~~~
 
-### Using predicates effectively
+### Using predicates
 
 The API uses predicates to identify valid values in searches and filter data objects into histories.
 The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. When using predicates, it is important to understand that a predicate is used to determine if a value belongs to a set of values that satisfies a rule. Not satisfying a rule [**DOES NOT** imply](#-Interpreting-predicates-correctly) that a value satisfies a second complimentary rule.
@@ -381,15 +383,103 @@ for update in results:
 
 ### Using TimeTypes
 
+The TimeType serializable stores timestamp information for both events and telemetry. As part of the development for the integration test API, the TimeType object was updated to support rich comparison and math operations. These are implemented with python special methods and are compatible with floating point numbers.
+
+**NOTE**: Math operations will return a new TimeType object with the resulting value and the TimeType serializable does not allow negative values.
+
+**NOTE**: Math operations between TimeType objects of different time_bases or time_context will return a TimeType with the same base and context as the left operand.
+
+~~~~{.python}
+from fprime.common.models.serialize.time_type import TimeType
+
+t0 = TimeType() # 0.0 seconds
+
+t1 = t0 + 1   # Assigns a TimeType with a time of 1.0 seconds
+t3 = t0 + 3   # Assigns a TimeType with a time of 3.0 seconds
+t2 = t3 - t1  # Assigns a TimeType with a time of 2.0 seconds
+t0 = t1 - t3  # Assigns a TimeType with a time of 0.0 seconds (negatives are set to 0)
+t15 = t3 / 2  # Assigns a TimeType with a time of 1.5 seconds
+t6 =  t2 * t3 # Assigns a TimeType with a time of 6.0 seconds
+
+
+t1 > 0   # evaluates True
+t1 > t0  # evaluates True
+t6 == 6  # evaluates True
+t3 >= t2 # evaluates True
+~~~~
+
+Accessing TimeStamps from from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
+
+~~~~{.python}
+seq = ["Counter"] * 5
+results = self.api.await_telemetry_sequence(seq)
+
+# checks that all adjacent elements in the sequence happened within 2 seconds of each other
+last = None
+for result in results:
+    if last is not None:
+        assert result.get_time() - last.get_time() < 2
+    last = result
+~~~~
+
 ### Recording a point in the histories
+
+**NOTE** There is an [issue](#-Latest-Time-Getter-is-incorrect) with how get_latest_time() is implemented. Getting history markers should be updated to be more robust.
+
+If a user wants to record a marker, send some commands and then come back and evaluate items after that marker, then they can do the following: This all will return the latest FSW TimeStamp when the histories are ordered by FSW time.
+
+~~~~{.python}
+# if using time-ordered histories
+fsw_start = self.api.get_latest_time()
+
+# do some stuff
+self.api.send_command("TEST_CMD_1")
+
+# search
+results = self.api.assert_telemetry("Counter", start=fsw_start)
+~~~~
+
+If using receive-ordered histories, this point should be marked as an index.
+~~~~{.python}
+# if using re-ordered histories
+ro_start = self.api.get_telemetry_test_history().size()
+
+# do some stuff
+self.api.send_command("TEST_CMD_1")
+
+# search
+results = self.api.assert_telemetry("Counter", start=ro_start)
+~~~~
 
 ## Anti-patterns
 
 ***
 
-### Asserting None and awaiting counts
+### Asserting none of a data object were received
 
-### Specifying sequence timeStamps
+One thing a user might want to do is assert that no instances of a certain update or message were received. This can be done using a count search for zero items on **existing history items only**.  This constraint is because the count search behaves as follows:
+
+1. count all items in the search scope of the current history
+2. await future updates until a correct count is received.
+
+So, if count search is awaiting zero items, it will exit immediately and claim success where the user may believe it searched future objects.
+
+~~~~{.python}
+# incorrect, this will exit as the search found 0 items and was looking for 0 items
+self.api.assert_telemetry_count(0, start="END", timeout=5)
+~~~~
+
+If the user wants to assert that none of a certain type of object were received in the future scope, they should wait for items to accumulate then assert on existing scope.
+
+~~~~{.python}
+import time
+
+# correct, way to say no telemetry was received in now or in the next 5 seconds.
+time.sleep(5)
+self.api.assert_telemetry_count(0)
+~~~~
+
+### Specifying sequence timestamps
 
 ### No-scope search
 
@@ -424,9 +514,13 @@ not_lte_pred("string") # evaluates True: because "string" is not a value that is
 gt_pred("string") # evaluates False: String is not a value that is greater than 8
 ~~~~
 
-## API Usage Requirements
+## API Installation Requirements
 
 ***
+
+openpyxl
+sphinx
+sphinx-markdown-builder
 
 ## Integration Test API Organization
 
@@ -552,12 +646,12 @@ The following table summarizes the color meanings from API-generated messages.
 
 ### Predicates
 
-A user of the integration test API should be familiar with the [predicates library](../../src/fprime_gds/common/testing_fw/predicates.py) used by the API. The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, user of the API can very easily create their own predicates. Below is a table of how predicates are organized with a brief summary of each section:
+The integration test API uses predicates for filtering, searching and asserting. A predicate is a callable class that evaluates if an object/value satisfies a certain property. Predicates used by the API are defined [here](../../src/fprime_gds/common/testing_fw/predicates.py). The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, a user of the API can very easily create their own. Below is a table of how predicates are organized with a brief summary of each section:
 
 | Predicate Section| Section Description| Functions/predicates|
 | :----| :----| :----|
 | Base class/helpers| This section contains the parent class for predicates and helpers to carry out duck-typing and string formatting.| class predicate, is_predicate(), get_descriptive_string()|
-| Comparison Predicates| These predicates carry out basic rich-comparisons (<, =, >, !=).| less_than, greater_than, equal_to, not_equal_to, less_than_or_equal_to, greater_than_or_equal_to, within_range|
+| Comparison Predicates| These predicates evaluate basic comparison rules (<, =, >, !=).| less_than, greater_than, equal_to, not_equal_to, less_than_or_equal_to, greater_than_or_equal_to, within_range|
 | Set Predicates| These predicates evaluate whether predicates belong to a set of objects.| is_a_member_of, is_not_a_member_of|
 | Logic Predicates| These predicates can be used to combine/manipulate other predicates with basic boolean logic.| always_true, invert (not), satisfies_all (and), satisfies_any (or)|
 | Test API Predicates| These predicates operate specifically on the fields on the ChData and EventData objects. They are used by the API to specify event and telemetry messages.| args_predicate, event_predicate, telemetry_predicate|
@@ -566,9 +660,26 @@ A user of the integration test API should be familiar with the [predicates libra
 
 ***
 
+### Latest Time Getter is incorrect
+
+Because it was demonstrated that data objects can come in a different receive order than they were created in FSW, the `get_latest_time()` method is not correct. When implemented, it was assumed that all history items would be enqueued in the same order that they were created. This is no longer a safe assumption. Effectively `get_latest_time()` is returns an approximation of the latest time.
+
+I see two options to address this:
+1. Replacing the Ram Histories in the GDS with Chronological Histories
+2. Having the TestAPI be subscribed to all data objects and calculate latest time as items are enqueued.
+
+### openpyxl has thrown WorkbookAlreadySaved error
+
+While running unit tests on the API, there was an error thrown by openpyxl that caused the log to close early. The behavior wasn't able to be recreated, but the [Test Logger](../../src/fprime_gds/common/logger/test_logger.py) was updated to catch the exception to prevent tests from failing due to the logger.
+
+To fully resolve this would require being able to reproduce the issue and explain why the test log failed. However, the test logger should at least have a reliable csv format that won't stop logging if the xml logger fails.
+
+Alternatively, The whole test logger could be replaced with python logging, but the formatting is very nice and would be nice to keep around.
+
 ## Idiosyncrasies
 
 ***
+
 In this document, idiosyncrasies refer to needed-improvements and future features that should/could be in the Test API. The API in its present state is functional, but these were identified as nice-to-haves or potential issues to be revised later.
 
 ### Timeout implementation
@@ -595,11 +706,13 @@ else:
 return searcher.get_return_value()
 ~~~~
 
-**NOTE**: The above code hasn't been tested and may have issues if `time.time() + timeout` overflows or if the system time changes.
-
-### Better History Timestamps (future)
+**NOTE**: The above code hasn't been tested and may have issues if the system time changes: `time.time()`.
 
 ### Implementing ERT ordering in Chronological History and in the GDS (future)
+
+#### Better History Markers (future)
+
+As part of the work to add ERT and have chronological histories work for both ERT and FSW orders, histories should be updated to have a `get_current_marker()` method. This will allow the histories to specify the best way to mark a position with respect to their own implementations. For reference: ChronologicalHistories should use a TimeType, Ram and Test History should use an index.
 
 ### Adding CSV Logger to Test Log (make an issue)
 
@@ -670,7 +783,7 @@ api.assert_telemetry("SOME_CHANNEL_MNEMONIC")
 
 ### FPrime CI/CD Test Runner
 
-During the development of the API it became apparent that the Test Runner would have bled into the scope of other testing efforts at the time. So the test API work de-scoped developing a test runner script. However, because discussions were had on what the Test Runnner should do, the requirements for the Test Runner are still captured here.
+During the development of the API it became apparent that the Test Runner would have bled into the scope of other testing efforts at the time. So the test API work de-scoped developing a test runner script. However, because discussions were had on what the Test Runner should do, the requirements for the Test Runner are still captured here.
 
 - The Test Runner shall collect artifacts to record the condition of the tests.
   - History logs
@@ -684,10 +797,6 @@ During the development of the API it became apparent that the Test Runner would 
 - The Test Runner should support different test configurations
 - The Test Runner should have a Command Line Interface
 
-## API Unit Tests
-
-***
-
-## Reference Application Integration Tests
+## Generating Documentation
 
 ***
