@@ -475,8 +475,6 @@ def check_generated_files(testdir):
             if not mod in files:
                 print("ERROR: python module {} not found in dictgen/commands".format(mod))
                 assert False
-    
-        print(len(expected_cmd_modules), len(files))
             
         if not len(expected_cmd_modules) == len(files):
             print("ERROR: Not all command python modules were generated")
