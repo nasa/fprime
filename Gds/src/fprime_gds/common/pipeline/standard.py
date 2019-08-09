@@ -75,7 +75,7 @@ class StandardPipeline:
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
         :param config: config object used when constructing the pipeline.
-        :param dictionary: dictionary path. Used to setup loading of dictsionaries.
+        :param dictionary: dictionary path. Used to setup loading of dictionaries.
         :param logging_prefix: logging prefix. Logs will be placed in a dated directory under this prefix
         :param packet_spec: location of packetized telemetry XML specification.
         """

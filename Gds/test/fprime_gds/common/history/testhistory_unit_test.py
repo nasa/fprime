@@ -172,6 +172,13 @@ class HistoryTestCases(unittest.TestCase):
         assert len(self.tHistory) == 25
         self.assert_lists_equal(range(0, 50, 2), self.tHistory.retrieve())
 
+        correct_error = False
+        try:
+            TestHistory("Not a predicate")
+        except TypeError:
+            correct_error = True
+        assert correct_error, "The History should have raised a TypeError"
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,7 +19,7 @@ import threading
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.cell import WriteOnlyCell
-
+from openpyxl.utils.exceptions import WorkbookAlreadySaved
 
 class TestLogger:
     """
@@ -64,6 +64,7 @@ class TestLogger:
         self.filename = os.path.join(output_path, "TestLog_{}.xlsx".format(date_string))
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
+        self.ws_saved = False
 
         if time_format is None:
             self.time_format = self.__time_fmt
@@ -84,11 +85,8 @@ class TestLogger:
         top.append(self.__get_cell("Test began at " + date_string))
         self.worksheet.append(top)
 
-        header = []
-        header.append(self.__get_cell("Time", style=self.BOLD))
-        header.append(self.__get_cell("Case ID", style=self.BOLD))
-        header.append(self.__get_cell("Sender", style=self.BOLD))
-        header.append(self.__get_cell("Message", style=self.BOLD))
+        labels = ["Log Time", "Case ID", "Sender", "Message"]
+        header = self.__get_ws_row(labels, style=self.BOLD)
         self.worksheet.append(header)
 
         self.case_id = "NA"
@@ -116,16 +114,16 @@ class TestLogger:
                 case_id = str(case_id)
             self.case_id = case_id
 
-        row = []
-        row.append(self.__get_cell(timestring, color, style))
-        row.append(self.__get_cell(self.case_id, color, style))
-        row.append(self.__get_cell(sender, color, style))
-        row.append(self.__get_cell(message, color, style))
-
+        strings = [timestring, self.case_id, sender, message]
         self.lock.acquire()
         try:
             print("{} [{}] {}".format(timestring, sender, message))
-            self.worksheet.append(row)
+            if not self.ws_saved:
+                row = self.__get_ws_row(strings, color, style)
+                self.worksheet.append(row)
+        except WorkbookAlreadySaved:
+            self.ws_saved = True
+            print("{} [{}] {}".format(timestring, "TestLogger", "Workbook has already been saved."))
         finally:
             self.lock.release()
 
@@ -134,6 +132,7 @@ class TestLogger:
         Saves the write-only workbook. Should be called only once when the log is completed.
         """
         self.workbook.save(filename=self.filename)
+        self.ws_saved = True
 
     def __get_cell(self, string, color=None, style=None):
         """
@@ -156,3 +155,9 @@ class TestLogger:
         )
         cell.alignment = self.__align
         return cell
+
+    def __get_ws_row(self, strings, color=None, style=None):
+        row = []
+        for string in strings:
+            row.append(self.__get_cell(string, color, style))
+        return row

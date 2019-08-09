@@ -35,6 +35,7 @@ class UTPipeline(StandardPipeline):
     """
     def __init__(self):
         self.command_count = 0
+        self.t0 = TimeType()
         StandardPipeline.__init__(self)
 
     def connect(self, address, port):
@@ -51,19 +52,19 @@ class UTPipeline(StandardPipeline):
             hist.data_callback(cmd_data)
 
         ev_temp = self.event_name_dict["CommandReceived"]
-        event = EventData((U32Type(cmd_data.get_id()),), TimeType(), ev_temp)
+        event = EventData((U32Type(cmd_data.get_id()),), self.t0 + time.time(), ev_temp)
         self.enqueue_event(event)
 
         ev_temp = self.event_name_dict["HistorySizeUpdate"]
         evr_size = U32Type(len(self.event_hist.retrieve()))
         cmd_size = U32Type(len(self.command_hist.retrieve()))
         ch_size = U32Type(len(self.channel_hist.retrieve()))
-        event = EventData((evr_size, cmd_size, ch_size), TimeType(), ev_temp)
+        event = EventData((evr_size, cmd_size, ch_size), self.t0 + time.time(), ev_temp)
         self.enqueue_event(event)
 
         self.command_count += 1
         ch_temp = self.channel_name_dict["CommandCounter"]
-        update = ChData(U32Type(self.command_count), TimeType(), ch_temp)
+        update = ChData(U32Type(self.command_count), self.t0 + time.time(), ch_temp)
         self.enqueue_telemetry(update)
 
     def enqueue_event(self, event):
@@ -80,19 +81,33 @@ class UTPipeline(StandardPipeline):
 
 
 class APITestCases(unittest.TestCase):
-    def setUp(self):
-        self.pipeline = UTPipeline()
+    @classmethod
+    def setUpClass(cls):
+        cls.pipeline = UTPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
         path = os.path.join(filename, "./UnitTestDictionary.xml")
-        self.pipeline.setup(config, path)
-        self.api = IntegrationTestAPI(self.pipeline)
+        cls.pipeline.setup(config, path)
+        log_path = os.path.join(filename, "./logs")
+        cls.api = IntegrationTestAPI(cls.pipeline, log_path)
+        cls.case_list = [] # TODO find a better way to do this.
+        cls.threads = []
+
+    def setUp(self):
+        for t in self.threads:
+            if t.isAlive():
+                t.join()
+        self.threads.clear()
+        count = len(self.case_list)
+        self.api.start_test_case(self._testMethodName, count)
+        self.case_list.append(1)
         self.tHistory = TestHistory()
         self.t0 = TimeType()
 
-    def tearDown(self):
-        self.pipeline.disconnect()
-        self.api.teardown()
+    @classmethod
+    def tearDownClass(cls):
+        cls.pipeline.disconnect()
+        cls.api.teardown()
 
     ######################################################################################
     #   Test Case Helper Methods
@@ -102,11 +117,13 @@ class APITestCases(unittest.TestCase):
             if timestep:
                 time.sleep(timestep)
             if isinstance(item, ChData) or isinstance(item, EventData):
-                item.time = self.t0 + time.time()
+                if item.time == 0:
+                    item.time = self.t0 + time.time()
             callback(item)
 
     def fill_history_async(self, callback, items, timestep=1):
         t = threading.Thread(target=self.fill_history, args=(callback, items, timestep))
+        self.threads.append(t)
         t.start()
         return t
 
@@ -333,12 +350,11 @@ class APITestCases(unittest.TestCase):
 
     def test_get_latest_fsw_time(self):
         ts0 = self.api.get_latest_time()
-        assert ts0 == 0, "The starting timestamp should be zero."
 
         time.sleep(0.1)
 
-        ts0 = self.api.get_latest_time()
-        assert ts0 == 0, "The starting timestamp should still be zero."
+        ts1 = self.api.get_latest_time()
+        assert ts0 is ts1, "The starting timestamp should not have changed if no dataobjects were enqueued"
 
         count_seq = self.get_counter_sequence(100)
         event_seq = self.get_severity_sequence(100)
@@ -469,8 +485,6 @@ class APITestCases(unittest.TestCase):
         assert telem_subhist.size() == 1, "There should be one update in the subhistory"
 
         assert not self.api.remove_telemetry_subhistory(telem_subhist), "should not remove twice"
-
-
 
     def test_translate_command_name(self):
         assert self.api.translate_command_name("TEST_CMD_1") == 1
@@ -638,8 +652,8 @@ class APITestCases(unittest.TestCase):
             pred = self.api.get_telemetry_pred("Counter", i)
             search_seq.append(pred)
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         results = self.api.await_telemetry_sequence(search_seq)
 
         assert len(results) == len(search_seq), "lists should have the same length"
@@ -647,17 +661,20 @@ class APITestCases(unittest.TestCase):
             msg = predicates.get_descriptive_string(results[i], search_seq[i])
             assert search_seq[i](results[i]), msg
 
-        time.sleep(1)
-
+        t1.join()
+        t2.join()
         results = self.api.await_telemetry_sequence(search_seq)
         assert len(results) < len(search_seq), "repeating the search should not complete"
 
         self.api.clear_histories()
 
-        self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.07)
-        self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
+        t1 = self.fill_history_async(self.pipeline.enqueue_telemetry, count_seq, 0.05)
+        t2 = self.fill_history_async(self.pipeline.enqueue_telemetry, sin_seq, 0.01)
         results = self.api.await_telemetry_sequence(search_seq, timeout=1)
         assert len(results) < len(search_seq), "repeating the search should not complete"
+
+        t1.join()
+        t2.join()
 
     def test_await_telemetry_count(self):
         count_seq = self.get_counter_sequence(20)

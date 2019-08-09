@@ -14,6 +14,8 @@ from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.test import TestHistory
 from fprime_gds.common.logger.test_logger import TestLogger
 from fprime_gds.common.utils.event_severity import EventSeverity
+from fprime_gds.common.history.chrono import ChronologicalHistory
+
 from fprime.common.models.serialize.time_type import TimeType
 
 
@@ -24,12 +26,13 @@ class IntegrationTestAPI:
     """
     NOW = "NOW"
 
-    def __init__(self, pipeline, logpath=None):
+    def __init__(self, pipeline, logpath=None, fsw_order=True):
         """
         Initializes API: constructs and registers test histories.
         Args:
             pipeline: a pipeline object providing access to basic GDS functionality
             logpath: an optional output destination for the api test log
+            fsw_order: a flag to determine whether the API histories will maintain FSW time order.
         """
         self.pipeline = pipeline
         # these are owned by the GDS and will not be modified by the test API.
@@ -38,12 +41,18 @@ class IntegrationTestAPI:
         self.aggregate_event_history = pipeline.get_event_history()
 
         # these histories are owned by the TestAPI and are modified by the API.
-        self.command_history = TestHistory()
+        self.fsw_ordered = fsw_order
+        if fsw_order:
+            self.command_history = ChronologicalHistory()
+            self.telemetry_history = ChronologicalHistory()
+            self.event_history = ChronologicalHistory()
+        else:
+            self.command_history = TestHistory()
+            self.telemetry_history = TestHistory()
+            self.event_history = TestHistory()
         self.pipeline.register_command_consumer(self.command_history)
-        self.telemetry_history = TestHistory()
-        self.pipeline.register_telemetry_consumer(self.telemetry_history)
-        self.event_history = TestHistory()
         self.pipeline.register_event_consumer(self.event_history)
+        self.pipeline.register_telemetry_consumer(self.telemetry_history)
 
         # Initialize latest time. Will be updated whenever a time query is made.
         self.latest_time = TimeType()
@@ -54,11 +63,11 @@ class IntegrationTestAPI:
         else:
             self.logger = None
 
-        # A predicate used as a filter to choose which EVR's to log automatically
+        # A predicate used as a filter to choose which events to log automatically
         self.event_log_filter = self.get_event_pred()
         self.pipeline.register_event_consumer(self)
 
-        # Used by the data_callback method to detect if EVR's have been received out of order.
+        # Used by the data_callback method to detect if events have been received out of order.
         self.last_evr = None
 
     def teardown(self):
@@ -92,8 +101,8 @@ class IntegrationTestAPI:
         """
         User-accessible function to log user messages to the test log.
         Args:
-            msg: a user-provided message to add to the test log.
-            color: a string containing a color hex code "######"
+            msg: a user-provided message to add to the test log. (str)
+            color: a string containing a color hex code "######" (str)
         """
         self.__log(msg, color, sender="API user")
 
@@ -110,12 +119,55 @@ class IntegrationTestAPI:
             e_time = events[-1].get_time()
 
         channels = self.aggregate_telemetry_history.retrieve()
-        t_time = TimeType().useconds
+        t_time = TimeType()
         if len(channels) > 0:
             t_time = channels[-1].get_time()
 
         self.latest_time = max(e_time, t_time, self.latest_time)
         return self.latest_time
+
+    def test_assert(self, value, msg="", expect=False):
+        """
+        this assert gives the user the ability to add formatted assert messages to the test log and
+        raise an assertion.
+        Args:
+            value: a boolean value that determines if the assert is successful.
+            msg: a string describing what is checked by the assert.
+            expect: when True, the call will behave as an expect, and will skip the assert (boolean)
+        Return:
+            True if the assert was successful, False otherwise
+        """
+        if not expect:
+            ast_msg = "User assertion"
+            fail_color = TestLogger.RED
+        else:
+            ast_msg = "User expectation"
+            fail_color = TestLogger.ORANGE
+
+        if value:
+            ast_msg = ast_msg + " succeeded: " + msg
+            self.__log(ast_msg, TestLogger.GREEN)
+        else:
+            ast_msg = ast_msg + " failed: " + msg
+            self.__log(ast_msg, fail_color)
+
+        if not expect:
+            assert value, ast_msg
+        return value
+
+    def predicate_assert(self, predicate, value, msg="", expect=False):
+        """
+        API assert gives the user the ability to add formatted assert messages to the test log and
+        raise an assertion.
+        Args:
+            value: the value to be evaluated by the predicate. (object)
+            predicate: an instance of predicate that will decided if the test passes (predicate)
+            msg: a string describing what is checked by the assert. (str)
+            expect: when True, the call will behave as an expect, and will skip the assert (boolean)
+        Return:
+            True if the assert was successful, False otherwise
+        """
+        return self.__assert_pred("User", predicate, value, msg, expect)
 
     def clear_histories(self, time_stamp=None):
         """
@@ -145,9 +197,11 @@ class IntegrationTestAPI:
 
         self.command_history.clear()
 
-    def set_event_log_filter(self, event=None, args=None, severity=None, time_pred=None):
+    def set_event_log_filter(
+        self, event=None, args=None, severity=None, time_pred=None
+    ):
         """
-        Constructs an event predicate that is then used to filter which EVR's are interlaced in the
+        Constructs an event predicate that is then used to filter which events are interlaced in the
         test logs. This method replaces the current filter. Calling this method with no arguments
         will effectively reset the filter.
 
@@ -159,6 +213,10 @@ class IntegrationTestAPI:
         """
         self.event_log_filter = self.get_event_pred(event, args, severity, time_pred)
 
+
+    ######################################################################################
+    #   History Functions
+    ######################################################################################
     def get_command_test_history(self):
         """
         Accessor for IntegrationTestAPI's command history
@@ -182,19 +240,56 @@ class IntegrationTestAPI:
             a history of EventData objects
         """
         return self.event_history
-    
-    def get_event_subhistory(self, event_filter=None):
+
+    def get_telemetry_subhistory(self, telemetry_filter=None, fsw_order=True):
         """
-        Returns a new instance of TestHistory that will be updated with new events as they come in.
-        Specifying a filter will only enqueue events that satisfy the filter in this new sub-history.
-        The returned history can be substituted into the await and assert methods of this API.
+        Returns a new instance of TestHistory that will be updated with new telemetry updates as
+        they come in. Specifying a filter will only enqueue updates that satisfy the filter in this
+        new sub-history. The returned history can be substituted into the await and assert methods
+        of this API.
 
         Args:
-            event_filter: an optional predicate to filter a subhistory.
+            telemetry_filter: an optional predicate used to filter a subhistory.
+            fsw_order: a flag to determine whether this subhistory will maintain FSW time order.
         Returns:
             an instance of TestHistory
         """
-        subhist = TestHistory(event_filter)
+        if fsw_order:
+            subhist = ChronologicalHistory(telemetry_filter)
+        else:
+            subhist = TestHistory(telemetry_filter)
+        self.pipeline.register_telemetry_consumer(subhist)
+        return subhist
+
+    def remove_telemetry_subhistory(self, subhist):
+        """
+        De-registers the subhistory from the GDS. Once called, the given subhistory will stop
+        receiving telemetry updates.
+
+        Args:
+            subhist: a TestHistory instance that is subscribed to event messages
+        Returns:
+            True if the subhistory was removed, False otherwise
+        """
+        return self.pipeline.remove_telemetry_consumer(subhist)
+
+    def get_event_subhistory(self, event_filter=None, fsw_order=True):
+        """
+        Returns a new instance of TestHistory that will be updated with new events as they come in.
+        Specifying a filter will only enqueue events that satisfy the filter in this new
+        sub-history. The returned history can be substituted into the await and assert methods of
+        this API.
+
+        Args:
+            event_filter: an optional predicate to filter a subhistory.
+            fsw_order: a flag to determine whether this subhistory will maintain FSW time order.
+        Returns:
+            an instance of TestHistory
+        """
+        if fsw_order:
+            subhist = ChronologicalHistory(event_filter)
+        else:
+            subhist = TestHistory(event_filter)
         self.pipeline.register_event_consumer(subhist)
         return subhist
 
@@ -209,34 +304,6 @@ class IntegrationTestAPI:
             True if the subhistory was removed, False otherwise
         """
         return self.pipeline.remove_event_consumer(subhist)
-
-    def get_telemetry_subhistory(self, telemetry_filter=None):
-        """
-        Returns a new instance of TestHistory that will be updated with new telemetry updates as
-        they come in. Specifying a filter will only enqueue updates that satisfy the filter in this
-        new sub-history. The returned history can be substituted into the await and assert methods
-        of this API.
-
-        Args:
-            telemetry_filter: an optional predicate used to filter a subhistory.
-        Returns:
-            an instance of TestHistory
-        """
-        hist = TestHistory(telemetry_filter)
-        self.pipeline.register_telemetry_consumer(hist)
-        return hist
-
-    def remove_telemetry_subhistory(self, subhist):
-        """
-        De-registers the subhistory from the GDS. Once called, the given subhistory will stop
-        receiving telemetry updates.
-
-        Args:
-            subhist: a TestHistory instance that is subscribed to event messages
-        Returns:
-            True if the subhistory was removed, False otherwise
-        """
-        return self.pipeline.remove_telemetry_consumer(subhist)
 
     ######################################################################################
     #   Command Functions
@@ -258,7 +325,9 @@ class IntegrationTestAPI:
             if command in cmd_dict:
                 return cmd_dict[command].get_id()
             else:
-                msg = "The command mnemonic, {}, wasn't in the dictionary".format(command)
+                msg = "The command mnemonic, {}, wasn't in the dictionary".format(
+                    command
+                )
                 raise KeyError(msg)
         else:
             cmd_dict = self.pipeline.get_command_id_dictionary()
@@ -393,14 +462,18 @@ class IntegrationTestAPI:
             if channel in ch_dict:
                 return ch_dict[channel].get_id()
             else:
-                msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(channel)
+                msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(
+                    channel
+                )
                 raise KeyError(msg)
         else:
             ch_dict = self.pipeline.get_channel_id_dictionary()
             if channel in ch_dict:
                 return channel
             else:
-                msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(channel)
+                msg = "The telemetry mnemonic, {}, wasn't in the dictionary".format(
+                    channel
+                )
                 raise KeyError(msg)
 
     def get_telemetry_pred(self, channel=None, value=None, time_pred=None):
@@ -542,10 +615,9 @@ class IntegrationTestAPI:
             the ChData object found during the search
         """
         pred = self.get_telemetry_pred(channel, value, time_pred)
-        result = self.await_telemetry(
-            channel, value, time_pred, history, start, timeout
-        )
-        self.__assert_pred("Telemetry Received", pred, result)
+        result = self.await_telemetry(channel, value, time_pred, history, start, timeout)
+        msg = "checks if item search found a correct update"
+        self.__assert_pred("Telemetry received", pred, result, msg)
         return result
 
     def assert_telemetry_sequence(self, channels, history=None, start=None, timeout=0):
@@ -567,7 +639,8 @@ class IntegrationTestAPI:
         """
         results = self.await_telemetry_sequence(channels, history, start, timeout)
         len_pred = predicates.equal_to(len(channels))
-        self.__assert_pred("Telemetry Sequence", len_pred, len(results))
+        msg = "checks if sequence search found every update"
+        self.__assert_pred("Telemetry sequence", len_pred, len(results), msg)
         return results
 
     def assert_telemetry_count(
@@ -588,11 +661,11 @@ class IntegrationTestAPI:
             a list of the ChData objects that were counted
         """
         results = self.await_telemetry_count(count, channels, history, start, timeout)
-        if predicates.is_predicate(count):
-            count_pred = count
-        elif isinstance(count, int):
-            count_pred = predicates.equal_to(count)
-        self.__assert_pred("Telemetry Count", count_pred, len(results))
+        count_pred = (
+            count if predicates.is_predicate(count) else predicates.equal_to(count)
+        )
+        msg = "checks if count search found a correct amount of updates"
+        self.__assert_pred("Telemetry count", count_pred, len(results), msg)
         return results
 
     ######################################################################################
@@ -654,7 +727,9 @@ class IntegrationTestAPI:
 
         if not predicates.is_predicate(severity) and severity is not None:
             if not isinstance(severity, EventSeverity):
-                msg = "Given severity was not a valid Severity Enum Value: {} ({})".format(severity, type(severity))
+                msg = "Given severity was not a valid Severity Enum Value: {} ({})".format(
+                    severity, type(severity)
+                )
                 raise TypeError(msg)
             severity = predicates.equal_to(severity)
 
@@ -744,7 +819,7 @@ class IntegrationTestAPI:
             search = self.get_event_pred(event=events)
 
         if history is None:
-            history = self.get_event_test_history()        
+            history = self.get_event_test_history()
 
         return self.find_history_count(count, history, search, start, timeout)
 
@@ -771,8 +846,11 @@ class IntegrationTestAPI:
             the EventData object found during the search
         """
         pred = self.get_event_pred(event, args, severity, time_pred)
-        result = self.await_event(event, args, severity, time_pred, history, start, timeout)
-        self.__assert_pred("Event Received", pred, result)
+        result = self.await_event(
+            event, args, severity, time_pred, history, start, timeout
+        )
+        msg = "checks if item search found a correct event"
+        self.__assert_pred("Event received", pred, result, msg)
         return result
 
     def assert_event_sequence(self, events, history=None, start=None, timeout=0):
@@ -792,7 +870,8 @@ class IntegrationTestAPI:
         """
         results = self.await_event_sequence(events, history, start, timeout)
         len_pred = predicates.equal_to(len(events))
-        self.__assert_pred("Event Sequence length", len_pred, len(results))
+        msg = "checks if sequence search found every event"
+        self.__assert_pred("Event sequence", len_pred, len(results), msg)
         return results
 
     def assert_event_count(
@@ -813,29 +892,25 @@ class IntegrationTestAPI:
             a list of the EventData objects that were counted
         """
         results = self.await_event_count(count, events, history, start, timeout)
-        if predicates.is_predicate(count):
-            count_pred = count
-        elif isinstance(count, int):
-            count_pred = predicates.equal_to(count)
-        self.__assert_pred("Event Count", count_pred, len(results))
+        count_pred = (
+            count if predicates.is_predicate(count) else predicates.equal_to(count)
+        )
+        msg = "checks if count search found a correct amount of events"
+        self.__assert_pred("Event count", count_pred, len(results), msg)
         return results
 
     ######################################################################################
     #   History Searches
     ######################################################################################
-    class TimeoutException(Exception):
-        """
-        This exception is used by the history searches to signal the end of the timeout.
-        """
-        pass
-
-    class __HistorySearcher():
+    class __HistorySearcher:
         """
         This class defines the calls made by the __history_search helper method and has a unique
         implementation for each type of search provided by the api.
         """
+
         def __init__(self):
             self.ret_val = None
+            self.repeats = False
             raise NotImplementedError()
 
         def search_current_history(self, items):
@@ -859,6 +934,18 @@ class IntegrationTestAPI:
             Returns the result of the search whether the search is successful or not
             """
             return self.ret_val
+
+        def requires_repeats(self):
+            """
+            Returns a flag to determine if the history searcher needs repeated data objects when receive order does not match chronological order.
+            """
+            return self.repeats
+
+    class TimeoutException(Exception):
+        """
+        This exception is used by the history searches to signal the end of the timeout.
+        """
+        pass
 
     def __timeout_sig_handler(self, signum, frame):
         raise self.TimeoutException()
@@ -910,17 +997,23 @@ class IntegrationTestAPI:
 
         if timeout:
             self.__log(name + " now awaiting for at most {} s.".format(timeout))
+            check_repeats = isinstance(history, ChronologicalHistory)
             try:
                 signal.signal(signal.SIGALRM, self.__timeout_sig_handler)
                 signal.alarm(timeout)
                 while True:
-                    new_items = history.retrieve_new()
+                    if check_repeats:
+                        new_items = history.retrieve_new(searcher.requires_repeats())
+                    else:
+                        new_items = history.retrieve_new()
                     for item in new_items:
                         if searcher.incremental_search(item):
                             return searcher.get_return_value()
                     time.sleep(0.1)
             except self.TimeoutException:
-                self.__log(name + " timed out and ended unsuccessfully.", TestLogger.YELLOW)
+                self.__log(
+                    name + " timed out and ended unsuccessfully.", TestLogger.YELLOW
+                )
             finally:
                 signal.alarm(0)
         else:
@@ -941,12 +1034,16 @@ class IntegrationTestAPI:
         Returns:
             the data object found during the search, otherwise, None
         """
+
         class __ItemSearcher(self.__HistorySearcher):
             def __init__(self, log, search_pred):
                 self.log = log
                 self.search_pred = search_pred
+                self.repeats = False
                 self.ret_val = None
-                msg = "Beginning an item search for an item that satisfies:\n    {}".format(self.search_pred)
+                msg = "Beginning an item search for an item that satisfies:\n    {}".format(
+                    self.search_pred
+                )
                 self.log(msg, TestLogger.YELLOW)
 
             def search_current_history(self, items):
@@ -964,7 +1061,9 @@ class IntegrationTestAPI:
                 return False
 
         searcher = __ItemSearcher(self.__log, search_pred)
-        return self.__search_test_history(searcher, "Item search", history, start, timeout)
+        return self.__search_test_history(
+            searcher, "Item search", history, start, timeout
+        )
 
     def find_history_sequence(self, seq_preds, history, start=None, timeout=0):
         """
@@ -983,12 +1082,16 @@ class IntegrationTestAPI:
         Returns:
             a list of data objects that satisfied the sequence
         """
+
         class __SequenceSearcher(self.__HistorySearcher):
             def __init__(self, log, seq_preds):
                 self.log = log
                 self.ret_val = []
                 self.seq_preds = seq_preds.copy()
-                msg = "Beginning a sequence search of {} items.".format(len(self.seq_preds))
+                self.repeats = True
+                msg = "Beginning a sequence search of {} items.".format(
+                    len(self.seq_preds)
+                )
                 self.log(msg, TestLogger.YELLOW)
 
             def search_current_history(self, items):
@@ -1008,12 +1111,16 @@ class IntegrationTestAPI:
                     self.ret_val.append(item)
                     self.seq_preds.pop(0)
                     if len(self.seq_preds) == 0:
-                        self.log("Sequence search found the last item.", TestLogger.YELLOW)
+                        self.log(
+                            "Sequence search found the last item.", TestLogger.YELLOW
+                        )
                         return True
                 return False
 
         searcher = __SequenceSearcher(self.__log, seq_preds)
-        return self.__search_test_history(searcher, "Sequence search", history, start, timeout)
+        return self.__search_test_history(
+            searcher, "Sequence search", history, start, timeout
+        )
 
     def find_history_count(
         self, count, history, search_pred=None, start=None, timeout=0
@@ -1035,17 +1142,21 @@ class IntegrationTestAPI:
         Returns:
             a list of data objects that were counted during the search
         """
+
         class __CountSearcher(self.__HistorySearcher):
             def __init__(self, log, count, search_pred):
                 self.log = log
                 self.ret_val = []
                 if predicates.is_predicate(count):
                     self.count_pred = count
-                elif isinstance(count, int):
+                else: 
                     self.count_pred = predicates.equal_to(count)
                 self.search_pred = search_pred
+                self.repeats = False
 
-                msg = "Beginning a count search for an amount of items ({}).".format(self.count_pred)
+                msg = "Beginning a count search for an amount of items ({}).".format(
+                    self.count_pred
+                )
                 self.log(msg, TestLogger.YELLOW)
 
             def search_current_history(self, items):
@@ -1055,11 +1166,15 @@ class IntegrationTestAPI:
                 else:
                     for item in items:
                         if search_pred(item):
-                            self.log("Count search counted another item: {}".format(item))
+                            self.log(
+                                "Count search counted another item: {}".format(item)
+                            )
                             self.ret_val.append(item)
 
                 if self.count_pred(len(self.ret_val)):
-                    msg = "Count search found a correct amount: {}".format(len(self.ret_val))
+                    msg = "Count search found a correct amount: {}".format(
+                        len(self.ret_val)
+                    )
                     self.log(msg, TestLogger.YELLOW)
                     return True
                 return False
@@ -1069,18 +1184,32 @@ class IntegrationTestAPI:
                     self.log("Count search counted another item: {}".format(item))
                     self.ret_val.append(item)
                     if self.count_pred(len(self.ret_val)):
-                        msg = "Count search found a correct amount: {}".format(len(self.ret_val))
+                        msg = "Count search found a correct amount: {}".format(
+                            len(self.ret_val)
+                        )
                         self.log(msg, TestLogger.YELLOW)
                         return True
                 return False
 
         searcher = __CountSearcher(self.__log, count, search_pred)
-        return self.__search_test_history(searcher, "Count search", history, start, timeout)
+        return self.__search_test_history(
+            searcher, "Count search", history, start, timeout
+        )
 
     ######################################################################################
     #   API Helper Methods
     ######################################################################################
     def __log(self, message, color=None, style=None, sender="Test API", case_id=None):
+        """
+        Logs and prints an API Message. If the API isn't using a Logger, then only a message will
+        be printed.
+        Args:
+            message: a string containing the message to log
+            color: a color hex code (str)
+            style: a style option from test logger (str) ["BOLD", "ITALICS", "UNDERLINED"]
+            sender: a marker for where the message originated
+            case_id: a tag for the current test case. Only needs to be set when a new case starts
+        """
         if not isinstance(message, str):
             message = str(message)
         if self.logger is None:
@@ -1088,30 +1217,53 @@ class IntegrationTestAPI:
         else:
             self.logger.log_message(message, sender, color, style, case_id)
 
-    def __assert_pred(self, name, predicate, value):
+    def __assert_pred(self, name, predicate, value, msg="", expect=False):
+        """
+        Helper to assert that a value satisfies a predicate. Includes arguments to provide more
+        descriptive messages in the logs.
+        Args:
+            name: short name describing the check
+            predicate: an instance of predicate to determine if the assert is successful
+            value: the object evaluated by the predicate
+            msg: a string message to describe what the assert is checking
+            expect: a boolean value: True will be have as an expect and not raise an assertion.
+        Returns:
+            True if the assertion was successful, False otherwise
+        """
+        name = name + (" expectation" if expect else " assertion")
         pred_msg = predicates.get_descriptive_string(value, predicate)
         if predicate(value):
-            msg = name + " Assertion was successful.\nassert " + pred_msg
-            self.__log(msg, TestLogger.GREEN)
-            assert True, pred_msg
+            ast_msg = name + " succeeded: {}\nassert ".format(msg) + pred_msg
+            self.__log(ast_msg, TestLogger.GREEN)
+            if not expect:
+                assert True, pred_msg
+            return True
         else:
-            msg = name + " Assertion failed!\nassert " + pred_msg
-            self.__log(msg, TestLogger.RED)
-            assert False, pred_msg
+            ast_msg = name + " failed: {}\nassert ".format(msg) + pred_msg
+            if not expect:
+                self.__log(ast_msg, TestLogger.RED)
+                assert False, pred_msg
+            else:
+                self.__log(ast_msg, TestLogger.ORANGE)
+            return False
 
     def data_callback(self, data_object):
         """
-        Data callback used by the api to subscribe to EVR's also logs if EVR's are received out of order.
-
+        Data callback used by the api to log events and detect when they are received out of order.
         Args:
             data_object: object to store
         """
         if self.event_log_filter(data_object):
-            msg = "GDS received EVR: {}".format(data_object.get_str(verbose=True))
-            self.__log(msg, TestLogger.BLUE)
-        if self.last_evr is not None and data_object.get_time() < self.last_evr.get_time():
+            msg = "Received EVR: {}".format(data_object.get_str(verbose=True))
+            self.__log(msg, TestLogger.BLUE, sender="GDS")
+        if (
+            self.last_evr is not None
+            and data_object.get_time() < self.last_evr.get_time()
+        ):
             msg = "API detected out of order evrs!"
-            msg = msg + "\nReceived First:{}".format(self.last_evr.get_str(verbose=True))
+            msg = msg + "\nReceived First:{}".format(
+                self.last_evr.get_str(verbose=True)
+            )
             msg = msg + "\nReceived Second:{}".format(data_object.get_str(verbose=True))
             self.__log(msg, TestLogger.ORANGE)
         self.last_evr = data_object

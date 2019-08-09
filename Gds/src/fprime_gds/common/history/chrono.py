@@ -1,20 +1,22 @@
 """
-test.py:
+chrono.py:
 
-A receive-ordered history that relies on predicates to provide filtering, searching, and
-retrieval operations
+A chronologically-ordered history that relies on predicates to provide filtering, searching, and
+retrieval operations. This history will re-order itself based on FSW time.
 
 :author: koran
 """
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.history import History
+from fprime.common.models.serialize.time_type import TimeType
 
 
-class TestHistory(History):
+class ChronologicalHistory(History):
     """
-    A receive-ordered history to support the GDS test api. This history adds support for specifying
+    A chronological history to support the GDS test api. This history adds support for specifying
     start with predicates and python's bracket notation.
     """
+
     ###########################################################################
     #   History Functions
     ###########################################################################
@@ -27,6 +29,7 @@ class TestHistory(History):
             filter_pred: an optional predicate to filter incoming data_objects
         """
         self.objects = []
+        self.new_objects = []
 
         self.filter = predicates.always_true()
         if filter_pred is not None:
@@ -46,7 +49,9 @@ class TestHistory(History):
             data_object: object to store
         """
         if self.filter(data_object):
-            self.objects.append(data_object)
+            self.__insert_chrono(data_object, self.new_objects)
+            index = self.__insert_chrono(data_object, self.objects)
+            self.retrieved_cursor = min(index, self.retrieved_cursor)
 
     def retrieve(self, start=None):
         """
@@ -60,14 +65,15 @@ class TestHistory(History):
         Returns:
             a list of objects in chronological order
         """
-        if start is not None:
-            index = self.__get_index(start)
-        else:
+        if start is None:
             index = 0
+        else:
+            index = self.__get_index(start, self.objects)
         self.retrieved_cursor = self.size()
+        self.new_objects.clear()
         return self.objects[index:]
 
-    def retrieve_new(self):
+    def retrieve_new(self, repeats=False):
         """
         Retrieves a chronological order of objects that haven't been accessed through retrieve or
         retrieve_new before.
@@ -77,7 +83,14 @@ class TestHistory(History):
         """
         index = self.retrieved_cursor
         self.retrieved_cursor = self.size()
-        return self.objects[index:]
+
+        if repeats:
+            self.new_objects.clear()
+            return self.objects[index:]
+        else:
+            new = self.new_objects
+            self.new_objects = []
+            return new
 
     def clear(self, start=None):
         """
@@ -89,18 +102,20 @@ class TestHistory(History):
         the history, all items will be cleared.
 
         Args:
-            start: clear all objects before start. start can either be an index or a predicate.
+            start: start: an optional indicator for the first item to remove. Can be a predicate, a
+                TimeType or an index in the ordering
         """
-        if start is not None:
-            index = self.__get_index(start)
+        index = self.__clear_list(start, self.objects)
+
+        if len(self.objects) > 0:
+            start = self.objects[0].get_time()
+            self.__clear_list(start, self.new_objects)
         else:
-            index = self.size()
+            self.new_objects.clear()
 
         self.retrieved_cursor -= index
         if self.retrieved_cursor < 0:
             self.retrieved_cursor = 0
-
-        del self.objects[:index]
 
     def size(self):
         """
@@ -133,18 +148,62 @@ class TestHistory(History):
         """
         return self.objects[index]
 
-    def __get_index(self, start):
+    ###########################################################################
+    #   helper methods
+    ###########################################################################
+    def __insert_chrono(self, data_object, ordered):
+        """
+        traverses the existing order (back to front) and inserts the data object in the correct
+        position chronologically.
+        Args:
+            data_object: an item to insert in the history. Must have a get_time() method.
+            ordered: a list to insert the item into.
+        Returns:
+            the index that the item was inserted at (int)
+        """
+        for i, item in reversed(list(enumerate(ordered))):
+            if item.get_time() < data_object.get_time():
+                ordered.insert(i + 1, data_object)
+                return i
+        # If the data object is the earliest in the list or the list was empty
+        ordered.insert(0, data_object)
+        return 0
+
+    def __clear_list(self, start, ordered):
         """
         finds the index that start specifies
         Args:
-            start: an indicator of a position in an order can be a predicate or an index in
-                the ordering
+            start: an optional indicator for the first item to remove. Can be a predicate, a
+                TimeType or an index in the ordering
+            ordered: the list to clear
+        Returns:
+            the index in the given list that start refers to
+        """
+        if start is None:
+            index = len(ordered)
+        else:
+            index = self.__get_index(start, ordered)
+        del ordered[:index]
+        return index
+
+    def __get_index(self, start, ordered):
+        """
+        finds the index that start specifies
+        Args:
+            start: an indicator of a position in an order can be a predicate, a TimeType time
+                stamp or an index in the ordering
+            ordered: the list to clear
         Returns:
             the index in the given list that start refers to
         """
         if predicates.is_predicate(start):
             index = 0
-            while index < self.size() and not start(self.objects[index]):
+            while index < len(ordered) and not start(ordered[index]):
+                index += 1
+            return index
+        elif isinstance(start, TimeType):
+            index = 0
+            while index < len(ordered) and ordered[index].get_time() < start:
                 index += 1
             return index
         else:
