@@ -1,0 +1,61 @@
+@This document covers the files associated with the file downlink command and the internship
+of Blake A. Harriman
+
+@date August 9, 2019
+@author Blake A. Harriamn
+
+Files Covered:
+-file_decoder.py
+-file_writer.py
+-file_data.py
+-main_frame_factory.py
+
+**(To Do List at bottom)**
+
+At the end of this internship, the work I have done now follows the architecture built by the previous interns
+at JPL.  Raw binary data is sent to file_decoder.py where it is decoded into individual packets (START, DATA,
+END, CANCEL).  These packets can be sent to any consumers under file_decoder.  In the case of this internship
+it would be sending them to file_writer.py to be written to file.  This looks like as follows:
+
+ --------------                      --------------                      --------------
+|              |                    |              |                    |              | 
+|              |                    |              |                    |              |
+|     TCP      |    Binary Data     |     File     |   Decoded Data     |   Consumer   |
+|    Server    | ---------------->  |    Decoder   | ---------------->  | (FileWriter) | 
+|              |                    |              |                    |              |
+|              |                    |              |                    |              |
+ --------------                      --------------                      --------------
+
+
+File Decoder can send the decoded data to multiple consumers to do anything as long as the consumers have been
+registered to File Decoder in main_frame_factory.py.  Note that files such as File Decoder should be generic
+and not include any code that would be used in a consumer (e.g. don't write to files in File Decoder because
+that should be done in a consumer like File Writer).  An example of another possible consumer could be a
+progress bar and the decoded data could indicate if the bar can be full to signal complettion or if it needs to
+be stopped because a timeout was detected.
+
+An important thing to note is that all consuers must have a data_callback function inside them.  When the file
+decoder calls send_to_all(), the consumers receive the data via the data_callback function so this must be
+included i.e. data_callback(self, data) ----> data = decoded data received
+
+In order for this architecture to work well, File Decoder must also have a place to return the decoded data to.
+In this case, the decoded data is returned to file_data.py.  The file has classes for the 4 different packet
+types and the specific attributes they contain.  For example, DATA packets have the attributes packetType, seqID,
+offset, length, dataVar.  These attributes can be used in the consumers of File Decoder.
+
+**TODO LIST:**
+I think I've done a pretty good job writing and commenting this code so not too much work needs to be done
+file_decoder.py:
+    -Possibly look into Cancel packets being needed or deleted.  Not sure if they are
+    really required, but it might be something nice to have just in case they ever pop
+    up
+file_writer.py:
+    -My state machine implementation is kinda messy due to time crunch.  Can possibly
+    look into using switch statements and making it more readible
+    -The case where the state is DATA and is within a START packet has not been tested.
+    I was unable to figure out how to get a file with multiple START packets in it so
+    this should DEFINITELY be tested and bugfixed if needed (currently lines 145 - 160)
+file_data.py:
+    -Nothing that I can think of
+main_frame_factory.py:
+    -None
