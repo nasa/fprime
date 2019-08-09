@@ -2,7 +2,7 @@
 @brief Class to store data from each specific file_data type
 
 @date Created July 10, 2019
-@author Blake A. HarrimanS
+@author Blake A. Harriman
 
 @bug No known bugs
 '''
@@ -32,7 +32,7 @@ class StartPacketData(sys_data.SysData):
         Returns:
             An initialized StartPacketData object
         '''
-        # TODO refactor so that arguments are actually of BaseType objects
+
         self.packetType = packetType
         self.seqID = seqID
         self.size = size
@@ -40,6 +40,10 @@ class StartPacketData(sys_data.SysData):
         self.sourcePath = sourcePath
         self.lengthDP = lengthDP
         self.destPath = destPath
+    
+        
+    def get_packetType(self):
+        return self.packetType
 
 #Takes care of the DATA packets that the file_decoder will receive
 class DataPacketData(sys_data.SysData):
@@ -62,7 +66,6 @@ class DataPacketData(sys_data.SysData):
             An initialized DataPacketData object
         '''
 
-        # TODO refactor so that arguments are actually of BaseType objects
         self.packetType = packetType
         self.seqID = seqID
         self.offset = offset
@@ -88,7 +91,6 @@ class EndPacketData(sys_data.SysData):
             An initialized EndPacketData object
         '''
 
-        # TODO refactor so that arguments are actually of BaseType objects
         self.packetType = packetType
         self.seqID = seqID
         self.hashValue = hashValue
@@ -111,7 +113,6 @@ class CancelPacketData(sys_data.SysData):
             An initialized StartPacketData object
         '''
 
-        # TODO refactor so that arguments are actually of BaseType objects
         self.packetType = packetType
         self.seqID = seqID
 
