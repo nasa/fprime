@@ -991,7 +991,7 @@ class XmlComponentParser(object):
                 PRINT.info(msg)
                 print(parsed_xml_tree)
                 raise Exception(msg)
-            else:
+            elif validator_type == 'schematron':
                 msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
                 PRINT.info(msg)
                 print(parsed_xml_tree)
