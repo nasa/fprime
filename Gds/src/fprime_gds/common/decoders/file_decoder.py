@@ -60,7 +60,7 @@ class FileDecoder(decoder.Decoder):
         '''
 
         result = self.decode_api(data)
-        
+
         # Make sure we don't send None data
         if result != None:
             self.send_to_all(result)
@@ -101,9 +101,9 @@ class FileDecoder(decoder.Decoder):
                 
             return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
         elif (packetType == 'END'):   #Packet Type is END
-                hashValue = unpack('>I', data[5:9])[0]
+            hashValue = unpack('>I', data[5:9])[0]
 
-                return file_data.EndPacketData(packetType, seqID, hashValue)
+            return file_data.EndPacketData(packetType, seqID, hashValue)
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
             return file_data.CancelPacketData(packetType, seqID)

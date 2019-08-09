@@ -40,10 +40,6 @@ class StartPacketData(sys_data.SysData):
         self.sourcePath = sourcePath
         self.lengthDP = lengthDP
         self.destPath = destPath
-    
-        
-    def get_packetType(self):
-        return self.packetType
 
 #Takes care of the DATA packets that the file_decoder will receive
 class DataPacketData(sys_data.SysData):
