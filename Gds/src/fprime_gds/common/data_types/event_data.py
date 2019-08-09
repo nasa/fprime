@@ -38,14 +38,8 @@ class EventData(sys_data.SysData):
         self.time = event_time
         self.template = event_temp
 
-    def get_id(self):
-        return self.id
-
     def get_args(self):
         return self.args
-
-    def get_time(self):
-        return self.time
     
     def get_severity(self):
         return self.template.get_severity()
