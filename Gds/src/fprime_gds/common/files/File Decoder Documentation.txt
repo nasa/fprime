@@ -55,6 +55,11 @@ file_writer.py:
     -The case where the state is DATA and is within a START packet has not been tested.
     I was unable to figure out how to get a file with multiple START packets in it so
     this should DEFINITELY be tested and bugfixed if needed (currently lines 145 - 160)
+    -Currently, even if the downlink times out the program will still read through all
+    of the packets.  This means that if we get a lot of packets timing out, then the
+    program will take a long time to process everything before the user can do a command
+    again.  Is this what we want or do we want to find a way to stop the program from
+    continuing to read the packets so the user can act again immediately?
 file_data.py:
     -Nothing that I can think of
 main_frame_factory.py:

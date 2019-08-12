@@ -39,7 +39,7 @@ class PacketType(Enum):
 #Main FileWriter class
 class FileWriter(decoder.Decoder):
     '''File writer class for decoded packets'''
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 120.0, first_time = True, timer = threading.Timer, state = 'IDLE'):
+    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 120.0, first_time = True, timer = threading.Timer, state = 'IDLE', is_open = False):
         '''
         FileWriter class constructor
 
@@ -60,8 +60,10 @@ class FileWriter(decoder.Decoder):
             and then canceled if the next packet is sent before the timer is started.  If the timer is executed,
             then that means the program took too long to cancel it and a timeout has occured.
             
-            state: The state of the machine.  It can either be in IDLE (the default) or DATA (when data is being
-            manipulated and written to the file)
+            state: The state of the machine.  It can either be in IDLE (the default), DATA (when data is being
+            manipulated and written to the file), or TIMED_OUT (when a timeout has occurred)
+
+            is_open: Checks to see whether or not the file is opened before trying to close it.
 
         Returns:
             An initialized FileWriter object.
@@ -74,6 +76,7 @@ class FileWriter(decoder.Decoder):
         self.first_time = first_time
         self.timer = timer
         self.state = state
+        self.is_open = is_open
 
         super(FileWriter, self).__init__()
 
@@ -100,6 +103,7 @@ class FileWriter(decoder.Decoder):
             self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
             self.timer.start()
             self.first_time = False
+
         self.write_to_file(data)
 
     #THIS METHOD NEEDS MAJOR CHANGES
@@ -116,7 +120,6 @@ class FileWriter(decoder.Decoder):
         Returns:
             None
         '''
-
         #If the program gets to the next packet before reaching the timeout duration, then cancel the timer
         self.timer.cancel()
 
@@ -141,6 +144,7 @@ class FileWriter(decoder.Decoder):
                 #Start a timer to check for a timeout error
                 self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
                 self.timer.start()
+                self.is_open = True
                 self.state = 'DATA'
             elif (self.state == 'DATA'):
                 #A new start packet was found in the middle of the downlink.  Close current file and open a new one
@@ -182,7 +186,8 @@ class FileWriter(decoder.Decoder):
                 file_dest.close()
                 print("Successfully finished downlink")
                 self.first_time = True
-                self.state = 'IDLE'
+                self.is_open = False
+            self.state = 'IDLE'
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
             self.first_time = True
@@ -303,8 +308,10 @@ class FileWriter(decoder.Decoder):
     def check_timeout(self, start_time):
         print("Timeout Error: The state machine has been reset to idle")
         file_dest = self.get_file()
-        file_dest.close()
-        self.state = 'IDLE'
+        if(self.is_open):
+            file_dest.close()
+            self.is_open = False
+        self.state = 'TIMED_OUT'
 
 
 
