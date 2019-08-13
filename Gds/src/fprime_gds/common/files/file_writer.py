@@ -100,13 +100,13 @@ class FileWriter(decoder.Decoder):
 
         #The first time through the loop requires a special case for the timeout to not fail
         if (self.first_time):
-            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
+            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=())
             self.timer.start()
             self.first_time = False
 
         self.write_to_file(data)
 
-    #THIS METHOD NEEDS MAJOR CHANGES
+    #Write to the file
     def write_to_file(self, data):
         '''
         Writes the given data to the correct file.  This function creates the
@@ -122,6 +122,10 @@ class FileWriter(decoder.Decoder):
         '''
         #If the program gets to the next packet before reaching the timeout duration, then cancel the timer
         self.timer.cancel()
+
+        #Start a timer to check for a timeout error
+        self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=())
+        self.timer.start()
 
         #Write to the file here
         packetType = data.packetType
@@ -141,9 +145,6 @@ class FileWriter(decoder.Decoder):
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
                 
-                #Start a timer to check for a timeout error
-                self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
-                self.timer.start()
                 self.is_open = True
                 self.state = 'DATA'
             elif (self.state == 'DATA'):
@@ -152,17 +153,11 @@ class FileWriter(decoder.Decoder):
                 file_dest = self.get_file()
                 file_dest.close()
 
-                print(sourcePath)
                 #Create the log file where the soucePath and lengthDP will be placed
                 self.create_log_file(sourcePath, lengthDP)
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
-
-                #Start a timer to check for a timeout error
-                self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
-                self.timer.start()
-
         elif (packetType == 'DATA'):   #Packet Type is DATA
             #Initialize all relevant DATA packet attributes into variables from file_data
             offset = data.offset
@@ -174,20 +169,18 @@ class FileWriter(decoder.Decoder):
                 file_dest.seek(offset, 0)
                 file_dest.write(dataVar)    #write the data information to the destination file
                 file_dest.flush()
-
-                #Start a timer to check for a timeout error
-                self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=(time.time(),))
-                self.timer.start()
         elif (packetType == 'END'):   #Packet Type is END
             #Initialize all relevant END packet attributes into varibles from file_data
             #hashValue attribute is not relevent right now, but might be in the future
             if (self.state == 'DATA'):
                 file_dest = self.get_file()
-                file_dest.close()
-                print("Successfully finished downlink")
-                self.first_time = True
-                self.is_open = False
+                if (self.is_open):
+                    file_dest.close()
+                    print("Successfully finished downlink")
+                    self.is_open = False
+            self.first_time = True
             self.state = 'IDLE'
+            self.timer.cancel()
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
             self.first_time = True
@@ -305,7 +298,7 @@ class FileWriter(decoder.Decoder):
     
 
     #Small function that is called to check if the file writer has timed out
-    def check_timeout(self, start_time):
+    def check_timeout(self):
         print("Timeout Error: The state machine has been reset to idle")
         file_dest = self.get_file()
         if(self.is_open):

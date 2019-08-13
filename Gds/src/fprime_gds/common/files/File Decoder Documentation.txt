@@ -59,7 +59,9 @@ file_writer.py:
     of the packets.  This means that if we get a lot of packets timing out, then the
     program will take a long time to process everything before the user can do a command
     again.  Is this what we want or do we want to find a way to stop the program from
-    continuing to read the packets so the user can act again immediately?
+    continuing to read the packets so the user can act again immediately?  I'm not sure
+    if my code actually solves this problem or not so this is definitely worth looking
+    into
 file_data.py:
     -Nothing that I can think of
 main_frame_factory.py:
