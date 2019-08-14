@@ -52,9 +52,9 @@ file_decoder.py:
 file_writer.py:
     -My state machine implementation is kinda messy due to time crunch.  Can possibly
     look into using switch statements and making it more readible
-    -The case where the state is ACTIVE and is within a START packet has not been tested.
+    -The case where the state is ACTIVE and is a START packet has not been tested.
     I was unable to figure out how to get a file with multiple START packets in it so
-    this should DEFINITELY be tested and bugfixed if needed (currently lines 145 - 160)
+    this should DEFINITELY be tested and bugfixed if needed
     -Currently, even if the downlink times out the program will still read through all
     of the packets.  This means that if we get a lot of packets timing out, then the
     program will take a long time to process everything before the user can do a command
@@ -62,6 +62,8 @@ file_writer.py:
     continuing to read the packets so the user can act again immediately?  I'm not sure
     if my code actually solves this problem or not so this is definitely worth looking
     into
+    -I was unable to write unit tests due to the time crunch for this project.  writing
+    unit tests could be helpful for assisting you and others with testing this class
 file_data.py:
     -Nothing that I can think of
 main_frame_factory.py:

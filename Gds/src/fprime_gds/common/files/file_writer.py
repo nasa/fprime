@@ -28,18 +28,10 @@ import datetime
 import os
 import random
 
-#More info about File packets can be found at fprime-sw/Fw/FilePacket/docs/sdd.md
-#Enum class for Packet Types
-class PacketType(Enum):
-    START = 0
-    DATA = 1
-    END = 2
-    CANCEL = 3
-
 #Main FileWriter class
 class FileWriter(decoder.Decoder):
     '''File writer class for decoded packets'''
-    def __init__(self, timeout_duration = 120.0):
+    def __init__(self, timeout_duration = 120.0, verbose = 2):
         '''
         FileWriter class constructor
 
@@ -47,11 +39,14 @@ class FileWriter(decoder.Decoder):
             timeout_duration: This is used to keep track of how long the program should wait before throwing
             a timeout exception:
 
+            verbose: Determines what is written to the log files.  Can be equal to 2, 1, or 0
+
         Returns:
             An initialized FileWriter object.
         '''
         
         self.timeout_duration = timeout_duration
+        self.verbose = verbose
         self._file_dest_data = '' #The file that will be written to by the program
         self._source_path = ''  #The source path of the file that the user inputs to be downlinked
         self._dest_path = ''    #The name and path of the file that will be written to
@@ -61,7 +56,6 @@ class FileWriter(decoder.Decoder):
         self.state = 'IDLE' #The state machine of the program.  Can be either IDLE or ACTIVE
         self.dest_is_open = False  #Boolean for checking whether or not the destination file is open or closed
         self.log_is_open = False  #Boolean for checking whether or not the log file is open or closed
-        self.verbose = 2 #Determines what should be printed to the log file.  Can be level 2, 1, or 0
 
         super(FileWriter, self).__init__()
 
@@ -86,6 +80,9 @@ class FileWriter(decoder.Decoder):
     def set_timeout_duration(self, x):
         self.timeout_duration = x
 
+    def set_verbose(self, x):
+        self.verbose = x
+
 
     def data_callback(self, data):
         '''
@@ -97,6 +94,7 @@ class FileWriter(decoder.Decoder):
 
         #The first time through the loop requires a special case for the timeout to not fail
         if (self.first_time):
+            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=())
             self.timer.start()
             self.first_time = False
 
@@ -129,15 +127,25 @@ class FileWriter(decoder.Decoder):
         #Packet Type determines the variables following the seqID
         if (packetType == 'START'):
             #Initialize all relavent START packet attributes into variables from file_data
+            size = data.size
+            lengthSP = data.lengthSP
             sourcePath = data.sourcePath
+            lengthDP = data.lengthDP
             destPath = data.destPath
 
             if (self.state == 'IDLE'):
                 #Create the log file where the soucePath and lengthDP will be placed
-                self.create_log_file(sourcePath)
+                self.create_log_file()
                 log_file = self.get_log()
-                if (self.log_is_open):
-                    log_file.write("Received START packet\n")
+                if (self.log_is_open and self.verbose > 0):
+                    log_file.write(self.get_datetime() + " Received START packet\n")
+                    log_file.write("START packet meta data:\n")
+                    log_file.write("\tSize: " + str(size) + "\n")
+                    log_file.write("\tLength of Source Path: " + str(lengthSP) + "\n")
+                    log_file.write("\tSource Path: " + str(sourcePath) + "\n")
+                    log_file.write("\tLength of Destination Path: " + str(lengthDP) + "\n")
+                    log_file.write("\tDestination Path: " + str(destPath) + "\n")
+
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
@@ -152,7 +160,7 @@ class FileWriter(decoder.Decoder):
                     self.dest_is_open = False
 
                 if (self.log_is_open):
-                    log_file.write("ERROR: Received a START packet out of order")
+                    log_file.write(self.get_datetime() + " ERROR: Received a START packet out of order")
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
@@ -165,15 +173,15 @@ class FileWriter(decoder.Decoder):
 
             if (self.state == 'IDLE'):
                 if (self.log_is_open):
-                    log_file.write("ERROR: Recieved data packet out of order at offset: " + str(offset) + "\n")
+                    log_file.write(self.get_datetime() + " ERROR: Recieved DATA packet out of order at offset: " + str(offset) + "\n")
             elif (self.state == 'ACTIVE'):
                 if (self.dest_is_open):
                     #Write the data information to the file
                     file_dest.seek(offset, 0)
                     file_dest.write(dataVar)    #write the data information to the destination file
                     file_dest.flush()
-                if(self.log_is_open):
-                    log_file.write("Received DATA packet at offset: " + str(offset) + "\n")
+                if(self.log_is_open and self.verbose == 2):
+                    log_file.write(self.get_datetime() + " Received DATA packet at offset: " + str(offset) + "\n")
                     log_file.flush()
 
         elif (packetType == 'END'):
@@ -184,16 +192,18 @@ class FileWriter(decoder.Decoder):
 
             if (self.state == 'IDLE'):
                 if (self.log_is_open):
-                   log_file.write("ERROR: Received end packet out of order\n")
+                   log_file.write(self.get_datetime()+ " ERROR: Received END packet out of order\n")
+                   log_file.flush()
+                   log_file.close()
             elif (self.state == 'ACTIVE'):
                 if (self.dest_is_open):
                     file_dest.flush()
                     file_dest.close()
                     self.dest_is_open = False
 
-                if (self.log_is_open):
-                    log_file.write("Received End packet\n")
-                    log_file.write("DONE: Successfully finished downlink\n")
+                if (self.log_is_open and self.verbose > 0):
+                    log_file.write(self.get_datetime() + " Received END packet\n")
+                    log_file.write(self.get_datetime() + " DONE: Successfully finished downlink\n")
                     log_file.flush()
                     log_file.close()
                     self.log_is_open = False
@@ -211,8 +221,8 @@ class FileWriter(decoder.Decoder):
                 file_dest.close()
                 self.dest_is_open = False
 
-            if (self.log_is_open):
-                log_file.write("Received a CANCEL packet\n")
+            if (self.log_is_open and self.verbose > 0):
+                log_file.write(self.get_datetime + " Received a CANCEL packet\n")
                 log_file.flush()
                 log_file.close()
                 self.log_is_open = False
@@ -222,11 +232,11 @@ class FileWriter(decoder.Decoder):
         else:
             log_file = self.get_log()
             if (self.log_is_open):
-                log_file.write("Invalid file detected\n")
+                log_file.write(self.get_datetime() + " Invalid file detected\n")
 
 
     #Create the log file for this downlink
-    def create_log_file(self, sourcePath):
+    def create_log_file(self):
         '''
         Creates the log file which contains information about the source
         path and length
@@ -239,7 +249,6 @@ class FileWriter(decoder.Decoder):
         Args:
             sourcePath: the source path that the user has entered into
             the program
-            lengthDP: the length of the destination path.
 
         Returns:
             None
@@ -258,7 +267,7 @@ class FileWriter(decoder.Decoder):
         #Get the current date time to create a new log file folder
         #Use the dates and time as the folder name
         time = datetime.datetime.now()
-        log_path = log_path + '/' + str(time.year) + '_' + str(time.month) + '_' + str(time.day) + '_' + str(time.hour) + '_' + str(time.minute)
+        log_path = log_path + '/' + str(time.year) + '_' + str(time.month) + '_' + str(time.day) + '_' + str(time.hour) + '_' + str(time.minute) + '_' + str(time.second)
         try:  
             os.makedirs(log_path)
         except OSError:  
@@ -269,9 +278,8 @@ class FileWriter(decoder.Decoder):
         #Create a new file to write to
         new_log = log_path + '/send_file'
         new_file = open(new_log, 'a')
-        temp_str = "Log File DateTime: " + str(time.month) + " " + str(time.day) + ", " + str(time.year) + " | " + str(time.hour) + ":" + str(time.minute) + "\n"
-        new_file.write(temp_str)
-        new_file.write("Source Path: " + sourcePath + "\n")
+        temp_str = self.get_datetime()[1:len(self.get_datetime()) - 1]
+        new_file.write("Log File Datetime: " + temp_str + "\n")
         self.set_log(new_file)
         self.log_is_open = True
 
@@ -355,6 +363,11 @@ class FileWriter(decoder.Decoder):
         self.state = 'IDLE'
 
 
+    #Gets current datetime in form of: [month/day/year | hour:minute:second]
+    def get_datetime(self):
+        time = datetime.datetime.now()
+        temp = "[" + str(time.month) + "/" + str(time.day) + "/" + str(time.year) + " | " + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
+        return str(temp)
 
 
 if __name__ == "__main__":
