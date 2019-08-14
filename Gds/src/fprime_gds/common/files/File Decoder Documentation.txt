@@ -52,7 +52,7 @@ file_decoder.py:
 file_writer.py:
     -My state machine implementation is kinda messy due to time crunch.  Can possibly
     look into using switch statements and making it more readible
-    -The case where the state is DATA and is within a START packet has not been tested.
+    -The case where the state is ACTIVE and is within a START packet has not been tested.
     I was unable to figure out how to get a file with multiple START packets in it so
     this should DEFINITELY be tested and bugfixed if needed (currently lines 145 - 160)
     -Currently, even if the downlink times out the program will still read through all

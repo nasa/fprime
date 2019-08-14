@@ -39,44 +39,29 @@ class PacketType(Enum):
 #Main FileWriter class
 class FileWriter(decoder.Decoder):
     '''File writer class for decoded packets'''
-    def __init__(self, file_dest_data = '', source_path = '', dest_path = '', timeout_duration = 120.0, first_time = True, timer = threading.Timer, state = 'IDLE', is_open = False):
+    def __init__(self, timeout_duration = 120.0):
         '''
         FileWriter class constructor
 
         Args:
-            file_dest_data: This is the file which will be written to by the program
-
-            source_path: This is the source path of the file that the user inputs to be downlinked
-            
-            dest_path: This is the name and path of the file that will be written to
-            
             timeout_duration: This is used to keep track of how long the program should wait before throwing
             a timeout exception:
-            
-            first_time: For the first packet that is sent to be written there is a special case where
-            this boolean is needed for the writing to work.
-            
-            timer: This is used to keep track of whether or not a timeout has occured.  The timer is started
-            and then canceled if the next packet is sent before the timer is started.  If the timer is executed,
-            then that means the program took too long to cancel it and a timeout has occured.
-            
-            state: The state of the machine.  It can either be in IDLE (the default), DATA (when data is being
-            manipulated and written to the file), or TIMED_OUT (when a timeout has occurred)
-
-            is_open: Checks to see whether or not the file is opened before trying to close it.
 
         Returns:
             An initialized FileWriter object.
         '''
         
-        self._file_dest_data = file_dest_data
-        self._source_path = source_path
-        self._dest_path = dest_path
         self.timeout_duration = timeout_duration
-        self.first_time = first_time
-        self.timer = timer
-        self.state = state
-        self.is_open = is_open
+        self._file_dest_data = '' #The file that will be written to by the program
+        self._source_path = ''  #The source path of the file that the user inputs to be downlinked
+        self._dest_path = ''    #The name and path of the file that will be written to
+        self._log_file = ''     #The log file
+        self.first_time = True  #The first packet that runs through requires a check to avoid errors so this boolean is used
+        self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=()) #Timer to check for timeouts
+        self.state = 'IDLE' #The state machine of the program.  Can be either IDLE or ACTIVE
+        self.dest_is_open = False  #Boolean for checking whether or not the destination file is open or closed
+        self.log_is_open = False  #Boolean for checking whether or not the log file is open or closed
+        self.verbose = 2 #Determines what should be printed to the log file.  Can be level 2, 1, or 0
 
         super(FileWriter, self).__init__()
 
@@ -89,6 +74,18 @@ class FileWriter(decoder.Decoder):
     def set_file(self, x):
         self._file_dest_data = x
 
+    #Getter for the log file
+    def get_log(self):
+        return self._log_file
+
+    #Setter for the log file
+    def set_log(self, x):
+        self._log_file = x
+
+    #Setter for the timeout_duration
+    def set_timeout_duration(self, x):
+        self.timeout_duration = x
+
 
     def data_callback(self, data):
         '''
@@ -100,7 +97,6 @@ class FileWriter(decoder.Decoder):
 
         #The first time through the loop requires a special case for the timeout to not fail
         if (self.first_time):
-            self.timer = threading.Timer(self.timeout_duration, self.check_timeout, args=())
             self.timer.start()
             self.first_time = False
 
@@ -130,64 +126,107 @@ class FileWriter(decoder.Decoder):
         #Write to the file here
         packetType = data.packetType
 
-
         #Packet Type determines the variables following the seqID
-        if (packetType == 'START'):  #Packet Type is START
+        if (packetType == 'START'):
             #Initialize all relavent START packet attributes into variables from file_data
             sourcePath = data.sourcePath
-            lengthDP = data.lengthDP
             destPath = data.destPath
 
             if (self.state == 'IDLE'):
                 #Create the log file where the soucePath and lengthDP will be placed
-                self.create_log_file(sourcePath, lengthDP)
+                self.create_log_file(sourcePath)
+                log_file = self.get_log()
+                if (self.log_is_open):
+                    log_file.write("Received START packet\n")
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
                 
-                self.is_open = True
-                self.state = 'DATA'
-            elif (self.state == 'DATA'):
+                self.state = 'ACTIVE'
+            elif (self.state == 'ACTIVE'):
                 #A new start packet was found in the middle of the downlink.  Close current file and open a new one
-                print("Warning: Found a START packet in the middle of the file.  Closing current file and opening a new one")
+                log_file = self.get_log()
                 file_dest = self.get_file()
-                file_dest.close()
+                if (self.dest_is_open):
+                    file_dest.close()
+                    self.dest_is_open = False
 
-                #Create the log file where the soucePath and lengthDP will be placed
-                self.create_log_file(sourcePath, lengthDP)
+                if (self.log_is_open):
+                    log_file.write("ERROR: Received a START packet out of order")
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
-        elif (packetType == 'DATA'):   #Packet Type is DATA
+        elif (packetType == 'DATA'):
             #Initialize all relevant DATA packet attributes into variables from file_data
             offset = data.offset
             dataVar = data.dataVar
+            log_file = self.get_log()
+            file_dest = self.get_file()
 
-            if (self.state == 'DATA'):
-                #Write the data information to the file
-                file_dest = self.get_file() #retrieve the file destination
-                file_dest.seek(offset, 0)
-                file_dest.write(dataVar)    #write the data information to the destination file
-                file_dest.flush()
-        elif (packetType == 'END'):   #Packet Type is END
+            if (self.state == 'IDLE'):
+                if (self.log_is_open):
+                    log_file.write("ERROR: Recieved data packet out of order at offset: " + str(offset) + "\n")
+            elif (self.state == 'ACTIVE'):
+                if (self.dest_is_open):
+                    #Write the data information to the file
+                    file_dest.seek(offset, 0)
+                    file_dest.write(dataVar)    #write the data information to the destination file
+                    file_dest.flush()
+                if(self.log_is_open):
+                    log_file.write("Received DATA packet at offset: " + str(offset) + "\n")
+                    log_file.flush()
+
+        elif (packetType == 'END'):
             #Initialize all relevant END packet attributes into varibles from file_data
             #hashValue attribute is not relevent right now, but might be in the future
-            if (self.state == 'DATA'):
-                file_dest = self.get_file()
-                if (self.is_open):
+            log_file = self.get_log()
+            file_dest = self.get_file()
+
+            if (self.state == 'IDLE'):
+                if (self.log_is_open):
+                   log_file.write("ERROR: Received end packet out of order\n")
+            elif (self.state == 'ACTIVE'):
+                if (self.dest_is_open):
+                    file_dest.flush()
                     file_dest.close()
-                    print("Successfully finished downlink")
-                    self.is_open = False
+                    self.dest_is_open = False
+
+                if (self.log_is_open):
+                    log_file.write("Received End packet\n")
+                    log_file.write("DONE: Successfully finished downlink\n")
+                    log_file.flush()
+                    log_file.close()
+                    self.log_is_open = False
+
             self.first_time = True
             self.state = 'IDLE'
             self.timer.cancel()
-        elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
+        elif (packetType == 'CANCEL'):
             #CANCEL Packets have no data
+            file_dest = self.get_file()
+            log_file = self.get_log()
+
+            if (self.dest_is_open):
+                file_dest.flush()
+                file_dest.close()
+                self.dest_is_open = False
+
+            if (self.log_is_open):
+                log_file.write("Received a CANCEL packet\n")
+                log_file.flush()
+                log_file.close()
+                self.log_is_open = False
+                
             self.first_time = True
+            self.state = 'IDLE'
+        else:
+            log_file = self.get_log()
+            if (self.log_is_open):
+                log_file.write("Invalid file detected\n")
 
-        #Otherwise the data was not determined to be any of the packet types so we do nothing with the packet
 
-    def create_log_file(self, sourcePath, lengthDP):
+    #Create the log file for this downlink
+    def create_log_file(self, sourcePath):
         '''
         Creates the log file which contains information about the source
         path and length
@@ -230,12 +269,14 @@ class FileWriter(decoder.Decoder):
         #Create a new file to write to
         new_log = log_path + '/send_file'
         new_file = open(new_log, 'a')
-        new_file.write('Source Path: ' + str(sourcePath) + '\n')
-        new_file.write('Destination Size: ' + str(lengthDP))
-        new_file.flush()
-        new_file.close()
+        temp_str = "Log File DateTime: " + str(time.month) + " " + str(time.day) + ", " + str(time.year) + " | " + str(time.hour) + ":" + str(time.minute) + "\n"
+        new_file.write(temp_str)
+        new_file.write("Source Path: " + sourcePath + "\n")
+        self.set_log(new_file)
+        self.log_is_open = True
 
-
+    
+    #Create the destination file for this downlink
     def create_dest_file(self, destPath):
         '''
         Creates the destination file that contains the contents of
@@ -295,16 +336,23 @@ class FileWriter(decoder.Decoder):
 
         #Set the file using the setter for other functions to be able to use the new file
         self.set_file(data_file)
+        self.dest_is_open = True
     
 
     #Small function that is called to check if the file writer has timed out
     def check_timeout(self):
-        print("Timeout Error: The state machine has been reset to idle")
         file_dest = self.get_file()
-        if(self.is_open):
+        log_file = self.get_log()
+        if(self.log_is_open):
+            log_file.write("ERROR: Downlink has timed out. State machine has been reset to IDLE\n")
+            log_file.flush()
+            log_file.close()
+            self.log_is_open = False
+        if(self.dest_is_open):
+            file_dest.flush()
             file_dest.close()
-            self.is_open = False
-        self.state = 'TIMED_OUT'
+            self.dest_is_open = False
+        self.state = 'IDLE'
 
 
 
