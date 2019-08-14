@@ -192,7 +192,7 @@ class FileWriter(decoder.Decoder):
 
             if (self.state == 'IDLE'):
                 if (self.log_is_open):
-                   log_file.write(self.get_datetime()+ " ERROR: Received END packet out of order\n")
+                   log_file.write(self.get_datetime() + " ERROR: Received END packet out of order\n")
                    log_file.flush()
                    log_file.close()
             elif (self.state == 'ACTIVE'):
