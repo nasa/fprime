@@ -26,6 +26,8 @@ from fprime_gds.common.distributor import distributor
 
 from fprime_gds.common.client_socket import client_socket
 
+from fprime_gds.common.files import file_writer
+
 from . import GDSMainFrameImpl
 
 from fprime_gds.common.logger import data_logger
@@ -146,7 +148,7 @@ class MainFrameFactory(object):
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
         self.file_dec = file_decoder.FileDecoder()
-        self.consumer = file_decoder.TestConsumer()
+        self.consumer = file_writer.FileWriter()
 
         # Register distributor to client socket
         self.client_socket.register_distributor(self.dist)
@@ -156,6 +158,7 @@ class MainFrameFactory(object):
         
         #Regist the file decoder consumer
         self.file_dec.register(self.consumer)
+
         
         # Register the event and channel decoders to the distributor for their
         # respective data types
