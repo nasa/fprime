@@ -19,8 +19,6 @@ from fprime_gds.common.decoders import file_decoder
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import *
-import multiprocessing as mp
-from multiprocessing import Process
 import threading
 import time
 import traceback
@@ -174,7 +172,7 @@ class FileWriter(decoder.Decoder):
             elif (self.state == 'ACTIVE'):
                 if (self.dest_is_open):
                     if (data.seqID != self.trackerID):
-                        self.write_to_log(self.get_datetime() + " Warning: Expected DATA packet with SeqID: " + str(self.trackerID) + ", but recieved SeqID: " + str(data.seqID) + " instead")
+                        self.write_to_log(self.get_datetime() + " Warning: Expected DATA packet with SeqID: " + str(self.trackerID) + ", but received SeqID: " + str(data.seqID) + " instead")
                     
                     #Write the data information to the file
                     file_dest.seek(offset, 0)
@@ -182,7 +180,6 @@ class FileWriter(decoder.Decoder):
                     file_dest.flush()
                 if(self.verbose == 2):
                     self.write_to_log(self.get_datetime() + " Received DATA packet at offset: " + str(offset) + "\n")
-
             self.trackerID += 1 #Increment the seqID tracker
         elif (packetType == 'END'):
             #Initialize all relevant END packet attributes into varibles from file_data
@@ -201,7 +198,7 @@ class FileWriter(decoder.Decoder):
 
                 if (self.verbose > 0):
                     if (data.seqID != self.trackerID):
-                        self.write_to_log(self.get_datetime() + " Warning: Expected END packet with SeqID: " + str(self.trackerID) + ", but recieved SeqID: " + str(data.seqID) + " instead")
+                        self.write_to_log(self.get_datetime() + " Warning: Expected END packet with SeqID: " + str(self.trackerID) + ", but received SeqID: " + str(data.seqID) + " instead")
                     else:
                         self.write_to_log(self.get_datetime() + " Received END packet\n")
 
@@ -218,7 +215,7 @@ class FileWriter(decoder.Decoder):
             file_dest = self.get_file()
             if (self.state == 'IDLE'):
                 if (self.verbose > 0):
-                    self.write_to_log(self.get_datetime + " Warning: Recieved unexpected CANCEL packet")
+                    self.write_to_log(self.get_datetime() + " Warning: Received unexpected CANCEL packet")
             elif (self.state == 'Active'):
                 if (self.dest_is_open):
                     file_dest.flush()
@@ -226,7 +223,7 @@ class FileWriter(decoder.Decoder):
                     self.dest_is_open = False
 
                 if (self.verbose > 0):
-                    self.write_to_log(self.get_datetime + " Received a CANCEL packet\n")
+                    self.write_to_log(self.get_datetime() + " Received a CANCEL packet\n")
                     log_file.close()
                     self.log_is_open = False
                 
@@ -269,8 +266,7 @@ class FileWriter(decoder.Decoder):
 
         #Get the current date time to create a new log file folder
         #Use the dates and time as the folder name
-        time = datetime.datetime.now()
-        log_path = log_path + '/' + str(time.year) + '_' + str(time.month) + '_' + str(time.day) + '_' + str(time.hour) + '_' + str(time.minute) + '_' + str(time.second)
+        log_path = log_path + '/' + datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         try:  
             os.makedirs(log_path)
         except OSError:  
@@ -378,8 +374,8 @@ class FileWriter(decoder.Decoder):
 
     #Gets current datetime in form of: [month/day/year | hour:minute:second]
     def get_datetime(self):
-        time = datetime.datetime.now()
-        temp = "[" + str(time.month) + "/" + str(time.day) + "/" + str(time.year) + " | " + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
+        temp = datetime.datetime.now().strftime('[%m/%d/%Y | %H:%M:%S.%f')[:-3]
+        temp += ']'
         return str(temp)
 
 
