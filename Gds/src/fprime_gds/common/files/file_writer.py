@@ -56,6 +56,7 @@ class FileWriter(decoder.Decoder):
         self.state = 'IDLE' #The state machine of the program.  Can be either IDLE or ACTIVE
         self.dest_is_open = False  #Boolean for checking whether or not the destination file is open or closed
         self.log_is_open = False  #Boolean for checking whether or not the log file is open or closed
+        self.trackerID = 0 #Keeps track of what the current sequence ID should be
 
         super(FileWriter, self).__init__()
 
@@ -123,7 +124,6 @@ class FileWriter(decoder.Decoder):
 
         #Write to the file here
         packetType = data.packetType
-
         #Packet Type determines the variables following the seqID
         if (packetType == 'START'):
             #Initialize all relavent START packet attributes into variables from file_data
@@ -136,54 +136,54 @@ class FileWriter(decoder.Decoder):
             if (self.state == 'IDLE'):
                 #Create the log file where the soucePath and lengthDP will be placed
                 self.create_log_file()
-                log_file = self.get_log()
-                if (self.log_is_open and self.verbose > 0):
-                    log_file.write(self.get_datetime() + " Received START packet\n")
-                    log_file.write("START packet meta data:\n")
-                    log_file.write("\tSize: " + str(size) + "\n")
-                    log_file.write("\tLength of Source Path: " + str(lengthSP) + "\n")
-                    log_file.write("\tSource Path: " + str(sourcePath) + "\n")
-                    log_file.write("\tLength of Destination Path: " + str(lengthDP) + "\n")
-                    log_file.write("\tDestination Path: " + str(destPath) + "\n")
+                if (self.verbose > 0):
+                    self.write_to_log(self.get_datetime() + " Received START packet\n") 
+                    self.write_to_log("START packet meta data:\n")
+                    self.write_to_log("\tSize: " + str(size) + "\n")
+                    self.write_to_log("\tLength of Source Path: " + str(lengthSP) + "\n")
+                    self.write_to_log("\tSource Path: " + str(sourcePath) + "\n")
+                    self.write_to_log("\tLength of Destination Path: " + str(lengthDP) + "\n")
+                    self.write_to_log("\tDestination Path: " + str(destPath) + "\n")
 
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
-                
                 self.state = 'ACTIVE'
             elif (self.state == 'ACTIVE'):
                 #A new start packet was found in the middle of the downlink.  Close current file and open a new one
-                log_file = self.get_log()
                 file_dest = self.get_file()
                 if (self.dest_is_open):
                     file_dest.close()
                     self.dest_is_open = False
 
-                if (self.log_is_open):
-                    log_file.write(self.get_datetime() + " ERROR: Received a START packet out of order")
+                if (self.verbose > 0):
+                    self.write_to_log(self.get_datetime() + " WARNING: Received unexpected START packet")
 
                 #Create the destination file where the DATA packet data will be stored
                 self.create_dest_file(destPath)
+            
+            self.trackerID += 1 #Incrememnt the seqID tracker
         elif (packetType == 'DATA'):
             #Initialize all relevant DATA packet attributes into variables from file_data
             offset = data.offset
             dataVar = data.dataVar
-            log_file = self.get_log()
             file_dest = self.get_file()
 
             if (self.state == 'IDLE'):
-                if (self.log_is_open):
-                    log_file.write(self.get_datetime() + " ERROR: Recieved DATA packet out of order at offset: " + str(offset) + "\n")
+                self.write_to_log(self.get_datetime() + "WARNING: Received unexpected DATA packet with Seq ID: " + str(data.seqID) + "\n")
             elif (self.state == 'ACTIVE'):
                 if (self.dest_is_open):
+                    if (data.seqID != self.trackerID):
+                        self.write_to_log(self.get_datetime() + " Warning: Expected DATA packet with SeqID: " + str(self.trackerID) + ", but recieved SeqID: " + str(data.seqID) + " instead")
+                    
                     #Write the data information to the file
                     file_dest.seek(offset, 0)
                     file_dest.write(dataVar)    #write the data information to the destination file
                     file_dest.flush()
-                if(self.log_is_open and self.verbose == 2):
-                    log_file.write(self.get_datetime() + " Received DATA packet at offset: " + str(offset) + "\n")
-                    log_file.flush()
+                if(self.verbose == 2):
+                    self.write_to_log(self.get_datetime() + " Received DATA packet at offset: " + str(offset) + "\n")
 
+            self.trackerID += 1 #Increment the seqID tracker
         elif (packetType == 'END'):
             #Initialize all relevant END packet attributes into varibles from file_data
             #hashValue attribute is not relevent right now, but might be in the future
@@ -191,48 +191,51 @@ class FileWriter(decoder.Decoder):
             file_dest = self.get_file()
 
             if (self.state == 'IDLE'):
-                if (self.log_is_open):
-                   log_file.write(self.get_datetime() + " ERROR: Received END packet out of order\n")
-                   log_file.flush()
-                   log_file.close()
+                self.write_to_log(self.get_datetime() + " WARNING: Received unexpected END packet\n")
+                log_file.close()
             elif (self.state == 'ACTIVE'):
                 if (self.dest_is_open):
                     file_dest.flush()
                     file_dest.close()
                     self.dest_is_open = False
 
-                if (self.log_is_open and self.verbose > 0):
-                    log_file.write(self.get_datetime() + " Received END packet\n")
-                    log_file.write(self.get_datetime() + " DONE: Successfully finished downlink\n")
-                    log_file.flush()
+                if (self.verbose > 0):
+                    if (data.seqID != self.trackerID):
+                        self.write_to_log(self.get_datetime() + " Warning: Expected END packet with SeqID: " + str(self.trackerID) + ", but recieved SeqID: " + str(data.seqID) + " instead")
+                    else:
+                        self.write_to_log(self.get_datetime() + " Received END packet\n")
+
+                    self.write_to_log(self.get_datetime() + " DONE: Successfully finished downlink\n")
                     log_file.close()
                     self.log_is_open = False
 
             self.first_time = True
             self.state = 'IDLE'
             self.timer.cancel()
+            self.trackerID = 0 #Set the seqID tracker to 0
         elif (packetType == 'CANCEL'):
             #CANCEL Packets have no data
             file_dest = self.get_file()
-            log_file = self.get_log()
+            if (self.state == 'IDLE'):
+                if (self.verbose > 0):
+                    self.write_to_log(self.get_datetime + " Warning: Recieved unexpected CANCEL packet")
+            elif (self.state == 'Active'):
+                if (self.dest_is_open):
+                    file_dest.flush()
+                    file_dest.close()
+                    self.dest_is_open = False
 
-            if (self.dest_is_open):
-                file_dest.flush()
-                file_dest.close()
-                self.dest_is_open = False
-
-            if (self.log_is_open and self.verbose > 0):
-                log_file.write(self.get_datetime + " Received a CANCEL packet\n")
-                log_file.flush()
-                log_file.close()
-                self.log_is_open = False
+                if (self.verbose > 0):
+                    self.write_to_log(self.get_datetime + " Received a CANCEL packet\n")
+                    log_file.close()
+                    self.log_is_open = False
                 
             self.first_time = True
             self.state = 'IDLE'
+            self.timer.cancel()
+            self.trackerID = 0 #Set the SeqID tracker to 0
         else:
-            log_file = self.get_log()
-            if (self.log_is_open):
-                log_file.write(self.get_datetime() + " Invalid file detected\n")
+            self.write_to_log(self.get_datetime() + " Invalid file detected\n")
 
 
     #Create the log file for this downlink
@@ -345,6 +348,16 @@ class FileWriter(decoder.Decoder):
         #Set the file using the setter for other functions to be able to use the new file
         self.set_file(data_file)
         self.dest_is_open = True
+
+
+    #Small function that writes to the log file
+    def write_to_log(self, word):
+        log_file = self.get_log()
+        if (self.log_is_open):
+            log_file.write(word)
+            log_file.flush()
+        
+
     
 
     #Small function that is called to check if the file writer has timed out
