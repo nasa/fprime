@@ -20,73 +20,54 @@ from optparse import OptionParser
 
 from fprime.common.models.serialize.type_exceptions import *
 
-__author__ = "Kevin Dinkel"
-__copyright__ = "Copyright 2015, California Institute of Technology."
+__author__ = "Tim Canham"
 __version__ = "1.0"
-__email__ = "kevin.dinkel@jpl.nasa.gov"
-
-def __error(string):
-  '''
-  Print an error message and exit with error code 1
-  @param string: the custom error string to print
-  '''
-  print string
-  sys.exit(1)
+__email__ = "timothy.canham@jpl.nasa.gov"
 
 # try:
 from fprime_gds.common.models.common.command import Descriptor
+from fprime_gds.common.models.common.command import Command
 from fprime_gds.common.encoders.seq_writer import SeqBinaryWriter
-from fprime_gds.tkgui.controllers import command_loader
-from fprime_gds.tkgui.controllers import exceptions as gseExceptions
+from fprime_gds.common.loaders.cmd_xml_loader import CmdXmlLoader
+from fprime_gds.common.data_types.exceptions import exceptions as gseExceptions
 from fprime_gds.common.parsers.seq_file_parser import SeqFileParser 
 
 # except:
 #  __error("The Gse source code was not found in your $PYTHONPATH variable. Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
 
-def __errorLine(lineNumber, string):
-  '''
-  Print an error message relating to a line number of the file input and exit with error code 1
-  @param lineNumber: the current line number being parsed
-  @param string: the custom error string to print
-  '''
-  __error("Error on line %d: %s" % (lineNumber + 1, string))
-
-
-def generateSequence(inputFile, outputFile, generated_path, timebase):
+def generateSequence(inputFile, outputFile, dictionary, timebase):
   '''
   Write a binary sequence file from a text sequence file
   @param inputFile: A text input sequence file name (usually a .seq extension)
   @param outputFile: An output binary sequence file name (usually a .bin extension)
   '''
   # Check the user environment:
-  generated_command_path = generated_path + "/commands"
-  cmds = command_loader.CommandLoader.getInstance()
+  cmd_xml_dict = command_loader.CmdXmlLoader.getInstance()
   try:
-    cmds.create(generated_command_path)
-  except gseExceptions.GseControllerUndefinedDirectoryException:
-    __error("Environment variable 'GSE_GENERATED_PATH' is set to '" + generated_path + "'. This is not a valid directory. Make sure this variable is set correctly, and the GSE python deployment autocode as been installed in this location.")
+    (cmd_id_dict, cmd_name_dict) = cmd_xml_dict.construct_dicts(dictionary)
+  except gseExceptions.GseControllerUndefinedFileException:
+    __error("Can't open file '" + dictionary + "'. ")
 
   # Parse the input file:
   command_list = []
-  command_obj_dict = cmds.getCommandDict()
-  parser = SeqFileParser()
-  for i, descriptor, seconds, useconds, mnemonic, args in parser.parse(inputFile):
+  file_parser = SeqFileParser()
+  for i, descriptor, seconds, useconds, mnemonic, args in file_parser.parse(inputFile):
     # Make sure that command is in the command dictionary:
-    if mnemonic in command_obj_dict:
-      command_obj = copy.deepcopy(command_obj_dict[mnemonic])
+    if mnemonic in cmd_name_dict:
+      command_temp = copy.deepcopy(cmd_name_dict[mnemonic])
       # Set the command arguments:
       try:
-        command_obj.setArgs(args)
+        command_temp.setArgs(args)
       except ArgLengthMismatchException as e:
         __errorLine(i, "'" + mnemonic + "' argument length mismatch. " + e.getMsg())
       except TypeException as e:
         __errorLine(i, "'" + mnemonic + "' argument type mismatch. " + e.getMsg())
       # Set the command time and descriptor:
-      command_obj.setDescriptor(descriptor)
-      command_obj.setSeconds(seconds)
-      command_obj.setUseconds(useconds)
+      command_temp.setDescriptor(descriptor)
+      command_temp.setSeconds(seconds)
+      command_temp.setUseconds(useconds)
       # Append this command to the command list:
-      command_list.append(command_obj)
+      command_list.append(command_temp)
     else:
       __errorLine(i, "'" + mnemonic + "' does not match any command in the command dictionary.")
 
@@ -112,8 +93,8 @@ if __name__ == "__main__":
 
   usage = "usage: %prog [options] input_file output_file"
   parser = OptionParser(usage=usage) 
-  parser.add_option("-g", "--generated_path", dest="generated_path", action="store", type="string", \
-                      help="Set base path to generated command/telemetry definition files")
+  parser.add_option("-d", "--dictionary", dest="dictionary", action="store", type="string", \
+                      help="Dictionary file name")
   parser.add_option("-t", "--timebase", dest="timebase", action="store", type="string", default = None, \
                       help="Set base path to generated command/telemetry definition files [default: any]")
   
@@ -132,7 +113,7 @@ if __name__ == "__main__":
     inputfile = args[0]
     if len(args) == 1:
         outputfile = None
-    generateSequence(inputfile,outputfile, opts.generated_path,timebase)
+    generateSequence(inputfile,outputfile, opts.dictionary,timebase)
   else:
     parser.print_help()
     sys.exit(1)

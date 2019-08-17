@@ -38,7 +38,7 @@ class CmdXmlLoader(XmlLoader):
         Returns:
             A tuple with two command dictionaries (python type dict):
             (id_dict, name_dict). The keys are the events' id and name fields
-            respectively and the values are ChTemplate objects
+            respectively and the values are CmdTemplate objects
         '''
         xml_tree = self.get_xml_tree(path)
 
