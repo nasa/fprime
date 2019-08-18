@@ -1,5 +1,6 @@
 import re
 import sys
+import copy
 from datetime import datetime, timedelta
 
 from fprime_gds.common.models.common.command import Descriptor

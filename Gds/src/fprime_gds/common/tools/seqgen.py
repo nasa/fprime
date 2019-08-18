@@ -29,8 +29,16 @@ from fprime_gds.common.models.common.command import Descriptor
 from fprime_gds.common.models.common.command import Command
 from fprime_gds.common.encoders.seq_writer import SeqBinaryWriter
 from fprime_gds.common.loaders.cmd_xml_loader import CmdXmlLoader
-from fprime_gds.common.data_types.exceptions import exceptions as gseExceptions
+from fprime_gds.common.data_types import exceptions as gseExceptions
 from fprime_gds.common.parsers.seq_file_parser import SeqFileParser 
+
+def __error(string):
+  '''
+  Print an error message and exit with error code 1
+  @param string: the custom error string to print
+  '''
+  print string
+  sys.exit(1)
 
 # except:
 #  __error("The Gse source code was not found in your $PYTHONPATH variable. Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
@@ -42,7 +50,7 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
   @param outputFile: An output binary sequence file name (usually a .bin extension)
   '''
   # Check the user environment:
-  cmd_xml_dict = command_loader.CmdXmlLoader.getInstance()
+  cmd_xml_dict = CmdXmlLoader()
   try:
     (cmd_id_dict, cmd_name_dict) = cmd_xml_dict.construct_dicts(dictionary)
   except gseExceptions.GseControllerUndefinedFileException:

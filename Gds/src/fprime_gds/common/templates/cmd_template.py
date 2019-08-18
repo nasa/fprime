@@ -10,6 +10,7 @@ Instances of this class describe a specific command type.
 '''
 from __future__ import absolute_import
 
+import copy
 from enum import Enum
 from . import data_template
 from fprime.common.models.serialize.type_base import BaseType
@@ -154,6 +155,8 @@ class CmdTemplate(data_template.DataTemplate):
     def setUseconds(self, usec):
         self.usec = usec       
             
+    def getOpCode(self):
+        return self.opcode
                 
     def getDescriptor(self):
         ''' 
@@ -171,6 +174,6 @@ class CmdTemplate(data_template.DataTemplate):
         return self.usec
     
     def getArgs(self):
-        return get_args()
+        return self.get_args()
         
         
