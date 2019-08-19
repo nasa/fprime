@@ -23,6 +23,7 @@ import time
 from fprime_ac.utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
+from lxml import isoschematron
 try:
     import configparser
 except ImportError:
@@ -108,6 +109,11 @@ class XmlComponentParser(object):
             PRINT.info(msg)
             print(element_tree)
             raise Exception(msg)
+        
+        # Check for async_input port
+        self.validate_xml(xml_file, element_tree, 'schematron', 'active_comp')
+
+        self.validate_xml(xml_file, element_tree, 'schematron', 'comp_unique')
 
         ## Add Implicit ports if needed
       #  element_tree = __check_ports(element_tree)
@@ -167,10 +173,17 @@ class XmlComponentParser(object):
                 dict_fd = open(dict_file,'r')
                 dict_parser = etree.XMLParser(remove_comments=True)
                 dict_element_tree = etree.parse(dict_fd,parser=xml_parser)
+
                 component.append(dict_element_tree.getroot())
                     
                 # Validate new imports using their root tag as a key to find what schema to use
-                self.validate_xml(dict_element_tree, 'schema', dict_element_tree.getroot().tag.lower())
+                self.validate_xml(dict_file, dict_element_tree, 'schema', dict_element_tree.getroot().tag.lower())
+                
+                # Validate ID and Opcode uniqueness with Schematron
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'chan_id')
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'evr_id')
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'param_id')
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'cmd_op')
 
                 # add to list of imported dictionaries for make dependencies later
                 self.__import_dictionary_files.append(comp_tag.text)
@@ -752,7 +765,6 @@ class XmlComponentParser(object):
                 PRINT.info("%s: Invalid tag %s in component definition"%(xml_file,comp_tag.tag))
                 sys.exit(-1)
 
-
         ## Add implicit ports to port list if no ports were defined
         ## Continue if all required ports are defined
         ## Abort if required ports are defined, but there are ports missing
@@ -955,7 +967,7 @@ class XmlComponentParser(object):
         # Python 3's SafeConfigParser isn't stripping comments, this fixes that problem
         return self.__const_parser.get(section,var).split(";")[0]
 
-    def validate_xml(self, parsed_xml_tree, validator_type, validator_name):
+    def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
         if not self.Config.has_option(validator_type, validator_name):
             msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
@@ -969,13 +981,20 @@ class XmlComponentParser(object):
         validator_file_handler.close()
         if validator_type == 'schema':
             validator_compiled = etree.RelaxNG(validator_parsed)
+        elif validator_type == 'schematron':
+            validator_compiled = isoschematron.Schematron(validator_parsed)
         
         # Validate XML file
         if not validator_compiled.validate(parsed_xml_tree):
-            msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get('schema' , dict_element_tree.getroot().tag.lower()))
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            if validator_type == 'schema':
+                msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
+                print(parsed_xml_tree)
+                raise Exception(msg)
+            elif validator_type == 'schematron':
+                msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
+                print(parsed_xml_tree)
 
     def is_component(self):
         """

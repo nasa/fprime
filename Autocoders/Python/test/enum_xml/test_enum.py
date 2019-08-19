@@ -188,7 +188,7 @@ def test_enum():
 
             pcmake = pexpect.spawn("cmake {} -DCMAKE_BUILD_TYPE=TESTING".format(os.environ["BUILD_ROOT"]))
             pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
-            print("Successfully ran cmake for testgen test")
+            print("Successfully ran cmake for enum xml test")
 
             # Build ut
             pbuild = pexpect.spawn("make Autocoders_Python_test_enum_xml_ut_exe -j32")

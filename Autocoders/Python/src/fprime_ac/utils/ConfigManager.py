@@ -118,6 +118,19 @@ class ConfigManager(parent):
         self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
+        # Schematron parameters here.
+        ################################################################
+        self.__prop['schematron'] = dict()
+        self.__prop['schematron']["chan_id"]            = '/Autocoders/Python/schema/default/channel_id_schematron.rng'
+        self.__prop['schematron']["param_id"]            = '/Autocoders/Python/schema/default/parameter_id_schematron.rng'
+        self.__prop['schematron']["cmd_op"]             = '/Autocoders/Python/schema/default/command_op_schematron.rng'
+        self.__prop['schematron']["evr_id"]             = '/Autocoders/Python/schema/default/event_id_schematron.rng'
+        self.__prop['schematron']["comp_unique"]        = '/Autocoders/Python/schema/default/comp_uniqueness_schematron.rng'
+        self.__prop['schematron']["top_unique"]         = '/Autocoders/Python/schema/default/top_uniqueness_schematron.rng'
+        self.__prop['schematron']["active_comp"]        = '/Autocoders/Python/schema/default/active_comp_schematron.rng'
+        self.__prop['schematron']["enum_value"]         = '/Autocoders/Python/schema/default/enum_value_schematron.rng'
+        self._setSectionDefaults('schematron')
+        ################################################################
         # component parameters here.
         ################################################################
         self.__prop['component'] = dict()
