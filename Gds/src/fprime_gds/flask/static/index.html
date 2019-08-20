@@ -72,12 +72,12 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="command-input-template">
                 <div>
-                    <h2>Command Sending: {{ selected.mnemonic }}</h2>
+                    <h2>Command Sending: {{ selected.full_name }}</h2>
                     <div class="form-row">
                         <div class="form-group col">
                             <label for="mnemonic">Mnemonic</label>
                             <v-select id="mnemonic" style="flex: 1 1 auto;" :clearable="false" :searchable="true"
-                                      :filterable="true"  label="mnemonic" :options="commandList" v-model="selected">
+                                      :filterable="true"  label="full_name" :options="commandList" v-model="selected">
                             </v-select>
                         </div>
                     </div>
@@ -90,8 +90,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         </div>
                     </div>
                     <div class="form-row">
-                        <button type="button" class="col btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
-                        <button type="button" :disabled="active" class="col btn btn-success" v-on:click="sendCommand">
+                        <button type="button" class="col-2 btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
+                        <button type="button" :disabled="active" class="col-2 btn btn-success" v-on:click="sendCommand">
                             Send Command
                         </button>
                     </div>
@@ -120,7 +120,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             These templates provide for event listing items.
             -->
             <template id="event-list-template">
-                <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity']"
+                <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity', 'Event Description']"
                           :items="events"
                           :item-to-columns="columnify"
                           :row-style="style"
@@ -134,7 +134,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             each channel. If this list contains duplicates, then the display will contain duplicates. This can be fixed
             -->
             <template id="channel-table-template">
-               <fp-table :header-columns="['Channel Id', 'Channel Name', 'Channel Value', 'Last Sample Time']"
+               <fp-table :header-columns="['Last Sample Time', 'Channel Id', 'Channel Name', 'Channel Value']"
                          :items="channels"
                          :item-to-columns="columnify"
                          :item-to-unique="keyify"
@@ -173,7 +173,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             </v-select>
                         </div>
                     </div>
-                    <table  class="sortable table table-hover">
+                    <table  class="sortable table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th v-if="editing" class="sorttable_nosort">

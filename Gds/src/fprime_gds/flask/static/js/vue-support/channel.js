@@ -24,7 +24,7 @@ Vue.component("channel-table", {
          * @return {*[]}
          */
         columnify: function(item) {
-            return ["0x" + item.id.toString(16), item.template.name, item.val, timeToString(item.time)]
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, item.val]
         },
         /**
          * Converts a channel to a unique rendering key. For channels, ids are unique, and thus just use that.

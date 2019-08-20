@@ -15,3 +15,23 @@
     overflow: hidden;
     height: 100%;
 }
+
+/**
+ * Based on recommendations here: https://stackoverflow.com/questions/41674548/how-to-make-html-table-columns-resizable
+ * this CSS class allows us to use a <div></div> construct inside <th></th> elements of an FP table in order to resize
+ * the header horizontally.
+ */
+/*div.resize-head-div {
+    resize: horizontal;
+    overflow: auto;
+    display: inline-block;
+    text-overflow: ellipsis;
+}*/
+
+table {
+    width:auto;
+    white-space: nowrap;
+}
+table td:last-child {
+    width:100%;
+}

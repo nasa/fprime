@@ -14,7 +14,7 @@ Note: JSON types must use only the following data types
 
 @author mstarch
 """
-
+import fprime_gds.common.data_types.cmd_data
 
 def fprime_to_jsonable(obj):
     """
@@ -31,7 +31,8 @@ def fprime_to_jsonable(obj):
             func = getattr(obj, getter)
             item = func()
             # If there is a property named "args" it needs to be handled specifically
-            if getter == "get_args":
+            abc_123 = type(obj)
+            if getter == "get_args" and type(obj) != fprime_gds.common.data_types.cmd_data.CmdData:
                 args = []
                 for arg_spec in item:
                     args.append({"name": arg_spec[0], "description": arg_spec[1],

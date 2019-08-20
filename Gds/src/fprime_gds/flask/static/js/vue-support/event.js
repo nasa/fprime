@@ -25,7 +25,7 @@ Vue.component("event-list", {
          */
         columnify: function (item) {
             //TODO: where are the arguments to place in the fmt string? Where did it go my friend?  Vladivostok? Paris?
-            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.name,
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
                 item.template.severity.value.replace("Severity.", ""), item.template.format_str];
         },
         /**

@@ -9,6 +9,7 @@ code that they are importing.
 """
 import os
 import re
+import errno
 import argparse
 import datetime
 
@@ -39,7 +40,7 @@ def add_safe_argument(parser, *args, **kwargs):
     try:
         parser.add_argument(*args, **kwargs)
     except argparse.ArgumentError as arge:
-        if not "conflicting option strings" in str(arge):
+        if not "conflicting option string" in str(arge):
             raise
 
 class LogDeployParser(object):
@@ -81,7 +82,11 @@ class LogDeployParser(object):
         if LogDeployParser.first_log is None:
             values["logs"] = os.path.abspath(os.path.join(values["logs"],
                                                           datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")))
-            os.makedirs(values["logs"], exist_ok=True)
+            try:
+                os.makedirs(values["logs"])
+            except OSError as exc:
+                if exc.errno != errno.EEXIST:
+                    raise
             first_log = values["logs"]
         else:
             values["logs"] = LogDeployParser.first_log
@@ -103,7 +108,7 @@ class MiddleWareParser(LogDeployParser):
         :param parser: parser to fill in with arguments
         :return: parser after arguments added
         """
-        super().add_args(parser)
+        super(MiddleWareParser, self).add_args(parser)
         add_safe_argument(parser, "-p", "--port", dest="port", action="store", type=int,
                           help="Set the threaded TCP socket server port [default: %(default)s]", default=50000)
         add_safe_argument(parser, "-a", "--addr", dest="addr", action="store", type=str,
@@ -116,7 +121,7 @@ class MiddleWareParser(LogDeployParser):
         :param arguments: parsed arguments
         :return:
         """
-        values = super().refine_args(arguments)
+        values = super(MiddleWareParser, self).refine_args(arguments)
         values.update({
             "port": arguments.port,
             "address": arguments.addr
@@ -148,7 +153,7 @@ class GdsParser(LogDeployParser):
         :param parser: parser to add args to
         :return: parser
         """
-        super().add_args(parser)
+        super(GdsParser, self).add_args(parser)
         add_safe_argument(parser, "--dictionary", dest="dictionary", action="store", required=False, type=str,
                           help="Path to dictionary. Overrides deploy if both are set")
 
@@ -162,10 +167,10 @@ class GdsParser(LogDeployParser):
         :param arguments: parsed arguments, ready for return.
         :return: values dictionaries
         """
-        values = super().refine_args(arguments)
+        values = super(GdsParser, self).refine_args(arguments)
         # Find dictionary setting via "dictionary" argument or the "deploy" argument
         if arguments.dictionary is not None and os.path.exists(arguments.dictionary):
-            values["dictionary"] = arguments.address
+            values["dictionary"] = arguments.dictionary
         elif arguments.dictionary is not None and not os.path.exists(arguments.dictionary):
             raise ValueError("Dictionary path {} is not valid 'py_dict' nor XML file".format(arguments.dictionary))
         elif arguments.deploy is not None:
@@ -198,7 +203,7 @@ class BinaryDeployment(MiddleWareParser):
         :param parser: parser to add arguments to.
         :return:
         """
-        parser = super().add_args(parser)
+        parser = super(BinaryDeployment, self).add_args(parser)
         add_safe_argument(parser, "--app", dest="app", action="store", required=False, type=str,
                           help="Path to app to run. Overrides deploy if both are set.")
 
@@ -209,7 +214,7 @@ class BinaryDeployment(MiddleWareParser):
         :param arguments: parsed arguments, ready for return.
         :return: values dictionaries
         """
-        values = super().refine_args(arguments)
+        values = super(BinaryDeployment, self).refine_args(arguments)
         if arguments.app is not None and os.path.isfile(arguments.app):
             values["app"] = arguments.app
         elif arguments.app is not None and not os.path.isfile(arguments.app):

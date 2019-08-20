@@ -50,13 +50,17 @@ Vue.component("command-input", {
             for (let i = 0; i < this.selected.args.length; i++) {
                 values.push(this.selected.args[i].value);
             }
-            this.loader.load("/commands/" + command.mnemonic, "PUT",
+            this.loader.load("/commands/" + command.full_name, "PUT",
                 {"key":0xfeedcafe, "arguments": values})
                 .then(function() {_self.active = false;})
                 .catch(function(err) {console.error("[ERROR] Failed to send command: " + err)});
         },
         columnify: function(item) {
-            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.mnemonic, item.args];
+            let values = [];
+            for (let i = 0; i < item.args.length; i++) {
+                values.push(item.args[i].value);
+            }
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, values];
         },
         /**
          * Take the given item and converting it to a unique key by merging the id and time together with a prefix
@@ -74,7 +78,19 @@ Vue.component("command-input", {
          * @return {unknown[]}
          */
         commandList: function() {
-            return Object.values(this.commands);
+            return Object.values(this.commands).sort(
+                /**
+                 * Compare objects by full_name
+                 * @param obj1: first object
+                 * @param obj2: second object
+                 * @return {number} -1 or 1
+                 */
+                function(obj1, obj2) {
+                    if (obj1.full_name <= obj2.full_name) {
+                        return -1;
+                    }
+                    return 1;
+                });
         }
     }
 });
@@ -124,7 +140,7 @@ export let CommandMixins = {
         }
         // Check if it is our component for the type we are looking for
         if (component.$options.name === "command-input") {
-            component.selected = component.commands["CMD_NO_OP"];
+            component.selected = component.commands["cmdDisp.CMD_NO_OP"];
             return true;
         }
         else if (component.$children.length > 0) {
