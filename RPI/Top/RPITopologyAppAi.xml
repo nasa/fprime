@@ -523,6 +523,10 @@
        <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
         <target component = "rpiDemo" port = "Run" type = "Sched" num = "0"/>
    </connection>
+   <connection name = "cmdSeq">
+       <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+        <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
+   </connection>
    
    <!-- Health Connections -->
    

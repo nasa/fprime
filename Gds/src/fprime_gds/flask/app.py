@@ -37,17 +37,17 @@ pipeline.connect("127.0.0.1", 50000)
 
 # Application routes
 api.add_resource(fprime_gds.flask.commands.CommandDictionary, "/dictionary/commands",
-                 resource_class_args=[pipeline.get_command_dictionary()])
+                 resource_class_args=[pipeline.get_command_name_dictionary()])
 api.add_resource(fprime_gds.flask.commands.CommandHistory, "/commands",
                  resource_class_args=[pipeline.get_command_history()])
 api.add_resource(fprime_gds.flask.commands.Command, "/commands/<command>",
                  resource_class_args=[pipeline])
 api.add_resource(fprime_gds.flask.events.EventDictionary, "/dictionary/events",
-                 resource_class_args=[pipeline.get_event_dictionary()])
+                 resource_class_args=[pipeline.get_event_id_dictionary()])
 api.add_resource(fprime_gds.flask.events.EventHistory, "/events",
                  resource_class_args=[pipeline.get_event_history()])
 api.add_resource(fprime_gds.flask.channels.ChannelDictionary, "/dictionary/channels",
-                 resource_class_args=[pipeline.get_channel_dictionary()])
+                 resource_class_args=[pipeline.get_channel_id_dictionary()])
 api.add_resource(fprime_gds.flask.channels.ChannelHistory, "/channels",
                  resource_class_args=[pipeline.get_channel_history()])
 

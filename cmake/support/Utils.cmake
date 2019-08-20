@@ -32,9 +32,6 @@ function(get_module_name DIRECTORY_PATH)
   endif()
   # Replace slash with underscore to have valid name
   string(REPLACE "/" "_" TEMP_MODULE_NAME ${TEMP_MODULE_NAME})
-  if (DEFINED BUILD_SUFFIX)
-      set(TEMP_MODULE_NAME "${TEMP_MODULE_NAME}${BUILD_SUFFIX}")
-  endif()
   set(MODULE_NAME ${TEMP_MODULE_NAME} PARENT_SCOPE)
 endfunction(get_module_name)
 
@@ -78,11 +75,7 @@ endfunction(add_generated_sources)
 # - **PARSER_TYPE:** type of parser to use. Must be one of the prefixes *_xml in cmake/parser/
 ####
 function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
-  if (NOT ${BUILD_SUFFIX} STREQUAL "")
-      string(REGEX REPLACE "${BUILD_SUFFIX}" "" MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-  else()
-      set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-  endif()
+  set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
       COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
@@ -96,8 +89,8 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
   # this prevents the need for manually specifying link orders.
   foreach(TARGET ${TARGETS})
-    add_dependencies(${MODULE_NAME} "${TARGET}${BUILD_SUFFIX}")
-    target_link_libraries(${MODULE_NAME} "${TARGET}${BUILD_SUFFIX}")
+    add_dependencies(${MODULE_NAME} "${TARGET}")
+    target_link_libraries(${MODULE_NAME} "${TARGET}")
   endforeach()
 endfunction(fprime_dependencies)
 

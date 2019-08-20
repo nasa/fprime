@@ -52,7 +52,7 @@ class ConfigBadTypeException(Exception):
               (type_str, config_name))
 
 
-class ConfigManager(configparser.SafeConfigParser):
+class ConfigManager(configparser.ConfigParser):
     '''
     This class provides a single entrypoint for all configurable properties,
     '''
@@ -71,7 +71,6 @@ class ConfigManager(configparser.SafeConfigParser):
             will be used until the set_configs method is called!
         '''
         # Cannot use super() function since ConfigParser is an old-style class
-        configparser.SafeConfigParser.__init__(self)
         configparser.ConfigParser.__init__(self)
         configparser.RawConfigParser.__init__(self)
 

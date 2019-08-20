@@ -39,9 +39,9 @@ class StandardPipeline:
     Class used to encapsulate all of the components of a standard pipeline. The life-cycle of this class follows the
     basic steps:
        1. setup: creates objects needed to read from middle-ware layer and provide data up the stack
-       2. register: consumers from this pipeline should register to recieve decoder callbacks
+       2. register: consumers from this pipeline should register to receive decoder callbacks
        3. run: this pipeline should either take over the standard thread of execution, or be executed on another thread
-       4. terminate: called to shutdown the piepline
+       4. terminate: called to shutdown the pipeline
     This class provides for basic log files as a fallback for storing events as well. These logs are stored in a given
     directory, which is created on the initialization of this class.
     """
@@ -52,9 +52,12 @@ class StandardPipeline:
         self.distributor = None
         self.client_socket = None
         # Dictionary items
-        self.command_dict = None
-        self.event_dict = None
-        self.channel_dict = None
+        self.command_id_dict = None
+        self.event_id_dict = None
+        self.channel_id_dict = None
+        self.command_name_dict = None
+        self.event_name_dict = None
+        self.channel_name_dict = None
         self.packet_dict = None
         # Encoder and decoder items
         self.command_encoder = None
@@ -65,13 +68,14 @@ class StandardPipeline:
         self.command_hist = None
         self.event_hist = None
         self.channel_hist = None
+        self.command_subscribers = []
 
     def setup(self, config, dictionary, logging_prefix=os.path.expanduser("~"), packet_spec=None):
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
         :param config: config object used when constructing the pipeline.
-        :param dictionary: dictionary path. Used to setup loading of dictsionaries.
+        :param dictionary: dictionary path. Used to setup loading of dictionaries.
         :param logging_prefix: logging prefix. Logs will be placed in a dated directory under this prefix
         :param packet_spec: location of packetized telemetry XML specification.
         """
@@ -106,10 +110,10 @@ class StandardPipeline:
         """
         # Create encoders and decoders using dictionaries
         self.command_encoder = fprime_gds.common.encoders.cmd_encoder.CmdEncoder()
-        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(self.event_dict)
-        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(self.channel_dict)
+        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(self.event_id_dict)
+        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(self.channel_id_dict)
         if self.packet_dict is not None:
-            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(self.packet_dict, self.channel_dict)
+            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(self.packet_dict, self.channel_id_dict)
         else:
             self.packet_decoder = None
 
@@ -158,26 +162,30 @@ class StandardPipeline:
         if os.path.isdir(dictionary):
             # Events
             event_loader = fprime_gds.common.loaders.event_py_loader.EventPyLoader()
-            self.event_dict = event_loader.get_id_dict(os.path.join(dictionary, "events"))
+            self.event_id_dict = event_loader.get_id_dict(os.path.join(dictionary, "events"))
+            self.event_name_dict = event_loader.get_name_dict(os.path.join(dictionary, "events"))
             # Commands
             command_loader = fprime_gds.common.loaders.cmd_py_loader.CmdPyLoader()
-            self.command_dict = command_loader.get_name_dict(os.path.join(dictionary, "commands"))
+            self.command_id_dict = command_loader.get_id_dict(os.path.join(dictionary, "commands"))
+            self.command_name_dict = command_loader.get_name_dict(os.path.join(dictionary, "commands"))
             # Channels
             channel_loader = fprime_gds.common.loaders.ch_py_loader.ChPyLoader()
-            self.channel_dict = channel_loader.get_id_dict(os.path.join(dictionary, "channels"))
-            channel_name_dict = channel_loader.get_name_dict(os.path.join(dictionary, "channels"))
+            self.channel_id_dict = channel_loader.get_id_dict(os.path.join(dictionary, "channels"))
+            self.channel_name_dict = channel_loader.get_name_dict(os.path.join(dictionary, "channels"))
         # XML dictionaries
         elif os.path.isfile(dictionary):
             # Events
             event_loader = fprime_gds.common.loaders.event_xml_loader.EventXmlLoader()
-            self.event_dict = event_loader.get_id_dict(dictionary)
+            self.event_id_dict = event_loader.get_id_dict(dictionary)
+            self.event_name_dict = event_loader.get_name_dict(dictionary)
             # Commands
             command_loader = fprime_gds.common.loaders.cmd_xml_loader.CmdXmlLoader()
-            self.command_dict = command_loader.get_name_dict(dictionary)
+            self.command_id_dict = command_loader.get_id_dict(dictionary)
+            self.command_name_dict = command_loader.get_name_dict(dictionary)
             # Channels
             channel_loader = fprime_gds.common.loaders.ch_xml_loader.ChXmlLoader()
-            self.channel_dict = channel_loader.get_id_dict(dictionary)
-            channel_name_dict = channel_loader.get_name_dict(dictionary)
+            self.channel_id_dict = channel_loader.get_id_dict(dictionary)
+            self.channel_name_dict = channel_loader.get_name_dict(dictionary)
         else:
             raise Exception("[ERROR] Dictionary '{}' does not exist.".format(dictionary))
         # Check for packet specification
@@ -200,11 +208,13 @@ class StandardPipeline:
         """
         Sends commands to the encoder and history.
         :param command: command id from dictionary to get command template
-        :paran args: arguments to process
+        :param args: arguments to process
         """
-        command_template = self.command_dict[command]
+        command_template = self.command_id_dict[command]
         cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
         self.command_hist.data_callback(cmd_data)
+        for hist in self.command_subscribers:
+            hist.data_callback(cmd_data)
         self.command_encoder.data_callback(cmd_data)
 
     def disconnect(self):
@@ -213,26 +223,47 @@ class StandardPipeline:
         """
         self.client_socket.disconnect()
 
-    def get_event_dictionary(self):
+    def get_event_id_dictionary(self):
         """
         Getter for event dictionary.
-        :return: event dictionary
+        :return: event dictionary keyed by event IDs
         """
-        return self.event_dict
+        return self.event_id_dict
 
-    def get_channel_dictionary(self):
+    def get_event_name_dictionary(self):
+        """
+        Getter for event dictionary.
+        :return: event dictionary keyed by event mnemonics
+        """
+        return self.event_name_dict
+
+    def get_channel_id_dictionary(self):
         """
         Getter for channel dictionary.
-        :return: channel dictionary
+        :return: channel dictionary keyed by channel IDs
         """
-        return self.channel_dict
+        return self.channel_id_dict
 
-    def get_command_dictionary(self):
+    def get_channel_name_dictionary(self):
+        """
+        Getter for channel dictionary.
+        :return: channel dictionary keyed by channel mnemonics
+        """
+        return self.channel_name_dict
+
+    def get_command_id_dictionary(self):
         """
         Getter for command dictionary.
-        :return: command dictionary
+        :return: command dictionary keyed by command IDs
         """
-        return self.command_dict
+        return self.command_id_dict
+
+    def get_command_name_dictionary(self):
+        """
+        Getter for command dictionary.
+        :return: command dictionary keyed by command mnemonics
+        """
+        return self.command_name_dict
 
     def get_event_history(self):
         """
@@ -254,3 +285,55 @@ class StandardPipeline:
         :return: command history
         """
         return self.command_hist
+
+    ###########################################################################
+    #   Subscriber functions
+    ###########################################################################
+    def register_event_consumer(self, history):
+        """
+        Registers a history with the event decoder.
+        """
+        self.event_decoder.register(history)
+
+    def remove_event_consumer(self, history):
+        """
+        Removes a history from the event decoder. Will raise an error if the history was not
+        previously registered.
+        Returns:
+            a boolean indicating if the history was removed.
+        """
+        return self.event_decoder.deregister(history)
+
+    def register_telemetry_consumer(self, history):
+        """
+        Registers a history with the telemetry decoder.
+        """
+        self.channel_decoder.register(history)
+
+    def remove_telemetry_consumer(self, history):
+        """
+        Removes a history from the telemetry decoder. Will raise an error if the history was not
+        previously registered.
+        Returns:
+            a boolean indicating if the history was removed.
+        """
+        return self.channel_decoder.deregister(history)
+
+    def register_command_consumer(self, history):
+        """
+        Registers a history with the standard pipeline.
+        """
+        self.command_subscribers.append(history)
+
+    def remove_command_consumer(self, history):
+        """
+        Removes a history that is subscribed to command data. Will raise an error if the history
+        was not previously registered.
+        Returns:
+            a boolean indicating if the history was removed.
+        """
+        try:
+            self.command_subscribers.remove(history)
+            return True
+        except ValueError:
+            return False

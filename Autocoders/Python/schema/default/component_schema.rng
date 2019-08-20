@@ -2,6 +2,7 @@
 <grammar
     xmlns="http://relaxng.org/ns/structure/1.0"
     xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
     xmlns:elements="common_elements.rng"
     xmlns:channel = "channel_schema.rng"
     xmlns:event = "event_schema.rng"
@@ -13,6 +14,11 @@
     <include href="common_elements.rng"/>
     <include href="common_types.rng"/>
 
+    <sch:pattern id = "TESTINGSCHEMATRON">
+        <sch:rule context="start">
+            <sch:assert test="@PARENT">Message.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
 
     <start>
         <element name = "component">
@@ -67,6 +73,10 @@
 
             <zeroOrMore>
                 <ref name = "import_serializable_define"></ref>
+            </zeroOrMore>
+            
+            <zeroOrMore>
+                <ref name = "import_enum_define"></ref>
             </zeroOrMore>
 
             <!-- Optional elements -->
@@ -195,6 +205,13 @@
     <define name = "import_serializable_define">
         <element name = "import_serializable_type" >
             <a:documentation>Path to serializable types</a:documentation>
+            <data type = "anyURI"></data>
+        </element>
+    </define>
+    
+    <define name = "import_enum_define">
+        <element name = "import_enum_type" >
+            <a:documentation>Path to enum types</a:documentation>
             <data type = "anyURI"></data>
         </element>
     </define>

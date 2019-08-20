@@ -19,7 +19,6 @@
 # project definition.
 ##
 project(UT-Custom-Execs C CXX)
-set(CMAKE_BUILD_TYPE DEBUG)
 cmake_minimum_required(VERSION 3.5)
 
 ##

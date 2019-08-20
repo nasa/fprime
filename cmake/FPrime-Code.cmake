@@ -8,7 +8,11 @@
 # @author mstarch
 ####
 # Libraries that make-up F prime. Hurray!
-add_subdirectory("${FPRIME_CORE_DIR}/gtest/" "${CMAKE_BINARY_DIR}/F-Prime")
+# Ignore GTest for non-test builds
+if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
+    add_subdirectory("${FPRIME_CORE_DIR}/gtest/" "${CMAKE_BINARY_DIR}/F-Prime/gtest")
+    add_subdirectory("${FPRIME_CORE_DIR}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
+endif()
 add_subdirectory("${FPRIME_CORE_DIR}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
 add_subdirectory("${FPRIME_CORE_DIR}/Fw/" "${CMAKE_BINARY_DIR}/F-Prime/Fw")
 add_subdirectory("${FPRIME_CORE_DIR}/Svc/" "${CMAKE_BINARY_DIR}/F-Prime/Svc")
