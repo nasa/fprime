@@ -33,7 +33,7 @@ class StringType(type_base.BaseType):
         self._check_val(val)
 
     def _check_val(self, val):
-        if not type(val) == type(str()):
+        if not type(val) == type(str()) and not type(val) == type(u""):
             raise TypeMismatchException(type(str()),type(val))
 
     @property
@@ -43,6 +43,8 @@ class StringType(type_base.BaseType):
     @val.setter
     def val(self, val):
         self._check_val(val)
+        if not type(val) == type(str()):
+            val = val.encode("utf-8")
         self.__val = val
 
     def serialize(self):
