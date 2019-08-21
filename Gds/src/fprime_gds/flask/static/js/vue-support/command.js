@@ -53,7 +53,10 @@ Vue.component("command-input", {
             this.loader.load("/commands/" + command.full_name, "PUT",
                 {"key":0xfeedcafe, "arguments": values})
                 .then(function() {_self.active = false;})
-                .catch(function(err) {console.error("[ERROR] Failed to send command: " + err)});
+                .catch(function(err) {
+                    console.error("[ERROR] Failed to send command: " + err);
+                    _self.active = false;
+                });
         },
         columnify: function(item) {
             let values = [];
