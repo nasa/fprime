@@ -158,7 +158,7 @@ export let CommandMixins = {
      * @param cmdhist: command history to set
      */
     updateCommandHistory(cmdhist) {
-        this.vue.cmdhist = cmdhist;
+        this.vue.cmdhist.push(...cmdhist);
     }
 };
 /**

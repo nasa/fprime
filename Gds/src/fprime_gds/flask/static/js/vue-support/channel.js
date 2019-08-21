@@ -24,6 +24,9 @@ Vue.component("channel-table", {
          * @return {*[]}
          */
         columnify: function(item) {
+            if (item.time == null || item.val == null) {
+                return ["", "0x" + item.id.toString(16), item.template.full_name, ""];
+            }
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, item.val]
         },
         /**
@@ -43,9 +46,9 @@ Vue.component("channel-table", {
             let value = this.channel.value;
             let channel = this.channel;
             let bounds = [
-                {"class": "table-danger", "bounds": [channel.template.low_red, value <= channel.template.high_red]},
+                {"class": "fp-color-fatal", "bounds": [channel.template.low_red, value <= channel.template.high_red]},
                 {
-                    "class": "table-warning",
+                    "class": "fp-color-warn-hi",
                     "bounds": [channel.template.low_yellow, value <= channel.template.high_yellow]
                 }
             ];
@@ -68,7 +71,21 @@ Vue.component("channel-table", {
          * @return item name
          */
         itemToName: function(item) {
-            return item.template.name;
+            return item.template.full_name;
+        },
+        /**
+         * Function that hides items with null time or value.
+         * @param item: channel to hide
+         * @return {boolean}
+         */
+        channelHider: function(item) {
+            return item.val == null || item.time == null;
+        }
+    },
+    // Computed methods
+    computed: {
+        conform: function() {
+            return Object.values(this.channels);
         }
     }
 });
@@ -80,35 +97,31 @@ Vue.component("channel-table", {
  */
 export let ChannelMixins = {
     /**
-     * Make the list of channels unique for display purposes.
-     * @param channels: channels to make unique
-     */
-    uniqueify(channels) {
-        // Create unique set of data
-        let chanSet = {};
-        for (let i = 0; i < channels.length; i++) {
-            chanSet[channels[i].id] = channels[i];
-        }
-        let chanList = [];
-        for (let chanItem in chanSet) {
-            chanList.push(chanSet[chanItem]);
-        }
-        return chanList;
-    },
-    /**
      * Update the list of channels with the supplied new list of channels.
      * @param newChannels: new full list of channels to render
      */
     updateChannels(newChannels) {
-        let unique = this.uniqueify(newChannels);
-        this.vue.channels = unique;
+        // Loop over all dictionaries
+        for (let i = 0; i < newChannels.length; i++) {
+            let channel = newChannels[i];
+            let id = channel.id;
+            this.vue.channels[id] = channel;
+        }
     },
     /**
-     * Sets up the needed channel data items.
-     * @return {"channels": []} an empty list to fill with channels
+     * Sets up the needed channel data items.  Adding new keys to an object won't be detected, so we will pre-populate
+     * the object with the items from the template.
+     * @param templates: templates for each channel
+     * @return {"channels": {}} an empty list to fill with channels
      */
-    setupChannels() {
-        return {"channels": []};
+    setupChannels(templates) {
+        let channels = {};
+        // Create a list of empty items
+        for (let key in templates) {
+            channels[key] = {id: key, template: templates[key], val: null, time: null};
+        }
+
+        return {"channels": channels};
     }
 };
 
@@ -125,11 +138,11 @@ export class ChannelView {
      * Creates a ChannelView that delegates to a Vue.js view.
      * @param elemid: HTML ID of the element to render to
      */
-    constructor(elemid) {
+    constructor(elemid, loader) {
         Object.assign(ChannelView.prototype, ChannelMixins);
         this.vue = new Vue({
             el: elemid,
-            data: this.setupChannels()
+            data: this.setupChannels(loader)
         });
     }
 }

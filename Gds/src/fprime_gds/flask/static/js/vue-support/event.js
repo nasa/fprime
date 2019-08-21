@@ -24,9 +24,8 @@ Vue.component("event-list", {
          * @return {[string, *, *, void | string, *]}
          */
         columnify: function (item) {
-            //TODO: where are the arguments to place in the fmt string? Where did it go my friend?  Vladivostok? Paris?
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
-                item.template.severity.value.replace("Severity.", ""), item.template.format_str];
+                item.template.severity.value.replace("Severity.", ""), item.display_text];
         },
         /**
          * Use the row's values and bounds to colorize the row. This function will color red and yellow items using
@@ -36,12 +35,12 @@ Vue.component("event-list", {
          */
         style: function (item) {
             let severity = {
-                "Severity.FATAL":      "table-danger",
-                "Severity.WARNING_HI": "table-item-warning",
-                "Severity.WARNING_LO": "table-warning",
-                "Severity.ACTIVITY_HI": "table-success",
-                "Severity.ACTIVITY_LO": "table-active",
-                "Severity.COMMAND":     "table-info",
+                "Severity.FATAL":      "fp-color-fatal",
+                "Severity.WARNING_HI": "fp-color-warn-hi",
+                "Severity.WARNING_LO": "fp-color-warn-lo",
+                "Severity.ACTIVITY_HI": "fp-color-act-hi",
+                "Severity.ACTIVITY_LO": "fp-color-act-lo",
+                "Severity.COMMAND":     "fp-color-command",
                 "Severity.DIAGNOSTIC":  ""
             }
             return severity[item.template.severity.value];
@@ -71,8 +70,7 @@ export let EventMixins = {
      * @param newEvents: new full list of events to render
      */
     updateEvents(newEvents) {
-        //TODO: make this efficient by appending to vue's data only
-        this.vue.events = newEvents;
+        this.vue.events.push(...newEvents);
     },
     /**
      * Sets up the needed event data items.

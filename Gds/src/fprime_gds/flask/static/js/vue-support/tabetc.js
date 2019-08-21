@@ -34,9 +34,10 @@ export class TabETCVue {
      * Constructs the tabbed element from the input variables.
      * @param element: HTML element ID to render to
      * @param commands: commands list to render in a drop down
+     * @param channels: channel templates list
      * @param loader: loader used to handel F prime REST
      */
-    constructor(element, commands, loader) {
+    constructor(element, commands, channels, loader) {
         //Mixin functions for each of the components
         Object.assign(TabETCVue.prototype, CommandMixins);
         Object.assign(TabETCVue.prototype, EventMixins);
@@ -45,7 +46,7 @@ export class TabETCVue {
         let data = {
             ...this.setupCommands(commands, loader),
             ...this.setupEvents(),
-            ...this.setupChannels()
+            ...this.setupChannels(channels)
         };
         // Create a vue object
         this.vue = new Vue({

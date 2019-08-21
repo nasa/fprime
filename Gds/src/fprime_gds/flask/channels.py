@@ -49,4 +49,4 @@ class ChannelHistory(flask_restful.Resource):
         Return the telemetry history object
         """
         args = self.parser.parse_args()
-        return {"history": self.history.retrieve(args.get("starttime", None))}
+        return {"history": self.history.retrieve_new()}

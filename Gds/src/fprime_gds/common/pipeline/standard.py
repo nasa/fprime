@@ -10,7 +10,8 @@ below.
 """
 import datetime
 import os.path
-import enum
+
+import fprime.common.models.serialize.time_type
 
 # History stores
 import fprime_gds.common.history.ram
@@ -51,6 +52,7 @@ class StandardPipeline:
         """
         self.distributor = None
         self.client_socket = None
+        self.logger = None
         # Dictionary items
         self.command_id_dict = None
         self.event_id_dict = None
@@ -136,6 +138,7 @@ class StandardPipeline:
         if self.packet_decoder is not None:
             self.packet_decoder.register(logger)
         self.client_socket.register_distributor(logger)
+        self.logger = logger
 
     def setup_history(self):
         """
@@ -191,7 +194,7 @@ class StandardPipeline:
         # Check for packet specification
         if packet_spec is not None:
             packet_loader = fprime_gds.common.loaders.pkt_xml_loader.PktXmlLoader()
-            self.packet_dict = packet_loader.get_id_dict(packet_spec, channel_name_dict)
+            self.packet_dict = packet_loader.get_id_dict(packet_spec, self.channel_name_dict)
         else:
             self.packet_dict = None
 
@@ -212,10 +215,13 @@ class StandardPipeline:
         """
         command_template = self.command_id_dict[command]
         cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
+        cmd_data.time = fprime.common.models.serialize.time_type.TimeType()
+        cmd_data.time.set_datetime(datetime.datetime.now(), 2)
         self.command_hist.data_callback(cmd_data)
         for hist in self.command_subscribers:
             hist.data_callback(cmd_data)
         self.command_encoder.data_callback(cmd_data)
+        self.logger.data_callback(cmd_data)
 
     def disconnect(self):
         """

@@ -9,6 +9,7 @@
 #                      "start-time": "YYYY-MM-DDTHH:MM:SS.sss" #Start time for event listing
 #                  }
 ####
+import types
 import flask_restful
 import flask_restful.reqparse
 
@@ -49,4 +50,10 @@ class EventHistory(flask_restful.Resource):
         Return the event history object
         """
         args = self.parser.parse_args()
-        return {"history": self.history.retrieve(args.get("starttime", None))}
+        new_events = self.history.retrieve_new()
+        for event in new_events:
+            # Add the 'display_text' to the event, along with a getter
+            setattr(event, "display_text", event.template.format_str % tuple([arg.val for arg in event.args]))
+            func = lambda this: this.display_text
+            setattr(event, "get_display_text", types.MethodType(func, event))
+        return {"history": new_events}

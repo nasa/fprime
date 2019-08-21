@@ -305,6 +305,24 @@ class TimeType(type_base.BaseType):
 
         return dt
 
+    def set_datetime(self, dt, time_base=0xffff):
+        '''
+        Sets the timebase from a datetime object.
+
+        Args:
+            dt (datetime): datetime object to read from time.
+        '''
+        total_seconds = (dt - datetime.fromtimestamp(0)).total_seconds()
+        seconds = int(total_seconds)
+        useconds = int((total_seconds - seconds) * 1000000)
+
+        self._check_time_base(time_base)
+        self._check_useconds(useconds)
+
+        self.__timeBase = u16_type.U16Type(time_base)
+        self.__secs = u32_type.U32Type(seconds)
+        self.__usecs = u32_type.U32Type(useconds)
+
     def __repr__(self): return 'Time'
 
     '''

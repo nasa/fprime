@@ -15,21 +15,14 @@ let loader = new Loader();
  * Setup the data bindings in order to map the loaded content to the GUI.
  */
 function setupBindings() {
-    //Setup a channel view, in this case the one supported by Vue.js from vue-support package
-  //  let channelView = new ChannelView("#channels");
-
-
-    //Setup an event view, in this case the one supported by Vue.js from vue-support package
-  //  let eventView = new EventView("#events");
-  //  loader.registerPoller("events", function (data) {eventView.updateEvents(data["history"]);});
-
-
-    let tabView = new TabETCVue("#tabetc", loader.endpoints["command-dict"].data, loader);
+    let tabView = new TabETCVue("#tabetc",
+        loader.endpoints["command-dict"].data,
+        loader.endpoints["channel-dict"].data,
+        loader);
     loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
     loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
     loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
 }
-
 
 // On ready when the document has been loaded
 document.addEventListener("DOMContentLoaded", function(event) {

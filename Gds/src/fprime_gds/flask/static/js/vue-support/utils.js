@@ -49,7 +49,7 @@ export function timeToString(time) {
         let date = new Date(0);
         date.setSeconds(time.seconds);
         date.setMilliseconds(time.microseconds/1000);
-        return date.toLocaleString();
+        return date.toISOString();
     }
     return time.seconds + "." + time.microseconds;
 }

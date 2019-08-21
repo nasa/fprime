@@ -62,7 +62,7 @@ class CommandHistory(flask_restful.Resource):
         Return the command history object
         """
         args = self.parser.parse_args()
-        return_set = {"history": self.history.retrieve(args.get("starttime", None))}
+        return_set = {"history": self.history.retrieve_new()}
         return return_set
 
 
@@ -93,7 +93,8 @@ class Command(flask_restful.Resource):
         if arg_list is None:
             arg_list = []
         try:
-            self.sender.send_command(command, arg_list)
+            cmd_name_dict = self.sender.get_command_name_dictionary()
+            self.sender.send_command(cmd_name_dict[command].opcode, arg_list)
         except fprime.common.models.serialize.type_exceptions.NotInitializedException:
             flask_restful.abort(403, message="Did not supply all required arguments.")
         return {"message": "success"}

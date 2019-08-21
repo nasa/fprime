@@ -161,6 +161,18 @@ Vue.component("fp-table", {
             default: function(item) {
                 return item.id;
             }
+        },
+        /**
+         * itemHide:
+         *
+         * 'itemHide' provides a function for hiding objects when no in in-view mode and editing mode. This function can
+         * take the item and return true or false to hide this item.
+         */
+        itemHide: {
+            type: Function,
+            default: function () {
+                return false;
+            }
         }
     },
     // Required data items (unique for each table instance)
@@ -203,8 +215,13 @@ Vue.component("fp-table", {
          */
         checkAll: function(e) {
             let state = e.target.checked;
-            for (let i = 0; i < this.items.length; i++) {
-                this.checkedChild({child: this.items[i], value: state});
+            let itemToColumns = this.itemToColumns;
+            let filtered = filter(this.items, this.matching,
+                function(item) {
+                    return itemToColumns(item).join(" ");
+                });
+            for (let i = 0; i < filtered.length; i++) {
+                this.checkedChild({child: filtered[i], value: state});
             }
             // Clear intermediate state
             this.$refs.allbox.indeterminate = false;
@@ -252,9 +269,22 @@ Vue.component("fp-table", {
             // Pre-filter step removes non-viewable items
             let items = [];
             for (let i = 0; i < this.items.length; i++) {
-                if (!this.supportViews || this.editing || this.view.length == 0 ||
-                    this.view.indexOf(this.itemToViewName(this.items[i])) != -1) {
-                    items.push(this.items[i]);
+                let item = this.items[i];
+                // Visible if editing
+                if (this.editing) {
+                    items.push(item);
+                }
+                // Visible if in no views selected and not hidden
+                else if (this.view.length == 0 && !this.itemHide(item)) {
+                    items.push(item);
+                }
+                // Visible if not hidden and not supporting views
+                else if (!this.supportViews && !this.itemHide(item)) {
+                    items.push(item);
+                }
+                // Visible if in the view, always
+                else if (this.view.indexOf(this.itemToViewName(item)) != -1) {
+                    items.push(item);
                 }
             }
             // Now filter items based on removable filters
