@@ -4,26 +4,10 @@ import copy
 from datetime import datetime, timedelta
 
 from fprime_gds.common.models.common.command import Descriptor
-from fprime_gds.tkgui.controllers import exceptions as gseExceptions
+from fprime_gds.common.data_types import exceptions as gseExceptions
 
 class SeqFileParser(object):
     
-    def __error(self, string):
-      '''
-      Print an error message and exit with error code 1
-      @param string: the custom error string to print
-      '''
-      print string
-      sys.exit(1)
-
-    def __errorLine(self, lineNumber, string):
-      '''
-      Print an error message relating to a line number of the file input and exit with error code 1
-      @param lineNumber: the current line number being parsed
-      @param string: the custom error string to print
-      '''
-      self.__error("Error on line %d: %s" % (lineNumber + 1, string))
-
     def parse(self, filename):
       '''
       Generator that parses an input sequence file and returns a tuple
@@ -50,8 +34,10 @@ class SeqFileParser(object):
         @param string: the string to perform comment removal on
         @return the string without trailing comments
         '''
+
         def replaceSemis(matchobj):
           return matchobj.group(0).replace(';', ' ')
+
         # ignore all semicolons in quotes:
         s = subQuoted(replaceSemis, string)
         s = subQuoted(replaceSemis, s)
@@ -69,10 +55,12 @@ class SeqFileParser(object):
         @param string: the string to perform the split on
         @return a list representing the split string
         '''
+
         def replaceSpacesAndCommas(matchobj):
           s = re.sub('\s', '_', matchobj.group(0))
           s = re.sub('\,', '_', s)
           return s
+
         # ignore all spaces in quotes:
         s = subQuoted(replaceSpacesAndCommas, string)
         # replace all commas with spaces, since either can be a delimiter:
@@ -90,6 +78,7 @@ class SeqFileParser(object):
         @param args: a list of parsed arguments
         @return a list of arguments as native python types
         '''
+
         def parseArg(arg):
           # See if argument is a string, if so remove the quotes and return it:
           if (arg[0] == '"' and arg[-1] == '"') or (arg[0] == "'" and arg[-1] == "'"):
@@ -104,7 +93,7 @@ class SeqFileParser(object):
           else:
             try:
               # See if it translates to an integer:
-              return int(arg,0)
+              return int(arg, 0)
             except ValueError:
               try:
                 # See if it translates to a float:
@@ -112,6 +101,7 @@ class SeqFileParser(object):
               except ValueError:
                 # Otherwise it is an enum type:
                 return str(arg)
+
         return map(parseArg, args)
     
       def parseTime(lineNumber, time):
@@ -129,6 +119,7 @@ class SeqFileParser(object):
           @param timeFmts: the time format used to parse the string
           @return the datetime object containing the parsed string
           '''
+
           def parseTimeString(timeFmt):
             try:
               return datetime.strptime(timeStr, timeFmt)
@@ -156,7 +147,7 @@ class SeqFileParser(object):
           @param timeStr: the time string
           @return the datetime object containing the parsed string
           '''
-          options = ["%Y-%jT%H:%M:%S.%f","%Y-%jT%H:%M:%S"]
+          options = ["%Y-%jT%H:%M:%S.%f", "%Y-%jT%H:%M:%S"]
           return parseTimeStringOption(timeStr, options)
     
         descriptor = None
@@ -178,7 +169,7 @@ class SeqFileParser(object):
               epoch = datetime.utcfromtimestamp(0)
           delta = (dt - epoch).total_seconds()
         else:
-          __error(lineNumber, "Invalid time descriptor '" + d + "' found. Descriptor should either be 'A' for absolute times or 'R' for relative times")
+          raise GseControllerParsingException("Line %d: %s"%(i,"Invalid time descriptor '" + d + "' found. Descriptor should either be 'A' for absolute times or 'R' for relative times"))
         seconds = int(delta)
         useconds = int((delta - seconds) * 1000000)
         return descriptor, seconds, useconds
@@ -193,12 +184,12 @@ class SeqFileParser(object):
             line = splitString(line)
             length = len(line)
             if length < 2:
-              __errorLine(i, "Each line must contain a minimum of two fields, time and command mnemonic\n")
+              raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i, "Each line must contain a minimum of two fields, time and command mnemonic\n"))
             else:
               try:
                 descriptor, seconds, useconds = parseTime(i, line[0])
               except:
-                self.__errorLine(i, "Encountered syntax error parsing timestamp")
+                raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i,"Encountered syntax error parsing timestamp"))
               mnemonic = line[1]
               args = []
               if length > 2:
@@ -206,6 +197,6 @@ class SeqFileParser(object):
                 try:
                  args = parseArgs(args)
                 except:
-                  self.__errorLine(i, "Encountered sytax error parsing arguments")
+                  raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i,"Encountered sytax error parsing arguments"))
             yield i, descriptor, seconds, useconds, mnemonic, args
             

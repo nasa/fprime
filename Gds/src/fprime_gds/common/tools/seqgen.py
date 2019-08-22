@@ -45,6 +45,14 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
   @param inputFile: A text input sequence file name (usually a .seq extension)
   @param outputFile: An output binary sequence file name (usually a .bin extension)
   '''
+    
+  # Check for files
+  if not os.path.isfile(inputFile):
+    raise SeqGenException("Can't open file '" + inputFile + "'. ")
+
+  if not os.path.isfile(dictionary):
+    raise SeqGenException("Can't open file '" + dictionary + "'. ")
+
   # Check the user environment:
   cmd_xml_dict = CmdXmlLoader()
   try:
@@ -55,7 +63,14 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
   # Parse the input file:
   command_list = []
   file_parser = SeqFileParser()
-  for i, descriptor, seconds, useconds, mnemonic, args in file_parser.parse(inputFile):
+  
+  
+  try:
+      parsed_seq = file_parser.parse(inputFile)
+  except gseExceptions.GseControllerParsingException as e:
+      raise SeqGenException(e.getMsg())
+  
+  for i, descriptor, seconds, useconds, mnemonic, args in parsed_seq:
     # Make sure that command is in the command dictionary:
     if mnemonic in cmd_name_dict:
       command_temp = copy.deepcopy(cmd_name_dict[mnemonic])
