@@ -32,13 +32,9 @@ from fprime_gds.common.loaders.cmd_xml_loader import CmdXmlLoader
 from fprime_gds.common.data_types import exceptions as gseExceptions
 from fprime_gds.common.parsers.seq_file_parser import SeqFileParser 
 
-def __error(string):
-  '''
-  Print an error message and exit with error code 1
-  @param string: the custom error string to print
-  '''
-  print string
-  sys.exit(1)
+class SeqGenException(gseExceptions.GseControllerException):
+    def __init__(self, val):
+        super(SeqGenException,self).__init__(str(val))
 
 # except:
 #  __error("The Gse source code was not found in your $PYTHONPATH variable. Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
@@ -54,7 +50,7 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
   try:
     (cmd_id_dict, cmd_name_dict) = cmd_xml_dict.construct_dicts(dictionary)
   except gseExceptions.GseControllerUndefinedFileException:
-    __error("Can't open file '" + dictionary + "'. ")
+    raise SeqGenException("Can't open file '" + dictionary + "'. ")
 
   # Parse the input file:
   command_list = []
@@ -67,9 +63,9 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
       try:
         command_temp.setArgs(args)
       except ArgLengthMismatchException as e:
-        __errorLine(i, "'" + mnemonic + "' argument length mismatch. " + e.getMsg())
+        raise SeqGenException("%d %s"%(i, "'" + mnemonic + "' argument length mismatch. " + e.getMsg()))
       except TypeException as e:
-        __errorLine(i, "'" + mnemonic + "' argument type mismatch. " + e.getMsg())
+        raise SeqGenException("%d %s"%(i, "'" + mnemonic + "' argument type mismatch. " + e.getMsg()))
       # Set the command time and descriptor:
       command_temp.setDescriptor(descriptor)
       command_temp.setSeconds(seconds)
@@ -77,8 +73,8 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
       # Append this command to the command list:
       command_list.append(command_temp)
     else:
-      __errorLine(i, "'" + mnemonic + "' does not match any command in the command dictionary.")
-
+      raise SeqGenException("%d %s"%(i, "'" + mnemonic + "' does not match any command in the command dictionary."))
+ 
   # Write to the output file:
   writer = SeqBinaryWriter(timebase=timebase)
   if not outputFile:
@@ -86,14 +82,16 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
   try:
     writer.open(outputFile)
   except:
-    __error("Encountered problem opening output file '" + outputFile + "'.")
+    raise SeqGenException("Encountered problem opening output file '" + outputFile + "'.")
+
   writer.write(command_list)
   writer.close()
   
   
 help_text = "seqgen.py -d"
 
-if __name__ == "__main__":
+    
+def main():
   '''
   The main program if run from the command line. Note that this file can also be used
   as a module by calling the generateSequence() function
@@ -115,14 +113,22 @@ if __name__ == "__main__":
         timebase = int(opts.timebase,0)
      except ValueError:
         print("Could not parse time base %s"%opts.timebase)
-        sys.exit(-1)
+        return 1
      
   if (len(args) == 1 or len(args) == 2):
     inputfile = args[0]
     if len(args) == 1:
         outputfile = None
-    generateSequence(inputfile,outputfile, opts.dictionary,timebase)
+    try:
+        generateSequence(inputfile,outputfile, opts.dictionary,timebase)
+    except SeqGenException as e:
+        print(e.getMsg())
+        return 1
   else:
     parser.print_help()
-    sys.exit(1)
-  sys.exit(0)
+    return 1
+  return 0
+  
+  
+if __name__ == "__main__":
+  sys.exit(main())  

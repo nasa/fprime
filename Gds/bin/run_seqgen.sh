@@ -12,4 +12,4 @@
 # * persons.
 # *
 DIRNAME="`dirname $0`"
-"${DIRNAME}/run_tool.sh" seqgen "$@"
+"${DIRNAME}/helpers/run_tool.sh" seqgen "$@"
