@@ -110,7 +110,7 @@ class CmdData(sys_data.SysData):
 
     def get_str(self, time_zone=None, verbose=False, csv=False):
         '''
-        Convert the event data to a string
+        Convert the command data to a string
 
         Args:
             time_zone: (tzinfo, default=None) Timezone to print time in. If
@@ -128,7 +128,7 @@ class CmdData(sys_data.SysData):
 
 
         if self.args == None:
-            arg_str = "EMPTY EVENT OBJ"
+            arg_str = "EMPTY COMMAND OBJ"
         else:
             # The arguments are currently serializable objects which cannot be
             # used to fill in a format string. Convert them to values that can be
