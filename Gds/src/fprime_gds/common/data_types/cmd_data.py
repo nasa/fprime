@@ -120,7 +120,7 @@ class CmdData(sys_data.SysData):
                                           if true
 
         Returns:
-            String version of the event data
+            String version of the command data
         '''
         time_str = self.time.to_readable(time_zone)
         raw_time_str = str(self.time)
