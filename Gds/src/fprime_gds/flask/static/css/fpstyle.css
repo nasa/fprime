@@ -1,0 +1,94 @@
+/**
+ * FP Backgrounds:
+ *
+ * F prime background colors are used to set the color of the various items in the system. This means highlighting
+ * Events, and  Channels based on severity. These colors should define two pairs, the color, and a .table-hover hover
+ * color for use in hover-tables.
+ */
+.fp-color-fatal {
+    background-color: #ff0000;
+}
+.table-hover .fp-color-fatal:hover {
+    background-color: #e60000;
+}
+.fp-color-warn-hi {
+    background-color: #ff8000;
+}
+.table-hover .fp-color-warn-hi:hover {
+    background-color: #e67300;
+}
+.fp-color-warn-lo {
+    background-color: #ffff00;
+}
+.table-hover .fp-color-warn-lo:hover {
+    background-color: #e6e600;
+}
+.fp-color-act-hi {
+    background-color: #0080ff;
+}
+.table-hover .fp-color-act-hi:hover {
+    background-color: #0073e6;
+}
+.fp-color-act-lo {
+    background-color: #808080;
+}
+.table-hover .fp-color-act-lo:hover {
+    background-color: #737373;
+}
+.fp-color-command {
+    background-color: #00ff00;
+}
+.table-hover .fp-color-command:hover {
+    background-color: #00e600;
+}
+/**
+ * Based on work from: https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3 these CSS items
+ * help make the file input looks like other buttons. Thus allowing it to play nicely with the other bootstrap buttons
+ * being used by the project.
+ */
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+/**
+ * Adds in a margin around the core elements of the interface. This allows the webpage to look nice event when it is
+ * fixed in a container-fluid.
+ */
+.fp-top-container {
+    margin: 1em;
+}
+/**
+ * FP scrollable container. This will allow a container to sub-scroll rather than increase the page's size. This will
+ * allow the user to continue to use the page controls without worry to hiding the controls at the top.
+ */
+.fp-scroll-container {
+    overflow: auto;
+}
+
+/**
+ * Based on recommendations here: https://stackoverflow.com/questions/41674548/how-to-make-html-table-columns-resizable
+ * this CSS class allows us to use a <div></div> construct inside <th></th> elements of an FP table in order to resize
+ * the header horizontally.
+ * Note: Comment out to disable resizing
+ */
+/*div.resize-head-div {
+    resize: horizontal;
+    overflow: auto;
+    display: inline-block;
+    text-overflow: ellipsis;
+}*/
+
+/**
+ * Table CSS to allow for the last child to take up its needed space. This means the last column of the table will be
+ * displayed taking up the full amount of the remaining space.
+ */
+table {
+    width: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+table td:last-child {
+    width: 100%;
+}
