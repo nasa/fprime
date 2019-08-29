@@ -10,9 +10,11 @@
 # ```
 ####
 # Independent requirements
+six
 lxml
 enum34
 Markdown
+pytest
 # Python 3 Cheetah version
 Cheetah3; python_version >= '3.0'
 # Python 2 Cheetah and python time zones
