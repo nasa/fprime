@@ -125,7 +125,7 @@ cd ..
 
 ```
 mkdir build_ut
-cmake ../Ref -DPLATFORM=ut/Linux
+cmake ../Ref -DCMAKE_BUILD_TYPE=TESTING
 cd ..
 ```
 
@@ -141,5 +141,5 @@ make check
 ```
 ## Global Build Options:
  - Options: [Options](Options.md) describes the CMake system options.
-
+ - Targets: [Targets](targets/Targets.md) describes built in support targets like `dict`
 

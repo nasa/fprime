@@ -26,7 +26,7 @@ class EventData(sys_data.SysData):
                         Each element's class should match the class of the
                         corresponding argument type object in the event_temp
                         object. This can be None.
-            event_time: The time the event occured (TimeType)
+            event_time: The time the event occurred (TimeType)
             event_temp: Event template instance for this event
 
         Returns:
@@ -38,10 +38,11 @@ class EventData(sys_data.SysData):
         self.time = event_time
         self.template = event_temp
 
-
     def get_args(self):
         return self.args
-
+    
+    def get_severity(self):
+        return self.template.get_severity()
 
     @staticmethod
     def get_empty_obj(event_temp):

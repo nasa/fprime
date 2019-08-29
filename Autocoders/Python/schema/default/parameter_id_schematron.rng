@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "UNIQUE_ID_PARAM">
+    <rule context="parameter">
+        <assert test="count(//parameter/@id[. = current()/@id]) = 1">Channel ID's should be unique.</assert>
+    </rule>
+</pattern>
+</schema>

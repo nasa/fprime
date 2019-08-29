@@ -52,7 +52,7 @@ class ConfigBadTypeException(Exception):
               (type_str, config_name))
 
 
-class ConfigManager(configparser.SafeConfigParser):
+class ConfigManager(configparser.ConfigParser):
     '''
     This class provides a single entrypoint for all configurable properties,
     '''
@@ -71,13 +71,13 @@ class ConfigManager(configparser.SafeConfigParser):
             will be used until the set_configs method is called!
         '''
         # Cannot use super() function since ConfigParser is an old-style class
-        configparser.SafeConfigParser.__init__(self)
         configparser.ConfigParser.__init__(self)
         configparser.RawConfigParser.__init__(self)
 
         # Set default properties
         self.__prop   = dict()
         self._set_defaults()
+        self.file_path = None
 
 
     def set_configs(self, f):
@@ -89,6 +89,7 @@ class ConfigManager(configparser.SafeConfigParser):
         Args:
             f (string): Path to a file object to read
         '''
+        self.file_path = f
         self.readfp(open(f))
 
 
@@ -145,6 +146,13 @@ class ConfigManager(configparser.SafeConfigParser):
             # Other types can be added later
             raise ConfigNonexistentException(type_str)
 
+
+    def get_file_path(self):
+        '''
+        Return file loaded for this configuration
+        :return: file path
+        '''
+        return self.file_path
 
     def _set_defaults(self):
         '''

@@ -16,7 +16,7 @@ elif platform.system() == "Darwin":
 
 # Test a normal build, with the ref executable and static libraries
 BUILD_DIR = os.path.join("<FPRIME>", "Ref")
-OPTIONS = {"LINK_AS_SHARED_LIBS": "ON"}
+OPTIONS = {"BUILD_SHARED_LIBS": "ON"}
 EXPECTED = [
     os.path.join("bin", platform.system(), "Ref"),
     os.path.join("<FPRIME>", "Ref", "Top", "RefTopologyAppDictionary.xml"),
@@ -53,7 +53,6 @@ EXPECTED = [
     os.path.join("lib", platform.system(), "libSvc_CmdDispatcher." + ext),
     os.path.join("lib", platform.system(), "libFw_Log." + ext),
     os.path.join("lib", platform.system(), "libFw_Tlm." + ext),
-    os.path.join("lib", platform.system(), "libgtest.a"), # GTest always a .a
     os.path.join("lib", platform.system(), "libOs." + ext),
     os.path.join("lib", platform.system(), "libRef_SignalGen." + ext),
     os.path.join("lib", platform.system(), "libSvc_Sched." + ext),
