@@ -8,6 +8,8 @@
 # ```
 # pip install -r ./requirements.txt
 # ```
+six
+pexpect
 flask
 flask_restful
 pytest
