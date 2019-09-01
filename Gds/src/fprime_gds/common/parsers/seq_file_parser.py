@@ -169,7 +169,7 @@ class SeqFileParser(object):
               epoch = datetime.utcfromtimestamp(0)
           delta = (dt - epoch).total_seconds()
         else:
-          raise GseControllerParsingException("Line %d: %s"%(i,"Invalid time descriptor '" + d + "' found. Descriptor should either be 'A' for absolute times or 'R' for relative times"))
+          raise GseControllerParsingException("Line %d: %s"%(i+1,"Invalid time descriptor '" + d + "' found. Descriptor should either be 'A' for absolute times or 'R' for relative times"))
         seconds = int(delta)
         useconds = int((delta - seconds) * 1000000)
         return descriptor, seconds, useconds
@@ -184,12 +184,12 @@ class SeqFileParser(object):
             line = splitString(line)
             length = len(line)
             if length < 2:
-              raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i, "Each line must contain a minimum of two fields, time and command mnemonic\n"))
+              raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i+1, "Each line must contain a minimum of two fields, time and command mnemonic\n"))
             else:
               try:
                 descriptor, seconds, useconds = parseTime(i, line[0])
               except:
-                raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i,"Encountered syntax error parsing timestamp"))
+                raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i+1,"Encountered syntax error parsing timestamp"))
               mnemonic = line[1]
               args = []
               if length > 2:
@@ -197,6 +197,6 @@ class SeqFileParser(object):
                 try:
                  args = parseArgs(args)
                 except:
-                  raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i,"Encountered sytax error parsing arguments"))
+                  raise gseExceptions.GseControllerParsingException("Line %d: %s"%(i+1,"Encountered sytax error parsing arguments"))
             yield i, descriptor, seconds, useconds, mnemonic, args
             

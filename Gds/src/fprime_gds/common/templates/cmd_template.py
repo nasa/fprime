@@ -135,7 +135,7 @@ class CmdTemplate(data_template.DataTemplate):
     def setArgs(self, values):
         
         if len(values) != len(self.arguments):
-            raise ArgLengthMismatchException(len(self.__arguments), len(values))
+            raise ArgLengthMismatchException(len(self.arguments), len(values))
     
         # set the values of the arguments
         new_arg_list = list()

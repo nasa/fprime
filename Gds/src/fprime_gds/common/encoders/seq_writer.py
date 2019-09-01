@@ -114,7 +114,12 @@ class SeqBinaryWriter(object):
         for cmd in seq_cmds_list:
             sequence += self.__binaryCmdRecord(cmd)
         size = len(sequence)
-        print "Sequence is %d bytes with timebase %s" % (size, self.__timebase)
+        if self.__timebase == 0xFFFF:
+            tb_txt = 'ANY'
+        else:
+            tb_txt = str(self.__timebase)
+            
+        print "Sequence is %d bytes with timebase %s" % (size, tb_txt)
 
         header = ""
         header += U32Type( size + 4 ).serialize() # Write out size of the sequence file in bytes here

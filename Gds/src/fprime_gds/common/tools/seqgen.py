@@ -65,30 +65,32 @@ def generateSequence(inputFile, outputFile, dictionary, timebase):
   file_parser = SeqFileParser()
   
   
+  parsed_seq = file_parser.parse(inputFile)
+  
+  
+  
   try:
-      parsed_seq = file_parser.parse(inputFile)
+      for i, descriptor, seconds, useconds, mnemonic, args in parsed_seq:
+        # Make sure that command is in the command dictionary:
+        if mnemonic in cmd_name_dict:
+          command_temp = copy.deepcopy(cmd_name_dict[mnemonic])
+          # Set the command arguments:
+          try:
+            command_temp.setArgs(args)
+          except ArgLengthMismatchException as e:
+            raise SeqGenException("Line %d: %s"%(i+1, "'" + mnemonic + "' argument length mismatch. " + e.getMsg()))
+          except TypeException as e:
+            raise SeqGenException("Line %d: %s"%(i+1, "'" + mnemonic + "' argument type mismatch. " + e.getMsg()))
+          # Set the command time and descriptor:
+          command_temp.setDescriptor(descriptor)
+          command_temp.setSeconds(seconds)
+          command_temp.setUseconds(useconds)
+          # Append this command to the command list:
+          command_list.append(command_temp)
+        else:
+          raise SeqGenException("Line %d: %s"%(i+1, "'" + mnemonic + "' does not match any command in the command dictionary."))
   except gseExceptions.GseControllerParsingException as e:
       raise SeqGenException(e.getMsg())
-  
-  for i, descriptor, seconds, useconds, mnemonic, args in parsed_seq:
-    # Make sure that command is in the command dictionary:
-    if mnemonic in cmd_name_dict:
-      command_temp = copy.deepcopy(cmd_name_dict[mnemonic])
-      # Set the command arguments:
-      try:
-        command_temp.setArgs(args)
-      except ArgLengthMismatchException as e:
-        raise SeqGenException("%d %s"%(i, "'" + mnemonic + "' argument length mismatch. " + e.getMsg()))
-      except TypeException as e:
-        raise SeqGenException("%d %s"%(i, "'" + mnemonic + "' argument type mismatch. " + e.getMsg()))
-      # Set the command time and descriptor:
-      command_temp.setDescriptor(descriptor)
-      command_temp.setSeconds(seconds)
-      command_temp.setUseconds(useconds)
-      # Append this command to the command list:
-      command_list.append(command_temp)
-    else:
-      raise SeqGenException("%d %s"%(i, "'" + mnemonic + "' does not match any command in the command dictionary."))
  
   # Write to the output file:
   writer = SeqBinaryWriter(timebase=timebase)
