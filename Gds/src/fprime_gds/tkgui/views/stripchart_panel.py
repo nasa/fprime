@@ -535,7 +535,7 @@ class AxesFrame(Tkinter.LabelFrame):
         self._canvas = FigureCanvasTkAgg(self._fig, master=self)
         # Attach canvas to self
         self._canvas.get_tk_widget().pack(side=Tkinter.TOP, expand=1, fill=Tkinter.X, padx=5, pady=5)
-        self._canvas.show()
+        self._canvas.draw()
 
         # Label Settings
         self.__settings_dialog = None
