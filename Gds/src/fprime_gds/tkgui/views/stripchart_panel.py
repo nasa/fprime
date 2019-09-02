@@ -172,9 +172,7 @@ class StripChartPanel(observer.Observer):
         # Get all figures
         fig_list = []
         for row in self.__axes_dict.values():
-            for a_frame in row.values():
-                fig_list.append(a_frame.get_fig())
-
+            fig_list.append(row.get_fig())
 
         d = tkFileDialog.askdirectory(initialdir = "/", \
                                       mustexist  = False,
