@@ -3,10 +3,10 @@ Created on August 16, 2019
 
 @author: tcanham
 '''
+from __future__ import print_function
 import time
 
 from fprime_gds.common.models.common import command
-import exceptions
 
 from fprime.common.models.serialize.u32_type import *
 from fprime.common.models.serialize.u16_type import *
@@ -63,9 +63,9 @@ class SeqBinaryWriter(object):
           return U32Type( len(command) ).serialize()
 
         def __print(byteBuffer):
-            print "Byte buffer size: %d" % len(byteBuffer)
+            print("Byte buffer size: %d" % len(byteBuffer))
             for entry in range(0,len(byteBuffer)):
-                print "Byte %d: 0x%02X (%c)"%(entry,struct.unpack("B",byteBuffer[entry])[0],struct.unpack("B",byteBuffer[entry])[0])
+                print("Byte %d: 0x%02X (%c)"%(entry,struct.unpack("B",byteBuffer[entry])[0],struct.unpack("B",byteBuffer[entry])[0]))
 
         # This is no longer in the sequence file format.
         #def __checksum(data):
@@ -110,18 +110,18 @@ class SeqBinaryWriter(object):
         Write out each command record 
         """
         num_records = len(seq_cmds_list)
-        sequence = ""
+        sequence = b""
         for cmd in seq_cmds_list:
             sequence += self.__binaryCmdRecord(cmd)
         size = len(sequence)
         if self.__timebase == 0xFFFF:
-            tb_txt = 'ANY'
+            tb_txt = b'ANY'
         else:
-            tb_txt = str(self.__timebase)
+            tb_txt = bytes(self.__timebase)
             
-        print "Sequence is %d bytes with timebase %s" % (size, tb_txt)
+        print("Sequence is %d bytes with timebase %s" % (size, tb_txt))
 
-        header = ""
+        header = b""
         header += U32Type( size + 4 ).serialize() # Write out size of the sequence file in bytes here
         header += U32Type( num_records ).serialize() # Write number of records
         header += U16Type( self.__timebase ).serialize() # Write time base
@@ -130,11 +130,11 @@ class SeqBinaryWriter(object):
         # compute CRC. Ported from Utils/Hassh/libcrc/libcrc.h (update_crc_32)
         crc = self.computeCrc(sequence)
 
-        print "CRC: %d (0x%04X)"%(crc,crc)
+        print("CRC: %d (0x%04X)"%(crc,crc))
         try:
             sequence += U32Type( crc ).serialize()
         except TypeMismatchException as typeErr:
-            print "Exception: %s" % typeErr.getMsg()
+            print("Exception: %s" % typeErr.getMsg())
             raise
 
         # Write the list of command records here

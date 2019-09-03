@@ -1,6 +1,8 @@
+from __future__ import print_function
 import re
 import sys
 import copy
+import functools
 from datetime import datetime, timedelta
 
 from fprime_gds.common.models.common.command import Descriptor
@@ -102,7 +104,7 @@ class SeqFileParser(object):
                 # Otherwise it is an enum type:
                 return str(arg)
 
-        return map(parseArg, args)
+        return list(map(parseArg, args))
     
       def parseTime(lineNumber, time):
         '''
@@ -162,10 +164,10 @@ class SeqFileParser(object):
           dt = parseAbsolute(t)
           # See if timezone was specified. If not, use UTC
           if dt.tzinfo != None:
-              print "Using timezone %s" % dt.tzinfo.tzname()
+              print("Using timezone %s" % dt.tzinfo.tzname())
               epoch = datetime.fromtimestamp(0, dt.tzinfo)
           else:
-              print "Using UTC timezone"
+              print("Using UTC timezone")
               epoch = datetime.utcfromtimestamp(0)
           delta = (dt - epoch).total_seconds()
         else:

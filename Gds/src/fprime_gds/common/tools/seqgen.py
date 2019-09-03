@@ -16,7 +16,8 @@
 import sys
 import os
 import copy
-from optparse import OptionParser
+import argparse
+#from optparse import OptionParser
 
 from fprime.common.models.serialize.type_exceptions import *
 
@@ -114,14 +115,17 @@ def main():
   as a module by calling the generateSequence() function
   '''
 
-  usage = "usage: %prog [options] input_file output_file"
-  parser = OptionParser(usage=usage) 
-  parser.add_option("-d", "--dictionary", dest="dictionary", action="store", type="string", \
-                      help="Dictionary file name")
-  parser.add_option("-t", "--timebase", dest="timebase", action="store", type="string", default = None, \
+  parser = argparse.ArgumentParser() 
+  parser.add_argument("sequence", action="store", type=str, help="Path to input sequence file")
+  parser.add_argument("output", action="store", nargs="?", type=str, help="Path to output binary file",
+                      default=None)
+  
+  parser.add_argument("-d", "--dictionary", dest="dictionary", action="store", type=str,
+                      required=True, help="Dictionary file name")
+  parser.add_argument("-t", "--timebase", dest="timebase", action="store", type=str, default=None,
                       help="Set base path to generated command/telemetry definition files [default: any]")
   
-  (opts, args) = parser.parse_args()
+  opts = parser.parse_args()
       
   if opts.timebase == None:
      timebase = 0xffff
@@ -132,20 +136,15 @@ def main():
         print("Could not parse time base %s"%opts.timebase)
         return 1
      
-  if (len(args) == 1 or len(args) == 2):
-    inputfile = args[0]
-    if len(args) == 1:
-        outputfile = None
-    try:
-        generateSequence(inputfile,outputfile, opts.dictionary,timebase)
-    except SeqGenException as e:
-        print(e.getMsg())
-        return 1
-  else:
-    parser.print_help()
-    return 1
+  inputfile = opts.sequence
+  outputfile = opts.output
+  try:
+      generateSequence(inputfile,outputfile, opts.dictionary,timebase)
+  except SeqGenException as e:
+      print(e.getMsg())
+      return 1
   return 0
   
   
 if __name__ == "__main__":
-  sys.exit(main())  
+  sys.exit(main())
