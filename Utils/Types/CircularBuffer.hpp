@@ -18,7 +18,7 @@
 #ifndef TYPES_CIRCULAR_BUFFER_HPP
 #define TYPES_CIRCULAR_BUFFER_HPP
 
-#define CIRCULAR_DEBUG
+//#define CIRCULAR_DEBUG
 
 // An assertion to guarantee the self-consistency of a head/tail pointer w.r.t. the store and size
 #define ASSERT_CONSISTENT(store, size, X) \

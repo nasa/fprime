@@ -12,3 +12,16 @@ set(MOD_DEPS
   "Fw/Types"
 )
 register_fprime_module()
+
+# Rules based unit testing
+set(UT_MOD_DEPS
+    STest
+    Fw/Types
+)
+set(UT_SOURCE_FILES
+    "test/ut/CircularBuffer/CircularState.cpp"
+    "test/ut/CircularBuffer/CircularRules.cpp"
+    "test/ut/CircularBuffer/Main.cpp"
+)
+# STest Includes for this UT
+register_fprime_ut("Types_Circular_Buffer_ut_exe")

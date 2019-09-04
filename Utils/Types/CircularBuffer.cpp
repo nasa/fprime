@@ -73,15 +73,19 @@ Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NA
     return Fw::FW_SERIALIZE_OK;
 }
 
+Fw::SerializeStatus CircularBuffer :: peek(char& value, NATIVE_UINT_TYPE offset) {
+    return peek(reinterpret_cast<U8&>(value), offset);
+}
+
 Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
     // Check that the head and tail pointers are consistent
     ASSERT_CONSISTENT(m_store, m_size, m_head);
     ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if (sizeof(U8) > get_remaining_size(false)) {
+    if ((sizeof(U8) + offset) > get_remaining_size(false)) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    value = *m_head;
+    value = *(m_head + offset);
     ASSERT_CONSISTENT(m_store, m_size, m_head);
     ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
@@ -92,7 +96,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) 
     ASSERT_CONSISTENT(m_store, m_size, m_head);
     ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if (sizeof(U32) > get_remaining_size(false)) {
+    if ((sizeof(U32) + offset) > get_remaining_size(false)) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     U8* peeker = m_head;
@@ -113,7 +117,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NA
     ASSERT_CONSISTENT(m_store, m_size, m_head);
     ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if (size > get_remaining_size(false)) {
+    if ((size + offset) > get_remaining_size(false)) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     U8* peeker = m_head;
