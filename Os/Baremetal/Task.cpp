@@ -69,4 +69,8 @@ bool Task::isSuspended(void) {
     return !reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled;
 }
 
+Task::TaskStatus Task::join(void **value_ptr) {
+    return TASK_OK;
+}
+
 }

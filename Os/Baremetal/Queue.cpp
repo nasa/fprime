@@ -48,7 +48,7 @@ Queue::Queue() :
 * \param NATIVE_INT_TYPE msgSize: message size
 * \return Queue::QueueStatus
 */
-Queue::QueueStatus Queue::create(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
+Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
     BareQueueHandle* handle = reinterpret_cast<BareQueueHandle*>(this->m_handle);
     // Queue has already been created... remove it and try again:
     if (NULL != handle) {
