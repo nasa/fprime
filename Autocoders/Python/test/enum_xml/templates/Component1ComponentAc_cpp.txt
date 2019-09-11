@@ -1,0 +1,581 @@
+#include <stdio.h>
+#include <Fw/Cfg/Config.hpp>
+#include <Example/Component1ComponentAc.hpp>
+#include <Fw/Types/Assert.hpp>
+#if FW_ENABLE_TEXT_LOGGING
+#include <Fw/Types/EightyCharString.hpp>
+#endif
+
+
+namespace Example {
+
+  // ----------------------------------------------------------------------
+  // Anonymous namespace to prevent name collisions
+  // ----------------------------------------------------------------------
+
+  namespace {
+
+    typedef enum {
+      COMPONENT1_COMPONENT_EXIT = Fw::ActiveComponentBase::ACTIVE_COMPONENT_EXIT,
+      EXENUMIN_PORT1,
+      ENUMIN_PORT1
+    } MsgTypeEnum;
+
+    // Get the max size by doing a union of the input port serialization sizes.
+
+    typedef union {
+      BYTE port1[Example::InputPort1Port::SERIALIZED_SIZE];
+    } BuffUnion;
+
+    // Define a message buffer class large enough to handle all the
+    // asynchronous inputs to the component
+
+    class ComponentIpcSerializableBuffer :
+      public Fw::SerializeBufferBase
+    {
+
+      public:
+
+        enum {
+          // Max. message size = size of data + message id + port
+          SERIALIZATION_SIZE =
+            sizeof(BuffUnion) +
+            sizeof(NATIVE_INT_TYPE) +
+            sizeof(NATIVE_INT_TYPE)
+        };
+
+        NATIVE_UINT_TYPE getBuffCapacity(void) const {
+          return sizeof(m_buff);
+        }
+
+        U8* getBuffAddr(void) {
+          return m_buff;
+        }
+
+        const U8* getBuffAddr(void) const {
+          return m_buff;
+        }
+
+      private:
+        // Should be the max of all the input ports serialized sizes...
+        U8 m_buff[SERIALIZATION_SIZE];
+
+    };
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Getters for numbers of input ports
+  // ----------------------------------------------------------------------
+
+  Example::InputPort1Port *Component1ComponentBase ::
+    get_ExEnumIn_InputPort(NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_ExEnumIn_InputPorts(),static_cast<AssertArg>(portNum));
+    return &this->m_ExEnumIn_InputPort[portNum];
+  }
+
+  Example::InputPort1Port *Component1ComponentBase ::
+    get_EnumIn_InputPort(NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_EnumIn_InputPorts(),static_cast<AssertArg>(portNum));
+    return &this->m_EnumIn_InputPort[portNum];
+  }
+
+  // ----------------------------------------------------------------------
+  // Typed connectors for output ports
+  // ----------------------------------------------------------------------
+
+  void Component1ComponentBase ::
+    set_EnumOut_OutputPort(
+        NATIVE_INT_TYPE portNum,
+        Example::InputPort1Port* port
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_EnumOut_OutputPorts(),static_cast<AssertArg>(portNum));
+    this->m_EnumOut_OutputPort[portNum].addCallPort(port);
+  }
+
+  // ----------------------------------------------------------------------
+  // Serialization connectors for output ports
+  // ----------------------------------------------------------------------
+
+#if FW_PORT_SERIALIZATION
+
+  void Component1ComponentBase ::
+    set_EnumOut_OutputPort(
+        NATIVE_INT_TYPE portNum,
+        Fw::InputSerializePort *port
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_EnumOut_OutputPorts(),static_cast<AssertArg>(portNum));
+    return this->m_EnumOut_OutputPort[portNum].registerSerialPort(port);
+  }
+
+#endif
+
+  // ----------------------------------------------------------------------
+  // Component construction, initialization, and destruction
+  // ----------------------------------------------------------------------
+
+  Component1ComponentBase ::
+#if FW_OBJECT_NAMES == 1
+    Component1ComponentBase(const char* compName) :
+      Fw::ActiveComponentBase(compName)
+#else
+    Component1ComponentBase() :
+      Fw::ActiveComponentBase()
+#endif
+  {
+
+
+
+  }
+
+  void Component1ComponentBase ::
+    init(
+        NATIVE_INT_TYPE queueDepth,
+        NATIVE_INT_TYPE instance
+    )
+  {
+
+    // Initialize base class
+    Fw::ActiveComponentBase::init(instance);
+
+    // Connect input port ExEnumIn
+    for (
+        NATIVE_INT_TYPE port = 0;
+        port < this->getNum_ExEnumIn_InputPorts();
+        port++
+    ) {
+
+      this->m_ExEnumIn_InputPort[port].init();
+      this->m_ExEnumIn_InputPort[port].addCallComp(
+          this,
+          m_p_ExEnumIn_in
+      );
+      this->m_ExEnumIn_InputPort[port].setPortNum(port);
+
+#if FW_OBJECT_NAMES == 1
+      char portName[80];
+      (void) snprintf(
+          portName,
+          sizeof(portName),
+          "%s_ExEnumIn_InputPort[%d]",
+          this->m_objName,
+          port
+      );
+      this->m_ExEnumIn_InputPort[port].setObjName(portName);
+#endif
+
+    }
+
+    // Connect input port EnumIn
+    for (
+        NATIVE_INT_TYPE port = 0;
+        port < this->getNum_EnumIn_InputPorts();
+        port++
+    ) {
+
+      this->m_EnumIn_InputPort[port].init();
+      this->m_EnumIn_InputPort[port].addCallComp(
+          this,
+          m_p_EnumIn_in
+      );
+      this->m_EnumIn_InputPort[port].setPortNum(port);
+
+#if FW_OBJECT_NAMES == 1
+      char portName[80];
+      (void) snprintf(
+          portName,
+          sizeof(portName),
+          "%s_EnumIn_InputPort[%d]",
+          this->m_objName,
+          port
+      );
+      this->m_EnumIn_InputPort[port].setObjName(portName);
+#endif
+
+    }
+
+    // Initialize output port EnumOut
+    for (
+        NATIVE_INT_TYPE port = 0;
+        port < this->getNum_EnumOut_OutputPorts();
+        port++
+    ) {
+      this->m_EnumOut_OutputPort[port].init();
+
+#if FW_OBJECT_NAMES == 1
+      char portName[80];
+      (void) snprintf(
+          portName,
+          sizeof(portName),
+          "%s_EnumOut_OutputPort[%d]",
+          this->m_objName,
+          port
+      );
+      this->m_EnumOut_OutputPort[port].setObjName(portName);
+#endif
+
+    }
+
+    Os::Queue::QueueStatus qStat =
+    this->createQueue(
+        queueDepth,
+        ComponentIpcSerializableBuffer::SERIALIZATION_SIZE
+    );
+    FW_ASSERT(
+        Os::Queue::QUEUE_OK == qStat,
+        static_cast<AssertArg>(qStat)
+    );
+
+  }
+
+  Component1ComponentBase::
+    ~Component1ComponentBase() {
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Invocation functions for output ports
+  // ----------------------------------------------------------------------
+
+  void Component1ComponentBase ::
+    EnumOut_out(
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_EnumOut_OutputPorts(),static_cast<AssertArg>(portNum));
+    this->m_EnumOut_OutputPort[portNum].invoke(Arg1, Arg2);
+  }
+
+  // ----------------------------------------------------------------------
+  // Getters for numbers of ports
+  // ----------------------------------------------------------------------
+
+  NATIVE_INT_TYPE Component1ComponentBase ::
+    getNum_ExEnumIn_InputPorts(void)
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        this->m_ExEnumIn_InputPort
+    );
+  }
+
+  NATIVE_INT_TYPE Component1ComponentBase ::
+    getNum_EnumIn_InputPorts(void)
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        this->m_EnumIn_InputPort
+    );
+  }
+
+  NATIVE_INT_TYPE Component1ComponentBase ::
+    getNum_EnumOut_OutputPorts(void)
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        this->m_EnumOut_OutputPort
+    );
+  }
+
+  // ----------------------------------------------------------------------
+  // Port connection status queries
+  // ----------------------------------------------------------------------
+
+  bool Component1ComponentBase ::
+    isConnected_EnumOut_OutputPort(NATIVE_INT_TYPE portNum)
+  {
+     FW_ASSERT(
+        portNum < this->getNum_EnumOut_OutputPorts(),
+        static_cast<AssertArg>(portNum)
+     );
+     return this->m_EnumOut_OutputPort[portNum].isConnected();
+  }
+
+  // ----------------------------------------------------------------------
+  // Calls for invocations received on typed input ports
+  // ----------------------------------------------------------------------
+
+  void Component1ComponentBase ::
+    m_p_ExEnumIn_in(
+        Fw::PassiveComponentBase* callComp,
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+    FW_ASSERT(callComp);
+    Component1ComponentBase* compPtr =
+      (Component1ComponentBase*) callComp;
+    compPtr->ExEnumIn_handlerBase(portNum, Arg1, Arg2);
+  }
+
+  void Component1ComponentBase ::
+    m_p_EnumIn_in(
+        Fw::PassiveComponentBase* callComp,
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+    FW_ASSERT(callComp);
+    Component1ComponentBase* compPtr =
+      (Component1ComponentBase*) callComp;
+    compPtr->EnumIn_handlerBase(portNum, Arg1, Arg2);
+  }
+
+  // ----------------------------------------------------------------------
+  // Port handler base-class functions for typed input ports
+  // ----------------------------------------------------------------------
+
+  void Component1ComponentBase ::
+    ExEnumIn_handlerBase(
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+
+    // Make sure port number is valid
+    FW_ASSERT(portNum < this->getNum_ExEnumIn_InputPorts(),static_cast<AssertArg>(portNum));
+
+    // Call pre-message hook
+    ExEnumIn_preMsgHook(
+        portNum,
+        Arg1, Arg2
+    );
+
+    ComponentIpcSerializableBuffer msg;
+    Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+
+    _status = msg.serialize(
+        static_cast<NATIVE_INT_TYPE>(EXENUMIN_PORT1)
+    );
+    FW_ASSERT (
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+    _status = msg.serialize(portNum);
+    FW_ASSERT (
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+    // Serialize argument Arg1
+    _status = msg.serialize(Arg1);
+    FW_ASSERT(
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+    // Serialize argument Arg2
+    _status = msg.serialize(Arg2);
+    FW_ASSERT(
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+
+    // send message
+    Os::Queue::QueueBlocking _block =
+      Os::Queue::QUEUE_NONBLOCKING;
+    Os::Queue::QueueStatus qStatus =
+      this->m_queue.send(msg, 0,_block);
+    FW_ASSERT(
+        qStatus == Os::Queue::QUEUE_OK,
+        static_cast<AssertArg>(qStatus)
+    );
+
+  }
+
+  void Component1ComponentBase ::
+    EnumIn_handlerBase(
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+
+    // Make sure port number is valid
+    FW_ASSERT(portNum < this->getNum_EnumIn_InputPorts(),static_cast<AssertArg>(portNum));
+
+    // Call pre-message hook
+    EnumIn_preMsgHook(
+        portNum,
+        Arg1, Arg2
+    );
+
+    ComponentIpcSerializableBuffer msg;
+    Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+
+    _status = msg.serialize(
+        static_cast<NATIVE_INT_TYPE>(ENUMIN_PORT1)
+    );
+    FW_ASSERT (
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+    _status = msg.serialize(portNum);
+    FW_ASSERT (
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+    // Serialize argument Arg1
+    _status = msg.serialize(Arg1);
+    FW_ASSERT(
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+    // Serialize argument Arg2
+    _status = msg.serialize(Arg2);
+    FW_ASSERT(
+        _status == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(_status)
+    );
+
+
+    // send message
+    Os::Queue::QueueBlocking _block =
+      Os::Queue::QUEUE_NONBLOCKING;
+    Os::Queue::QueueStatus qStatus =
+      this->m_queue.send(msg, 0,_block);
+    FW_ASSERT(
+        qStatus == Os::Queue::QUEUE_OK,
+        static_cast<AssertArg>(qStatus)
+    );
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Pre-message hooks for async input ports
+  // ----------------------------------------------------------------------
+
+  void Component1ComponentBase ::
+    ExEnumIn_preMsgHook(
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+    // Default: no-op
+  }
+
+  void Component1ComponentBase ::
+    EnumIn_preMsgHook(
+        NATIVE_INT_TYPE portNum,
+        Example::Enum1 Arg1, Example::Serial1 Arg2
+    )
+  {
+    // Default: no-op
+  }
+
+  // ----------------------------------------------------------------------
+  // Message dispatch method for active and queued components. Called
+  // by active component thread or implementation code for queued components
+  // ----------------------------------------------------------------------
+
+  Fw::QueuedComponentBase::MsgDispatchStatus Component1ComponentBase ::
+    doDispatch(void)
+  {
+    ComponentIpcSerializableBuffer msg;
+    NATIVE_INT_TYPE priority;
+
+    Os::Queue::QueueStatus msgStatus = this->m_queue.receive(msg,priority,Os::Queue::QUEUE_BLOCKING);
+    FW_ASSERT(
+        msgStatus == Os::Queue::QUEUE_OK,
+        static_cast<AssertArg>(msgStatus)
+    );
+
+    // Reset to beginning of buffer
+    msg.resetDeser();
+
+    NATIVE_INT_TYPE desMsg;
+    Fw::SerializeStatus deserStatus = msg.deserialize(desMsg);
+    FW_ASSERT(
+        deserStatus == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(deserStatus)
+    );
+
+    MsgTypeEnum msgType = static_cast<MsgTypeEnum>(desMsg);
+
+    if (msgType == COMPONENT1_COMPONENT_EXIT) {
+      return MSG_DISPATCH_EXIT;
+    }
+
+    NATIVE_INT_TYPE portNum;
+    deserStatus = msg.deserialize(portNum);
+    FW_ASSERT(
+        deserStatus == Fw::FW_SERIALIZE_OK,
+        static_cast<AssertArg>(deserStatus)
+    );
+
+    switch (msgType) {
+
+      // Handle async input port ExEnumIn
+      case EXENUMIN_PORT1: {
+
+        // Deserialize argument Arg1
+        Example::Enum1 Arg1;
+        deserStatus = msg.deserialize(Arg1);
+        FW_ASSERT(
+            deserStatus == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(deserStatus)
+        );
+
+        // Deserialize argument Arg2
+        Example::Serial1 Arg2;
+        deserStatus = msg.deserialize(Arg2);
+        FW_ASSERT(
+            deserStatus == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(deserStatus)
+        );
+
+        // Call handler function
+        this->ExEnumIn_handler(
+            portNum,
+            Arg1, Arg2
+        );
+
+        break;
+
+      }
+
+      // Handle async input port EnumIn
+      case ENUMIN_PORT1: {
+
+        // Deserialize argument Arg1
+        Example::Enum1 Arg1;
+        deserStatus = msg.deserialize(Arg1);
+        FW_ASSERT(
+            deserStatus == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(deserStatus)
+        );
+
+        // Deserialize argument Arg2
+        Example::Serial1 Arg2;
+        deserStatus = msg.deserialize(Arg2);
+        FW_ASSERT(
+            deserStatus == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(deserStatus)
+        );
+
+        // Call handler function
+        this->EnumIn_handler(
+            portNum,
+            Arg1, Arg2
+        );
+
+        break;
+
+      }
+
+      default:
+        return MSG_DISPATCH_ERROR;
+
+    }
+
+    return MSG_DISPATCH_OK;
+
+  }
+
+} // end namespace Example

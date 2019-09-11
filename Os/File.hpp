@@ -14,7 +14,10 @@ namespace Os {
             typedef enum {
                 OPEN_NO_MODE,   //!<  File mode not yet selected
                 OPEN_READ, //!<  Open file for reading
-                OPEN_WRITE //!<  Open file for writing
+                OPEN_WRITE, //!<  Open file for writing
+                OPEN_SYNC_WRITE, //!<  Open file for writing; writes don't return until data is on disk
+                OPEN_SYNC_DIRECT_WRITE, //!<  Open file for writing, bypassing all caching. Requires data alignment
+                OPEN_CREATE, //!< Open file for writing and truncates file if it exists, ie same flags as creat()
             } Mode;
 
             typedef enum {
@@ -29,18 +32,23 @@ namespace Os {
 
             File(); //!<  Constructor
             virtual ~File(); //!<  Destructor. Will close file if still open
+            Status prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len);
             Status open(const char* fileName, Mode mode); //!<  open file. Writing creates file if it doesn't exist
             Status seek(NATIVE_INT_TYPE offset, bool absolute = true); //!<  seek to location. If absolute = true, absolute from beginning of file
-
+            Status flush(); //!< flush data to disk. No-op on systems that do not support.
             Status read(void * buffer, NATIVE_INT_TYPE &size, bool waitForFull = true); //!<  read data from file; returns amount read or errno.
                                                                             //!<  waitForFull = true to wait for all bytes to be read
                                                                             // size is modified to actual read size
             Status write(const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone = true); //!<  write size; will return amount written or errno
+            Status bulkWrite(const void * buffer, NATIVE_UINT_TYPE &totalSize, NATIVE_INT_TYPE chunkSize); //!<  write size; will return amount written or errno
 
             void close(void); //!<  close file
 
             NATIVE_INT_TYPE getLastError(void); //!< read back last error code (typically errno)
             const char* getLastErrorString(void); //!< get a string of the last error (typically from strerror)
+            Status calculateCRC32(U32 &crc); //!< calculates the CRC32 of the file
+
+            static Status niceCRC32(U32 &crc, const char* fileName); //!< Calculates CRC32 of file, not burdening FS
 
         private:
 

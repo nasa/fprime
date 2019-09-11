@@ -1,11 +1,10 @@
-#!/bin/csh
+#!/bin/sh
+DIRNAME="`dirname $0`"
+# Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
+if [ -z ${BUILD_ROOT} ]
+then
+    export BUILD_ROOT="`cd ${DIRNAME}/../..; pwd`"
+fi
+echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
-if !($?BUILD_ROOT) then
-    set curdir = "${PWD}"
-    setenv BUILD_ROOT `dirname $0`/../..
-    cd $BUILD_ROOT
-    setenv BUILD_ROOT ${PWD}
-    cd ${curdir}
-endif
-
-${BUILD_ROOT}/Gse/bin/run_cmds.sh --addr 127.0.0.1 --port 50000 --dictionary ${BUILD_ROOT}/Gse/generated/Ref $*
+${BUILD_ROOT}/Gds/bin/tkgui/run_cmds.sh --addr localhost --port 50000 --dictionary ${BUILD_ROOT}/Ref/py_dict "$@"

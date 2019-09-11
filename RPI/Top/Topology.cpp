@@ -143,6 +143,9 @@ void constructApp(int port_number, char* hostname) {
     health.regCommands();
     rpiDemo.regCommands();
 
+    // set sequencer timeout
+    cmdSeq.setTimeout(30);
+
     // read parameters
     prmDb.readParamFile();
 
@@ -223,7 +226,7 @@ void constructApp(int port_number, char* hostname) {
     uartDrv.startReadThread(100,10*1024,-1);
 
     // Initialize socket server
-    sockGndIf.startSocketTask(100, port_number, hostname);
+    sockGndIf.startSocketTask(100, 10*1024, port_number, hostname, Svc::SocketGndIfImpl::SEND_UDP);
 
 }
 

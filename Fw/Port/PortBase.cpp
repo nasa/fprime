@@ -1,6 +1,6 @@
 #include <Fw/Port/PortBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Os/Log.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <stdio.h>
 
 #if FW_PORT_TRACING
@@ -70,9 +70,9 @@ namespace Fw {
 
         if (do_trace) {
 #if FW_OBJECT_NAMES == 1
-            Os::Log::logMsg("Trace: %s\n", (POINTER_CAST)this->m_objName, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %s\n", (POINTER_CAST)this->m_objName, 0, 0, 0, 0, 0);
 #else
-            Os::Log::logMsg("Trace: %p\n", (POINTER_CAST)this, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %p\n", (POINTER_CAST)this, 0, 0, 0, 0, 0);
 #endif
         }
     }

@@ -31,7 +31,7 @@ If the UART port is not set up correctly, there will be a file open error.
 |IO23|IO25|GPIO|
 |IO24|IO17|GPIO|
 
-**If you wish to see the blinking LED demo, connect an LED to GPIO 22 as follows:**
+**If you wish to see the blinking LED demo, connect an LED to GPIO 21 as follows:**
 
 [Connect an LED](https://thepihut.com/blogs/raspberry-pi-tutorials/27968772-turning-on-an-led-with-your-raspberry-pis-gpio-pins)
  
@@ -58,6 +58,31 @@ or, for cross-compiling, from the build host:
 make rebuild_rpi_cross
 ```
 The build should run to completion. This will take a few minutes.
+
+**Building using CMake:**
+
+You may also build the software using CMake. First, create an output folder. We'll assume that you're already within the `RPI` directory:
+
+```
+mkdir build
+cd build
+```
+
+You can now build the software:
+
+```
+cmake ../
+make
+```
+
+If you're cross-compiling, you can instead specify the respective toolkit. Note -- The toolkit specifies that the cross-compile tools folder be installed into the `/opt` directory. If you place it elsewhere on your system, please update it in the toolkit file.
+
+```
+cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/toolchain/arm-linux-gnueabihf.cmake ../
+make
+```
+
+After `make` has completed, the output binary can be found in the `bin` folder.
 
 **Run the software:**
 

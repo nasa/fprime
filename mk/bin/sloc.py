@@ -1,5 +1,5 @@
 import sys
-import commands
+import subprocess
 import os
 import os.path
 
@@ -59,7 +59,7 @@ def get_stats(file):
 
 	ext = os.path.splitext(file)[1]
 	
-	if ext == ".c" or ext == ".cc" or ext == ".cpp" or ext == ".h" or ext = ".hpp":
+	if ext == ".c" or ext == ".cc" or ext == ".cpp" or ext == ".h" or ext == ".hpp":
 		file_stats[file_short] = c_sloc_lines(file)
 	elif ext == ".xml":
 		file_stats[file_short] = count_non_empty_lines(file_lines,"<?")
@@ -74,11 +74,11 @@ def get_stats(file):
 	if sloc_verbose:
 		sloc_log.write("File %s: sloc: %d ncsl: %d comments: %d semis: %d\n"%(file_stats[file_short][0],file_stats[file_short][1],file_stats[file_short][2],file_stats[file_short][3]))
  
-if not os.environ.has_key("BUILD_ROOT"):
+if "BUILD_ROOT" not in os.environ:
 	print("You must define BUILD_ROOT first.")
 	sys.exit(-1)
 
-if os.environ.has_key("SLOC_VERBOSE"):
+if "SLOC_VERBOSE" in os.environ:
 	sloc_verbose = True
 	sloc_log = open("sloc.log_%s"%sys.argv[1],'w')
 else:
@@ -89,7 +89,7 @@ if sys.argv[1] == "summarize":
 	type_stats = {}
 	for line in file_lines:
 		(type,file_short,sloc_lines,ncsl_lines,comments,semis) = line.split(",")
-		if not type_stats.has_key(type):
+		if type not in type_stats:
 			type_stats[type] = [0,0,0,0]
 			
 		type_stats[type][0] += int(sloc_lines)
@@ -98,8 +98,8 @@ if sys.argv[1] == "summarize":
 		type_stats[type][3] += int(semis)
 		
 	print("*sum*")
-	for type in type_stats.keys():
-		print ("%s,%d,%d,%d,%d"%(type,type_stats[type][0],type_stats[type][1],type_stats[type][2],type_stats[type][3]))
+	for type in list(type_stats.keys()):
+		print(("%s,%d,%d,%d,%d"%(type,type_stats[type][0],type_stats[type][1],type_stats[type][2],type_stats[type][3])))
 	sys.exit(0)
 	
 if sys.argv[1] == "collate":
@@ -115,7 +115,7 @@ if sys.argv[1] == "collate":
 				continue
 			if sum_found: 
 				(type,sloc_lines,ncsl_lines,comments,semis) = line.split(",")
-				if not type_stats.has_key(type):
+				if type not in type_stats:
 					type_stats[type] = [0,0,0,0]
 					
 				type_stats[type][0] += int(sloc_lines)
@@ -129,7 +129,7 @@ if sys.argv[1] == "collate":
 		sys.stderr.write("File %s doesn't have *sum*!\n" % file_short)
 	else:
 		total_sloc_lines = total_ncsl_lines = total_comment_lines = total_semi_lines = 0
-		for type in type_stats.keys():
+		for type in list(type_stats.keys()):
 			sloc_sum_file.write("Type: %s sloc: %d nscl: %d comments: %d semis %d\n"%(type,type_stats[type][0],type_stats[type][1],type_stats[type][2],type_stats[type][3]))
 			total_sloc_lines += type_stats[type][0]		
 			total_ncsl_lines += type_stats[type][1]		
@@ -147,6 +147,6 @@ for file in sys.argv[2:]:
 		sloc_log.write("Examining file %s\n"%file)
 	get_stats(file)
 	(sloc_lines,ncsl_lines,comments,semis) = file_stats[file_short]
-	print("%s,%s,%s,%s,%s,%s"%(sys.argv[1],file_short,sloc_lines,ncsl_lines,comments,semis))
+	print(("%s,%s,%s,%s,%s,%s"%(sys.argv[1],file_short,sloc_lines,ncsl_lines,comments,semis)))
 
 

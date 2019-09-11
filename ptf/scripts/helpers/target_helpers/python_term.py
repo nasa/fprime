@@ -51,11 +51,11 @@ else:        # Parent
 
     try:
         masters[EXT], slaves[EXT] = os.openpty()
-        print "Access this terminal at ", os.ttyname(slaves[EXT])
+        print("Access this terminal at ", os.ttyname(slaves[EXT]))
 
         if options.symlink is not "":
             if os.path.exists(options.symlink):
-                print "Symbolic link '%s' already exists!" % options.symlink
+                print("Symbolic link '%s' already exists!" % options.symlink)
                 symlink = ""
             else:
                 os.symlink(os.ttyname(slaves[EXT]), options.symlink)
@@ -95,14 +95,14 @@ else:        # Parent
         need_timetag = True
         keep_running = True
         while (keep_running):
-            readlist, writelist, exceptlist = select.select(transfers.keys(), [], transfers.keys())
+            readlist, writelist, exceptlist = select.select(list(transfers.keys()), [], list(transfers.keys()))
 
             for src_fd in readlist:
                 str = ""
                 try :
                     str = os.read(src_fd, 1024)
-                except Exception, e:
-                    print "Connected process has terminated."
+                except Exception as e:
+                    print("Connected process has terminated.")
                     keep_running = False
 
                 if len(str) > 0:
@@ -143,13 +143,13 @@ else:        # Parent
                         size = os.write(dest_fd, str)
 
             for src_fd in exceptlist:
-                print "I GOT A EXCEPTIONAL EVENT ON FD %d" % src_fd
+                print("I GOT A EXCEPTIONAL EVENT ON FD %d" % src_fd)
                 
-    except KeyboardInterrupt, e:
-        print "Buuuuuhhh bye!"
-    except Exception, e:
-        print "Recorded an unexpected exception!"
-        print e
+    except KeyboardInterrupt as e:
+        print("Buuuuuhhh bye!")
+    except Exception as e:
+        print("Recorded an unexpected exception!")
+        print(e)
 
     if log_fd is not None:
         log_fd.close()

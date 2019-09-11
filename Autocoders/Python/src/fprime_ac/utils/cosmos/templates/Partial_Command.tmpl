@@ -1,0 +1,5 @@
+# Hardcoded deployment file, fill in your deployment's common event items in Cheetah Template
+  APPEND_PARAMETER SYNC 32 UINT 0x5A5A5A5A 0x5A5A5A5A 0x5A5A5A5A "Sync pattern"
+  APPEND_PARAMETER LENGTH 32 UINT 0 0 0 "Command length"
+  APPEND_PARAMETER DESC 32 UINT 0 0 0 "Command descriptor always zero"  
+  APPEND_ID_PARAMETER OP_CODE 32 UINT #raw<%=#end raw id %> #raw<%=#end raw id %> #raw<%=#end raw id %> "Command Id or op code"

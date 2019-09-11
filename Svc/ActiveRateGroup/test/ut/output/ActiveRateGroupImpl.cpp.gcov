@@ -10,14 +10,8 @@
         -:    8:*
         -:    9:*   Copyright 2014-2015, by the California Institute of Technology.
         -:   10:*   ALL RIGHTS RESERVED. United States Government Sponsorship
-        -:   11:*   acknowledged. Any commercial use must be negotiated with the Office
-        -:   12:*   of Technology Transfer at the California Institute of Technology.
+        -:   11:*   acknowledged.
         -:   13:*
-        -:   14:*   Information included herein is controlled under the International
-        -:   15:*   Traffic in Arms Regulations ("ITAR") by the U.S. Department of State.
-        -:   16:*   Export or transfer of this information to a Foreign Person or foreign
-        -:   17:*   entity requires an export license issued by the U.S. State Department
-        -:   18:*   or an ITAR exemption prior to the export or transfer.
         -:   19:*/
         -:   20:
         -:   21:#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>

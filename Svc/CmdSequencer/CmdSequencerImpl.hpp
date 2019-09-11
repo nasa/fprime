@@ -4,432 +4,787 @@
 // \brief  hpp file for CmdSequencer component implementation class
 //
 // \copyright
-// Copyright (C) 2009-2016 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
-#ifndef Svc_CmdSequencer_HPP
-#define Svc_CmdSequencer_HPP
+#ifndef Svc_CmdSequencerImpl_HPP
+#define Svc_CmdSequencerImpl_HPP
 
-#include <Os/File.hpp>
-#include <Os/ValidateFile.hpp>
-#include <Svc/CmdSequencer/CmdSequencerComponentAc.hpp>
-#include <Fw/Com/ComBuffer.hpp>
-#include <Fw/Types/MemAllocator.hpp>
+#include "Fw/Com/ComBuffer.hpp"
+#include "Fw/Types/MemAllocator.hpp"
+#include "Os/File.hpp"
+#include "Os/ValidateFile.hpp"
+#include "Svc/CmdSequencer/CmdSequencerComponentAc.hpp"
 
 namespace Svc {
 
-    class CmdSequencerComponentImpl: public CmdSequencerComponentBase {
+  class CmdSequencerComponentImpl : 
+    public CmdSequencerComponentBase 
+  {
 
-            // ----------------------------------------------------------------------
-            // Construction, initialization, and destruction
-            // ----------------------------------------------------------------------
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Private enumerations
+      // ----------------------------------------------------------------------
+
+      //! The run mode
+      enum RunMode {
+        STOPPED, RUNNING
+      };
+
+      //! The step mode
+      enum StepMode {
+        AUTO, MANUAL
+      };
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Public classes
+      // ----------------------------------------------------------------------
+
+      //! \class Sequence
+      //! \brief A sequence with unspecified binary format
+      class Sequence {
 
         public:
 
-            //! Construct a CmdSequencer
-            CmdSequencerComponentImpl(
-#if FW_OBJECT_NAMES == 1
-                    const char* compName //!< The component name
-#else
-                    void
-#endif
-                    );
+          //! \class Events
+          //! \brief Sequence event reporting
+          class Events {
 
-            //! Initialize a CmdSequencer
-            void init(const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-                    const NATIVE_INT_TYPE instance //!< The instance number
-                    );
+            public:
 
-            //! optional - set a timeout. Sequence will quit if a command takes longer than the number of
-            //! cycles in the timeout value.
-            void setTimeout(NATIVE_UINT_TYPE seconds);
+              //! File read stage for error reporting
+              struct FileReadStage {
 
-            //! Give the class a memory buffer. Should be called after constructor and init, but before task is spawned.
-            void allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes);
+                typedef enum {
+                  READ_HEADER,
+                  READ_HEADER_SIZE,
+                  DESER_SIZE,
+                  DESER_NUM_RECORDS,
+                  DESER_TIME_BASE,
+                  DESER_TIME_CONTEXT,
+                  READ_SEQ_CRC,
+                  READ_SEQ_DATA,
+                  READ_SEQ_DATA_SIZE,
+                } t;
 
-            //! Return allocated buffer. Should be done during shutdown
-            void deallocateBuffer(Fw::MemAllocator& allocator);
+                //! Convert FileReadStage::t to CmdSequencerComponentImpl::FileReadStage
+                static CmdSequencerComponentImpl::FileReadStage 
+                  toComponentEnum(
+                      const t fileReadStage //!< The file read stage
+                  );
 
-            //! Destroy a CmdDispatcherComponentBase
-            ~CmdSequencerComponentImpl(void);
+              }; 
 
-            // ----------------------------------------------------------------------
-            // Handler implementations
-            // ----------------------------------------------------------------------
+            public:
 
-        PRIVATE:
+              //! Construct an Events object
+              Events(
+                  Sequence& sequence //!< The enclosing sequence
+              );
 
-            // ----------------------------------------------------------------------
-            // Types
-            // ----------------------------------------------------------------------
+            public:
 
-            //! The run mode
-            enum RunMode {
-                STOPPED, RUNNING
-            };
+              //! File CRC failure
+              void fileCRCFailure(
+                  const U32 storedCRC, //!< The CRC stored in the file
+                  const U32 computedCRC //!< The CRC computed over the file
+              );
 
-            //! The step mode
-            enum StepMode {
-                AUTO, MANUAL
-            };
+              //! File invalid
+              void fileInvalid(
+                  const FileReadStage::t stage, //!< The file read stage
+                  const I32 error //!< The error
+              );
 
-            enum CmdRecordDescriptor {
+              //! File not found
+              void fileNotFound(void);
+
+              //! File read error
+              void fileReadError(void);
+
+              //! File size error
+              void fileSizeError(
+                  const U32 size //!< The size
+              );
+
+              //! Record invalid
+              void recordInvalid(
+                  const U32 recordNumber, //!< The record number
+                  const I32 error //!< The error
+              );
+
+              //! Record mismatch
+              void recordMismatch(
+                  const U32 numRecords, //!< The number of records in the header
+                  const U32 extraBytes //!< The number of bytes beyond last record
+              );
+
+              //! Time base mismatch
+              void timeBaseMismatch(
+                  const U32 currTimeBase, //!< The current time base
+                  const U32 seqTimeBase //!< The sequence file time base
+              );
+
+              //! Time context mismatch
+              void timeContextMismatch(
+                  const U32 currTimeContext, //!< The current time context
+                  const U32 seqTimeContext //!< The sequence file time context
+              );
+
+            PRIVATE:
+
+              //! The enclosing component
+              Sequence& m_sequence;
+
+          };
+
+        public:
+
+          //! Construct a Sequence object
+          Sequence(
+              CmdSequencerComponentImpl& component //!< The enclosing component
+          );
+
+          //! Destroy a Sequence object
+          virtual ~Sequence(void);
+
+        public:
+
+          //! \class Header
+          //! \brief A sequence header
+          class Header {
+
+            public:
+
+              enum Constants {
+                //! Serialized size of header
+                SERIALIZED_SIZE =
+                  sizeof(U32) +
+                  sizeof(U32) +
+                  sizeof(FwTimeBaseStoreType) +
+                  sizeof(FwTimeContextStoreType)
+              };
+
+            public:
+
+              //! Construct a Header object
+              Header(void);
+
+            public:
+
+              //! Validate the time field of the sequence header
+              //! \return Success or failure
+              bool validateTime(
+                  CmdSequencerComponentImpl& component //!< Component for time and events
+              );
+
+            public:
+
+              //! The file size
+              U32 m_fileSize;
+
+              //! The number of records in the sequence
+              U32 m_numRecords;
+
+              //! The time base of the sequence
+              TimeBase m_timeBase;
+
+              //! The context of the sequence
+              FwTimeContextStoreType m_timeContext;
+
+          };
+
+        public:
+
+          //! \class Record
+          //! \brief A sequence record
+          class Record {
+
+            public:
+
+              enum Descriptor {
                 ABSOLUTE, //!< Absolute time
                 RELATIVE, //!< Relative time
                 END_OF_SEQUENCE //!< end of sequence
-            };
+              };
 
-            // ----------------------------------------------------------------------
-            // Private helper classes
-            // ----------------------------------------------------------------------
+            public:
 
-            //! \class CmdRecord
-            //! \brief A class representing an executing command record
-            class CmdRecord : public Fw::Serializable {
+              //! Construct a Record object
+              Record(void) :
+                m_descriptor(END_OF_SEQUENCE) 
+              {
 
-                public:
+              }
 
-                    //! Construct a CmdRecord object
-                    CmdRecord(void) :
-                        m_descriptor(END_OF_SEQUENCE) {
-                    }
+            public:
 
-                    //! The command record descriptor
-                    CmdRecordDescriptor m_descriptor;
+              //! The descriptor
+              Descriptor m_descriptor;
 
-                    //! Time tag for this command. NOTE: timeBase and context not filled in
-                    Fw::Time m_timeTag;
+              //! The time tag. NOTE: timeBase and context not filled in
+              Fw::Time m_timeTag;
 
-                    //! The command associated with the command record
-                    Fw::ComBuffer m_command;
+              //! The command
+              Fw::ComBuffer m_command;
 
-                    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialize contents
-                    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialize contents
+          };
 
-            };
+        public:
 
-            //! \class Timer
-            //! \brief A class representing a timer
-            class Timer {
+          //! Give the sequence representation a memory buffer
+          void allocateBuffer(
+              NATIVE_INT_TYPE identifier, //!< The identifier
+              Fw::MemAllocator& allocator, //!< The allocator
+              NATIVE_UINT_TYPE bytes //!< The number of bytes
+          );
 
-                PRIVATE:
+          //! Deallocate the buffer
+          void deallocateBuffer(
+              Fw::MemAllocator& allocator //!< The allocator
+          );
 
-                    //! The timer state
-                    typedef enum {
-                        SET, CLEAR
-                    } State;
+          //! Set the file name. Also sets the log file name.
+          void setFileName(const Fw::CmdStringArg& fileName);
 
-                public:
+          //! Get the file name
+          //! \return The file name
+          Fw::CmdStringArg& getFileName(void);
 
-                    //! Construct a Timer object
-                    Timer(void) :
-                        m_state(CLEAR) {
-                    }
+          //! Get the log file name
+          //! \return The log file name
+          Fw::LogStringArg& getLogFileName(void);
 
-                    //! Set the expiration time
-                    void set(Fw::Time time //!< The time
-                            ) {
-                        this->m_state = SET;
-                        this->expirationTime = time;
-                    }
+          //! Get the sequence header
+          const Header& getHeader(void) const;
 
-                    //! Clear the timer
-                    void clear(void) {
-                        this->m_state = CLEAR;
-                    }
+          //! Load a sequence file
+          //! \return Success or failure
+          virtual bool loadFile(
+              const Fw::CmdStringArg& fileName //!< The file name
+          ) = 0;
 
-                    //! Determine whether the timer is expired at a given time
-                    //! \return Yes or no
-                    bool isExpiredAt(Fw::Time time //!< The time
-                            ) {
-                        if (this->m_state == CLEAR) {
-                            return false;
-                        } else if (Fw::Time::compare(this->expirationTime, time)
-                                == Fw::Time::GT) {
-                            return false;
-                        }
-                        return true;
-                    }
+          //! Query whether the sequence has any more records
+          //! \return Yes or no
+          virtual bool hasMoreRecords(void) const = 0;
 
-                PRIVATE:
+          //! Get the next record in the sequence
+          //! Asserts on failure
+          virtual void nextRecord(
+              Record& record //!< The returned record
+          ) = 0;
 
-                    //! The timer state
-                    State m_state;
+          //! Reset the sequence to the beginning.
+          //! After calling this, hasMoreRecords should return true, 
+          //! unless the sequence has no records
+          virtual void reset(void) = 0;
 
-                    //! The expiration time
-                    Fw::Time expirationTime;
+          //! Clear the sequence records.
+          //! After calling this, hasMoreRecords should return false
+          virtual void clear(void) = 0;
 
-            };
+        PROTECTED:
 
+          //! The enclosing component
+          CmdSequencerComponentImpl& m_component;
 
-            void CS_Run_cmdHandler(
-            FwOpcodeType opCode, //!< The opcode
-                    U32 cmdSeq, //!< The command sequence number
-                    const Fw::CmdStringArg& fileName //!< The file name
-                    );
+          //! Event reporting
+          Events m_events;
 
-            void CS_Validate_cmdHandler(
-                    FwOpcodeType opCode, /*!< The opcode*/
-                    U32 cmdSeq, /*!< The command sequence number*/
-                    const Fw::CmdStringArg& fileName /*!< The name of the sequence file*/
-                );
+          //! The sequence file name
+          Fw::CmdStringArg m_fileName;
 
-            void CS_Cancel_cmdHandler(
-            FwOpcodeType opCode, //!< The opcode
-                    U32 cmdSeq //!< The command sequence number
-                    );
+          //! Copy of file name for events
+          Fw::LogStringArg m_logFileName;
 
-            //! Handler for input port cmdResponseIn
-            //!
-            void cmdResponseIn_handler(NATIVE_INT_TYPE portNum, //!< The port number
-                    FwOpcodeType opcode, //!< The command opcode
-                    U32 cmdSeq, //!< The command sequence number
-                    Fw::CommandResponse response //!< The command response
-                    );
+          //! Serialize buffer to hold the binary sequence data
+          Fw::ExternalSerializeBuffer m_buffer;
+          
+          //! The allocator ID
+          NATIVE_INT_TYPE m_allocatorId;
 
-            //! Handler for input port schedIn
-            //!
-            void schedIn_handler(NATIVE_INT_TYPE portNum, //!< The port number
-                    NATIVE_UINT_TYPE order //!< The call order
-                    );
+          //! The sequence header
+          Header m_header;
 
-            //! Handler for input port seqRunIn
-            void seqRunIn_handler(
-                   NATIVE_INT_TYPE portNum, /*!< The port number*/
-                   Fw::EightyCharString &filename /*!< The sequence file*/
-               );
+      };
 
-            //! Handler for ping port
-            void pingIn_handler(
-                    NATIVE_INT_TYPE portNum, /*!< The port number*/
-                    U32 key /*!< Value to return to pinger*/
-                );
+      //! \class FPrimeSequence
+      //! \brief A sequence that uses the F Prime binary format
+      class FPrimeSequence :
+        public Sequence
+      {
 
         PRIVATE:
 
-            // ----------------------------------------------------------------------
-            // Command handler implementations
-            // ----------------------------------------------------------------------
+          enum Constants {
+            INITIAL_COMPUTED_VALUE = 0xFFFFFFFFU
+          };
 
-            //! Handler for command CS_Start
-            //! Start running a command sequence
-            void CS_Start_cmdHandler(
-            FwOpcodeType opcode, //!< The opcode
-                    U32 cmdSeq //!< The command sequence number
-                    );
+        public:
 
-            //! Handler for command CS_Step
-            //! Perform one step in a command sequence.
-            //! Valid only if SequenceRunner is in MANUAL run mode.
-            void CS_Step_cmdHandler(
-            FwOpcodeType opcode, //!< The opcode
-                    U32 cmdSeq //!< The command sequence number
-                    );
+          //! \class CRC
+          //! \brief Container for computed and stored CRC values
+          struct CRC {
 
-            //! Handler for command CS_Auto
-            //! Set the run mode to AUTO.
-            void CS_Auto_cmdHandler(
-            FwOpcodeType opcode, //!< The opcode
-                    U32 cmdSeq //!< The command sequence number
-                    );
+            //! Construct a CRC
+            CRC(void);
 
-            //! Handler for command CS_Manual
-            //! Set the run mode to MANUAL.
-            void CS_Manual_cmdHandler(
-            FwOpcodeType opcode, //!< The opcode
-                    U32 cmdSeq //!< The command sequence number
-                    );
+            //! Initialize computed CRC
+            void init(void);
 
-            // ----------------------------------------------------------------------
-            // Private helper methods
-            // ----------------------------------------------------------------------
+            //! Update computed CRC
+            void update(
+                const BYTE* buffer, //!< The buffer
+                NATIVE_UINT_TYPE bufferSize //!< The buffer size
+            );
 
-            // ----------------------------------------------------------------------
-            // Helper methods
-            // ----------------------------------------------------------------------
+            //! Finalize computed CRC
+            void finalize(void);
 
-            //! Require a run mode
-            //! \return Whether we are in the correct mode
-            bool requireRunMode(RunMode mode); //!< The required mode
+            //! Computed CRC
+            U32 m_computed;
 
-            //! Record an error
-            void error(void);
+            //! Stored CRC
+            U32 m_stored;
 
-            //! Record a completed command
-            void commandComplete(const U32 opCode);
+          };
 
-            //! Record an error in executing a sequence command
-            void commandError(const U32 number, //!< The command number
-                    const U32 opCode, //!< The command opcode
-                    const U32 error //!< The error code
-                    );
+        public:
 
-            //! Record a sequence complete event
-            void sequenceComplete(void);
+          //! Construct an FPrimeSequence
+          FPrimeSequence(
+              CmdSequencerComponentImpl& component //!< The enclosing component
+          );
 
-            //! Perform a Step command
-            void performCmd_Step(void);
+        public:
 
-            //! Perform a Step command with an absolute time
-            void performCmd_Step_ABSOLUTE(Fw::Time& currentTime //!< The time
-                    );
+          //! Load a sequence file
+          //! \return Success or failure
+          bool loadFile(
+              const Fw::CmdStringArg& fileName //!< The file name
+          );
 
-            //! Perform a Step command with a relative time
-            void performCmd_Step_RELATIVE(Fw::Time& currentTime //!< The time
-                    );
+          //! Query whether the sequence has any more records
+          //! \return Yes or no
+          bool hasMoreRecords(void) const;
 
-            //! Emit a FileInvalid event
-            void eventFileInvalid(FileReadStage stage, I32 error);
+          //! Get the next record in the sequence.
+          //! Asserts on failure
+          void nextRecord(
+              Record& record //!< The returned record
+          );
 
-            //! Emit a FileReadError event
-            void eventFileReadError(void);
+          //! Reset the sequence to the beginning.
+          //! After calling this, hasMoreRecords should return true, unless
+          //! the sequence has no records.
+          void reset(void);
 
-            //! Emit a FileSizeError event
-            void eventFileSizeError(U32 size);
-
-            //! Emit a RecordInvalid event
-            void eventRecordInvalid(U32 n, I32 error //!< The record number
-                    );
-
-            //! Emit a TimeBaseMismatch event
-            void eventTimeBaseMismatch(
-                    U32 currTimeBase, //!< The current time base
-                    U32 seqTimeBase //!< The sequence file time base
-                    );
-
-            //! Emit a TimeContextMismatch event
-            void eventTimeContextMismatch(
-                    U32 currTimeContext, //!< The current time context
-                    U32 seqTimeContxt //!< The sequence file time context
-                    );
-
-            //! Perform a Cancel command
-            void performCmd_Cancel(void);
-
-            //! Perform a Load command
-            //! \return status (succeed or fail)
-            bool performCmd_Load(const Fw::CmdStringArg& fileName); //!< The file name
-
-            //! Read an open sequence file
-            //! \return status (succeed or fail)
-            bool readOpenSequenceFile(void);
-
-            //! Read a sequence file
-            //! \return status (succeed or fail)
-            bool readSequenceFile(void);
-
-            //! Validate a sequence buffer
-            //! \return status (succeed or fail)
-            bool validateBuffer(void);
-
-            //! Some CRC helpers
-
-            //! initialize CRC
-            static void initCrc(U32 &crc);
-
-            //! update CRC
-            static void updateCRC(U32 &crc, const BYTE* buffer, NATIVE_UINT_TYPE bufferSize);
-
-            //! finalize CRC
-            static void finalizeCRC(U32 &crc);
-
-            //! set command timeout timer
-            void setCmdTimeout(const Fw::Time &currentTime);
-
-            // ----------------------------------------------------------------------
-            // Data
-            // ----------------------------------------------------------------------
+          //! Clear the sequence records.
+          //! After calling this, hasMoreRecords should return false.
+          void clear(void);
 
         PRIVATE:
 
-            //! The deserialize buffer wrapper for the file contents
-            Fw::ExternalSerializeBuffer m_seqBuffer;
+          //! Read a sequence file
+          //! \return Success or failure
+          bool readFile(void);
 
-            //! Number of records in the file
-            U32 m_numRecords;
+          //! Read an open sequence file
+          //! \return Success or failure
+          bool readOpenFile(void);
 
-            //! Time base of file
-            TimeBase m_timeBase;
+          //! Read a binary sequence header from the sequence file
+          //! into the buffer
+          //! \return Success or failure
+          bool readHeader(void);
 
-            //! Context of file
-            FwTimeContextStoreType m_timeContext;
+          //! Deserialize the binary sequence header from the buffer
+          //! \return Success or failure
+          bool deserializeHeader(void);
 
-            //! Computed CRC of file
-            U32 m_fileCRC;
+          //! Read records and CRC into buffer
+          //! \return Success or failure
+          bool readRecordsAndCRC(void);
 
-            //! The allocator ID
-            NATIVE_INT_TYPE m_allocatorId;
+          //! Extract CRC from record data
+          //! \return Success or failure
+          bool extractCRC(void);
 
-            //! The sequence file name
-            Fw::CmdStringArg m_fileName;
-            //! Copy of file name for events
-            Fw::LogStringArg m_logFileName;
+          //! Validate the CRC
+          //! \return Success or failure
+          bool validateCRC(void);
 
-            //! The sequence file
-            Os::File m_sequenceFile;
+          //! Deserialize a record from a buffer
+          //! \return Serialize status
+          Fw::SerializeStatus deserializeRecord(
+              Record& record //!< The record
+          );
 
-            //! The number of Load commands executed
-            U32 m_loadCmdCount;
+          //! Deserialize a record descriptor
+          //! \return Serialize status
+          Fw::SerializeStatus deserializeDescriptor(
+              Record::Descriptor& descriptor //!< The descriptor
+          );
 
-            //! The number of Cancel commands executed
-            U32 m_cancelCmdCount;
+          //! Deserialize a time tag
+          //! \return Serialize status
+          Fw::SerializeStatus deserializeTimeTag(
+              Fw::Time& timeTag //!< The time tag
+          );
 
-            //! The number of errors
-            U32 m_errorCount;
+          //! Deserialize the record size
+          //! \return Serialize status
+          Fw::SerializeStatus deserializeRecordSize(
+              U32& recordSize //!< The record size
+          );
 
-            //! The queue depth
-            NATIVE_INT_TYPE m_queueDepth;
+          //! Copy the serialized command into a com buffer
+          //! \return Serialize status
+          Fw::SerializeStatus copyCommand(
+              Fw::ComBuffer& comBuffer, //!< The com buffer
+              const U32 recordSize //!< The record size
+          );
 
-            //! The run mode
-            RunMode m_runMode;
+          //! Validate the sequence records in the buffer
+          //! \return Success or failure
+          bool validateRecords(void);
 
-            //! The step mode
-            StepMode m_stepMode;
+        PRIVATE:
 
-            //! The command record currently being processed
-            CmdRecord m_cmdRecord;
+          //! The CRC values
+          CRC m_crc;
 
-            //! The command time timer
-            Timer m_cmdTimer;
+          //! The sequence file
+          Os::File m_sequenceFile;
 
-            //! The number of commands executed in this sequence
-            U32 m_executedCount;
+      };
 
-            //! The total number of commands executed across all sequences
-            U32 m_totalExecutedCount;
+    PRIVATE:
 
-            //! The total number of sequences completed
-            U32 m_sequencesCompletedCount;
+      // ----------------------------------------------------------------------
+      // Private classes 
+      // ----------------------------------------------------------------------
 
-            //! Preamble for some checks
-            void preamble(void);
+      //! \class Timer
+      //! \brief A class representing a timer
+      class Timer {
 
-            // some constants
+        PRIVATE:
 
-            enum {
-                SEQ_FILE_HEADER_SIZE = //!< sequence file header size
-                    sizeof(U32) +
-                    sizeof(U32) +
-                    sizeof(FwTimeBaseStoreType) +
-                    sizeof(FwTimeContextStoreType)
-            };
+          //! The timer state
+          typedef enum {
+            SET, CLEAR
+          } State;
 
-            //! timeout value
-            NATIVE_UINT_TYPE m_timeout;
-            //! timeout timer
-            Timer m_cmdTimeoutTimer;
+        public:
 
-    };
+          //! Construct a Timer object
+          Timer(void) :
+            m_state(CLEAR) 
+          {
+
+          }
+
+          //! Set the expiration time
+          void set(
+              Fw::Time time //!< The time
+          ) {
+            this->m_state = SET;
+            this->expirationTime = time;
+          }
+
+          //! Clear the timer
+          void clear(void) {
+            this->m_state = CLEAR;
+          }
+
+          //! Determine whether the timer is expired at a given time
+          //! \return Yes or no
+          bool isExpiredAt(
+              Fw::Time time //!< The time
+          ) {
+            if (this->m_state == CLEAR) {
+              return false;
+            } else if (
+                Fw::Time::compare(this->expirationTime, time) == Fw::Time::GT
+            ) {
+              return false;
+            }
+            return true;
+          }
+
+        PRIVATE:
+
+          //! The timer state
+          State m_state;
+
+          //! The expiration time
+          Fw::Time expirationTime;
+
+      };
+
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Construction, initialization, and destruction
+      // ----------------------------------------------------------------------
+
+      //! Construct a CmdSequencer
+      CmdSequencerComponentImpl(
+#if FW_OBJECT_NAMES == 1
+          const char* compName //!< The component name
+#else
+          void
+#endif
+      );
+
+      //! Initialize a CmdSequencer
+      void init(
+          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
+          const NATIVE_INT_TYPE instance //!< The instance number
+      );
+
+      //! (Optional) Set a timeout. 
+      //! Sequence will quit if a command takes longer than the number of
+      //! seconds in the timeout value.
+      void setTimeout(
+          NATIVE_UINT_TYPE seconds //!< The number of seconds
+      );
+
+      //! (Optional) Set the sequence format.
+      //! CmdSequencer will use the sequence object you pass in 
+      //! to load and run sequences. By default, it uses an FPrimeSequence
+      //! object.
+      void setSequenceFormat(
+          Sequence& sequence //!< The sequence object
+      );
+
+      //! Give the sequence a memory buffer. 
+      //! Call this after constructor and init, and after setting
+      //! the sequence format, but before task is spawned.
+      void allocateBuffer(
+          NATIVE_INT_TYPE identifier, //!< The identifier
+          Fw::MemAllocator& allocator, //!< The allocator
+          NATIVE_UINT_TYPE bytes //!< The number of bytes
+      );
+
+      //! (Optional) Load a sequence to run later.
+      //! When you call this function, the event ports must be connected.
+      void loadSequence(
+          const Fw::EightyCharString& fileName //!< The file name
+      );
+
+      //! Return allocated buffer. Call during shutdown.
+      void deallocateBuffer(
+          Fw::MemAllocator& allocator //!< The allocator
+      );
+
+      //! Destroy a CmdDispatcherComponentBase
+      ~CmdSequencerComponentImpl(void);
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Handler implementations for input ports
+      // ----------------------------------------------------------------------
+
+      //! Handler for input port cmdResponseIn
+      void cmdResponseIn_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          FwOpcodeType opcode, //!< The command opcode
+          U32 cmdSeq, //!< The command sequence number
+          Fw::CommandResponse response //!< The command response
+      );
+
+      //! Handler for input port schedIn
+      void schedIn_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          NATIVE_UINT_TYPE order //!< The call order
+      );
+
+      //! Handler for input port seqRunIn
+      void seqRunIn_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          Fw::EightyCharString &filename //!< The sequence file
+      );
+
+      //! Handler for ping port
+      void pingIn_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          U32 key //!< Value to return to pinger
+      );
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Command handler implementations
+      // ----------------------------------------------------------------------
+
+      //! Handler for command CS_AUTO
+      //! Set the run mode to AUTO.
+      void CS_AUTO_cmdHandler(
+          FwOpcodeType opcode, //!< The opcode
+          U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Handler for command CS_CANCEL
+      //! Validate a command sequence file
+      void CS_CANCEL_cmdHandler(
+          FwOpcodeType opCode, //!< The opcode
+          U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Handler for command CS_MANUAL
+      //! Set the run mode to MANUAL.
+      void CS_MANUAL_cmdHandler(
+          FwOpcodeType opcode, //!< The opcode
+          U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Handler for command CS_RUN
+      void CS_RUN_cmdHandler(
+          FwOpcodeType opCode, //!< The opcode
+          U32 cmdSeq, //!< The command sequence number
+          const Fw::CmdStringArg& fileName //!< The file name
+      );
+
+      //! Handler for command CS_START
+      //! Start running a command sequence
+      void CS_START_cmdHandler(
+          FwOpcodeType opcode, //!< The opcode
+          U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Handler for command CS_STEP
+      //! Perform one step in a command sequence.
+      //! Valid only if SequenceRunner is in MANUAL run mode.
+      void CS_STEP_cmdHandler(
+          FwOpcodeType opcode, //!< The opcode
+          U32 cmdSeq //!< The command sequence number
+      );
+
+      //! Handler for command CS_VALIDATE
+      //! Run a command sequence file
+      void CS_VALIDATE_cmdHandler(
+          FwOpcodeType opCode, //!< The opcode
+          U32 cmdSeq, //!< The command sequence number
+          const Fw::CmdStringArg& fileName //!< The name of the sequence file
+      );
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Private helper methods
+      // ----------------------------------------------------------------------
+
+      //! Load a sequence file
+      //! \return Success or failure
+      bool loadFile(
+          const Fw::CmdStringArg& fileName //!< The file name
+      );
+
+      //! Perform a Cancel command
+      void performCmd_Cancel(void);
+
+      //! Perform a Step command
+      void performCmd_Step(void);
+
+      //! Perform a Step command with a relative time
+      void performCmd_Step_RELATIVE(
+          Fw::Time& currentTime //!< The time
+      );
+
+      //! Perform a Step command with an absolute time
+      void performCmd_Step_ABSOLUTE(
+          Fw::Time& currentTime //!< The time
+      );
+
+      //! Record a completed command
+      void commandComplete(
+          const U32 opCode //!< The opcode
+      );
+
+      //! Record a sequence complete event
+      void sequenceComplete(void);
+
+      //! Record an error
+      void error(void);
+
+      //! Record an error in executing a sequence command
+      void commandError(
+          const U32 number, //!< The command number
+          const U32 opCode, //!< The command opcode
+          const U32 error //!< The error code
+      );
+
+      //! Require a run mode
+      //! \return Whether we are in the correct mode
+      bool requireRunMode(
+          RunMode mode //!< The required mode
+      );
+
+      //! Set command timeout timer
+      void setCmdTimeout(
+          const Fw::Time &currentTime //!< The current time
+      );
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Private member variables
+      // ----------------------------------------------------------------------
+
+      //! The F Prime sequence
+      FPrimeSequence m_FPrimeSequence;
+
+      //! The abstract sequence
+      Sequence *m_sequence;
+
+      //! The number of Load commands executed
+      U32 m_loadCmdCount;
+
+      //! The number of Cancel commands executed
+      U32 m_cancelCmdCount;
+
+      //! The number of errors
+      U32 m_errorCount;
+
+      //! The run mode
+      RunMode m_runMode;
+
+      //! The step mode
+      StepMode m_stepMode;
+
+      //! The sequence record currently being processed
+      Sequence::Record m_record;
+
+      //! The command time timer
+      Timer m_cmdTimer;
+
+      //! The number of commands executed in this sequence
+      U32 m_executedCount;
+
+      //! The total number of commands executed across all sequences
+      U32 m_totalExecutedCount;
+
+      //! The total number of sequences completed
+      U32 m_sequencesCompletedCount;
+
+      //! timeout value
+      NATIVE_UINT_TYPE m_timeout;
+
+      //! timeout timer
+      Timer m_cmdTimeoutTimer;
+
+  };
 
 };
 

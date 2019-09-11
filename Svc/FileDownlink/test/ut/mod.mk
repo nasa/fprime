@@ -3,14 +3,15 @@
 # ----------------------------------------------------------------------
 
 TEST_SRC= \
-				TesterBase.cpp \
-				GTestBase.cpp \
+				Handcode/TesterBase.cpp \
+				Handcode/GTestBase.cpp \
 				Tester.cpp \
 				Main.cpp  \
 				FileBuffer.cpp
 
 TEST_MODS= \
 	Svc/FileDownlink \
+	Svc/Ping \
 	Fw/Tlm \
 	Fw/Log \
 	Fw/Time \
@@ -26,3 +27,7 @@ TEST_MODS= \
 	CFDP/Checksum \
 	Fw/Types \
 	gtest
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Note: inputType attribute can be sync, async, or guarded. Only for input />
+   Note: priority attribute can be high, medium, low or interrupt.
+         Only valid for active components input.
+   Note  kind attribute of component can be active, passive or queued.
+         -->
+<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Partition" kind="passive" namespace="Partition">
+    <comment>A demonstration Duck component with three ports</comment>
+    <ports>
+        <port name="inputPort1" data_type="Serial" kind="sync_input">
+            <comment/>
+        </port>
+
+        <port name="inputPort2" data_type="Serial" kind="sync_input">
+            <comment/>
+        </port>
+
+        <port name="outputPort1" kind="output" data_type="Serial">
+            <comment/>
+        </port>
+
+        <port name="outputPort2" kind="output" data_type="Serial">
+            <comment/>
+        </port>
+
+    </ports>
+</component>

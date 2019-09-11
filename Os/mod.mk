@@ -1,25 +1,24 @@
 #
 #   Copyright 2004-2008, by the California Institute of Technology.
 #   ALL RIGHTS RESERVED. United States Government Sponsorship
-#   acknowledged. Any commercial use must be negotiated with the Office
-#   of Technology Transfer at the California Institute of Technology.
+#   acknowledged.
 #
-#   Information included herein is controlled under the International
-#   Traffic in Arms Regulations ("ITAR") by the U.S. Department of State.
-#   Export or transfer of this information to a Foreign Person or foreign
-#   entity requires an export license issued by the U.S. State Department
-#   or an ITAR exemption prior to the export or transfer.
 #
 
 SRC = 			TaskCommon.cpp \
 				TaskString.cpp \
 				QueueCommon.cpp \
 				QueueString.cpp \
+				IPCQueueCommon.cpp \
 				SimpleQueueRegistry.cpp \
 				MemCommon.cpp \
-				ValidateFileCommon.cpp 
+				ValidateFileCommon.cpp \
+				ValidatedFile.cpp \
+				FileCommon.cpp \
+				IntervalTimerCommon.cpp
 
 HDR = 			Queue.hpp \
+				IPCQueue.hpp \
 				QueueString.hpp \
 				SimpleQueueRegistry.hpp \
 				Task.hpp \
@@ -30,9 +29,12 @@ HDR = 			Queue.hpp \
 				Mutex.hpp \
 				File.hpp \
 				ValidateFile.hpp \
-				FileSystem.hpp
+				FileSystem.hpp \
+				LocklessQueue.hpp \
+				ValidatedFile.hpp
 
-SRC_LINUX=      Pthreads/Queue.cpp \
+SRC_LINUX=      Posix/IPCQueue.cpp \
+               	Pthreads/Queue.cpp \
                	Pthreads/BufferQueueCommon.cpp \
                 Pthreads/PriorityBufferQueue.cpp \
                 Pthreads/MaxHeap/MaxHeap.cpp \
@@ -44,9 +46,11 @@ SRC_LINUX=      Pthreads/Queue.cpp \
 				X86/IntervalTimer.cpp \
 				Linux/IntervalTimer.cpp \
 				Posix/Mutex.cpp \
-				Linux/FileSystem.cpp
+				Linux/FileSystem.cpp \
+				Posix/LocklessQueue.cpp
 
-SRC_DARWIN =    Pthreads/Queue.cpp \
+SRC_DARWIN =    MacOs/IPCQueueStub.cpp \ # NOTE(mereweth) - provide a stub that only works in single-process, not IPC
+               	Pthreads/Queue.cpp \
                 Pthreads/BufferQueueCommon.cpp \
                 Pthreads/PriorityBufferQueue.cpp \
                 Pthreads/MaxHeap/MaxHeap.cpp \
@@ -58,7 +62,8 @@ SRC_DARWIN =    Pthreads/Queue.cpp \
 				X86/IntervalTimer.cpp \
 				MacOs/IntervalTimer.cpp \
 				Posix/Mutex.cpp \
-				Linux/FileSystem.cpp
+				Linux/FileSystem.cpp  \
+				Posix/LocklessQueue.cpp
 
 SRC_CYGWIN =    Pthreads/Queue.cpp \
                	Pthreads/BufferQueueCommon.cpp \

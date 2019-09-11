@@ -1,0 +1,255 @@
+// ======================================================================
+// \title  ${name}/test/ut/GTestBase.hpp
+// \author Auto-generated
+// \brief  hpp file for ${name} component Google Test harness base class
+//
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
+\#ifndef ${name}_GTEST_BASE_HPP
+\#define ${name}_GTEST_BASE_HPP
+
+\#include "TesterBase.hpp"
+\#include "gtest/gtest.h"
+
+#if $has_commands:
+// ----------------------------------------------------------------------
+// Macros for command history assertions
+// ----------------------------------------------------------------------
+
+\#define ASSERT_CMD_RESPONSE_SIZE(size) \
+  this->assertCmdResponse_size(__FILE__, __LINE__, size)
+
+\#define ASSERT_CMD_RESPONSE(index, opCode, cmdSeq, response) \
+  this->assertCmdResponse(__FILE__, __LINE__, index, opCode, cmdSeq, response)
+
+#end if
+#if $has_telemetry:
+// ----------------------------------------------------------------------
+// Macros for telemetry history assertions
+// ----------------------------------------------------------------------
+
+\#define ASSERT_TLM_SIZE(size) \
+  this->assertTlm_size(__FILE__, __LINE__, size)
+
+  #for $id, $channel_name, $type, $size, $update, $comment, $typeinfo in $channels:
+\#define ASSERT_TLM_${channel_name}_SIZE(size) \
+  this->assertTlm_${channel_name}_size(__FILE__, __LINE__, size)
+
+\#define ASSERT_TLM_${channel_name}(index, value) \
+  this->assertTlm_${channel_name}(__FILE__, __LINE__, index, value)
+
+  #end for
+#end if
+#if $has_events:
+// ----------------------------------------------------------------------
+// Macros for event history assertions
+// ----------------------------------------------------------------------
+
+\#define ASSERT_EVENTS_SIZE(size) \
+  this->assertEvents_size(__FILE__, __LINE__, size)
+
+  #for $id, $event_name, $severity, $format_string, $throttle, $comment in $events:
+\#define ASSERT_EVENTS_${event_name}_SIZE(size) \
+  this->assertEvents_${event_name}_size(__FILE__, __LINE__, size)
+
+    #set $params = $event_params[$event_name]
+    #if len($params) > 0:
+\#define ASSERT_EVENTS_${event_name}(index$emit_macro_params($params)) \
+  this->assertEvents_${event_name}(__FILE__, __LINE__, index$emit_macro_params($params))
+
+    #end if
+  #end for
+#end if
+#if len($typed_user_output_ports) > 0:
+// ----------------------------------------------------------------------
+// Macros for typed user from port history assertions
+// ----------------------------------------------------------------------
+
+\#define ASSERT_FROM_PORT_HISTORY_SIZE(size) \
+  this->assertFromPortHistory_size(__FILE__, __LINE__, size)
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+\#define ASSERT_from_${instance}_SIZE(size) \
+  this->assert_from_${instance}_size(__FILE__, __LINE__, size)
+
+    #set $params = $port_params[$instance]
+    #if len($params) > 0:
+\#define ASSERT_from_${instance}(index$emit_macro_params($params)) \
+  { \
+    ASSERT_GT(this->fromPortHistory_${instance}->size(), static_cast<U32>(index)) \
+    $failure_message \
+    $LTLT "  Value:    Index into history of from_${instance}\n" \
+    $LTLT "  Expected: Less than size of history (" \
+    $LTLT this->fromPortHistory_${instance}->size() $LTLT ")\n" \
+    $LTLT "  Actual:   " $LTLT index $LTLT "\n"; \
+    const FromPortEntry_${instance}& _e = \
+      this->fromPortHistory_${instance}->at(index); \
+      #for $param_name, $param_type, $param_comment, $param_modifier, $param_enum in $params
+    ASSERT_EQ(_${param_name}, _e.${param_name}) \
+    $failure_message \
+    $LTLT "  Value:    Value of argument $param_name at index " \
+    $LTLT index \
+    $LTLT " in history of from_${instance}\n" \
+    $LTLT "  Expected: " $LTLT _$param_name $LTLT "\n" \
+    $LTLT "  Actual:   " $LTLT _e.${param_name} $LTLT "\n"; \
+      #end for
+  }
+
+    #end if
+  #end for
+#end if
+#if $namespace_list != None
+  #for $namespace in $namespace_list
+namespace ${namespace} {
+
+  #end for
+#end if
+  //! \class $gtest_base
+  //! \brief Auto-generated base class for $name component Google Test harness
+  //!
+  class $gtest_base :
+    public $tester_base
+  {
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Construction and destruction
+      // ----------------------------------------------------------------------
+
+      //! Construct object $gtest_base
+      //!
+      ${gtest_base}(
+\#if FW_OBJECT_NAMES == 1
+$emit_hpp_params([ $param_compName, $param_maxHistorySize ])
+\#else
+$emit_hpp_params([ $param_maxHistorySize ])
+\#endif
+      );
+
+      //! Destroy object $gtest_base
+      //!
+      virtual ~${gtest_base}(void);
+
+#if $has_commands
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Commands
+      // ----------------------------------------------------------------------
+
+      //! Assert size of command response history
+      //!
+      void assertCmdResponse_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+      //! Assert command response in history at index
+      //!
+      void assertCmdResponse(
+$emit_hpp_params($params_assert_cmd_response)
+      ) const;
+
+#end if
+#if $has_telemetry
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Telemetry
+      // ----------------------------------------------------------------------
+
+      //! Assert size of telemetry history
+      //!
+      void assertTlm_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+  #for $id, $channel_name, $type, $size, $update, $comment, $typeinfo in $channels:
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Channel: ${channel_name}
+      // ----------------------------------------------------------------------
+
+      //! Assert telemetry value in history at index
+      //!
+      void assertTlm_${channel_name}_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+    #set $param_val = $get_param_val_Tlm($type, $typeinfo)
+      void assertTlm_${channel_name}(
+$emit_hpp_params([ $param_fileName, $param_lineNumber, $param_index, $param_val ])
+      ) const;
+
+  #end for
+#end if
+#if $has_events
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Events
+      // ----------------------------------------------------------------------
+
+      void assertEvents_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+  #for $id, $event_name, $severity, $format_string, $throttle, $comment in $events:
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Event: $event_name
+      // ----------------------------------------------------------------------
+
+      void assertEvents_${event_name}_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+    #set $params = $get_event_params($event_name)
+    #if len($params) > 0:
+      void assertEvents_${event_name}(
+$emit_hpp_params($params_assert_event + $params)
+      ) const;
+
+    #end if
+  #end for
+#end if
+#if len($typed_user_output_ports) > 0:
+    protected:
+
+      // ----------------------------------------------------------------------
+      // From ports
+      // ----------------------------------------------------------------------
+
+      void assertFromPortHistory_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    protected:
+
+      // ----------------------------------------------------------------------
+      // From port: ${instance}
+      // ----------------------------------------------------------------------
+
+      void assert_from_${instance}_size(
+$emit_hpp_params($params_assert_size)
+      ) const;
+
+  #end for
+#end if
+  };
+
+#if $namespace_list != None
+  #for $namespace in $namespace_list
+} // end namespace $namespace
+
+  #end for
+#end if
+\#endif

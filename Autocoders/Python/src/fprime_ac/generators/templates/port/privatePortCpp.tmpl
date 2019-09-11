@@ -1,0 +1,74 @@
+\#if FW_PORT_SERIALIZATION == 1    
+    Fw::SerializeStatus Input${name}Port::invokeSerial(Fw::SerializeBufferBase &buffer) {
+#if $ret_flag == False:
+#if len($args) > 0:
+        Fw::SerializeStatus _status;
+#end if        
+\#if FW_PORT_TRACING == 1
+        this->trace();
+\#endif
+        FW_ASSERT(this->m_comp);
+        FW_ASSERT(this->m_func);
+
+#set $num = 0
+#for $arg in $args:
+#if $enum_marker[$num] == 'ENUM':
+## Generate enum deserialize here...
+#if $pointer_marker[$num] == True:
+## With pointer modifier...
+        FwEnumStoreType *$arg[0];
+        void* ${arg[0]}PtrTemp;
+        _status = buffer.deserialize(${arg[0]}PtrTemp);
+        $arg[0] = static_cast<$argtype>(${arg[0]}PtrTemp);
+#else:
+        FwEnumStoreType ${arg[0]}_val;
+        _status = buffer.deserialize(${arg[0]}_val);
+#end if
+        if (Fw::FW_SERIALIZE_OK != _status) {
+            return _status;
+        }
+        $arg[1] $arg[0] = static_cast<$arg[1]>(${arg[0]}_val);
+#else:
+## Generate all other deserialize here...
+#if $arg[1] == "string":
+#set $argtype = $arg[0] + "String"
+#else if $arg[1] == "buffer":
+#set $argtype = $arg[0] + "Buffer"
+#else
+#set $argtype = $arg[1]
+#end if
+
+#if $pointer_marker[$num] == True:
+## With pointer modifier...
+
+        $argtype *$arg[0];
+        void* ${arg[0]}PtrTemp;
+        _status = buffer.deserialize(${arg[0]}PtrTemp);
+        $arg[0] = static_cast<$argtype*>(${arg[0]}PtrTemp);
+#else:
+## Without any pointer modifier...
+        $argtype $arg[0];
+        _status = buffer.deserialize($arg[0]);
+#end if
+        if (Fw::FW_SERIALIZE_OK != _status) {
+            return _status;
+        }
+#end if
+#set $num = $num + 1
+#end for
+
+#if len($args) > 0:
+        this->m_func(this->m_comp, this->m_portNum, ${args_string});
+#else:
+        this->m_func(this->m_comp, this->m_portNum);
+#end if
+    
+        return Fw::FW_SERIALIZE_OK;
+#else:
+## For return type the invokeSerial is not used so just throw an assert here...
+        FW_ASSERT(0);
+
+        return Fw::FW_SERIALIZE_OK;
+#end if
+    }
+\#endif

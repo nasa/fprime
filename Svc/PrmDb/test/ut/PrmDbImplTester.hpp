@@ -8,7 +8,7 @@
 #ifndef PRMDB_TEST_UT_PRMDBIMPLTESTER_HPP_
 #define PRMDB_TEST_UT_PRMDBIMPLTESTER_HPP_
 
-#include <Svc/PrmDb/test/ut/GTestBase.hpp>
+#include <GTestBase.hpp>
 #include <Svc/PrmDb/test/ut/PrmDbImplTesterCfg.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Os/File.hpp>
@@ -32,17 +32,23 @@ namespace Svc {
             void init(NATIVE_INT_TYPE instance = 0);
 
         private:
+            //! Handler for from_pingOut
+            //!
+            void from_pingOut_handler(
+                const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                U32 key /*!< Value to return to pinger*/
+            );
             Svc::PrmDbImpl& m_impl;
             void resetEvents(void);
 
             // open call modifiers
 
-            static bool OpenIntercepter(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
+            static bool OpenInterceptor(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
             Os::File::Status m_testOpenStatus;
 
             // read call modifiers
 
-            static bool ReadIntercepter(Os::File::Status &stat, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr);
+            static bool ReadInterceptor(Os::File::Status &stat, void * buffer, NATIVE_INT_TYPE &size, bool waitForFull, void* ptr);
             Os::File::Status m_testReadStatus;
             // How many read calls to let pass before modifying
             NATIVE_INT_TYPE m_readsToWait;
@@ -58,7 +64,7 @@ namespace Svc {
 
             // write call modifiers
 
-            static bool WriteIntercepter(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
+            static bool WriteInterceptor(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
             Os::File::Status m_testWriteStatus;
             // How many read calls to let pass before modifying
             NATIVE_INT_TYPE m_writesToWait;

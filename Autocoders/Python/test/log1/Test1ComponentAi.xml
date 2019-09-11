@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="TestEvent" kind="passive" namespace="Tlm">
+    <import_port_type>Autocoders/Python/test/log1/Test4PortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+    <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+
+    <comment>A component with a single event</comment>
+    <ports>
+        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" role="TimeGet"/>
+        <port name="Log" kind="output" data_type="Fw::Log" max_number="1" role="LogEvent"/>
+        <port name="LogText" kind="output" data_type="Fw::LogText" max_number="1" role="LogTextEvent"/>
+        <port name="aport" data_type="Another::Test4" kind="sync_input" >
+            <comment>
+            A test port
+            </comment>
+        </port>
+    </ports>
+    <events>
+        <event id="100" name="SomeEvent" severity="ACTIVITY_HI" format_string = "SomeEvent: %d">
+            <comment>
+            A test event
+            </comment>
+            <args>
+                <arg name="arg1" type="U32">
+                    <comment>The U32 log argument</comment>
+                </arg>
+            </args>
+        </event>
+    </events>
+</component>

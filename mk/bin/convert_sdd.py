@@ -8,10 +8,10 @@ import os
 source_md = sys.argv[1]
 dest_html = sys.argv[2]
 
-print "Converting %s to %s"%(source_md,dest_html)
+print("Converting %s to %s"%(source_md,dest_html))
 
 if not os.path.exists(source_md):
-    print("Markdown file %s does not exist!" % source_md)
+    print(("Markdown file %s does not exist!" % source_md))
     sys.exit(-1)
 
 # try:

@@ -1,0 +1,30 @@
+<title>${name} Component Dictionary</title>
+\#\# ${name} Component Dictionary
+
+#if $has_commands
+
+\#\#\#Command: ${name}
+
+|Mnemonic|ID|Description|Arg Name|Arg Type|Comment
+|---|---|---|---|---|---|
+#for $mnemonic, $opcode, $sync, $priority, $full, $comment in $commands:
+	#set $args = $command_args[$mnemonic]
+	#set $args_length = len($args) + 1
+	#if len($opcode) == 1:
+	   #set $opcode = $opcode[0]
+	   #if "x" in $opcode:
+	     #set $opcode = int($opcode, 16) + $base_id
+	   #else
+	     #set $opcode = int($opcode) + $base_id
+	   #end if
+       #set $hexopcode = hex($opcode)
+	#end if
+|${mnemonic}|${opcode} (${hexopcode})|${comment}| | |
+  			#if $args_length > 1
+  				#set $args_index = 1
+  				#for $arg_name, $arg_type, $comment, $typeinfo in $args:
+| | | |$arg_name|$arg_type|$comment|
+				#end for
+			#end if
+#end for
+#end if

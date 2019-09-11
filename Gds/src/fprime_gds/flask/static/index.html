@@ -1,0 +1,226 @@
+<!--
+index.html:
+
+This HTML document sets up the most basic of UIs for the F prime webified GUI layer. This GUI layer is built with the
+Bootstrap CSS, but without the paired JavaScript packages.
+
+
+This GUI provides the following items:
+
+1. Events panel showing events in the system
+2. Channels panel showing latest channel readings
+3. Commands panel allowing for commanding of the system
+
+Note: Bootstrap is used, as it can be run as a CSS framework without many node and JavaScript packages.
+Note: Vue.js annotations are used, as Vue is the data-to-view framework of choice.  It can be run with a single JS
+      dependency, without need for WebPack or other module loaders.
+-->
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="css/third-party/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
+        <link rel="stylesheet" href="css/third-party/vue-select.css">
+        <link rel="stylesheet" href="css/fpstyle.css">
+        <!-- Development mode -Vue- should it be needed for debug purposes -->
+        <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script-->
+
+        <!-- Third-party JavaScript files, hosted locally to remove internet dependence -->
+        <script src="js/third-party/vue.min.js"></script>
+        <script src="js/third-party/sorttable.js"></script>
+        <!-- JavaScript GDS files -->
+        <script type="module" src="js/gds.js"></script>
+    </head>
+    <body>
+        <div id="tabetc" class="container-fluid" style="height: 100%;">
+            <tabbed-etc
+                    v-bind:commands="commands"
+                    v-bind:loader="loader"
+                    v-bind:events="events"
+                    v-bind:channels="channels"
+                    v-bind:cmdhist="cmdhist"
+            ></tabbed-etc>
+        </div>
+
+        <div hidden>
+            <!-- Tabbed and routed Command Component -->
+            <template id="tabetc-template">
+                <div>
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                        <span class="navbar-brand">F´</span>
+                            <div class="navbar-nav">
+                                <div v-for="tab in tabs"
+                                    :class="['nav-item', 'nav-link', { active: currentTab == tab }]"
+                                    :key="tab"
+                                    v-on:click="currentTab = tab">{{ tab }}</div>
+                            </div>
+                    </nav>
+                    <div class="fp-top-container">
+                        <h1>F´ Ground Control Interface: {{ currentTab }}</h1>
+                        <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
+                        <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
+                           v-show="currentTab == 'Commanding'"></command-input>
+                        <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
+                        <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
+                    </div>
+                </div>
+            </template>
+
+
+            <!--
+            Command Templates:
+
+            Some such thing.
+            -->
+            <template id="command-input-template">
+                <div>
+                    <h2>Command Sending: {{ selected.full_name }}</h2>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label for="mnemonic">Mnemonic</label>
+                            <v-select id="mnemonic" style="flex: 1 1 auto;"
+                                      :clearable="false" :searchable="true"
+                                      :filterable="true"  label="full_name" :options="commandList" v-model="selected">
+                            </v-select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col" v-for="argument in selected.args">
+                            <label :for="argument.name">{{ argument.name }}</label>
+                            <input type="text" :id="argument.name" class="form-control"
+                                 :placeholder="argument.name"
+                                 v-model="argument.value">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="button" class="col-2 btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
+                        <button type="button" :disabled="active" class="col-2 btn btn-success" v-on:click="sendCommand">
+                            Send Command
+                        </button>
+                    </div>
+                    <div>
+                        <h2>Command History</h2>
+                        <fp-table :header-columns="['Command Time', 'Command Id', 'Command Mnemonic', 'Command Args']"
+                                  :items="cmdhist"
+                                  :item-to-columns="columnify"
+                                  :item-to-unique="keyify"
+                        ></fp-table>
+                    </div>
+                </div>
+            </template>
+            <template id="command-item-template">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{calculateCommandTime + " " + command.template.mnemonic }}</h5>
+                        <small>Command Id 0x{{ command.id.toString(16) }}</small>
+                    </div>
+                    <p class="mb-1">Arguments: {{ command.args }}</p>
+                </a>
+            </template>
+            <!--
+            Event Templates:
+
+            These templates provide for event listing items.
+            -->
+            <template id="event-list-template">
+                <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity', 'Event Description']"
+                          :items="events"
+                          :item-to-columns="columnify"
+                          :row-style="style"
+                          :item-to-unique="keyify"
+                ></fp-table>
+            </template>
+            <!--
+            Channel Templates:
+
+            These templates display a channel table.  It takes all channels supplied in a list, and prints a row for
+            each channel. If this list contains duplicates, then the display will contain duplicates. This can be fixed
+            -->
+            <template id="channel-table-template">
+               <fp-table :header-columns="['Last Sample Time', 'Channel Id', 'Channel Name', 'Channel Value']"
+                         :items="conform"
+                         :item-to-columns="columnify"
+                         :item-to-unique="keyify"
+                         :support-views="true"
+                         :item-to-view-name="itemToName"
+                         :item-hide="channelHider"
+               ></fp-table>
+            </template>
+
+
+            <!-- FP Table Templates:
+
+            FP Table is designed to create a common look-and-feel across all the table displays used in F´. This
+            provides for a common filtering box, view loading box, and table with header information. It is used for the
+            following table types:
+
+            1. Command History
+            2. Event History
+            3. Active Telemetry
+
+            This section consists of two templates, the row template, and the table template.
+            -->
+            <template id="fp-row-template">
+                <tr :class="calculateStyle">
+                    <th v-if="editing" v-on:input="onInput"><input type="checkbox" :checked="inView"></th>
+                    <td v-for="(column, index) in calculatedColumns">{{ column }}</td>
+                </tr>
+            </template>
+            <template id="fp-table-template">
+                <div>
+                    <div class="row">
+                        <div class="col-8"></div>
+                        <div class="col-1">Filters:</div>
+                        <div class="col-3">
+                            <v-select id="fp-table-filter" :clearable="true" :searchable="true" :taggable="true"
+                                      :no-drop="true" :options="[]" :multiple="true"
+                                      v-model="matching">
+                            </v-select>
+                        </div>
+                    </div>
+                    <div class="fp-scroll-container">
+                        <table  class="sortable table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th v-if="editing" class="sorttable_nosort">
+                                        <input type="checkbox" v-on:input="checkAll" ref="allbox"
+                                            :checked="view.length == items.length">
+                                    </th>
+                                    <th v-for="column in headerColumns">{{ column }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr is="fp-row" v-for="item in filteredItems" :item="item"
+                                    :item-to-columns="itemToColumns"
+                                    :row-style="rowStyle"
+                                    :key="itemToUnique(item)"
+                                    :editing="editing"
+                                    :in-view="inView(item)"
+                                    v-on:row-checked="checkedChild">
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- If the table supports editing views, these features support the edit context of the view -->
+                    <div class="row" v-if="editing">
+                        <div class="col-4"></div>
+                        <div class="btn-group col-8">
+                            <div type="button" class="btn btn-danger" v-on:click="clearView">Clear</div>
+                            <a :href="viewHref" download="current-view.txt" class="btn btn-primary">Export</a>
+                            <label class="btn btn-primary btn-file">
+                                Import<input type="file" v-on:input="readFile" style="display: none;">
+                            </label>
+                            <div type="button" class="btn btn-success" v-on:click="saveView">Done</div>
+                        </div>
+                    </div>
+                    <div class="row" v-if="!editing">
+                        <div class="col-10"></div>
+                        <button type="button" class="col-2 btn btn-primary" v-if="supportViews && !editing"
+                                v-on:click="editViews">Edit View</button>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </body>
+</html>

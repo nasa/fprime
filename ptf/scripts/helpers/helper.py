@@ -8,7 +8,7 @@ sighandler_registered = False
 
 def sighandler(signum, frame):
 	if signum == signal.SIGINT:
-		print "Helper received SIGINT! Exiting helpers..."
+		print("Helper received SIGINT! Exiting helpers...")
 		for helper in helper_list:
 			helper.exit()
 		sys.exit(1)

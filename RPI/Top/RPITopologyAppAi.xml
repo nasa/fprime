@@ -72,14 +72,14 @@
    
    <instance namespace="Drv" name="uartDrv" type="LinuxSerialDriver" base_id="2000"  base_id_window="20" />
    
-   <instance namespace="Drv" name="ledDrv" type="LinuxGpioDriver" base_id="2100"  base_id_window="1" />
-   <instance namespace="Drv" name="gpio23Drv" type="LinuxGpioDriver" base_id="2101"  base_id_window="1" />
-   <instance namespace="Drv" name="gpio24Drv" type="LinuxGpioDriver" base_id="2102"  base_id_window="1" />
-   <instance namespace="Drv" name="gpio25Drv" type="LinuxGpioDriver" base_id="2103"  base_id_window="1" />
-   <instance namespace="Drv" name="gpio17Drv" type="LinuxGpioDriver" base_id="2104"  base_id_window="1" />
-   <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2200"  base_id_window="20" />
+   <instance namespace="Drv" name="ledDrv" type="LinuxGpioDriver" base_id="2100"  base_id_window="100" />
+   <instance namespace="Drv" name="gpio23Drv" type="LinuxGpioDriver" base_id="2200"  base_id_window="100" />
+   <instance namespace="Drv" name="gpio24Drv" type="LinuxGpioDriver" base_id="2300"  base_id_window="100" />
+   <instance namespace="Drv" name="gpio25Drv" type="LinuxGpioDriver" base_id="2400"  base_id_window="100" />
+   <instance namespace="Drv" name="gpio17Drv" type="LinuxGpioDriver" base_id="2500"  base_id_window="100" />
+   <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2600"  base_id_window="100" />
 
-   <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2300"  base_id_window="20" />
+   <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2700"  base_id_window="100" />
 
 
    <!-- Command Registration/Dispatch/Reply Connections -->
@@ -522,6 +522,10 @@
    <connection name = "rpiDemo1Hz">
        <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
         <target component = "rpiDemo" port = "Run" type = "Sched" num = "0"/>
+   </connection>
+   <connection name = "cmdSeq">
+       <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+        <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
    </connection>
    
    <!-- Health Connections -->

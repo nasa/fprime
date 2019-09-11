@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "ASYNC_PORT">
+    <rule context="component">
+        <assert test="(//component/@kind = 'active' and count(//component/ports/port/@kind[. = 'async_input']) >= 1) or not (//component/@kind = 'active')">Active components should have at least 1 port of kind async_input.</assert>
+    </rule>
+</pattern>
+</schema>

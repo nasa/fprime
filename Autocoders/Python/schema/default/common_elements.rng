@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar  xmlns="http://relaxng.org/ns/structure/1.0" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <!-- Defenitions for items that can only have specific values -->
+
+    <define name = "full_items_define">
+        <a:documentation>Valid values for the full tag.</a:documentation>
+        <choice>
+            <value>drop</value>
+            <value>assert</value>
+            <value>block</value>
+        </choice>
+    </define>
+
+    <define name = "pass_by_define">
+        <a:documentation>Defines how the variable is being passed.</a:documentation>
+        <choice>
+            <value>reference</value>
+            <value>value</value>
+            <value>pointer</value>
+        </choice>
+    </define>
+
+    <define name="component_role_define">
+        <a:documentation>Choice for component roles.</a:documentation>
+        <choice>
+            <value>LogEvent</value>
+            <value>LogTextEvent</value>
+            <value>TimeGet</value>
+            <value>ParamSet</value>
+            <value>ParamGet</value>
+            <value>Telemetry</value>
+            <value>CmdRegistration</value>
+            <value>Cmd</value>
+            <value>CmdResponse</value>
+        </choice>
+    </define>
+
+
+    <define name = "channel_update_define">
+        <a:documentation>Choice between always and on_change. This is used in the channel 'update' tag.</a:documentation>
+        <choice>
+            <value>always</value>
+            <value>on_change</value>
+        </choice>
+    </define>
+
+    <define name="severity_define">
+        <a:documentation>Set of valid severity values. This is used for an event 'severity' tag.</a:documentation>
+        <choice>
+            <value>COMMAND</value>
+            <value>ACTIVITY_LO</value>
+            <value>ACTIVITY_HI</value>
+            <value>WARNING_LO</value>
+            <value>WARNING_HI</value>
+            <value>DIAGNOSTIC</value>
+            <value>FATAL</value>
+        </choice>
+    </define>
+
+    <define name = "command_kind_define">
+        <a:documentation>Choice between different command kinds.</a:documentation>
+        <choice>
+            <value>async</value>
+            <value>sync</value>
+            <value>guarded</value>
+        </choice>
+    </define>
+
+    <define name = "component_types_define">
+        <a:documentation>Choice between active, passive, or queued.</a:documentation>
+        <choice>
+            <value>active</value>
+            <value>passive</value>
+            <value>queued</value>
+        </choice>
+    </define>
+
+    <define name = "port_types_define">
+        <a:documentation>Choice between different port types.</a:documentation>
+        <choice>
+            <value>input</value>
+            <value>sync_input</value>
+            <value>guarded_input</value>
+            <value>async_input</value>
+            <value>model_input</value>
+            <value>output</value>
+        </choice>
+    </define>
+
+    <!-- Data types that require regular expressions -->
+
+    <define name = "id_or_system_var_define">
+        <a:documentation>Data types for items that can either be numbers or references to system variables that have numbers.</a:documentation>
+        <choice>
+            <ref name = "system_var_define"></ref>
+            <ref name = "id_define"></ref>
+        </choice>
+    </define>
+
+    <define name = "base_code_define">
+        <a:documentation>Made for base codes, ie 0x100,0x200</a:documentation>
+        <choice>
+            <ref name = "system_var_define"></ref>
+            <data type="string">
+                <param name = "pattern">(((0?x[0-9A-Fa-f]+)|\d+)(,?))+</param>
+            </data>
+        </choice>
+    </define>
+
+    <define name = "system_var_define">
+        <a:documentation>Data type for items that are system variables.</a:documentation>
+        <data type = "string">
+            <param name = "pattern">$[\w|_|\-]+</param>
+        </data>
+    </define>
+
+
+    <define name = "id_define">
+        <a:documentation>Defines a ID data type. Acceptable values formats include "10" , "0xA" , "xA".</a:documentation>
+        <data type="string">
+            <param name = "pattern">((0?x[0-9A-Fa-f]+)|\d+)</param>
+        </data>
+    </define>
+
+
+    <!-- Repeated element defines -->
+
+    <define name = "comment_define">
+        <element name = "comment">
+            <a:documentation>Simple comment tag with no attributes.</a:documentation>
+            <text/>
+        </element>
+    </define>
+
+    <define name = "enum_define">
+        <element name = "enum">
+            <attribute name = "name">
+                <a:documentation>Enum Name.</a:documentation>
+                <text/>
+            </attribute>
+
+            <oneOrMore>
+                <element name = 'item'>
+                    <attribute name = "name">
+                        <a:documentation>Name of the enum item.</a:documentation>
+                        <text/>
+                    </attribute>
+
+                    <optional>
+                        <attribute name = "value">
+                            <a:documentation>The value being sent through the enum item.</a:documentation>
+                            <text/>
+                        </attribute>
+                    </optional>
+
+                    <optional>
+                        <attribute name = "comment">
+                            <a:documentation>Comment about the enum item.</a:documentation>
+                            <text/>
+                        </attribute>
+                    </optional>
+
+                </element>
+            </oneOrMore>
+        </element>
+    </define>
+
+    <define name = "arg_define">
+        <a:documentation>Arguments with the pass by attribute.</a:documentation>
+        <element name = "arg">
+            <!-- Required Attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Name of the argument.</a:documentation>
+                <text/>
+            </attribute>
+
+
+            <optional>
+                <attribute name = "pass_by">
+                    <a:documentation>Defines how the arguments are passed.</a:documentation>
+                    <ref name = "pass_by_define"></ref>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "comment">
+                    <a:documentation>Comments about the argument.</a:documentation>
+                    <data type="string"></data>
+                </attribute>
+            </optional>
+
+            <!-- The interleave is used to mix together Attribute typed paired with an enum element if type = ENUM and a comment block -->
+            <interleave>
+                <ref name = "type_size_choice_define"></ref>
+
+                <optional>
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+            </interleave>
+        </element>
+    </define>
+
+    <define name = "return_define">
+        <a:documentation>Return with the pass by attribute</a:documentation>
+        <element name = "return">
+            <!-- Required Attributes -->
+
+
+            <optional>
+                <attribute name = "name">
+                    <a:documentation>Name of the argument.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+
+
+            <optional>
+                <attribute name = "pass_by">
+                    <a:documentation>Defines how the arguments are passed.</a:documentation>
+                    <ref name = "pass_by_define"></ref>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "comment">
+                    <a:documentation>Comments about the argument.</a:documentation>
+                    <data type="string"></data>
+                </attribute>
+            </optional>
+
+            <!-- The interleave is used to mix together Attribute typed paired with an enum element if type = ENUM and a comment block -->
+            <interleave>
+                <ref name = "type_size_choice_define"></ref>
+
+                <optional>
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+            </interleave>
+        </element>
+    </define>
+
+
+
+    <define name = "external_arg_define">
+        <a:documentation>Arguments without the pass by attributes. Used for events, commands, and telemetry.</a:documentation>
+        <element name = "arg">
+
+            <!-- Required Attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Name of the argument.</a:documentation>
+                <text/>
+            </attribute>
+
+            <!-- Optional Attributes -->
+
+            <optional>
+                <attribute name = "comment">
+                    <a:documentation>Comments about the argument.</a:documentation>
+                    <data type="string"></data>
+                </attribute>
+            </optional>
+
+            <!-- The interleave is used to mix together Attribute typed paired with an enum element if type = ENUM and a comment block -->
+            <interleave>
+                <ref name = "type_size_choice_define"></ref>
+
+                <optional>
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+            </interleave>
+        </element>
+    </define>
+
+    <define name="type_size_choice_define">
+        <!-- This is a common choice withing many elements. -->
+
+        <choice>
+
+            <!-- Choice one: Type = string and size is also an attribute -->
+            <group>
+                <choice>
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <attribute name = "type">
+                        <a:documentation>The type of data being passed through the argument.</a:documentation>
+                        <value>string</value>
+                    </attribute>
+
+                    <attribute name = "data_type">
+                        <a:documentation>The type of data being passed through the argument.</a:documentation>
+                        <value>string</value>
+                    </attribute>
+                </choice>
+
+
+                <attribute name = "size">
+                    <a:documentation>The size of the argument.</a:documentation>
+                    <data type="nonNegativeInteger"></data>
+                </attribute>
+            </group>
+
+            <!--Choice two: Type = ENUM and Enum element inside block -->
+            <group>
+                <choice>
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <attribute name = "type">
+                        <a:documentation>The type of data being passed through the argument.</a:documentation>
+                        <value>ENUM</value>
+                    </attribute>
+
+                    <attribute name = "data_type">
+                        <a:documentation>The type of data being passed through the argument.</a:documentation>
+                        <value>ENUM</value>
+                    </attribute>
+                </choice>
+
+
+                <ref name = "enum_define"></ref>
+            </group>
+
+            <!-- Choice three: Type != ENUM and Type != string and nothing inside block -->
+            <group>
+
+
+                <choice>
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <attribute name = "type">
+                        <a:documentation>The type of data being passed through the argument.</a:documentation>
+                        <!-- Any string BUT ENUM -->
+                        <data type = "string">
+                            <except>
+                                <choice>
+                                    <value>ENUM</value>
+                                    <value>string</value>
+                                </choice>
+                            </except>
+                        </data>
+                    </attribute>
+
+                    <attribute name = "data_type">
+                        <a:documentation>The type of data being passed through the argument.</a:documentation>
+                        <!-- Any string BUT ENUM -->
+                        <data type = "string">
+                            <except>
+                                <choice>
+                                    <value>ENUM</value>
+                                    <value>string</value>
+                                </choice>
+                            </except>
+                        </data>
+                    </attribute>
+                </choice>
+
+                <optional>
+                    <attribute name = "size">
+                        <a:documentation>The size of the argument.</a:documentation>
+                        <data type="nonNegativeInteger"></data>
+                    </attribute>
+                </optional>
+            </group>
+
+        </choice>
+    </define>
+</grammar>
