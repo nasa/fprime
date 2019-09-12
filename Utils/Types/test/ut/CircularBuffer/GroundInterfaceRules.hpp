@@ -16,8 +16,8 @@
  *
  * @author mstarch
  */
-#ifndef FPRIME_CIRCULARRULES_HPP
-#define FPRIME_CIRCULARRULES_HPP
+#ifndef FPRIME_GROUNDINTERFACERULES_HPP
+#define FPRIME_GROUNDINTERFACERULES_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/EightyCharString.hpp>
@@ -140,4 +140,4 @@ namespace Types {
         void action(MockTypes::CircularState& state);
     };
 };
-#endif //FPRIME_CIRCULARRULES_HPP
+#endif //FPRIME_GROUNDINTERFACERULES_HPP

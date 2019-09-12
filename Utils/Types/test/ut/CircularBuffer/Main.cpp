@@ -11,7 +11,7 @@
 #include <STest/Scenario/BoundedScenario.hpp>
 
 #include <Fw/Test/UnitTest.hpp>
-#include <Utils/Types/test/ut/CircularBuffer/CircularRules.hpp>
+#include <Utils/Types/test/ut/CircularBuffer/GroundInterfaceRules.hpp>
 #include <gtest/gtest.h>
 
 #include <stdio.h>

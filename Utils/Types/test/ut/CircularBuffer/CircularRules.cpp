@@ -7,7 +7,7 @@
  *
  * @author mstarch
  */
-#include "CircularRules.hpp"
+#include "GroundInterfaceRules.hpp"
 
 #include <cstdlib>
 #include <cmath>
