@@ -71,8 +71,7 @@ def main(argv=None):
             "--port", "%d" % used_port,
             "--host", addr
         ]
-        TTS = subprocess.Popen(TTS_args, stdout=tts_log,
-                               stderr=subprocess.STDOUT)
+        TTS = subprocess.Popen(TTS_args, stdout=tts_log, stderr=subprocess.STDOUT)
 
     # wait for TCP Server to start
     time.sleep(2)
