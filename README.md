@@ -14,7 +14,7 @@ F Prime has the following key features:
 
 ### Reusability
 
-F Primeâ€™s component-based architecture enables a high degree of modularity and software reuse. 
+F Prime's component-based architecture enables a high degree of modularity and software reuse. 
 
 ### Rapid Deployment
 

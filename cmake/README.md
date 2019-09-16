@@ -1,6 +1,6 @@
 # F´ CMake Build System
 
-Stock F´ ships with a bispoke make system ensure that building is done correctly and in the correct
+Stock F´ ships with a bespoke make system ensure that building is done correctly and in the correct
 order. However, using and maintaining this build system presents a steep learning curve to new
 users of F´. This included CMake system is intended as an eventual replacement to the existing
 build system that should be easier to learn and use. In addition, the use of cmake puts F´more in

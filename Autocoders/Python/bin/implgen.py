@@ -11,7 +11,8 @@
 # Copyright 2019, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
-
+from utils.pathmaker import setup_fprime_autocoder_path
+setup_fprime_autocoder_path()
 import os
 import sys
 import time
@@ -231,6 +232,7 @@ def main():
         ModelParser.BUILD_ROOT = BUILD_ROOT
         if VERBOSE:
             print("BUILD_ROOT set to %s" % BUILD_ROOT)
+        os.environ["BUILD_ROOT"] = BUILD_ROOT
     else:
         if ('BUILD_ROOT' in os.environ.keys()) == False:
             print("ERROR: Build root not set to root build path...")
