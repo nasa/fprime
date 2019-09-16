@@ -12,13 +12,15 @@
 # * persons.
 # *
 
-if !($?BUILD_ROOT) then
+
+if [ -z "$BUILD_ROOT" ]
+then
     set curdir = "${PWD}"
-    setenv BUILD_ROOT `dirname $0`/../..
+    export BUILD_ROOT=$(dirname $0)/../..
     cd $BUILD_ROOT
-    setenv BUILD_ROOT ${PWD}
+    export BUILD_ROOT=${PWD}
     cd ${curdir}
-endif
+fi
 
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
@@ -26,5 +28,6 @@ echo "BUILD_ROOT is: ${BUILD_ROOT}"
 export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=RASPIAN print_output_dir`"
 echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 
-export PYTHONPATH="${BUILD_ROOT}/Gse/src:${BUILD_ROOT}/Gse/generated/FlightDemo/serializable"
+export PYTHONPATH="${BUILD_ROOT}/Gds/src/fprime_gds/tkgui/tools/:${BUILD_ROOT}/Gds/src/:${BUILD_ROOT}/Fw/Python/src/"
 python "${BUILD_ROOT}/RPI/scripts/run_pi.py" "$@"
+
