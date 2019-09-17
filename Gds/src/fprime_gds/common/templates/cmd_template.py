@@ -10,6 +10,7 @@ Instances of this class describe a specific command type.
 '''
 from __future__ import absolute_import
 
+import copy
 from enum import Enum
 from . import data_template
 from fprime.common.models.serialize.type_base import BaseType
@@ -67,6 +68,9 @@ class CmdTemplate(data_template.DataTemplate):
         self.opcode = opcode
         self.description = description
         self.arguments = arguments
+        self.descriptor = None
+        self.sec = None
+        self.usec = None
 
 
     def get_full_name(self):
@@ -123,3 +127,53 @@ class CmdTemplate(data_template.DataTemplate):
             description may be None.
         '''
         return self.arguments
+    
+    # Methods to keep compatibility with the names used in
+    # Gds/src/fprime_gds/common/encoders/seq_writer. This allows sharing
+    # of the code.
+    
+    def setArgs(self, values):
+        
+        if len(values) != len(self.arguments):
+            raise ArgLengthMismatchException(len(self.arguments), len(values))
+    
+        # set the values of the arguments
+        new_arg_list = list()
+        for value, (arg_name, arg_desc, arg_value) in zip(values, self.arguments):
+            new_value = copy.deepcopy(arg_value)
+            new_value.val = value
+            new_arg_list.append((arg_name, arg_desc, new_value))
+            
+        self.arguments = new_arg_list
+    
+    def setDescriptor(self, desc): 
+        self.descriptor = desc
+        
+    def setSeconds(self, sec):
+        self.sec = sec
+        
+    def setUseconds(self, usec):
+        self.usec = usec       
+            
+    def getOpCode(self):
+        return self.opcode
+                
+    def getDescriptor(self):
+        ''' 
+        Returns the time descriptor, relative or absolute
+        
+        Returns:
+            A integer that indicates whether the command is relative or absolute
+        '''
+        return self.descriptor
+    
+    def getSeconds(self):
+        return self.sec
+    
+    def getUseconds(self):
+        return self.usec
+    
+    def getArgs(self):
+        return self.get_args()
+        
+        
