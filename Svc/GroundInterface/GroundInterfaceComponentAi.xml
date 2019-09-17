@@ -13,16 +13,16 @@
     <ports>
 
         <!-- Input ports -->
-        <port name="downlinkPort" data_type="Fw::Com"  kind="sync_input"    max_number="1">
+        <port name="downlinkPort" data_type="Fw::Com"  kind="guarded_input"    max_number="1">
         </port>
 
-        <port name="fileDownlinkBufferSendIn" data_type="Fw::BufferSend"  kind="sync_input"    max_number="1">
+        <port name="fileDownlinkBufferSendIn" data_type="Fw::BufferSend"  kind="guarded_input"    max_number="1">
         </port>
 
-        <port name="readCallback" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
+        <port name="readCallback" data_type="Fw::BufferSend" kind="guarded_input" max_number="1">
         </port>
 
-        <port name="schedIn" data_type="Svc::Sched"  kind="sync_input"    max_number="1">
+        <port name="schedIn" data_type="Svc::Sched"  kind="guarded_input"    max_number="1">
         </port>
 
         <!-- Output ports -->
