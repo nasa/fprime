@@ -47,19 +47,14 @@ namespace Fw {
 
     bool StringBase::operator==(const char* other) const {
 
-        NATIVE_UINT_TYPE len = this->length();
-
-        const char* us = this->toChar();
-        if ((us == 0) or (other == 0)) {
+        const char *const us = this->toChar();
+        if ((us == NULL) or (other == NULL)) {
             return false;
         }
-        // compare buffer
-        for (NATIVE_UINT_TYPE byte = 0; byte < len; byte++) {
-            if (us[byte] != other[byte]) {
-                return false;
-            }
-        }
-        return true;
+
+        const NATIVE_UINT_TYPE capacity = this->getCapacity();
+        const size_t result = strncmp(us, other, capacity);
+        return (result == 0);
 
     }
 
