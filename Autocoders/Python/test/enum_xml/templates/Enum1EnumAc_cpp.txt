@@ -1,0 +1,106 @@
+#include <string.h>
+#include <limits.h>
+#include "Fw/Types/Assert.hpp"
+#include "Enum1EnumAc.hpp"
+
+namespace Example {
+
+  // ----------------------------------------------------------------------
+  // Constructors
+  // ----------------------------------------------------------------------
+  
+  Enum1 :: Enum1(void):Serializable()
+  {
+    this->e = (t)0;
+  }
+  
+  Enum1 :: Enum1(const t e):Serializable()
+  {
+    this->e = e;
+  }
+  
+  Enum1 :: Enum1(const Enum1& other):Serializable()
+  {
+    this->e = other.e;
+  }
+  
+  // ----------------------------------------------------------------------
+  // Instance methods
+  // ----------------------------------------------------------------------
+  
+  const Enum1& Enum1 :: operator=(const Enum1& other)
+  {
+    this->e = other.e;
+    return *this;
+  }
+  
+  const Enum1& Enum1 :: operator=(const NATIVE_INT_TYPE a)
+  {
+    FW_ASSERT(a == -1952875139 || a == 2 || a == 2000999333 || a == 21 || a == -8324876, static_cast<t>(a));
+    this->e = static_cast<t>(a);
+    return *this;
+  }
+  
+  const Enum1& Enum1 :: operator=(const NATIVE_UINT_TYPE a)
+  {
+    FW_ASSERT(a == 2 || a == 2000999333 || a == 21, static_cast<t>(a));
+    this->e = static_cast<t>(a);
+    return *this;
+  }
+  
+  bool Enum1 :: operator==(const Enum1& other) const
+  {
+    return this->e == other.e;
+  }
+  
+  bool Enum1 :: operator!=(const Enum1& other) const
+  {
+    return !(*this == other);
+  }
+  
+#ifdef BUILD_UT
+  std::ostream& operator<<(std::ostream& os, const Enum1& obj) {
+    os << "Enum1::";
+    const Enum1::t e = obj.e;
+    switch (e) {
+        case Enum1::Item1:
+          os << "Item1";
+          break;
+        case Enum1::Item2:
+          os << "Item2";
+          break;
+        case Enum1::Item3:
+          os << "Item3";
+          break;
+        case Enum1::Item4:
+          os << "Item4";
+          break;
+        case Enum1::Item5:
+          os << "Item5";
+          break;
+        default:
+          os << "[invalid]";
+          break;
+    }
+    os << " (" << e << ")";
+    return os;
+  }
+#endif
+  
+  Fw::SerializeStatus Enum1 :: serialize(Fw::SerializeBufferBase& buffer) const
+  {
+    Fw::SerializeStatus status;
+    status = buffer.serialize(static_cast<FwEnumStoreType>(this->e));
+    return status;
+  }
+  
+  Fw::SerializeStatus Enum1 :: deserialize(Fw::SerializeBufferBase& buffer)
+  {
+    Fw::SerializeStatus status;
+    FwEnumStoreType es;
+    status = buffer.deserialize(es);
+    if (status == Fw::FW_SERIALIZE_OK)
+      this->e = static_cast<t>(es);
+    return status;
+  }
+}

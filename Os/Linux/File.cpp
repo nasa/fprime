@@ -160,7 +160,14 @@ namespace Os {
 
         // make sure it has been opened
         if (OPEN_NO_MODE == this->m_mode) {
+            size = 0;
             return NOT_OPENED;
+        }
+        // Validate read size before entering reading loop. Linux's read call expects size_t, which
+        // is defined as an unsigned value. Thus 0 and negative values rejected.
+        if (size <= 0) {
+            size = 0;
+            return BAD_SIZE;
         }
 
         NATIVE_INT_TYPE accSize = 0; // accumulated size
@@ -194,7 +201,6 @@ namespace Os {
                     accSize = 0;
                     break; // break out of while loop
                 } else if (0 == readSize) { // end of file
-                    accSize = 0;
                     break;
                 } else { // partial read so adjust read point and size
                     accSize += readSize;
@@ -232,6 +238,12 @@ namespace Os {
         if (OPEN_NO_MODE == this->m_mode) {
             size = 0;
             return NOT_OPENED;
+        }
+        // Validate read size before entering reading loop. Linux's read call expects size_t, which
+        // is defined as an unsigned value. Thus 0 and negative values rejected.
+        if (size <= 0) {
+            size = 0;
+            return BAD_SIZE;
         }
 
         Status stat = OP_OK;
@@ -291,6 +303,16 @@ namespace Os {
         if (OPEN_NO_MODE == this->m_mode) {
             totalSize = 0;
             return NOT_OPENED;
+        }
+        // Validate read size before entering reading loop. Linux's read call expects size_t, which
+        // is defined as an unsigned value. Thus 0 and negative values rejected.
+        if (totalSize == 0) {
+            totalSize = 0;
+            return BAD_SIZE;
+        }
+        else if (chunkSize <= 0) {
+            totalSize = 0;
+            return BAD_SIZE;
         }
 
 #ifdef __linux__

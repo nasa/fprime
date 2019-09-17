@@ -19,7 +19,6 @@
 # project definition.
 ##
 project(Ref C CXX)
-set(CMAKE_BUILD_TYPE DEBUG)
 cmake_minimum_required(VERSION 3.5)
 
 ##
@@ -30,7 +29,8 @@ cmake_minimum_required(VERSION 3.5)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
-
+# NOTE: register custom targets between these two lines
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 # Note: when building a deployment outside of the F´ core directories, then the
 # build root must be re-mapped for use with the standard build system components.
 #

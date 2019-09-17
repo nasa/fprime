@@ -15,6 +15,7 @@ set(SOURCE_FILES
 set(MOD_DEPS
   Fw/Cfg
   Fw/Types
+  Fw/Logger
   Fw/Obj
 )
 register_fprime_module()

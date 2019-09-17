@@ -9,8 +9,12 @@ from fprime.constants import DATA_ENCODING
 GUI_TAG = "GUI"
 FSW_TAG = "FSW"
 
+
 class ThreadedTCPSocketClient(object):
-    '''Threaded TCP client that connects to teh socket server which serves packets from the helecopter'''
+    '''
+    Threaded TCP client that connects to the socket server that serves packets from the flight
+    software
+    '''
 
     def __init__(self, sock=None):
         """

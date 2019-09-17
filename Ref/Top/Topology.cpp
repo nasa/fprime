@@ -1,6 +1,7 @@
 #include <Components.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Task.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 
@@ -9,8 +10,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #endif
-// List of context IDs
 
+// List of context IDs
 enum {
     DOWNLINK_PACKET_SIZE = 500,
     DOWNLINK_BUFFER_STORE_SIZE = 2500,
@@ -19,13 +20,16 @@ enum {
     UPLINK_BUFFER_QUEUE_SIZE = 30
 };
 
+Os::Log osLogger;
+
+
 // Registry
 #if FW_OBJECT_REGISTRATION == 1
 static Fw::SimpleObjRegistry simpleReg;
 #endif
 
 // Component instance pointers
-static NATIVE_INT_TYPE rgDivs[] = {1,2,4};
+static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
 Svc::RateGroupDriverImpl rateGroupDriverComp(
 #if FW_OBJECT_NAMES == 1
                     "RGDvr",
@@ -390,7 +394,7 @@ int main(int argc, char* argv[]) {
 	port_number = 0;
 	option = 0;
 	hostname = NULL;
-
+        Fw::Logger::registerLogger(&osLogger);
 	while ((option = getopt(argc, argv, "hp:a:")) != -1){
 		switch(option) {
 			case 'h':

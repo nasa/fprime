@@ -21,25 +21,6 @@ i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
 - **Return: MODULE_NAME** (set in parent scope)
 
 
-## Function `setup_module_dicts`:
-
-Creates a dictionary target for the module, that is then added to the "dict" and "module"
-targets.
-
-- **MOD_NAME:** name of module being processed
-- **AI_XML:** AI_XML that is generating dictionaries
-- **DICT_INPUTS:** inputs from auto-coder, used to trigger dictionary generation
-
-
-## Function `add_dict_deps`:
-
-Used to track dictionary dependencies, in order to ensure that the fewest number of dictionary
-targets are used.
-
-- **MODULE_NAME:** module receiving a dict dependency
-- **DEP_MODULE_NAME:** name of the module whose dictionary will be added
-
-
 ## Function `add_generated_sources`:
 
 Add generated file as sources for the given target. This function specifically adds

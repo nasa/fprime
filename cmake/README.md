@@ -38,6 +38,8 @@ Building a CMake-enabled deployment comes down to just a small number of steps:
 2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt>`
 3. Engage OS-specific make system: `make`
 4. Run unit tests: `make check`
+5. Run F´ specific targets like dictionariy generation, and module coverage: 
+[Targets](./docs/targets/Targets.md) 
 
 Further information on each step is provided below.
 
@@ -183,8 +185,9 @@ other tools will fail.  This can be done with the following two lines added to t
 `CMakeLists.txt`. However, these lines **must** be added after including F´core subdirectories.
 
 ```
-# **** First Include FPrime.cmake, the core components CMake ***
+# **** First Include FPrime.cmake,FPrime-Code.cmake the core API and components CMakes ***
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 
 # **** Second, override the current BUILD_ROOT ****
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
