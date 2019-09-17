@@ -126,6 +126,7 @@ namespace Svc {
       //! Expected buffer, for checking of the interface
       TOKEN_TYPE m_size;
       Fw::Buffer m_incoming_buffer;
+      Fw::Buffer m_incoming_file_buffer;
       U8* m_buffer;
       U32 m_uplink_type;
       U32 m_uplink_used;

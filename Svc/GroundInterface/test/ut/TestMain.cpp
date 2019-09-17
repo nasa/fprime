@@ -26,8 +26,8 @@ TEST(Nominal, RandomizedGroundIf) {
     // Setup a list of rules to choose from
     STest::Rule<Svc::Tester>* rules[] = {
             &randomize,
- //           &downlink,
- //           &filedown,
+            &downlink,
+            &filedown,
             &sendup
     };
     // Construct the random scenario and run it with the defined bounds

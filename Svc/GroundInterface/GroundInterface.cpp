@@ -72,6 +72,7 @@ namespace Svc {
   {
       FW_ASSERT(fwBuffer.getsize() <= MAX_DATA_SIZE);
       frame_send(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize());
+      fileDownlinkBufferSendOut_out(0, fwBuffer);
   }
 
   void GroundInterfaceComponentImpl ::
@@ -117,22 +118,31 @@ namespace Svc {
   void GroundInterfaceComponentImpl ::
     routeComData()
   {
-      Fw::ComBuffer com;
+      // Read the packet type from the data buffer
       U32 packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN;
-      m_in_ring.peek(com.getBuffAddr(), m_data_size, HEADER_SIZE);
-      com.setBuffLen(m_data_size);
-      // Read description and reset
-      com.deserialize(packet_type);
+      m_in_ring.peek(packet_type, HEADER_SIZE);
+
       // Process variable type
       switch (packet_type) {
-          case Fw::ComPacket::FW_PACKET_COMMAND:
+          case Fw::ComPacket::FW_PACKET_COMMAND: {
+              Fw::ComBuffer com;
+              m_in_ring.peek(com.getBuffAddr(), m_data_size, HEADER_SIZE);
               // Reset com buffer for sending out data
               com.setBuffLen(m_data_size);
               uplinkPort_out(0, com, 0);
               break;
-          //case Fw::ComPacket::FW_PACKET_FILE:
-          //    fileUplinkBufferSendOut_out(0, com, 0);
-          //    break;
+          }
+          case Fw::ComPacket::FW_PACKET_FILE: {
+              // If file uplink is possible, handle files.  Otherwise ignore.
+              if (isConnected_fileUplinkBufferGet_OutputPort(0) &&
+                  isConnected_fileDownlinkBufferSendOut_OutputPort(0)) {
+                  Fw::Buffer buffer = fileUplinkBufferGet_out(0, m_data_size);
+                  m_in_ring.peek(reinterpret_cast<U8*>(buffer.getdata()), m_data_size, HEADER_SIZE);
+                  buffer.setsize(m_data_size);
+                  fileUplinkBufferSendOut_out(0, buffer);
+              }
+              break;
+          }
           default:
               return;
       }
@@ -187,6 +197,4 @@ namespace Svc {
           processRing();
       }
   }
-
-
 } // end namespace Svc

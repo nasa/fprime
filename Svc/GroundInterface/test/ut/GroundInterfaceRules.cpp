@@ -26,6 +26,8 @@ namespace Svc {
         if (state.m_uplink_type == 2 || state.m_uplink_point == 0) {
             state.m_uplink_type = STest::Pick::lowerUpper(0, 1);
             state.m_uplink_used = STest::Pick::lowerUpper(4, FW_COM_BUFFER_MAX_SIZE);
+            state.m_uplink_com_type = static_cast<Fw::ComPacket::ComPacketType>(
+                    STest::Pick::lowerUpper(Fw::ComPacket::FW_PACKET_COMMAND,Fw::ComPacket::FW_PACKET_FILE));
             for (U32 i = 0; i < state.m_uplink_used; i++) {
                 state.m_uplink_data[(sizeof(TOKEN_TYPE) * 2) + i] =
                         static_cast<U8>(STest::Pick::lowerUpper(0, 255));
@@ -71,6 +73,7 @@ namespace Svc {
         state.setInputParams(sizeof(U32), reinterpret_cast<U8*>(buffer.getdata()));
         state.invoke_to_fileDownlinkBufferSendIn(0, buffer);
         state.assert_from_write_size(__FILE__, __LINE__, 1);
+        state.assert_from_fileDownlinkBufferSendOut_size(__FILE__, __LINE__, 1);
         state.clearFromPortHistory();
     }
 
@@ -91,7 +94,7 @@ namespace Svc {
         state.m_uplink_point = (state.m_uplink_point + size >= total_used) ? 0 : (state.m_uplink_point + size);
         Fw::Buffer buffer(0x12345321, 0x98765678, up_ptr, size);
         // Uplink based on uplink type
-        if (state.m_uplink_type && 0) {
+        if (state.m_uplink_type) {
             state.invoke_to_readCallback(0,buffer);
         } else {
             state.m_incoming_buffer = buffer;
@@ -103,7 +106,7 @@ namespace Svc {
             if (state.m_uplink_com_type == Fw::ComPacket::FW_PACKET_COMMAND) {
                 state.assert_from_uplinkPort_size(__FILE__, __LINE__, 1);
             } else if (state.m_uplink_com_type == Fw::ComPacket::FW_PACKET_FILE) {
-                //state.assert_from_uplinkPort_size(__FILE__, __LINE__, 1);
+                state.assert_from_fileUplinkBufferSendOut_size(__FILE__, __LINE__, 1);
             }
             state.clearFromPortHistory();
         } else {

@@ -15,6 +15,8 @@
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
 
+U8 file_back_buffer[10240];
+
 namespace Svc {
   // ----------------------------------------------------------------------
   // Construction and destruction 
@@ -85,6 +87,9 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_fileUplinkBufferSendOut(fwBuffer);
+    for (U32 i = 0; i < fwBuffer.getsize(); i++) {
+        ASSERT_EQ(reinterpret_cast<U8*>(fwBuffer.getdata())[i], m_uplink_data[i + HEADER_SIZE]);
+    }
   }
 
   void Tester ::
@@ -107,6 +112,7 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_fileDownlinkBufferSendOut(fwBuffer);
+
   }
 
   Fw::Buffer Tester ::
@@ -116,7 +122,9 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_fileUplinkBufferGet(size);
-    return m_incoming_buffer;
+    m_incoming_file_buffer.setsize(size);
+    m_incoming_file_buffer.setdata(reinterpret_cast<U64>(file_back_buffer));
+    return m_incoming_file_buffer;
   }
 
   void Tester ::
