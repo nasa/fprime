@@ -11,7 +11,7 @@
 
 #define GND_BUFFER_SIZE 512
 #define TOKEN_TYPE U32
-#define HEADER_SIZE (3 * sizeof(TOKEN_TYPE))
+#define HEADER_SIZE (2 * sizeof(TOKEN_TYPE))
 
 namespace Svc {
 
@@ -19,19 +19,9 @@ namespace Svc {
     public GroundInterfaceComponentBase
   {
     public:
-      /**
-       * DataType:
-       *
-       * Type of data in the buffer being processed. Used to route the out-going data
-       * to the correct port.
-       */
-      enum DataType {
-          COMMAND_TYPE = 0x5a5a5a5a, //! Set to be backwards compatible with old GSE
-          MAX_DATA_TYPE = 0xDEAD4EAD
-      };
-      static const U32 MAX_DATA_SIZE = 2048;
-      static const TOKEN_TYPE START_WORD = static_cast<TOKEN_TYPE>(0xdeadbeef);
-      static const TOKEN_TYPE END_WORD = static_cast<TOKEN_TYPE>(0xcafecafe);
+      static const U32 MAX_DATA_SIZE;
+      static const TOKEN_TYPE START_WORD;
+      static const U32 END_WORD;
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
@@ -90,6 +80,13 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
+      //! Frame and send some data
+      //!
+      void frame_send(
+          U8* data, /*!< Data to be framed and sent out */
+          TOKEN_TYPE size /*!< Size of data in typed format */
+      );
+
       //! Processes the out-going data into coms order
       void routeComData();
 
@@ -104,7 +101,6 @@ namespace Svc {
       U8 m_buffer[GND_BUFFER_SIZE];
       // Input variables
       TOKEN_TYPE m_data_size; //!< Data size expected in incoming data
-      DataType m_data_type; //!< Type of data being read
       U8 m_in_buffer[GND_BUFFER_SIZE];
       Types::CircularBuffer m_in_ring;
     };
