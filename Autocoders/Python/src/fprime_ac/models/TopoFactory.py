@@ -91,7 +91,7 @@ class TopoFactory:
     getInstance = staticmethod(getInstance)
 
 
-    def create(self, the_parsed_topology_xml):
+    def create(self, the_parsed_topology_xml, generate_list_file = True):
         """
         Create a topology model here.
         """
@@ -124,7 +124,7 @@ class TopoFactory:
 
         if self.__generate_new_IDS:
             # Iterate over all the model.Component classes and...
-            instance_name_base_id_list = self.__compute_base_ids(x.get_base_id(), x.get_base_id_window(), x.get_instances() , x.get_xml_filename())
+            instance_name_base_id_list = self.__compute_base_ids(x.get_base_id(), x.get_base_id_window(), x.get_instances() , x.get_xml_filename(), generate_list_file)
         else:
             instance_name_base_id_list = []
 
@@ -282,7 +282,7 @@ class TopoFactory:
 
 
 
-    def __compute_base_ids(self, assembly_base_id, assembly_window, instances , xml_file_path):
+    def __compute_base_ids(self, assembly_base_id, assembly_window, instances , xml_file_path, generate_list_file):
         """
         Compute the set of baseIds for the component instances here.
         @param components: List of Component object instances with baseId, window, and max window size set
@@ -392,13 +392,15 @@ class TopoFactory:
 
         save_buffer = self.__print_base_id_table_comments(save_buffer)
 
-        csv_removed_from_path_name = xml_file_path.replace(".XML" , "")
-        csv_removed_from_path_name = csv_removed_from_path_name.replace(".xml" , "")
-        save_log_file_path = csv_removed_from_path_name + "_IDTableLog.txt"
-
-        save_log_file = open(save_log_file_path , 'w')
-        save_log_file.write(save_buffer)
-        save_log_file.close()
+        if generate_list_file:
+            csv_removed_from_path_name = xml_file_path.replace(".XML" , "")
+            csv_removed_from_path_name = csv_removed_from_path_name.replace(".xml" , "")
+            
+            save_log_file_path = csv_removed_from_path_name + "_IDTableLog.txt"
+    
+            save_log_file = open(save_log_file_path , 'w')
+            save_log_file.write(save_buffer)
+            save_log_file.close()
 
         return out_base_ids_list
 
