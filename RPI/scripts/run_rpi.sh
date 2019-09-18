@@ -17,8 +17,6 @@ fi
 export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=RASPIAN print_output_dir`"
 echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 
-# Set python path
-export PYTHONPATH="${BUILD_ROOT}/Gds/src/fprime_gds/tkgui/tools/:${BUILD_ROOT}/Gds/src/:${BUILD_ROOT}/Fw/Python/src/"
-
 DEPLOY=`cd ${DIRNAME}/..; pwd;`
 ${BUILD_ROOT}/Gds/bin/run_deployment.sh --deploy "${DEPLOY}" "$@"
+
