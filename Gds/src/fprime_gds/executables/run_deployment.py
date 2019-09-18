@@ -222,7 +222,7 @@ def launch_process(cmd, stdout=None, stderr=None, name=None, pgroup=False):
     print("[INFO] Waiting 5 seconds for {0} to start".format(name))
     time.sleep(5)
     proc.poll()
-    if proc.returncode is not None:
+    if proc.returncode:
         error_exit("Failed to start {0}".format(name), 1)
         raise Exception("FAILED TO EXIT")
     return proc
