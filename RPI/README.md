@@ -43,7 +43,7 @@ If you are cross-compiling, this would apply only to the compile host:
 ```
 ./mk/os-pkg/ubuntu-packages.sh
 sudo pip install -r  mk/python/pip_required_build.txt
-sudo pip install -r  mk/python/pip_required_gui.txt
+sudo pip install -r  mk/python/pip_required_gse.txt
 ```
 For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/tools/rpi`. If they are installed elsewhere, the location can be updated [here](../mk/configs/host/Linux-generic.mk).
 
