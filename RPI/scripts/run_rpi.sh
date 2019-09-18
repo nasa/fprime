@@ -13,10 +13,5 @@ then
     export BUILD_ROOT="`cd ${DIRNAME}/../..; pwd`"
 fi
 
-# Get binary output path
-export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=RASPIAN print_output_dir`"
-echo "OUTPUT_DIR: ${OUTPUT_DIR}"
-
 DEPLOY=`cd ${DIRNAME}/..; pwd;`
 ${BUILD_ROOT}/Gds/bin/run_deployment.sh --deploy "${DEPLOY}" "$@"
-
