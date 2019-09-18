@@ -21,7 +21,7 @@
 	<import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
 	<import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
 	<import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
-	<import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
+	<import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
 	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
 	<import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
 	<import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
@@ -29,6 +29,7 @@
 	<import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
 	<import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
 	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+	<import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
 
    <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
 
@@ -70,7 +71,7 @@
 
    <instance namespace="Svc" name="health" type="Health" base_id="361"  base_id_window="20" />
 
-   <instance namespace="Svc" name="sockGndIf" type="GndIf" base_id="381"  base_id_window="20" />
+   <instance namespace="Svc" name="groundIf" type="GroundInterface" base_id="381"  base_id_window="20" />
 
    <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
 
@@ -86,6 +87,8 @@
 
    <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
 
+   <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="641"  base_id_window="20" />
+
 
 <connection name = "Connection1">
 	 <source component = "recvBuffComp" port = "Time" type = "Time" num = "0"/>
@@ -100,15 +103,15 @@
  	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
 </connection>
 <connection name = "Connection4">
-	 <source component = "sockGndIf" port = "Time" type = "Time" num = "0"/>
+	 <source component = "groundIf" port = "Time" type = "Time" num = "0"/>
  	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
 </connection>
 <connection name = "Connection5">
-	 <source component = "pingRcvr" port = "LogText" type = "LogText" num = "0"/>
+	 <source component = "groundIf" port = "LogText" type = "LogText" num = "0"/>
  	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
 </connection>
 <connection name = "Connection6">
-	 <source component = "sockGndIf" port = "Log" type = "Log" num = "0"/>
+	 <source component = "groundIf" port = "Log" type = "Log" num = "0"/>
  	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
 </connection>
 <connection name = "Connection7">
@@ -116,7 +119,7 @@
  	 <target component = "blockDrv" port = "BufferIn" type = "DataBuffer" num = "0"/>
 </connection>
 <connection name = "Connection8">
-	 <source component = "sockGndIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
+	 <source component = "groundIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
  	 <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
 </connection>
 <connection name = "Connection9">
@@ -392,7 +395,7 @@
  	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
 </connection>
 <connection name = "Connection77">
-	 <source component = "sockGndIf" port = "LogText" type = "LogText" num = "0"/>
+	 <source component = "groundIf" port = "LogText" type = "LogText" num = "0"/>
  	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
 </connection>
 <connection name = "Connection78">
@@ -492,7 +495,7 @@
  	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
 </connection>
 <connection name = "Connection102">
-	 <source component = "sockGndIf" port = "uplinkPort" type = "Com" num = "0"/>
+	 <source component = "groundIf" port = "uplinkPort" type = "Com" num = "0"/>
  	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "1"/>
 </connection>
 <connection name = "Connection103">
@@ -621,14 +624,14 @@
 </connection>
 <connection name = "Connection134">
 	 <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
- 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
+ 	 <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
 </connection>
 <connection name = "Connection135">
 	 <source component = "recvBuffComp" port = "LogText" type = "LogText" num = "0"/>
  	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
 </connection>
 <connection name = "Connection136">
-	 <source component = "sockGndIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
+	 <source component = "groundIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
  	 <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
 </connection>
 <connection name = "Connection137">
@@ -656,7 +659,7 @@
  	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
 </connection>
 <connection name = "Connection143">
-	 <source component = "sockGndIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
+	 <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
  	 <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
 </connection>
 <connection name = "Connection144">
@@ -669,7 +672,7 @@
 </connection>
 <connection name = "Connection146">
 	 <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "sockGndIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
+ 	 <target component = "groundIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
 </connection>
 <connection name = "Connection147">
 	 <source component = "SG2" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
@@ -689,7 +692,7 @@
 </connection>
 <connection name = "Connection151">
 	 <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
- 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
+ 	 <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
 </connection>
 <connection name = "Connection152">
 	 <source component = "SG3" port = "logOut" type = "Log" num = "0"/>
@@ -806,5 +809,13 @@
 <connection name = "Connection180">
 	 <source component = "cmdSeq" port = "cmdRegOut" type = "CmdReg" num = "0"/>
  	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "13"/>
+</connection>
+<connection name = "Connection181">
+	<source component = "groundIf" port = "write" type = "Fw::BufferSend" num = "0"/>
+	<target component = "socketIpDriver" port = "send" type = "Fw::BufferSend" num = "0"/>
+</connection>
+<connection name = "Connection182">
+	<source component = "socketIpDriver" port = "recv" type = "Fw::BufferSend" num = "0"/>
+	<target component = "groundIf" port = "readCallback" type = "Fw::BufferSend" num = "0"/>
 </connection>
 </assembly>

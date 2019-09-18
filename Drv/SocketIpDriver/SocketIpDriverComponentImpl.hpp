@@ -16,8 +16,16 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include "Drv/SocketIpDriver/SocketIpDriverComponentAc.hpp"
 #include <Drv/SocketIpDriver/SocketIpDriverCfg.hpp>
+// Includes for the IP layer
+#ifdef TGT_OS_TYPE_VXWORKS
+    #include <inetLib.h>
+#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    #include <arpa/inet.h>
+#else
+    #error OS not supported for IP Socket Communications
+#endif
 
-namespace Svc {
+namespace Drv {
 
   class SocketIpDriverComponentImpl :
     public SocketIpDriverComponentBase
@@ -30,7 +38,10 @@ namespace Svc {
           FAILED_TO_GET_HOST_IP = -2,
           INVALID_IP_ADDRESS = -3,
           FAILED_TO_CONNECT = -4,
-          FAILED_TO_SET_SOCKET_OPTIONS = -5
+          FAILED_TO_SET_SOCKET_OPTIONS = -5,
+          INTERRUPTED_TRY_AGAIN = -6,
+          READ_ERROR = -7,
+          READ_DISCONNECTED = -8
       };
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
@@ -66,7 +77,7 @@ namespace Svc {
 
       //! Receive on setup port
       //! return: true to stop the task, false otherwise
-      bool receive();
+      SocketIpStatus receive();
 
       //! Start the socket task
       //!
@@ -88,7 +99,7 @@ namespace Svc {
 
       //! Handler implementation for downlink
       //!
-      void downlink_handler(
+      void send_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer 
       );
@@ -99,7 +110,8 @@ namespace Svc {
       NATIVE_INT_TYPE m_socketOutFd; //!< Output file descriptor, always UDP
       const char* m_hostname;        //!< Hostname to supply
       U16 m_port;                    //!< IP address port used
-      U8 m_backing_data[RECV_BUFFER_MAX_SIZE]; //!< Buffer used to store data
+      U8 m_backing_data[MAX_RECV_BUFFER_SIZE]; //!< Buffer used to store data
+      bool m_stop; //!< Stop the receiving port
     };
 
 } // end namespace Svc

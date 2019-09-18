@@ -9,22 +9,18 @@
 // acknowledged.
 //
 // ======================================================================
-
 // Includes for the IP layer
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <hostLib.h>
     #include <ioLib.h>
-    #include <socket.h>
     #include <vxWorks.h>
     #include <sockLib.h>
-    #include <inetLib.h>
     #include <fioLib.h>
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     #include <sys/socket.h>
-    #include <arpa/inet.h>
     #include <netdb.h>
     #include <unistd.h>
     #include <errno.h>
@@ -32,17 +28,18 @@
     #error OS not supported for IP Socket Communications
 #endif
 
-
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverCfg.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/EightyCharString.hpp>
 
 extern "C" {
     #include <stdio.h>
 };
 
-namespace Svc {
+namespace Drv {
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -59,10 +56,11 @@ namespace Svc {
 #endif
     ,
     m_buffer(0xbeef, 0xbeef, reinterpret_cast<U64>(m_backing_data), sizeof(m_buffer)),
-    m_socketInFd(0),
-    m_socketOutFd(0),
+    m_socketInFd(-1),
+    m_socketOutFd(-1),
     m_hostname(""),
-    m_port(0)
+    m_port(0),
+    m_stop(false)
   { }
 
   void SocketIpDriverComponentImpl ::
@@ -131,7 +129,7 @@ namespace Svc {
       }
       // Set up the address port and name
       address.sin_family = AF_INET;
-      address.sin_port = m_port;
+      address.sin_port = htons(m_port);
       address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 
 // Get the IP address from host
@@ -148,14 +146,14 @@ namespace Svc {
           return FAILED_TO_GET_HOST_IP;
       }
       // First IP address to socket sin_addr
-      if (inet_aton(host_entry->h_addr_list[0], &address.sin_addr) == -1) {
+      if (inet_pton(address.sin_family, m_hostname, &(address.sin_addr)) < 0) {
           close(socketFd);
           return INVALID_IP_ADDRESS;
       };
 #endif
       // If TCP, connect to the socket to allow for communication
       if (protocol != SOCK_DGRAM && connect(socketFd, reinterpret_cast<struct sockaddr *>(&address),
-              sizeof(struct sockaddr_in)) < 0) {
+              sizeof(address)) < 0) {
           close(socketFd);
           return FAILED_TO_CONNECT;
       }
@@ -175,41 +173,56 @@ namespace Svc {
   }
 
   void SocketIpDriverComponentImpl :: readTask(void* pointer) {
-      bool stop = false;
       FW_ASSERT(pointer != NULL);
+      SocketIpDriverComponentImpl::SocketIpStatus status = SocketIpDriverComponentImpl::SUCCESS;
       SocketIpDriverComponentImpl* self = reinterpret_cast<SocketIpDriverComponentImpl*>(pointer);
-      // Open a network connection, if not open.
-      while (self->m_socketInFd == -1 && self->open() != SocketIpDriverComponentImpl::SUCCESS) {
-          Os::Task::delay(PRE_CONNECTION_RETRY_INTERVAL_MS);
+      do {
+          // Open a network connection, if it has not already been open
+          if (self->m_socketInFd == -1 && self->open() != SocketIpDriverComponentImpl::SUCCESS && not self->m_stop) {
+              Os::Task::delay(PRE_CONNECTION_RETRY_INTERVAL_MS);
+          }
+          // If the network connection is open, read from it
+          if (self->m_socketInFd != -1) {
+              status = self->receive();
+              if (status != SocketIpDriverComponentImpl::SUCCESS &&
+                  status != SocketIpDriverComponentImpl::INTERRUPTED_TRY_AGAIN) {
+                  self->m_socketInFd = -1;
+                  self->m_socketOutFd = -1;
+              }
+          }
       }
-      // Loop until asked to stop
-      while(!stop) {
-          stop = self->receive();
-      }
+      // As long as not told to stop, and we are successful interrupted or ordered to retry, keep receiving
+      while(not self->m_stop && (status == SocketIpDriverComponentImpl::SUCCESS ||
+            status == SocketIpDriverComponentImpl::INTERRUPTED_TRY_AGAIN || RECONNECT_AUTOMATICALLY != 0));
   }
 
-  bool SocketIpDriverComponentImpl :: receive() {
-      U32 total = 0;
-      I32 recd = 0;
+    SocketIpDriverComponentImpl::SocketIpStatus SocketIpDriverComponentImpl :: receive() {
       U8* data = reinterpret_cast<U8*>(m_buffer.getdata());
+      SocketIpDriverComponentImpl::SocketIpStatus status = SocketIpDriverComponentImpl::SUCCESS;
       // Attempt to recv out data
-      for (U32 i = 0; i < MAX_SEND_ITERATIONS && recd > 0 && total < RECV_BUFFER_MAX_SIZE; i++) {
-          recd = recv(m_socketInFd, data + total, RECV_BUFFER_MAX_SIZE - total, SOCKET_RECV_FLAGS);
-          // Error returned, and it wasn't an interrupt
-          if (recd == -1 && errno != EINTR) {
-              Fw::Logger::logMsg("[ERROR] IP recv failed ERRNO: %d\n", errno);
-              return true; // Stop recv task on error
-          }
-          // Error is EINTR, just try again
-          else if (recd == -1 && errno == EINTR) {
-              continue;
-          }
-          total += recd;
+      I32 recd = recv(m_socketInFd, data, MAX_RECV_BUFFER_SIZE, SOCKET_RECV_FLAGS);
+      // Error returned, and it wasn't an interrupt
+      if (recd == -1 && errno != EINTR) {
+          Fw::Logger::logMsg("[ERROR] IP recv failed ERRNO: %d\n", errno);
+          status = READ_ERROR; // Stop recv task on error
       }
-      m_buffer.setsize(total);
-      // Expected to be a guarded or sync output to ensure processing immediately
-      uplink_out(0, m_buffer);
-      return false;
+      // Error is EINTR, just try again
+      else if (recd == -1 && errno == EINTR) {
+          status = INTERRUPTED_TRY_AGAIN;
+      }
+      // Zero bytes read means a closed socket
+      else if (recd == 0) {
+          (void) close(m_socketInFd);
+          m_socketInFd = -1;
+          status = READ_DISCONNECTED;
+      }
+      // Valid data, send it out, and keep looping
+      else {
+          m_buffer.setsize(recd);
+          // Expected to be a guarded or sync output to ensure processing immediately
+          recv_out(0, m_buffer);
+      }
+      return status;
   }
 
   void SocketIpDriverComponentImpl :: startSocketTask(
@@ -223,6 +236,8 @@ namespace Svc {
       Fw::EightyCharString name("IpSocketRead");
       // Do not restart task
       if (not m_recvTask.isStarted()) {
+          m_hostname = host;
+          m_port = port;
           // Start by opening the socket
           if (m_socketInFd == -1) {
               open();
@@ -238,7 +253,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void SocketIpDriverComponentImpl ::
-    downlink_handler(
+    send_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
     )
@@ -246,9 +261,8 @@ namespace Svc {
       U32 total = 0;
       U32 size = fwBuffer.getsize();
       U8* data = reinterpret_cast<U8*>(fwBuffer.getdata());
-      // Prevent transmission before connection
+      // Prevent transmission before connection, or after a disconnect
       if (m_socketOutFd == -1) {
-          Fw::Logger::logMsg("[ERROR] No output socket created. UDP: %d\n", SOCKET_SEND_UDP);
           return;
       }
       // Attempt to send out data
@@ -263,16 +277,26 @@ namespace Svc {
           else {
               sent = send(m_socketOutFd, data + total, size - total, SOCKET_SEND_FLAGS);
           }
+          // Error is EINTR, just try again
+          if (sent == -1 && errno == EINTR) {
+              continue;
+          }
+          // Error bad file descriptor is a close
+          else if (sent == -1 && errno == EBADF) {
+              Fw::Logger::logMsg("[ERROR] Server disconnected\n");
+              (void) close(m_socketOutFd);
+              m_socketOutFd = -1;
+              break;
+          }
           // Error returned, and it wasn't an interrupt
-          if (sent == -1 && errno != EINTR) {
+          else if (sent == -1 && errno == EINTR) {
               Fw::Logger::logMsg("[ERROR] IP send failed ERRNO: %d UDP: %d\n", errno, SOCKET_SEND_UDP);
               break;
           }
-          // Error is EINTR, just try again
-          else if (sent == -1 && errno == EINTR) {
-              continue;
+          // Successful write
+          else {
+              total += sent;
           }
-          total += sent;
       }
   }
 } // end namespace Svc

@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  SocketIpDriverComponentImpl.hpp
+// \title  SocketIpDriverCfg.hpp
 // \author mstarch
 // \brief  hpp file for SocketIpDriver component implementation class
 //
@@ -14,14 +14,15 @@
 #define REF_SOCKETIPDRIVERCFG_HPP
 
 enum SocketIpCfg {
-    SOCKET_TIMEOUT_SECONDS = 1,
-    SOCKET_TIMEOUT_MILLI_SECONDS = 0,
-    SOCKET_SEND_UDP = 1,
-    SOCKET_SEND_FLAGS = 0,
-    SOCKET_RECV_FLAGS = 0,
-    MAX_SEND_ITERATIONS = 0xFFFF,
-    RECV_BUFFER_MAX_SIZE = 2048,
-    PRE_CONNECTION_RETRY_INTERVAL_MS = 1000
+    SOCKET_TIMEOUT_SECONDS = 1,       // Seconds component of timeout
+    SOCKET_TIMEOUT_MILLI_SECONDS = 0, // Milliseconds component of timeout
+    SOCKET_SEND_UDP = 0,              // 0 - Send down using TCP, 1 - Send down using UDP
+    SOCKET_SEND_FLAGS = 0,            // send, sendto FLAGS argument
+    SOCKET_RECV_FLAGS = 0,            // recv FLAGS argument
+    RECONNECT_AUTOMATICALLY = 0,      // Attempt to reconnect when a socket closes
+    MAX_SEND_ITERATIONS = 0xFFFF,     // Maximum send iterations
+    MAX_RECV_BUFFER_SIZE = 2048,      // Maximum and allocation size of the send buffer. TODO: use buffer manager
+    PRE_CONNECTION_RETRY_INTERVAL_MS = 1000 // Interval between connection retries before main recv thread starts
 };
 
 

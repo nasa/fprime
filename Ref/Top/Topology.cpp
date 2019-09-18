@@ -64,9 +64,9 @@ Svc::ActiveRateGroupImpl rateGroup3Comp
 ;
 
 // Command Components
-Svc::SocketGndIfImpl sockGndIf
+Svc::GroundInterfaceComponentImpl groundIf
 #if FW_OBJECT_NAMES == 1
-                    ("SGIF")
+                    ("GNDIF")
 #endif
 ;
 
@@ -144,6 +144,12 @@ Ref::PingReceiverComponentImpl pingRcvr
 #endif
 ;
 
+Drv::SocketIpDriverComponentImpl socketIpDriver
+#if FW_OBJECT_NAMES == 1
+        ("SocketIpDriver")
+#endif
+;
+
 Svc::FileUplink fileUplink ("fileUplink");
 Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
 Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
@@ -202,7 +208,7 @@ void dumpobj(const char* objName) {
 
 #endif
 
-void constructApp(int port_number, char* hostname) {
+void constructApp(int port_number, const char* hostname) {
 
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
@@ -242,7 +248,8 @@ void constructApp(int port_number, char* hostname) {
 
     prmDb.init(10,0);
 
-    sockGndIf.init(0);
+    groundIf.init(0);
+    socketIpDriver.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
@@ -322,7 +329,7 @@ void constructApp(int port_number, char* hostname) {
     pingRcvr.start(0, 100, 10*1024);
 
     // Initialize socket server
-    sockGndIf.startSocketTask(100, 10*1024, port_number, hostname, Svc::SocketGndIfImpl::SEND_UDP);
+    socketIpDriver.startSocketTask(100, 10*1024, hostname, port_number);
 
 #if FW_OBJECT_REGISTRATION == 1
     //simpleReg.dump();
@@ -388,13 +395,11 @@ static void sighandler(int signum) {
 }
 
 int main(int argc, char* argv[]) {
-	U32 port_number;
+	U32 port_number = 50000;
 	I32 option;
-	char *hostname;
-	port_number = 0;
+	const char *hostname = "127.0.0.1";
 	option = 0;
-	hostname = NULL;
-        Fw::Logger::registerLogger(&osLogger);
+	Fw::Logger::registerLogger(&osLogger);
 	while ((option = getopt(argc, argv, "hp:a:")) != -1){
 		switch(option) {
 			case 'h':

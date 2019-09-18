@@ -19,8 +19,6 @@ void exitTasks(void);
 #include <Svc/BufferManager/BufferManager.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 
-#include <Svc/SocketGndIf/SvcSocketGndIfImpl.hpp>
-
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
 #include <Ref/SendBuffApp/SendBuffComponentImpl.hpp>
 #include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
@@ -28,11 +26,13 @@ void exitTasks(void);
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
+#include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
-extern Svc::SocketGndIfImpl sockGndIf;
+extern Svc::GroundInterfaceComponentImpl groundIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
@@ -53,5 +53,6 @@ extern Ref::RecvBuffImpl recvBuffComp;
 extern Ref::SendBuffImpl sendBuffComp;
 extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
 extern Ref::PingReceiverComponentImpl pingRcvr;
+extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 
 #endif
