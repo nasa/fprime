@@ -15,7 +15,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 function(add_dict_target)
     # If we are generating python dictionaries, then we need to copy the outputs
-    if (UT_BUILD)
+    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     elseif (GENERATE_HERITAGE_PY_DICT)
         add_custom_target(
@@ -53,13 +53,23 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
       "${EXECUTABLE_NAME}"
       "${SOURCE_FILES}" # Added to suppress warning if module only has autocode
   )
+  # CMake object type
+  if (NOT DEFINED FPRIME_OBJECT_TYPE)
+      set(FPRIME_OBJECT_TYPE "Executable")
+  endif()
   # Install the executable
   generate_module(${EXECUTABLE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
-  install(TARGETS "${EXECUTABLE_NAME}"
-        RUNTIME DESTINATION "bin/${PLATFORM}"
-        LIBRARY DESTINATION "lib/${PLATFORM}"
-        ARCHIVE DESTINATION "lib/static/${PLATFORM}")
   # Link library list output on per-module basis
+  # Install the executable, if not excluded and not testing
+  get_target_property(IS_EXCLUDE_FROM_ALL "${EXECUTABLE_NAME}" "EXCLUDE_FROM_ALL")
+  if ("${IS_EXCLUDE_FROM_ALL}" STREQUAL "IS_EXCLUDE_FROM_ALL-NOTFOUND" AND
+      NOT CMAKE_BUILD_TYPE STREQUAL "TESTING") 
+      install(TARGETS "${EXECUTABLE_NAME}"
+          RUNTIME DESTINATION "bin/${PLATFORM}"
+          LIBRARY DESTINATION "lib/${PLATFORM}"
+          ARCHIVE DESTINATION "lib/static/${PLATFORM}"
+      )
+  endif()
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${EXECUTABLE_NAME})
   endif()

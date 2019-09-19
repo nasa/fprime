@@ -19,14 +19,21 @@
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
 
-# Include validation file first, as it checks that everything is in-order
-include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")
+# Set build type, if unser
+if(NOT CMAKE_BUILD_TYPE) 
+    set(CMAKE_BUILD_TYPE DEBUG)
+else()
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+endif()
+
 # Include the Options, and platform files. These are files that change the build
 # setup. Users may need to add items to these files in order to ensure that all
 # specific project builds work as expected.
 include("${CMAKE_CURRENT_LIST_DIR}/Options.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 
+# Include validation file next, as it checks that everything is in-order
+include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")
 # Include the support files that provide all the functions, utilities, and other
 # hidden items in the CMake system. Typically a user should not interact with any
 # of these files, as they are a library that automates FPrime builds.
@@ -45,19 +52,11 @@ set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
 # Set the install directory for the package
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
   set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "Install dir" FORCE)
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-message(STATUS "Default installation directory: ${CMAKE_INSTALL_PREFIX}")
-
-# Library types, used for generating shared objects or static archives
-if (LINK_AS_SHARED_LIBS)
-    message(STATUS "Generating shared libraries")
-    set(FPRIME_LIB_TYPE "SHARED")
-else()
-    message(STATUS "Generating static libraries")
-    set(FPRIME_LIB_TYPE "STATIC")
 endif()
+message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
+
 # Let user know on the choice of dictionaries
 if (GENERATE_HERITAGE_PY_DICT)
     message(STATUS "Generating Heritage Python Dictionaries")
@@ -76,20 +75,11 @@ else()
 endif()
 
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")
-
-# Add gtest
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
-add_subdirectory("${FPRIME_CORE_DIR}/gtest/" "${CMAKE_BINARY_DIR}/F-Prime")
-
-# Module subdirectories
-# Autocoders is first for Cheetah templates
-add_subdirectory("${FPRIME_CORE_DIR}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
-add_subdirectory("${FPRIME_CORE_DIR}/Fw/" "${CMAKE_BINARY_DIR}/F-Prime/Fw")
-add_subdirectory("${FPRIME_CORE_DIR}/Svc/" "${CMAKE_BINARY_DIR}/F-Prime/Svc")
-add_subdirectory("${FPRIME_CORE_DIR}/Os/" "${CMAKE_BINARY_DIR}/F-Prime/Os")
-add_subdirectory("${FPRIME_CORE_DIR}/Drv/" "${CMAKE_BINARY_DIR}/F-Prime/Drv")
-add_subdirectory("${FPRIME_CORE_DIR}/CFDP/" "${CMAKE_BINARY_DIR}/F-Prime/CFDP")
-add_subdirectory("${FPRIME_CORE_DIR}/Utils/" "${CMAKE_BINARY_DIR}/F-Prime/Utils")
+# Ignore GTest for non-test builds
+if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
+    include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+endif()

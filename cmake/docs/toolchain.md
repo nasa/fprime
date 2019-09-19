@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ../toolchain/toolchain.cmake.template
+**Note:** auto-generated from comments in: ./toolchain/toolchain.cmake.template
 
 ## Template toolchain.cmake.template:
 

@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ../platform/platform.cmake.template
+**Note:** auto-generated from comments in: ./platform/platform.cmake.template
 
 ## platform.cmake.template:
 
@@ -27,10 +27,6 @@ will be used. `${CMAKE_SYSTEM_NAME}` is set in the toolchain file.
 
 Otherwise, CMake sets the `${CMAKE_SYSTEM_NAME}` to be that of the Host system, and that platform
 will be used. e.g. when building on Linux, the platform file "Linux.cmake" will be used.
-
-**Note:** Unit tests are treated as a separate system. When building and running unit tests the
-          user is expected to select the appropriate platform in `platform/ut/` to run their UTs.
-          e.g. running UTs on Linux should be run with `-DPLATFORM=ut/Linux` on the command line.
 
 ### Filling In CMake Platform by Eample ###
 

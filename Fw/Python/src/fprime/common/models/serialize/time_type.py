@@ -11,6 +11,9 @@ time tags sent with serialized data in the fprime architecture.
 @date Updated June 18, 2018
 @author R. Joseph Paetz (rpaetz@jpl.nasa.gov)
 
+@date Updated July 22, 2019
+@author Kevin C Oran (kevin.c.oran@jpl.nasa.gov)
+
 @bug No known bugs
 '''
 from __future__ import print_function
@@ -20,6 +23,7 @@ import time
 from datetime import *
 from pytz import *
 from enum import Enum
+import math
 
 # Custom Python Modules
 from fprime.common.models.serialize.type_exceptions import *
@@ -96,7 +100,7 @@ class TimeType(type_base.BaseType):
 
     def _check_time_base(self, time_base):
         '''
-        Checks if a given microsecond value is valid.
+        Checks if a given TimeBase value is valid.
 
         Args:
             time_base (int): The value to check
@@ -110,6 +114,15 @@ class TimeType(type_base.BaseType):
         if (time_base not in valid_vals):
             raise TypeRangeException(time_base)
 
+    def to_jsonable(self):
+        """
+        JSONable object format
+        """
+        return {"type": self.__repr__(),
+                "base": self.__timeBase,
+                "context": self.__timeContext,
+                "seconds": self.seconds,
+                "microseconds": self.useconds}
     @property
     def timeBase(self):
         return TimeBase(self.__timeBase.val)
@@ -209,6 +222,8 @@ class TimeType(type_base.BaseType):
         Returns:
             Negative, 0, or positive for t1<t2, t1==t2, t1>t2 respectively
         '''
+        def cmp(x, y):
+            return ((x > y) - (x < y))  # added to support Python 2/3
 
         # Compare Base
         base_cmp = cmp(t1.__timeBase.val, t2.__timeBase.val)
@@ -290,8 +305,166 @@ class TimeType(type_base.BaseType):
 
         return dt
 
+    def set_datetime(self, dt, time_base=0xffff):
+        '''
+        Sets the timebase from a datetime object.
+
+        Args:
+            dt (datetime): datetime object to read from time.
+        '''
+        total_seconds = (dt - datetime.fromtimestamp(0)).total_seconds()
+        seconds = int(total_seconds)
+        useconds = int((total_seconds - seconds) * 1000000)
+
+        self._check_time_base(time_base)
+        self._check_useconds(useconds)
+
+        self.__timeBase = u16_type.U16Type(time_base)
+        self.__secs = u32_type.U32Type(seconds)
+        self.__usecs = u32_type.U32Type(useconds)
 
     def __repr__(self): return 'Time'
+
+    '''
+    The following Python special methods add support for rich comparison of TimeTypes to other
+    TimeTypes and numbers.
+    Note: comparisons support comparing to numbers or other instances of TimeType. If comparing to
+    another TimeType, these comparisons use the provided compare method. See TimeType.compare for
+    a description of this behavior.
+    '''
+    def __get_float(self):
+        '''
+        a helper method that gets the current TimeType as a float where the non-fraction is seconds
+        and the fraction is microseconds. This enables comparisons with numbers.
+        '''
+        return self.seconds + (self.useconds / 1000000)
+
+    def __lt__(self, other):
+        if isinstance(other, TimeType):
+            return self.compare(self, other) < 0
+        else:
+            return self.__get_float() < other
+
+    def __le__(self, other):
+        if isinstance(other, TimeType):
+            return self.compare(self, other) <= 0
+        else:
+            return self.__get_float() <= other
+
+    def __eq__(self, other):
+        if isinstance(other, TimeType):
+            return self.compare(self, other) == 0
+        else:
+            return self.__get_float() == other
+
+    def __ne__(self, other):
+        if isinstance(other, TimeType):
+            return self.compare(self, other) != 0
+        else:
+            return self.__get_float() != other
+
+    def __gt__(self, other):
+        if isinstance(other, TimeType):
+            return self.compare(self, other) > 0
+        else:
+            return self.__get_float() > other
+
+    def __ge__(self, other):
+        if isinstance(other, TimeType):
+            return self.compare(self, other) >= 0
+        else:
+            return self.__get_float() >= other
+
+    '''
+    The following helper methods enable support for arithmetic operations on TimeTypes.
+    '''
+    def __set_float(self, num):
+        '''
+        a helper method that takes a float and sets a TimeType's seconds and useconds fields.
+        Note: This method is private because it is only used by the _get_type_from_float helper to
+        generate new TimeType instances. It is not meant to be used to modify an existing timestamp.
+        Note: Present implementation will set any negative result to 0
+        '''
+        num = max(num, 0)
+        self.seconds = int(math.floor(num))
+        self.useconds = int(round((num - self.seconds) * 1000000))
+
+    def __get_type_from_float(self, num):
+        '''
+        a helper method that returns a new instance of TimeType and sets the seconds and useconds
+        fields using the given number. The new TimeType's time_base and time_context will be
+        preserved from the calling object.
+        '''
+        tType = TimeType(self.__timeBase.val, self.__timeContext.val)
+        tType.__set_float(num)
+        return tType
+
+    '''
+    The following Python special methods add support for arithmetic operations on TimeTypes.
+    '''
+    def __add__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = self.__get_float() + other
+        return self.__get_type_from_float(num)
+
+    def __sub__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = self.__get_float() - other
+        return self.__get_type_from_float(num)
+
+    def __mul__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = self.__get_float() * other
+        return self.__get_type_from_float(num)
+
+    def __truediv__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = self.__get_float() / other
+        return self.__get_type_from_float(num)
+
+    def __floordiv__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = self.__get_float() // other
+        return self.__get_type_from_float(num)
+
+    '''
+    The following Python special methods add support for reflected arithmetic operations on
+    TimeTypes.
+    '''
+    def __radd__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = other + self.__get_float()
+        return self.__get_type_from_float(num)
+
+    def __rsub__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = other - self.__get_float()
+        return self.__get_type_from_float(num)
+
+    def __rmul__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = other * self.__get_float()
+        return self.__get_type_from_float(num)
+
+    def __rtruediv__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = other / self.__get_float()
+        return self.__get_type_from_float(num)
+
+    def __rfloordiv__(self, other):
+        if isinstance(other, TimeType):
+            other = other.__get_float()
+        num = other // self.__get_float()
+        return self.__get_type_from_float(num)
 
 
 def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):

@@ -23,12 +23,16 @@ import time
 from fprime_ac.utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
+from lxml import isoschematron
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
 #from __builtin__ import None
 from pickle import NONE
+
+# For Python determination
+import six
 
 #
 # Python extension modules and custom interfaces
@@ -50,6 +54,7 @@ class XmlComponentParser(object):
         self.__import_serializable_type_files = []
         self.__include_header_files = []
         self.__import_dictionary_files = []
+        self.__import_enum_type_files = []
         #
         self.__is_component_xml = False
         #
@@ -63,6 +68,13 @@ class XmlComponentParser(object):
         self.__instances = None # Stores number of detected instances based on id base values
 
         #
+        if os.path.isfile(xml_file) == False:
+            stri = "ERROR: Could not find specified XML file %s." % xml_file
+            PRINT.info(stri)
+            raise IOError(stri)
+        
+        fd = open(xml_file,'r')
+        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         #
         self.Config = ConfigManager.ConfigManager.getInstance()
@@ -74,18 +86,13 @@ class XmlComponentParser(object):
         constants_file = ROOTDIR + os.sep + self.Config.get('constants','constants_file')
         ## make sure it is a real file
         if os.path.isfile(constants_file):
-            self.__const_parser = configparser.SafeConfigParser()
+            if six.PY2:
+                self.__const_parser = configparser.SafeConfigParser()
+            else:
+                self.__const_parser = configparser.ConfigParser()
             self.__const_parser.read(constants_file)
         else:
             self.__const_parser = None
-
-        #
-        if os.path.isfile(xml_file) == False:
-            stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise IOError(stri)
-
-        fd = open(xml_file,'r')
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
@@ -96,16 +103,17 @@ class XmlComponentParser(object):
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
 
-        try:
-            # 2/3 conversion
-            relax_compiled.validate(element_tree)
-        except Exception as e:
-            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.Config.get('schema' , 'component')))
-            PRINT.info(e)
-            PRINT.info(relax_compiled.error_log)
-            PRINT.info(relax_compiled.error_log.last_error)
+        # 2/3 conversion
+        if not relax_compiled.validate(element_tree):
+            msg = "XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.Config.get('schema' , 'component'))
+            PRINT.info(msg)
             print(element_tree)
-            raise e
+            raise Exception(msg)
+        
+        # Check for async_input port
+        self.validate_xml(xml_file, element_tree, 'schematron', 'active_comp')
+
+        self.validate_xml(xml_file, element_tree, 'schematron', 'comp_unique')
 
         ## Add Implicit ports if needed
       #  element_tree = __check_ports(element_tree)
@@ -150,6 +158,8 @@ class XmlComponentParser(object):
                 self.__import_port_type_files.append(comp_tag.text)
             elif comp_tag.tag == 'import_serializable_type':
                 self.__import_serializable_type_files.append(comp_tag.text)
+            elif comp_tag.tag == 'import_enum_type':
+                self.__import_enum_type_files.append(comp_tag.text)
             elif comp_tag.tag == 'import_dictionary':
                 for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR',"")]:
                     dict_file = os.path.join(possible, comp_tag.text)
@@ -163,23 +173,17 @@ class XmlComponentParser(object):
                 dict_fd = open(dict_file,'r')
                 dict_parser = etree.XMLParser(remove_comments=True)
                 dict_element_tree = etree.parse(dict_fd,parser=xml_parser)
+
                 component.append(dict_element_tree.getroot())
-
-                #Validate new imports using their root tag as a key to find what schema to use
-                relax_file_handler = open(ROOTDIR + self.Config.get('schema' , dict_element_tree.getroot().tag.lower()) , 'r')
-                relax_parsed = etree.parse(relax_file_handler)
-                relax_file_handler.close()
-                relax_compiled = etree.RelaxNG(relax_parsed)
-
-                try:
-                    # 2/3 conversion
-                    relax_compiled.validate(element_tree)
-                except Exception as e:
-                    PRINT.info("XML file {} is not valid according to schema {}.".format(dict_file , ROOTDIR + self.Config.get('schema' , dict_element_tree.getroot().tag.lower())))
-                    PRINT.info(e)
-                    PRINT.info(relax_compiled.error_log)
-                    PRINT.info(relax_compiled.error_log.last_error)
-                    raise e
+                    
+                # Validate new imports using their root tag as a key to find what schema to use
+                self.validate_xml(dict_file, dict_element_tree, 'schema', dict_element_tree.getroot().tag.lower())
+                
+                # Validate ID and Opcode uniqueness with Schematron
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'chan_id')
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'evr_id')
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'param_id')
+                self.validate_xml(dict_file, dict_element_tree, 'schematron', 'cmd_op')
 
                 # add to list of imported dictionaries for make dependencies later
                 self.__import_dictionary_files.append(comp_tag.text)
@@ -761,7 +765,6 @@ class XmlComponentParser(object):
                 PRINT.info("%s: Invalid tag %s in component definition"%(xml_file,comp_tag.tag))
                 sys.exit(-1)
 
-
         ## Add implicit ports to port list if no ports were defined
         ## Continue if all required ports are defined
         ## Abort if required ports are defined, but there are ports missing
@@ -964,6 +967,35 @@ class XmlComponentParser(object):
         # Python 3's SafeConfigParser isn't stripping comments, this fixes that problem
         return self.__const_parser.get(section,var).split(";")[0]
 
+    def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
+        # Check that validator is valid
+        if not self.Config.has_option(validator_type, validator_name):
+            msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
+            PRINT.info(msg)
+            print(msg)
+            raise Exception(msg)
+        
+        # Create proper xml validator tool
+        validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
+        validator_parsed = etree.parse(validator_file_handler)
+        validator_file_handler.close()
+        if validator_type == 'schema':
+            validator_compiled = etree.RelaxNG(validator_parsed)
+        elif validator_type == 'schematron':
+            validator_compiled = isoschematron.Schematron(validator_parsed)
+        
+        # Validate XML file
+        if not validator_compiled.validate(parsed_xml_tree):
+            if validator_type == 'schema':
+                msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
+                print(parsed_xml_tree)
+                raise Exception(msg)
+            elif validator_type == 'schematron':
+                msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
+                print(parsed_xml_tree)
+
     def is_component(self):
         """
         Returns true if component xml or false if other type.
@@ -987,6 +1019,12 @@ class XmlComponentParser(object):
         Return a list of all imported serializable type XML files.
         """
         return self.__import_serializable_type_files
+    
+    def get_enum_type_files(self):
+        """
+        Return a list of all imported enum type XML files.
+        """
+        return self.__import_enum_type_files
 
     def get_imported_dictionary_files(self):
         """

@@ -69,7 +69,6 @@ class ChData(sys_data.SysData):
         '''
         return self.pkt
 
-
     def get_val(self):
         '''
         Return the channel value
@@ -92,15 +91,6 @@ class ChData(sys_data.SysData):
             inherited from TypeBase
         '''
         return self.val_obj
-
-    def get_time(self):
-        '''
-        Return the channel sample's timestamp
-
-        Returns:
-            The channel timestamp
-        '''
-        return self.time
 
     @staticmethod
     def get_csv_header(verbose=False):

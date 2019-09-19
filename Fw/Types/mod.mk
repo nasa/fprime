@@ -41,9 +41,6 @@ HDR = \
 	MallocAllocator.hpp
 
 #	FwStructSerializable.hpp
-
-SRC_BAERAD750 = \
-	VxWorks/VxWorksLogAssert.cpp
 	
 SUBDIRS = test
 

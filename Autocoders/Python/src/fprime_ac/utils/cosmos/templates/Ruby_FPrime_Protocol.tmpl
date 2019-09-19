@@ -1,0 +1,24 @@
+#raw
+# AUTO-GENERATED AS-IS TO LIB DIRECTORY BY COSMOSGEN.PY
+# Inherits from LengthProtocol but does not print debug when discarding FPrime's first 13 bytes sent
+
+require 'cosmos/interfaces/protocols/length_protocol'
+
+module Cosmos
+  # Protocol which delineates packets using a length field at a fixed
+  # location in each packet.
+  class FPrimeProtocol < LengthProtocol
+      
+    @initial = true 
+    
+    # Overwritten method to bypass error when FPrime Server sends first 13 meaningless bytes
+    def log_discard(length, found)
+        if(not (length == 13) and initial)
+            initial = false
+            super(length, found)
+        end
+    end
+
+  end
+end
+#end raw

@@ -286,8 +286,9 @@ blue/orange in the diagram below.
 These files are supplied by the the deployment or executable being built. This is typically supplied
 by the adaption project of F´. These files supply two critical functions. Primarily, this must
 supply an entry-point of the build system. It contains the standard CMake headers and an inclusion
-of the F´ CMake support file `FPrime.cmake`. This ensures CMake is ready to run, and all the F´
-setup is included. This should look something like the following:
+of the F´ CMake support file `FPrime.cmake` it should also include `FPrime-Code.cmake` to include
+the F´ core code. This ensures CMake is ready to run, and all the F´ setup is included.
+This should look something like the following:
 
 **CMake Headers and F´ Build System**
 
@@ -300,7 +301,6 @@ setup is included. This should look something like the following:
 ##
 cmake_minimum_required(VERSION 3.5)
 project(FPrime-Ref C CXX)
-set(CMAKE_BUILD_TYPE DEBUG)
 
 ##
 # Section 2: F´ Core
@@ -310,6 +310,7 @@ set(CMAKE_BUILD_TYPE DEBUG)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ```
 
 The secondary function of this file is to include any sub directories that contain adaptation
@@ -338,11 +339,11 @@ with the `Ref` prefix.
 ### 4.2 F´ Core CMake Support Files
 
 These files provide the the core CMake functions used to make components, deployments, and modules.
-In addition `FPrime.cmake` includes the sub directories that compose F´ core components. In that
-way deployments need only include the one CMake file to import all of F´. Functions that automate
-the auto-code function, module dependencies, and various other utilities are included to. Thus
-deployments and executables can follow the same pattern as core F´ components when adding custom
-components of their own.
+In addition `FPrime-Code.cmake` includes the sub directories that compose F´ core components. In
+that way deployments need only include the one CMake file to import all of F´. Functions that
+automate the auto-code function, module dependencies, and various other utilities are included to.
+Thus deployments and executables can follow the same pattern as core F´ components when adding
+custom components of their own.
 
 ### 4.3 F´Core and Adaptation CMakeLists.txt Files
 
@@ -374,15 +375,16 @@ A complete list of documentation pages can be found at:
 
 1. [API](API.md): standard user-level functions.
 2. [Options](Options.md): options to affect the build setup.
-3. [platform](platform.md): F´ platform setup documentation and how and creation.
-4. [toolchain](toolchain.md): CMake toolchain setup documentation and creation.
-4. [module](module.md): adding modules to the CMake sytem.
-4. [deployment](deployment.md): adding deployment to the CMake system.
-5. [Support/Module](support/Module.md): detailed inner documentation on module functions
-6. [Support/Executable](support/Executable.md): detailed inner documentation on executable functions.
-7. [Support/Unit-Test](support/Unit_Test.md): detailed inner documentation on unit test functions.
-8. [Support/Utils](support/Utils.md): detailed inner documentation on utility functions.
-8. [Support/AC-Utils](support/AC_Utils.md): detailed innner documentation on AC utility functions.
+3. [Targets](targets/Targets.md) describes built in support targets like `dict`
+4. [platform](platform.md): F´ platform setup documentation and how and creation.
+5. [toolchain](toolchain.md): CMake toolchain setup documentation and creation.
+6. [module](module.md): adding modules to the CMake sytem.
+7. [deployment](deployment.md): adding deployment to the CMake system.
+8. [Support/Module](support/Module.md): detailed inner documentation on module functions
+9. [Support/Executable](support/Executable.md): detailed inner documentation on executable functions.
+10. [Support/Unit-Test](support/Unit_Test.md): detailed inner documentation on unit test functions.
+11. [Support/Utils](support/Utils.md): detailed inner documentation on utility functions.
+12. [Support/AC-Utils](support/AC_Utils.md): detailed innner documentation on AC utility functions.
 
 ### 5.1 Module Functions: register_fprime_module and generate_module
 
@@ -420,7 +422,8 @@ Registering unit tests uses the same process as above with the exception that th
 `UT_SOURCE_FILES` and `UT_MOD_DEPS`. This allows the same file to define both a module or
 executable and unit test without overriding perviously used variables.
 
-Unit tests must be built with a platform defining the `UT_BUILD` variable. This prevents the
+Unit tests must be built with a cmake build type of "TESTING". This allows for the building of the
+unit-tests and setting up the `make check` target. This prevents the
 unit-tests from bogging down a normal build, and allows for specialized compilation flags for UTs.
 They are registered with a `make check` target to allow them to be run at once. Individual UTs can
 be run from the `bin` directory if needed. It is advised that the user build from top-level F´ as
@@ -432,7 +435,7 @@ deployment's unit-tests.
 ```
 mkdir build_ut
 cd build_ut
-cmake .. -DPLATFORM=ut/Linux
+cmake .. -DCMAKE_BUILD_TYPE=TESTING
 make -j32
 ```
 

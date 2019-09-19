@@ -57,12 +57,12 @@ namespace Svc {
 
             // open call modifiers
 
-            static bool OpenIntercepter(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
+            static bool OpenInterceptor(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
             Os::File::Status m_testOpenStatus;
 
             // write call modifiers
 
-            static bool WriteIntercepter(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
+            static bool WriteInterceptor(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
             Os::File::Status m_testWriteStatus;
             // How many read calls to let pass before modifying
             NATIVE_INT_TYPE m_writesToWait;

@@ -21,6 +21,10 @@ set(MOD_DEPS
   CFDP/Checksum
   Fw/Buffer
 )
+# For shared libraries, Os must exist in the module list
+if (BUILD_SHARED_LIBS)
+    list(APPEND MOD_DEPS "Os")
+endif()
 register_fprime_module()
 # Add GTest directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

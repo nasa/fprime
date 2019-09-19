@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "UNIQUE_WINDOW_ID">
+    <rule context="instance">
+        <assert test="count(//instance[((./@base_id+./@base_id_window)>current()/@base_id and (current()/@base_id+current()/@base_id_window)>(./@base_id))])=1 or (count(//instance[((./@base_id+./@base_id_window)=current()/@base_id and (current()/@base_id+current()/@base_id_window)=(./@base_id))])=1)">Range of id's for every instance should be non-overlapping.</assert>
+    </rule>
+</pattern>
+</schema>

@@ -2,17 +2,14 @@
 # AUTOCODER_INPUT_FILES: Contains all Autocoder input files
 # SOURCE_FILES: Handcoded C++ source files)
 
-set(AUTOCODER_INPUT_FILES
+set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MsgPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/VoidPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/VoidArgComponentAi.xml"
-)
-
-set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/App2VoidArgImpl.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+register_fprime_module()
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
@@ -25,4 +22,11 @@ set_target_properties(
 )
 
 # Add unit test directory
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+# UT_SOURCE_FILES: Sources for unit test
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/app2/VoidArgComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Top.cpp"
+)
+#register_fprime_ut()
+
+
