@@ -142,6 +142,9 @@ class ChannelListener(consumer.Consumer):
       # Descriptor and length of message have already been decoded
       self.__status_bar_updater.put_data((8 + len(data), 0))
 
+      # Pass message to the stripchart panel
+      self.__stripchart_listener.update_telem(self.__current_ch_msg)
+
     def decode_ch(self, msg):
         """
         Decode channel telemetry item using Channel object dictionary.
