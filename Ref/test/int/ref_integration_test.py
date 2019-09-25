@@ -95,8 +95,8 @@ class TestRefAppClass(object):
         else:
             severity = self.FilterSeverity[severity].name
         try:
-            self.api.send_command("ALOG_SET_EVENT_REPORT_FILTER", ["INPUT_" + severity, "INPUT_" + enabled])
-            self.api.send_command("ALOG_SET_EVENT_SEND_FILTER", ["SEND_" + severity, "SEND_" + enabled])
+            self.api.send_command("eventLogger.ALOG_SET_EVENT_REPORT_FILTER", ["INPUT_" + severity, "INPUT_" + enabled])
+            self.api.send_command("eventLogger.ALOG_SET_EVENT_SEND_FILTER", ["SEND_" + severity, "SEND_" + enabled])
             return True
         except AssertionError:
             return False
@@ -113,9 +113,9 @@ class TestRefAppClass(object):
         self.set_event_filter("DIAGNOSTIC", False)
 
     def test_send_command(self):
-        self.assert_command("CMD_NO_OP", max_delay=0.1)
+        self.assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 1
-        self.assert_command("CMD_NO_OP", max_delay=0.1)
+        self.assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 2
 
     def test_send_and_assert_no_op(self):
@@ -125,7 +125,7 @@ class TestRefAppClass(object):
         any_reordered = False
         dropped = False
         for i in range(0, length):
-            results = self.api.send_and_await_event("CMD_NO_OP", events=evr_seq, timeout=2)
+            results = self.api.send_and_await_event("cmdDisp.CMD_NO_OP", events=evr_seq, timeout=2)
             msg = "Send and assert NO_OP Trial #{}".format(i)
             if not self.api.test_assert(len(results) == 3,msg, True):
                 items = self.api.get_event_test_history().retrieve()
@@ -194,8 +194,8 @@ class TestRefAppClass(object):
             pred = predicates.greater_than(0)
             zero = predicates.equal_to(0)
 
-            self.assert_command("CMD_NO_OP")
-            self.assert_command("CMD_NO_OP")
+            self.assert_command("cmdDisp.CMD_NO_OP")
+            self.assert_command("cmdDisp.CMD_NO_OP")
 
             time.sleep(0.5)
 
@@ -204,8 +204,8 @@ class TestRefAppClass(object):
 
             self.set_event_filter(self.FilterSeverity.COMMAND, False)
             self.api.clear_histories()
-            self.api.send_command("CMD_NO_OP")
-            self.api.send_command("CMD_NO_OP")
+            self.api.send_command("cmdDisp.CMD_NO_OP")
+            self.api.send_command("cmdDisp.CMD_NO_OP")
 
             time.sleep(0.5)
 
