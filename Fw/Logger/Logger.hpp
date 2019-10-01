@@ -66,6 +66,8 @@ namespace Fw {
 
             //!< Static logger to use when calling the above 'logMsg' function
             static Logger* s_current_logger;
+
+            virtual ~Logger();
     };
 }
 

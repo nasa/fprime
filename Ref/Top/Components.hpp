@@ -1,6 +1,7 @@
 #ifndef __LITS_COMPONENTS_HEADER__
 #define __LITS_COMPONENTS_HEADER__
 void constructRefArchitecture(void);
+bool constructApp(bool dump, int port_number, char* hostname);
 void exitTasks(void);
 
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
