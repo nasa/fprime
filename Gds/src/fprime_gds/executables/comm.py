@@ -1,16 +1,27 @@
+"""
+Comm.py:
+
+Communications application. This will run the communications layer.
+"""
+from __future__ import print_function
 import sys
 import argparse
 import threading
+import logging
+import fprime_gds.common.logger
 
+import fprime_gds.common.adapters.base
 import fprime_gds.common.adapters.sender
 import fprime_gds.common.adapters.ip
+import fprime_gds.executables.cli
 
+LOGGER = logging.getLogger("comm")
 # Uses non-standard PIP package pyserial, so test the waters
 try:
     import fprime_gds.common.adapters.uart
-    UART_AVAILABLE = True
 except ImportError:
-    UART_AVAILABLE = False
+    pass
+
 
 def parse_args(args):
     """
@@ -19,27 +30,31 @@ def parse_args(args):
     :return: namespace argument
     """
     parser = argparse.ArgumentParser(description="Connects data from F prime flight software to the GDS tcp server")
-    parser.add_argument("--gds-addr", dest="gds_addr", type=str, default="127.0.0.1",
-                        help="Address of the GDS layer. Default: %(default)s")
-    parser.add_argument("--gds-port", dest="gds_port", type=int, default=50050,
-                        help="Port GDS later. Default: %(default)s")
-    subparsers = parser.add_subparsers(help="Type of adapter used for processing", dest="subcommand")
-    # UART adapter arguments
-    if UART_AVAILABLE:
-        uparser = subparsers.add_parser("uart", help="Connects to a UART radio")
-        uparser.add_argument("-d", "--device", dest="device", type=str, default="/dev/ttyACM0",
-                             help="UART device representing the FSW. Default: %(default)s")
-        uparser.add_argument("-b", "--baud", dest="baud", type=int, default=115200,
-                             help="Baud rate of the serial device. Default: %(default)s")
+    # Setup this parser to handle MiddleWare arguments
+    fprime_gds.executables.cli.MiddleWareParser.add_args(parser)
 
-    # IP adapter arguments
-    iparser =  subparsers.add_parser("ip", help="Connects to a IP radio")
-    iparser.add_argument("-a", "--addr", dest="addr", type=str, default="0.0.0.0",
-                         help="Address of the IP adapter server. Default: %(default)s")
-    iparser.add_argument("-p", "--port", dest="port", type=int, default=50000,
-                         help="Port of the IP adapter server. Default: %(default)s")
+    # Add a parser for each adapter
+    subparsers = parser.add_subparsers(help="Type of adapter used for processing", dest="subcommand")
+    for adapter_name in fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys():
+        adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[adapter_name]
+        # Check adapter real quick before moving on
+        if not hasattr(adapter, "get_arguments") or not callable(getattr(adapter, "get_arguments", None)):
+            LOGGER.error("'{}' does not have 'get_arguments' method, skipping.".format(adapter_name))
+            continue
+        subparse = subparsers.add_parser(adapter_name)
+        # Add arguments for the parser
+        for argument in adapter.get_arguments().keys():
+            subparse.add_argument(*argument, **adapter.get_arguments()[argument])
     args = parser.parse_args(args)
+    try:
+        extras = fprime_gds.executables.cli.refine(parser, args)
+        fprime_gds.common.logger.configure_py_log(extras["logs"], "comm-adapter.log")
+    except ValueError as exc:
+        print("[ERROR] {}".format(exc), file=sys.stderr)
+        parser.print_help(sys.stderr)
+        sys.exit(-1)
     return args
+
 
 def main(args=sys.argv):
     """
@@ -48,17 +63,14 @@ def main(args=sys.argv):
     :return: return code
     """
     args = parse_args(args[1:])
-    sender = fprime_gds.common.adapters.sender.TCPSender(args.gds_addr, args.gds_port)
-    if args.subcommand == "ip":
-        adapter = fprime_gds.common.adapters.ip.IpAdapter(sender, args.addr, args.port)
-    elif args.subcommand == "uart":
-        adapter = fprime_gds.common.adapters.uart.SerialAdapter(sender, args.device, args.baud)
-    else:
-        raise Exception("Programming error!")
+    sender = fprime_gds.common.adapters.sender.TCPSender(args.tts_addr, args.tts_port)
+    # Create an adapter from input
+    adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[args.subcommand]
+    adapted = adapter(sender, **fprime_gds.common.adapters.base.BaseAdapter.process_arguments(adapter, args))
 
-    threading.Thread(target=adapter.run_uplink).start()
-    threading.Thread(target=adapter.run_downlink).start()
-
+    # Start-up threads
+    threading.Thread(target=adapted.run_uplink).start()
+    threading.Thread(target=adapted.run_downlink).start()
 
 if __name__ == "__main__":
     sys.exit(main())

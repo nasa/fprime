@@ -9,11 +9,29 @@ code that they are importing.
 """
 import os
 import re
+import sys
 import errno
 import argparse
 import datetime
 
 import fprime_gds.common.utils.config_manager
+import fprime_gds.common.adapters.base
+# Include basic adapters
+import fprime_gds.common.adapters.ip
+try:
+    import fprime_gds.common.adapters.uart
+except ImportError:
+    pass
+# Try to import each GUI type, and if it can be imported
+# it will be provided to the user as an option
+GUIS = ["none", "html"]
+try:
+    import fprime_gds.wxgui.tools.gds
+    GUIS.append("wx")
+except ImportError as exc:
+    pass
+
+
 
 
 def find_in(token, deploy, is_file=True):
@@ -30,6 +48,7 @@ def find_in(token, deploy, is_file=True):
                 return os.path.join(dirpath, check)
     return None
 
+
 def add_safe_argument(parser, *args, **kwargs):
     """
     Wrap add argument call on parser to ensure we catch duplicate errors
@@ -43,6 +62,34 @@ def add_safe_argument(parser, *args, **kwargs):
         if not "conflicting option string" in str(arge):
             raise
 
+
+ATTR_NAME = "fp_refineries"
+def add_refinery(parser, method):
+    """
+    Adds or updates the "fp_refineries" member attribute to the supplied parser, int order to ensure that we can parse
+    all the arguments out of the added arguments.
+    Note: this is monkey-patching. Yes it is evil, but it allows for colocation of argument additions and usage.
+    :param parser: parser to add or update the attribute
+    :param method: argument refining method to call
+    """
+    if not hasattr(parser, ATTR_NAME):
+        setattr(parser, ATTR_NAME, [])
+    getattr(parser, ATTR_NAME).append(method)
+
+
+def refine(parser, args):
+    """
+    Run all refineries on the arguments.
+    :param parser: parser to release
+    :param args: arguments to refine
+    :return:
+    """
+    args_out = {}
+    for refinery in getattr(parser, ATTR_NAME, []):
+        args_out.update(refinery(args))
+    return args_out
+
+
 class LogDeployParser(object):
     """
     A parser that handles log files by reading in a '--logs' directory or a '--deploy' directory to put the logs into
@@ -51,7 +98,8 @@ class LogDeployParser(object):
     # Class variable
     first_log = None
 
-    def add_args(self, parser):
+    @classmethod
+    def add_args(claxx, parser):
         """
         Adds a log argument and deploy argument.
         :return: parser
@@ -60,9 +108,13 @@ class LogDeployParser(object):
                           help="Path to deployment directory. Will be used to find dictionary and app automatically")
         add_safe_argument(parser, "-l", "--logs", dest="logs", action="store", default=None, type=str,
                           help="Logging directory. Created if non-existant.")
+        add_safe_argument(parser, "--log-directly", dest="log_directly", action="store_true", default=False,
+                          help="Logging directory is used directly, no extra dated directories created.")
+        add_refinery(parser, claxx.refine_args)
         return parser
 
-    def refine_args(self, arguments):
+    @classmethod
+    def refine_args(clazz, arguments):
         """
         Refine the arguments in order to produce the needed values.
         :param arguments: parsed arguments
@@ -78,21 +130,25 @@ class LogDeployParser(object):
             values["logs"] = arguments.logs
         elif arguments.deploy is not None and os.path.isdir(arguments.deploy):
             values["logs"] = os.path.join(arguments.deploy, "logs")
-        # Make log directory for this run
-        if LogDeployParser.first_log is None:
+        # Get logging dir
+        if arguments.log_directly:
+            clazz.first_log = values["logs"]
+        elif clazz.first_log is None:
             values["logs"] = os.path.abspath(os.path.join(values["logs"],
                                                           datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")))
-            try:
-                os.makedirs(values["logs"])
-            except OSError as exc:
-                if exc.errno != errno.EEXIST:
-                    raise
-            first_log = values["logs"]
+            clazz.first_log = values["logs"]
         else:
-            values["logs"] = LogDeployParser.first_log
+            values["logs"] = clazz.first_log
+        # Make sure directory exists
+        try:
+            os.makedirs(values["logs"])
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
         return values
 
-class MiddleWareParser(LogDeployParser):
+
+class MiddleWareParser(object):
     """
     Class defining add_args and validate_args methods for finding middleware CLI inputs. Needed values produced from
     this parser must be the following:
@@ -100,7 +156,8 @@ class MiddleWareParser(LogDeployParser):
     - port: port to run on.
     - address: address to run on.
     """
-    def add_args(self, parser):
+    @classmethod
+    def add_args(claxx, parser):
         """
         Sets up and parses the arguments required to run the data middleware layer. At this time, the data middleware is
         the threaded TCP server and thus the arguments are the ip address and port to listen to. May also be used in
@@ -108,27 +165,86 @@ class MiddleWareParser(LogDeployParser):
         :param parser: parser to fill in with arguments
         :return: parser after arguments added
         """
-        super(MiddleWareParser, self).add_args(parser)
-        add_safe_argument(parser, "-p", "--port", dest="port", action="store", type=int,
-                          help="Set the threaded TCP socket server port [default: %(default)s]", default=50000)
-        add_safe_argument(parser, "-a", "--addr", dest="addr", action="store", type=str,
+        LogDeployParser.add_args(parser) # All middleware parsers are log-deploy parsers
+        add_safe_argument(parser, "--tts-port", dest="tts_port", action="store", type=int,
+                          help="Set the threaded TCP socket server port [default: %(default)s]", default=50050)
+        add_safe_argument(parser, "--tts-addr", dest="tts_addr", action="store", type=str,
                           help="set the threaded TCP socket server address [default: %(default)s]", default="0.0.0.0")
+        add_refinery(parser, claxx.refine_args)
         return parser
 
-    def refine_args(self, arguments):
+    @classmethod
+    def refine_args(claxx, arguments):
         """
         Refine the arguments in order to produce the needed values.
         :param arguments: parsed arguments
         :return:
         """
-        values = super(MiddleWareParser, self).refine_args(arguments)
+        values = {}
         values.update({
-            "port": arguments.port,
-            "address": arguments.addr
+            "tts_port": arguments.tts_port,
+            "tts_address": arguments.tts_addr
         })
         return values
 
-class GdsParser(LogDeployParser):
+
+class CommParser(object):
+    """
+    Class defining add_args and validate_args methods for finding communication CLI inputs. Needed values produced from
+    this parser must be the following:
+
+    Adapter type and adapter arguments.
+
+    """
+    ADAPTER_PARSERS = {}
+    @classmethod
+    def add_args(claxx, parser):
+        """
+        Sets up and parses the arguments required to run the data middleware layer. At this time, the data middleware is
+        the threaded TCP server and thus the arguments are the ip address and port to listen to. May also be used in
+        clients connecting to the middleware layer.
+        :param parser: parser to fill in with arguments
+        :return: parser after arguments added
+        """
+        adapters = fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys()
+        LogDeployParser.add_args(parser)  # All middleware parsers are log-deploy parsers
+        add_safe_argument(parser, "--comm-adapter", dest="adapter", action="store", type=str,
+                          help="Choose an adapter from the available adapters.", choices=adapters, default="ip")
+        for adapter_name in adapters:
+            adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[adapter_name]
+            # Check adapter real quick before moving on
+            if not hasattr(adapter, "get_arguments") or not callable(getattr(adapter, "get_arguments", None)):
+                #LOGGER.error("'{}' does not have 'get_arguments' method, skipping.".format(adapter_name))
+                continue
+            comm_parser = argparse.ArgumentParser(description='Run F prime communication arguments.')
+            # Add arguments for the parser
+            for argument in adapter.get_arguments().keys():
+                add_safe_argument(comm_parser, *argument, **adapter.get_arguments()[argument])
+            CommParser.ADAPTER_PARSERS[adapter_name] = comm_parser
+        add_refinery(parser, claxx.refine_args)
+        return parser
+
+    @classmethod
+    def refine_args(claxx, arguments):
+        """
+        Refine the arguments in order to produce the needed values.
+        :param arguments: parsed arguments
+        :return:
+        """
+        values = {}
+        values.update({
+            "comm_adapter": arguments.adapter
+        })
+        if values["comm_adapter"] not in CommParser.ADAPTER_PARSERS:
+            raise ValueError("Could not comm adapter in {}"
+                             .format(fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys()))
+        args, unknown = CommParser.ADAPTER_PARSERS.get(values["comm_adapter"]).parse_known_args(sys.argv)
+        adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[values["comm_adapter"]]
+        values.update(fprime_gds.common.adapters.base.BaseAdapter.process_arguments(adapter, args))
+        return values
+
+
+class GdsParser(object):
     """
     Class defining add_args and validate_args methods for finding GDS CLI inputs. This must produce the following needed
     arguments:
@@ -139,35 +255,35 @@ class GdsParser(LogDeployParser):
 
     Note: deployment can help in setting both dictionary and logs, but isn't strictly required.
     """
-    def __init__(self, is_gds=True):
-        """
-        Set the type of GDS.
-        :param is_gds: is it the new style gds
-        """
-        self.is_gds = is_gds
-
-    def add_args(self, parser):
+    @classmethod
+    def add_args(claxx, parser):
         """
         Function to parse GDS required arguments like configuration files, deployment package to read, and a logging
         path to write out
         :param parser: parser to add args to
         :return: parser
         """
-        super(GdsParser, self).add_args(parser)
+        MiddleWareParser.add_args(parser)
+        add_safe_argument(parser,"-g", "--gui", choices=GUIS, dest="gui", type=str,
+                          help="Set the desired GUI system for running the deployment. [default: %(default)s]",
+                          default="html")
         add_safe_argument(parser, "--dictionary", dest="dictionary", action="store", required=False, type=str,
                           help="Path to dictionary. Overrides deploy if both are set")
 
         add_safe_argument(parser, "-c", "--config", dest="config", action="store", default=None, type=str,
                           help="Configuration for wx GUI. Ignored if not using wx.")
+        add_refinery(parser, claxx.refine_args)
+        return parser
 
-    def refine_args(self, arguments):
+    @classmethod
+    def refine_args(claxx, arguments):
         """
         Takes the arguments from the parser, and processes them into the needed map of key to dictionaries for the
         program. This will throw if there is an error.
         :param arguments: parsed arguments, ready for return.
         :return: values dictionaries
         """
-        values = super(GdsParser, self).refine_args(arguments)
+        values = {"gui": arguments.gui}
         # Find dictionary setting via "dictionary" argument or the "deploy" argument
         if arguments.dictionary is not None and os.path.exists(arguments.dictionary):
             values["dictionary"] = arguments.dictionary
@@ -193,35 +309,43 @@ class GdsParser(LogDeployParser):
         return values
 
 
-class BinaryDeployment(MiddleWareParser):
+class BinaryDeployment(object):
     """
     Class defining add_args and validate_args methods for finding Binary inputs.
     """
-    def add_args(self, parser):
+    @classmethod
+    def add_args(claxx, parser):
         """
         Add arguments used to run the binary application. Uses the middleware layer, so the arguments are also inherited.
         :param parser: parser to add arguments to.
         :return:
         """
-        parser = super(BinaryDeployment, self).add_args(parser)
+        CommParser.add_args(parser)
+        add_safe_argument(parser, "-n", "--no-app", dest="noapp", action="store_true", default=False,
+                          help="Do not run deployment binary. Overrides --app.")
         add_safe_argument(parser, "--app", dest="app", action="store", required=False, type=str,
                           help="Path to app to run. Overrides deploy if both are set.")
+        add_refinery(parser, claxx.refine_args)
 
-    def refine_args(self, arguments):
+    @classmethod
+    def refine_args(claxx, arguments):
         """
         Takes the arguments from the parser, and processes them into the needed map of key to dictionaries for the
         program. This will throw if there is an error.
         :param arguments: parsed arguments, ready for return.
         :return: values dictionaries
         """
-        values = super(BinaryDeployment, self).refine_args(arguments)
+        values = {}
+        # No app, stop processing now
+        if arguments.noapp:
+            return values
         if arguments.app is not None and os.path.isfile(arguments.app):
             values["app"] = arguments.app
         elif arguments.app is not None and not os.path.isfile(arguments.app):
             raise ValueError("App {} does not exist".format(arguments.app))
         elif arguments.deploy is not None:
             basename = os.path.basename(os.path.normpath(arguments.deploy))
-            values["app"] = find_in(basename, arguments.deploy, is_file=True)
+            values["app"] = find_in(basename, os.path.join(arguments.deploy, "bin"), is_file=True)
             if values["app"] is None:
                 raise ValueError("App {} not found in {}. Specify with '--app'.".format(basename, arguments.deploy))
         else:

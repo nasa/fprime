@@ -13,6 +13,9 @@ import fprime_gds.common.utils.config_manager
 
 # Get dictionary from environment
 DICTIONARY = os.environ.get("DICTIONARY", None)
+PORT = int(os.environ.get("TTS_PORT", 50050), 0)
+ADDRESS = os.environ.get("TTS_ADDR", "0.0.0.0")
+LOG_DIR = os.environ.get("LOG_DIR", None)
 
 # Gds config setup
 GDS_CONFIG = fprime_gds.common.utils.config_manager.ConfigManager()

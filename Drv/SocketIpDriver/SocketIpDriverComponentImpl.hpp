@@ -52,9 +52,11 @@ namespace Drv {
       SocketIpDriverComponentImpl(
 #if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
-#else
-          void
 #endif
+        ,
+        const bool send_udp = SOCKET_SEND_UDP, /*!< Send down using UDP. Default: read from configuration HPP*/
+        const U32 timeout_seconds = SOCKET_TIMEOUT_SECONDS, /*!< Timeout(S). Default: from configuration HPP*/
+        const U32 timeout_microseconds = SOCKET_TIMEOUT_MICROSECONDS /*!< Timeout(uS). Default: from configuration HPP*/
       );
 
       //! Initialize object SocketIpDriver
@@ -112,6 +114,12 @@ namespace Drv {
       U16 m_port;                    //!< IP address port used
       U8 m_backing_data[MAX_RECV_BUFFER_SIZE]; //!< Buffer used to store data
       bool m_stop; //!< Stop the receiving port
+
+      // Configuration values
+      const bool m_send_udp;
+      const U32 m_timeout_seconds;
+      const U32 m_timeout_microseconds;
+
     };
 
 } // end namespace Svc

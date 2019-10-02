@@ -80,12 +80,13 @@ class BaseAdapter(object):
         adapters 'write' definition. This will also retry the uplink up to RETRY_COUNT times.
         :param data: data to be framed.
         """
-        data = self.sender.poll()
+        data = self.sender.read()
         # Check for valid data
         if data is not None and len(data) > 0:
             data_length = len(data)
             framed = struct.pack(BaseAdapter.HEADER_FORMAT, BaseAdapter.START_TOKEN, data_length)
             framed += data
+            framed += struct.pack(">I", BaseAdapter.CHECKSUM_CALC(framed))
             # Transmit the data with retries
             for retry in range(0, BaseAdapter.RETRY_COUNT):
                 if self.write(framed):
@@ -106,7 +107,7 @@ class BaseAdapter(object):
         frames = self.process(data)
         # Send out all frames found to GDS
         for frame in frames:
-            self.write.send(frame)
+            self.sender.write(frame)
 
     def process(self, data):
         """
@@ -153,6 +154,36 @@ class BaseAdapter(object):
         """
         while self.running_downlink:
             self.downlink()
+
+    @classmethod
+    def get_adapters(cls):
+        """
+        Get the adapters off of base class.
+        :return: adapter list (must be imported)
+        """
+        adapter_map = {}
+        for adapter in cls.__subclasses__():
+            # Get two versions of names
+            adapter_name = adapter.__module__
+            adapter_short = adapter_name.split(".")[-1]
+            # Check to use long or short name
+            if not adapter_short in adapter_map:
+                adapter_name = adapter_short
+            adapter_map[adapter_name] = adapter
+        return adapter_map
+
+    @staticmethod
+    def process_arguments(clazz, args):
+        """
+        Process arguments incoming from the command line. This will construct keyword arguments to add to supply to a
+        call to the adapter's constructors.
+        :param args: arguments to process
+        :return: dictionary of constructor keyword arguments
+        """
+        kwargs = {}
+        for value in clazz.get_arguments().values():
+            kwargs[value["dest"]] = getattr(args, value["dest"])
+        return kwargs
 
 class UplinkFailureException(Exception):
     """

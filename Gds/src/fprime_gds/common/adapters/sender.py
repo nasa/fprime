@@ -7,90 +7,54 @@ sender should be used with a radio adapter in order to pull and push data to/fro
 @author lestarch
 """
 from __future__ import print_function
-import socket
-import threading
-
 import logging
-LOGGER = logging.getLogger("gds_sender")
-logging.basicConfig(level=logging.INFO)
+import struct
 
-class TCPSender(object):
+from .ip import TcpHandler
+
+LOGGER = logging.getLogger("gds_sender")
+
+class TCPSender(TcpHandler):
     """
     Interface class defining necessary functions to talk to the GDS.
     """
     SOCKET_TIMEOUT = 0.250
-    def __init__(self, address="127.0.0.1", port=50000):
+    def __init__(self, address="127.0.0.1", port=50050):
         """
         Initialize this interface with the address and port needed to connect to the GDS.
         :param address: Address of the tcp server. Default 127.0.0.1
         :param port: port of the tcp server. Default: 50000
         """
-        # Socket variables
-        self.address = address
-        self.port = port
-        self.socket = None
-        self.connected = True
-        self.recv_lock = threading.Lock()
-        self.send_lock = threading.Lock()
+        super(TCPSender, self).__init__(address, port, False, logging.getLogger("gds_sender"))
+        self.frame = True
 
-        # Callback and threading variables
-        self.callbacks = []
-        self.connected = False
+    def post_open(self):
+        """
+        Opens the connection to the TCP as a client. Then sends the required write packet to startup the session.
+        """
+        with self.lock:
+            self.frame = False
+        self.write(b"Register FSW\n")
+        with self.lock:
+            self.frame = True
 
-    def open(self):
+    def read_impl(self):
         """
-        Opens the connection to the TCP server. Raises exception on connection issues.
-        """
-        try:
-            # Close in preparation for reopening
-            self.close()
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.socket.connect((self.address, self.port))
-            self.socket.settimeout(TCPSender.SOCKET_TIMEOUT)
-            # Opening volley
-            self.socket.sendall(b"Register FSW\n")
-            LOGGER.info("Connected to GDS at: {}:{}".format(self.address, self.port))
-            self.connected = True
-        except:
-            self.close()
-            raise
-
-    def close(self):
-        """
-        Close the connection to the GDS TCP server.
-        """
-        if self.socket is not None:
-            self.socket.close()
-            self.socket = None
-            # Fully conected otherwise stop
-            if self.connected:
-                LOGGER.info("Disconnected from GDS at {}:{}".format(self.address, self.port))
-                self.connected = False
-
-    def write(self, packet):
-        """
-        Write a packet out to the tcp socket server
+        Write a packet out to the tcp socket server. This adds the framing data for the TCP Server.
         :param packet: bytes object of data to write out to the socket server
         """
-        try:
-            if self.socket is None:
-                self.open()
-            data = b"A5A5 GUI %s" % (packet)
-            with self.send_lock:
-                self.socket.sendall(data)
-        except socket.error:
-            pass
+        data = super(TCPSender, self).read_impl()
+        return data[8:]
 
-    def poll(self):
+
+    def write_impl(self, packet):
         """
-        Polls the interface looking for a packet of data.
-        :return: bytes object containing packet
+        Write a packet out to the tcp socket server. This adds the framing data for the TCP Server.
+        :param packet: bytes object of data to write out to the socket server
         """
-        try:
-            if self.socket is None:
-                self.open()
-            self.socket.settimeout(0.010)
-            with self.recv_lock:
-                return self.socket.recv(4096)
-        except socket.error:
-            return None
+        if self.frame:
+            packet = b"A5A5 GUI %s%s" % (struct.pack(">I", len(packet)), packet)
+        super(TCPSender, self).write_impl(packet)
+
+
+

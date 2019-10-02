@@ -6,6 +6,7 @@
 #
 ####
 import os
+import logging
 import flask
 import flask_restful
 
@@ -17,6 +18,10 @@ import fprime_gds.flask.json
 
 # Import GDS layer items
 import fprime_gds.common.pipeline.standard
+
+# Update logging to avoid redundant messages
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.WARN)
 
 # Flask global objects
 app = flask.Flask(__name__, static_url_path="")
@@ -32,8 +37,10 @@ api = flask_restful.Api(app)
 
 # Middleware to python data pipeline
 pipeline = fprime_gds.common.pipeline.standard.StandardPipeline()
-pipeline.setup(app.config["GDS_CONFIG"], app.config["DICTIONARY"])
-pipeline.connect("127.0.0.1", 50000)
+pipeline.setup(app.config["GDS_CONFIG"], app.config["DICTIONARY"], logging_prefix=app.config["LOG_DIR"])
+app.logger.info("Connected to GDS at: {}:{}".format(app.config["ADDRESS"], app.config["PORT"]))
+pipeline.connect(app.config["ADDRESS"], app.config["PORT"])
+
 
 # Application routes
 api.add_resource(fprime_gds.flask.commands.CommandDictionary, "/dictionary/commands",

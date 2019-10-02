@@ -72,8 +72,23 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             self.close()
         return None
 
-
-
-
-
-
+    @classmethod
+    def get_arguments(cls):
+        """
+        Returns a dictionary of flag to argparse-argument dictionaries for use with argparse to setup arguments.
+        :return: dictionary of flag to argparse arguments for use with argparse
+        """
+        return {
+            ("-d", "--device"): {
+                "dest": "device",
+                "type": str,
+                "default": "/dev/ttyACM0",
+                "help": "UART device representing the FSW. Default: %(default)s"
+            },
+            ("-b", "--baud"): {
+                "dest":"port",
+                "type":int,
+                "default": 115200,
+                "help": "Baud rate of the serial device. Default: %(default)s"
+            }
+        }

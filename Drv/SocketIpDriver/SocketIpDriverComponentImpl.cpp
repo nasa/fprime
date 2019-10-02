@@ -34,6 +34,7 @@
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/EightyCharString.hpp>
+#include <Os/Log.hpp>
 
 extern "C" {
     #include <stdio.h>
@@ -41,18 +42,25 @@ extern "C" {
 
 namespace Drv {
 
+  //!< Storage for our keep-alive data
+  const char KEEPALIVE_CONST[] = KEEPALIVE_DATA;
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   SocketIpDriverComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     SocketIpDriverComponentImpl(
-        const char *const compName
+#if FW_OBJECT_NAMES == 1
+        const char *const compName,
+#endif
+        bool send_udp,
+        U32 timeout_seconds,
+        U32 timeout_microseconds
     ) :
+#if FW_OBJECT_NAMES == 1
       SocketIpDriverComponentBase(compName)
 #else
-    SocketIpDriverComponentBase(void)
+      SocketIpDriverComponentBase(void)
 #endif
     ,
     m_buffer(0xbeef, 0xbeef, reinterpret_cast<U64>(m_backing_data), sizeof(m_buffer)),
@@ -60,7 +68,11 @@ namespace Drv {
     m_socketOutFd(-1),
     m_hostname(""),
     m_port(0),
-    m_stop(false)
+    m_stop(false),
+    // Configuration values
+    m_send_udp(send_udp),
+    m_timeout_seconds(timeout_seconds),
+    m_timeout_microseconds(timeout_microseconds)
   { }
 
   void SocketIpDriverComponentImpl ::
@@ -86,12 +98,12 @@ namespace Drv {
           return status;
       }
       // If we need UDP sending, attempt to open UDP
-      if (SOCKET_SEND_UDP && (status = openProtocol(SOCK_DGRAM, false)) != SocketIpDriverComponentImpl::SUCCESS) {
+      if (m_send_udp && (status = openProtocol(SOCK_DGRAM, false)) != SocketIpDriverComponentImpl::SUCCESS) {
           (void) close(m_socketInFd);
           return status;
       }
       // Not sending UDP, reuse our input TCP socket
-      else if (!SOCKET_SEND_UDP) {
+      else if (!m_send_udp) {
           m_socketOutFd = m_socketInFd;
       }
       // Coding error, if not successful here
@@ -120,8 +132,8 @@ namespace Drv {
       }
       // Set timeout socket option
       struct timeval timeout;
-      timeout.tv_sec = SOCKET_TIMEOUT_SECONDS;
-      timeout.tv_usec = SOCKET_TIMEOUT_MILLI_SECONDS;
+      timeout.tv_sec = m_timeout_seconds;
+      timeout.tv_usec = m_timeout_microseconds;
       // set socket write to timeout after 1 sec
       if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
           (void) close(socketFd);
@@ -169,6 +181,8 @@ namespace Drv {
       } else {
           m_socketOutFd = socketFd;
       }
+      Fw::Logger::logMsg("Connected to %s:%hu using %s\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port,
+                         reinterpret_cast<POINTER_CAST>(m_send_udp ? "udp" : "tcp"));
       return SocketIpDriverComponentImpl::SUCCESS;
   }
 
@@ -201,8 +215,8 @@ namespace Drv {
       SocketIpDriverComponentImpl::SocketIpStatus status = SocketIpDriverComponentImpl::SUCCESS;
       // Attempt to recv out data
       I32 recd = recv(m_socketInFd, data, MAX_RECV_BUFFER_SIZE, SOCKET_RECV_FLAGS);
-      // Error returned, and it wasn't an interrupt
-      if (recd == -1 && errno != EINTR) {
+      // Error returned, and it wasn't an interrupt, nor a reset
+      if (recd == -1 && errno != EINTR && errno != ECONNRESET) {
           Fw::Logger::logMsg("[ERROR] IP recv failed ERRNO: %d\n", errno);
           status = READ_ERROR; // Stop recv task on error
       }
@@ -211,13 +225,14 @@ namespace Drv {
           status = INTERRUPTED_TRY_AGAIN;
       }
       // Zero bytes read means a closed socket
-      else if (recd == 0) {
+      else if (recd == 0 || errno == ECONNRESET) {
           (void) close(m_socketInFd);
           m_socketInFd = -1;
           status = READ_DISCONNECTED;
       }
-      // Valid data, send it out, and keep looping
-      else {
+      // Ignore KEEPALIVE data and send out any other data.
+      else if (memcmp(data, KEEPALIVE_CONST,
+              (recd > static_cast<I32>(sizeof(KEEPALIVE_CONST)) - 1) ? sizeof(KEEPALIVE_CONST) -1 : recd) != 0) {
           m_buffer.setsize(recd);
           // Expected to be a guarded or sync output to ensure processing immediately
           recv_out(0, m_buffer);
@@ -269,7 +284,7 @@ namespace Drv {
       for (U32 i = 0; i < MAX_SEND_ITERATIONS && total < size; i++) {
           I32 sent = 0;
           // Output to send UDP
-          if (SOCKET_SEND_UDP) {
+          if (m_send_udp) {
               sent = sendto(m_socketOutFd, data + total, size - total, SOCKET_SEND_FLAGS,
                             reinterpret_cast<struct sockaddr *>(&m_udpAddr), sizeof(m_udpAddr));
           }
@@ -290,7 +305,7 @@ namespace Drv {
           }
           // Error returned, and it wasn't an interrupt
           else if (sent == -1 && errno == EINTR) {
-              Fw::Logger::logMsg("[ERROR] IP send failed ERRNO: %d UDP: %d\n", errno, SOCKET_SEND_UDP);
+              Fw::Logger::logMsg("[ERROR] IP send failed ERRNO: %d UDP: %d\n", errno, m_send_udp);
               break;
           }
           // Successful write
