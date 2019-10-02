@@ -344,7 +344,7 @@ class BinaryDeployment(object):
         elif arguments.app is not None and not os.path.isfile(arguments.app):
             raise ValueError("App {} does not exist".format(arguments.app))
         elif arguments.deploy is not None:
-            basename = os.path.basename(os.path.normpath(arguments.deploy))
+            basename = os.path.basename(os.path.abspath(arguments.deploy))
             values["app"] = find_in(basename, os.path.join(arguments.deploy, "bin"), is_file=True)
             if values["app"] is None:
                 raise ValueError("App {} not found in {}. Specify with '--app'.".format(basename, arguments.deploy))
