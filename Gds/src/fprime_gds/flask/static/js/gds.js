@@ -4,8 +4,6 @@
  * JavaScript support file for the gds layer.
  */
 import {Loader} from "./loader.js"
-import {ChannelView}  from "./vue-support/channel.js"
-import {EventView}  from "./vue-support/event.js"
 import {TabETCVue}  from "./vue-support/tabetc.js"
 
 //import {SimpleTemplate} from "./simple-templates.js";
@@ -22,6 +20,7 @@ function setupBindings() {
     loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
     loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
     loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
+    loader.registerPoller("logdata", function (data) {tabView.updateLogs(data);});
 }
 
 // On ready when the document has been loaded

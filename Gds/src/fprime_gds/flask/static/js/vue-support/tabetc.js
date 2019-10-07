@@ -9,6 +9,7 @@
 import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
+import {LogMixins} from "./log.js";
 
 /**
  * tabbed-ect:
@@ -18,9 +19,9 @@ import {EventMixins} from "./event.js";
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "cmdhist", "events", "channels"],
+    props:["commands", "loader", "cmdhist", "events", "channels", "logs"],
     data: function () {
-        return {"currentTab": "Commanding", "tabs": ["Commanding", "Events", "Channels"]}
+        return {"currentTab": "Commanding", "tabs": ["Commanding", "Events", "Channels", "Logs"]}
     }
 });
 
@@ -42,11 +43,13 @@ export class TabETCVue {
         Object.assign(TabETCVue.prototype, CommandMixins);
         Object.assign(TabETCVue.prototype, EventMixins);
         Object.assign(TabETCVue.prototype, ChannelMixins);
+        Object.assign(TabETCVue.prototype, LogMixins);
 
         let data = {
             ...this.setupCommands(commands, loader),
             ...this.setupEvents(),
-            ...this.setupChannels(channels)
+            ...this.setupChannels(channels),
+            ...this.setupLogs()
         };
         // Create a vue object
         this.vue = new Vue({
