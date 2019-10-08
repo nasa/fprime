@@ -38,7 +38,7 @@ namespace Svc {
           unsigned long long missed;
           int ret = read (fd, &missed, sizeof (missed));
           if (-1 == ret) {
-              Fw::Logger.logMsg("timer read error: %s\n",strerror(errno));
+              Fw::Logger::logMsg("timer read error: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
           }
           if (this->m_quit) {
               itval.it_interval.tv_sec = 0;
