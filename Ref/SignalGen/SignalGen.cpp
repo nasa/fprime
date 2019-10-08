@@ -150,7 +150,7 @@ namespace Ref {
     this->signalPhase     = Phase;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
-    //this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase);
+    this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase);
   }
 
   void SignalGen :: SignalGen_Toggle_cmdHandler(
