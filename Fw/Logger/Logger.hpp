@@ -28,12 +28,16 @@ namespace Fw {
              */
             virtual void log(
                 const char* fmt,
+                POINTER_CAST a0 = 0,
                 POINTER_CAST a1 = 0,
                 POINTER_CAST a2 = 0,
                 POINTER_CAST a3 = 0,
                 POINTER_CAST a4 = 0,
                 POINTER_CAST a5 = 0,
-                POINTER_CAST a6 = 0
+                POINTER_CAST a6 = 0,
+                POINTER_CAST a7 = 0,
+                POINTER_CAST a8 = 0,
+                POINTER_CAST a9 = 0
             ) = 0;
 
             /**
@@ -49,12 +53,16 @@ namespace Fw {
              */
             static void logMsg(
                 const char* fmt,
+                POINTER_CAST a0 = 0,
                 POINTER_CAST a1 = 0,
                 POINTER_CAST a2 = 0,
                 POINTER_CAST a3 = 0,
                 POINTER_CAST a4 = 0,
                 POINTER_CAST a5 = 0,
-                POINTER_CAST a6 = 0
+                POINTER_CAST a6 = 0,
+                POINTER_CAST a7 = 0,
+                POINTER_CAST a8 = 0,
+                POINTER_CAST a9 = 0
             );
 
             /**

@@ -14,6 +14,7 @@
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <assert.h>
 #include <stdio.h>
 
@@ -89,7 +90,7 @@ namespace Svc {
                   arg1,arg2,arg3,arg4,arg5,arg6);
       } else {
           // Can't assert, what else can we do? Maybe somebody will see it.
-          (void)printf("Svc::AssertFatalAdapter not registered!\n");
+          Fw::Logger::logMsg("Svc::AssertFatalAdapter not registered!\n");
           assert(0);
       }
   }
