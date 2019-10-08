@@ -13,7 +13,8 @@ class ProcessNotStableException(Exception):
     """ Process did not start up stably. Thus there was a problem. """
     def __init__(self, name, code, lifespan):
         """ Constructor to help with messages"""
-        super(ProcessNotStableException, "{} stopped with code {} sooner than {} seconds".format(name, code, lifespan))
+        super(ProcessNotStableException, self).__init__("{} stopped with code {} sooner than {} seconds"
+                                                        .format(name, code, lifespan))
 
 
 class AppWrapperException(Exception):

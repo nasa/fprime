@@ -57,8 +57,18 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
     if name is None:
         name = str(cmd)
     print("[INFO] Ensuring {} is stable for at least {} seconds".format(name, launch_time))
-    return fprime_gds.executables.utils.run_wrapped_application(cmd, logfile, env, launch_time)
-
+    try:
+        return fprime_gds.executables.utils.run_wrapped_application(cmd, logfile, env, launch_time)
+    except fprime_gds.executables.utils.AppWrapperException as awe:
+        print("[ERROR] {} erred with {}. Log output:".format(name, str(awe)), file=sys.stderr)
+        try:
+            if logfile is not None:
+                with open(logfile, "r") as file_handle:
+                    for line in file_handle.readlines():
+                        print("    [LOG] {}".format(line.strip()), file=sys.stderr)
+        except Exception:
+            pass
+        raise
 
 def launch_tts(tts_port, tts_address, logs, **_):
     """
@@ -182,18 +192,18 @@ def main(argv=None):
         print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
         raise Exception("Invalid GUI specified: {0}".format(args["gui"]))
-
-    # Launch all launchers
-    procs = []
-    for launcher in launchers:
-        procs.append(launcher(**args))
-
-    # Wait for either gui or app to finish, then close
+    # Launch launchers and wait for the last app to finish
     try:
-        print("[INFO] F´ is now running. CTRL-C to shutdown all components.")
+        procs = []
+        for launcher in launchers:
+            procs.append(launcher(**args))
+        print("[INFO] F prime is now running. CTRL-C to shutdown all components.")
         procs[-1].wait()
     except KeyboardInterrupt:
         print("[INFO] CTRL-C received. Exiting.")
+    except Exception as exc:
+        print("[INFO] Shutting down F prime due to error. {}".format(str(exc)), file=sys.stderr)
+        return 1
     # Processes are killed atexit
     return 0
 
