@@ -13,6 +13,7 @@ import sys
 import errno
 import argparse
 import datetime
+import platform
 
 import fprime_gds.common.utils.config_manager
 import fprime_gds.common.adapters.base
@@ -345,7 +346,7 @@ class BinaryDeployment(object):
             raise ValueError("App {} does not exist".format(arguments.app))
         elif arguments.deploy is not None:
             basename = os.path.basename(os.path.abspath(arguments.deploy))
-            values["app"] = find_in(basename, os.path.join(arguments.deploy, "bin"), is_file=True)
+            values["app"] = find_in(basename, os.path.join(arguments.deploy, "bin", platform.system()), is_file=True)
             if values["app"] is None:
                 raise ValueError("App {} not found in {}. Specify with '--app'.".format(basename, arguments.deploy))
         else:

@@ -77,13 +77,17 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
     """
     # Write out run information for the calling user
     print("[INFO] Running Application: {0}".format(arguments[0]))
-    # Spawn the process. Uses pexpect, as this will force the process to output data immediately, rather than buffering
-    # the output. That way the log file is fully up-to-date.
+    # Attempt to open a log file
+    file_handler = None
     try:
-        file_handler = None
         if logfile is not None:
             print("[INFO] Log File: {0}".format(logfile))
             file_handler = open(logfile, "wb", 0)
+    except IOError as exc:
+        raise AppWrapperException("Failed to open: {} with error {}.".format(logfile, str(exc)))
+    # Spawn the process. Uses pexpect, as this will force the process to output data immediately, rather than buffering
+    # the output. That way the log file is fully up-to-date.
+    try:
         child = subprocess.Popen(arguments, stdout=file_handler, stderr=subprocess.STDOUT, env=env)
         register_process_assassin(child, file_handler)
         # If launch time is specified, then wait for it to be stable
@@ -93,8 +97,6 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
             if child.returncode is not None:
                 raise ProcessNotStableException(arguments[0], child.returncode, launch_time)
         return child
-    except IOError as exc:
-        raise AppWrapperException("Failed to open: {} with error {}.".format(logfile, str(exc)))
     except Exception as exc:
         raise AppWrapperException("Failed to run application: {0}. Error: {1}".format(" ".join(arguments), exc))
     return None

@@ -60,7 +60,7 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
     try:
         return fprime_gds.executables.utils.run_wrapped_application(cmd, logfile, env, launch_time)
     except fprime_gds.executables.utils.AppWrapperException as awe:
-        print("[ERROR] {} erred with {}. Log output:".format(name, str(awe)), file=sys.stderr)
+        print("[ERROR] {}.".format(str(awe)), file=sys.stderr)
         try:
             if logfile is not None:
                 with open(logfile, "r") as file_handle:
@@ -68,7 +68,7 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
                         print("    [LOG] {}".format(line.strip()), file=sys.stderr)
         except Exception:
             pass
-        raise
+        raise fprime_gds.executables.utils.AppWrapperException("Failed to run {}".format(name))
 
 def launch_tts(tts_port, tts_address, logs, **_):
     """
