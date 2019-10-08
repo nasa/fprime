@@ -65,7 +65,8 @@ namespace Svc {
     }
     // Pick a rule and downlink
     void FileDownlinkRule :: action(Svc::Tester &state) {
-        Fw::Buffer buffer;
+        char data_holder[2048];
+        Fw::Buffer buffer(0, 0, reinterpret_cast<U64>(data_holder), sizeof(data_holder));
         Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(buffer.getdata()), buffer.getsize());
         // Force a U32 to know the size
         buffer_wrapper.serialize(static_cast<U32>(0xdeadbeef));
