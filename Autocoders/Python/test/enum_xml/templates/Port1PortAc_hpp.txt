@@ -1,0 +1,54 @@
+#ifndef EXAMPLE_PORT1_PORT_HPP_
+#define EXAMPLE_PORT1_PORT_HPP_
+
+#include <cstring>
+#include <cstdio>
+#include <Fw/Cfg/Config.hpp>
+#include <Fw/Port/InputPortBase.hpp>
+#include <Fw/Port/OutputPortBase.hpp>
+#include <Fw/Comp/PassiveComponentBase.hpp>
+#include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/Serializable.hpp>
+#include <Fw/Types/StringType.hpp>
+#include <Autocoders/Python/test/enum_xml/Serial1SerializableAc.hpp>
+
+
+namespace Example {
+
+    /// Input Port1 port description
+    /// 
+
+    class InputPort1Port : public Fw::InputPortBase  {
+    public:
+        enum {
+            SERIALIZED_SIZE = Example::Enum1::SERIALIZED_SIZE + Example::Serial1::SERIALIZED_SIZE //!< serialized size of port arguments
+        };
+        typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp, NATIVE_INT_TYPE portNum, Example::Enum1 Arg1, Example::Serial1 Arg2); //!< port callback definition
+
+        InputPort1Port(void); //!< constructor
+        void init(void); //!< initialization function
+        void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr); //!< call to register a component
+        void invoke(Example::Enum1 Arg1, Example::Serial1 Arg2); //!< invoke port interface
+    protected:
+    private:
+        CompFuncPtr m_func; //!< pointer to port callback function
+#if FW_PORT_SERIALIZATION == 1        
+        Fw::SerializeStatus invokeSerial(Fw::SerializeBufferBase &buffer); //!< invoke the port with serialized arguments
+#endif
+};
+    /// Input Port1 port description
+    /// 
+    
+    class OutputPort1Port : public Fw::OutputPortBase {
+      public: 
+        OutputPort1Port(void);
+        void init(void);
+        void addCallPort(InputPort1Port* callPort);
+        void invoke(Example::Enum1 Arg1, Example::Serial1 Arg2);
+      protected:
+      private:
+        InputPort1Port* m_port;
+    };
+} // end namespace Example
+#endif /* EXAMPLE_PORT1_PORT_HPP_ */
+

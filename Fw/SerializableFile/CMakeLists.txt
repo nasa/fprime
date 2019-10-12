@@ -5,7 +5,9 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/TestSerializable")
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/TestSerializable")
+endif()
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
 )
@@ -13,6 +15,10 @@ set(MOD_DEPS
   Fw/Cfg
   Fw/Types
 )
+# For shared libraries, Os must exist in the module list
+if (BUILD_SHARED_LIBS)
+    list(APPEND MOD_DEPS "Os")
+endif()
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES

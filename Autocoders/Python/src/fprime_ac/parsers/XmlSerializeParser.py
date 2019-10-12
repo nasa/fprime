@@ -70,6 +70,8 @@ class XmlSerializeParser(object):
         self.__include_header_files = []
         # List of XML serializable description dependencies
         self.__includes = []
+        # List of XML enum type files
+        self.__include_enum_files = []
         # Comment block of text for serializable
         self.__comment = ""
         # List of (name, type, comment) tuples
@@ -77,36 +79,41 @@ class XmlSerializeParser(object):
         # Type ID for serialized type
         self.__type_id = None
         #
+        if os.path.isfile(xml_file) == False:
+            stri = "ERROR: Could not find specified XML file %s." % xml_file
+            PRINT.info(stri)
+            raise
+        fd = open(xml_file,'r')
+#        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
         self.__config       = ConfigManager.ConfigManager.getInstance()
 
         #
-        if os.path.isfile(xml_file) == False:
-            stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise
-
-        fd = open(xml_file,'r')
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
 
-         #Validate new imports using their root tag as a key to find what schema to use
-        file_handler = open(os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower()) , 'r')
+        #Validate new imports using their root tag as a key to find what schema to use
+        for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR',"")]:
+            rng_file = os.path.join(possible, self.__config.get('schema' , element_tree.getroot().tag.lower()).lstrip("/"))
+            if os.path.isfile(rng_file) == True:
+                break
+        else:
+            stri = "ERROR: Could not find specified RNG file %s." % rng_file
+            PRINT.info(stri)
+            raise IOError(stri)
+        file_handler = open(rng_file, 'r')
         relax_parsed = etree.parse(file_handler)
         file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
 
-        try:
-            # 2/3 conversion
-            relax_compiled.validate(element_tree)
-        except Exception as e:
-            PRINT.info("XML file {} is not valid according to schema {}.".format(xml_file , os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower())))
-            PRINT.info(e)
-            PRINT.info(relax_compiled.error_log)
-            PRINT.info(relax_compiled.error_log.last_error)
-            raise e
+        # 2/3 conversion
+        if not relax_compiled.validate(element_tree):
+            msg = "XML file {} is not valid according to schema {}.".format(xml_file , os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower()))
+            PRINT.info(msg)
+            print(element_tree)
+            raise Exception(msg)
 
         serializable = element_tree.getroot()
         if serializable.tag != "serializable":
@@ -134,6 +141,8 @@ class XmlSerializeParser(object):
                 self.__include_header_files.append(serializable_tag.text)
             elif serializable_tag.tag == 'import_serializable_type':
                 self.__includes.append(serializable_tag.text)
+            elif serializable_tag.tag == 'import_enum_type':
+                self.__include_enum_files.append(serializable_tag.text)
             elif serializable_tag.tag == 'members':
                 for member in serializable_tag:
                     if member.tag != 'member':
@@ -239,6 +248,12 @@ class XmlSerializeParser(object):
         Returns a list of all imported XML serializable files.
         """
         return self.__includes
+    
+    def get_include_enums(self):
+        """
+        Returns a list of all imported XML enum files.
+        """
+        return self.__include_enum_files
 
 
     def get_comment(self):

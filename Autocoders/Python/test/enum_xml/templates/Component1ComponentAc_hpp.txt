@@ -1,0 +1,324 @@
+#ifndef COMPONENT1_COMP_HPP_
+#define COMPONENT1_COMP_HPP_
+
+#include <Fw/Cfg/Config.hpp>
+#include <Fw/Port/InputSerializePort.hpp>
+#include <Fw/Port/OutputSerializePort.hpp>
+#include <Fw/Comp/ActiveComponentBase.hpp>
+#include <Autocoders/Python/test/enum_xml/Port1PortAc.hpp>
+#include <Autocoders/Python/test/enum_xml/Serial1SerializableAc.hpp>
+
+namespace Example {
+
+  //! \class Component1ComponentBase
+  //! \brief Auto-generated base for Component1 component
+  //!
+  class Component1ComponentBase :
+    public Fw::ActiveComponentBase
+  {
+
+    // ----------------------------------------------------------------------
+    // Friend classes
+    // ----------------------------------------------------------------------
+
+    //! Friend class for white-box testing
+    //!
+    friend class Component1ComponentBaseFriend;
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Getters for typed input ports
+    // ----------------------------------------------------------------------
+
+    //! Get input port at index
+    //!
+    //! \return ExEnumIn[portNum]
+    //!
+    Example::InputPort1Port* get_ExEnumIn_InputPort(
+        NATIVE_INT_TYPE portNum /*!< The port number*/
+    );
+
+    //! Get input port at index
+    //!
+    //! \return EnumIn[portNum]
+    //!
+    Example::InputPort1Port* get_EnumIn_InputPort(
+        NATIVE_INT_TYPE portNum /*!< The port number*/
+    );
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Connect typed input ports to typed output ports
+    // ----------------------------------------------------------------------
+
+    //! Connect port to EnumOut[portNum]
+    //!
+    void set_EnumOut_OutputPort(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::InputPort1Port *port /*!< The port*/
+    );
+
+#if FW_PORT_SERIALIZATION
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Connect serialization input ports to typed output ports
+    // ----------------------------------------------------------------------
+
+    //! Connect port to EnumOut[portNum]
+    //!
+    void set_EnumOut_OutputPort(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::InputSerializePort *port /*!< The port*/
+    );
+
+#endif
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Component construction, initialization, and destruction
+    // ----------------------------------------------------------------------
+
+#if FW_OBJECT_NAMES == 1
+    //! Construct a Component1ComponentBase object
+    //!
+    Component1ComponentBase(
+        const char* compName /*!< Component name*/
+    );
+#else
+    //! Construct a Component1ComponentBase object
+    //!
+    Component1ComponentBase(void);
+#endif
+
+    //! Initialize a Component1ComponentBase object
+    //!
+    void init(
+        NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
+        NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
+
+    //! Destroy a Component1ComponentBase object
+    //!
+    virtual ~Component1ComponentBase(void);
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Handlers to implement for typed input ports
+    // ----------------------------------------------------------------------
+
+    //! Handler for input port ExEnumIn
+    //
+    virtual void ExEnumIn_handler(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    ) = 0;
+
+    //! Handler for input port EnumIn
+    //
+    virtual void EnumIn_handler(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    ) = 0;
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Port handler base-class functions for typed input ports.
+    // ----------------------------------------------------------------------
+    // Call these functions directly to bypass the corresponding ports.
+    // ----------------------------------------------------------------------
+
+    //! Handler base-class function for input port ExEnumIn
+    //!
+    void ExEnumIn_handlerBase(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+    //! Handler base-class function for input port EnumIn
+    //!
+    void EnumIn_handlerBase(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Pre-message hooks for typed async input ports.
+    // ----------------------------------------------------------------------
+    // Each of these functions is invoked just before processing a message
+    // on the corresponding port. By default they do nothing. You can
+    // override them to provide specific pre-message behavior.
+    // ----------------------------------------------------------------------
+
+    //! Pre-message hook for async input port ExEnumIn
+    //!
+    virtual void ExEnumIn_preMsgHook(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+    //! Pre-message hook for async input port EnumIn
+    //!
+    virtual void EnumIn_preMsgHook(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Invocation functions for typed output ports
+    // ----------------------------------------------------------------------
+
+    //! Invoke output port EnumOut
+    //!
+    void EnumOut_out(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Getters for numbers of input ports
+    // ----------------------------------------------------------------------
+
+    //! Get the number of ExEnumIn input ports
+    //!
+    //! \return The number of ExEnumIn input ports
+    //!
+    NATIVE_INT_TYPE getNum_ExEnumIn_InputPorts(void);
+
+    //! Get the number of EnumIn input ports
+    //!
+    //! \return The number of EnumIn input ports
+    //!
+    NATIVE_INT_TYPE getNum_EnumIn_InputPorts(void);
+
+
+    // ----------------------------------------------------------------------
+    // Enumerations for number of ports
+    // ----------------------------------------------------------------------
+
+    enum {
+       NUM_EXENUMIN_INPUT_PORTS = 1,
+       NUM_ENUMIN_INPUT_PORTS = 1,
+    };
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Getters for numbers of output ports
+    // ----------------------------------------------------------------------
+
+    //! Get the number of EnumOut output ports
+    //!
+    //! \return The number of EnumOut output ports
+    //!
+    NATIVE_INT_TYPE getNum_EnumOut_OutputPorts(void);
+
+
+    enum {
+       NUM_ENUMOUT_OUTPUT_PORTS = 1,
+    };
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Connection status queries for output ports
+    // ----------------------------------------------------------------------
+
+    //! Check whether port EnumOut is connected
+    //!
+    //! \return Whether port EnumOut is connected
+    //!
+    bool isConnected_EnumOut_OutputPort(
+        NATIVE_INT_TYPE portNum /*!< The port number*/
+    );
+
+  PROTECTED:
+
+    // ----------------------------------------------------------------------
+    // Event logging functions
+    // ----------------------------------------------------------------------
+
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Typed input ports
+    // ----------------------------------------------------------------------
+
+    //! Input port ExEnumIn
+    //!
+    Example::InputPort1Port m_ExEnumIn_InputPort[NUM_EXENUMIN_INPUT_PORTS];
+
+    //! Input port EnumIn
+    //!
+    Example::InputPort1Port m_EnumIn_InputPort[NUM_ENUMIN_INPUT_PORTS];
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Typed output ports
+    // ----------------------------------------------------------------------
+
+    //! Output port EnumOut
+    //!
+    Example::OutputPort1Port m_EnumOut_OutputPort[NUM_ENUMOUT_OUTPUT_PORTS];
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Calls for messages received on typed input ports
+    // ----------------------------------------------------------------------
+
+    //! Callback for port ExEnumIn
+    //!
+    static void m_p_ExEnumIn_in(
+        Fw::PassiveComponentBase* callComp, /*!< The component instance*/
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+    //! Callback for port EnumIn
+    //!
+    static void m_p_EnumIn_in(
+        Fw::PassiveComponentBase* callComp, /*!< The component instance*/
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Example::Enum1 Arg1, /*!< Example enum arg*/
+        Example::Serial1 Arg2 /*!< Example serial arg w enum*/
+    );
+
+  PRIVATE:
+
+    // ----------------------------------------------------------------------
+    // Message dispatch functions
+    // ----------------------------------------------------------------------
+
+    //! Called in the message loop to dispatch a message from the queue
+    //!
+    virtual MsgDispatchStatus doDispatch(void);
+
+
+
+  };
+
+} // end namespace Example
+#endif

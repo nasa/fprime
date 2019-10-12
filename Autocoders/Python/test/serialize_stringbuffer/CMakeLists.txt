@@ -2,14 +2,11 @@
 # AUTOCODER_INPUT_FILES: Contains all Autocoder input files
 # SOURCE_FILES: Handcoded C++ source files)
 
-set(AUTOCODER_INPUT_FILES
+set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ExampleSerializableAi.xml"
 )
 
-set(SOURCE_FILES
-  "")
-
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+register_fprime_module()
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
@@ -22,4 +19,10 @@ set_target_properties(
 )
 
 # Add unit test directory
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+# UT_SOURCE_FILES: Sources for unit test
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
+register_fprime_ut()
+
+
