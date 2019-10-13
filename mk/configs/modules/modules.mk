@@ -205,6 +205,7 @@ OTHER_MODULES := \
 	gtest \
 	Os/Stubs \
 	Fw/Test \
+	STest \
 	$(FW_GTEST_MODULES)
 
 # List deployments

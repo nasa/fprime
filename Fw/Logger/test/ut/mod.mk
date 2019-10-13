@@ -6,10 +6,7 @@
 #
 # There are some standard files that are included for reference
 
-SRC = Logger.cpp \
-      LogAssert.cpp
-	
-HDR = Logger.hpp \
-      LogAssert.hpp
 
-SUBDIRS = test
+TEST_SRC = FakeLogger.cpp LoggerRules.cpp Main.cpp
+
+TEST_MODS = Fw/Logger STest gtest Fw/Types

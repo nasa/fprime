@@ -16,7 +16,7 @@
 #include <cstddef>
 #include <limits.h>
 
-#include "STest/types/basic_types.h"
+#include "STest/STest/types/basic_types.h"
 
 namespace STest {
 

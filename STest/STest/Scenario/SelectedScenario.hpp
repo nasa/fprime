@@ -15,9 +15,9 @@
 #include <assert.h>
 #include <string.h>
 
-#include "STest/Random/Random.hpp"
-#include "STest/Scenario/Scenario.hpp"
-#include "STest/Scenario/ScenarioArray.hpp"
+#include "STest/STest/Random/Random.hpp"
+#include "STest/STest/Scenario/Scenario.hpp"
+#include "STest/STest/Scenario/ScenarioArray.hpp"
 
 namespace STest {
 

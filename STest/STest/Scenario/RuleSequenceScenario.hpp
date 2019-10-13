@@ -14,8 +14,8 @@
 
 #include <assert.h>
 
-#include "STest/Scenario/SequenceScenario.hpp"
-#include "STest/Scenario/RuleScenario.hpp"
+#include "STest/STest/Scenario/SequenceScenario.hpp"
+#include "STest/STest/Scenario/RuleScenario.hpp"
 
 namespace STest {
 

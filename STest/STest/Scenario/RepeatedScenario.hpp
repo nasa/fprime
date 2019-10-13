@@ -12,7 +12,7 @@
 #ifndef STest_RepeatedScenario_HPP
 #define STest_RepeatedScenario_HPP
 
-#include "STest/Scenario/IteratedScenario.hpp"
+#include "STest/STest/Scenario/IteratedScenario.hpp"
 
 namespace STest {
 

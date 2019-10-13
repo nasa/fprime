@@ -16,8 +16,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "STest/Random/Random.hpp"
-#include "STest/Rule/Rule.hpp"
+#include "STest/STest/Random/Random.hpp"
+#include "STest/STest/Rule/Rule.hpp"
 
 namespace STest {
 

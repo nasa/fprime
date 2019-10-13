@@ -14,7 +14,7 @@
 
 #include <assert.h>
 
-#include "STest/Scenario/Scenario.hpp"
+#include "STest/STest/Scenario/Scenario.hpp"
 
 namespace STest {
 
