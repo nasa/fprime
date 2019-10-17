@@ -3,7 +3,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Os/Log.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <stdio.h>
 
 namespace Svc {
@@ -47,7 +47,7 @@ namespace Svc {
         U32 sourcePort;
         status = data.deserialize(sourcePort);
         if (status != Fw::FW_SERIALIZE_OK) {
-            (void)printf("SerializableHubImpl: unable to deserialize port: %d\n",status);
+            Fw::Logger::logMsg("SerializableHubImpl: unable to deserialize port: %d\n",status);
         }
 
         // deserialize buffer
@@ -55,7 +55,7 @@ namespace Svc {
         status = data.deserialize(buff);
 
         if (status != Fw::FW_SERIALIZE_OK) {
-            (void)printf("SerializableHubImpl: unable to deserialize buffer: %d\n",status);
+            Fw::Logger::logMsg("SerializableHubImpl: unable to deserialize buffer: %d\n",status);
         }
 
         // call output port

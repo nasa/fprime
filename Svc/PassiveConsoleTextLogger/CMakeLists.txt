@@ -8,7 +8,6 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Stub/PrintfLoggerImplStub.cpp"
 )
 set(MOD_DEPS
   Fw/Logger
