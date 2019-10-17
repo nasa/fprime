@@ -12,7 +12,7 @@
 #ifndef STest_BoundedIteratedScenario_HPP
 #define STest_BoundedIteratedScenario_HPP
 
-#include "STest/STest/Scenario/ConditionalIteratedScenario.hpp"
+#include "STest/Scenario/ConditionalIteratedScenario.hpp"
 
 namespace STest {
 

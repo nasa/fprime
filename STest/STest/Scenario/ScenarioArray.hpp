@@ -14,7 +14,7 @@
 
 #include <assert.h>
 
-#include "STest/STest/Random/Random.hpp"
+#include "STest/Random/Random.hpp"
 
 namespace STest {
 

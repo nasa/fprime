@@ -12,7 +12,7 @@
 #ifndef STest_RuleScenario_HPP
 #define STest_RuleScenario_HPP
 
-#include "STest/STest/Scenario/Scenario.hpp"
+#include "STest/Scenario/Scenario.hpp"
 
 namespace STest {
 

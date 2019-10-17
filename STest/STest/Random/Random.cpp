@@ -12,10 +12,10 @@
 #include <assert.h>
 #include <time.h>
 
-#include "STest/STest/Random/Random.hpp"
+#include "STest/Random/Random.hpp"
 
 extern "C" {
-#include "STest/STest/Random/bsd_random.h"
+#include "STest/Random/bsd_random.h"
 }
 
 namespace STest {

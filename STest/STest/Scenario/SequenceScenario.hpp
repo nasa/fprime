@@ -14,8 +14,8 @@
 
 #include <assert.h>
 
-#include "STest/STest/Scenario/IteratedScenario.hpp"
-#include "STest/STest/Scenario/ScenarioArray.hpp"
+#include "STest/Scenario/IteratedScenario.hpp"
+#include "STest/Scenario/ScenarioArray.hpp"
 
 namespace STest {
 
