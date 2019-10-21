@@ -42,7 +42,7 @@ static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
 Svc::ActiveRateGroupImpl rateGroup3Comp("RG3",rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
 
 // Command Components
-Svc::SocketGndIfImpl sockGndIf("SGIF");
+Svc::GroundInterfaceComponentImpl groundIf("GNDIF");
 
 // Driver Component
 Drv::BlockDriverImpl blockDrv("BDRV");
@@ -71,6 +71,8 @@ Svc::CmdSequencerComponentImpl cmdSeq("CMDSEQ");
 Svc::PrmDbImpl prmDb("PRM","PrmDb.dat");
 
 Ref::PingReceiverComponentImpl pingRcvr("PngRecv");
+
+Drv::SocketIpDriverComponentImpl socketIpDriver("SocketIpDriver");
 
 Svc::FileUplink fileUplink ("fileUplink");
 
@@ -136,7 +138,8 @@ bool constructApp(bool dump, int port_number, char* hostname) {
 
     prmDb.init(10,0);
 
-    sockGndIf.init(0);
+    groundIf.init(0);
+    socketIpDriver.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
@@ -225,7 +228,7 @@ bool constructApp(bool dump, int port_number, char* hostname) {
     pingRcvr.start(0, 100, 10*1024);
 
     // Initialize socket server
-    sockGndIf.startSocketTask(100, 10*1024, port_number, hostname, Svc::SocketGndIfImpl::SEND_UDP);
+    socketIpDriver.startSocketTask(100, 10*1024, hostname, port_number);
 
     return false;
 }
@@ -243,3 +246,4 @@ void exitTasks(void) {
     fileDownlink.exit();
     cmdSeq.exit();
 }
+

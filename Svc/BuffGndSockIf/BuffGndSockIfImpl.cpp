@@ -28,6 +28,7 @@
 #else
 #error Unsupported OS!
 #endif
+#include <Fw/Logger/Logger.hpp>
 
 namespace Svc {
 
@@ -115,7 +116,7 @@ namespace Svc {
         char buf[256];
 
         if ((this->m_socketFd = socket(AF_INET, SOCK_STREAM, 0)) == ERROR) {
-            (void) printf("Socket error: %s\n",strerror(errno));
+            Fw::Logger::logMsg("Socket error: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
             return;
         }
 
@@ -140,7 +141,7 @@ namespace Svc {
             struct hostent *he;
             struct in_addr **addr_list;
             if ((he = gethostbyname(this->hostname)) == NULL) {
-                (void)printf("Unable to get hostname\n");
+                Fw::Logger::logMsg("Unable to get hostname\n");
                 return;
             }
 
@@ -163,11 +164,11 @@ namespace Svc {
 #else
         if (socketWrite(this->m_socketFd, (U8*)buf, strnlen(buf, 13)) < 0) {
 #endif
-            (void) printf("write error on port %d \n", port);
+            Fw::Logger::logMsg("write error on port %d \n", port);
             return;
         }
         this->log_ACTIVITY_HI_BuffGndSockIf_ConnectedToServer(port);
-        (void) printf("Sent register ISF string to ground\n");
+        Fw::Logger::logMsg("Sent register ISF string to ground\n");
         //m_connectionFd is set so m_socketFd can register ISF before other tasks try to write data to ground
         this->m_connectionFd = this->m_socketFd;
     }
@@ -198,7 +199,7 @@ namespace Svc {
                 // first, read packet delimiter
                 bytesRead = socketRead(comp->m_socketFd,(U8*)&packetDelimiter,sizeof(packetDelimiter));
                 if (-1 == bytesRead) {
-                    (void) printf("Delim read error: %s",strerror(errno));
+                    Fw::Logger::logMsg("Delim read error: %s", reinterpret_cast<POINTER_CAST>(strerror(errno)));
                     break;
                 }
 
@@ -208,17 +209,17 @@ namespace Svc {
                 }
 
                 if (bytesRead != sizeof(packetDelimiter)) {
-                    (void) printf("Didn't get right pd size: %ld\n",(long int)bytesRead);
+                    Fw::Logger::logMsg("Didn't get right pd size: %ld\n",(long int)bytesRead);
                 }
                 // correct for network order
                 packetDelimiter = ntohl(packetDelimiter);
 
                 // if magic number to quit, exit loop
                 if (packetDelimiter == 0xA5A5A5A5) {
-                    (void) printf("packetDelimiter = 0x%x\n", packetDelimiter);
+                    Fw::Logger::logMsg("packetDelimiter = 0x%x\n", packetDelimiter);
                     //break;
                 } else if (packetDelimiter != 0x5A5A5A5A) {
-                    (void) printf("Unexpected delimiter 0x%08X\n",packetDelimiter);
+                    Fw::Logger::logMsg("Unexpected delimiter 0x%08X\n",packetDelimiter);
                     // just keep reading until a delimiter is found
                     continue;
                 }
@@ -226,7 +227,7 @@ namespace Svc {
                 // now read packet size
                 bytesRead = socketRead(comp->m_socketFd,(U8*)&packetSize,sizeof(packetSize));
                 if (-1 == bytesRead) {
-                    (void) printf("Size read error: %s",strerror(errno));
+                    Fw::Logger::logMsg("Size read error: %s", reinterpret_cast<POINTER_CAST>(strerror(errno)));
                     break;
                 }
 
@@ -236,7 +237,7 @@ namespace Svc {
                 }
 
                 if (bytesRead != sizeof(packetSize)) {
-                    (void) printf("Didn't get right ps size!\n");
+                    Fw::Logger::logMsg("Didn't get right ps size!\n");
                 }
 
                 // correct for network order
@@ -248,7 +249,7 @@ namespace Svc {
                 // read packet
                 bytesRead = socketRead(comp->m_socketFd,(U8*)fwBuffer.getdata(),packetSize);
                 if (-1 == bytesRead) {
-                    (void) printf("Size read error: %s\n",strerror(errno));
+                    Fw::Logger::logMsg("Size read error: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
                     break;
                 }
 
@@ -259,7 +260,7 @@ namespace Svc {
 
                 // check read size
                 if (bytesRead != (ssize_t)packetSize) {
-                    (void) printf("Read size mismatch: A: %ld E: %d\n",(long int)bytesRead,packetSize);
+                    Fw::Logger::logMsg("Read size mismatch: A: %ld E: %d\n",(long int)bytesRead,packetSize);
                 }
 
                 if (comp->isConnected_uplink_OutputPort(0)) {
@@ -301,7 +302,7 @@ namespace Svc {
 
         // check to see if someone is connected
         if (this->m_connectionFd != -1) {
-            //(void) printf("Trying to send %ld bytes to ground.\n",data.getBuffLength() + header_size + sizeof(data_size));
+            // Fw::Logger::logMsg("Trying to send %ld bytes to ground.\n",data.getBuffLength() + header_size + sizeof(data_size));
             strncpy(buf, "A5A5 GUI ", sizeof(buf));
             memmove(buf + header_size, &data_net_size, sizeof(data_net_size));
             memmove(buf + header_size + sizeof(data_size), (char *)fwBuffer.getdata(), data_size);
@@ -309,13 +310,13 @@ namespace Svc {
             //TODO: need to make the write call more robust (continue writing if first write didn't write everything)
             bytes_sent = socketWrite(this->m_connectionFd,(U8*)buf, header_size + data_size + sizeof(data_size));
             if (bytes_sent < 0) {
-            	(void) printf("write error on port %d \n", this->port_number);
+            	Fw::Logger::logMsg("write error on port %d \n", this->port_number);
             	return;
             }
             else if (bytes_sent != (I32)(header_size + data_size + sizeof(data_size))) {
-                (void) printf("Not all data sent. E: %lu A: %d\n", (long unsigned int)(header_size + data_size + sizeof(data_size)), bytes_sent);
+                Fw::Logger::logMsg("Not all data sent. E: %lu A: %d\n", (long unsigned int)(header_size + data_size + sizeof(data_size)), bytes_sent);
             } else {
-//                (void) printf("Sent %d bytes to ground.\n",bytes_sent);
+//                Fw::Logger::logMsg("Sent %d bytes to ground.\n",bytes_sent);
             }
         }
 

@@ -24,6 +24,7 @@
 import flask_restful
 import flask_restful.reqparse
 import fprime.common.models.serialize.type_exceptions
+import fprime_gds.common.data_types.cmd_data
 
 class CommandDictionary(flask_restful.Resource):
     """
@@ -97,5 +98,9 @@ class Command(flask_restful.Resource):
             self.sender.send_command(cmd_name_dict[command].opcode, arg_list)
         except fprime.common.models.serialize.type_exceptions.NotInitializedException:
             flask_restful.abort(403, message="Did not supply all required arguments.")
+        except fprime_gds.common.data_types.cmd_data.CommandArgumentException as exc:
+            flask_restful.abort(403, message=str(exc))
+        except fprime_gds.common.data_types.cmd_data.CommandArgumentsException as exc:
+            flask_restful.abort(403, message="Argument errors occurred", errors=exc.errors)
         return {"message": "success"}
 

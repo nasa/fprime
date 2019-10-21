@@ -72,7 +72,7 @@ class StandardPipeline:
         self.channel_hist = None
         self.command_subscribers = []
 
-    def setup(self, config, dictionary, logging_prefix=os.path.expanduser("~"), packet_spec=None):
+    def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
@@ -81,6 +81,8 @@ class StandardPipeline:
         :param logging_prefix: logging prefix. Logs will be placed in a dated directory under this prefix
         :param packet_spec: location of packetized telemetry XML specification.
         """
+        if logging_prefix is None:
+            logging_prefix = StandardPipeline.get_dated_logging_dir()
         # Loads the distributor and client socket
         self.distributor = fprime_gds.common.distributor.distributor.Distributor(config)
         self.client_socket = fprime_gds.common.client_socket.client_socket.ThreadedTCPSocketClient()
@@ -119,10 +121,12 @@ class StandardPipeline:
         else:
             self.packet_decoder = None
 
-    def setup_logging(self, prefix):
+    @classmethod
+    def get_dated_logging_dir(cls, prefix=os.path.expanduser("~")):
         """
-        Setup logging based on the logging prefix supplied
-        :param prefix: logging prefix to use
+        Sets up the dated subdirectory based upon a given prefix
+        :param prefix:
+        :return:
         """
         # Setup log file location
         dts = datetime.datetime.now()
@@ -130,6 +134,13 @@ class StandardPipeline:
         # Make the directories if they do not exit
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
+        return log_dir
+
+    def setup_logging(self, log_dir):
+        """
+        Setup logging based on the logging prefix supplied
+        :param prefix: logging prefix to use
+        """
         # Setup the logging pipeline (register it to all its data sources)
         logger = fprime_gds.common.logger.data_logger.DataLogger(log_dir, verbose=True, csv=True)
         self.command_encoder.register(logger)

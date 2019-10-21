@@ -4,17 +4,38 @@
  *
  */
 // Setup component for select
-import "../third-party/vue-select.js"
+import "../../third-party/js/vue-select.js"
 import {timeToString,filter} from "./utils.js";
 
 Vue.component('v-select', VueSelect.VueSelect);
 
+Vue.component("command-argument", {
+    props:["argument"],
+    template: "#command-argument-template",
+    computed: {
+        inputType: function () {
+            // Unsigned integer
+            if (this.argument.type[0] == 'U') {
+                return ["number", "\\d+"];
+            }
+            else if (this.argument.type[0] == 'F') {
+                return ["number", "\\d*.?\\d*"];
+            }
+            return ["text", ".*"];
+        },
+        argumentError: function () {
+            if ("error" in this.argument) {
+                return this.argument.error;
+            }
+            return "NO ERROR!!!";
+        }
+    }
+});
+
+
 /**
- * channel-row:
+ * command-item:
  *
- * A vue component designed to render exactly on row of the channel lising. It includes both the massage functions used
- * to transform data for display purposes (e.g. getChanTime) and also the colorization code used to colorize these lists
- * based on the channel's bounds.
  */
 Vue.component("command-item", {
     props:["command"],
@@ -33,7 +54,9 @@ Vue.component("command-item", {
 
 Vue.component("command-input", {
     props:["commands", "loader", "cmdhist"],
-    data: function() {return {"matching": "", "selected": {"mnemonic":"NON_SELECTED", "args":[]}, "active": false}},
+    data: function() {
+        return {"matching": "", "selected": {"mnemonic":"NON_SELECTED", "args":[]}, "active": false}
+    },
     template: "#command-input-template",
     methods: {
         clearArguments: function() {
@@ -52,9 +75,27 @@ Vue.component("command-input", {
             }
             this.loader.load("/commands/" + command.full_name, "PUT",
                 {"key":0xfeedcafe, "arguments": values})
-                .then(function() {_self.active = false;})
+                .then(function() {
+                    _self.active = false;
+                    // Clear errors, as there is not a problem further
+                    for (let i = 0; i < command.args.length; i++) {
+                        command.args[i].error = "";
+                    }
+                })
                 .catch(function(err) {
+                    // Log all errors incoming
                     console.error("[ERROR] Failed to send command: " + err);
+                    let response = JSON.parse(err);
+                    // Argument errors are parceled out to each error
+                    if ("errors" in response) {
+                        for (let i = 0; i < response.errors.length; i++) {
+                            command.args[i].error = response.errors[i];
+                        }
+                    }
+                    // All other command errors
+                    else {
+                        command.error = response.message;
+                    }
                     _self.active = false;
                 });
         },
@@ -124,6 +165,16 @@ export let CommandMixins = {
      * @return {{loader: loader object  loads endpoints, commands: command dictionary object, history: empty list}}
      */
     setupCommands(commands, loader) {
+        // Fix enumeration inializations
+        for (let command in commands) {
+            command = commands[command];
+            for (let i = 0; i < command.args.length; i++) {
+                command.args[i].error = "";
+                if (command.args[i].type == "Enum") {
+                    command.args[i].value = command.args[i].possible[0];
+                }
+            }
+        }
         return {"commands": commands, "loader": loader, "cmdhist":[]};
     },
     /**
