@@ -23,6 +23,7 @@ from __future__ import print_function
 from setuptools import find_packages
 from setuptools import setup
 
+
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
 # then distutils.
 setup(
@@ -51,7 +52,7 @@ to interact with the data coming from the FSW.
     author_email='Michael.D.Starch@jpl.nasa.gov',
     ####
     # Included Packages:
-    # 
+    #
     # Will search for and included all python packages under the "src" directory.  The root package
     # is set to 'src' to avoid package names of the form src.fprime.
     ####
@@ -81,8 +82,11 @@ to interact with the data coming from the FSW.
     ],
     # Requires Python 2.7, or 3.4+, and the 'six' Python package
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
-    install_requires=['six'],
-    test_requires=['pytest'],
+    install_requires=['six', "lxml", 'enum34;python_version < "3.4"', "Markdown", "pexpect", "pytest",
+                  'Cheetah3;python_version >= "3.0"', 'Cheetah;python_version < "3.0"'],
+    # Setup and test requirments, not needed by normal install
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     # Create a set of executable entry-points for running directly from the package
     entry_points={
         "console_scripts": [
