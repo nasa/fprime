@@ -8,6 +8,7 @@ are supported herein:
  - build: build the current directory/module/deployment
  - impl: make implementation templates
  - testimpl: make testing templates
+ - build_ut: build the current UTs
  - check: run modules unit tests
 
 @author mstarch
@@ -16,33 +17,101 @@ from __future__ import print_function
 import os
 import sys
 import argparse
+import shutil
 
-import fprime.build
+import fprime.fbuild
+
+ACTION_MAP = {
+    "generate": {
+        "description": "Generate an F prime build directory"
+    },
+    "build": {
+        "description": "Build component/deployment",
+        "target": ""
+    },
+    "impl": {
+        "description": "Generate implementation templates",
+        "target": "impl"
+    },
+    "testimpl": {
+        "description": "Generates test implementation templates",
+        "target": "testcomp"
+    },
+    "build_ut": {
+        "description": "Build unit tests for component/deployment",
+        "target": "ut_exe"
+    },
+    "check": {
+        "description": "Run unit tests for component/deployment",
+        "target": "check"
+    }
+}
 
 
 def validate(parsed):
     """
-    Validate rules to ensure that the args are properly consistent.
-    :param parser: args to validate
+    Validate rules to ensure that the args are properly consistent. This will also generate a set of validated arguments
+    to pass to CMake. This allows these values to be created, defaulted, and validated in one place
+    :param parsed: args to validate
+    :return: cmake arguments to pass to CMake
     """
-    # Find the nearest build directory if not set
-    if parsed.command != "generate" and parsed.build_dir is None:
-        try:
-            parsed.build_dir = fprime.build.builder.find_nearest_standard_build(parsed.platform, parsed.path)
-            cache_file = os.path.join(parsed.build_dir, "CMakeCache.txt")
-        except fprime.build.cmake.CMakeException as exc:
-            print("[ERROR] Failed to find automatic build dir {}. {} of {}"
-                  .format(fprime.build.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform), exc,
-                          parsed.path), file=sys.stderr)
-            sys.exit(1)
+    cmake_args = {}
+    try:
+        if parsed.build_dir is None and parsed.command != "generate":
+            parsed.build_dir = fprime.fbuild.builder().find_nearest_standard_build(parsed.platform, parsed.path)
+        # Generation validation
+        elif parsed.build_dir is None:
+            parsed.build_dir = os.path.join(
+                fprime.fbuild.builder().get_include_info(parsed.path, parsed.path)[1],
+                fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform))
+    except fprime.fbuild.cmake.CMakeProjectException as exc:
+        print("[ERROR] {}".format(exc))
+        sys.exit(1)
+    except fprime.fbuild.cmake.CMakeExecutionException as exc:
+        print("[ERROR] {} is an invalid F prime deployment. {}".format(parsed.path, exc))
+        sys.exit(1)
+    except fprime.fbuild.cmake.CMakeException as exc:
+        print("[ERROR] Failed to find automatic build dir {}. {} of {}"
+              .format(fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform), exc,
+                      parsed.path), file=sys.stderr)
+        sys.exit(2)
+    cache_file = os.path.join(parsed.build_dir, "CMakeCache.txt")
     # Check for generate validation
     if parsed.command == "generate" and os.path.exists(parsed.build_dir):
         print("[ERROR] {} already exists {} a CMakeBuild. Will not overwrite."
               .format(parsed.build_dir, "and is" if os.path.isfile(cache_file) else "but IS NOT"), file=sys.stderr)
-        sys.exit(1)
+        sys.exit(3)
     if parsed.command != "generate" and not os.path.isfile(cache_file):
         print("[ERROR] {} is not valid build directory. Please run 'generate' first".format(parsed.build_dir))
-        sys.exit(1)
+        sys.exit(4)
+    # Check jobs is greater than zero
+    if parsed.jobs <= 0:
+        print("[WARNING] Parallel jobs cannot be 0 or negative, setting to minimum of 1.", file=sys.stderr)
+        parsed.jobs = 1
+    # Check platforms for existing toolchain, unless the default is specified.
+    if parsed.command == "generate":
+        # Look for default toolchains via FPRIME_DEFAULT_TOOLCHAIN_NAME
+        toolchain = parsed.platform
+        if parsed.platform == "default":
+            toolchain = fprime.fbuild.builder().get_fprime_configuration("FPRIME_DEFAULT_TOOLCHAIN_NAME")[0]
+        # Find locations of toolchain files, assuming a non-None toolchain is asked for
+        if toolchain is not None:
+            locations = fprime.fbuild.builder().get_include_locations(parsed.path)
+            toolchains_paths = map(lambda loc: os.path.join(loc, "cmake", "toolchain",
+                                                            parsed.platform + ".cmake"), locations)
+            toolchains = list(filter(os.path.exists, toolchains_paths))
+            if not toolchains:
+                print("[ERROR] Toolchain file {} does not exist at any of {}"
+                      .format(parsed.platform + ".cmake", ", ".join(list(toolchains_paths))))
+                sys.exit(-1)
+            print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
+            cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
+    # Build type only for generate, jobs only for non-generate
+    if parsed.command == "generate":
+        cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
+    else:
+        cmake_args.update({"--jobs": parsed.jobs})
+    return cmake_args
 
 
 def parse_args(args):
@@ -51,44 +120,54 @@ def parse_args(args):
     :param args: CLI arguments to process
     :return: parsed arguments in a Namespace
     """
-    parser = argparse.ArgumentParser(description="F prime helper application")
-    parser.add_argument("command", choices=ACTION_MAP.keys(), help="F prime command to run")
-    parser.add_argument("platform", nargs="?", default="default", help="F prime platform. Default: From project")
-    parser.add_argument("-p", "--path", default=os.getcwd(),
-                        help="F prime directory to operate on. Default: current dir: %(default)s")
-    parser.add_argument("-b", "--build-dir", dest="build_dir", default=None,
-                        help="F prime build directory from CMake. Must exist unless generating.")
-    parser.add_argument("-j", "--parallel", default=1, type=int,
-                        help="F prime parallel job count. Default: %(default)s")
+    # Common parser specifying common arguments input into the utility
+    common_parser = argparse.ArgumentParser(description="Common Parser for Common Ingredients.")
+    common_parser.add_argument("platform", nargs="?", default="default",
+                               help="F prime build platform (e.g. Linux, Darwin). Default specified in CMakeLists.txt.")
+    common_parser.add_argument("-b", "--build-dir", dest="build_dir", default=None,
+                               help="F prime build directory to generate, or existing build to operate on.")
+    common_parser.add_argument("-p", "--path", default=os.getcwd(),
+                               help="F prime directory to operate on. Default: cwd, %(default)s.")
+    common_parser.add_argument("-j", "--jobs", default=1, type=int,
+                               help="F prime parallel job count. Default: %(default)s.")
+    # Main parser for the whole application
+    parsers = {}
+    parser = argparse.ArgumentParser(description="F prime helper application.")
+    subparsers = parser.add_subparsers(description="F prime utility command line. Please run one of the commands. " +
+                                       "For help, run a command with the --help flag.", dest="command")
+    for key in ACTION_MAP.keys():
+        parsers[key] = subparsers.add_parser(key, description=ACTION_MAP[key]["description"], parents=[common_parser],
+                                             add_help=False)
+    parsers["generate"].add_argument("--build-type", dest="build_type", default="Testing",
+                                     choices=["Release", "Debug", "Testing"],
+                                     help="CMake build type passed to CMake system.")
+    # Parse and prepare to run
     parsed = parser.parse_args(args)
-    validate(parsed)
-    return parsed
-
-ACTION_MAP = {
-    "generate": None,
-    "build":    "",
-    "impl":     "impl",
-    "testimpl": "testcomp",
-    "build_ut": "ut_exe",
-    "check":    "check"
-}
+    automatic_build_dir = parsed.build_dir is None and parsed.command == "generate"
+    if not hasattr(parsed, "command") or parsed.command is None:
+        parser.print_help()
+        sys.exit(1)
+    cmake_args = validate(parsed)
+    return parsed, cmake_args, automatic_build_dir
 
 
-def main(args=sys.argv[1:]):
+def utility_entry(args=sys.argv[1:]):
     """
     Main interface to F prime utility.
     :return: return code of the function.
     """
+    parsed, cmake_args, remove_build_dir = parse_args(args)
     try:
-        args = parse_args(args)
-        if args.command == "generate":
-            print("[ERROR] 'generate' not implemented. Run 'cmake' manually", file=sys.stderr)
-            sys.exit(1)
-        stdout, stderr = fprime.build.builder.execute_known_target(ACTION_MAP[args.command], args.build_dir, args.path)
-    except Exception as exc:
+        if parsed.command == "generate":
+            print("[INFO] Creating up automatic build directory at: {}".format(parsed.build_dir))
+            fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir, cmake_args)
+        else:
+            fprime.fbuild.builder().execute_known_target(ACTION_MAP[parsed.command]["target"],
+                                                       parsed.build_dir, parsed.path, cmake_args)
+    except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
+        if parsed.command == "generate" and remove_build_dir:
+            print("[INFO] Cleaning up automatic build directory at: {}".format(parsed.build_dir))
+            shutil.rmtree(parsed.build_dir, ignore_errors=True)
         return 1
     return 0
-
-if __name__ == "__main__":
-    main(sys.argv[1:])

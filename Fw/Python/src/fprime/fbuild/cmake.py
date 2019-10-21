@@ -1,5 +1,5 @@
 """
-fprime.build.cmake:
+fprime.fbuild.cmake:
 
 File to contain basic wrappers for the CMake. This will enable basic CMake commands in order to detect the properties of
 the build. This should not be imported in-person, but rather should be included by the build package. This can be the
@@ -7,16 +7,20 @@ receiver of these delegated functions.
 
 @author mstarch
 """
+import six
 import os
 import re
 import sys
 import shutil
 import tempfile
-import functools
 import subprocess
+import itertools
+import functools
+import collections
 
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
+
 
 class CMakeBuildCache(object):
     """
@@ -30,16 +34,18 @@ class CMakeBuildCache(object):
 
     def get_cmake_temp_build(self, proj_dir):
         """ Gets a CMake build directory for the specified proj_dir """
-        if self.project is not None and self.project != proj_dir:
+        if self.project is not None and proj_dir is not None and self.project != proj_dir:
             raise CMakeException("Already tracking project {}".format(self.project))
-        self.project = proj_dir
         # No tempdir, prepare a build
         if self.tempdir is None:
+            if proj_dir is None:
+                raise ValueError("No build cache available, and no project_dir specified")
             # Create a temp directory and register its deletion at the end of the program run
             self.tempdir = tempfile.mkdtemp()
             atexit.register(lambda: shutil.rmtree(self.tempdir, ignore_errors=True))
             # Turn that directory into a CMake build
-            CMakeHandler._run_cmake(["-B", self.tempdir, "-S", self.project], write_override=True)
+            CMakeHandler.generate_build(proj_dir, self.tempdir, ignore_output=True)
+        self.project = proj_dir
         return self.tempdir
 
 
@@ -48,6 +54,7 @@ class CMakeHandler(object):
     CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.
     """
     CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
+    CMAKE_LOCATION_FIELDS = ["FPRIME_PROJECT_ROOT", "FPRIME_LIBRARIES", "FPRIME_FRAMEWORK_PATH"]
 
     def __init__(self):
         """
@@ -55,17 +62,20 @@ class CMakeHandler(object):
         """
         self.build_cache = CMakeBuildCache()
 
-    def execute_known_target(self, target, build_dir, path):
+    def execute_known_target(self, target, build_dir, path, cmake_args=None):
         """
         Executes a known target for a given build_dir. Path will default to a known path.
         :param build_dir: build_dir to use to run this.
         :param target: target to execute at the path, using above build_dir
         :param path: path to run target against. (default) current working directory
+        :param cmake_args: cmake args input
         :return: return code from CMake
         """
+        cmake_args = {} if cmake_args is None else cmake_args
         # Get module name from the relative path to include root
-        module = os.path.relpath(path, self.get_include_root(path, build_dir)).replace(os.sep, "_")
-        cmake_target = module if target == "" else "{}_{}".format(module, target)
+        include_root = self.get_include_info(path, build_dir)[1]
+        module = os.path.relpath(path,  include_root).replace(".", "").replace(os.sep, "_")
+        cmake_target = module if target == "" else "{}_{}".format(module, target).lstrip("_")
         return CMakeHandler._run_cmake(["--build", build_dir, "--target", cmake_target], write_override=True)
 
     def find_nearest_standard_build(self, platform, path):
@@ -90,7 +100,25 @@ class CMakeHandler(object):
                                  .format(CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(platform)))
         return self.find_nearest_standard_build(platform, new_dir)
 
-    def get_include_root(self, path, build_dir=None, project_dir=None):
+    def get_include_locations(self, cmake_dir):
+        """
+        Gets the locations that can be used as the root of an include tree. Common directories are placed in these
+        include locations. These include standard builds, configs, etc.
+        :param cmake_dir: directory of a CMake build, or directory containing a CMake project
+        :return: [] # List of include locations. Order: project, lib, lib, ..., F prime core
+        !!! Note: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time. !!!
+        """
+        # Reading config fields. If the cmake_dir is a project dir, a build cache may be setup.
+        # !! Note: using a project dir will cause file-system side effects, and incur a one-time cost to setup cache !!
+        config_fields = self.get_fprime_configuration(CMakeHandler.CMAKE_LOCATION_FIELDS, cmake_dir)
+        non_null = filter(lambda item: item is not None, config_fields)
+        # Read cache fields for each possible directory the build_dir, and the new tempdir
+        locations = itertools.chain(*map(lambda value: value.split(";"), non_null))
+        mapped = map(os.path.abspath, locations)
+        # Removes duplicates, by creating an ordered dictionary, and then asking for its keys
+        return list(collections.OrderedDict.fromkeys(mapped).keys())
+
+    def get_include_info(self, path, cmake_dir):
         """
         Calculates the include root of the given path. The include root is defined as the following based on the other
         two values supplied. First, the following two path values are established:
@@ -99,33 +127,83 @@ class CMakeHandler(object):
         From there, the include root of the supplied path is whichever of those two paths is your parent. In cases where
         both are parents, it will take the outer-most parent
         :param path: path to calculate looking for include-root
-        :param build_dir: directory of the CMake build
-        :param project_dir: path to folder containing a CMakeList.txt defining an F prime project
-        :return: include root for the given path.
+        :param cmake_dir: directory of a CMake build, or directory containing a CMake project
+        :return: (relative include path, include root for the given path)
+        !!! Note: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time. !!!
         """
-        path = path if os.path.abspath(path) is not None else os.path.abspath(os.getcwd())
-        # Cannot handle both project_dir and build_dir
-        if build_dir is not None and project_dir is not None:
-            raise Exception("Cannot calculate build root from both project CMakeLists.txt and build_dir")
-        # Detect which directory to use for these values, a temp build from a project or a formal build dir
-        # !!! Note: using a project will cause file-system side effects, and take time if this is the first call !!!
-        cache_dir = build_dir if build_dir is not None else self.build_cache.get_cmake_temp_build(project_dir)
-        # Read cache fields for each possible directory the build_dir, and the new tempdir
-        fields = ["FPRIME_FRAMEWORK_PATH", "FPRIME_PROJECT_ROOT"]
-        possible_parents = list(filter(lambda parent: parent is not None,
-                                       CMakeHandler._read_values_from_cache(fields, cache_dir)))
+        path = os.path.abspath(path) if path is not None else os.path.abspath(os.getcwd())
+        possible_parents = self.get_include_locations(cmake_dir)
         # Check there is some possible parent
         if not possible_parents:
-            raise CMakeProjectException(build_dir if cache_dir == build_dir else project_dir,
-                                        "Does not define cache fields: {}".format(",".join(fields)))
+            raise CMakeProjectException(cmake_dir, "Does not define any of the cache fields: {}"
+                                        .format(",".join(CMakeHandler.CMAKE_LOCATION_FIELDS)))
         full_parents = map(os.path.abspath, possible_parents)
         # Parents *are* the common prefix for their children
-        parents = list(filter(lambda parent: os.path.commonprefix([parent, path]) == parent, full_parents))
-        # Check that a parent is the true parent
-        if not parents:
-            raise CMakeOrphanException(path)
-        return parents[-1] # Take the last parent, project root
+        parents = filter(lambda parent: os.path.commonprefix([parent, path]) == parent, full_parents)
 
+        def parent_reducer(accum, item):
+            """
+            Reduces a list of parents, and the given path, to a single path who is the closes parent to the existing
+            path while stilling being a parent.
+            :param accum: latest best parent, or None if no valid parent found
+            :param item: current parent being evaluated
+            :return: next latest best parent
+            """
+            # None items cannot weigh-in
+            if item is None:
+                return accum
+            # Calculate common path
+            prefix = os.path.commonprefix([item, path])
+            # Return the previous parent, if new prefix is not the directory itself, or the old one was closer
+            return accum if prefix != item or (accum is not None and len(accum) > len(item)) else item
+        nearest_parent = functools.reduce(parent_reducer, parents, None)
+        # Check that a parent is the true parent
+        if nearest_parent is None:
+            raise CMakeOrphanException(path)
+        return os.path.relpath(path, nearest_parent), nearest_parent
+
+    def get_fprime_configuration(self, fields, cmake_dir=None):
+        """
+        Gets fprime configuration for the given field(s). This will return a list of fields for the set of input fields.
+        The user may supply a string for a single value returned as list of one, or a list of fields for list of values.
+        :param fields: name of field, or list of names of fields
+        :param cmake_dir: a cmake directory (project or build) to used. default: None, use existing temp cached build.
+        :return: list of values, or Nones
+        """
+        if isinstance(fields, six.string_types):
+            fields = [fields]
+        # Setup the build_dir if it can be detected. Without a cache or specified value, we can crash
+        build_dir = self._build_directory_from_cmake_dir(cmake_dir)
+        return CMakeHandler._read_values_from_cache(fields, build_dir=build_dir)
+
+    def _build_directory_from_cmake_dir(self, cmake_dir):
+        """
+        If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file
+        should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then
+        generate a temporary directory to be used as a build.
+        :return: working build directory
+        """
+        try:
+            CMakeHandler._cmake_validate_build_dir(cmake_dir)
+            return cmake_dir
+        except (CMakeInvalidBuildException, TypeError):
+            return self.build_cache.get_cmake_temp_build(cmake_dir)
+
+    @staticmethod
+    def generate_build(source_dir, build_dir, args=None, ignore_output=False):
+        """
+        Generate a build directory for purposes of the build.
+        :param source_dir: source directory to generate from
+        :param build_dir: build directory to generate to
+        :param args: arguments to hand to CMake.
+        :param ignore_output: do not print the output where the user can see it
+        """
+        args = {} if args is None else args
+        fleshed_args = map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
+                           .format(key, args[key]), args.keys())
+        CMakeHandler._cmake_validate_source_dir(source_dir)
+        CMakeHandler._run_cmake(["-S", source_dir, "-B", build_dir] + list(fleshed_args),
+                                capture=ignore_output, write_override=True)
 
     @staticmethod
     def _read_values_from_cache(keys, build_dir):
@@ -156,6 +234,22 @@ class CMakeHandler(object):
         valid_matches = filter(lambda item: item is not None, map(reg.match, stdout.split("\n")))
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
+
+    @staticmethod
+    def _cmake_validate_source_dir(source_dir):
+        """
+        Raises an exception if the source dir is not a valid CMake source directory. This means a CMakeLists.txt exists
+        and defines within it a project call.
+        :param source_dir: source directory to validate
+        """
+        cmake_file = os.path.join(source_dir, "CMakeLists.txt")
+        if not os.path.isfile(cmake_file):
+            raise CMakeProjectException(source_dir, "No CMakeLists.txt is defined")
+        # Test the cmake_file for project(
+        with open(cmake_file, "r") as file_handle:
+            project_lines = list(filter(lambda line: "project(" in line, file_handle.readlines()))
+            if not project_lines:
+                raise CMakeProjectException(source_dir, "No 'project()' calls in {}".format(cmake_file))
 
     @staticmethod
     def _cmake_validate_build_dir(build_dir):
@@ -245,3 +339,9 @@ class CMakeExecutionException(CMakeException):
         :return: stderr of CMake as supplied into this Exception
         """
         return self.stderr
+
+class CMakeNoSuchTargetException(CMakeException):
+    """ The target does not exist. """
+    def __init__(self, build_dir, target):
+        """  Better messaging for this exception """
+        super(CMakeNoSuchTargetException, self).__init__("{} does not support target {}".format(build_dir, target))
