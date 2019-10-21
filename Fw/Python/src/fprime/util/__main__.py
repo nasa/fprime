@@ -6,4 +6,12 @@ This will include the build_helper scripts and run them.
 """
 import sys
 import fprime.util.build_helper
-fprime.util.build_helper.utility_entry(args=sys.argv[1:])
+
+
+def main():
+    """ Run wrapper, to point a console_script at """
+    fprime.util.build_helper.utility_entry(args=sys.argv[1:])
+
+
+if __name__ == "__main__":
+    main()

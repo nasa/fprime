@@ -143,10 +143,10 @@ def parse_args(args):
                                      help="CMake build type passed to CMake system.")
     # Parse and prepare to run
     parsed = parser.parse_args(args)
-    automatic_build_dir = parsed.build_dir is None and parsed.command == "generate"
     if not hasattr(parsed, "command") or parsed.command is None:
         parser.print_help()
         sys.exit(1)
+    automatic_build_dir = parsed.build_dir is None and parsed.command == "generate"
     cmake_args = validate(parsed)
     return parsed, cmake_args, automatic_build_dir
 
