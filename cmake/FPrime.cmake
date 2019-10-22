@@ -76,6 +76,8 @@ endif()
 
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")

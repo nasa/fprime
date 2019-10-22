@@ -35,7 +35,7 @@ ACTION_MAP = {
     },
     "testimpl": {
         "description": "Generates test implementation templates",
-        "target": "testcomp"
+        "target": "testimpl"
     },
     "build_ut": {
         "description": "Build unit tests for component/deployment",
