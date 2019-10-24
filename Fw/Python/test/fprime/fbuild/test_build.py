@@ -25,6 +25,15 @@ def get_data_dir():
     raise Exception("Test data directory not setup for {} builder class".format(type(fprime.fbuild.builder())))
 
 
+def test_hash_finder():
+    """
+    Tests that the hash finder works given a known builds.
+    """
+    build_dir = os.path.join(os.path.dirname(__file__), "cmake-data", "testbuild")
+    assert fprime.fbuild.builder().find_hashed_file(build_dir, 0xdeadbeef) == ["Abc: 0xdeadbeef\n"]
+    assert fprime.fbuild.builder().find_hashed_file(build_dir, 0xc0dec0de) == ["HJK: 0xc0dec0de\n"]
+
+
 def test_needed_functions():
     """
     Test the needed functions for the given builder. This will ensure that the public interface to the builder is

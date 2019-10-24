@@ -21,29 +21,35 @@ import shutil
 
 import fprime.fbuild
 
+UT_SUFFIX = "-ut"
 ACTION_MAP = {
     "generate": {
         "description": "Generate an F prime build directory"
     },
     "build": {
         "description": "Build component/deployment",
-        "target": ""
+        "target": "",
+        "build-suffix": ""
     },
     "impl": {
         "description": "Generate implementation templates",
-        "target": "impl"
+        "target": "impl",
+        "build-suffix": ""
     },
     "testimpl": {
         "description": "Generates test implementation templates",
-        "target": "testimpl"
+        "target": "testimpl",
+        "build-suffix": ""
     },
     "build_ut": {
         "description": "Build unit tests for component/deployment",
-        "target": "ut_exe"
+        "target": "ut_exe",
+        "build-suffix": UT_SUFFIX
     },
     "check": {
         "description": "Run unit tests for component/deployment",
-        "target": "check"
+        "target": "check",
+        "build-suffix": UT_SUFFIX
     }
 }
 
@@ -107,9 +113,7 @@ def validate(parsed):
             print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
             cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
     # Build type only for generate, jobs only for non-generate
-    if parsed.command == "generate":
-        cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
-    else:
+    if parsed.command != "generate":
         cmake_args.update({"--jobs": parsed.jobs})
     return cmake_args
 
@@ -130,6 +134,7 @@ def parse_args(args):
                                help="F prime directory to operate on. Default: cwd, %(default)s.")
     common_parser.add_argument("-j", "--jobs", default=1, type=int,
                                help="F prime parallel job count. Default: %(default)s.")
+    common_parser.add_argument("-v", "--verbose", default=False, action="store_true", help="Turn on verbose output.")
     # Main parser for the whole application
     parsers = {}
     parser = argparse.ArgumentParser(description="F prime helper application.")
@@ -141,11 +146,18 @@ def parse_args(args):
     parsers["generate"].add_argument("--build-type", dest="build_type", default="Testing",
                                      choices=["Release", "Debug", "Testing"],
                                      help="CMake build type passed to CMake system.")
+    # Add a search for hash function
+    hparser = subparsers.add_parser("hash-to-file", description="Converts F prime build hash to filename.",
+                                    parents=[common_parser], add_help=False)
+    hparser.add_argument("hash", type=lambda x: int(x, 0), help="F prime assert hash to associate with a file.")
+    hparser.add_argument("-t", "--unittest", default=False, action="store_true",
+                         help="Use F prime ut build, not regular build")
     # Parse and prepare to run
     parsed = parser.parse_args(args)
     if not hasattr(parsed, "command") or parsed.command is None:
         parser.print_help()
         sys.exit(1)
+    fprime.fbuild.builder().set_verbose(parsed.verbose)
     automatic_build_dir = parsed.build_dir is None and parsed.command == "generate"
     cmake_args = validate(parsed)
     return parsed, cmake_args, automatic_build_dir
@@ -156,18 +168,39 @@ def utility_entry(args=sys.argv[1:]):
     Main interface to F prime utility.
     :return: return code of the function.
     """
-    parsed, cmake_args, remove_build_dir = parse_args(args)
+    parsed, cmake_args, automatic_build_dir = parse_args(args)
     try:
-        if parsed.command == "generate":
-            print("[INFO] Creating up automatic build directory at: {}".format(parsed.build_dir))
+        if parsed.command == "hash-to-file":
+            suffix = UT_SUFFIX if parsed.unittest else ""
+            lines = fprime.fbuild.builder().find_hashed_file(parsed.build_dir + suffix, parsed.hash)
+            # Print out lines when found
+            if lines:
+                print("[INFO] File(s) associated with hash 0x{:x}".format(parsed.hash))
+                for line in lines:
+                    print("   ", line, end="")
+            # Report nothing
+            else:
+                print("[ERROR] No file hashes found in {} build.{}"
+                      .format("unittest" if parsed.unittest else "regular",
+                              "" if parsed.unittest else " Do you need the --unittest flag?"))
+        elif parsed.command == "generate":
+            print("[INFO] Creating {} build directory at: {}"
+                  .format("automatic" if automatic_build_dir else "specified", parsed.build_dir))
             fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir, cmake_args)
+            cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
+            print("[INFO] Creating {} unit-test build directory at: {}"
+                  .format("automatic" if automatic_build_dir else "specified", parsed.build_dir + UT_SUFFIX))
+            fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir + UT_SUFFIX, cmake_args)
         else:
-            fprime.fbuild.builder().execute_known_target(ACTION_MAP[parsed.command]["target"],
-                                                       parsed.build_dir, parsed.path, cmake_args)
+            action = ACTION_MAP[parsed.command]
+            fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
+                                                         parsed.path, cmake_args)
     except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
-        if parsed.command == "generate" and remove_build_dir:
-            print("[INFO] Cleaning up automatic build directory at: {}".format(parsed.build_dir))
+        if parsed.command == "generate" and automatic_build_dir:
+            print("[INFO] Cleaning automatic build directory at: {}".format(parsed.build_dir))
+            shutil.rmtree(parsed.build_dir, ignore_errors=True)
+            print("[INFO] Cleaning automatic unit-test build directory at: {}".format(parsed.build_dir + UT_SUFFIX))
             shutil.rmtree(parsed.build_dir, ignore_errors=True)
         return 1
     return 0

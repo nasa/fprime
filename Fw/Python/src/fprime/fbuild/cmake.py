@@ -32,7 +32,7 @@ class CMakeBuildCache(object):
         self.project = None
         self.tempdir = None
 
-    def get_cmake_temp_build(self, proj_dir):
+    def get_cmake_temp_build(self, proj_dir, verbose=False):
         """ Gets a CMake build directory for the specified proj_dir """
         if self.project is not None and proj_dir is not None and self.project != proj_dir:
             raise CMakeException("Already tracking project {}".format(self.project))
@@ -44,7 +44,7 @@ class CMakeBuildCache(object):
             self.tempdir = tempfile.mkdtemp()
             atexit.register(lambda: shutil.rmtree(self.tempdir, ignore_errors=True))
             # Turn that directory into a CMake build
-            CMakeHandler.generate_build(proj_dir, self.tempdir, ignore_output=True)
+            CMakeHandler.generate_build(proj_dir, self.tempdir, ignore_output=not verbose)
         self.project = proj_dir
         return self.tempdir
 
@@ -61,6 +61,11 @@ class CMakeHandler(object):
         Instantiate a basic CMake handler.
         """
         self.build_cache = CMakeBuildCache()
+        self.verbose = False
+
+    def set_verbose(self, verbose):
+        """ Sets verbosity """
+        self.verbose = verbose
 
     def execute_known_target(self, target, build_dir, path, cmake_args=None):
         """
@@ -72,11 +77,27 @@ class CMakeHandler(object):
         :return: return code from CMake
         """
         cmake_args = {} if cmake_args is None else cmake_args
+        fleshed_args = list(map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
+                           .format(key, cmake_args[key]), cmake_args.keys()))
         # Get module name from the relative path to include root
         include_root = self.get_include_info(path, build_dir)[1]
         module = os.path.relpath(path,  include_root).replace(".", "").replace(os.sep, "_")
         cmake_target = module if target == "" else "{}_{}".format(module, target).lstrip("_")
-        return CMakeHandler._run_cmake(["--build", build_dir, "--target", cmake_target], write_override=True)
+        return self._run_cmake(["--build", build_dir, "--target", cmake_target] + fleshed_args, write_override=True)
+
+    def find_hashed_file(self, build_dir, hash):
+        """
+        Find a file from a hash
+        :param build_dir: build directory to search
+        :param hash: hash number
+        :return: filename
+        """
+        hashes_file = os.path.join(build_dir, "hashes.txt")
+        if not os.path.exists(hashes_file):
+            raise CMakeException("Failed to find {}, was the build generated.".format(hashes_file))
+        with open(hashes_file, "r") as file_handle:
+            lines = filter(lambda line: "{:x}".format(hash) in line, file_handle.readlines())
+        return list(lines)
 
     def find_nearest_standard_build(self, platform, path):
         """
@@ -91,7 +112,7 @@ class CMakeHandler(object):
         # Look for a potential build that is valid
         potential_build = os.path.join(current, CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(platform))
         if os.path.exists(potential_build):
-            CMakeHandler._cmake_validate_build_dir(potential_build)
+            self._cmake_validate_build_dir(potential_build)
             return potential_build
         # Check for root, and throw error if it is already a root
         new_dir = os.path.dirname(current)
@@ -174,7 +195,7 @@ class CMakeHandler(object):
             fields = [fields]
         # Setup the build_dir if it can be detected. Without a cache or specified value, we can crash
         build_dir = self._build_directory_from_cmake_dir(cmake_dir)
-        return CMakeHandler._read_values_from_cache(fields, build_dir=build_dir)
+        return self._read_values_from_cache(fields, build_dir=build_dir)
 
     def _build_directory_from_cmake_dir(self, cmake_dir):
         """
@@ -184,13 +205,12 @@ class CMakeHandler(object):
         :return: working build directory
         """
         try:
-            CMakeHandler._cmake_validate_build_dir(cmake_dir)
+            self._cmake_validate_build_dir(cmake_dir)
             return cmake_dir
         except (CMakeInvalidBuildException, TypeError):
-            return self.build_cache.get_cmake_temp_build(cmake_dir)
+            return self.build_cache.get_cmake_temp_build(cmake_dir, self.verbose)
 
-    @staticmethod
-    def generate_build(source_dir, build_dir, args=None, ignore_output=False):
+    def generate_build(self, source_dir, build_dir, args=None, ignore_output=False):
         """
         Generate a build directory for purposes of the build.
         :param source_dir: source directory to generate from
@@ -201,25 +221,23 @@ class CMakeHandler(object):
         args = {} if args is None else args
         fleshed_args = map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, args[key]), args.keys())
-        CMakeHandler._cmake_validate_source_dir(source_dir)
-        CMakeHandler._run_cmake(["-S", source_dir, "-B", build_dir] + list(fleshed_args),
+        self._cmake_validate_source_dir(source_dir)
+        self._run_cmake(["-S", source_dir, "-B", build_dir] + list(fleshed_args),
                                 capture=ignore_output, write_override=True)
 
-    @staticmethod
-    def _read_values_from_cache(keys, build_dir):
+    def _read_values_from_cache(self, keys, build_dir):
         """
         Reads set values from cache into an output tuple.
         :param keys: keys to read in iterable
         :param build_dir: build directory containing cache file
         :return: a tuple of keys, None if not part of cache
         """
-        cache = CMakeHandler._read_cache(build_dir)
+        cache = self._read_cache(build_dir)
         # Reads cache values suppressing KeyError, {}.get(x, default=None)
         miner = lambda x: cache.get(x, None)
         return tuple(map(miner, keys))
 
-    @staticmethod
-    def _read_cache(build_dir):
+    def _read_cache(self, build_dir):
         """
         Reads the cache from the associated build_dir. This will return a dictionary of cache variable name to
         its value. This will not update internal state.
@@ -228,8 +246,8 @@ class CMakeHandler(object):
         """
         reg = re.compile("([^:]+):[^=]*=(.*)")
         # Check that the build_dir is properly setup
-        CMakeHandler._cmake_validate_build_dir(build_dir)
-        stdout, stderr = CMakeHandler._run_cmake(["-B", build_dir, "-LA"], capture=True)
+        self._cmake_validate_build_dir(build_dir)
+        stdout, stderr = self._run_cmake(["-B", build_dir, "-LA"], capture=True)
         # Scan for lines in stdout that have non-None matches for the above regular expression
         valid_matches = filter(lambda item: item is not None, map(reg.match, stdout.split("\n")))
         # Return the dictionary composed from the match groups
@@ -261,8 +279,7 @@ class CMakeHandler(object):
         if not os.path.isfile(cache_file):
             raise CMakeInvalidBuildException(build_dir)
 
-    @staticmethod
-    def _run_cmake(arguments, capture=False, write_override=False):
+    def _run_cmake(self, arguments, capture=False, write_override=False):
         """
         Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
         path in order for this to run.
@@ -276,6 +293,9 @@ class CMakeHandler(object):
         if not write_override:
             cargs.append("-N")
         cargs.extend(arguments)
+        # Verbose means print calls
+        if self.verbose:
+            print("[CMAKE] '{}'".format(" ".join(cargs)))
         proc = subprocess.Popen(cargs, stdout=subprocess.PIPE if capture else None,
                                 stderr=subprocess.PIPE if capture else None)
         stdout, stderr = proc.communicate()

@@ -24,7 +24,7 @@ function(get_module_name DIRECTORY_PATH)
   # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
   # name. If it does not exist, then it is assumed to be an offset already and is carried
   # forward in the calculation.
-  if (EXISTS ${DIRECTORY_PATH})
+  if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
       # Get path name relative to the root directory
       file(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CURRENT_BUILD_ROOT} ${DIRECTORY_PATH})
   else()
