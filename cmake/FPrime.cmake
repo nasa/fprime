@@ -18,6 +18,8 @@
 # add-ons used by projects.
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
+# Clear hashes file
+file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 
 # Set build type, if unser
 if(NOT CMAKE_BUILD_TYPE) 

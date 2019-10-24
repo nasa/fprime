@@ -122,6 +122,10 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
+  foreach(SRC_FILE ${FINAL_SOURCE_FILES})
+      set_hash_flag("${SRC_FILE}")
+  endforeach()
+
 
   # Register extra targets at the very end, once all of the core functions are properly setup.
   setup_all_module_targets(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}")

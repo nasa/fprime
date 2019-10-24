@@ -77,6 +77,8 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
         COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
         DEPENDS ${TEST_SOURCE} ${TMP_AC_DIR}
       )
+      set_hash_flag("${GTEST_SOURCE}")
+      set_hash_flag("${BASE_SOURCE}")
       # Add autocode sources to module
       target_sources(
         ${EXE_NAME}
