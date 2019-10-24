@@ -63,18 +63,9 @@ message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
 if (GENERATE_HERITAGE_PY_DICT)
     message(STATUS "Generating Heritage Python Dictionaries")
 endif()
-# In order to generate AC files out-of-source, the ${CMAKE_BINARY_DIR} must
-# be included as the AC files will be placed there in a parallel, but separated,
-# directory from the source.
-if (NOT GENERATE_AC_IN_SOURCE)
-    message(STATUS "Running out-of-source AC Generation")
-    # Normal (deployment) outputs
-    include_directories("${CMAKE_BINARY_DIR}")
-    # Core outputs
-    include_directories("${CMAKE_BINARY_DIR}/F-Prime")
-else()
-    message(STATUS "Running in-source AC Generation")
-endif()
+# Normal (deployment) outputs
+include_directories("${CMAKE_BINARY_DIR}")
+include_directories("${CMAKE_BINARY_DIR}/F-Prime")
 
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")

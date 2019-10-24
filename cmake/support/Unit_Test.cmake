@@ -36,12 +36,7 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       string(REGEX REPLACE "([a-zA-Z0-9\-_]+)(ComponentAi.xml)" "\\1" COMPONENT_NAME ${COMPONENT_XML})
       get_filename_component(RAW_XML ${COMPONENT_XML} NAME)
 
-      # Invoke autocoder to produce unit test base classes
-      if (GENERATE_AC_IN_SOURCE)
-          set(AUTOCODE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Autocode")
-      else()
-          set(AUTOCODE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Autocode")
-      endif()
+      set(AUTOCODE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Autocode")
       #TODO: fix once the autocoder does break on build-root
       set(TMP_AC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Autocode")
       get_module_name("${TMP_AC_DIR}")
