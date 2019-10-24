@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-COPY Autocoders/Python/requirements.txt /tmp/AC_requirements.txt
+COPY Fw/Python /tmp/Python
 COPY Gds/requirements.txt /tmp/GDS_requirements.txt
 ####
 # Run the install of required software.
@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends bash git build-essential cmake time python \
                     python-setuptools python-pip python3 python3-pip python3-venv && \
     mkdir -p /opt/ && python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-    pip install -r /tmp/AC_requirements.txt && pip install -r /tmp/GDS_requirements.txt  && \
+    pip install /tmp/Python && pip install -r /tmp/GDS_requirements.txt  && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ####
 # Jenkins:
