@@ -30,7 +30,7 @@
     <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
     <import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
     <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
-    <import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+    <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
