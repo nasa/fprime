@@ -6,10 +6,5 @@
 #
 # There are some standard files that are included for reference
 
-SRC = Logger.cpp \
-      LogAssert.cpp
-	
-HDR = Logger.hpp \
-      LogAssert.hpp
 
-SUBDIRS = test
+SUBDIRS = ut
