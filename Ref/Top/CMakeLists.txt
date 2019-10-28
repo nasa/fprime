@@ -15,7 +15,6 @@ set(SOURCE_FILES
 set(MOD_DEPS
   Fw/Logger
   Svc/PassiveConsoleTextLogger
-  Svc/SocketGndIf
   Svc/LinuxTime
 )
 register_fprime_executable()
