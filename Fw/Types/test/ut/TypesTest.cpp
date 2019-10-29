@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-#define DEBUG_VERBOSE 1
+#define DEBUG_VERBOSE 0
 
 #include <gtest/gtest.h>
 
