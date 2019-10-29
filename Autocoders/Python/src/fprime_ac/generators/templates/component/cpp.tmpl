@@ -467,7 +467,7 @@ namespace ${namespace} {
       this->m_${instance}_InputPort[port].setPortNum(port);
 
 \#if FW_OBJECT_NAMES == 1
-      char portName[80];
+      char portName[120];
       (void) snprintf(
           portName,
           sizeof(portName),
@@ -494,7 +494,7 @@ namespace ${namespace} {
       this->m_${instance}_OutputPort[port].init();
 
 \#if FW_OBJECT_NAMES == 1
-      char portName[80];
+      char portName[120];
       (void) snprintf(
           portName,
           sizeof(portName),

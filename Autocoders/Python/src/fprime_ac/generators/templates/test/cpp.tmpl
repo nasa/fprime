@@ -139,7 +139,7 @@ $emit_cpp_params([ $param_instance ])
       this->m_${port_name}[_port].setPortNum(_port);
 
 \#if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -168,7 +168,7 @@ $emit_cpp_params([ $param_instance ])
       this->m_to_${instance}[_port].init();
 
 \#if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       snprintf(
           _portName,
           sizeof(_portName),
