@@ -1090,25 +1090,25 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
   {
     const char *severityString = "UNKNOWN";
     switch (e.severity) {
-      case Fw::LOG_FATAL:
+      case Fw::TEXT_LOG_FATAL:
         severityString = "FATAL";
         break;
-      case Fw::LOG_WARNING_HI:
+      case Fw::TEXT_LOG_WARNING_HI:
         severityString = "WARNING_HI";
         break;
-      case Fw::LOG_WARNING_LO:
+      case Fw::TEXT_LOG_WARNING_LO:
         severityString = "WARNING_LO";
         break;
-      case Fw::LOG_COMMAND:
+      case Fw::TEXT_LOG_COMMAND:
         severityString = "COMMAND";
         break;
-      case Fw::LOG_ACTIVITY_HI:
+      case Fw::TEXT_LOG_ACTIVITY_HI:
         severityString = "ACTIVITY_HI";
         break;
-      case Fw::LOG_ACTIVITY_LO:
+      case Fw::TEXT_LOG_ACTIVITY_LO:
         severityString = "ACTIVITY_LO";
         break;
-      case Fw::LOG_DIAGNOSTIC:
+      case Fw::TEXT_LOG_DIAGNOSTIC:
        severityString = "DIAGNOSTIC";
         break;
       default:

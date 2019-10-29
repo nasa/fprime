@@ -162,7 +162,7 @@
 // The size of the object name stored in the object base class. Larger names will be truncated.
 #if FW_OBJECT_NAMES
  #ifndef FW_OBJ_NAME_MAX_SIZE
- #define FW_OBJ_NAME_MAX_SIZE                120  //!< Size of object name (if object names enabled)
+ #define FW_OBJ_NAME_MAX_SIZE                80  //!< Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80.
  #endif
 #endif
 
