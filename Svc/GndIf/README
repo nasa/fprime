@@ -1,7 +1,0 @@
-This directory contains the definition of a ground interface component. 
-It has uplink and downlink ports for sending and receiving communication packet buffers. 
-For a given project, the uplink and downlink hardware would be specific, so the intent
-is that implementations would be defined in other locations but use this component base class.
-
-GndIfComponentAi.xml - XML definition of component
-GndIfModule.msxml - MagicDraw project file describing component
