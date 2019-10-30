@@ -93,7 +93,7 @@ namespace Ref {
       this->m_from_mathOut[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -122,7 +122,7 @@ namespace Ref {
       this->m_from_CmdStatus[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -151,7 +151,7 @@ namespace Ref {
       this->m_from_CmdReg[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -180,7 +180,7 @@ namespace Ref {
       this->m_from_Tlm[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -209,7 +209,7 @@ namespace Ref {
       this->m_from_Time[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -238,7 +238,7 @@ namespace Ref {
       this->m_from_Log[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -268,7 +268,7 @@ namespace Ref {
       this->m_from_LogText[_port].setPortNum(_port);
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -292,7 +292,7 @@ namespace Ref {
       this->m_to_mathIn[_port].init();
 
 #if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       snprintf(
           _portName,
           sizeof(_portName),
