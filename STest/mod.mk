@@ -6,4 +6,8 @@
 #
 
 
-SRC = 	PassiveTextLoggerComponentAi.xml
+SRC = STest/Random/bsd_random.c \
+    STest/Random/Random.cpp \
+    STest/Pick/Pick_default.cpp \
+    STest/Pick/Pick.cpp
+

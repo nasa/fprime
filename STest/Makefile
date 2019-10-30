@@ -1,10 +1,9 @@
-# This Makefile goes in each module, and allows building of an individual module library.
-# It is expected that each developer will add targets of their own for building and running
-# tests, for example.
+# This Makefile should be placed in the module that is contained under another root directory. 
+# The relative path from the root of the sandbox should be put in MODULE_DIR
 
 # derive module name from directory
 
-MODULE_DIR = Svc/GndIf
+MODULE_DIR = STest
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))

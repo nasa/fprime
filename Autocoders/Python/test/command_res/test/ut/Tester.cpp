@@ -82,9 +82,9 @@ namespace Cmd {
 
       // second async command
       args.resetSer();
-      U32 arg21;
-      U16 arg22;
-      U8 arg23;
+      U32 arg21 = 0;
+      U16 arg22 = 0;
+      U8 arg23 = 0;
 
       ASSERT_EQ(Fw::FW_SERIALIZE_OK,args.serialize(arg21));
       ASSERT_EQ(Fw::FW_SERIALIZE_OK,args.serialize(arg22));

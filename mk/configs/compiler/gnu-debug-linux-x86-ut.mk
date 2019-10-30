@@ -6,13 +6,15 @@ CFLAGS :=	$(DEBUG) \
 			$(LINUX_GNU_CFLAGS) \
 			$(LINUX_GNU_INCLUDES) \
 			$(COVERAGE) \
-			$(UT_FLAGS)
+			$(UT_FLAGS) \
+			-I$(BUILD_ROOT)/STest
 
 CXXFLAGS :=	$(DEBUG) \
 			$(LINUX_GNU_CXXFLAGS) \
 			$(LINUX_GNU_INCLUDES) \
 			$(COVERAGE) \
-			$(UT_FLAGS)
+			$(UT_FLAGS) \
+			-I$(BUILD_ROOT)/STest
 
 # for e.g. *Interceptor functions in Os/Stubs
 LINK_BIN_FLAGS := -z muldefs $(LINK_BIN_FLAGS) $(COVERAGE) 

@@ -142,7 +142,7 @@ namespace Drv {
       // Set up the address port and name
       address.sin_family = AF_INET;
       address.sin_port = htons(m_port);
-#ifdef TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
+#if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
       address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 // Get the IP address from host
