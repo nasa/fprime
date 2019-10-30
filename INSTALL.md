@@ -70,7 +70,7 @@ tools package. This is to enable users to choose which tools they'd like to use.
 **Installing F´ Python Packages**
 ```
 cd <path/to/fprime/checkout>
-pip install -r ./Autocoders/Python/requirements.txt
+pip install -r ./Fw/Python
 pip install -r ./Gds/requirements.txt
 ```
 

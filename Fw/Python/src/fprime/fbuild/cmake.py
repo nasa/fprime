@@ -20,7 +20,7 @@ import collections
 
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
-
+import fprime.fbuild
 
 class CMakeBuildCache(object):
     """
@@ -44,7 +44,7 @@ class CMakeBuildCache(object):
             self.tempdir = tempfile.mkdtemp()
             atexit.register(lambda: shutil.rmtree(self.tempdir, ignore_errors=True))
             # Turn that directory into a CMake build
-            CMakeHandler.generate_build(proj_dir, self.tempdir, ignore_output=not verbose)
+            fprime.fbuild.builder().generate_build(proj_dir, self.tempdir, ignore_output=not verbose)
         self.project = proj_dir
         return self.tempdir
 
