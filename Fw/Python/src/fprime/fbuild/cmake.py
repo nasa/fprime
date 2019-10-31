@@ -83,7 +83,11 @@ class CMakeHandler(object):
         include_root = self.get_include_info(path, build_dir)[1]
         module = os.path.relpath(path,  include_root).replace(".", "").replace(os.sep, "_")
         cmake_target = module if target == "" else "{}_{}".format(module, target).lstrip("_")
-        return self._run_cmake(["--build", build_dir, "--target", cmake_target] + fleshed_args, write_override=True)
+        run_args = ["--build", build_dir]
+        if self.verbose:
+            run_args.append("--verbose")
+        run_args.extend(["--target", cmake_target])
+        return self._run_cmake(run_args + fleshed_args, write_override=True)
 
     def find_hashed_file(self, build_dir, hash):
         """

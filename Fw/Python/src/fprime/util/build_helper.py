@@ -24,7 +24,10 @@ import fprime.fbuild
 UT_SUFFIX = "-ut"
 ACTION_MAP = {
     "generate": {
-        "description": "Generate an F prime build directory"
+        "description": "Generate an F prime build directory in the current directory"
+    },
+    "purge": {
+        "description": "Purges nearest F prime build directory after confirmatiohn"
     },
     "build": {
         "description": "Build component/deployment",
@@ -36,12 +39,12 @@ ACTION_MAP = {
         "target": "impl",
         "build-suffix": ""
     },
-    "testimpl": {
+    "ut-impl": {
         "description": "Generates test implementation templates",
         "target": "testimpl",
         "build-suffix": ""
     },
-    "build_ut": {
+    "ut-build": {
         "description": "Build unit tests for component/deployment",
         "target": "ut_exe",
         "build-suffix": UT_SUFFIX
@@ -67,9 +70,8 @@ def validate(parsed):
             parsed.build_dir = fprime.fbuild.builder().find_nearest_standard_build(parsed.platform, parsed.path)
         # Generation validation
         elif parsed.build_dir is None:
-            parsed.build_dir = os.path.join(
-                fprime.fbuild.builder().get_include_info(parsed.path, parsed.path)[1],
-                fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform))
+            build_inst_name = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform)
+            parsed.build_dir = os.path.join(os.getcwd(), build_inst_name)
     except fprime.fbuild.cmake.CMakeProjectException as exc:
         print("[ERROR] {}".format(exc))
         sys.exit(1)
@@ -99,7 +101,8 @@ def validate(parsed):
         # Look for default toolchains via FPRIME_DEFAULT_TOOLCHAIN_NAME
         toolchain = parsed.platform
         if parsed.platform == "default":
-            toolchain = fprime.fbuild.builder().get_fprime_configuration("FPRIME_DEFAULT_TOOLCHAIN_NAME")[0]
+            toolchain = fprime.fbuild.builder().get_fprime_configuration("FPRIME_DEFAULT_TOOLCHAIN_NAME",
+                                                                         cmake_dir=parsed.path)[0]
         # Find locations of toolchain files, assuming a non-None toolchain is asked for
         if toolchain is not None:
             locations = fprime.fbuild.builder().get_include_locations(parsed.path)
@@ -146,6 +149,8 @@ def parse_args(args):
     parsers["generate"].add_argument("--build-type", dest="build_type", default="Testing",
                                      choices=["Release", "Debug", "Testing"],
                                      help="CMake build type passed to CMake system.")
+    parsers["purge"].add_argument("-f", "--force", default=False, action="store_true",
+                                  help="Purges the build directory by force. No confirmation will be requested.")
     # Add a search for hash function
     hparser = subparsers.add_parser("hash-to-file", description="Converts F prime build hash to filename.",
                                     parents=[common_parser], add_help=False)
@@ -162,6 +167,19 @@ def parse_args(args):
     cmake_args = validate(parsed)
     return parsed, cmake_args, automatic_build_dir
 
+def confirm():
+    """
+    Confirms the removal of the file with a yes or no input.
+    :return: True to remove false otherwise
+    """
+    # Loop "forever"
+    while True:
+        confirm = input("Purge this directory (yes/no)?")
+        if confirm.lower() in ["y", "yes"]:
+            return True
+        elif confirm.lower() in ["n", "no"]:
+            return False
+        print("{} is invalid.  Please use 'yes' or 'no'".format(confirm))
 
 def utility_entry(args=sys.argv[1:]):
     """
@@ -183,6 +201,17 @@ def utility_entry(args=sys.argv[1:]):
                 print("[ERROR] No file hashes found in {} build.{}"
                       .format("unittest" if parsed.unittest else "regular",
                               "" if parsed.unittest else " Do you need the --unittest flag?"))
+        elif parsed.command == "purge":
+            removables = []
+            for dirname in filter(os.path.exists, [parsed.build_dir, parsed.build_dir + UT_SUFFIX]):
+                print("[INFO] Purging the following build directory: {}".format(dirname))
+                # Either the directory is forced remove, or the user confirms with a y/yes input
+                remove = (hasattr(parsed, "forced") and parsed.force) or confirm()
+                if remove:
+                    removables.append(dirname)
+            # Remove what was asked for
+            for dirname in removables:
+                shutil.rmtree(dirname, ignore_errors=True)
         elif parsed.command == "generate":
             print("[INFO] Creating {} build directory at: {}"
                   .format("automatic" if automatic_build_dir else "specified", parsed.build_dir))
