@@ -35,7 +35,7 @@ setup(
     ####
     name='fprime',
     version='1.3.0',
-    license='Apache 2.0 Lisense',
+    license='Apache 2.0 License',
     description='F Prime Flight Software core data types',
     long_description='''
 This package contains the necessary core data types used by F´. Users who seek to develop tools,
