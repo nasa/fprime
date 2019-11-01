@@ -224,7 +224,7 @@ def utility_entry(args=sys.argv[1:]):
             for dirname in filter(os.path.exists, [parsed.build_dir, parsed.build_dir + UT_SUFFIX]):
                 print("[INFO] Purging the following build directory: {}".format(dirname))
                 # Either the directory is forced remove, or the user confirms with a y/yes input
-                remove = (hasattr(parsed, "forced") and parsed.force) or confirm()
+                remove = (hasattr(parsed, "force") and parsed.force) or confirm()
                 if remove:
                     removables.append(dirname)
             # Remove what was asked for

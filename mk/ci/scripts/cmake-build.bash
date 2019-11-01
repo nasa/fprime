@@ -6,7 +6,7 @@ then
 fi
 WORKDIR="$1"
 shift
-JOBS="$2"
+JOBS="$1"
 shift
 TARGETS="$@"
 (
@@ -14,7 +14,7 @@ TARGETS="$@"
     # Loop through all targets and ensure that the targets run
     for target in ${TARGETS}
     do
-        fprime-util --jobs "${JOBS}" "${target}"
+        fprime-util "${target}" --jobs "${JOBS}"
         if (( $? != 0 ))
         then
             echo "[ERROR] Failed to run 'fprime-util --jobs ${JOBS} ${target}' in: ${WORKDIR}" 1>&2
@@ -25,7 +25,7 @@ TARGETS="$@"
 RET=$?
 (
     cd ${WORKDIR}
-    fprime-util --force purge
+    fprime-util purge --force
 )    
 exit $RET
 

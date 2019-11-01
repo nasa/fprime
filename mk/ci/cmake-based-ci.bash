@@ -1,12 +1,13 @@
 #!/bin/bash
 DIRNAME="$(dirname "${BASH_SOURCE}")"
+FPRIME_DIR=`pwd`
 
 # Standard builds with `Ref` and `RPI`
 for FPRIME_DEP in "${FPRIME_DIR}" "${FPRIME_DIR}/Ref" "${FPRIME_DIR}/RPI"
 do
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     PREFIX="base-build"
-    ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "${JOBS}" "build" "check-all" "install" "build-all"
+    ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "${JOBS}" "generate" "build" "check-all" "install" "build-all"
     if (( $? != 0 ))
     then
         echo "[ERROR] Failed to build (-j${JOBS}): ${FPRIME_DEP}"
