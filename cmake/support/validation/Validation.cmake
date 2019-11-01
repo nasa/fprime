@@ -38,15 +38,15 @@ function(setup_validation_command VALIDATION_TIME)
     	    message(FATAL_ERROR "[VALIDATION] Validation failed for: ${ARGN}")
     	endif()
     elseif(VALIDATION_TIME STREQUAL "PRE-AUTOCODE")
-    
+
     elseif(VALIDATION_TIME STREQUAL "PRE-BUILD")
-    
+
     elseif(VALIDATION_TIME STREQUAL "POST-BUILD")
-    
+
     else()
-        message(FATAL_ERROR "[VALIDATION] Invalid validation time '${VALIDATION_TIME}'") 
+        message(FATAL_ERROR "[VALIDATION] Invalid validation time '${VALIDATION_TIME}'")
     endif()
 endfunction(setup_validation_command)
 
 # Registers the pipsetup check
-setup_validation_command("SETUP" "python" "${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
+setup_validation_command("SETUP" "python ${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
