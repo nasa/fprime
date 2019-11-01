@@ -67,13 +67,14 @@ class CMakeHandler(object):
         """ Sets verbosity """
         self.verbose = verbose
 
-    def execute_known_target(self, target, build_dir, path, cmake_args=None):
+    def execute_known_target(self, target, build_dir, path, cmake_args=None, top_target=False):
         """
         Executes a known target for a given build_dir. Path will default to a known path.
         :param build_dir: build_dir to use to run this.
         :param target: target to execute at the path, using above build_dir
         :param path: path to run target against. (default) current working directory
         :param cmake_args: cmake args input
+        :param top_target: top-level target. Do not append path name
         :return: return code from CMake
         """
         cmake_args = {} if cmake_args is None else cmake_args
@@ -82,7 +83,8 @@ class CMakeHandler(object):
         # Get module name from the relative path to include root
         include_root = self.get_include_info(path, build_dir)[1]
         module = os.path.relpath(path,  include_root).replace(".", "").replace(os.sep, "_")
-        cmake_target = module if target == "" else "{}_{}".format(module, target).lstrip("_")
+        cmake_target = module if target == "" else \
+            ("{}_{}".format(module, target).lstrip("_") if not top_target else target)
         run_args = ["--build", build_dir]
         if self.verbose:
             run_args.append("--verbose")

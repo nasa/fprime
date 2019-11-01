@@ -39,21 +39,39 @@ ACTION_MAP = {
         "target": "impl",
         "build-suffix": ""
     },
-    "ut-impl": {
+    "impl-ut": {
         "description": "Generates test implementation templates",
         "target": "testimpl",
         "build-suffix": ""
     },
-    "ut-build": {
+    "build-ut": {
         "description": "Build unit tests for component/deployment",
         "target": "ut_exe",
         "build-suffix": UT_SUFFIX
     },
     "check": {
-        "description": "Run unit tests for component/deployment",
+        "description": "Run unit tests for single component/deployment",
         "target": "check",
         "build-suffix": UT_SUFFIX
-    }
+    },
+    "check-all": {
+        "description": "Runs all unit tests for deployment",
+        "target": "check",
+        "build-suffix": UT_SUFFIX,
+        "top-target": True
+    },
+    "install": {
+        "description": "Install to the configured directory for a deployment",
+        "target": "install",
+        "build-suffix": "",
+        "top-target": True
+    },
+    "build-all": {
+        "description": "Build the all target",
+        "target": "all",
+        "build-suffix": "",
+        "top-target": True
+    },
 }
 
 
@@ -223,7 +241,7 @@ def utility_entry(args=sys.argv[1:]):
         else:
             action = ACTION_MAP[parsed.command]
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
-                                                         parsed.path, cmake_args)
+                                                         parsed.path, cmake_args, action.get("top-target", False))
     except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         if parsed.command == "generate" and automatic_build_dir:
