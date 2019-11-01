@@ -12,7 +12,8 @@
 # Independent requirements
 six
 lxml
-enum34
+# Python < 3.4 enum version
+enum34; python_version <= '3.4'
 Markdown
 pytest
 pexpect
