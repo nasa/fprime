@@ -1,17 +1,32 @@
 #!/bin/bash
 DIRNAME="$(dirname "${BASH_SOURCE}")"
 
-FPRIME_DIR=`pwd`
-FPRIME_DEP="${FPRIME_DIR}/Ref"
-
-let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
-PREFIX="base-build"
-${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "" "install"
+# Standard builds with `Ref` and `RPI`
+for FPRIME_DEP in "${FPRIME_DIR}" "${FPRIME_DIR}/Ref" "${FPRIME_DIR}/RPI"
+do
+    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
+    PREFIX="base-build"
+    ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "${JOBS}" "build" "check-all" "install" "build-all"
+    if (( $? != 0 ))
+    then
+        echo "[ERROR] Failed to build (-j${JOBS}): ${FPRIME_DEP}"
+        exit 1
+    fi
+done
+#Should have been installed
+"${FPRIME_DIR}/Ref/bin/Linux/Ref" &
+sleep 10 # Program should be running this far
+ps -p $!
 if (( $? != 0 ))
 then
-    echo "[ERROR] Failed to build (-j${JOBS}): ${PREFIX}"
-    exit 1
+    echo "[ERROR] Failed to find 'Ref' running"
+    exit 2
 fi
+# Ditch the old process
+kill -KILL $!
+# Prep for standard runs
+FPRIME_DIR=`pwd`
+FPRIME_DEP="${FPRIME_DIR}/Ref"
 
 let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
 PREFIX="all-uts"
@@ -51,4 +66,5 @@ then
     echo "[ERROR] Failed to run CMake unit tests"
     exit 2
 fi
+
 exit 0

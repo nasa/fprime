@@ -4,33 +4,28 @@ then
     echo "[ERROR] Failed to supply CMake dir and make targets" 1>&2
     exit 1
 fi
-TARGET="$(cd $(dirname $1); pwd)/$(basename $1)"
+WORKDIR="$1"
 shift
-echo "$@"
-DIR="${BUILD_DIR:-$(mktemp -d)}"
+JOBS="$2"
+shift
+TARGETS="$@"
 (
-    echo "[INFO] Building in: ${DIR}"
-    cd "$DIR"
-    cmake ${CARGS} "${TARGET}" > "${DIR}/cmake.out" 2> >(tee -a "${DIR}/cmake.err" >&2)
-    if (( $? != 0 ))
-    then
-        echo "[ERROR] Failed to generate CMake: ${TARGET} with ${ARGS}" 1>&2
-        exit 2
-    fi
-    for MK_TAR in "$@"
+    cd ${WORKDIR}
+    # Loop through all targets and ensure that the targets run
+    for target in ${TARGETS}
     do
-        make ${MK_TAR} -j${JOBS:-1} > "${DIR}/mk-${MK_TAR}.out" 2> >(tee -a "${DIR}/mk-${MK_TAR}.err" >&2)
+        fprime-util --jobs "${JOBS}" "${target}"
         if (( $? != 0 ))
         then
-            echo "[ERROR] Failed to make '${MK_TAR}': ${TARGET} with ${ARGS}" 1>&2
-            exit 3
+            echo "[ERROR] Failed to run 'fprime-util --jobs ${JOBS} ${target}' in: ${WORKDIR}" 1>&2
+            exit 1
         fi
     done
 )
 RET=$?
-if [[ "${BUILD_DIR}" == "" ]]
-then
-    rm -r "${DIR}"
-fi
+(
+    cd ${WORKDIR}
+    fprime-util --force purge
+)    
 exit $RET
 

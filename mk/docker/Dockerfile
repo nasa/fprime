@@ -10,7 +10,9 @@ RUN apt-get update && \
                     python-setuptools python-pip python3 python3-pip python3-venv && \
     mkdir -p /opt/ && python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
     pip install /tmp/Python-Fw && pip install /tmp/GDS  && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    git clone https://github.com/raspberrypi/tools.git /opt/tools
+
 ####
 # Jenkins:
 #   This container is used to build as part of a Jenkins-CI setup. The following lines add in
