@@ -107,11 +107,11 @@ def validate(parsed):
         if toolchain is not None:
             locations = fprime.fbuild.builder().get_include_locations(parsed.path)
             toolchains_paths = map(lambda loc: os.path.join(loc, "cmake", "toolchain",
-                                                            parsed.platform + ".cmake"), locations)
+                                                            toolchain + ".cmake"), locations)
             toolchains = list(filter(os.path.exists, toolchains_paths))
             if not toolchains:
                 print("[ERROR] Toolchain file {} does not exist at any of {}"
-                      .format(parsed.platform + ".cmake", ", ".join(list(toolchains_paths))))
+                      .format(toolchains + ".cmake", ", ".join(list(toolchains_paths))))
                 sys.exit(-1)
             print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
             cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})

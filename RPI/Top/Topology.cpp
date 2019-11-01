@@ -32,7 +32,8 @@ static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,Rpi::CONTEXT_RPI_DEMO_1Hz,0,0,0,0,
 Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 
 // Command Components
-Svc::SocketGndIfImpl sockGndIf("SGIF");
+Svc::GroundInterfaceComponentImpl groundIf("GNDIF");
+Drv::SocketIpDriverComponentImpl socketIpDriver("SocketIpDriver");
 
 #if FW_ENABLE_TEXT_LOGGING
 Svc::ConsoleTextLoggerImpl textLogger("TLOG");
@@ -109,7 +110,8 @@ void constructApp(int port_number, char* hostname) {
 
     prmDb.init(10,0);
 
-    sockGndIf.init(0);
+    groundIf.init(0);
+    socketIpDriver.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
@@ -226,7 +228,7 @@ void constructApp(int port_number, char* hostname) {
     uartDrv.startReadThread(100,10*1024,-1);
 
     // Initialize socket server
-    sockGndIf.startSocketTask(100, 10*1024, port_number, hostname, Svc::SocketGndIfImpl::SEND_UDP);
+    socketIpDriver.startSocketTask(100, 10*1024, hostname, port_number);
 
 }
 

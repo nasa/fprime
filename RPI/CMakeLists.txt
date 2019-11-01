@@ -2,7 +2,7 @@
 # 'RPI' Deployment:
 #
 # This sets up the build for the 'RPI' Application, including the custom
-# component. In addition, it imports FPrime.cmake, which includes the core F Prime
+# components. In addition, it imports FPrime.cmake, which includes the core F Prime
 # components.
 #
 # This file has several sections.
@@ -19,8 +19,10 @@
 # project definition.
 ##
 project(RPI C CXX)
-set(CMAKE_BUILD_TYPE DEBUG)
 cmake_minimum_required(VERSION 3.5)
+set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Location of F prime framework" FORCE)
+set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
+set(FPRIME_DEFAULT_TOOLCHAIN_NAME "raspberrypi"  CACHE STRING "Default toolchain, used in generation" FORCE)
 
 ##
 # Section 2: F´ Core
@@ -30,7 +32,8 @@ cmake_minimum_required(VERSION 3.5)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
-
+# NOTE: register custom targets between these two lines
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 # Note: when building a deployment outside of the F´ core directories, then the
 # build root must be re-mapped for use with the standard build system components.
 #
