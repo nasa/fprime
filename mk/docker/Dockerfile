@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-COPY Fw/Python /tmp/Python-Fw
+COPY Fw/Python /tmp/Python
 COPY Gds /tmp/Gds
 ####
 # Run the install of required software.
@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends bash git build-essential cmake time python \
                     python-setuptools python-pip python3 python3-pip python3-venv && \
     mkdir -p /opt/ && python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-    pip install /tmp/Python-Fw && pip install /tmp/GDS  && \
+    pip install /tmp/Python && pip install /tmp/Gds && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     git clone https://github.com/raspberrypi/tools.git /opt/tools
 
