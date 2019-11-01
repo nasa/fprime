@@ -17,7 +17,7 @@
 # used to specify where F prime core lives allowing it to be separate from the
 # add-ons used by projects.
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
+message(STATUS "F prime core directory set to: ${FPRIME_CORE_DIR}")
 # Clear hashes file
 file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 
@@ -51,7 +51,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 # BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
 # path from which to do internal operations.
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
+message(STATUS "F prime BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
 # Set the install directory for the package
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")

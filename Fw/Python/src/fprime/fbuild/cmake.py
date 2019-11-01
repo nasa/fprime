@@ -78,6 +78,7 @@ class CMakeHandler(object):
         :return: return code from CMake
         """
         cmake_args = {} if cmake_args is None else cmake_args
+        make_args = {} if make_args is None else make_args
         fleshed_args = list(map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, cmake_args[key]), cmake_args.keys()))
         fleshed_args += ["--"] + list(map(lambda key: "{}={}".format(key, make_args[key]), make_args.keys()))

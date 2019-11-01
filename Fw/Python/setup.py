@@ -38,8 +38,8 @@ setup(
     license='Apache 2.0 License',
     description='F Prime Flight Software core data types',
     long_description='''
-This package contains the necessary core data types used by F´. Users who seek to develop tools,
-utilities, and other libraries used to interact with F´ framework code can use these data types
+This package contains the necessary core data types used by F prime. Users who seek to develop tools,
+utilities, and other libraries used to interact with F prime framework code can use these data types
 to interact with the data coming from the FSW.
     ''',
     url='https://github.com/nasa/fprime',

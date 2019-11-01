@@ -8,7 +8,7 @@
 # This file has several sections.
 #
 # 1. Header Section: define basic properties of the build
-# 2. F´ core: includes all F´ core components, and build-system properties
+# 2. F prime core: includes all F prime core components, and build-system properties
 # 3. Local subdirectories: contains all deployment specific directory additions
 ####
 
@@ -23,9 +23,9 @@ cmake_minimum_required(VERSION 3.5)
 
 
 ##
-# Section 2: F´ Core
+# Section 2: F prime Core
 #
-# This includes all of the F´ core components, and imports the make-system. F´ core
+# This includes all of the F prime core components, and imports the make-system. F prime core
 # components will be placed in the F-Prime binary subdirectory to keep them from
 # colliding with deployment specific items.
 ##
