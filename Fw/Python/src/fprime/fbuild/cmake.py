@@ -67,7 +67,7 @@ class CMakeHandler(object):
         """ Sets verbosity """
         self.verbose = verbose
 
-    def execute_known_target(self, target, build_dir, path, cmake_args=None, top_target=False):
+    def execute_known_target(self, target, build_dir, path, cmake_args=None, make_args=None, top_target=False):
         """
         Executes a known target for a given build_dir. Path will default to a known path.
         :param build_dir: build_dir to use to run this.
@@ -80,6 +80,7 @@ class CMakeHandler(object):
         cmake_args = {} if cmake_args is None else cmake_args
         fleshed_args = list(map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, cmake_args[key]), cmake_args.keys()))
+        fleshed_args += ["--"] + list(map(lambda key: "{}={}".format(key, make_args[key]), make_args.keys()))
         # Get module name from the relative path to include root
         include_root = self.get_include_info(path, build_dir)[1]
         module = os.path.relpath(path,  include_root).replace(".", "").replace(os.sep, "_")
@@ -224,12 +225,14 @@ class CMakeHandler(object):
         :param args: arguments to hand to CMake.
         :param ignore_output: do not print the output where the user can see it
         """
+        if not os.path.exists(build_dir):
+            os.makedirs(build_dir)
         args = {} if args is None else args
         fleshed_args = map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, args[key]), args.keys())
         self._cmake_validate_source_dir(source_dir)
-        self._run_cmake(["-S", source_dir, "-B", build_dir] + list(fleshed_args),
-                                capture=ignore_output, write_override=True)
+        self._run_cmake(["-S", source_dir] + list(fleshed_args), workdir=build_dir, capture=ignore_output,
+                        write_override=True)
 
     def _read_values_from_cache(self, keys, build_dir):
         """
@@ -253,7 +256,7 @@ class CMakeHandler(object):
         reg = re.compile("([^:]+):[^=]*=(.*)")
         # Check that the build_dir is properly setup
         self._cmake_validate_build_dir(build_dir)
-        stdout, stderr = self._run_cmake(["-B", build_dir, "-LA"], capture=True)
+        stdout, stderr = self._run_cmake(["-LA"], workdir=build_dir, capture=True)
         # Scan for lines in stdout that have non-None matches for the above regular expression
         valid_matches = filter(lambda item: item is not None, map(reg.match, stdout.split("\n")))
         # Return the dictionary composed from the match groups
@@ -285,7 +288,7 @@ class CMakeHandler(object):
         if not os.path.isfile(cache_file):
             raise CMakeInvalidBuildException(build_dir)
 
-    def _run_cmake(self, arguments, capture=False, write_override=False):
+    def _run_cmake(self, arguments, workdir=None, capture=False, write_override=False):
         """
         Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
         path in order for this to run.
@@ -303,7 +306,8 @@ class CMakeHandler(object):
         if self.verbose:
             print("[CMAKE] '{}'".format(" ".join(cargs)))
         proc = subprocess.Popen(cargs, stdout=subprocess.PIPE if capture else None,
-                                stderr=subprocess.PIPE if capture else None)
+                                stderr=subprocess.PIPE if capture else None,
+                                cwd=workdir)
         stdout, stderr = proc.communicate()
         # Check for Python 3, and decode if possible
         if capture and sys.version_info[0] >= 3:
@@ -348,7 +352,7 @@ class CMakeInvalidBuildException(CMakeException):
     def __init__(self, build_dir):
         """ Force an appropriate message """
         super(CMakeInvalidBuildException, self)\
-            .__init__("{} is not a CMake build directory. Please setup using 'cmake -B {} <path to deployment>'"
+            .__init__("{} is not a CMake build directory. Please setup using 'fprime-util generate"
                       .format(build_dir, build_dir))
 
 

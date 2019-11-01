@@ -83,6 +83,7 @@ def validate(parsed):
     :return: cmake arguments to pass to CMake
     """
     cmake_args = {}
+    make_args = {}
     try:
         if parsed.build_dir is None and parsed.command != "generate":
             parsed.build_dir = fprime.fbuild.builder().find_nearest_standard_build(parsed.platform, parsed.path)
@@ -135,8 +136,8 @@ def validate(parsed):
             cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
     # Build type only for generate, jobs only for non-generate
     if parsed.command != "generate":
-        cmake_args.update({"--jobs": parsed.jobs})
-    return cmake_args
+        make_args.update({"--jobs": parsed.jobs})
+    return cmake_args, make_args
 
 
 def parse_args(args):
@@ -182,8 +183,8 @@ def parse_args(args):
         sys.exit(1)
     fprime.fbuild.builder().set_verbose(parsed.verbose)
     automatic_build_dir = parsed.build_dir is None and parsed.command == "generate"
-    cmake_args = validate(parsed)
-    return parsed, cmake_args, automatic_build_dir
+    cmake_args, make_args = validate(parsed)
+    return parsed, cmake_args, make_args, automatic_build_dir
 
 def confirm():
     """
@@ -204,7 +205,7 @@ def utility_entry(args=sys.argv[1:]):
     Main interface to F prime utility.
     :return: return code of the function.
     """
-    parsed, cmake_args, automatic_build_dir = parse_args(args)
+    parsed, cmake_args, make_args, automatic_build_dir = parse_args(args)
     try:
         if parsed.command == "hash-to-file":
             suffix = UT_SUFFIX if parsed.unittest else ""
@@ -241,7 +242,8 @@ def utility_entry(args=sys.argv[1:]):
         else:
             action = ACTION_MAP[parsed.command]
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
-                                                         parsed.path, cmake_args, action.get("top-target", False))
+                                                         parsed.path, cmake_args, make_args,
+                                                         action.get("top-target", False))
     except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         if parsed.command == "generate" and automatic_build_dir:
