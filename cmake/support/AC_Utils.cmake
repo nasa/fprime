@@ -21,7 +21,7 @@ function(cheetah CHEETAH_TEMPLATES)
   # forces cheetah templates to be compiled and up-to-date before running the auto-coder.
   string(REPLACE ".tmpl" ".py" PYTHON_TEMPLATES "${CHEETAH_TEMPLATES}")
   # Setup the cheetah-compile command that runs the physical compile of the above statement. This
-  # controls the work to be done to create PYTHON_TEMPLATES from ${CHEETAH_TEMPLATES. 
+  # controls the work to be done to create PYTHON_TEMPLATES from ${CHEETAH_TEMPLATES.
   add_custom_command(
     OUTPUT ${PYTHON_TEMPLATES}
     COMMAND cheetah-compile ${CHEETAH_TEMPLATES}
@@ -54,7 +54,7 @@ function(serialns AI_XML)
     if (${ERR_RETURN})
         message(FATAL_ERROR "${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py ${AI_XML} failed.")
     endif()
-    set(SERIAL_NS "${NS}" PARENT_SCOPE) 
+    set(SERIAL_NS "${NS}" PARENT_SCOPE)
 endfunction(serialns)
 
 
@@ -105,7 +105,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR} FPRIME_CORE_DIR=${FPRIME_CORE_DIR}
-      ${FPRIME_CORE_DIR}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML} 
+      ${FPRIME_CORE_DIR}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML}
       DEPENDS ${AC_FINAL_XML}
     )
   else()
