@@ -82,7 +82,7 @@ Drv::LinuxGpioDriverComponentImpl gpio17Drv("gpio17Drv");
 
 Rpi::RpiDemoComponentImpl rpiDemo("rpiDemo");
 
-void constructApp(int port_number, char* hostname) {
+void constructApp(U32 port_number, char* hostname) {
 
     // Initialize rate group driver
     rateGroupDriverComp.init();
@@ -228,8 +228,9 @@ void constructApp(int port_number, char* hostname) {
     uartDrv.startReadThread(100,10*1024,-1);
 
     // Initialize socket server
-    socketIpDriver.startSocketTask(100, 10*1024, hostname, port_number);
-
+    if (hostname != NULL && port_number != 0) {
+        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
+    }
 }
 
 void exitTasks(void) {

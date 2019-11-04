@@ -1,10 +1,6 @@
 #ifndef __RPI_COMPONENTS_HEADER__
 #define __RPI_COMPONENTS_HEADER__
 
-void constructRPIArchitecture(void);
-void exitTasks(void);
-void constructApp(int port_number, char* hostname);
-
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
 
@@ -36,6 +32,10 @@ void constructApp(int port_number, char* hostname);
 
 // Main app
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
+
+void constructRPIArchitecture(void);
+void exitTasks(void);
+void constructApp(U32 port_number, char* hostname);
 
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup10HzComp;

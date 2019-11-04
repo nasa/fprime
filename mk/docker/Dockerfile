@@ -10,7 +10,7 @@ RUN apt-get update && \
                     python-setuptools python-pip python3 python3-pip python3-venv && \
     mkdir -p /opt/ && python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
     pip install /tmp/Python && pip install /tmp/Gds && \
-    git clone https://github.com/raspberrypi/tools.git /opt/tools && \
+    git clone --quiet https://github.com/raspberrypi/tools.git /opt/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ####
