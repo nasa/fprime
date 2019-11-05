@@ -20,7 +20,10 @@ done
 #Should have been installed
 echo "[INFO] Running CMake Integration Tests against ${FPRIME_DIR}/Ref"
 ${DIRNAME}/scripts/cmake-int.bash "${FPRIME_DIR}/Ref"
-if (( $? != 0 ))
+CMAKE_INT_RET="$?"
+cp -R "${FPRIME_DIR}/Ref/test/int/logs" "${CI_LOG_DIR}/int-apt-logs"
+cp -R "${FPRIME_DIR}/Ref/logs" "${CI_LOG_DIR}/int-gds-logs"
+if (( ${CMAKE_INT_RET} != 0 ))
 then
     echo "[ERROR] Failed to run 'Ref' I&T tests"
     exit 2
@@ -30,17 +33,22 @@ FPRIME_DIR=`pwd`
 FPRIME_DEP="${FPRIME_DIR}/Ref"
 
 let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
-PREFIX="all-uts"
+# Generate build for all UTs
 DIR=$(mktemp -d)
-BUILD_DIR="${DIR}" ${DIRNAME}/scripts/cmake-ut.bash "${FPRIME_DIR}" "check" 
+(
+    cd "${DIR}"
+    echo "[INFO] Generating basic CMake dir for running all UTs at: ${DIR}"
+    cmake "${FPRIME_DEP}" -DCMAKE_BUILD_TYPE=Testing > "${CI_LOG_DIR}/cmake_all_ut_build.out.log" 2> "${CI_LOG_DIR}/cmake_all_ut_build.err.log"
+)
 if (( $? != 0 ))
 then
-    echo "[ERROR] Failed to run CMake and process UTs (-j${JOBS}): ${PREFIX}"
-    rm -r "${DIR}"
-    exit 2
+   echo "[ERROR] Failed to run CMake for unit tests"
+   exit 8
 fi
+
 # Read the previous build and run each target individually
 (
+
   OWD="$(pwd)"
   let RET=0
   cd ${DIR}

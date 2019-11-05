@@ -12,7 +12,7 @@ GDS_PID=$!
 echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
 sleep ${SLEEP_TIME}
 # Check the above started successfully
-ps -p ${GDS_PID}
+ps -p ${GDS_PID} 2> /dev/null 1> /dev/null
 if (( $? != 0 ))
 then
     echo "[ERROR] Failed to start GDS"
@@ -20,9 +20,10 @@ then
 fi
 # Run integration tests
 (
-    cd "${1}" 
+    cd "${1}"
+    echo "[INFO] Running $1's pytest integration tests" 
     pytest
 )
 RET_PYTEST=$?
 kill $GDS_PID
-
+exit ${RET_PYTEST}
