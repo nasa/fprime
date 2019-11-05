@@ -1,7 +1,10 @@
 #!/bin/bash
 DIRNAME="$(dirname "${BASH_SOURCE}")"
 FPRIME_DIR=`pwd`
-
+# LOG file DIR
+export CI_LOG_DIR=`pwd`/ci-logs
+rm -rf "${CI_LOG_DIR}"
+mkdir -p "${CI_LOG_DIR}"
 # Standard builds with `Ref` and `RPI`
 for FPRIME_DEP in "${FPRIME_DIR}/Ref" "${FPRIME_DIR}/RPI"
 do
@@ -15,12 +18,10 @@ do
     fi
 done
 #Should have been installed
-"${FPRIME_DIR}/Ref/bin/Linux/Ref" &
-sleep 10 # Program should be running this far
-ps -p $!
+${DIRNAME}/scripts/cmake-int.bash
 if (( $? != 0 ))
 then
-    echo "[ERROR] Failed to find 'Ref' running"
+    echo "[ERROR] Failed to run 'Ref' I&T tests"
     exit 2
 fi
 # Ditch the old process

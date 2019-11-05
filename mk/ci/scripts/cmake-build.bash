@@ -14,7 +14,7 @@ TARGETS="$@"
     # Loop through all targets and ensure that the targets run
     for target in ${TARGETS}
     do
-        fprime-util "${target}" --jobs "${JOBS}"
+        fprime-util "${target}" --jobs "${JOBS}" > "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.out.log" 2> "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.err.log"
         if (( $? != 0 ))
         then
             echo "[ERROR] Failed to run 'fprime-util --jobs ${JOBS} ${target}' in: ${WORKDIR}" 1>&2
@@ -25,7 +25,7 @@ TARGETS="$@"
 RET=$?
 (
     cd ${WORKDIR}
-    fprime-util purge --force
+    fprime-util purge --force  > "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.out.log" 2> "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.err.log"
 )    
 exit $RET
 
