@@ -14,6 +14,7 @@ TARGETS="$@"
     # Loop through all targets and ensure that the targets run
     for target in ${TARGETS}
     do
+        echo "[INFO] Running CMake Helper against ${WORKDIR} and target ${target} with ${JOBS} jobs"
         fprime-util "${target}" --jobs "${JOBS}" > "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.out.log" 2> "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.err.log"
         if (( $? != 0 ))
         then
@@ -25,7 +26,8 @@ TARGETS="$@"
 RET=$?
 (
     cd ${WORKDIR}
-    fprime-util purge --force  > "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.out.log" 2> "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.err.log"
+    echo "[INFO] Purging CMake Helper build dir from ${WORKDIR}"
+    fprime-util purge --force  > "${CI_LOG_DIR}/${WORKDIR//\//_}_purge.out.log" 2> "${CI_LOG_DIR}/${WORKDIR//\//_}_purge.err.log"
 )    
 exit $RET
 

@@ -10,6 +10,7 @@ for FPRIME_DEP in "${FPRIME_DIR}/Ref" "${FPRIME_DIR}/RPI"
 do
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     PREFIX="base-build"
+    echo "[INFO] Running CMake Builds against ${FPRIME_DEP} with targets: 'generate' 'build' 'check-all' 'install' 'build-all'"
     ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "${JOBS}" "generate" "build" "check-all" "install" "build-all"
     if (( $? != 0 ))
     then
@@ -18,14 +19,13 @@ do
     fi
 done
 #Should have been installed
-${DIRNAME}/scripts/cmake-int.bash
+echo "[INFO] Running CMake Integration Tests against ${FPRIME_DIR}/Ref"
+${DIRNAME}/scripts/cmake-int.bash "${FPRIME_DIR}/Ref"
 if (( $? != 0 ))
 then
     echo "[ERROR] Failed to run 'Ref' I&T tests"
     exit 2
 fi
-# Ditch the old process
-kill -KILL $!
 # Prep for standard runs
 FPRIME_DIR=`pwd`
 FPRIME_DEP="${FPRIME_DIR}/Ref"
