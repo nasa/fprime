@@ -8,13 +8,12 @@ mkdir -p "${CI_LOG_DIR}"
 # Standard builds with `Ref` and `RPI`
 for FPRIME_DEP in "${FPRIME_DIR}/Ref" "${FPRIME_DIR}/RPI"
 do
-    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     PREFIX="base-build"
     echo "[INFO] Running CMake Builds against ${FPRIME_DEP} with targets: 'generate' 'build' 'check-all' 'install' 'build-all'"
-    ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "${JOBS}" "generate" "build" "check-all" "install" "build-all"
+    ${DIRNAME}/scripts/cmake-build.bash "${FPRIME_DEP}" "generate" "build" "check-all" "install" "build-all"
     if (( $? != 0 ))
     then
-        echo "[ERROR] Failed to build (-j${JOBS}): ${FPRIME_DEP}"
+        echo "[ERROR] Failed to run all cmake builds with: ${FPRIME_DEP}"
         exit 1
     fi
 done

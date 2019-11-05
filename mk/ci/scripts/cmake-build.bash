@@ -6,14 +6,13 @@ then
 fi
 WORKDIR="$1"
 shift
-JOBS="$1"
-shift
 TARGETS="$@"
 (
     cd ${WORKDIR}
     # Loop through all targets and ensure that the targets run
     for target in ${TARGETS}
     do
+        let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
         echo "[INFO] Running CMake Helper against ${WORKDIR} and target ${target} with ${JOBS} jobs"
         fprime-util "${target}" --jobs "${JOBS}" > "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.out.log" 2> "${CI_LOG_DIR}/${WORKDIR//\//_}_${target}.err.log"
         if (( $? != 0 ))
