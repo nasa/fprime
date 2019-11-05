@@ -9,6 +9,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends bash git build-essential cmake time python \
                     python-setuptools python-pip python3 python3-pip python3-venv && \
     mkdir -p /opt/ && python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+    pip install wheel && \
     pip install /tmp/Python && pip install /tmp/Gds[test-api-xls] && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
