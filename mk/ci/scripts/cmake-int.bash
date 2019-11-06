@@ -26,4 +26,6 @@ fi
 )
 RET_PYTEST=$?
 kill $GDS_PID
+sleep 2
+pkill -KILL Ref
 exit ${RET_PYTEST}
