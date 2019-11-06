@@ -66,7 +66,7 @@ class TestRefAppClass(object):
         events = []
         events.append(self.api.get_event_pred("OpCodeDispatched", [cmd_id, None]))
         events.append(self.api.get_event_pred("OpCodeCompleted", [cmd_id]))
-        results = self.api.send_and_assert_event(command, args, events)
+        results = self.api.send_and_assert_event(command, args, events, timeout=timeout)
         if max_delay is not None:
             delay = results[1].get_time() - results[0].get_time()
             msg = "The delay, {}, between the two events should be < {}".format(delay, max_delay)
@@ -125,7 +125,7 @@ class TestRefAppClass(object):
         any_reordered = False
         dropped = False
         for i in range(0, length):
-            results = self.api.send_and_await_event("cmdDisp.CMD_NO_OP", events=evr_seq, timeout=2)
+            results = self.api.send_and_await_event("cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25)
             msg = "Send and assert NO_OP Trial #{}".format(i)
             if not self.api.test_assert(len(results) == 3,msg, True):
                 items = self.api.get_event_test_history().retrieve()
@@ -197,7 +197,7 @@ class TestRefAppClass(object):
             self.assert_command("cmdDisp.CMD_NO_OP")
             self.assert_command("cmdDisp.CMD_NO_OP")
 
-            time.sleep(0.5)
+            time.sleep(6.5)
 
             self.api.assert_event_count(pred, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
@@ -207,7 +207,7 @@ class TestRefAppClass(object):
             self.api.send_command("cmdDisp.CMD_NO_OP")
             self.api.send_command("cmdDisp.CMD_NO_OP")
 
-            time.sleep(0.5)
+            time.sleep(6.5)
 
             self.api.assert_event_count(zero, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
