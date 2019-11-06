@@ -794,7 +794,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             for si in obj.get_serializables()
         ]
         s_includes = [
-            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","").replace("/test/ut")
+            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","").replace("/test/ut", "")
             for sinc in ser_includes
         ]
         c.ser_includes = s_includes
