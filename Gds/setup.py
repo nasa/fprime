@@ -126,6 +126,7 @@ integrated configuration with ground in-the-loop.
     ],
     extras_require={
         # I and T API
+        'uart-adapter': 'pyserial',
         'test-api-xls': 'openpyxl',
         # TK GUI items for Python 2
         ':python_version<"3.0"': 

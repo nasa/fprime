@@ -29,7 +29,7 @@ def get_args(args):
         handler.add_args(parser)
     # Parse the arguments, and refine through all handlers
     try:
-        parsed_args = parser.parse_args(args)
+        parsed_args, _ = parser.parse_known_args(args)
         # Add all values to the values list
         values = fprime_gds.executables.cli.refine(parser, parsed_args)
         # Special checks
