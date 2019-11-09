@@ -22,9 +22,10 @@ function(cheetah CHEETAH_TEMPLATES)
   string(REPLACE ".tmpl" ".py" PYTHON_TEMPLATES "${CHEETAH_TEMPLATES}")
   # Setup the cheetah-compile command that runs the physical compile of the above statement. This
   # controls the work to be done to create PYTHON_TEMPLATES from ${CHEETAH_TEMPLATES.
+  find_program(CHEETAH_EXE NAMES "cheetah-compile" "cheetah-compile3")
   add_custom_command(
     OUTPUT ${PYTHON_TEMPLATES}
-    COMMAND cheetah-compile ${CHEETAH_TEMPLATES}
+    COMMAND ${CHEETAH_EXE} ${CHEETAH_TEMPLATES}
     DEPENDS ${CHEETAH_TEMPLATES}
   )
   # Add the above PYTHON_TEMPLATES to the list of sources for the CODEGEN_TARGET target. Thus they will be
