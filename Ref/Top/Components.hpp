@@ -1,9 +1,5 @@
 #ifndef __LITS_COMPONENTS_HEADER__
 #define __LITS_COMPONENTS_HEADER__
-void constructRefArchitecture(void);
-bool constructApp(bool dump, int port_number, char* hostname);
-void exitTasks(void);
-
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
 
@@ -29,6 +25,11 @@ void exitTasks(void);
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
+
+void constructRefArchitecture(void);
+bool constructApp(bool dump, U32 port_number, char* hostname);
+void exitTasks(void);
+
 
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;

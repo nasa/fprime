@@ -98,7 +98,7 @@ Svc::AssertFatalAdapterComponentImpl fatalAdapter("fatalAdapter");
 
 Svc::FatalHandlerComponentImpl fatalHandler("fatalHandler");
 
-bool constructApp(bool dump, int port_number, char* hostname) {
+bool constructApp(bool dump, U32 port_number, char* hostname) {
 
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
@@ -227,9 +227,10 @@ bool constructApp(bool dump, int port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
-    // Initialize socket server
-    socketIpDriver.startSocketTask(100, 10*1024, hostname, port_number);
-
+    // Initialize socket server if and only if there is a valid specification
+    if (hostname != NULL && port_number != 0) {
+        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
+    }
     return false;
 }
 

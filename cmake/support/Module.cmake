@@ -56,11 +56,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       string(CONCAT AC_SOURCE ${AC_NAME} "${NAME_TYPE}Ac.cpp")
       # AC files may be considered source files, or they may be considered build artifacts. This is set via
       # cmake configuration and controls the location of the output.
-      if (GENERATE_AC_IN_SOURCE)
-          set(AC_FINAL_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-      else()
-          set(AC_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
-      endif()
+      set(AC_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
       string(CONCAT AC_FINAL_HEADER ${AC_FINAL_DIR} "/" ${AC_HEADER})
       string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
       acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
@@ -122,6 +118,10 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
+  foreach(SRC_FILE ${FINAL_SOURCE_FILES})
+      set_hash_flag("${SRC_FILE}")
+  endforeach()
+
 
   # Register extra targets at the very end, once all of the core functions are properly setup.
   setup_all_module_targets(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}")
