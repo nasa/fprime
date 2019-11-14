@@ -79,4 +79,12 @@ More information can be found here: [Autocoders/Python/src/fprime_ac/utils/cosmo
 * Purged inaccurate ITAR and Copyright notices
 * Misc. bug fixes
 
+#### Release 1.3
+
+* New prototype HTML GUI
+* Python packages Fw/Python and Gds
+* Refined CMake and fprime-util helper script
+* Better ground interface component
+* Integration test API
+* Baremetal components
 

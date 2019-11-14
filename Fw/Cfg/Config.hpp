@@ -112,7 +112,7 @@
 #endif
 
 #ifndef FW_BAREMETAL_SCHEDULER
-#define FW_BAREMETAL_SCHEDULER             1   //!< Indicates whether or not a baremetal scheduler should be used. Alternatively the Os scheduler is used.
+#define FW_BAREMETAL_SCHEDULER             0   //!< Indicates whether or not a baremetal scheduler should be used. Alternatively the Os scheduler is used.
 #endif
 
 // Port Facilities
