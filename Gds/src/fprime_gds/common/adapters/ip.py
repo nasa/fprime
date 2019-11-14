@@ -101,7 +101,7 @@ class IpHandler(object):
     Base handler for IP types. This will provide the basic methods, and synchronization for reading/writing to multiple
     child implementations, namely: UDP and TCP. These child objects can then be instantiated individually.
     """
-    IP_SOCKET_TIMEOUT = 0.010 # Timeout applied to the socket
+    IP_SOCKET_TIMEOUT = 0.001 # Timeout applied to the socket
     ERROR_RETRY_INTERVAL = 1 # Seconds between a non-timeout error and a socket reconnection
     MAX_CLIENT_BACKLOG = 1 # One client backlog, allowing for reconnects
     # Connection states, it will go between these states

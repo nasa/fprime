@@ -37,10 +37,9 @@ void runcycles(NATIVE_INT_TYPE cycles) {
 }
 
 int main(int argc, char* argv[]) {
-    U32 port_number;
+    U32 port_number = 0; // Invalid port number forced
     I32 option;
     char *hostname;
-    port_number = 0;
     option = 0;
     hostname = NULL;
     bool dump = false;

@@ -20,7 +20,7 @@ def get_args(args):
     the arguments in their namespace.
     :param args: arguments to supply
     """
-    parser = argparse.ArgumentParser(description='Run F´ deployment with: GDS data server, GDS GUI, and application.')
+    parser = argparse.ArgumentParser(description='Run F prime deployment with: GDS data server, GDS GUI, and application.')
     # Get custom handlers for all executables we are running
     arg_handlers = [fprime_gds.executables.cli.GdsParser, fprime_gds.executables.cli.MiddleWareParser,
                     fprime_gds.executables.cli.BinaryDeployment, fprime_gds.executables.cli.CommParser]
@@ -29,7 +29,7 @@ def get_args(args):
         handler.add_args(parser)
     # Parse the arguments, and refine through all handlers
     try:
-        parsed_args = parser.parse_args(args)
+        parsed_args, _ = parser.parse_known_args(args)
         # Add all values to the values list
         values = fprime_gds.executables.cli.refine(parser, parsed_args)
         # Special checks

@@ -27,7 +27,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         Then open the port up again.
         """
         self.close()
-        self.serial = serial.Serial(self.device, self.baud, self.timeout)
+        self.serial = serial.Serial(self.device, self.baud, timeout=self.timeout)
 
     def close(self):
         """
@@ -68,7 +68,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             if self.serial is None and self.reconnect:
                 self.open()
             return self.serial.read(size)
-        except serial.serialutil.SerialException:
+        except serial.serialutil.SerialException as exc:
             self.close()
         return None
 
@@ -86,7 +86,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
                 "help": "UART device representing the FSW. Default: %(default)s"
             },
             ("-b", "--baud"): {
-                "dest":"port",
+                "dest":"baud",
                 "type":int,
                 "default": 115200,
                 "help": "Baud rate of the serial device. Default: %(default)s"
