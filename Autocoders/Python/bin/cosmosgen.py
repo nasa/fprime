@@ -12,8 +12,7 @@
 # Copyright 2018, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 #===============================================================================
-from utils.pathmaker import setup_fprime_autocoder_path
-setup_fprime_autocoder_path()
+
 import os
 import sys
 
