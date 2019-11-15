@@ -38,7 +38,7 @@ class TaskRunner : TaskRegistry {
          */
         void stop();
         /**
-         * Program loop, used to run all tasks forever
+         * Run once function call, used to run one pass over tasks
          */
         void run();
     private:

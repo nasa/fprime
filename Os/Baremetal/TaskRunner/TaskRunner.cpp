@@ -12,7 +12,7 @@ namespace Os {
 
 TaskRunner::TaskRunner() :
     m_index(0),
-    m_cont(false)
+    m_cont(true)
 {
     for (U32 i = 0; i < TASK_REGISTRY_CAP; i++) {
         this->m_task_table[i] = 0;
@@ -60,33 +60,32 @@ void TaskRunner::stop() {
     m_cont = false;
 }
 /**
- * Program loop, used to run all tasks forever
+ * Run once through list of tasks
  */
 void TaskRunner::run() {
-    m_cont = true;
-    //Run until asked to stop, and all subtasks cease
-    while (m_cont) {
-        U32 i = 0;
-        //Loop through full table
-        for (i = 0; i < TASK_REGISTRY_CAP; i++) {
-            //Break at end of table
-            if (m_task_table[i] == NULL) {
-                break;
-            }
-            //Get bare task or break
-            BareTaskHandle* handle = reinterpret_cast<BareTaskHandle*>(m_task_table[i]->getRawHandle());
-            if (handle == NULL || handle->m_routine == NULL || !handle->m_enabled) {
-                continue;
-            }
-            //Run-it!
-            handle->m_routine(handle->m_argument);
-            //Disable tasks that have "exited" or stopped
-            handle->m_enabled = m_task_table[i]->isStarted();
+    U32 i = 0;
+    if (!m_cont) {
+        return;
+    }
+    //Loop through full table
+    for (i = 0; i < TASK_REGISTRY_CAP; i++) {
+        //Break at end of table
+        if (m_task_table[i] == NULL) {
+            break;
         }
-        //Check if no tasks, and stop
-        if (i == 0) {
-            m_cont = false;
+        //Get bare task or break
+        BareTaskHandle* handle = reinterpret_cast<BareTaskHandle*>(m_task_table[i]->getRawHandle());
+        if (handle == NULL || handle->m_routine == NULL || !handle->m_enabled) {
+            continue;
         }
+        //Run-it!
+        handle->m_routine(handle->m_argument);
+        //Disable tasks that have "exited" or stopped
+        handle->m_enabled = m_task_table[i]->isStarted();
+    }
+    //Check if no tasks, and stop
+    if (i == 0) {
+        m_cont = false;
     }
 }
 }

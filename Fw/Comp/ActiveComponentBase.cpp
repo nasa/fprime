@@ -94,6 +94,7 @@ namespace Fw {
         //Start if not started
         if (!comp->m_task.isStarted()) {
             comp->m_task.setStarted(true);
+            comp->preamble();
         }
         //Bare components cannot block, so return to the scheduler
         if (comp->m_queue.getNumMsgs() == 0) {
