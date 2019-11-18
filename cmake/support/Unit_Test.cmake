@@ -7,7 +7,14 @@
 # opposed to the standard CMake call. The CMake test support functions are still used.
 #
 ####
+# Bail if not testing
+if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" )
+    return()
+endif()
+
+# Enable testing, setup CTest, etc.
 enable_testing()
+include( CTest )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 ####
@@ -35,6 +42,20 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       else()
           set(AUTOCODE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Autocode")
       endif()
+      #TODO: fix once the autocoder does break on build-root
+      set(TMP_AC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Autocode")
+      get_module_name("${TMP_AC_DIR}")
+      set(AC_TMP_MOD "${MODULE_NAME}_clean")
+      
+      # This creates the temporary Autocoder directory. Since this is used by multiple generations
+      # it must be created on the fly, and cleaned up afterword. The clean-up step here "generates"
+      # a fake source
+      # Add a custom command to make the directory
+      add_custom_command(
+        OUTPUT ${TMP_AC_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TMP_AC_DIR}
+      )    
+      
       set(GTEST_SOURCE "${AUTOCODE_DIR}/GTestBase.cpp")
       set(BASE_SOURCE "${AUTOCODE_DIR}/TesterBase.cpp")
       set(GTEST_HEADER "${AUTOCODE_DIR}/GTestBase.hpp")
@@ -42,18 +63,19 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       target_include_directories(${EXE_NAME} PUBLIC ${AUTOCODE_DIR})
       add_custom_command(
         OUTPUT ${GTEST_SOURCE} ${BASE_SOURCE} ${GTEST_HEADER} ${BASE_HEADER}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${AUTOCODE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy ${TEST_SOURCE} ${AUTOCODE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E chdir ${AUTOCODE_DIR} ${CMAKE_COMMAND} -E env pwd
-        COMMAND ${CMAKE_COMMAND} -E chdir ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy ${TEST_SOURCE} ${TMP_AC_DIR}
+        COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR} ${CMAKE_COMMAND} -E env pwd
+        COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR}
         ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
-        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${AUTOCODE_DIR} --build_root ${RAW_XML}
-        COMMAND ${CMAKE_COMMAND} -E chdir ${AUTOCODE_DIR}
+        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${TMP_AC_DIR} --build_root ${RAW_XML}
+        COMMAND ${CMAKE_COMMAND} -E chdir ${TMP_AC_DIR}
         ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
-        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${AUTOCODE_DIR} --build_root -u ${RAW_XML}
-        COMMAND ${CMAKE_COMMAND} -E remove ${AUTOCODE_DIR}/Tester.hpp ${AUTOCODE_DIR}/Tester.cpp
+        ${PYTHON_AUTOCODER_DIR}/bin/codegen.py -p ${TMP_AC_DIR} --build_root -u ${RAW_XML}
+        COMMAND ${CMAKE_COMMAND} -E remove ${TMP_AC_DIR}/Tester.hpp ${TMP_AC_DIR}/Tester.cpp
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${TMP_AC_DIR} ${AUTOCODE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
-        DEPENDS ${TEST_SOURCE}
+        DEPENDS ${TEST_SOURCE} ${TMP_AC_DIR}
       )
       # Add autocode sources to module
       target_sources(
@@ -86,6 +108,9 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # MOD_DEPS = All other module inputs DEPS_INPUT
     split_source_files("${UT_SOURCES_INPUT}")
     split_dependencies("${MOD_DEPS_INPUT}")
+    if (NOT DEFINED FPRIME_OBJECT_TYPE)
+        set(FPRIME_OBJECT_TYPE "Unit-Test")
+    endif()
     generate_executable(${UT_EXE_NAME} "${SOURCE_FILES}" "${MOD_DEPS_INPUT}")
     # Generate the UTs w/ autocoding and add the other sources  
     unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}")
@@ -98,6 +123,13 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
+    
+    # Check target for this module
+    if (NOT TARGET "${MODULE_NAME}_check")
+	    add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND})
+    endif()
+	add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
+    
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
 	    print_dependencies(${UT_EXE_NAME})

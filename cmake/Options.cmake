@@ -18,6 +18,11 @@
 # - Generate heritage python dictionaries
 # - Manually specify the build platform
 #
+# Note: this file also sets up the following "build type" for use by the user. These build types
+#       are in addition to the standard cmake build types.
+#
+#       TESTING: build the unit tests and setup the "make check" target
+# 
 # @author mstarch
 ####
 
@@ -54,22 +59,6 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 option(GENERATE_AC_IN_SOURCE "Ac.cpp and Ac.hpp are placed with source files." OFF)
 
 ####
-# `LINK_AS_SHARED_LIBS:`
-#
-# This option swiches the default link option from static linkage to using a shared-object linkage.
-# It implies that instead of static archive files, shared objects will be built instead. This will
-# mean smaller binaries, partial-updates are possible, and more rigorous project process must be
-# used.
-#
-# **Values:**
-# - ON: generate shared libraries with shared-linkage.
-# - OFF: (default) generate static libraries with static-linkage.
-#
-# e.g. `-DLINK_AS_SHARED_LIBS=ON`
-####
-option(LINK_AS_SHARED_LIBS "Link F prime with shared libraries." OFF)
-
-####
 # `GENERATE_HERITAGE_PY_DICT:`
 #
 # This option switches from generating XML dictionaries to generating the heritage python
@@ -84,8 +73,49 @@ option(LINK_AS_SHARED_LIBS "Link F prime with shared libraries." OFF)
 ####
 option(GENERATE_HERITAGE_PY_DICT "Generate F prime python dictionaries instead of XML based dictionaries." OFF)
 
+####
+# `SKIP_TOOLS_CHECK:`
+#
+# For older clients, the check that validates the tool-suite is installed may fail. This option
+# skips the tools check enabling the system to run.
+#
+# **Values:**
+# - ON: skip tools check
+# - OFF: (default) run tools check
+#
+# e.g. `-DSKIP_TOOLS_CHECK=ON`
+####
+option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
+
+
 # Note: document other system options here.
 
+
+####
+# `TESTING:`
+#
+# Testing build type used to build UTs and setting up the `make check` target. If the unit testing
+# is desired run with this build type.
+#
+# e.g. `-DCMAKE_BUILD_TYPE=TESTING`
+####
+SET(CMAKE_CXX_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Testing C++ flags." FORCE)
+SET(CMAKE_C_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Testing C flags." FORCE)
+SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
+SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
+MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_TESTING
+    CMAKE_C_FLAGS_TESTING
+    CMAKE_EXE_LINKER_FLAGS_TESTING
+    CMAKE_SHARED_LINKER_FLAGS_TESTING )
+# Testing setup for UT and coverage builds
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING" )
+    # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
+    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
+    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+endif()
 ####
 # `PLATFORM:`
 #

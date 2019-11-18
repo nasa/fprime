@@ -4,14 +4,14 @@
 <!--============ CmdSequencer Commands =================================== -->
 
 <commands>
-	<command kind="async" opcode="0" mnemonic="CS_RUN">
-		<comment>Run a command sequence file</comment>
-		<args>
-			<arg type="string" name="fileName" size="240">
-				<comment>The name of the sequence file</comment>
-			</arg>
-		</args>
-	</command>
+    <command kind="async" opcode="0" mnemonic="CS_RUN">
+        <comment>Run a command sequence file</comment>
+        <args>
+            <arg type="string" name="fileName" size="240">
+                <comment>The name of the sequence file</comment>
+            </arg>
+        </args>
+    </command>
     <command kind="async" opcode="1" mnemonic="CS_VALIDATE">
         <comment>Validate a command sequence file</comment>
         <args>
@@ -20,19 +20,19 @@
             </arg>
         </args>
     </command>
-	<command kind="async" opcode="2" mnemonic="CS_CANCEL">
-		<comment>Cancel a command sequence</comment>
-	</command>
-	<command kind="async" opcode="3" mnemonic="CS_START">
-		<comment>Start running a command sequence</comment>
-	</command>
-	<command kind="async" opcode="4" mnemonic="CS_STEP">
-		<comment>Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.</comment>
-	</command>
-	<command kind="async" opcode="5" mnemonic="CS_AUTO">
-		<comment>Set the run mode to AUTO.</comment>
-	</command>
-	<command kind="async" opcode="6" mnemonic="CS_MANUAL">
-		<comment>Set the run mode to MANUAL.</comment>
-	</command>
+    <command kind="async" opcode="2" mnemonic="CS_CANCEL">
+        <comment>Cancel a command sequence</comment>
+    </command>
+    <command kind="async" opcode="3" mnemonic="CS_START">
+        <comment>Start running a command sequence</comment>
+    </command>
+    <command kind="async" opcode="4" mnemonic="CS_STEP">
+        <comment>Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.</comment>
+    </command>
+    <command kind="async" opcode="5" mnemonic="CS_AUTO">
+        <comment>Set the run mode to AUTO.</comment>
+    </command>
+    <command kind="async" opcode="6" mnemonic="CS_MANUAL">
+        <comment>Set the run mode to MANUAL.</comment>
+    </command>
 </commands>

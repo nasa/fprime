@@ -19,11 +19,14 @@ from fprime_gds.common.loaders import cmd_py_loader, cmd_xml_loader
 from fprime_gds.common.decoders import ch_decoder
 from fprime_gds.common.decoders import event_decoder
 from fprime_gds.common.decoders import pkt_decoder
+from fprime_gds.common.decoders import file_decoder
 from fprime_gds.common.encoders import cmd_encoder
 
 from fprime_gds.common.distributor import distributor
 
 from fprime_gds.common.client_socket import client_socket
+
+from fprime_gds.common.files import file_writer
 
 from . import GDSMainFrameImpl
 
@@ -99,7 +102,7 @@ class MainFrameFactory(object):
 
 
     def setup_pipeline(self):
-        """Setup the pipline of data from the client to the GUI. Creates one instance of main GDS window for you.
+        """Setup the pipeline of data from the client to the GUI. Creates one instance of main GDS window for you.
 
         Raises:
             Exception -- raised if no dictionary path passed in the opts object
@@ -107,7 +110,7 @@ class MainFrameFactory(object):
         # Create Distributor and client socket
         self.dist = distributor.Distributor(self.config)
         self.client_socket = client_socket.ThreadedTCPSocketClient()
-
+        
         # Choose the dictionary type we will use
         if self.opts.generated_path != None:
             use_py_dicts = True
@@ -144,17 +147,24 @@ class MainFrameFactory(object):
         self.cmd_enc = cmd_encoder.CmdEncoder()
         self.event_dec = event_decoder.EventDecoder(eid_dict)
         self.ch_dec = ch_decoder.ChDecoder(ch_dict)
+        self.file_dec = file_decoder.FileDecoder()
+        self.consumer = file_writer.FileWriter()
 
         # Register distributor to client socket
         self.client_socket.register_distributor(self.dist)
 
         # Register client socket to encoder
         self.cmd_enc.register(self.client_socket)
+        
+        #Regist the file decoder consumer
+        self.file_dec.register(self.consumer)
 
+        
         # Register the event and channel decoders to the distributor for their
         # respective data types
         self.dist.register("FW_PACKET_LOG", self.event_dec)
         self.dist.register("FW_PACKET_TELEM", self.ch_dec)
+        self.dist.register("FW_PACKET_FILE", self.file_dec)
 
         # If a packet specification file is availiable, initialize and register
         # a packet decoder

@@ -1,0 +1,9 @@
+# Hardcoded deployment file, fill in your deployment's common event items in Cheetah Template
+    APPEND_ITEM SYNC 72 STRING "Sync pattern"  
+    APPEND_ITEM LENGTH 32 UINT "Telemetry length"
+    APPEND_ID_ITEM DESC 32 UINT 1 "Descriptor always 1 for Channels"  
+    APPEND_ID_ITEM CHANNEL_ID 32 UINT #raw<%=#end raw id %> "Channel ID"
+    APPEND_ITEM HDR_TIME_BASE 16 UINT "Time Base"
+    APPEND_ITEM TIME_CONTEXT 8 UINT "Time Context"
+    APPEND_ITEM SECS 32 UINT "Seconds"
+    APPEND_ITEM USECS 32 UINT "Microseconds"

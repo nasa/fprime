@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "UNIQUE_OPCODE_CMD">
+    <rule context="command">
+        <assert test="count(//command/@opcode[. = current()/@opcode]) = 1">Command opcodes should be unique.</assert>
+    </rule>
+</pattern>
+</schema>

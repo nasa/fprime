@@ -296,7 +296,7 @@ endfunction(register_fprime_executable)
 # unit test name, autocoding and source inputs for the unit test, and (optionally) any
 # non-standard link dependencies.
 #
-# **Note:** This is ONLY run when the platform sets UT_BUILD to TRUE
+# **Note:** This is ONLY run when the build type is  TESTING
 #
 # Required variables (defined in calling scope):
 #
@@ -373,7 +373,7 @@ endfunction(register_fprime_executable)
 ####
 function(register_fprime_ut)
     #### CHECK UT BUILD ####
-    if (NOT UT_BUILD)
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     endif()
     get_module_name(${CMAKE_CURRENT_LIST_DIR})
@@ -383,7 +383,7 @@ function(register_fprime_ut)
     elseif(DEFINED UT_NAME)
         set(UT_NAME ${UT_NAME})
     else()
-    	set(UT_NAME "${MODULE_NAME}_exe")
+        set(UT_NAME "${MODULE_NAME}_ut_exe")
     endif()
     # SOURCE_FILES is supplied as the first positional -OR- as the list 'SOURCE_FILES'
     if (${ARGC} GREATER 1)
@@ -394,11 +394,7 @@ function(register_fprime_ut)
         message(FATAL_ERROR "'UT_SOURCE_FILES' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
     # MOD_DEPS is supplied as an optional second positional -OR- or as  the list 'MOD_DEPS'
-    if (NOT BUILD_SUFFIX STREQUAL "")
-        string(REGEX REPLACE "${BUILD_SUFFIX}" "" MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-    else()
-        set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-    endif()
+    set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
     if (${ARGC} GREATER 2)
         set(MD_IFS "${ARGV2}")
     elseif(DEFINED UT_MOD_DEPS)

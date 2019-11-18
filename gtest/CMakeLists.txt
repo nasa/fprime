@@ -1,6 +1,6 @@
 
 # set gtest target name
-set(GTEST_TARGET "gtest${BUILD_SUFFIX}" CACHE INTERNAL "Target for gtest infrastructure")
+set(GTEST_TARGET "gtest" CACHE INTERNAL "Target for gtest infrastructure")
 
 # Create gtest static library
 add_library(

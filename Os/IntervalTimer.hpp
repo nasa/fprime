@@ -1,49 +1,77 @@
+/**
+ * IntervalTimer.hpp:
+ *
+ * Interval timer provides timing over a set interval to the caller. It is one of the core Os
+ * package supplied items.
+ */
 #ifndef _IntervalTimer_hpp_
 #define _IntervalTimer_hpp_
 
 #include <Fw/Types/BasicTypes.hpp>
 
 namespace Os {
-
     class IntervalTimer {
         public:
-            
-            // represents raw hardware time
-            
+    		/**
+    		 * RawTime:
+    		 *
+    		 * Most time is stored as an upper and lower part of this raw time object. The
+    		 * semantic meaning of this "RawTime" is platform-dependent.
+    		 */
             typedef struct {
-                U32 upper;  //!<  Upper part of time value. Platform dependent.
-                U32 lower; //!<  Lower part of time value. Platform dependent.
+                U32 upper;  //!< Upper 32-bits part of time value. Platform dependent.
+                U32 lower; //!< Lower 32-bits part of time value. Platform dependent.
             } RawTime;
-                        
-            IntervalTimer(); //!<  Constructor
-            virtual ~IntervalTimer(); //!<  Desctructor
-            
-            void start(void); //!<  store start time
-            void stop(void); //!<  store end time
-            
-            U32 getDiffUsec(void); //!<  return usec difference between start and stop. Must have called start and stop previously.
-            static U32 getDiffUsec(const RawTime& t1, const RawTime& t2); //!<  return microsec difference between two supplied values, t1-t2
-            static U32 getDiffNsec(const RawTime& t1, const RawTime& t2); //!<  return nanosec difference between two supplied values, t1-t2
 
-            RawTime getDiffRaw(void);  //!<  return raw difference between start and stop values
-            static RawTime getDiffRaw(const RawTime& t1, const RawTime& t2); //!<  return raw difference between supplied values, t1-t2
-            
-            static RawTime getSumRaw(const RawTime& t1, const RawTime& t2); //!<  get the sum of the times in the raw representation
-            
-            static U32 nanoSecPerClockTick(void); //!<  Get the number of nanoseconds per clock tick. Platform dependent.
-            static I32 toNanoSec(const RawTime& time); //!<  Convert raw time to nanoseconds. Platform dependent. Time since time source value was zero.
-            
-            static void getRawTime(RawTime& time);  //!<  Get the current raw time
-            
+            IntervalTimer(); //!<  Constructor
+            virtual ~IntervalTimer(); //!<  Destructor
+
+            //------------ Common Functions ------------
+            // Common functions, typically do not need to be implemented by an OS support package.
+            // Common implementations in IntervalTimerCommon.cpp.
+            //------------------------------------------
+            /**
+             * Capture a start time of the interval timed by the interval timer. This fills the
+             * start RawTime of the interval.
+             */
+            void start(void);
+            /**
+             * Capture a stop time of the interval timed by the interval timer. This fills the
+             * stop RawTime of the interval.
+             */
+            void stop(void);
+            /**
+             * Returns the difference in usecond difference between start and stop times. The caller
+             * must have called start and stop previously.
+             * \return U32: microseconds difference in the interval
+             */
+            U32 getDiffUsec(void);
+
+            //------------ Platform Functions ------------
+            // Platform functions, typically do need to be implemented by an OS support package, as
+            // they are dependent on the platform definition of "RawTime".
+            //------------------------------------------
+
+            /**
+             * Returns the difference in microseconds between the supplied times t1, and t2. This
+             * calculation is done with respect to the semantic meaning of the times, and thus is
+             * dependent on the platform's representation of the RawTime object.
+             * \return U32 microsecond difference between two supplied values, t1-t2.
+             */
+            static U32 getDiffUsec(const RawTime& t1, const RawTime& t2);
+            /**
+             * Fills the RawTime object supplied with the current raw time in a platform dependent
+             * way.
+             */
+            static void getRawTime(RawTime& time);
         PRIVATE:
 
+		    //------------ Internal Member Variables ------------
             RawTime m_startTime; //!<  Stored start time
             RawTime m_stopTime; //!<  Stored end time
-            IntervalTimer(IntervalTimer&); //!<  disabled copy constructor
 
-            static U32 getTimerFrequency(void); //!<  target specific calls to get the frequency of the timer for computing durations
-            static U32 timerToUsec(const RawTime& val); //!<  convert the raw time to microseconds
-
+            //------------ Disabled (private) Copy Constructor ------------
+            IntervalTimer(IntervalTimer&); //!<  Disabled copy constructor
     };
 }
 

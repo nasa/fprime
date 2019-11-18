@@ -172,9 +172,7 @@ class StripChartPanel(observer.Observer):
         # Get all figures
         fig_list = []
         for row in self.__axes_dict.values():
-            for a_frame in row.values():
-                fig_list.append(a_frame.get_fig())
-
+            fig_list.append(row.get_fig())
 
         d = tkFileDialog.askdirectory(initialdir = "/", \
                                       mustexist  = False,
@@ -535,7 +533,7 @@ class AxesFrame(Tkinter.LabelFrame):
         self._canvas = FigureCanvasTkAgg(self._fig, master=self)
         # Attach canvas to self
         self._canvas.get_tk_widget().pack(side=Tkinter.TOP, expand=1, fill=Tkinter.X, padx=5, pady=5)
-        self._canvas.show()
+        self._canvas.draw()
 
         # Label Settings
         self.__settings_dialog = None

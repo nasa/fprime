@@ -2,16 +2,13 @@
 # AUTOCODER_INPUT_FILES: Contains all Autocoder input files
 # SOURCE_FILES: Handcoded C++ source files)
 
-set(AUTOCODER_INPUT_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/TestComponentAi.xml"
-)
-
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TestSerialImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
+register_fprime_module()
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
@@ -24,4 +21,13 @@ set_target_properties(
 )
 
 # Add unit test directory
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+# UT_SOURCE_FILES: Sources for unit test
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/serial_passive/TestComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
+#TODO: ULTRA FIX 
+#register_fprime_ut()
+
+

@@ -17,17 +17,18 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-
-
-# Add unit test directory
-##TODO-MSTARCH add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
-
-# Sets MODULE_NAME to unique name based on path
+##
+# Excludes this target from all, preventing it from being built unless needed.
+##
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Exclude test module from all build
 set_target_properties(
   ${MODULE_NAME}
   PROPERTIES
   EXCLUDE_FROM_ALL TRUE
 )
+
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Autocoders/Python/templates/ExampleComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
+register_fprime_ut()
