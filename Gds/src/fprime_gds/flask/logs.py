@@ -22,7 +22,7 @@ class FlaskLogger(flask_restful.Resource):
         Returns the logdir.
         """
         logs = {}
-        listing = os.listdir(path=self.logdir)
+        listing = os.listdir(self.logdir)
         for path in [path for path in listing if path.endswith(".log")]:
             full_path = os.path.join(self.logdir, path)
             offset = 0

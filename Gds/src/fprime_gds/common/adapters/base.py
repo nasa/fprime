@@ -1,5 +1,6 @@
 
 import struct
+CHECKSUM_CALC = lambda data: 0xcafecafe
 
 class BaseAdapter(object):
     """
@@ -15,7 +16,6 @@ class BaseAdapter(object):
     HEADER_SIZE = (TOKEN_SIZE * 2)
     # Size of checksum value, and the hardcoded value before CRC32 is available
     CHECKSUM_SIZE = 4
-    CHECKSUM_CALC = lambda data: 0xcafecafe
     # Maximum data size
     MAXIMUM_DATA_SIZE = 2048
     # Retry count to upload
@@ -86,7 +86,7 @@ class BaseAdapter(object):
             data_length = len(data)
             framed = struct.pack(BaseAdapter.HEADER_FORMAT, BaseAdapter.START_TOKEN, data_length)
             framed += data
-            framed += struct.pack(">I", BaseAdapter.CHECKSUM_CALC(framed))
+            framed += struct.pack(">I", CHECKSUM_CALC(framed))
             # Transmit the data with retries
             for retry in range(0, BaseAdapter.RETRY_COUNT):
                 if self.write(framed):
@@ -130,7 +130,7 @@ class BaseAdapter(object):
             # If the pool is large enough to read the whole frame, then read it
             elif len(self.pool) >= total_size:
                 deframed, check = struct.unpack_from(">{0}sI".format(data_size), self.pool, BaseAdapter.HEADER_SIZE)
-                if check == BaseAdapter.CHECKSUM_CALC(self.pool[:data_size + BaseAdapter.HEADER_SIZE]):
+                if check == CHECKSUM_CALC(self.pool[:data_size + BaseAdapter.HEADER_SIZE]):
                     self.pool = self.pool[total_size:]
                     packets.append(deframed)
                 # Invalid checksum, rotate it away

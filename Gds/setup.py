@@ -77,6 +77,7 @@ integrated configuration with ground in-the-loop.
     ####
     packages=gds_packages, # See above for how GDS packages are found
     package_dir={'': 'src'},
+    package_data={'fprime_gds': ["flask/static/*", "flask/static/*/*", "flask/static/*/*/*"]},
     include_package_data=True,
     zip_safe=False, # HTML templates require normal FIO access.
     ####
@@ -134,8 +135,9 @@ integrated configuration with ground in-the-loop.
              'multiprocess',
              'Pmw',
              'tkintertable==1.2',
-             'scimath',
+             'numpy',
              'scipy',
+             'scimath',
              'matplotlib'],
         # WX GUI options
         'wx-gui': 'wxPython'

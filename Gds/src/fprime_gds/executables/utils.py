@@ -9,6 +9,13 @@ import signal
 import subprocess
 
 
+# Python 2.7 compatibility, adding in missing error type
+try:
+    InterruptedError
+except NameError:
+    class InterruptedError(Exception):
+        pass
+
 class ProcessNotStableException(Exception):
     """ Process did not start up stably. Thus there was a problem. """
     def __init__(self, name, code, lifespan):
