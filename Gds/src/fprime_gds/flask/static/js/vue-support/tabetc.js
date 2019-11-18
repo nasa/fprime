@@ -9,6 +9,7 @@
 import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
+import {LogMixins} from "./log.js";
 
 /**
  * tabbed-ect:
@@ -18,9 +19,29 @@ import {EventMixins} from "./event.js";
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "cmdhist", "events", "channels"],
+    props:["commands", "loader", "cmdhist", "events", "channels", "logs"],
     data: function () {
-        return {"currentTab": "Commanding", "tabs": ["Commanding", "Events", "Channels"]}
+        let hash = window.location.hash.replace("#", "");
+        return {
+            "currentTab": (hash == "")? "Commanding" : hash,
+            "tabs": ["Commanding", "Events", "Channels", "Logs"]
+        }
+    },
+    methods: {
+        /**
+         * Route the tab-change and place it in the Window's location
+         * @param tab: tab to route to. No need for the #
+         */
+        route: function (tab) {
+            window.location.hash = tab;
+            this.currentTab = tab;
+        },
+        /**
+         * Spawns a new window when the new window button is clicked.
+         */
+        spawn: function () {
+            window.open(window.location);
+        }
     }
 });
 
@@ -42,11 +63,13 @@ export class TabETCVue {
         Object.assign(TabETCVue.prototype, CommandMixins);
         Object.assign(TabETCVue.prototype, EventMixins);
         Object.assign(TabETCVue.prototype, ChannelMixins);
+        Object.assign(TabETCVue.prototype, LogMixins);
 
         let data = {
             ...this.setupCommands(commands, loader),
             ...this.setupEvents(),
-            ...this.setupChannels(channels)
+            ...this.setupChannels(channels),
+            ...this.setupLogs()
         };
         // Create a vue object
         this.vue = new Vue({

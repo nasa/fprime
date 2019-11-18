@@ -24,7 +24,7 @@ function(get_module_name DIRECTORY_PATH)
   # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
   # name. If it does not exist, then it is assumed to be an offset already and is carried
   # forward in the calculation.
-  if (EXISTS ${DIRECTORY_PATH})
+  if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
       # Get path name relative to the root directory
       file(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CURRENT_BUILD_ROOT} ${DIRECTORY_PATH})
   else()
@@ -141,8 +141,20 @@ function(split_dependencies DEPS_INPUT)
 	set(LINK_DEPS "${LD}" PARENT_SCOPE)
 	set(MOD_DEPS "${FD}" PARENT_SCOPE)
 endfunction(split_dependencies)
-
-
+####
+# Function `set_hash_flag`:
+#
+# Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
+# hashes.txt. This allows for asserts on file ID not string.
+####
+function(set_hash_flag SRC)
+    get_filename_component(FPRIME_CURRENT_BUILD_ROOT_ABS "${FPRIME_CURRENT_BUILD_ROOT}" ABSOLUTE)
+    string(REPLACE "${FPRIME_CURRENT_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
+    string(MD5 HASH_VAL "${SHORT_SRC}")
+    string(SUBSTRING "${HASH_VAL}" 0 8 HASH_32)
+    file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")
+    SET_SOURCE_FILES_PROPERTIES(${SRC} PROPERTIES COMPILE_FLAGS -DASSERT_FILE_ID="0x${HASH_32}")
+endfunction(set_hash_flag)
 ####
 # Function `print_dependencies`:
 #

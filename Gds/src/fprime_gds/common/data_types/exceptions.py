@@ -13,21 +13,21 @@ class GseControllerException(Exception):
 
 class GseControllerUndefinedDirectoryException(GseControllerException):
     def __init__(self, val):
-        super(GseControllerUndefinedDirectoryException,self).__init__("Path does not exist: %s !" % str(val))
+        super(GseControllerUndefinedDirectoryException,self).__init__("Path does not exist: %s!" % str(val))
 
 class GseControllerUndefinedFileException(GseControllerException):
     def __init__(self, val):
-        super(GseControllerUndefinedFileException,self).__init__("Path does not exist: %s !" % str(val))
+        super(GseControllerUndefinedFileException,self).__init__("Path does not exist: %s!" % str(val))
 
 class GseControllerParsingException(GseControllerException):
     def __init__(self, val):
-        super(GseControllerParsingException,self).__init__("Parsing error: %s !" % str(val))
+        super(GseControllerParsingException,self).__init__("Parsing error: %s!" % str(val))
 
 class GseControllerMnemonicMismatchException(GseControllerException):
     def __init__(self, val1, val2):
-        super(GseControllerMnemonicMismatchException,self).__init__("ID mismatch (%s, %s) !" % (str(val1),str(val2)))
+        super(GseControllerMnemonicMismatchException,self).__init__("ID mismatch (%s, %s)!" % (str(val1),str(val2)))
 
 class GseControllerStatusUpdateException(GseControllerException):
     def __init__(self, val):
-        super(GseControllerStatusUpdateException,self).__init__("Bad status update mode: %s !" % str(val))
+        super(GseControllerStatusUpdateException,self).__init__("Bad status update mode: %s!" % str(val))
 

@@ -1,10 +1,6 @@
 #ifndef __RPI_COMPONENTS_HEADER__
 #define __RPI_COMPONENTS_HEADER__
 
-void constructRPIArchitecture(void);
-void exitTasks(void);
-void constructApp(int port_number, char* hostname);
-
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
 
@@ -22,7 +18,8 @@ void constructApp(int port_number, char* hostname);
 #include <Svc/BufferManager/BufferManager.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 
-#include <Svc/SocketGndIf/SvcSocketGndIfImpl.hpp>
+#include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
@@ -36,11 +33,14 @@ void constructApp(int port_number, char* hostname);
 // Main app
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
 
+void constructRPIArchitecture(void);
+void exitTasks(void);
+void constructApp(U32 port_number, char* hostname);
+
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup10HzComp;
 extern Svc::ActiveRateGroupImpl rateGroup1HzComp;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
-extern Svc::SocketGndIfImpl sockGndIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
@@ -66,6 +66,7 @@ extern Drv::LinuxGpioDriverComponentImpl gpio17Drv;
 
 extern Rpi::RpiDemoComponentImpl rpiDemo;
 
-
+extern Drv::SocketIpDriverComponentImpl socketIpDriver;
+extern Svc::GroundInterfaceComponentImpl groundIf;
 
 #endif

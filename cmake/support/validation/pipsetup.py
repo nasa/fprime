@@ -9,18 +9,24 @@ packages are installed properly.
 from __future__ import print_function
 import os
 import sys
-# Witchcraft or heresy?
-import pkg_resources
+
+# Migrated from setup.py in Fw/Python
+REQUIRED_PACKS = ['six', "lxml", "Markdown", "pexpect", "pytest"]
+if sys.version_info[0] >= 3:
+    REQUIRED_PACKS.append("Cheetah3")
+else:
+    REQUIRED_PACKS.extend(['Cheetah', 'enum34']) 
 
 def validate_python_setup():
     """
     Validates the python setup of the system to ensure that the CMake system, Autocoder, etc can run
     as expected.
     """
-    reqs_txt = os.path.join(os.path.dirname(__file__),
-                            "..", "..", "..", "Autocoders", "Python", "requirements.txt")
-    with open(reqs_txt, "r") as file_handle:
-        deps = file_handle.readlines()
+    if sys.version_info[0] >= 3 and sys.version_info[1] <= 3:
+        print("Python 3.4+ required")
+        return False
+    import pkg_resources
+    deps = REQUIRED_PACKS  
     # Checking all dependencies one-at-a-time
     good = True
     for dep in deps:

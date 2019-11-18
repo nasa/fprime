@@ -1,3 +1,4 @@
+#include <Fw/Logger/Logger.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Cfg/Config.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -27,12 +28,15 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING == 1            
             char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
             this->m_objPtrArray[obj]->toString(objDump,sizeof(objDump));
-            (void)printf("Entry: %d Ptr: %p Str: %s\n",obj,this->m_objPtrArray[obj],objDump);
+            Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", obj,
+                    reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]), reinterpret_cast<POINTER_CAST>(objDump));
 #else
-            (void)printf("Entry: %d Ptr: %p Name: %s\n",obj,this->m_objPtrArray[obj],this->m_objPtrArray[obj]->getObjName());
+            Fw::Logger::logMsg("Entry: %d Ptr: %p Name: %s\n",obj,
+                    reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]),
+                    reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]->getObjName()));
 #endif // FW_OBJECT_TO_STRING
 #else
-            (void)printf("Entry: %d Ptr: %p Str:\n", obj, this->m_objPtrArray[obj]);
+            Fw::Logger::logMsg("Entry: %d Ptr: %p Str:\n", obj, reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]));
 #endif			
         }
     }
@@ -44,9 +48,12 @@ namespace Fw {
             if (strncmp(objName,this->m_objPtrArray[obj]->getObjName(),sizeof(objDump)) == 0) {
 #if FW_OBJECT_TO_STRING == 1            
                 this->m_objPtrArray[obj]->toString(objDump,sizeof(objDump));
-                (void)printf("Entry: %d Ptr: %p Str: %s\n",obj,this->m_objPtrArray[obj],objDump);
+                Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", obj,
+                        reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]), reinterpret_cast<POINTER_CAST>(objDump));
 #else
-                (void)printf("Entry: %d Ptr: %p Name: %s\n",obj,this->m_objPtrArray[obj],this->m_objPtrArray[obj]->getObjName());
+                Fw::Logger::logMsg("Entry: %d Ptr: %p Name: %s\n",obj,
+                        reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]),
+                        reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]->getObjName()));
 #endif
             }
         }

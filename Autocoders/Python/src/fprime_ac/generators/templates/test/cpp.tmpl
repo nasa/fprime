@@ -139,7 +139,7 @@ $emit_cpp_params([ $param_instance ])
       this->m_${port_name}[_port].setPortNum(_port);
 
 \#if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       (void) snprintf(
           _portName,
           sizeof(_portName),
@@ -168,7 +168,7 @@ $emit_cpp_params([ $param_instance ])
       this->m_to_${instance}[_port].init();
 
 \#if FW_OBJECT_NAMES == 1
-      char _portName[80];
+      char _portName[120];
       snprintf(
           _portName,
           sizeof(_portName),
@@ -1090,25 +1090,25 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
   {
     const char *severityString = "UNKNOWN";
     switch (e.severity) {
-      case Fw::LOG_FATAL:
+      case Fw::TEXT_LOG_FATAL:
         severityString = "FATAL";
         break;
-      case Fw::LOG_WARNING_HI:
+      case Fw::TEXT_LOG_WARNING_HI:
         severityString = "WARNING_HI";
         break;
-      case Fw::LOG_WARNING_LO:
+      case Fw::TEXT_LOG_WARNING_LO:
         severityString = "WARNING_LO";
         break;
-      case Fw::LOG_COMMAND:
+      case Fw::TEXT_LOG_COMMAND:
         severityString = "COMMAND";
         break;
-      case Fw::LOG_ACTIVITY_HI:
+      case Fw::TEXT_LOG_ACTIVITY_HI:
         severityString = "ACTIVITY_HI";
         break;
-      case Fw::LOG_ACTIVITY_LO:
+      case Fw::TEXT_LOG_ACTIVITY_LO:
         severityString = "ACTIVITY_LO";
         break;
-      case Fw::LOG_DIAGNOSTIC:
+      case Fw::TEXT_LOG_DIAGNOSTIC:
        severityString = "DIAGNOSTIC";
         break;
       default:
