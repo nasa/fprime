@@ -37,6 +37,10 @@ export class Loader {
             "channels": {
                 "url": "/channels",
                 "last": null
+            },
+            "logdata": {
+                "url": "/logdata",
+                "last": null
             }
         };
     }

@@ -13,8 +13,7 @@ set(SOURCE_FILES
 )
 # Note: supply non-explicit dependencies here
 set(MOD_DEPS
-	Svc/PassiveConsoleTextLogger
-	Svc/SocketGndIf
-	Svc/LinuxTime
+   Fw/Logger
+   Svc/LinuxTime
 )
 register_fprime_executable()

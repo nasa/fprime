@@ -18,7 +18,7 @@ fileUplinkBufferManager |  301 (0x12d)  |          20           |             20
           SG4           |  321 (0x141)  |          20           |             20             |               3               |         3        
      fatalAdapter       |  341 (0x155)  |          20           |             20             |               8               |         8        
         health          |  361 (0x169)  |          20           |             20             |               8               |         8        
-       sockGndIf        |  381 (0x17d)  |          20           |             20             |               4               |         4        
+       groundIf         |  381 (0x17d)  |          20           |             20             |               1               |         1        
 fileDownlinkBufferManag |  401 (0x191)  |          20           |             20             |               3               |         3        
           er            |               |                       |                            |                               |                  
       eventLogger       |  421 (0x1a5)  |          20           |             20             |               7               |         7        
@@ -27,7 +27,8 @@ fileDownlinkBufferManag |  401 (0x191)  |          20           |             20
        blockDrv         |  481 (0x1e1)  |          20           |             20             |               1               |         1        
      fileDownlink       |  501 (0x1f5)  |          20           |             20             |               4               |         4        
       textLogger        |  521 (0x209)  |          20           |             20             |             None              |         0        
-        cmdSeq          |  541 (0x21d)  |          23           |            inf.            |              23               |        23        
+        cmdSeq          |  541 (0x21d)  |          23           |             60             |              23               |        23        
+    socketIpDriver      |  601 (0x259)  |          20           |            inf.            |             None              |         0        
 -------------------------------------------------------------------------------------------------------------------------------------
 | INSTANCE NAME                 - Name of the instance object.                                                                      |
 | BASE ID (HEX)                 - Base ID set for the instance.                                                                     |

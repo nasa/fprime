@@ -70,8 +70,8 @@ tools package. This is to enable users to choose which tools they'd like to use.
 **Installing F´ Python Packages**
 ```
 cd <path/to/fprime/checkout>
-pip install -r ./Autocoders/Python/requirements.txt
-pip install -r ./Gds/requirements.txt
+pip install ./Fw/Python
+pip install ./Gds
 ```
 
 ## Checking Your F´ Installation
@@ -82,16 +82,15 @@ layer components. Should the user not have installed the given component, the co
 
 **Testing F´ Autocoder Installation Via Building Ref Application**
 ```
-mkdir build-test
-cd build-test
-cmake <path/to/fprime/checkout>/Ref
-make -j32
-make install -j32
+cd Ref
+fprime-util generate
+fprime-util build --jobs 32
+fprime-util install --jobs 32
 ```
 
 **Testing F´ GDS Installation Via Running HTML GUI**
 ```
-<path/to/fprime>/Gds/bin/run_deployment.sh -g html -d <path/to/fprime/checkout>/Ref
+fprime-util -g html -d <path/to/fprime/checkout>/Ref
 ```
 **Note:** `Ref` should contain pre-built dictionaries and binaries for the user's system. This can
 be achieved by running the autocoder installation test (the user must have a working autocoder

@@ -15,10 +15,11 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <Fw/Logger/Logger.hpp>
 
 typedef void* (*pthread_func_ptr)(void*);
 
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
+//#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
 #define DEBUG_PRINT(x,...)
 
 namespace Os {
@@ -45,7 +46,7 @@ namespace Os {
 
         I32 stat = pthread_attr_init(&att);
         if (stat != 0) {
-            printf("pthread_attr_init: (%d)(%d): %s\n",stat,errno,strerror(stat));
+            Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n",stat,errno, reinterpret_cast<POINTER_CAST>(strerror(stat)));
         	return TASK_INVALID_PARAMS;
         }
 #ifdef TGT_OS_TYPE_VXWORKS
@@ -80,7 +81,7 @@ namespace Os {
 #if !defined BUILD_CYGWIN // cygwin doesn't support this call
         stat = pthread_attr_setschedpolicy(&att,SCHED_RR);
         if (stat != 0) {
-            printf("pthread_attr_setschedpolicy: %s\n",strerror(errno));
+            Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
             return TASK_INVALID_PARAMS;
         }
 #endif
@@ -124,7 +125,7 @@ namespace Os {
                 break;
             case EINVAL:
                 delete tid;
-                printf("pthread_create: %s\n",strerror(errno));
+                Fw::Logger::logMsg("pthread_create: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
                 tStat = TASK_INVALID_PARAMS;
                 break;
             default:

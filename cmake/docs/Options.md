@@ -39,22 +39,6 @@ and repair errors. For normal usage, this is not necessary.
 e.g. `-DCMAKE_DEBUG_OUTPUT=ON`
 
 
-## `GENERATE_AC_IN_SOURCE:`
-
-Allows for generating auto-coded files in the source tree. Typically, this is frowned upon as
-this prevents using F prime as a library. However, this is necessary to support historic
-project development practices.
-
-**WARNING:** due to the limitations of the autocoder, currently the CMake system generates
-             in-source and moves the files out.
-
-**Values:**
-- ON: generate auto-coding files in source-tree.
-- OFF: (default) generate auto-coding files in the build-tree.
-
-e.g. `-DGENERATE_AC_IN_SOURCE=ON`
-
-
 ## `GENERATE_HERITAGE_PY_DICT:`
 
 This option switches from generating XML dictionaries to generating the heritage python

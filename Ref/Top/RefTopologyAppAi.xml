@@ -1,810 +1,886 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "Ref">
-	<import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-	<import_component_type>Ref/PingReceiver/PingReceiverComponentAi.xml</import_component_type>
-	<import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
-	<import_component_type>Ref/SendBuffApp/SendBuffComponentAi.xml</import_component_type>
-	<import_component_type>Ref/RecvBuffApp/RecvBuffComponentAi.xml</import_component_type>
-	<import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
-	<import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-	<import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
-	<import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-	<import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-	<import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-	<import_component_type>Svc/FileUplink/FileUplinkComponentAi.xml</import_component_type>
-	<import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
-	<import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-	<import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
-	<import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
-	<import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
-	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
-	<import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
-	<import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
-	<import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
-	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
 
-   <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
+    <!-- Immport component declarations -->
 
-   <instance namespace="Svc" name="rateGroup1Comp" type="ActiveRateGroup" base_id="21"  base_id_window="20" />
+    <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
+    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
+    <import_component_type>Ref/PingReceiver/PingReceiverComponentAi.xml</import_component_type>
+    <import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SendBuffApp/SendBuffComponentAi.xml</import_component_type>
+    <import_component_type>Ref/RecvBuffApp/RecvBuffComponentAi.xml</import_component_type>
+    <import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
+    <import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
+    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
+    <import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
+    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
+    <import_component_type>Svc/FileUplink/FileUplinkComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
+    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
+    <import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
+    <import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
+    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
+    <import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
+    <import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
+    <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
+    <import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
+    <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
+    <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+    <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
+    <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
+    <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
 
-   <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
+    <!-- Declare component instances - must match names in Components.hpp -->
 
-   <instance namespace="Svc" name="chanTlm" type="TlmChan" base_id="61"  base_id_window="20" />
+    <!-- Core C&DH Components -->
+    <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
+    <instance namespace="Svc" name="chanTlm" type="TlmChan" base_id="61"  base_id_window="20" />
+    <instance namespace="Svc" name="prmDb" type="PrmDb" base_id="141"  base_id_window="20" />
+    <instance namespace="Svc" name="cmdSeq" type="CmdSequencer" base_id="541"  base_id_window="23" />
+    <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="421"  base_id_window="20" />
+    <instance namespace="Svc" name="health" type="Health" base_id="361"  base_id_window="20" />
+    <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
+    <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
+    <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
+    <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
+    <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
+    <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
+    <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
+    <instance namespace="Svc" name="groundIf" type="GroundInterface" base_id="381"  base_id_window="20" />
+    <instance namespace="Svc" name="linuxTime" type="Time" base_id="441"  base_id_window="20" />
 
-   <instance namespace="Ref" name="sendBuffComp" type="SendBuff" base_id="81"  base_id_window="20" />
+    <!-- Communications driver. May be swapped with other comm drivers like UART -->
+    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="601" base_id_window="20" />
 
-   <instance namespace="Ref" name="recvBuffComp" type="RecvBuff" base_id="101"  base_id_window="20" />
+    <!-- Rate Group Components -->
 
-   <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
+    <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="461"  base_id_window="20" />
+    <instance namespace="Svc" name="rateGroup1Comp" type="ActiveRateGroup" base_id="21"  base_id_window="20" />
+    <instance namespace="Svc" name="rateGroup2Comp" type="ActiveRateGroup" base_id="161"  base_id_window="20" />
+    <instance namespace="Svc" name="rateGroup3Comp" type="ActiveRateGroup" base_id="241"  base_id_window="20" />
 
-   <instance namespace="Svc" name="prmDb" type="PrmDb" base_id="141"  base_id_window="20" />
+    <!-- Reference Example Components -->
 
-   <instance namespace="Svc" name="rateGroup2Comp" type="ActiveRateGroup" base_id="161"  base_id_window="20" />
+    <instance namespace="Ref" name="sendBuffComp" type="SendBuff" base_id="81"  base_id_window="20" />
+    <instance namespace="Ref" name="recvBuffComp" type="RecvBuff" base_id="101"  base_id_window="20" />
+    <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
+    <instance namespace="Ref" name="SG1" type="SignalGen" base_id="181"  base_id_window="20" />
+    <instance namespace="Ref" name="SG3" type="SignalGen" base_id="201"  base_id_window="20" />
+    <instance namespace="Ref" name="SG2" type="SignalGen" base_id="221"  base_id_window="20" />
+    <instance namespace="Ref" name="SG5" type="SignalGen" base_id="281"  base_id_window="20" />
+    <instance namespace="Ref" name="SG4" type="SignalGen" base_id="321"  base_id_window="20" />
+    <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
 
-   <instance namespace="Svc" name="cmdSeq" type="CmdSequencer" base_id="541"  base_id_window="23" />
+    <!-- Connections -->
+    <!-- Communications driver connections -->
+    <connection name = "CommunicationRecv">
+        <source component = "socketIpDriver" port = "recv" type = "Fw::BufferSend" num = "0"/>
+        <target component = "groundIf" port = "readCallback" type = "Fw::BufferSend" num = "0"/>
+    </connection>
+    <connection name = "CommunicationSend">
+        <source component = "groundIf" port = "write" type = "Fw::BufferSend" num = "0"/>
+        <target component = "socketIpDriver" port = "send" type = "Fw::BufferSend" num = "0"/>
+    </connection>
+    
+    <!-- Command Registration/Dispatch/Reply Connections -->
+   
+    <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
 
-   <instance namespace="Ref" name="SG1" type="SignalGen" base_id="181"  base_id_window="20" />
+    <connection name = "EventLoggerReg">
+         <source component = "eventLogger" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "0"/>
+    </connection>
+    <connection name = "CmdDispReg">
+         <source component = "cmdDisp" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "1"/>
+    </connection>
+    <connection name = "HealthReg">
+         <source component = "health" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "2"/>
+    </connection>
+    <connection name = "PrmDbReg">
+         <source component = "prmDb" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "3"/>
+    </connection>
+    <connection name = "CmdSeqReg">
+         <source component = "cmdSeq" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "4"/>
+    </connection>
+    <connection name = "FileDownlinkReg">
+         <source component = "fileDownlink" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
+    </connection>
+    
+    
+    <connection name = "SendBuffReg">
+         <source component = "sendBuffComp" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
+    </connection>
+    <connection name = "RecvBuffReg">
+         <source component = "recvBuffComp" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "7"/>
+    </connection>
+    
+    
+    <connection name = "SG1Reg">
+         <source component = "SG1" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "8"/>
+    </connection>
+    <connection name = "SG2Reg">
+         <source component = "SG2" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "9"/>
+    </connection>
+    <connection name = "SG3Reg">
+         <source component = "SG3" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "10"/>
+    </connection>
+    <connection name = "SG4Reg">
+         <source component = "SG4" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "11"/>
+    </connection>
+    <connection name = "SG5Reg">
+         <source component = "SG5" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "12"/>
+    </connection>
+    <connection name = "PingRcvReg">
+         <source component = "pingRcvr" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "13"/>
+    </connection>
 
-   <instance namespace="Ref" name="SG3" type="SignalGen" base_id="201"  base_id_window="20" />
+    <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
 
-   <instance namespace="Ref" name="SG2" type="SignalGen" base_id="221"  base_id_window="20" />
+    <connection name = "EventLoggerDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "0"/>
+         <target component = "eventLogger" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "CmdDispDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
+         <target component = "cmdDisp" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "HealthDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "2"/>
+         <target component = "health" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "PrmDbDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "3"/>
+         <target component = "prmDb" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "CmdSeqDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "4"/>
+         <target component = "cmdSeq"  port = "cmdIn"       type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "FileDownlinkDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "5"/>
+         <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    
+    <connection name = "SendBuffDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
+         <target component = "sendBuffComp" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "RecvBuffDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "7"/>
+         <target component = "recvBuffComp" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    
+    
+    <connection name = "SG1Disp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "8"/>
+         <target component = "SG1" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "SG2Disp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "9"/>
+         <target component = "SG2" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "SG3Disp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "10"/>
+         <target component = "SG3" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "SG4Disp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "11"/>
+         <target component = "SG4" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "SG5Disp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "12"/>
+         <target component = "SG5" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    
+    <connection name = "PingRcvDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "13"/>
+         <target component = "pingRcvr" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
+    
+   
+    <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
 
-   <instance namespace="Svc" name="rateGroup3Comp" type="ActiveRateGroup" base_id="241"  base_id_window="20" />
+    <connection name = "EventLoggerReply">
+        <source component = "eventLogger" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "CmdSeqReply">
+        <source component = "cmdSeq" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "PrmDbReply">
+        <source component = "prmDb" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "CmdDispReply">
+        <source component = "cmdDisp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "HealthReply">
+        <source component = "health" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "FileDownlinkReply">
+        <source component = "fileDownlink" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "PingRcvStat">
+         <source component = "pingRcvr" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "recvBuffStat">
+         <source component = "recvBuffComp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "sendBuffStat">
+         <source component = "sendBuffComp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "SG1Stat">
+         <source component = "SG1" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "SG2Stat">
+         <source component = "SG2" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "SG3Stat">
+         <source component = "SG3" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "SG4Stat">
+         <source component = "SG4" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "SG5Stat">
+         <source component = "SG5" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
 
-   <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
+    <!-- Sequencer Connections - should not conflict with uplink port -->
 
-   <instance namespace="Ref" name="SG5" type="SignalGen" base_id="281"  base_id_window="20" />
+    <connection name = "SeqCompStatus">
+        <source component = "cmdDisp" port = "seqCmdStatus" type = "CmdResponse" num = "1"/>
+        <target component = "cmdSeq" port = "cmdResponseIn" type = "CmdResponse" num = "0"/>
+    </connection>
+    <!-- Input port number needs to be the same as previous dispatch -->
+    <connection name = "SeqCmdSend">
+        <source component = "cmdSeq" port = "comCmdOut" type = "Com" num = "0"/>
+        <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "1"/>
+    </connection>
+   
+    <!-- Event Logger Binary Connections -->
+   
+    <connection name = "groundIfLog">
+        <source component = "groundIf" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "PrmDbLog">
+        <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "FileUplinkLog">
+        <source component = "fileUplink" port = "eventOut" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "EventLoggerLog">
+        <source component = "eventLogger" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "FileUplinkBufferManagerLog">
+        <source component = "fileUplinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "CmdDispLog">
+        <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "FileDownlinkBufferManagerLog">
+        <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "CmdSeqLog">
+        <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "FatalAdapterLog">
+        <source component = "fatalAdapter" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "HealthLog">
+        <source component = "health" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "FileDownlinkLog">
+        <source component = "fileDownlink" port = "eventOut" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "RG1Ev">
+         <source component = "rateGroup1Comp" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "RG2Ev">
+         <source component = "rateGroup2Comp" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "RG3Ev">
+         <source component = "rateGroup3Comp" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "SendBuffEvent">
+         <source component = "sendBuffComp" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "RcvBuffEvent">
+        <source component = "recvBuffComp" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "SG1Evt">
+         <source component = "SG1" port = "logOut" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "SG2Evt">
+         <source component = "SG2" port = "logOut" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "SG3Evt">
+         <source component = "SG3" port = "logOut" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "SG4Evt">
+         <source component = "SG4" port = "logOut" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "SG5Evt">
+         <source component = "SG5" port = "logOut" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+    <connection name = "pingEvt">
+         <source component = "pingRcvr" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+   
+    <!-- Event Logger Text Connections -->
+   
+    <connection name = "CmdSeqTextLog">
+        <source component = "cmdSeq" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "EventLoggerTextLog">
+        <source component = "eventLogger" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "HealthTextLog">
+        <source component = "health" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "groundIfTextLog">
+        <source component = "groundIf" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "FatalAdapterTextLog">
+        <source component = "fatalAdapter" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "PrmDbTextLogger">
+        <source component = "prmDb" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "CmdDispTextLogger">
+        <source component = "cmdDisp" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "Rg1Text">
+         <source component = "rateGroup1Comp" port = "LogText" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "Rg2Text">
+         <source component = "rateGroup2Comp" port = "LogText" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "Rg3Text">
+         <source component = "rateGroup3Comp" port = "LogText" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "PingText">
+        <source component = "pingRcvr" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "SG1Text">
+         <source component = "SG1" port = "logTextOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "SG2Text">
+         <source component = "SG2" port = "logTextOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "SG3Text">
+         <source component = "SG3" port = "logTextOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "SG4Text">
+         <source component = "SG4" port = "logTextOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "SG5Text">
+         <source component = "SG5" port = "logTextOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "sendBufText">
+         <source component = "sendBuffComp" port = "LogText" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "recvBufText">
+         <source component = "recvBuffComp" port = "LogText" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    
 
-   <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
+    <!-- Telemetry Connections -->
 
-   <instance namespace="Ref" name="SG4" type="SignalGen" base_id="321"  base_id_window="20" />
+    <connection name = "fileDownlinkTlm">
+        <source component = "fileDownlink" port = "tlmOut" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "FileUplinkBufferManagerTlm">
+        <source component = "fileUplinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "FileUplinkTlm">
+        <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "FileDownlinkBufferManagerTlm">
+        <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "cmdSeqTlm">
+        <source component = "cmdSeq" port = "tlmOut" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "cmdDispTlm">
+        <source component = "cmdDisp" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "Rg1Tlm">
+         <source component = "rateGroup1Comp" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "Rg2Tlm">
+         <source component = "rateGroup2Comp" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "Rg3Tlm">
+         <source component = "rateGroup3Comp" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "healthTlm">
+        <source component = "health" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "SG1Tlm">
+         <source component = "SG1" port = "tlmOut" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "SG2Tlm">
+         <source component = "SG2" port = "tlmOut" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "SG3Tlm">
+         <source component = "SG3" port = "tlmOut" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "SG4Tlm">
+         <source component = "SG4" port = "tlmOut" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "SG5Tlm">
+         <source component = "SG5" port = "tlmOut" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "pingTlm">
+         <source component = "pingRcvr" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "sendBufTlm">
+         <source component = "sendBuffComp" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "recvBufTlm">
+         <source component = "recvBuffComp" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "blockDrvTlm">
+         <source component = "blockDrv" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    
+    <!-- Parameter Connections -->
+   
+    <connection name = "RecvBuffPrmGet">
+         <source component = "recvBuffComp" port = "ParamGet" type = "PrmGet" num = "0"/>
+         <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
+    </connection>
+    <connection name = "SendBuffPrmGet">
+         <source component = "sendBuffComp" port = "ParamGet" type = "PrmGet" num = "0"/>
+         <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
+    </connection>
+    <connection name = "RecvBuffPrmSet">
+         <source component = "recvBuffComp" port = "ParamSet" type = "PrmSet" num = "0"/>
+         <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
+    </connection>
+    <connection name = "SendBuffPrmSet">
+         <source component = "sendBuffComp" port = "ParamSet" type = "PrmSet" num = "0"/>
+         <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
+    </connection>
 
-   <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
+    <!-- Time Connections -->
 
-   <instance namespace="Svc" name="health" type="Health" base_id="361"  base_id_window="20" />
+    <connection name = "prmDbTime">
+        <source component = "prmDb" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "eventLoggerTime">
+        <source component = "eventLogger" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "rg1Time">
+         <source component = "rateGroup1Comp" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "rg2Time">
+         <source component = "rateGroup2Comp" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "rg3Time">
+         <source component = "rateGroup3Comp" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkBufferManagerTime">
+        <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "cmdSeqTime">
+        <source component = "cmdSeq" port = "timeCaller" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "healthTime">
+        <source component = "health" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "fileUplinkBufferManagerTime">
+        <source component = "fileUplinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "cmdDispTime">
+        <source component = "cmdDisp" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "fileUplinkTime">
+        <source component = "fileUplink" port = "timeCaller" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkTmp">
+        <source component = "fileDownlink" port = "timeCaller" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "fatalAdapterTime">
+        <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "groundIfTime">
+        <source component = "groundIf" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "recvBuffTime">
+        <source component = "recvBuffComp" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+     </connection>
+    <connection name = "SG1Time">
+         <source component = "SG1" port = "timeCaller" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "SG2Time">
+         <source component = "SG2" port = "timeCaller" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "SG3Time">
+         <source component = "SG3" port = "timeCaller" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "SG4Time">
+         <source component = "SG4" port = "timeCaller" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "SG5Time">
+         <source component = "SG5" port = "timeCaller" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "SendBuffTime">
+         <source component = "sendBuffComp" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "pingTime">
+         <source component = "pingRcvr" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
+    <connection name = "blockDrvTime">
+         <source component = "blockDrv" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>    
 
-   <instance namespace="Svc" name="sockGndIf" type="GndIf" base_id="381"  base_id_window="20" />
+    <!-- Rate Group Connections -->
+   
+    <!-- Linux Timer Connection -->
+    <connection name = "BlkDrvClock">
+         <source component = "blockDrv" port = "CycleOut" type = "Cycle" num = "0"/>
+         <target component = "rateGroupDriverComp" port = "CycleIn" type = "Cycle" num = "0"/>
+    </connection>
 
-   <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
+    <!-- Rate Group 1 -->
+    <connection name = "rateGroup1DriverComp">
+        <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "0"/>
+        <target component = "rateGroup1Comp" port = "CycleIn" type = "Cycle" num = "0"/>
+    </connection>
+    <connection name = "Rg1Sg1">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+         <target component = "SG1" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg1Sg2">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+         <target component = "SG2" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg1ChTlm">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+         <target component = "chanTlm" port = "Run" type = "Sched" num = "0"/>
+    </connection>
 
-   <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="421"  base_id_window="20" />
+    <!-- Rate Group 2 -->
+    <connection name = "Rg2Drv">
+        <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "1"/>
+        <target component = "rateGroup2Comp" port = "CycleIn" type = "Cycle" num = "0"/>
+    </connection>      
+    <connection name = "Rg2Seq">
+         <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+         <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg2SendBuff">
+         <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+         <target component = "sendBuffComp" port = "SchedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg2Sg3">
+         <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+         <target component = "SG3" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg2Sg4">
+         <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <target component = "SG4" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+   
+    <!-- Rate Group 3 -->
+    <connection name = "rateGroup3DriverComp">
+        <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "2"/>
+        <target component = "rateGroup3Comp" port = "CycleIn" type = "Cycle" num = "0"/>
+    </connection>
+    
+    <connection name = "Rg3Health">
+         <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+         <target component = "health" port = "Run" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg3Sg5">
+        <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+        <target component = "SG5" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg3BlkDrv">
+         <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+         <target component = "blockDrv" port = "Sched" type = "Sched" num = "0"/>
+    </connection>
+    
+    
+    <!-- Health Connections -->
+   
+    <!-- The PingSend output port number should match the PingReturn input port number -->
+    <!-- Each port number pair must be unique -->
+    <!-- This order must match the pingEntries[] table in Ref/Top/Topology.cpp -->
 
-   <instance namespace="Svc" name="linuxTime" type="Time" base_id="441"  base_id_window="20" />
+    <connection name = "Rg1PingSend">
+         <source component = "rateGroup1Comp" port = "PingOut" type = "Ping" num = "0"/>
+         <target component = "health" port = "PingReturn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "Rg1PingRecv">
+         <source component = "health" port = "PingSend" type = "Ping" num = "0"/>
+         <target component = "rateGroup1Comp" port = "PingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "Rg2PingSend">
+         <source component = "health" port = "PingSend" type = "Ping" num = "1"/>
+         <target component = "rateGroup2Comp" port = "PingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "Rg2PingRecv">
+         <source component = "rateGroup2Comp" port = "PingOut" type = "Ping" num = "0"/>
+         <target component = "health" port = "PingReturn" type = "Ping" num = "1"/>
+    </connection>
+    <connection name = "Rg3PingSend">
+         <source component = "health" port = "PingSend" type = "Ping" num = "2"/>
+         <target component = "rateGroup3Comp" port = "PingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "Rg3PingRecv">
+         <source component = "rateGroup3Comp" port = "PingOut" type = "Ping" num = "0"/>
+         <target component = "health" port = "PingReturn" type = "Ping" num = "2"/>
+    </connection>
+    <connection name = "cmdDispPingIn">
+        <source component = "health" port = "PingSend" type = "Ping" num = "3"/>
+        <target component = "cmdDisp" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "cmdDispPingRecv">
+        <source component = "cmdDisp" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "3"/>
+    </connection>
+    <connection name = "eventLoggerPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "4"/>
+        <target component = "eventLogger" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "eventLoggerPingRecv">
+        <source component = "eventLogger" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "4"/>
+    </connection>
+    <connection name = "cmdSeqPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "5"/>
+        <target component = "cmdSeq" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "cmdSeqPingRecv">
+        <source component = "cmdSeq" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "5"/>
+    </connection>
+    <connection name = "chanTlmPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "6"/>
+        <target component = "chanTlm" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "chanTlmPingRecv">
+        <source component = "chanTlm" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "6"/>
+    </connection>
+    <connection name = "prmDbPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "7"/>
+        <target component = "prmDb" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "prmDbPingRecv">
+        <source component = "prmDb" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "7"/>
+    </connection>
+    <connection name = "fileUplinkPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "8"/>
+        <target component = "fileUplink" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "fileUplinkPingRecv">
+        <source component = "fileUplink" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "8"/>
+    </connection>
+    <connection name = "fileDownlinkPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "9"/>
+        <target component = "fileDownlink" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkPingRecv">
+        <source component = "fileDownlink" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
+    </connection>
+    <connection name = "PingRcvPingRecv">
+         <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
+         <target component = "pingRcvr" port = "PingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "PingRcvPingSend">
+         <source component = "pingRcvr" port = "PingOut" type = "Ping" num = "0"/>
+         <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
+    </connection>
+    <connection name = "blockDrvPingSend">
+         <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
+         <target component = "blockDrv" port = "PingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "blockDrvPingRecv">
+         <source component = "blockDrv" port = "PingOut" type = "Ping" num = "0"/>
+         <target component = "health" port = "PingReturn" type = "Ping" num = "11"/>
+    </connection>
 
-   <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="461"  base_id_window="20" />
+    <!-- Socket Ground System Connections -->
 
-   <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
+    <!-- Uplink Connections -->
+   
+    <!-- Uplink connection to command dispatcher should not conflict with command sequencer -->
+    <connection name = "cmdDispPkts">
+        <source component = "groundIf" port = "uplinkPort" type = "Com" num = "0"/>
+        <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
+    </connection>
 
-   <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
+    <connection name = "groundIfIfFileUplinkBufferGet">
+        <source component = "groundIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
+        <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
+    </connection>
+    <connection name = "fileUplinkBuffIn">
+        <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <connection name = "groundIfIfFileUplinkBufferSend">
+        <source component = "groundIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
 
-   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
+    <!-- Downlink Connections -->
 
-
-<connection name = "Connection1">
-	 <source component = "recvBuffComp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection2">
-	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "1"/>
- 	 <target component = "rateGroup2Comp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection3">
-	 <source component = "recvBuffComp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection4">
-	 <source component = "sockGndIf" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection5">
-	 <source component = "pingRcvr" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection6">
-	 <source component = "sockGndIf" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection7">
-	 <source component = "sendBuffComp" port = "Data" type = "DataBuffer" num = "0"/>
- 	 <target component = "blockDrv" port = "BufferIn" type = "DataBuffer" num = "0"/>
-</connection>
-<connection name = "Connection8">
-	 <source component = "sockGndIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
- 	 <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-</connection>
-<connection name = "Connection9">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "5"/>
- 	 <target component = "fileUplink" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection10">
-	 <source component = "recvBuffComp" port = "ParamGet" type = "PrmGet" num = "0"/>
- 	 <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
-</connection>
-<connection name = "Connection11">
-	 <source component = "prmDb" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "6"/>
-</connection>
-<connection name = "Connection12">
-	 <source component = "eventLogger" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection13">
-	 <source component = "blockDrv" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "11"/>
-</connection>
-<connection name = "Connection14">
-	 <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
- 	 <target component = "SG5" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection15">
-	 <source component = "SG1" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection16">
-	 <source component = "fileDownlink" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection17">
-	 <source component = "SG2" port = "logTextOut" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection18">
-	 <source component = "cmdSeq" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection19">
-	 <source component = "fileUplinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection20">
-	 <source component = "SG4" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection21">
-	 <source component = "rateGroup3Comp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection22">
-	 <source component = "pingRcvr" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection23">
-	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
- 	 <target component = "SG2" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection24">
-	 <source component = "SG1" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection25">
-	 <source component = "SG1" port = "logTextOut" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection26">
-	 <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection27">
-	 <source component = "prmDb" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection28">
-	 <source component = "cmdDisp" port = "seqCmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdSeq" port = "cmdResponseIn" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection29">
-	 <source component = "blockDrv" port = "CycleOut" type = "Cycle" num = "0"/>
- 	 <target component = "rateGroupDriverComp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection30">
-	 <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection31">
-	 <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
- 	 <target component = "health" port = "Run" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection32">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "8"/>
- 	 <target component = "rateGroup2Comp" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection33">
-	 <source component = "rateGroup2Comp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection34">
-	 <source component = "rateGroup2Comp" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "8"/>
-</connection>
-<connection name = "Connection35">
-	 <source component = "pingRcvr" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection36">
-	 <source component = "rateGroup1Comp" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "7"/>
-</connection>
-<connection name = "Connection37">
-	 <source component = "cmdSeq" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection38">
-	 <source component = "eventLogger" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection39">
-	 <source component = "sendBuffComp" port = "ParamGet" type = "PrmGet" num = "0"/>
- 	 <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
-</connection>
-<connection name = "Connection40">
-	 <source component = "fileUplink" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection41">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "0"/>
- 	 <target component = "chanTlm" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection42">
-	 <source component = "rateGroup3Comp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection43">
-	 <source component = "SG5" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection44">
-	 <source component = "sendBuffComp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection45">
-	 <source component = "eventLogger" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection46">
-	 <source component = "sendBuffComp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection47">
-	 <source component = "eventLogger" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection48">
-	 <source component = "recvBuffComp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection49">
-	 <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
- 	 <target component = "SG3" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection50">
-	 <source component = "pingRcvr" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
-</connection>
-<connection name = "Connection51">
-	 <source component = "SG2" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection52">
-	 <source component = "rateGroup2Comp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection53">
-	 <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection54">
-	 <source component = "health" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection55">
-	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
- 	 <target component = "SG1" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection56">
-	 <source component = "sendBuffComp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection57">
-	 <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection58">
-	 <source component = "fileUplinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection59">
-	 <source component = "cmdSeq" port = "comCmdOut" type = "Com" num = "0"/>
- 	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
-</connection>
-<connection name = "Connection60">
-	 <source component = "cmdSeq" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection61">
-	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
- 	 <target component = "chanTlm" port = "Run" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection62">
-	 <source component = "SG2" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection63">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "1"/>
- 	 <target component = "cmdDisp" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection64">
-	 <source component = "prmDb" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection65">
-	 <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection66">
-	 <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection67">
-	 <source component = "SG3" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection68">
-	 <source component = "eventLogger" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "3"/>
-</connection>
-<connection name = "Connection69">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
- 	 <target component = "blockDrv" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection70">
-	 <source component = "pingRcvr" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection71">
-	 <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
- 	 <target component = "SG4" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection72">
-	 <source component = "SG1" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection73">
-	 <source component = "rateGroup2Comp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection74">
-	 <source component = "rateGroup3Comp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection75">
-	 <source component = "SG2" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection76">
-	 <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection77">
-	 <source component = "sockGndIf" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection78">
-	 <source component = "SG4" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection79">
-	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "2"/>
- 	 <target component = "rateGroup3Comp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection80">
-	 <source component = "rateGroup1Comp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection81">
-	 <source component = "fileDownlink" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection82">
-	 <source component = "fatalAdapter" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection83">
-	 <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
- 	 <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection84">
-	 <source component = "fatalAdapter" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection85">
-	 <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
- 	 <target component = "blockDrv" port = "Sched" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection86">
-	 <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection87">
-	 <source component = "fileDownlink" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "4"/>
-</connection>
-<connection name = "Connection88">
-	 <source component = "SG3" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection89">
-	 <source component = "cmdSeq" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection90">
-	 <source component = "recvBuffComp" port = "ParamSet" type = "PrmSet" num = "0"/>
- 	 <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
-</connection>
-<connection name = "Connection91">
-	 <source component = "rateGroup1Comp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection92">
-	 <source component = "prmDb" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection93">
-	 <source component = "SG5" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection94">
-	 <source component = "SG4" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection95">
-	 <source component = "SG4" port = "logTextOut" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection96">
-	 <source component = "cmdDisp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection97">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "7"/>
- 	 <target component = "rateGroup1Comp" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection98">
-	 <source component = "sendBuffComp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection99">
-	 <source component = "sendBuffComp" port = "ParamSet" type = "PrmSet" num = "0"/>
- 	 <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
-</connection>
-<connection name = "Connection100">
-	 <source component = "SG1" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection101">
-	 <source component = "SG4" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection102">
-	 <source component = "sockGndIf" port = "uplinkPort" type = "Com" num = "0"/>
- 	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "1"/>
-</connection>
-<connection name = "Connection103">
-	 <source component = "cmdSeq" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "2"/>
-</connection>
-<connection name = "Connection104">
-	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "0"/>
- 	 <target component = "rateGroup1Comp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection105">
-	 <source component = "health" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection106">
-	 <source component = "cmdDisp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection107">
-	 <source component = "recvBuffComp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection108">
-	 <source component = "health" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection109">
-	 <source component = "fileUplinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection110">
-	 <source component = "SG5" port = "logTextOut" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection111">
-	 <source component = "rateGroup1Comp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection112">
-	 <source component = "cmdDisp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection113">
-	 <source component = "blockDrv" port = "BufferOut" type = "DataBuffer" num = "0"/>
- 	 <target component = "recvBuffComp" port = "Data" type = "DataBuffer" num = "0"/>
-</connection>
-<connection name = "Connection114">
-	 <source component = "sendBuffComp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection115">
-	 <source component = "chanTlm" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection116">
-	 <source component = "rateGroup3Comp" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
-</connection>
-<connection name = "Connection117">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "3"/>
- 	 <target component = "eventLogger" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection118">
-	 <source component = "SG3" port = "logTextOut" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection119">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "2"/>
- 	 <target component = "cmdSeq" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection120">
-	 <source component = "health" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection121">
-	 <source component = "cmdDisp" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "1"/>
-</connection>
-<connection name = "Connection122">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
- 	 <target component = "pingRcvr" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection123">
-	 <source component = "fileUplink" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "5"/>
-</connection>
-<connection name = "Connection124">
-	 <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
- 	 <target component = "sendBuffComp" port = "SchedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection125">
-	 <source component = "SG5" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection126">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "9"/>
- 	 <target component = "rateGroup3Comp" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection127">
-	 <source component = "fileDownlink" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection128">
-	 <source component = "SG5" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection129">
-	 <source component = "blockDrv" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection130">
-	 <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
- 	 <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
-</connection>
-<connection name = "Connection131">
-	 <source component = "cmdDisp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection132">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "6"/>
- 	 <target component = "prmDb" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection133">
-	 <source component = "fileUplink" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection134">
-	 <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
- 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
-</connection>
-<connection name = "Connection135">
-	 <source component = "recvBuffComp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection136">
-	 <source component = "sockGndIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection137">
-	 <source component = "pingRcvr" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection138">
-	 <source component = "blockDrv" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection139">
-	 <source component = "rateGroup3Comp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection140">
-	 <source component = "fileDownlink" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection141">
-	 <source component = "health" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection142">
-	 <source component = "rateGroup2Comp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection143">
-	 <source component = "sockGndIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection144">
-	 <source component = "rateGroup1Comp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection145">
-	 <source component = "SG3" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection146">
-	 <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "sockGndIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection147">
-	 <source component = "SG2" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection148">
-	 <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection149">
-	 <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
- 	 <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-</connection>
-<connection name = "Connection150">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "4"/>
- 	 <target component = "fileDownlink" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection151">
-	 <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
- 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
-</connection>
-<connection name = "Connection152">
-	 <source component = "SG3" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection153">
-	 <source component = "eventLogger" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "0"/>
-</connection>
-<connection name = "Connection154">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "0"/>
- 	 <target component = "eventLogger" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection155">
-	 <source component = "SG2" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "1"/>
-</connection>
-<connection name = "Connection156">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
- 	 <target component = "SG2" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection157">
-	 <source component = "SG1" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "2"/>
-</connection>
-<connection name = "Connection158">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "2"/>
- 	 <target component = "SG1" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection159">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "3"/>
- 	 <target component = "SG4" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection160">
-	 <source component = "SG4" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "3"/>
-</connection>
-<connection name = "Connection161">
-	 <source component = "pingRcvr" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "4"/>
-</connection>
-<connection name = "Connection162">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "4"/>
- 	 <target component = "pingRcvr" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection163">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "5"/>
- 	 <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection164">
-	 <source component = "fileDownlink" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
-</connection>
-<connection name = "Connection165">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
- 	 <target component = "sendBuffComp" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection166">
-	 <source component = "sendBuffComp" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
-</connection>
-<connection name = "Connection167">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "7"/>
- 	 <target component = "cmdDisp" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection168">
-	 <source component = "cmdDisp" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "7"/>
-</connection>
-<connection name = "Connection169">
-	 <source component = "SG3" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "8"/>
-</connection>
-<connection name = "Connection170">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "8"/>
- 	 <target component = "SG3" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection171">
-	 <source component = "health" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "9"/>
-</connection>
-<connection name = "Connection172">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "9"/>
- 	 <target component = "health" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection173">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "10"/>
- 	 <target component = "recvBuffComp" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection174">
-	 <source component = "recvBuffComp" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "10"/>
-</connection>
-<connection name = "Connection175">
-	 <source component = "SG5" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "11"/>
-</connection>
-<connection name = "Connection176">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "11"/>
- 	 <target component = "SG5" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection177">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "12"/>
- 	 <target component = "prmDb" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection178">
-	 <source component = "prmDb" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "12"/>
-</connection>
-<connection name = "Connection179">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "13"/>
- 	 <target component = "cmdSeq" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection180">
-	 <source component = "cmdSeq" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "13"/>
-</connection>
+    <connection name = "eventLoggerPkts">
+        <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
+    </connection>
+   
+    <connection name = "chanTlmPkts">
+        <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
+    </connection>
+   
+    <connection name = "fileDownlinkBufferGet">
+        <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
+        <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkBufferManagerBufferReturn">
+        <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkBufferSend">
+        <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "groundIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+   
+    <!-- Fault Connections -->
+    <connection name = "eventLoggerFatalOut">
+        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
+        <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
+    </connection>
+    
+    <!-- Reference App Connections -->
+    
+    <connection name = "SendBuffDrv">
+         <source component = "sendBuffComp" port = "Data" type = "DataBuffer" num = "0"/>
+         <target component = "blockDrv" port = "BufferIn" type = "DataBuffer" num = "0"/>
+    </connection>
+    <connection name = "RecvBuffDrv">
+         <source component = "blockDrv" port = "BufferOut" type = "DataBuffer" num = "0"/>
+         <target component = "recvBuffComp" port = "Data" type = "DataBuffer" num = "0"/>
+    </connection>
+    
 </assembly>
