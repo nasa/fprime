@@ -10,7 +10,7 @@ import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
 import {LogMixins} from "./log.js";
-
+import {config} from "../config.js"
 /**
  * tabbed-ect:
  *
@@ -19,12 +19,13 @@ import {LogMixins} from "./log.js";
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "cmdhist", "events", "channels", "logs"],
+    props:["commands", "loader", "cmdhist", "events", "channels", "logs", "eventsActive", "channelsActive"],
     data: function () {
         let hash = window.location.hash.replace("#", "");
         return {
             "currentTab": (hash == "")? "Commanding" : hash,
-            "tabs": ["Commanding", "Events", "Channels", "Logs"]
+            "tabs": ["Commanding", "Events", "Channels", "Logs"],
+            "config": config
         }
     },
     methods: {
@@ -42,6 +43,22 @@ Vue.component("tabbed-etc", {
         spawn: function () {
             window.open(window.location);
         }
+    },
+    computed: {
+        orbStatus: function() {
+            if (this.eventsActive && this.channelsActive) {
+                return "All systems are go";
+            } else if (this.eventsActive) {
+                return "No channel updates detected";
+            } else if (this.channelsActive) {
+                return "No event updates detected";
+            }
+            return "He's dead, Jim";
+        },
+        noneActive: function () {
+            return !(this.eventsActive || this.channelsActive);
+        }
+
     }
 });
 
