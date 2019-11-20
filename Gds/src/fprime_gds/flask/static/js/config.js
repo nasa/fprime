@@ -8,8 +8,10 @@ export let config = {
     projectName: "F´ Infrastructure",
     // Logo of the project. Will be grey when timed-out, otherwise will be full-color
     logo: "https://www.nasa.gov/sites/all/themes/custom/nasatwo/images/nasa-logo.svg",
-    // Time in seconds to wait before reporting events missing status
-    eventsTimeout: 60,
-    // Time in seconds to wait before reporting channels missing status
-    channelsTimeout: 2
+    // Time in seconds to wait before reporting data flow error
+    dataTimeout: 5,
+    // Set the icon for the condition when there is data flowing
+    dataSuccessIcon: "/img/success.svg",
+    // Set the icon for the condition when there is a data-flow error
+    dataErrorIcon: "/img/error.svg"
 };

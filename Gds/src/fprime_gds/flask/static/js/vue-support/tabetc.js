@@ -45,16 +45,6 @@ Vue.component("tabbed-etc", {
         }
     },
     computed: {
-        orbStatus: function() {
-            if (this.eventsActive && this.channelsActive) {
-                return "All systems are go";
-            } else if (this.eventsActive) {
-                return "No channel updates detected";
-            } else if (this.channelsActive) {
-                return "No event updates detected";
-            }
-            return "He's dead, Jim";
-        },
         noneActive: function () {
             return !(this.eventsActive || this.channelsActive);
         }

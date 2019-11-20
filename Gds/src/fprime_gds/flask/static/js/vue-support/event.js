@@ -72,7 +72,7 @@ export let EventMixins = {
      * @param newEvents: new full list of events to render
      */
     updateEvents(newEvents) {
-        let timeout = config.eventsTimeout * 1000;
+        let timeout = config.dataTimeout * 1000;
         this.vue.events.push(...newEvents);
         // Set active events, and register a timeout to turn it off again
         if (newEvents.length > 0) {

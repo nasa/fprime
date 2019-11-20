@@ -103,7 +103,7 @@ export let ChannelMixins = {
      * @param newChannels: new full list of channels to render
      */
     updateChannels(newChannels) {
-        let timeout = config.channelsTimeout * 1000;
+        let timeout = config.dataTimeout * 1000;
         // Loop over all dictionaries
         for (let i = 0; i < newChannels.length; i++) {
             let channel = newChannels[i];
