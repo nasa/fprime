@@ -36,5 +36,5 @@ void TestPrmImpl::printParam(void) {
 
 void TestPrmImpl::parameterUpdated(FwPrmIdType id)
   {
-    printf("Parameter %d was updated\n");
+    printf("Parameter %d was updated\n", id);
   }

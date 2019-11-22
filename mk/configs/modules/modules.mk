@@ -17,7 +17,8 @@ FW_MODULES := \
 	Fw/Com \
 	Fw/ComFile \
 	Fw/SerializableFile \
-	Fw/Types
+	Fw/Types \
+        Fw/Logger
 
 FW_GTEST_MODULES := \
 	Fw/SerializableFile/test/TestSerializable \
@@ -34,7 +35,8 @@ CFDP_GTEST_MODULES := \
 	CFDP/Checksum/GTest
 	
 UTILS_MODULES := \
-	Utils/Hash
+	Utils/Hash \
+	Utils/Types
         
 SVC_MODULES := \
 	Svc/BufferAccumulator \
@@ -71,7 +73,8 @@ SVC_MODULES := \
     Svc/FatalHandler \
 	Svc/FileManager \
 	Svc/UdpSender \
-	Svc/UdpReceiver
+	Svc/UdpReceiver \
+	Svc/GroundInterface
 	
 
 DEMO_DRV_MODULES := \
@@ -204,6 +207,7 @@ OTHER_MODULES := \
 	gtest \
 	Os/Stubs \
 	Fw/Test \
+	STest \
 	$(FW_GTEST_MODULES)
 
 # List deployments

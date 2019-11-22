@@ -1,0 +1,118 @@
+#ifndef Example_Enum1_HPP
+#define Example_Enum1_HPP
+
+#include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/Serializable.hpp"
+// To add include directives here, put them in a file called Include/Enum1EnumAc.hpp
+
+namespace Example {
+  class Enum1 : public Fw::Serializable
+  {
+    public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    typedef enum {
+    Item1 = -1952875139,
+    Item2 = 2,
+    Item3 = 2000999333, //!< Test Item
+    Item4 = 21,
+    Item5 = -8324876,
+        } t;
+  
+    public:
+  
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    enum {
+        SERIALIZED_SIZE = sizeof(FwEnumStoreType)
+        };
+
+    public:
+
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
+
+    //! Construct Enum1 object with default initialization
+    Enum1(void);
+
+    //! Construct Enum1 object and initialize its value
+    Enum1(
+        const t e //!< The enum value
+        );
+
+    //! Copy constructor
+    Enum1(
+        const Enum1& other //!< The other object
+        );
+  
+    public:
+  
+    // ----------------------------------------------------------------------
+    // Operators
+    // ----------------------------------------------------------------------
+  
+    //! Assignment operator
+    const Enum1& operator=(
+        const Enum1& other //!< The other object
+        );
+  
+    //! Assignment operator
+    const Enum1& operator=(
+        const NATIVE_INT_TYPE a //!< The integer to copy
+        );
+  
+    //! Assignment operator
+    const Enum1& operator=(
+        const NATIVE_UINT_TYPE a //!< The integer to copy
+        );
+  
+    //! Equality operator
+    bool operator==(
+        const Enum1& other //!< The other object
+        ) const;
+  
+    //! Inequality operator
+    bool operator!=(
+        const Enum1& other //!< The other object
+        ) const;
+  
+#ifdef BUILD_UT
+    //! Ostream operator for Enum1 object
+    friend std::ostream& operator<<(
+        std::ostream& os, //!< The ostream
+        const Enum1& obj //!< The object
+        );
+#endif
+  
+    public:
+  
+    // ----------------------------------------------------------------------
+    // Methods
+    // ----------------------------------------------------------------------
+  
+    //! Serialization
+    Fw::SerializeStatus serialize(
+        Fw::SerializeBufferBase& buffer //!< The serial buffer
+        ) const;
+  
+    //! Deserialization
+    Fw::SerializeStatus deserialize(
+        Fw::SerializeBufferBase& buffer //!< The serial buffer
+        );
+  
+    public:
+  
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+  
+    //! The enumeration value
+    t e;
+  };
+}
+#endif

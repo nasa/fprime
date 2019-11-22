@@ -1,6 +1,6 @@
 # F´ CMake Build System
 
-Stock F´ ships with a bispoke make system ensure that building is done correctly and in the correct
+Stock F´ ships with a bespoke make system ensure that building is done correctly and in the correct
 order. However, using and maintaining this build system presents a steep learning curve to new
 users of F´. This included CMake system is intended as an eventual replacement to the existing
 build system that should be easier to learn and use. In addition, the use of cmake puts F´more in
@@ -35,9 +35,11 @@ generated, standard make tools can be run to perform the compiling, assembling, 
 Building a CMake-enabled deployment comes down to just a small number of steps:
 
 1. Make and change to a directory to build in: `mkdir build_dir; cd build_dir`
-2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt`
+2. Call CMake to generate make-files: `cmake <path to deployment CMakeLists.txt>`
 3. Engage OS-specific make system: `make`
 4. Run unit tests: `make check`
+5. Run F´ specific targets like dictionariy generation, and module coverage: 
+[Targets](./docs/targets/Targets.md) 
 
 Further information on each step is provided below.
 
@@ -124,8 +126,7 @@ make
 Toolchain files are used to setup the tools and packages used to cross-compile code for a separate
 target platform. The cmake toolchain files are placed in [cmake/toolchain](toolchain) and are
 standard CMake toolchain files.
-[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html]
-(https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
+[https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html](https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html)
 Alternatively, the user may specify a path to an external CMake toolchain file. This file specifies
 the path to the tools used to perform the build (i.e. the compilers, libraries, and packages). A
 sample template for setting up new toolchain files can be found at
@@ -184,8 +185,9 @@ other tools will fail.  This can be done with the following two lines added to t
 `CMakeLists.txt`. However, these lines **must** be added after including F´core subdirectories.
 
 ```
-# **** First Include FPrime.cmake, the core components CMake ***
+# **** First Include FPrime.cmake,FPrime-Code.cmake the core API and components CMakes ***
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 
 # **** Second, override the current BUILD_ROOT ****
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")

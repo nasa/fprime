@@ -53,8 +53,8 @@ class TelemetryFilterPanel(object):
         top.title("F Prime Channel Telemetry Filter Selection")
         top.focus()
         # Constrain size on window so geometry works.
-        top.maxsize(1000,400)
-        top.minsize(600,400)
+        top.maxsize(1000,450)
+        top.minsize(600,450)
         top.lift()
         self.__top = top
 

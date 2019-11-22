@@ -20,7 +20,7 @@
 ####
 function(setup_module_dicts MOD_NAME TARGET_NAME AI_XML_FULL DICT_INPUTS)
     # UTs don't supply directories
-    if (UT_BUILD)
+    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     endif()
     get_filename_component(AI_XML ${AI_XML_FULL} NAME_WE)
@@ -48,7 +48,7 @@ endfunction(setup_module_dicts)
 ####
 function(add_global_target TARGET_NAME)
     # If we are generating python dictionaries, then we need to copy the outputs
-    if (UT_BUILD)
+    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     elseif (GENERATE_HERITAGE_PY_DICT)
         add_custom_target(

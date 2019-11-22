@@ -7,11 +7,11 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLoggerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Stub/PrintfLoggerImplStub.cpp"
 )
 set(MOD_DEPS
-  Svc/PassiveTextLogger
+  Fw/Logger
 )
 
 register_fprime_module()

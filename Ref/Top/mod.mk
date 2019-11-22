@@ -1,2 +1,3 @@
-SRC = 				Topology.cpp \
+SRC = 				Main.cpp \
+					Topology.cpp \
                     RefTopologyAppAi.xml

@@ -15,10 +15,11 @@
 
 namespace Drv {
 
-    void LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
+    bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
                                            NATIVE_INT_TYPE select,
                                            SpiFrequency clock) {
-
+        //TODO: fill this function out
+        return false;
     }
 
     // ----------------------------------------------------------------------

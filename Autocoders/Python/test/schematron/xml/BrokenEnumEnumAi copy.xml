@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../../Autocoders/Python/schema/ISF_Type_Schema.rnc" type="compact"?>
+<enum namespace = "Schematron" name="BrokenEnum">
+    <item name="Item1" value="-1952875139"/>
+    <item name="Item2" value="21"/>
+    <item name="Item3" comment="Test Item" value="2000999333"/>
+    <item name="Item4" value="21"/>
+    <item name="Item5" value="-8324876"/>
+</enum>

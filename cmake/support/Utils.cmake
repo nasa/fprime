@@ -24,7 +24,7 @@ function(get_module_name DIRECTORY_PATH)
   # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
   # name. If it does not exist, then it is assumed to be an offset already and is carried
   # forward in the calculation.
-  if (EXISTS ${DIRECTORY_PATH})
+  if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
       # Get path name relative to the root directory
       file(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CURRENT_BUILD_ROOT} ${DIRECTORY_PATH})
   else()
@@ -32,68 +32,8 @@ function(get_module_name DIRECTORY_PATH)
   endif()
   # Replace slash with underscore to have valid name
   string(REPLACE "/" "_" TEMP_MODULE_NAME ${TEMP_MODULE_NAME})
-  if (DEFINED BUILD_SUFFIX)
-      set(TEMP_MODULE_NAME "${TEMP_MODULE_NAME}${BUILD_SUFFIX}")
-  endif()
   set(MODULE_NAME ${TEMP_MODULE_NAME} PARENT_SCOPE)
 endfunction(get_module_name)
-
-####
-# Function `setup_module_dicts`:
-#
-# Creates a dictionary target for the module, that is then added to the "dict" and "module"
-# targets.
-#
-# - **MOD_NAME:** name of module being processed
-# - **AI_XML:** AI_XML that is generating dictionaries
-# - **DICT_INPUTS:** inputs from auto-coder, used to trigger dictionary generation
-####
-function(setup_module_dicts MOD_NAME AI_XML DICT_INPUTS)
-    # UTs don't supply directories
-    if (UT_BUILD)
-        return()
-    endif()
-	set(AI_DICT_NAME "${AI_XML}_dict")
-	set(MOD_DICT_NAME "${MOD_NAME}_dict")
-	# Add the dictionary target for this module, if it doesn't already exist
-	if (NOT TARGET ${MOD_DICT_NAME})
-	    add_custom_target(${MOD_DICT_NAME})
-		if (CMAKE_DEBUG_OUTPUT)
-		    message(STATUS "\tAdding Dict Target: ${MOD_NAME}_dict")
-		endif()
-	endif()
-	add_custom_target(${AI_DICT_NAME} DEPENDS ${DICT_INPUTS})
-	# Add dependencies upstream
-	add_dependencies(${AI_DICT_NAME} ${CODEGEN_TARGET})
-	add_dependencies(${MOD_DICT_NAME} ${AI_DICT_NAME})
-endfunction(setup_module_dicts)
-
-####
-# Function `add_dict_deps`:
-#
-# Used to track dictionary dependencies, in order to ensure that the fewest number of dictionary
-# targets are used.
-#
-# - **MODULE_NAME:** module receiving a dict dependency
-# - **DEP_MODULE_NAME:** name of the module whose dictionary will be added
-####
-function(add_dict_deps MODULE_NAME DEP_MODULE_NAME)
-    # UTs don't do dictionaries
-    if (UT_BUILD)
-        return()
-    endif()
-    # Skip if there is no dict module to be added
-    if (TARGET "${DEP_MODULE_NAME}_DICT")
-        # We have sub-dictionaries, create a roll-up target
-        if (NOT TARGET "${MODULE_NAME}_DICT")
-            if (CMAKE_DEBUG_OUTPUT)
-                message(STATUS "\tAdding Faux-Dict Target: ${MODULE_NAME}_DICT")
-            endif()
-            add_custom_target("${MODULE_NAME}_DICT")
-        endif()
-        add_dependencies("${MODULE_NAME}_DICT" "${DEP_MODULE_NAME}_DICT")
-    endif()
-endfunction(add_dict_deps)
 
 ####
 # Function `add_generated_sources`:
@@ -135,11 +75,7 @@ endfunction(add_generated_sources)
 # - **PARSER_TYPE:** type of parser to use. Must be one of the prefixes *_xml in cmake/parser/
 ####
 function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
-  if (NOT ${BUILD_SUFFIX} STREQUAL "")
-      string(REGEX REPLACE "${BUILD_SUFFIX}" "" MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-  else()
-      set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-  endif()
+  set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
       COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
@@ -153,9 +89,8 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
   # this prevents the need for manually specifying link orders.
   foreach(TARGET ${TARGETS})
-    add_dependencies(${MODULE_NAME} "${TARGET}${BUILD_SUFFIX}")
-    target_link_libraries(${MODULE_NAME} "${TARGET}${BUILD_SUFFIX}")
-    add_dict_deps(${MODULE_NAME}  "${TARGET}${BUILD_SUFFIX}")
+    add_dependencies(${MODULE_NAME} "${TARGET}")
+    target_link_libraries(${MODULE_NAME} "${TARGET}")
   endforeach()
 endfunction(fprime_dependencies)
 
@@ -206,8 +141,20 @@ function(split_dependencies DEPS_INPUT)
 	set(LINK_DEPS "${LD}" PARENT_SCOPE)
 	set(MOD_DEPS "${FD}" PARENT_SCOPE)
 endfunction(split_dependencies)
-
-
+####
+# Function `set_hash_flag`:
+#
+# Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
+# hashes.txt. This allows for asserts on file ID not string.
+####
+function(set_hash_flag SRC)
+    get_filename_component(FPRIME_CURRENT_BUILD_ROOT_ABS "${FPRIME_CURRENT_BUILD_ROOT}" ABSOLUTE)
+    string(REPLACE "${FPRIME_CURRENT_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
+    string(MD5 HASH_VAL "${SHORT_SRC}")
+    string(SUBSTRING "${HASH_VAL}" 0 8 HASH_32)
+    file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")
+    SET_SOURCE_FILES_PROPERTIES(${SRC} PROPERTIES COMPILE_FLAGS -DASSERT_FILE_ID="0x${HASH_32}")
+endfunction(set_hash_flag)
 ####
 # Function `print_dependencies`:
 #

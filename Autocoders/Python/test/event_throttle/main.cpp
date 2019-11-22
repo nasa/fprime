@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 #endif
 
     TestLogImpl testImpl("TestLogImpl");
-	testImpl.init();
+	testImpl.init(0);
 	TestLogRecvImpl logRecv("TestLogRecv");
 	logRecv.init();
 	TestTimeImpl timeSource("TimeComp");

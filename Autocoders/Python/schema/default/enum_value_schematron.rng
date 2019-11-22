@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "VALUE_EXISTS">
+    <rule context="item">
+        <assert test="count(//item[@value]) = count(//item) or count(//item[@value]) = 0">Either all enum items should have a value or none should</assert>
+    </rule>
+</pattern>
+<pattern id = "VALUE_UNIQUE">
+    <rule context="item">
+        <assert test="count(//item/@value[. = current()/@value]) = 1">Enum item values should be unique</assert>
+    </rule>
+</pattern>
+</schema>

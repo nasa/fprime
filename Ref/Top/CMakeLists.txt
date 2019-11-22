@@ -9,11 +9,11 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
+  "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
 )
 # Note: supply non-explicit dependencies here
 set(MOD_DEPS
-  Svc/PassiveConsoleTextLogger
-  Svc/SocketGndIf
+  Fw/Logger
   Svc/LinuxTime
 )
 register_fprime_executable()

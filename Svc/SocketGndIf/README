@@ -1,4 +1,0 @@
-The SocketGndIF component is an implementation class for the GndIf component base class. It uses TCP/IP sockets 
-to send and receive packets to a ground system/test interface.
-
-SvcSocketGndIfImpl.hpp(.cpp) - Implementation class for socket interface

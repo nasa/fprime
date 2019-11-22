@@ -1,3 +1,6 @@
+build
+build*
+
 AutoXML/
 test_harness/src/test_harness-C/application.out
 /.project
@@ -54,10 +57,10 @@ core
 ./Gds/docs/doxy
 
 *AppDictionary.xml
-*TopologyAppID.csv 
+*TopologyAppID.csv
 *TopologyAppAi_IDTableLog.txt
 
 .vscode
 py_dict
 .settings
-
+build-fprime-automatic*

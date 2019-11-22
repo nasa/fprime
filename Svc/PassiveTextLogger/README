@@ -1,4 +1,0 @@
-This directory defines a component base class for a passive text logger. This is used to print a text version of an event. This component executes on the thread of the caller.
-
-PassiveTextLoggerComponentAi.xml - XML that defines component
-PassiveTextLoggerModule.mdxml - MagicDraw project file that describes the component
