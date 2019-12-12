@@ -62,6 +62,10 @@ class CMakeHandler(object):
         """
         self.build_cache = CMakeBuildCache()
         self.verbose = False
+        try:
+            self._run_cmake([])
+        except Exception as exc:
+            raise CMakeExecutionException("CMake executable 'cmake' not found", str(exc))
 
     def set_verbose(self, verbose):
         """ Sets verbosity """
