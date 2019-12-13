@@ -6,7 +6,7 @@ This tutorial will walk the user through the basic usage of the F´ development 
 through the above installation guide, and has a working F´ installation.
 
 ## F´ Terminology
-
+**Comming Soon**
 
 ## F´ Utility
 
@@ -23,7 +23,7 @@ wishes to build.  If not supplied, the current directory will be considered the 
 **Generate the Ref Application**
 ```
 cd fprime/Ref
-fprime-utility generate
+fprime-util generate
 ```
 
 Here the utility will create two standard builds: one for the standard build, and one for the unit test build. This will enable
@@ -48,13 +48,13 @@ command.
 **Build SignalGen Component**
 ```
 cd fprime/Ref/SignalGen
-fprime-utility build
+fprime-util build
 ```
 
 **Build Ref Deployment**
 ```
 cd fprime/Ref
-fprime-utility build
+fprime-util build
 ```
 
 Now users should be able to change components' C++, build the component to ensure that the changes compile, and then continue
@@ -72,11 +72,23 @@ the directory defining the deployment.
 **Installing the Ref Deployment**
 ```
 cd fprime/Ref
-fprime-utility install
+fprime-util install
 ./bin/*/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
 Running the application as part of the development ground data system is shown below.
+
+## Creating Implementation Stubs
+
+Once the build system is up and running, developers will desire to generate the stubbed implementations of the Component's C++
+files. This can be done using the "impl" command of the fprime utility.
+
+**Generating Implementation Stubs of SignalGen**
+```
+cd fprime/Ref/SignalGen
+fprime-util impl
+```
+
 
 
 
