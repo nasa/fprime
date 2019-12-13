@@ -25,7 +25,7 @@ pip install Fw/Python Gds
 ## Tutorials
 
 F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more. These 
-tutorials are available here: https://github.com/nasa/fprime/docs/Tutorials
+tutorials are available here: https://github.com/nasa/fprime/tree/master/docs/Tutorials
 
 ## User Guide, Architecture Specification, and Further Documentation
 
@@ -40,6 +40,15 @@ The continuous integration system performs builds and unit-test check on any pul
 ### Cosmos Integration
 
 More information can be found here: [Autocoders/Python/src/fprime_ac/utils/cosmos/README.md](Autocoders/Python/src/fprime_ac/utils/cosmos/README.md)
+
+
+## F´ Community
+
+As F´ becomes a community centered product line, there are more items available from the community at large. This information
+may be found at: [https://github.com/fprime-community](https://github.com/fprime-community).
+
+The F´ community contains course materials on flight quality software, component libraries that may be of use, and more.
+
 
 ## F´ Features
 
