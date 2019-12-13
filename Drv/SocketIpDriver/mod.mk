@@ -5,7 +5,10 @@
 #
 #
 
+SRC = SocketIpDriverComponentAi.xml SocketIpDriverComponentImpl.cpp
 
-SRC = PassiveTextLoggerComponentAi.xml ConsoleTextLoggerImplCommon.cpp
+HDR = SocketIpDriverComponentImpl.hpp
 
-HDR = ConsoleTextLoggerImpl.hpp
+SUBDIRS = 
+
+
