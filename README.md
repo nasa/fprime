@@ -35,7 +35,7 @@ The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pd
 
 ### Continuous Integration
 
-The continous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.
+The continuous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.
 
 ### Cosmos Integration
 
