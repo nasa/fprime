@@ -14,7 +14,7 @@ In order to ease in development, the F´ team has created a small wrapper for th
 advantages of the previous development pattern, while allowing the power and configurability of CMake as an underlying
 build architecture.
 
-### F´ Utility Generation
+### Build Cache Generation
 
 The first step to building and developing an F´ application is to generate a working build cache. This can easily be done
 using the F´ utility with the "generate" command. This command takes a single argument of the F´ of the F´ deployment one
@@ -38,7 +38,7 @@ cd fprime
 fprime-generate
 ```
 
-### F´ Utility Building
+### Building Components and Deployments
 
 In order to build a component or deployment with F´, a user may run the "build" command as part of the fprime-utility. This
 will build the "current directory". That means that should the user change into a deployment directory then the build command
@@ -63,7 +63,7 @@ to build the full deployment to yield a runnable F´ exectuable. The F´ exectua
 
 This process also build the Dictionaries for the project.
 
-## F´ Installing the F´ Executable and Dictionaries
+## Installing the F´ Executable and Dictionaries
 
 Once the deployment is built, it would nice to be able to install the binary and dictionaries. This will enable the users to
 quickly find and run the deployment. This installation can be run using the following command. Everything will be install to
@@ -74,7 +74,10 @@ the directory defining the deployment.
 cd fprime/Ref
 fprime-utility install
 ./bin/*/Ref # Run the deployment
+CTRL-C # Exit the application
 ```
+Running the application as part of the development ground data system is shown below.
+
 
 
 
