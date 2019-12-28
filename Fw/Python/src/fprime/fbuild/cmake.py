@@ -228,6 +228,8 @@ class CMakeHandler(object):
         """
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
+        # We will CD for build, so this path must become absolute
+        source_dir = os.path.abspath(source_dir)
         args = {} if args is None else args
         fleshed_args = map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, args[key]), args.keys())

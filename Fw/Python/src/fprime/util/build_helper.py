@@ -90,7 +90,7 @@ def validate(parsed):
         # Generation validation
         elif parsed.build_dir is None:
             build_inst_name = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform)
-            parsed.build_dir = os.path.join(os.getcwd(), build_inst_name)
+            parsed.build_dir = os.path.join(parsed.path, build_inst_name)
     except fprime.fbuild.cmake.CMakeProjectException as exc:
         print("[ERROR] {}".format(exc))
         sys.exit(1)
