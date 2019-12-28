@@ -130,7 +130,7 @@ def validate(parsed):
             toolchains = list(filter(os.path.exists, toolchains_paths))
             if not toolchains:
                 print("[ERROR] Toolchain file {} does not exist at any of {}"
-                      .format(toolchains + ".cmake", ", ".join(list(toolchains_paths))))
+                      .format(toolchain + ".cmake", ", ".join(list(toolchains_paths))))
                 sys.exit(-1)
             print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
             cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
