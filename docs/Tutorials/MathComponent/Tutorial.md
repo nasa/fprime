@@ -22,7 +22,7 @@ this tutorial are as follows:
 
 Installation can be done by following the installation guide found at: [INSTALL.md](../../../INSTALL.md). This guide
 will walk the user through the installation process and verifying the installation.  In addition, users may wish to
-follow the [Getting Started](../GettingStarted/Tutorial.md) tutorial in order to get a feel for the F´ environment and
+follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
 tools.
 
 # 1 Component Descriptions
@@ -2122,12 +2122,20 @@ The final connection is the connection that performs the math operation. It goes
 
 Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
 If the updates were correct, the module should compile with no errors. 
-The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`.
-
+The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`. Once the
+build passes, you should also run the installation of the `Ref` deployment using by typing `fprime-util install`.
 
 If running on a different platform, you can specify the build target by typing `fprime-util generate <target>`.
 
 # 4 Executing the Example
+
+We are now ready to run the ground system. Before the user runs this build system, ensure that the install command has
+been run. This is accomplished with the following commands:
+
+```shell
+cd fprime/Ref
+fprime-util install
+```
 
 ## 4.1 Running the Ground System
 
