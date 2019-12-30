@@ -205,8 +205,9 @@ def utility_entry(args=sys.argv[1:]):
     Main interface to F prime utility.
     :return: return code of the function.
     """
-    parsed, cmake_args, make_args, automatic_build_dir = parse_args(args)
+    parsed = None
     try:
+        parsed, cmake_args, make_args, automatic_build_dir = parse_args(args)
         if parsed.command == "hash-to-file":
             suffix = UT_SUFFIX if parsed.unittest else ""
             lines = fprime.fbuild.builder().find_hashed_file(parsed.build_dir + suffix, parsed.hash)
@@ -244,9 +245,13 @@ def utility_entry(args=sys.argv[1:]):
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
                                                          parsed.path, cmake_args, make_args,
                                                          action.get("top-target", False))
+    except fprime.fbuild.cmake.CMakeExecutionException as exexc:
+        stderr = exexc.get_errors()
+        print("[ERROR] {}.{}".format(exexc,"\n{}".format(stderr) if stderr else ""), file=sys.stderr)
+        return 1
     except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
-        if parsed.command == "generate" and automatic_build_dir:
+        if parsed is not None and parsed.command == "generate" and automatic_build_dir:
             print("[INFO] Cleaning automatic build directory at: {}".format(parsed.build_dir))
             shutil.rmtree(parsed.build_dir, ignore_errors=True)
             print("[INFO] Cleaning automatic unit-test build directory at: {}".format(parsed.build_dir + UT_SUFFIX))
