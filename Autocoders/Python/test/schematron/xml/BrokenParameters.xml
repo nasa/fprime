@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<parameters>
+
+    <parameter id="0" set_opcode="0" save_opcode="1" name="parameter1" data_type="U32" default="10">
+        <comment>
+            A test parameter
+        </comment>
+    </parameter>
+    <parameter id="0" set_opcode="2" save_opcode="3" name="parameter2" data_type="I16" default="11">
+        <comment>
+            A test parameter
+        </comment>
+    </parameter>
+
+</parameters>

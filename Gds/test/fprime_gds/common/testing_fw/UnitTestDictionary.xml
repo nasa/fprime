@@ -1,0 +1,56 @@
+<dictionary topology="TestFWUnitTesting">
+  <enums>
+  </enums>
+  <serializables>
+  </serializables>
+  <commands>
+    <command component="apiTester" mnemonic="TEST_CMD_1" opcode="0x01">
+    </command>
+    <command component="apiTester" mnemonic="TEST_CMD_2" opcode="0x02">
+      <args>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+      </args>
+    </command>
+    <command component="apiTester" mnemonic="TEST_CMD_3" opcode="0x03">
+      <args>
+        <arg name="message" len="240" type="string"/>
+      </args>
+    </command>
+  </commands>
+  <events>
+    <event component="apiTester" name="CommandReceived" id="0x01" severity="DIAGNOSTIC" format_string="Received a cmd with opcode %d">
+      <args>
+        <arg name="opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="apiTester" name="HistorySizeUpdate" id="0x2" severity="DIAGNOSTIC" format_string="The history sizes are now: EVR(%d) CMD(%d) CH(%d)">
+      <args>
+        <arg name="evr_size" type="U32"/>
+        <arg name="cmd_size" type="U32"/>
+        <arg name="ch_size" type="U32"/>
+      </args>
+    </event>
+    <event component="apiTester" name="SeverityCOMMAND" id="0x3" severity="COMMAND" format_string="Unit Test EVR with COMMAND Severity">
+    </event>
+    <event component="apiTester" name="SeverityACTIVITY_LO" id="0x4" severity="ACTIVITY_LO" format_string="Unit Test EVR with ACTIVITY_LO Severity">
+    </event>
+    <event component="apiTester" name="SeverityACTIVITY_HI" id="0x5" severity="ACTIVITY_HI" format_string="Unit Test EVR with ACTIVITY_HI Severity">
+    </event>
+    <event component="apiTester" name="SeverityWARNING_LO" id="0x6" severity="WARNING_LO" format_string="Unit Test EVR with WARNING_LO Severity">
+    </event>
+    <event component="apiTester" name="SeverityWARNING_HI" id="0x7" severity="WARNING_HI" format_string="Unit Test EVR with WARNING_HI Severity">
+    </event>
+    <event component="apiTester" name="SeverityDIAGNOSTIC" id="0x8" severity="DIAGNOSTIC" format_string="Unit Test EVR with DIAGNOSTIC Severity">
+    </event>
+    <event component="apiTester" name="SeverityFATAL" id="0x9" severity="FATAL" format_string="Unit Test EVR with FATAL Severity">
+    </event>
+  </events>
+  <channels>
+    <channel component="apiTester" name="CommandCounter" id="1" description="Counts number of commands sent by the unit test" type="U32"/>
+    <channel component="apiTester" name="Oscillator" id="2" description="Oscillates over time" type="I32"/>
+    <channel component="apiTester" name="Counter" id="3" description="Counts over time" type="U32"/>
+  </channels>
+  <parameters>
+  </parameters>
+</dictionary>

@@ -56,11 +56,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
       string(CONCAT AC_SOURCE ${AC_NAME} "${NAME_TYPE}Ac.cpp")
       # AC files may be considered source files, or they may be considered build artifacts. This is set via
       # cmake configuration and controls the location of the output.
-      if (GENERATE_AC_IN_SOURCE)
-          set(AC_FINAL_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-      else()
-          set(AC_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
-      endif()
+      set(AC_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
       string(CONCAT AC_FINAL_HEADER ${AC_FINAL_DIR} "/" ${AC_HEADER})
       string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
       acwrap("${AC_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
@@ -75,44 +71,6 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES AC_TYPE)
   endforeach()
 endfunction(generic_autocoder)
 
-# TODO: enumerations don't work super well with the system.  Don't use.
-function(enum_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
-  # Search for enum txt files
-  foreach(INPUT_FILE ${AUTOCODER_INPUT_FILES})
-    string(REGEX MATCH "([a-zA-Z0-9\-_]+)EnumAi.txt" ENUM_TXT "${INPUT_FILE}")
-    if(NOT ${ENUM_TXT} STREQUAL "")
-      # Extract enum name
-      string(REGEX REPLACE "([a-zA-Z0-9\-_]+)(EnumAi.txt)" "\\1" ENUM_NAME "${ENUM_TXT}")
-      message(STATUS "\tFound enum: ${ENUM_NAME}")
-
-      # Add enum header and source
-      string(CONCAT ENUM_HEADER ${ENUM_NAME} "EnumAc.hpp")
-      string(CONCAT ENUM_SOURCE ${ENUM_NAME} "EnumAc.cpp")
-      string(CONCAT ENUM_PY ${ENUM_NAME} ".py")
-      # AC files may be considered source files, or they may be considered build artifacts. This is set via
-      # cmake configuration and controls the location of the output.
-      if (GENERATE_AC_IN_SOURCE)
-          set(ENUM_FINAL_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-      else()
-          set(ENUM_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
-      endif()
-      # Invoke autocoder to produce enum header
-      add_custom_command(
-        OUTPUT ${ENUM_FINAL_DIR}/${ENUM_HEADER} ${ENUM_FINAL_DIR}/${ENUM_SOURCE}
-        COMMAND ${CMAKE_COMMAND} -E env SHELL_AUTOCODER_DIR=${SHELL_AUTOCODER_DIR}
-        ${FPRIME_CORE_DIR}/cmake/wrapper/enumgen.sh ${CMAKE_CURRENT_SOURCE_DIR}/${ENUM_TXT} ${ENUM_FINAL_DIR}
-        DEPENDS ${ENUM_TXT}
-      )
-
-      # Add autocode to module
-      target_sources(
-        ${MODULE_NAME}
-        PRIVATE ${ENUM_FINAL_DIR}/${ENUM_SOURCE} ${ENUM_FINAL_DIR}/${ENUM_HEADER}
-      )
-    endif()
-  endforeach()
-endfunction(enum_autocoder)
-
 ####
 # Function `generate_module`:
 #
@@ -125,7 +83,6 @@ endfunction(enum_autocoder)
 # - **SOURCE_FILES:** source file inputs
 # - **LINK_DEPS:** link-time dependecies like -lm or -lpthread
 # - **MOD_DEPS:** CMake module dependencies
-#
 ####
 function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS MOD_DEPS)
   # If there are  build flags, set them now 
@@ -151,7 +108,6 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
       get_module_name(${MOD_DEP})
       add_dependencies(${OBJ_NAME} ${MODULE_NAME})
       target_link_libraries(${OBJ_NAME} ${MODULE_NAME})
-      add_dict_deps(${OBJ_NAME} ${MODULE_NAME})
   endforeach()
   
   # Remove empty source from target
@@ -162,6 +118,10 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
      PROPERTIES
      SOURCES "${FINAL_SOURCE_FILES}"
   )
+  foreach(SRC_FILE ${FINAL_SOURCE_FILES})
+      set_hash_flag("${SRC_FILE}")
+  endforeach()
+
 
   # Register extra targets at the very end, once all of the core functions are properly setup.
   setup_all_module_targets(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}")
@@ -194,17 +154,23 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
   # Add the library name
   add_library(
     ${MODULE_NAME}
-    ${FPRIME_LIB_TYPE}
     ${SOURCE_FILES}
     ${EMPTY_C_SRC} # Added to suppress warning if module only has autocode
   )
+  if (NOT DEFINED FPRIME_OBJECT_TYPE)
+      set(FPRIME_OBJECT_TYPE "Library")
+  endif()
   generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
-  # Install the executable
-  install(TARGETS "${MODULE_NAME}"
-        RUNTIME DESTINATION "bin/${PLATFORM}"
-        LIBRARY DESTINATION "lib/${PLATFORM}"
-        ARCHIVE DESTINATION "lib/static/${PLATFORM}"
-        OPTIONAL)
+  # Install the executable, if not excluded and not testing
+  get_target_property(IS_EXCLUDE_FROM_ALL "${MODULE_NAME}" "EXCLUDE_FROM_ALL")
+  if ("${IS_EXCLUDE_FROM_ALL}" STREQUAL "IS_EXCLUDE_FROM_ALL-NOTFOUND" AND
+      NOT CMAKE_BUILD_TYPE STREQUAL "TESTING") 
+      install(TARGETS "${MODULE_NAME}"
+          RUNTIME DESTINATION "bin/${PLATFORM}"
+          LIBRARY DESTINATION "lib/${PLATFORM}"
+          ARCHIVE DESTINATION "lib/static/${PLATFORM}"
+      )
+  endif()
   # Link library list output on per-module basis
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${MODULE_NAME})

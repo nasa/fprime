@@ -14,6 +14,8 @@ of the data as well as data such as channel value or argument value.
 from fprime.common.models.serialize import time_type
 from fprime_gds.common.templates import data_template
 
+import fprime_gds.common.utils.jsonable
+
 class SysData(object):
     '''
     The SysData class defines the interface for system data classes which are
@@ -67,6 +69,11 @@ class SysData(object):
         '''
         return self.template
 
+    def to_jsonable(self):
+        '''
+        Converts to a JSONable object (primatives, anon-objects, lists)
+        '''
+        return fprime_gds.common.utils.jsonable.fprime_to_jsonable(self)
 
     @staticmethod
     def compare(x, y):

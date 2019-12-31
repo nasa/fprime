@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--======================================================================
+
+  DictGen
+  TestComponent
+  Telemetry
+
+======================================================================-->
+
+<telemetry>
+
+    <channel id="0" name="PktState" data_type="Ref::PacketStat">
+        <comment>
+            Packet Statistics
+        </comment>
+    </channel>
+    <channel id="1" name="Sensor1" data_type="F32" format_string = "%4.2fV" abbrev="R002-3000">
+        <comment>
+            Value of Sensor1
+        </comment>
+    </channel>
+    <channel id="1" name="Sensor2" data_type="F32" abbrev="R002-4000">
+        <comment>
+            Value of Sensor3
+        </comment>
+    </channel>
+
+</telemetry>

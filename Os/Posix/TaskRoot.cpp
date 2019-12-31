@@ -10,13 +10,15 @@
     #include <unistd.h>
 #endif
 
+#include <Fw/Logger/Logger.hpp>
+
 #include <pthread.h>
 #include <errno.h>
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
 
-//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
+//#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
 #define DEBUG_PRINT(x,...)
 
 typedef void* (*pthread_func_ptr)(void*);
@@ -39,7 +41,7 @@ namespace Os {
 
         I32 stat = pthread_attr_init(&att);
         if (stat != 0) {
-            printf("pthread_attr_init: (%d)(%d): %s\n",stat,errno,strerror(stat));
+            Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n",stat,errno,strerror(stat));
         	return TASK_INVALID_PARAMS;
         }
 
@@ -51,12 +53,12 @@ namespace Os {
         stat = pthread_attr_setschedpolicy(&att,SCHED_RR);
 
         if (stat != 0) {
-            printf("pthread_attr_setschedpolicy: %s\n",strerror(errno));
+            Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n",strerror(errno));
             return TASK_INVALID_PARAMS;
         }
         stat = pthread_attr_setinheritsched(&att,PTHREAD_EXPLICIT_SCHED); // may not need this
         if (stat != 0) {
-            printf("pthread_attr_setinheritsched: %s\n",strerror(errno));
+            Fw::Logger::logMsg("pthread_attr_setinheritsched: %s\n",strerror(errno));
          	return TASK_INVALID_PARAMS;
         }
         sched_param schedParam;
@@ -64,7 +66,7 @@ namespace Os {
         schedParam.sched_priority = priority;
         stat = pthread_attr_setschedparam(&att,&schedParam);
         if (stat != 0) {
-            printf("pthread_attr_setschedparam: %s\n",strerror(errno));
+            Fw::Logger::logMsg("pthread_attr_setschedparam: %s\n",strerror(errno));
         	return TASK_INVALID_PARAMS;
         }
 
@@ -77,7 +79,7 @@ namespace Os {
 
             stat = pthread_attr_setaffinity_np(&att, sizeof(cpu_set_t), &cpuset);
             if (stat != 0) {
-                printf("pthread_setaffinity_np: %i %s\n",cpuAffinity,strerror(stat));
+                Fw::Logger::logMsg("pthread_setaffinity_np: %i %s\n",cpuAffinity,strerror(stat));
                 return TASK_INVALID_PARAMS;
             }
         }
@@ -98,7 +100,7 @@ namespace Os {
                 break;
             case EINVAL:
                 delete tid;
-                printf("pthread_create: %s\n",strerror(errno));
+                Fw::Logger::logMsg("pthread_create: %s\n",strerror(errno));
                 tStat = TASK_INVALID_PARAMS;
                 break;
             default:
@@ -111,7 +113,7 @@ namespace Os {
 
             stat = pthread_setname_np(*tid,(char*)this->m_name.toChar());
             if (stat != 0) {
-                printf("pthread_setname_np: %s %s\n",this->m_name.toChar(),strerror(stat));
+                Fw::Logger::logMsg("pthread_setname_np: %s %s\n",this->m_name.toChar(),strerror(stat));
                 delete tid;
                 tStat = TASK_INVALID_PARAMS;
             }

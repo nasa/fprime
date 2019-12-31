@@ -56,6 +56,7 @@ class CmdData(sys_data.SysData):
         Returns:
             An initialized CmdData object
         '''
+        self.id = cmd_temp.get_id()
         self.template = cmd_temp
         self.arg_vals = cmd_args
 
@@ -67,8 +68,16 @@ class CmdData(sys_data.SysData):
         else:
             self.time = TimeType(TimeBase["TB_DONT_CARE"].value)
 
+        errors = []
         for val, typ in zip(self.arg_vals, self.args):
-            self.convert_arg_value(val, typ)
+            try:
+                self.convert_arg_value(val, typ)
+                errors.append("")
+            except Exception as exc:
+                errors.append(str(exc))
+        # If any errors occur, then raise a aggregated error
+        if [error for error in errors if error != ""]:
+            raise CommandArgumentsException(errors)
 
     def get_template(self):
         """Get the template class associate with this specific data object
@@ -79,6 +88,24 @@ class CmdData(sys_data.SysData):
 
         return self.template
 
+    def get_id(self):
+        """Get the ID associate with the template of this data object
+
+        Returns:
+            An ID number
+        """
+        
+        return self.id
+
+    def get_arg_vals(self):
+        """ Get the values for each argument in a command.
+
+        Returns:
+            list -- a list of value objects that were used in this data object.
+        """
+        
+        return self.arg_vals
+
     def get_args(self):
         """Get the arguments associate with the template of this data object
 
@@ -88,7 +115,48 @@ class CmdData(sys_data.SysData):
 
         return self.args
 
+
+    def get_str(self, time_zone=None, verbose=False, csv=False):
+        '''
+        Convert the command data to a string
+
+        Args:
+            time_zone: (tzinfo, default=None) Timezone to print time in. If
+                      time_zone=None, use local time.
+            verbose: (boolean, default=False) Prints extra fields if True
+            csv: (boolean, default=False) Prints each field with commas between
+                                          if true
+
+        Returns:
+            String version of the command data
+        '''
+        time_str = self.time.to_readable(time_zone)
+        raw_time_str = str(self.time)
+        name = self.template.get_full_name()
+
+
+        if self.args == None:
+            arg_str = "EMPTY COMMAND OBJ"
+        else:
+            # The arguments are currently serializable objects which cannot be
+            # used to fill in a format string. Convert them to values that can be
+            arg_val_list = [arg_obj.val for arg_obj in self.args]
+
+            arg_str = " ".join(str(arg_val_list))
+
+        if verbose and csv:
+            return ("%s,%s,%s,%d,%s"%(time_str, raw_time_str, name, self.id, arg_str))
+        elif verbose and not csv:
+            return ("%s: %s (%d) %s : %s"%(time_str, name, self.id,
+                                              raw_time_str, arg_str))
+        elif not verbose and csv:
+            return ("%s,%s,%s"%(time_str, name, arg_str))
+        else:
+            return ("%s: %s : %s"%(time_str, name, arg_str))
+
     def convert_arg_value(self, arg_val, arg_type):
+        if arg_val is None:
+            raise CommandArgumentException('Argument value could not be converted to type object')
         if "0x" in arg_val:
             arg_val = int(arg_val, 16)
 
@@ -136,7 +204,7 @@ class CmdData(sys_data.SysData):
         elif type(arg_type) == type(SerializableType()):
             pass
         else:
-            raise Exception('Argument value could not be converted to type object')
+            raise CommandArgumentException('Argument value could not be converted to type object')
 
 
     def __str__(self):
@@ -153,4 +221,14 @@ class CmdData(sys_data.SysData):
         else:
             return arg_info
 
+class CommandArgumentException(Exception):
+    pass
 
+
+class CommandArgumentsException(Exception):
+    def __init__(self, errors):
+        """
+        Handle a list of errors as an exception.
+        """
+        super(CommandArgumentsException, self).__init__(" ".join(errors))
+        self.errors = errors

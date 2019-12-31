@@ -2,15 +2,12 @@
 # AUTOCODER_INPUT_FILES: Contains all Autocoder input files
 # SOURCE_FILES: Handcoded C++ source files)
 
-set(AUTOCODER_INPUT_FILES
+set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TestPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Test2PortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/QuaternionSerializableAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TestPtComponentAi.xml"
-)
-
-set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestPrmSourceImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TestCommandSourceImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TestTelemRecvImpl.cpp"
@@ -19,22 +16,14 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestPtSourceImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
-
-generate_module("${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}")
-
-# Sets MODULE_NAME to unique name based on path
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-
-# Depends on a component defined in another module
-add_dependencies(
-  ${MODULE_NAME}
-  "Autocoders_test_command_tester"
-  "Autocoders_test_log_tester"
-  "Autocoders_test_param_tester"
-  "Autocoders_test_telem_tester"
-  "Autocoders_test_time_tester"
+set(MOD_DEPS
+  Autocoders/Python/test/telem_tester
+  Autocoders/Python/test/log_tester
+  Autocoders/Python/test/param_tester
+  Autocoders/Python/test/command_tester
+  Autocoders/Python/test/time_tester
 )
-
+register_fprime_module()
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})
@@ -47,4 +36,20 @@ set_target_properties(
 )
 
 # Add unit test directory
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/ut")
+# UT_SOURCE_FILES: Sources for unit test
+set(UT_SOURCE_FILES
+  "${FPRIME_CORE_DIR}/Autocoders/Python/test/stress/TestPtComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
+register_fprime_ut()
+
+# ac.ini needs to be copied into Autocode directory
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+  add_custom_target(py_ac_test_stress_ac_ini
+     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/Autocode
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_LIST_DIR}/Autocode
+  )
+  add_dependencies(${MODULE_NAME}_ut_exe py_ac_test_stress_ac_ini)
+endif()
+
+

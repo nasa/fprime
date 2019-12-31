@@ -14,7 +14,7 @@
     id="0"
     name="SignalGen_SettingsChanged"
     severity="ACTIVITY_LO"
-    format_string="Set Frequency(Hz) %s, Amplitude %s, Phase %s">
+    format_string="Set Frequency(Hz) %d, Amplitude %d, Phase %d">
       <comment>Signal Generator Settings Changed</comment>
       <args>
       <arg 
