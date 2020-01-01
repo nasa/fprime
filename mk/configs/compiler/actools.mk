@@ -1,6 +1,6 @@
 #DICT_TYPE specifies what type of dictionary to generate, with the arguments being "PYTHON", "AMPCS", or "XML" 
 #"PYTHON" is the default if the var is not set or is set to the wrong value. 
-DICT_TYPE := "PYTHON"
+DICT_TYPE := "XML"
 
 # Python path addition for ACTOOLS
 

@@ -1,9 +1,0 @@
-This component provides input ports that will serialize a port call to a buffer, which can be sent via the output ports. 
-Another component connected to the output port can take the data and send it over whatever transport layer is used to another
-hub.
-
-ComHubComponentAi.xml - Hub component definition
-SerializableHubImpl.hpp(.cpp) - Hub implementation class
-
-NOTE: Work in progress. Code probably won't compile or work
- 

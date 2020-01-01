@@ -41,24 +41,6 @@
 option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
 
 ####
-# `GENERATE_AC_IN_SOURCE:`
-#
-# Allows for generating auto-coded files in the source tree. Typically, this is frowned upon as
-# this prevents using F prime as a library. However, this is necessary to support historic
-# project development practices.
-#
-# **WARNING:** due to the limitations of the autocoder, currently the CMake system generates
-#              in-source and moves the files out.
-# 
-# **Values:**
-# - ON: generate auto-coding files in source-tree.
-# - OFF: (default) generate auto-coding files in the build-tree.
-#
-# e.g. `-DGENERATE_AC_IN_SOURCE=ON`
-####
-option(GENERATE_AC_IN_SOURCE "Ac.cpp and Ac.hpp are placed with source files." OFF)
-
-####
 # `GENERATE_HERITAGE_PY_DICT:`
 #
 # This option switches from generating XML dictionaries to generating the heritage python

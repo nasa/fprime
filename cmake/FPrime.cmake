@@ -17,7 +17,9 @@
 # used to specify where F prime core lives allowing it to be separate from the
 # add-ons used by projects.
 set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "F´ core directory set to: ${FPRIME_CORE_DIR}")
+message(STATUS "F prime core directory set to: ${FPRIME_CORE_DIR}")
+# Clear hashes file
+file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 
 # Set build type, if unser
 if(NOT CMAKE_BUILD_TYPE) 
@@ -49,7 +51,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 # BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
 # path from which to do internal operations.
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
+message(STATUS "F prime BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 
 # Set the install directory for the package
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
@@ -61,21 +63,14 @@ message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
 if (GENERATE_HERITAGE_PY_DICT)
     message(STATUS "Generating Heritage Python Dictionaries")
 endif()
-# In order to generate AC files out-of-source, the ${CMAKE_BINARY_DIR} must
-# be included as the AC files will be placed there in a parallel, but separated,
-# directory from the source.
-if (NOT GENERATE_AC_IN_SOURCE)
-    message(STATUS "Running out-of-source AC Generation")
-    # Normal (deployment) outputs
-    include_directories("${CMAKE_BINARY_DIR}")
-    # Core outputs
-    include_directories("${CMAKE_BINARY_DIR}/F-Prime")
-else()
-    message(STATUS "Running in-source AC Generation")
-endif()
+# Normal (deployment) outputs
+include_directories("${CMAKE_BINARY_DIR}")
+include_directories("${CMAKE_BINARY_DIR}/F-Prime")
 
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory.
 include_directories(SYSTEM "${FPRIME_CORE_DIR}")

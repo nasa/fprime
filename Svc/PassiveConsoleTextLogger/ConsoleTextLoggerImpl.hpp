@@ -1,7 +1,7 @@
 #ifndef SVC_TEXT_LOGGER_IMPL_HPP
 #define SVC_TEXT_LOGGER_IMPL_HPP
 
-#include <Svc/PassiveTextLogger/PassiveTextLoggerComponentAc.hpp>
+#include <Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAc.hpp>
 
 namespace Svc {
 

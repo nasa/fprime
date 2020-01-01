@@ -24,6 +24,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/IntervalTimer.cpp"
@@ -52,6 +53,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
@@ -83,6 +85,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
     "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
@@ -109,6 +112,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
       "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
@@ -138,6 +142,7 @@ else()
     "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/X86/IntervalTimer.cpp"
@@ -161,7 +166,13 @@ else()
       list(APPEND MOD_DEPS "-lrt")
   endif()
 endif()
-
+# If baremetal scheduler is set, remove the previouse task files and add in the Baremetal variant
+if (BAREMETAL_SCHEDULER)
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Baremetal/TaskRunner/")
+    add_definitions("-DFW_BAREMETAL_SCHEDULER")
+    list(FILTER SOURCE_FILES EXCLUDE REGEX "Task\.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
+endif()
 register_fprime_module()
 
 # Add stubs directory for testing builds

@@ -27,6 +27,10 @@ namespace Os {
     bool Task::wasSuspended(void) {
         return this->m_suspendedOnPurpose;
     }
+
+    POINTER_CAST Task::getRawHandle(void) {
+        return this->m_handle;
+    }
     
     void Task::registerTaskRegistry(TaskRegistry* registry) {
         FW_ASSERT(registry);

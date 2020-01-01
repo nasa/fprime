@@ -13,6 +13,11 @@ namespace Os {
     class Log : public Fw::Logger {
         public:
             /**
+             * Constructor for the Os::Log object.
+             */
+            Log();
+
+            /**
              * Function called on the logger to log a message. This is abstract virtual method and
              * must be supplied by the subclass. This logger object should be registered with the
              * Fw::Log::registerLogger function.
@@ -26,12 +31,16 @@ namespace Os {
              */
             void log(
                 const char* fmt,
+                POINTER_CAST a0 = 0,
                 POINTER_CAST a1 = 0,
                 POINTER_CAST a2 = 0,
                 POINTER_CAST a3 = 0,
                 POINTER_CAST a4 = 0,
                 POINTER_CAST a5 = 0,
-                POINTER_CAST a6 = 0
+                POINTER_CAST a6 = 0,
+                POINTER_CAST a7 = 0,
+                POINTER_CAST a8 = 0,
+                POINTER_CAST a9 = 0
             );
     };
 }

@@ -18,88 +18,107 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
 <!doctype html>
 <html>
     <head>
-        <link rel="stylesheet" href="css/third-party/bootstrap.min.css"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
-        <link rel="stylesheet" href="css/third-party/vue-select.css">
+        <link rel="stylesheet" href="third-party/css/bootstrap.min.css">
+        <link rel="stylesheet" href="third-party/css/vue-select.css">
         <link rel="stylesheet" href="css/fpstyle.css">
         <!-- Development mode -Vue- should it be needed for debug purposes -->
         <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script-->
 
         <!-- Third-party JavaScript files, hosted locally to remove internet dependence -->
-        <script src="js/third-party/vue.min.js"></script>
-        <script src="js/third-party/sorttable.js"></script>
+        <script src="third-party/js/vue.min.js"></script>
+        <script src="third-party/js/sorttable.js"></script>
         <!-- JavaScript GDS files -->
         <script type="module" src="js/gds.js"></script>
     </head>
     <body>
-        <div id="tabetc" class="container-fluid" style="height: 100%;">
+        <div id="tabetc" class="container-fluid fp-flex-repeater fp-full-height">
             <tabbed-etc
                     v-bind:commands="commands"
                     v-bind:loader="loader"
                     v-bind:events="events"
                     v-bind:channels="channels"
                     v-bind:cmdhist="cmdhist"
+                    v-bind:logs="logs"
             ></tabbed-etc>
         </div>
 
         <div hidden>
             <!-- Tabbed and routed Command Component -->
             <template id="tabetc-template">
-                <div>
-                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                        <span class="navbar-brand">F´</span>
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <span class="navbar-brand">F´</span>
                             <div class="navbar-nav">
                                 <div v-for="tab in tabs"
                                     :class="['nav-item', 'nav-link', { active: currentTab == tab }]"
                                     :key="tab"
-                                    v-on:click="currentTab = tab">{{ tab }}</div>
+                                    v-on:click="route(tab)">{{ tab }}</div>
                             </div>
-                    </nav>
-                    <div class="fp-top-container">
+                            <button class="btn btn-success" v-on:click="spawn">New Window</button>
+                        </nav>
                         <h1>F´ Ground Control Interface: {{ currentTab }}</h1>
-                        <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
-                        <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
-                           v-show="currentTab == 'Commanding'"></command-input>
-                        <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
-                        <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
                     </div>
+                    <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
+                    <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
+                                   v-show="currentTab == 'Commanding'"></command-input>
+                    <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
+                    <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
+                    <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
                 </div>
             </template>
 
-
+            <template id="logs-template">
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <label for="logselect">Available Logs:</label>
+                        <v-select id="logselect"
+                                  :clearable="false" :searchable="true"
+                                  :filterable="true"  :options="options"
+                                  v-model="selected">
+                        </v-select>
+                    </div>
+                    <div class="fp-scroll-container">
+                        <div class="fp-scrollable fp-color-logging">
+                            <pre><code>{{logs[selected]}}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </template>
             <!--
             Command Templates:
 
             Some such thing.
             -->
             <template id="command-input-template">
-                <div>
-                    <h2>Command Sending: {{ selected.full_name }}</h2>
-                    <div class="form-row">
-                        <div class="form-group col-4">
-                            <label for="mnemonic">Mnemonic</label>
-                            <v-select id="mnemonic" style="flex: 1 1 auto;"
-                                      :clearable="false" :searchable="true"
-                                      :filterable="true"  label="full_name" :options="commandList" v-model="selected">
-                            </v-select>
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <h2>Command Sending: {{ selected.full_name }}</h2>
+                        <div class="form-row">
+                            <div class="form-group col-4">
+                                <label for="mnemonic">Mnemonic</label>
+                                <v-select id="mnemonic" style="flex: 1 1 auto;"
+                                          :clearable="false" :searchable="true"
+                                          :filterable="true"  label="full_name" :options="commandList" v-model="selected">
+                                </v-select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col" v-for="argument in selected.args">
+                                <command-argument :argument="argument"></command-argument>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <button type="button" class="col-2 btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
+                            <button type="button" :disabled="active" class="col-2 btn btn-success" v-on:click="sendCommand">
+                                Send Command
+                            </button>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group col" v-for="argument in selected.args">
-                            <label :for="argument.name">{{ argument.name }}</label>
-                            <input type="text" :id="argument.name" class="form-control"
-                                 :placeholder="argument.name"
-                                 v-model="argument.value">
+                    <div class="fp-flex-repeater">
+                        <div class="fp-flex-header">
+                            <h2>Command History</h2>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <button type="button" class="col-2 btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
-                        <button type="button" :disabled="active" class="col-2 btn btn-success" v-on:click="sendCommand">
-                            Send Command
-                        </button>
-                    </div>
-                    <div>
-                        <h2>Command History</h2>
                         <fp-table :header-columns="['Command Time', 'Command Id', 'Command Mnemonic', 'Command Args']"
                                   :items="cmdhist"
                                   :item-to-columns="columnify"
@@ -117,6 +136,24 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <p class="mb-1">Arguments: {{ command.args }}</p>
                 </a>
             </template>
+            <!--
+            Command argument template
+            -->
+            <template id="command-argument-template">
+                <div>
+                    <label :for="argument.name">{{ argument.name }}</label>
+                    <input v-if="argument.type != 'Enum'" :type="inputType[0]" :id="argument.name" class="form-control"
+                           :placeholder="argument.name" :pattern="inputType[1]"
+                           v-model="argument.value">
+                    <v-select v-if="argument.type == 'Enum'" :id="argument.name" style="flex: 1 1 auto;"
+                              :clearable="false" :searchable="true"
+                              :filterable="true"  label="full_name" :options="argument.possible"
+                              v-model="argument.value">
+                    </v-select>
+                    <div>{{ argument.error }}</div>
+                </div>
+            </template>
+
             <!--
             Event Templates:
 
@@ -167,8 +204,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 </tr>
             </template>
             <template id="fp-table-template">
-                <div>
-                    <div class="row">
+                <div class="fp-flex-repeater">
+                    <div class="row fp-flex-header">
                         <div class="col-8"></div>
                         <div class="col-1">Filters:</div>
                         <div class="col-3">
@@ -179,30 +216,32 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         </div>
                     </div>
                     <div class="fp-scroll-container">
-                        <table  class="sortable table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th v-if="editing" class="sorttable_nosort">
-                                        <input type="checkbox" v-on:input="checkAll" ref="allbox"
-                                            :checked="view.length == items.length">
-                                    </th>
-                                    <th v-for="column in headerColumns">{{ column }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr is="fp-row" v-for="item in filteredItems" :item="item"
-                                    :item-to-columns="itemToColumns"
-                                    :row-style="rowStyle"
-                                    :key="itemToUnique(item)"
-                                    :editing="editing"
-                                    :in-view="inView(item)"
-                                    v-on:row-checked="checkedChild">
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="fp-scrollable">
+                            <table  class="sortable table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th v-if="editing" class="sorttable_nosort">
+                                            <input type="checkbox" v-on:input="checkAll" ref="allbox"
+                                                :checked="view.length == items.length">
+                                        </th>
+                                        <th v-for="column in headerColumns">{{ column }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr is="fp-row" v-for="item in filteredItems" :item="item"
+                                        :item-to-columns="itemToColumns"
+                                        :row-style="rowStyle"
+                                        :key="itemToUnique(item)"
+                                        :editing="editing"
+                                        :in-view="inView(item)"
+                                        v-on:row-checked="checkedChild">
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <!-- If the table supports editing views, these features support the edit context of the view -->
-                    <div class="row" v-if="editing">
+                    <div class="row fp-flex-header" v-if="editing">
                         <div class="col-4"></div>
                         <div class="btn-group col-8">
                             <div type="button" class="btn btn-danger" v-on:click="clearView">Clear</div>
@@ -213,14 +252,13 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <div type="button" class="btn btn-success" v-on:click="saveView">Done</div>
                         </div>
                     </div>
-                    <div class="row" v-if="!editing">
+                    <div class="row fp-flex-header" v-if="!editing">
                         <div class="col-10"></div>
                         <button type="button" class="col-2 btn btn-primary" v-if="supportViews && !editing"
                                 v-on:click="editViews">Edit View</button>
                     </div>
                 </div>
             </template>
-
         </div>
     </body>
 </html>

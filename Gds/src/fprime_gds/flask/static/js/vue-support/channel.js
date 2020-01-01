@@ -27,7 +27,8 @@ Vue.component("channel-table", {
             if (item.time == null || item.val == null) {
                 return ["", "0x" + item.id.toString(16), item.template.full_name, ""];
             }
-            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, item.val]
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
+                (typeof(item.display_text) !== "undefined")? item.display_text : item.val]
         },
         /**
          * Converts a channel to a unique rendering key. For channels, ids are unique, and thus just use that.

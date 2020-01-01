@@ -21,10 +21,11 @@ function(cheetah CHEETAH_TEMPLATES)
   # forces cheetah templates to be compiled and up-to-date before running the auto-coder.
   string(REPLACE ".tmpl" ".py" PYTHON_TEMPLATES "${CHEETAH_TEMPLATES}")
   # Setup the cheetah-compile command that runs the physical compile of the above statement. This
-  # controls the work to be done to create PYTHON_TEMPLATES from ${CHEETAH_TEMPLATES. 
+  # controls the work to be done to create PYTHON_TEMPLATES from ${CHEETAH_TEMPLATES.
+  find_program(CHEETAH_EXE NAMES "cheetah-compile" "cheetah-compile3")
   add_custom_command(
     OUTPUT ${PYTHON_TEMPLATES}
-    COMMAND cheetah-compile ${CHEETAH_TEMPLATES}
+    COMMAND ${CHEETAH_EXE} ${CHEETAH_TEMPLATES}
     DEPENDS ${CHEETAH_TEMPLATES}
   )
   # Add the above PYTHON_TEMPLATES to the list of sources for the CODEGEN_TARGET target. Thus they will be
@@ -54,7 +55,7 @@ function(serialns AI_XML)
     if (${ERR_RETURN})
         message(FATAL_ERROR "${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py ${AI_XML} failed.")
     endif()
-    set(SERIAL_NS "${NS}" PARENT_SCOPE) 
+    set(SERIAL_NS "${NS}" PARENT_SCOPE)
 endfunction(serialns)
 
 
@@ -99,34 +100,22 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
   # variant of this command.
   get_filename_component(CPP_NAME ${AC_FINAL_SOURCE} NAME)
   get_filename_component(HPP_NAME ${AC_FINAL_HEADER} NAME)
-  if (GENERATE_AC_IN_SOURCE)
-    add_custom_command(
-      OUTPUT ${OUTPUT_PRODUCTS}
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
-      PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR} FPRIME_CORE_DIR=${FPRIME_CORE_DIR}
-      ${FPRIME_CORE_DIR}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML} 
-      DEPENDS ${AC_FINAL_XML}
-    )
-  else()
-    #Setup the output directory
-    get_filename_component(TO_MK_DIR ${AC_FINAL_SOURCE} DIRECTORY)
-    add_custom_command(
-        OUTPUT ${TO_MK_DIR}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${TO_MK_DIR}
-    ) 
-    add_custom_command(
+  #Setup the output directory
+  get_filename_component(TO_MK_DIR ${AC_FINAL_SOURCE} DIRECTORY)
+  if (NOT "${TO_MK_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
+      message(FATAL_ERROR "Output directory: ${TO_MK_DIR} differs from expected output directory ${CMAKE_CURRENT_BINARY_DIR}")
+  endif()
+  add_custom_command(
       OUTPUT  ${OUTPUT_PRODUCTS}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_CURRENT_BUILD_ROOT}
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR} FPRIME_CORE_DIR=${FPRIME_CORE_DIR}
       ${FPRIME_CORE_DIR}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML}
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${CPP_NAME} ${AC_FINAL_SOURCE}
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${HPP_NAME} ${AC_FINAL_HEADER}
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME}
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${HPP_NAME}
-      DEPENDS ${AC_FINAL_XML} ${TO_MK_DIR}
-    )
-  endif()
+      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${CPP_NAME} ${HPP_NAME} ${CMAKE_CURRENT_BINARY_DIR}
+      #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${HPP_NAME} ${AC_FINAL_HEADER}
+      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME} ${HPP_NAME}
+      #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${HPP_NAME}
+      DEPENDS ${AC_FINAL_XML} #${TO_MK_DIR}
+  )
   set(AC_OUTPUTS ${OUTPUT_PRODUCTS} PARENT_SCOPE)
 endfunction(acwrap)

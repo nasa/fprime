@@ -12,4 +12,4 @@ SRC = Logger.cpp \
 HDR = Logger.hpp \
       LogAssert.hpp
 
-SUBDIRS = 
+SUBDIRS = test

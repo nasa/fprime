@@ -9,6 +9,7 @@
 #                      "start-time": "YYYY-MM-DDTHH:MM:SS.sss" #Start time for event listing
 #                  }
 ####
+import types
 import flask_restful
 import flask_restful.reqparse
 
@@ -49,4 +50,11 @@ class ChannelHistory(flask_restful.Resource):
         Return the telemetry history object
         """
         args = self.parser.parse_args()
-        return {"history": self.history.retrieve_new()}
+        new_chans = self.history.retrieve_new()
+        for chan in new_chans:
+            # Add the 'display_text' to the event, along with a getter
+            if chan.template.fmt_str is not None:
+                setattr(chan, "display_text", chan.template.fmt_str % (chan.val_obj.val))
+                func = lambda this: this.display_text
+                setattr(chan, "get_display_text", types.MethodType(func, chan))
+        return {"history": new_chans}

@@ -10,9 +10,5 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PacketStatSerializableAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
 )
-set(MOD_DEPS "")
-# For shared libraries, Os must exist in the module list
-if (BUILD_SHARED_LIBS)
-    list(APPEND MOD_DEPS "Fw/Cmd")
-endif()
+set(MOD_DEPS "Fw/Cmd")
 register_fprime_module()
