@@ -22,10 +22,23 @@ cd fprime
 pip install Fw/Python Gds
 ```
 
+## Example Deployments
+
+F´ comes with two example deployments. The deployments represent working F´ applications for help understanding F´. These examples may be used 
+as reference, or cloned to start a new project. More step-by-step tutorials are linked in the next section, but as these are complete applications
+it is recommended that the user at least build and run the first one to ensure that F´ is installed correctly.
+
+[Ref](./Ref/README.md): The standard reference application demonstrates how most of the system components should be wired together. In addition,
+the reference application can be build on Linux or Mac OSX allowing the user to get started immediately without the need for embedded hardware.
+
+[RPI](./RPI/README.md): The Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded
+Linux computer). This application shows the user how to get started in the embedded world with cross-compiling, dirvers, and more. The Raspberry
+Pi was chosen as it is comercially available for a low price and runs Linux.
+
 ## Tutorials
 
-F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more. These 
-tutorials are available here: https://github.com/nasa/fprime/tree/master/docs/Tutorials
+F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system
+ and topology design, tooling, and more. These tutorials are available here: [docs/Tutorials/README.md](./docs/Tutorials/README.md).
 
 ## User Guide, Architecture Specification, and Further Documentation
 

@@ -1,43 +1,39 @@
----
-title: GPS Tutorial
-layout: default
----
-# F' GPS Tutorial
+# F´ GPS Tutorial
 
 In this guide, we will cover the basics of working with F´. To start with, we retrieve the code, build the reference application, and verify
 that the reference application will run. After that we will create a custom F´ component and create our own application. Along the way
 we will cover: Components, Topologies, Events, Telemetry, and Commands. In addition, we will see how to modify the build system to include our
 new components and topologies.
 
-## Getting Started with F' and the Reference Application
+## Getting Started with F´ and the Reference Application
 
-The first step to running F' is to ensure that the required build tools are available on your system. This is all covered at length in the installation
+The first step to running F´ is to ensure that the required build tools are available on your system. This is all covered at length in the installation
 document found at: [INSTALL.md](../../INSTALL.md). Before continuing with this tutorial, please ensure that you have successfully installed F´. This
 will also take you through verifying the install you performed.
 
 ## Custom Application Goals
 
-In the DIY electronics community there is an abundace of cheap GPS receivers based around the NMEA protocol. These receivers often suport a USB interface
+In the DIY electronics community there is an abundance of cheap GPS receivers based around the NMEA protocol. These receivers often support a USB interface
 pretending to be am ACM device for basic serial communication. The messages these receivers send are NMEA formatted text.
 
 ![USB GPS Hardware](img/usb-gps.jpg)
 
 This tutorial will show how to integrate one of these GPS receivers with the F´ framework by wrapping it in a Component and defining commands,
 telemetry, and log events. Finally, we will modify the reference Topology to include this new component such that we can downlink our telemetry to
-the F' supplied ground station (GSE).
+the F´ supplied ground station (GSE).
 
 **Note:** all the sample files, and a working deployment are available at [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application).
 
-## Creating a Custom F' Component
+## Creating a Custom F´ Component
 
-In this next section we will create a custom F' component for reading GPS data off a UART based GPS module. We will then downlink this data as telemetry
+In this next section we will create a custom F´ component for reading GPS data off a UART based GPS module. We will then downlink this data as telemetry
 and finish up by adding an event to report GPS lock status and a command to report lock-status on demand.
 
 ### Designing the GPS Component
 
 The F’ designs are specified by XML files that are compiled by code generators. An XML file represents a single component including the ports it uses
-to communicate with other components as well as references to the dictonaries that define events/log messages, telmetry, and commands. Further discussion
-of components, ports, events, telemetry, and commands can be found in the F' user guide. [User Guide](docs/UsersGuide/FprimeUserGuide.pdf). *Side note:* 
+to communicate with other components as well as references to the dictionaries that define events/log messages, telmetry, and commands. Further discussion
+of components, ports, events, telemetry, and commands can be found in the F´ user guide. [User Guide](docs/UsersGuide/FprimeUserGuide.pdf). *Side note:* 
 Ports are also defined with XML, however; this application does not need any customized ports and thus we need not elaborate here.
 
 The first step to making a compnent is to make a project directory to hold our project's components, and a component directory for our GPS. This is do
@@ -236,7 +232,7 @@ If these commands pass without errors, we are ready to start coding our module.
 ## Coding Our Module
 
 Now it is time to code our module to read the GPS module and downlink the GPS telemetry. This is where the framework will help us considerably. All 
-these previous steps set us up to use the auto-coding features of F'. We can generate the basic implementation of the code by using the make 
+these previous steps set us up to use the auto-coding features of F´. We can generate the basic implementation of the code by using the make 
 command *make impl*, which generates needed *GpsComponentImpl.cpp-tmpl* and *GpsComponentImpl.hpp-tmpl* files. We can use these as the basis for our 
 implementation. In addition, the framework will also generate * *Ac.?pp* files, which handle the work of connecting ports allowing us to write 
 minimal code to support the component interface. First we generate code templates, and move them into place (because 
