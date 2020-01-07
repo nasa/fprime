@@ -21,6 +21,7 @@ import shutil
 
 import fprime.fbuild
 
+
 UT_SUFFIX = "-ut"
 ACTION_MAP = {
     "generate": {
@@ -176,6 +177,12 @@ def parse_args(args):
     hparser.add_argument("hash", type=lambda x: int(x, 0), help="F prime assert hash to associate with a file.")
     hparser.add_argument("-t", "--unittest", default=False, action="store_true",
                          help="Use F prime ut build, not regular build")
+    # Check for a valid builder first
+    try:
+        fprime.fbuild.builder()
+    except Exception as exc:
+        print("[ERROR]", exc, exc.stderr, file=sys.stderr)
+        sys.exit()
     # Parse and prepare to run
     parsed = parser.parse_args(args)
     if not hasattr(parsed, "command") or parsed.command is None:
@@ -193,7 +200,13 @@ def confirm():
     """
     # Loop "forever"
     while True:
-        confirm = input("Purge this directory (yes/no)?")
+        # Py 2/3
+        prompter = input
+        try:
+            prompter = raw_input
+        except NameError:
+            pass
+        confirm = prompter("Purge this directory (yes/no)?")
         if confirm.lower() in ["y", "yes"]:
             return True
         elif confirm.lower() in ["n", "no"]:
