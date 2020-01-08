@@ -11,7 +11,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 	set(SOURCE_FILES
 		"${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentAi.xml"
 		"${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImplStub.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImpl.cpp"
 	)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(SOURCE_FILES
