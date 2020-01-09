@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<component name="Gps" kind="active" namespace="GpsApp" modeler="true">
+
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+    <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_dictionary>GpsApp/Gps/Commands.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Telemetry.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Events.xml</import_dictionary>
+    <ports>
+
+        <port name="cmdRegOut" data_type="Fw::CmdReg"  kind="output" role="CmdRegistration"    max_number="1">
+        </port>
+
+        <port name="eventOut" data_type="Fw::Log"  kind="output" role="LogEvent"    max_number="1">
+        </port>
+
+        <port name="cmdIn" data_type="Fw::Cmd"  kind="input" role="Cmd"    max_number="1">
+        </port>
+
+        <port name="serialRecv" data_type="Drv::SerialRead"  kind="async_input"    max_number="1">
+        </port>
+
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
+        </port>
+
+        <port name="tlmOut" data_type="Fw::Tlm"  kind="output" role="Telemetry"    max_number="1">
+        </port>
+
+        <port name="cmdResponseOut" data_type="Fw::CmdResponse"  kind="output" role="CmdResponse"    max_number="1">
+        </port>
+    </ports>
+
+</component>

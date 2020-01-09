@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  GpsApp/Gps/Commands.xml
+
+======================================================================-->
+
+<commands>
+
+  <command
+    kind="async"
+    opcode="0"
+    mnemonic="Gps_ReportLockStatus"
+  >
+    <comment>A command to force an EVR reporting lock status.</comment>
+  </command>
+
+</commands>

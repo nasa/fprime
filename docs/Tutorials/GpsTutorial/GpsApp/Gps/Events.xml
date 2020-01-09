@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  GpsApp/Gps/Events.xml
+
+======================================================================-->
+
+<events>
+
+  <event
+    id="0"
+    name="Gps_LockAquired"
+    severity="ACTIVITY_HI"
+    format_string="GPS lock acquired"
+  >
+    <comment>A notification on GPS lock aquired</comment>
+  </event>
+
+  <event
+    id="1"
+    name="Gps_LockLost"
+    severity="WARNING_HI"
+    format_string="GPS lock lost"
+  >
+    <comment>A notification on GPS lock lost</comment>
+  </event>
+
+</events>
