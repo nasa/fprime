@@ -8,6 +8,8 @@
  * @author mstarch
  */
 import {filter, timeToString} from "./utils.js";
+import {config} from "../config.js";
+
 /**
  * events-list:
  *
@@ -70,14 +72,22 @@ export let EventMixins = {
      * @param newEvents: new full list of events to render
      */
     updateEvents(newEvents) {
+        let timeout = config.dataTimeout * 1000;
         this.vue.events.push(...newEvents);
+        // Set active events, and register a timeout to turn it off again
+        if (newEvents.length > 0) {
+            let vue_self = this.vue;
+            vue_self.eventsActive = true;
+            clearTimeout(this.eventTimeout);
+            this.eventTimeout = setTimeout(() => vue_self.eventsActive = false, timeout);
+        }
     },
     /**
      * Sets up the needed event data items.
-     * @return [] an empty list to fill with events
+     * @return {[], []} an empty list to fill with events
      */
     setupEvents() {
-        return {"events": []};
+        return {"events": [], "eventsActive": false};
     }
 };
 
