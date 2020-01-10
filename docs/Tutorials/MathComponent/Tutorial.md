@@ -6,10 +6,9 @@ result via a `MathResult` port.
 
 ![`Component` Diagram](img/Comp.jpg "Component Pair")
 
-All the code in this tutorial can be found in this directory. The actual location of the components will be in the `Ref`
-directory, where a demonstration reference application is located. 
-
-#### **TODO** improve the above sentence
+All the code in this tutorial can be found in this directory. This code will work if it is copied or reimplemented
+within the `Ref` directory of F´. This tutorial will walk the user through modifying the Reference app, Ref, to
+implement the math components.
 
 ## Prerequisites
 

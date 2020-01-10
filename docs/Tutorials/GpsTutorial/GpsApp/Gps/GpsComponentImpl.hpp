@@ -1,5 +1,5 @@
 // ====================================================================== 
-// \title  GpsImpl.hpp
+// \title  GpsComponentImpl.hpp
 // \author lemstarch
 // \brief  hpp header file for the sample F' GPS component, based on a
 //         NMEA GPS receiver.
@@ -8,11 +8,13 @@
 // Copyright 2018, lestarch
 // ====================================================================== 
 
-#ifndef Gps_HPP
-#define Gps_HPP
+#ifndef GpsComponentImpl_HPP
+#define GpsComponentImpl_HPP
 
 #include "GpsApp/Gps/GpsComponentAc.hpp"
 
+// Need to define the memory footprint of our buffers. This means defining a count of buffers, and how big each is. In
+// this example, we will allow the Gps component to manage its own buffers.
 #define NUM_UART_BUFFERS 20
 #define UART_READ_BUFF_SIZE 1024
 
@@ -23,7 +25,7 @@ namespace GpsApp {
   {
       /**
        * GpsPacket:
-       *   A structure containing the information in the GPS location pacaket
+       *   A structure containing the information in the GPS location packet
        * received via the NMEA GPS receiver.
        */
       struct GpsPacket {
@@ -95,7 +97,7 @@ namespace GpsApp {
       );
       //!< Has the device acquired GPS lock?
       bool m_locked;
-      //!< Buffers and buffer storage
+      //!< Create member variables to store buffers and the data array that those buffers use for storage
       Fw::Buffer m_recvBuffers[NUM_UART_BUFFERS];
       BYTE m_uartBuffers[NUM_UART_BUFFERS][UART_READ_BUFF_SIZE];
     };

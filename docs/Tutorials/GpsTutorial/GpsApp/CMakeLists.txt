@@ -1,5 +1,5 @@
 ####
-# 'GpsApp' Deployment:
+# GPS Tutorial 'GpsApp' Deployment CMakeLists.txt: GpsApp/CMakeLists.txt
 #
 # This sets up the build for the 'GpsApp' Application, including the custom
 # components. In addition, it imports FPrime.cmake, which includes the core F Prime
@@ -15,10 +15,10 @@
 ##
 # Section 1: Basic Project Setup
 #
-# This contains the basic project information. Specifically, a cmake version and
-# project definition.
+# This contains the basic project information. Specifically, a cmake version and project definition. It also defines our
+# default paths to the F prime framework, and sets a default toolchain.
 ##
-project(GpsApp C CXX)
+project(GpsApp C CXX)  # Should match the directory it is in
 cmake_minimum_required(VERSION 3.5)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
@@ -48,8 +48,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ##
 # Section 3: Components and Topology
 #
-# This section includes deployment specific directories. This allows use of non-
-# core components in the topology, which is also added here.
+# This section includes deployment specific directories. This allows use of non- core components in the topology,
+# which is also added here.
 ##
 # Add component subdirectories
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Gps/")

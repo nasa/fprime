@@ -2,7 +2,7 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "GpsApp">
 
-    <!-- Immport component declarations -->
+    <!-- Import component declarations -->
 
     <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
@@ -26,6 +26,7 @@
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
+    <!-- GPS tutorial: here we replaced the Ref component imports with the two components we need -->
     <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
     <import_component_type>GpsApp/Gps/GpsComponentAi.xml</import_component_type>
 
@@ -58,7 +59,7 @@
     <instance namespace="Svc" name="rateGroup2Comp" type="ActiveRateGroup" base_id="161"  base_id_window="20" />
     <instance namespace="Svc" name="rateGroup3Comp" type="ActiveRateGroup" base_id="241"  base_id_window="20" />
 
-    <!-- GpsApp Example Components -->
+    <!-- GPS Tutorial: GpsApp Example Components -->
 
     <instance namespace="GpsApp" name="gpsImpl" type="Gps" base_id="321"  base_id_window="20" />
     <instance namespace="Drv" name="gpsSerial" type="LinuxSerialDriver" base_id="481"  base_id_window="20" />
@@ -102,8 +103,7 @@
          <source component = "fileDownlink" port = "cmdRegOut" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
     </connection>
-    
-    
+    <!-- GPS Tutorial connection -->
     <connection name = "GpsReg">
          <source component = "gpsImpl" port = "cmdRegOut" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
@@ -134,7 +134,7 @@
          <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "5"/>
          <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
     </connection>
-    
+    <!-- GPS Tutorial connection -->
     <connection name = "GpsDisp">
          <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
          <target component = "gpsImpl" port = "cmdIn" type = "Cmd" num = "0"/>
@@ -166,6 +166,7 @@
         <source component = "fileDownlink" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
     </connection>
+    <!-- GPS Tutorial connection -->
     <connection name = "GpsStat">
          <source component = "gpsImpl" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
          <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
@@ -241,6 +242,7 @@
          <source component = "rateGroup3Comp" port = "Log" type = "Log" num = "0"/>
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
+    <!-- GPS Tutorial connections -->
     <connection name = "GpsEvt">
          <source component = "gpsImpl" port = "eventOut" type = "Log" num = "0"/>
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -292,18 +294,18 @@
          <source component = "rateGroup3Comp" port = "LogText" type = "LogText" num = "0"/>
          <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
+    <!-- GPS Tutorial connections -->
     <connection name = "GUartText">
         <source component = "gpsSerial" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
-    <!--connection name = "recvBufText">
-         <source component = "recvBuffComp" port = "LogText" type = "LogText" num = "0"/>
+    <connection name = "GpsText">
+         <source component = "gpsImpl" port = "textEventOut" type = "LogText" num = "0"/>
          <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-    </connection-->
+    </connection>
     
 
     <!-- Telemetry Connections -->
-
     <connection name = "fileDownlinkTlm">
         <source component = "fileDownlink" port = "tlmOut" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
@@ -344,6 +346,7 @@
         <source component = "health" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
+    <!-- GPS Tutorial connections -->
     <connection name = "GpsTlm">
          <source component = "gpsImpl" port = "tlmOut" type = "Tlm" num = "0"/>
          <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
@@ -354,7 +357,6 @@
     </connection>
     
     <!-- Parameter Connections -->
-   
     <connection name = "RecvBuffPrmGet">
          <source component = "recvBuffComp" port = "ParamGet" type = "PrmGet" num = "0"/>
          <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
@@ -430,6 +432,7 @@
         <source component = "groundIf" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
+    <!-- GPS Tutorial connections -->
     <connection name = "GUartTime">
         <source component = "gpsSerial" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
@@ -612,7 +615,10 @@
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
     </connection>
     
-    <!-- GpsApp Connections -->
+    <!-- GPS tutorial: GpsApp Connections
+    Here we add the connections that aren't part of standard connection patterns, namely we attach the serial ports to
+    the GpsApp.
+    -->
     <connection name = "GpsAppConn">
         <source component = "gpsSerial" port = "serialRecv" type = "SerialDriverRead" num = "0"/>
         <target component = "gpsImpl" port = "serialRecv" type = "SerialDriverRead" num = "0"/>
@@ -621,5 +627,4 @@
         <source component = "gpsImpl" port = "serialBufferOut" type = "BufferSend" num = "0"/>
         <target component = "gpsSerial" port = "readBufferSend" type = "BufferSend" num = "0"/>
     </connection>
-    
 </assembly>

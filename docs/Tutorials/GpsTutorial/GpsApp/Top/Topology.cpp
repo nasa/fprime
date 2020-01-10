@@ -274,9 +274,9 @@ void constructApp(int port_number, char* hostname, char* device) {
                    Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
                    true))
     {
-        Fw::Logger::logMsg("[ERROR] Failed to open GPS UART\n");
+        Fw::Logger::logMsg("[ERROR] Failed to open GPS UART: %s\n", reinterpret_cast<POINTER_CAST>(device));
     } else {
-        Fw::Logger::logMsg("[INFO] Opened GPS UART\n");
+        Fw::Logger::logMsg("[INFO] Opened GPS UART: %s\n", reinterpret_cast<POINTER_CAST>(device));
         uart_connected = true;
     }
     // register ping table
@@ -298,9 +298,9 @@ void constructApp(int port_number, char* hostname, char* device) {
     //GPS-- GPS thread starting. The GPS component is active, so its governing thread must be started
     //      with the unique id, defined above, a priority 256 (highest) - 0 (lowest) set here to 99, and
     //      a stack size for the thread, here 10KB is used.
-    gpsImpl.start(ACTIVE_COMP_GPS, 99, 10*1024);
+    gpsImpl.start(ACTIVE_COMP_GPS, 95, 10*1024);
     if (uart_connected) {
-        gpsSerial.startReadThread(100, 20 * 1024);
+        gpsSerial.startReadThread(94, 20 * 1024);
     }
     fileDownlink.start(ACTIVE_COMP_FILE_DOWNLINK, 100, 10*1024);
     fileUplink.start(ACTIVE_COMP_FILE_UPLINK, 100, 10*1024);

@@ -1,405 +1,426 @@
 # F´ GPS Tutorial
 
-In this guide, we will cover the basics of working with F´. To start with, we retrieve the code, build the reference application, and verify
-that the reference application will run. After that we will create a custom F´ component and create our own application. Along the way
-we will cover: Components, Topologies, Events, Telemetry, and Commands. In addition, we will see how to modify the build system to include our
-new components and topologies.
+In this guide, we will cover the basics of working with F´ by attaching a GPS receiver to a serial driver and running
+the application on a Raspberry PI. In order to fully benefit from this tutorial, the user should acquire any NMEA
+compatible UART GPS receiver and a raspberry pi.  In this tutorial, we use a NMEA GPS receiver with micro-USB such that
+the code may be run on both the laptop and the Raspberry PI.
 
-## Getting Started with F´ and the Reference Application
-
-The first step to running F´ is to ensure that the required build tools are available on your system. This is all covered at length in the installation
-document found at: [INSTALL.md](../../INSTALL.md). Before continuing with this tutorial, please ensure that you have successfully installed F´. This
-will also take you through verifying the install you performed.
-
-## Custom Application Goals
-
-In the DIY electronics community there is an abundance of cheap GPS receivers based around the NMEA protocol. These receivers often support a USB interface
-pretending to be am ACM device for basic serial communication. The messages these receivers send are NMEA formatted text.
+In the DIY electronics community there is an abundance of cheap GPS receivers based around the NMEA protocol. These
+receivers may support a USB interface pretending to be an ACM device for basic serial communication. The messages these
+receivers send are NMEA formatted ASCII text.
 
 ![USB GPS Hardware](img/usb-gps.jpg)
 
-This tutorial will show how to integrate one of these GPS receivers with the F´ framework by wrapping it in a Component and defining commands,
-telemetry, and log events. Finally, we will modify the reference Topology to include this new component such that we can downlink our telemetry to
-the F´ supplied ground station (GSE).
+This tutorial will show how to integrate one of these GPS receivers with the F´ framework by wrapping it in a Component
+and defining commands, telemetry, and log events. We will create a GpsApp deployment for the Component where it will
+be wired to a standard UART driver in order to receive messages. Then we can cross compile it for the Raspberry PI and
+run the application against the F´ ground system.
 
-**Note:** all the sample files, and a working deployment are available at [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application).
+**Note:** all the sample files are available in this Tutorial's directory in the F´checkout, and a working full-checkout
+ is available at [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application).
+
+## Prerequisites
+
+This tutorial requires the user to have some basic software skills and have installed F´. The prerequisite skills to
+understand this tutorial are as follows:
+
+1) Working knowledge of Unix; how to navigate in a shell and execute programs
+2) An understanding of C++, including class declarations and inheritance
+3) An understanding of how XML is structured
+4) An understanding of the raspberry pi, specifically SSHing into the pi and running applications
+
+Installation can be done by following the installation guide found at: [INSTALL.md](../../../INSTALL.md). This guide
+will walk the user through the installation process and verifying the installation.  In addition, users may wish to
+follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
+tools.
 
 ## Creating a Custom F´ Component
 
-In this next section we will create a custom F´ component for reading GPS data off a UART based GPS module. We will then downlink this data as telemetry
-and finish up by adding an event to report GPS lock status and a command to report lock-status on demand.
+In this next section we will create a custom F´ component for reading GPS data off a UART based GPS module. It will 
+receive data from a UART read port, process the data, and report telemetry from that data. We will then finish up by
+adding an event to report GPS lock status when it changes and a command to report lock status on demand.
+
+Our custom component has the following functional block diagram:
+
+![GPS Component Diagram](img/gps-comp.png)
+
+**Note:** there are a few other ports our component will need to wire to other components in the system, the above
+diagram captures the ports needed for our desired functionality.
 
 ### Designing the GPS Component
 
-The F’ designs are specified by XML files that are compiled by code generators. An XML file represents a single component including the ports it uses
-to communicate with other components as well as references to the dictionaries that define events/log messages, telmetry, and commands. Further discussion
-of components, ports, events, telemetry, and commands can be found in the F´ user guide. [User Guide](docs/UsersGuide/FprimeUserGuide.pdf). *Side note:* 
-Ports are also defined with XML, however; this application does not need any customized ports and thus we need not elaborate here.
+The F’ designs are specified by XML files that are processed by code generators to create C++ source and header files.
+An XML file represents a single entity in the F´ system (Component, Port, Serializable, or Deployment). Command, Event,
+and Telemetry Channel specifications are also written in XML.  Further information is in the full F´ user guide.
+[User Guide](../../UsersGuide/FprimeUserGuide.pdf). This application does not need any custom ports, as we are using the
+standard ports to create our GPS handler. Custom ports can be seen in the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
-The first step to making a compnent is to make a project directory to hold our project's components, and a component directory for our GPS. This is do
-as follows:
+In this section we will create a directory for our GPS component, and design the component through XML. The first step
+to making the component is to make a project directory to hold our project, and a component subdirectory for our GPS.
 
-```
+```shell
 cd fprime
 mkdir -p GpsApp/Gps
 cd GpsApp/Gps
 ```
+All files in this component section will be created in the `Gps` subdirectory.
 
-Next, in this directory, we will create a file called *GpsComponentAi.xml* filled with the below text. This represents our component's design by defining
-the ports it uses to connect with other components and the files used to specify commands, telemetry, and events. As can be seen, we are creating our component
-to have 5 ports:
+Next, in the GPS subdirectory, we will create a file called *GpsComponentAi.xml* filled with the below text. This
+represents our component's design by defining the ports it uses to connect with other components and the files used to
+specify commands, telemetry, and events. As can be seen, we are creating our component with 8 ports, the 4 functional
+ports defined above, and 4 additional ports described below:
 
-1. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component's commands with the command dispatcher
-2. **eventOut**: an output port of *Fw::Log* type used to log events
-3. **cmdIn**: an input port of *Fw::Cmd* type used to process commands sent to this component
-4. **tlmOut**: an output port of *Fw::Tlm* type used to send out telemetry items
-5. **cmdResponseOut**: an output port of *Fw::CmdResponse* type used to signal a command has finished
+1. **cmdIn**: an input port of *Fw::Cmd* type used to process commands sent to this component.
+2. **cmdRegOut**: an output port of *Fw::CmdReg* type used to register this component's with the command dispatcher
+3. **cmdResponseOut**: an output port of *Fw::CmdResponse* type used respond to dispatched commands
+4. **eventOut**: an output port of *Fw::Log* type used to send events out
+5. **textEventOut**: an output port of *Fw::LogText* type used to send events in a text form
+6. **tlmOut**: an output port of *Fw::Tlm* type used to send out telemetry channels
+7. **serialRecv**: an input port of type *Drv::SerialRead* used to receive serial data buffers,
+8. **serialBufferOut**: an output port of type *Fw::BufferSend* used at startup to supply buffers to the serial driver
 
+Input ports are invoked from external components, and must be handled by the component. Output ports are used by this
+component to invoke actions of other components. Here **cmdIn** and **serialRecv** are inputs for commands and serial
+data respectively. Each will define a handler (seen later) to handle these invocations.  All other ports are used to
+invoke other components to send data buffers, events, telemetry, etc.
 
-In addition, our component imports the above port types, and imports 3 dictionaries: Commands.xml, Events.xml, and Telemetry.xml. The GpsComponentAi.xml
-file should look like this:
-
-```
+The `GpsComponentAi.xml` file in the `Gps` subdirectory should look like:
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!-- GPS Tutorial: GpsComponentAi.xml
+
+This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events, and
+Telemetry that represent the GPS link. This will also have a command to emit the lock status of the GPS signal. This
+is an active component, meaning it will have it's own thead. It will therefore process messages at its own pace, and
+will not need an external thread of execution to run on.
+
+It has 3 standard command ports, 2 standard event ports, 1 standard telemetry port, and 2 ports to interact with the
+serial driver.
+-->
 
 <component name="Gps" kind="active" namespace="GpsApp" modeler="true">
-
-    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
-    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <!-- Import command ports -->
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
-    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
-    <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+    <!-- Import event ports -->
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+    <!-- Import telemetry ports -->
+    <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <!-- Import ports for serial driver -->
+    <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <!-- Import command, telemetry, and event dictionaries -->
     <import_dictionary>GpsApp/Gps/Commands.xml</import_dictionary>
     <import_dictionary>GpsApp/Gps/Telemetry.xml</import_dictionary>
     <import_dictionary>GpsApp/Gps/Events.xml</import_dictionary>
+
     <ports>
-
-
-        <port name="cmdRegOut" data_type="Fw::CmdReg"  kind="output" role="CmdRegistration"    max_number="1">
-        </port>
-
-        <port name="eventOut" data_type="Fw::Log"  kind="output" role="LogEvent"    max_number="1">
-        </port>
-
+        <!-- Command port definitions: command input receives commands, command reg out, and response out are
+        ports used to register with the command dispatcher, and return responses to it -->
         <port name="cmdIn" data_type="Fw::Cmd"  kind="input" role="Cmd"    max_number="1">
         </port>
-
-        <port name="schedIn" data_type="Svc::Sched"  kind="async_input"    max_number="1">
+        <port name="cmdRegOut" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
         </port>
-
-        <port name="tlmOut" data_type="Fw::Tlm"  kind="output" role="Telemetry"    max_number="1">
+        <port name="cmdResponseOut" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
         </port>
-
-        <port name="cmdResponseOut" data_type="Fw::CmdResponse"  kind="output" role="CmdResponse"    max_number="1">
+        <!-- Event ports: send events, and text formated events -->
+        <port name="eventOut" data_type="Fw::Log"  kind="output" role="LogEvent"  max_number="1">
+        </port>
+        <port name="textEventOut" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+        </port>
+        <!-- Telemetry ports -->
+        <port name="tlmOut" data_type="Fw::Tlm"  kind="output" role="Telemetry" max_number="1">
+        </port>
+        <!-- Serial ports: one to receive serial data, and one to provide buffers for the serial driver to use -->
+        <port name="serialRecv" data_type="Drv::SerialRead"  kind="async_input" max_number="1">
+        </port>
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
         </port>
     </ports>
-
 </component>
 ```
+This file first imports all *Ai.xml files needed for each port type, imports our command, telemetry channel, and event
+definition XMLs, and then defines all ports as we saw described above. There are several things to note:
 
-Connecting these components together is done at the system level, enabling the individual components to be reused in different applications. We will
-see this step later.
+1. The GPS component is an *active* component, which has a thread of its own to execute on. This was chosen as the GPS
+component has no realtime deadlines and is expected to run in parallel with other components in the system.
+2. *async_input* is used for the input port from the serial driver. The handler should be run on the *active*
+component's thread opposed to the invoking component's thread.
 
-## Creating Commands.xml, Events.xml and Telemetry.xml Dictionaries
+*active* components with *async_input* ports are a fairly common initial design for components. They are typically used
+unless the system has no thread scheduler, there are firm realtime deadlines, or other off-nominal requirements must be
+met. Port and component types are described in more detail in the aforementioned User Guide.
 
-These three XML dictionaries define the structure of commands, events, and telemetry that our component uses. This allows the auto-coding system
-to automatically generate the needed code to process commands, and emit events and telemetry. This allows the developer to concentrate on the specific code for the component.
+Instantiating the GPS component, and connecting it with other components in the system is done at the system level,
+enabling the individual components to be reused in different applications. We will see this step later, after we design
+our Commands, Events and Telemetry. We will also implement the C++ code as well.
 
-First we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This command will trigger an event
-which will report if the GPS is locked or not. Commands.xml should look like the following:
+### Creating Commands.xml, Events.xml and Telemetry.xml Dictionaries
 
-```
+These three XML dictionaries define the structure of commands, events, and telemetry that our component uses. This will
+allow the autocoder to automatically generate the needed code to process commands, and emit events and telemetry. This
+allows the developer to concentrate on the specific code for the component as opposed to hand coding the structure of
+these entities.
+
+First we will create a command dictionary. The purpose of our command is to report the lock status of the GPS unit. This
+command will trigger code to emit an event, which will report if the GPS has "locked" status or not. `Commands.xml` in
+the `Gps` subdirectory should look like the following:
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<!-- GPS Tutorial: GpsApp/Gps/Commands.xml
 
-<!--====================================================================== 
-
-  GpsApp/Gps/Commands.xml
-
-======================================================================-->
-
+This defines a single command to report the lock status of the GPS. This demonstrates a simple command that is useful
+when working with GPS to determine if the data should be trusted.
+-->
 <commands>
-
-  <command
-    kind="async"
-    opcode="0"
-    mnemonic="Gps_ReportLockStatus"
-  >
-    <comment>A command to force an EVR reporting lock status.</comment>
-  </command>
-
+    <!-- Define a single command that runs asynchronously on the component's own thread. The opcode "0" is relative to
+    the GPS component's command space.  The mnemonic is the string a user will use to refer to this command. -->
+    <command kind="async" opcode="0" mnemonic="Gps_ReportLockStatus" >
+        <comment>A command to force an EVR reporting lock status.</comment>
+    </command>
 </commands>
 ```
+There are several notes to consider:
 
-Next we will create an Events.xml dictionary that setup the events our component can log. In this case we have two events, GPS locked and GPS lock lost.
-Here again we have and ID base allowing us to fill in the event offsets later. The Events.xml file should look like:
+1. We use an *async*s command  for the same reason as we use *async_input* ports above.
+2. Each component defines it's own set of opcodes indexed from 0. The autocoder will prevent collisions between
+components by adding a prefix to the component's final opcode.
+3. Users typically refer to the component's mnemonic and the opcode is typically internal to the F´ system.
 
-```
+Next we will create an Events.xml dictionary that setup the events our component can emit. In this case we have two
+events, GPS locked and GPS lock lost. The `Events.xml` file in the `Gps` subdirectory should look like:
+
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<!-- GPS Tutorial: GpsApp/Gps/Events.xml
 
-<!--====================================================================== 
-
-  GpsApp/Gps/Events.xml
-
-======================================================================-->
-
+This defines two events, one at activity hi level to report that lock has been acquired, and one at warning hi level to
+indicate lock lost.
+-->
 <events>
-
-  <event
-    id="0"
-    name="Gps_LockAquired"
-    severity="ACTIVITY_HI"
-    format_string="GPS lock acquired"
-  >
-    <comment>A notification on GPS lock aquired</comment>
-  </event>
-
-  <event
-    id="1"
-    name="Gps_LockLost"
-    severity="WARNING_HI"
-    format_string="GPS lock lost"
-  >
-    <comment>A notification on GPS lock lost</comment>
-  </event>
-
+    <event id="0" name="Gps_LockAquired" severity="ACTIVITY_HI" format_string="GPS lock acquired">
+        <comment>A notification on GPS lock acquired</comment>
+    </event>
+    <event id="1" name="Gps_LockLost" severity="WARNING_HI" format_string="GPS lock lost">
+        <comment>A warning on GPS lock lost</comment>
+    </event>
 </events>
 ```
+Here it should be noted that:
+1. *id*s are indexed per-component, like opcodes
+2. Typically users refer to names of telemetry channels
+3. Format strings are not downlinked, but stored for display purposes
 
-Finally, we should create a Telemetry.xml dictionary. It will specify that we will downlink latitude, longitude, altitude, time, and current number of 
-satellites visible to the GPS unit. These are all standard fields emitted by a UART based GPS unit. Our file should look like:
+Finally, we should create a Telemetry.xml dictionary. It will specify that we will downlink GPS latitude, GPS longitude,
+GPS altitude, GPS time, and current number of satellites visible to the GPS unit. These are all standard fields emitted
+GPS units and are the heart of our application. Our `Telemetry.xml` file in the `Gps` subdirectory should look like:
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<!-- GPS Tutorial: GpsApp/Gps/Telemetry.xml
 
-<!--====================================================================== 
-
-  GpsApp/Gps/Telemetry
-
-======================================================================-->
-
+This defines four telemetry channels to report basic GPS information.
+-->
 <telemetry>
-
-  <channel
-    id="0"
-    name="Gps_Latitude"
-    data_type="F32"
-    abbrev="GPS-0000"
-  >
-    <comment>The current latitude</comment>
-  </channel>
-
-  <channel
-    id="1"
-    name="Gps_Longitude"
-    data_type="F32"
-    abbrev="GPS-0001"
-  >
-    <comment>The current longitude</comment>
-  </channel>
-
-  <channel
-    id="2"
-    name="Gps_Altitude"
-    data_type="F32"
-    abbrev="GPS-0002"
-  >
-    <comment>The current altitude</comment>
-  </channel>
-
-  <channel
-    id="3"
-    name="Gps_Count"
-    data_type="U32"
-    abbrev="GPS-0003"
-  >
-    <comment>The current number of satilites</comment>
-  </channel>
-
+    <channel id="0" name="Gps_Latitude" data_type="F32" abbrev="GPS-0000">
+        <comment>The current latitude</comment>
+    </channel>
+    <channel id="1" name="Gps_Longitude" data_type="F32" abbrev="GPS-0001">
+        <comment>The current longitude</comment>
+    </channel>
+    <channel id="2" name="Gps_Altitude" data_type="F32" abbrev="GPS-0002">
+        <comment>The current altitude</comment>
+    </channel>
+    <channel id="3" name="Gps_Count" data_type="U32" abbrev="GPS-0003">
+        <comment>The current number of satilites</comment>
+    </channel>
 </telemetry>
 ```
+Some notes:
+1. *id*s are indexed per-component, like opcodes, and event ids
+2. Typically users refer to names of telemetry channels, but a shorthand for display is the abbrev
+3. Telemetry channels can be primitive types and serializable.  All of the GPS data could be reimplemented as a single
+serializable channel.
+
+At this stage, the design of the Gps component has been completed. Before we can implement code, we need to integrate
+the GPS component with the build system. This will be described next.
 
 ## Setting Up the Build System for Gps and GpsApp
 
-TODO: Show how to implement CMake file. And run generate
+Now it is time to create *CMakeList.txt* files for the GPS component, and GpsApp deployment. This will allow us to run
+our GPS component through the autocoder, and receive implementation templates in order to save time/effort.
 
-If these commands pass without errors, we are ready to start coding our module.
+First, in the `Gps` directory, create a module specific *CMakeLists.txt* file. Since we have not created any C++ files,
+our *CMakeLists.txt* will only contain the Ai.xml file we created. We'll add C++ files once we have created them.
+
+The `CMakeLists.txt` created in the `Gps` directory should look like this:
+```
+####
+# GPS Tutorial: GpsApp/Gps/CMakeLists.txt
+#
+# SOURCE_FILES: combined list of source and autocoding files
+# MOD_DEPS: (optional) module dependencies
+#
+# This file will setup the build for the Gps component. This is done by defining the SOURCE_FILES variable and then
+# registering the component as an F prime module. This allows autocoding and more!
+####
+set(SOURCE_FILES
+	"${CMAKE_CURRENT_LIST_DIR}/GpsComponentAi.xml"
+)
+register_fprime_module()
+```
+All the user has to do for components, and ports is to specify a list of source files (including autocoder inputs) and
+call `register_fprime_module()`. Next we will create an F´ deployment makefile. This links in the full F´ build system
+and defines our deployment. This is needed to be able to build our Gps module. We do not yet need a full system design
+(Topology), so we can perform this step now and build the Topology later.
+
+First change to the `GpsApp` we created earlier. It should be the parent of the `Gps` subdirectory we are currently in.
+
+```shell
+cd ..
+```
+
+Now we will create the `CMakeLists.txt` file here with the following content:
+```
+####
+# GPS Tutorial 'GpsApp' Deployment CMakeLists.txt: GpsApp/CMakeLists.txt
+#
+# This sets up the build for the 'GpsApp' Application, including the custom
+# components. In addition, it imports FPrime.cmake, which includes the core F Prime
+# components.
+#
+# This file has several sections.
+#
+# 1. Header Section: define basic properties of the build
+# 2. F prime core: includes all F prime core components, and build-system properties
+# 3. Local subdirectories: contains all deployment specific directory additions
+####
+
+##
+# Section 1: Basic Project Setup
+#
+# This contains the basic project information. Specifically, a cmake version and project definition. It also defines our
+# default paths to the F prime framework, and sets a default toolchain.
+##
+project(GpsApp C CXX)  # Should match the directory it is in
+cmake_minimum_required(VERSION 3.5)
+set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Location of F prime framework" FORCE)
+set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
+
+##
+# Section 2: F prime Core
+#
+# This includes all of the F prime core components, and imports the make-system. F prime core
+# components will be placed in the F-Prime binary subdirectory to keep them from
+# colliding with deployment specific items.
+##
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
+# NOTE: register custom targets between these two lines
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
+# Note: when building a deployment outside of the F prime core directories, then the
+# build root must be re-mapped for use with the standard build system components.
+#
+# In this way, the module names can be predicted as an offset from the (new) build
+# root, without breaking the standard locations of F prime.
+#
+# Uncomment the following lines, and set them to the BUILD_ROOT of your deployment,
+# which is typically one directory up from the CMakeLists.txt in the deployment dir.
+#set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+#message(STATUS "F prime BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
+
+##
+# Section 3: Components and Topology
+#
+# This section includes deployment specific directories. This allows use of non- core components in the topology,
+# which is also added here.
+##
+# Add component subdirectories
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Gps/")
+```
+Most of this file is boilerplate code and is commented to provide guidance. There are still several things to be aware
+of:
+
+1. `project(GpsApp C CXX)` sets up our project. The name "GpsApp" should be the same as our chose directory.
+2. `include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")` includes all the CMake based build utilities for F´.
+3. `include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")` includes all the F´ core code.
+4. `add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Gps/")` adds in our custom component as it isn't F´ core code.
+
+Next, the user may generate an F´ build in order to begin implementing and coding our module. This can be done with the
+following commands run from the `GpsApp` directory:
+```shell
+fprime-util generate
+```
+This command should pass and we can then begin coding our module. If the command is not found, ensure that F´ has been
+installed correctly, and, if using a virtual environment for Python, ensure this environment has been activated.
+
+If the command reports errors, ensure the files match those above (or borrow the sample code from this Tutorial's
+directory) and try again.
 
 ## Coding Our Module
 
-Now it is time to code our module to read the GPS module and downlink the GPS telemetry. This is where the framework will help us considerably. All 
-these previous steps set us up to use the auto-coding features of F´. We can generate the basic implementation of the code by using the make 
-command *make impl*, which generates needed *GpsComponentImpl.cpp-tmpl* and *GpsComponentImpl.hpp-tmpl* files. We can use these as the basis for our 
-implementation. In addition, the framework will also generate * *Ac.?pp* files, which handle the work of connecting ports allowing us to write 
-minimal code to support the component interface. First we generate code templates, and move them into place (because 
-don't already have implementations we can safely rename the template files).
+Now it is time to code our module to read the GPS module and downlink the GPS telemetry. This is where the framework
+will help us considerably. All these previous steps set us up to use the autocoding features of F´. We can generate the
+basic implementation of the code by using the `fprime-util` *impl* command, which generates needed
+*GpsComponentImpl.cpp-tmpl* and *GpsComponentImpl.hpp-tmpl* files. We can use these as the basis for our implementation.
+In addition, the framework will also generate * *Ac.?pp* files, which handle the work of connecting ports allowing us
+to write minimal code to support the component interface. First we generate code templates, and move them into place.
+Since we don't already have implementations  we can safely rename the template files without first checking for existing
+files.
 
-```
+Change back to the `Gps` subdirectory and generate implementations with:
+```shell
+cd Gps
 fprime-util impl
 mv GpsComponentImpl.cpp-template GpsComponentImpl.cpp
 mv GpsComponentImpl.hpp-template GpsComponentImpl.hpp
 ```
+*Note:* If the developer regenerates the templates, care must be taken to not overwrite already implemented code by
+copying the templates to the implementation files.
 
-*Note:* If the developer regenerates the templates, care must be taken to not overwrite already implemented code by copying the templates to the implementation files.
-
-These template file contents are in the following sections.
-
-### GpsComponentImpl.hpp
-```
-#ifndef Gps_HPP
-#define Gps_HPP
-
-#include "GpsApp/Gps/GpsComponentAc.hpp"
-
-namespace GpsApp {
-
-  class GpsComponentImpl :
-    public GpsComponentBase
-  {
-
-    public:
-
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
-
-      //! Construct object Gps
-      //!
-      GpsComponentImpl(
-#if FW_OBJECT_NAMES == 1
-          const char *const compName /*!< The component name*/
-#else
-          void
-#endif
-      );
-
-      //! Initialize object Gps
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
-      //! Destroy object Gps
-      //!
-      ~GpsComponentImpl(void);
-
-    PRIVATE:
-
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
-
-      //! Handler implementation for schedIn
-      //!
-      void schedIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< The call order*/
-      );
-
-    PRIVATE:
-
-      // ----------------------------------------------------------------------
-      // Command handler implementations 
-      // ----------------------------------------------------------------------
-
-      //! Implementation for Gps_ReportLockStatus command handler
-      //! A command to force an EVR reporting lock status.
-      void Gps_ReportLockStatus_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq /*!< The command sequence number*/
-      );
-
-
-    };
-
-} // end namespace GpsApp
-
-#endif
-```
-
-### GpsComponentImpl.cpp
-```
-#include <GpsApp/Gps/GpsComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
-
-namespace GpsApp {
-
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
-  // ----------------------------------------------------------------------
-
-  GpsComponentImpl ::
-#if FW_OBJECT_NAMES == 1
-    GpsComponentImpl(
-        const char *const compName
-    ) :
-      GpsComponentBase(compName)
-#else
-    GpsImpl(void)
-#endif
-  {
-
-  }
-
-  void GpsComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    GpsComponentBase::init(queueDepth, instance);
-  }
-
-  GpsComponentImpl ::
-    ~GpsComponentImpl(void)
-  {
-
-  }
-
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
-
-  void GpsComponentImpl ::
-    schedIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
-    )
-  {
-    // TODO
-  }
-
-  // ----------------------------------------------------------------------
-  // Command handler implementations 
-  // ----------------------------------------------------------------------
-
-  void GpsComponentImpl ::
-    Gps_ReportLockStatus_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq
-    )
-  {
-    // TODO
-  }
-
-} // end namespace GpsApp
+At this point, the user may open up the `GpsComponentImpl.cpp` file and the `GpsComponentImpl.hpp` file in order to see
+what has been generated. The critical sections for our implementation are in `GpsComponentImpl.cpp` and are shown below:
+```cpp
+ 51   // ----------------------------------------------------------------------
+ 52   // Handler implementations for user-defined typed input ports
+ 53   // ----------------------------------------------------------------------
+ 54 
+ 55   void GpsComponentImpl ::
+ 56     serialRecv_handler(
+ 57         const NATIVE_INT_TYPE portNum,
+ 58         Fw::Buffer &serBuffer,
+ 59         Drv::SerialReadStatus &status
+ 60     )
+ 61   {
+ 62     // TODO
+ 63   }
+ 64 
+ 65   // ----------------------------------------------------------------------
+ 66   // Command handler implementations
+ 67   // ----------------------------------------------------------------------
+ 68 
+ 69   void GpsComponentImpl ::
+ 70     Gps_ReportLockStatus_cmdHandler(
+ 71         const FwOpcodeType opCode,
+ 72         const U32 cmdSeq
+ 73     )
+ 74   {
+ 75     // TODO
+ 76     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+ 77   }
 ```
 
 ### Implementation
 
-Here it can be seen that we have two actions "TODO". First we will need to implement a function called *schedIn_handler* and
-the second is to implement a command handler for *Gps_ReportLockStatus_cmdHandler*. Both are port calls that will be made
-into our component. Ports are found in the GpsComponentAi.xml, however; only our *schedIn* port is used directly. The 
-rest are called as part of telemetry, event logging, or command processing and thus have helpful wrappers (seen below).
-schedIn represents a call from a rate group driver. It is called at a set rate, e.g. 10Hz based on the rate group to which it 
-is connected. We will use this schedIn call to read the UART interface at a set rate of 1Hz. *Gps_ReportLockStatus_cmdHandler* is a 
-handler that implements the function for the command we defined in Command.xml. We also have the following outgoing port calls, 
-and events that can be used as part of our code. 
+In the generated implementations, we can seen that we have two actions "TODO". First we will need to implement a
+function called *serialRecv_handler* and the second is to implement a command handler for
+*Gps_ReportLockStatus_cmdHandler*. The other functions of our code are provided as functions we can use when we
+implement these two pieces. Those available functions are described below:
 
 1. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
 2. log_WARNING_HI_Gps_LockLost: used to emit the event *Gps_LockLost* as defined in Events.xml
@@ -409,42 +430,44 @@ and events that can be used as part of our code.
 6. tlmWrite_Gps_Count: used to send down *Count* telemetry as defined in Telemetry.xml
 7. sendCommandResponse: used to respond to a sent command. Call this in the above cmdHandler.
 
-In order to make a GPS processor, we need to take the following steps:
+In order to make a GPS processor that works well, we need to take the following steps:
 
-0. Implement the schedIn function (called at 1Hz)
-1. (Re)initialize the UART in the call to schedIn
-2. Read UART in schedIn
-3. Parse UART data in schedIn
-4. Downlink telmetry in schedIn
-5. If lock is newly found, downlink a *LockAquired* EVR
+0. Create a preamble function and send some buffers for the serial driver to use
+1. Implement the serialRecv_handler function (called by the serial driver with one of the above buffers)
+2. Break down the GPS message
+3. Return the buffer to the serial driver
+4. Downlink telemetry in serialRecv_handler
+5. If lock is newly found, downlink a *LockAcquired* EVR
 6. If lock is newly lost, downlink a *LockLost* EVR
-7. Downlink a *LockAquired* EVR in commandHandler, if lock is currently held
+7. Downlink a *LockAcquired* EVR in commandHandler, if lock is currently held
 8. Downlink a *LockLost* EVR in commandHandler, if lock is not currently held
-9. Respond from commandHandler with a sendCommandResponse call
+9. Respond to the commandHandler with a sendCommandResponse call
 
-These steps are called out in the following implementations of these two files. Since the purpose of the getting-started tutorial is not to demonstrate
-how to write each line of code, the steps above are called out in comments in the code.
+These steps are called out in the following implementations of these two files. Since the purpose of this tutorial
+is not to demonstrate how to write each line of code, the steps above are called out in comments in the code.
 
-### GpsComponentImpl.cpp (Sample)
-```
+### GpsApp/Gps/GpsComponentImpl.cpp (Sample)
+```cpp
+// ======================================================================
+// \title  GpsComponentImpl.cpp
+// \author lestarch
+// \brief  cpp implementation of the F' sample GPS receiver for a
+//         NMEA GPS receiver device.
+//
+// \copyright
+// Copyright 2018, lestarch.
+// ======================================================================
+
 #include <GpsApp/Gps/GpsComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Logger/Logger.hpp"
 
-//File path to UART device on UNIX system
-#define UART_FILE_PATH "/dev/ttyACM0"
 #include <cstring>
-#include <iostream>
-//POSIX includes for UART communication
-extern "C" {
-    #include <unistd.h>
-    #include <fcntl.h>
-    #include <termios.h>
-}
 
 namespace GpsApp {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   GpsComponentImpl ::
@@ -456,9 +479,8 @@ namespace GpsApp {
 #else
       GpsComponentBase(void),
 #endif
-      m_setup(false),
-      m_locked(false),
-      m_fh(-1)
+      // Initialize the lock to "false"
+      m_locked(false)
   {
 
   }
@@ -467,9 +489,24 @@ namespace GpsApp {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     GpsComponentBase::init(queueDepth, instance);
+  }
+
+  //Step 0: The linux serial driver keeps its storage externally. This means that we need to supply it some buffers to
+  //        work with. This code will loop through our member variables holding the buffers and send them to the linux
+  //        serial driver.  'preamble' is automatically called after the system is constructed, before the system runs
+  //        at steady-state. This allows for initialization code that invokes working ports.
+  void GpsComponentImpl :: preamble(void)
+  {
+      for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_UART_BUFFERS; buffer++) {
+          //Assign the raw data to the buffer. Make sure to include the side of the region assigned.
+          this->m_recvBuffers[buffer].setdata((U64)this->m_uartBuffers[buffer]);
+          this->m_recvBuffers[buffer].setsize(UART_READ_BUFF_SIZE);
+          // Invoke the port to send the buffer out.
+          this->serialBufferOut_out(0, this->m_recvBuffers[buffer]);
+      }
   }
 
   GpsComponentImpl ::
@@ -478,78 +515,52 @@ namespace GpsApp {
 
   }
 
-  //Step 1: setup
-  //
-  // Each second, we should ensure that the UART is initialized
-  // and if not, we should try to initialize it again.
-  void GpsComponentImpl ::
-    setup(void)
-  {
-      if (m_setup) {
-          return;
-      }
-      //Open the GPS, and configure it for a raw-socket in read-only mode
-      m_fh = open(UART_FILE_PATH, O_RDONLY);
-      if (m_fh < 0) {
-          std::cout << "[ERROR] Failed to open file: " << UART_FILE_PATH << std::endl;
-          return;
-      }
-      //Setup the struct for termios configuration
-      struct termios options;
-      std::memset(&options, 0, sizeof(options));
-      //Set to raw socket, remove modem control, allow input
-      cfmakeraw(&options);
-      options.c_cflag |= (CLOCAL | CREAD);
-      //Set to 9600 baud
-      cfsetispeed(&options, B9600);
-      //Make the above options stick
-      NATIVE_INT_TYPE status = tcsetattr(m_fh, TCSANOW, &options);
-      if (status != 0) {
-          std::cout << "[ERROR] Failed to setup UART options" << std::endl;
-          return;
-      }
-      m_setup = true;
-  }
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined typed input ports
   // ----------------------------------------------------------------------
 
-  // Step 0: schedIn
+  // Step 1: serialIn
   //
-  //  By implementing this "handler" we can respond to the 1Hz call allowing
-  //  us to read the GPS UART every 1 second.
+  // By implementing this "handler" we can respond to the serial device sending us data buffers containing the GPS
+  // data. This handles our serial messages. It should perform the actions we expect from the design phases.
   void GpsComponentImpl ::
-    schedIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        NATIVE_UINT_TYPE context
+    serialRecv_handler(
+        const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::Buffer &serBuffer, /*!< Buffer containing data*/
+        Drv::SerialReadStatus &serial_status /*!< Status of read*/
     )
   {
+      // Local variable definitions
       int status = 0;
       float lat = 0.0f, lon = 0.0f;
       GpsPacket packet;
-      char buffer[1024];
-      char* pointer = buffer;
-      //During each cycle, attempt to setup if not setup
-      //Step 1: setup
-      // Each second, we should ensure that the UART is initialized
-      // and if not, we should try to initialize it again.
-      setup();
-      if (!m_setup) {
+      // Grab the size (used amount of the buffer) and a pointer to the data in the buffer
+      U32 buffsize = static_cast<U32>(serBuffer.getsize());
+      char* pointer = reinterpret_cast<char*>(serBuffer.getdata());
+      // Check for invalid read status, log an error, return buffer and abort if there is a problem
+      if (serial_status != Drv::SER_OK) {
+          Fw::Logger::logMsg("[WARNING] Received buffer with bad packet: %d\n", serial_status);
+          // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
+          // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
+          // reset it to the full data block size before returning it.
+          serBuffer.setsize(UART_READ_BUFF_SIZE);
+          this->serialBufferOut_out(0, serBuffer);
           return;
       }
-      //Then receive data from the GPS. Should block until available
-      //and thus, this module should not be driven at a rate faster than 1Hz
-      //Step 2: read the UART
-      // Read the GPS message from the UART
-      ssize_t size = read(m_fh, buffer, sizeof(buffer));
-      if (size <= 0) {
-          std::cout << "[ERROR] Failed to read from UART with: " << size << std::endl;
+      // If not enough data is available for a full messsage, return the buffer and abort.
+      else if (buffsize < 24) {
+          // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
+          // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
+          // reset it to the full data block size before returning it.
+          serBuffer.setsize(UART_READ_BUFF_SIZE);
+          this->serialBufferOut_out(0, serBuffer);
           return;
       }
-      //Look for a recognized GPS location packet and parse it
-      //Step 3:
-      // Parse the GPS message from the UART (looking for $GPPA messages)
-      for (U32 i = 0; i < sizeof(buffer) - 6; i++) {
+      //Step 2:
+      //  Parse the GPS message from the UART (looking for $GPGGA messages). This uses standard C functions to read all
+      //  the defined protocol messages into our GPS package struct. If all 9 items are parsed, we break. Otherwise we
+      //  continue to scan the block of data looking for messages further in.
+      for (U32 i = 0; i < (buffsize - 24); i++) {
           status = sscanf(pointer, "$GPGGA,%f,%f,%c,%f,%c,%u,%u,%f,%f",
               &packet.utcTime, &packet.dmNS, &packet.northSouth,
               &packet.dmEW, &packet.eastWest, &packet.lock,
@@ -560,9 +571,23 @@ namespace GpsApp {
           }
           pointer = pointer + 1;
       }
-      //If we failed to find the packet, or failed to extract data then return
-      if (status != 9) {
-          std::cout << "[ERROR] GPS parsing failed: " << status << std::endl;
+      //If we failed to find the GPGGA then return the buffer and abort.
+      if (status == 0) {
+          // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
+          // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
+          // reset it to the full data block size before returning it.
+          serBuffer.setsize(UART_READ_BUFF_SIZE);
+          this->serialBufferOut_out(0, serBuffer);
+          return;
+      }
+      // If we found some of the message but not all of the message, then log an error, return the buffer and exit.
+      else if (status != 9) {
+          Fw::Logger::logMsg("[ERROR] GPS parsing failed: %d\n", status);
+          // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
+          // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
+          // reset it to the full data block size before returning it.
+          serBuffer.setsize(UART_READ_BUFF_SIZE);
+          this->serialBufferOut_out(0, serBuffer);
           return;
       }
       //GPS packet locations are of the form: ddmm.mmmm
@@ -575,16 +600,14 @@ namespace GpsApp {
       lon = (U32)(packet.dmEW/100.0f);
       lon = lon + (packet.dmEW - (lon * 100.0f))/60.f;
       lon = lon * ((packet.eastWest == 'E') ? 1 : -1);
-      //Step 4: downlink
-      // Call the downlink functions to send down data
-      std::cout << "[INFO] Current lat, lon: (" << lat << "," << lon << ")" << std::endl;
+      //Step 4: call the downlink functions to send down data
       tlmWrite_Gps_Latitude(lat);
       tlmWrite_Gps_Longitude(lon);
       tlmWrite_Gps_Altitude(packet.altitude);
       tlmWrite_Gps_Count(packet.count);
       //Lock status update only if changed
-      //Step 7,8: note changed lock status
-      // Emit an event if the lock has been aquired, or lost
+      //Step 5,6: note changed lock status
+      // Emit an event if the lock has been acquired, or lost
       if (packet.lock == 0 && m_locked) {
           m_locked = false;
           log_WARNING_HI_Gps_LockLost();
@@ -592,14 +615,19 @@ namespace GpsApp {
           m_locked = true;
           log_ACTIVITY_HI_Gps_LockAquired();
       }
+      // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
+      // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
+      // reset it to the full data block size before returning it.
+      serBuffer.setsize(UART_READ_BUFF_SIZE);
+      this->serialBufferOut_out(0, serBuffer);
   }
 
   // ----------------------------------------------------------------------
-  // Command handler implementations 
+  // Command handler implementations
   // ----------------------------------------------------------------------
-  //Step 9: respond to status command
+  //Step 7,8: respond to a command to report lock status.
   //
-  // When a status command is received, respond by emitting the 
+  // When a status command is received, respond by emitting the
   // current lock status as an Event.
   void GpsComponentImpl ::
     Gps_ReportLockStatus_cmdHandler(
@@ -613,15 +641,33 @@ namespace GpsApp {
     } else {
         log_WARNING_HI_Gps_LockLost();
     }
+    //Step 9: complete command
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 } // end namespace GpsApp
+
 ```
-### GpsComponentImpl.hpp (Sample)
-```
-#ifndef Gps_HPP
-#define Gps_HPP
+### GpsApp/Gps/GpsComponentImpl.hpp (Sample)
+```hpp
+// ====================================================================== 
+// \title  GpsComponentImpl.hpp
+// \author lemstarch
+// \brief  hpp header file for the sample F' GPS component, based on a
+//         NMEA GPS receiver.
+//
+// \copyright
+// Copyright 2018, lestarch
+// ====================================================================== 
+
+#ifndef GpsComponentImpl_HPP
+#define GpsComponentImpl_HPP
 
 #include "GpsApp/Gps/GpsComponentAc.hpp"
+
+// Need to define the memory footprint of our buffers. This means defining a count of buffers, and how big each is. In
+// this example, we will allow the Gps component to manage its own buffers.
+#define NUM_UART_BUFFERS 20
+#define UART_READ_BUFF_SIZE 1024
 
 namespace GpsApp {
 
@@ -630,7 +676,7 @@ namespace GpsApp {
   {
       /**
        * GpsPacket:
-       *   A structure containing the information in the GPS location pacaket
+       *   A structure containing the information in the GPS location packet
        * received via the NMEA GPS receiver.
        */
       struct GpsPacket {
@@ -667,24 +713,25 @@ namespace GpsApp {
           const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
       );
 
+      //! Preamble
+      //!
+      void preamble(void);
+
       //! Destroy object Gps
       //!
       ~GpsComponentImpl(void);
 
     PRIVATE:
-      //! Setup the UART interface for taking with the GPS module. Note: this
-      //! is currently implemented using standard Unix /dev/tty* devices.
-      //!
-      void setup(void);
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
-      //! Handler implementation for schedIn
+      //! Handler implementation for serialRecv
       //!
-      void schedIn_handler(
+      void serialRecv_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< The call order*/
+          Fw::Buffer &serBuffer, /*!< Buffer containing data*/
+          Drv::SerialReadStatus &serial_status /*!< Status of read*/
       );
 
     PRIVATE:
@@ -699,28 +746,46 @@ namespace GpsApp {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
-      //!< Is the GPS UART setup
-      bool m_setup;
       //!< Has the device acquired GPS lock?
       bool m_locked;
-      //!< File handle of UART
-      NATIVE_INT_TYPE m_fh;
+      //!< Create member variables to store buffers and the data array that those buffers use for storage
+      Fw::Buffer m_recvBuffers[NUM_UART_BUFFERS];
+      BYTE m_uartBuffers[NUM_UART_BUFFERS][UART_READ_BUFF_SIZE];
     };
 
 } // end namespace GpsApp
 
 #endif
+
 ```
 
-Next, we need to add (or uncomment) our .cpp and .hpp to the mod.mk in the GpsApp directory.  The final version will look like this:
+Next, we need to add (or uncomment) our .cpp and .hpp to the `CMakeLists.txt` in the `GpsApp/Gps` subdirectory.  The
+final version will look like this:
 
-### fprime/GpsApp/Gps/CMakeListst.txt (final)
+### GpsApp/Gps/CMakeListst.txt (final)
 ```
-TODO: fill this in
+####
+# GPS Tutorial: GpsApp/Gps/CMakeLists.txt
+#
+# SOURCE_FILES: combined list of source and autocoding files
+# MOD_DEPS: (optional) module dependencies
+#
+# This file will setup the build for the Gps component. This is done by defining the SOURCE_FILES variable and then
+# registering the component as an F prime module. This allows autocoding and more!
+####
+set(SOURCE_FILES
+	"${CMAKE_CURRENT_LIST_DIR}/GpsComponentAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/GpsComponentImpl.cpp"
+)
+register_fprime_module()
+
 ```
 
-Finally, regenerate the makefiles, clean, and build. We will use this pattern a lot.
-```
+Finally, run the F´ utility to build this component using `fprime-util build`. This will regenerate the CMake build
+file, which we made with the `fprime-util generate` command earlier. This should pass and the code should be ready.
+We'll then integrate it into a new topology.
+
+```shell
 fprime-util build
 ```
 
@@ -728,1067 +793,223 @@ We are now ready to make a Topology for this application, and test it!
 
 ## Topology
 
-We are finally ready to build our topology to connect the GPS module up to the rate converter, and logger. Then we can see
-if this will work. Generally, this process is done with a design tool like MagicDraw, but because the user may or may not
-have access to this tool, the topology Ai is provided below. The user may then edit it to make changes.
+We are finally ready to build our topology to connect the GPS module up to the standard F´ components. Then we can see
+if this design works by cross compiling and running it on the RPI. We'll be modifying the existing `Ref` topology in
+order more quickly create one of our own. A more useful system diagram is shown below.
 
-First, the Reference application's topology is copied into the *Top* folder of *GpsApp* application and we'll grab the deployment makefile 
-too. We do this as a convienence to save time during this tutorial. It is easier and faster to start with the Reference application's files
-and modify them to construct our topology.
+![GPS App Topology Diagram](img/gps-top.png)
 
+There are many components that will come "for free" by copying the Reference application. However, the key components
+that represent our application's flow are shown in the diagram. We to make sure that all 8 of our ports for the Gps
+component have been hooked-up. This involves two major steps:
+
+1. Instantiate `LinuxSerialDriver` and `Gps` components
+2. Add new port connections to wire up the `Gps` and `LinuxSerialDriver`
+
+We'll work through these steps below.
+
+### Clone the Ref Application
+
+First, the Reference application's topology is copied into the *Top* folder of *GpsApp* application and we'll grab. We
+do this as a convenience to save time during this tutorial. It is easier and faster to start with the Reference
+application's files and modify them to construct our topology.
+
+From the `GpsApp` directory run the following:
+```shell
+cp -r ../Ref/Top ./Top
 ```
-cp -r fprime/Ref/Top fprime/GpsApp/Top
-cp fprime/Ref/Makefile fprime/GpsApp
+
+### Update the GpsApp CmakeLists.txt
+
+Now that we have a topology, we'll go ahead and update the `CMakeLists.txt` file in the `GpsApp` folder. This will
+nearly complete the modifications we need for this file. You may choose later to make the `raspberrypi` toolchain to be
+default once we start cross-compiling. We do this by adding a single line to include the `Top` directory at the very end
+of the file.
+
+Make sure the `CMakeLists.txt` in the `GpsApp` directory has the following line added to the end:
+```
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
 ```
 
-Then update *fprime/GpsApp/Makefile* to set the following line to our deployment's name *GpsApp*.
+### Build the Topology Sources
 
-```
-DEPLOYMENT := GpsApp
-```
+A topology consists of several files that instantiate the components in C++, construct and initialize the system, and
+represent the "main function" or entry point into the code. These files are shown below:
 
-After this adjustment to the make system, we need to add 3 custom files that represent our Topology.  These files are the following:
+1. **GpsTopologyAppAi.xml**: the design file showing the list of components, and the connections between components.
+This file is based on RefTopologyAppAi.xml from the reference application with new ports added. GpsTopologyAppAi.xml
+should replace RefTopologyAppAi.xml.
+2. **Components.hpp**: the header file declaring in code the same components as listed in the topology ai XML, along
+with includes of the headers that define them.
+3. **Topology.cpp**: top level code and initialization of the components, threads, and registration of commands.
+4. **Main.cpp**: entry point to the code.
 
-1. **GpsTopologyAppAi.xml**: the design file showing the list of components, and the connections between components. This file is based
-on RefTopologyAppAi.xml from the reference application. GpsTopologyAppAi.xml should replace RefTopologyAppAi.xml.
-2. **Components.hpp**: the header file declaring in code the same components as listed in the topology ai XML, along with includes
-of the headers that define them.
-3. **Topology.cpp**: top level code, main function, and initialization of the components, threads, and registration of commands.
-
-Essentially, GpsTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology.cpp is the implementation code. All of these
-files are referenced by the make files we inherited from the reference app. Building the distribution (fprime/GpsApp) will include the 
-topology (fprime/GpsApp/Top) as its entry-point creating a single application, which represents our software.
+Essentially, GpsTopologyAppAi.xml is the design, Components.hpp is the definitions, and Topology.cpp is the system
+initialization code. All of these files are referenced by the CMake files we inherited from the reference app. Building
+the distribution (fprime/GpsApp) will include the topology (GpsApp/Top) as its entry-point creating a single binary,
+which represents our software.
 
 Sample versions of these files are provided below, and are annotated with comments representing the changes
 made to support the Gps Application. **Note:** these files are available in a working repository at:
-[https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application) in case the user prefers a direct checkout of working code.
+[https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application)
+in case the user prefers a direct checkout of working code.  The files are linked below:
 
-We will also need to update the mod.mk in the Top directory to change the name of "RefTopologyAppAi.xml" to "GpsTopologyAppAi.xml".
+1. [Top/GpsAppTopologyAi.xml](GpsApp/Top/GpsAppTopologyAppAi.xml)
+2. [Top/Components.hpp](GpsApp/Top/Components.hpp)
+3. [Top/Topology.cpp](GpsApp/Top/Topology.cpp)
+4. [Top/Main.cpp](GpsApp/Top/Main.cpp)
 
-Once these files have been added to the *fprime/GpsApp/Top* folder, we have a complete project. The project can be built 
+
+We will also need to update the `CMakeLists.txt` in the `Top` directory to change the name of "RefTopologyAppAi.xml" to
+"GpsTopologyAppAi.xml".
+
+Once these files have been added to the *GpsApp/Top* folder, we have a complete project. The project can be built 
 by changing directory to the deployment directory, issuing our build commands and then running the executable.
 
+## Running the Executable On the Native Host with the Ground System
+
+We'll start by removing the old build generation. By adding the top folder, this will remove any issues with the build.
+Then we can build, and run right on the local machine. If the user has a USB based GPS receiver, the code should work.
+
+In the `GpsApp` directory, build and install the code. Install will automatically build if the code has not been built.
+```shell
+cd GpsApp
+fprime-util purge
+fprime-util generate
+fprime-util install
 ```
+
+Now run the ground system in one terminal and the Gps app in the other. Here we inform the ground system that we will
+run the application independently.
+```shell
+fprime-gds -d . -n
+```
+
+Run the application binary. **Note:** we are currently compiling for the native OS. Linux is assumed and so is the path
+to the USB GPS device. If the device doesn't exist, the system will run but log an error opening it.
+
+```shell
 cd fprime/GpsApp
-make gen_make
-make clean
-make
-./linux-linux-x86-debug-gnu-bin/GpsApp
+./bin/Linux/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
 ```
 
-If you see output similar to the following, when running with the UART GPS you have successfully, completed the tutorial. If running without the GPS, you should see GPS setup errors every 1 second.
-
-#### Successful Output
-```
-[INFO] Current lat, lon: (41.758,-72.6492)
-[INFO] Current lat, lon: (41.758,-72.6492)
-[INFO] Current lat, lon: (41.758,-72.6492)
-[INFO] Current lat, lon: (41.758,-72.6492)
-
--- or --
-
-[ERROR] Failed to open file: /dev/ttyACM0
-[ERROR] Failed to open file: /dev/ttyACM0
-[ERROR] Failed to open file: /dev/ttyACM0
-[ERROR] Failed to open file: /dev/ttyACM0
-```
-
-### Topology.cpp (Sample)
-```
-#include <Components.hpp>
-
-
-#include <Fw/Types/Assert.hpp>
-#include <Ref/Top/TargetInit.hpp>
-#include <Os/Task.hpp>
-#include <Os/Log.hpp>
-#include <Fw/Types/MallocAllocator.hpp>
-
-#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <getopt.h>
-#include <stdlib.h>
-#include <ctype.h>
-#endif
-// List of context IDs
-
-// GPS Application:
-//  For GPS application specific items, look for GPS-- comments below
-enum {
-    DOWNLINK_PACKET_SIZE = 500,
-    DOWNLINK_BUFFER_STORE_SIZE = 2500,
-    DOWNLINK_BUFFER_QUEUE_SIZE = 5,
-    UPLINK_BUFFER_STORE_SIZE = 3000,
-    UPLINK_BUFFER_QUEUE_SIZE = 30
-};
-
-enum {
-        ACTIVE_COMP_1HZ_RG,
-        ACTIVE_COMP_P5HZ_RG,
-        ACTIVE_COMP_P25HZ_RG,
-        ACTIVE_COMP_CMD_DISP,
-        ACTIVE_COMP_CMD_SEQ,
-        ACTIVE_COMP_LOGGER,
-        ACTIVE_COMP_TLM,
-        ACTIVE_COMP_PRMDB,
-        ACTIVE_COMP_FILE_DOWNLINK,
-        ACTIVE_COMP_FILE_UPLINK,
-
-        ACTIVE_COMP_BLKDRV,
-        ACTIVE_COMP_PING_RECEIVER,
-        // GPS-- our component is an active component, thus it needs a thread-id. Thread IDs come from this
-        // enumeration to keep them unique.
-        ACTIVE_COMP_GPS,
-
-        CYCLER_TASK,
-        NUM_ACTIVE_COMPS
-};
-
-// Registry
-#if FW_OBJECT_REGISTRATION == 1
-static Fw::SimpleObjRegistry simpleReg;
-#endif
-
-// Component instance pointers
-static NATIVE_INT_TYPE rgDivs[] = {1,2,4};
-Svc::RateGroupDriverImpl rateGroupDriverComp(
-#if FW_OBJECT_NAMES == 1
-                    "RGDvr",
-#endif
-                    rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
-
-static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup1Comp
-#if FW_OBJECT_NAMES == 1
-                    ("RG1",rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
-#else
-                    (rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
-#endif
-;
-
-static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup2Comp
-#if FW_OBJECT_NAMES == 1
-                    ("RG2",rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
-#else
-                    (rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
-#endif
-;
-
-static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup3Comp
-#if FW_OBJECT_NAMES == 1
-                    ("RG3",rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
-#else
-                    (rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
-#endif
-;
-
-// Command Components
-Svc::SocketGndIfImpl sockGndIf
-#if FW_OBJECT_NAMES == 1
-                    ("SGIF")
-#endif
-;
-
-//GPS-- GPS Component construction, notice if compiled with names, a name should be given.
-GpsApp::GpsComponentImpl gpsImpl
-#if FW_OBJECT_NAMES == 1
-                    ("GPS")
-#endif
-;
-
-#if FW_ENABLE_TEXT_LOGGING
-Svc::ConsoleTextLoggerImpl textLogger
-#if FW_OBJECT_NAMES == 1
-                    ("TLOG")
-#endif
-;
-#endif
-
-Svc::ActiveLoggerImpl eventLogger
-#if FW_OBJECT_NAMES == 1
-                    ("ELOG")
-#endif
-;
-
-Svc::LinuxTimeImpl linuxTime
-#if FW_OBJECT_NAMES == 1
-                    ("LTIME")
-#endif
-;
-
-Svc::TlmChanImpl chanTlm
-#if FW_OBJECT_NAMES == 1
-                    ("TLM")
-#endif
-;
-
-Svc::CommandDispatcherImpl cmdDisp
-#if FW_OBJECT_NAMES == 1
-                    ("CMDDISP")
-#endif
-;
-
-Fw::MallocAllocator seqMallocator;
-Svc::CmdSequencerComponentImpl cmdSeq
-#if FW_OBJECT_NAMES == 1
-                    ("CMDSEQ")
-#endif
-;
-
-Svc::PrmDbImpl prmDb
-#if FW_OBJECT_NAMES == 1
-                    ("PRM","PrmDb.dat")
-#else
-                    ("PrmDb.dat")
-#endif
-;
-
-
-Svc::FileUplink fileUplink ("fileUplink");
-Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
-Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
-Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
-Svc::HealthImpl health("health");
-
-Svc::AssertFatalAdapterComponentImpl fatalAdapter
-#if FW_OBJECT_NAMES == 1
-("fatalAdapter")
-#endif
-;
-
-Svc::FatalHandlerComponentImpl fatalHandler
-#if FW_OBJECT_NAMES == 1
-("fatalHandler")
-#endif
-;
-
-
-#if FW_OBJECT_REGISTRATION == 1
-
-void dumparch(void) {
-    simpleReg.dump();
-}
-
-#if FW_OBJECT_NAMES == 1
-void dumpobj(const char* objName) {
-    simpleReg.dump(objName);
-}
-#endif
-
-#endif
-
-void constructApp(int port_number, char* hostname) {
-
-    localTargetInit();
-
-#if FW_PORT_TRACING
-    Fw::PortBase::setTrace(false);
-#endif    
-
-    // Initialize rate group driver
-    rateGroupDriverComp.init();
-
-    // Initialize the rate groups
-    rateGroup1Comp.init(10,0);
-    
-    rateGroup2Comp.init(10,1);
-    
-    rateGroup3Comp.init(10,2);
-    //GPS-- Here we initialize the component with a queue size, and instance number. The queue size governs how
-    //      many waiting port calls can queue up before the system asserts, and the instance number is a unique
-    //      number given to every instance of a given type.
-    gpsImpl.init(10, 1);
-#if FW_ENABLE_TEXT_LOGGING
-    textLogger.init();
-#endif
-
-    eventLogger.init(10,0);
-
-    linuxTime.init(0);
-
-    chanTlm.init(10,0);
-
-    cmdDisp.init(20,0);
-
-    cmdSeq.init(10,0);
-    cmdSeq.allocateBuffer(0,seqMallocator,5*1024);
-
-    prmDb.init(10,0);
-
-    sockGndIf.init(0);
-
-    fileUplink.init(30, 0);
-    fileDownlink.init(30, 0);
-    fileUplinkBufferManager.init(0);
-    fileDownlinkBufferManager.init(1);
-    fatalAdapter.init(0);
-    fatalHandler.init(0);
-    health.init(25,0);
-    // Connect rate groups to rate group driver
-    constructRefArchitecture();
-
-    /* Register commands */
-    cmdSeq.regCommands();
-    cmdDisp.regCommands();
-    eventLogger.regCommands();
-    prmDb.regCommands();
-    fileDownlink.regCommands();
-    health.regCommands();
-
-    // read parameters
-    prmDb.readParamFile();
-
-    // set health ping entries
-
-    Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,rateGroup1Comp.getObjName()}, // 0
-        {3,5,rateGroup2Comp.getObjName()}, // 1
-        {3,5,rateGroup3Comp.getObjName()}, // 2
-        {3,5,cmdDisp.getObjName()}, // 3
-        {3,5,eventLogger.getObjName()}, // 4
-        {3,5,cmdSeq.getObjName()}, // 5
-        {3,5,chanTlm.getObjName()}, // 6
-        {3,5,fileUplink.getObjName()}, // 7
-        {3,5,fileDownlink.getObjName()}, // 8
-    };
-
-    // register ping table
-    health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
-
-    // Active component startup
-    // start rate groups
-    rateGroup1Comp.start(ACTIVE_COMP_1HZ_RG, 120,10 * 1024);
-    rateGroup2Comp.start(ACTIVE_COMP_P5HZ_RG, 119,10 * 1024);
-    rateGroup3Comp.start(ACTIVE_COMP_P25HZ_RG, 118,10 * 1024);
-    // start dispatcher
-    cmdDisp.start(ACTIVE_COMP_CMD_DISP,101,10*1024);
-    // start sequencer
-    cmdSeq.start(ACTIVE_COMP_CMD_SEQ,100,10*1024);
-    // start telemetry
-    eventLogger.start(ACTIVE_COMP_LOGGER,98,10*1024);
-    chanTlm.start(ACTIVE_COMP_TLM,97,10*1024);
-    prmDb.start(ACTIVE_COMP_PRMDB,96,10*1024);
-    //GPS-- GPS thread starting. The GPS component is active, so its governing thread must be started
-    //      with the unique id, defined above, a priority 256 (highest) - 0 (lowest) set here to 99, and
-    //      a stack size for the thread, here 10KB is used.
-    gpsImpl.start(ACTIVE_COMP_GPS, 99, 10*1024);
-
-    fileDownlink.start(ACTIVE_COMP_FILE_DOWNLINK, 100, 10*1024);
-    fileUplink.start(ACTIVE_COMP_FILE_UPLINK, 100, 10*1024);
-
-    // Initialize socket server
-    sockGndIf.startSocketTask(100, port_number, hostname);
-
-}
-//GPS-- Given the application's lack of a specific timing element, we
-//      force a call to the rate group driver every second here.
-//      More complex applications may drive this from a system oscillator.
-void run1cycle(void) {
-    // get timer to call rate group driver
-    Svc::TimerVal timer;
-    timer.take();
-    rateGroupDriverComp.get_CycleIn_InputPort(0)->invoke(timer);
-    Os::Task::TaskStatus delayStat = Os::Task::delay(1000);
-    FW_ASSERT(Os::Task::TASK_OK == delayStat,delayStat);
-}
-
-
-
-void runcycles(NATIVE_INT_TYPE cycles) {
-    if (cycles == -1) {
-        while (true) {
-            run1cycle();
-        }
-    }
-
-    for (NATIVE_INT_TYPE cycle = 0; cycle < cycles; cycle++) {
-        run1cycle();
-    }
-
-}
-
-void exitTasks(void) {
-    rateGroup1Comp.exit();
-    rateGroup2Comp.exit();
-    rateGroup3Comp.exit();
-    cmdDisp.exit();
-    eventLogger.exit();
-    chanTlm.exit();
-    prmDb.exit();
-    fileUplink.exit();
-    fileDownlink.exit();
-    cmdSeq.exit();
-}
-
-void print_usage() {
-	(void) printf("Usage: ./Ref [options]\n-p\tport_number\n-a\thostname/IP address\n");
-}
-
-
-#include <signal.h>
-#include <stdio.h>
-
-volatile sig_atomic_t terminate = 0;
-
-static void sighandler(int signum) {
-	terminate = 1;
-}
-
-int main(int argc, char* argv[]) {
-	U32 port_number;
-	I32 option;
-	char *hostname;
-	port_number = 0;
-	option = 0;
-	hostname = NULL;
-
-	while ((option = getopt(argc, argv, "hp:a:")) != -1){
-		switch(option) {
-			case 'h':
-				print_usage();
-				return 0;
-				break;
-			case 'p':
-				port_number = atoi(optarg);
-				break;
-			case 'a':
-				hostname = optarg;
-				break;
-			case '?':
-				return 1;
-			default:
-				print_usage();
-				return 1;
-		}
-	}
-
-	(void) printf("Hit Ctrl-C to quit\n");
-
-    constructApp(port_number, hostname);
-    //dumparch();
-
-    signal(SIGINT,sighandler);
-    signal(SIGTERM,sighandler);
-
-    int cycle = 0;
-
-    while (!terminate) {
-//        (void) printf("Cycle %d\n",cycle);
-        runcycles(1);
-        cycle++;
-    }
-
-    // stop tasks
-    exitTasks();
-    // Give time for threads to exit
-    (void) printf("Waiting for threads...\n");
-    Os::Task::delay(1000);
-
-    (void) printf("Exiting...\n");
-
-    return 0;
-}
+If you see output similar to the following, when running with the USB GPS you have successfully, completed the
+development of our tutorial. We'll discuss how to cross compile for the Raspberry PI and run on the Raspberry pi next.
+
+Once the ground system loads in the user's browser, the user can start seeing what the software is doing. If it doesn't
+load, then the user should go navigate to: https://localhost:5000.
+
+First click on the "Channels" tab at the top. The user should at least see the "rateGroup1Comp.RgMaxTime" channel. If
+the GPS is working and has lock, then the user should see the GPS channels as well. This is seen below.  Later we will
+discuss what to do if this did not show up.
+
+![GPS GDS Channels Tab](img/gps-channels.png)
+
+Next, the user should navigate to the "Commanding" tab and select "gpsImpl.Gps_ReportLockStatus" from the drop down.
+The user may start to type in the dropdown to subset the list. Press the green "Send" button and the command should be
+sent as seen below.
+
+![GPS GDS Commanding Tab](img/gps-commands.png)
+
+Finally, the user can check the "Events" tab at the top to see the lock status as we asked it to be reported.
+
+![GPS GDS Event Tab](img/gps-events.png)
+
+To exit the ground system, CTRL-C the terminal process.
+
+
+If the above code did not work, the user should check the following:
+
+1. Issue the `cmdDisp.CMD_NO_OP` command from the "Commanding" tab and check the "Events" tab. The user should expect to
+see NO_OP events, proving the executable is working and the data flow is working. If this does not work, then rerun the
+ground system and binary. Ensure no errors have been reported.  Check the "Logs" tab for logs in the system and ensure
+there are no errors there. Make sure port 50000 is free, and that no other ground systems are running.
+
+2. Assuming the user has working `cmdDisp.CMD_NO_OP`, the code is running. Thus the users should rerun the
+"gpsImpl.Gps_ReportLockStatus" command. If the lock status is not acquired, then the user will not see GPS channels.
+Sometimes the ground connection is not fast enough to see the startup events and channels, so the ground system is blank
+until an event happens, like the one from `cmdDisp.CMD_NO_OP`.
+
+Again, ensure the ground system and running binary have been stopped with the CTRL-C to kill the process.
+
+## Cross Compiling for the Raspberry PI
+
+Once we have the code building for Linux, it is time to engage the raspberry pi cross compilation tools in order to
+build a binary that will run on the Raspberry PI. We'll be working with code for the Raspberry PI 3, but it should work
+on the RPI 2 as well.
+
+### Cross Compiling Explicitly
+
+The first step is to follow the installation of the tools for the RPI cross compile as documented here:
+[RPI Deployment README.md](../../../RPI/README.md).
+
+In order to cross-compile for the a specific architecture, the user needs to generate a new build directory using a 
+toolchain file for that architecture. F´ includes a toolchain for the raspberry PI, assuming the tools are installed in
+the manner described in the above readme.  This toolchain is called "raspberrypi". The build can be generated by running
+the following commands in the `GpsApp` directory:
+
+```shell
+fprime-util generate raspberrypi
+fprime-util install raspberrypi
 ```
 
-### Components.hpp (Sample)
-```
-#ifndef __LITS_COMPONENTS_HEADER__
-#define __LITS_COMPONENTS_HEADER__
-void constructRefArchitecture(void);
-void exitTasks(void);
+This will generate the binary at `GpsApp/bin/arm-linux-gnueabihf/GpsApp`. The user then may run the ground system as
+before. Ensure that the system and network firewall allow through port 50000 from the PI to the host, and then run:
 
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
-#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
-
-#include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
-#include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
-#include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
-#include <Svc/LinuxTime/LinuxTimeImpl.hpp>
-#include <Svc/TlmChan/TlmChanImpl.hpp>
-#include <Svc/PrmDb/PrmDbImpl.hpp>
-#include <Fw/Obj/SimpleObjRegistry.hpp>
-#include <Svc/FileUplink/FileUplink.hpp>
-#include <Svc/FileDownlink/FileDownlink.hpp>
-#include <Svc/BufferManager/BufferManager.hpp>
-#include <Svc/Health/HealthComponentImpl.hpp>
-
-#include <Svc/SocketGndIf/SvcSocketGndIfImpl.hpp>
-
-#include <GpsApp/Top/TargetInit.hpp>
-#include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-
-//Gps Inclusion:
-// Here we include the header definition of our GPS component, not the GPS is declared
-// further down in the file.
-#include <GpsApp/Gps/GpsComponentImpl.hpp>
-
-extern Svc::RateGroupDriverImpl rateGroupDriverComp;
-extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
-extern Svc::CmdSequencerComponentImpl cmdSeq;
-extern Svc::SocketGndIfImpl sockGndIf;
-extern Svc::ConsoleTextLoggerImpl textLogger;
-extern Svc::ActiveLoggerImpl eventLogger;
-extern Svc::LinuxTimeImpl linuxTime;
-extern Svc::TlmChanImpl chanTlm;
-extern Svc::CommandDispatcherImpl cmdDisp;
-extern Svc::PrmDbImpl prmDb;
-extern Svc::FileUplink fileUplink;
-extern Svc::FileDownlink fileDownlink;
-extern Svc::BufferManager fileDownlinkBufferManager;
-extern Svc::BufferManager fileUplinkBufferManager;
-extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
-extern Svc::FatalHandlerComponentImpl fatalHandler;
-extern Svc::HealthImpl health;
-//Our new GPS Driver
-extern GpsApp::GpsComponentImpl gpsImpl;
-#endif
+```shell
+fprime-gds -d . -n
 ```
 
-### GpsTopologyAppAi.xml (Sample)
+Assuming there is no firewall or other network limits between the PI and the host, the user can run the following from a
+separate terminal run the following:
+
+```shell
+cd fprime/GpsApp
+scp bin/arm-linux-gnueabihf/GpsApp pi@<raspberry pi IP>
+ssh pi@<raspberry pi IP>
+./GpsApp -a <ground system IP> -p 50000 -d <serial port, /dev/ttyACM0 for USB>
 ```
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<!--
-Topology Ai:
 
-The topology Ai.xml file consists of three parts:
+Now the PI should be powered up and running the embedded Linux binary, and our host system should be running the ground
+system. If the code work when running natively, and isn't connecting for this example the cause it likely a firewall
+issue. Again make sure port 50000 is exposed to the PI, and that the pi can ping the ground system machine.
 
-1. Importation of individual modules and components
-2. Declaration of used components
-3. Port connections between components
+### Setting the Cross Compile Build as Default
 
-Note: in most cases this file is auto-generated using magic draw.
--->
-<assembly name = "Ref">
-	<!-- 
-        Component XML includes:
+As we saw above, cross compile builds can be done explicitly by setting the toolchain. However, some users may wish to
+make this the default, and not need to specify it. This can be done by adding the following line to the deployment
+*CMakeLists.txt* file at `GpsApp/CMakeList.txt`. This is typically done in the first few lines after the `project()`
+call.
 
-        Here the various components used in our Topology are included via their *Ai.xml file.  This links
-        those design files with this top-level make file.
-        -->
-	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-	<import_component_type>Svc/FileUplink/FileUplinkComponentAi.xml</import_component_type>
-	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-	<import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
-	<import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
-	<import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
-	<import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
-	<import_component_type>GpsApp/Gps/GpsComponentAi.xml</import_component_type>
-	<import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
-	<import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
-	<import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-	<import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
-	<import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
-	<import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
-	<import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
-	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
-   <!--
-   Instance declarations:
-
-   Define the components that make up the topology, this includes the namespace of the compnent, and the type of the component.
-   These values should match the component Ai XML that was imported.
-
-   In addition, the component should have a name, which will be used in the Components.hpp, and Topology.cpp files. 
-   -->
-   <instance namespace="Svc" name="rateGroup3Comp" type="ActiveRateGroup" base_id="241"  base_id_window="20" />
-
-   <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
-
-   <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
-
-   <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
-
-   <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
-
-   <instance namespace="Svc" name="rateGroup1Comp" type="ActiveRateGroup" base_id="21"  base_id_window="20" />
-
-   <instance namespace="Svc" name="chanTlm" type="TlmChan" base_id="61"  base_id_window="20" />
-
-   <instance namespace="Svc" name="health" type="Health" base_id="361"  base_id_window="20" />
-
-   <instance namespace="Svc" name="sockGndIf" type="GndIf" base_id="381"  base_id_window="20" />
-
-   <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
-
-   <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="421"  base_id_window="20" />
-
-   <instance namespace="Svc" name="linuxTime" type="Time" base_id="441"  base_id_window="20" />
-
-   <instance namespace="GpsApp" name="gpsImpl" type="Gps"/>
-
-   <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
-
-   <instance namespace="Svc" name="prmDb" type="PrmDb" base_id="141"  base_id_window="20" />
-
-   <instance namespace="Svc" name="rateGroup2Comp" type="ActiveRateGroup" base_id="161"  base_id_window="20" />
-
-   <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="461"  base_id_window="20" />
-
-   <instance namespace="Svc" name="cmdSeq" type="CmdSequencer" base_id="541"  base_id_window="23" />
-
-   <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
-
-   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
-
-<!--
-Connection definitions:
-
-This section defines the connections between components. The source component, and source component port name
-should be declared, and matched to the target component, and port. The type of the port is also specified.
-Finally, the port number on the source and target is defined, in the case that the named port has a multiplicity
-meaning that it is an array of ports under the same name.
--->
-<connection name = "Connection1">
-	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "1"/>
- 	 <target component = "rateGroup2Comp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection2">
-	 <source component = "sockGndIf" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection3">
-	 <source component = "sockGndIf" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection4">
-	 <source component = "sockGndIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
- 	 <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-</connection>
-<connection name = "Connection5">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "5"/>
- 	 <target component = "fileUplink" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection6">
-	 <source component = "prmDb" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "6"/>
-</connection>
-<connection name = "Connection7">
-	 <source component = "eventLogger" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection8">
-	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
- 	 <target component = "gpsImpl" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection10">
-	 <source component = "fileDownlink" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection11">
-	 <source component = "fileUplinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection12">
-	 <source component = "cmdSeq" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection13">
-	 <source component = "gpsImpl" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection14">
-	 <source component = "rateGroup3Comp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection15">
-	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
- 	 <target component = "gpsImpl" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection16">
-	 <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection17">
-	 <source component = "prmDb" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection19">
-	 <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection20">
-	 <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
- 	 <target component = "health" port = "Run" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection21">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "8"/>
- 	 <target component = "rateGroup2Comp" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection22">
-	 <source component = "rateGroup2Comp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection23">
-	 <source component = "rateGroup2Comp" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "8"/>
-</connection>
-<connection name = "Connection24">
-	 <source component = "rateGroup1Comp" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "7"/>
-</connection>
-<connection name = "Connection25">
-	 <source component = "cmdSeq" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection26">
-	 <source component = "eventLogger" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection27">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "0"/>
- 	 <target component = "chanTlm" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection28">
-	 <source component = "fileUplink" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection29">
-	 <source component = "rateGroup3Comp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection30">
-	 <source component = "eventLogger" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection31">
-	 <source component = "eventLogger" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection32">
-	 <source component = "rateGroup2Comp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection33">
-	 <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection34">
-	 <source component = "health" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection35">
-	 <source component = "fileUplinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection36">
-	 <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection37">
-	 <source component = "cmdSeq" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection38">
-	 <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
- 	 <target component = "chanTlm" port = "Run" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection39">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "1"/>
- 	 <target component = "cmdDisp" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection40">
-	 <source component = "prmDb" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection41">
-	 <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection42">
-	 <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection43">
-	 <source component = "eventLogger" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "3"/>
-</connection>
-<connection name = "Connection45">
-	 <source component = "rateGroup2Comp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection46">
-	 <source component = "rateGroup3Comp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection47">
-	 <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection48">
-	 <source component = "sockGndIf" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection49">
-	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "2"/>
- 	 <target component = "rateGroup3Comp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection50">
-	 <source component = "gpsImpl" port = "tlmOut" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection51">
-	 <source component = "rateGroup1Comp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection52">
-	 <source component = "fileDownlink" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection53">
-	 <source component = "fatalAdapter" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection54">
-	 <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
- 	 <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
-</connection>
-<connection name = "Connection56">
-	 <source component = "fatalAdapter" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection57">
-	 <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection58">
-	 <source component = "fileDownlink" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "4"/>
-</connection>
-<connection name = "Connection59">
-	 <source component = "cmdSeq" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection60">
-	 <source component = "rateGroup1Comp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection61">
-	 <source component = "prmDb" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection62">
-	 <source component = "gpsImpl" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection63">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "7"/>
- 	 <target component = "rateGroup1Comp" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection64">
-	 <source component = "cmdDisp" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection65">
-	 <source component = "cmdSeq" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "2"/>
-</connection>
-<connection name = "Connection66">
-	 <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "0"/>
- 	 <target component = "rateGroup1Comp" port = "CycleIn" type = "Cycle" num = "0"/>
-</connection>
-<connection name = "Connection67">
-	 <source component = "health" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection68">
-	 <source component = "cmdDisp" port = "LogText" type = "LogText" num = "0"/>
- 	 <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-</connection>
-<connection name = "Connection69">
-	 <source component = "health" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection70">
-	 <source component = "fileUplinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection71">
-	 <source component = "cmdDisp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection72">
-	 <source component = "rateGroup1Comp" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection73">
-	 <source component = "chanTlm" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection74">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "3"/>
- 	 <target component = "eventLogger" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection75">
-	 <source component = "rateGroup3Comp" port = "PingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
-</connection>
-<connection name = "Connection76">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "2"/>
- 	 <target component = "cmdSeq" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection77">
-	 <source component = "health" port = "Tlm" type = "Tlm" num = "0"/>
- 	 <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-</connection>
-<connection name = "Connection78">
-	 <source component = "cmdDisp" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "1"/>
-</connection>
-<connection name = "Connection79">
-	 <source component = "fileUplink" port = "pingOut" type = "Ping" num = "0"/>
- 	 <target component = "health" port = "PingReturn" type = "Ping" num = "5"/>
-</connection>
-<connection name = "Connection80">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "9"/>
- 	 <target component = "rateGroup3Comp" port = "PingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection81">
-	 <source component = "fileDownlink" port = "eventOut" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection83">
-	 <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
- 	 <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
-</connection>
-<connection name = "Connection84">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "6"/>
- 	 <target component = "prmDb" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection85">
-	 <source component = "cmdDisp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection86">
-	 <source component = "fileUplink" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection87">
-	 <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
- 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
-</connection>
-<connection name = "Connection88">
-	 <source component = "sockGndIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection90">
-	 <source component = "rateGroup3Comp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection91">
-	 <source component = "fileDownlink" port = "timeCaller" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection92">
-	 <source component = "health" port = "CmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection93">
-	 <source component = "rateGroup2Comp" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection94">
-	 <source component = "sockGndIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection95">
-	 <source component = "rateGroup1Comp" port = "Log" type = "Log" num = "0"/>
- 	 <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-</connection>
-<connection name = "Connection96">
-	 <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
- 	 <target component = "sockGndIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
-</connection>
-<connection name = "Connection97">
-	 <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
- 	 <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-</connection>
-<connection name = "Connection98">
-	 <source component = "health" port = "PingSend" type = "Ping" num = "4"/>
- 	 <target component = "fileDownlink" port = "pingIn" type = "Ping" num = "0"/>
-</connection>
-<connection name = "Connection99">
-	 <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
- 	 <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-</connection>
-<connection name = "Connection100">
-	 <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
- 	 <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
-</connection>
-<connection name = "Connection101">
-	 <source component = "eventLogger" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "0"/>
-</connection>
-<connection name = "Connection102">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "0"/>
- 	 <target component = "eventLogger" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection103">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
- 	 <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection104">
-	 <source component = "fileDownlink" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "1"/>
-</connection>
-<connection name = "Connection105">
-	 <source component = "cmdDisp" port = "seqCmdStatus" type = "CmdResponse" num = "0"/>
- 	 <target component = "cmdSeq" port = "cmdResponseIn" type = "CmdResponse" num = "0"/>
-</connection>
-<connection name = "Connection106">
-	 <source component = "cmdSeq" port = "comCmdOut" type = "Com" num = "0"/>
- 	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
-</connection>
-<connection name = "Connection107">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "2"/>
- 	 <target component = "cmdDisp" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection108">
-	 <source component = "cmdDisp" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "2"/>
-</connection>
-<connection name = "Connection109">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "3"/>
- 	 <target component = "gpsImpl" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection110">
-	 <source component = "gpsImpl" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "3"/>
-</connection>
-<connection name = "Connection111">
-	 <source component = "health" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "4"/>
-</connection>
-<connection name = "Connection112">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "4"/>
- 	 <target component = "health" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection113">
-	 <source component = "sockGndIf" port = "uplinkPort" type = "Com" num = "0"/>
- 	 <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "1"/>
-</connection>
-<connection name = "Connection114">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "5"/>
- 	 <target component = "prmDb" port = "CmdDisp" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection115">
-	 <source component = "prmDb" port = "CmdReg" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
-</connection>
-<connection name = "Connection116">
-	 <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
- 	 <target component = "cmdSeq" port = "cmdIn" type = "Cmd" num = "0"/>
-</connection>
-<connection name = "Connection117">
-	 <source component = "cmdSeq" port = "cmdRegOut" type = "CmdReg" num = "0"/>
- 	 <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
-</connection>
-</assembly>
 ```
+set(FPRIME_DEFAULT_TOOLCHAIN_NAME "raspberrypi"  CACHE STRING "Default toolchain, used in generation" FORCE)
+```
+
+Now that this is done, we need to purge the old build files in order to ensure that we start again clean. This can be
+done with the following commands. Notice we are purging all previous build directories we made.
+
+```
+fprime-util purge
+fprime-util purge raspberrypi
+```
+
+Now the "raspberrypi" build can be created with a call to `fprime-util generate` and the original native build can be
+made by explicitly setting the native toolchain: `fprime-util generate native`.
+
+```
+# Raspberry PI by defaule
+fprime-util generate
+fprime-util install
+
+# Native builds now explicit
+fprime-util generate native
+fprime-util install native
+```
+
+## Conclusion
+
+The GPS tutorial has shown us how to do cross compiling, and running on an embedded Linux system. We have seen how to
+add components, and wire them to existing drivers. We've seen how to run the ground system, and collect data!
+
+The user is now directed back to the [Tutorials](../README.md) for future reading. More work with the Raspberry PI can
+be found here: [RPI README.md](../../../RPI/README.md).
