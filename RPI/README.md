@@ -62,12 +62,11 @@ bin subfolder.
 
 ```
 cd fprime/RPI
-fprime-util build
 fprime-util install 
 ```
 
 After the build has completed, the output binary can be found in the `bin/raspberrypi` folder. This assumes you build with the default toolchain
-of "raspberrypi"
+of "raspberrypi".
 
 **Run the software:**
 

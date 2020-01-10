@@ -30,7 +30,6 @@ and will produce a binary that can be run on the user's system. This is accompli
 will run the code next, we will also run the install command to ensure we may easily find the binaries.
 
 ```
-fprime-util build
 fprime-util install
 ```
 

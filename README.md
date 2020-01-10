@@ -19,7 +19,7 @@ including virtual environment creation, installation verification, and support f
 ```
 git clone https://github.com/nasa/fprime.git
 cd fprime
-pip install Fw/Python Gds
+pip install Fw/Python Gds/
 ```
 
 ## Example Deployments
@@ -40,27 +40,15 @@ Pi was chosen as it is comercially available for a low price and runs Linux.
 F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system
  and topology design, tooling, and more. These tutorials are available here: [docs/Tutorials/README.md](./docs/Tutorials/README.md).
 
-## User Guide, Architecture Specification, and Further Documentation
+## Getting Help with F´
 
-The Reference application is shipped as part of F'. Documentation for this reference application can be found [here.](Ref/docs/sdd.md)
+As F´ becomes a community centered product line, there are more items available from the community at large. A mailing list is available
+at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
 
-The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf)
+In addition we have a community GitHub Organization containing third party contributions, further documentation of flight
+software development and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 
-### Continuous Integration
-
-The continuous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.
-
-### Cosmos Integration
-
-More information can be found here: [Autocoders/Python/src/fprime_ac/utils/cosmos/README.md](Autocoders/Python/src/fprime_ac/utils/cosmos/README.md)
-
-
-## F´ Community
-
-As F´ becomes a community centered product line, there are more items available from the community at large. This information
-may be found at: [https://github.com/fprime-community](https://github.com/fprime-community).
-
-The F´ community contains course materials on flight quality software, component libraries that may be of use, and more.
+Issues can be submitted to: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
 
 
 ## F´ Features
