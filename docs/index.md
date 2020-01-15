@@ -18,13 +18,13 @@ F´ has the following features:
 |---|---|
 | F´ Features | [Features](./features.md) |
 | Projects Using F´ | [Projects](./projects.md) |
-| Full Installation | [INSTALL.md](../INSTALL.md) | 
+| Full Installation | [INSTALL.md](https://github.com/nasa/fprime/blob/master/INSTALL.md) | 
 | Tutorials | [Tutorials](./Tutorials/README.md) |
 | Repository | [https://github.com/nasa/fprime](https://github.com/nasa/fprime) |
 | Community Forum and Mailing List | [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) |
 | Community GitHub Organization | [https://github.com/fprime-community](https://github.com/fprime-community) |
-| Standard Reference Application | [Ref](../Ref/README.md)  |
-| Raspberry PI Reference Application | [RPI](../RPI/README.md) | 
+| Standard Reference Application | [Ref](https://github.com/nasa/fprime/blob/master/Ref/README.md)  |
+| Raspberry PI Reference Application | [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md) | 
 
 ## F´ System Requirements
 
@@ -68,7 +68,8 @@ Full information on the code and F´ are available at our Github page:
 [http://github.com/nasa/fprime](http://github.com/nasa/fprime).  
 
 To start with, follow the [installation guide](https://github.com/nasa/fprime/blob/master/INSTALL.md). Then inspect
-either the [reference application](../Ref/README.md), [rapberry pi reference](../RPI/README.md), or the
+either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md), 
+[rapberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
 [tutorials](Tutorials/README.md).
 
 .
