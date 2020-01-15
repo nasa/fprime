@@ -1,74 +1,68 @@
 ---
-title: F Prime: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
+title: F´: A Flight Software Framework
 layout: default
 ---
-# F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
+# F´ A Flight-Proven Flight Software and Embedded Systems Framework
 
-F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
+F´ is a software framework for rapidly development and deployment of embedded systems and spaceflight applications.
+Originally developed at NASA's Jet Propulsion Laboratory, F´ is open source software that has been successfully deployed
+for several space applications. It has been used for, but is not limited to, CubeSats, SmallSats, instruments, and
+deployables.
 
-F´ comprises several elements: 
+F´ has the following features:
+* Component architecture with well-defined interfaces
+* C++ framework providing core capabilities like queues, threads, and operating-system abstraction
+* Tools for designing systems and automatically generating code from systems design
+* A standard library of flight-worthy components
+* Testing tools for unit and system-level testing
 
-* An architecture that decomposes flight software into discrete components with well-defined interfaces
-* A C++ framework that provides core capabilities such as message queues and threads
-* Modeling tools for specifying components and connections and automatically generating code
-* A growing collection of ready-to-use components
-* Testing tools for testing flight software at the unit and integration levels.
+F´ is available on GitHub at: [https://github.com/nasa/fprime](https://github.com/nasa/fprime). Further information can
+be found at that location.  Interested users may also join our mailing list at:
+[https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) or browse our
+community repositories at [https://github.com/fprime-community](https://github.com/fprime-community).
+
+## F´ System Requirements
+
+In order to develop applications with F´ the following requirements of the user's system must be met.
+
+1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
+2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path
+3. Bash or Bash compatible shell
+4. CLang or GCC compiler
+5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
+
 
 ## Quick Installation Guide
 
-F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3 with pip. Once these have been installed, users are 
-recommended to install F´ python dependencies. This is usually done in a Python virtual environment as this prevents issues at the system level, but is not required. Full installation instructions
-including virtual environment creation, installation verification, and support for Python 2 is available: [INSTALL.md](INSTALL.md). The following are the most basic steps for convenience.
+F´ can be quickly installed and ready to use by cloning the GitHub repository, installing Python code (typically in a
+virtual environment), and building on of our reference applications. For full install instructions please see:
+[INSTALL.md](https://github.com/nasa/fprime/blob/master/INSTALL.md).
 
+**Clone and Install**
 ```
 git clone https://github.com/nasa/fprime.git
 cd fprime
-pip install Fw/Python Gds
+pip install Fw/Python Gds/
+```
+**Build the Ref Application**
+```
+cd Ref
+fprime-util generate
+fprime-util install
+```
+**Run the Ref Application**
+```
+./bin/*/Ref
+...
+CTRL-C
 ```
 
-## Tutorials
+## Further References
 
-F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more. These 
-tutorials are available here: https://github.com/nasa/fprime/docs/Tutorials
+Full information on the code and F´ are available at our Github page:
+[http://github.com/nasa/fprime](http://github.com/nasa/fprime).
 
-## User Guide, Architecture Specification, and Further Documentation
+Tutorials and Getting Started Guides are available in our tutorials section: [Tutorials](Tutorials/README.md).
 
-The Reference application is shipped as part of F'. Documentation for this reference application can be found [here.](Ref/docs/sdd.md)
-
-The full F' User's guide can be found [here.](docs/UsersGuide/FprimeUserGuide.pdf) In addition, the F' architectural overview can be found [here.](docs/Architecture/FPrimeArchitectureShort.pdf)
-
-### Continuous Integration
-
-The continuous integration system performs builds and unit-test check on any pull-requests created on the F´ core. Thus ensuring that F´ core is stable and well maintained.
-
-### Cosmos Integration
-
-More information can be found here: [Autocoders/Python/src/fprime_ac/utils/cosmos/README.md](Autocoders/Python/src/fprime_ac/utils/cosmos/README.md)
-
-## F´ Features
-
-F´ has the following key features that enable robust embedded system design.
-
-### Reusability
-
-F´'s component-based architecture enables a high degree of modularity and software reuse. 
-
-### Rapid Deployment
-
-F´ provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the boilerplate code required in an F´ deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
-
-### Portability
-
-F´ runs on a wide range of processors, from microcontrollers to multicore computers, and on several operating systems. Porting F´ to new operating systems is straightforward.
-
-### High Performance
-
-F´ utilizes a point-to-point architecture. The architecture minimizes the use of computational resources and is well suited for smaller processors.
-	
-### Adaptability
-
-F´is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while still supporting a wide variety of missions.
-
-### Analyzability
-
-The typed port connections provide strong compile-time guarantees of correctness.
+There are two reference applications, a standard reference [Ref](../Ref/README.md) and one for the Raspberry PI
+[RPI](../RPI/README.md).
