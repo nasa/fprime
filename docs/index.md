@@ -2,8 +2,6 @@
 title: F´: A Flight Software Framework
 layout: default
 ---
-# F´ A Flight-Proven Flight Software and Embedded Systems Framework
-
 F´ is a software framework for rapidly development and deployment of embedded systems and spaceflight applications.
 Originally developed at NASA's Jet Propulsion Laboratory, F´ is open source software that has been successfully deployed
 for several space applications. It has been used for, but is not limited to, CubeSats, SmallSats, instruments, and
@@ -16,10 +14,17 @@ F´ has the following features:
 * A standard library of flight-worthy components
 * Testing tools for unit and system-level testing
 
-F´ is available on GitHub at: [https://github.com/nasa/fprime](https://github.com/nasa/fprime). Further information can
-be found at that location.  Interested users may also join our mailing list at:
-[https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) or browse our
-community repositories at [https://github.com/fprime-community](https://github.com/fprime-community).
+| F´ Resources | |
+|---|---|
+| F´ Features | [Features](./features.md) |
+| Projects Using F´ | [Projects](./projects.md) |
+| Full Installation | [INSTALL.md](../INSTALL.md) | 
+| Tutorials | [Tutorials](./Tutorials/README.md) |
+| Repository | [https://github.com/nasa/fprime](https://github.com/nasa/fprime) |
+| Community Forum and Mailing List | [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) |
+| Community GitHub Organization | [https://github.com/fprime-community](https://github.com/fprime-community) |
+| Standard Reference Application | [Ref](../Ref/README.md)  |
+| Raspberry PI Reference Application | [RPI](../RPI/README.md) | 
 
 ## F´ System Requirements
 
@@ -60,9 +65,10 @@ CTRL-C
 ## Further References
 
 Full information on the code and F´ are available at our Github page:
-[http://github.com/nasa/fprime](http://github.com/nasa/fprime).
+[http://github.com/nasa/fprime](http://github.com/nasa/fprime).  
 
-Tutorials and Getting Started Guides are available in our tutorials section: [Tutorials](Tutorials/README.md).
+To start with, follow the [installation guide](https://github.com/nasa/fprime/blob/master/INSTALL.md). Then inspect
+either the [reference application](../Ref/README.md), [rapberry pi reference](../RPI/README.md), or the
+[tutorials](Tutorials/README.md).
 
-There are two reference applications, a standard reference [Ref](../Ref/README.md) and one for the Raspberry PI
-[RPI](../RPI/README.md).
+.
