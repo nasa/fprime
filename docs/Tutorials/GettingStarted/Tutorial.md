@@ -20,9 +20,9 @@ reference for keywords that have specific meaning in an F´ project.
 **Port:** a port represents a connection between *Components*. These act as communication channels in F´. This allows
 *Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*. 
 
-**Component:** a single unit in F´. This represents one conceptual portion of an F´ deployment.  Typically encapsulates
-core logic inside. *Components* define a set of *Ports* that act as the interface to the *Component*, and additionally
-may define *Commands*, *Events*, *Channels*, and *Parameters*. These items represent a standard data pattern for F´.
+**Component:** the location of program behavior. Components execute the software logic of the system and typically 
+define an interface of *Ports* that act allow them to interact with other *Components*. Components additionally
+may define *Commands*, *Events*, *Channels*, and *Parameters*, which define standard data patterns in F´.
 
 **Topology**: a topology represents the full F´ system. It is a set of *Components* and the connections between those
 *Components*. The *Topology* specifies the full system and all the communication channels.
