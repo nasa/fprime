@@ -171,12 +171,14 @@ namespace Drv {
           case BAUD_230K:
               relayRate = B230400;
               break;
+#if defined TGT_OS_TYPE_LINUX
           case BAUD_460K:
               relayRate = B460800;
               break;
           case BAUD_921K:
               relayRate = B921600;
               break;
+#endif
           default:
               FW_ASSERT(0,baud);
               break;

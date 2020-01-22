@@ -8,6 +8,7 @@
  */
 import {filter, timeToString} from "./utils.js"
 import "./fptable.js";
+import {config} from "../config.js";
 /**
  * channel-table:
  *
@@ -102,11 +103,19 @@ export let ChannelMixins = {
      * @param newChannels: new full list of channels to render
      */
     updateChannels(newChannels) {
+        let timeout = config.dataTimeout * 1000;
         // Loop over all dictionaries
         for (let i = 0; i < newChannels.length; i++) {
             let channel = newChannels[i];
             let id = channel.id;
             this.vue.channels[id] = channel;
+        }
+        // Set active channels, and register a timeout to turn it off again
+        if (newChannels.length > 0) {
+            let vue_self = this.vue;
+            vue_self.channelsActive = true;
+            clearTimeout(this.channelTimeout);
+            this.channelTimeout = setTimeout(() => vue_self.channelsActive = false, timeout);
         }
     },
     /**
@@ -121,8 +130,7 @@ export let ChannelMixins = {
         for (let key in templates) {
             channels[key] = {id: key, template: templates[key], val: null, time: null};
         }
-
-        return {"channels": channels};
+        return {"channels": channels, "channelsActive": false};
     }
 };
 

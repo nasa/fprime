@@ -15,7 +15,7 @@ Vue.component("logging", {
     computed:{
         options: function () {
             let kets = Object.keys(this.logs);
-            return kets;ß
+            return kets;
         }
     }
 });

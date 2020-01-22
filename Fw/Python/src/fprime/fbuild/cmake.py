@@ -63,7 +63,7 @@ class CMakeHandler(object):
         self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
-            self._run_cmake([])
+            self._run_cmake(["--help"], capture=True)
         except Exception as exc:
             raise CMakeExecutionException("CMake executable 'cmake' not found", str(exc))
 
