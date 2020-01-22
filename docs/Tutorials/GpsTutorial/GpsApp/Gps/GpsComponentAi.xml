@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!-- GPS Tutorial: GpsComponentAi.xml
+
+This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events, and
+Telemetry that represent the GPS link. This will also have a command to emit the lock status of the GPS signal. This
+is an active component, meaning it will have it's own thead. It will therefore process messages at its own pace, and
+will not need an external thread of execution to run on.
+
+It has 3 standard command ports, 2 standard event ports, 1 standard telemetry port, and 2 ports to interact with the
+serial driver.
+-->
+
+<component name="Gps" kind="active" namespace="GpsApp" modeler="true">
+    <!-- Import command ports -->
+    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+    <!-- Import event ports -->
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+    <!-- Import telemetry ports -->
+    <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <!-- Import ports for serial driver -->
+    <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <!-- Import command, telemetry, and event dictionaries -->
+    <import_dictionary>GpsApp/Gps/Commands.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Telemetry.xml</import_dictionary>
+    <import_dictionary>GpsApp/Gps/Events.xml</import_dictionary>
+
+    <ports>
+        <!-- Command port definitions: command input receives commands, command reg out, and response out are
+        ports used to register with the command dispatcher, and return responses to it -->
+        <port name="cmdIn" data_type="Fw::Cmd"  kind="input" role="Cmd" max_number="1">
+        </port>
+        <port name="cmdRegOut" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
+        </port>
+        <port name="cmdResponseOut" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
+        </port>
+        <!-- Event ports: send events, and text formated events -->
+        <port name="eventOut" data_type="Fw::Log"  kind="output" role="LogEvent"  max_number="1">
+        </port>
+        <port name="textEventOut" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+        </port>
+        <!-- Telemetry ports -->
+        <port name="tlmOut" data_type="Fw::Tlm"  kind="output" role="Telemetry" max_number="1">
+        </port>
+        <!-- Serial ports: one to receive serial data, and one to provide buffers for the serial driver to use -->
+        <port name="serialRecv" data_type="Drv::SerialRead"  kind="async_input" max_number="1">
+        </port>
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
+        </port>
+    </ports>
+</component>
