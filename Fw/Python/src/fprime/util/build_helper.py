@@ -120,9 +120,11 @@ def validate(parsed):
     if parsed.command == "generate":
         # Look for default toolchains via FPRIME_DEFAULT_TOOLCHAIN_NAME
         toolchain = parsed.platform
-        if parsed.platform == "default":
+        if toolchain == "default":
             toolchain = fprime.fbuild.builder().get_fprime_configuration("FPRIME_DEFAULT_TOOLCHAIN_NAME",
                                                                          cmake_dir=parsed.path)[0]
+        elif toolchain == "native":
+            toolchain = None
         # Find locations of toolchain files, assuming a non-None toolchain is asked for
         if toolchain is not None:
             locations = fprime.fbuild.builder().get_include_locations(parsed.path)

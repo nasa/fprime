@@ -89,16 +89,15 @@ namespace Drv {
 
   SocketIpDriverComponentImpl::SocketIpStatus SocketIpDriverComponentImpl :: open() {
       SocketIpDriverComponentImpl::SocketIpStatus status = SocketIpDriverComponentImpl::SUCCESS;
+      // Only the input (TCP) socket needs closing
       (void) close(m_socketInFd); // Close open sockets, to force a re-open
-      (void) close(m_socketOutFd);
       m_socketInFd = -1;
-      m_socketOutFd = -1;
       // Open a TCP socket for incoming commands, and outgoing data if not using UDP
       if ((status = openProtocol(SOCK_STREAM)) != SocketIpDriverComponentImpl::SUCCESS) {
           return status;
       }
       // If we need UDP sending, attempt to open UDP
-      if (m_send_udp && (status = openProtocol(SOCK_DGRAM, false)) != SocketIpDriverComponentImpl::SUCCESS) {
+      if (m_send_udp && m_socketOutFd == -1 && (status = openProtocol(SOCK_DGRAM, false)) != SocketIpDriverComponentImpl::SUCCESS) {
           (void) close(m_socketInFd);
           return status;
       }
@@ -182,8 +181,9 @@ namespace Drv {
       } else {
           m_socketOutFd = socketFd;
       }
-      Fw::Logger::logMsg("Connected to %s:%hu using %s\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port,
-                         reinterpret_cast<POINTER_CAST>(m_send_udp ? "udp" : "tcp"));
+      Fw::Logger::logMsg("Connected to %s:%hu for %s using %s\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port,
+                         reinterpret_cast<POINTER_CAST>(isInput ? "uplink" : "downlink"),
+                         reinterpret_cast<POINTER_CAST>((protocol == SOCK_DGRAM) ? "udp" : "tcp"));
       return SocketIpDriverComponentImpl::SUCCESS;
   }
 
@@ -201,8 +201,8 @@ namespace Drv {
               status = self->receive();
               if (status != SocketIpDriverComponentImpl::SUCCESS &&
                   status != SocketIpDriverComponentImpl::INTERRUPTED_TRY_AGAIN) {
+                  (void) close(self->m_socketInFd);
                   self->m_socketInFd = -1;
-                  self->m_socketOutFd = -1;
               }
           }
       }
@@ -227,8 +227,6 @@ namespace Drv {
       }
       // Zero bytes read means a closed socket
       else if (recd == 0 || errno == ECONNRESET) {
-          (void) close(m_socketInFd);
-          m_socketInFd = -1;
           status = READ_DISCONNECTED;
       }
       // Ignore KEEPALIVE data and send out any other data.
