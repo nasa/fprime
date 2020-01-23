@@ -1,4 +1,7 @@
-# F´ Quick Installation Guide
+---
+layout: page
+title: "F´ Installation Guide"
+---
 
 This installation guide is specifically designed to enable individual and researchers to get up and
 running with F´ quickly. This guide is not intended for large teams with specific content

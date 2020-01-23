@@ -39,7 +39,7 @@ If the UART port is not set up correctly, there will be a file open error.
 
 **Install the packages necessary to run the demo.** 
 
-Please see [INSTALL.md](../INSTALL.md) to ensure that the F´ application has been installed and tested with the basic Ref. For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/rpi`. If they are installed elsewhere, the location can be updated [here](../cmake/toolchain/raspberrypi.cmake).
+Please see [INSTALL.md](../docs/INSTALL.md) to ensure that the F´ application has been installed and tested with the basic Ref. For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/rpi`. If they are installed elsewhere, the location can be updated [here](../cmake/toolchain/raspberrypi.cmake).
 
 ### Build the software
 
