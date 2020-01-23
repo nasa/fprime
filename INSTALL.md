@@ -13,11 +13,11 @@ VirtualBox [https://www.virtualbox.org/](https://www.virtualbox.org/).
 
 Requirements:
 
-1. Mac OSX or Linux Operating System
-2. CMake [https://cmake.org/download/](https://cmake.org/download/)
+1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
+2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path
 3. Bash or Bash compatible shell
 4. CLang or GCC compiler
-5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/) 
+5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
 6. Python Virtual Environment \* (pip install venv or pip install virtualenv)
 
 **Note:** it is possible to install and run F´ without a virtual environment, however; for
