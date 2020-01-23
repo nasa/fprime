@@ -10,7 +10,7 @@ Understanding the reference application has a few minimal prerequisites.
 
 **Installing F´**
 
-Please follow the install guide for F´ found here: [INSTALL.md](../INSTALL.md).
+Please follow the install guide for F´ found here: [INSTALL.md](../docs/INSTALL.md).
 
 ## Building and Running the Ref Application
 

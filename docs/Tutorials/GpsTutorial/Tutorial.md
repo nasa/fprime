@@ -29,7 +29,7 @@ understand this tutorial are as follows:
 3) An understanding of how XML is structured
 4) An understanding of the raspberry pi, specifically SSHing into the pi and running applications
 
-Installation can be done by following the installation guide found at: [INSTALL.md](../../../INSTALL.md). This guide
+Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
 will walk the user through the installation process and verifying the installation.  In addition, users may wish to
 follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
 tools.
