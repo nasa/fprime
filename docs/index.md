@@ -71,5 +71,3 @@ To start with, follow the [installation guide](https://github.com/nasa/fprime/bl
 either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md), 
 [rapberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
 [tutorials](Tutorials/README.md).
-
-.
