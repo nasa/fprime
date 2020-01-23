@@ -1,6 +1,6 @@
 ---
-title: F´: Features of the Framework
-layout: default
+layout: page
+title: "F´ Features"
 ---
 F´ has the following key features that enable robust embedded system design. These features enable projects to quickly
 develop embedded systems applications from design through test.
