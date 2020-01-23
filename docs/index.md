@@ -1,5 +1,5 @@
 ---
-title: F´: A Flight Software Framework
+title: "F´ A Flight Software and Embedded Systems Framework"
 layout: default
 ---
 F´ is a software framework for rapidly development and deployment of embedded systems and spaceflight applications.

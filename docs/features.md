@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: "F´ Features"
 ---
 F´ has the following key features that enable robust embedded system design. These features enable projects to quickly
