@@ -19,7 +19,7 @@ this tutorial are as follows:
 2) An understanding of C++, including class declarations and inheritance
 3) An understanding of how XML is structured
 
-Installation can be done by following the installation guide found at: [INSTALL.md](../../../INSTALL.md). This guide
+Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
 will walk the user through the installation process and verifying the installation.  In addition, users may wish to
 follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
 tools.

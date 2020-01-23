@@ -1,6 +1,6 @@
 # Getting Started with F´
 
-Prerequisites: [https://github.com/nasa/fprime/blob/master/INSTALL.md](https://github.com/nasa/fprime/blob/master/INSTALL.md)
+Prerequisites: [INSTALL.md](../../INSTALL.md)
 
 This tutorial will walk the user through the basic usage of the F´ development suite. This assumes that the user has run
 through the above installation guide, and has a working F´ installation.
