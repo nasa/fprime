@@ -135,7 +135,6 @@ integrated configuration with ground in-the-loop.
              'multiprocess',
              'Pmw',
              'tkintertable==1.2',
-             'numpy',
              'scipy',
              'scimath',
              'matplotlib'],

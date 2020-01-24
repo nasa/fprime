@@ -39,6 +39,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     v-bind:channels="channels"
                     v-bind:cmdhist="cmdhist"
                     v-bind:logs="logs"
+                    v-bind:events-active="eventsActive"
+                    v-bind:channels-active="channelsActive"
             ></tabbed-etc>
         </div>
 
@@ -48,16 +50,25 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">
                         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                            <span class="navbar-brand">F´</span>
-                            <div class="navbar-nav">
-                                <div v-for="tab in tabs"
-                                    :class="['nav-item', 'nav-link', { active: currentTab == tab }]"
-                                    :key="tab"
-                                    v-on:click="route(tab)">{{ tab }}</div>
-                            </div>
-                            <button class="btn btn-success" v-on:click="spawn">New Window</button>
+                            <span class="navbar-brand">
+                                <img v-bind:src="config.logo" width="50" height="50"
+                                     v-bind:alt="config.projectName" v-bind:title="config.projectName">
+                            </span>
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li v-for="tab in tabs"
+                                     :class="['nav-item', 'nav-link', { active: currentTab == tab }]"
+                                     :key="tab"
+                                     v-on:click="route(tab)">{{ tab }}</li>
+                                <form class="form-inline my-2 my-lg-0">
+                                    <button class="btn btn-success" v-on:click="spawn">New Window</button>
+                                </form>
+                            </ul>
+                            <span class="navbar-brand">
+                                    <img v-bind:src="noneActive ? config.dataErrorIcon : config.dataSuccessIcon"
+                                         width="30" height="30">
+                                </span>
                         </nav>
-                        <h1>F´ Ground Control Interface: {{ currentTab }}</h1>
+                        <h1>{{ config.projectName }}: {{ currentTab }}</h1>
                     </div>
                     <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
                     <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"

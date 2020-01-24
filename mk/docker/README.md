@@ -70,9 +70,9 @@ implications in mounting volumens into Docker.
 
 ### Build the F´Docker Image
 ```bash 
-fprime>docker build -t fprime -f docker/Dockerfile mk/
+fprime>docker build -t fprime -f mk/docker/Dockerfile .
 ``` 
-Here the Docker container is built using "mk/" as context and specifying the F´dockerfile.
+Here the Docker container is built using the repository's root folder as context and specifying the F´dockerfile.
 
 ### Run the F´Docker Image Manually
 ```bash
