@@ -62,6 +62,10 @@ class TCPSender(TcpHandler):
         Write a packet out to the tcp socket server. This adds the framing data for the TCP Server.
         :param packet: bytes object of data to write out to the socket server
         """
+        # If frames are available, send them up already
+        if self.deframes:
+            return self.deframes.pop(0)
+        # No more frames, read data and block on it
         try:
             self.data += super(TCPSender, self).read_impl()
             self.cut_into_frames()

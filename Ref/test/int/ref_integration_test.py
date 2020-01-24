@@ -61,8 +61,8 @@ class TestRefAppClass(object):
         Return:
             returns a list of the EventData objects found by the search
         """
-        self.api.log("Starting assert_command helper")
         cmd_id = self.api.translate_command_name(command)
+        self.api.log("Starting assert_command helper for {}({})".format(command, cmd_id))
         events = []
         events.append(self.api.get_event_pred("OpCodeDispatched", [cmd_id, None]))
         events.append(self.api.get_event_pred("OpCodeCompleted", [cmd_id]))
@@ -182,7 +182,7 @@ class TestRefAppClass(object):
         case = True
         case &= self.api.test_assert(ascending, "Expected all updates to ascend.", True)
         case &= self.api.test_assert(not reordered, "Expected no updates to be dropped.", True)
-        self.api.predicate_assert(count_pred, len(results), "Expected > {} updates".format(length-1), True)
+        self.api.predicate_assert(count_pred, len(results) - 1, "Expected >= {} updates".format(length-1), True)
         self.api.assert_telemetry_count(0, "RgCycleSlips")
         assert case, "Expected all checks to pass (ascending, reordering). See log."
 
@@ -197,7 +197,7 @@ class TestRefAppClass(object):
             self.assert_command("cmdDisp.CMD_NO_OP")
             self.assert_command("cmdDisp.CMD_NO_OP")
 
-            time.sleep(6.5)
+            time.sleep(0.5)
 
             self.api.assert_event_count(pred, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
@@ -207,7 +207,7 @@ class TestRefAppClass(object):
             self.api.send_command("cmdDisp.CMD_NO_OP")
             self.api.send_command("cmdDisp.CMD_NO_OP")
 
-            time.sleep(6.5)
+            time.sleep(0.5)
 
             self.api.assert_event_count(zero, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
