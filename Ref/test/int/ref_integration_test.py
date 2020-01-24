@@ -193,6 +193,8 @@ class TestRefAppClass(object):
             actHI_events = self.api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
             pred = predicates.greater_than(0)
             zero = predicates.equal_to(0)
+            # Drain time for dispatch events
+            time.sleep(10)
 
             self.assert_command("cmdDisp.CMD_NO_OP")
             self.assert_command("cmdDisp.CMD_NO_OP")
@@ -203,6 +205,8 @@ class TestRefAppClass(object):
             self.api.assert_event_count(pred, actHI_events)
 
             self.set_event_filter(self.FilterSeverity.COMMAND, False)
+            # Drain time for dispatch events
+            time.sleep(10)
             self.api.clear_histories()
             self.api.send_command("cmdDisp.CMD_NO_OP")
             self.api.send_command("cmdDisp.CMD_NO_OP")
