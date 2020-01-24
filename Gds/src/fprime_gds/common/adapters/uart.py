@@ -79,7 +79,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         :return: dictionary of flag to argparse arguments for use with argparse
         """
         return {
-            ("-d", "--device"): {
+            ("-a", "--device"): {
                 "dest": "device",
                 "type": str,
                 "default": "/dev/ttyACM0",

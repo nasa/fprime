@@ -8,7 +8,7 @@ export CHEETAH_COMPILE ?= cheetah-compile
 export MARKDOWN ?= markdown_py -x markdown.extensions.extra -x markdown.extensions.codehilite
 
 CKSUM_SH := $(BUILD_ROOT)/mk/bin/md5.sh
-export CKSUM := /usr/bin/openssl md5
+export CKSUM := /usr/bin/md5sum
 CKSUM_SUFFIX := .md5
 
 DOXYGEN := 
