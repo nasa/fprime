@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<!-- GPS Tutorial: GpsApp/Gps/Commands.xml
+
+This defines a single command to report the lock status of the GPS. This demonstrates a simple command that is useful
+when working with GPS to determine if the data should be trusted.
+-->
+<commands>
+    <!-- Define a single command that runs asynchronously on the component's own thread. The opcode "0" is relative to
+    the GPS component's command space.  The mnemonic is the string a user will use to refer to this command. -->
+    <command kind="async" opcode="0" mnemonic="Gps_ReportLockStatus" >
+        <comment>A command to force an EVR reporting lock status.</comment>
+    </command>
+</commands>

@@ -62,6 +62,10 @@ class CMakeHandler(object):
         """
         self.build_cache = CMakeBuildCache()
         self.verbose = False
+        try:
+            self._run_cmake(["--help"], capture=True)
+        except Exception as exc:
+            raise CMakeExecutionException("CMake executable 'cmake' not found", str(exc))
 
     def set_verbose(self, verbose):
         """ Sets verbosity """
@@ -228,6 +232,8 @@ class CMakeHandler(object):
         """
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
+        # We will CD for build, so this path must become absolute
+        source_dir = os.path.abspath(source_dir)
         args = {} if args is None else args
         fleshed_args = map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, args[key]), args.keys())

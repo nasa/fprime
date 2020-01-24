@@ -21,6 +21,7 @@ import shutil
 
 import fprime.fbuild
 
+
 UT_SUFFIX = "-ut"
 ACTION_MAP = {
     "generate": {
@@ -90,7 +91,7 @@ def validate(parsed):
         # Generation validation
         elif parsed.build_dir is None:
             build_inst_name = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform)
-            parsed.build_dir = os.path.join(os.getcwd(), build_inst_name)
+            parsed.build_dir = os.path.join(parsed.path, build_inst_name)
     except fprime.fbuild.cmake.CMakeProjectException as exc:
         print("[ERROR] {}".format(exc))
         sys.exit(1)
@@ -119,9 +120,11 @@ def validate(parsed):
     if parsed.command == "generate":
         # Look for default toolchains via FPRIME_DEFAULT_TOOLCHAIN_NAME
         toolchain = parsed.platform
-        if parsed.platform == "default":
+        if toolchain == "default":
             toolchain = fprime.fbuild.builder().get_fprime_configuration("FPRIME_DEFAULT_TOOLCHAIN_NAME",
                                                                          cmake_dir=parsed.path)[0]
+        elif toolchain == "native":
+            toolchain = None
         # Find locations of toolchain files, assuming a non-None toolchain is asked for
         if toolchain is not None:
             locations = fprime.fbuild.builder().get_include_locations(parsed.path)
@@ -130,7 +133,7 @@ def validate(parsed):
             toolchains = list(filter(os.path.exists, toolchains_paths))
             if not toolchains:
                 print("[ERROR] Toolchain file {} does not exist at any of {}"
-                      .format(toolchains + ".cmake", ", ".join(list(toolchains_paths))))
+                      .format(toolchain + ".cmake", ", ".join(list(toolchains_paths))))
                 sys.exit(-1)
             print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
             cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
@@ -176,6 +179,12 @@ def parse_args(args):
     hparser.add_argument("hash", type=lambda x: int(x, 0), help="F prime assert hash to associate with a file.")
     hparser.add_argument("-t", "--unittest", default=False, action="store_true",
                          help="Use F prime ut build, not regular build")
+    # Check for a valid builder first
+    try:
+        fprime.fbuild.builder()
+    except Exception as exc:
+        print("[ERROR]", exc, exc.stderr, file=sys.stderr)
+        sys.exit()
     # Parse and prepare to run
     parsed = parser.parse_args(args)
     if not hasattr(parsed, "command") or parsed.command is None:
@@ -193,7 +202,13 @@ def confirm():
     """
     # Loop "forever"
     while True:
-        confirm = input("Purge this directory (yes/no)?")
+        # Py 2/3
+        prompter = input
+        try:
+            prompter = raw_input
+        except NameError:
+            pass
+        confirm = prompter("Purge this directory (yes/no)?")
         if confirm.lower() in ["y", "yes"]:
             return True
         elif confirm.lower() in ["n", "no"]:
@@ -205,8 +220,9 @@ def utility_entry(args=sys.argv[1:]):
     Main interface to F prime utility.
     :return: return code of the function.
     """
-    parsed, cmake_args, make_args, automatic_build_dir = parse_args(args)
+    parsed = None
     try:
+        parsed, cmake_args, make_args, automatic_build_dir = parse_args(args)
         if parsed.command == "hash-to-file":
             suffix = UT_SUFFIX if parsed.unittest else ""
             lines = fprime.fbuild.builder().find_hashed_file(parsed.build_dir + suffix, parsed.hash)
@@ -244,9 +260,13 @@ def utility_entry(args=sys.argv[1:]):
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
                                                          parsed.path, cmake_args, make_args,
                                                          action.get("top-target", False))
+    except fprime.fbuild.cmake.CMakeExecutionException as exexc:
+        stderr = exexc.get_errors()
+        print("[ERROR] {}.{}".format(exexc,"\n{}".format(stderr) if stderr else ""), file=sys.stderr)
+        return 1
     except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
-        if parsed.command == "generate" and automatic_build_dir:
+        if parsed is not None and parsed.command == "generate" and automatic_build_dir:
             print("[INFO] Cleaning automatic build directory at: {}".format(parsed.build_dir))
             shutil.rmtree(parsed.build_dir, ignore_errors=True)
             print("[INFO] Cleaning automatic unit-test build directory at: {}".format(parsed.build_dir + UT_SUFFIX))

@@ -44,6 +44,13 @@
 .fp-color-logging {
     background-color: #f0fff0;
 }
+/**
+ * Filter the orb image when there is no data flow.
+ */
+img.dead {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+}
 
 /**
  * FP Containerization:

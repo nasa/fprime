@@ -1,22 +1,34 @@
-# Introduction
+# Math Component Tutorial
 
-The following example shows the steps to implement a simple pair of components connected by a pair of ports. The first, `MathSender`, will invoke the second, `MathReceiver`, via  a `MathOp` port to perform a math operation and return the result via a `MathResult` port. 
+The following example shows the steps to implement a simple pair of components connected by a pair of ports. The first,
+`MathSender`, will invoke the second, `MathReceiver`, via  a `MathOp` port to perform a math operation and return the
+result via a `MathResult` port.
 
 ![`Component` Diagram](img/Comp.jpg "Component Pair")
 
-All the code in this tutorial can be found in this directory. The actual location of the components will be in the `Ref` directory, where a demonstration reference application is located. 
+All the code in this tutorial can be found in this directory. This code will work if it is copied or reimplemented
+within the `Ref` directory of F´. This tutorial will walk the user through modifying the Reference app, Ref, to
+implement the math components.
 
-The prerequisite skills to understand this totorial are as follows:
+## Prerequisites
 
-1) Working knowledge of Linux; how to navigate in a shell and execute programs
+This tutorial requires the user to have some basic skills and have installed F´. The prerequisite skills to understand
+this tutorial are as follows:
+
+1) Working knowledge of Unix; how to navigate in a shell and execute programs
 2) An understanding of C++, including class declarations and inheritance
 3) An understanding of how XML is structured
 
-Before beginning, please make sure that all the dependencies are installed. Please read the [User Guide](/docs/UsersGuide/FprimeUserGuide.pdf) for help installing these packages.
-
-Here is a description of the components:
+Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
+will walk the user through the installation process and verifying the installation.  In addition, users may wish to
+follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
+tools.
 
 # 1 Component Descriptions
+
+This section will cover the components that will be built in this tutorial. Each component may define the commands,
+events, telemetry channels, and parameters. This section will list commands, events, telemetry channels, and parameters
+for each component that will be created.
 
 ## 1.1 MathSender
 `MathSender` must do the following:
@@ -82,15 +94,16 @@ result = (value1 operation value2)*factor1/factor2
 
 # 2 Implementation
 
-The implementation of the component will will have the following steps:
+This section will cover the implementation of the components for this tutorial. The implementation of these components 
+will have the following steps:
 
 1) Define the `MathOpPort` and 'MathResultPort' ports that are used between the components.
 2) Define the `MathSender` component in XML and compile it.
 3) Implement the `MathSender` derived implementation class. 
 4) Unit test the `MathSender` implementation component.
 5) Define the `MathReceiver` component in XML.
-6) Implement the `MathReceiver` implemenation class.
-7) Unit test the `MathReceiver` implemenation class.
+6) Implement the `MathReceiver` implementation class.
+7) Unit test the `MathReceiver` implementation class.
 8) Connect the classes to the `Ref` topology.
 9) Run the ground system and exercise the commands and view the telemetry and events in the GUI.
 
@@ -184,66 +197,62 @@ The enumerations are a special type of argument. When `type="ENUM"` is an attrib
  ```
 #### 2.1.1.3 Adding the port to the build
 
-The build system needs to be made aware of the port XML. To do this, edit the file `/mk/configs/modules/modules.mk`.  
+The build system needs to be made aware of the port XML. To do this, the user needs to create a `CMakeLists.txt` file in
+the directory of the port. Create a file named `CMakeLists.txt` in the `MathPorts` directory. This file tells the build
+system that a new file needs to be added to the build. Here are the contents:
 
-Find the `REF_MODULES` variable and add the new port directory:
-
-```make
-REF_MODULES := \
-    Ref/Top \
-    Ref/RecvBuffApp \
-    Ref/SendBuffApp \
-    Ref/SignalGen \
-    Ref/PingReceiver \
-    Ref/MathPorts
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathOpPortAi.xml"
+)
+register_fprime_module()
 ```
 
-Create a file named `mod.mk` in the `MathPorts` directory. This file tells the build system that a new file needs to be added to the build. Here are the contents:
+Here the source files for this module are listed. In the case of ports, only the Ai.xml file is needed. The next step is
+to add the `MathPorts` to the `Ref` project.
 
-```make
-SRC = 	MathOpPortAi.xml 
-```
+The port can be added into the `Ref` project by editing the `Ref/CMakeLists.txt`. This will add the port directory into
+the directories available to the `Ref` build.  Find the following lines in `Ref/CMakeLists.txt` and append a record with
+the current directory.
 
-A second make file is needed to build the code in the local `MathPorts` directory. It should be named `Makefile` and have the following contents:
+```cmake
+...
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
+``` 
 
-```make
-# derive module name from directory
+The file after modification should look like the following:
 
-MODULE_DIR = Ref/MathPorts
-MODULE = $(subst /,,$(MODULE_DIR))
+```cmake
+...
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
+``` 
 
-BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))
-export BUILD_ROOT
-
-include $(BUILD_ROOT)/mk/makefiles/module_targets.mk
-
-```
-
-The `MODULE_DIR` path should always be the current directory of the `Makefile`.
-
-Now a make target can be called to include the module in the build. This only needs to be done once:
+Now that the ports directory is part of the build system, the port can be built. If you have not already generated a
+build directory for `Ref` as described in the "INSTALL.md" and the "Getting Started" tutorial, then run the following
+commands to generate a build. 
 
 ```shell
-make gen_make
-Generating templates
-...
-Regenerating global Makefile
-Generating Makefiles in .../fprime/mk/makefiles
-Makefile generation complete.
-Build Time: 0:00.51
+# Change to Ref directory
+cd fprime/Ref
+fprime-util generate
 ```
 
 Now, the port code can be generated and compiled:
 
 ```shell
-make
-Building module RefMathPorts code generation (level 4)
-...
-make[1]: Leaving directory '.../fprime/Ref/MathPorts'
-Build Time: 0:03.49
+# Change to the MathPorts directory from Ref
+cd MathPorts
+fprime-util build
 ```
 
-The code generation from the XML produces two files:
+The code generation from the XML produces two files, both of which are part of the generated build directory:
 
 ```
  MathOpPortAc.cpp
@@ -269,16 +278,20 @@ These contain the C++ classes that implement the port functionality. The build s
 
 ```
 
-This file can be added to the `mod.mk` in the `Ref/MathPorts` directory:
+This file can be added to the `CMakeLists.txt` in the `Ref/MathPorts` directory:
 
-```make
-SRC = 	MathOpPortAi.xml \
-		MathResultPortAi.xml
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathOpPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MathResultPortAi.xml"
+
+)
+register_fprime_module()
 ```
 
-Running `make gen_make` and `make` as before will make the build system aware of the new port XML file and compile it.
-
-The code generated to implement ports is complete. Developers do not need to add any implmentation code of their own.
+Running `fprime-util build` as before will compile the new port XML file and generate the C++ Autogenerated
+files. The code generated to implement ports is complete. Developers do not need to add any implementation code of their
+own to port definitions.
 
 ## 2.2 Serializable Definition
 
@@ -309,10 +322,13 @@ The `MathOp` serializable structure is needed by `MathReceiver` for a telemetry 
 </serializable>
 ```
 
-Add a mod.mk file for the serializable:
+Add a `CMakeLists.txt` file for the serializable:
 
-```make
-SRC = 	MathOpSerializableAi.xml
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathOpSerializableAi.xml"
+)
+register_fprime_module()
 ```
 
 #### 2.2.1.1 Serializable Name Specification
@@ -347,18 +363,17 @@ The `members` tag starts the section of the XML that specifies the members of th
 
 As with the arguments to port definitions, built-in types can be specified as well as enumerations.
 
-As before with the port definitions, the `Ref/MathTypes` directory needs to be added to `/mk/configs/modules/modules.mk`.  
+As before with the port definitions, the `Ref/MathTypes` directory needs to be added to `Ref/CMakeLists.txt`.  
 
-```make
-REF_MODULES := \
-    Ref/Top \
-    Ref/RecvBuffApp \
-    Ref/SendBuffApp \
-    Ref/SignalGen \
-    Ref/PingReceiver \
-    Ref/MathPorts \
-    Ref/MathTypes
-```
+```cmake
+...
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
+``` 
 
 This XML defined structure compiles to a C++ class that has accessors for the members of the structure.
 
@@ -671,40 +686,29 @@ The `<events>` tag starts the section containing events for `MathSender`. For ea
 |id|A numeric value for the event. The value is relative to a base value set when the component is added to a topology|
 |format_string|A C-style format string for displaying the event and the argument values.|
 
-The directory containing the component XML can be added to the list of modules in `/mk/configs/modules/modules.mk`:
+The directory containing the component XML can be added to the list of modules in `Ref/CMakeLists.txt`:
 
-```make
-REF_MODULES := \
-	Ref/Top \
-	Ref/RecvBuffApp \
-	Ref/SendBuffApp \
-	Ref/SignalGen \
-	Ref/PingReceiver \
-	Ref/MathPorts \
-	Ref/MathTypes \
-	Ref/MathSender
-```
-
-Create a `mod.mk` file in `Ref/MathSender` and add `MathSenderComponentAi.xml`.
-
-Create a `Makefile` file in `Ref/MathSender`, following the same structure as earlier:
-
-
-```make
-# derive module name from directory
-
-MODULE_DIR = Ref/MathSender
-MODULE = $(subst /,,$(MODULE_DIR))
-
-BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))
-export BUILD_ROOT
-
-include $(BUILD_ROOT)/mk/makefiles/module_targets.mk
-
+```cmake
+...
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathSender/")
 ``` 
 
+Create a `CMakeLists.txt` file in `Ref/MathSender` and add `MathSenderComponentAi.xml`.
 
-Once it is added, add the directory to the build and build the component by typing `make rebuild` from the `Ref` directory.
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
+)
+register_fprime_module()
+```
+
+Once it is added, add the directory to the build and build the component by typing `fprime-util build` from the `Ref` directory.
 
 ### 2.3.2 MathReceiver Component
 
@@ -821,13 +825,18 @@ The `MathReceiver` component XML is as follows:
     
 </component>
 ```
-The mod.mk file for this component is as follows:
 
-```make
-SRC = 	MathReceiverComponentAi.xml 
+
+The `CMakeLists.txt` file for this component is as follows:
+
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentAi.xml"
+)
+register_fprime_module()
 ```
 
-Don't forget to create a `Makefile` and add `Ref/MathReceiver` to `/mk/configs/modules/modules.mk`.
+Don't forget to `Ref/MathReceiver` to `Ref/CMakeLists.txt`.
 
 
 Many of the elements are the same as described in `MathSender`, so this section will highlight the differences.
@@ -914,7 +923,8 @@ The component implementation consists of writing a class that is derived from th
 
 #### 2.4.1.1 Stub Generation
 
-There is a make target that will generate stubs that the developer can fill in. The command to generate the stubs is: `make impl`. This will generate two files:
+There is a F´ utility command that will generate stubs that the developer can fill in. The command to generate the stubs is: `fprime-util impl`.
+This should be run in the directory for the MathSender component, and will generate two files:
 
 ```
 MathSenderComponentImpl.hpp-template
@@ -928,21 +938,23 @@ MathSenderComponentImpl.hpp
 MathSenderComponentImpl.cpp
 ```
 
-Add the new files to the `mod.mk` file:
+Add the new files to the MathSender's `CMakeLists.txt` file:
 
-```make
-SRC = MathSenderComponentAi.xml MathSenderComponentImpl.cpp
-
-HDR = MathSenderComponentImpl.hpp
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentImpl.cpp"
+)
+register_fprime_module()
 ```
 
-Make the build system aware of the new files and build:
+Now attempt to build the component with:
 
 ```
-make rebuild
+fprime-util build
 ```
 
-The stub files should sucessfully compile.
+The stub files should successfully compile.
 
 #### 2.4.1.2 Handler implementation
 
@@ -1019,7 +1031,7 @@ The handler will send the appropriate events and telemetry values, then invoke t
 Note that each channel and event argument that has an enumeration has a unique type declaration. 
 Finally, note that the output command response port must be called with a command status in order to let the framework components know that the command is complete. 
 If the completion status isn't sent, it will stall any sequences the command was part of. 
-There are command error status along with successfull completions. 
+There are command error status along with successful completions. 
 Most commands return this status at the end of the handler, but component implementations can store the `opCode` and `cmdSeq` values to return later, but those specific values must be returned in order to match the status with the command originally sent.
 
 Find the empty result handler:
@@ -1052,7 +1064,7 @@ Fill in the result handler with code that reports telemetry and an event:
 
 This handler reports the result via a telemetry channel and an event.
 
-Once complete, add the directory to the build and build the component by typing `make rebuild` from the `Ref` directory.
+Once complete, add the directory to the build and build the component by typing `fprime-util build` from the `Ref` directory.
 
 #### 2.4.1.3 Unit Tests
 
@@ -1063,7 +1075,7 @@ Unit Tests are used to exercise the component's functions by invoking input port
 The code generator will generate test components that can be connected to the component to enable a set of unit tests to check functionality and to get coverage of all the code. To generate a set of files for testing, from the module directory type:
 
 ```shell
-make testcomp
+fprime-util impl-ut
 ```
 
 The files that are generated are:
@@ -1093,48 +1105,31 @@ mkdir -p test/ut
 
 Move the above set of files into that subdirectory.
 
-The new unit test files have to be registered with the build system, so modifications to the `mod.mk` files are necessary. Here are the steps:
+The new unit test files have to be registered with the build system, so modifications to the `CMakeLists.txt` files are
+necessary. To do this, add a "UT_SOURCE_FILES" variable to `CMakeLists.txt` followed by a call `register_fprime_ut()`.
+The UT_SOURCE_FILES variable contains a list of the C++ files associated with the UT (see list above).
 
-1) Add the following entry to the `mod.mk` file in `Ref/MathSender`:
+The final `CMakeLists.txt` file should look like the following:
 
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentImpl.cpp"
+)
+register_fprime_module()
+
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TesterBase.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/GTestBase.cpp"
+)
+register_fprime_ut()
 ```
-SUBDIRS = test
-```
+The `UT_SOURCE_FILES` variable includes any source code needed to run the test. It usually only includes the generated
+test code and a `main.cpp`, but it can include any code the user needs to test.
 
-2) Add a `mod.mk` file to the new `test` subdirectory:
-
-```
-SUBDIRS = ut
-```
-
-3) Finally, add a `mod.mk` file to the `test/ut` directory:
-
-```make
-TEST_SRC =       main.cpp \
-                Tester.cpp \
-                GTestBase.cpp \
-                TesterBase.cpp
-
-TEST_MODS =          Ref/MathSender \
-                    Ref/MathPorts \
-                    Fw/Cmd \
-                    Fw/Comp \
-                    Fw/Port \
-                    Fw/Prm \
-                    Fw/Time \
-                    Fw/Tlm \
-                    Fw/Types \
-                    Fw/Log \
-                    Fw/Obj \
-                    Fw/Com \
-                    Os \
-                    Utils/Hash \
-                    gtest
-```
-
-The `TEST_SRC` variable includes any source code needed to run the test. It usually only includes the generated test code and a `main.cpp`, but it can include any code the user needs to test.
-
-The `TEST_MODS` variable must have all the modules that the component depends on, including itself. The test binary links against the modules in the list.
+A `UT_MODS` variable may be set should the UT depend on modules not automatically included by the component.
 
 ##### 2.4.1.3.2 Test Code Implementation
 
@@ -1260,7 +1255,7 @@ The `Tester.hpp` stub can be updated to include the declarations of the unit tes
     ...
 ```
 
-The next step is to add the specific test cases to the `Tester.cpp` implementation file. It is important to note that the unit tests are designed to be single-threaded. The active components do not have their threads started, so any messages to asynchronous ports are manually retrieved from the message queue and dispatched to handlers. This makes testing simpler since the execution of the thread in reponse to port calls or commands does not need to be managed. Examples of this will be seen in the test code.
+The next step is to add the specific test cases to the `Tester.cpp` implementation file. It is important to note that the unit tests are designed to be single-threaded. The active components do not have their threads started, so any messages to asynchronous ports are manually retrieved from the message queue and dispatched to handlers. This makes testing simpler since the execution of the thread in response to port calls or commands does not need to be managed. Examples of this will be seen in the test code.
 
 The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telmetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
 
@@ -1434,40 +1429,13 @@ The other test cases are similarly implemented for the other operations. See the
 To build the unit test, type:
 
 ```
-make gen_make
-make ut
+fprime-utli build-ut
 ```
 
-The build system looks for a script with a specific name in order to run the unit test. The script has the form `runtest_<build>`, where `<build>` is the build target. For example on a Linux host, the unit test will build a Linux binary so the script would be `runtest_LINUX`. 
-The build system calls a script rather than the binary directly so developers who are writing unit tests can do any necessary setup for the test like generating files, executing other scripts, etc.
-The developer writes this script and places it in the `<module>/test/ut directory.
-
-A basic `runtest_LINUX` script looks like the following:
+The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
 
 ```shell
-#!/bin/sh
-LOC=${BUILD_ROOT}/Ref/MathSender/test/ut
-cd ${LOC}
-echo "Running ${LOC}/$1/test_ut"
-${LOC}/$1/test_ut
-```
-
-The `$1` variable is the path to the test binary that is built for the local target and is provided by the build system. The binary output subdirectories are names based on the target and compiler, so using the `$1` variable allows the script to be portable.
-
-Once the files and scripts are in place, the unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
-
-```shell
-$ make ut run_ut
-Compiling ut_LINUX unit test for RefMathSender
-make[1]: Entering directory '/mnt/c/data/source2/fprime/Ref/MathSender'
-make[1]: Nothing to be done for 'test_RefMathSendertestut'.
-make[1]: Leaving directory '/mnt/c/data/source2/fprime/Ref/MathSender'
-Build Time: 0:02.11
-Running unit test for RefMathSender
-make[1]: Entering directory '/mnt/c/data/source2/fprime/Ref/MathSender'
-Running test/ut/runtest_LINUX with output dir linux-linux-x86-debug-gnu-ut-bin
-test/ut/runtest_LINUX linux-linux-x86-debug-gnu-ut-bin
-Running /mnt/c/data/source2/fprime/Ref/MathSender/test/ut/linux-linux-x86-debug-gnu-ut-bin/test_ut
+$ fprime-util check
 [==========] Running 4 tests from 1 test case.
 [----------] Global test environment set-up.
 [----------] 4 tests from Nominal
@@ -1487,14 +1455,6 @@ Running /mnt/c/data/source2/fprime/Ref/MathSender/test/ut/linux-linux-x86-debug-
 
 ```
 
-Once the test code is complete, the test can be executed with coverage checking enabled:
-
-```
-make ut run_ut cov
-```
-
-The test should pass, and the file `Ref/MathSender/MathSenderComponentImpl.cpp.gcov` can be examined to test for coverage. The coverage file has codes that indicate whether the code has been executed or not. See the `gcov` man page for details. Any code that has not been covered can be seen with `#####` at the beginning of the line.
-
 ### 2.4.2 MathReceiver Implementation
 
 #### 2.4.2.1 Component Implementation
@@ -1502,21 +1462,23 @@ The test should pass, and the file `Ref/MathSender/MathSenderComponentImpl.cpp.g
 As before, a stub can be generated:
 
 ```
-make impl
+cd fprime/Ref/MathReceiver
+fprime-util impl
 mv MathReceiverComponentImpl.cpp-template MathReceiverComponentImpl.cpp
 mv MathReceiverComponentImpl.hpp-template MathReceiverComponentImpl.hpp
 ```
 
-Add the stub files to `mod.mk`:
+Add the stub files to `CMakeLists.txt`:
 
-```make
-SRC = MathReceiverComponentAi.xml MathReceiverComponentImpl.cpp
-
-HDR = MathReceiverComponentImpl.hpp
-
+```cmake
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponent.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentImpl.cpp"
+)
+register_fprime_module()
 ```
 
-Add the files and compile them: `make rebuild`
+Add the files and compile them: `fprime-util build`
 
 ##### 2.4.2.1.1 Port handler
 
@@ -1701,7 +1663,7 @@ Add the function to the header file:
   );
 ```
 
-Once it is added, add the directory to the build and build the component by typing `make rebuild` from the `Ref` directory.
+Once it is added, add the directory to the build and build the component by typing `fprime-util build` from the `Ref` directory.
 
 #### 2.4.2.2 Unit Tests
 
@@ -1785,7 +1747,7 @@ This unit test demonstrates how event throttling works. The event is repeatedly 
 
 Now that the two components are defined, implemented and unit tested they can to be added to the `Ref` topology. 
 The topology describes the interconnection of all the components so the system operates as intended. 
-They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F` repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. 
+They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F´ repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. 
 The `Ref` topology has already been developed as an example. 
 The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. 
 It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
@@ -2157,85 +2119,67 @@ The final connection is the connection that performs the math operation. It goes
    
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `make` at the command line in the `Ref/Top` directory. 
+Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
 If the updates were correct, the module should compile with no errors. 
-The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `make`. 
-To build the command/telemetry GUI dictionary files, run `make dict_install`.
+The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`. Once the
+build passes, you should also run the installation of the `Ref` deployment using by typing `fprime-util install`.
 
-
-If running `make` builds on the wrong platform, you can specify the build target by typing `make <target>`. The different build targets can be viewed with `make help`.
+If running on a different platform, you can specify the build target by typing `fprime-util generate <target>`.
 
 # 4 Executing the Example
 
+We are now ready to run the ground system. Before the user runs this build system, ensure that the install command has
+been run. This is accomplished with the following commands:
+
+```shell
+cd fprime/Ref
+fprime-util install
+```
+
 ## 4.1 Running the Ground System
 
-Once the `Ref` example has successfully built, the ground system and executable can be run by typing `./scripts/run_ref.sh`. The ground system GUI should appear:
-
-![Startup GUI](img/Gnd1.jpg)
+Once the `Ref` example has successfully built, the ground system and executable can be run by typing `fprime-gds -d fprime/Ref`. The ground system GUI should appear:
 
 ### 4.1.1 Executing Commands
 
 Commands can be executed by selecting the `Commands` tab and clicking on the `Cmds` drop-down list. 
 
-![Command List](img/Gnd2.jpg)
-
 For the tutorial example, select the `MathSender` command `MS_DO_MATH` and fill in the arguments.
-
-![MS_DO_MATH Command](img/Gnd3.jpg)
 
 Clicking on the `Send` button will send the command to the software. When the command is sent, it is placed in the command history. It can be selected and sent again if the user desires.
 
-![MS_DO_MATH Command Sent](img/Gnd4.jpg)
-
 ### 4.1.2 Checking Events
 
-The `Log Events` tab shows events that are generated by the software. For the tutorial, the events tab shows the events that were sent by the `MS_DO_MATH` command:
-
-![MS_DO_MATH Events](img/Gnd6.jpg)
+The `Events` tab shows events that are generated by the software. For the tutorial, the events tab shows the events that were sent by the `MS_DO_MATH` command:
 
 It shows the F' `CmdDispatcher` event indicating a command was dispatched and completed. It also has the events defined by the tutorial example that are sent as a results of requesting a math operation. The result is zero, since the `factor1` value is zero, as shown in the unit testing in section `2.4.2.2`.
 
-The events are also echoed to `stdout` of the application:
-
-![MS_DO_MATH Events Console](img/App2.jpg)
+The events are also echoed to `stdout` of the application, which can be found in the `Logs` tab, selecting "Ref.log" in the
+dropdown.
 
 ### 4.1.3 Checking Telemetry
 
 The `Channel Telemetry` tab shows channelized telemetry sent by the software. The channels defined by the tutorial have the last values and time they were updated:
 
-![MS_DO_MATH Telemetry](img/Gnd5.jpg)
-
 ### 4.1.5 Updating `factor1`
 
 In order to get a non-zero result, `factor1` needs to be updated. The tutorial defined a command to update it, `MR_SET_FACTOR1`. It can be selected from the command tab:
 
-![MR_SET_FACTOR1 Command](img/Gnd7.jpg)
-
-When the command is executed, the `Log Events` tab will show the event indicating the value was updated:
-
-![MR_SET_FACTOR1 Event](img/Gnd8.jpg)
+When the command is executed, the `Log Events` tab will show the event indicating the value was updated.
 
 The `Channel Telemetry` tab shows the two channels related to the update. `MR_FACTOR1` shows the new value, while `MR_FACTOR1S` show how many times the value has been updated.
-
-![MR_SET_FACTOR1 Event](img/Gnd9.jpg)
 
 ### 4.1.6 Running the Command Again
 
 After `factor1` has been updated, the command can be repeated:
 
-![Repeat MS_DO_MATH](img/Gnd10.jpg)
-
 ### 4.1.7 Updated Events and Telemetry
 
 The new events will appear in the `Log Events` tab:
 
-![Repeat MS_DO_MATH Events](img/Gnd11.jpg)
-
 Notice that the updated events are added to the end of the log, since events are meant to be a record of events in the software.
 
 The `Channel Telemetry` tab will also show the updated values:
-
-![Repeat MS_DO_MATH Telemetry](img/Gnd12.jpg)
 
 Notice that the `MS_OP`, `MS_VAL1`, `MS_VAL2`, `MR_OPERATION`, and `MS_RESULT` are updated to the latest value with a more recent time stamp, since telemetry channels are meant to show the latest value. The new result is `10.0` now that `factor1` has been updated.
 
@@ -2247,187 +2191,33 @@ The tutorial defined a `factor2` parameter in the `MathReceiver` component. The 
 
 The `FACTOR1_PRM_SET` command can be sent to the software:
 
-![FACTOR1_PRM_SET command](img/Gnd13.jpg)
-
 The notification function that was implemented as part of the tutorial will send an event indicating the value was updated:
-
-![FACTOR1_PRM_SET event](img/Gnd14.jpg)
 
 The `MS_DO_MATH` command can now be executed with the new value:
 
-![MS_DO_MATH Command](img/Gnd15.jpg)
-
 The `MathReceiver` component sends the events with the new result:
 
-![MS_DO_MATH Events](img/Gnd16.jpg)
-
 The new result is `1.0` with the new value of `factor2`. The "Channel Telemetry" tab also shows the new values:
-
-![MS_DO_MATH Channels](img/Gnd17.jpg)
 
 #### 4.1.8.2 Saving the Parameter Value
 
 Once the parameter value has been tested to the user's satisfaction, it can be saved to `PrmDb` by sending the `FACTOR2_PRM_SAVE` command:
 
-![FACTOR2_PRM_SAVE](img/Gnd18.jpg)
-
 The `Log Events` tab has an event from `PrmDb` indicating that the `FACTOR2` parameter value was added:
-
-![PrmDb event](img/Gnd19.jpg)
 
 #### 4.1.8.3 Writing the Parameter to Storage
 
 The parameter can be written to storage by sending the `PRM_SAVE_FILE` command:
 
-![PRM_SAVE_FILE](img/Gnd20.jpg)
-
 `PrmDb` sends an event indicating that the parameters in RAM were stored:
-
-![PRM_SAVE_FILE](img/Gnd21.jpg)
 
 ### 4.1.9 Ground System Logs
 
-The ground system keeps logs of all received events and telemetry. They can be found in the directories `<Run Directory>/logs/<Date-Time>/channel/Channel.log` and `<Run Directory>/logs/<Date-Time>/event/Event.log`, where `<Run Directory>` is the location the ground system was run from. For the tutorial, it is `Ref`. The `<Date-Time>` part of the path is a string contructed of the date and time the ground system was started.
-
-### 4.1.10 Ground System Scripting
-
-As an alternative to executing commands by selecting them from the GUI, users can write script files that contain the commands in text form. They run through the ground system and dispatch a specified set of commands. They are executed when the ground system is up and running. The syntax of the script file is as follows:
-
-```
-# Comment 
-
-CMD_NAME, arg1, arg2, arg3 # end of line comment
-WAIT, 2
-ANOTHER_CMD
-
-```
-
-The `#` token denotes a comment. Any text from the token to the end of the line is ignored.
-
-Lines can be blank.
-
-A line with a command starts with the command mnemonic. It is followed by a comma then a comma separated list of command arguments.
-
-There is a one second delay between the execution of each command in the list. If a longer delay is desired, a special command `WAIT, <seconds>` can be added to the list.  
-
-To recreate the set of tutorial commands that were executed manually via the GUI (see `4.1.1`), the script file would look like:
-
-```
-# Run this script to replicate the MathComponent tutorial
-
-MS_DO_MATH, 2.0, 3.0, ADD # Add two numbers together
-MR_SET_FACTOR1, 2.0 # Set factor1 to 2.0
-MS_DO_MATH, 2.0, 3.0, ADD # Re-run math operation with new factor1 value
-WAIT, 2 # Wait two seconds
-FACTOR2_PRM_SET, 10.0 # Set factor2 to 10.0
-MS_DO_MATH, 2.0, 3.0, ADD # Re-run math operation with new factor2 value
-FACTOR2_PRM_SAVE # Save parameter
-PRM_SAVE_FILE # Save parameters to disk
-```
-
-Save this file as `Ref/scripts/math_scripts.txt", and then from the `Ref` directory, run:
-
-```
-./scripts/run_ref_cmds.sh scripts/math_script.txt
-```
-
-The output should appear as follows:
-
-```
-BUILD_ROOT is: xxxxxx/fprime
-NATIVE_BUILD: LINUX
-OUTPUT_DIR: linux-linux-x86-debug-gnu-bin
-None
-Connecting to host addr 127.0.0.1, port 50000
-
-Parsing command file scripts/math_script.txt
-Sent command MS_DO_MATH with arguments ['2.0', '3.0', 'ADD']
-Sent command MR_SET_FACTOR1 with arguments ['2.0']
-Sent command MS_DO_MATH with arguments ['2.0', '3.0', 'ADD']
-Wait 2
-Wait 1
-Sent command FACTOR2_PRM_SET with arguments ['10.0']
-Sent command MS_DO_MATH with arguments ['2.0', '3.0', 'ADD']
-Sent command FACTOR2_PRM_SAVE with arguments []
-Sent command PRM_SAVE_FILE with arguments []
-```
-
-The script will execute and show the same events and telemetry channels as manually executing the commands through the GUI.
-
-## 4.2 Sequences
-
-Sequences are a list of commands that are compiled to a binary form and executed in order via the `CmdSequencer` component. The binary file is compiled during ground operations and uploaded to the target hardware. `CmdSequencer` dispatches each command, and if one of them returns a failure the sequence is aborted. 
-
-### 4.2.1 Writing a Sequence
-
-The sequence file has the following syntax:
-
-```
-; This is a comment line
-
-A<Year>-<DOY>T<Hours>:<Minutes>:<Seconds> <CMD_NAME> <ARG1>,<ARG2>,...<ARGN>
-R<Hours>:<Minutes>:<Seconds> <CMD_NAME> <ARG1>,<ARG2>,...<ARGN>
-```
-
-Blank lines and any characters past the `;` token are ignored. 
-
-The `A` token denotes an absolute time to run the command on that line. If the time has not arrived, the sequencer will wait until the time arrives to dispatch the command. If the time has passed, the command will dispatched immediately. 
-
-The `R` token specifies a relative time from the current time when the command will be dispatched. It is relative to the time the line in the sequence is processed rather than the start of the sequence. A value of `R00:00:00` means that the command will be dispactched immediately.
-
-The `<CMD_NAME>` and `<ARG>` fields are the command mnemonic and arguments.
-
-The sequence to execute the tutorial commands would be as follows:
-
-```
-; Run this sequence to replicate the MathComponent tutorial
-
-R00:00:00 MS_DO_MATH 2.0, 3.0, ADD ; Add two numbers together
-R00:00:00 MR_SET_FACTOR1 2.0 ; Set factor1 to 2.0
-R00:00:00 MS_DO_MATH 2.0, 3.0, ADD ; Re-run math operation with new factor1 value
-R00:00:02 FACTOR2_PRM_SET 10.0 ; Set factor2 to 10.0
-R00:00:00 MS_DO_MATH 2.0, 3.0, ADD ; Re-run math operation with new factor2 value
-R00:00:00 FACTOR2_PRM_SAVE ; Save parameter
-R00:00:00 PRM_SAVE_FILE ; Save parameters to disk
-```
-
-Save this sequence file as `Ref/sequences/math_sequence.seq`. 
-
-### 4.2.2 Compiling the Sequence
-
-The file can be compiled by executing the following from the `Ref` directory:
-
-```
-./scripts/compile_ref_sequence.sh ./sequences/math_sequence.seq
-```
-The output should appear as follows:
-
-```           
-BUILD_ROOT is: XXXXXX/fprime
-Sequence is 191 bytes
-CRC: 3121812285 (0xBA13133D)
-```
-
-The sequence compiler generates a file `Ref/sequences/math_sequence.bin`, which is the binary form of the sequence.
-
-### 4.2.3 Executing the Sequence
-
-Sequences are run by invoking the `CS_Run` command while the software is running. The F' `CmdSequencer` infrastructure component loads the sequence from the target's file system and executes it. Normally for a flight project there is a process of uplinking the file to the flight vehicle, but the `Ref` example can access the binary file directly.
-
-The sequence run command can be sent via the GUI:
-
-![CS_RUN Command](img/Gnd30.jpg)
-
-The `Log Events` panel will show the expected events from the tutorial example. In addition, it shows the events sent by the sequencer as it executes each command in the sequence:
-
-![CS_RUN Events](img/Gnd31.jpg)
-
-Likewise, the `Channel Telemetry` tab shows the tutorial channels as well as channels updated by the sequencer:
-
-![CS_RUN Channels](img/Gnd32.jpg)
+The ground system keeps logs of all received events and telemetry. They can be found in the directories `<deployment>/logs/`, where `<Run Directory>` is the location of the deployment. e.g. `Ref`.
 
 # Conclusion
 
-This tutorial is an attempt to communicate the concepts and implementation. If there are aspects that are confusing, feel free to submit GitHub issues asking for clarification or to report errors:
+This tutorial is an attempt to communicate the concepts and implementation. If there are aspects that are confusing,
+feel free to submit GitHub issues asking for clarification or to report errors:
 
 https://github.com/nasa/fprime/issues
