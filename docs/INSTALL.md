@@ -93,7 +93,7 @@ fprime-util install --jobs 32
 
 **Testing F´ GDS Installation Via Running HTML GUI**
 ```
-fprime-util -g html -d <path/to/fprime/checkout>/Ref
+fprime-gds -g html -d <path/to/fprime/checkout>/Ref
 ```
 **Note:** `Ref` should contain pre-built dictionaries and binaries for the user's system. This can
 be achieved by running the autocoder installation test (the user must have a working autocoder
