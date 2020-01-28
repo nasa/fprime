@@ -110,7 +110,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     return launch_process(gse_args, name="WX GUI")
 
 
-def launch_html(tts_port, dictionary, connect_address, logs, **_):
+def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     '''
     Launch the flask server and a browser pointed at the HTML page.
     :param tts_port: port to connect to
@@ -129,7 +129,8 @@ def launch_html(tts_port, dictionary, connect_address, logs, **_):
     })
     gse_args = ["python", "-u", "-m", "flask", "run"]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
-    webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
+    if extras["gui"] == "html":
+        webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
     return ret
 
 
@@ -186,10 +187,10 @@ def main(argv=None):
     gui = args.get("gui", "none")
     if gui == "wx":
         launchers.append(launch_wx)
-    elif gui == "html":
+    elif gui == "html" or gui == "none":
         launchers.append(launch_html)
-    elif gui == "none":
-        print("[WARNING] No GUI specified, running headless", file=sys.stderr)
+    #elif gui == "none":
+    #    print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
         raise Exception("Invalid GUI specified: {0}".format(args["gui"]))
     # Launch launchers and wait for the last app to finish

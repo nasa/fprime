@@ -1,7 +1,20 @@
+"""
+uart.py:
+
+This is the adapter for projects that would choose to use a serial UART interface for sending data from an F prime
+deployment. This handles sending and receiving data from the things like 'LinuxSerialDriver' and other standard UART
+drivers.
+
+@author lestarch
+"""
 from __future__ import print_function
 
+import logging
 import serial
+
 import fprime_gds.common.adapters.base
+
+LOGGER = logging.getLogger("serial_adapter")
 
 
 class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
@@ -9,16 +22,14 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     Supplies a data source adapter that is pulling data off from a UART wire using PySerial. This is setup using a
     device handle and a baudrate for the given serial device.
     """
-    def __init__(self, sender, device, baud, timeout=0, reconnect=True):
+
+    def __init__(self, device, baud):
         """
         Initialize the serial adapter using the default settings. This does not open the serial port, but sets up all
         the internal variables used when opening the device.
         """
-        super(SerialAdapter, self).__init__(sender)
         self.device = device
         self.baud = baud
-        self.reconnect = reconnect
-        self.timeout = timeout
         self.serial = None
 
     def open(self):
@@ -27,7 +38,8 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         Then open the port up again.
         """
         self.close()
-        self.serial = serial.Serial(self.device, self.baud, timeout=self.timeout)
+        self.serial = serial.Serial(self.device, self.baud)
+        return self.serial is not None
 
     def close(self):
         """
@@ -47,30 +59,38 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         :return: True, when data was sent through the UART. False otherwise.
         """
         try:
-            if self.serial is None and self.reconnect:
+            if self.serial is None:
                 self.open()
             written = self.serial.write(frame)
             # Not believed to be possible to not send everything without getting a timeout exception
             assert written == len(frame)
             return True
-        except serial.serialutil.SerialException:
+        except serial.serialutil.SerialException as exc:
+            LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
             self.close()
         return False
 
-    def read(self, size):
+    def read(self):
         """
         Read up to a given count in bytes from the UART adapter. This may return less than the full requested size but
         is expected to return some data.
         :param size: upper bound of data requested
         :return: data successfully read
         """
+        data = b""
         try:
-            if self.serial is None and self.reconnect:
+            if self.serial is None:
                 self.open()
-            return self.serial.read(size)
+            # Read as much data as possible, while ensuring to block if no data is available at this time. Note: as much
+            # data is read as possible to avoid a long-return time to this call. Minimum data to read is one byte in
+            # order to block this function while data is incoming.
+            data = self.serial.read(1) # Force a block for at least 1 character
+            while self.serial.in_waiting:
+                data += self.serial.read(self.serial.in_waiting) # Drain the incoming data queue
         except serial.serialutil.SerialException as exc:
+            LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
             self.close()
-        return None
+        return data
 
     @classmethod
     def get_arguments(cls):

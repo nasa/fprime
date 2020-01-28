@@ -79,6 +79,63 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 </div>
             </template>
 
+            <template id="uplink-downlink-template">
+                <div class="fp-flex-repeater">
+                    <div class="row fp-flex-header">
+                        <div class="col-8"></div>
+                        <div class="col-1">Filters:</div>
+                        <div class="col-3">
+                            <v-select id="fp-table-filter" :clearable="true" :searchable="true" :taggable="true"
+                                      :no-drop="true" :options="[]" :multiple="true"
+                                      v-model="matching">
+                            </v-select>
+                        </div>
+                    </div>
+                    <div class="fp-scroll-container">
+                        <div class="fp-scrollable">
+                            <table  class="sortable table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th v-if="uplink" class="sorttable_nosort">
+                                        <input type="checkbox" v-on:input="checkAll" ref="allbox"
+                                               :checked="view.length == items.length">
+                                    </th>
+                                    <th v-for="column in headerColumns">{{ column }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr is="fp-row" v-for="item in filteredItems" :item="item"
+                                    :item-to-columns="itemToColumns"
+                                    :row-style="rowStyle"
+                                    :key="itemToUnique(item)"
+                                    :editing="editing"
+                                    :in-view="inView(item)"
+                                    v-on:row-checked="checkedChild">
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- If the table supports editing views, these features support the edit context of the view -->
+                    <div class="row fp-flex-header" v-if="editing">
+                        <div class="col-4"></div>
+                        <div class="btn-group col-8">
+                            <div type="button" class="btn btn-danger" v-on:click="clearView">Clear</div>
+                            <a :href="viewHref" download="current-view.txt" class="btn btn-primary">Export</a>
+                            <label class="btn btn-primary btn-file">
+                                Import<input type="file" v-on:input="readFile" style="display: none;">
+                            </label>
+                            <div type="button" class="btn btn-success" v-on:click="saveView">Done</div>
+                        </div>
+                    </div>
+                    <div class="row fp-flex-header" v-if="!editing">
+                        <div class="col-10"></div>
+                        <button type="button" class="col-2 btn btn-primary" v-if="supportViews && !editing"
+                                v-on:click="editViews">Edit View</button>
+                    </div>
+                </div>
+            </template>
+
             <template id="logs-template">
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">

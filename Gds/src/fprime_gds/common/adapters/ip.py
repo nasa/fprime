@@ -1,11 +1,22 @@
+"""
+ip.py:
+
+Module containing a comm-layer adapter for the Tcp/UDP/IP stack. This pairs with the F prime component "SocketIpDriver"
+in order to read data being sent via Tcp or Udp. This is the default adapter used by the system to handle data sent
+across a Tcp and/or UDP network interface.
+
+@author lestarch
+"""
 import time
 import logging
 import socket
+import queue
 import threading
 import fprime_gds.common.adapters.base
 import fprime_gds.common.logger
 
 LOGGER = logging.getLogger("ip_adapter")
+
 
 class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     """
@@ -16,12 +27,11 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     KEEPALIVE_INTERVAL = 0.500 # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
     KEEPALIVE_DATA = b"sitting well" # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
 
-    def __init__(self, sender, address, port):
+    def __init__(self, address, port):
         """
         Initialize this adapter by creating a handler for UDP and TCP. A thread for the KEEPALIVE application packets
         will be created, if the interval is not none.
         """
-        super(IpAdapter, self).__init__(sender)
         self.stop = False
         self.keepalive = None
         self.running = True
@@ -29,7 +39,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         self.udp = UdpHandler(address, port)
         self.thtcp = None
         self.thudp = None
-        self.lock = threading.Lock()
+        self.data_chunks = queue.Queue()
         self.blob = b""
 
     def open(self):
@@ -58,9 +68,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """Adapter"""
         handler.open() #Initialize with an open call
         while not self.stop:
-            data = handler.read()
-            with self.lock:
-                self.blob += data
+            self.data_chunks.put(handler.read())
         handler.close()
 
     def write(self, frame):
@@ -72,16 +80,19 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         return self.tcp.write(frame)
 
-    def read(self, _):
+    def read(self):
         """
         Read up to a given count in bytes from the TCP adapter. This may return less than the full requested size but
         is expected to return some data.
         :param _: upper bound of data requested, unused with IP connections
         :return: data successfully read
         """
-        with self.lock:
-            data = self.blob
-            self.blob = b""
+        data = b""
+        try:
+            while not self.data_chunks.empty():
+                data += self.data_chunks.get_nowait()
+        except queue.Empty:
+            pass
         return data
 
     def th_alive(self, interval):
@@ -139,7 +150,6 @@ class IpHandler(object):
         self.port = port
         self.socket = None
         self.server = server
-        self.lock = threading.Lock()
         self.connected = IpHandler.CLOSED
         self.logger = logger
 
@@ -173,13 +183,7 @@ class IpHandler(object):
             # Check ending condition of loop
             if not self.server or self.CONNECTED == self.connected:
                 break
-        if self.CONNECTED == self.connected:
-            self.post_open()
         return self.connected == self.CONNECTED
-
-    def post_open(self):
-        """Used by sender subclass to perform actions on start-up"""
-        pass
 
     def close(self):
         """
