@@ -47,6 +47,26 @@ class BaseAdapter(abc.ABC):
         pass
 
     @classmethod
+    @abc.abstractmethod
+    def get_arguments(cls):
+        """
+        Returns a set of arguments consumed by this adapter. This will be consumed by the CLI layer in order to provide
+        command line arguments to the user. Note: these should be globally unique args, e.g. --ip-address
+        :return: dictionary, keys of tuple of arg flags and value of list of other arguments to argparse's add_argument
+        """
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def check_arguments(cls, args):
+        """
+        Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
+        should be raised describing the problem with these arguments.
+        :param args: arguments as dictionary
+        """
+        pass
+
+    @classmethod
     def get_adapters(cls):
         """
         Get all known adapters of this base class. These must be imported into the comm-layer to be available to the
@@ -78,4 +98,17 @@ class BaseAdapter(abc.ABC):
             kwargs[value["dest"]] = getattr(args, value["dest"])
         return kwargs
 
+    @classmethod
+    def construct_adapter(cls, adapter_name, args):
+        """
+        Constructs a new adapter, from the given adapter name and the given namespace of argument inputs. This is a
+        wrapper of "get_adapters" and "process_arguments" to help build a new, fully configured, adapter. This is a
+        factory method.
+        :param adapter_name: name of the adapter to build
+        :param args: namespace of arg value to help build an adapter
+        :return: newly constructed adapter
+        """
+        adapter = cls.get_adapters()[adapter_name]
+        # TODO: check that the arguments for existance/validity to front-load errors
+        return adapter(**cls.process_arguments(adapter, args))
 

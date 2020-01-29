@@ -61,9 +61,7 @@ class TCPGround(GroundHandler):
         :param address: Address of the tcp server. Default 127.0.0.1
         :param port: port of the tcp server. Default: 50000
         """
-        self.tcp = TcpHandler(address, port, False, LOGGER)
-        self.tcp.open()
-        self.post_open()
+        self.tcp = TcpHandler(address, port, False, LOGGER, post_connect=b"Register FSW\n")
         self.data = bytearray()
         self.deframer = TcpServerFramerDeframer()
 
@@ -72,8 +70,15 @@ class TCPGround(GroundHandler):
         Opens any needed resources and prepares the system for receiving and sending. This means opening the TCP handler
         and sending out the initial register command to the TcpServer.
         """
-        self.tcp.open()
-        self.tcp.write(b"Register FSW\n")
+        if not self.tcp.open():
+            return False
+        return True
+
+    def close(self):
+        """
+        Closes the open adapter.
+        """
+        self.tcp.close()
 
     def receive_all(self):
         """
@@ -81,7 +86,7 @@ class TCPGround(GroundHandler):
         These packets should be fully-deframed and ready for reframing in the comm-layer specified format.
         :return: list deframed packets
         """
-        self.data += self.read_impl()
+        self.data += self.tcp.read()
         (frames, self.data) = self.deframer.deframe_all(self.data, no_copy=True)
         return frames
 

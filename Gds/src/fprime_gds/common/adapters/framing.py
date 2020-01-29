@@ -87,6 +87,7 @@ class FpFramerDeframer(FramerDeframer):
     HEADER_SIZE = (TOKEN_SIZE * 2)
     # Size of checksum value, and the hardcoded value before CRC32 is available
     CHECKSUM_SIZE = 4
+    MAXIMUM_DATA_SIZE = 4096
 
     # Filled by set_constants()
     TOKEN_TYPE = None
@@ -149,17 +150,17 @@ class FpFramerDeframer(FramerDeframer):
             total_size = FpFramerDeframer.HEADER_SIZE + data_size + FpFramerDeframer.CHECKSUM_SIZE
             # Invalid frame, rotate away a Byte and keep processing
             if start != FpFramerDeframer.START_TOKEN or data_size >= FpFramerDeframer.MAXIMUM_DATA_SIZE:
-                del data[0] # This is fast but destroys data input, user is warned
+                data = data[1:]
                 continue
             # If the pool is large enough to read the whole frame, then read it
             elif len(data) >= total_size:
                 deframed, check = struct.unpack_from(">{0}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE)
                 # If the checksum is valid, return the packet. Otherwise continue to rotate
                 if check == CHECKSUM_CALC(data[:data_size + FpFramerDeframer.HEADER_SIZE]):
-                    del data[:total_size]
+                    data = data[total_size:]
                     return deframed, data
                 # Bad checksum, rotate 1 and keep looking for non-garbage
-                del data[0] # This is fast but destroys data input, user is warned
+                data = data[1:]
                 continue
             # Case of not enough data for a full packet, return hoping for more later
             return None, data
@@ -209,7 +210,7 @@ class TcpServerFramerDeframer(FramerDeframer):
             data = copy.copy(data)
         # Shift over to ZZZZ
         while len(data) > 4 and data[0:4] != b"ZZZZ":
-            del data[0]
+            data = data[1:]
         # Break out of data when not enough
         if len(data) < 8:
             return None, data
@@ -218,5 +219,5 @@ class TcpServerFramerDeframer(FramerDeframer):
         if len(data) < data_len + 8:
             return None, data
         packet = data[8:data_len + 8]
-        del data[:data_len +  8]
+        data = data[data_len + 8:]
         return packet, data

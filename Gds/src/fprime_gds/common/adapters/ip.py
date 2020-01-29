@@ -18,6 +18,22 @@ import fprime_gds.common.logger
 LOGGER = logging.getLogger("ip_adapter")
 
 
+def check_port(address, port):
+    """
+    Checks a given address and port to ensure that it is available. If not available, a ValueError is raised. Note: this
+    is done by binding to an address. It does not call "listen"
+    :param address: address that will bind to
+    :param port: port to bind to
+    """
+    try:
+        socket_trial = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket_trial.bind((address, port))
+    except socket.error as err:
+        raise ValueError("Error with address/port of '{}:{}' : {}".format(address, port, err))
+    finally:
+        socket_trial.close()
+
+
 class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     """
     Adapts IP traffic for use with the GDS ground system. This serves two different "servers" both on the same address
@@ -26,6 +42,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     """
     KEEPALIVE_INTERVAL = 0.500 # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
     KEEPALIVE_DATA = b"sitting well" # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
+    MAXIMUM_DATA_SIZE = 4096
 
     def __init__(self, address, port):
         """
@@ -34,7 +51,6 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         self.stop = False
         self.keepalive = None
-        self.running = True
         self.tcp = TcpHandler(address, port)
         self.udp = UdpHandler(address, port)
         self.thtcp = None
@@ -63,10 +79,12 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     def close(self):
         """Close the adapter, by setting the stop flag"""
         self.stop = True
+        self.tcp.stop()
+        self.udp.stop()
 
     def th_handler(self, handler):
-        """Adapter"""
-        handler.open() #Initialize with an open call
+        """Adapter thread function"""
+        handler.open()
         while not self.stop:
             self.data_chunks.put(handler.read())
         handler.close()
@@ -78,7 +96,8 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         :param frame: framed data packet to send out
         :return: True, when data was sent through the UART. False otherwise.
         """
-        return self.tcp.write(frame)
+        if self.tcp.connected == IpHandler.CONNECTED:
+            return self.tcp.write(frame)
 
     def read(self):
         """
@@ -100,7 +119,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         Run this thread in order to accept incoming connections and spiral them off into another thread for handling the
         given client.
         """
-        while self.running:
+        while not self.stop:
             self.write(IpAdapter.KEEPALIVE_DATA)
             time.sleep(interval)
 
@@ -111,19 +130,29 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         :return: dictionary of flag to argparse arguments for use with argparse
         """
         return {
-            ("-a", "--address"):{
+            ("--ip-address",): {
                 "dest":"address",
                 "type":str,
                 "default":"0.0.0.0",
                 "help":"Address of the IP adapter server. Default: %(default)s"
             },
-            ("-p", "--port"): {
+            ("--ip-port",): {
                 "dest":"port",
                 "type":int,
                 "default": 50000,
                 "help":"Port of the IP adapter server. Default: %(default)s"
             }
         }
+
+    @classmethod
+    def check_arguments(cls, args):
+        """
+        Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
+        should be raised describing the problem with these arguments.
+        :param args: arguments as dictionary
+        """
+        check_port(args["address"], args["port"])
+
 
 class IpHandler(object):
     """
@@ -137,13 +166,14 @@ class IpHandler(object):
     CONNECTED = "CONNECTED"
     CLOSED = "CLOSED"
 
-    def __init__(self, address, port, type, server=True, logger=logging.getLogger("ip_handler")):
+    def __init__(self, address, port, type, server=True, logger=logging.getLogger("ip_handler"), post_connect=None):
         """
         Initialize this handler. This will set the variables, and start up the internal receive thread.
         :param address: address of the handler
         :param port: port of the handler
         :param type: type of this adapter. socket.SOCK_STREAM or socket.SOCK_DGRAM
         """
+        self.running = True
         self.type = type
         self.address = address
         self.next_connect = 0
@@ -152,6 +182,7 @@ class IpHandler(object):
         self.server = server
         self.connected = IpHandler.CLOSED
         self.logger = logger
+        self.post_connect = post_connect
 
     def open(self):
         """
@@ -159,8 +190,8 @@ class IpHandler(object):
         """
         if self.CONNECTED == self.connected:
             return True
-        # If a server, just continually try and reconnect. Otherwise, just try once.
-        while True:
+        # Just continually try and reconnect essentially "blocking" until open. Will only fail if we aborted.
+        while self.running and self.CONNECTED != self.connected:
             try:
                 # Prevent reconnects when the socket is connected. Socket should be closed on all errors
                 if self.connected == IpHandler.CLOSED and self.next_connect < time.time():
@@ -174,15 +205,17 @@ class IpHandler(object):
                     self.connected = IpHandler.CONNECTED
                     self.logger.info("{} connected to {}:{}"
                                 .format("Server" if self.server else "Client", self.address, self.port))
+                    # Post connect handshake
+                    if self.post_connect is not None:
+                        self.write(self.post_connect)
             # All errors (timeout included) we should close down the socket, which sets self.connected
+            except ConnectionAbortedError:
+                return False
             except socket.error as exc:
                 self.logger.warning("Failed to open socket at {}:{}, retrying: {}: {}"
                                     .format(self.address, self.port, type(exc).__name__, str(exc)))
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()
-            # Check ending condition of loop
-            if not self.server or self.CONNECTED == self.connected:
-                break
         return self.connected == self.CONNECTED
 
     def close(self):
@@ -191,11 +224,15 @@ class IpHandler(object):
         """
         try:
             self.close_impl()
-            if self.socket is not None:
-                self.socket.close()
-                self.socket = None
+            IpHandler.kill_socket(self.socket)
         finally:
+            self.socket = None
             self.connected = IpHandler.CLOSED
+
+    def stop(self):
+        """ Stop the handler from reconnecting and close"""
+        self.running = False
+        self.close()
 
     def read(self):
         """
@@ -203,14 +240,13 @@ class IpHandler(object):
         preparation for a reconnect. This internally will call the child's read_impl
         :return: data read from TCP server or b"" when nothing is available
         """
-        # Open if not already open, on failure return b""
-        if self.open():
-            # This will block waiting for data
-            try:
-                return self.read_impl()
-            except socket.error as exc:
+        # This will block waiting for data
+        try:
+            return self.read_impl()
+        except socket.error as exc:
+            if self.running:
                 self.close()
-                self.logger.warning("Read failure attempting reconnection. {}: ".format(type(exc).__name__, str(exc)))
+                self.logger.warning("Read failure attempting reconnection. {}: {}".format(type(exc).__name__, str(exc)))
                 self.open()
         return b""
 
@@ -221,30 +257,38 @@ class IpHandler(object):
         :param message: message to send
         :return: True if all data was written, False otherwise
         """
-        # Open if not already open, on failure return b""
-        if self.open():
-            # This will block waiting for data
-            try:
-                self.write_impl(message)
-                return True
-            except socket.error as exc:
-                self.close()
-                self.logger.warning("Write failure, reconnecting. {}: ".format(type(exc).__name__, str(exc)))
-                self.open()
+        try:
+            self.write_impl(message)
+            return True
+        except socket.error as exc:
+            if self.running:
+                self.logger.warning("Write failure: {}".format(type(exc).__name__, str(exc)))
         return False
+
+    @staticmethod
+    def kill_socket(sock):
+        """ Kills a socket connection, but shutting it down and then closing. """
+        if sock is None:
+            return
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+        finally:
+            sock.close()
 
 
 class TcpHandler(IpHandler):
     """
     An IpAdapter that allows for interfacing with TCP socket.
     """
-    def __init__(self,  address, port, server=True, logger=logging.getLogger("tcp_handler")):
+    def __init__(self,  address, port, server=True, logger=logging.getLogger("tcp_handler"), post_connect=None):
         """
         Init the TCP adapter with port and address
         :param address: address of TCP
         :param port: port of TCP
         """
-        super(TcpHandler, self).__init__(address, port, socket.SOCK_STREAM, server, logger)
+        super(TcpHandler, self).__init__(address, port, socket.SOCK_STREAM, server, logger, post_connect)
         self.client = None
         self.client_address = None
 
@@ -264,8 +308,9 @@ class TcpHandler(IpHandler):
         """
         Close the TCP socket that was spawned as appropriate.
         """
-        if self.client is not None:
-            self.client.close()
+        try:
+            IpHandler.kill_socket(self.client)
+        finally:
             self.client = None
             self.client_address = None
 
@@ -280,9 +325,11 @@ class TcpHandler(IpHandler):
     def write_impl(self, message):
         """
         Send is implemented with TCP. It will send it to the connected client.
-        :param message:
-        :return:
+        :param message: message to send out
         """
+        # Block until the port is open
+        while self.connected != IpHandler.CONNECTED or self.client is None:
+            pass
         self.client.sendall(message)
 
 

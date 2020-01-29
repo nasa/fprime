@@ -89,6 +89,11 @@ class Uplinker(object):
                 raise UplinkFailureException("Uplink failed to send {} bytes of data after {} retries"
                                              .format(len(framed), Uplinker.RETRY_COUNT))
 
+    def stop(self):
+        """ Stop the thread depends will close the ground resource which may be blocking """
+        self.running = False
+        self.ground.close()
+
     @staticmethod
     def get_handshake():
         """
@@ -107,6 +112,10 @@ class Uplinker(object):
                 self.uplink()
             except UplinkFailureException as ufe:
                 LOGGER.warning("Uplink exception occured: {}".format(ufe))
+            # Shutdown exception handling, only keep exception when running
+            except OSError:
+                if self.running:
+                   raise
 
 
 class UplinkFailureException(Exception):
@@ -146,7 +155,7 @@ class Downlinker(object):
         """
         # Read the downlink data for a full (maximum) frame, and process if non-zero. No retries, as retry is implicit.
         self.pool += self.downlink_adapter.read()
-        frames, self.pool = self.deramer.deframe_all(self.pool, no_copy=True)
+        frames, self.pool = self.deframer.deframe_all(self.pool, no_copy=True)
         # Add all enqueued items. Implemented as a try-catch as "empty" makes no guarentees, so a try-catch is required.
         try:
             while not self.enqueued.empty():
@@ -155,6 +164,11 @@ class Downlinker(object):
             pass
         # Send out all frames found to GDS
         self.ground.send_all(frames)
+
+    def stop(self):
+        """ Stop the thread depends will close the ground resource which may be blocking """
+        self.running = False
+        self.downlink_adapter.close()
 
     def queue_downlink(self, frame):
         """
@@ -204,33 +218,41 @@ def parse_args(args):
     return args
 
 
-def main(args=sys.argv):
+def main():
     """
-    Main program, degenerates into the run loop
-    :param args: arguments
+    Main program, degenerates into the run loop.
     :return: return code
     """
-    args = parse_args(args[1:])
+    args, _ = fprime_gds.executables.cli.ParserBase.parse_args([fprime_gds.executables.cli.LogDeployParser,
+                                                                fprime_gds.executables.cli.MiddleWareParser,
+                                                                fprime_gds.executables.cli.CommParser],
+                                                               description="F prime communications layer.", client=True)
     # First setup the ground handler to talk to the ground system.
     ground = fprime_gds.common.adapters.ground.TCPGround(args.tts_addr, args.tts_port)
     # Create an adapter from input arguments in order to talk to the flight deployment.
-    adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[args.subcommand]
-    adapted = adapter(**fprime_gds.common.adapters.base.BaseAdapter.process_arguments(adapter, args))
+    adapter = args.comm_adapter
     # Create uplink and downlink handlers
-    downlinker = Downlinker(adapted, ground)
+    downlinker = Downlinker(adapter, ground)
     uplinker = Uplinker(adapter, ground, downlinker)
     # Open resources and fail if ground is unavailable
-    if not ground.open():
-        LOGGER.error("Failed to open interface to ground system. exiting.")
-        sys.exit(-1)
+    ground.open()
     # Try to open adapted, but ignore failure as it should reconnect
-    adapted.open()
+    adapter.open()
     # Start-up threads to handle uplink and downlink
-    down_thread = threading.Thread(target=downlinker.run).start()
-    up_thread = threading.Thread(target=uplinker.run).start()
+    down_thread = threading.Thread(target=downlinker.run)
+    up_thread = threading.Thread(target=uplinker.run)
+    down_thread.start()
+    up_thread.start()
     # Join on the threads before exiting
+    try:
+        down_thread.join()
+        up_thread.join()
+    except KeyboardInterrupt:
+        downlinker.stop()
+        uplinker.stop()
     down_thread.join()
     up_thread.join()
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
