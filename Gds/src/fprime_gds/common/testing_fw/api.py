@@ -1247,7 +1247,7 @@ class IntegrationTestAPI:
                 self.__log(ast_msg, TestLogger.ORANGE)
             return False
 
-    def data_callback(self, data_object):
+    def data_callback(self, data_object, sender=None):
         """
         Data callback used by the api to log events and detect when they are received out of order.
         Args:

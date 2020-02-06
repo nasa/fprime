@@ -83,7 +83,7 @@ class FileWriter(decoder.Decoder):
         self.verbose = x
 
 
-    def data_callback(self, data):
+    def data_callback(self, data, sender=None):
         '''
         Function called to pass data to the writer class
 

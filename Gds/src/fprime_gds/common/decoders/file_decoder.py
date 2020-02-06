@@ -10,30 +10,15 @@ in file_data objects.
 @bug No known bugs
 '''
 from __future__ import print_function
-import copy
 from struct import *
-from enum import Enum
+
+from fprime_gds.common.data_types.file_data import FilePacketType
 from fprime_gds.common.decoders import decoder
 from fprime_gds.common.data_types import file_data
-from fprime.common.models.serialize import u32_type
-from fprime.common.models.serialize import time_type
-from fprime.common.models.serialize.type_exceptions import *
-import multiprocessing as mp
-from multiprocessing import Process
-import threading
-import time
-import traceback
-import datetime
-import os
-import random
+
 
 #More info about File packets can be found at fprime-sw/Fw/FilePacket/docs/sdd.md
 #Enum class for Packet Types
-class PacketType(Enum):
-    START = 0
-    DATA = 1
-    END = 2
-    CANCEL = 3
 
 #Main FileDecoder class
 class FileDecoder(decoder.Decoder):
@@ -49,22 +34,6 @@ class FileDecoder(decoder.Decoder):
         '''
 
         super(FileDecoder, self).__init__()
-
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data to the decoder class
-
-        Args:
-            data: Binary data to decode and pass to registered consumers
-        '''
-
-        result = self.decode_api(data)
-
-        # Make sure we don't send None data
-        if result != None:
-            self.send_to_all(result)
-
 
     def decode_api(self, data):
         '''
@@ -82,7 +51,7 @@ class FileDecoder(decoder.Decoder):
         '''
 
         #Decode file here
-        packetType = PacketType(unpack('B', data[:1])[0]).name
+        packetType = FilePacketType(unpack('B', data[:1])[0]).name
         seqID = unpack('>I', data[1:5])[0]
 
         #Packet Type determines the variables following the seqID
@@ -93,24 +62,20 @@ class FileDecoder(decoder.Decoder):
             lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
             destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
 
-            return file_data.StartPacketData(packetType, seqID, size, lengthSP, sourcePath, lengthDP, destPath)
+            return file_data.StartPacketData(seqID, size, lengthSP, sourcePath, lengthDP, destPath)
         elif (packetType == 'DATA'):   #Packet Type is DATA
             offset = unpack('>I', data[5:9])[0]
             length = unpack('BB', data[9:11])[0]
             dataVar = data[11:]
                 
-            return file_data.DataPacketData(packetType, seqID, offset, length, dataVar)
+            return file_data.DataPacketData(seqID, offset, length, dataVar)
         elif (packetType == 'END'):   #Packet Type is END
             hashValue = unpack('>I', data[5:9])[0]
 
-            return file_data.EndPacketData(packetType, seqID, hashValue)
+            return file_data.EndPacketData(seqID, hashValue)
         elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
             #CANCEL Packets have no data
-            return file_data.CancelPacketData(packetType, seqID)
+            return file_data.CancelPacketData(seqID)
 
         #The data was not determined to be any of the packet types so return none
         return None
-    
-
-if __name__ == "__main__":
-    pass

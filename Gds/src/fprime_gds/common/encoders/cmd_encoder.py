@@ -70,20 +70,6 @@ class CmdEncoder(encoder.Encoder):
 
         self.len_obj = self.config.get_type("msg_len")
 
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data through the encoder.
-
-        Objects that the encoder is registered to will call this function to
-        pass data to the encoder.
-
-        Args:
-            data: CmdData object to encode into binary data.
-        '''
-        self.send_to_all(self.encode_api(data))
-
-
     def encode_api(self, data):
         '''
         Encodes the given CmdData object as binary data and returns the result.
