@@ -22,6 +22,7 @@ import collections
 import atexit
 import fprime.fbuild
 
+
 class CMakeBuildCache(object):
     """
     Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
@@ -95,7 +96,13 @@ class CMakeHandler(object):
         if self.verbose:
             run_args.append("--verbose")
         run_args.extend(["--target", cmake_target])
-        return self._run_cmake(run_args + fleshed_args, write_override=True)
+        try:
+            return self._run_cmake(run_args + fleshed_args, write_override=True)
+        except CMakeException as exc:
+            print("[CMAKE] CMake exception detected, attempting CMake cache refresh and retry")
+            self._cmake_referesh_cache(build_dir)
+            return self._run_cmake(run_args + fleshed_args, write_override=True)
+
 
     def find_hashed_file(self, build_dir, hash):
         """
@@ -294,6 +301,19 @@ class CMakeHandler(object):
         cache_file = os.path.join(build_dir, "CMakeCache.txt")
         if not os.path.isfile(cache_file):
             raise CMakeInvalidBuildException(build_dir)
+
+    def _cmake_referesh_cache(self, build_dir):
+        """
+        Runs the cmake  target required to refresh the cmake cache. This will allow for unknown targets to be searched
+        for before the utility gives up and produces.
+        :param build_dir: directory to build in
+        """
+        run_args = ["--build", build_dir]
+        if self.verbose:
+            print("[CMAKE] Refreshing CMake build cache")
+            run_args.append("--verbose")
+        run_args.extend(["--target", "rebuild_cache"])
+        self._run_cmake(run_args, write_override=True)
 
     def _run_cmake(self, arguments, workdir=None, capture=False, write_override=False):
         """
