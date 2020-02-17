@@ -14,10 +14,10 @@
     <return type="ENUM" pass_by="value">
        <enum name="I2cStatus">
             <item name="I2C_OK" comment="Transaction okay"/>
-            <item name="I2C_ADDRESS_ERR" comment="Parity error on data"/>           
-            <item name="I2C_WRITE_ERR" comment="Serial driver ran out of buffers"/>           
-            <item name="I2C_READ_ERR" comment="Target buffer is too small"/>           
-            <item name="SER_OTHER_ERR" comment="Other errors that don't fit"/>           
+            <item name="I2C_ADDRESS_ERR" comment="I2C address invalid"/>           
+            <item name="I2C_WRITE_ERR" comment="I2C write failed"/>           
+            <item name="I2C_READ_ERR" comment="I2C read failed"/>           
+            <item name="I2C_OTHER_ERR" comment="Other errors that don't fit"/>           
        </enum>
    </return>
 </interface>
