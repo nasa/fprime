@@ -30,4 +30,11 @@ again after the user runs `purge`.
 changes and need to be redone from the beginning.
 3. `build`: builds the current directory. If in a component directory, it will compile the component library. If in a
 deployment directory, it will build the binary.
-4.
+4. `build-ut`: builds any unit tests in the current directory.
+5. `build-all`: builds all units in the project. Usefull to build tools, or other secondary products inside an F prime project.
+6. `impl`: generates implementation stubs for the developer to fill in.
+7. `impl-ut`: generates implementation stubs for unit testing.
+8. `check`: runs any unit tests in the current directory.
+9. `check-all`: runs all unit tests in the project.
+10. `install`: installs all executables built to `bin` and all libraries to `lib` directories under the current project
+11. `hash-to-file`: convert an assert file id (hash) to the source file in the build.
