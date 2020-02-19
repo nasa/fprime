@@ -91,7 +91,7 @@ namespace Drv {
 #endif
       // select slave address
       int stat = ioctl(this->m_fd, I2C_SLAVE, addr);
-      if (stat != 0) {
+      if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
@@ -101,7 +101,7 @@ namespace Drv {
       FW_ASSERT(serBuffer.getdata());
       // write data
       stat = write(this->m_fd,(void*) serBuffer.getdata(), serBuffer.getsize());
-      if (stat != 0) {
+      if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
@@ -125,7 +125,7 @@ namespace Drv {
 #endif
       // select slave address
       int stat = ioctl(this->m_fd, I2C_SLAVE, addr);
-      if (stat != 0) {
+      if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
@@ -135,7 +135,7 @@ namespace Drv {
       FW_ASSERT(serBuffer.getdata());
       // read data
       stat = read(this->m_fd,(void*) serBuffer.getdata(), serBuffer.getsize());
-      if (stat != 0) {
+      if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
