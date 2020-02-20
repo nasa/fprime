@@ -22,6 +22,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -749,7 +750,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split('::')
-        c.user = os.environ['USER']
+        c.user = getuser()
         c.args_string = self.argsString
         c.doxygen_pre_comment = self.doxygenPreComment
         c.doxygen_post_comment = self.doxygenPostComment
