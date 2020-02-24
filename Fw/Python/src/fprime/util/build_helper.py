@@ -73,6 +73,11 @@ ACTION_MAP = {
         "build-suffix": "",
         "top-target": True
     },
+    "coverage": {
+        "description": "Generate unit test coverage reports",
+        "target": "coverage",
+        "build-suffix": UT_SUFFIX
+    },
 }
 
 
