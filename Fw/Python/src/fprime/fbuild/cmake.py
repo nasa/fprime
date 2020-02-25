@@ -8,15 +8,20 @@ receiver of these delegated functions.
 @author mstarch
 """
 import six
+import io
 import os
 import re
+import pty
 import sys
+import copy
+import time
 import shutil
 import tempfile
 import subprocess
 import itertools
 import functools
 import collections
+import selectors
 
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
@@ -64,9 +69,9 @@ class CMakeHandler(object):
         self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
-            self._run_cmake(["--help"], capture=True)
+            self._run_cmake(["--help"], print_output=False)
         except Exception as exc:
-            raise CMakeExecutionException("CMake executable 'cmake' not found", str(exc))
+            raise CMakeExecutionException("CMake executable 'cmake' not found", str(exc), printed=False)
 
     def set_verbose(self, verbose):
         """ Sets verbosity """
@@ -93,16 +98,20 @@ class CMakeHandler(object):
         cmake_target = module if target == "" else \
             ("{}_{}".format(module, target).lstrip("_") if not top_target else target)
         run_args = ["--build", build_dir]
+        environment = {}
         if self.verbose:
-            run_args.append("--verbose")
+            environment["VERBOSE"] = "1"
         run_args.extend(["--target", cmake_target])
         try:
-            return self._run_cmake(run_args + fleshed_args, write_override=True)
-        except CMakeException as exc:
-            print("[CMAKE] CMake exception detected, attempting CMake cache refresh and retry")
+            return self._run_cmake(run_args + fleshed_args, write_override=True, environment=environment)
+        except CMakeExecutionException as exc:
+            no_target = functools.reduce(lambda cur, line: cur or "No rule to make target" in line,
+                                         exc.get_errors(), False)
+            if not no_target:
+                raise
+            print("[CMAKE] CMake failed to detect target, attempting CMake cache refresh and retry")
             self._cmake_referesh_cache(build_dir)
-            return self._run_cmake(run_args + fleshed_args, write_override=True)
-
+            return self._run_cmake(run_args + fleshed_args, write_override=True, environment=environment)
 
     def find_hashed_file(self, build_dir, hash):
         """
@@ -245,7 +254,7 @@ class CMakeHandler(object):
         fleshed_args = map(lambda key: ("{}={}" if key.startswith("--") else "-D{}={}")
                            .format(key, args[key]), args.keys())
         self._cmake_validate_source_dir(source_dir)
-        self._run_cmake(["-S", source_dir] + list(fleshed_args), workdir=build_dir, capture=ignore_output,
+        self._run_cmake(["-S", source_dir] + list(fleshed_args), workdir=build_dir, print_output=not ignore_output,
                         write_override=True)
 
     def _read_values_from_cache(self, keys, build_dir):
@@ -270,9 +279,9 @@ class CMakeHandler(object):
         reg = re.compile("([^:]+):[^=]*=(.*)")
         # Check that the build_dir is properly setup
         self._cmake_validate_build_dir(build_dir)
-        stdout, stderr = self._run_cmake(["-LA"], workdir=build_dir, capture=True)
+        stdout, stderr = self._run_cmake(["-LA"], workdir=build_dir, print_output=False)
         # Scan for lines in stdout that have non-None matches for the above regular expression
-        valid_matches = filter(lambda item: item is not None, map(reg.match, stdout.split("\n")))
+        valid_matches = filter(lambda item: item is not None, map(reg.match, stdout))
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
@@ -308,42 +317,97 @@ class CMakeHandler(object):
         for before the utility gives up and produces.
         :param build_dir: directory to build in
         """
+        environment = {}
         run_args = ["--build", build_dir]
         if self.verbose:
             print("[CMAKE] Refreshing CMake build cache")
-            run_args.append("--verbose")
+            environment["VERBOSE"] = "1"
         run_args.extend(["--target", "rebuild_cache"])
-        self._run_cmake(run_args, write_override=True)
+        self._run_cmake(run_args, write_override=True, environment=environment)
 
-    def _run_cmake(self, arguments, workdir=None, capture=False, write_override=False):
+    def _run_cmake(self, arguments, workdir=None, print_output=True, write_override=False, environment={}):
         """
         Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
         path in order for this to run.
         :param arguments: arguments to supply to CMake.
+        :param workdir: work directory to run in
+        :param print: print to the screen. Default: True
         :param write_override: allows for non-read-only commands
+        :param environment: environment to write into
         :return: (stdout, stderr)
         Note: !!! this function has potential File System side-effects !!!
         """
-        # Keep these steps atomic
+        cm_environ = copy.copy(os.environ)
+        cm_environ.update(environment)
         cargs = ["cmake"]
         if not write_override:
             cargs.append("-N")
         cargs.extend(arguments)
-        # Verbose means print calls
         if self.verbose:
             print("[CMAKE] '{}'".format(" ".join(cargs)))
-        proc = subprocess.Popen(cargs, stdout=subprocess.PIPE if capture else None,
-                                stderr=subprocess.PIPE if capture else None,
-                                cwd=workdir)
-        stdout, stderr = proc.communicate()
-        # Check for Python 3, and decode if possible
-        if capture and sys.version_info[0] >= 3:
-            stdout = stdout.decode()
-            stderr = stderr.decode()
-        # Raise for errors
-        if proc.returncode != 0:
-            raise CMakeExecutionException("CMake erred with return code {}".format(proc.returncode), stderr)
+        # In order to get proper console highlighting while still getting access to the output, we need to create a
+        # pseudo-terminal. This will allow the proc to write to one side, and our select below to read from the other
+        # side. Most importantly, pseudo-terminal usage will trick CMake into highlighting for us.
+        pty_err_r, pty_err_w = pty.openpty()
+        pty_out_r, pty_out_w = pty.openpty()
+        proc = subprocess.Popen(cargs, stdout=pty_out_w, stderr=pty_err_w, cwd=workdir, env=cm_environ, close_fds=True)
+        # Close our side of the writing pipes. Subproc will also close when it it finished.
+        os.close(pty_out_w)
+        os.close(pty_err_w)
+        ret, stdout, stderr = self._communicate(proc, io.open(pty_out_r, mode="rb"), io.open(pty_err_r, mode="rb"),
+                                                print_output)
+        # Raising an exception when the return code is non-zero allows us to handle the exception internally if it is
+        # needed. Thus we do not just exit.
+        if ret != 0:
+            raise CMakeExecutionException("CMake erred with return code {}".format(proc.returncode),
+                                          stderr, print_output)
         return stdout, stderr
+
+    @staticmethod
+    def _communicate(proc, stdout, stderr, print_output=True):
+        """
+        Communicates with a process while assuring that output is captured and optionally printed. This will buffer
+        lines for the standard out file handle when not none, and will always buffer standard error so that it can be
+        provided when needed. This effectively replaces the .communicate method of the proc itself, while still
+        preventing deadlocks.  The output is returned for each stream as a list of lines.
+        :param proc: Popen process constructed with the above pairs to the submitted file handles
+        :param stdout: standard output file handle. Paired with the FH provided to the Popen stdout argument
+        :param stderr: standard error file handle. Paired with the FH provided to the Popen stderr argument
+        :param print_output: print output to the screen. If False, output is masked. Default: True, print to screen.
+        :return return code, stdout as list of lines, stderr as list of lines
+        """
+        stdouts = []
+        stderrs = []
+        # Selection will allow us to read from stdout and stderr whenever either is available. This will allow the
+        # program to capture both, while still printing as soon as is possible. This will keep the user informed, not
+        # merge streams, and capture output.
+        #
+        # Selection blocks on the read of "either" file descriptor, and then passes off the execution to the below code
+        # with a key that represents which descriptor was the one available to read without blocking.
+        selector = selectors.DefaultSelector()
+        selector.register(stdout, selectors.EVENT_READ, data=(stdouts, sys.stdout))
+        selector.register(stderr, selectors.EVENT_READ, data=(stderrs, sys.stderr))
+        while not stdout.closed or not stderr.closed:
+            # This line *BLOCKS* until on of the above registered handles is available to read. Then a set of events is
+            # returned signaling that a given object is available for IO.
+            events = selector.select()
+            for key, _ in events:
+                appendable, stream = key.data
+                line = key.fileobj.readline().decode().replace("\r\n", "\n")
+                appendable.append(line)
+                # Streams are EOF when the line returned is empty. Once this occurs, we are responsible for closing the
+                # stream and thus closing the select loop. Empty strings need not be printed.
+                if line == "":
+                    key.fileobj.close()
+                    continue
+                # Forwards output to screen.  Assuming a PTY is used, then coloring highlights should be automatically
+                # included for output. Raw streams are used to avoid print quirks
+                elif print_output:
+                    stream.write(line)
+                    stream.flush()
+        # Check the developer's assertion that the CMake program will not close the file handles before it finishes
+        assert proc.poll() is not None, "CMake process unexpectedly closed file handles before process termination."
+        return proc.poll(), stdouts, stderrs
 
 
 class CMakeException(Exception):
@@ -385,10 +449,11 @@ class CMakeInvalidBuildException(CMakeException):
 
 class CMakeExecutionException(CMakeException):
     """ Pass up a CMake Error as an Exception """
-    def __init__(self, message, stderr):
+    def __init__(self, message, stderr, printed):
         """ The error data should be stored """
         super(CMakeExecutionException, self).__init__(message)
         self.stderr = stderr
+        self.need = not printed
 
     def get_errors(self):
         """
@@ -396,6 +461,13 @@ class CMakeExecutionException(CMakeException):
         :return: stderr of CMake as supplied into this Exception
         """
         return self.stderr
+
+    def need_print(self):
+        """
+        Returns if the errors need to be printed
+        :return: need print
+        """
+        return self.need
 
 class CMakeNoSuchTargetException(CMakeException):
     """ The target does not exist. """
