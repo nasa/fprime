@@ -24,33 +24,30 @@ include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
 function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
   # Go through every auto-coder file and then run the autocoder detected by cracking open the XML file.
   foreach(INPUT_FILE ${AUTOCODER_INPUT_FILES})
-      # Acquire the name components that we need
-      get_filename_component(INPUT_FILE_REAL "${INPUT_FILE}" REALPATH)
-      get_filename_component(AC_XML "${INPUT_FILE}" NAME)
+      # Convert the input file into a real path to ensure the system knows what to work with
+      get_filename_component(INPUT_FILE "${INPUT_FILE}" REALPATH)
 
+      # Run the function required to get all information from the Ai file
+      fprime_ai_info("${INPUT_FILE}" "${MODULE_NAME}")
+      message(STATUS "\tFound ${XML_LOWER_TYPE}: ${AC_OBJ_NAME} in ${INPUT_FILE}")
+      # The build system intrinsically depends on these Ai.xmls and all files includeded by it
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${INPUT_FILE};${FILE_DEPENDENCIES}")
 
+      # Calculate the full path to the Ac.hpp and Ac.cpp files that should be generated both the
+      string(CONCAT AC_FULL_HEADER ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.hpp")
+      string(CONCAT AC_FULL_SOURCE ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.cpp")
 
-      fprime_type("${INPUT_FILE_REAL}")
-      string(TOLOWER ${FP_AI_TYPE} LOWER_TYPE)
-      string(REGEX REPLACE "(${FP_AI_TYPE})?Ai.xml" "" AC_NAME "${AC_XML}")
-      message(STATUS "\tFound ${LOWER_TYPE}: ${AC_NAME} in ${INPUT_FILE}")
-      # The build system intrinsically depends on these AC_XML files, so add it to the CMAKE_CONFIGURE_DEPENDS  
-      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${INPUT_FILE})
+      # Run the specific autocoder herlper
+      acwrap("${XML_LOWER_TYPE}" "${AC_FULL_SOURCE}" "${AC_FULL_HEADER}"  "${INPUT_FILE}" "${FILE_DEPENDENCIES}")
 
-      # Calculate the Ac .hpp and .cpp files that should be generated
-      string(CONCAT AC_HEADER ${AC_NAME} "${FP_AI_TYPE}Ac.hpp")
-      string(CONCAT AC_SOURCE ${AC_NAME} "${FP_AI_TYPE}Ac.cpp")
-      # AC files may be considered source files, or they may be considered build artifacts. This is set via
-      # cmake configuration and controls the location of the output.
-      set(AC_FINAL_DIR ${CMAKE_CURRENT_BINARY_DIR})
-      string(CONCAT AC_FINAL_HEADER ${AC_FINAL_DIR} "/" ${AC_HEADER})
-      string(CONCAT AC_FINAL_SOURCE ${AC_FINAL_DIR} "/" ${AC_SOURCE})
-      message(STATUS "ACWRAPER: ${CMAKE_CURRENT_BINARY_DIR} ${AC_FINAL_DIR}  ${LOWER_TYPE} ${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${INPUT_FILE_REAL}")
-      acwrap("${LOWER_TYPE}" "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}"  "${INPUT_FILE_REAL}")
-
-      # Generated and detected dependencies
-      add_generated_sources(${AC_FINAL_SOURCE} ${AC_FINAL_HEADER} ${MODULE_NAME})
-      fprime_dependencies(${INPUT_FILE_REAL} ${MODULE_NAME} ${LOWER_TYPE})
+      add_generated_sources("${AC_FULL_SOURCE}" "${AC_FULL_HEADER}" "${MODULE_NAME}")
+      # For every detected dependency, add them to the supplied module. This enforces build order.
+      # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
+      # this prevents the need for manually specifying link orders.
+      foreach(TARGET ${MODULE_DEPENDENCIES})
+          add_dependencies(${MODULE_NAME} "${TARGET}")
+          target_link_libraries(${MODULE_NAME} "${TARGET}")
+      endforeach()
 
       # Pass list of autocoder outputs out of the module
       set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)

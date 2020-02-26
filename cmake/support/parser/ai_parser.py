@@ -108,6 +108,10 @@ def print_fprime_dependencies(root, current_library, import_base):
     dependencies = read_xml_file(root, import_base)
     if current_library in dependencies:
         dependencies.remove(current_library)
+    #Rebuilding is broken by non-deterministic set behavior, so this makes it a reverse-sorted (deterministic) list
+    dependencies = list(dependencies)
+    dependencies.sort()
+    dependencies.reverse()
     # Go in order, for GCC
     gcc_order = []
     for dep in DEPENDENCY_ORDER:
