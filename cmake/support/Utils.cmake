@@ -77,7 +77,7 @@ endfunction(add_generated_sources)
 function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
   set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
-      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
+      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "print-mod-deps" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
 	  OUTPUT_VARIABLE TARGETS
   )
@@ -93,6 +93,27 @@ function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
     target_link_libraries(${MODULE_NAME} "${TARGET}")
   endforeach()
 endfunction(fprime_dependencies)
+
+####
+# Function `fprime_type`:
+#
+# A function used to detect the type of the Ai.xml file from within. This prevents the forced-dependence on
+# the namining convention.
+#
+# - **XML_PATH:** full path to the XML used for sources.
+####
+function(fprime_type XML_PATH)
+  execute_process(
+      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "print-type" "${XML_PATH}"
+	  RESULT_VARIABLE ERR_RETURN
+	  OUTPUT_VARIABLE FPTYPE
+  )
+  # Check parser return code
+  if(ERR_RETURN)
+     message(FATAL_ERROR "Failed to parse ${XML_PATH}. ${ERR_RETURN}")
+  endif()
+  set(FP_AI_TYPE "${FPTYPE}" PARENT_SCOPE) 
+endfunction(fprime_type)
 
 ####
 # Function `split_source_files`:
