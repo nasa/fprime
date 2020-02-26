@@ -64,36 +64,6 @@ function(add_generated_sources CPP_SOURCE HPP_SOURCE)
 endfunction(add_generated_sources)
 
 ####
-# Function `fprime_dependencies`:
-#
-# A function used to detect the dependencies of a given module from the XML file that
-# defines this module. This is used to reduce code in the Serializable, Port, Component,
-# and Topology functions that all use the same procedure.
-#
-# - **XML_PATH:** full path to the XML used for sources.
-# - **MODULE_NAME:** name of the module soliciting new dependencies
-####
-function(fprime_dependencies XML_PATH MODULE_NAME)
-  set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-  execute_process(
-      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py"  "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
-	  RESULT_VARIABLE ERR_RETURN
-	  OUTPUT_VARIABLE TARGETS
-  )
-  # Check parser return code
-  if(ERR_RETURN)
-     message(FATAL_ERROR "Failed to parse ${XML_PATH}. ${ERR_RETURN}")
-  endif()
-  # For every dected dependency, add them to the supplied module. This enforces build order.
-  # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
-  # this prevents the need for manually specifying link orders.
-  foreach(TARGET ${TARGETS})
-    add_dependencies(${MODULE_NAME} "${TARGET}")
-    target_link_libraries(${MODULE_NAME} "${TARGET}")
-  endforeach()
-endfunction(fprime_dependencies)
-
-####
 # Function `fprime_ai_info`:
 #
 # A function used to detect all the needed information for an Ai.xml file. This looks for the following items:
