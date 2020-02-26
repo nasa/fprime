@@ -366,7 +366,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             else:
                                 type_name = member_type
                                 if member_type == "string":
-                                    member_elem.attrib["len"] = member.get_size()
+                                    member_elem.attrib["len"] = member_size
                             member_elem.attrib["type"] = type_name
                             members_elem.append(member_elem)
                         serializable_elem.append(members_elem)
@@ -1234,7 +1234,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
 
     # verify directory exists for dependency file and is directory
     if not os.path.isdir(os.path.dirname(filename)):
-        PRINT.info("ERROR: Dependency file path %s does not exist!",os.path.dirname(full_path))
+        PRINT.info("ERROR: Dependency file path %s does not exist!",os.path.dirname(filename))
         sys.exit(-1)
 
 
@@ -1448,4 +1448,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exc:
+        print(exc, file=sys.stderr)
+        sys.exit(-1)
