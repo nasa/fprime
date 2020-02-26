@@ -393,7 +393,12 @@ class CMakeHandler(object):
             events = selector.select()
             for key, _ in events:
                 appendable, stream = key.data
-                line = key.fileobj.readline().decode().replace("\r\n", "\n")
+                try:
+                    line = key.fileobj.readline().decode().replace("\r\n", "\n")
+                # Some systems (like running inside Docker) raise an io error instead of returning "" when the device
+                # is ended. Not sure why this is, but the effect is the same, on IOError assume end-of-input
+                except IOError as ioe:
+                    line = ""
                 appendable.append(line)
                 # Streams are EOF when the line returned is empty. Once this occurs, we are responsible for closing the
                 # stream and thus closing the select loop. Empty strings need not be printed.
