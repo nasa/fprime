@@ -410,8 +410,9 @@ class CMakeHandler(object):
                 elif print_output:
                     stream.write(line)
                     stream.flush()
-        # Check the developer's assertion that the CMake program will not close the file handles before it finishes
-        assert proc.poll() is not None, "CMake process unexpectedly closed file handles before process termination."
+        # Spin waiting for the .poll() method to return a non-None result ensuring that the process has finished.
+        while proc.poll() is None:
+            time.sleep(0.0001)
         return proc.poll(), stdouts, stderrs
 
 
