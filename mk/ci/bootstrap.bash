@@ -10,5 +10,5 @@
 # Clean the repository as part of setup
 echo -e "${BLUE}Cleaning Repository and Installing PIP Package${NOCOLOR}"
 git clean -xdf .
-pip install ./Fw/Python
-pip install ./Gds[test-api-xls]
+pip install ./Fw/Python 1>/dev/null 2>/dev/null || fail_and_stop "Failed to install fprime PIP module from ./Fw/Python"
+pip install ./Gds[test-api-xls] 1>/dev/null 2>/dev/null || fail_and_stop "Failed to install fprime PIP module from ./Gds[test-api-xls]"

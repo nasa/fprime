@@ -15,6 +15,6 @@ mkdir -p "${LOG_DIR}"
 # Loop through all scripts in  tests directory and run them
 for test_script in "${SCRIPT_DIR}/tests"/*
 do
-    "${SCriPT_DIR}/bootstrap.bash" || fail_and_stop "Cleaning and PIP install Failed"
+    "${SCRIPT_DIR}/bootstrap.bash" || fail_and_stop "Cleaning and PIP install Failed"
     "${test_script}" || fail_and_stop "${test_script} failed"    
 done

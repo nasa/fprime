@@ -20,6 +20,6 @@ function fail_and_stop()
 {
     echo -e "${RED}---------------- ERROR ----------------" 1>&2
     echo    " CI Failed with error: ${1}" 1>&2
-    echo -e "---------------------------------------${NOCOLOR}" 1 >&2
+    echo -e "---------------------------------------${NOCOLOR}" 1>&2
     exit 1
 }
