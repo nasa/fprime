@@ -18,10 +18,11 @@ export FPRIME_DIR="$(pwd)"
 export LOG_DIR="${FPRIME_DIR}/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
+"${SCRIPT_DIR}/bootstrap.bash" || fail_and_stop "Bootstrapping container with Python modules"
 # Loop through all scripts in  tests directory and run them
 for test_script in ${TESTS}
 do
-    "${SCRIPT_DIR}/bootstrap.bash" || fail_and_stop "Cleaning and PIP install Failed"
+    "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning drectory"
     echo -e "${BLUE}Starting CI test ${test_script}${NOCOLOR}"
     /usr/bin/time "${test_script}" || fail_and_stop "${test_script} failed"
     echo -e "${GREEN}CI test ${test_script} SUCCESSFUL${NOCOLOR}"

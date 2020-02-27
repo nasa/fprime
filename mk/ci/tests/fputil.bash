@@ -16,10 +16,9 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # :param target($1): command to run with FP util
 # :param deploy($2): deployment to run on
 ####
-function fputil_action
-do
-    export TARGET="${1}"
-    export WORKDIR="${2}"
+function fputil_action {
+    export WORKDIR="${1}"
+    export TARGET="${2}"
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
         cd "${WORKDIR}"
@@ -34,16 +33,15 @@ do
         fprime-util "${target}" --jobs "${JOBS}" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
             || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
     ) || exit 1
-done
-
+}
+export -f fputil_action
 ####
 # integration_test:
 #
 # Runs the FPrime GDS and integration test layer for a deployment.
 # :param deploy($1): deployment to run on.
 ####
-function integration_test
-do
+function integration_test {
     let SLEEP_TIME=10
     export WORKDIR="${1}"
     fputil_action "${WORKDIR}" "install" || fail_and_stop "Failed to install before integration test"
@@ -69,4 +67,5 @@ do
         pkill -KILL Ref
         exit ${RET_PYTEST}
     ) || fail_and_stop "Failed integration tests on ${WORKDIR}"
-done
+}
+export -f integration_test
