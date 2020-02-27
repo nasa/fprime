@@ -6,6 +6,7 @@
 # usage elsewhere.
 ####
 export BLUE='\033[0;34m'
+export GREEN='\033[0;32m'
 export RED='\033[0;31m'
 export NOCOLOR='\033[0m' # No Color
 
@@ -19,7 +20,8 @@ export NOCOLOR='\033[0m' # No Color
 function fail_and_stop()
 {
     echo -e "${RED}---------------- ERROR ----------------" 1>&2
-    echo    " CI Failed with error: ${1}" 1>&2
+    echo    "${1}" 1>&2
     echo -e "---------------------------------------${NOCOLOR}" 1>&2
     exit 1
 }
+export -f fail_and_stop

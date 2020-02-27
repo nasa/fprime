@@ -14,7 +14,7 @@
 FROM ubuntu:18.04 AS fprime-base
 # Adding fprime user, group, and password fprime
 RUN groupadd fprime && \
-    groupmod -g 1001 jenkins && \
+    groupmod -g 1001 fprime && \
     useradd -ms /bin/bash -g root -G sudo,fprime -p fprime fprime && \
     usermod -u 1001 fprime && \
 # Installing system components
@@ -25,7 +25,7 @@ RUN groupadd fprime && \
     pip install wheel && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    rm ~/.cache/pip && \
+    rm -r ~/.cache/pip && \
 # Change user and group of the virtual environemnt
     chown -R fprime:fprime /opt/fprime-venv && \
     chmod -R 775 /opt/fprime-venv
@@ -56,4 +56,5 @@ ENV USER jenkins
 ENV VIRTUAL_ENV "/opt/fprime-venv"
 ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
+ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
 ENTRYPOINT ["/bin/bash"]

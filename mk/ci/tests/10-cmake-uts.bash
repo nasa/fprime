@@ -6,5 +6,7 @@
 ####
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
-
-pytest cmake/ -v --ignore test_ut.py --ignore test_validation.py || fail_and_stop "Failed to run CMake UTs"
+(
+    cd cmake/test/
+    pytest -v --ignore="src/test_ut.py" --ignore="src/test_shared.py" --ignore="src/test_validation.py" --ignore="src/test_tool_check.py" || fail_and_stop "Failed to run CMake UTs" 
+) || exit 1
