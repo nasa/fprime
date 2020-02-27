@@ -27,6 +27,8 @@ import exceptions
 import subprocess
 import signal
 
+from getpass import getuser
+
 import log_event_panel
 import command_panel
 import telemetry_panel
@@ -325,7 +327,7 @@ class TopPanel(object):
 
 
         print "Exit..."
-        user = os.environ['USER']
+        user = getuser()
         op_sys = os.uname()[0]
 
         if self.__opts.exec_app != None:
