@@ -4,7 +4,7 @@
 #
 # Helpers to test via FP util
 ####
-export FPUTIL_TARGETS="generate build build-uts check-all install build-all coverage"
+export FPUTIL_TARGETS="generate build build-ut check-all install build-all coverage"
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
 
 export INT_DEPLOYS="${FPRIME_DIR}/Ref"
@@ -29,8 +29,8 @@ function fputil_action {
             fprime-util "generate" --jobs "${JOBS}" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
                 || fail_and_stop "Failed to generate before ${WORKDIR//\//_} '${TARGET}' execution"
         fi
-        echo "[INFO] FP Util in ${WORKDIR} running ${target} with ${JOBS} jobs"
-        fprime-util "${target}" --jobs "${JOBS}" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
+        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
+        fprime-util "${TARGET}" --jobs "${JOBS}" > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
             || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
     ) || exit 1
 }
@@ -42,7 +42,7 @@ export -f fputil_action
 # :param deploy($1): deployment to run on.
 ####
 function integration_test {
-    let SLEEP_TIME=10
+    export SLEEP_TIME="10"
     export WORKDIR="${1}"
     fputil_action "${WORKDIR}" "install" || fail_and_stop "Failed to install before integration test"
     (
@@ -57,9 +57,9 @@ function integration_test {
         ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start GDS layer headlessly"
         # Run integration tests
         (
-            cd "${WORKDIR}"
-            echo "[INFO] Running $1's pytest integration tests" 
-            pytest "${LOG_DIR}/${WORKDIR//\//_}_pytest_ints.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pytest_ints.err.log"
+            cd "${WORKDIR}/test"
+            echo "[INFO] Running ${WORKDIR}/test's pytest integration tests" 
+            pytest 
         )
         RET_PYTEST=$?
         kill $GDS_PID
