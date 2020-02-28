@@ -8,5 +8,5 @@
 # that we are ready to run all tools.
 ####
 echo -e "${BLUE}Installing PIP Packages${NOCOLOR}"
-pip install ./Fw/Python 1>/dev/null 2>/dev/null || fail_and_stop "Failed to install fprime PIP module from ./Fw/Python"
-pip install ./Gds[test-api-xls] 1>/dev/null 2>/dev/null || fail_and_stop "Failed to install fprime PIP module from ./Gds[test-api-xls]"
+pip install ./Fw/Python || fail_and_stop "Failed to install fprime PIP module from ./Fw/Python"
+pip install ./Gds[test-api-xls] || fail_and_stop "Failed to install fprime PIP module from ./Gds[test-api-xls]"
