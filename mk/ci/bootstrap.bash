@@ -10,7 +10,7 @@
 export USABLE_VENV="${FPRIME_DIR}/ci-venv"
 echo -e "${BLUE}Preparing VENV at: ${USABLE_VENV}${NOCOLOR}"
 rm -r "${USABLE_VENV}"
-python -m venv "{$USABLE_VENV}"
+python3 -m venv "{$USABLE_VENV}"
 . "${USABLE_VENV}/bin/activate"
 echo -e "Installing PIP Packages"
 pip install ./Fw/Python || fail_and_stop "Failed to install fprime PIP module from ./Fw/Python"
