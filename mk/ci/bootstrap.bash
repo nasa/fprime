@@ -7,7 +7,7 @@
 # Sets up the python environment for the CI system. This will read the latest Python and ensure
 # that we are ready to run all tools.
 ####
-export USABLE_VENV="${CI_VENV:-${FPRIME_PATH}/ci-venv}"
+export USABLE_VENV="${FPRIME_DIR}/ci-venv"
 echo -e "${BLUE}Preparing VENV at: ${USABLE_VENV}${NOCOLOR}"
 rm -r "${USABLE_VENV}"
 python -m venv "{$USABLE_VENV}"
