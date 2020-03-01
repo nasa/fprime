@@ -7,6 +7,11 @@
 # Sets up the python environment for the CI system. This will read the latest Python and ensure
 # that we are ready to run all tools.
 ####
-echo -e "${BLUE}Installing PIP Packages${NOCOLOR}"
+export USABLE_VENV="${CI_VENV:-${FPRIME_PATH}/ci-venv}"
+echo -e "${BLUE}Preparing VENV at: ${USABLE_VENV}${NOCOLOR}"
+rm -r "${USABLE_VENV}"
+python -m venv "{$USABLE_VENV}"
+. "${USABLE_VENV}/bin/activate"
+echo -e "Installing PIP Packages"
 pip install ./Fw/Python || fail_and_stop "Failed to install fprime PIP module from ./Fw/Python"
 pip install ./Gds[test-api-xls] || fail_and_stop "Failed to install fprime PIP module from ./Gds[test-api-xls]"

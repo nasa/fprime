@@ -21,23 +21,28 @@ RUN groupadd fprime && \
     apt-get update && apt-get install -y --no-install-recommends \
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv && \
     mkdir -p /opt/ && \
-    python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-    pip install wheel && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    rm -r ~/.cache/pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Change user and group of the virtual environemnt
-    chown -R fprime:fprime /opt/fprime-venv && \
-    chmod -R 775 /opt/fprime-venv
 # Make fprime user default user
 ENV HOST fprime
 ENV USER fprime
-ENV VIRTUAL_ENV "/opt/fprime-venv"
-ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
+FROM fprime-base AS fprime-docker
+    COPY . /opt/fprime
+    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+        pip install wheel && \
+        pip install /opt/fprime/Fw/Python/ && \
+        pip install /opt/fprime/Gds/ && \
+        rm -r ~/.cache/pip && \
+        chown -R fprime:fprime /opt/fprime-venv && \
+        chmod -R 775 /opt/fprime-venv
+ENV VIRTUAL_ENV "/opt/fprime-venv"
+ENV PYTHONHOME "/opt/fprime-venv"
+ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ####
 # F Prime CI Image:   **** Must Be Last Image In File ****
@@ -53,8 +58,7 @@ RUN groupadd jenkins && \
 ENV HOST jenkins
 ENV USER jenkins
 # Paths and entrypoinys
-ENV VIRTUAL_ENV "/opt/fprime-venv"
-ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
 ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
 ENTRYPOINT ["/bin/bash"]
