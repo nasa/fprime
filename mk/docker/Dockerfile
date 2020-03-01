@@ -31,18 +31,18 @@ ENV LANG C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
-FROM fprime-base AS fprime-docker
-    COPY . /opt/fprime
-    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-        pip install wheel && \
-        pip install /opt/fprime/Fw/Python/ && \
-        pip install /opt/fprime/Gds/ && \
-        rm -r ~/.cache/pip && \
-        chown -R fprime:fprime /opt/fprime-venv && \
-        chmod -R 775 /opt/fprime-venv
-ENV VIRTUAL_ENV "/opt/fprime-venv"
-ENV PYTHONHOME "/opt/fprime-venv"
-ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+#FROM fprime-base AS fprime-docker
+#    COPY . /opt/fprime
+#    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+#        pip install wheel && \
+#        pip install /opt/fprime/Fw/Python/ && \
+#        pip install /opt/fprime/Gds/ && \
+#        rm -r ~/.cache/pip && \
+#        chown -R fprime:fprime /opt/fprime-venv && \
+#        chmod -R 775 /opt/fprime-venv
+#ENV VIRTUAL_ENV "/opt/fprime-venv"
+#ENV PYTHONHOME "/opt/fprime-venv"
+#ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ####
 # F Prime CI Image:   **** Must Be Last Image In File ****
