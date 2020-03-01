@@ -18,7 +18,7 @@ export FPRIME_DIR="$(pwd)"
 export LOG_DIR="${FPRIME_DIR}/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
-"${SCRIPT_DIR}/bootstrap.bash" || fail_and_stop "Bootstrapping container with Python modules"
+. "${SCRIPT_DIR}/bootstrap.bash" 
 # Loop through all scripts in  tests directory and run them
 for test_script in ${TESTS}
 do
