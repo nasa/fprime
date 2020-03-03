@@ -19,7 +19,7 @@ VirtualBox [https://www.virtualbox.org/](https://www.virtualbox.org/).
 Requirements:
 
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path
+2. CMake 3.5 or newer [https://cmake.org/download/](https://cmake.org/download/). CLI tool must be available on system path.
 3. Bash or Bash compatible shell
 4. CLang or GCC compiler
 5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
