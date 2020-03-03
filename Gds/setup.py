@@ -117,7 +117,7 @@ integrated configuration with ground in-the-loop.
         # 'Programming Language :: Python :: Implementation :: Jython',
         # 'Programming Language :: Python :: Implementation :: Stackless',
     ],
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
+    python_requires='>=3.5',
     install_requires=[
         'flask',
         'pexpect',
