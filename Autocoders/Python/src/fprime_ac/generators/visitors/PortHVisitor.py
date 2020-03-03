@@ -21,6 +21,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -222,7 +223,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.name_space = obj.get_namespace()
         d = datetime.datetime.now()
         c.date = d.strftime("%A, %d %B %Y")
-        c.user = os.environ['USER']
+        c.user = getuser()
         self._writeTmpl(c, "startSourceFilesVisit")
 
 

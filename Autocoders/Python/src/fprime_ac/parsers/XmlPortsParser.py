@@ -23,6 +23,7 @@ import time
 from optparse import OptionParser
 from lxml import etree
 from fprime_ac.utils import ConfigManager
+from fprime_ac.utils.exceptions import FprimeRngXmlValidationException
 
 #
 # Python extention modules and custom interfaces
@@ -63,7 +64,6 @@ class XmlPortsParser(object):
         #
         if os.path.isfile(xml_file) == False:
             str = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(str)
             raise IOError(str)
         fd = open(xml_file,'r')
         xml_file = os.path.basename(xml_file)
@@ -82,17 +82,14 @@ class XmlPortsParser(object):
 
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
-            msg = "XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.__config.get('schema' , 'interface'))
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            raise FprimeRngXmlValidationException(relax_compiled.error_log)
 
         interface = element_tree.getroot()
         if interface.tag != "interface":
             PRINT.info("%s is not a interface file"%xml_file)
             sys.exit(-1)
 
-        print(("Parsing Interface %s" %interface.attrib['name']))
+        print("Parsing Interface %s" %interface.attrib['name'])
 
         if 'namespace' in interface.attrib:
             namespace_name = interface.attrib['namespace']

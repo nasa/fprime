@@ -18,6 +18,8 @@ import sys
 import time
 import datetime
 
+from getpass import getuser
+
 from fprime_ac.utils.cosmos.util import CosmosUtil
 
 """
@@ -28,7 +30,7 @@ Cheetah templates.
 # COSMOS OUTPUT STYLING
 #
 DATE = datetime.datetime.now().strftime("%A, %d, %B, %Y")
-USER = os.environ['USER']
+USER = getuser()
 
 #
 # CHANNELS

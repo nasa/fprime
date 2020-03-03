@@ -73,6 +73,11 @@ ACTION_MAP = {
         "build-suffix": "",
         "top-target": True
     },
+    "coverage": {
+        "description": "Generate unit test coverage reports",
+        "target": "coverage",
+        "build-suffix": UT_SUFFIX
+    },
 }
 
 
@@ -261,8 +266,9 @@ def utility_entry(args=sys.argv[1:]):
                                                          parsed.path, cmake_args, make_args,
                                                          action.get("top-target", False))
     except fprime.fbuild.cmake.CMakeExecutionException as exexc:
-        stderr = exexc.get_errors()
-        print("[ERROR] {}.{}".format(exexc,"\n{}".format(stderr) if stderr else ""), file=sys.stderr)
+        print("[ERROR] {}.".format(exexc), file=sys.stderr)
+        if exexc.need_print():
+            print("\n".join(exexc.get_errors()), file=sys.stderr)
         return 1
     except fprime.fbuild.cmake.CMakeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)

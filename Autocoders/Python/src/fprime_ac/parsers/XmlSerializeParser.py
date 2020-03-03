@@ -24,6 +24,8 @@ from optparse import OptionParser
 from lxml import etree
 import hashlib
 from fprime_ac.utils import ConfigManager
+from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
+
 #
 # Python extention modules and custom interfaces
 #
@@ -81,8 +83,7 @@ class XmlSerializeParser(object):
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise
+            raise IOError(stri)
         fd = open(xml_file,'r')
 #        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
@@ -101,7 +102,6 @@ class XmlSerializeParser(object):
                 break
         else:
             stri = "ERROR: Could not find specified RNG file %s." % rng_file
-            PRINT.info(stri)
             raise IOError(stri)
         file_handler = open(rng_file, 'r')
         relax_parsed = etree.parse(file_handler)
@@ -111,16 +111,14 @@ class XmlSerializeParser(object):
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
             msg = "XML file {} is not valid according to schema {}.".format(xml_file , os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower()))
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            raise FprimeXmlException(msg)
 
         serializable = element_tree.getroot()
         if serializable.tag != "serializable":
             PRINT.info("%s is not a serializable definition file"%xml_file)
             sys.exit(-1)
 
-        print(("Parsing Serializable %s" %serializable.attrib['name']))
+        print("Parsing Serializable %s" %serializable.attrib['name'])
 
         self.__name = serializable.attrib['name']
 
