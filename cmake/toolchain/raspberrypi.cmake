@@ -2,7 +2,7 @@
 set(CMAKE_SYSTEM_NAME "arm-linux-gnueabihf")
 
 # Location of pi toolchain
-set(PI_TOOLCHAIN "/opt/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/")
+set(PI_TOOLCHAIN "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/")
 
 # specify the cross compiler
 set(CMAKE_C_COMPILER "${PI_TOOLCHAIN}/bin/arm-linux-gnueabihf-gcc")

@@ -6,7 +6,7 @@ Read the documents in the F' repo as described in the [README](../README.md) to 
 
 ### Board Preparation
 
-This demo was developed on a Raspberry Pi 2 model B. The following directions are how to checkout and run the demo on the Raspberry Pi itself. There are also alternative directions for cross-compiling for the RPI. The cross-compile has been tested on Ubuntu as a host. Compiling and running on the RPI can be very slow, and the ground system has had some issues running on Raspberry Pi.
+This demo was developed on a Raspberry Pi 2 model B. The following directions are how to checkout and run the demo on the Raspberry Pi itself. There are also alternative directions for cross-compiling for the RPI. The cross-compile has been tested on Ubuntu as a host. Compiling and running on the RPI can be very slow, and the ground system has had some issues running on Raspberry Pi so this guide will walk the user through the setup to cross-compile for the raspberry pi.
 
 **From the RPI configuration menu:**
 
@@ -39,82 +39,71 @@ If the UART port is not set up correctly, there will be a file open error.
 
 **Install the packages necessary to run the demo.** 
 
-If you are cross-compiling, this would apply only to the compile host:
-```
-./mk/os-pkg/ubuntu-packages.sh
-sudo pip install -r  mk/python/pip_required_build.txt
-sudo pip install -r  mk/python/pip_required_gui.txt
-```
-For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/tools/rpi`. If they are installed elsewhere, the location can be updated [here](../mk/configs/host/Linux-generic.mk).
+Please see [INSTALL.md](../docs/INSTALL.md) to ensure that the F´ application has been installed and tested with the basic Ref. For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/rpi`. If they are installed elsewhere, the location can be updated [here](../cmake/toolchain/raspberrypi.cmake).
 
 ### Build the software
 
-**From the `RPI` directory in the repo, run:**
-```
-make rebuild_rpi
-```
-or, for cross-compiling, from the build host:
-```
-make rebuild_rpi_cross
-```
-The build should run to completion. This will take a few minutes.
+**Crosscompiling using CMake:**
 
-**Building using CMake:**
-
-You may also build the software using CMake. First, create an output folder. We'll assume that you're already within the `RPI` directory:
+The following commands are described at length in the getting started [tutorial](../docs/Tutorials/GettingStarted/Tutorial.md). These commands will
+go to the RPI directory and generate a build directory for the RPI example. This step generates a CMake Cache, sets the toolchain use to build the
+code and does an initial scan of the source tree. Since the RPI example sets a default F´ toolchain file in its CMakeLists.txt, we do not need to 
+supply one on the command line when generating the build. This only needs to be done once to prepare for the build because CMake will detect
+changes to its files.
 
 ```
-mkdir build
-cd build
+cd fprime/RPI
+fprime-util generate
 ```
 
-You can now build the software:
+The next set of commands will build the RPI code and install it.  The installation step is only necessary to make it easier to locate the binary
+file that the build generates. By default this binary is deep in the build tree and installing it puts the output in the RPI folder under the
+bin subfolder. 
 
 ```
-cmake ../
-make
+cd fprime/RPI
+fprime-util install 
 ```
 
-If you're cross-compiling, you can instead specify the respective toolkit. Note -- The toolkit specifies that the cross-compile tools folder be installed into the `/opt` directory. If you place it elsewhere on your system, please update it in the toolkit file.
-
-```
-cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/toolchain/arm-linux-gnueabihf.cmake ../
-make
-```
-
-After `make` has completed, the output binary can be found in the `bin` folder.
+After the build has completed, the output binary can be found in the `bin/raspberrypi` folder. This assumes you build with the default toolchain
+of "raspberrypi".
 
 **Run the software:**
 
-```
-./runBoth.sh
-```
-
-This will start the software itself in a window and start the ground system. The application window appears like this:
-
-![`Application Window`](img/app.png "App")
-
-The ground system window appears like this:
-
-![`Ground System`](img/gse.png "Gse")
-
-When cross-compiling, the best way to run the demo is to execute the binary on the Raspberry Pi and the ground system on the build host. For the demo to work this way, the build host would have to be connected to the Raspberry Pi via a network connection. Once that is done, copy these files to a directory on the RPI:
+The first step to running the software is to run the ground station. This will allow the code running on the Raspberry PI to downlink telemetry
+that is then displayed in the user's browser. This next step uses port 50000 for the PI to connect to. The user should ensure that this port
+is not blocked by the system firewall, and is properly forwarded to the network that the raspberry pi is connected to.  In the case of a standard
+home network where the pi and the user's computer are connected to the same network, these typically do not require special setup.
 
 ```
-RPI/raspian-raspian-arm-debug-gnu-bin/RPI
-RPI/runRPICross.sh
+./scripts/run_rpi_cross.sh
+```
+The ground station should now appear in the user's default browser. Should the user wish to terminate the ground system, return to that terminal
+and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab diaplying the GUI.
+
+
+In order to run the compiled software, we'll first need to copy it to the RPI. This can be done by creating a new terminal, and running the
+following commands. Note: the ground station should be left running.
+
+```
+cd fprime/RPI
+scp ./bin/raspberrypi/RPI pi@<pi's ip>:
+ssh pi@<pi's IP>
 ```
 
-Modify the `runRPICross.sh` IP address in the `-a` argument be the address of the build host.
+Now the binary is available in home directory of the pi user on the raspberry pi and the user has logged into the pi. The user can then run the
+following command to launch the embedded application:
 
-The `runGui.sh` runs only the ground system on the build host. The address in the script can be modified to the address of the build host.
+```
+./RPI -a <ground computer's IP> -p 50000
+```
 
-The `runGui.sh` script should be run first on the build host, and then `runRPICross.sh` on the RPI.
-
+Switching back to the browser's GUI, the user should see channelized telemetry updating by clicking on the "Channels" tab and events by clicking
+on the "Events" tab.
 
 **Run some commands:**
 
-Click on the `Commands` tab and drop down the `Cmds` list to see a list of available commands. There are some infrastructure commands, but for the purpose of this demo you can use the Raspberry Pi demo component commands:
+Click on the `Commanding` tab and drop down the `Mnemonic` list to see a list of available commands. There are some infrastructure commands, but for the purpose of this demo you can use the Raspberry Pi demo component commands:
 
 |Command|Function|Notes|
 |---|---|---|
@@ -126,11 +115,11 @@ Click on the `Commands` tab and drop down the `Cmds` list to see a list of avail
 |RD_SetLed|Turns blinking LED on or off|
 |RD_SetLedDivider|Sets LED blink rate. Rate is 10Hz/argument|
 
-Look at channelized telemetry and events
+Look at channelized telemetry and events.
 
-The telemetry in the system can be seen in the `Channel Telemetry` tab. The values update once per second. You can see various values updated by the demonstration component.
+The telemetry in the system can be seen in the `Channels` tab. The values update once per second. You can see various values updated by the demonstration component.
 
-`Log Events` are asynchronous messages that indicate events have happened in the system. As you exercise the `RD`commands, you should see messages appear indicating what is happening in the system.
+`Events` are asynchronous messages that indicate events have happened in the system. As you exercise the `RD`commands, you should see messages appear indicating what is happening in the system.
 
 **Use parameters**
 
@@ -138,7 +127,7 @@ Parameters are values that are stored on disk for subsequent executions of the s
 
 **Exit the software**
 
-The demo can be exited by clicking on the window exit button or by choosing `File` then `Exit.` If you are running the cross-compiled binary on the RPI, typing `Ctrl-C` will cause the program to exit.
+CTRL-C in both terminals will stop the software from running.
 
 **Things to look at**
 
@@ -146,30 +135,8 @@ The demo consists of a single component along with all the infrastructure compon
 
 **Some tips:**
 
- * You can script a set of commands through the ground system. For an example, run from the RPI directory:
- ```
- ./run_rpi_cmds.sh scripts/tests/RPI_cmds.txt
- ```
  * If you would like to add your own components, read the User's manual on how to add new directories to the build.
- * If you have defined some component XML, you can generate an empty implementation class by typing `make impl`. 
- * If you would like to know how many lines of code you have, you can type `make sloc` in the component directory or `make RASPIAN_sloc` in the `RPI` deployment directory.
- * If your app crashes and the app window disappears, standard output is in `RPI/RPI.log`.
- * You can see the telemetry and events in `RPI/logs/<date>/channel/Channel.log` and `RPI/logs/<date>/event/Event.log` respectively.
- * Sometimes you see the error:
- ```
- EXCEPTION: Could not connect to socket at host addr localhost, port 50000
- ```
+ * If you have defined some component XML, you can generate an empty implementation class by typing `fprime-util impl`. 
+ * You can see the telemetry and events in `RPI/logs/<date>/channel.log` and `RPI/logs/<date>/event.log` respectively.
+ * Sometimes you see the error: Could not connect to socket at host addr localhost, port 50000, or address in use
 This means that the GUI was restarted before the socket was released by Linux. Wait a minute or so and try again.
- 
-Sometimes the GUI can be sluggish on older RPI models. In this case, connect the RPI to a network and run the GUI on another host such as an Ubuntu Linux machine configured for development as described earlier. The `runGui.sh` and `runRPI.sh` scripts should be modified with the network addresses selected for the host and Raspberry Pi.
-
-**Follow these steps to run the GUI on a host:**
-
-This is for the case where the demo has been build on the RPI. For the cross-compiled case, see the previous directions. 
-
-* Clone the repository on the host machine
-* Follow the steps to configure the host for development.
-* Run the following make command from `RPI`: `make dictionary`. This will complete enough of the build to generate a dictionary for the GUI.
-* Run `runGui.sh` on the host.
-* Run `runRPI.sh` on the Raspberry Pi.
-

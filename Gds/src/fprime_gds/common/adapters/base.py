@@ -40,6 +40,10 @@ class BaseAdapter(object):
         self.running_downlink = True
         self.running_uplink = True
 
+    def open(self):
+        """No implementation needed in base-case"""
+        pass
+
     @classmethod
     def set_constants(clazz):
         """
@@ -145,6 +149,7 @@ class BaseAdapter(object):
         """
         Run the uplink side of the adapter.
         """
+        self.sender.open()
         while self.running_uplink:
             self.uplink()
 
@@ -152,6 +157,7 @@ class BaseAdapter(object):
         """
         Run the downlink of the adapter.
         """
+        self.open()
         while self.running_downlink:
             self.downlink()
 

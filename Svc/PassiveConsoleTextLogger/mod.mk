@@ -6,6 +6,6 @@
 #
 
 
-SRC = 	ConsoleTextLoggerImplCommon.cpp
+SRC = PassiveTextLoggerComponentAi.xml ConsoleTextLoggerImplCommon.cpp
 
 HDR = ConsoleTextLoggerImpl.hpp

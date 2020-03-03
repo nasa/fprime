@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<!-- GPS Tutorial: GpsApp/Gps/Events.xml
+
+This defines two events, one at activity hi level to report that lock has been acquired, and one at warning hi level to
+indicate lock lost.
+-->
+<events>
+    <event id="0" name="Gps_LockAquired" severity="ACTIVITY_HI" format_string="GPS lock acquired">
+        <comment>A notification on GPS lock acquired</comment>
+    </event>
+    <event id="1" name="Gps_LockLost" severity="WARNING_HI" format_string="GPS lock lost">
+        <comment>A warning on GPS lock lost</comment>
+    </event>
+</events>

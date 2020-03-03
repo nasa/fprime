@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<!-- GPS Tutorial: GpsApp/Gps/Telemetry.xml
+
+This defines four telemetry channels to report basic GPS information.
+-->
+<telemetry>
+    <channel id="0" name="Gps_Latitude" data_type="F32" abbrev="GPS-0000">
+        <comment>The current latitude</comment>
+    </channel>
+    <channel id="1" name="Gps_Longitude" data_type="F32" abbrev="GPS-0001">
+        <comment>The current longitude</comment>
+    </channel>
+    <channel id="2" name="Gps_Altitude" data_type="F32" abbrev="GPS-0002">
+        <comment>The current altitude</comment>
+    </channel>
+    <channel id="3" name="Gps_Count" data_type="U32" abbrev="GPS-0003">
+        <comment>The current number of satilites</comment>
+    </channel>
+</telemetry>

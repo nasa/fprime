@@ -21,6 +21,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -180,7 +181,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
-                c.user = os.environ['USER']
+                c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[inst], "commandHeaderVisit")
                 inst += 1
@@ -192,7 +193,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
-                c.user = os.environ['USER']
+                c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[inst], "commandHeaderVisit")
                 inst += 1
@@ -203,7 +204,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
-                c.user = os.environ['USER']
+                c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp2[inst], "commandHeaderVisit")
                 inst += 1
