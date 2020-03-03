@@ -12,9 +12,9 @@ F´ comprises several elements:
 
 ## Quick Installation Guide
 
-F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3 with pip. Once these have been installed, users are 
+F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3.5+ with pip. Once these have been installed, users are 
 recommended to install F´ python dependencies. This is usually done in a Python virtual environment as this prevents issues at the system level, but is not required. Full installation instructions
-including virtual environment creation, installation verification, and support for Python 2 is available: [INSTALL.md](./docs/INSTALL.md). The following are the most basic steps for convenience.
+including virtual environment creation, and installation verification: [INSTALL.md](./docs/INSTALL.md). The following are the most basic steps for convenience.
 
 ```
 git clone https://github.com/nasa/fprime.git
