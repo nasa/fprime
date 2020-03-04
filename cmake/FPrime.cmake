@@ -53,7 +53,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "F prime BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 if ("${PROJECT_AC_CONSTANTS_FILE}" STREQUAL "" )
-    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini")
+    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_CURRENT_BUILD_ROOT}/Fw/Cfg/AcConstants.ini")
 endif()
 message(STATUS "Using autocoder constants file: ${PROJECT_AC_CONSTANTS_FILE}")
 
