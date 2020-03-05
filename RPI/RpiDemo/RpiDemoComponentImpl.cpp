@@ -163,6 +163,11 @@ namespace Rpi {
       txt.setdata((U64)text.toChar());
       this->UartWrite_out(0,txt);
       this->m_uartWriteBytes += text.length();
+      
+      char* msg = (char*)txt.getdata();
+      Fw::LogStringArg arg = msg;
+      this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
+      
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
