@@ -264,7 +264,7 @@ def main():
             print("\nGenerating tests...")
         generate_impl_files(opt, component_model)
     else:
-        print("ERROR: Invalid XML found...this format not supported")
+        print("ERROR: {} is used for component XML files, not {} XML files".format(sys.argv[0], xml_type))
         sys.exit(-1)
     
     sys.exit(0)
