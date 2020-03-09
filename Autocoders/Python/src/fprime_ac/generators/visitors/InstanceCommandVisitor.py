@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ComponentHVisitor.py
 #
@@ -300,7 +299,3 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
 
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyVisit")
                 self.__fp2[fname].close()
-
-
-if __name__ == '__main__':
-    pass

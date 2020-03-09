@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstChannelWriter.py
 #
@@ -177,8 +176,3 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
     
             self._writeTmpl(c, self.__fp[fname], "channelBodyWrite")
             self.__fp[fname].close()
-                
-            
-
-if __name__ == '__main__':
-    pass

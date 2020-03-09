@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: SerialHVisitor.py
 #
@@ -305,7 +304,3 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             c.namespace_list = obj.get_namespace().split('::')
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
-
-
-if __name__ == '__main__':
-    pass

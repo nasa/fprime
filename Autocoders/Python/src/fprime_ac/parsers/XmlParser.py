@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: XmlParser.py
 #
@@ -55,6 +54,3 @@ class XmlParser(object):
         """
         return self.__root
 
-
-if __name__ == '__main__':
-    pass

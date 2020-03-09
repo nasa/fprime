@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ChannelVisitor.py
 #
@@ -158,6 +157,3 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp[inst].close()
             inst += 1
             
-
-if __name__ == '__main__':
-    pass

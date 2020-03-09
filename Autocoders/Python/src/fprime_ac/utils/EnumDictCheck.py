@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -259,7 +259,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
     return results
 
 
-if (__name__ == '__main__'):
+if __name__ == '__main__':
 
     filename = "../../fsw/msl/currentxml/command.xml"
 

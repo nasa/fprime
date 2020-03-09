@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ComponentHVisitor.py
 #
@@ -177,8 +176,3 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
     
             self._writeTmpl(c, self.__fp[fname], "channelBodyVisit")
             self.__fp[fname].close()
-                
-            
-
-if __name__ == '__main__':
-    pass

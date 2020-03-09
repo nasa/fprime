@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import logging
 
 # Global logger initialization

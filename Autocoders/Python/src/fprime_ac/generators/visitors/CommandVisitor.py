@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: CommandVisitor.py
 #
@@ -284,7 +283,3 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 self._writeTmpl(c, self.__fp2[inst], "commandBodyVisit")
                 self.__fp2[inst].close()
                 inst += 1
-            
-
-if __name__ == '__main__':
-    pass

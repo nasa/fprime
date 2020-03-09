@@ -220,6 +220,25 @@ def confirm():
             return False
         print("{} is invalid.  Please use 'yes' or 'no'".format(confirm))
 
+
+def purge_functionality(build_dir, force=False):
+    """
+    Reusable purge functionality, so the user may purge or the system may cleanup itself
+    :param build_dir: build dir specified to purge
+    :param force: do not ask the user to purge before doing so. Default: False, ask.
+    """
+    removables = []
+    for dirname in filter(os.path.exists, [build_dir, build_dir + UT_SUFFIX]):
+        print("[INFO] Purging the following build directory: {}".format(dirname))
+        # Either the directory is forced remove, or the user confirms with a y/yes input
+        remove = force or confirm()
+        if remove:
+            removables.append(dirname)
+    # Remove what was asked for
+    for dirname in removables:
+        shutil.rmtree(dirname, ignore_errors=True)
+
+
 def utility_entry(args=sys.argv[1:]):
     """
     Main interface to F prime utility.
@@ -242,24 +261,20 @@ def utility_entry(args=sys.argv[1:]):
                       .format("unittest" if parsed.unittest else "regular",
                               "" if parsed.unittest else " Do you need the --unittest flag?"))
         elif parsed.command == "purge":
-            removables = []
-            for dirname in filter(os.path.exists, [parsed.build_dir, parsed.build_dir + UT_SUFFIX]):
-                print("[INFO] Purging the following build directory: {}".format(dirname))
-                # Either the directory is forced remove, or the user confirms with a y/yes input
-                remove = (hasattr(parsed, "force") and parsed.force) or confirm()
-                if remove:
-                    removables.append(dirname)
-            # Remove what was asked for
-            for dirname in removables:
-                shutil.rmtree(dirname, ignore_errors=True)
+            purge_functionality(parsed.build_dir, (hasattr(parsed, "force") and parsed.force))
         elif parsed.command == "generate":
-            print("[INFO] Creating {} build directory at: {}"
-                  .format("automatic" if automatic_build_dir else "specified", parsed.build_dir))
-            fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir, cmake_args)
-            cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
-            print("[INFO] Creating {} unit-test build directory at: {}"
-                  .format("automatic" if automatic_build_dir else "specified", parsed.build_dir + UT_SUFFIX))
-            fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir + UT_SUFFIX, cmake_args)
+            try:
+                print("[INFO] Creating {} build directory at: {}"
+                      .format("automatic" if automatic_build_dir else "specified", parsed.build_dir))
+                fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir, cmake_args)
+                cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
+                print("[INFO] Creating {} unit-test build directory at: {}"
+                      .format("automatic" if automatic_build_dir else "specified", parsed.build_dir + UT_SUFFIX))
+                fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir + UT_SUFFIX, cmake_args)
+            except Exception as exc:
+                print("[INFO] Error detected, automatically cleaning up failed-generation")
+                purge_functionality(parsed.build_dir, True)
+                raise
         else:
             action = ACTION_MAP[parsed.command]
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],

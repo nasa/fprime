@@ -13,5 +13,8 @@ set(MOD_DEPS
   Fw/Cfg
   Fw/Types
 )
+if (BUILD_SHARED_LIBS)
+  list(APPEND MOD_DEPS "Fw/Logger")
+endif()
 
 register_fprime_module()
