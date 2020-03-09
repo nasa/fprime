@@ -75,7 +75,7 @@ def launch_tts(tts_port, tts_addr, logs, **_):
     # Open log, and prepare to close it cleanly on exit
     tts_log = os.path.join(logs, "ThreadedTCP.log")
     # Launch the tcp server
-    tts_cmd = ["python", "-u", "-m", "fprime_gds.executables.tcpserver",
+    tts_cmd = ["python3", "-u", "-m", "fprime_gds.executables.tcpserver",
                "--port", str(tts_port), "--host", str(tts_addr)]
     return launch_process(tts_cmd, logfile=tts_log, name="TCP Server")
 
@@ -90,7 +90,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     :param config: configuration to use
     :return: process
     """
-    gse_args = ["python", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port)]
+    gse_args = ["python3", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port)]
     if os.path.isfile(dictionary):
         gse_args.extend(["-x", dictionary])
     elif os.path.isdir(dictionary):
@@ -121,7 +121,7 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
         "LOG_DIR": logs,
         "SERVE_LOGS": "YES"
     })
-    gse_args = ["python", "-u", "-m", "flask", "run"]
+    gse_args = ["python3", "-u", "-m", "flask", "run"]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
     if extras["gui"] == "html":
         webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
@@ -148,7 +148,7 @@ def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
     :return:
     """
 
-    app_cmd = ["python", "-u", "-m", "fprime_gds.executables.comm", "--tts-addr", connect_address,\
+    app_cmd = ["python3", "-u", "-m", "fprime_gds.executables.comm", "--tts-addr", connect_address,\
                "--tts-port", str(tts_port), "-l", logs, "--log-directly", "--comm-adapter", all_args["adapter"]]
     # Manufacture arguments for the selected adapter
     for arg in comm_adapter.get_arguments().keys():

@@ -84,38 +84,38 @@ class Dictionaries(object):
         else:
             self._packet_dict = None
 
-        @property
-        def command_id(self):
-            """ Command dictionary by ID """
-            return self._command_id_dict
+    @property
+    def command_id(self):
+        """ Command dictionary by ID """
+        return self._command_id_dict
 
-        @property
-        def event_id(self):
-            """ Event dictionary by ID """
-            return self._event_id_dict
+    @property
+    def event_id(self):
+        """ Event dictionary by ID """
+        return self._event_id_dict
 
-        @property
-        def channel_id(self):
-            """ Channel dictionary by ID """
-            return self._channel_id_dict
+    @property
+    def channel_id(self):
+        """ Channel dictionary by ID """
+        return self._channel_id_dict
 
-        @property
-        def command_name(self):
-            """ Command dictionary by name """
-            return self._command_id_dict
+    @property
+    def command_name(self):
+        """ Command dictionary by name """
+        return self._command_id_dict
 
-        @property
-        def event_name(self):
-            """ Event dictionary by name """
-            return self._event_id_dict
+    @property
+    def event_name(self):
+        """ Event dictionary by name """
+        return self._event_id_dict
 
-        @property
-        def channel_name(self):
-            """ Channel dictionary by name """
-            return self._channel_id_dict
+    @property
+    def channel_name(self):
+        """ Channel dictionary by name """
+        return self._channel_id_dict
 
-        @property
-        def packet(self):
-            """ Packet dictionary """
-            return self._packet_dict
+    @property
+    def packet(self):
+        """ Packet dictionary """
+        return self._packet_dict
 

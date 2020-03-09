@@ -52,19 +52,16 @@ class FileEncoder(encoder.Encoder):
     """
     Encodes the file data. This plugs into the uplink system and allows for data to be sent to the spacecraft.
     """
-    def __init__(self, dest="FSW", config=None):
+    def __init__(self, config=None):
         """
         Constructs a file encoder. Defaults to FSW as destination..
 
         Args:
-            dest (string, "FSW" or "GUI", default="FSW"): Destination for binary
-                  data produced by encoder.
             config (ConfigManager, default=None): Object with configuration data
                     for the sizes of fields in the binary data. If None passed,
                     defaults are used.
         """
-        super(FileEncoder, self).__init__(dest, config)
-
+        super(FileEncoder, self).__init__(config)
         self.len_obj = self.config.get_type("msg_len")
 
     def encode_api(self, data):

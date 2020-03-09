@@ -39,34 +39,34 @@ class EncodingDecoding(object):
         self.packet_decoder = None
         self.command_subscribers = []
 
-    def setup_coders(self, dictionaries, distrbutor, sender):
+    def setup_coders(self, dictionaries, distributor, sender):
         """
         Sets up the encoder and decoder layer of the GDS pipeline. This requires a dictionary set that has loaded the
         dictionaries needed for the decoders to work correctly. This will register then register the decoders with a
         supplied distributor to handle known types with the known decoders. Lastly, the sender will be registered to the
         encoder to handle the encoded data going out.
         :param dictionaries: a dictionaries handling object holding dictionaries
+        :param distributor: distributor of data to register to
         """
         # Create encoders and decoders using dictionaries
         self.file_encoder = fprime_gds.common.encoders.file_encoder.FileEncoder()
         self.command_encoder = fprime_gds.common.encoders.cmd_encoder.CmdEncoder()
-        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(self.event_id_dict)
-        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(self.channel_id_dict)
+        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(dictionaries.event_id)
+        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(dictionaries.channel_id)
         self.file_decoder = fprime_gds.common.decoders.file_decoder.FileDecoder()
-        if self.packet_dict is not None:
-            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(self.packet_dict,
-                                                                                   self.channel_id_dict)
-        else:
-            self.packet_decoder = None
+        self.packet_decoder = None
+        if dictionaries.packet is not None:
+            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(dictionaries.packet,
+                                                                                   dictionaries.channel_id)
         # Register client socket to encoder
-        self.command_encoder.register(self.client_socket)
+        self.command_encoder.register(sender)
         # Register the event and channel decoders to the distributor for their
         # respective data types
-        self.distributor.register("FW_PACKET_LOG", self.event_decoder)
-        self.distributor.register("FW_PACKET_TELEM", self.channel_decoder)
-        self.distributor.register("FW_PACKET_FILE", self.file_decoder)
-        if self.packet_dict is not None:
-            self.distributor.register("FW_PACKET_PACKETIZED_TLM", self.packet_dict)
+        distributor.register("FW_PACKET_LOG", self.event_decoder)
+        distributor.register("FW_PACKET_TELEM", self.channel_decoder)
+        distributor.register("FW_PACKET_FILE", self.file_decoder)
+        if self.packet_decoder is not None:
+            distributor.register("FW_PACKET_PACKETIZED_TLM", self.packet_decoder)
 
     def send_command(self, command):
         """

@@ -4,19 +4,22 @@ import sys
 import socket
 import threading
 import select
+
+from fprime_gds.common.handlers import DataHandler
+
 from fprime.constants import DATA_ENCODING
 # Constants for public use
 GUI_TAG = "GUI"
 FSW_TAG = "FSW"
 
 
-class ThreadedTCPSocketClient(object):
+class ThreadedTCPSocketClient(DataHandler):
     '''
     Threaded TCP client that connects to the socket server that serves packets from the flight
     software
     '''
 
-    def __init__(self, sock=None):
+    def __init__(self, sock=None, dest=FSW_TAG):
         """
         Threaded client socket constructor
 
@@ -31,7 +34,7 @@ class ThreadedTCPSocketClient(object):
             self.sock = sock
 
         # NOTE can't do this b/c EINPROGRESS: self.sock.setblocking(0)
-
+        self.dest = dest
         self.__distributors = []
         self.__select_timeout = 1
         self.__data_recv_thread = threading.Thread(target=self.recv)
@@ -100,6 +103,13 @@ class ThreadedTCPSocketClient(object):
         self.stop_event.set()
         self.__data_recv_thread.join()
         self.sock.close()
+
+    def data_callback(self, data):
+        """
+        Handles incoming data by sending it to a socket.
+        :param data: data to send to the client socket
+        """
+        self.send(data, self.dest)
 
     def send(self, data, dest):
         """

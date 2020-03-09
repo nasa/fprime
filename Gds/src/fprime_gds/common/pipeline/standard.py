@@ -61,7 +61,7 @@ class StandardPipeline(object):
         self.client_socket = fprime_gds.common.client_socket.client_socket.ThreadedTCPSocketClient()
         # Setup dictionaries encoders and decoders
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
-        self.coders.setup_coders(dictionaries, self.distributor, self.client_socket)
+        self.coders.setup_coders(self.dictionaries, self.distributor, self.client_socket)
         self.histories.setup_histories(self.coders)
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)

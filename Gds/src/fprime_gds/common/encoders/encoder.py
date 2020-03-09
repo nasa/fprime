@@ -31,10 +31,9 @@ class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers
     Base class for all encoder classes. This defines the "encode_api" function to allow for decoding of raw bytes. In
     addition it has a "data_callback" function implementation that decodes and sends out all results.
     """
-    def __init__(self, dest="FSW", config=None):
+    def __init__(self, config=None):
         """
         Encoder class constructor
-        :param dest: (string, "FSW" or "GUI", default="FSW"): Destination for binary data produced by encoder
         :param config: (ConfigManager, default=None): Object with configuration data for the sizes of fields in the
                        binary data. If None passed, defaults are used.
         """
@@ -42,7 +41,6 @@ class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers
             # Retrieve defaults for the configs
             config = ConfigManager()
         self.config = config
-        self.dest = dest
 
     def data_callback(self, data, sender=None):
         """

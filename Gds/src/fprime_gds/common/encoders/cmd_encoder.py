@@ -52,13 +52,11 @@ import binascii
 class CmdEncoder(encoder.Encoder):
     '''Encoder class for command data'''
 
-    def __init__(self, dest="FSW", config=None):
+    def __init__(self, config=None):
         '''
         CmdEncoder class constructor
 
         Args:
-            dest (string, "FSW" or "GUI", default="FSW"): Destination for binary
-                  data produced by encoder.
             config (ConfigManager, default=None): Object with configuration data
                     for the sizes of fields in the binary data. If None passed,
                     defaults are used.
@@ -66,8 +64,7 @@ class CmdEncoder(encoder.Encoder):
         Returns:
             An initialized CmdEncoder object
         '''
-        super(CmdEncoder, self).__init__(dest, config)
-
+        super(CmdEncoder, self).__init__(config)
         self.len_obj = self.config.get_type("msg_len")
 
     def encode_api(self, data):
