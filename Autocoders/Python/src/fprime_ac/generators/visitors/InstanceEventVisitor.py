@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ComponentHVisitor.py
 #
@@ -195,7 +194,3 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                 arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyVisit")
             self.__fp[fname].close()
-            
-
-if __name__ == '__main__':
-    pass

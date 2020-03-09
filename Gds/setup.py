@@ -40,8 +40,6 @@ from setuptools import setup
 # excludes the 'fprime_gds.tkgui' package, and then includes it if the Python version is < 2.
 ####
 gds_packages = find_packages('src', exclude=["*tkgui*"])
-if sys.version_info < (3, 0):
-    gds_packages.append("fprime_gds.tkgui")
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
 # then distutils.
 setup(
@@ -104,9 +102,7 @@ integrated configuration with ground in-the-loop.
         'Operating System :: Unix',
         'Operating System :: POSIX',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -129,15 +125,6 @@ integrated configuration with ground in-the-loop.
         # I and T API
         'uart-adapter': 'pyserial',
         'test-api-xls': 'openpyxl',
-        # TK GUI items for Python 2
-        ':python_version<"3.0"': 
-            ['pytz',
-             'multiprocess',
-             'Pmw',
-             'tkintertable==1.2',
-             'scipy',
-             'scimath',
-             'matplotlib'],
         # WX GUI options
         'wx-gui': 'wxPython'
     }

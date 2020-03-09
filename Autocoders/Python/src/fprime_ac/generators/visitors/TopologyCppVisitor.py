@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: TopologyCppVisitor.py
 #
@@ -414,6 +413,3 @@ class TopologyCppVisitor(AbstractVisitor.AbstractVisitor):
         #self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
 
-
-if __name__ == '__main__':
-    pass

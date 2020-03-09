@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: DictStart
 #
@@ -97,6 +96,3 @@ class DictStart:
         """
         return self.__obj
 
-
-if __name__ == '__main__':
-    pass

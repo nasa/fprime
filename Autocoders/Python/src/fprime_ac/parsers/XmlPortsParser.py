@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: XmlPortsParser.py
 #
@@ -329,8 +329,4 @@ if __name__ == '__main__':
         print("Name: %s, Type: %s" % (arg.get_name(), arg.get_type()))
         print("Port comment:")
         print(arg.get_comment())
-
-
-
-
 

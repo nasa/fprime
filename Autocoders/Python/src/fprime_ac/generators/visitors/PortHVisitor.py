@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: PortHVisitor.py
 #
@@ -393,7 +392,3 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.return_type = return_type + return_modifier
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
-
-
-if __name__ == '__main__':
-    pass

@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: XmlEnumParser.py
 #
@@ -194,8 +194,4 @@ if __name__ == '__main__':
     print("Items")
     for item in xml_parser.get_items():
         print("%s=%s // %s" % item)
-
-
-
-
 
