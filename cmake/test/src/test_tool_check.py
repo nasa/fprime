@@ -27,15 +27,18 @@ def test_tools_validation():
         os.chdir(tmpd)
         python_dir = distutils.spawn.find_executable("python").replace("/python","")
         with pytest.raises(AssertionError):
-            os.environ["PYTHONHOME"] = ""
-            os.environ["PYTHONPATH"] = ""
+            for byekey in ["PYTHONHOME", "PYTHONPATH", "VIRTUALENV"]:
+                try:
+                    del os.environ[byekey]
+                except KeyError:
+                    pass
             os.environ["PATH"] = os.environ.get("PATH", "").replace(python_dir + ":", "").replace(":" + python_dir, "")
             ret, stdout, stderr = cmake.run_cmake(os.path.join(os.path.dirname(__file__), "..", "..", "..", "Ref"), capout=True)
             print(stdout.decode("utf-8"), file=sys.stdout)
             print(stderr.decode("utf-8"), file=sys.stderr)
             all_out = "".join([stdout.decode("utf-8"), stderr.decode("utf-8")])
             assert ret, "Assert that the CMake run has failed"
-        ex_texts = ["  [VALIDATION] Validation failed for:\n  python;",
+        ex_texts = ["  [VALIDATION] Validation failed for:\n  python3;",
                     "cmake/support/validation/pipsetup.py"]
         for ex_text in ex_texts:
             assert ex_text in all_out, "Failed to find tool check error"
