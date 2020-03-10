@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: MdDoc
 #
@@ -97,6 +96,3 @@ class MdStartPage:
         """
         return self.__obj
 
-
-if __name__ == '__main__':
-    pass

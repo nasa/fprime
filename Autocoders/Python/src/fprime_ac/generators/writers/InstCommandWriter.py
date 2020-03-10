@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstCommandWriter
 #
@@ -301,6 +300,3 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyWrite")
                 self.__fp2[fname].close()
 
-
-if __name__ == '__main__':
-    pass

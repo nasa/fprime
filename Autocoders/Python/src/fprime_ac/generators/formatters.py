@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: formatters.py
 #
@@ -1435,10 +1434,3 @@ class Formatters(object):
                 new_args.append(arg)
 
         return new_args
-
-
-def main():
-    pass
-
-if __name__ == '__main__':
-    pass

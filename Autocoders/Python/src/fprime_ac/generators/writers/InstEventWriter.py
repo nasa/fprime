@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstEventWriter.py
 #
@@ -195,7 +194,3 @@ class InstEventWriter(AbstractDictWriter.AbstractDictWriter):
                 arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyWrite")
             self.__fp[fname].close()
-            
-
-if __name__ == '__main__':
-    pass

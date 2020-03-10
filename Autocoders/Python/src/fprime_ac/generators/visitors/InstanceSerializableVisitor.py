@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: SerialHVisitor.py
 #
@@ -252,6 +251,3 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
     def finishSourceFilesVisit(self, obj):
         self.__fp.close()
 
-
-if __name__ == '__main__':
-    pass

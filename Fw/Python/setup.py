@@ -71,17 +71,15 @@ to interact with the data coming from the FSW.
         'Operating System :: Unix',
         'Operating System :: POSIX',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    # Requires Python 2.7, or 3.4+, and the 'six' Python package
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
+    # Requires Python 3.5+, and the 'six' Python package
+    python_requires='>=3.5',
     install_requires=['six', "lxml", 'enum34;python_version < "3.4"', "Markdown", "pexpect", "pytest",
                   'Cheetah3;python_version >= "3.0"', 'Cheetah;python_version < "3.0"'],
     # Setup and test requirments, not needed by normal install

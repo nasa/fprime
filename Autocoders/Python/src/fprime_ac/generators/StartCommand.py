@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: StartCommand
 #
@@ -97,6 +96,3 @@ class StartCommand:
         """
         return self.__obj
 
-
-if __name__ == '__main__':
-    pass

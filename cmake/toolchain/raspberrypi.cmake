@@ -4,7 +4,7 @@ set(CMAKE_SYSTEM_NAME "arm-linux-gnueabihf")
 # Location of pi toolchain
 set(RPI_TOOLCHAIN "$ENV{RPI_TOOLCHAIN_DIR}")
 if ("${RPI_TOOLCHAIN}" STREQUAL "")
-    set(RPI_TOOLCHAIN "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/")
+    set(RPI_TOOLCHAIN "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf")
 endif()
 # Check toolchain directory exists
 IF(NOT EXISTS "${RPI_TOOLCHAIN}")

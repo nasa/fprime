@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 header = '''/*
 * Author: Autocode Tools
 *

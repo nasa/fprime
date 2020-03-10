@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: TopoFactory.py
 #
@@ -331,8 +331,9 @@ class TopoFactory:
         prev_name = "NONE"
         for t in initial_comp_with_ID:
             if(t[1] < prev_id + prev_window):
-                PRINT.info("Component {} has a base ID {} which collides with the allocated IDs for component {} (base ID {} , window ID {})".format(t[0] , t[1] , prev_name , prev_id , prev_window))
-                raise Exception()
+                err = "Component {} has a base ID {} which collides with the allocated IDs for component {} (base ID {} , window ID {})".format(t[0] , t[1] , prev_name , prev_id , prev_window)
+                PRINT.info(err)
+                raise Exception(err)
             #Code below auto adjusts user specified IDS
             #if(t[1] < prev_id + prev_window):
             #    t[1] = prev_id + prev_window

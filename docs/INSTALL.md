@@ -7,6 +7,8 @@ This installation guide is specifically designed to enable individual and resear
 running with F´ quickly. This guide is not intended for large teams with specific content
 management (CM) requirements.
 
+**Note:** se the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
+
 ## Requirements
 
 F´ depends on several items before the user should attempt to install it. These requirements are
@@ -17,10 +19,10 @@ VirtualBox [https://www.virtualbox.org/](https://www.virtualbox.org/).
 Requirements:
 
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path
+2. CMake 3.5 or newer [https://cmake.org/download/](https://cmake.org/download/). CLI tool must be available on system path.
 3. Bash or Bash compatible shell
 4. CLang or GCC compiler
-5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
+5. Python 3.5+ and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
 6. Python Virtual Environment \* (pip install venv or pip install virtualenv)
 
 **Note:** it is possible to install and run F´ without a virtual environment, however; for
@@ -33,15 +35,9 @@ This will create a new virtual environment for F´ to be installed into. The fol
 will create a new virtual environment called `fprime-venv` and ensure that virtual environment
 is activated.
 
-**Python 3.3+:**
+**Python 3.5+:**
 ```
 python3 -m venv ./fprime-venv
-. ./fprime-venv/bin/activate
-```
-
-**Python 2.7 - 3.2:**
-```
-virtualenv ./fprime-venv
 . ./fprime-venv/bin/activate
 ```
 
@@ -93,10 +89,50 @@ fprime-util install --jobs 32
 
 **Testing F´ GDS Installation Via Running HTML GUI**
 ```
-fprime-util -g html -d <path/to/fprime/checkout>/Ref
+fprime-gds -g html -d <path/to/fprime/checkout>/Ref
 ```
 **Note:** `Ref` should contain pre-built dictionaries and binaries for the user's system. This can
 be achieved by running the autocoder installation test (the user must have a working autocoder
 installation).
+
+## Troubleshooting
+
+This section willl add some known hints to trouble-shooting with the installation of F´. This will hopefully help users 
+install things more effectively.
+
+### Ubuntu, Debian, Python PIP, and Pyhon Virtual Environments
+
+Ubuntu and possibly other Debian variants don't include the virtual environment nor pip packages in the default python 3 
+installation. In order to get a fully functional Python 3 installation, use these commands on Ubuntu:
+
+```
+sudo apt install python3 python3-pip python3-venv
+```
+Now you should be able to run the installation without trouble.
+
+### Mac OS X and CMake Command Not Found
+
+If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake command 
+line tools must be added to the user's PATH or default system libraries.  The quickest command to do that is:
+
+```
+sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
+```
+More information can be found here: https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac
+
+
+### System Python, Packages, and Python3
+
+Many operaitng systems are offer python PIP packages through their package manager (apt, yum, etc).  Most python projects 
+recommend avoiding those packages, but rather installing from PIP in a virtual environment.  The reason for this is that the
+version of the python package from the OS may not be the required version that the python project depends on.  Thus, for 
+F´ we strongly recommend using a virtual environment and not system packages.
+
+If the user chooses to use system python as thier python to run F´, they must ensure that "python" available on the path 
+points to a Python3 install, not the Python 2 installation that most OSes default to.  Also, packages F´ uses when installing
+may break the system Python, and prevent the OS from functioning.  Use at your own risk.
+
+
+
 
 

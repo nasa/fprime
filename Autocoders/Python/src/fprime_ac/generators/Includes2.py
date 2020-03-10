@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: Includes2
 #
@@ -96,7 +95,3 @@ class Includes2:
         Return the object to the visitor.
         """
         return self.__obj
-
-
-if __name__ == '__main__':
-    pass
