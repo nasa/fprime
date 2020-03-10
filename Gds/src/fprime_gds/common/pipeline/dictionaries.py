@@ -102,17 +102,17 @@ class Dictionaries(object):
     @property
     def command_name(self):
         """ Command dictionary by name """
-        return self._command_id_dict
+        return self._command_name_dict
 
     @property
     def event_name(self):
         """ Event dictionary by name """
-        return self._event_id_dict
+        return self._event_name_dict
 
     @property
     def channel_name(self):
         """ Channel dictionary by name """
-        return self._channel_id_dict
+        return self._channel_name_dict
 
     @property
     def packet(self):

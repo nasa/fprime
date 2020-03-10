@@ -20,7 +20,7 @@ import fprime_gds.common.data_types.cmd_data
 
 from . import dictionaries
 from . import encoding
-
+from . import histories
 
 class StandardPipeline(object):
     """
@@ -43,7 +43,7 @@ class StandardPipeline(object):
 
         self.dictionaries = dictionaries.Dictionaries()
         self.coders = encoding.EncodingDecoding()
-        self.histories = encoding.EncodingDecoding()
+        self.histories = histories.Histories()
 
     def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
         """
@@ -92,7 +92,7 @@ class StandardPipeline(object):
         logger = fprime_gds.common.logger.data_logger.DataLogger(log_dir, verbose=True, csv=True)
         self.logger = logger
         self.coders.register_channel_consumer(self.logger)
-        self.coders.register_channel_event(self.logger)
+        self.coders.register_event_consumer(self.logger)
         self.coders.register_command_consumer(self.logger)
         self.coders.register_packet_consumer(self.logger)
         self.client_socket.register_distributor(self.logger)
@@ -118,7 +118,10 @@ class StandardPipeline(object):
         :param command: command id from dictionary to get command template
         :param args: arguments to process
         """
-        command_template = self.dictionaries.command_id[command]
+        if isinstance(command, str):
+            command_template = self.dictionaries.command_name[command]
+        else:
+            command_template = self.dictionaries.command_id[command]
         cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
         cmd_data.time = fprime.common.models.serialize.time_type.TimeType()
         cmd_data.time.set_datetime(datetime.datetime.now(), 2)

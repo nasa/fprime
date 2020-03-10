@@ -37,6 +37,7 @@ class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers
         :param config: (ConfigManager, default=None): Object with configuration data for the sizes of fields in the
                        binary data. If None passed, defaults are used.
         """
+        super().__init__()
         if config is None:
             # Retrieve defaults for the configs
             config = ConfigManager()

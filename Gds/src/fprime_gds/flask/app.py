@@ -45,19 +45,19 @@ pipeline.connect(app.config["ADDRESS"], app.config["PORT"])
 
 # Application routes
 api.add_resource(fprime_gds.flask.commands.CommandDictionary, "/dictionary/commands",
-                 resource_class_args=[pipeline.get_command_name_dictionary()])
+                 resource_class_args=[pipeline.dictionaries.command_name])
 api.add_resource(fprime_gds.flask.commands.CommandHistory, "/commands",
-                 resource_class_args=[pipeline.get_command_history()])
+                 resource_class_args=[pipeline.histories.commands])
 api.add_resource(fprime_gds.flask.commands.Command, "/commands/<command>",
                  resource_class_args=[pipeline])
 api.add_resource(fprime_gds.flask.events.EventDictionary, "/dictionary/events",
-                 resource_class_args=[pipeline.get_event_id_dictionary()])
+                 resource_class_args=[pipeline.dictionaries.event_id])
 api.add_resource(fprime_gds.flask.events.EventHistory, "/events",
-                 resource_class_args=[pipeline.get_event_history()])
+                 resource_class_args=[pipeline.histories.events])
 api.add_resource(fprime_gds.flask.channels.ChannelDictionary, "/dictionary/channels",
-                 resource_class_args=[pipeline.get_channel_id_dictionary()])
+                 resource_class_args=[pipeline.dictionaries.channel_id])
 api.add_resource(fprime_gds.flask.channels.ChannelHistory, "/channels",
-                 resource_class_args=[pipeline.get_channel_history()])
+                 resource_class_args=[pipeline.histories.channels])
 # Optionally serve log files
 if app.config["SERVE_LOGS"]:
     api.add_resource(fprime_gds.flask.logs.FlaskLogger, "/logdata", resource_class_args=[app.config["LOG_DIR"]])

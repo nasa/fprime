@@ -144,4 +144,5 @@ class EncodingDecoding(object):
         :param consumer: consumer of packets
         :return: a boolean indicating if the consumer was removed.
         """
-        return self.packet_decoder.deregister(consumer)
+        if self.packet_decoder is not None:
+            return self.packet_decoder.deregister(consumer)

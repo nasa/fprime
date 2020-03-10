@@ -35,7 +35,8 @@ class HandlerRegistrar(abc.ABC):
         """
         Constructor defining the internal lists needed to store the registrants.
         """
-        self.__registrants = []
+        super().__init__()
+        self._registrants = []
 
     def register(self, registrant):
         """
@@ -45,7 +46,7 @@ class HandlerRegistrar(abc.ABC):
         """
         if not isinstance(registrant, DataHandler):
             raise ValueError("Cannot register non data handler")
-        self.__registrants.append(registrant)
+        self._registrants.append(registrant)
 
     def deregister(self, registrant):
         """
@@ -55,7 +56,7 @@ class HandlerRegistrar(abc.ABC):
         :return: True if found, False if not. May safely be ignored.
         """
         try:
-            self.__registrants.remove(registrant)
+            self._registrants.remove(registrant)
             return True
         except ValueError:
             return False
@@ -66,5 +67,5 @@ class HandlerRegistrar(abc.ABC):
         :param data: data to send back to registrants
         :param sender: (optional) sender to pass to data_callback
         """
-        for registrant in self.__registrants:
+        for registrant in self._registrants:
             registrant.data_callback(data, sender)
