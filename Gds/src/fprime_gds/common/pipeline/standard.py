@@ -41,9 +41,9 @@ class StandardPipeline(object):
         self.client_socket = None
         self.logger = None
 
-        self.dictionaries = dictionaries.Dictionaries()
-        self.coders = encoding.EncodingDecoding()
-        self.histories = histories.Histories()
+        self.__dictionaries = dictionaries.Dictionaries()
+        self.__coders = encoding.EncodingDecoding()
+        self.__histories = histories.Histories()
 
     def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
         """
@@ -127,3 +127,26 @@ class StandardPipeline(object):
         cmd_data.time.set_datetime(datetime.datetime.now(), 2)
         self.coders.send_command(cmd_data)
 
+    @property
+    def dictionaries(self):
+        """
+        Get a dictionaries object
+        :return: dictionaries composition
+        """
+        return self.__dictionaries
+
+    @property
+    def coders(self):
+        """
+        Get a coders object
+        :return: coders composition
+        """
+        return self.__coders
+
+    @property
+    def histories(self):
+        """
+        Get a histories object
+        :return: histories composition
+        """
+        return self.__histories

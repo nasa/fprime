@@ -62,6 +62,7 @@ function integration_test {
             pytest 
         )
         RET_PYTEST=$?
+        pkill -P $GDS_PID
         kill $GDS_PID
         sleep 2
         pkill -KILL Ref
