@@ -74,9 +74,11 @@ class FileEncoder(encoder.Encoder):
         out_data = struct.pack(">BI", int(data.packetType.value), data.seqID)
         # Packet Type determines the variables following the seqID
         if data.packetType == FilePacketType.START:
-            out_data += struct.pack(">IBsBs", 2 + len(data.sourcePath) + len(data.destPath),
-                                    len(data.sourcePath), data.sourcePath.encode(DATA_ENCODING),
-                                    len(data.destPath), data.destPath.encode(DATA_ENCODING))
+            file_src_enc = data.sourcePath.encode(DATA_ENCODING)
+            file_dst_enc = data.sourcePath.encode(DATA_ENCODING)
+            out_data += struct.pack(">IBsBs", 2 + len(file_src_enc) + len(file_dst_enc),
+                                    len(file_src_enc), file_src_enc,
+                                    len(file_dst_enc), file_dst_enc)
         elif data.packetType == FilePacketType.DATA:
             out_data += struct.pack(">IH", data.offset, data.length)
             out_data += data.dataVar
