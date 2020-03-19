@@ -35,9 +35,11 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <tabbed-etc
                     v-bind:commands="commands"
                     v-bind:loader="loader"
+                    v-bind:uploader="uploader"
                     v-bind:events="events"
                     v-bind:channels="channels"
                     v-bind:cmdhist="cmdhist"
+                    v-bind:upfiles="upfiles"
                     v-bind:logs="logs"
                     v-bind:events-active="eventsActive"
                     v-bind:channels-active="channelsActive"
@@ -75,6 +77,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                    v-show="currentTab == 'Commanding'"></command-input>
                     <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
                     <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
+                    <uplink v-bind:upfiles="upfiles" v-bind:uploader="uploader" v-show="currentTab == 'Uplink'"></uplink>
                     <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
                 </div>
             </template>
@@ -252,6 +255,40 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                ></fp-table>
             </template>
 
+            <template id="uplink-template">
+                <div class="fp-flex-repeater">
+                    <form enctype="multipart/form-data" class="fp-flex-header">
+                        <input type="file" v-bind:files="selected" multiple v-on:change="handelFiles" />
+                        <input type="text" v-bind:value="destination" pattern="/.*" /><button v-on:click="uplinkFiles">Uplink</button>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" :aria-valuenow="upload_progress"
+                                 aria-valuemin="0" aria-valuemax="100" :style="{width: upload_progress + '%'}">
+                                {{ upload_progress }}%
+                            </div>
+                        </div>
+                    </form>
+                    <fp-table :header-columns="['Last Update Time', 'Filename', 'Progress']"
+                              :items="upfiles"
+                              :item-to-unique="keyify"
+                              :display-template="'uplink-row'"
+                    ></fp-table>
+                </div>
+            </template>
+            <template id="uplink-row-template">
+                <tr>
+                    <td>N/A</td>
+                    <td>{{ item.file.name }}</td>
+                    <td>
+                        <div class="progress">
+                            <div :class="['progress-bar', progressBarClass]" role="progressbar" :aria-valuenow="item.percent"
+                                 aria-valuemin="0" aria-valuemax="100" :style="{width: item.percent + '%'}">
+                                {{ item.percent }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </template>
+
 
             <!-- FP Table Templates:
 
@@ -271,6 +308,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <td v-for="(column, index) in calculatedColumns">{{ column }}</td>
                 </tr>
             </template>
+
+
+
             <template id="fp-table-template">
                 <div class="fp-flex-repeater">
                     <div class="row fp-flex-header">
@@ -296,7 +336,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr is="fp-row" v-for="item in filteredItems" :item="item"
+                                    <tr :is="displayTemplate" v-for="item in filteredItems" :item="item"
                                         :item-to-columns="itemToColumns"
                                         :row-style="rowStyle"
                                         :key="itemToUnique(item)"
@@ -328,13 +368,6 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 </div>
             </template>
 
-            <template>
-                <div>
-                    <div class="btn btn-primary btn-sm float-left">
-                        <span>Choose files</span>
-                        <input type="file" multiple>
-                    </div>
-            </template>
         </div>
     </body>
 </html>

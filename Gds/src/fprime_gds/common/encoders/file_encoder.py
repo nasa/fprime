@@ -47,6 +47,7 @@ import struct
 from . import encoder
 from fprime_gds.common.data_types.file_data import FilePacketType
 
+from fprime.constants import DATA_ENCODING
 
 class FileEncoder(encoder.Encoder):
     """
@@ -70,11 +71,12 @@ class FileEncoder(encoder.Encoder):
         :param data: FilePacket type to send.
         :return: encoded bytes data
         """
-        out_data = struct.pack(">BI", data.packetType, data.seqID)
+        out_data = struct.pack(">BI", int(data.packetType.value), data.seqID)
         # Packet Type determines the variables following the seqID
         if data.packetType == FilePacketType.START:
-            out_data += struct.pack(">IIBsBs", 2 + len(data.sourcePath) + len(data.destPath),
-                                    len(data.sourcePath), data.sourcePath, len(data.destPath), data.destPath)
+            out_data += struct.pack(">IBsBs", 2 + len(data.sourcePath) + len(data.destPath),
+                                    len(data.sourcePath), data.sourcePath.encode(DATA_ENCODING),
+                                    len(data.destPath), data.destPath.encode(DATA_ENCODING))
         elif data.packetType == FilePacketType.DATA:
             out_data += struct.pack(">IH", data.offset, data.length)
             out_data += data.dataVar

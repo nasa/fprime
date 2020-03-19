@@ -18,9 +18,12 @@ import fprime_gds.common.distributor.distributor
 import fprime_gds.common.client_socket.client_socket
 import fprime_gds.common.data_types.cmd_data
 
+# Local imports for the sake of composition
 from . import dictionaries
 from . import encoding
 from . import histories
+from . import files
+
 
 class StandardPipeline(object):
     """
@@ -44,6 +47,7 @@ class StandardPipeline(object):
         self.__dictionaries = dictionaries.Dictionaries()
         self.__coders = encoding.EncodingDecoding()
         self.__histories = histories.Histories()
+        self.__filing = files.Filing()
 
     def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
         """
@@ -63,6 +67,7 @@ class StandardPipeline(object):
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
         self.coders.setup_coders(self.dictionaries, self.distributor, self.client_socket)
         self.histories.setup_histories(self.coders)
+        self.files.setup_file_handling(self.coders.file_encoder, self.coders.file_decoder)
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
         # Final setup step is to make a logging directory, and register in the logger
@@ -150,3 +155,11 @@ class StandardPipeline(object):
         :return: histories composition
         """
         return self.__histories
+
+    @property
+    def files(self):
+        """
+        Files member property
+        :return: filing compositions
+        """
+        return self.__filing

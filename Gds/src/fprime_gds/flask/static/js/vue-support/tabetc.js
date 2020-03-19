@@ -9,6 +9,7 @@
 import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
+import {UplinkMixins} from "./uplink.js";
 import {LogMixins} from "./log.js";
 import {config} from "../config.js"
 /**
@@ -19,12 +20,12 @@ import {config} from "../config.js"
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "cmdhist", "events", "channels", "logs", "eventsActive", "channelsActive"],
+    props:["commands", "loader", "uploader", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
     data: function () {
         let hash = window.location.hash.replace("#", "");
         return {
             "currentTab": (hash == "")? "Commanding" : hash,
-            "tabs": ["Commanding", "Events", "Channels", "Logs"],
+            "tabs": ["Commanding", "Events", "Channels", "Uplink", "Logs"],
             "config": config
         }
     },
@@ -63,20 +64,23 @@ export class TabETCVue {
      * @param element: HTML element ID to render to
      * @param commands: commands list to render in a drop down
      * @param channels: channel templates list
-     * @param loader: loader used to handel F prime REST
+     * @param loader: loader used to handle F prime REST
+     * @param uploader: uploader used to handle F prime file uplink
      */
-    constructor(element, commands, channels, loader) {
+    constructor(element, commands, channels, loader, uploader) {
         //Mixin functions for each of the components
         Object.assign(TabETCVue.prototype, CommandMixins);
         Object.assign(TabETCVue.prototype, EventMixins);
         Object.assign(TabETCVue.prototype, ChannelMixins);
+        Object.assign(TabETCVue.prototype, UplinkMixins);
         Object.assign(TabETCVue.prototype, LogMixins);
 
         let data = {
             ...this.setupCommands(commands, loader),
             ...this.setupEvents(),
             ...this.setupChannels(channels),
-            ...this.setupLogs()
+            ...this.setupLogs(),
+            ...this.setupUplink(uploader)
         };
         // Create a vue object
         this.vue = new Vue({

@@ -41,6 +41,10 @@ export class Loader {
             "logdata": {
                 "url": "/logdata",
                 "last": null
+            },
+            "files": {
+                "url": "/upload/files",
+                "last": null
             }
         };
     }

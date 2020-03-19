@@ -26,6 +26,7 @@ import flask_restful.reqparse
 import fprime.common.models.serialize.type_exceptions
 import fprime_gds.common.data_types.cmd_data
 
+
 class CommandDictionary(flask_restful.Resource):
     """
     Command dictionary endpoint. Will return dictionary when hit with a GET.

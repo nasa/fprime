@@ -10,6 +10,8 @@ handshake packet in return before the next chunk is sent out.
 import os
 import enum
 import zlib
+import queue
+import threading
 
 import fprime_gds.common.handlers
 from fprime_gds.common.data_types.file_data import *
@@ -53,6 +55,32 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         self.timeout = timeout
         self.file_encoder = file_encoder
         self.current_crc = 0
+        self.queue = queue.Queue()
+        self.flag = threading.Semaphore()
+        threading.Thread(target=self.uplink_thread, args=()).start()
+        self.__destination_dir = "/"
+
+    def enqueue(self, filepath, destination=None):
+        """
+        Enqueue files for the upload. This tunnels into the upload thread, which unblocks once files have been enqueued
+        read to upload.
+        :param filepath: filepath to upload to the system
+        :param destination: (optional) destination to uplink to. Default: current destination + file's basename
+        """
+        if destination is None:
+            destination = os.path.join(self.__destination_dir, os.path.basename(filepath))
+        self.queue.put((filepath, destination))
+
+    def uplink_thread(self):
+        """
+        A thread that will uplink files on after another until all files that have been enqueued are properly processed.
+        """
+        while True:
+            filepath, dest = self.queue.get()
+            self.start(filepath, dest)
+            if not self.flag.acquire(timeout=self.timeout):
+                self.cancel()
+            self.flag.release() # Just wanted to know where were done by blocking on the semaphore
 
     def start(self, filepath, destination):
         """
@@ -68,6 +96,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         if self.state != UplinkStates.IDLE:
             raise FileUplinkerBusyException("Currently uplinking file '{}' cannot start uplinking '{}'"
                                             .format(self.active, filepath))
+        self.flag.acquire()
         self.state = UplinkStates.RUNNING
         self.active = filepath
         self.current_size = 0
@@ -84,6 +113,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         # If it is an end-wait or a cancel state, respond without reading next chunk
         if self.state == UplinkStates.END_WAIT:
             self.state = UplinkStates.IDLE
+            self.flag.release()
             return
         elif self.state == UplinkStates.CANCELED:
             self.file_encoder.data_callback(CancelPacketData(self.get_next_sequence()))
@@ -109,7 +139,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
     def finish(self):
         """
-        Finishes the current file uplink by closing the file and setting the running flag back to false.
+        Finishes the current file uplink by closing the file
         """
         self._fd.close()
         self._fd = None
@@ -121,6 +151,22 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         tmp = self.sequence
         self.sequence = self.sequence + 1
         return tmp
+
+    @property
+    def destination_dir(self):
+        """
+        Get the destination property.
+        :return: value of destination
+        """
+        return self.__destination_dir
+
+    @destination_dir.setter
+    def destination_dir(self, destination):
+        """
+        Set the destination property
+        :param destination: new destination
+        """
+        self.__destination_dir = destination
 
 
 class FileUplinkerBusyException(Exception):

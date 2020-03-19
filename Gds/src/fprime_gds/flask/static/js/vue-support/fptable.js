@@ -173,6 +173,9 @@ Vue.component("fp-table", {
             default: function () {
                 return false;
             }
+        },
+        displayTemplate: {
+            default: "fp-row"
         }
     },
     // Required data items (unique for each table instance)
