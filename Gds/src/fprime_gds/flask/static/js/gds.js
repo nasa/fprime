@@ -19,10 +19,10 @@ function setupBindings() {
         loader.endpoints["command-dict"].data,
         loader.endpoints["channel-dict"].data,
         loader, uploader);
-    //loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
-    //loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
-    //loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
-    l//oader.registerPoller("logdata", function (data) {tabView.updateLogs(data);});
+    loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
+    loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
+    loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
+    loader.registerPoller("logdata", function (data) {tabView.updateLogs(data);});
 }
 
 // On ready when the document has been loaded

@@ -137,8 +137,8 @@ namespace Svc {
               if (isConnected_fileUplinkBufferGet_OutputPort(0) &&
                   isConnected_fileDownlinkBufferSendOut_OutputPort(0)) {
                   Fw::Buffer buffer = fileUplinkBufferGet_out(0, m_data_size);
-                  m_in_ring.peek(reinterpret_cast<U8*>(buffer.getdata()), m_data_size, HEADER_SIZE);
-                  buffer.setsize(m_data_size);
+                  m_in_ring.peek(reinterpret_cast<U8*>(buffer.getdata()), m_data_size - sizeof(packet_type), HEADER_SIZE + sizeof(packet_type));
+                  buffer.setsize(m_data_size - sizeof(packet_type));
                   fileUplinkBufferSendOut_out(0, buffer);
               }
               break;

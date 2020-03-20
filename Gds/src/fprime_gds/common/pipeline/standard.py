@@ -67,7 +67,7 @@ class StandardPipeline(object):
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
         self.coders.setup_coders(self.dictionaries, self.distributor, self.client_socket)
         self.histories.setup_histories(self.coders)
-        self.files.setup_file_handling(self.coders.file_encoder, self.coders.file_decoder)
+        self.files.setup_file_handling(self.coders.file_encoder, self.coders.file_decoder, self.distributor)
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
         # Final setup step is to make a logging directory, and register in the logger

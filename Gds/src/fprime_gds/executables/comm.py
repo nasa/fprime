@@ -29,6 +29,9 @@ import fprime_gds.common.adapters.ground
 import fprime_gds.common.adapters.ip
 from fprime_gds.common.adapters.framing import FpFramerDeframer
 
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime_gds.common.utils.data_desc_type import DataDescType
+
 import fprime_gds.executables.cli
 
 # Uses non-standard PIP package pyserial, so test the waters before getting a hard-import crash
@@ -83,8 +86,10 @@ class Uplinker(object):
             framed = self.framer.frame(valid_packet)
             for retry in range(0, Uplinker.RETRY_COUNT):
                 if self.uplink_adapter.write(framed):
+                    # Handshaking only occurs for file packets
+                    if valid_packet[:4] == bytes([0, 0, 0, 3]):
+                        self.downlink.queue_downlink(Uplinker.get_handshake())
                     break
-                self.downlink.queue_downlink(Uplinker.get_handshake())
             else:
                 raise UplinkFailureException("Uplink failed to send {} bytes of data after {} retries"
                                              .format(len(framed), Uplinker.RETRY_COUNT))
@@ -100,7 +105,8 @@ class Uplinker(object):
         Gets a handshake raw frame
         :return: handshake raw-frame.
         """
-        return b'\x00\x00\x00\xff'
+
+        return U32Type(DataDescType["FW_PACKET_HAND"].value).serialize()
 
     def run(self):
         """

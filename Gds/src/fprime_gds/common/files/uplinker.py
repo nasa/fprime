@@ -78,7 +78,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         while True:
             filepath, dest = self.queue.get()
             self.start(filepath, dest)
-            if not self.flag.acquire(timeout=self.timeout):
+            if not self.flag.acquire():
                 self.cancel()
             self.flag.release() # Just wanted to know where were done by blocking on the semaphore
 
@@ -103,6 +103,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         self.total = os.path.getsize(filepath) #Source of OSError when inaccesible
         self._fd = open(filepath, "rb") #Source of OSError when no permissions
         self.file_encoder.data_callback(StartPacketData(self.get_next_sequence(), self.total, filepath, destination))
+        pass
 
     def data_callback(self, data, sender=None):
         """

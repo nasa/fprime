@@ -42,10 +42,13 @@ Serialized command format:
 """
 from __future__ import absolute_import
 
+import os
 import struct
 
 from . import encoder
 from fprime_gds.common.data_types.file_data import FilePacketType
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime_gds.common.utils.data_desc_type import DataDescType
 
 from fprime.constants import DATA_ENCODING
 
@@ -75,10 +78,11 @@ class FileEncoder(encoder.Encoder):
         # Packet Type determines the variables following the seqID
         if data.packetType == FilePacketType.START:
             file_src_enc = data.sourcePath.encode(DATA_ENCODING)
-            file_dst_enc = data.sourcePath.encode(DATA_ENCODING)
-            out_data += struct.pack(">IBsBs", 2 + len(file_src_enc) + len(file_dst_enc),
-                                    len(file_src_enc), file_src_enc,
-                                    len(file_dst_enc), file_dst_enc)
+            file_dst_enc = data.destPath.encode(DATA_ENCODING)
+            out_data += struct.pack(">IB", data.size, len(file_src_enc))
+            out_data += file_src_enc
+            out_data += struct.pack(">B", len(file_dst_enc))
+            out_data += file_dst_enc
         elif data.packetType == FilePacketType.DATA:
             out_data += struct.pack(">IH", data.offset, data.length)
             out_data += data.dataVar
@@ -86,4 +90,8 @@ class FileEncoder(encoder.Encoder):
             out_data += struct.pack(">I", data.hashValue)
         elif data.packetType != FilePacketType.CANCEL:
             raise Exception("Invalid packet type found while encoding: {}".format(data.packetType))
-        return out_data
+        descriptor = U32Type(DataDescType["FW_PACKET_FILE"].value).serialize()
+        length_obj = self.config.get_type("msg_len")
+        length_obj.val = len(descriptor) + len(out_data)
+        header = U32Type( 0x5A5A5A5A ).serialize() + length_obj.serialize() + descriptor
+        return  header + out_data

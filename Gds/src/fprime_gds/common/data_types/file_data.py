@@ -77,8 +77,9 @@ class DataPacketData(sys_data.SysData):
         self.packetType = FilePacketType.DATA
         self.seqID = seqID
         self.offset = offset
-        self.length = len(self.dataVar)
         self.dataVar = dataVar
+        self.length = len(self.dataVar)
+
 
 #Takes care of the END packets that the file_decoder will receive
 class EndPacketData(sys_data.SysData):

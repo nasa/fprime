@@ -60,6 +60,7 @@ class EncodingDecoding(object):
                                                                                    dictionaries.channel_id)
         # Register client socket to encoder
         self.command_encoder.register(sender)
+        self.file_encoder.register(sender)
         # Register the event and channel decoders to the distributor for their
         # respective data types
         distributor.register("FW_PACKET_LOG", self.event_decoder)

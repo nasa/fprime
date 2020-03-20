@@ -19,13 +19,14 @@ class Filing(object):
         """
         self.__uplinker = None
 
-    def setup_file_handling(self, file_encoder, file_decoder):
+    def setup_file_handling(self, file_encoder, file_decoder, distributor):
         """
         Sets up the file handling (uplink and downlink) from a pair of encoders and decoders
         :param file_encoder: file encoder for uplink
         :param file_decoder: file decoder for downlink
         """
         self.__uplinker = fprime_gds.common.files.uplinker.FileUplinker(file_encoder)
+        distributor.register("FW_PACKET_HAND", self.__uplinker)
 
     @property
     def uplinker(self):
