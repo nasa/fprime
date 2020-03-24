@@ -28,6 +28,7 @@ RUN groupadd fprime && \
 ENV HOST fprime
 ENV USER fprime
 ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
@@ -60,5 +61,6 @@ ENV USER jenkins
 # Paths and entrypoinys
 ENV PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
 ENTRYPOINT ["/bin/bash"]
