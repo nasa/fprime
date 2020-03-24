@@ -10,7 +10,7 @@ in file_data objects.
 @bug No known bugs
 '''
 from __future__ import print_function
-from struct import *
+import struct
 
 from fprime_gds.common.data_types.file_data import FilePacketType
 from fprime_gds.common.decoders import decoder
@@ -51,31 +51,25 @@ class FileDecoder(decoder.Decoder):
         '''
 
         #Decode file here
-        packetType = FilePacketType(unpack('B', data[:1])[0]).name
-        seqID = unpack('>I', data[1:5])[0]
+        packetTypeNum, seqID = struct.unpack_from('>BI', data, 0)
+        packetType = FilePacketType(packetTypeNum).name
 
         #Packet Type determines the variables following the seqID
-        if (packetType == 'START'):  #Packet Type is START
-            size = unpack('>I', data[5:9])[0]
-            lengthSP = unpack('B', data[9])[0] #Length of the source path
-            sourcePath = data[10:lengthSP + 10]
-            lengthDP = unpack('B', data[lengthSP + 10])[0] #Length of the destination path
-            destPath = data[lengthSP + 11: lengthSP + lengthDP + 11]
-
-            return file_data.StartPacketData(seqID, size, lengthSP, sourcePath, lengthDP, destPath)
-        elif (packetType == 'DATA'):   #Packet Type is DATA
-            offset = unpack('>I', data[5:9])[0]
-            length = unpack('BB', data[9:11])[0]
-            dataVar = data[11:]
-                
-            return file_data.DataPacketData(seqID, offset, length, dataVar)
-        elif (packetType == 'END'):   #Packet Type is END
-            hashValue = unpack('>I', data[5:9])[0]
-
+        if packetType == 'START':  #Packet Type is START
+            fileSize, sourcePathSize = struct.unpack_from('>IB', data, 5)
+            sourcePath = data[10:sourcePathSize + 10]
+            destPathSize, = struct.unpack_from('>B', data, sourcePathSize + 10)
+            destPath = data[sourcePathSize + 11: sourcePathSize + destPathSize + 11]
+            return file_data.StartPacketData(seqID, fileSize, sourcePath, destPath)
+        elif packetType == 'DATA':   #Packet Type is DATA
+            offset, length = struct.unpack_from('>IH', data, 0)
+            dataVar = data[11:11+length]
+            return file_data.DataPacketData(seqID, offset, dataVar)
+        elif packetType == 'END':   #Packet Type is END
+            hashValue = struct.unpack_from('>I', data, 5)
             return file_data.EndPacketData(seqID, hashValue)
-        elif (packetType == 'CANCEL'):   #Packet Type is CANCEL
+        elif packetType == 'CANCEL':   #Packet Type is CANCEL
             #CANCEL Packets have no data
             return file_data.CancelPacketData(seqID)
-
         #The data was not determined to be any of the packet types so return none
         return None
