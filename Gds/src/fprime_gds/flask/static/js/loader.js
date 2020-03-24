@@ -124,7 +124,7 @@ export class Loader {
             // Don't request if already requesting
             if (!inProgress) {
                 inProgress = true;
-                _self.load(endpoint).then(
+                _self.load(_self.endpoints[endpoint]["url"]).then(
                     function(data) {
                         inProgress = false;
                         callback(data);

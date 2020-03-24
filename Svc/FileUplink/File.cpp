@@ -22,7 +22,6 @@ namespace Svc {
     char path[length + 1];
     memcpy(path, startPacket.destinationPath.value, length);
     path[length] = 0;
-    printf("Length desst: %d, path: %s\n", length, path);
     this->size = startPacket.fileSize;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;

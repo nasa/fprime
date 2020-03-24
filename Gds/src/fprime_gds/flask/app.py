@@ -48,7 +48,8 @@ def construct_app():
     app.json_encoder = fprime_gds.flask.json.GDSJsonEncoder
     app.config['RESTFUL_JSON'] = {'cls': app.json_encoder}
     # Standard pipeline creation
-    pipeline = components.setup_pipelined_components(app.logger, app.config["GDS_CONFIG"], app.config["DICTIONARY"],
+    pipeline = components.setup_pipelined_components(app.debug, app.logger,
+                                                     app.config["GDS_CONFIG"], app.config["DICTIONARY"],
                                                      app.config["LOG_DIR"], app.config["ADDRESS"], app.config["PORT"])
     # Restful API registration
     api = flask_restful.Api(app)
@@ -111,5 +112,5 @@ def log():
 
 # When running from the command line, this will allow the flask development server to launch
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 

@@ -49,11 +49,13 @@ class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers
         consumer. This should only need to be overridden in extraordinary circumstances.
         :param data: data bytes to be decoded
         :param sender: (optional) sender id, otherwise None
+        :return: returns the encoded data for reference
         """
         encoded = self.encode_api(data)
         if encoded is not None:
             self.send_to_all(encoded)
         #TODO: log None values here
+        return encoded
 
 
     @abc.abstractmethod

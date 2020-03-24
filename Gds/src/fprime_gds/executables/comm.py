@@ -86,9 +86,7 @@ class Uplinker(object):
             framed = self.framer.frame(valid_packet)
             for retry in range(0, Uplinker.RETRY_COUNT):
                 if self.uplink_adapter.write(framed):
-                    # Handshaking only occurs for file packets
-                    if valid_packet[:4] == bytes([0, 0, 0, 3]):
-                        self.downlink.queue_downlink(Uplinker.get_handshake())
+                    self.downlink.queue_downlink(Uplinker.get_handshake(valid_packet))
                     break
             else:
                 raise UplinkFailureException("Uplink failed to send {} bytes of data after {} retries"
@@ -100,13 +98,13 @@ class Uplinker(object):
         self.ground.close()
 
     @staticmethod
-    def get_handshake():
+    def get_handshake(packet):
         """
-        Gets a handshake raw frame
-        :return: handshake raw-frame.
+        Gets a handshake raw frame. It repeats the last packet.
+        :param packet: packet to repeat back out
+        :return: handshake raw-frame
         """
-
-        return U32Type(DataDescType["FW_PACKET_HAND"].value).serialize()
+        return U32Type(DataDescType["FW_PACKET_HAND"].value).serialize() + packet
 
     def run(self):
         """

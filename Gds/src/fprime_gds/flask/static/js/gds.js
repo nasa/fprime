@@ -23,6 +23,7 @@ function setupBindings() {
     loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
     loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
     loader.registerPoller("logdata", function (data) {tabView.updateLogs(data);});
+    loader.registerPoller("files", function (data) {tabView.updateFiles(data["files"]);});
 }
 
 // On ready when the document has been loaded

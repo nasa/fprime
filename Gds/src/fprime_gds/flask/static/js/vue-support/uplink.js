@@ -17,6 +17,19 @@ Vue.component("uplink-row", {
          */
         itemToColumns: Function
     },
+    methods: {
+        fileAction(event) {
+            let action = event.currentTarget.innerText;
+            let uplinkvue = this.$parent.$parent;
+            let index = uplinkvue.selected.indexOf(this.item);
+            if (action == "Remove" && index != -1) {
+                uplinkvue.selected.splice(index, 1);
+            }
+            else {
+                uplinkvue.uploader.command(this.item.source, action);
+            }
+        }
+    },
     computed: {
         progressBarClass: function () {
             return "bg-success";
@@ -27,30 +40,36 @@ Vue.component("uplink-row", {
 Vue.component("uplink", {
     props:["upfiles", "uploader"],
     data: function() {
-        return {"selected": [], "upload_progress": 0, "upload_elem": null, "destination": "/"}
+        return {"selected": [], "destination": "/"}
     },
     template: "#uplink-template",
     methods: {
-        progress(percent) {
-            this.upload_progress = percent;
-        },
         uplinkFiles() {
-            this.upload_progress = 0;
             if (this.selected.length == 0) {
                 return;
             }
-            this.uploader.upload(this.selected, this.destination, this.progress.bind(this)).then(
-                () => {
-                    this.upload_elem.value = "";
-                }
-            );
+            this.uploader.upload(this.selected, this.destination);
         },
         handelFiles(event) {
-            this.upload_elem = event.target;
-            this.selected = event.target.files;
+            this.selected = Array.from(event.target.files).map((item) =>
+                {
+                    return {
+                        "file": item,
+                        "source": item.name,
+                        "destination": this.destination,
+                        "state": "NOT STARTED",
+                        "percent": 0
+                    }
+                });
+            event.target.value = "";
         },
         keyify(item) {
             return "file-" + item;
+        }
+    },
+    computed: {
+        elements: function () {
+            return this.selected.concat(this.upfiles);
         }
     }
 });
@@ -58,5 +77,8 @@ Vue.component("uplink", {
 export let UplinkMixins = {
     setupUplink(uploader) {
         return {"upfiles": [], "uploader": uploader}
+    },
+    updateFiles(files) {
+        this.vue.upfiles = files;
     }
 };
