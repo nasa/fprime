@@ -32,6 +32,8 @@
 
 // Main app
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
+#include <RPI/LinuxI2CDriver/LinuxI2CDriverComponentImpl.hpp>
+#include <RPI/Camera/CameraComponentImpl.hpp>
 
 void constructRPIArchitecture(void);
 void exitTasks(void);
@@ -63,8 +65,14 @@ extern Drv::LinuxGpioDriverComponentImpl gpio23Drv;
 extern Drv::LinuxGpioDriverComponentImpl gpio24Drv;
 extern Drv::LinuxGpioDriverComponentImpl gpio25Drv;
 extern Drv::LinuxGpioDriverComponentImpl gpio17Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio7Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio11Drv;
+extern Drv::LinuxGpioDriverComponentImpl gpio12Drv;
 
 extern Rpi::RpiDemoComponentImpl rpiDemo;
+extern RPI::CameraComponentImpl camImpl;
+
+extern RPI::LinuxI2CDriverComponentImpl i2cDriver;
 
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 extern Svc::GroundInterfaceComponentImpl groundIf;

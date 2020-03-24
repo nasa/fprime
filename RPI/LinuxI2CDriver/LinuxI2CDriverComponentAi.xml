@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<component name="LinuxI2CDriver" kind="passive" namespace="RPI" modeler="true">
+
+    <!-- Import driver ports from adjacent directory -->
+    <import_port_type>RPI/LinuxI2CPorts/LinuxI2CWritePortAi.xml</import_port_type>
+    <import_port_type>RPI/LinuxI2CPorts/LinuxI2CReadPortAi.xml</import_port_type>
+
+    <!-- Import command ports -->
+    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+    <!-- Import event ports -->
+    <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+    <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+
+    <!-- No telemetry ports for this component (following style of GPIO Component) -->
+
+    <!-- Import relevant dictionaries in this directory -->
+    <import_dictionary>RPI/LinuxI2CDriver/Events.xml</import_dictionary>
+    
+    <ports>
+        <!-- Command port definitions: command input receives commands, command reg out, and response out are
+        ports used to register with the command dispatcher, and return responses to it -->
+        <!-- <port name="cmdIn" data_type="Fw::Cmd"  kind="input" role="Cmd" max_number="1">
+        </port>
+        <port name="cmdRegOut" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
+        </port>
+        <port name="cmdResponseOut" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
+        </port> -->
+        <!-- Event ports: send events, and text formated events -->
+        <port name="eventOut" data_type="Fw::Log"  kind="output" role="LogEvent"  max_number="1">
+        </port>
+        <port name="textEventOut" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+        </port>
+
+        <!-- Write and Read input ports used to connect directly and receive commands from other components -->
+        <port name="I2CWrite" data_type="RPI::I2CWritePort" kind="guarded_input">
+        </port>
+        <port name="I2CRead" data_type="RPI::I2CReadPort" kind="guarded_input">
+        </port>
+    </ports>
+
+</component>

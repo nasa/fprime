@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<events>
+    <event id="0" name="I2CWrite_Success" severity="ACTIVITY_HI" format_string="I2C Write was successful">
+        <comment>A notification that I2CWrite was successful</comment>
+    </event>
+    <event id="1" name="I2CWrite_Fail" severity="WARNING_HI" format_string="I2C Write failed">
+        <comment>A notification that I2CWrite failed</comment>
+    </event>
+</events>
+

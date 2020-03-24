@@ -29,6 +29,8 @@
    <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
 
    <import_component_type>RPI/RpiDemo/RpiDemoComponentAi.xml</import_component_type>
+   <import_component_type>RPI/LinuxI2CDriver/LinuxI2CDriverComponentAi.xml</import_component_type>
+   <import_component_type>RPI/Camera/CameraComponentAi.xml</import_component_type>
    <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
@@ -78,12 +80,22 @@
    <instance namespace="Drv" name="gpio24Drv" type="LinuxGpioDriver" base_id="2300"  base_id_window="100" />
    <instance namespace="Drv" name="gpio25Drv" type="LinuxGpioDriver" base_id="2400"  base_id_window="100" />
    <instance namespace="Drv" name="gpio17Drv" type="LinuxGpioDriver" base_id="2500"  base_id_window="100" />
-   <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2600"  base_id_window="100" />
+   <!-- Add GPIO Pins required by camera -->
+   <instance namespace="Drv" name="gpio7Drv" type="LinuxGpioDriver" base_id="2600"  base_id_window="100" />
+   <instance namespace="Drv" name="gpio11Drv" type="LinuxGpioDriver" base_id="2700"  base_id_window="100" />
+   <instance namespace="Drv" name="gpio12Drv" type="LinuxGpioDriver" base_id="2800"  base_id_window="100" />
+   <instance namespace="Drv" name="spiDrv" type="LinuxSpiDriver" base_id="2900"  base_id_window="100" />
+   <!-- End of GPIO pins for camera -->
 
-   <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2700"  base_id_window="100" />
+   <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="3000"  base_id_window="100" />
+   <!-- Added instances of custom components here -->
+   <instance namespace="RPI" name="i2cDriver" type="LinuxI2CDriver" base_id="3100" base_id_window="100" />
+   <instance namespace="RPI" name="camImpl" type="Camera" base_id="3200" base_id_window="100" />
+
+   <!-- End of custom component instances -->
 
     <!-- Communications driver. May be swapped with other comm drivers like UART -->
-    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="2800" base_id_window="20" />
+    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="3300" base_id_window="20" />
 
     <!-- Communications driver connections -->
     <connection name = "CommunicationRecv">
@@ -127,6 +139,10 @@
         <source component = "rpiDemo" port = "CmdReg" type = "CmdReg" num = "0"/>
         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
    </connection>
+     <!-- <connection name = "i2cReg">
+        <source component = "i2cDriver" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "7"/>
+   </connection> -->
 
     <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
 
@@ -288,6 +304,23 @@
        <source component = "gpio17Drv" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
+   <connection name = "gpio7Log">
+       <source component = "gpio7Drv" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+   <connection name = "gpio11Log">
+       <source component = "gpio11Drv" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+   <connection name = "gpio12Log">
+       <source component = "gpio12Drv" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+
+   <!-- <connection name = "i2cLog">
+       <source component = "i2cDriver" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection> -->
    
    <!-- Event Logger Text Connections -->
    
@@ -355,8 +388,20 @@
        <source component = "gpio25Drv" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
-   <connection name = "gpio8TextLog">
+   <connection name = "gpio17TextLog">
        <source component = "gpio17Drv" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+   <connection name = "gpio7TextLog">
+       <source component = "gpio7Drv" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+   <connection name = "gpio11TextLog">
+       <source component = "gpio11Drv" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+   <connection name = "gpio12TextLog">
+       <source component = "gpio12Drv" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
 
@@ -498,6 +543,18 @@
    </connection>
    <connection name = "Gpio17DrvTime">
        <source component = "gpio17Drv" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+   <connection name = "Gpio7DrvTime">
+       <source component = "gpio7Drv" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+   <connection name = "Gpio11DrvTime">
+       <source component = "gpio11Drv" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+   <connection name = "Gpio12DrvTime">
+       <source component = "gpio12Drv" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
 

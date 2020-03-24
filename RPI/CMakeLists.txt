@@ -53,6 +53,11 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ##
 # Add component subdirectories
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RpiDemo/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxI2CPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxI2CDriver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CameraPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Camera/")
+
 
 # Add Topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")

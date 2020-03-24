@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/interface_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<interface name="I2CReadPort" namespace="RPI">
+	<import_serializable_type>Fw/Buffer/BufferSerializableAi.xml</import_serializable_type>
+	<args>
+            <arg name="address" type="U32" pass_by="value">
+            </arg>
+	    <arg name="readBuffer" type="Fw::Buffer" pass_by="reference">
+	    </arg>
+            <arg name="length" type="U32" pass_by="value">
+            </arg>
+	</args>
+</interface>

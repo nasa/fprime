@@ -79,8 +79,13 @@ Drv::LinuxGpioDriverComponentImpl gpio23Drv("gpio23Drv");
 Drv::LinuxGpioDriverComponentImpl gpio24Drv("gpio24Drv");
 Drv::LinuxGpioDriverComponentImpl gpio25Drv("gpio25Drv");
 Drv::LinuxGpioDriverComponentImpl gpio17Drv("gpio17Drv");
+Drv::LinuxGpioDriverComponentImpl gpio7Drv("gpio7Drv");
+Drv::LinuxGpioDriverComponentImpl gpio11Drv("gpio11Drv");
+Drv::LinuxGpioDriverComponentImpl gpio12Drv("gpio12Drv");
 
 Rpi::RpiDemoComponentImpl rpiDemo("rpiDemo");
+RPI::LinuxI2CDriverComponentImpl i2cDriver("i2cDriver");
+RPI::CameraComponentImpl camImpl("camImpl");
 
 void constructApp(U32 port_number, char* hostname) {
 
@@ -131,8 +136,14 @@ void constructApp(U32 port_number, char* hostname) {
     gpio24Drv.init(0);
     gpio25Drv.init(0);
     gpio17Drv.init(0);
+    gpio7Drv.init(0);
+    gpio11Drv.init(0);
+    gpio12Drv.init(0);
+
+    i2cDriver.init(0);
 
     rpiDemo.init(10,0);
+    camImpl.init(0);
 
     constructRPIArchitecture();
 
@@ -144,6 +155,7 @@ void constructApp(U32 port_number, char* hostname) {
     fileDownlink.regCommands();
     health.regCommands();
     rpiDemo.regCommands();
+    camImpl.regCommands();
 
     // set sequencer timeout
     cmdSeq.setTimeout(30);
@@ -222,6 +234,18 @@ void constructApp(U32 port_number, char* hostname) {
     }
 
     if (not gpio17Drv.open(17,Drv::LinuxGpioDriverComponentImpl::GPIO_IN)) {
+        return;
+    }
+
+    if (not gpio7Drv.open(7,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+        return;
+    }
+
+    if (not gpio11Drv.open(11,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
+        return;
+    }
+
+    if (not gpio12Drv.open(12,Drv::LinuxGpioDriverComponentImpl::GPIO_OUT)) {
         return;
     }
 
