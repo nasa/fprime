@@ -40,6 +40,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     v-bind:channels="channels"
                     v-bind:cmdhist="cmdhist"
                     v-bind:upfiles="upfiles"
+                    v-bind:downfiles="downfiles"
                     v-bind:logs="logs"
                     v-bind:events-active="eventsActive"
                     v-bind:channels-active="channelsActive"
@@ -78,6 +79,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
                     <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
                     <uplink v-bind:upfiles="upfiles" v-bind:uploader="uploader" v-show="currentTab == 'Uplink'"></uplink>
+                    <downlink v-bind:downfiles="downfiles" v-show="currentTab == 'Downlink'"></downlink>
                     <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
                 </div>
             </template>
@@ -200,18 +202,16 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
 
             <template id="uplink-template">
                 <div class="fp-flex-repeater">
-                    <form enctype="multipart/form-data" class="fp-flex-header">
-                        <div class="row">
-                            <label class="col-2">Destination Folder:</label>
-                            <input class="col-2" type="text" v-model="destination" pattern="/.*" />
-                            <div class="col-4">
-                                <label>Add Files to Uplink:</label>
-                                <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
-                            </div>
-                            <button class="col-2 btn btn-danger" disabled>Pause Uplink</button>
-                            <button class="col-2 btn btn-success" v-on:click="uplinkFiles">Start Uplink</button>
+                    <div class="form-row">
+                        <label class="col-2">Destination Folder:</label>
+                        <input class="col-2" type="text" v-model="destination" pattern="/.*" />
+                        <div class="col-4">
+                            <label>Add Files to Uplink:</label>
+                            <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
                         </div>
-                    </form>
+                        <button class="col-2 btn btn-danger" disabled>Pause Uplink</button>
+                        <button class="col-2 btn btn-success" v-on:click="uplinkFiles">Start Uplink</button>
+                    </div>
                     <fp-table :header-columns="['Source', 'Destination', 'State', 'Control', 'Progress']"
                               :items="elements"
                               :item-to-unique="keyify"
@@ -219,14 +219,26 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     ></fp-table>
                 </div>
             </template>
+            <template id="downlink-template">
+                    <fp-table :header-columns="['Source', 'Destination', 'State', 'Control', 'Progress']"
+                              :items="elements"
+                              :item-to-unique="keyify"
+                              :display-template="'uplink-row'"
+                    ></fp-table>
+            </template>
             <template id="uplink-row-template">
                 <tr>
                     <td>{{ item.source }}</td>
                     <td>{{ item.destination }}</td>
                     <td>{{ item.state }}</td>
-                    <td>
+                    <td v-if="item.uplink">
                         <button v-if="item.state != 'FINISHED' && item.state != 'CANCELED'" class="btn btn-danger" v-on:click="fileAction">
-                            {{ (item.state == "UPLINKING" )? "Cancel" : "Remove" }}
+                            {{ (item.state == "TRANSMITTING" ) ? "Cancel" : "Remove" }}
+                        </button>
+                    </td>
+                    <td v-if="!item.uplink">
+                        <button v-if="item.state == 'FINISHED'" class="btn btn-danger" v-on:click="fileAction">
+                            Download
                         </button>
                     </td>
                     <td>

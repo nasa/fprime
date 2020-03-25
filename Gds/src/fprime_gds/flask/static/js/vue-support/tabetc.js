@@ -10,6 +10,7 @@ import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
 import {UplinkMixins} from "./uplink.js";
+import {DownlinkMixins} from "./downlink.js";
 import {LogMixins} from "./log.js";
 import {config} from "../config.js"
 /**
@@ -20,12 +21,12 @@ import {config} from "../config.js"
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "uploader", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
+    props:["commands", "loader", "uploader", "downfiles", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
     data: function () {
         let hash = window.location.hash.replace("#", "");
         return {
             "currentTab": (hash == "")? "Commanding" : hash,
-            "tabs": ["Commanding", "Events", "Channels", "Uplink", "Logs"],
+            "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs"],
             "config": config
         }
     },
@@ -73,6 +74,7 @@ export class TabETCVue {
         Object.assign(TabETCVue.prototype, EventMixins);
         Object.assign(TabETCVue.prototype, ChannelMixins);
         Object.assign(TabETCVue.prototype, UplinkMixins);
+        Object.assign(TabETCVue.prototype, DownlinkMixins);
         Object.assign(TabETCVue.prototype, LogMixins);
 
         let data = {
@@ -80,7 +82,8 @@ export class TabETCVue {
             ...this.setupEvents(),
             ...this.setupChannels(channels),
             ...this.setupLogs(),
-            ...this.setupUplink(uploader)
+            ...this.setupUplink(uploader),
+            ...this.setupDownlink()
         };
         // Create a vue object
         this.vue = new Vue({

@@ -51,16 +51,21 @@ Vue.component("uplink", {
             this.uploader.upload(this.selected, this.destination);
         },
         handelFiles(event) {
-            this.selected = Array.from(event.target.files).map((item) =>
+            // Bail on no files
+            if (event.target.files.length == 0) {
+                return;
+            }
+            this.selected.push(...Array.from(event.target.files).map((item) =>
                 {
                     return {
                         "file": item,
                         "source": item.name,
                         "destination": this.destination,
                         "state": "NOT STARTED",
-                        "percent": 0
+                        "percent": 0,
+                        "uplink": true
                     }
-                });
+                }));
             event.target.value = "";
         },
         keyify(item) {
@@ -69,7 +74,7 @@ Vue.component("uplink", {
     },
     computed: {
         elements: function () {
-            return this.selected.concat(this.upfiles);
+            return this.selected.concat(this.upfiles.reverse());
         }
     }
 });
@@ -78,7 +83,7 @@ export let UplinkMixins = {
     setupUplink(uploader) {
         return {"upfiles": [], "uploader": uploader}
     },
-    updateFiles(files) {
+    updateUpfiles(files) {
         this.vue.upfiles = files;
     }
 };

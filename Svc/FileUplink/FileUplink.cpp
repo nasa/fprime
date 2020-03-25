@@ -98,6 +98,11 @@ namespace Svc {
   void FileUplink ::
     handleStartPacket(const Fw::FilePacket::StartPacket& startPacket)
   {
+    // Clear all event throttles in preparation for new start packet
+    this->log_WARNING_HI_FileUplink_FileWriteError_ThrottleClear();
+    this->log_WARNING_HI_FileUplink_InvalidReceiveMode_ThrottleClear();
+    this->log_WARNING_HI_FileUplink_PacketOutOfBounds_ThrottleClear();
+    this->log_WARNING_HI_FileUplink_PacketOutOfOrder_ThrottleClear();
     this->packetsReceived.packetReceived();
     if (this->receiveMode != START) {
       this->file.osFile.close();

@@ -17,14 +17,15 @@ import fprime_gds.flask.events
 import fprime_gds.flask.channels
 import fprime_gds.flask.logs
 import fprime_gds.flask.json
-import fprime_gds.flask.upload
+import fprime_gds.flask.updown
 
 from . import components
 
 # Update logging to avoid redundant messages
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.WARN)
-
+log = logging.getLogger("downlink")
+log.setLevel(logging.INFO)
 
 def construct_app():
     """
@@ -48,8 +49,8 @@ def construct_app():
     app.json_encoder = fprime_gds.flask.json.GDSJsonEncoder
     app.config['RESTFUL_JSON'] = {'cls': app.json_encoder}
     # Standard pipeline creation
-    pipeline = components.setup_pipelined_components(app.debug, app.logger,
-                                                     app.config["GDS_CONFIG"], app.config["DICTIONARY"],
+    pipeline = components.setup_pipelined_components(app.debug, app.logger, app.config["GDS_CONFIG"],
+                                                     app.config["DICTIONARY"], app.config["DOWNLINK_DIR"],
                                                      app.config["LOG_DIR"], app.config["ADDRESS"], app.config["PORT"])
     # Restful API registration
     api = flask_restful.Api(app)
@@ -72,10 +73,12 @@ def construct_app():
                      resource_class_args=[pipeline.dictionaries.channel_id])
     api.add_resource(fprime_gds.flask.channels.ChannelHistory, "/channels",
                      resource_class_args=[pipeline.histories.channels])
-    api.add_resource(fprime_gds.flask.upload.Destination, "/upload/destination",
+    api.add_resource(fprime_gds.flask.updown.Destination, "/upload/destination",
                      resource_class_args=[pipeline.files.uplinker])
-    api.add_resource(fprime_gds.flask.upload.FileUploads, "/upload/files",
+    api.add_resource(fprime_gds.flask.updown.FileUploads, "/upload/files",
                      resource_class_args=[pipeline.files.uplinker, uplink_set])
+    api.add_resource(fprime_gds.flask.updown.FileDownload, "/download/files",
+                     resource_class_args=[pipeline.files.downlinker])
     # Optionally serve log files
     if app.config["SERVE_LOGS"]:
         api.add_resource(fprime_gds.flask.logs.FlaskLogger, "/logdata", resource_class_args=[app.config["LOG_DIR"]])

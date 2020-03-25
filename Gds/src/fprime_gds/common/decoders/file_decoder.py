@@ -62,7 +62,7 @@ class FileDecoder(decoder.Decoder):
             destPath = data[sourcePathSize + 11: sourcePathSize + destPathSize + 11]
             return file_data.StartPacketData(seqID, fileSize, sourcePath, destPath)
         elif packetType == 'DATA':   #Packet Type is DATA
-            offset, length = struct.unpack_from('>IH', data, 0)
+            offset, length = struct.unpack_from('>IH', data, 5)
             dataVar = data[11:11+length]
             return file_data.DataPacketData(seqID, offset, dataVar)
         elif packetType == 'END':   #Packet Type is END

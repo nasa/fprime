@@ -13,7 +13,7 @@ import fprime_gds.common.pipeline.standard
 __PIPELINE = None
 
 
-def setup_pipelined_components(debug, logger, config, dictionary, log_dir, tts_address, tts_port):
+def setup_pipelined_components(debug, logger, config, dictionary, down_store, log_dir, tts_address, tts_port):
     """
     Setup the standard pipeline and related components. This is done once, and then the resulting singletons are
     returned so that one object is used throughout the system.
@@ -28,7 +28,7 @@ def setup_pipelined_components(debug, logger, config, dictionary, log_dir, tts_a
     global __PIPELINE
     if __PIPELINE is None and not debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         pipeline = fprime_gds.common.pipeline.standard.StandardPipeline()
-        pipeline.setup(config, dictionary, logging_prefix=log_dir)
+        pipeline.setup(config, dictionary, down_store, logging_prefix=log_dir)
         logger.info("Connecting to GDS at: {}:{} from pid: {}".format(tts_address, tts_port, os.getpid()))
         pipeline.connect(tts_address, tts_port)
         __PIPELINE = pipeline

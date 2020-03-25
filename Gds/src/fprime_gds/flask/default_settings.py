@@ -12,7 +12,8 @@ import os
 import fprime_gds.common.utils.config_manager
 
 # Select uploads directory and create it
-uplink_dir = os.environ.get("FILES_DIR", "/tmp/fprime-uplink/")
+uplink_dir = os.environ.get("UP_FILES_DIR", "/tmp/fprime-uplink/")
+DOWNLINK_DIR = os.environ.get("DOWN_FILES_DIR", "/tmp/fprime-downlink/")
 
 # Configuration is mostly driven from environment variables
 DICTIONARY = os.environ.get("DICTIONARY", None)
@@ -27,7 +28,7 @@ MAX_CONTENT_LENGTH = 32 * 1024 * 1024 # Max length of request is 32MiB
 # Gds config setup
 GDS_CONFIG = fprime_gds.common.utils.config_manager.ConfigManager()
 
-for dir in [LOG_DIR, UPLOADED_UPLINK_DEST, UPLOADS_DEFAULT_DEST]:
+for dir in [LOG_DIR, UPLOADED_UPLINK_DEST, UPLOADS_DEFAULT_DEST, DOWNLINK_DIR]:
     os.makedirs(dir, exist_ok=True)
 
 #TODO: load real config

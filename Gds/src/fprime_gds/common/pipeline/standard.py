@@ -49,12 +49,13 @@ class StandardPipeline(object):
         self.__histories = histories.Histories()
         self.__filing = files.Filing()
 
-    def setup(self, config, dictionary, logging_prefix=None, packet_spec=None):
+    def setup(self, config, dictionary, down_store, logging_prefix=None, packet_spec=None):
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
         :param config: config object used when constructing the pipeline.
         :param dictionary: dictionary path. Used to setup loading of dictionaries.
+        :param down_store: downlink storage directory
         :param logging_prefix: logging prefix. Logs will be placed in a dated directory under this prefix
         :param packet_spec: location of packetized telemetry XML specification.
         """
@@ -67,7 +68,7 @@ class StandardPipeline(object):
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
         self.coders.setup_coders(self.dictionaries, self.distributor, self.client_socket)
         self.histories.setup_histories(self.coders)
-        self.files.setup_file_handling(self.coders.file_encoder, self.coders.file_decoder, self.distributor)
+        self.files.setup_file_handling(down_store, self.coders.file_encoder, self.coders.file_decoder, self.distributor)
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
         # Final setup step is to make a logging directory, and register in the logger

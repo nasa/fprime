@@ -12,7 +12,7 @@ export class Uploader {
                 let data = new FormData();
                 while(0 < files.length) {
                     let file = files.shift();
-                    data.append(file.filename, file.file);
+                    data.append(file.file.name, file.file);
                 }
                 let xhr = new XMLHttpRequest();
                 xhr.open("POST", this.endpoint, true);

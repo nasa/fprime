@@ -1,5 +1,5 @@
 """
-flask/upload.py:
+flask/updown.py:
 
 A simple service that handles file uploads that then trigger file uplinks to the embedded system.
 
@@ -87,3 +87,19 @@ class FileUploads(flask_restful.Resource):
                 flask.current_app.logger.warning("Failed to save file {} with error: {}".format(key, exc))
                 failed.append(key)
         return {"successful": successful, "failed": failed}
+
+
+class FileDownload(flask_restful.Resource):
+    """  """
+    def __init__(self, downlinker):
+        """
+        Constructor: setup the pipeline
+        """
+        self.downlinker = downlinker
+
+    def get(self):
+        """
+        Gets the current destination
+        :return: current destination
+        """
+        return {"files": self.downlinker.current_files()}
