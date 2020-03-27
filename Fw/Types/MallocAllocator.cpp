@@ -25,7 +25,11 @@ namespace Fw {
         // don't use identifier
         // heap memory is never recoverable
         recoverable = false;
-        return ::malloc(size);
+        void *mem = ::malloc(size);
+        if (NULL == mem) {
+            size = 0; // set to zero if can't get memory
+        }
+        return mem;
     }
 
     void MallocAllocator::deallocate(const NATIVE_UINT_TYPE identifier, void* ptr) {

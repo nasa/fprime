@@ -27,6 +27,7 @@ namespace Fw {
         void* addr = mmap(NULL, size, PROT_READ | PROT_WRITE,
                              MAP_SHARED | MAP_ANONYMOUS, -1, 0);
         if (addr == MAP_FAILED) {
+            size = 0;
             return NULL;
         }
         this->m_length = size;
