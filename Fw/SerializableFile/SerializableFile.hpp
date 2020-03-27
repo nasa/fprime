@@ -31,6 +31,7 @@ namespace Fw {
       DESERIALIZATION_ERROR
     };
 
+    // NOTE!: This should not be used with an allocator that can return a smaller buffer than requested
     SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize);
     ~SerializableFile();
     
@@ -40,6 +41,7 @@ namespace Fw {
     PRIVATE:
     void reset();
     MemAllocator* allocator;
+    bool recoverable; // don't care; for allocator
     SerialBuffer buffer;
   };
 }

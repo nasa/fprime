@@ -18,7 +18,9 @@ namespace Fw {
 
   SerializableFile::SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize) :
     allocator(allocator),
-    buffer( (U8 *const) this->allocator->allocate(0, maxSerializedSize), maxSerializedSize)
+    recoverable(false),
+    // FIXME: below line needs to be fixed with new allocator. Buffer will be wrongly sized if allocator returns smaller buffer
+    buffer( (U8 *const) this->allocator->allocate(0, maxSerializedSize, recoverable), maxSerializedSize)
   {
     FW_ASSERT(NULL != buffer.getBuffAddr());
   }
