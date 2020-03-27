@@ -42,6 +42,7 @@ namespace Fw {
     void reset();
     MemAllocator* allocator;
     bool recoverable; // don't care; for allocator
+    NATIVE_UINT_TYPE actualSize; // for checking
     SerialBuffer buffer;
   };
 }
