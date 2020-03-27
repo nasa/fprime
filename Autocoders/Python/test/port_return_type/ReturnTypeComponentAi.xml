@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="PassBy" kind="passive" namespace="App">
+    <import_port_type>Autocoders/Python/test/port_return_type/Msg1PortAi.xml</import_port_type>
+    <comment>A demonstration component with ports pass by value, pointer and type</comment>
+    <ports>
+        <!-- Port definition-->
+        <port name="InExt" data_type="Msg1" kind="sync_input" max_number="1">
+            <comment>
+            The input port of type SomeType has a return value
+            </comment>
+        </port>
+        <port name="InReturn" data_type="Msg1" kind="sync_input" max_number="1">
+            <comment>
+            The input port of type SomeType has a return value
+            </comment>
+        </port>
+        <port name="OutReturn" data_type="Msg1" kind="output" max_number="1">
+            <comment>
+            The output port of type SomeType has a return value
+            </comment>
+        </port>
+
+    </ports>
+</component>
+

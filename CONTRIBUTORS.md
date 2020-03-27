@@ -7,14 +7,17 @@ JPL Contributors to the F' Software Framework:
 * Catchen, Michael
 * Chase, Matthew
 * Chen, Victor
+* Daruwala, Rohan
 * Daugherty, Daniel
 * Day, Leonard
 * Dinkel, Jack
 * Dinkel, Kevin
 * Gandhi, Gorang
 * Gangianpour, Mehran
+* Harriman, Blake
 * Hofman, James
 * Huynh, Thomas
+* Ishii, Jordan
 * Kaye, Warren
 * Kooi, David
 * Klemm, Roger
@@ -25,6 +28,7 @@ JPL Contributors to the F' Software Framework:
 * Merewether, Eugene
 * Nicolich, Eric
 * Nowicki, Robert
+* Oran, Kevin
 * Ortega, Kevin
 * Pandian, Prashanth 
 * Ramanan, Saikiran
@@ -41,3 +45,8 @@ JPL Contributors to the F' Software Framework:
 * Wang, Eric
 * Whitaker, William
 * Wong, Vincent
+
+Non-JPL Contributors to the F' Software Framework:
+* acxz
+* jasonduley
+* keck-in-space

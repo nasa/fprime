@@ -204,14 +204,14 @@ class PlanValidator:
         contribution = 0.
 
         title = issue.get("title")
-        if title in tasks.keys():
+        if title in list(tasks.keys()):
             task_name = title
-        elif ':' in title and title[:title.find(':')] in tasks.keys():
+        elif ':' in title and title[:title.find(':')] in list(tasks.keys()):
             task_name = title[:title.find(':')]
         else:
             for label_json in issue.get("labels"):
                 label_name = str(label_json.get("name"))
-                if label_name in tasks.keys():
+                if label_name in list(tasks.keys()):
                     task_name = label_name
                     break
 
@@ -227,7 +227,7 @@ class PlanValidator:
                 for label_json in issue.get("labels"):
                     # once we find a label that's a gate label, break (there can't be more than 1)
                     label_name = str(label_json.get("name"))
-                    if not gate_name and label_name in tasks[task_name].keys():
+                    if not gate_name and label_name in list(tasks[task_name].keys()):
                         gate_name = label_name
                     # labels.append(label_name)
             if gate_name or gate_name == "":
@@ -236,7 +236,7 @@ class PlanValidator:
                 contribution = tasks[task_name][gate_name][self.EV]
                 for local_key, ghe_upper_key, ghe_lower_key in [(self.ENG, "assignee", "login"),
                                                                 (self.REL, "milestone", "title")]:
-                    if ghe_upper_key in issue.keys() and issue[ghe_upper_key]:
+                    if ghe_upper_key in list(issue.keys()) and issue[ghe_upper_key]:
                         ghe_value = issue[ghe_upper_key][ghe_lower_key]
                     else:
                         ghe_value = ""
@@ -271,8 +271,8 @@ class PlanValidator:
         labels = ghe_conn.get_labels(repo_name)
         gates = gates or self.plans[plan_key][self.GATE]
         print("\n{} Missing Labels {} ".format("-" * 10, "-" * 10))
-        for gate in gates.keys():
-            if gate not in labels.keys():
+        for gate in list(gates.keys()):
+            if gate not in list(labels.keys()):
                 print("Unable to find label \"{}\" in GitHub repo {}.".format(gate, repo_name))
                 if create:
                     print("** Creating \"{}\"".format(gate))
@@ -282,8 +282,8 @@ class PlanValidator:
             # Nothing to do in this case, retained for consistency
         if show_found:
             print("\n{} Found Labels {} ".format("-" * 10, "-" * 10))
-            for gate in gates.keys():
-                if gate in labels.keys():
+            for gate in list(gates.keys()):
+                if gate in list(labels.keys()):
                     print("Found label \"{}\" in GitHub repo {} at url {}."
                           .format(gate, repo_name, labels[gate]["url"]))
 
@@ -306,13 +306,13 @@ class PlanValidator:
         """
         plan_key = plan_key or self.primary_plan
         milestones = ghe_conn.get_milestones(repo_name)
-        for milestone in milestones.values():
+        for milestone in list(milestones.values()):
             name = milestone["title"]
             milestones[name] = milestone
         releases = self.plans[plan_key][self.REL]
         print("\n{} Missing Releases {} ".format("-" * 10, "-" * 10))
-        for release in releases.keys():
-            if release not in milestones.keys():
+        for release in list(releases.keys()):
+            if release not in list(milestones.keys()):
                 print("Unable to find milestone \"{}\" in GitHub repo {}.".format(release, repo_name))
                 if create:
                     print("** Creating \"{}\"".format(release))
@@ -324,8 +324,8 @@ class PlanValidator:
             # Nothing to do in this case, retained in case due_date calculation and updating was wanted.
         if show_found:
             print("\n{} Found Releases {} ".format("-" * 10, "-" * 10))
-            for release in releases.keys():
-                if release in milestones.keys():
+            for release in list(releases.keys()):
+                if release in list(milestones.keys()):
                     print("Found milestone \"{}\" in GitHub repo {} at url {}."
                           .format(release, repo_name, milestones[release]["url"]))
 
@@ -353,7 +353,7 @@ class PlanValidator:
         # get all of the issues
         issues = ghe_conn.get_issues(repo_name, events=False)
         # check each of the issues to see if it matches against
-        for issue_number in issues.keys():
+        for issue_number in list(issues.keys()):
             self.find_issue_in_plan(issues[issue_number], plan_key=plan_key)
         print("\n{} Missing Plan Items {} ".format("-" * 10, "-" * 10))
         for task in task_list:

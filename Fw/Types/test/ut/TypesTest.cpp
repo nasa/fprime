@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-#define DEBUG_VERBOSE 1
+#define DEBUG_VERBOSE 0
 
 #include <gtest/gtest.h>
 
@@ -547,8 +547,8 @@ void classCopyTest(I32 iterations) {
     timer.start();
 
     for (I32 iter = 0; iter < iterations; iter++) {
-        memcpy(buff, &ms, sizeof(ms));
-        memcpy(&ms, buff, sizeof(buff));
+        memcpy(buff, reinterpret_cast<void*>(&ms), sizeof(ms));
+        memcpy(reinterpret_cast<void*>(&ms), buff, sizeof(buff));
     }
 
     timer.stop();
@@ -561,8 +561,8 @@ void classCopyTest(I32 iterations) {
 }
 
 void printSizes(void) {
-    printf("Sizeof TestStruct: %d\n", sizeof(TestStruct));
-    printf("Sizeof MySerializable: %d\n", sizeof(MySerializable));
+    printf("Sizeof TestStruct: %lu\n", sizeof(TestStruct));
+    printf("Sizeof MySerializable: %lu\n", sizeof(MySerializable));
 }
 
 void AssertTest(void) {

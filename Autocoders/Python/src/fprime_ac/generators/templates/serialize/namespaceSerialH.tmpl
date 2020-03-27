@@ -1,0 +1,58 @@
+#if $namespace_list != None
+ #for $n in $namespace_list:
+namespace ${n} {
+ #end for
+#end if
+#if $len($enum_type_list) > 0:
+#for $e in $enum_type_list:
+#set type_name = $e[0][1]
+#set enum_list = $e[1]
+
+    typedef enum {
+#for $item in $enum_list:
+        $item
+#end for
+        ${type_name}_MAX
+    } ${type_name};
+#end for
+#end if
+
+class ${name} : public Fw::Serializable {
+
+#for ($memname,$type,$size,$format,$comment) in $mem_list:
+#if $type == "string":
+
+  public:
+    class ${memname}String : public Fw::StringBase {
+        public:
+
+            enum {
+                SERIALIZED_SIZE = ${size} + sizeof(FwBuffSizeType) //!<size of buffer + storage of two size words
+            };
+
+            ${memname}String(const char* src); //!< char array constructor
+            ${memname}String(const Fw::StringBase& src); //!< string base constructor
+            ${memname}String(const ${memname}String& src); //!< string base constructor
+            ${memname}String(void); //!< default constructor
+            virtual ~${memname}String(void); //!< destructor
+            const char* toChar(void) const; //!< retrieves char buffer of string
+            NATIVE_UINT_TYPE length(void) const; //!< returns length of string
+            bool operator==(const ${memname}String& src) const; //!< equality operator
+
+            const ${memname}String& operator=(const ${memname}String& other); //!< equal operator for other strings
+
+            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialization function
+            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
+
+        private:
+            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy a buffer, overwriting current contents
+            NATIVE_UINT_TYPE getCapacity(void) const ;
+            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+
+            char m_buf[${size}]; //!< buffer for string storage
+
+    };
+
+#end if
+#end for
+

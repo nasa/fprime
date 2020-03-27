@@ -1,0 +1,11 @@
+####
+# File requirements.txt:
+#
+# This file provides the python requirements for the F prime GDS package. This file unifies
+# both the Python 2 and Python 3 requirements. It can be installed in the local python environment
+# using the following command:
+#
+# ```
+# pip install -r ./requirements.txt
+# ```
+openpyxl

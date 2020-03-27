@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="RecvBuff" kind="passive" namespace="Ref">
     <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
     <import_serializable_type>Ref/RecvBuffApp/PacketStatSerializableAi.xml</import_serializable_type>
@@ -18,7 +18,7 @@
             Packet Statistics
             </comment>
         </channel>
-        <channel id="1" name="Sensor1" data_type="F32" abbrev="R002-3000">
+        <channel id="1" name="Sensor1" data_type="F32" format_string = "%4.2fV" abbrev="R002-3000">
             <comment>
             Value of Sensor1
             </comment>

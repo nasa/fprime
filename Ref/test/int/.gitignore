@@ -1,0 +1,3 @@
+# output files from pytest and test API.
+assets
+*.html

@@ -90,7 +90,7 @@ def format_label_chart(fig, axs, x_data):
     try:
         for ax in axs:
             ax.legend()
-            ax.set_xticks(np.array(range(len(x_data))))
+            ax.set_xticks(np.array(list(range(len(x_data)))))
             ax.set_xticklabels(x_data, rotation=90)
             x_lim = ax.get_xlim()
             ax.set_xlim(-1, len(x_data))
@@ -98,7 +98,7 @@ def format_label_chart(fig, axs, x_data):
             ax.set_ylim(y_lim[0], 1.05 * y_lim[1])
     except TypeError:
         axs.legend()
-        axs.set_xticks(np.array(range(len(x_data))))
+        axs.set_xticks(np.array(list(range(len(x_data)))))
         axs.set_xticklabels(x_data, rotation=90)
         x_lim = axs.get_xlim()
         axs.set_xlim(-1, len(x_data))
@@ -169,12 +169,12 @@ def generate_table(table_columns, data, title="", directory=None, show=False):
 def generate_line_plot(x_data, y_data, filled=None, data_labels=None, title="", directory=None, show=False,
                        date_plot=False, stacked=False):
     if data_labels is None:
-        data_labels = y_data.keys()
+        data_labels = list(y_data.keys())
 
     if date_plot:
         x_index = x_data
     else:
-        x_index = np.array(range(len(x_data)))
+        x_index = np.array(list(range(len(x_data))))
     y_offset = np.zeros((len(x_index),))
 
     colors = create_graph_colors_list(data_labels)
@@ -216,7 +216,7 @@ def generate_line_plot(x_data, y_data, filled=None, data_labels=None, title="", 
 def _generate_complicated_bar_plot(x_data, y_data, data_labels=None, title="", directory=None, show=False,
                                    date_plot=False, split=False, adjacent=False, stacked=False):
     if data_labels is None:
-        data_labels = y_data.keys()
+        data_labels = list(y_data.keys())
 
     bar_width = DEFAULT_BAR_WIDTH
     colors = create_graph_colors_list(data_labels)
@@ -239,7 +239,7 @@ def _generate_complicated_bar_plot(x_data, y_data, data_labels=None, title="", d
     if date_plot:
         x = x_data
     else:
-        x = np.array(range(len(x_data)))
+        x = np.array(list(range(len(x_data))))
         if adjacent:
             bar_width /= len(data_labels)
             x = x - (len(data_labels) - 1) * bar_width / 2
@@ -321,7 +321,7 @@ def table_project_summary(reporter, categories=None, period=None, show=False, di
     # sloc
     for category in categories[S]:
         total = 0
-        for key in (metrics.sloc_data.keys()):
+        for key in (list(metrics.sloc_data.keys())):
             total += metrics.sloc_data[key].get(category) \
                 if metrics.sloc_data[key].get(category) is not None else 0
         table_data.append([category, total])
@@ -329,7 +329,7 @@ def table_project_summary(reporter, categories=None, period=None, show=False, di
     # component counts
     for comp in categories[C]:
         total = 0
-        for key in metrics.comp_data.keys():
+        for key in list(metrics.comp_data.keys()):
             total += metrics.comp_data[key].get(comp) \
                 if metrics.comp_data[key].get(comp) is not None else 0
         table_data.append([comp, total])
@@ -952,7 +952,7 @@ def line_plot_ev_plan(reporter, categories=None, period=None, show=False, direct
 
 
 def sloc_overview_annotation(reporter, categories=None, period=None, show=False, directory=None, title="SLOC Overview Annotation"):
-    return annotation_insert(reporter.metrics.sloc_data.keys())
+    return annotation_insert(list(reporter.metrics.sloc_data.keys()))
 
 
 def sloc_totals_annotation(reporter, categories=None, period=None, show=False, directory=None, title="SLOC Totals Annotation"):
@@ -961,7 +961,7 @@ def sloc_totals_annotation(reporter, categories=None, period=None, show=False, d
 
 
 def comp_overview_annotation(reporter, categories=None, period=None, show=False, directory=None, title="Component Overview Annotation"):
-    return annotation_insert(reporter.metrics.comp_data.keys())
+    return annotation_insert(list(reporter.metrics.comp_data.keys()))
 
 
 def comp_totals_annotation(reporter, categories=None, period=None, show=False, directory=None, title="Component Totals Annotation"):
@@ -984,7 +984,7 @@ def annotation_insert(types):
 def _sort_legend(ax):
     handles, labels = ax.get_legend_handles_labels()
     # sort both labels and handles by labels
-    labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+    labels, handles = list(zip(*sorted(zip(labels, handles), key=lambda t: t[0])))
     return handles, labels
 
 

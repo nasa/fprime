@@ -15,4 +15,4 @@
 |---|---|---|---|---|---|---|
 |RateGroupStarted|0 (0x0)|Informational event that rate group has started| | | | |
 |RateGroupCycleSlip|1 (0x1)|Warning event that rate group has had a cycle slip| | | | |
-| | | |cycle|U32||The cycle where the cycle occurred|    
+| | | |cycle|U32||The cycle where the cycle occurred|

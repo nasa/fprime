@@ -2,7 +2,7 @@
 
 import scripts.helpers.target_helper
 import scripts.helpers.process_helper
-import commands
+import subprocess
 import os
 import signal
 import time
@@ -12,7 +12,7 @@ class LinuxHelper(scripts.helpers.target_helper.TargetHelper):
         scripts.helpers.helper.Helper.__init__(self)
         self.instance_id = instance_id
         self.started = False
-        if os.environ.has_key("DUAL_RCE"):
+        if "DUAL_RCE" in os.environ:
             self.max_session_id_char = 24
         else:
             self.max_session_id_char = 30
@@ -34,13 +34,13 @@ class LinuxHelper(scripts.helpers.target_helper.TargetHelper):
         title = xterm_name
         arg_list += "-sl","20000","-title",title,"-n",title
             
-        if os.environ.has_key("vxsim_geometry"):
+        if "vxsim_geometry" in os.environ:
             arg_list += "-geometry",os.environ["vxsim_geometry"]
 
         #TBD fsw_file = os.environ["BUILD_ROOT"] + "/fsw/" + os.environ["COMPILER_dir"]+"/fsw"
 
         fsw_file = os.environ["BUILD_ROOT"] + "/fsw/" + os.environ["COMPILER_dir"] + "/fsw"
-        if os.environ.has_key("LINUX_BIN_PRE"):
+        if "LINUX_BIN_PRE" in os.environ:
             arg_list += "-e",os.environ["LINUX_BIN_PRE"],fsw_file
         else:
             arg_list += "-e",fsw_file
@@ -66,23 +66,23 @@ class LinuxHelper(scripts.helpers.target_helper.TargetHelper):
         self.started = True
 
     def load_fsw(self, fsw_file):
-        print "base load"
+        print("base load")
 
     def run_cmd(self, cmd):
-        print "base run"
+        print("base run")
 
     def reset(self):
-        print "base reset"
+        print("base reset")
 
     def exit(self):
         if self.started:
                         self.linux_helper.kill(signal.SIGKILL)
 
     def wait(self):
-        print "base wait"
+        print("base wait")
 
     def do_test(self, unit_test):
-        print "base do_test"
+        print("base do_test")
 
     def genStdScript(self):
-                print "genStdScript"
+                print("genStdScript")

@@ -1,4 +1,4 @@
-#!/tps/bin/python
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -100,7 +100,7 @@ crcfile.close()
 
 
     
-print "%s crc is %d (0x%08X)" % (filename,crc,crc)
+print("%s crc is %d (0x%08X)" % (filename,crc,crc))
     
 
 

@@ -5,7 +5,6 @@
  *
  * \copyright
  * Copyright (C) 2009-2017 California Institute of Technology. ALL RIGHTS RESERVED. 
- * Any commercial use must be negotiated with the Office of Technology Transfer at the California Institute of Technology.
  * The research was carried out at the Jet Propulsion Laboratory, California Institute of Technology, 
  * under a contract with the National Aeronautics and Space Administration. 
  * This software has been approved for open source release under NTR #49404.

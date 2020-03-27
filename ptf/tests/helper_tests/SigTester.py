@@ -1,5 +1,3 @@
-#!/dsw/Python-2.4.3r1_32/bin/python
-
 import scripts.helpers.target_helper_factory
 import scripts.helpers.master_helper_factory
 import scripts.helpers.simulation_helper_factory
@@ -20,6 +18,6 @@ target_helper.exit()
 simulation_helper.exit()
 gds_helper.exit()
 
-print "Interactive session finished."
+print("Interactive session finished.")
 
 

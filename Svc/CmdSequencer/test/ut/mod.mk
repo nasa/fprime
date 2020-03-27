@@ -5,7 +5,7 @@
 TEST_SRC= \
   AMPCS.cpp \
   CommandBuffers.cpp \
-  GTestBase.cpp \
+  Handcode/GTestBase.cpp \
   Health.cpp \
   ImmediateBase.cpp \
   Immediate.cpp \
@@ -41,7 +41,7 @@ TEST_SRC= \
   SequenceFiles/SizeFieldTooSmallFile.cpp \
   SequenceFiles/TooLargeFile.cpp \
   SequenceFiles/USecFieldTooShortFile.cpp \
-  TesterBase.cpp \
+  Handcode/TesterBase.cpp \
   Tester.cpp
 
 TEST_MODS= \
@@ -64,3 +64,7 @@ TEST_MODS= \
   Utils/Hash \
   gtest
   
+
+
+
+COMPARGS = -I$(CURDIR)/test/ut/Handcode

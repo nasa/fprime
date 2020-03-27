@@ -1,0 +1,71 @@
+<!--
+index.html:
+
+This HTML document sets up the most basic of UIs for the F prime webified GUI layer. This GUI layer is built with the
+Bootstrap CSS, but without the paired JavaScript packages.
+
+
+This GUI provides the following items:
+
+1. Events panel showing events in the system
+2. Channels panel showing latest channel readings
+3. Commands panel allowing for commanding of the system
+
+Note: Bootstrap is used, as it can be run as a CSS framework without many node and JavaScript packages.
+Note: Vue.js annotations are used, as Vue is the data-to-view framework of choice.  It can be run with a single JS
+      dependency, without need for WebPack or other module loaders.
+-->
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="third-party/css/bootstrap.min.css">
+        <link rel="stylesheet" href="third-party/css/vue-select.css">
+        <link rel="stylesheet" href="css/fpstyle.css">
+        <!-- Development mode -Vue- should it be needed for debug purposes -->
+        <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script-->
+
+        <!-- Third-party JavaScript files, hosted locally to remove internet dependence -->
+        <script src="third-party/js/vue.min.js"></script>
+        <script src="third-party/js/sorttable.js"></script>
+        <!-- JavaScript GDS files -->
+        <script type="module" src="js/logs.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid  fp-flex-repeater fp-full-height">
+            <div class="fp-flex-header">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <span class="navbar-brand">F´</span>
+                    <div class="navbar-nav">
+                        <a href="/" class="nav-item nav-link">Ground System</a>
+                        <div class="nav-item nav-link active">Logging</div>
+                    </div>
+                </nav>
+                <h2>F´ Logging Interface</h2>
+            </div>
+            <div id="logging-container" class="fp-flex-repeater">
+                <logging v-bind:logs="logs"></logging>
+            </div>
+        </div>
+
+        <div hidden>
+            <!-- Tabbed and routed Command Component -->
+            <template id="logs-template">
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <label for="logselect">Available Logs:</label>
+                        <v-select id="logselect"
+                                  :clearable="false" :searchable="true"
+                                  :filterable="true"  :options="options"
+                                  v-model="selected">
+                        </v-select>
+                    </div>
+                    <div class="fp-scroll-container">
+                        <div class="fp-scrollable fp-color-logging">
+                            <pre><code>{{logs[selected]}}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </body>
+</html>

@@ -6,15 +6,8 @@
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  *
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 #include <Fw/Types/StringType.hpp>
@@ -54,19 +47,14 @@ namespace Fw {
 
     bool StringBase::operator==(const char* other) const {
 
-        NATIVE_UINT_TYPE len = this->length();
-
-        const char* us = this->toChar();
-        if ((us == 0) or (other == 0)) {
+        const char *const us = this->toChar();
+        if ((us == NULL) or (other == NULL)) {
             return false;
         }
-        // compare buffer
-        for (NATIVE_UINT_TYPE byte = 0; byte < len; byte++) {
-            if (us[byte] != other[byte]) {
-                return false;
-            }
-        }
-        return true;
+
+        const NATIVE_UINT_TYPE capacity = this->getCapacity();
+        const size_t result = strncmp(us, other, capacity);
+        return (result == 0);
 
     }
 

@@ -14,7 +14,7 @@ class EnvXMLHandler(xml.sax.ContentHandler):
 		#print "TAG: %s" % (tag)
 		#print attrs.keys()
 
-		for param in attrs.keys():
+		for param in list(attrs.keys()):
 			val = attrs[param]
 
 			# look for embedded environment variables
@@ -39,8 +39,8 @@ class EnvXMLHandler(xml.sax.ContentHandler):
 							try:
 								sub_val = os.environ[var]
 							except:
-								for key in self.cfg_dictionary.keys():
-									print "%s = %s" % (key,self.cfg_dictionary[key])
+								for key in list(self.cfg_dictionary.keys()):
+									print("%s = %s" % (key,self.cfg_dictionary[key]))
 								raise str("%s not found in environment or in xml file" % var)
 							
 						val = val_pre + sub_val + val_post
@@ -51,7 +51,7 @@ class EnvXMLHandler(xml.sax.ContentHandler):
 			
 	def toEnvs(self):
 
-		for env_var in self.cfg_dictionary.keys():
+		for env_var in list(self.cfg_dictionary.keys()):
 			# the dictionary key is the variable
 			val = self.cfg_dictionary[env_var]
 			# print "Setting " + env_var + " to " + val

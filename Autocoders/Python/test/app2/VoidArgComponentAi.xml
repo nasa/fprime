@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+<component name="VoidArg" kind="active" namespace="App2">
+    <import_port_type>Autocoders/Python/test/app2/VoidPortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/app2/MsgPortAi.xml</import_port_type>
+    <comment>
+    A demonstration component that contains six instances
+    of ports.  Two input ports have no args and an outport
+    responds to the no args case.  Two input ports have
+    arguments and one an output port has arguments.
+
+    This component is based on two different port types.
+    </comment>
+    <ports>
+        <!-- First port defined is external void for main code calling -->
+        <port name="ExtIn" data_type="Void" kind="async_input">
+        <comment>The input port has no args and is external interface</comment>
+        </port>
+
+        <!-- Second port defined is input void with no args -->
+        <port name="In" data_type="Void" kind="async_input">
+        <comment>The input port of type Void has no args</comment>
+        </port>
+
+        <!-- Third port defined is output void with no args -->
+        <port name="Out" data_type="Void" kind="output">
+        <comment>The output port of type Void has no args</comment>
+        </port>
+
+        <!-- Forth port defined is input with three args of type Msg -->
+        <port name="ExtMsgIn" data_type="Msg" kind="async_input">
+        <comment>The input port of type Msg has three args and is external interface</comment>
+        </port>
+
+        <!-- Fith port defined is input with three args of type Msg -->
+        <port name="MsgIn" data_type="Msg" kind="async_input">
+        <comment>The input port of type Msg has three args</comment>
+        </port>
+
+        <!-- Sixth port defined is output with three args of type Msg -->
+        <port name="MsgOut" data_type="Msg" kind="output">
+        <comment>The input port of type Msg has three args</comment>
+        </port>
+    </ports>
+</component>
+

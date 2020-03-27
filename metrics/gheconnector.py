@@ -99,7 +99,7 @@ class GitHubConnector:
             current_path += '/' + step
             if not complete and index == len(path_steps) - 1:
                 break
-            if (repo_name, ref, current_path) in self.found_submodules.keys():
+            if (repo_name, ref, current_path) in list(self.found_submodules.keys()):
                 repo_name, ref, prefix_path = self.found_submodules[(repo_name, ref, current_path)]
                 current_path = ""
         return repo_name, current_path, ref
@@ -140,7 +140,7 @@ class GitHubConnector:
         :param repo:
         :return:
         """
-        if repo not in self.repos.keys():
+        if repo not in list(self.repos.keys()):
             github_repo_url = self.github_url + self.API_ENDPOINT + '/' + repo
             github_repo_data, github_repo_headers, status = self._github_request(github_repo_url)
             self.repos[repo] = github_repo_data
@@ -352,7 +352,7 @@ class GitHubConnector:
             return {}
         if repo_name not in self.labels:
             self.labels[repo_name] = {}
-        if label_name not in self.labels.keys():
+        if label_name not in list(self.labels.keys()):
             # /repos/:owner/:repo/labels
             github_label_url = self.github_url + self.API_ENDPOINT + '/' + repo_name + self.LABELS_SUFFIX \
                                + "/" + label_name
@@ -379,7 +379,7 @@ class GitHubConnector:
             return {}
         if repo_name not in self.milestones:
             self.milestones[repo_name] = {}
-        if milestone_number not in self.milestones.keys():
+        if milestone_number not in list(self.milestones.keys()):
             # /repos/:owner/:repo/labels
             github_milestone_url = self.github_url + self.API_ENDPOINT + '/' + repo_name + self.MILESTONES_SUFFIX \
                                    + "/" + milestone_number
@@ -412,7 +412,7 @@ class GitHubConnector:
         github_issues_url = github_repo_url + self.ISSUES_SUFFIX
         github_issue_data, h, s = self._github_post(github_issues_url, issue_json)
         issue_number = github_issue_data["number"]
-        if repo_name not in self.issues.keys():
+        if repo_name not in list(self.issues.keys()):
             self.issues[repo_name] = {}
         self.issues[repo_name][issue_number] = github_issue_data
         return self.issues[repo_name][issue_number]
@@ -432,7 +432,7 @@ class GitHubConnector:
         github_repo_url = self.github_url + self.API_ENDPOINT + '/' + repo_name
         github_labels_url = github_repo_url + self.LABELS_SUFFIX
         github_issue_data, h, s = self._github_post(github_labels_url, label_json)
-        if repo_name not in self.labels.keys():
+        if repo_name not in list(self.labels.keys()):
             self.labels[repo_name] = {}
         self.labels[repo_name][label_name] = github_issue_data
         return self.labels[repo_name][label_name]
@@ -456,7 +456,7 @@ class GitHubConnector:
         github_milestones_url = github_repo_url + self.MILESTONES_SUFFIX
         github_issue_data, h, s = self._github_post(github_milestones_url, milestone_json)
         milestone_number = github_issue_data["number"]
-        if repo_name not in self.milestones.keys():
+        if repo_name not in list(self.milestones.keys()):
             self.milestones[repo_name] = {}
         self.milestones[repo_name][milestone_number] = github_issue_data
         return self.milestones[repo_name][milestone_number]
@@ -493,7 +493,7 @@ class GitHubConnector:
         """
         label_json = {"name": label["name"],
                       "color": label["color"],
-                      "description": label["description"] if "description" in label.keys() else ""}
+                      "description": label["description"] if "description" in list(label.keys()) else ""}
         label, h, s = self._github_post(label["url"], label_json)
         return label
 
@@ -505,7 +505,7 @@ class GitHubConnector:
         """
         milestone_json = {"title": milestone["title"],
                           "due_on": milestone["due_on"],
-                          "description": milestone["description"] if "description" in milestone.keys() else "",
+                          "description": milestone["description"] if "description" in list(milestone.keys()) else "",
                           "state": milestone["state"]}
         milestone, h, s = self._github_post(milestone["url"], milestone_json)
         return milestone

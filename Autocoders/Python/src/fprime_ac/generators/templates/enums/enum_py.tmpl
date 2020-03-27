@@ -1,0 +1,22 @@
+##
+## Template to stamp out serializable enums .py file
+##
+from models.serialize.DefaultTypeExceptions import *
+from models.serialize.type_base import *
+from models.serialize.default_enum_type import *
+from models.serialize.default_string_type import *
+from models.serialize.default_serializable_type import *
+
+def ${name}():
+  return DefaultEnumType(
+    "${name}",
+    {
+#for $item_name,$item_value,$item_comment in $items_list:
+#if not $item_value == ""
+      "${item_name}":${item_value},
+#else
+    "${item_name}",
+#end if
+#end for
+    }
+  )

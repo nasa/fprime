@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Component1" kind="active" namespace="Example">
+    <import_enum_type>Autocoders/Python/test/enum_xml/Enum1EnumAi.xml</import_enum_type>
+    <import_port_type>Autocoders/Python/test/enum_xml/Port1PortAi.xml</import_port_type>
+    <import_serializable_type>Autocoders/Python/test/enum_xml/Serial1SerializableAi.xml</import_serializable_type>
+
+    <comment>A demonstration component with enums</comment>
+    <ports>
+        <port name="ExEnumIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
+        <port name="EnumIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
+        <port name="EnumOut" kind="output" data_type="Example::Port1" max_number="1"/>
+    </ports>
+</component>

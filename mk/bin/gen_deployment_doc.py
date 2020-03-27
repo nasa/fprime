@@ -104,10 +104,10 @@ nav_doc_end = """
 """
 
 if len(sys.argv) < 3:
-    print("%s: Must specify dest file and one module!"%sys.argv[0])
+    print(("%s: Must specify dest file and one module!"%sys.argv[0]))
     
 path_to_dep = "%s/%s"%(os.environ["BUILD_ROOT"],sys.argv[1]) 
-print "Generating HTML files for %s" % path_to_dep
+print("Generating HTML files for %s" % path_to_dep)
 
 open("%s/docs/deployment_title.html"%path_to_dep,"w").write(deployment_title.replace("$deployment",sys.argv[1]))
 open("%s/docs/deployment.html"%path_to_dep,"w").write(deployment_doc.replace("$deployment",sys.argv[1]))

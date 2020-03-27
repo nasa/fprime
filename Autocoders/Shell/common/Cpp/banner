@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# ----------------------------------------------------------------------
+# Codegen/Cpp/banner
+# Emit banner
+# ----------------------------------------------------------------------
+
+echo '// ====================================================================== 
+// \\title  '$1'
+// \\author '$2'
+// \\brief  '$3'
+//
+// \\copyright
+// Copyright (C) '`date "+%Y"`' California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+// 
+// ======================================================================'

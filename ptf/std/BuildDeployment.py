@@ -1,5 +1,3 @@
-#!/dsw/Python-2.4.3r1_32/bin/python
-
 import scripts.helpers.target_helper_factory
 import scripts.helpers.results_helpers.file_searcher
 import scripts.helpers.make_helper
@@ -10,7 +8,7 @@ import optparse
 
 deployment = os.environ["DEPLOYMENT"]
 
-print "Build Deployment %s"%deployment
+print("Build Deployment %s"%deployment)
 
 parser = optparse.OptionParser()
 

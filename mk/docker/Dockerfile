@@ -1,29 +1,64 @@
-FROM ubuntu:16.04
-# Copy-on build specific items 
-COPY os-pkg/ubuntu-packages.sh /tmp
-COPY python/pip_required_build.txt /tmp
 ####
-# Run the install of required software.
-# Note: this is done in one step to prevent extra docker image size.
+# F Prime Base Image:
+#
+# The F prime base image is an Ubuntu 18.04 image with some basic packages installed to ensure that
+# the build tools and needed packages are installed. It also sets-up a virtual environment into
+# which the python packages can be installed. This step, however; is deferred to the next layer
+# of containers. It ensures the fprime virtual environment is writable by members in the fprime
+# group, and owned by an fprime user.
+#
+# Note: the RPI toolchain is also installed to ensure that the RPI package is ready-to-go.
+#
+# Build this with the --target fprime-base
 ####
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends csh git build-essential && \
-    yes | /tmp/ubuntu-packages.sh && \
-    pip install -r /tmp/pip_required_build.txt && \
+FROM ubuntu:18.04 AS fprime-base
+# Adding fprime user, group, and password fprime
+RUN groupadd fprime && \
+    groupmod -g 1001 fprime && \
+    useradd -ms /bin/bash -g root -G sudo,fprime -p fprime fprime && \
+    usermod -u 1001 fprime && \
+# Installing system components
+    apt-get update && apt-get install -y --no-install-recommends \
+    bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv && \
+    mkdir -p /opt/ && \
+    git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Change user and group of the virtual environemnt
+# Make fprime user default user
+ENV HOST fprime
+ENV USER fprime
+ENV LANG C.UTF-8
+ENTRYPOINT ["/bin/bash"]
+
+### **** **** Add Non-CI Images Here **** **** ###
+#FROM fprime-base AS fprime-docker
+#    COPY . /opt/fprime
+#    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+#        pip install wheel && \
+#        pip install /opt/fprime/Fw/Python/ && \
+#        pip install /opt/fprime/Gds/ && \
+#        rm -r ~/.cache/pip && \
+#        chown -R fprime:fprime /opt/fprime-venv && \
+#        chmod -R 775 /opt/fprime-venv
+#ENV VIRTUAL_ENV "/opt/fprime-venv"
+#ENV PYTHONHOME "/opt/fprime-venv"
+#ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
 ####
-# Jenkins:
-#   This container is used to build as part of a Jenkins-CI setup. The following lines add in
-# the required items to support a Jenkins build.
+# F Prime CI Image:   **** Must Be Last Image In File ****
+#
+# This sets up an image for use within a CI build system. This is currently configured for the
+# Jenkins CI system. This means a Jenkins user is created, setup and ready to run.
 ####
-# Jenkins user setup
+FROM fprime-base AS jenkins-ci
 RUN groupadd jenkins && \
     groupmod -g 1003 jenkins && \
-    useradd -ms /bin/bash -g root -G sudo,jenkins -p jenkins jenkins && \
+    useradd -ms /bin/bash -g root -G sudo,jenkins,fprime -p jenkins jenkins && \
     usermod -u 1003 jenkins
-# Jenkins environment
 ENV HOST jenkins
 ENV USER jenkins
 # Paths and entrypoinys
 ENV PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV LANG C.UTF-8
+ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
 ENTRYPOINT ["/bin/bash"]

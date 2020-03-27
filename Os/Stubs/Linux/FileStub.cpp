@@ -15,21 +15,21 @@
 
 namespace Os {
 
-    static ReadIntercepter readInterceptor = 0;
+    static ReadInterceptor readInterceptor = 0;
     static void *readInterceptorPtr = 0;
 
-    static WriteIntercepter writeInterceptor = 0;
+    static WriteInterceptor writeInterceptor = 0;
     static void *writeInterceptorPtr = 0;
 
-    static OpenIntercepter openInterceptor = 0;
+    static OpenInterceptor openInterceptor = 0;
     static void *openInterceptorPtr = 0;
 
-    static SeekIntercepter seekInterceptor = 0;
+    static SeekInterceptor seekInterceptor = 0;
     static void *seekInterceptorPtr = 0;
 
     static NATIVE_INT_TYPE lastError = 0;
 
-    void registerReadInterceptor(ReadIntercepter funcPtr, void *ptr) {
+    void registerReadInterceptor(ReadInterceptor funcPtr, void *ptr) {
         readInterceptor = funcPtr;
         readInterceptorPtr = ptr;
     }
@@ -38,7 +38,7 @@ namespace Os {
         readInterceptor = 0;
     }
 
-    void registerWriteInterceptor(WriteIntercepter funcPtr, void *ptr) {
+    void registerWriteInterceptor(WriteInterceptor funcPtr, void *ptr) {
         writeInterceptor = funcPtr;
         writeInterceptorPtr = ptr;
     }
@@ -47,7 +47,7 @@ namespace Os {
         writeInterceptor = 0;
     }
 
-    void registerOpenInterceptor(OpenIntercepter funcPtr, void *ptr) {
+    void registerOpenInterceptor(OpenInterceptor funcPtr, void *ptr) {
         openInterceptor = funcPtr;
         openInterceptorPtr = ptr;
     }
@@ -56,7 +56,7 @@ namespace Os {
         openInterceptor = 0;
     }
 
-    void registerSeekInterceptor(SeekIntercepter funcPtr, void *ptr) {
+    void registerSeekInterceptor(SeekInterceptor funcPtr, void *ptr) {
         seekInterceptor = funcPtr;
         seekInterceptorPtr = ptr;
     }
