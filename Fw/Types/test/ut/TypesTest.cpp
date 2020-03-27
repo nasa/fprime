@@ -45,8 +45,9 @@ TEST(SerializationTest,Serialization1) {
     printf("U8 Test\n");
 #endif
 
-    U8 u8t1 = 10;
+    U8 u8t1 = 0xAB;
     U8 u8t2 = 0;
+    U8* ptr = buff.getBuffAddr();
 
     Fw::SerializeStatus stat1;
     Fw::SerializeStatus stat2;
@@ -55,8 +56,11 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(1,buff.m_serLoc);
     stat2 = buff.deserialize(u8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(1,buff.m_deserLoc);
 
     ASSERT_EQ(u8t2,u8t1);
 
@@ -66,23 +70,28 @@ TEST(SerializationTest,Serialization1) {
     printf("I8 Test\n");
 #endif
 
-    I8 i8t1 = -10;
+    buff.resetSer();
+    ASSERT_EQ(0,buff.m_serLoc);
+    ASSERT_EQ(0,buff.m_deserLoc);
+
+    I8 i8t1 = 0xFF;
     I8 i8t2 = 0;
 
-    buff.resetSer();
     stat1 = buff.serialize(i8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(1,buff.m_serLoc);
+    ASSERT_EQ(0xFF,ptr[0]);
     stat2 = buff.deserialize(i8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i8t1,i8t2);
-
+    ASSERT_EQ(1,buff.m_deserLoc);
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i8t1, i8t2, stat1,
             stat2);
     printf("U16 Test\n");
 #endif
 
-    U16 u16t1 = 1000;
+    U16 u16t1 = 0xABCD;
     U16 u16t2 = 0;
 
 // Test shorts
@@ -90,9 +99,13 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(2,buff.m_serLoc);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
     stat2 = buff.deserialize(u16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(u16t1,u16t2);
+    ASSERT_EQ(2,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u16t1, u16t2, stat1,
@@ -100,15 +113,20 @@ TEST(SerializationTest,Serialization1) {
     printf("I16 test\n");
 #endif
 
-    I16 i16t1 = -1000;
+    I16 i16t1 = 0xABCD;
     I16 i16t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(2,buff.m_serLoc);
+    // 2s complement
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
     stat2 = buff.deserialize(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i16t1,i16t2);
+    ASSERT_EQ(2,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i16t1, i16t2, stat1,
@@ -117,7 +135,7 @@ TEST(SerializationTest,Serialization1) {
     printf("U32 Test\n");
 #endif
 
-    U32 u32t1 = 100000;
+    U32 u32t1 = 0xABCDEF12;
     U32 u32t2 = 0;
 
 // Test ints
@@ -125,9 +143,15 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
+    ASSERT_EQ(0xEF,ptr[2]);
+    ASSERT_EQ(0x12,ptr[3]);
     stat2 = buff.deserialize(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(u32t1,u32t2);
+    ASSERT_EQ(4,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u32t1, u32t2, stat1,
@@ -135,14 +159,20 @@ TEST(SerializationTest,Serialization1) {
     printf("I32 Test\n");
 #endif
 
-    I32 i32t1 = -100000;
+    I32 i32t1 = 0xABCDEF12;
     I32 i32t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
+    ASSERT_EQ(0xEF,ptr[2]);
+    ASSERT_EQ(0x12,ptr[3]);
     stat2 = buff.deserialize(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(4,buff.m_deserLoc);
     ASSERT_EQ(i32t1,i32t2);
 
 #if DEBUG_VERBOSE
@@ -152,7 +182,7 @@ TEST(SerializationTest,Serialization1) {
     printf("U64 Test\n");
 #endif
 
-    U64 u64t1 = 10000000;
+    U64 u64t1 = 0x0123456789ABCDEF;
     U64 u64t2 = 0;
 
 // Test ints
@@ -160,9 +190,19 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    ASSERT_EQ(0x01,ptr[0]);
+    ASSERT_EQ(0x23,ptr[1]);
+    ASSERT_EQ(0x45,ptr[2]);
+    ASSERT_EQ(0x67,ptr[3]);
+    ASSERT_EQ(0x89,ptr[4]);
+    ASSERT_EQ(0xAB,ptr[5]);
+    ASSERT_EQ(0xCD,ptr[6]);
+    ASSERT_EQ(0xEF,ptr[7]);
     stat2 = buff.deserialize(u64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(u64t1,u64t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", u64t1, u64t2, stat1,
@@ -170,15 +210,25 @@ TEST(SerializationTest,Serialization1) {
     printf("I64 Test\n");
 #endif
 
-    I64 i64t1 = -10000000;
+    I64 i64t1 = 0x0123456789ABCDEF;
     I64 i64t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(i64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    ASSERT_EQ(0x01,ptr[0]);
+    ASSERT_EQ(0x23,ptr[1]);
+    ASSERT_EQ(0x45,ptr[2]);
+    ASSERT_EQ(0x67,ptr[3]);
+    ASSERT_EQ(0x89,ptr[4]);
+    ASSERT_EQ(0xAB,ptr[5]);
+    ASSERT_EQ(0xCD,ptr[6]);
+    ASSERT_EQ(0xEF,ptr[7]);
     stat2 = buff.deserialize(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i64t1,i64t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", i64t1, i64t2, stat1,

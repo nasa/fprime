@@ -109,7 +109,7 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 8;;
+        this->getBuffAddr()[this->m_serLoc + 0] = val >> 8;
         this->getBuffAddr()[this->m_serLoc + 1] = val;
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
