@@ -21,7 +21,7 @@ namespace Fw {
         public:
             MallocAllocator();
             virtual ~MallocAllocator();
-            void *allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size);
+            void *allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size, bool& recoverable);
             void deallocate(NATIVE_UINT_TYPE identifier, void* ptr);
     };
 

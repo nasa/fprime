@@ -23,13 +23,17 @@ namespace Fw {
     MmapAllocator::~MmapAllocator() {
     }
 
-    void *MmapAllocator::allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size) {
+    void *MmapAllocator::allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size, bool& recoverable) {
         void* addr = mmap(NULL, size, PROT_READ | PROT_WRITE,
                              MAP_SHARED | MAP_ANONYMOUS, -1, 0);
         if (addr == MAP_FAILED) {
             return NULL;
         }
         this->m_length = size;
+
+        // mmap memory is never recoverable
+        recoverable = false;
+
         return addr;
     }
 

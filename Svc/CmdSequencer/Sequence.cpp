@@ -84,9 +84,10 @@ namespace Svc {
     {
         // has to be at least as big as a header
         FW_ASSERT(bytes >= Sequence::Header::SERIALIZED_SIZE);
+        bool recoverable; // don't care, since sequencer buffers don't need to survive reboot
         this->m_allocatorId = identifier;
         this->m_buffer.setExtBuffer(
-            static_cast<U8*>(allocator.allocate(identifier,bytes)),
+            static_cast<U8*>(allocator.allocate(identifier,bytes,recoverable)),
             bytes
         );
     }

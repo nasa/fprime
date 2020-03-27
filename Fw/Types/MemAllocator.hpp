@@ -22,7 +22,7 @@ namespace Fw {
 
     class MemAllocator {
         public:
-            virtual void *allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size)=0;
+            virtual void *allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size, bool& recoverable)=0;
             virtual void deallocate(NATIVE_UINT_TYPE identifier, void* ptr)=0;
         protected:
             MemAllocator();
