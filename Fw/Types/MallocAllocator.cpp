@@ -21,14 +21,15 @@ namespace Fw {
     MallocAllocator::~MallocAllocator() {
     }
 
-    void *MallocAllocator::allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size, bool& recoverable) {
+    void *MallocAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE &size, bool& recoverable) {
+        // don't use identifier
         // heap memory is never recoverable
         recoverable = false;
         return ::malloc(size);
     }
 
-    void MallocAllocator::deallocate(NATIVE_UINT_TYPE identifier, void* ptr) {
-        return ::free(ptr);
+    void MallocAllocator::deallocate(const NATIVE_UINT_TYPE identifier, void* ptr) {
+        ::free(ptr);
     }
 
 } /* namespace Fw */
