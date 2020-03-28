@@ -237,7 +237,7 @@ TEST(SerializationTest,Serialization1) {
     printf("F32 Test\n");
 #endif
 
-    F32 f32t1 = 100.2;
+    F32 f32t1 = -1.23;
     F32 f32t2 = 0;
 
 // Test ints
@@ -245,9 +245,15 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(f32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    ASSERT_EQ(0xBF,ptr[0]);
+    ASSERT_EQ(0x9D,ptr[1]);
+    ASSERT_EQ(0x70,ptr[2]);
+    ASSERT_EQ(0xA4,ptr[3]);
     stat2 = buff.deserialize(f32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_FLOAT_EQ(f32t1,f32t2);
+    ASSERT_EQ(4,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %f out: %f stat1: %d stat2: %d\n", f32t1, f32t2, stat1,
@@ -255,15 +261,25 @@ TEST(SerializationTest,Serialization1) {
     printf("F64 Test\n");
 #endif
 
-    F64 f64t1 = -100.232145345346534;
+    F64 f64t1 = 100.232145345346534;
     F64 f64t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    ASSERT_EQ(0x40,ptr[0]);
+    ASSERT_EQ(0x59,ptr[1]);
+    ASSERT_EQ(0x0E,ptr[2]);
+    ASSERT_EQ(0xDB,ptr[3]);
+    ASSERT_EQ(0x78,ptr[4]);
+    ASSERT_EQ(0x26,ptr[5]);
+    ASSERT_EQ(0x8B,ptr[6]);
+    ASSERT_EQ(0xA6,ptr[7]);
     stat2 = buff.deserialize(f64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_DOUBLE_EQ(f32t1,f32t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lf out: %lf stat1: %d stat2: %d\n", f64t1, f64t2, stat1,
