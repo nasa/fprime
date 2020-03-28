@@ -872,6 +872,41 @@ TEST(TypesTest,StringFormatTest) {
     printf("Formatted: %s\n",str.toChar());
 }
 
+TEST(PerformanceTest, U64SerPerfTest) {
+
+#if 0
+
+    SerializeTestBuffer buff;
+
+#if DEBUG_VERBOSE
+    printf("U8 Test\n");
+#endif
+
+    U64 in = 10;
+    U64 out = 0;
+
+    NATIVE_INT_TYPE iters = 100000000;
+
+    Os::IntervalTimer timer;
+    timer.start();
+
+
+    for (NATIVE_INT_TYPE iter = 0; iter < iters; iter++) {
+		buff.resetSer();
+		buff.serialize(in);
+		buff.deserialize(out);
+    }
+
+    timer.stop();
+
+    printf("%d iterations took %d us (%f each).\n", iters,
+            timer.getDiffUsec(),
+            (F32) (timer.getDiffUsec()) / (F32) iters);
+
+#endif
+
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

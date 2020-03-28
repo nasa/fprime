@@ -193,7 +193,8 @@ namespace Fw {
     SerializeStatus SerializeBufferBase::serialize(F64 val) {
         // floating point values need to be byte-swapped as well, so copy to U64 and use that routine
         U64 u64Val;
-        (void) memcpy(&u64Val, &val, sizeof(val));
+
+        *reinterpret_cast<F64*>(&u64Val) = val;
         return this->serialize(u64Val);
 
     }
@@ -204,7 +205,8 @@ namespace Fw {
 
         // floating point values need to be byte-swapped as well, so copy to U32 and use that routine
         U32 u32Val;
-        (void) memcpy(&u32Val, &val, sizeof(val));
+
+        *reinterpret_cast<F32*>(&u32Val) = val;
         return this->serialize(u32Val);
 
     }
@@ -446,8 +448,9 @@ namespace Fw {
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
+
         // copy to argument
-        (void) memcpy(&val, &tempVal, (NATIVE_UINT_TYPE)sizeof(val));
+        val = *reinterpret_cast<F64*>(&tempVal);
 
         return FW_SERIALIZE_OK;
     }
@@ -486,7 +489,9 @@ namespace Fw {
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
-        (void) memcpy(&val, &tempVal, sizeof(val));
+
+        // copy to argument
+        val = *reinterpret_cast<F32*>(&tempVal);
 
         return FW_SERIALIZE_OK;
     }
