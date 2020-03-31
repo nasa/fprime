@@ -117,6 +117,7 @@ class StandardPipeline(object):
         Disconnect from socket
         """
         self.client_socket.disconnect()
+        self.files.uplinker.exit()
 
     def send_command(self, command, args):
         """

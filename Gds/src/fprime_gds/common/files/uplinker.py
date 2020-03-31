@@ -30,7 +30,9 @@ class UplinkQueue(object):
         self.busy = threading.Semaphore()
         self.queue = queue.Queue()
         self.__file_store = []
-        threading.Thread(target=self.run, args=()).start()
+        self.__exit = threading.Event()
+        self.__thread = threading.Thread(target=self.run, args=())
+        self.__thread.start()
 
     def enqueue(self, filepath, destination):
         """
@@ -80,9 +82,12 @@ class UplinkQueue(object):
         """
         A thread that will uplink files on after another until all files that have been enqueued are properly processed.
         """
-        while True:
+        while not self.__exit.is_set():
             while self.running:
                 file_obj = self.queue.get()
+                # Exit condition is a None message
+                if file_obj is None:
+                    break
                 self.busy.acquire()
                 self.uplinker.start(file_obj)
                 # Wait until the file is finished, then release again waiting for more files
@@ -96,6 +101,12 @@ class UplinkQueue(object):
         :return: copy of current files
         """
         return file_to_dict(self.__file_store)
+
+    def exit(self):
+        """ Exit event to shutdown the thread """
+        self.__exit.set()
+        self.queue.put(None) # Force an end to the wait for a file, if an uplink is not in-progress
+        self.__thread.join()
 
 
 class FileUplinker(fprime_gds.common.handlers.DataHandler):
@@ -136,6 +147,10 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         if destination is None:
             destination = os.path.join(self.__destination_dir, os.path.basename(filepath))
         self.queue.enqueue(filepath, destination)
+
+    def exit(self):
+        """ Exit this uplinker by killing the thread """
+        self.queue.exit()
 
     def is_running(self):
         """ Check if the queue is running """
