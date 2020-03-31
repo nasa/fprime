@@ -7,6 +7,7 @@ handshake packet in return before the next chunk is sent out.
 
 @author lestarch
 """
+import time
 import queue
 
 import fprime_gds.common.handlers
@@ -24,6 +25,7 @@ class UplinkQueue(object):
         Constructs the uplink queue with a reference to the object that run the uplink.
         :param uplinker: uplinker to callback into
         """
+        self.running = True
         self.uplinker = uplinker
         self.busy = threading.Semaphore()
         self.queue = queue.Queue()
@@ -42,11 +44,19 @@ class UplinkQueue(object):
 
     def pause(self):
         """ Pause the uplinker """
-        self.busy.acquire()
+        if self.running:
+            self.running = False
+            self.busy.acquire()
 
     def unpause(self):
         """ Pause the uplinker """
-        self.busy.release()
+        if not self.running:
+            self.busy.release()
+            self.running = True
+
+    def is_running(self):
+        """ Check if the queue is running """
+        return self.running
 
     def remove(self, source):
         """
@@ -71,12 +81,14 @@ class UplinkQueue(object):
         A thread that will uplink files on after another until all files that have been enqueued are properly processed.
         """
         while True:
-            file_obj = self.queue.get()
-            self.busy.acquire()
-            self.uplinker.start(file_obj)
-            # Wait until the file is finished, then release again waiting for more files
-            self.busy.acquire()
-            self.busy.release()
+            while self.running:
+                file_obj = self.queue.get()
+                self.busy.acquire()
+                self.uplinker.start(file_obj)
+                # Wait until the file is finished, then release again waiting for more files
+                self.busy.acquire()
+                self.busy.release()
+            time.sleep(0.010) # Don't busy spin, but yield and sleep
 
     def current(self):
         """
@@ -125,9 +137,17 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
             destination = os.path.join(self.__destination_dir, os.path.basename(filepath))
         self.queue.enqueue(filepath, destination)
 
+    def is_running(self):
+        """ Check if the queue is running """
+        return self.queue.is_running()
+
     def pause_unpause(self, pause=False):
         """ Pause/Unpause uplink """
-        pass
+        if pause:
+            self.cancel()
+            self.queue.pause()
+        else:
+            self.queue.unpause()
 
     def cancel_remove(self, file):
         """
@@ -184,7 +204,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         if self.state == FileStates.END_WAIT:
             self.active.state = "FINISHED" if self.active.state != "CANCELED" else "CANCELED"
             self.state = FileStates.IDLE
-            self.queue.unpause() # Allow the queue to continue
+            self.queue.busy.release() # Allow the queue to continue
             self.__timeout.stop()
             return
         elif self.state == FileStates.CANCELED:
@@ -230,7 +250,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         if not wait_for_handshake:
             self.state = FileStates.IDLE
             self.__expected = []
-            self.queue.unpause()
+            self.queue.busy.release()
             self.__timeout.stop()
 
     def get_next_sequence(self):

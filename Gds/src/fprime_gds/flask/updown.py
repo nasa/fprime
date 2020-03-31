@@ -51,14 +51,14 @@ class FileUploads(flask_restful.Resource):
         self.uplink_set = uplink_set
         self.parser = flask_restful.reqparse.RequestParser()
         self.parser.add_argument("action", required=True, help="Action to take against files")
-        self.parser.add_argument("source", required=True, help="File on which to act file")
+        self.parser.add_argument("source", required=False, default=None, help="File on which to act file")
 
     def get(self):
         """
         Gets the current destination
         :return: current destination
         """
-        return {"files": self.uplinker.current_files()}
+        return {"files": self.uplinker.current_files(), "running": self.uplinker.is_running()}
 
     def put(self, file=None):
         """
@@ -69,7 +69,10 @@ class FileUploads(flask_restful.Resource):
         source = args.get("source", None)
         if action == "Remove" or action == "Cancel" and source is not None:
             self.uplinker.cancel_remove(source)
-        # TODO: pause here
+        elif action == "pause-all":
+            self.uplinker.pause_unpause(pause=True)
+        elif action == "unpause-all":
+            self.uplinker.pause_unpause(pause=False)
 
     def post(self):
         """

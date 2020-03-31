@@ -55,6 +55,9 @@ Vue.component("event-list", {
          */
         keyify(item) {
             return "evt-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
+        },
+        clearEvents() {
+            return this.events.splice(0, this.events.length);
         }
     }
 });

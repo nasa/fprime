@@ -21,7 +21,7 @@ import {config} from "../config.js"
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "uploader", "downfiles", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
+    props:["commands", "loader", "uploader", "running", "downfiles", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
     data: function () {
         let hash = window.location.hash.replace("#", "");
         return {

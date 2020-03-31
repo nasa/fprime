@@ -10,7 +10,10 @@ Vue.component("downlink", {
     computed: {
         elements: function () {
             return this.downfiles;
-        }
+        },
+        columnify: function (item) {
+            return [item.source, item.destination, item.state];
+        },
     }
 });
 

@@ -10,6 +10,7 @@ import os
 import enum
 import struct
 import threading
+import datetime
 
 
 class Timeout(object):
@@ -98,6 +99,8 @@ class TransmitFile(object):
     def __init__(self, source, destination):
         """ Construct the uplink file """
         self.__mode = None
+        self.__start = None
+        self.__end = None
         self.__source = source
         self.__destination = destination
         self.__size = os.path.getsize(source)
@@ -114,6 +117,7 @@ class TransmitFile(object):
         self.__mode = mode
         self.__state = "TRANSMITTING"
         self.__fd = open(self.__source if self.__mode.startswith("r") else self.destination, self.__mode)
+        self.__start = datetime.datetime.utcnow()
 
     def read(self, chunk):
         """ Read the chunk from the file """
@@ -139,6 +143,15 @@ class TransmitFile(object):
         if self.__fd is not None:
             self.__fd.close()
             self.__fd = None
+            self.__end = datetime.datetime.utcnow()
+
+    @property
+    def start(self):
+        return self.__start
+
+    @property
+    def end(self):
+        return self.__end
 
     @property
     def source(self):
@@ -188,6 +201,8 @@ def file_to_dict(files, uplink=True):
             "current": item.seek,
             "state": item.state,
             "percent": int(item.seek/item.size * 100.0),
-            "uplink": uplink
+            "uplink": uplink,
+            "start": item.start,
+            "end": item.end
         })
     return current

@@ -23,6 +23,14 @@ export class Uploader {
         });
     }
 
+    pause() {
+        return this.loader.load("/upload/files", "PUT", {"action": "pause-all"});
+    }
+
+    unpause() {
+        return this.loader.load("/upload/files", "PUT", {"action": "unpause-all"});
+    }
+
     command(file, action) {
         return this.loader.load("/upload/files", "PUT", {"source": file, "action": action});
     }

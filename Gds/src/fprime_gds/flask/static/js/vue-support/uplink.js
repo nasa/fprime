@@ -38,7 +38,7 @@ Vue.component("uplink-row", {
 });
 
 Vue.component("uplink", {
-    props:["upfiles", "uploader"],
+    props:["upfiles", "running", "uploader"],
     data: function() {
         return {"selected": [], "destination": "/"}
     },
@@ -49,6 +49,12 @@ Vue.component("uplink", {
                 return;
             }
             this.uploader.upload(this.selected, this.destination);
+        },
+        pauseUplink() {
+            this.uploader.pause();
+        },
+        unpauseUplink() {
+            this.uploader.unpause();
         },
         handelFiles(event) {
             // Bail on no files
@@ -63,14 +69,19 @@ Vue.component("uplink", {
                         "destination": this.destination,
                         "state": "NOT STARTED",
                         "percent": 0,
-                        "uplink": true
+                        "uplink": true,
+                        "start": "",
+                        "end": ""
                     }
                 }));
             event.target.value = "";
         },
         keyify(item) {
             return "file-" + item;
-        }
+        },
+        columnify: function (item) {
+            return [item.source, item.destination, item.state];
+        },
     },
     computed: {
         elements: function () {
@@ -81,9 +92,10 @@ Vue.component("uplink", {
 
 export let UplinkMixins = {
     setupUplink(uploader) {
-        return {"upfiles": [], "uploader": uploader}
+        return {"upfiles": [], "running": false, "uploader": uploader}
     },
-    updateUpfiles(files) {
+    updateUpfiles(files, running) {
         this.vue.upfiles = files;
+        this.vue.running = running;
     }
 };

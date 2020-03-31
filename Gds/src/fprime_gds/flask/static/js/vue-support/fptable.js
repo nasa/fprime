@@ -176,6 +176,11 @@ Vue.component("fp-table", {
         },
         displayTemplate: {
             default: "fp-row"
+        },
+
+        clearRows: {
+            type: Function,
+            default: null
         }
     },
     // Required data items (unique for each table instance)
