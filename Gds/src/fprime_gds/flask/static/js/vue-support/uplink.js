@@ -1,64 +1,67 @@
-import {timeToString} from "./utils.js";
-
-Vue.component("uplink-row", {
-    template: "#uplink-row-template",
+/**
+ * uplink.js:
+ *
+ * This is the Vue component used to display and handle the uplinks of the various files. This component has two basic
+ * parts:
+ *
+ * 1. a small command form to upload N files to 1 destination allowing for a curated list and a "go" button
+ * 2. a table view of all curating and uploading files
+ *
+ * Note: this component uses a custom row HTML for display in the table view, as it is sufficiently different from
+ * the other tables. This can be found in the fptable JS document.
+ *
+ * These file rows are used to fill out the uplink and the downlink tables.
+ *
+ * @author mstarch
+ */
+Vue.component("uplink", {
+    template: "#uplink-template",
     props: {
         /**
-         * item:
-         *
-         * 'item' will be automatically bound to each item in the 'items' list of the consuming table. It is the loop
-         * variable, and will be passed into the 'itemToColumns' function to produce columns.
+         * A list of files filled in from REST polling that represent the files being  managed by the file uplinker.
          */
-        item: Object,
+        "upfiles": Array,
         /**
-         * itemToColumns:
-         *
-         * 'itemToColumns' will be bound to a function taking one item from the parent fp-table object. See fp-table.
+         * Filled in by REST polling, this is a boolean that describes if the uplinking is running
+         * (as opposed to paused).
          */
-        itemToColumns: Function
+        "running": Boolean,
+        /**
+         * Uploader object used to interact with the file uplinks and downlinks REST endpoints.
+         */
+        "uploader": Object
     },
-    methods: {
-        fileAction(event) {
-            let action = event.currentTarget.innerText;
-            let uplinkvue = this.$parent.$parent;
-            let index = uplinkvue.selected.indexOf(this.item);
-            if (action == "Remove" && index != -1) {
-                uplinkvue.selected.splice(index, 1);
-            } else {
-                uplinkvue.uploader.command(this.item.source, action);
-            }
-        }
-    },
-    computed: {
-        progressBarClass: function () {
-            return "bg-success";
-        },
-        basename() {
-            let regex = /.*[\\\/]/;
-            return this.item.destination.replace(regex, "")
-        }
-    }
-});
-
-Vue.component("uplink", {
-    props:["upfiles", "running", "uploader"],
     data: function() {
         return {"selected": [], "destination": "/"}
     },
-    template: "#uplink-template",
     methods: {
+        /**
+         * Starts the uplink by uploading the currated list of files to the webserver backend. If there are no files
+         * specified in the curated list, then bail.
+         */
         uplinkFiles() {
             if (this.selected.length == 0) {
                 return;
             }
             this.uploader.upload(this.selected, this.destination);
         },
+        /**
+         * Calls the uploader to pause the uplinker.
+         */
         pauseUplink() {
             this.uploader.pause();
         },
+        /**
+         * Calls the uploader to unpause the uplinker.
+         */
         unpauseUplink() {
             this.uploader.unpause();
         },
+        /**
+         * Handles the files event to add input files into the list being curated. This takes each file, and creates a
+         * mock file object so that it displays nicely in the curateable "NOT STARTED" state.
+         * @param event: event to add files
+         */
         handelFiles(event) {
             // Bail on no files
             if (event.target.files.length == 0) {
@@ -79,24 +82,51 @@ Vue.component("uplink", {
                 }));
             event.target.value = "";
         },
+        /**
+         * Turn this file item into a key. for uniqueness
+         * @param item: item to keyify
+         * @return {string}
+         */
         keyify(item) {
-            return "file-" + item;
+            return "file-" + item.source + item.destination + item.state;
         },
-        columnify: function (item) {
+        /**
+         * Change the file into a set of columns. This isn't used for display, but for filtering.
+         * @param item: file item
+         * @return Array of columns for filtering purposes.
+         */
+        columnify(item) {
             return [item.source, item.destination, item.state];
         },
     },
     computed: {
-        elements: function () {
+        /**
+         * Returns the total list of files for display in the table. In short, this is curatec + uplinked (reversed)
+         * lists.
+         * @return {T[] | string}
+         */
+        elements() {
             return this.selected.concat(this.upfiles.reverse());
         }
     }
 });
-
+/**
+ * Mixins used to handle uplink as part of this, or any Vue.
+ */
 export let UplinkMixins = {
+    /**
+     * Setup the uplink requires the "uploader" object. returns the needed top-level data to be bound down into props.
+     * @param uploader: uploader object to use to upload.
+     * @return initially needed uplink data items
+     */
     setupUplink(uploader) {
         return {"upfiles": [], "running": false, "uploader": uploader}
     },
+    /**
+     * Callback used to set files and running state needed for the uplink.
+     * @param files: list of files managed by the uplinker on the server side
+     * @param running: boolean not-paused running status.
+     */
     updateUpfiles(files, running) {
         this.vue.upfiles = files;
         this.vue.running = running;

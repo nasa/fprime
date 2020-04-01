@@ -25,7 +25,7 @@ Vue.component("event-list", {
          * @param item: event object to harvest
          * @return {[string, *, *, void | string, *]}
          */
-        columnify: function (item) {
+        columnify(item) {
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
                 item.template.severity.value.replace("Severity.", ""), item.display_text];
         },
@@ -35,7 +35,7 @@ Vue.component("event-list", {
          * @param item: item passed in with which to calculate style
          * @return {string}: style-class to use
          */
-        style: function (item) {
+        style(item) {
             let severity = {
                 "Severity.FATAL":      "fp-color-fatal",
                 "Severity.WARNING_HI": "fp-color-warn-hi",
@@ -56,6 +56,10 @@ Vue.component("event-list", {
         keyify(item) {
             return "evt-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         },
+        /**
+         * A function to clear the events pane to remove events that have already been seen. Note: this action is
+         * irrecoverable.
+         */
         clearEvents() {
             return this.events.splice(0, this.events.length);
         }

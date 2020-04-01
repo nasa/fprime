@@ -85,6 +85,61 @@ Vue.component("fp-row", {
         }
     }
 });
+
+/**
+ * file-row:
+ *
+ * File row Vue component. This is used to display rows that represent file data in the GDS. This includes sources,
+ * destinations, and progress bars.
+ */
+Vue.component("file-row", {
+    template: "#file-row-template",
+    props: {
+        /**
+         * item:
+         *
+         * 'item' will be automatically bound to each item in the 'items' list of the consuming table. It is the loop
+         * variable, and will be passed into the 'itemToColumns' function to produce columns.
+         */
+        item: Object,
+        /**
+         * itemToColumns:
+         *
+         * 'itemToColumns' will be bound to a function taking one item from the parent fp-table object. See fp-table.
+         */
+        itemToColumns: Function
+    },
+    methods: {
+        /**
+         * Performs an action on a given file. This allows for the "Remove" and "Cancel" actions to be sent via the
+         * uploader to control the file's state on the server. If the file is being curated in JavaScript before uplink
+         * was started, then it will just be removed locally.
+         * @param event: button event to look at for the action.
+         */
+        fileAction(event) {
+            let action = event.currentTarget.innerText;
+            let uplinkvue = this.$parent.$parent;
+            let index = uplinkvue.selected.indexOf(this.item);
+            // Local javascript file, removeit from the selected (curation) list
+            if (action == "Remove" && index != -1) {
+                uplinkvue.selected.splice(index, 1);
+            } else {
+                uplinkvue.uploader.command(this.item.source, action);
+            }
+        }
+    },
+    computed: {
+        /**
+         * Calculates the basename of the given file. This is used for cases where the REST interface needs to be
+         * supplied a filename in the URL i.e. GET /files/filename1.  This strip all characters up to the last / or \.
+         * @return {string} full path to file (source, destination)
+         */
+        basename() {
+            let regex = /.*[\\\/]/;
+            return this.item.destination.replace(regex, "")
+        }
+    }
+});
 /**
  * fp-table:
  *

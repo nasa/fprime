@@ -22,32 +22,40 @@ import {config} from "../config.js"
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
     props:["commands", "loader", "uploader", "running", "downfiles", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
-    data: function () {
-        let hash = window.location.hash.replace("#", "");
-        return {
-            "currentTab": (hash == "")? "Commanding" : hash,
-            "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs"],
-            "config": config
-        }
-    },
+    data:
+        /**
+         * Function to return a dictionary of data items. currentTab is set based on the initial URL.
+         */
+        function () {
+            let hash = window.location.hash.replace("#", "");
+            return {
+                "currentTab": (hash == "")? "Commanding" : hash,
+                "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs"],
+                "config": config
+            }
+        },
     methods: {
         /**
          * Route the tab-change and place it in the Window's location
          * @param tab: tab to route to. No need for the #
          */
-        route: function (tab) {
+        route(tab) {
             window.location.hash = tab;
             this.currentTab = tab;
         },
         /**
          * Spawns a new window when the new window button is clicked.
          */
-        spawn: function () {
+        spawn() {
             window.open(window.location);
         }
     },
     computed: {
-        noneActive: function () {
+        /**
+         * Determines if none are active by checking if active channels or events have been detected recently.
+         * @return {boolean} no active data flow
+         */
+        noneActive() {
             return !(this.eventsActive || this.channelsActive);
         }
 
@@ -57,7 +65,8 @@ Vue.component("tabbed-etc", {
 /**
  * TabETC:
  *
- * Class implementing the vue-items used to do a tabbed version of the F´ setup.
+ * Class implementing the vue-items used to do a tabbed version of the F´ setup. This allows it to be exported and
+ * interacted with outside of the knowledge of the raw Vue component.
  */
 export class TabETCVue {
     /**
@@ -83,7 +92,7 @@ export class TabETCVue {
             ...this.setupChannels(channels),
             ...this.setupLogs(),
             ...this.setupUplink(uploader),
-            ...this.setupDownlink(uploader)
+            ...this.setupDownlink()
         };
         // Create a vue object
         this.vue = new Vue({
