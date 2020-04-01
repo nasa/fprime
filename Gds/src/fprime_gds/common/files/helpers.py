@@ -2,7 +2,12 @@
 helpers.py:
 
 Helpers for file uplink, and downlink. This contains shared components, classes, and support architecture in order to
-enable both file uplink and downlink to share the same structures.
+enable both file uplink and downlink to share the same structures. This includes the following shared objects:
+
+1. Timeout: for managing timeouts and timeout responses
+2. FileStates: managing the state of an uplink or downlinking file
+3. CFDPChecksum: calculates the CFDP checksum for files
+4. TransmitFile:  file object for up and down
 
 @author mstarch, and Blake A. Harriman's work
 """
@@ -11,11 +16,12 @@ import enum
 import struct
 import threading
 import datetime
+import logging
 
 
 class Timeout(object):
     """
-    Starts a timeout thread and will respond with a callback to a function, if the timeout expires.
+    Starts a timeout thread and will respond with a callback to a function when the timeout expires.
     """
     def __init__(self):
         """ Sets up needed member variables """
@@ -42,13 +48,11 @@ class Timeout(object):
         self.__timer = threading.Timer(self.__timeout, self.__callback, args=self.args)
         self.__timer.start()
 
-    def restart(self, ignore_stopped=False):
+    def restart(self):
         """
         Restarts the given timer first canceling and then starting it again.
-        :param ignore_stopped: ignores an already stopped timer
         """
-        if self.__timer is not None or not ignore_stopped:
-            self.stop()
+        self.stop()
         self.start()
 
     def stop(self):
@@ -62,8 +66,7 @@ class Timeout(object):
 
 class FileStates(enum.Enum):
     """
-    An enumeration of states used in the below FileUplinker class. This allows uplinking to follow a basic state machine
-    that waits for handshaking and can handle canceling packets.
+    An enumeration of states used in the file uplinker and downlinker.
     """
     IDLE = 0
     RUNNING = 1
@@ -74,7 +77,7 @@ class FileStates(enum.Enum):
 class CFDPChecksum(object):
     """ Class running the CFDG checksum """
     def __init__(self):
-        """Set value as zero """
+        """ Set initial value as zero """
         self.__value = 0
 
     def update(self, data, offset):
@@ -94,7 +97,7 @@ class CFDPChecksum(object):
 
 class TransmitFile(object):
     """
-    Wraps the file information needed for the uplink process.
+    Wraps the file information needed for the uplink and downlinking processes.
     """
     def __init__(self, source, destination):
         """ Construct the uplink file """
@@ -108,16 +111,19 @@ class TransmitFile(object):
         self.__state = "QUEUED"
         self.__fd = None
         self.__checksum = CFDPChecksum()
+        self.__log_handler = None
 
     def open(self, mode="rb"):
         """
-        Opens the file descriptor and prepares it for uplink
+        Opens the file descriptor and prepares it for uplink/downlink
         """
         assert self.__fd is None, "Must close file before attempting to reopen it"
+        filepath = self.__source if mode.startswith("r") else self.destination
         self.__mode = mode
         self.__state = "TRANSMITTING"
-        self.__fd = open(self.__source if self.__mode.startswith("r") else self.destination, self.__mode)
+        self.__fd = open(filepath, self.__mode)
         self.__start = datetime.datetime.utcnow()
+        self.__log_handler = logging.FileHandler("{}.log".format(filepath), "w")
 
     def read(self, chunk):
         """ Read the chunk from the file """
@@ -127,8 +133,8 @@ class TransmitFile(object):
 
     def write(self, chunk, offset):
         """
-        Write a chunk to the file
-        :param chunk:
+        Write a chunk to the file.
+        :param chunk: data to write to the file
         :param offset: offset to write to
         """
         assert self.__fd is not None, "Must open file before writing"
@@ -141,6 +147,7 @@ class TransmitFile(object):
         Opens the file descriptor and prepares it for uplink
         """
         if self.__fd is not None:
+            self.__log_handler.close()
             self.__fd.close()
             self.__fd = None
             self.__end = datetime.datetime.utcnow()
@@ -185,10 +192,14 @@ class TransmitFile(object):
     def checksum(self):
         return self.__checksum
 
+    @property
+    def log_handler(self):
+        return self.__log_handler
+
 
 def file_to_dict(files, uplink=True):
     """
-    Converts files to dictionary
+    Converts files to dictionary. This creates a new list of JSONable file dictionaries.
     :param files: list of TransmitFiles to convert
     :return: list of dictionaries
     """

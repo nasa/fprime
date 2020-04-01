@@ -39,14 +39,14 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             An initialized FileWriter object.
         """
         super().__init__()
-        self.directory = directory
+        self.__directory = directory
         self.active = None
         self.files = []
         self.state = FileStates.IDLE
         self.sequence = 0 #Keeps track of what the current sequence ID should be
         self.timer = fprime_gds.common.files.helpers.Timeout()
         self.timer.setup(self.timeout, timeout)
-        os.makedirs(directory, exist_ok=True)
+        os.makedirs(self.__directory, exist_ok=True)
 
     def data_callback(self, data, sender=None):
         """
@@ -55,7 +55,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         Args:
             data: Binary data that has been decoded and passed to the correct consumer
         """
-        self.timer.restart(ignore_stopped=True) # Start or restart the timer
+        self.timer.restart() # Start or restart the timer
         packet_type = data.packetType
         # Check the packet type, and route to the appropriate sub-function
         if packet_type == FilePacketType.START:
@@ -81,15 +81,16 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         if self.state != FileStates.IDLE:
             LOGGER.warning("File transfer already inprogress. Aborting original.")
             self.finish()
+        # Create the destination file where the DATA packet data will be stored
+        assert self.active is None, "File is already open, something went wrong"
+        self.active = TransmitFile(source_path, os.path.join(self.__directory, self.sanitize(dest_path)))
+        self.active.open("wb+")
+        LOGGER.addHandler(self.active.log_handler)
         message = "Received START packet with metadata:\n"
         message += "\tSize: %d\n"
         message += "\tSource: %s\n"
-        message += "\tDestination: %s\n"
-        LOGGER.info(message, size, source_path, source_path)
-        # Create the destination file where the DATA packet data will be stored
-        assert self.active is None, "File is already open, something went wrong"
-        self.active = TransmitFile(source_path, os.path.join(self.directory, self.sanitize(dest_path)))
-        self.active.open("wb+")
+        message += "\tDestination: %s"
+        LOGGER.info(message, size, source_path, dest_path)
         self.files.append(self.active)
         self.state = FileStates.RUNNING
         self.sequence += 1
@@ -152,6 +153,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         self.state = FileStates.IDLE
         self.sequence = 0
         self.active.state = "FINISHED"
+        LOGGER.removeHandler(self.active.log_handler)
         self.active.close()
         self.active = None
 
@@ -167,6 +169,10 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         :return: sanitized filename
         """
         return filename.replace(os.sep, "_")
+
+    @property
+    def directory(self):
+        return self.__directory
 
 
 if __name__ == "__main__":

@@ -34,4 +34,5 @@ export class Uploader {
     command(file, action) {
         return this.loader.load("/upload/files", "PUT", {"source": file, "action": action});
     }
+
 };

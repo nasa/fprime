@@ -83,7 +83,7 @@ export class TabETCVue {
             ...this.setupChannels(channels),
             ...this.setupLogs(),
             ...this.setupUplink(uploader),
-            ...this.setupDownlink()
+            ...this.setupDownlink(uploader)
         };
         // Create a vue object
         this.vue = new Vue({

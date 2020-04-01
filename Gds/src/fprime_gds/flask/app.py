@@ -77,7 +77,7 @@ def construct_app():
                      resource_class_args=[pipeline.files.uplinker])
     api.add_resource(fprime_gds.flask.updown.FileUploads, "/upload/files",
                      resource_class_args=[pipeline.files.uplinker, uplink_set])
-    api.add_resource(fprime_gds.flask.updown.FileDownload, "/download/files",
+    api.add_resource(fprime_gds.flask.updown.FileDownload, "/download/files", "/download/files/<string:source>",
                      resource_class_args=[pipeline.files.downlinker])
     # Optionally serve log files
     if app.config["SERVE_LOGS"]:

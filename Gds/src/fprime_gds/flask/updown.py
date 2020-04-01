@@ -1,7 +1,9 @@
 """
 flask/updown.py:
 
-A simple service that handles file uploads that then trigger file uplinks to the embedded system.
+A simple service that handles file uploads and downloads. This allowd the REST api to show the status of file uplinks
+and downlinks. In addition, an uplink destination directory is exposed for the UI to set where new uploads should be
+uplinked to.
 
 @author mstarch
 """
@@ -41,11 +43,11 @@ class Destination(flask_restful.Resource):
 
 class FileUploads(flask_restful.Resource):
     """
-    A data model for the current location of the destination of uplinked files.
+    A data model for the current uplinking file set.
     """
     def __init__(self, uplinker, uplink_set):
         """
-        Constructor: setup the pipeline
+        Constructor: setup the uplinker and argument parsing
         """
         self.uplinker = uplinker
         self.uplink_set = uplink_set
@@ -55,14 +57,15 @@ class FileUploads(flask_restful.Resource):
 
     def get(self):
         """
-        Gets the current destination
-        :return: current destination
+        Gets the current set of files
+        :return: current uplinking files
         """
         return {"files": self.uplinker.current_files(), "running": self.uplinker.is_running()}
 
-    def put(self, file=None):
+    def put(self):
         """
-        Updates the current destination directory
+        Handles an update to an existing source file.  Source and action are expected parameters to be supplied. If
+        source is None, then "pause-all" or "unpause-all" should be supplied to globally pause the uplinker.
         """
         args = self.parser.parse_args()
         action = args.get("action", None)
@@ -70,13 +73,13 @@ class FileUploads(flask_restful.Resource):
         if action == "Remove" or action == "Cancel" and source is not None:
             self.uplinker.cancel_remove(source)
         elif action == "pause-all":
-            self.uplinker.pause_unpause(pause=True)
+            self.uplinker.pause()
         elif action == "unpause-all":
-            self.uplinker.pause_unpause(pause=False)
+            self.uplinker.unpause()
 
     def post(self):
         """
-        Updates the current destination directory
+        Adds file(s) to be uplinked by enqueuing each into the uplinker.
         """
         successful = []
         failed = []
@@ -96,13 +99,17 @@ class FileDownload(flask_restful.Resource):
     """  """
     def __init__(self, downlinker):
         """
-        Constructor: setup the pipeline
+        Constructor: setup the downlinker
         """
         self.downlinker = downlinker
 
-    def get(self):
+    def get(self, source=None):
         """
-        Gets the current destination
-        :return: current destination
+        Gets the current downlinking files
+        :return: current downlinking files
         """
-        return {"files": self.downlinker.current_files()}
+        # Serve the  source if asked for, otherwise list all files
+        if source is not None:
+            return flask.send_from_directory(self.downlinker.directory, os.path.basename(source), as_attachment=True)
+        else:
+            return {"files": self.downlinker.current_files()}

@@ -18,7 +18,8 @@ from fprime_gds.common.data_types.file_data import *
 class UplinkQueue(object):
     """
     Handles queuing of files to send to the uplinker. This offloads the work of determining when done, and what to do
-    while waiting. It also owns the thread that runs uplink.
+    while waiting. It also owns the thread that starts uplink. This thread watches for the current uplink to finish, and
+    then it starts the next one and returns to a quiescent state.
     """
     def __init__(self, uplinker):
         """
@@ -45,24 +46,26 @@ class UplinkQueue(object):
         self.__file_store.append(file_obj)
 
     def pause(self):
-        """ Pause the uplinker """
+        """ Pause the uplinker, setting the running flag off, then holding the busy semaphore """
         if self.running:
             self.running = False
             self.busy.acquire()
 
     def unpause(self):
-        """ Pause the uplinker """
+        """ Unpause the uplinker, releasing the busy semaphore and then restoring the running flag """
         if not self.running:
             self.busy.release()
             self.running = True
 
     def is_running(self):
-        """ Check if the queue is running """
+        """ Check if the uplink is running """
         return self.running
 
     def remove(self, source):
         """
-        Remove a file by its source from the queue and the permanent uplink list.
+        Remove a file by its source from the queue and the permanent uplink list. This will touch each record in the
+        queue one time, as they are pulled off the queue, inspected, and the replaced.
+        :param source: source file to remove
         """
         try:
             first = None
@@ -75,19 +78,23 @@ class UplinkQueue(object):
             self.queue.put_nowait(found)
             found = self.queue.get_nowait()
         except queue.Empty:
-            pass
+            return
         self.__file_store.remove(found)
 
     def run(self):
         """
         A thread that will uplink files on after another until all files that have been enqueued are properly processed.
+        To stop this thread, set the exit event.
         """
         while not self.__exit.is_set():
+            # While running (not paused) continue to get - uplink - wait
             while self.running:
                 file_obj = self.queue.get()
-                # Exit condition is a None message
+                # Exit condition is a None message, which unblocks the above get
                 if file_obj is None:
                     break
+                # Once a file is obtained from the queue, aquire the busy lock before starting. This prevents a in-use
+                # or paused queue from uplinking.
                 self.busy.acquire()
                 self.uplinker.start(file_obj)
                 # Wait until the file is finished, then release again waiting for more files
@@ -98,27 +105,25 @@ class UplinkQueue(object):
     def current(self):
         """
         Gets a set of current files. This will create a copy, to prevent messing with uplink.
-        :return: copy of current files
+        :return: copy of current files transformed into a JSONable dictionary
         """
         return file_to_dict(self.__file_store)
 
     def exit(self):
         """ Exit event to shutdown the thread """
         self.__exit.set()
+        self.running = False
         self.queue.put(None) # Force an end to the wait for a file, if an uplink is not in-progress
+
+    def join(self):
+        """ Join with this uplinker """
         self.__thread.join()
 
 
 class FileUplinker(fprime_gds.common.handlers.DataHandler):
     """
     File uplinking component. Keeps track of the currently uplinking file, and registers as a receiver for the handshake
-    packets that are send back on each packet. This uplinker defines the following externally available functions for
-    use in the greater ground layer:
-
-    1. start: to start a file uplink. Will throw exception if already running.
-    2. get_progress: returns the current progress of the upload: (file name, size uploaded, total size)
-    3. data_callback: receives and verifies handshake, then uplinks next block.
-    4. cancel: cancel the current upload.
+    packets that are send back on each packet.
     """
     CHUNK_SIZE = 256
 
@@ -139,8 +144,8 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
     def enqueue(self, filepath, destination=None):
         """
-        Enqueue files for the upload. This tunnels into the upload thread, which unblocks once files have been enqueued
-        read to upload.
+        Enqueue files for the upload. This tunnels into the upload queue, which unblocks once files have been enqueued
+        and begins to upload each file sequentially.
         :param filepath: filepath to upload to the system
         :param destination: (optional) destination to uplink to. Default: current destination + file's basename
         """
@@ -151,22 +156,28 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     def exit(self):
         """ Exit this uplinker by killing the thread """
         self.queue.exit()
+        self.cancel()
+        self.join()
 
     def is_running(self):
         """ Check if the queue is running """
         return self.queue.is_running()
 
-    def pause_unpause(self, pause=False):
-        """ Pause/Unpause uplink """
-        if pause:
-            self.cancel()
-            self.queue.pause()
-        else:
-            self.queue.unpause()
+    def pause_unpause(self):
+        """ Pause uplink by canceling the uplink, and then pausing the uplink queue """
+        self.cancel()
+        self.queue.pause()
+
+
+    def unpause(self):
+        """ Unpauses the uplink by unpausing the internal queue """
+        self.queue.unpause()
 
     def cancel_remove(self, file):
         """
-        Cancel/remove the uplink of the given file
+        Cancel/remove the uplink of the given file.  If uplinking, it will cancel the uplink, and if queued it will
+        remove the file from the queue.  Unknown files will be ignored.
+        :param file: file to remove from the uplinker
         """
         if file == self.active.source:
             self.cancel()
@@ -175,8 +186,8 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
     def current_files(self):
         """
-        Returns the current set of files.
-        :return: current files
+        Returns the current set of files held by the uplink queue.
+        :return: current files as a list in JSONable format
         """
         return self.queue.current()
 
@@ -201,16 +212,17 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
     def send(self, packet_data):
         """
-        A function to send the packet out.  Starts timeout and handles timeouts.
-        :param packet_data: packet data to send,
+        A function to send the packet out.  Starts timeout and then pushes the packet to the file encoder.
+        :param packet_data: packet data to send that will be pushed to the encoder
         """
-        self.__timeout.restart(ignore_stopped=True)
+        self.__timeout.restart()
         self.__expected = self.file_encoder.data_callback(packet_data)[8:]
 
     def data_callback(self, data, sender=None):
         """
-        Process incoming handshake data, and if it is the expected handshake, then it uplinks next packet.
-        :param data: data from handshake packet.
+        Process incoming handshake data, and if it is the expected handshake, then it uplinks the next packet. In the
+        file. Invalid handshakes are ignore. When finished a returning handshake puts the uplinker into idle state.
+        :param data: data from handshake packet to be verified against that previously sent
         """
         # Ignore handshakes not for us
         if not self.valid_handshake(data):
@@ -239,7 +251,8 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     def cancel(self):
         """
         Cancels the currently active file uplink. Will emit a cancel packet to inform the deployment that the file is
-        canceled. This merely sets the state to "canceled" and will handle this later.
+        canceled. This merely sets the state to "canceled" and will handle this later. This implies that in the case of
+        a timeout, cancels may be ignored.
         """
         if self.state == FileStates.RUNNING:
             self.state = FileStates.CANCELED
@@ -247,7 +260,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
             #self.queue.pause()
 
     def timeout(self):
-        """Time out the uplink"""
+        """ Handles timeout o file packet by finishing the upload immediately, and setting the state to timeout """
         self.finish(False)
         self.active.state = "TIMEOUT"
 
@@ -269,7 +282,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
             self.__timeout.stop()
 
     def get_next_sequence(self):
-        """Gets the next sequence number"""
+        """ Gets the next sequence number """
         tmp = self.sequence
         self.sequence = self.sequence + 1
         return tmp
@@ -286,7 +299,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     @property
     def destination_dir(self):
         """
-        Get the destination property.
+        Get the destination directory that files will be uplinked to, if not currently specified.
         :return: value of destination
         """
         return self.__destination_dir
@@ -294,7 +307,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     @destination_dir.setter
     def destination_dir(self, destination):
         """
-        Set the destination property
+        Set the destination directory that files will be uplinked to.
         :param destination: new destination
         """
         self.__destination_dir = destination

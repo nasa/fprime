@@ -24,8 +24,7 @@ Vue.component("uplink-row", {
             let index = uplinkvue.selected.indexOf(this.item);
             if (action == "Remove" && index != -1) {
                 uplinkvue.selected.splice(index, 1);
-            }
-            else {
+            } else {
                 uplinkvue.uploader.command(this.item.source, action);
             }
         }
@@ -33,6 +32,10 @@ Vue.component("uplink-row", {
     computed: {
         progressBarClass: function () {
             return "bg-success";
+        },
+        basename() {
+            let regex = /.*[\\\/]/;
+            return this.item.destination.replace(regex, "")
         }
     }
 });

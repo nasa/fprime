@@ -244,9 +244,10 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         </button>
                     </td>
                     <td v-if="!item.uplink">
-                        <button v-if="item.state == 'FINISHED'" class="btn btn-danger" v-on:click="fileAction">
+                        <a v-if="item.state == 'FINISHED'" class="btn btn-danger"
+                           :href="'/download/files/' + basename" :download="basename">
                             Download
-                        </button>
+                        </a>
                     </td>
                     <td>
                         <div class="progress">
