@@ -91,7 +91,8 @@ class UplinkQueue(object):
             while self.running:
                 file_obj = self.queue.get()
                 # Exit condition is a None message, which unblocks the above get
-                if file_obj is None:
+                if file_obj is None or not self.running:
+                    self.queue.put(file_obj)
                     break
                 # Once a file is obtained from the queue, aquire the busy lock before starting. This prevents a in-use
                 # or paused queue from uplinking.
@@ -163,11 +164,10 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """ Check if the queue is running """
         return self.queue.is_running()
 
-    def pause_unpause(self):
+    def pause(self):
         """ Pause uplink by canceling the uplink, and then pausing the uplink queue """
         self.cancel()
         self.queue.pause()
-
 
     def unpause(self):
         """ Unpauses the uplink by unpausing the internal queue """
@@ -179,7 +179,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         remove the file from the queue.  Unknown files will be ignored.
         :param file: file to remove from the uplinker
         """
-        if file == self.active.source:
+        if self.active is not None and file == self.active.source:
             self.cancel()
         else:
             self.queue.remove(file)
