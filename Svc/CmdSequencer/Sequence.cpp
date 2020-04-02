@@ -77,17 +77,22 @@ namespace Svc {
 
     void CmdSequencerComponentImpl::Sequence ::
       allocateBuffer(
-          NATIVE_INT_TYPE identifier,
+          const NATIVE_INT_TYPE identifier,
           Fw::MemAllocator& allocator,
-          NATIVE_UINT_TYPE bytes
+          const NATIVE_UINT_TYPE bytes
       ) 
     {
         // has to be at least as big as a header
         FW_ASSERT(bytes >= Sequence::Header::SERIALIZED_SIZE);
+        bool recoverable; // don't care, since sequencer buffers don't need to survive reboot
         this->m_allocatorId = identifier;
+        NATIVE_UINT_TYPE actualSize = bytes; // set size to requested size
+
+        U8* mem = static_cast<U8*>(allocator.allocate(identifier,actualSize,recoverable));
+        FW_ASSERT(mem);
         this->m_buffer.setExtBuffer(
-            static_cast<U8*>(allocator.allocate(identifier,bytes)),
-            bytes
+            mem,
+            actualSize
         );
     }
 
