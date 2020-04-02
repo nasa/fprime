@@ -18,6 +18,7 @@ export class Loader {
      * Sets up the list of endpoints, and preps for the initial loading of the dictionaries.
      */
     constructor() {
+        this.session = new Date().getTime().toString();
         this.endpoints = {
             // Dictionary endpoints
             "command-dict": {
@@ -35,15 +36,18 @@ export class Loader {
             // Data endpoints
             "commands": {
                 "url": "/commands",
-                "last": null
+                "last": null,
+                "shutdown": true
             },
             "events": {
                 "url": "/events",
-                "last": null
+                "last": null,
+                "shutdown": true
             },
             "channels": {
                 "url": "/channels",
-                "last": null
+                "last": null,
+                "shutdown": true
             },
             "logdata": {
                 "url": "/logdata",
@@ -100,6 +104,7 @@ export class Loader {
      * @param jsonify: jsonify the data. Default: true.
      */
     load(endpoint, method, data, jsonify) {
+        let _self = this;
         // Default method argument to "GET"
         if (typeof(method) === "undefined") {
             method = "GET";
@@ -120,7 +125,8 @@ export class Loader {
                     reject(this.responseText);
                 }
             };
-            xhttp.open(method, endpoint, true);
+            let random = new Date().getTime().toString();
+            xhttp.open(method, endpoint + "?_no_cache=" + random + "&session=" + _self.session, method != "DELETE");
             if (typeof(data) === "undefined") {
                 xhttp.send();
             } else if (typeof(jsonify) === "undefined" || jsonify) {
@@ -161,4 +167,17 @@ export class Loader {
         this.endpoints[endpoint]["interval"] = setInterval(handler, config["dataPollIntervalMs"]);
         handler();
     }
- }
+
+    /**
+     * Destroys the session tracking items. Best-effort shutdown attempt.
+     */
+    destroy() {
+        for (let endpoint in this.endpoints) {
+            endpoint = this.endpoints[endpoint];
+            if (typeof(endpoint["shutdown"]) !== "undefined" && endpoint["shutdown"]) {
+                this.load(endpoint["url"], "DELETE");
+            }
+        }
+    }
+}
+

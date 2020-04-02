@@ -42,7 +42,7 @@ class ChannelHistory(flask_restful.Resource):
         :param dictionary: dictionary holding channel list
         """
         self.parser = flask_restful.reqparse.RequestParser()
-        self.parser.add_argument("starttime")
+        self.parser.add_argument("session", required=True, help="Session key for fetching data.")
         self.history = history
 
     def get(self):
@@ -50,7 +50,8 @@ class ChannelHistory(flask_restful.Resource):
         Return the telemetry history object
         """
         args = self.parser.parse_args()
-        new_chans = self.history.retrieve_new()
+        new_chans = self.history.retrieve(session=args.get("session"))
+        self.history.clear()
         for chan in new_chans:
             # Add the 'display_text' to the event, along with a getter
             if chan.template.fmt_str is not None:
@@ -58,3 +59,10 @@ class ChannelHistory(flask_restful.Resource):
                 func = lambda this: this.display_text
                 setattr(chan, "get_display_text", types.MethodType(func, chan))
         return {"history": new_chans}
+
+    def delete(self):
+        """
+        Delete the event history for a given session. This keeps the data all clear like.
+        """
+        args = self.parser.parse_args()
+        self.history.clear(session=args.get("session"))

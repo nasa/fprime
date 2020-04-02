@@ -99,7 +99,7 @@ class TransmitFile(object):
     """
     Wraps the file information needed for the uplink and downlinking processes.
     """
-    def __init__(self, source, destination):
+    def __init__(self, source, destination, log_dir=None):
         """ Construct the uplink file """
         self.__mode = None
         self.__start = None
@@ -111,6 +111,7 @@ class TransmitFile(object):
         self.__state = "QUEUED"
         self.__fd = None
         self.__checksum = CFDPChecksum()
+        self.__log_dir = log_dir
         self.__log_handler = None
 
     def open(self, mode="rb"):
@@ -123,7 +124,9 @@ class TransmitFile(object):
         self.__state = "TRANSMITTING"
         self.__fd = open(filepath, self.__mode)
         self.__start = datetime.datetime.utcnow()
-        self.__log_handler = logging.FileHandler("{}.log".format(filepath), "w")
+        if self.__log_dir is not None:
+            self.__log_handler = logging.FileHandler(os.path.join(self.__log_dir,
+                                                                 "{}.log".format(os.path.basename(filepath))), "w")
 
     def read(self, chunk):
         """ Read the chunk from the file """
@@ -146,8 +149,10 @@ class TransmitFile(object):
         """
         Opens the file descriptor and prepares it for uplink
         """
-        if self.__fd is not None:
+        if self.__log_handler is not None:
             self.__log_handler.close()
+            self.__log_handler = None
+        if self.__fd is not None:
             self.__fd.close()
             self.__fd = None
             self.__end = datetime.datetime.utcnow()

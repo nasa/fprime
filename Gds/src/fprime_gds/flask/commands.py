@@ -56,7 +56,7 @@ class CommandHistory(flask_restful.Resource):
         :param dictionary: dictionary holding command list
         """
         self.parser = flask_restful.reqparse.RequestParser()
-        self.parser.add_argument("start-time")
+        self.parser.add_argument("session", required=True, help="Session key for fetching data.")
         self.history = history
 
     def get(self):
@@ -64,9 +64,16 @@ class CommandHistory(flask_restful.Resource):
         Return the command history object
         """
         args = self.parser.parse_args()
-        return_set = {"history": self.history.retrieve_new()}
+        return_set = {"history": self.history.retrieve(session=args.get("session"))}
+        self.history.clear()
         return return_set
 
+    def delete(self):
+        """
+        Delete the event history for a given session. This keeps the data all clear like.
+        """
+        args = self.parser.parse_args()
+        self.history.clear(session=args.get("session"))
 
 class Command(flask_restful.Resource):
     """
@@ -103,4 +110,3 @@ class Command(flask_restful.Resource):
 #        except fprime_gds.common.data_types.cmd_data.CommandArgumentsException as exc:
 #            flask_restful.abort(403, message="Argument errors occurred", errors=exc.errors)
         return {"message": "success"}
-

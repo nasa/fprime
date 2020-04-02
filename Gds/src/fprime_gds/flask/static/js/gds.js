@@ -44,3 +44,9 @@ function setupBindings() {
 document.addEventListener("DOMContentLoaded", function(event) {
     loader.setup().then(setupBindings).catch(console.error);
 });
+/**
+ * Teardown best effort code.
+ */
+window.onbeforeunload = function (e) {
+    loader.destroy();
+};

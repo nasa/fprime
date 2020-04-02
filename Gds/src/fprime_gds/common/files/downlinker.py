@@ -26,7 +26,7 @@ LOGGER.setLevel(logging.INFO)
 
 class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     """File writer class for decoded packets"""
-    def __init__(self, directory, timeout = 20.0):
+    def __init__(self, directory, timeout = 20.0, log_dir=None):
         """
         FileWriter class constructor
 
@@ -40,6 +40,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         """
         super().__init__()
         self.__directory = directory
+        self.__log_dir = log_dir if log_dir is not None else directory
         self.active = None
         self.files = []
         self.state = FileStates.IDLE
@@ -83,7 +84,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             self.finish()
         # Create the destination file where the DATA packet data will be stored
         assert self.active is None, "File is already open, something went wrong"
-        self.active = TransmitFile(source_path, os.path.join(self.__directory, self.sanitize(dest_path)))
+        self.active = TransmitFile(source_path, os.path.join(self.__directory, self.sanitize(dest_path)), self.__log_dir)
         self.active.open("wb+")
         LOGGER.addHandler(self.active.log_handler)
         message = "Received START packet with metadata:\n"
