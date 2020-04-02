@@ -50,7 +50,14 @@ Vue.component("fp-row", {
         inView: {
             type: Boolean,
             default: true
-        }
+        },
+        /**
+         * Action to perform when the clicked row has been clicked.
+         */
+        clickAction: {
+            type: Function,
+            default: (item) => {},
+        },
     },
     methods: {
         /**
@@ -232,7 +239,16 @@ Vue.component("fp-table", {
         displayTemplate: {
             default: "fp-row"
         },
-
+        /**
+         * Action to perform when the clicked row has been clicked.
+         */
+        clickAction: {
+            type: Function,
+            default: (item) => {},
+        },
+        /**
+         * Action to perform when the clear rows button has been clicked.
+         */
         clearRows: {
             type: Function,
             default: null

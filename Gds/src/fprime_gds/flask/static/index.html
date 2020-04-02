@@ -166,6 +166,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                   :items="cmdhist"
                                   :item-to-columns="columnify"
                                   :item-to-unique="keyify"
+                                  :click-action="clickAction"
                         ></fp-table>
                     </div>
                 </div>
@@ -292,7 +293,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <template id="fp-row-template">
                 <tr :class="calculateStyle">
                     <th v-if="editing" v-on:input="onInput"><input type="checkbox" :checked="inView"></th>
-                    <td v-for="(column, index) in calculatedColumns">{{ column }}</td>
+                    <td v-for="(column, index) in calculatedColumns" v-on:click="clickAction(item)">{{ column }}</td>
                 </tr>
             </template>
 
@@ -376,7 +377,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                         :editing="editing"
                                         :in-view="inView(item)"
                                         v-on:row-checked="checkedChild"
-                                        :all-items="filteredItems">
+                                        :click-action="clickAction"
+                                        :all-items="filteredItems"
+                                    >
                                     </tr>
                                 </tbody>
                             </table>

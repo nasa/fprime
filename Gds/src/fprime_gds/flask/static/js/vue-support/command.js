@@ -118,6 +118,14 @@ Vue.component("command-input", {
                 });
         },
         /**
+         * Action to perform on a row when it has ben clicked by the user.
+         * @param item: item to click
+         */
+        clickAction(item) {
+            this.selected = item.template;
+            this.selected.args = [...item.args];
+        },
+        /**
          * Converts a given item into columns.
          * @param item: item to convert to columns
          */
