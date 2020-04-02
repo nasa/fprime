@@ -117,3 +117,12 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Integration test API
 * Baremetal components
 
+#### Release 1.4
+
+* Updated MemAllocator to have:
+  * "recoverable" flag to indicate if memory was recoverable across boots
+  * size variable is now modifiable by allocator to indicate actual size
+  * This will break existing code that uses MemAllocator
+* Updated CmdSequencer
+  * Uses new MemAllocator interface  
+
