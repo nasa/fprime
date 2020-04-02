@@ -157,7 +157,10 @@ export class Loader {
                         inProgress = false;
                         callback(data);
                     }
-                ).catch(console.error);
+                ).catch(function(error) {
+                    inProgress = false;
+                    console.error("[ERROR] Polling " + _self.endpoints[endpoint]["url"] + " failed with: " + error);
+                });
             }
         };
         // Clear old intervals
