@@ -293,7 +293,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <template id="fp-row-template">
                 <tr :class="calculateStyle">
                     <th v-if="editing" v-on:input="onInput"><input type="checkbox" :checked="inView"></th>
-                    <td v-for="(column, index) in calculatedColumns" v-on:click="clickAction(item)">{{ column }}</td>
+                    <td v-for="(column, index) in calculatedColumns" v-on:dblclick="clickAction(item)">{{ column }}</td>
                 </tr>
             </template>
 

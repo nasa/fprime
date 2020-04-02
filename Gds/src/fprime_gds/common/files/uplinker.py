@@ -158,7 +158,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """ Exit this uplinker by killing the thread """
         self.queue.exit()
         self.cancel()
-        self.join()
+        self.queue.join()
 
     def is_running(self):
         """ Check if the queue is running """
