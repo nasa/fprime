@@ -30,10 +30,7 @@ function(cheetah CHEETAH_TEMPLATES)
   )
   # Add the above PYTHON_TEMPLATES to the list of sources for the CODEGEN_TARGET target. Thus they will be
   # built as dependencies for the CODEGEN step.
-  target_sources(
-    ${CODEGEN_TARGET}
-    PRIVATE ${PYTHON_TEMPLATES}
-  )
+  set_property(GLOBAL APPEND PROPERTY CODEGEN_OUTPUTS ${PYTHON_TEMPLATES})
 endfunction(cheetah)
 
 ####
