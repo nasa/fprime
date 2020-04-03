@@ -32,7 +32,7 @@ Vue.component("uplink", {
         "uploader": Object
     },
     data: function() {
-        return {"selected": [], "destination": "/"}
+        return {"selected": [], "destination": "/", "error": null}
     },
     methods: {
         /**
@@ -40,10 +40,15 @@ Vue.component("uplink", {
          * specified in the curated list, then bail.
          */
         uplinkFiles() {
+            this.error = null;
             if (this.selected.length == 0) {
                 return;
             }
-            this.uploader.upload(this.selected, this.destination);
+            let _self = this;
+            this.uploader.upload(this.selected, this.destination).catch(
+                function(error) {
+                    _self.error = (error != "")? error : "Total size limited to 32MB. Please use separate uplinks";
+                });
         },
         /**
          * Calls the uploader to pause the uplinker.

@@ -252,9 +252,12 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <label>Add Files to Uplink:</label>
                             <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
                         </div>
-                        <button v-if="running" type="button" class="col-2 btn btn-danger" v-on:click="pauseUplink">Pause Uplink</button>
-                        <button v-if="!running" type="button" class="col-2 btn btn-danger" v-on:click="unpauseUplink">Unpause Uplink</button>
-                        <button type="button" class="col-2 btn btn-success" v-on:click="uplinkFiles">Start Uplink</button>
+                        <button v-if="running" type="button" class="col-2 btn btn-danger" v-on:click="pauseUplink">Pause Uplink Queue</button>
+                        <button v-if="!running" type="button" class="col-2 btn btn-danger" v-on:click="unpauseUplink">Unpause Uplink Queue</button>
+                        <button type="button" class="col-2 btn btn-success" v-on:click="uplinkFiles">Submit Uplink</button>
+                    </div>
+                    <div v-if="error != null" class="alert alert-danger" role="alert">
+                        {{ this.error }}
                     </div>
                     <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
                               :items="elements"
