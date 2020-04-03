@@ -262,6 +262,10 @@ namespace Drv {
       }
   }
 
+  void SocketIpDriverComponentImpl :: exitSocketTask() {
+      this->m_stop = true;
+  }
+
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined typed input ports
   // ----------------------------------------------------------------------
