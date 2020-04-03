@@ -162,7 +162,7 @@ class StringValidator(wx.Validator):
 		text = textCtrl.GetValue()
 
 
-		if text is not u'':
+		if text != u'':
 			textCtrl.SetBackgroundColour("white")
 			return True
 		else:
