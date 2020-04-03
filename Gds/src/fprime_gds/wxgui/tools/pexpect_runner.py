@@ -21,7 +21,7 @@ def process_poller():
     # command to run is arguments 2->end
     global exitThread
     command = " ".join(sys.argv[3:])
-    print "Running command %s"%command
+    print("Running command %s"%command)
     child = pexpect.spawn(command)
     logfd = open(sys.argv[1],'w')
     child.logfile = logfd

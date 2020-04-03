@@ -169,7 +169,6 @@ endif()
 # If baremetal scheduler is set, remove the previouse task files and add in the Baremetal variant
 if (BAREMETAL_SCHEDULER)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Baremetal/TaskRunner/")
-    add_definitions("-DFW_BAREMETAL_SCHEDULER")
     list(FILTER SOURCE_FILES EXCLUDE REGEX "Task\.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
 endif()
