@@ -119,7 +119,8 @@ integrated configuration with ground in-the-loop.
         'pexpect',
         'pytest',
         'flask_restful',
-        'fprime>=1.3.0'
+        'fprime>=1.3.0',
+        'flask_uploads @ git+https://github.com/maxcountryman/flask-uploads@f66d7dc93e684fa0a3a4350a38e41ae00483a796'
     ],
     extras_require={
         # I and T API

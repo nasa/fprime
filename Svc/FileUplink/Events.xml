@@ -84,6 +84,7 @@
     name="FileUplink_FileWriteError"
     severity="WARNING_HI"
     format_string="Could not write to file %s"
+    throttle="5"
   >
     <comment>An error occurred writing to a file</comment>
     <args>
@@ -102,6 +103,7 @@
     name="FileUplink_InvalidReceiveMode"
     severity="WARNING_HI"
     format_string="Packet type %u received in mode %u"
+    throttle="5"
   >
     <comment>The File Uplink component received a packet with a type that was invalid for the current receive mode</comment>
     <args>
@@ -127,6 +129,7 @@
     name="FileUplink_PacketOutOfBounds"
     severity="WARNING_HI"
     format_string="Packet %u out of bounds for file %s"
+    throttle="5"
   >
     <comment>During receipt of a file, the File Uplink component encountered a packet with offset and size out of bounds for the current file</comment>
     <args>
@@ -152,6 +155,7 @@
     name="FileUplink_PacketOutOfOrder"
     severity="WARNING_HI"
     format_string="Received packet %u after packet %u"
+    throttle="20"
   >
     <comment>The File Uplink component encountered an out-of-order packet during file receipt</comment>
     <args>

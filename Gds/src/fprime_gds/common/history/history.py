@@ -5,9 +5,11 @@ An ordered history that defines what interfaces a history should have within the
 
 :author: koran
 """
+import abc
+import fprime_gds.common.handlers
 
 
-class History:
+class History(fprime_gds.common.handlers.DataHandler):
     """
     An ordered history to support the GDS. Histories are intended to be registered with decoders in
     order to handle incoming objects and store them for retrieval. The default behavior of a
@@ -15,22 +17,7 @@ class History:
     want to maintain a different order, this should be made clear to the user and still support the
     calls in this History class.
     """
-
-    def __init__(self):
-        """
-        Constructor used to set-up  a history.
-        """
-        raise NotImplementedError("This history didn't override the __init__ method.")
-
-    def data_callback(self, data_object):
-        """
-        Data callback to push an object on the history. 
-
-        Args:
-            data_object: object to store
-        """
-        raise NotImplementedError("This history didn't override the data_callback method.")
-
+    @abc.abstractmethod
     def retrieve(self, start=None):
         """
         Retrieve objects from this history. If a starting point is specified, will return a
@@ -44,6 +31,7 @@ class History:
         """
         raise NotImplementedError("This history didn't override the retrieve method.")
 
+    @abc.abstractmethod
     def retrieve_new(self):
         """
         Retrieves an ordered list of objects that have been enqueued since the last call to
@@ -54,6 +42,7 @@ class History:
         """
         raise NotImplementedError("This history didn't override the retrieve_new method.")
 
+    @abc.abstractmethod
     def clear(self, start=None):
         """
         Clears objects from history. A clear that specifies a starting point will clear the history
@@ -66,6 +55,7 @@ class History:
         """
         raise NotImplementedError("This history didn't override the clear method.")
 
+    @abc.abstractmethod
     def size(self):
         """
         Accessor for the number of objects in the history

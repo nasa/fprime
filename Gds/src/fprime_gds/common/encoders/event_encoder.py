@@ -77,21 +77,6 @@ class EventEncoder(Encoder):
         self.desc_obj = self.config.get_type("msg_desc")
         self.id_obj = self.config.get_type("event_id")
 
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data through the encoder.
-
-        Objects that the encoder is registered to will call this function to
-        pass data to the encoder. This function will then send the encoded
-        data to all registered senders.
-
-        Args:
-            data (EventData obj): A non-empty EventData obj to encode to binary
-        '''
-        self.send_to_all(self.encode_api(data))
-
-
     def encode_api(self, data):
         '''
         Encodes the given EventData object as binary data and returns the result.
