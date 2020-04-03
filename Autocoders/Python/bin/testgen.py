@@ -53,7 +53,11 @@ from fprime_ac.generators.writers import TestImplCppWriter
 from fprime_ac.generators.writers import TestMainWriter
 
 #Generators to produce the code
-from fprime_ac.generators import GenFactory
+try:
+    from fprime_ac.generators import GenFactory
+except ImportError as ime:
+    print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
+    sys.exit(1)
 
 # Flag to indicate verbose mode.
 VERBOSE = False

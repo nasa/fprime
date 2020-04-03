@@ -33,7 +33,11 @@ from fprime_ac.parsers import XmlTopologyParser
 from lxml import etree
 
 #Generators to produce the code
-from fprime_ac.generators import GenFactory
+try:
+    from fprime_ac.generators import GenFactory
+except ImportError as ime:
+    print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
+    sys.exit(1)
 
 # Needs to be initialized to create the other parsers
 CONFIG = ConfigManager.ConfigManager.getInstance()
