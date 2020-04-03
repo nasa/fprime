@@ -57,6 +57,7 @@ TEST_MODS= \
   Fw/Tlm \
   Fw/Types \
   Fw/Log \
+  Fw/Logger \
   Fw/Obj \
   Fw/Com \
   Os/Stubs \

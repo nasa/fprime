@@ -6,6 +6,7 @@
 #include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
 
 #include <stdio.h>
 #include <string.h>
@@ -963,7 +964,20 @@ TEST(PerformanceTest, F64SerPerfTest) {
             timer.getDiffUsec(),
             (F32) (timer.getDiffUsec()) / (F32) iters);
 
+}
 
+TEST(AllocatorTest,MallocAllocatorTest) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    NATIVE_UINT_TYPE size = 100; // one hundred bytes
+    bool recoverable;
+    void *ptr = allocator.allocate(10,size,recoverable);
+    ASSERT_EQ(100,size);
+    ASSERT_NE(ptr,(void*)NULL);
+    ASSERT_FALSE(recoverable);
+    // deallocate memory
+    allocator.deallocate(100,ptr);
 }
 
 int main(int argc, char **argv) {
