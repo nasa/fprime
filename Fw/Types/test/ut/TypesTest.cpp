@@ -85,7 +85,26 @@ TEST(SerializationTest,Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i8t1,i8t2);
     ASSERT_EQ(1,buff.m_deserLoc);
-#if DEBUG_VERBOSE
+
+
+    buff.resetSer();
+    ASSERT_EQ(0,buff.m_serLoc);
+    ASSERT_EQ(0,buff.m_deserLoc);
+
+    // double check negative numbers
+    i8t1 = -100;
+    i8t2 = 0;
+
+    stat1 = buff.serialize(i8t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(1,buff.m_serLoc);
+    stat2 = buff.deserialize(i8t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(i8t1,i8t2);
+    ASSERT_EQ(1,buff.m_deserLoc);
+
+
+    #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i8t1, i8t2, stat1,
             stat2);
     printf("U16 Test\n");
@@ -127,6 +146,20 @@ TEST(SerializationTest,Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i16t1,i16t2);
     ASSERT_EQ(2,buff.m_deserLoc);
+
+    // double check negative number
+    i16t1 = -1000;
+    i16t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serialize(i16t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(2,buff.m_serLoc);
+    stat2 = buff.deserialize(i16t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(i16t1,i16t2);
+    ASSERT_EQ(2,buff.m_deserLoc);
+
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i16t1, i16t2, stat1,
@@ -174,6 +207,20 @@ TEST(SerializationTest,Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(4,buff.m_deserLoc);
     ASSERT_EQ(i32t1,i32t2);
+
+    // double check negative number
+    i32t1 = -1000000;
+    i32t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serialize(i32t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    stat2 = buff.deserialize(i32t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(4,buff.m_deserLoc);
+    ASSERT_EQ(i32t1,i32t2);
+
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i32t1, i32t2, stat1,
@@ -229,6 +276,20 @@ TEST(SerializationTest,Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i64t1,i64t2);
     ASSERT_EQ(8,buff.m_deserLoc);
+
+    // double check negative number
+    i64t1 = -1000000000000;
+    i64t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serialize(i64t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    stat2 = buff.deserialize(i64t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(i64t1,i64t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
+
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", i64t1, i64t2, stat1,
@@ -872,9 +933,8 @@ TEST(TypesTest,StringFormatTest) {
     printf("Formatted: %s\n",str.toChar());
 }
 
-TEST(PerformanceTest, U64SerPerfTest) {
+TEST(PerformanceTest, F64SerPerfTest) {
 
-#if 0
 
     SerializeTestBuffer buff;
 
@@ -882,8 +942,8 @@ TEST(PerformanceTest, U64SerPerfTest) {
     printf("U8 Test\n");
 #endif
 
-    U64 in = 10;
-    U64 out = 0;
+    F64 in = 10000.0;
+    F64 out = 0;
 
     NATIVE_INT_TYPE iters = 100000000;
 
@@ -899,11 +959,10 @@ TEST(PerformanceTest, U64SerPerfTest) {
 
     timer.stop();
 
-    printf("%d iterations took %d us (%f each).\n", iters,
+    printf("%d iterations took %d us (%f us each).\n", iters,
             timer.getDiffUsec(),
             (F32) (timer.getDiffUsec()) / (F32) iters);
 
-#endif
 
 }
 
