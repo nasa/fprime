@@ -83,7 +83,7 @@ namespace Fw {
             return FW_SERIALIZE_NO_ROOM_LEFT;
         }
         FW_ASSERT(this->getBuffAddr());
-        this->getBuffAddr()[this->m_serLoc + 0] = (U8) val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -96,8 +96,8 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 8;
-        this->getBuffAddr()[this->m_serLoc + 1] = val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
+        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -109,8 +109,8 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 8;
-        this->getBuffAddr()[this->m_serLoc + 1] = val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
+        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -123,10 +123,10 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 24;
-        this->getBuffAddr()[this->m_serLoc + 1] = val >> 16;
-        this->getBuffAddr()[this->m_serLoc + 2] = val >> 8;
-        this->getBuffAddr()[this->m_serLoc + 3] = val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
+        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
+        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
+        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -138,10 +138,10 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 24;
-        this->getBuffAddr()[this->m_serLoc + 1] = val >> 16;
-        this->getBuffAddr()[this->m_serLoc + 2] = val >> 8;
-        this->getBuffAddr()[this->m_serLoc + 3] = val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
+        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
+        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
+        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -155,14 +155,14 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 56;
-        this->getBuffAddr()[this->m_serLoc + 1] = val >> 48;
-        this->getBuffAddr()[this->m_serLoc + 2] = val >> 40;
-        this->getBuffAddr()[this->m_serLoc + 3] = val >> 32;
-        this->getBuffAddr()[this->m_serLoc + 4] = val >> 24;
-        this->getBuffAddr()[this->m_serLoc + 5] = val >> 16;
-        this->getBuffAddr()[this->m_serLoc + 6] = val >> 8;
-        this->getBuffAddr()[this->m_serLoc + 7] = val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
+        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
+        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
+        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
+        this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
+        this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
+        this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
+        this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -174,14 +174,14 @@ namespace Fw {
         }
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        this->getBuffAddr()[this->m_serLoc + 0] = val >> 56;
-        this->getBuffAddr()[this->m_serLoc + 1] = val >> 48;
-        this->getBuffAddr()[this->m_serLoc + 2] = val >> 40;
-        this->getBuffAddr()[this->m_serLoc + 3] = val >> 32;
-        this->getBuffAddr()[this->m_serLoc + 4] = val >> 24;
-        this->getBuffAddr()[this->m_serLoc + 5] = val >> 16;
-        this->getBuffAddr()[this->m_serLoc + 6] = val >> 8;
-        this->getBuffAddr()[this->m_serLoc + 7] = val;
+        this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
+        this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
+        this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
+        this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
+        this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
+        this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
+        this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
+        this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
         this->m_serLoc += sizeof(val);
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
