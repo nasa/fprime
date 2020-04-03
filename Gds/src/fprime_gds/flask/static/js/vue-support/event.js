@@ -10,6 +10,8 @@
 import {filter, timeToString} from "./utils.js";
 import {config} from "../config.js";
 
+let OPREG = /Opcode (0x\d+)/;
+
 /**
  * events-list:
  *
@@ -17,7 +19,7 @@ import {config} from "../config.js";
  * needed method to configure fp-table to render events.
  */
 Vue.component("event-list", {
-    props:["events"],
+    props:["events", "commands"],
     template: "#event-list-template",
     methods: {
         /**
@@ -26,8 +28,22 @@ Vue.component("event-list", {
          * @return {[string, *, *, void | string, *]}
          */
         columnify(item) {
+            let display_text = item.display_text;
+            // Remap command EVRs to expand opcode for visualization pruposes
+            let groups = null
+            if (item.template.severity.value == "Severity.COMMAND" && (groups = display_text.match(OPREG)) != null) {
+                let mnemonic = "UNKNOWN";
+                let id = parseInt(groups[1]);
+                for (let command in this.commands) {
+                    command = this.commands[command];
+                    if (command.id == id) {
+                        mnemonic = command.mnemonic;
+                    }
+                }
+                display_text = display_text.replace(OPREG, '<span title="' + groups[0] + '">' + mnemonic + '</span>');
+            }
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
-                item.template.severity.value.replace("Severity.", ""), item.display_text];
+                item.template.severity.value.replace("Severity.", ""), display_text];
         },
         /**
          * Use the row's values and bounds to colorize the row. This function will color red and yellow items using

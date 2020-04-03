@@ -98,7 +98,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
                                    v-show="currentTab == 'Commanding'"></command-input>
                     <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
-                    <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
+                    <event-list v-bind:events="events" v-show="currentTab == 'Events'" v-bind:commands="commands"></event-list>
                     <uplink v-bind:upfiles="upfiles" v-bind:uploader="uploader" v-bind:running="running" v-show="currentTab == 'Uplink'"></uplink>
                     <downlink v-bind:downfiles="downfiles" v-show="currentTab == 'Downlink'"></downlink>
                     <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
@@ -296,7 +296,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <template id="fp-row-template">
                 <tr :class="calculateStyle">
                     <th v-if="editing" v-on:input="onInput"><input type="checkbox" :checked="inView"></th>
-                    <td v-for="(column, index) in calculatedColumns" v-on:dblclick="clickAction(item)">{{ column }}</td>
+                    <td v-for="(column, index) in calculatedColumns" v-on:dblclick="clickAction(item)" v-html="column"></td>
                 </tr>
             </template>
 
