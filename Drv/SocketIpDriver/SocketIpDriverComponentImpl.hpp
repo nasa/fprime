@@ -91,6 +91,10 @@ namespace Drv {
               NATIVE_INT_TYPE cpuAffinity = -1 //!< CPU affinity of the task to start
       );
 
+      //! Set the stop flag on the thread's loop such that it will shutdown promptly
+      //!
+      void exitSocketTask();
+
     PRIVATE:
 
       SocketIpStatus openProtocol(NATIVE_INT_TYPE protocol, bool isInput = true);
