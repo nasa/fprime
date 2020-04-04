@@ -119,6 +119,16 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 #### Release 1.4
 
+* Ref app no longer hangs on Linux exit
+* GDS improvements:
+  * File Uplink and Downlink implemented
+  * GDS supports multiple active windows
+  * Usability improvements for EVRs and commands
+* CMake improvements:
+  * Baremetal compilation supported
+  * Random rebuilding fixed
+  * Missing Cheetah templates properly rebuild
+  * Separate projects supported without additional tweaks
 * Updated MemAllocator to have:
   * "recoverable" flag to indicate if memory was recoverable across boots
   * size variable is now modifiable by allocator to indicate actual size
