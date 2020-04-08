@@ -1,29 +1,40 @@
 /**
- * command-input:
+ * command.js:
  *
- *
+ * Contains the Vue components for displaying the command history, and the command sending form.
  */
 // Setup component for select
 import "../../third-party/js/vue-select.js"
 import {timeToString,filter} from "./utils.js";
 
 Vue.component('v-select', VueSelect.VueSelect);
-
+/**
+ *
+ */
 Vue.component("command-argument", {
     props:["argument"],
     template: "#command-argument-template",
     computed: {
-        inputType: function () {
+        /**
+         * Allows for validation of commands using the HTML-based validation using regex and numers. Note: numbers here
+         * are treated as text, because we can allow for hex, and octal bases.
+         * @return [HTML input type, validation regex]
+         */
+        inputType() {
             // Unsigned integer
             if (this.argument.type[0] == 'U') {
-                return ["number", "\\d+"];
+                // Supports binary, hex, ocatal, and digital
+                return ["text", "0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|[1-9]\\\\d*"];
             }
             else if (this.argument.type[0] == 'F') {
                 return ["number", "\\d*.?\\d*"];
             }
             return ["text", ".*"];
         },
-        argumentError: function () {
+        /**
+         * Unpack errors on arguments, for display in this GUI.
+         */
+        argumentError() {
             if ("error" in this.argument) {
                 return this.argument.error;
             }
@@ -33,10 +44,6 @@ Vue.component("command-argument", {
 });
 
 
-/**
- * command-item:
- *
- */
 Vue.component("command-item", {
     props:["command"],
     template: "#command-item-template",
@@ -51,7 +58,11 @@ Vue.component("command-item", {
     }
 });
 
-
+/**
+ * command-input:
+ *
+ * Input command form Vue object. This allows for sending commands from the GDS.
+ */
 Vue.component("command-input", {
     props:["commands", "loader", "cmdhist"],
     data: function() {
@@ -59,13 +70,20 @@ Vue.component("command-input", {
     },
     template: "#command-input-template",
     methods: {
-        clearArguments: function() {
+        /**
+         * Clear the arguments to the command.
+         */
+        clearArguments() {
             // Clear arguments
             for (let i = 0; i < this.selected.args.length; i++) {
                 this.selected.args[i].value = "";
             }
         },
-        sendCommand: function() {
+        /**
+         * Send a command from this interface. This calls into the loader to send the command, and locks-out until the
+         * command reaches the ground system.
+         */
+        sendCommand() {
             let _self = this;
             _self.active = true;
             let command = this.selected;
@@ -99,7 +117,19 @@ Vue.component("command-input", {
                     _self.active = false;
                 });
         },
-        columnify: function(item) {
+        /**
+         * Action to perform on a row when it has ben clicked by the user.
+         * @param item: item to click
+         */
+        clickAction(item) {
+            this.selected = item.template;
+            this.selected.args = [...item.args];
+        },
+        /**
+         * Converts a given item into columns.
+         * @param item: item to convert to columns
+         */
+        columnify(item) {
             let values = [];
             for (let i = 0; i < item.args.length; i++) {
                 values.push(item.args[i].value);
@@ -118,10 +148,10 @@ Vue.component("command-input", {
     },
     computed: {
         /**
-         *
+         * List out the usable commands to be sent by the ground system.
          * @return {unknown[]}
          */
-        commandList: function() {
+        commandList() {
             return Object.values(this.commands).sort(
                 /**
                  * Compare objects by full_name

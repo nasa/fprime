@@ -9,6 +9,8 @@
 import {ChannelMixins} from "./channel.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
+import {UplinkMixins} from "./uplink.js";
+import {DownlinkMixins} from "./downlink.js";
 import {LogMixins} from "./log.js";
 import {config} from "../config.js"
 /**
@@ -19,33 +21,41 @@ import {config} from "../config.js"
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "cmdhist", "events", "channels", "logs", "eventsActive", "channelsActive"],
-    data: function () {
-        let hash = window.location.hash.replace("#", "");
-        return {
-            "currentTab": (hash == "")? "Commanding" : hash,
-            "tabs": ["Commanding", "Events", "Channels", "Logs"],
-            "config": config
-        }
-    },
+    props:["commands", "loader", "uploader", "running", "downfiles", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
+    data:
+        /**
+         * Function to return a dictionary of data items. currentTab is set based on the initial URL.
+         */
+        function () {
+            let hash = window.location.hash.replace("#", "");
+            return {
+                "currentTab": (hash == "")? "Commanding" : hash,
+                "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs"],
+                "config": config
+            }
+        },
     methods: {
         /**
          * Route the tab-change and place it in the Window's location
          * @param tab: tab to route to. No need for the #
          */
-        route: function (tab) {
+        route(tab) {
             window.location.hash = tab;
             this.currentTab = tab;
         },
         /**
          * Spawns a new window when the new window button is clicked.
          */
-        spawn: function () {
+        spawn() {
             window.open(window.location);
         }
     },
     computed: {
-        noneActive: function () {
+        /**
+         * Determines if none are active by checking if active channels or events have been detected recently.
+         * @return {boolean} no active data flow
+         */
+        noneActive() {
             return !(this.eventsActive || this.channelsActive);
         }
 
@@ -55,7 +65,8 @@ Vue.component("tabbed-etc", {
 /**
  * TabETC:
  *
- * Class implementing the vue-items used to do a tabbed version of the F´ setup.
+ * Class implementing the vue-items used to do a tabbed version of the F´ setup. This allows it to be exported and
+ * interacted with outside of the knowledge of the raw Vue component.
  */
 export class TabETCVue {
     /**
@@ -63,20 +74,25 @@ export class TabETCVue {
      * @param element: HTML element ID to render to
      * @param commands: commands list to render in a drop down
      * @param channels: channel templates list
-     * @param loader: loader used to handel F prime REST
+     * @param loader: loader used to handle F prime REST
+     * @param uploader: uploader used to handle F prime file uplink
      */
-    constructor(element, commands, channels, loader) {
+    constructor(element, commands, channels, loader, uploader) {
         //Mixin functions for each of the components
         Object.assign(TabETCVue.prototype, CommandMixins);
         Object.assign(TabETCVue.prototype, EventMixins);
         Object.assign(TabETCVue.prototype, ChannelMixins);
+        Object.assign(TabETCVue.prototype, UplinkMixins);
+        Object.assign(TabETCVue.prototype, DownlinkMixins);
         Object.assign(TabETCVue.prototype, LogMixins);
 
         let data = {
             ...this.setupCommands(commands, loader),
             ...this.setupEvents(),
             ...this.setupChannels(channels),
-            ...this.setupLogs()
+            ...this.setupLogs(),
+            ...this.setupUplink(uploader),
+            ...this.setupDownlink()
         };
         // Create a vue object
         this.vue = new Vue({

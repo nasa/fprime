@@ -2,7 +2,8 @@
 ## Overview
 The Gds consists of a collection of classes and tools that provide an interface for fprime deployments, allowing users to view telemetry and events and send commands.
 
-The GDS WX GUI is an almost completely rewritten version of the fprime GSE UI. Both the GSE and GDS
+The GDS HTML GUI is an almost completely rewritten version of the fprime GSE UI, our historical ground system that has been
+deprecated due to its Python 2 requirement. Both the GSE and GDS
 use the ThreadedTCPServer to receive data from the fprime deployment. They also
 have very similar looking GUIs, start up scripts, and command line arguments.
 However, The infrastructure supporting each one is very different.
@@ -46,36 +47,41 @@ The WX GUI is a user interface developed with the WX-Python. It uses the GDS to 
 ## GDS GUI Usage
 Starting the GDS can started along with the TCPServer and Reference App by executing the following script.
 ```
-fprime-sw/Ref/scripts/run_ref_gds.sh
+fprime-gds -d Ref/
 ```
 The Ref example should be built, and the `Ref/logs` directory should exist in the fprime directory.
 
 This script has default parameters passed to the GDS, but the full usage of the GDS is: 
 ```
-usage: gds.py [-h] [-d GENERATED_PATH] [-x XML_DICT_PATH] [-s PKT_SPEC_PATH]
-              [-a ADDR] [-p PORT] [-L LOG_DIR_PATH] [-C CONFIG_PATH]
+usage: fprime-gds [-h] [-d DEPLOY] [-l LOGS] [--log-directly]
+                  [--tts-port TTS_PORT] [--tts-addr TTS_ADDR] [-g {none,html}]
+                  [--dictionary DICTIONARY] [-c CONFIG] [--comm-adapter {ip}]
+                  [-n] [--app APP]
 
-GDS GUI to display telem and event data from Fprime deployments and send
-commands to them
+Run F prime deployment with: GDS data server, GDS GUI, and application.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d GENERATED_PATH, --dictionary GENERATED_PATH
-                        Path to generated dictionary files (if using python
-                        module dictionaries)
-  -x XML_DICT_PATH, --xml-dict XML_DICT_PATH
-                        Path to the xml dictionary file (if using xml
-                        dictionaries)
-  -s PKT_SPEC_PATH, --pkt-spec PKT_SPEC_PATH
-                        Path to the packet specification file
-  -a ADDR, --addr ADDR  Set threaded tcp socket server address
-                        [default=127.0.0.1]
-  -p PORT, --port PORT  Set threaded tcp socket server port [default: 50000]
-  -L LOG_DIR_PATH       Path to directory where log files will be put (a
-                        subdirectory named with the current date and time will
-                        be made with individual log files within it)
-  -C CONFIG_PATH, --config CONFIG_PATH
-                        Path to the configuration file to read
+  -d DEPLOY, --deployment DEPLOY
+                        Path to deployment directory. Will be used to find
+                        dictionary and app automatically
+  -l LOGS, --logs LOGS  Logging directory. Created if non-existant.
+  --log-directly        Logging directory is used directly, no extra dated
+                        directories created.
+  --tts-port TTS_PORT   Set the threaded TCP socket server port [default:
+                        50050]
+  --tts-addr TTS_ADDR   set the threaded TCP socket server address [default:
+                        0.0.0.0]
+  -g {none,html}, --gui {none,html}
+                        Set the desired GUI system for running the deployment.
+                        [default: html]
+  --dictionary DICTIONARY
+                        Path to dictionary. Overrides deploy if both are set
+  -c CONFIG, --config CONFIG
+                        Configuration for wx GUI. Ignored if not using wx.
+  --comm-adapter {ip}   Choose an adapter from the available adapters.
+  -n, --no-app          Do not run deployment binary. Overrides --app.
+  --app APP             Path to app to run. Overrides deploy if both are set.
 ```
 
 ## Classes

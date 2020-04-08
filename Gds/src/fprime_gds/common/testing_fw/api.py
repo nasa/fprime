@@ -17,9 +17,9 @@ from fprime_gds.common.utils.event_severity import EventSeverity
 from fprime_gds.common.history.chrono import ChronologicalHistory
 
 from fprime.common.models.serialize.time_type import TimeType
+from fprime_gds.common.handlers import DataHandler
 
-
-class IntegrationTestAPI:
+class IntegrationTestAPI(DataHandler):
     """
     A value used to begin searches after the current contents in a history and only search future
     items
@@ -36,9 +36,9 @@ class IntegrationTestAPI:
         """
         self.pipeline = pipeline
         # these are owned by the GDS and will not be modified by the test API.
-        self.aggregate_command_history = pipeline.get_command_history()
-        self.aggregate_telemetry_history = pipeline.get_channel_history()
-        self.aggregate_event_history = pipeline.get_event_history()
+        self.aggregate_command_history = pipeline.histories.commands
+        self.aggregate_telemetry_history = pipeline.histories.channels
+        self.aggregate_event_history = pipeline.histories.events
 
         # these histories are owned by the TestAPI and are modified by the API.
         self.fsw_ordered = fsw_order
@@ -50,9 +50,9 @@ class IntegrationTestAPI:
             self.command_history = TestHistory()
             self.telemetry_history = TestHistory()
             self.event_history = TestHistory()
-        self.pipeline.register_command_consumer(self.command_history)
-        self.pipeline.register_event_consumer(self.event_history)
-        self.pipeline.register_telemetry_consumer(self.telemetry_history)
+        self.pipeline.coders.register_command_consumer(self.command_history)
+        self.pipeline.coders.register_event_consumer(self.event_history)
+        self.pipeline.coders.register_channel_consumer(self.telemetry_history)
 
         # Initialize latest time. Will be updated whenever a time query is made.
         self.latest_time = TimeType()
@@ -65,7 +65,7 @@ class IntegrationTestAPI:
 
         # A predicate used as a filter to choose which events to log automatically
         self.event_log_filter = self.get_event_pred()
-        self.pipeline.register_event_consumer(self)
+        self.pipeline.coders.register_event_consumer(self)
 
         # Used by the data_callback method to detect if events have been received out of order.
         self.last_evr = None
@@ -258,7 +258,7 @@ class IntegrationTestAPI:
             subhist = ChronologicalHistory(telemetry_filter)
         else:
             subhist = TestHistory(telemetry_filter)
-        self.pipeline.register_telemetry_consumer(subhist)
+        self.pipeline.coders.register_channel_consumer(subhist)
         return subhist
 
     def remove_telemetry_subhistory(self, subhist):
@@ -271,7 +271,7 @@ class IntegrationTestAPI:
         Returns:
             True if the subhistory was removed, False otherwise
         """
-        return self.pipeline.remove_telemetry_consumer(subhist)
+        return self.pipeline.coders.remove_channel_consumer(subhist)
 
     def get_event_subhistory(self, event_filter=None, fsw_order=True):
         """
@@ -290,7 +290,7 @@ class IntegrationTestAPI:
             subhist = ChronologicalHistory(event_filter)
         else:
             subhist = TestHistory(event_filter)
-        self.pipeline.register_event_consumer(subhist)
+        self.pipeline.coders.register_event_consumer(subhist)
         return subhist
 
     def remove_event_subhistory(self, subhist):
@@ -303,7 +303,7 @@ class IntegrationTestAPI:
         Returns:
             True if the subhistory was removed, False otherwise
         """
-        return self.pipeline.remove_event_consumer(subhist)
+        return self.pipeline.coders.remove_event_consumer(subhist)
 
     ######################################################################################
     #   Command Functions
@@ -321,7 +321,7 @@ class IntegrationTestAPI:
             The comand ID (int)
         """
         if isinstance(command, str):
-            cmd_dict = self.pipeline.get_command_name_dictionary()
+            cmd_dict = self.pipeline.dictionaries.command_name
             if command in cmd_dict:
                 return cmd_dict[command].get_id()
             else:
@@ -330,7 +330,7 @@ class IntegrationTestAPI:
                 )
                 raise KeyError(msg)
         else:
-            cmd_dict = self.pipeline.get_command_id_dictionary()
+            cmd_dict = self.pipeline.dictionaries.command_id
             if command in cmd_dict:
                 return command
             else:
@@ -458,7 +458,7 @@ class IntegrationTestAPI:
             the channel ID (int)
         """
         if isinstance(channel, str):
-            ch_dict = self.pipeline.get_channel_name_dictionary()
+            ch_dict = self.pipeline.dictionaries.channel_name
             if channel in ch_dict:
                 return ch_dict[channel].get_id()
             else:
@@ -467,7 +467,7 @@ class IntegrationTestAPI:
                 )
                 raise KeyError(msg)
         else:
-            ch_dict = self.pipeline.get_channel_id_dictionary()
+            ch_dict = self.pipeline.dictionaries.channel_id
             if channel in ch_dict:
                 return channel
             else:
@@ -683,14 +683,14 @@ class IntegrationTestAPI:
             the event ID (int)
         """
         if isinstance(event, str):
-            event_dict = self.pipeline.get_event_name_dictionary()
+            event_dict = self.pipeline.dictionaries.event_name
             if event in event_dict:
                 return event_dict[event].get_id()
             else:
                 msg = "The event mnemonic, {}, wasn't in the dictionary".format(event)
                 raise KeyError(msg)
         else:
-            event_dict = self.pipeline.get_event_id_dictionary()
+            event_dict = self.pipeline.dictionaries.event_id
             if event in event_dict:
                 return event
             else:
@@ -1247,7 +1247,7 @@ class IntegrationTestAPI:
                 self.__log(ast_msg, TestLogger.ORANGE)
             return False
 
-    def data_callback(self, data_object):
+    def data_callback(self, data_object, sender=None):
         """
         Data callback used by the api to log events and detect when they are received out of order.
         Args:

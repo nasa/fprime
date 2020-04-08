@@ -1,5 +1,3 @@
-#! /dsw/Python-2.6.1-2/bin/python
-
 # This script will create two PTYs. One through a forkpty call
 # that creates a copy of this script on a new PTY for control/shell
 # PTY control. The second is in raw mode and just transfers bytes

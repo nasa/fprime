@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: implgen.py
 #
@@ -47,7 +47,11 @@ from fprime_ac.generators.writers import ImplCppWriter
 from fprime_ac.generators.writers import ImplHWriter
 
 #Generators to produce the code
-from fprime_ac.generators import GenFactory
+try:
+    from fprime_ac.generators import GenFactory
+except ImportError as ime:
+    print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
+    sys.exit(1)
 
 # Flag to indicate verbose mode.
 VERBOSE = False
@@ -264,7 +268,7 @@ def main():
             print("\nGenerating tests...")
         generate_impl_files(opt, component_model)
     else:
-        print("ERROR: Invalid XML found...this format not supported")
+        print("ERROR: {} is used for component XML files, not {} XML files".format(sys.argv[0], xml_type))
         sys.exit(-1)
     
     sys.exit(0)

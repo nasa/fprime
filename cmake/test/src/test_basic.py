@@ -54,7 +54,6 @@ EXPECTED = [
     os.path.join("lib", platform.system(), "libSvc_FileDownlink.a"),
     os.path.join("lib", platform.system(), "libFw_ComFile.a"),
     os.path.join("lib", platform.system(), "libRef_RecvBuffApp.a"),
-    os.path.join("lib", platform.system(), "libcodegen.a"),
     os.path.join("lib", platform.system(), "libSvc_Time.a"),
     os.path.join("lib", platform.system(), "libFw_Cfg.a"),
     os.path.join("lib", platform.system(), "libSvc_Fatal.a"),

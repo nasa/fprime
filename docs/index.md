@@ -2,7 +2,7 @@
 title: "F´ A Flight Software and Embedded Systems Framework"
 layout: default
 ---
-F´ is a software framework for rapidly development and deployment of embedded systems and spaceflight applications.
+F´ is a software framework for rapid development and deployment of embedded systems and spaceflight applications.
 Originally developed at NASA's Jet Propulsion Laboratory, F´ is open source software that has been successfully deployed
 for several space applications. It has been used for, but is not limited to, CubeSats, SmallSats, instruments, and
 deployables.
@@ -29,7 +29,7 @@ F´ has the following features:
 
 ## F´ System Requirements
 
-In order to develop applications with F´ the following requirements of the user's system must be met.
+In order to develop applications with F´, the following requirements of the user's system must be met.
 
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
 2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path

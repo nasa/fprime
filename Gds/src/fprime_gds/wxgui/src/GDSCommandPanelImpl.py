@@ -156,7 +156,7 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
 
         s = self.CmdsComboBox.GetStringSelection()
-        if s is not u'':
+        if s != u'':
             temp = self.cname_dict[s]
             data_obj = cmd_data.CmdData(tuple(arglist), temp)
 
@@ -171,7 +171,7 @@ class CommandsImpl (GDSCommandPanelGUI.Commands):
 
     def onCmdHistSearchButtonClick( self, event ):
 
-        if self.CmdHistSearchTextCtl.GetLineText(0) is not u'':
+        if self.CmdHistSearchTextCtl.GetLineText(0) != u'':
             if self.CmdHistSearchTextCtl.GetLineText(0) != self._previous_search_term:
                 self._previous_search_term = self.CmdHistSearchTextCtl.GetLineText(0)
                 self.updateCmdSearchPool()

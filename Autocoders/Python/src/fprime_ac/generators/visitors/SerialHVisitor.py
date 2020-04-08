@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: SerialHVisitor.py
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -201,7 +201,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         c.name = obj.get_name()
         d = datetime.datetime.now()
         c.date = d.strftime("%A, %d %B %Y")
-        c.user = os.environ['USER']
+        c.user = getuser()
         self._writeTmpl(c, "startSourceFilesVisit")
 
 
@@ -304,7 +304,3 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             c.namespace_list = obj.get_namespace().split('::')
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
-
-
-if __name__ == '__main__':
-    pass

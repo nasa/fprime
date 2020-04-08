@@ -1,171 +1,78 @@
+"""
+base.py:
 
-import struct
-CHECKSUM_CALC = lambda data: 0xcafecafe
+This file specifies the base-adapter for the F prime comm-layer. This class defines the basic methods needed to interact
+with various wire formats as they are supported by the F prime comm-layer. This file defines a single abstract base
+class representing the core features of the adapter class that must be implemented by every implementation of the
+adapter for use with the comm-layer.
 
-class BaseAdapter(object):
+@author lestarch
+"""
+import abc
+
+
+class BaseAdapter(abc.ABC):
     """
-    Base adapter for the framing and deframing of the F prime packets from the GroundInterface component. This does not
-    provide the actual mechanics of reading and writing data, as those should be provided by the child classes specific
-    to each adapter type.
-
-
+    Base adapter for adapting the communications layer. This essentially breaks down to providing the ability to read
+    data from, and write to the necessary wire-format. The children of this class must at least implement the 'read' and
+    'write' functions to ensure that data can be read and written. 'open' and 'close' are also provided as a helper to
+    the subclass implementor to place resource initialization and release code, however; these implementations are
+    defaulted not overridden.
     """
-    # Size of an F prime framing token, and the type based on that size
-    TOKEN_SIZE = 4
-    # Total size of header data based on token size
-    HEADER_SIZE = (TOKEN_SIZE * 2)
-    # Size of checksum value, and the hardcoded value before CRC32 is available
-    CHECKSUM_SIZE = 4
-    # Maximum data size
-    MAXIMUM_DATA_SIZE = 2048
-    # Retry count to upload
-    RETRY_COUNT = 3
-
-
-    # Filled by set_constants()
-    TOKEN_TYPE = None
-    HEADER_FORMAT = None
-    START_TOKEN = None
-
-    def __init__(self, sender):
-        """
-        Initialize this adapter's member variables, and static variables for use in the rest of the processing. This
-        will prepare the processing engine to run as expected.
-        :param sender: an object used to send frames to the GDS
-        """
-        # Setup the constants as soon as possible.
-        BaseAdapter.set_constants()
-        self.pool = bytearray()
-        self.sender = sender
-        self.running_downlink = True
-        self.running_uplink = True
 
     def open(self):
-        """No implementation needed in base-case"""
+        """Null default implementation """
         pass
 
-    @classmethod
-    def set_constants(clazz):
-        """
-        Setup the constants for the various token sizes. This will ensure that the system can read
-        :return:
-        """
-        if BaseAdapter.TOKEN_SIZE == 4:
-            BaseAdapter.TOKEN_TYPE = "I"
-            BaseAdapter.START_TOKEN =  0xdeadbeef
-        elif BaseAdapter.TOKEN_SIZE == 2:
-            BaseAdapter.TOKEN_TYPE = "H"
-            BaseAdapter.START_TOKEN = 0xbeef
-        elif BaseAdapter.TOKEN_SIZE == 1:
-            BaseAdapter.TOKEN_TYPE = "B"
-            BaseAdapter.START_TOKEN = 0xef
-        else:
-            raise ValueError("Invalid TOKEN_SIZE of {0}".format(BaseAdapter.TOKEN_SIZE))
-        BaseAdapter.HEADER_FORMAT = ">" + (BaseAdapter.TOKEN_TYPE * 2)
+    def close(self):
+        """Null default implementation """
+        pass
 
-    def read(self, size):
+    @abc.abstractmethod
+    def read(self):
         """
         Read from the interface. Must be overridden by the child adapter. Throw no fatal errors, reconnect instead.
-        :param size: maximum size of data to read.
+        :param size: maximum size of data to read before breaking
+        :return: byte array of data, or b'' if no data was read
         """
-        raise NotImplementedError("'read' not properly overridden by child adapter")
+        pass
 
+    @abc.abstractmethod
     def write(self, frame):
         """
         Write to the interface. Must be overridden by the child adapter. Throw no fatal errors, reconnect instead.
         :param frame: framed data to uplink
         :return: True if data sent through adapter, False otherwise
         """
-        raise NotImplementedError("'read' not properly overridden by child adapter")
+        pass
 
-    def uplink(self):
+    @classmethod
+    @abc.abstractmethod
+    def get_arguments(cls):
         """
-        Runs the data uplink to the FSW. The data will first be framed with the framing tokens, and then uplinked by the
-        adapters 'write' definition. This will also retry the uplink up to RETRY_COUNT times.
-        :param data: data to be framed.
+        Returns a set of arguments consumed by this adapter. This will be consumed by the CLI layer in order to provide
+        command line arguments to the user. Note: these should be globally unique args, e.g. --ip-address
+        :return: dictionary, keys of tuple of arg flags and value of list of other arguments to argparse's add_argument
         """
-        data = self.sender.read()
-        # Check for valid data
-        if data is not None and len(data) > 0:
-            data_length = len(data)
-            framed = struct.pack(BaseAdapter.HEADER_FORMAT, BaseAdapter.START_TOKEN, data_length)
-            framed += data
-            framed += struct.pack(">I", CHECKSUM_CALC(framed))
-            # Transmit the data with retries
-            for retry in range(0, BaseAdapter.RETRY_COUNT):
-                if self.write(framed):
-                    break
-            else:
-                raise UplinkFailureException("Uplink failed to send {} bytes of data after {} retries"
-                                             .format(data_length, BaseAdapter.RETRY_COUNT))
+        pass
 
-    def downlink(self):
+    @classmethod
+    @abc.abstractmethod
+    def check_arguments(cls, args):
         """
-        Runs the downlink that reads data in, processes it, and then sends available packets back out to the ground
-        system. This can be run inside an infinite loop, or "polled" to process data.
+        Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
+        should be raised describing the problem with these arguments.
+        :param args: arguments as dictionary
         """
-        # Read the downlink data for a full (maximum) frame, and process if non-zero. No retries, as retry is implicit.
-        data = self.read(BaseAdapter.MAXIMUM_DATA_SIZE + BaseAdapter.HEADER_SIZE + BaseAdapter.CHECKSUM_SIZE)
-        if not data:
-            return
-        frames = self.process(data)
-        # Send out all frames found to GDS
-        for frame in frames:
-            self.sender.write(frame)
-
-    def process(self, data):
-        """
-        Processes a set of data. This involves adding it to the growing buffer of received data, searching for start,
-        length, and framing words. Then it will return a list of deframed packets from all available data.
-        :param data: new data to add to the existing pool as data, must be in byte array format
-        :return: list of extracted F prime packets (deframed)
-        """
-        packets = []
-        self.pool.extend(data)
-        # Read all packets that are available
-        while len(self.pool) >= BaseAdapter.HEADER_SIZE:
-            # Read header information including start token and size
-            start, data_size = struct.unpack_from(BaseAdapter.HEADER_FORMAT, self.pool)
-            total_size = BaseAdapter.HEADER_SIZE + data_size + BaseAdapter.CHECKSUM_SIZE
-            # Invalid frame, rotate away a Byte and keep processing
-            if start != BaseAdapter.START_TOKEN or data_size >= BaseAdapter.MAXIMUM_DATA_SIZE:
-                self.pool = self.pool[1:]
-                continue
-            # If the pool is large enough to read the whole frame, then read it
-            elif len(self.pool) >= total_size:
-                deframed, check = struct.unpack_from(">{0}sI".format(data_size), self.pool, BaseAdapter.HEADER_SIZE)
-                if check == CHECKSUM_CALC(self.pool[:data_size + BaseAdapter.HEADER_SIZE]):
-                    self.pool = self.pool[total_size:]
-                    packets.append(deframed)
-                # Invalid checksum, rotate it away
-                else:
-                    self.pool = self.pool[1:]
-            # Not enough data, go read more
-            else:
-                break
-        return packets
-
-    def run_uplink(self):
-        """
-        Run the uplink side of the adapter.
-        """
-        self.sender.open()
-        while self.running_uplink:
-            self.uplink()
-
-    def run_downlink(self):
-        """
-        Run the downlink of the adapter.
-        """
-        self.open()
-        while self.running_downlink:
-            self.downlink()
+        pass
 
     @classmethod
     def get_adapters(cls):
         """
-        Get the adapters off of base class.
-        :return: adapter list (must be imported)
+        Get all known adapters of this base class. These must be imported into the comm-layer to be available to the
+        system, however; they only need to be imported. Once imported this function will find them and make them
+        available to the comm-layer in the standard way.
+        :return: list of all imported comm adapters.
         """
         adapter_map = {}
         for adapter in cls.__subclasses__():
@@ -181,8 +88,8 @@ class BaseAdapter(object):
     @staticmethod
     def process_arguments(clazz, args):
         """
-        Process arguments incoming from the command line. This will construct keyword arguments to add to supply to a
-        call to the adapter's constructors.
+        Process arguments incoming from the command line and construct a dictionary of kwargs to supply to the chosen
+        adapter at creation time. This will allow the user to choose any imported adapters at runtime.
         :param args: arguments to process
         :return: dictionary of constructor keyword arguments
         """
@@ -191,8 +98,17 @@ class BaseAdapter(object):
             kwargs[value["dest"]] = getattr(args, value["dest"])
         return kwargs
 
-class UplinkFailureException(Exception):
-    """
-    After all retries were complete, uplink has still failed
-    """
-    pass
+    @classmethod
+    def construct_adapter(cls, adapter_name, args):
+        """
+        Constructs a new adapter, from the given adapter name and the given namespace of argument inputs. This is a
+        wrapper of "get_adapters" and "process_arguments" to help build a new, fully configured, adapter. This is a
+        factory method.
+        :param adapter_name: name of the adapter to build
+        :param args: namespace of arg value to help build an adapter
+        :return: newly constructed adapter
+        """
+        adapter = cls.get_adapters()[adapter_name]
+        # TODO: check that the arguments for existance/validity to front-load errors
+        return adapter(**cls.process_arguments(adapter, args))
+

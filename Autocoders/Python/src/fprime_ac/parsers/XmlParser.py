@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: XmlParser.py
 #
@@ -41,7 +40,6 @@ class XmlParser(object):
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file {}.".format(xml_file)
-            PRINT.info(stri)
             raise IOError(stri)
 
         fd = open(xml_file,'r')
@@ -56,6 +54,3 @@ class XmlParser(object):
         """
         return self.__root
 
-
-if __name__ == '__main__':
-    pass

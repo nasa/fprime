@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstanceTopologyHTMLVisitor.py
 #
@@ -210,6 +209,3 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp_dict[fp].close()
         PRINT.info("Completed generating HTML event tables...")
 
-
-if __name__ == '__main__':
-    pass

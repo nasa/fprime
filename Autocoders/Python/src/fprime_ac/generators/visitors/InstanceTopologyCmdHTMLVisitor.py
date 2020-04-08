@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstanceTopologyHTMLVisitor.py
 #
@@ -203,6 +202,3 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp_dict[fp].close()
         PRINT.info("Completed generating HTML command tables...")
 
-
-if __name__ == '__main__':
-    pass

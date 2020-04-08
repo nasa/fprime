@@ -40,23 +40,7 @@ class ChDecoder(Decoder):
             An initialized channel decoder object.
         '''
         super(ChDecoder, self).__init__()
-
         self.__dict = ch_dict
-
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data to the decoder class
-
-        Args:
-            data: Binary data to decode and pass to registered consumers
-        '''
-        result = self.decode_api(data)
-
-        # Make sure we don't send None data
-        if result != None:
-            self.send_to_all(result)
-
 
     def decode_api(self, data):
         '''
@@ -96,7 +80,6 @@ class ChDecoder(Decoder):
             print("Channel decode error: id %d not in dictionary"%ch_id)
             return None
 
-
     def decode_ch_val(self, val_data, offset, template):
         '''
         Decodes the given channel's value from the given data
@@ -123,8 +106,4 @@ class ChDecoder(Decoder):
         val_obj.deserialize(val_data, offset)
 
         return val_obj
-
-
-if __name__ == "__main__":
-    pass
 

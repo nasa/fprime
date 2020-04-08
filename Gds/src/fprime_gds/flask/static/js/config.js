@@ -1,7 +1,9 @@
 /**
  * config.js:
  *
- * Configuration for the F´ GDS. This allows projects to quickly set properties that run the system.
+ * Configuration for the F´ GDS. This allows projects to quickly set properties that change how the GDS is displayed in
+ * the browser to customise some parts of the look and feel. It also provides the some basic functionality
+ * configuration.
  */
 export let config = {
     // Allows projects to brand the UI
@@ -13,5 +15,7 @@ export let config = {
     // Set the icon for the condition when there is data flowing
     dataSuccessIcon: "/img/success.svg",
     // Set the icon for the condition when there is a data-flow error
-    dataErrorIcon: "/img/error.svg"
+    dataErrorIcon: "/img/error.svg",
+    // Data polling interval in milliseconds
+    dataPollIntervalMs: 1000
 };

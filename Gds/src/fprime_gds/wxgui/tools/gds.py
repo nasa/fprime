@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 '''
 This is the Fprime Ground data system GUI (GDS). It displays telemetry and event
