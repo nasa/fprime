@@ -1,0 +1,6 @@
+name: 'F prime CI'
+description: 'Runs continuous integration testing on F prime'
+runs:
+  using: 'docker'
+  image: 'docker://hub.docker.com/repository/docker/nasafprime/fprime-base/latest'
+  entrypoint: ["sh", "-c", "$GITHUB_WORKSPACE/mk/ci/master.bash"]
