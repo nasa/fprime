@@ -23,5 +23,5 @@ jobs:
     - uses: actions/checkout@v2
     # Runs the CI action internal to the repository
     - name: F prime CI step
-      uses: .github/actions/ 
+      uses: ./.github/actions/
       id: github-ci-action
