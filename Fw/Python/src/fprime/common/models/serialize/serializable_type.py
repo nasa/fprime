@@ -37,6 +37,7 @@ class SerializableType(type_base.BaseType):
             raise TypeMismatchException(type(str()),type(typename))
 
         self.__typename = typename
+        self.__val = []
         setattr(self, "mem_list", None)
 
         if mem_list == None or len(mem_list) == 0:
