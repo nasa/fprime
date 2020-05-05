@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME:  abstract_face.py
 #
@@ -68,6 +67,3 @@ class AbstractParser(object):
         """
         raise Exception("AbstractFace.__call__() - Implementation Error: you must supply your own concrete implementation of getAttr(...).")
 
-
-if __name__ == '__main__':
-    pass

@@ -1,11 +1,13 @@
 /**
+ * log.js:
  *
- *
+ * Vue support for the log viewing screen. This will allow users to view the various logs exported by the underlying
+ * server.
  */
 // Setup component for select
 import "../../third-party/js/vue-select.js"
 
-
+// Must provide v-select
 Vue.component('v-select', VueSelect.VueSelect);
 
 Vue.component("logging", {
@@ -13,6 +15,10 @@ Vue.component("logging", {
     template: "#logs-template",
     data: function() { return {"selected": ""};},
     computed:{
+        /**
+         * Computes the appropriate log files available.
+         * @return {string[]}
+         */
         options: function () {
             let kets = Object.keys(this.logs);
             return kets;
@@ -49,6 +55,8 @@ export let LogMixins = {
 /**
  * LogView:
  *
+ * Seperate wrapper object for handling the interaction with the raw Vue component, so that it can be exported and
+ * provide easy interaction.
  *
  * @author mstarch
  */

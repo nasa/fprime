@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: XmlComponentParser.py
 #
@@ -21,6 +21,7 @@ import os
 import sys
 import time
 from fprime_ac.utils import ConfigManager
+from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
 from optparse import OptionParser
 from lxml import etree
 from lxml import isoschematron
@@ -70,7 +71,6 @@ class XmlComponentParser(object):
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
             raise IOError(stri)
         
         fd = open(xml_file,'r')
@@ -105,10 +105,7 @@ class XmlComponentParser(object):
 
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
-            msg = "XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.Config.get('schema' , 'component'))
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            raise FprimeRngXmlValidationException(relax_compiled.error_log)
         
         # Check for async_input port
         self.validate_xml(xml_file, element_tree, 'schematron', 'active_comp')
@@ -127,7 +124,7 @@ class XmlComponentParser(object):
         component = element_tree.getroot()
         component_name = component.attrib['name']
 
-        print(("Parsing Component %s" %component_name))
+        print("Parsing Component %s" %component_name)
 
         if 'namespace' in component.attrib:
             namespace_name = component.attrib['namespace']
@@ -167,7 +164,6 @@ class XmlComponentParser(object):
                         break
                 else:
                     stri = "ERROR: Could not find specified dictionary XML file %s." % dict_file
-                    PRINT.info(stri)
                     raise IOError(stri)
                 PRINT.info("Reading external dictionary %s"%dict_file)
                 dict_fd = open(dict_file,'r')
@@ -971,9 +967,7 @@ class XmlComponentParser(object):
         # Check that validator is valid
         if not self.Config.has_option(validator_type, validator_name):
             msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
-            PRINT.info(msg)
-            print(msg)
-            raise Exception(msg)
+            raise FprimeXmlException(msg)
         
         # Create proper xml validator tool
         validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
@@ -988,13 +982,10 @@ class XmlComponentParser(object):
         if not validator_compiled.validate(parsed_xml_tree):
             if validator_type == 'schema':
                 msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
-                PRINT.info(msg)
-                print(parsed_xml_tree)
-                raise Exception(msg)
+                raise FprimeXmlException(msg)
             elif validator_type == 'schematron':
                 msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
                 PRINT.info(msg)
-                print(parsed_xml_tree)
 
     def is_component(self):
         """

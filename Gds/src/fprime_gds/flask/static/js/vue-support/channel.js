@@ -24,7 +24,7 @@ Vue.component("channel-table", {
          * @param item: channel item to convert to column values
          * @return {*[]}
          */
-        columnify: function(item) {
+        columnify(item) {
             if (item.time == null || item.val == null) {
                 return ["", "0x" + item.id.toString(16), item.template.full_name, ""];
             }
@@ -44,7 +44,7 @@ Vue.component("channel-table", {
          * the boot-strap "warning" and "danger" calls.
          * @return {string}: style-class to use
          */
-        calculateRowStyle: function () {
+        calculateRowStyle() {
             let value = this.channel.value;
             let channel = this.channel;
             let bounds = [
@@ -72,7 +72,7 @@ Vue.component("channel-table", {
          * @param item: the channel item to convert to its name
          * @return item name
          */
-        itemToName: function(item) {
+        itemToName(item) {
             return item.template.full_name;
         },
         /**
@@ -80,13 +80,13 @@ Vue.component("channel-table", {
          * @param item: channel to hide
          * @return {boolean}
          */
-        channelHider: function(item) {
+        channelHider(item) {
             return item.val == null || item.time == null;
         }
     },
     // Computed methods
     computed: {
-        conform: function() {
+        conform() {
             return Object.values(this.channels);
         }
     }

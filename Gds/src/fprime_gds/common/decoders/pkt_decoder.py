@@ -45,22 +45,6 @@ class PktDecoder(ChDecoder):
 
         self.__dict = pkt_name_dict
 
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data to the decoder class
-
-        Args:
-            data: (bytearray) Binary data to decode and pass to registered
-                              consumers
-        '''
-        result = self.decode_api(data)
-
-        # Make sure we don't send None data
-        if result != None:
-            self.send_to_all(result)
-
-
     def decode_api(self, data):
         '''
         Decodes the given data and returns the result.
@@ -109,7 +93,3 @@ class PktDecoder(ChDecoder):
             ch_data_objs.append(ChData(val_obj, pkt_time, ch_temp))
 
         return PktData(ch_data_objs, pkt_time, pkt_temp)
-
-
-if __name__ == "__main__":
-    pass

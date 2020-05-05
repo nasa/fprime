@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: AbstractWriter.py
 #
@@ -164,6 +163,3 @@ class AbstractWriter:
     def isInput(self, str):
         return str != None and str.lower() == "input"
 
-
-if __name__ == '__main__':
-    pass

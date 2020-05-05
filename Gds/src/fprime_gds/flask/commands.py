@@ -26,6 +26,7 @@ import flask_restful.reqparse
 import fprime.common.models.serialize.type_exceptions
 import fprime_gds.common.data_types.cmd_data
 
+
 class CommandDictionary(flask_restful.Resource):
     """
     Command dictionary endpoint. Will return dictionary when hit with a GET.
@@ -55,7 +56,7 @@ class CommandHistory(flask_restful.Resource):
         :param dictionary: dictionary holding command list
         """
         self.parser = flask_restful.reqparse.RequestParser()
-        self.parser.add_argument("start-time")
+        self.parser.add_argument("session", required=True, help="Session key for fetching data.")
         self.history = history
 
     def get(self):
@@ -63,9 +64,16 @@ class CommandHistory(flask_restful.Resource):
         Return the command history object
         """
         args = self.parser.parse_args()
-        return_set = {"history": self.history.retrieve_new()}
+        return_set = {"history": self.history.retrieve(session=args.get("session"))}
+        self.history.clear()
         return return_set
 
+    def delete(self):
+        """
+        Delete the event history for a given session. This keeps the data all clear like.
+        """
+        args = self.parser.parse_args()
+        self.history.clear(session=args.get("session"))
 
 class Command(flask_restful.Resource):
     """
@@ -94,13 +102,11 @@ class Command(flask_restful.Resource):
         if arg_list is None:
             arg_list = []
         try:
-            cmd_name_dict = self.sender.get_command_name_dictionary()
-            self.sender.send_command(cmd_name_dict[command].opcode, arg_list)
+            self.sender.send_command(command, arg_list)
         except fprime.common.models.serialize.type_exceptions.NotInitializedException:
             flask_restful.abort(403, message="Did not supply all required arguments.")
         except fprime_gds.common.data_types.cmd_data.CommandArgumentException as exc:
             flask_restful.abort(403, message=str(exc))
-        except fprime_gds.common.data_types.cmd_data.CommandArgumentsException as exc:
-            flask_restful.abort(403, message="Argument errors occurred", errors=exc.errors)
+#        except fprime_gds.common.data_types.cmd_data.CommandArgumentsException as exc:
+#            flask_restful.abort(403, message="Argument errors occurred", errors=exc.errors)
         return {"message": "success"}
-

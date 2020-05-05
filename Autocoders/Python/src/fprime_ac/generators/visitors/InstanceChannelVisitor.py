@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ComponentHVisitor.py
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -129,7 +129,7 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
             c = ChannelHeader.ChannelHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
-            c.user = os.environ['USER']
+            c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[fname], "channelHeaderVisit")
       
@@ -176,8 +176,3 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
     
             self._writeTmpl(c, self.__fp[fname], "channelBodyVisit")
             self.__fp[fname].close()
-                
-            
-
-if __name__ == '__main__':
-    pass

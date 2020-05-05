@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # File difference and rename routines.
 # Main useful routines are:

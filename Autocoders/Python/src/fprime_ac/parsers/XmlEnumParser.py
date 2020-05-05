@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: XmlEnumParser.py
 #
@@ -25,6 +25,7 @@ from optparse import OptionParser
 from lxml import etree
 from lxml import isoschematron
 from fprime_ac.parsers import XmlParser
+from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
 #
 # Python extention modules and custom interfaces
 #
@@ -59,8 +60,7 @@ class XmlEnumParser(object):
 
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
-            raise
+            raise IOError(stri)
         fd = open(xml_file,'r')
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
@@ -81,10 +81,7 @@ class XmlEnumParser(object):
 
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
-            msg = "XML file {} is not valid according to schema {}.".format(xml_file , ROOTDIR + self.Config.get('schema' , 'enum'))
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            raise FprimeRngXmlValidationException(relax_compiled.error_log)
         
         enum = element_tree.getroot()
         if enum.tag != "enum":
@@ -115,9 +112,7 @@ class XmlEnumParser(object):
         # Check that validator is valid
         if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
             msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
-            PRINT.info(msg)
-            print(msg)
-            raise Exception(msg)
+            raise FprimeXmlException(msg)
                                 
         # Create proper xml validator tool
         validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
@@ -132,13 +127,10 @@ class XmlEnumParser(object):
         if not validator_compiled.validate(parsed_xml_tree):
             if validator_type == 'schema':
                 msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
-                PRINT.info(msg)
-                print(parsed_xml_tree)
-                raise Exception(msg)
+                raise FprimeXmlException(msg)
             elif validator_type == 'schematron':
                 msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
                 PRINT.info(msg)
-                print(parsed_xml_tree)
 
     def check_enum_values(self, element_tree):
         """
@@ -147,9 +139,7 @@ class XmlEnumParser(object):
         """
         if not self.is_attribute_consistent(element_tree, 'value'):
             msg = "If one enum item has a value attribute, all items should have a value attribute"
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            raise FprimeXmlException(msg)
         
     def is_attribute_consistent(self, element_tree, val_name):
         """
@@ -204,8 +194,4 @@ if __name__ == '__main__':
     print("Items")
     for item in xml_parser.get_items():
         print("%s=%s // %s" % item)
-
-
-
-
 

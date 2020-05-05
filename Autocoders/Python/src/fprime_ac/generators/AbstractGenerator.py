@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME:  AbstractGenerator.py
 #
@@ -73,7 +72,3 @@ class AbstractGenerator:
 	    Method to add the visitor to a list of visitors.
 	    """
         raise Exception("AbstractFace.accept.addVisitor(v) - Implementation Error: you must supply your own concrete implementation.")
-
-
-if __name__ == '__main__':
-    pass

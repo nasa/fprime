@@ -241,9 +241,9 @@ namespace Svc {
 
           //! Give the sequence representation a memory buffer
           void allocateBuffer(
-              NATIVE_INT_TYPE identifier, //!< The identifier
+              const NATIVE_INT_TYPE identifier, //!< The identifier
               Fw::MemAllocator& allocator, //!< The allocator
-              NATIVE_UINT_TYPE bytes //!< The number of bytes
+              const NATIVE_UINT_TYPE bytes //!< The number of bytes
           );
 
           //! Deallocate the buffer
@@ -571,9 +571,9 @@ namespace Svc {
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
-          NATIVE_INT_TYPE identifier, //!< The identifier
+          const NATIVE_INT_TYPE identifier, //!< The identifier
           Fw::MemAllocator& allocator, //!< The allocator
-          NATIVE_UINT_TYPE bytes //!< The number of bytes
+          const NATIVE_UINT_TYPE bytes //!< The number of bytes
       );
 
       //! (Optional) Load a sequence to run later.

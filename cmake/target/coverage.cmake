@@ -76,7 +76,7 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
     endforeach()
     # Check target for this module
     if (NOT TARGET "${MODULE_NAME}_check")
-	    add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND})
+	    add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
     endif()
     add_custom_target(
         ${TARGET_NAME}

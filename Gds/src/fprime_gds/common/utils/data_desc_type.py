@@ -16,6 +16,8 @@ DataDescType = Enum("DataDescType",
                       "FW_PACKET_PACKETIZED_TLM": 4,
                       # Idle packet
                       "FW_PACKET_IDLE": 5,
+                      # Handshake packet
+                      "FW_PACKET_HAND": 0xFE,
                       # Unknown packet
                       "FW_PACKET_UNKNOWN": 0xFF})
 

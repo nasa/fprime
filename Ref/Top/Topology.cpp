@@ -246,5 +246,7 @@ void exitTasks(void) {
     fileUplink.exit();
     fileDownlink.exit();
     cmdSeq.exit();
+    pingRcvr.exit();
+    socketIpDriver.exitSocketTask();
 }
 

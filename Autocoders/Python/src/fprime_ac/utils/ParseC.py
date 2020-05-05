@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This file contains a set of Python functions that parse C code. The
 # idea is to build this library as we need more capability. The functions

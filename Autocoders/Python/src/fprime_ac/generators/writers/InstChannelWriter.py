@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstChannelWriter.py
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -129,7 +129,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
             c = ChannelHeader.ChannelHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
-            c.user = os.environ['USER']
+            c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[fname], "channelHeaderWrite")
       
@@ -176,8 +176,3 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
     
             self._writeTmpl(c, self.__fp[fname], "channelBodyWrite")
             self.__fp[fname].close()
-                
-            
-
-if __name__ == '__main__':
-    pass

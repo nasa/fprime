@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ComponentHVisitor.py
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -128,7 +128,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c = EventHeader.EventHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
-            c.user = os.environ['USER']
+            c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[fname], "eventHeaderVisit")
 
@@ -194,7 +194,3 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                 arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyVisit")
             self.__fp[fname].close()
-            
-
-if __name__ == '__main__':
-    pass

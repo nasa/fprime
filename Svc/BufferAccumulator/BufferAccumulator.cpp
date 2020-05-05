@@ -30,7 +30,8 @@ namespace Svc {
       bufferMemory(NULL),
       bufferQueue(),
       send(true),
-      numWarnings(0)
+      numWarnings(0),
+      allocatorId(0)
   {
 
   }
@@ -61,9 +62,13 @@ namespace Svc {
     )
   {
       this->allocatorId = identifier;
+      bool recoverable; // don't need to recover
+      NATIVE_UINT_TYPE actualSize = sizeof(Fw::Buffer) * maxNumBuffers;
       this->bufferMemory =  static_cast<Fw::Buffer*>(
-          allocator.allocate(identifier, sizeof(Fw::Buffer) * maxNumBuffers));
-      bufferQueue.init(this->bufferMemory, maxNumBuffers);
+          allocator.allocate(identifier, actualSize, recoverable));
+      NATIVE_UINT_TYPE actualBuffers = actualSize/sizeof(Fw::Buffer);
+
+      bufferQueue.init(this->bufferMemory, actualBuffers);
   }
 
   void BufferAccumulator ::

@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 #===============================================================================
 # NAME: XmlTopologyParser.py
 #
@@ -29,6 +29,7 @@ except ImportError:
     import ConfigParser as configparser
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
+from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
 #from builtins import file
 #
 # Python extention modules and custom interfaces
@@ -54,7 +55,6 @@ class XmlTopologyParser(object):
         self.__comment = ""
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            PRINT.info(stri)
             raise IOError(stri)
         
         fd = open(xml_file,'r')
@@ -81,10 +81,7 @@ class XmlTopologyParser(object):
 
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
-            msg = "XML file {} is not valid according to schema {}.".format(xml_file ,ROOTDIR + self.__config.get('schema' , 'assembly'))
-            PRINT.info(msg)
-            print(element_tree)
-            raise Exception(msg)
+            raise FprimeRngXmlValidationException(relax_compiled.error_log)
         
         self.validate_xml(xml_file, element_tree, 'schematron', 'top_unique')
 
@@ -246,9 +243,7 @@ class XmlTopologyParser(object):
         # Check that validator is valid
         if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
             msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
-            PRINT.info(msg)
-            print(msg)
-            raise Exception(msg)
+            raise FprimeXmlException(msg)
         
         # Create proper xml validator tool
         validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
@@ -263,13 +258,10 @@ class XmlTopologyParser(object):
         if not validator_compiled.validate(parsed_xml_tree):
             if validator_type == 'schema':
                 msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
-                PRINT.info(msg)
-                print(parsed_xml_tree)
-                raise Exception(msg)
+                raise FprimeXmlException(msg)
             elif validator_type == 'schematron':
                 msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
                 PRINT.info(msg)
-                print(parsed_xml_tree)
 
     def get_root(self):
         """
