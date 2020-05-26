@@ -44,6 +44,9 @@ python3 -m venv ./fprime-venv
 Any time the user wishes to use F´, this virtual environment should be activated. This should be
 done in each new shell the user uses. This is all that is required to activate F´ for use.
 
+**Note:** file system for VirtualEnvironment should support symbolic links, or use the `--always-copy` flag to pip.
+
+
 **Activate the Virtual Environment**
 ```
 . ./fprime-venv/bin/activate
@@ -69,7 +72,7 @@ tools package. This is to enable users to choose which tools they'd like to use.
 **Installing F´ Python Packages**
 ```
 pip install --upgrade wheel setuptools pip
-cd <path/to/fprime/checkout>
+cd <path to fprime checkout>
 pip install ./Fw/Python
 pip install ./Gds
 ```
@@ -90,7 +93,7 @@ fprime-util install --jobs 32
 
 **Testing F´ GDS Installation Via Running HTML GUI**
 ```
-fprime-gds -g html -d <path/to/fprime/checkout>/Ref
+fprime-gds -g html -d <path to fprime checkout>/Ref
 ```
 **Note:** `Ref` should contain pre-built dictionaries and binaries for the user's system. This can
 be achieved by running the autocoder installation test (the user must have a working autocoder
