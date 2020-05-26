@@ -68,6 +68,7 @@ tools package. This is to enable users to choose which tools they'd like to use.
 
 **Installing F´ Python Packages**
 ```
+pip install --upgrade wheel setuptools pip
 cd <path/to/fprime/checkout>
 pip install ./Fw/Python
 pip install ./Gds
