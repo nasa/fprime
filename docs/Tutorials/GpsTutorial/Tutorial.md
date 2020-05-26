@@ -882,6 +882,7 @@ fprime-util install
 Now run the ground system in one terminal and the Gps app in the other. Here we inform the ground system that we will
 run the application independently.
 ```shell
+# In GpsApp directory
 fprime-gds -d . -n
 ```
 
@@ -890,7 +891,10 @@ to the USB GPS device. If the device doesn't exist, the system will run but log 
 
 ```shell
 cd fprime/GpsApp
+# For "Linux":
 ./bin/Linux/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
+# For "Mac OSX":
+./bin/Darwin/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
 ```
 
 If you see output similar to the following, when running with the USB GPS you have successfully, completed the

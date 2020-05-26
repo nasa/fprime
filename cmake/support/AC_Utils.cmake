@@ -30,10 +30,7 @@ function(cheetah CHEETAH_TEMPLATES)
   )
   # Add the above PYTHON_TEMPLATES to the list of sources for the CODEGEN_TARGET target. Thus they will be
   # built as dependencies for the CODEGEN step.
-  target_sources(
-    ${CODEGEN_TARGET}
-    PRIVATE ${PYTHON_TEMPLATES}
-  )
+  set_property(GLOBAL APPEND PROPERTY CODEGEN_OUTPUTS ${PYTHON_TEMPLATES})
 endfunction(cheetah)
 
 ####
@@ -72,9 +69,10 @@ endfunction(serialns)
 # - **AC_FINAL_SOURCE:** final position of the CPP file
 # - **AC_FINAL_HEADER:** final position of the HPP file
 # - **AI_XML:** AI xml input to autocoder
+# - **XML_FILE_DEPS:** xml file dependencies
 # - **Return: AC_OUTPUTS** (set in outer scope)
 ####
-function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
+function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS)
   # Setup the list such that new outputs can be appended to them
   set(OUTPUT_PRODUCTS "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}")
 
@@ -87,10 +85,10 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
     serialns(${AI_XML})
     set(GEN_ARGS "--build_root" "--default_topology_dict" "--dict_dir" "${CMAKE_BINARY_DIR}/dict")
     list(APPEND OUTPUT_PRODUCTS "${CMAKE_BINARY_DIR}/dict/serializable/${SERIAL_NS}.py")
-  elseif (GENERATE_HERITAGE_PY_DICT AND ${AC_TYPE} STREQUAL "topology")
+  elseif (GENERATE_HERITAGE_PY_DICT AND ${AC_TYPE} STREQUAL "topologyapp")
     set(GEN_ARGS "--build_root" "--connect_only" "--default_topology_dict" "--dict_dir" "${CMAKE_BINARY_DIR}/dict") #--dict_dir not used
     list(APPEND OUTPUT_PRODUCTS "${CMAKE_SOURCE_DIR}/py_dict/")
-  elseif(${AC_TYPE} STREQUAL "topology")
+  elseif(${AC_TYPE} STREQUAL "topologyapp")
     set(GEN_ARGS "--build_root" "--connect_only" "--xml_topology_dict")
   else()
     set(GEN_ARGS "--build_root")
@@ -115,7 +113,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML)
       #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${HPP_NAME} ${AC_FINAL_HEADER}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME} ${HPP_NAME}
       #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${HPP_NAME}
-      DEPENDS ${AC_FINAL_XML} #${TO_MK_DIR}
+      DEPENDS ${AI_XML} ${XML_FILE_DEPS} ${PROJECT_AC_CONSTANTS_FILE}
   )
   set(AC_OUTPUTS ${OUTPUT_PRODUCTS} PARENT_SCOPE)
 endfunction(acwrap)

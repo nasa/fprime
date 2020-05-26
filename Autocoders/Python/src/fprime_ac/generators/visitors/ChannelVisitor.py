@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: ChannelVisitor.py
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -123,7 +123,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
             c = ChannelHeader.ChannelHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
-            c.user = os.environ['USER']
+            c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[inst], "channelHeaderVisit")
             inst += 1
@@ -157,6 +157,3 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp[inst].close()
             inst += 1
             
-
-if __name__ == '__main__':
-    pass

@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InitFiles
 #
@@ -97,7 +96,3 @@ class InitFiles:
         Return the object to the visitor.
         """
         return self.__obj
-
-
-if __name__ == '__main__':
-    pass

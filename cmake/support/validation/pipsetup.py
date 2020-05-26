@@ -22,8 +22,8 @@ def validate_python_setup():
     Validates the python setup of the system to ensure that the CMake system, Autocoder, etc can run
     as expected.
     """
-    if sys.version_info[0] >= 3 and sys.version_info[1] <= 3:
-        print("Python 3.4+ required")
+    if sys.version_info[0] < 3 or sys.version_info[1] < 5:
+        print("Python 3.5+ required")
         return False
     import pkg_resources
     deps = REQUIRED_PACKS  

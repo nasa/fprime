@@ -8,4 +8,4 @@
 # Traditional C/C++ strings typically use "ascii" encoding. Hence being used here.  However, should
 # F prime be updated to use some other encoding, this value may be changed.
 #
-DATA_ENCODING = "ascii"
+DATA_ENCODING = "utf-8"

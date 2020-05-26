@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Utils:
 
@@ -32,6 +32,11 @@ KIND_DEPENDENCIES = {
     "queued": ["Os"],
     "active": ["Os"],
     "guarded_input": ["Os"]
+}
+
+XML_TAG_REMAP = {
+    "interface": "Port",
+    "assembly": "TopologyApp",
 }
 
 # Dependency Ordering:
@@ -73,18 +78,40 @@ def main():
         print("[ERROR] {0} does not exist. Usage:\n\t{1} <input_Ai.xml> <library name> <import base>"
               .format(sys.argv[3], sys.argv[0]), file=sys.stderr)
         sys.exit(3)
-    print_fprime_dependencies(*sys.argv[1:])
+    # Read the xml tree
+    tree = xml.etree.ElementTree.parse(sys.argv[1])
+    root = tree.getroot()
+    print(XML_TAG_REMAP.get(root.tag, root.tag.capitalize()))
+    print_fprime_dependencies(root, *sys.argv[2:])
+    print("")
+    print_file_dependencies(root, sys.argv[3])
+    print("")
 
-def print_fprime_dependencies(input_file, current_library, import_base):
+def print_file_dependencies(root, import_base):
     """
     Print F prime dependencies. These should be printed w/o a newlines.
-    :param input_file: input XML file to parse
+    :param root: input XML file to parse parsed, root of tree
     :param current_library: current library to strip from dependencies
     :param import_base: base of imported dictionaries, used for finding and opening them
     """
-    dependencies = read_xml_file(input_file, import_base)
+    dicts = map(lambda x: os.path.join(import_base, x.text), root.findall("import_dictionary"))
+    sys.stdout.write(";".join(dicts))
+    sys.stdout.flush()
+
+def print_fprime_dependencies(root, current_library, import_base):
+    """
+    Print F prime dependencies. These should be printed w/o a newlines.
+    :param root: input XML file to parse parsed, root of tree
+    :param current_library: current library to strip from dependencies
+    :param import_base: base of imported dictionaries, used for finding and opening them
+    """
+    dependencies = read_xml_file(root, import_base)
     if current_library in dependencies:
         dependencies.remove(current_library)
+    #Rebuilding is broken by non-deterministic set behavior, so this makes it a reverse-sorted (deterministic) list
+    dependencies = list(dependencies)
+    dependencies.sort()
+    dependencies.reverse()
     # Go in order, for GCC
     gcc_order = []
     for dep in DEPENDENCY_ORDER:
@@ -113,17 +140,15 @@ def read_fprime_import(import_type, root):
     return deps
 
 
-def read_xml_file(input_file, import_base):
+def read_xml_file(root, import_base):
     """
     Reads and Ai.xml file, detects the type, and then pulls in the dependencies. Recursively looks for dependencies in
     import_dictionaries by inferring dependencies for each type of dictionary.
-    :param input_file: input XML file to parse
+    :param root: input XML file to parsed, root of tree
     :param import_base: base of imported dictionaries, used for finding and opening them
     :return: dependencies set
     """
     # Read the file into the XML libraries
-    tree = xml.etree.ElementTree.parse(input_file)
-    root = tree.getroot()
     ai_type = root.tag
     dependencies = set(BASIC_DEPENDENCIES[ai_type])
     kind = root.attrib.get("kind", None)
@@ -141,7 +166,9 @@ def read_xml_file(input_file, import_base):
                 dependencies.update(KIND_DEPENDENCIES[kind])
     # Recurse imports for other importables
     for recurse_ai in root.findall("import_dictionary"):
-        dependencies.update(read_xml_file(os.path.join(import_base, recurse_ai.text), import_base))
+        tmptree = xml.etree.ElementTree.parse(os.path.join(import_base, recurse_ai.text))
+        newroot = tmptree.getroot()
+        dependencies.update(read_xml_file(newroot, import_base))
     return dependencies
 
 

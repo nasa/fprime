@@ -40,4 +40,6 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
       ${FPRIME_CORE_DIR}/Autocoders/Python/bin/testgen.py ${AI_XML}
       DEPENDS ${AI_XML}
     )
+    # Add dependencies to codegen
+    add_dependencies("${TARGET_NAME}" "${CODEGEN_TARGET}")
 endfunction(add_module_target)

@@ -9,6 +9,7 @@ import os
 import logging
 import flask
 import flask_restful
+import flask_uploads
 
 # Import the Flask API implementations
 import fprime_gds.flask.commands
@@ -16,51 +17,76 @@ import fprime_gds.flask.events
 import fprime_gds.flask.channels
 import fprime_gds.flask.logs
 import fprime_gds.flask.json
+import fprime_gds.flask.updown
 
-# Import GDS layer items
-import fprime_gds.common.pipeline.standard
+from . import components
 
 # Update logging to avoid redundant messages
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.WARN)
+log = logging.getLogger("downlink")
+log.setLevel(logging.INFO)
 
-# Flask global objects
-app = flask.Flask(__name__, static_url_path="")
-# Configuration loading
-app.config.from_object("fprime_gds.flask.default_settings")
-if "FP_FLASK_SETTINGS" in os.environ:
-    app.config.from_envvar("FP_FLASK_SETTINGS")
-# JSON encoding seeting must come before restful
-app.json_encoder = fprime_gds.flask.json.GDSJsonEncoder
-app.config['RESTFUL_JSON'] = {'cls': app.json_encoder}
+def construct_app():
+    """
+    Constructs the Flask app by taking the following steps:
 
-api = flask_restful.Api(app)
+    1. Setup and configure the app
+    2. Setup JSON encoding for Flask and flask_restful to handle F prime types natively
+    3. Setup standard pipeline used throughout the system
+    4. Create Restful API for registering flask items
+    5. Setup flask_uploads settings
+    6. Register all restful endpoints
+    :return: setup app
+    """
+    app = flask.Flask(__name__, static_url_path="")
+    app.config.from_object("fprime_gds.flask.default_settings")
+    # Override defaults from python files specified in 'FP_FLASK_SETTINGS'
+    if "FP_FLASK_SETTINGS" in os.environ:
+        app.config.from_envvar("FP_FLASK_SETTINGS")
 
-# Middleware to python data pipeline
-pipeline = fprime_gds.common.pipeline.standard.StandardPipeline()
-pipeline.setup(app.config["GDS_CONFIG"], app.config["DICTIONARY"], logging_prefix=app.config["LOG_DIR"])
-app.logger.info("Connected to GDS at: {}:{}".format(app.config["ADDRESS"], app.config["PORT"]))
-pipeline.connect(app.config["ADDRESS"], app.config["PORT"])
+    # JSON encoding seeting must come before restful
+    app.json_encoder = fprime_gds.flask.json.GDSJsonEncoder
+    app.config['RESTFUL_JSON'] = {'cls': app.json_encoder}
+    # Standard pipeline creation
+    pipeline = components.setup_pipelined_components(app.debug, app.logger, app.config["GDS_CONFIG"],
+                                                     app.config["DICTIONARY"], app.config["DOWNLINK_DIR"],
+                                                     app.config["LOG_DIR"], app.config["ADDRESS"], app.config["PORT"])
+    # Restful API registration
+    api = flask_restful.Api(app)
+    # File upload configuration, 1 set for everything
+    uplink_set = flask_uploads.UploadSet("uplink", flask_uploads.ALL)
+    flask_uploads.configure_uploads(app, [uplink_set])
+
+    # Application routes
+    api.add_resource(fprime_gds.flask.commands.CommandDictionary, "/dictionary/commands",
+                     resource_class_args=[pipeline.dictionaries.command_name])
+    api.add_resource(fprime_gds.flask.commands.CommandHistory, "/commands",
+                     resource_class_args=[pipeline.histories.commands])
+    api.add_resource(fprime_gds.flask.commands.Command, "/commands/<command>",
+                     resource_class_args=[pipeline])
+    api.add_resource(fprime_gds.flask.events.EventDictionary, "/dictionary/events",
+                     resource_class_args=[pipeline.dictionaries.event_id])
+    api.add_resource(fprime_gds.flask.events.EventHistory, "/events",
+                     resource_class_args=[pipeline.histories.events])
+    api.add_resource(fprime_gds.flask.channels.ChannelDictionary, "/dictionary/channels",
+                     resource_class_args=[pipeline.dictionaries.channel_id])
+    api.add_resource(fprime_gds.flask.channels.ChannelHistory, "/channels",
+                     resource_class_args=[pipeline.histories.channels])
+    api.add_resource(fprime_gds.flask.updown.Destination, "/upload/destination",
+                     resource_class_args=[pipeline.files.uplinker])
+    api.add_resource(fprime_gds.flask.updown.FileUploads, "/upload/files",
+                     resource_class_args=[pipeline.files.uplinker, uplink_set])
+    api.add_resource(fprime_gds.flask.updown.FileDownload, "/download/files", "/download/files/<string:source>",
+                     resource_class_args=[pipeline.files.downlinker])
+    # Optionally serve log files
+    if app.config["SERVE_LOGS"]:
+        api.add_resource(fprime_gds.flask.logs.FlaskLogger, "/logdata", resource_class_args=[app.config["LOG_DIR"]])
+    return app, api
 
 
-# Application routes
-api.add_resource(fprime_gds.flask.commands.CommandDictionary, "/dictionary/commands",
-                 resource_class_args=[pipeline.get_command_name_dictionary()])
-api.add_resource(fprime_gds.flask.commands.CommandHistory, "/commands",
-                 resource_class_args=[pipeline.get_command_history()])
-api.add_resource(fprime_gds.flask.commands.Command, "/commands/<command>",
-                 resource_class_args=[pipeline])
-api.add_resource(fprime_gds.flask.events.EventDictionary, "/dictionary/events",
-                 resource_class_args=[pipeline.get_event_id_dictionary()])
-api.add_resource(fprime_gds.flask.events.EventHistory, "/events",
-                 resource_class_args=[pipeline.get_event_history()])
-api.add_resource(fprime_gds.flask.channels.ChannelDictionary, "/dictionary/channels",
-                 resource_class_args=[pipeline.get_channel_id_dictionary()])
-api.add_resource(fprime_gds.flask.channels.ChannelHistory, "/channels",
-                 resource_class_args=[pipeline.get_channel_history()])
-# Optionally serve log files
-if app.config["SERVE_LOGS"]:
-    api.add_resource(fprime_gds.flask.logs.FlaskLogger, "/logdata", resource_class_args=[app.config["LOG_DIR"]])
+app, _ = construct_app()
+
 
 @app.route("/js/<path:path>")
 def files_serve(path):
@@ -78,6 +104,7 @@ def index():
     """
     return flask.send_from_directory("static", "index.html")
 
+
 @app.route("/logs")
 def log():
     """
@@ -88,5 +115,5 @@ def log():
 
 # When running from the command line, this will allow the flask development server to launch
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 

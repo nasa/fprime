@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstCommandWriter
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -178,7 +178,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
-                c.user = os.environ['USER']
+                c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[fname], "commandHeaderWrite")
                 
@@ -188,7 +188,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
-                c.user = os.environ['USER']
+                c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[fname], "commandHeaderWrite")
 
@@ -197,7 +197,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
-                c.user = os.environ['USER']
+                c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp2[fname], "commandHeaderWrite")
  
@@ -300,6 +300,3 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyWrite")
                 self.__fp2[fname].close()
 
-
-if __name__ == '__main__':
-    pass

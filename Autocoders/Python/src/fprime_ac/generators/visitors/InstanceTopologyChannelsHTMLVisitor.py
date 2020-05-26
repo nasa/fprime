@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: InstanceTopologyHTMLVisitor.py
 #
@@ -209,7 +208,3 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         for fp in list(self.__fp_dict.keys()):
             self.__fp_dict[fp].close()
         PRINT.info("Completed generating HTML channel tables...")
-
-
-if __name__ == '__main__':
-    pass

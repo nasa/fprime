@@ -39,23 +39,7 @@ class EventDecoder(decoder.Decoder):
             An initialized EventDecoder object.
         '''
         super(EventDecoder, self).__init__()
-
         self.__dict = event_dict
-
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data to the decoder class
-
-        Args:
-            data: Binary data to decode and pass to registered consumers
-        '''
-        result = self.decode_api(data)
-
-        # Make sure we don't send None data
-        if result != None:
-            self.send_to_all(result)
-
 
     def decode_api(self, data):
         '''
@@ -93,7 +77,6 @@ class EventDecoder(decoder.Decoder):
         else:
             print("Event decode error: id %d not in dictionary"%event_id)
             return None
-
 
     def decode_args(self, arg_data, offset, template):
         '''
@@ -138,8 +121,4 @@ class EventDecoder(decoder.Decoder):
             offset = offset + arg_obj.getSize()
 
         return tuple(arg_results)
-
-
-if __name__ == "__main__":
-    pass
 

@@ -19,7 +19,7 @@
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN || TGT_OS_TYPE_RTEMS
     #include <sys/socket.h>
     #include <netdb.h>
     #include <unistd.h>
@@ -260,6 +260,10 @@ namespace Drv {
                                                        SocketIpDriverComponentImpl::readTask, this, cpuAffinity);
           FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
       }
+  }
+
+  void SocketIpDriverComponentImpl :: exitSocketTask() {
+      this->m_stop = true;
   }
 
   // ----------------------------------------------------------------------

@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: Namespace
 #
@@ -97,7 +96,3 @@ class Namespace:
         Return the object to the visitor.
         """
         return self.__obj
-
-
-if __name__ == '__main__':
-    pass

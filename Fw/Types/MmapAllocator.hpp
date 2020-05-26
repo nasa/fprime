@@ -21,8 +21,8 @@ namespace Fw {
         public:
             MmapAllocator();
             virtual ~MmapAllocator();
-            void *allocate(NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE size);
-            void deallocate(NATIVE_UINT_TYPE identifier, void* ptr);
+            void *allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE &size, bool& recoverable);
+            void deallocate(const NATIVE_UINT_TYPE identifier, void* ptr);
 
         private:
             NATIVE_UINT_TYPE m_length;

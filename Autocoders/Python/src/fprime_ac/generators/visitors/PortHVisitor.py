@@ -1,4 +1,3 @@
-#!/bin/env python
 #===============================================================================
 # NAME: PortHVisitor.py
 #
@@ -21,6 +20,7 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+from getpass import getuser
 #
 # Python extention modules and custom interfaces
 #
@@ -222,7 +222,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.name_space = obj.get_namespace()
         d = datetime.datetime.now()
         c.date = d.strftime("%A, %d %B %Y")
-        c.user = os.environ['USER']
+        c.user = getuser()
         self._writeTmpl(c, "startSourceFilesVisit")
 
 
@@ -392,7 +392,3 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.return_type = return_type + return_modifier
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
-
-
-if __name__ == '__main__':
-    pass

@@ -1,4 +1,10 @@
 /**
+ * utils.js:
+ *
+ * This file contains utility functions used by various parts of the vue-support system. Each item here intended for use
+ * elsewhere should be "export"ed as then they can then be imported for use elsewhere.
+ */
+/**
  * Filter the given items by looking for a the matching string inside the list of items.  Each item is converted to a
  * string using the ifun parameter, and then the matching parameter is searched for in that converted string. Everything
  * is done in lower-case to provide for case-independent matching.
@@ -12,7 +18,6 @@ export function filter(items, matching, ifun) {
     if (!Array.isArray(matching)) {
         matching = [matching];
     }
-
     // Convert object to string using given ifun function, or JSON.stringify
     let stringer = ifun;
     if (typeof(stringer) === "undefined") {
@@ -37,7 +42,6 @@ export function filter(items, matching, ifun) {
     }
     return output;
 }
-
 /**
  * Convert a given F´ time into a string for display purposes.
  * @param time: f´ time to convert

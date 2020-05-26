@@ -2,7 +2,7 @@
 index.html:
 
 This HTML document sets up the most basic of UIs for the F prime webified GUI layer. This GUI layer is built with the
-Bootstrap CSS, but without the paired JavaScript packages.
+Bootstrap CSS, but without the paired JavaScript packages as they conflict with the Vue.js display layer being used.
 
 
 This GUI provides the following items:
@@ -10,6 +10,8 @@ This GUI provides the following items:
 1. Events panel showing events in the system
 2. Channels panel showing latest channel readings
 3. Commands panel allowing for commanding of the system
+4. uplink and downlink panels for uploading and downloading files from the spacecraft
+5. Logs file to display in the GDS layer
 
 Note: Bootstrap is used, as it can be run as a CSS framework without many node and JavaScript packages.
 Note: Vue.js annotations are used, as Vue is the data-to-view framework of choice.  It can be run with a single JS
@@ -31,21 +33,43 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
         <script type="module" src="js/gds.js"></script>
     </head>
     <body>
+        <!--
+        GDS:
+
+        The primary vue of the GDS is a tabbed view that is composed of separate components for each view. This is
+        where Vue JS is allowed to display its items.
+        -->
         <div id="tabetc" class="container-fluid fp-flex-repeater fp-full-height">
             <tabbed-etc
                     v-bind:commands="commands"
                     v-bind:loader="loader"
+                    v-bind:uploader="uploader"
                     v-bind:events="events"
                     v-bind:channels="channels"
                     v-bind:cmdhist="cmdhist"
+                    v-bind:upfiles="upfiles"
+                    v-bind:downfiles="downfiles"
+                    v-bind:running="running"
                     v-bind:logs="logs"
                     v-bind:events-active="eventsActive"
                     v-bind:channels-active="channelsActive"
             ></tabbed-etc>
         </div>
+        <!--
+        Templates:
 
+        The rest of this document is a hidden list of templates representing each of the components used in this web
+        layer.
+        -->
         <div hidden>
-            <!-- Tabbed and routed Command Component -->
+            <!--
+            TabETC Component:
+
+            The tabbed component has to primary sections:
+
+            1. Navigation, allowing for the changing of tabs in the system
+            2. Tab components only one visable at a time.
+            -->
             <template id="tabetc-template">
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">
@@ -60,7 +84,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                      :key="tab"
                                      v-on:click="route(tab)">{{ tab }}</li>
                                 <form class="form-inline my-2 my-lg-0">
-                                    <button class="btn btn-success" v-on:click="spawn">New Window</button>
+                                    <div class="btn btn-success" v-on:click="spawn">New Window</div>
                                 </form>
                             </ul>
                             <span class="navbar-brand">
@@ -74,11 +98,18 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
                                    v-show="currentTab == 'Commanding'"></command-input>
                     <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
-                    <event-list v-bind:events="events" v-show="currentTab == 'Events'"></event-list>
+                    <event-list v-bind:events="events" v-show="currentTab == 'Events'" v-bind:commands="commands"></event-list>
+                    <uplink v-bind:upfiles="upfiles" v-bind:uploader="uploader" v-bind:running="running" v-show="currentTab == 'Uplink'"></uplink>
+                    <downlink v-bind:downfiles="downfiles" v-show="currentTab == 'Downlink'"></downlink>
                     <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
                 </div>
             </template>
+            <!--
+            Logs:
 
+            Logs template used to display log information from the system. Contains a selectable list of logs and a
+            panel that displays the raw text, with light highlighting.
+            -->
             <template id="logs-template">
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">
@@ -97,9 +128,10 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 </div>
             </template>
             <!--
-            Command Templates:
+            Command Input:
 
-            Some such thing.
+            Displays a list of selectable commands. It also displays the list of arguments available to be sent with the
+            selected command as it is passed to the ground.
             -->
             <template id="command-input-template">
                 <div class="fp-flex-repeater">
@@ -134,10 +166,16 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                   :items="cmdhist"
                                   :item-to-columns="columnify"
                                   :item-to-unique="keyify"
+                                  :click-action="clickAction"
                         ></fp-table>
                     </div>
                 </div>
             </template>
+            <!--
+            Command Item:
+
+            A single command item to send.
+            -->
             <template id="command-item-template">
                 <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
@@ -148,7 +186,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 </a>
             </template>
             <!--
-            Command argument template
+            Command Argument:
+
+            Command argument template for displaying a single argument.
             -->
             <template id="command-argument-template">
                 <div>
@@ -168,7 +208,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <!--
             Event Templates:
 
-            These templates provide for event listing items.
+            These templates provide for event listing items. Events use the FPTable component to configure a nice list
+            of events for display.
             -->
             <template id="event-list-template">
                 <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity', 'Event Description']"
@@ -176,6 +217,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                           :item-to-columns="columnify"
                           :row-style="style"
                           :item-to-unique="keyify"
+                          :clear-rows="clearEvents"
                 ></fp-table>
             </template>
             <!--
@@ -194,7 +236,50 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :item-hide="channelHider"
                ></fp-table>
             </template>
+            <!-- Uplink;
 
+            Uplink template defines a control form used to upload files to a given destination.
+
+            Uses FP table to display the rows of the uplink table. This specifically chooses the file-row template for
+            the rows, as it is customized for use with uplink.
+            -->
+            <template id="uplink-template">
+                <div class="fp-flex-repeater">
+                    <div class="form-row">
+                        <label class="col-2">Destination Folder:</label>
+                        <input class="col-2" type="text" v-model="destination" pattern="/.*" />
+                        <div class="col-4">
+                            <label>Add Files to Uplink:</label>
+                            <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
+                        </div>
+                        <button v-if="running" type="button" class="col-2 btn btn-danger" v-on:click="pauseUplink">Pause Uplink Queue</button>
+                        <button v-if="!running" type="button" class="col-2 btn btn-danger" v-on:click="unpauseUplink">Unpause Uplink Queue</button>
+                        <button type="button" class="col-2 btn btn-success" v-on:click="uplinkFiles">Submit Uplink</button>
+                    </div>
+                    <div v-if="error != null" class="alert alert-danger" role="alert">
+                        {{ this.error }}
+                    </div>
+                    <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
+                              :items="elements"
+                              :item-to-unique="keyify"
+                              :display-template="'file-row'"
+                              :item-to-columns="columnify"
+                    ></fp-table>
+                </div>
+            </template>
+            <!-- Downlink;
+
+            Uses FP table to display the rows of the downlink table. This specifically chooses the file-row template for
+            the rows, as it is customized for use with downlink.
+            -->
+            <template id="downlink-template">
+                    <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
+                              :items="elements"
+                              :item-to-unique="keyify"
+                              :display-template="'file-row'"
+                              :item-to-columns="columnify"
+                    ></fp-table>
+            </template>
 
             <!-- FP Table Templates:
 
@@ -211,20 +296,69 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <template id="fp-row-template">
                 <tr :class="calculateStyle">
                     <th v-if="editing" v-on:input="onInput"><input type="checkbox" :checked="inView"></th>
-                    <td v-for="(column, index) in calculatedColumns">{{ column }}</td>
+                    <td v-for="(column, index) in calculatedColumns" v-on:dblclick="clickAction(item)" v-html="column"></td>
                 </tr>
             </template>
+
+            <!-- File Row:
+
+            This is an alternate display for the row in an FP table that can show a file list item including commanding
+            and progress. It is used by Uplink and downlink
+            -->
+            <template id="file-row-template">
+                <tr>
+                    <td>{{ item.start }}</td>
+                    <td>{{ item.end }}</td>
+                    <td>{{ item.source }}</td>
+                    <td>{{ item.destination }}</td>
+                    <td>{{ item.state }}</td>
+                    <td v-if="item.uplink">
+                        <button v-if="item.state != 'FINISHED' && item.state != 'CANCELED'" class="btn btn-danger" v-on:click="fileAction">
+                            {{ (item.state == "TRANSMITTING" ) ? "Cancel" : "Remove" }}
+                        </button>
+                    </td>
+                    <td v-if="!item.uplink">
+                        <a v-if="item.state == 'FINISHED'" class="btn btn-danger"
+                           :href="'/download/files/' + basename" :download="basename">
+                            Download
+                        </a>
+                    </td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" :aria-valuenow="item.percent"
+                                 aria-valuemin="0" aria-valuemax="100" :style="{width: item.percent + '%'}">
+                                {{ item.percent }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </template>
+
+            <!--
+            FP Table:
+
+            FP table supports the features of a sortable, filterable, table. It allows for the ability to specify views
+            that reduce what is seen and specify custom row templates for non-standard data. It is used for each of the
+            following data type displays:
+
+            1. Command history
+            2. Event log
+            3. Active channel view
+            4. File uplink curation and progress (uses file-row template)
+            5. File downlink progress and download (uses file-row template)
+            -->
             <template id="fp-table-template">
                 <div class="fp-flex-repeater">
                     <div class="row fp-flex-header">
-                        <div class="col-8"></div>
+                        <div class="col-7"></div>
                         <div class="col-1">Filters:</div>
-                        <div class="col-3">
+                        <div v-bind:class="clearRows != null ? 'col-3' : 'col-4'">
                             <v-select id="fp-table-filter" :clearable="true" :searchable="true" :taggable="true"
                                       :no-drop="true" :options="[]" :multiple="true"
                                       v-model="matching">
                             </v-select>
                         </div>
+                        <button class="col-1 btn btn-danger" v-if="clearRows != null" v-on:click="clearRows">Clear</button>
                     </div>
                     <div class="fp-scroll-container">
                         <div class="fp-scrollable">
@@ -239,13 +373,16 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr is="fp-row" v-for="item in filteredItems" :item="item"
+                                    <tr :is="displayTemplate" v-for="item in filteredItems" :item="item"
                                         :item-to-columns="itemToColumns"
                                         :row-style="rowStyle"
                                         :key="itemToUnique(item)"
                                         :editing="editing"
                                         :in-view="inView(item)"
-                                        v-on:row-checked="checkedChild">
+                                        v-on:row-checked="checkedChild"
+                                        :click-action="clickAction"
+                                        :all-items="filteredItems"
+                                    >
                                     </tr>
                                 </tbody>
                             </table>

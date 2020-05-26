@@ -14,34 +14,28 @@ import fprime_gds.executables.cli
 import fprime_gds.executables.utils
 
 
-def get_args(args):
+def get_args():
     """
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
     :param args: arguments to supply
     """
-    parser = argparse.ArgumentParser(description='Run F prime deployment with: GDS data server, GDS GUI, and application.')
     # Get custom handlers for all executables we are running
-    arg_handlers = [fprime_gds.executables.cli.GdsParser, fprime_gds.executables.cli.MiddleWareParser,
-                    fprime_gds.executables.cli.BinaryDeployment, fprime_gds.executables.cli.CommParser]
-    # Add all handlers
-    for handler in arg_handlers:
-        handler.add_args(parser)
+    arg_handlers = [fprime_gds.executables.cli.LogDeployParser, fprime_gds.executables.cli.GdsParser,
+                    fprime_gds.executables.cli.MiddleWareParser, fprime_gds.executables.cli.BinaryDeployment,
+                    fprime_gds.executables.cli.CommParser]
     # Parse the arguments, and refine through all handlers
     try:
-        parsed_args, _ = parser.parse_known_args(args)
-        # Add all values to the values list
-        values = fprime_gds.executables.cli.refine(parser, parsed_args)
+        args, parser = fprime_gds.executables.cli.ParserBase.parse_args(arg_handlers, "Run F prime deployment and GDS")
         # Special checks
-        if values["config"].get_file_path() is None and parsed_args.gui == "wx":
+        if args.config.get_file_path() is None and args.gui == "wx":
             raise ValueError("Must supply --config when using 'wx' GUI.")
     # On ValueError print error, help and exit
     except ValueError as vexc:
         print("[ERROR] {}".format(str(vexc)), file=sys.stderr, end="\n\n")
         parser.print_help(sys.stderr)
         sys.exit(-1)
-    values["gui"] = parsed_args.gui
-    return values
+    return args
 
 
 def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
@@ -70,19 +64,19 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
             pass
         raise fprime_gds.executables.utils.AppWrapperException("Failed to run {}".format(name))
 
-def launch_tts(tts_port, tts_address, logs, **_):
+def launch_tts(tts_port, tts_addr, logs, **_):
     """
     Launch the Threaded TCP Server
     :param tts_port: port to attach to
-    :param tts_address: address to bind to
+    :param tts_addr: address to bind to
     :param logs: logs output directory
     :return: process
     """
     # Open log, and prepare to close it cleanly on exit
     tts_log = os.path.join(logs, "ThreadedTCP.log")
     # Launch the tcp server
-    tts_cmd = ["python", "-u", "-m", "fprime_gds.executables.tcpserver",
-               "--port", str(tts_port), "--host", str(tts_address)]
+    tts_cmd = ["python3", "-u", "-m", "fprime_gds.executables.tcpserver",
+               "--port", str(tts_port), "--host", str(tts_addr)]
     return launch_process(tts_cmd, logfile=tts_log, name="TCP Server")
 
 
@@ -96,7 +90,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     :param config: configuration to use
     :return: process
     """
-    gse_args = ["python", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port)]
+    gse_args = ["python3", "-u", "-m", "fprime_gds.wxgui.tools.gds", "--port", str(port)]
     if os.path.isfile(dictionary):
         gse_args.extend(["-x", dictionary])
     elif os.path.isdir(dictionary):
@@ -110,7 +104,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     return launch_process(gse_args, name="WX GUI")
 
 
-def launch_html(tts_port, dictionary, connect_address, logs, **_):
+def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     '''
     Launch the flask server and a browser pointed at the HTML page.
     :param tts_port: port to connect to
@@ -127,9 +121,10 @@ def launch_html(tts_port, dictionary, connect_address, logs, **_):
         "LOG_DIR": logs,
         "SERVE_LOGS": "YES"
     })
-    gse_args = ["python", "-u", "-m", "flask", "run"]
+    gse_args = ["python3", "-u", "-m", "flask", "run"]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
-    webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
+    if extras["gui"] == "html":
+        webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
     return ret
 
 
@@ -152,32 +147,32 @@ def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
     """
     :return:
     """
-    adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[comm_adapter]
-    app_cmd = ["python", "-u", "-m", "fprime_gds.executables.comm", "--tts-addr", connect_address,\
-               "--tts-port", str(tts_port), "-l", logs, "--log-directly", comm_adapter]
+
+    app_cmd = ["python3", "-u", "-m", "fprime_gds.executables.comm", "--tts-addr", connect_address,\
+               "--tts-port", str(tts_port), "-l", logs, "--log-directly", "--comm-adapter", all_args["adapter"]]
     # Manufacture arguments for the selected adapter
-    for arg in adapter.get_arguments().keys():
-        definition = adapter.get_arguments()[arg]
+    for arg in comm_adapter.get_arguments().keys():
+        definition = comm_adapter.get_arguments()[arg]
         destination = definition["dest"]
         app_cmd.append(arg[0])
         app_cmd.append(str(all_args[destination]))
-    return launch_process(app_cmd, name="{0} Application".format("comm[{}]".format(comm_adapter)), launch_time=1)
+    return launch_process(app_cmd, name="{0} Application".format("comm[{}]".format(all_args["adapter"])), launch_time=1)
 
 
-def main(argv=None):
+def main():
     '''
     Main function used to launch processes.
     '''
-    args = get_args(argv)
+    args = vars(get_args())
     # Launch a gui, if specified
-    args["connect_address"] = args["tts_address"] if args["tts_address"] != "0.0.0.0" else "127.0.0.1"
+    args["connect_address"] = args["tts_addr"] if args["tts_addr"] != "0.0.0.0" else "127.0.0.1"
     # List of things to launch, in order.
     launchers = [
         launch_tts,
         launch_comm
     ]
     # Add app, if possible
-    if "app" in args and args.get("comm_adapter", "") == "ip":
+    if "app" in args and args.get("adapter", "") == "ip":
         launchers.append(launch_app)
     elif "app" in args:
         print("[WARNING] App cannot be auto-launched without IP adapter")
@@ -186,10 +181,10 @@ def main(argv=None):
     gui = args.get("gui", "none")
     if gui == "wx":
         launchers.append(launch_wx)
-    elif gui == "html":
+    elif gui == "html" or gui == "none":
         launchers.append(launch_html)
-    elif gui == "none":
-        print("[WARNING] No GUI specified, running headless", file=sys.stderr)
+    #elif gui == "none":
+    #    print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
         raise Exception("Invalid GUI specified: {0}".format(args["gui"]))
     # Launch launchers and wait for the last app to finish

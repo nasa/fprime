@@ -157,9 +157,6 @@ class CmdData(sys_data.SysData):
     def convert_arg_value(self, arg_val, arg_type):
         if arg_val is None:
             raise CommandArgumentException('Argument value could not be converted to type object')
-        if "0x" in arg_val:
-            arg_val = int(arg_val, 16)
-
         if type(arg_type) == type(BoolType()):
             if arg_val == "False":
                 av = False
@@ -168,39 +165,12 @@ class CmdData(sys_data.SysData):
             arg_type.val = av
         elif type(arg_type) == type(EnumType()):
             arg_type.val = arg_val
-        elif type(arg_type) == type(F64Type()):
+        elif isinstance(type(arg_type), (F64Type, F32Type)):
             arg_type.val = float(arg_val)
-
-        elif type(arg_type) == type(F32Type()):
-            arg_type.val = float(arg_val)
-
-        elif type(arg_type) == type(I64Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(I32Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(I16Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(I8Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U64Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U32Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U16Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U8Type()):
-            arg_type.val = int(arg_val)
-
+        elif isinstance(arg_type, (I64Type, U64Type, I32Type, U32Type, I16Type, U16Type, I8Type, U8Type)):
+            arg_type.val = int(arg_val, 0)
         elif type(arg_type) == type(StringType()):
             arg_type.val = arg_val
-
         elif type(arg_type) == type(SerializableType()):
             pass
         else:

@@ -47,7 +47,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
     def __del__( self ):
         self.dv_model.DecRef()
 
-    def data_callback(self, data):
+    def data_callback(self, data, sender=None):
         """Recieves data from decoders to which this consumer is registered
 
         Arguments:

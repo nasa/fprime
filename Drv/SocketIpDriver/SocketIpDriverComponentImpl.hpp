@@ -21,6 +21,9 @@
     #include <inetLib.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     #include <arpa/inet.h>
+#elif TGT_OS_TYPE_RTEMS
+  #include <arpa/inet.h>
+  #include <netinet/in.h>
 #else
     #error OS not supported for IP Socket Communications
 #endif
@@ -90,6 +93,10 @@ namespace Drv {
               U16 port,                 //!< Port to connect to
               NATIVE_INT_TYPE cpuAffinity = -1 //!< CPU affinity of the task to start
       );
+
+      //! Set the stop flag on the thread's loop such that it will shutdown promptly
+      //!
+      void exitSocketTask();
 
     PRIVATE:
 
