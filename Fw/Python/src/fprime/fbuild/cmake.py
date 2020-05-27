@@ -27,6 +27,7 @@ import selectors
 import atexit
 import fprime.fbuild
 
+COMMENT_REGEX = re.compile("\s*#.*")
 
 class CMakeBuildCache(object):
     """
@@ -66,6 +67,7 @@ class CMakeHandler(object):
         """
         Instantiate a basic CMake handler.
         """
+        self.environment = {}
         self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
@@ -285,6 +287,25 @@ class CMakeHandler(object):
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
+    def setup_environment_from_file(self, build_dir, environment_file=None):
+        """
+        Sets the environment to apply to CMake commands.  Will read from the supplied file.  If None is supplied, it
+        will try and detect the the environment file from variables set in the cache.  If no file is supplied, nor any
+        set in the cache, then it is ignored.
+        """
+        environment_file = environment_file if environment_file is not None else self._read_values_from_cache(["FPRIME_BUILD_ENVIRONMENT"], build_dir)[0]
+        # Nothing to set
+        if environment_file is None:
+            return
+        elif not os.path.isfile(environment_file):
+            raise CMakeProjectException("Environment file '{}' does not exist")
+        print("[INFO] Reading environment from: {}".format(environment_file))
+        with open(environment_file, "r") as file_handle:
+            for line in file_handle.readlines():
+                tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) # No need to quote
+                if len(tokens) == 2:
+                    self.environment[tokens[0]] = tokens[1]
+
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
         """
@@ -338,6 +359,7 @@ class CMakeHandler(object):
         Note: !!! this function has potential File System side-effects !!!
         """
         cm_environ = copy.copy(os.environ)
+        cm_environ.update(self.environment)
         cm_environ.update(environment)
         cargs = ["cmake"]
         if not write_override:

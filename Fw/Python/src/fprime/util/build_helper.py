@@ -108,6 +108,10 @@ def validate(parsed):
               .format(fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform), exc,
                       parsed.path), file=sys.stderr)
         sys.exit(2)
+    # Check enviornment if specidied
+    if parsed.environment is not None and not os.path.isfile(parsed.environment):
+        print("[ERROR] Environment file {} does not exist".format(parsed.environment))
+        sys.exit(3)
     cache_file = os.path.join(parsed.build_dir, "CMakeCache.txt")
     # Check for generate validation
     if parsed.command == "generate" and os.path.exists(parsed.build_dir):
@@ -165,6 +169,8 @@ def parse_args(args):
     common_parser.add_argument("-j", "--jobs", default=1, type=int,
                                help="F prime parallel job count. Default: %(default)s.")
     common_parser.add_argument("-v", "--verbose", default=False, action="store_true", help="Turn on verbose output.")
+    common_parser.add_argument("-e", "--environment", default=None,
+                               help="File path to read for environment settings for build.")
     # Main parser for the whole application
     parsers = {}
     parser = argparse.ArgumentParser(description="F prime helper application.")
@@ -266,10 +272,12 @@ def utility_entry(args=sys.argv[1:]):
             try:
                 print("[INFO] Creating {} build directory at: {}"
                       .format("automatic" if automatic_build_dir else "specified", parsed.build_dir))
+                fprime.fbuild.builder().setup_environment_from_file(parsed.build_dir, parsed.environment)
                 fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir, cmake_args)
                 cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
                 print("[INFO] Creating {} unit-test build directory at: {}"
                       .format("automatic" if automatic_build_dir else "specified", parsed.build_dir + UT_SUFFIX))
+                fprime.fbuild.builder().setup_environment_from_file(parsed.build_dir + UT_SUFFIX, parsed.environment)
                 fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir + UT_SUFFIX, cmake_args)
             except Exception as exc:
                 print("[INFO] Error detected, automatically cleaning up failed-generation")
@@ -277,6 +285,7 @@ def utility_entry(args=sys.argv[1:]):
                 raise
         else:
             action = ACTION_MAP[parsed.command]
+            fprime.fbuild.builder().setup_environment_from_file(parsed.build_dir + action["build-suffix"], parsed.environment)
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
                                                          parsed.path, cmake_args, make_args,
                                                          action.get("top-target", False))
