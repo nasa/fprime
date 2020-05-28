@@ -213,7 +213,7 @@ class CMakeHandler(object):
         # Check that a parent is the true parent
         if nearest_parent is None:
             raise CMakeOrphanException(path)
-        return os.path.relpath(path, nearest_parent), nearest_parent
+        return os.path.relpath(path, nearest_parent), nearest_parent.rstrip(os.sep)
 
     def get_fprime_configuration(self, fields, cmake_dir=None):
         """
