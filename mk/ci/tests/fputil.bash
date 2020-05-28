@@ -4,7 +4,7 @@
 #
 # Helpers to test via FP util
 ####
-export FPUTIL_TARGETS="generate build check-all install build-all coverage"
+export FPUTIL_TARGETS="generate build check-all install build-all"
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
 
 export INT_DEPLOYS="${FPRIME_DIR}/Ref"
