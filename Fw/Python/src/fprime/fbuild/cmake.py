@@ -188,7 +188,9 @@ class CMakeHandler(object):
         if not possible_parents:
             raise CMakeProjectException(cmake_dir, "Does not define any of the cache fields: {}"
                                         .format(",".join(CMakeHandler.CMAKE_LOCATION_FIELDS)))
-        full_parents = map(os.path.abspath, possible_parents)
+        # Common-prefix will fail in the case that two directories share a common prefix in their name
+        # So force directory separator to force common prefix to only work on full directory names
+        full_parents = map(lambda dir: os.path.abspath(dir) + os.sep, possible_parents)
         # Parents *are* the common prefix for their children
         parents = filter(lambda parent: os.path.commonprefix([parent, path]) == parent, full_parents)
 
@@ -293,12 +295,15 @@ class CMakeHandler(object):
         will try and detect the the environment file from variables set in the cache.  If no file is supplied, nor any
         set in the cache, then it is ignored.
         """
-        environment_file = environment_file if environment_file is not None else self._read_values_from_cache(["FPRIME_BUILD_ENVIRONMENT"], build_dir)[0]
+        try:
+            environment_file = environment_file if environment_file is not None else self._read_values_from_cache(["FPRIME_BUILD_ENVIRONMENT"], build_dir)[0]
+        except CMakeException:
+            print("[WARNING] Could not read CMake cache. Will not use 'FPRIME_BUILD_ENVIRONMENT' for environment.")
         # Nothing to set
         if environment_file is None:
             return
         elif not os.path.isfile(environment_file):
-            raise CMakeProjectException("Environment file '{}' does not exist")
+            raise CMakeException("Environment file '{}' does not exist".format(environment_file))
         print("[INFO] Reading environment from: {}".format(environment_file))
         with open(environment_file, "r") as file_handle:
             for line in file_handle.readlines():
@@ -471,8 +476,8 @@ class CMakeInvalidBuildException(CMakeException):
     def __init__(self, build_dir):
         """ Force an appropriate message """
         super(CMakeInvalidBuildException, self)\
-            .__init__("{} is not a CMake build directory. Please setup using 'fprime-util generate"
-                      .format(build_dir, build_dir))
+            .__init__("{} is not a CMake build directory. Please setup using 'fprime-util generate'"
+                      .format(build_dir))
 
 
 class CMakeExecutionException(CMakeException):

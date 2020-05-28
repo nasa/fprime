@@ -193,9 +193,12 @@ def parse_args(args):
     # Check for a valid builder first
     try:
         fprime.fbuild.builder()
-    except Exception as exc:
+    except fprime.fbuild.cmake.CMakeExecutionException as exc:
         print("[ERROR]", exc, exc.stderr, file=sys.stderr)
-        sys.exit()
+        sys.exit(2)
+    except Exception as exc:
+        print("[ERROR]", exc, file=sys.stderr)
+        sys.exit(3)
     # Parse and prepare to run
     parsed = parser.parse_args(args)
     if not hasattr(parsed, "command") or parsed.command is None:
@@ -272,12 +275,10 @@ def utility_entry(args=sys.argv[1:]):
             try:
                 print("[INFO] Creating {} build directory at: {}"
                       .format("automatic" if automatic_build_dir else "specified", parsed.build_dir))
-                fprime.fbuild.builder().setup_environment_from_file(parsed.build_dir, parsed.environment)
                 fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir, cmake_args)
                 cmake_args.update({"CMAKE_BUILD_TYPE": parsed.build_type})
                 print("[INFO] Creating {} unit-test build directory at: {}"
                       .format("automatic" if automatic_build_dir else "specified", parsed.build_dir + UT_SUFFIX))
-                fprime.fbuild.builder().setup_environment_from_file(parsed.build_dir + UT_SUFFIX, parsed.environment)
                 fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir + UT_SUFFIX, cmake_args)
             except Exception as exc:
                 print("[INFO] Error detected, automatically cleaning up failed-generation")
