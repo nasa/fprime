@@ -299,7 +299,7 @@ class TimeType(type_base.BaseType):
 
             # This finds the local time corresponding to the timestamp and
             # timezone object, or local time zone if tz=None
-            dt = datetime.fromtimestamp(self.__secs.val, tz)
+            dt = datetime.datetime.fromtimestamp(self.__secs.val, tz)
 
             dt = dt.replace(microsecond=self.__usecs.val)
 
@@ -312,7 +312,7 @@ class TimeType(type_base.BaseType):
         Args:
             dt (datetime): datetime object to read from time.
         '''
-        total_seconds = (dt - datetime.fromtimestamp(0)).total_seconds()
+        total_seconds = (dt - datetime.datetime.fromtimestamp(0)).total_seconds()
         seconds = int(total_seconds)
         useconds = int((total_seconds - seconds) * 1000000)
 
@@ -499,8 +499,8 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
 
         val2 = TimeType()
         val2.deserialize(buff, 0)
-        print(("Deserialized: TimeType(%d, %d, %d, %d)"%
-              (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds)))
+        print("Deserialized: TimeType(%s, %d, %d, %d)" %
+              (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds))
 
         if (val2.timeBase != t_base):
             return False
