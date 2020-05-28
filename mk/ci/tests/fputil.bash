@@ -22,15 +22,22 @@ function fputil_action {
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
         cd "${WORKDIR}"
+        PLATFORM=""
+        # Setup special platform for check/check-all
+        if [[ "${TARGET}" == check* ]]
+        then
+                PLATFORM="${CHECK_TARGET_PLATFORM}"
+        fi
+  
         # Generate is only needed when it isn't being tested
         if [[ "${TARGET}" != "generate" ]]
         then
             echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
-            fprime-util "generate" --jobs "${JOBS}" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
+            fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
                 || fail_and_stop "Failed to generate before ${WORKDIR//\//_} '${TARGET}' execution"
         fi
         echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
-        fprime-util "${TARGET}" --jobs "${JOBS}" > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
+        fprime-util "${TARGET}" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
             || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
     ) || exit 1
 }
