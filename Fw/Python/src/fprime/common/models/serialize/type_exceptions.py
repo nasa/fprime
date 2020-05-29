@@ -32,6 +32,10 @@ class TypeMismatchException(TypeException):
     def __init__(self, expected_type, actual_type):
         super(TypeMismatchException,self).__init__("Type %s expected, type %s found!" %(expected_type,actual_type))
 
+class ArrayLengthException(TypeException):
+    def __init__(self, arr_type, expected_len, actual_len):
+        super(ArrayLengthException,self).__init__("Array type %s is of length %s, actual length %s found!" %(arr_type, expected_len, actual_len))
+
 class EnumMismatchException(TypeException):
     def __init__(self, enum, bad_member):
         super(EnumMismatchException,self).__init__("Invalid enum member %s set in %s enum!" %(bad_member,enum))
