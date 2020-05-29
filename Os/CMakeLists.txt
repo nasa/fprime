@@ -41,6 +41,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
+          "${CMAKE_CURRENT_LIST_DIR}/Linux/TaskLock.cpp"
+          "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
   )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   set(SOURCE_FILES
@@ -71,6 +73,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
+          "${CMAKE_CURRENT_LIST_DIR}/Linux/TaskLock.cpp"
+          "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
   )
   # Shard libraries need an -rt dependency for mq libs
   if (BUILD_SHARED_LIBS)
