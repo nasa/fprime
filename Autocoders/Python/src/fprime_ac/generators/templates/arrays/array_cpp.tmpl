@@ -1,0 +1,184 @@
+##
+## Template to stamp out serializable arrays .cpp file
+##
+// ====================================================================== 
+// \title  ${name}
+// \author Auto-generated
+// \brief  cpp file for ${name}
+//
+// \copyright
+// Copyright 2020 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged. Any commercial use must be negotiated with the Office
+// of Technology Transfer at the California Institute of Technology.
+// 
+// This software may be subject to U.S. export control laws and
+// regulations.  By accepting this document, the user agrees to comply
+// with all U.S. export laws and regulations.  User has the
+// responsibility to obtain export licenses, or other export authority
+// as may be required before exporting such information to foreign
+// countries or providing access to foreign persons.
+// ======================================================================
+
+\#include <string.h>
+
+\#include "Fw/Types/Assert.hpp"
+
+\#include "${name}.hpp"
+
+namespace ${namespace} {
+
+  // ----------------------------------------------------------------------
+  // Constructors
+  // ----------------------------------------------------------------------
+  
+  ${name} ::
+    ${name}(void) :
+      Serializable()
+  {
+  
+  }
+  
+  ${name} :: 
+    ${name}(const ElementType (&a)[SIZE]) :
+      Serializable()
+  {
+    for(U32 index = 0; index < SIZE; index++)
+    {
+      this->elements[index] = a[index];
+    }
+  }
+  
+  ${name} :: 
+    ${name}(const ElementType& e) :
+      Serializable()
+  {
+    for(U32 index = 0; index < SIZE; index++)
+    {
+      this->elements[index] = e;
+    }
+  }
+  
+  ${name} :: 
+    ${name}(
+#for $i in $range(1, $size + 1)
+      const ElementType (&e${i}), //!< Element ${i}
+#end for
+    ) :
+      Serializable()
+  {
+    this->elements[0] = e${i};
+  }
+  
+  ${name} ::
+    ${name}(const ${name}& other) :
+      Serializable()
+  {
+    for(U32 index = 0; index < SIZE; index++)
+    {
+      this->elements[index] = other.elements[index];
+    }
+  }
+  
+  // ----------------------------------------------------------------------
+  // Public functions
+  // ----------------------------------------------------------------------
+  
+  
+  ${name}::ElementType& ${name} ::
+    operator[](const U32 i)
+  {
+    FW_ASSERT(i < SIZE);
+    return this->elements[i];
+  }
+  
+  const ${name}::ElementType& ${name} ::
+    operator[](const U32 i) const
+  {
+    FW_ASSERT(i < SIZE);
+    return this->elements[i];
+  }
+  
+  
+  const ${name}& ${name} ::
+    operator=(const ${name}& other)
+  {
+    for(U32 index = 0; index < SIZE; index++) {
+      this->elements[index] = other.elements[index];
+    }
+    return *this;
+  }
+  
+  const ${name}& ${name} ::
+    operator=(const ElementType (&a)[SIZE])
+  {
+    for(U32 index = 0; index < SIZE; index++) {
+      this->elements[index] = a[index];
+    }
+    return *this;
+  }
+  
+  const ${name}& ${name} ::
+    operator=(const ElementType& e)
+  {
+    for(U32 index = 0; index < SIZE; index++) {
+      this->elements[index] = e;
+    }
+    return *this;
+  }
+  
+  bool ${name} ::
+    operator==(const ${name}& other) const 
+  {
+    for (U32 i = 0; i < SIZE; ++i) {
+      if ((*this)[i] != other[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  bool ${name} ::
+    operator!=(const ${name}& other) const 
+  {
+    return !(*this == other);
+  }
+  
+\#ifdef BUILD_UT
+  std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
+    os << "[";
+    for (U32 i = 0; i < Array::SIZE; ++i) {
+      os << " " << obj[i];
+    }
+    os << "]";
+    return os;
+  }
+\#endif
+  
+  Fw::SerializeStatus ${name} ::
+    serialize(Fw::SerializeBufferBase& buffer) const
+  {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    for (U32 i = 0; i < SIZE; ++i) {
+      status = buffer.serialize((*this)[i]);
+      if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+      }
+    }
+    return status;
+  }
+  
+  Fw::SerializeStatus ${name} ::
+    deserialize(Fw::SerializeBufferBase& buffer)
+  {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    for (U32 i = 0; i < SIZE; ++i) {
+      status = buffer.deserialize((*this)[i]);
+      if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+      }
+    }
+    return status;
+  }
+
+}

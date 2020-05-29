@@ -79,6 +79,10 @@
                 <ref name = "import_enum_define"></ref>
             </zeroOrMore>
 
+            <zeroOrMore>
+                <ref name = "import_array_define"></ref>
+            </zeroOrMore>
+
             <!-- Optional elements -->
 
             <optional>
@@ -213,6 +217,13 @@
         <element name = "import_enum_type" >
             <a:documentation>Path to enum types</a:documentation>
             <data type = "anyURI"></data>
+        </element>
+    </define>
+
+    <define name = "import_array_define">
+        <element name = "import_array_type">
+            <a:documentation>Import array XML files.</a:documentation>
+            <data type="anyURI"></data>
         </element>
     </define>
 
