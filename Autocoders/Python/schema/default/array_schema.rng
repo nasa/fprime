@@ -49,7 +49,7 @@
             <optional>
                 <attribute name = "default_values">
                     <oneOrMore>
-                        <attribute name = "">
+                        <attribute name = "value">
                             <text/>
                         </attribute>
                     </oneOrMore>
