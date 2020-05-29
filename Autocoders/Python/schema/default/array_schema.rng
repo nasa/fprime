@@ -38,6 +38,23 @@
                     <text/>
                 </attribute>
             </optional>
+
+            <optional>
+                <attribute name = "format_string">
+                    <a:documentation>Used to format data into readable content on the ground system software.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "default_values">
+                    <oneOrMore>
+                        <attribute name = "">
+                            <text/>
+                        </attribute>
+                    </oneOrMore>
+                </attribute>
+            </optional>
         </element>
     </define>
 </grammar>
