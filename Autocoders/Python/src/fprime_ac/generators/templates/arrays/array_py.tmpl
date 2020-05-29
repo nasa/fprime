@@ -1,0 +1,18 @@
+##
+## Template to stamp out serializable arrays .py file
+##
+from models.serialize.DefaultTypeExceptions import *
+from models.serialize.type_base import *
+from models.serialize.default_array_type import *
+from models.serialize.default_string_type import *
+from models.serialize.default_serializable_type import *
+
+def ${name}():
+  return DefaultArrayType(
+    "${name}",
+    {
+#for $item in $items_list:
+      ${item},
+#end for
+    }
+  )

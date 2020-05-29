@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    
+    <include href="common_elements.rng"/>
+    <include href="common_types.rng"/>
+    
+    <start>
+        <ref name = "array_root_define"></ref>
+    </start>
+    
+    <define name="array_root_define">
+        <element name = "array">
+            <a:documentation>Component root tag.</a:documentation>
+            
+            <!-- Required Attributes -->
+            <attribute name = "name">
+                <a:documentation>Name of the array.</a:documentation>
+                <text/>
+            </attribute>
+
+            <attribute name = "type">
+                <a:documentation>Type of the array.</a:documentation>
+                <text/>
+            </attribute>
+
+            <attribute name = "size">
+                <a:documentation>Size of the array.</a:documentation>
+                <data type = "integer"></data>
+            </attribute>
+            
+            <!-- Optional attributes -->
+            <optional>
+                <attribute name = "namespace">
+                    <a:documentation>Namespace of the serializable object.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+        </element>
+    </define>
+</grammar>

@@ -74,6 +74,8 @@ class XmlSerializeParser(object):
         self.__includes = []
         # List of XML enum type files
         self.__include_enum_files = []
+        # List of XML array type files
+        self.__include_array_files = []
         # Comment block of text for serializable
         self.__comment = ""
         # List of (name, type, comment) tuples
@@ -141,6 +143,8 @@ class XmlSerializeParser(object):
                 self.__includes.append(serializable_tag.text)
             elif serializable_tag.tag == 'import_enum_type':
                 self.__include_enum_files.append(serializable_tag.text)
+            elif serializable_tag.tag == 'import_array_type':
+                self.__include_array_files.append(serializable_tag.text)
             elif serializable_tag.tag == 'members':
                 for member in serializable_tag:
                     if member.tag != 'member':
@@ -253,6 +257,11 @@ class XmlSerializeParser(object):
         """
         return self.__include_enum_files
 
+    def get_include_arrays(self):
+        """
+        Returns a list of all imported XML array files.
+        """
+        return self.__include_array_files
 
     def get_comment(self):
         """

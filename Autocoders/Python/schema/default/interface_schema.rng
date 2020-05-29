@@ -81,6 +81,13 @@
             </zeroOrMore>
 
             <zeroOrMore>
+                <element name = "import_array_type">
+                    <a:documentation>Import array XML files.</a:documentation>
+                    <data type="anyURI"></data>
+                </element>
+            </zeroOrMore>
+
+            <zeroOrMore>
                 <ref name = "args_define"></ref>
             </zeroOrMore>
 
