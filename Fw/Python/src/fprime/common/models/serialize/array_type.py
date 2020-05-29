@@ -16,91 +16,71 @@ class ArrayType(type_base.BaseType):
 
     The array takes a list that stores the array members.
     
-    The enumeration takes a dictionary that stores the enumeration members
-    and current value as a string. The member values will have to be computed
-    containing code based on C enum rules
-    @param: typename = "SomeTypeName" string  Name of the type.
-    @param: enum_dict = { "member":val, ...}  member value dict.
-    @param: val = "member name" Optional member name for serializing only.
+    @param param: typename = "SomeTypeName" string
+    @param param: mem_type = "TypeOfMembers" string
+    @param param: mem_len = integer length of mem_list
+    @param param: mem_list = ["member", ...]
     """
-    def __init__(self, typename="", enum_dict={"UNDEFINED":0}, val = None):
+    def __init__(self, typename, mem_type, mem_len, mem_list=None):
         """
         Constructor
         """
-        # Check input value for member selected
-        if val != None:
-            if not type(val) == type(str()):
-                raise TypeMismatchException(type(str()),type(val))
-        else:
-            val = "UNDEFINED"
-        self.__val = val
-
-        # Check type of typename
         if not type(typename) == type(str()):
-            raise TypeMismatchException(type(str()), type(val))
+            raise TypeMismatchException(type(str()),type(typename))
 
         self.__typename = typename
+        setattr(self, "mem_list", None)
 
-        # Check enum is a dict
-        if not type(enum_dict) == type(dict()):
-            raise TypeMismatchException(type(dict()),type(val))
+        if mem_list == None or len(mem_list) == 0:
+            return;
 
-        # scan the dictionary to see if it is formatted correctly
-        for member in list(enum_dict.keys()):
-            # member name should be a string
-            if not type(member) == type(str()):
-                raise TypeMismatchException(type(str()),type(member))
-            # member value should be an integer
-            if not type(enum_dict[member]) == type(int()):
-                raise TypeMismatchException(type(int()),enum_dict[member])
+        if not type(mem_list) == type(list()):
+            raise TypeMismatchException(type(list()),type(mem_list))
 
-        self.__enum_dict = enum_dict
-        self.__do_check = True
+        if not len(mem_list) <= mem_len:
+            raise ArrayLengthException(typename, mem_len, len(mem_list))
 
-        self._check_val(val)
+        # Check all members?
 
-    def _check_val(self, val):
-      # make sure requested value is found in enum members
-      if val != "UNDEFINED" and self.__do_check:
-          if val not in list(self.__enum_dict.keys()):
-              raise EnumMismatchException(self.__typename, val)
+        self.__mem_type = mem_type
+        self.__mem_len = mem_len
+        self.__mem_list = mem_list
 
-    @property
-    def val(self):
-        return self.__val
+    def member(self, i):
+        return self.__mem_list[i]
 
-
-    @val.setter
-    def val(self, val):
-        self._check_val(val)
-        self.__val = val
-
-
-    def keys(self):
-        """
-        Return all the enum key values.
-        """
-        return list(self.__enum_dict.keys())
-
+    def member(self, i, val):
+        if len(self.__mem_list) >= i:
+            self.__mem_list.append(val)
+        else:
+            self.__mem_list[i] = val
 
     def typename(self):
         return self.__typename
 
+    def mem_type(self):
+        return self.__mem_type
 
-    def enum_dict(self):
-        return self.__enum_dict
+    def mem_len(self):
+        return self.__mem_len
+
+    def mem_list(self):
+        return self.__mem_list
 
 
     def serialize(self):
         """
         Utilize serialize decorator here...
         """
-        # for enums, take the string value and convert it to
-        # the numeric equivalent
-        if self.val == None:
+        if self.mem_list == None:
             raise NotInitializedException(type(self))
-        #
-        return self._serialize('>i', self.__enum_dict[self.val])
+
+        # iterate through members and serialize each one
+        serStream = ""
+        for member in self.mem_list:
+            serStream += member.serialize()
+
+        return serStream
 
 
     def deserialize(self,data,offset):
@@ -122,24 +102,17 @@ class ArrayType(type_base.BaseType):
         if self.val not in list(self.__enum_dict.keys()):
             raise TypeRangeException(self.val)
 
-
-    def getSize(self):
-        # enum value stored as unsigned int
-        #return struct.calcsize('>i');
-        return 4;
-
-    def __repr__(self): return 'Enum'
+    def __repr__(self): return 'Array'
 
 if __name__ == '__main__':
-    print("ENUM")
+    print("ARRAY")
     try:
-        members = { "MEMB1":0 , "MEMB2":6, "MEMB3":9 }
+        members = list([0, 1, 2, 3, 4])
         print("Members: ", members)
-        val = EnumType("SomeEnum",members,"MEMB3")
-        print("Value: %s" % val.val)
+        val = ArrayType("SomeArray","I32", 5, members)
         buff = val.serialize()
         type_base.showBytes(buff)
-        val2 = EnumType("SomeEnum",members)
+        val2 = ArrayType("SomeArray","I32", 5, members)
         val2.deserialize(buff,len(buff))
         print("Deserialize: %s" % val2.val)
     except TypeException as e:
