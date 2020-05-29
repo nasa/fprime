@@ -20,6 +20,7 @@ from fprime_ac.utils import Logger
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils import DictTypeConverter
 from fprime_ac.utils import EnumGenerator
+from fprime_ac.utils import ArrayGenerator
 
 
 # Meta-model for Component only generation
