@@ -8,7 +8,7 @@
 #ifndef TASKIDREPR_HPP
 #define TASKIDREPR_HPP
 
-#if defined(TGT_OS_TYPE_LINUX)
+#if defined(TGT_OS_TYPE_LINUX) || defined(TGT_OS_TYPE_DARWIN)
 extern "C" {
 #include <pthread.h>
 };
@@ -17,7 +17,7 @@ extern "C" {
 namespace Os {
 #if defined(TGT_OS_TYPE_VXWORKS)
     typedef int TaskIdRepr;
-#elif defined(TGT_OS_TYPE_LINUX)
+#elif defined(TGT_OS_TYPE_LINUX) || defined(TGT_OS_TYPE_DARWIN)
     typedef pthread_t TaskIdRepr;
 #endif
 }
