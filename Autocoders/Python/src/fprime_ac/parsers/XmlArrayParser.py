@@ -53,6 +53,17 @@ class XmlArrayParser(object):
         self.__name = ""
         self.__namespace = None
 
+      # List of C++ include files for serializable *.hpp file
+        self.__include_header_files = []
+        # List of XML serializable description dependencies
+        self.__includes = []
+        # List of XML enum type files
+        self.__include_enum_files = []
+        # List of XML array type files
+        self.__include_array_files = []
+
+        self.__format_string = ""
+        self.__default_values = None
         self.__xml_filename = xml_file
         self.__type = "U32"
         self.__size = 4
@@ -91,30 +102,33 @@ class XmlArrayParser(object):
             self.__namespace = array.attrib['namespace']
         else:
             self.__namespace = None
+
+        if 'format_string' in array.attrib:
+            self.__format = array.attrib['format']
+        else:
+            self.__format = None
+
+        tmp = []
+        index = 0
+        for item in array.attrib['default']:
+            tmp.append((index, item))
+            index += 1
+        self.__default = tmp
         
         print(self.__name + " " + self.__namespace)
 
         self.__type = array.attrib["type"]
         self.__size = array.attrib["size"]
 
-    def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
-        # Check that validator is valid
-        if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
-            msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
-            raise FprimeXmlException(msg)
-                                
-        # Create proper xml validator tool
-        validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
-        validator_parsed = etree.parse(validator_file_handler)
-        validator_file_handler.close()
-        if validator_type == 'schema':
-            validator_compiled = etree.RelaxNG(validator_parsed)
-                                                
-        # Validate XML file
-        if not validator_compiled.validate(parsed_xml_tree):
-            if validator_type == 'schema':
-                msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
-                raise FprimeXmlException(msg)
+        for array_tag in array:
+            if array_tag.tag == 'include_header':
+                self.__include_header_files.append(array_tag.text)
+            elif array_tag.tag == 'import_serializable_type':
+                self.__includes.append(array_tag.text)
+            elif array_tag.tag == 'import_enum_type':
+                self.__include_enum_files.append(array_tag.text)
+            elif array_tag.tag == 'import_array_type':
+                self.__include_array_files.append(array_tag.text)
 
     def get_name(self):
         return self.__name
@@ -128,15 +142,31 @@ class XmlArrayParser(object):
     def get_size(self):
         return self.__size
 
+    def get_format_string(self):
+        return self.__format_string
+
+    def get_default_values(self):
+        return self.__default_values
+
+    def get_include_header_files(self):
+        return self.__include_header_files
+    
+    def get_includes(self):
+        return self.__includes
+        
+    def get_include_enum_files(self):
+        return self.__include_enum_files
+
+    def get_include_array_files(self):
+        return self.__include_array_files
+
 
 if __name__ == '__main__':
     xmlfile = sys.argv[1]
     xml = XmlParser.XmlParser(xmlfile)
     print("Type of XML is: %s" % xml())
     print("Array XML parse test (%s)" % xmlfile)
-    xml_parser = XmlEnumParser(xmlfile)
+    xml_parser = XmlArrayParser(xmlfile)
     print("Array name: %s, namespace: %s" % (xml_parser.get_name(),xml_parser.get_namespace()))
-    print("Items")
-    for item in xml_parser.get_items():
-        print("%s=%s // %s" % item)
+    print("Size: %s, member type: %s" % (self.get_size(), self.get_type())
 

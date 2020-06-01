@@ -116,6 +116,7 @@ class ConfigManager(parent):
         self.__prop['schema']["serializable"]           = '/Autocoders/Python/schema/default/serializable_schema.rng'
         self.__prop['schema']["parameters"]             = '/Autocoders/Python/schema/default/parameters_schema.rng'
         self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
+        self.__prop['schema']["array"]                  = '/Autocoders/Python/schema/default/array_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
         # Schematron parameters here.
