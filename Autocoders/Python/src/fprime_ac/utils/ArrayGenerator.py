@@ -43,7 +43,7 @@ def open_file(name, type):
         sys.exit(-1)
     return fp
 
-def write_template(fp, c, name, namespace, arr_type, arr_size):
+def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, include_headers, import_serializables, import_enums, import_arrays):
     '''
     Set up and write out templates here
     '''
@@ -51,7 +51,12 @@ def write_template(fp, c, name, namespace, arr_type, arr_size):
     c.namespace = namespace
     c.type = arr_type
     c.size = arr_size
-    c.items_list = items
+    c.format_string = format_string
+    c.default_values = default_values
+    c.include_headers = include_headers
+    c.import_serializables = import_serializables
+    c.import_enums = import_enums
+    c.import_arrays = import_arrays
     fp.writelines(c.__str__())
 
 def generate_array(xml_file):
@@ -70,26 +75,32 @@ def generate_array(xml_file):
         namespace = array_xml.get_namespace()
         arr_type = array_xml.get_type()
         arr_size = array_xml.get_size()
+        format_string = array_xml.get_format_string()
+        default_values = array_xml.get_default_values()
+        include_headers = array_xml.get_include_header_files()
+        import_serializables = array_xml.get_includes()
+        import_enums = array_xml.get_include_enum_files()
+        import_arrays = array_xml.get_include_array_files()
         #
         # Generate the hpp file
         #
         fp = open_file(name, "hpp")
         c = array_hpp.array_hpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, include_headers, import_serializables, import_enums, import_arrays)
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = array_cpp.array_cpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, include_headers, import_serializables, import_enums, import_arrays)
         fp.close()
         #
         # Generate the py file
         #
         fp = open_file(name, "py")
         c = array_py.array_py()
-        write_template(fp, c, name, namespace, arr_type, arr_size)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, include_headers, import_serializables, import_enums, import_arrays)
         fp.close()
         return True
     else:
