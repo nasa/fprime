@@ -19,6 +19,7 @@ including virtual environment creation, and installation verification: [INSTALL.
 ```
 git clone https://github.com/nasa/fprime.git
 cd fprime
+pip install --upgrade wheel setuptools pip
 pip install Fw/Python Gds/
 ```
 
