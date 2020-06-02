@@ -1,0 +1,41 @@
+        -:    0:Source:/home/vwong/sphinx-sat/LfNeasc/Common/Util/LockGuard.cpp
+        -:    0:Programs:3
+        -:    1:// ====================================================================== 
+        -:    2:// \title  LockGuard.cpp
+        -:    3:// \author vwong
+        -:    4:// \brief  cpp file for a lock guard utility class
+        -:    5://
+        -:    6:// \copyright
+        -:    7:// Copyright 2009-2015, by the California Institute of Technology.
+        -:    8:// ALL RIGHTS RESERVED.  United States Government Sponsorship
+        -:    9:// acknowledged. Any commercial use must be negotiated with the Office
+        -:   10:// of Technology Transfer at the California Institute of Technology.
+        -:   11:// 
+        -:   12:// This software may be subject to U.S. export control laws and
+        -:   13:// regulations.  By accepting this document, the user agrees to comply
+        -:   14:// with all U.S. export laws and regulations.  User has the
+        -:   15:// responsibility to obtain export licenses, or other export authority
+        -:   16:// as may be required before exporting such information to foreign
+        -:   17:// countries or providing access to foreign persons.
+        -:   18:// ====================================================================== 
+        -:   19:
+        -:   20:#include <LfNeasc/Common/Util/LockGuard.hpp>
+        -:   21:
+        -:   22:namespace LfNeasc {
+        -:   23:
+        3:   24:  LockGuard ::
+        -:   25:    LockGuard (
+        -:   26:        Os::Mutex& mutex
+        -:   27:    ) :
+        3:   28:      m_mutex(mutex)
+        -:   29:  {
+        3:   30:    this->m_mutex.lock();
+        3:   31:  }
+        -:   32:
+        3:   33:  LockGuard ::
+        -:   34:    ~LockGuard ()
+        -:   35:  {
+        3:   36:    this->m_mutex.unLock();
+        3:   37:  }
+        -:   38:
+        -:   39:} // end namespace LfNeasc
