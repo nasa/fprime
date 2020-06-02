@@ -43,7 +43,7 @@ namespace Types {
         Fw::SerializeStatus status = state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize());
         state.setRemainingSize(state.getRemainingSize() - state.getRandomSize());
         ASSERT_TRUE(state.addInfinite(state.getBuffer(), state.getRandomSize()));
-        ASSERT_EQ(status, Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 
 
@@ -59,7 +59,7 @@ namespace Types {
 
     void SerializeOverflowRule::action(MockTypes::CircularState& state) {
         Fw::SerializeStatus status = state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize());
-        ASSERT_EQ(status, Fw::SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_NO_ROOM_LEFT);
     }
 
 

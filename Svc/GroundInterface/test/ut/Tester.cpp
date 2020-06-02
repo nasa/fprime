@@ -71,9 +71,10 @@ namespace Svc {
       m_uplink_data[2 * sizeof(TOKEN_TYPE) + 3] = (static_cast<U32>(m_uplink_com_type) >>  0) & 0xFF;
   }
 
-  void Tester :: setInputParams(TOKEN_TYPE size, U8* buffer) {
+  void Tester :: setInputParams(TOKEN_TYPE size, U8* buffer, TOKEN_TYPE packet_type) {
       m_size = size;
       m_buffer = buffer;
+      m_packet = packet_type;
   }
 
   // ----------------------------------------------------------------------
@@ -88,7 +89,8 @@ namespace Svc {
   {
     this->pushFromPortEntry_fileUplinkBufferSendOut(fwBuffer);
     for (U32 i = 0; i < fwBuffer.getsize(); i++) {
-        ASSERT_EQ(reinterpret_cast<U8*>(fwBuffer.getdata())[i], m_uplink_data[i + HEADER_SIZE]);
+        // File uplink strips type before outputting to FileUplink
+        ASSERT_EQ(reinterpret_cast<U8*>(fwBuffer.getdata())[i], m_uplink_data[i + HEADER_SIZE + sizeof(TOKEN_TYPE)]);
     }
   }
 
@@ -137,6 +139,7 @@ namespace Svc {
     // All writes can be processed here
     TOKEN_TYPE start = 0;
     TOKEN_TYPE size = 0;
+    TOKEN_TYPE packet = 0;
     U32 end = 0;
     Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize());
     buffer_wrapper.setBuffLen(fwBuffer.getsize());
@@ -145,6 +148,13 @@ namespace Svc {
     ASSERT_EQ(buffer_wrapper.deserialize(size), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(start, GroundInterfaceComponentImpl::START_WORD);
     ASSERT_EQ(size, m_size);
+    // Deserialize the packet type, if know. This handles the different paths for FilePackets and homoginized packets
+    if (m_packet != Fw::ComPacket::FW_PACKET_UNKNOWN) {
+        ASSERT_EQ(buffer_wrapper.deserialize(packet), Fw::FW_SERIALIZE_OK);
+        // For now, only FilePackets take this path
+        ASSERT_EQ(packet, Fw::ComPacket::FW_PACKET_FILE);
+        m_size -= sizeof(packet);
+    }
     // Note: no checking for symmetric errors, as we are depending on ExternalSerializeBuffer's correctness here
     for (U32 i = 0; i < m_size; i++) {
         U8 byte_data;
