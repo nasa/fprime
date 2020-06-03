@@ -20,6 +20,7 @@ import logging
 import os
 import sys
 import time
+import hashlib
 from fprime_ac.utils import ConfigManager
 from optparse import OptionParser
 from lxml import etree
@@ -62,11 +63,11 @@ class XmlArrayParser(object):
         # List of XML array type files
         self.__include_array_files = []
 
-        self.__format_string = ""
-        self.__default_values = None
+        self.__format = ""
+        self.__default = []
         self.__xml_filename = xml_file
         self.__type = "U32"
-        self.__size = 4
+        self.__size = "4"
         
         self.Config = ConfigManager.ConfigManager.getInstance()
 
@@ -103,25 +104,24 @@ class XmlArrayParser(object):
         else:
             self.__namespace = None
 
-        if 'format_string' in array.attrib:
+        if 'format' in array.attrib:
             self.__format = array.attrib['format']
         else:
             self.__format = None
 
-        tmp = []
-        index = 0
-        for item in array.attrib['default']:
-            tmp.append((index, item))
-            index += 1
-        self.__default = tmp
-        
-        print(self.__name + " " + self.__namespace)
+        if 'typeid' in array.attrib:
+            self.__type_id = array.attrib['typeid']
+        else:
+            self.__type_id = None
 
         self.__type = array.attrib["type"]
-        self.__size = array.attrib["size"]
-
+        self.__size = int(array.attrib["size"])
+        
         for array_tag in array:
-            if array_tag.tag == 'include_header':
+            if array_tag.tag == 'default':
+                for value_tag in array_tag:
+                    self.__default.append(value_tag.text)
+            elif array_tag.tag == 'include_header':
                 self.__include_header_files.append(array_tag.text)
             elif array_tag.tag == 'import_serializable_type':
                 self.__includes.append(array_tag.text)
@@ -129,6 +129,16 @@ class XmlArrayParser(object):
                 self.__include_enum_files.append(array_tag.text)
             elif array_tag.tag == 'import_array_type':
                 self.__include_array_files.append(array_tag.text)
+
+        #
+        # Generate a type id here using SHA256 algorithm and XML stringified file.
+        #
+
+        if not 'typeid' in array.attrib:
+            s = etree.tostring(element_tree.getroot())
+            h = hashlib.sha256(s)
+            n = h.hexdigest()
+            self.__type_id = "0x" + n.upper()[-8:]
 
     def get_name(self):
         return self.__name
@@ -142,11 +152,14 @@ class XmlArrayParser(object):
     def get_size(self):
         return self.__size
 
-    def get_format_string(self):
-        return self.__format_string
+    def get_format(self):
+        return self.__format
 
-    def get_default_values(self):
-        return self.__default_values
+    def get_default(self):
+        return self.__default
+
+    def get_type_id(self):
+        return self.__type_id
 
     def get_include_header_files(self):
         return self.__include_header_files
@@ -168,5 +181,5 @@ if __name__ == '__main__':
     print("Array XML parse test (%s)" % xmlfile)
     xml_parser = XmlArrayParser(xmlfile)
     print("Array name: %s, namespace: %s" % (xml_parser.get_name(),xml_parser.get_namespace()))
-    print("Size: %s, member type: %s" % (self.get_size(), self.get_type())
+    print("Size: %s, member type: %s" % (self.get_size(), self.get_type()))
 

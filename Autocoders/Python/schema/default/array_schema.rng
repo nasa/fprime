@@ -30,14 +30,6 @@
                 <a:documentation>Size of the array.</a:documentation>
                 <data type = "integer"></data>
             </attribute>
-
-            <attribute name = "default">
-                <oneOrMore>
-                    <attribute name = "value">
-                        <text/>
-                    </attribute>
-                </oneOrMore>
-            </attribute>
             
             <!-- Optional attributes -->
             <optional>
@@ -61,8 +53,22 @@
                 </attribute>
             </optional>
 
+            <optional>
+                <attribute name = "typeid">
+                    <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all serlializable files.</a:documentation>
+                    <ref name = "id_define"></ref>
+                </attribute>
+            </optional>
+
             
             <!-- Elements -->
+            <element name = "default">
+                <oneOrMore>
+                    <element name = "value">
+                        <text/>
+                    </element>
+                </oneOrMore>
+            </element>
 
             <zeroOrMore>
                 <element name = "include_header">

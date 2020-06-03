@@ -38,7 +38,7 @@ namespace ${namespace} {
     typedef ${type} ElementType;
     
     enum {
-        SIZE=${size}
+        SIZE=${size},
 #if $type == "string":
         SERIALIZED_SIZE = SIZE * sizeof(${string_type})
 #else:
@@ -68,7 +68,11 @@ namespace ${namespace} {
       //! Construct a ${name} and initialize its elements from elements
       ${name}(
 #for $i in $range(1, $size + 1):
+#if $i != $size:
           const ElementType (&e${i}), //!< Element ${i}
+#else
+          const ElementType (&e${i}) //!< Element ${i}
+#end if
 #end for
       );
   
@@ -95,7 +99,7 @@ namespace ${namespace} {
   
       //! Assignment operator
       const ${name}& operator=(
-          const & other //!< The other object
+          const ${name}& other //!< The other object
       );
   
       //! Assignment operator from array
