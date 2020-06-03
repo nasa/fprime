@@ -73,10 +73,10 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
-          "${CMAKE_CURRENT_LIST_DIR}/Linux/TaskLock.cpp"
-          "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Linux/TaskLock.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
   )
-  # Shard libraries need an -rt dependency for mq libs
+  # Shared libraries need an -rt dependency for mq libs
   if (BUILD_SHARED_LIBS)
       list(APPEND MOD_DEPS "-lrt")
   endif()
@@ -88,6 +88,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
@@ -115,6 +116,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
       "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
@@ -145,6 +147,7 @@ else()
     "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/MaxHeap.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/File.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
@@ -165,7 +168,7 @@ else()
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
   )
-  # Shard libraries need an -rt dependency for mq libs
+  # Shared libraries need an -rt dependency for mq libs
   if (BUILD_SHARED_LIBS)
       list(APPEND MOD_DEPS "-lrt")
   endif()
