@@ -51,6 +51,7 @@ namespace Os {
             case OPEN_SYNC_WRITE:
                 flags = O_WRONLY | O_CREAT | O_SYNC;
                 break;
+#ifndef TGT_OS_TYPE_RTEMS
             case OPEN_SYNC_DIRECT_WRITE:
                 flags = O_WRONLY | O_CREAT | O_DSYNC
 #ifdef __linux__
@@ -59,6 +60,7 @@ namespace Os {
                 ;
 #endif
                 break;
+#endif
             case OPEN_CREATE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
                 break;
