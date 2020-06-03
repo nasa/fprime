@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/default/array_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<array name="ArrayType" type="U32" size="2">
+    <default>
+        <value>2</value>
+        <value>1</value>
+    </default>
+</array>

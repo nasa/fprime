@@ -24,7 +24,7 @@
 
 \#include "Fw/Types/Assert.hpp"
 
-\#include "${name}.hpp"
+\#include "${name}ArrayAc.hpp"
 
 namespace ${namespace} {
 
@@ -37,13 +37,17 @@ namespace ${namespace} {
       Serializable()
   {
     *this = ${name}(
-  #for $index, $element in $default:
-  #if $index != $size - 1:
+  #set $i = 1
+  #for $element in $default:
+  #if $i != $size:
+  #slurp
       $element,
   #else:
-      $element
+  #slurp
+      $element);
+  #end if
+  #set $i = $i + 1
   #end for
-    );
   }
   
   ${name} :: 
@@ -69,12 +73,18 @@ namespace ${namespace} {
   ${name} :: 
     ${name}(
 #for $i in $range(1, $size + 1)
+#if $i != $size:
       const ElementType (&e${i}), //!< Element ${i}
+#else
+      const ElementType (&e${i})
+#end if
 #end for
     ) :
       Serializable()
   {
+#for $i in $range(1, $size + 1)
     this->elements[0] = e${i};
+#end for
   }
   
   ${name} ::
@@ -155,67 +165,21 @@ namespace ${namespace} {
 
 void ${name}::toString(Fw::StringBase& text) const {
 
-    static const char * formatString =
-       "("
-#for $member in $default:
-#if $type != "string":
-       "$member = "
-#for $elem in range(0,int($size)-1):
-       "[$format]"
-#end for
-       "[$format] "
-#else
-       "$member = $format, "
-#end if
-#end for
-#if $type != "string":
-       "$member = "
-#for $elem in range(0,int($members[-1][2])-1):
-       "[$member"
-#end for
-       "[$member] "
-#else
-       "$member = $format"
-#end if
-       ")";
+    static const char * formatString = "${format}";
 
     // declare strings to hold any serializable toString() arguments
 
-#for $member in $default:
-#if $type == "extern":
-
-    Fw::EightyCharString ${member}Str;
-    this->m_${member}.toString(${member}Str);
-#end if
-#end for
-
     char outputString[FW_ARRAY_TO_STRING_BUFFER_SIZE];
     (void)snprintf(outputString,FW_ARRAY_TO_STRING_BUFFER_SIZE,formatString
-#for $member in $default:
-#if $type != "string":
-#for $elem in range(0,int($size)):
+#for $index in $range(0, $size):
 #if $type == "bool":
-       ,this->m_${member}[$elem]?"T":"F"
+      ,this->elements[$index]?"T":"F"
 #else if $type == "enum":
-       ,(NATIVE_INT_TYPE)this->m_${member}[$elem]
+      ,(NATIVE_INT_TYPE)this->elements[$index]
 #else:
-       ,this->m_${member}[$elem]
+      ,this->elements[$index]
 #end if
-#end for ## for each element of the array
-#else: ## not array
-#if $type == "bool":
-       ,this->m_${member}?"T":"F"
-#else if $type == "enum":
-       ,(NATIVE_INT_TYPE)this->m_${member}
-#else if $type == "string":
-       ,this->m_${member}.toChar()
-#else if $type == "extern":
-       ,${member}Str.toChar()
-#else:
-       ,this->m_$member
-#end if
-#end if ## not array
-#end for ## each member
+#end for ## INDEX
     );
     outputString[FW_ARRAY_TO_STRING_BUFFER_SIZE-1] = 0; // NULL terminate
 
