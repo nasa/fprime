@@ -1,0 +1,139 @@
+        -:    0:Source:/home/vwong/sphinx-sat/LfNeasc/Common/Util/TokenBucket.cpp
+        -:    0:Programs:3
+        -:    1:// ====================================================================== 
+        -:    2:// \title  TokenBucket.cpp
+        -:    3:// \author vwong
+        -:    4:// \brief  cpp file for a rate limiter utility class
+        -:    5://
+        -:    6:// \copyright
+        -:    7:// Copyright 2009-2015, by the California Institute of Technology.
+        -:    8:// ALL RIGHTS RESERVED.  United States Government Sponsorship
+        -:    9:// acknowledged. Any commercial use must be negotiated with the Office
+        -:   10:// of Technology Transfer at the California Institute of Technology.
+        -:   11:// 
+        -:   12:// This software may be subject to U.S. export control laws and
+        -:   13:// regulations.  By accepting this document, the user agrees to comply
+        -:   14:// with all U.S. export laws and regulations.  User has the
+        -:   15:// responsibility to obtain export licenses, or other export authority
+        -:   16:// as may be required before exporting such information to foreign
+        -:   17:// countries or providing access to foreign persons.
+        -:   18:// ====================================================================== 
+        -:   19:
+        -:   20:#include <LfNeasc/Common/Util/TokenBucket.hpp>
+        -:   21:
+        -:   22:namespace LfNeasc {
+        -:   23:
+        1:   24:  TokenBucket ::
+        -:   25:    TokenBucket (
+        -:   26:        U32 replenishInterval,
+        -:   27:        U32 maxTokens,
+        -:   28:        U32 replenishRate,
+        -:   29:        U32 startTokens,
+        -:   30:        Fw::Time startTime
+        -:   31:    ) :
+        -:   32:      m_maxTokens(maxTokens),
+        -:   33:      m_replenishInterval(replenishInterval),
+        -:   34:      m_replenishRate(replenishRate),
+        -:   35:      m_tokens(startTokens),
+        1:   36:      m_time(startTime)
+        -:   37:  {
+        1:   38:  }
+        -:   39:
+        5:   40:  TokenBucket ::
+        -:   41:    TokenBucket (
+        -:   42:        U32 replenishInterval,
+        -:   43:        U32 maxTokens
+        -:   44:    ) :
+        -:   45:      m_replenishInterval(replenishInterval),
+        -:   46:      m_maxTokens(maxTokens),
+        -:   47:      m_replenishRate(1),
+        -:   48:      m_tokens(maxTokens),
+        5:   49:      m_time(0, 0)
+        -:   50:  {
+        5:   51:    FW_ASSERT(this->m_maxTokens <= MAX_TOKEN_BUCKET_TOKENS, this->m_maxTokens);
+        5:   52:  }
+        -:   53:
+        2:   54:  void TokenBucket ::
+        -:   55:    setReplenishInterval(
+        -:   56:        U32 replenishInterval
+        -:   57:    )
+        -:   58:  {
+        2:   59:    this->m_replenishInterval = replenishInterval;
+        2:   60:  }
+        -:   61:
+        1:   62:  void TokenBucket ::
+        -:   63:    setMaxTokens(
+        -:   64:        U32 maxTokens
+        -:   65:    )
+        -:   66:  {
+        1:   67:    this->m_maxTokens = maxTokens;
+        1:   68:  }
+        -:   69:
+        1:   70:  void TokenBucket ::
+        -:   71:    setReplenishRate(
+        -:   72:        U32 replenishRate
+        -:   73:    )
+        -:   74:  {
+        1:   75:    this->m_replenishRate = replenishRate;
+        1:   76:  }
+        -:   77:
+        4:   78:  void TokenBucket ::
+        -:   79:    replenish()
+        -:   80:  {
+        4:   81:    if (this->m_tokens < this->m_maxTokens) {
+        4:   82:      this->m_tokens = this->m_maxTokens;
+        -:   83:    }
+        4:   84:  }
+        -:   85:
+        2:   86:  U32 TokenBucket ::
+        -:   87:    getReplenishInterval() const
+        -:   88:  {
+        2:   89:    return this->m_replenishInterval;
+        -:   90:  }
+        -:   91:
+        2:   92:  U32 TokenBucket ::
+        -:   93:    getMaxTokens() const
+        -:   94:  {
+        2:   95:    return this->m_maxTokens;
+        -:   96:  }
+        -:   97:
+        2:   98:  U32 TokenBucket ::
+        -:   99:    getReplenishRate() const
+        -:  100:  {
+        2:  101:    return this->m_replenishRate;
+        -:  102:  }
+        -:  103:
+      896:  104:  U32 TokenBucket ::
+        -:  105:    getTokens() const
+        -:  106:  {
+      896:  107:    return this->m_tokens;
+        -:  108:  }
+        -:  109:
+     5346:  110:  bool TokenBucket ::
+        -:  111:    trigger(
+        -:  112:        Fw::Time time
+        -:  113:    )
+        -:  114:  {
+        -:  115:    // attempt replenishing
+     5346:  116:    Fw::Time replenishInterval = Fw::Time(this->m_replenishInterval / 1000000, this->m_replenishInterval % 1000000);
+    10692:  117:    Fw::Time nextTime = Fw::Time::add(this->m_time, replenishInterval);
+    11809:  118:    while (this->m_tokens < this->m_maxTokens && nextTime <= time) {
+     1117:  119:      this->m_tokens = FW_MIN(this->m_maxTokens, this->m_tokens + this->m_replenishRate);
+     1117:  120:      this->m_time = nextTime;
+     1117:  121:      nextTime = Fw::Time::add(this->m_time, replenishInterval);
+        -:  122:    }
+     5346:  123:    if (this->m_tokens >= this->m_maxTokens && this->m_time < time) {
+        1:  124:      this->m_time = time;
+        -:  125:    }
+        -:  126:
+        -:  127:    // attempt consuming token
+     5346:  128:    if (this->m_tokens > 0) {
+     2900:  129:      this->m_tokens--;
+     2900:  130:      return true;
+        -:  131:
+        -:  132:    } else {
+     2446:  133:      return false;
+     5346:  134:    }
+        -:  135:  }
+        -:  136:
+        3:  137:} // end namespace LfNeasc

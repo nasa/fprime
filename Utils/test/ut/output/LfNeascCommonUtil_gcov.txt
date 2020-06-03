@@ -1,0 +1,17 @@
+File '/home/vwong/sphinx-sat/LfNeasc/Common/Util/RateLimiter.cpp'
+Lines executed:100.00% of 72
+Creating 'RateLimiter.cpp.gcov'
+
+File '/usr/include/c++/4.8/iostream'
+Lines executed:100.00% of 1
+Creating 'iostream.gcov'
+
+File '/home/vwong/sphinx-sat/LfNeasc/Common/Util/TokenBucket.cpp'
+Lines executed:100.00% of 43
+Creating 'TokenBucket.cpp.gcov'
+
+File '/home/vwong/sphinx-sat/LfNeasc/Common/Util/LockGuard.cpp'
+Lines executed:100.00% of 7
+Creating 'LockGuard.cpp.gcov'
+
+Lines executed:100.00% of 123
