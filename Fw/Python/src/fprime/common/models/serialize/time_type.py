@@ -299,7 +299,7 @@ class TimeType(type_base.BaseType):
 
             # This finds the local time corresponding to the timestamp and
             # timezone object, or local time zone if tz=None
-            dt = datetime.datetime.fromtimestamp(self.__secs.val, tz)
+            dt = datetime.fromtimestamp(self.__secs.val, tz)
 
             dt = dt.replace(microsecond=self.__usecs.val)
 
@@ -312,7 +312,7 @@ class TimeType(type_base.BaseType):
         Args:
             dt (datetime): datetime object to read from time.
         '''
-        total_seconds = (dt - datetime.datetime.fromtimestamp(0)).total_seconds()
+        total_seconds = (dt - datetime.fromtimestamp(0)).total_seconds()
         seconds = int(total_seconds)
         useconds = int((total_seconds - seconds) * 1000000)
 
