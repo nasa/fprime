@@ -48,7 +48,7 @@ namespace Svc {
 
       void update_header_info();
 
-      void setInputParams(TOKEN_TYPE size, U8* buffer);
+      void setInputParams(TOKEN_TYPE size, U8* buffer, TOKEN_TYPE packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
 
     private:
 
@@ -125,6 +125,7 @@ namespace Svc {
 
       //! Expected buffer, for checking of the interface
       TOKEN_TYPE m_size;
+      TOKEN_TYPE m_packet;
       Fw::Buffer m_incoming_buffer;
       Fw::Buffer m_incoming_file_buffer;
       U8* m_buffer;

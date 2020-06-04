@@ -92,6 +92,12 @@ def test_get_include_info():
         ],
         "subdir": [
             ("/home/user11/Proj/fprime/Svc/SomeComp1", ("Svc/SomeComp1", "/home/user11/Proj/fprime")),
+            # An insidious case where the path contains a common prefix as another possible location without being an
+            # exact directory.  Notice /home/user11/Proj/fprime-something/Comps/SomeComp1 contains a non-exact common
+            # prefix with the directory /home/user11/Proj/fprime. i.e. /home/user11/Proj/fprime is a prefix but
+            # /home/user11/Proj/fprime/ is not.
+            ("/home/user11/Proj/fprime-something/Comps/SomeComp1",
+             ("fprime-something/Comps/SomeComp1", "/home/user11/Proj")),
             ("/home/user11/Proj/Ref/SomeComp2", ("Ref/SomeComp2", "/home/user11/Proj")),
             ("/home/user11/Proj/Ref/SomeComp2/../../fprime/Svc/SomeComp1",
              ("Svc/SomeComp1", "/home/user11/Proj/fprime")),

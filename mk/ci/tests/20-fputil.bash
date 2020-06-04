@@ -12,6 +12,7 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 for deployment in ${FPUTIL_DEPLOYS}
 do
     echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS}${NOCOLOR}"
+    export CHECK_TARGET_PLATFORM="native"
     for target in ${FPUTIL_TARGETS}
     do
         fputil_action "${deployment}" "${target}"
