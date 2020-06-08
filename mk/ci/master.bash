@@ -8,12 +8,14 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
 TESTS="${@}"
+export TEST_TYPE="FULL"
 if (( $# ==  0 )) || [[ "${TESTS}" == "FULL" ]]
 then
     TESTS="$(ls "${SCRIPT_DIR}/tests"/*)"
 elif [[ "${TESTS}" == "QUICK" ]]
 then
     TESTS="${SCRIPT_DIR}/tests/20-fputil.bash ${SCRIPT_DIR}/tests/30-ints.bash"
+    export TEST_TYPE="QUICK"    
 fi
 
 #### NEEDED ENVIRONMENT ####
