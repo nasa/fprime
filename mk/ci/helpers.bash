@@ -8,6 +8,7 @@
 export BLUE='\033[0;34m'
 export GREEN='\033[0;32m'
 export RED='\033[0;31m'
+export PURPLE='\033[0;95m'
 export NOCOLOR='\033[0m' # No Color
 
 ####
@@ -22,6 +23,29 @@ function fail_and_stop()
     echo -e "${RED}---------------- ERROR ----------------" 1>&2
     echo    "${1}" 1>&2
     echo -e "---------------------------------------${NOCOLOR}" 1>&2
+    echo "${LOG_DIR}"
+    ls -trd "${LOG_DIR}/"*.err.log
+    LASTLOG=`ls -trd "${LOG_DIR}/"*.err.log | tail -1`
+    if [ -f "${LASTLOG}" ]
+    then
+    
+        echo -e "---------------- STDERR ---------------" 1>&2
+        tail -30 "${LASTLOG}" 1>&2
+        echo -e "---------------------------------------" 1>&2
+    fi
     exit 1
 }
+####
+# warn_and_cont:
+#
+# This function produces a warning block of test but exits with a success error code such that subsequent tests will run.
+####
+function warn_and_cont()
+{
+    echo -e "${PURPLE}--------------- WARNING --------------" 1>&2
+    echo    "${1}" 1>&2
+    echo -e "---------------------------------------${NOCOLOR}" 1>&2
+}
+
 export -f fail_and_stop
+export -f warn_and_cont
