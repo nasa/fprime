@@ -15,6 +15,7 @@ do
     export CHECK_TARGET_PLATFORM="native"
     for target in ${FPUTIL_TARGETS}
     do
+        rm -rf "${deployment}/build-fprime-automatic-"*
         fputil_action "${deployment}" "${target}"
         "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning repository"
     done
