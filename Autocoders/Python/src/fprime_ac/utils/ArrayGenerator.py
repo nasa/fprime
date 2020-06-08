@@ -74,7 +74,7 @@ def generate_array(xml_file):
         name = array_xml.get_name()
         namespace = array_xml.get_namespace()
         arr_type = array_xml.get_type()
-        arr_size = array_xml.get_size()
+        arr_size = int(array_xml.get_size())
         format_string = array_xml.get_format()
         default_values = array_xml.get_default()
         type_id = array_xml.get_type_id()

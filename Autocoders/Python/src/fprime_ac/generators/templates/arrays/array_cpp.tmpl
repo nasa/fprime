@@ -165,7 +165,14 @@ namespace ${namespace} {
 
 void ${name}::toString(Fw::StringBase& text) const {
 
-    static const char * formatString = "${format}";
+    static const char * formatString = "["
+#for $index in $range(0, $size):
+#if $index != $size - 1:
+      "[${format}], "
+#else:
+      "[${format}] ]";
+#end if
+#end for
 
     // declare strings to hold any serializable toString() arguments
 
@@ -190,11 +197,7 @@ void ${name}::toString(Fw::StringBase& text) const {
   
 \#ifdef BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
-    os << "[";
-    for (U32 i = 0; i < Array::SIZE; ++i) {
-      os << " " << obj[i];
-    }
-    os << "]";
+    os << obj::toString();
     return os;
   }
 \#endif

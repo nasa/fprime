@@ -63,11 +63,13 @@ class XmlArrayParser(object):
         # List of XML array type files
         self.__include_array_files = []
 
-        self.__format = ""
+        self.__format = None
+        self.__type_id = None
+        self.__string_size = None
+        self.__type = None
+        self.__size = None
         self.__default = []
         self.__xml_filename = xml_file
-        self.__type = "U32"
-        self.__size = "4"
         
         self.Config = ConfigManager.ConfigManager.getInstance()
 
@@ -90,6 +92,8 @@ class XmlArrayParser(object):
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
             raise FprimeRngXmlValidationException(relax_compiled.error_log)
+
+        self.validate_xml(xml_file, element_tree, 'schematron', 'array_default')
         
         array = element_tree.getroot()
         if array.tag != "array":
@@ -101,24 +105,19 @@ class XmlArrayParser(object):
             
         if 'namespace' in array.attrib:
             self.__namespace = array.attrib['namespace']
-        else:
-            self.__namespace = None
-
-        if 'format' in array.attrib:
-            self.__format = array.attrib['format']
-        else:
-            self.__format = None
-
-        if 'typeid' in array.attrib:
-            self.__type_id = array.attrib['typeid']
-        else:
-            self.__type_id = None
-
-        self.__type = array.attrib["type"]
-        self.__size = int(array.attrib["size"])
         
         for array_tag in array:
-            if array_tag.tag == 'default':
+            if array_tag.tag == 'format':
+                self.__format = array_tag.text
+            elif array_tag.tag == 'type':
+                self.__type = array_tag.text
+                if 'string_size' in array_tag.attrib:
+                    self.__string_size = array_tag['string_size']
+            elif array_tag.tag == 'typeid':
+                self.__type_id = array_tag.text
+            elif array_tag.tag == 'size':
+                self.__size = array_tag.text
+            elif array_tag.tag == 'default':
                 for value_tag in array_tag:
                     self.__default.append(value_tag.text)
             elif array_tag.tag == 'include_header':
@@ -139,6 +138,30 @@ class XmlArrayParser(object):
             h = hashlib.sha256(s)
             n = h.hexdigest()
             self.__type_id = "0x" + n.upper()[-8:]
+
+    def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
+        # Check that validator is valid
+        if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
+            msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
+            raise FprimeXmlException(msg)
+                                
+        # Create proper xml validator tool
+        validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
+        validator_parsed = etree.parse(validator_file_handler)
+        validator_file_handler.close()
+        if validator_type == 'schema':
+            validator_compiled = etree.RelaxNG(validator_parsed)
+        elif validator_type == 'schematron':
+            validator_compiled = isoschematron.Schematron(validator_parsed)
+                                                
+        # Validate XML file
+        if not validator_compiled.validate(parsed_xml_tree):
+            if validator_type == 'schema':
+                msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                raise FprimeXmlException(msg)
+            elif validator_type == 'schematron':
+                msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+                PRINT.info(msg)
 
     def get_name(self):
         return self.__name
