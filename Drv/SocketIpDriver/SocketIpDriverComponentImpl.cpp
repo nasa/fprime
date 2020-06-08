@@ -141,6 +141,7 @@ namespace Drv {
   {
       U32 size = fwBuffer.getsize();
       BYTE* data = reinterpret_cast<BYTE*>(fwBuffer.getdata());
+      FW_ASSERT(data);
       this->m_helper.send(data,size);
   }
 } // end namespace Svc
