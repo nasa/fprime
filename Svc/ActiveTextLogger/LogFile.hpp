@@ -1,9 +1,7 @@
-/*
- * LogFile.hpp
- *
- *  Created on: October 6, 2017
- *      Author: Gorang Gandhi
- */
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
 
 #ifndef SVCLOGFILE_HPP_
 #define SVCLOGFILE_HPP_

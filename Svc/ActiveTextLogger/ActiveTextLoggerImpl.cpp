@@ -1,9 +1,7 @@
-/*
- * ActiveTextLoggerImpl.cpp
- *
- *  Created on: May 10, 2017
- *      Author: Gorang Gandhi
- */
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
 
 #include <Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>

@@ -1,9 +1,8 @@
-/*
- * ActiveTextLoggerImpl.hpp
- *
- *  Created on: May 10, 2017
- *      Author: Gorang Gandhi
- */
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+
 
 #ifndef ACTIVETEXTLOGGERIMPL_HPP_
 #define ACTIVETEXTLOGGERIMPL_HPP_
