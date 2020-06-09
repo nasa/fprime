@@ -81,7 +81,7 @@ function integration_test {
             --show-leak-kinds=all \
             --track-origins=yes \
             --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${WORKDIR}/bin/*Linux/Ref -a 127.0.0.1 -p 50000 &
+            ${WORKDIR}/bin/*/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
         VALGRIND_PID=$!
 
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
