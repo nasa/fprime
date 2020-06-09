@@ -235,6 +235,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 }
 
 void exitTasks(void) {
+    cmdSeq.deallocateBuffer(seqMallocator);
     rateGroup1Comp.exit();
     rateGroup2Comp.exit();
     rateGroup3Comp.exit();
