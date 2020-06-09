@@ -2,8 +2,10 @@
 A set of PyTest-style unit tests for parsing commands
 """
 
-import fprime_gds.executables.fprime_cli as fprime_cli
 import pytest
+
+import fprime_gds.executables.fprime_cli as fprime_cli
+import fprime_gds.common.gds_cli.events as events
 
 
 @pytest.fixture
@@ -53,7 +55,7 @@ def default_valid_args_dict(updated_values_dict={}):
                 "url": "localhost:5000",
             },
         ),
-        (["events"], default_valid_args_dict(),),
+        (["events"], default_valid_args_dict({"func": events.get_events_output}),),
         (["channels", "-l"], default_valid_args_dict({"list": True}),),
         (["channels", "--list"], default_valid_args_dict({"list": True}),),
         (["channels", "-s", "348"], default_valid_args_dict({"session": 348}),),
@@ -79,6 +81,7 @@ def default_valid_args_dict(updated_values_dict={}):
             ],
             default_valid_args_dict(
                 {
+                    "func": events.get_events_output,
                     "component": [
                         "Grover's Corners",
                         "Sutton County",
@@ -89,19 +92,26 @@ def default_valid_args_dict(updated_values_dict={}):
                         "Earth",
                         "The Solar System",
                         "The Universe",
-                    ]
+                    ],
                 }
             ),
         ),
         (
             ["events", "-S", "per.aspera.ad.astra"],
-            default_valid_args_dict({"search": "per.aspera.ad.astra"}),
+            default_valid_args_dict(
+                {"func": events.get_events_output, "search": "per.aspera.ad.astra"}
+            ),
         ),
         (
             ["events", "-u", "jpl.nasa.gov"],
-            default_valid_args_dict({"url": "jpl.nasa.gov"}),
+            default_valid_args_dict(
+                {"func": events.get_events_output, "url": "jpl.nasa.gov"}
+            ),
         ),
-        (["events", "-j"], default_valid_args_dict({"json": True}),),
+        (
+            ["events", "-j"],
+            default_valid_args_dict({"func": events.get_events_output, "json": True}),
+        ),
     ],
 )
 @pytest.mark.gds_cli
