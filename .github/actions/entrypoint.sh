@@ -1,2 +1,3 @@
 #!/bin/sh
-$GITHUB_WORKSPACE/mk/ci/master.bash
+cd "$GITHUB_WORKSPACE"
+"$GITHUB_WORKSPACE/mk/ci/master.bash" QUICK
