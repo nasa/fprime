@@ -1,0 +1,34 @@
+Running unit test for LfNeascCommonUtil
+make[1]: Entering directory `/home/vwong/sphinx-sat/LfNeasc/Common/Util'
+Running test/ut/runtest_LINUX with output dir linux-linux-x86-debug-gnu-ut-bin
+test/ut/runtest_LINUX linux-linux-x86-debug-gnu-ut-bin
+Running /home/vwong/sphinx-sat/LfNeasc/Common/Util/test/ut/linux-linux-x86-debug-gnu-ut-bin/test_ut
+[==========] Running 7 tests from 3 test cases.
+[----------] Global test environment set-up.
+[----------] 1 test from LockGuardTest
+[ RUN      ] LockGuardTest.TestLocking
+[       OK ] LockGuardTest.TestLocking (200 ms)
+[----------] 1 test from LockGuardTest (200 ms total)
+
+[----------] 3 tests from RateLimiterTest
+[ RUN      ] RateLimiterTest.TestCounterTriggering
+[       OK ] RateLimiterTest.TestCounterTriggering (2 ms)
+[ RUN      ] RateLimiterTest.TestTimeTriggering
+[       OK ] RateLimiterTest.TestTimeTriggering (67 ms)
+[ RUN      ] RateLimiterTest.TestCounterAndTimeTriggering
+[       OK ] RateLimiterTest.TestCounterAndTimeTriggering (175 ms)
+[----------] 3 tests from RateLimiterTest (244 ms total)
+
+[----------] 3 tests from TokenBucketTest
+[ RUN      ] TokenBucketTest.TestTriggering
+[       OK ] TokenBucketTest.TestTriggering (1 ms)
+[ RUN      ] TokenBucketTest.TestReconfiguring
+[       OK ] TokenBucketTest.TestReconfiguring (0 ms)
+[ RUN      ] TokenBucketTest.TestInitialSettings
+[       OK ] TokenBucketTest.TestInitialSettings (0 ms)
+[----------] 3 tests from TokenBucketTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 3 test cases ran. (446 ms total)
+[  PASSED  ] 7 tests.
+make[1]: Leaving directory `/home/vwong/sphinx-sat/LfNeasc/Common/Util'

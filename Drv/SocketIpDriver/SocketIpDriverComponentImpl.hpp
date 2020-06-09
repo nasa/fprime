@@ -21,6 +21,9 @@
     #include <inetLib.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     #include <arpa/inet.h>
+#elif TGT_OS_TYPE_RTEMS
+  #include <arpa/inet.h>
+  #include <netinet/in.h>
 #else
     #error OS not supported for IP Socket Communications
 #endif
