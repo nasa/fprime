@@ -499,8 +499,8 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
 
         val2 = TimeType()
         val2.deserialize(buff, 0)
-        print(("Deserialized: TimeType(%d, %d, %d, %d)"%
-              (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds)))
+        print("Deserialized: TimeType(%s, %d, %d, %d)" %
+              (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds))
 
         if (val2.timeBase != t_base):
             return False

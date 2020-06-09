@@ -102,6 +102,12 @@ $emit_cpp_params([ $param_maxHistorySize ])
     delete this->eventHistory_${event_name};
     #end if
   #end for
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    #if len($typed_user_output_ports) > 0:
+    // Destroy port histories
+    delete this->fromPortHistory_${instance};
+    #end if
+  #end for
 #end if
   }
 
