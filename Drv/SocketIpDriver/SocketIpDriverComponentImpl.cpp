@@ -80,6 +80,7 @@ namespace Drv {
           // If the network connection is open, read from it
           if (self->m_helper.isOpened()) {
               BYTE* data = reinterpret_cast<U8*>(self->m_buffer.getdata());
+              FW_ASSERT(data);
               I32 size = 0;
               status = self->m_helper.recv(data,size);
               if (status != SOCK_SUCCESS &&
