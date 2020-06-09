@@ -4,7 +4,7 @@
 #
 # Helpers to test via FP util
 ####
-export FPUTIL_TARGETS="generate build check-all install build-all"
+export FPUTIL_TARGETS="generate build build-all check-all install"
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
 
 export INT_DEPLOYS="${FPRIME_DIR}/Ref"
@@ -24,13 +24,19 @@ function fputil_action {
         cd "${WORKDIR}"
         PLATFORM=""
         # Setup special platform for check/check-all
-        if [[ "${TARGET}" == check* ]]
+        if [[ "${TARGET}" == check* ]] && [[ "${WORKDIR}" == */RPI ]]
         then
                 PLATFORM="${CHECK_TARGET_PLATFORM}"
+                if [[ "${TEST_TYPE}" == "QUICK" ]]
+                then
+                    echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
+                    fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
+                        || fail_and_stop "Failed to generate before ${WORKDIR//\//_} '${TARGET}' execution"
+                fi
         fi
   
         # Generate is only needed when it isn't being tested
-        if [[ "${TARGET}" != "generate" ]]
+        if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
         then
             echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
             fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
@@ -51,7 +57,10 @@ export -f fputil_action
 function integration_test {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
-    fputil_action "${WORKDIR}" "install" || fail_and_stop "Failed to install before integration test"
+    if [[ "${TEST_TYPE}" != "QUICK" ]]
+    then
+        fputil_action "${WORKDIR}" "install" || fail_and_stop "Failed to install before integration test"
+    fi
     (
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
