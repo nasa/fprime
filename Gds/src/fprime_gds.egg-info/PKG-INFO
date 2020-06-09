@@ -1,0 +1,32 @@
+Metadata-Version: 2.1
+Name: fprime-gds
+Version: 1.4.1
+Summary: F Prime Flight Software Ground Data System layer.
+Home-page: https://github.com/nasa/fprime
+Author: Michael Starch
+Author-email: Michael.D.Starch@jpl.nasa.gov
+License: Apache 2.0 License
+Project-URL: Issue Tracker, https://github.com/nasa/fprime/issues
+Description: 
+        This package contains the Python files used to run the F prime Ground Data System and Test API.
+        It is intended to supply the user with the ability to test F prime flight software in an
+        integrated configuration with ground in-the-loop.
+            
+Keywords: fprime,gds,embedded,nasa
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache 2.0
+Classifier: Operating System :: Unix
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=3.5
+Provides-Extra: uart-adapter
+Provides-Extra: test-api-xls
+Provides-Extra: wx-gui
