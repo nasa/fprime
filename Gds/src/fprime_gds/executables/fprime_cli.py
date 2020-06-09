@@ -2,7 +2,7 @@
 
 """
 Parses the given CLI command for the F' GDS, and then executes the correct
-command with the user-provided arguments
+command with the user-provided arguments on the GDS
 """
 
 import abc

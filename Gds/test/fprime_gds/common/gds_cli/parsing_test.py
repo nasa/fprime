@@ -11,6 +11,27 @@ def standard_parser():
     return fprime_cli.create_parser()
 
 
+def default_valid_args_dict(updated_values_dict={}):
+    """
+    The output arguments dictionary for a valid channels/commands/events
+    command without any arguments provided to it; can pass in a dictionary of
+    key/value pairs to update this dictionary as necessary for a given test
+    """
+    dictionary = {
+        "func": fprime_cli.PLACEHOLDER_FUNC,
+        "list": False,
+        "session": None,
+        "follow": None,
+        "id": None,
+        "component": None,
+        "search": None,
+        "url": "localhost:5000",
+        "json": False,
+    }
+    dictionary.update(updated_values_dict)
+    return dictionary
+
+
 # A set of valid CLI inputs and the output we expect from them
 @pytest.mark.parametrize(
     "input_cli_arguments, expected_args_dict",
@@ -19,34 +40,8 @@ def standard_parser():
         ([], {"func": None}),
         # TODO: Unsure how to test help/version args, since they exit the program?
         # (["-h"], {"func": None}),
-        (
-            ["channels"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
-        (
-            ["commands"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
+        (["channels"], default_valid_args_dict(),),
+        (["commands"], default_valid_args_dict(),),
         (
             ["command-send", "some.command.name"],
             {
@@ -58,103 +53,15 @@ def standard_parser():
                 "url": "localhost:5000",
             },
         ),
-        (
-            ["events"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
-        (
-            ["channels", "-l"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": True,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
-        (
-            ["channels", "--list"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": True,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
-        (
-            ["channels", "-s", "348"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": 348,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
-        (
-            ["channels", "-f", "0.1"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": 0.1,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
-        (
-            ["commands", "-i", "10"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": [10],
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
-        ),
+        (["events"], default_valid_args_dict(),),
+        (["channels", "-l"], default_valid_args_dict({"list": True}),),
+        (["channels", "--list"], default_valid_args_dict({"list": True}),),
+        (["channels", "-s", "348"], default_valid_args_dict({"session": 348}),),
+        (["channels", "-f", "0.1"], default_valid_args_dict({"follow": 0.1}),),
+        (["commands", "-i", "10"], default_valid_args_dict({"id": [10]}),),
         (
             ["commands", "-i", "3", "4", "8"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": [3, 4, 8],
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
+            default_valid_args_dict({"id": [3, 4, 8]}),
         ),
         (
             [
@@ -170,70 +77,31 @@ def standard_parser():
                 "The Solar System",
                 "The Universe",
             ],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": [
-                    "Grover's Corners",
-                    "Sutton County",
-                    "New Hampshire",
-                    "United States of America",
-                    "North America",
-                    "Western Hemisphere",
-                    "Earth",
-                    "The Solar System",
-                    "The Universe",
-                ],
-                "search": None,
-                "url": "localhost:5000",
-                "json": False,
-            },
+            default_valid_args_dict(
+                {
+                    "component": [
+                        "Grover's Corners",
+                        "Sutton County",
+                        "New Hampshire",
+                        "United States of America",
+                        "North America",
+                        "Western Hemisphere",
+                        "Earth",
+                        "The Solar System",
+                        "The Universe",
+                    ]
+                }
+            ),
         ),
         (
             ["events", "-S", "per.aspera.ad.astra"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": "per.aspera.ad.astra",
-                "url": "localhost:5000",
-                "json": False,
-            },
+            default_valid_args_dict({"search": "per.aspera.ad.astra"}),
         ),
         (
             ["events", "-u", "jpl.nasa.gov"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "jpl.nasa.gov",
-                "json": False,
-            },
+            default_valid_args_dict({"url": "jpl.nasa.gov"}),
         ),
-        (
-            ["events", "-j"],
-            {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
-                "list": False,
-                "session": None,
-                "follow": None,
-                "id": None,
-                "component": None,
-                "search": None,
-                "url": "localhost:5000",
-                "json": True,
-            },
-        ),
+        (["events", "-j"], default_valid_args_dict({"json": True}),),
     ],
 )
 @pytest.mark.gds_cli
