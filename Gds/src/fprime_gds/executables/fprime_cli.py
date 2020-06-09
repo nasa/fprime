@@ -9,14 +9,15 @@ import abc
 import argparse
 import sys
 
+import fprime_gds.common.gds_cli.events as events
 
-def PLACEHOLDER_FUNC(*args):
+
+def PLACEHOLDER_FUNC(**kwargs):
     """
     TODO: REMOVE!
     A placeholder function that just prints out the arguments it's given
     """
-    for arg in args:
-        print(arg)
+    print(kwargs)
 
 
 def add_history_arguments(parser: argparse.ArgumentParser, command_name: str):
@@ -300,7 +301,7 @@ class EventsParser(CliCommandParserBase):
         """
         Returns the function that should be executed when "events" is called
         """
-        return PLACEHOLDER_FUNC
+        return events.get_events_output
 
 
 def create_parser():
@@ -342,7 +343,7 @@ def main():
     function = args.func
     argument_dict = vars(args)
     del argument_dict["func"]  # Remove function
-    function(argument_dict)
+    function(**argument_dict)
 
 
 if __name__ == "__main__":
