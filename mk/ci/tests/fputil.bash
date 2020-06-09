@@ -36,7 +36,11 @@ function fputil_action {
         fi
   
         # Generate is only needed when it isn't being tested
+<<<<<<< HEAD
         if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
+=======
+        if [[ "${TARGET}" != "generate" ]]
+>>>>>>> hpaulson: fix to memory leak in topology.cpp
         then
             echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
             fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
