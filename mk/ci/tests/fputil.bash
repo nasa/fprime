@@ -36,6 +36,7 @@ function fputil_action {
         fi
   
         # Generate is only needed when it isn't being tested
+<<<<<<< HEAD
 
         # if [[ "${TARGET}" != "generate" ]]
         # then
@@ -44,6 +45,9 @@ function fputil_action {
         #         || fail_and_stop "Failed to generate before ${WORKDIR//\//_} '${TARGET}' execution"
         # fi
         if [[ "${TARGET}" != "generate" ]]
+=======
+        if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
+>>>>>>> hpaulson: fixing merge issues
         then
             echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
             fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
