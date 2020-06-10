@@ -34,6 +34,23 @@ def get_recent_events(session, url):
     return None
 
 
+# TODO: Possibly move this to the API as a method that can take arbitrary predicates for awaiting events?
+def get_upcoming_events(
+    test_api: IntegrationTestAPI,
+    search_filter: predicates.predicate,
+    timeout: int = 5,
+):
+    """
+    Returns the next event matching the given search filter that occurs after
+    this is called. Times out after the given amount of time if no matching
+    new events are found.
+    """
+    event_filter = predicates.satisfies_all([search_filter, predicates.event_predicate()])
+    return test_api.find_history_item(
+        event_filter, test_api.get_event_test_history(), "NOW", timeout
+    )
+
+
 def get_events_list(url):
     """
     Returns an object containing all the possible event types that could occur
@@ -48,7 +65,7 @@ class id_predicate(predicates.predicate):
         """
         A predicate that tests if the SysData argument given to it is of a given
         ID type
-        :param id: The exact text to check for inside the object
+        :param id: The ID to compare the item against
         """
         self.id = id
 
@@ -62,7 +79,7 @@ class id_predicate(predicates.predicate):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return 'x.id == "{}"'.format(self.id)
+        return "x.id == {}".format(self.id)
 
 
 def get_id_predicate(ids):
@@ -70,11 +87,35 @@ def get_id_predicate(ids):
     Returns a Test API predicate that only accepts items with one of the given
     type IDs (if no IDs are given, accept all items)
     """
-    # TODO: Implement this!
     if ids:
         id_preds = [id_predicate(id) for id in ids]
         return predicates.satisfies_any(id_preds)
     return predicates.always_true()
+
+
+class component_predicate(predicates.predicate):
+    def __init__(self, component: str):
+        """
+        A predicate that tests if the SysData argument given is from the given
+        component. If there is no component information, returns True
+        :param component: The component name to check for
+        """
+        self.comp = component
+
+    def __call__(self, item: SysData):
+        """
+        :param item: the object or value to evaluate
+        """
+        # TODO: Apparently, only commands have components stored in their SysData? Find a better way around this than returning true?
+        if not item.get_comp_name:
+            return True
+        return self.comp == item.get_comp_name()
+
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return 'x is in component "{}"'.format(self.comp)
 
 
 def get_component_predicate(components):
@@ -84,7 +125,8 @@ def get_component_predicate(components):
     """
     # TODO: Implement this!
     if components:
-        return None
+        component_preds = [component_predicate(comp) for comp in components]
+        return predicates.satisfies_any(component_preds)
     return predicates.always_true()
 
 
@@ -123,9 +165,9 @@ def get_search_predicate(search_string: str):
 
 def get_full_filter_predicate(ids, components, search_string):
     """
-    Returns an Test API predicate to only get recent data from the
-    specified ids/components, and containing the given search string. If any of
-    these are left blank, no restrictions are assumed for that field
+    Returns a Test API predicate to only get recent data from the specified
+    IDs/components, and containing the given search string. If any of these
+    are left blank, no restrictions are assumed for that field
     """
     return_all = predicates.always_true()
 
@@ -198,15 +240,15 @@ def get_events_output(
     pipeline, api = initialize_test_api(dict_path)
     # ==========================================================================
 
+    filter_predicate = get_full_filter_predicate(id, component, search)
     event_objects = None
     if list:
         event_objects = get_events_list(url)
     else:
         session = update_session_id(session)
-        event_objects = get_recent_events(session, url)
+        event_objects = get_upcoming_events(api, filter_predicate)
 
-    # TODO: Test API may be able to do filtering at search time instead
-    filter_predicate = get_full_filter_predicate(id, component, search)
+    # TODO: Print returned objects properly, instead of leaving it up to Test API
 
     # ==========================================================================
     pipeline.disconnect()
