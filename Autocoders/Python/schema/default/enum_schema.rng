@@ -29,10 +29,18 @@
                 </attribute>
             </optional>
             
-            <!-- Required elements -->
-            <oneOrMore>
-                <ref name = "item_definition"></ref>
-            </oneOrMore>
+            <!-- Elements -->
+            <interleave>
+                <oneOrMore>
+                    <ref name = "item_definition"></ref>
+                </oneOrMore>
+
+                <optional>
+                    <attribute name = "comment">
+                        <text/>
+                    </attribute>
+                </optional>
+            </interleave>
         </element>
     </define>
     
