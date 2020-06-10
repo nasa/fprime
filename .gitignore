@@ -65,8 +65,6 @@ py_dict
 .settings
 build-fprime-automatic*
 
-
-*/Math*
 /Ref/bin
 /ci-venv/
 /ci-logs*
