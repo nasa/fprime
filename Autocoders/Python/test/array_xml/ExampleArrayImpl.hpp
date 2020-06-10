@@ -1,6 +1,7 @@
 #ifndef EXAMPLE_ARRAY_IMPL_HPP
 #define EXAMPLE_ARRAY_IMPL_HPP
 
+#include <Fw/Types/EightyCharString.hpp>
 #include <Autocoders/Python/test/array_xml/Component1ComponentAc.hpp>
 
 namespace Example {
@@ -14,8 +15,8 @@ namespace Example {
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:
-        void ExArrayIn_handler(NATIVE_INT_TYPE portNum, ArrayNS::ArrayType array1, Example::Serial1 serial1);
-        void ArrayIn_handler(NATIVE_INT_TYPE portNum, ArrayNS::ArrayType array1, Example::Serial1 serial1);
+        void ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1);
+        void EnumIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1);
 	};
 
 };

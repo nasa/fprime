@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/default/array_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<array name="ArrayType" namespace="ArrayNS">
+<array name="ArrayType" namespace="Example">
     <import_array_type>Autocoders/Python/test/array_xml/InternalTypeArrayAi.xml</import_array_type>
 
     <type>InternalType</type>
@@ -8,6 +8,6 @@
     <format>%s</format>
 
     <default>
-        <value>ArrayNS::InternalType(1,2,3,4)</value>
+        <value>Example::InternalType(1,2,3,4)</value>
     </default>
 </array>

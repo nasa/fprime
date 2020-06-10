@@ -4,15 +4,15 @@
     <import_array_type>Autocoders/Python/test/array_xml/ArrayTypeArrayAi.xml</import_array_type>
     <import_array_type>Autocoders/Python/test/array_xml/InternalTypeArrayAi.xml</import_array_type>
     
-    <import_serializable_type>Autocoders/Python/test/enum_xml/Serial1SerializableAi.xml</import_serializable_type>
+    <import_serializable_type>Autocoders/Python/test/array_xml/ArrSerialSerializableAi.xml</import_serializable_type>
     <comment>
     Example port with arg
     </comment>
     <args>
-        <arg name="Arg1" type="ArrayNS::ArrayType">
+        <arg name="Arg1" type="Example::ArrayType">
             <comment>Example array arg</comment>
         </arg>
-        <arg name="Arg2" type="Example::Serial1">
+        <arg name="Arg2" type="Example::ArrSerial">
             <comment>Example serial arg w enum</comment>
         </arg>
     </args>

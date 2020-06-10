@@ -42,7 +42,7 @@ def open_file(name, type):
         sys.exit(-1)
     return fp
 
-def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_headers, import_serializables, import_enums, import_arrays):
+def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_path, include_headers, import_serializables, import_enums, import_arrays):
     '''
     Set up and write out templates here
     '''
@@ -82,19 +82,38 @@ def generate_array(xml_file):
         import_serializables = array_xml.get_includes()
         import_enums = array_xml.get_include_enum_files()
         import_arrays = array_xml.get_include_array_files()
+        include_path = array_xml.get_include_path()
+
+        # Set up imports
+        headers = []
+        for h in include_headers:
+            headers.append(h.replace("Ai.xml", "Ac.hpp"))
+
+        serials = []
+        for s in import_serializables:
+            serials.append(s.replace("Ai.xml", "Ac.hpp"))
+
+        enums = []
+        for e in import_enums:
+            enums.append(e.replace("Ai.xml", "Ac.hpp"))
+
+        arrays = []
+        for a in import_arrays:
+            arrays.append(a.replace("Ai.xml", "Ac.hpp"))
+
         #
         # Generate the hpp file
         #
         fp = open_file(name, "hpp")
         c = array_hpp.array_hpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_headers, import_serializables, import_enums, import_arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_path, headers, serials, enums, arrays)
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = array_cpp.array_cpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_headers, import_serializables, import_enums, import_arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_path, headers, serials, enums, arrays)
         fp.close()
         return True
     else:
