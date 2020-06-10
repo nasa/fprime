@@ -262,6 +262,13 @@ namespace Drv {
       }
   }
 
+  Os::Task::TaskStatus SocketIpDriverComponentImpl :: joinSocketTask(void** value_ptr) {
+      // provide return value of thread if value_ptr is not NULL
+      Os::Task::TaskStatus stat = m_recvTask.join(value_ptr);
+      FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+      return stat;
+  }
+
   void SocketIpDriverComponentImpl :: exitSocketTask() {
       this->m_stop = true;
   }

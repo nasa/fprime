@@ -247,7 +247,21 @@ void exitTasks(void) {
     fileDownlink.exit();
     cmdSeq.exit();
     pingRcvr.exit();
+    // join the component threads with NULL pointers to free them
+    (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
+    (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
+    (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
+    (void) blockDrv.ActiveComponentBase::join(NULL);
+    (void) cmdDisp.ActiveComponentBase::join(NULL);
+    (void) eventLogger.ActiveComponentBase::join(NULL);
+    (void) chanTlm.ActiveComponentBase::join(NULL);
+    (void) prmDb.ActiveComponentBase::join(NULL);
+    (void) fileUplink.ActiveComponentBase::join(NULL);
+    (void) fileDownlink.ActiveComponentBase::join(NULL);
+    (void) cmdSeq.ActiveComponentBase::join(NULL);
+    (void) pingRcvr.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
+    (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);
 }
 
