@@ -49,9 +49,6 @@ namespace Os {
             Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n",stat,errno, reinterpret_cast<POINTER_CAST>(strerror(stat)));
         	return TASK_INVALID_PARAMS;
         }
-        // creating pthreads in a detached state avoids accidental memory loss
-        pthread_attr_setdetachstate(&att, PTHREAD_CREATE_DETACHED);
-
 #ifdef TGT_OS_TYPE_VXWORKS
         stat = pthread_attr_setstacksize(&att,stackSize);
         if (stat != 0) {
@@ -201,6 +198,11 @@ namespace Os {
     bool Task::isSuspended(void) {
         FW_ASSERT(0);
         return false;
+    }
+
+    TaskId Task::getOsIdentifier(void) {
+        TaskId T;
+        return T;
     }
 
     Task::TaskStatus Task::join(void **value_ptr) {
