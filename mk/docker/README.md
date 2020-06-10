@@ -30,13 +30,13 @@ as few files as possible.
 **Build fprime-base**
 ```
 cd fprime/mk/docker
-docker build --target fprime-base -t latest .
+docker build --target fprime-base -t fprime-base:latest .
 ```
 
 **Build fprime-ci**
 ```
 cd fprime/mk/docker
-docker build --target jenkins-ci -t latest .
+docker build --target jenkins-ci -t fprime-base:latest .
 ```
 
 ### Publishing Docker Image to DockerHub
@@ -47,6 +47,7 @@ commands.
 
 **Publish Latest Docker Image**
 ```
+docker tag fprime-base:latest nasafprime/fprime-base:latest
 docker login
 docker push nasafprime/fprime-base:tagname
 ```
@@ -74,14 +75,16 @@ needed for Jenkins CI.
 
 Should a user need to run this docker image for purposes other than CI, docker can be run manually to
 create an F´container. The user will be root when running the `fprime-base` image. Please ensure that
-the fprime-base image has been built or downloaded as latest.  Also have an fprime checkout availble.
+the fprime-base image has been built or downloaded as latest. If downloaded, run with the tag
+`nasafprime/fprime-base:latest` instead of just `fprime-base:latest`. An fprime checkout should be
+mapped into the container.
 
 **Note:** the user/developer should understand Docker UUIDs and the implications in mounting volumes
 into a running Docker container because this differs accross host OSes.
 
 ### Run the F´Docker Image Manually
 ```bash
-fprime>docker run -it -v <path to fprime checkout>:/fprime fprime:latest
+fprime>docker run -it -v <path to fprime checkout>:/fprime fprime-base:latest
 docker> cd /fprime
 ... Install an F´ venv ...
 ... F´ commands here ...
