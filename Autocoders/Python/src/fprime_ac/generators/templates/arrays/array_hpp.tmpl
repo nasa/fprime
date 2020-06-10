@@ -25,7 +25,19 @@
 
 \#include "Fw/Types/BasicTypes.hpp"
 \#include "Fw/Types/Serializable.hpp"
-// To add include directives here, put them in a file called Include/${name}EnumAc.hpp
+// To add include directives here, put them in a file called Include/${name}ArrayAc.hpp
+#for $t in $include_headers:
+\#include <${t}>
+#end for
+#for $t in $import_serializables:
+\#include <${t}>
+#end for
+#for $t in $import_enums:
+\#include <${t}>
+#end for
+#for $t in $import_arrays:
+\#include <${t}>
+#end for
 
 namespace ${namespace} {
   class ${name} : public Fw::Serializable
@@ -59,11 +71,13 @@ namespace ${namespace} {
       ${name}(
           const ElementType (&a)[SIZE] //!< The array
       );
-  
+
+ #if $size != 1: 
       //! Construct a ${name} and initialize its elements from a single element
       ${name}(
           const ElementType& e //!< The element
       );
+#end if
   
       //! Construct a ${name} and initialize its elements from elements
    ${name}(

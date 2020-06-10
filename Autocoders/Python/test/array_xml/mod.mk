@@ -13,11 +13,11 @@
 
  # There are some standard files that are included for reference
 
- SRC = Component1ComponentAi.xml \
-	  ArrayTypeArrayAi.xml \
-       InternalTypeArrayAi.xml \
+ SRC = ArrayTypeArrayAi.xml \
+	  InternalTypeArrayAi.xml \
+       ArrSerialSerializableAi.xml \
        Port1PortAi.xml \
-       Serial1SerializableAi.xml
+       Component1ComponentAi.xml
 
 
   SUBDIRS = test

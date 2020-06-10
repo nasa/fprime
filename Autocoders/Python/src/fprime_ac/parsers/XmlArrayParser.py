@@ -139,6 +139,12 @@ class XmlArrayParser(object):
             n = h.hexdigest()
             self.__type_id = "0x" + n.upper()[-8:]
 
+        # Set file path for import
+        core = os.environ["BUILD_ROOT"]
+        curdir = os.getcwd()
+        curdir.replace(core, "")
+        self.__include_path = curdir
+
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
         if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
@@ -183,6 +189,9 @@ class XmlArrayParser(object):
 
     def get_type_id(self):
         return self.__type_id
+
+    def get_include_path(self):
+        return self.__include_path
 
     def get_include_header_files(self):
         return self.__include_header_files

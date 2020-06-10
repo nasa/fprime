@@ -295,6 +295,17 @@
 #endif
 #endif
 
+// Define if arrays have toString() method.
+#ifndef FW_ARRAY_TO_STRING
+#define FW_ARRAY_TO_STRING                  1   //!< Indicates if autocoded arrays have toString() methods
+#endif
+
+#if FW_ARRAY_TO_STRING
+#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE
+#define FW_ARRAY_TO_STRING_BUFFER_SIZE 255  //!< Size of string to store toString() string output
+#endif
+#endif
+
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
 #ifndef FW_AMPCS_COMPATIBLE
 #define FW_AMPCS_COMPATIBLE            0   //!< Whether or not JPL AMPCS ground system support is enabled.

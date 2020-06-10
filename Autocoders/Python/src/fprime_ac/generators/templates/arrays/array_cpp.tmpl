@@ -24,6 +24,8 @@
 
 \#include "Fw/Types/Assert.hpp"
 
+\#include "Fw/Types/EightyCharString.hpp"
+
 \#include "${name}ArrayAc.hpp"
 
 namespace ${namespace} {
@@ -39,7 +41,7 @@ namespace ${namespace} {
     *this = ${name}(
   #set $i = 1
   #for $element in $default:
-  #if $i != $size:
+  #if $i != len($default):
   #slurp
       $element,
   #else:
@@ -60,6 +62,7 @@ namespace ${namespace} {
     }
   }
   
+  #if $size != 1:
   ${name} :: 
     ${name}(const ElementType& e) :
       Serializable()
@@ -69,6 +72,7 @@ namespace ${namespace} {
       this->elements[index] = e;
     }
   }
+  #end if
   
   ${name} :: 
     ${name}(
@@ -190,14 +194,17 @@ void ${name}::toString(Fw::StringBase& text) const {
     );
     outputString[FW_ARRAY_TO_STRING_BUFFER_SIZE-1] = 0; // NULL terminate
 
-    text = outputString;
+    (Fw::EightyCharString)text = outputString;
 }
 
 \#endif
   
 \#ifdef BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
-    os << obj::toString();
+    Fw::EightyCharString temp;
+    obj.toString(temp);
+
+    os << temp;
     return os;
   }
 \#endif
