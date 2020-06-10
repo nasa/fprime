@@ -21,7 +21,7 @@ def get_event_string(event):
     representation of its information
     """
     # TODO: Implement this!
-    return None
+    return str(event)
 
 
 def get_recent_events(session, url):
@@ -35,9 +35,10 @@ def get_recent_events(session, url):
 
 
 # TODO: Possibly move this to the API as a method that can take arbitrary predicates for awaiting events?
-def get_upcoming_events(
+def get_upcoming_event(
     test_api: IntegrationTestAPI,
     search_filter: predicates.predicate,
+    start_time = "NOW",
     timeout: int = 5,
 ):
     """
@@ -47,7 +48,7 @@ def get_upcoming_events(
     """
     event_filter = predicates.satisfies_all([search_filter, predicates.event_predicate()])
     return test_api.find_history_item(
-        event_filter, test_api.get_event_test_history(), "NOW", timeout
+        event_filter, test_api.get_event_test_history(), start_time, timeout
     )
 
 
@@ -231,7 +232,7 @@ def get_events_output(
     Gds/src/fprime_gds/executables/fprime_cli.py
     """
     # ==========================================================================
-    # TODO: Somehow find this dynamically?
+    # TODO: Somehow find this dynamically, or via an arg?
     local_dir = os.path.dirname(__file__)
     dict_path = os.path.join(
         local_dir, "../../../../../Ref/Top/RefTopologyAppDictionary.xml"
@@ -242,21 +243,39 @@ def get_events_output(
 
     filter_predicate = get_full_filter_predicate(id, component, search)
     event_objects = None
-    if list:
-        event_objects = get_events_list(url)
-    else:
-        session = update_session_id(session)
-        event_objects = get_upcoming_events(api, filter_predicate)
 
-    # TODO: Print returned objects properly, instead of leaving it up to Test API
+    # TODO: Follow currently just prints all new events as they come, with no
+    # set printing frequency; update interface/API to reflect this?
+
+    # Get objects at least once, and continue looping if follow is set and we're
+    # not listing events
+    min_start_time = "NOW"
+    try:
+        while True:
+            if list:
+                event_objects = get_events_list(url)
+            else:
+                session = update_session_id(session)
+                event_objects = get_upcoming_event(api, filter_predicate, min_start_time)
+
+            # TODO: Print returned objects properly, instead of leaving it up to Test API
+            if json:
+                # TODO: convert into a JSON object string
+                pass
+            else:
+                print(get_event_string(event_objects))
+
+            if list or not follow:
+                break
+
+            # Update time so we catch all events since the last one
+            if event_objects:
+                min_start_time = predicates.greater_than(event_objects.get_time())
+    except KeyboardInterrupt:
+        # Break the loop and teardown the API/pipeline
+        pass
 
     # ==========================================================================
     pipeline.disconnect()
     api.teardown()
     # ==========================================================================
-
-    if json:
-        # TODO: convert into a JSON object string
-        return
-
-    return get_event_string(event_objects)
