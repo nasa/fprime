@@ -11,4 +11,3 @@ set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F p
 # Include the build for F prime.
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime-Code.cmake")
- 
