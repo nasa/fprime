@@ -9,6 +9,10 @@ from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.data_types.sys_data import SysData
+
+
+# TODO: Refactor these methods into different utility files
 
 
 def get_event_string(event):
@@ -39,44 +43,97 @@ def get_events_list(url):
     return None
 
 
-def filter_by_id(object, ids):
+class id_predicate(predicates.predicate):
+    def __init__(self, id):
+        """
+        A predicate that tests if the SysData argument given to it is of a given
+        ID type
+        :param id: The exact text to check for inside the object
+        """
+        self.id = id
+
+    def __call__(self, item: SysData):
+        """
+        :param item: the object or value to evaluate
+        """
+        return self.id == item.get_id()
+
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return 'x.id == "{}"'.format(self.id)
+
+
+def get_id_predicate(ids):
     """
-    Takes in the given JSON object and filters all the items by their ID number;
-    returns a JSON object with only objects of the given ID(s) left
-
-    TODO: Currently assumes the JSON object passed in is a channel/command/event
-    object in one of the formats returned by the GDS REST API
-    """
-    # TODO: Implement this!
-    # TODO: Possibly replace with Test API queries?
-    return None
-
-
-def filter_by_component(object, components):
-    """
-    Takes in the given JSON object and filters all the items by their component
-    name; returns a JSON object with only objects from the given component(s)
-    left
-
-    TODO: Currently assumes the JSON object passed in is a channel/command/event
-    object in one of the formats returned by the GDS REST API
-    """
-    # TODO: Implement this!
-    # TODO: Possibly replace with Test API queries?
-    return None
-
-
-def filter_by_search(object, search_string):
-    """
-    Takes in the given JSON object and removes any items whose name or string
-    description doesn't include the given search term
-
-    TODO: Currently assumes the JSON object passed in is a channel/command/event
-    object in one of the formats returned by the GDS REST API
+    Returns a Test API predicate that only accepts items with one of the given
+    type IDs (if no IDs are given, accept all items)
     """
     # TODO: Implement this!
-    # TODO: Possibly replace with Test API queries?
-    return None
+    if ids:
+        id_preds = [id_predicate(id) for id in ids]
+        return predicates.satisfies_any(id_preds)
+    return predicates.always_true()
+
+
+def get_component_predicate(components):
+    """
+    Returns a Test API predicate that only accepts items from one of the given
+    components (if no components are given, accept all items)
+    """
+    # TODO: Implement this!
+    if components:
+        return None
+    return predicates.always_true()
+
+
+class contains_search_string(predicates.predicate):
+    def __init__(self, search_string: str):
+        """
+        A predicate that tests if the argument given to it contains the
+        passed-in string (after the argument is converted to a string via
+        __str__)
+        :param search_string: The exact text to check for inside the object
+        """
+        self.search_string = str(search_string)
+
+    def __call__(self, item):
+        """
+        :param item: the object or value to evaluate
+        """
+        return self.search_string in str(item)
+
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return 'str(x) contains "{}"'.format(self.search_string)
+
+
+def get_search_predicate(search_string: str):
+    """
+    Returns a Test API predicate that only accepts items whose string
+    representation contains the exact given term
+    """
+    if search_string:
+        return contains_search_string(search_string)
+    return predicates.always_true()
+
+
+def get_full_filter_predicate(ids, components, search_string):
+    """
+    Returns an Test API predicate to only get recent data from the
+    specified ids/components, and containing the given search string. If any of
+    these are left blank, no restrictions are assumed for that field
+    """
+    return_all = predicates.always_true()
+
+    id_pred = get_id_predicate(ids)
+    comp_pred = get_component_predicate(components)
+    search_pred = get_search_predicate(search_string)
+
+    return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
 
 
 def update_session_id(current_session_id: int):
@@ -113,6 +170,7 @@ def initialize_test_api(
 
 
 # TODO: Might need to update interface to use Test API correctly
+# TODO: Should separate frontend printing code from backend data-getting
 def get_events_output(
     list: bool,
     session: int,
@@ -124,7 +182,7 @@ def get_events_output(
     json: bool,
 ):
     """
-    Takes in the given arguments and returns an appropriate formatted string of
+    Takes in the given arguments and prints an appropriate formatted string of
     recent event data that matches the user's criteria
 
     For descriptions of these arguments, and more function details, see:
@@ -148,9 +206,7 @@ def get_events_output(
         event_objects = get_recent_events(session, url)
 
     # TODO: Test API may be able to do filtering at search time instead
-    event_objects = filter_by_id(event_objects, id)
-    event_objects = filter_by_component(event_objects, component)
-    event_objects = filter_by_search(event_objects, search)
+    filter_predicate = get_full_filter_predicate(id, component, search)
 
     # ==========================================================================
     pipeline.disconnect()
