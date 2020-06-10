@@ -85,7 +85,9 @@ namespace Fw {
 
     Os::Task::TaskStatus ActiveComponentBase::join(void **value_ptr) {
         DEBUG_PRINT("join %s\n", this->getObjName());
-        return this->m_task.join(value_ptr);
+        Os::Task::TaskStatus stat = this->m_task.join(value_ptr);
+        FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+        return stat;
     }
 
     void ActiveComponentBase::s_baseBareTask(void* ptr) {
