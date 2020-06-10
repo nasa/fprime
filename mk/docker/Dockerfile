@@ -32,6 +32,7 @@ ENV LC_ALL C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
+## Example docker container with F prime code copied in:
 #FROM fprime-base AS fprime-docker
 #    COPY . /opt/fprime
 #    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
@@ -50,6 +51,10 @@ ENTRYPOINT ["/bin/bash"]
 #
 # This sets up an image for use within a CI build system. This is currently configured for the
 # Jenkins CI system. This means a Jenkins user is created, setup and ready to run.
+#
+# This is the last image in the file because the Jenkins server used by F prime does not expose
+# the --target argument for building the docker image.  As such, this image is the one built and
+# used for Jenkins.
 ####
 FROM fprime-base AS jenkins-ci
 RUN groupadd jenkins && \
