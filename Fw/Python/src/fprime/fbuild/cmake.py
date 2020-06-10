@@ -28,6 +28,7 @@ import atexit
 import fprime.fbuild
 
 COMMENT_REGEX = re.compile("\s*#.*")
+SUBSTIT_REGEX = re.compile("\$\(([^)]*)\)")
 
 class CMakeBuildCache(object):
     """
@@ -289,6 +290,21 @@ class CMakeHandler(object):
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
+    def sub_environment_values(self, value):
+        """
+        Stubstitute all values of the form $(ABC) in the string.
+        :return: subbed out value
+        """
+        # Find all matches and iterate backwards substituting as we go
+        matches = list(SUBSTIT_REGEX.finditer(value))
+        matches.reverse()
+        for match in matches:
+            subkey = match.group(1)
+            subval = self.environment.get(subkey, os.environ.get(subkey, ""))
+            value = value[:match.start()] + subval + value[match.end():]
+        return value
+
+
     def setup_environment_from_file(self, build_dir, environment_file=None):
         """
         Sets the environment to apply to CMake commands.  Will read from the supplied file.  If None is supplied, it
@@ -307,9 +323,10 @@ class CMakeHandler(object):
         print("[INFO] Reading environment from: {}".format(environment_file))
         with open(environment_file, "r") as file_handle:
             for line in file_handle.readlines():
-                tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) # No need to quote
-                if len(tokens) == 2:
-                    self.environment[tokens[0]] = tokens[1]
+                # No need to quote, accounts for blanks
+                tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) + [""]
+                if len(tokens) >= 2:
+                    self.environment[tokens[0]] = self.sub_environment_values(tokens[1])
 
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
