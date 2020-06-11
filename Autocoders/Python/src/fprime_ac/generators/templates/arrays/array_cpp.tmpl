@@ -21,6 +21,7 @@
 // ======================================================================
 
 \#include <string.h>
+\#include <stdio.h>
 
 \#include "Fw/Types/Assert.hpp"
 
@@ -33,7 +34,10 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
   // Constructors
   // ----------------------------------------------------------------------
-  
+
+  #for $com in $comments:
+  //! $com
+  #end for 
   ${name} ::
     ${name}(void) :
       Serializable()

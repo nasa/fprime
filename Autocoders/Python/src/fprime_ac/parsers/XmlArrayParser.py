@@ -62,6 +62,7 @@ class XmlArrayParser(object):
         self.__include_enum_files = []
         # List of XML array type files
         self.__include_array_files = []
+        self.__comments = []
 
         self.__format = None
         self.__type_id = None
@@ -120,6 +121,8 @@ class XmlArrayParser(object):
             elif array_tag.tag == 'default':
                 for value_tag in array_tag:
                     self.__default.append(value_tag.text)
+            elif array_tag.tag == 'comment':
+                self.__comments.append(array_tag.text)
             elif array_tag.tag == 'include_header':
                 self.__include_header_files.append(array_tag.text)
             elif array_tag.tag == 'import_serializable_type':
@@ -189,6 +192,9 @@ class XmlArrayParser(object):
 
     def get_type_id(self):
         return self.__type_id
+
+    def get_comments(self):
+        return self.__comments
 
     def get_include_path(self):
         return self.__include_path
