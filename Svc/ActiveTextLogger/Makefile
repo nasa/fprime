@@ -1,6 +1,6 @@
-# This Makefile goes in each module, and allows building of an individual module library.
-# It is expected that each developer will add targets of their own for building and running
-# tests, for example.
+# Copyright 2009-2015, by the California Institute of Technology.
+# ALL RIGHTS RESERVED.  United States Government Sponsorship
+# acknowledged.
 
 # derive module name from directory
 
