@@ -69,6 +69,12 @@
                     </oneOrMore>
                 </element>
 
+                <optional>
+                    <attribute name = "comment">
+                        <text/>
+                    </attribute>
+                </optional>
+
                 <zeroOrMore>
                     <element name = "include_header">
                         <a:documentation>Defines the header file of the interface.</a:documentation>
