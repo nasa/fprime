@@ -292,7 +292,7 @@ class CMakeHandler(object):
 
     def sub_environment_values(self, value):
         """
-        Stubstitute all values of the form $(ABC) in the string.
+        Substitute all values of the form $(ABC) in the string.
         :return: subbed out value
         """
         # Find all matches and iterate backwards substituting as we go
