@@ -6,6 +6,8 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Os/TaskString.hpp>
 
+#include <Os/TaskId.hpp>
+
 namespace Os {
 
     class TaskRegistry; //!< forward declaration
@@ -36,6 +38,7 @@ namespace Os {
 
             TaskStatus join(void **value_ptr); //!< Wait for task to finish
             void suspend(bool onPurpose = false); //!< suspend task
+            static TaskId getOsIdentifier(void);
             void resume(void); //!< resume execution of task
             bool wasSuspended(void); //!< returns whether or not task was suspended on purpose
             bool isSuspended(void); //!< check with OS to see if it is suspended already
