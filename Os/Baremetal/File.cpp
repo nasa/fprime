@@ -10,7 +10,9 @@ namespace Os {
 
     File::~File() {}
 
-    File::Status File::open(const char* fileName, File::Mode mode) {}
+    File::Status File::open(const char* fileName, File::Mode mode) {
+        return NOT_OPENED;
+    }
 
     File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
         return NOT_OPENED;
