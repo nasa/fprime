@@ -20,12 +20,43 @@ def PLACEHOLDER_FUNC(**kwargs):
     print(kwargs)
 
 
+def add_connection_arguments(parser: argparse.ArgumentParser):
+    """
+    Adds the arguments needed to properly connect to the API, which the user may
+    want to specify
+    """
+    parser.add_argument(
+        "-d",
+        "--dictionary-path",
+        type=str,
+        help="path from the current working directory to the \"<project name>AppDictionary.xml\" file for the project you're using the API with",
+        metavar="PATH",
+    )
+    parser.add_argument(
+        "-ip",
+        "--ip-address",
+        type=str,
+        default="127.0.0.1",
+        help='connect to the GDS server using the given IP or hostname (default=127.0.0.1 (i.e. localhost))',
+        metavar="IP",
+    )
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=50050,
+        help='connect to the GDS server using the given port number (default=50050)',
+        metavar="PORT",
+    )
+
+
 def add_history_arguments(parser: argparse.ArgumentParser, command_name: str):
     """
     Adds all the arguments/flags normally used by the Channels/Commands/Events
     commands with the given name used in the help text, due to the similarity
     of each of these commands (at least currently)
     """
+    add_connection_arguments(parser)
     parser.add_argument(
         "-l",
         "--list",
@@ -34,55 +65,37 @@ def add_history_arguments(parser: argparse.ArgumentParser, command_name: str):
         % (command_name[:-1], command_name, command_name[:-1]),
     )
     parser.add_argument(
-        "-s",
-        "--session",
-        type=int,
-        help='provide a session ID "N" for this call (defaults to generating a new ID each time)',
-        metavar="N",
-    )
-    parser.add_argument(
         "-f",
         "--follow",
-        nargs="?",
-        type=float,
-        const=1.0,
-        help='continue polling the API every "N" seconds, and printing out new %s to the console (default=1.0)'
+        action="store_true",
+        help='continue polling the API and printing out new %s to the console until the user exits (via CTRL+C)'
         % (command_name),
-        metavar="N",
     )
     parser.add_argument(
         "-i",
-        "--id",
+        "--ids",
         nargs="+",
         type=int,
-        help='only show %s matching the given type ID(s) "N"; can provide multiple IDs to show all given types'
+        help='only show %s matching the given type ID(s) "ID"; can provide multiple IDs to show all given types'
         % (command_name),
-        metavar="N",
+        metavar="ID",
     )
     parser.add_argument(
         "-c",
-        "--component",
+        "--components",
         nargs="+",
         type=str,
-        help='only show %s from the given component name "C"; can provide multiple components to show %s from all components given'
+        help='only show %s from the given component name "COMP"; can provide multiple components to show %s from all components given'
         % (command_name, command_name),
-        metavar="C",
+        metavar="COMP",
     )
     parser.add_argument(
         "-S",
         "--search",
         type=str,
-        help='only show %s whose name or output string exactly matches or contains the entire given string "S"'
+        help='only show %s whose name or output string exactly matches or contains the entire given string "STRING"'
         % (command_name),
-        metavar="S",
-    )
-    parser.add_argument(
-        "-u",
-        "--url",
-        type=str,
-        default="localhost:5000",
-        help='use the provided base URL "S" instead of the default "localhost:5000/"',
-        metavar="S",
+        metavar="STRING",
     )
     parser.add_argument(
         "-j",
@@ -232,6 +245,7 @@ class CommandSendParser(CliCommandParserBase):
             "command_name",
             help='the full name of the command you want to execute in "<component>.<name>" form',
         )
+        add_connection_arguments(parser)
         parser.add_argument(
             "-l",
             "--list",
@@ -252,14 +266,6 @@ class CommandSendParser(CliCommandParserBase):
             nargs="*",
             type=str,
             help="provide a space-separated set of arguments to the command being sent",
-        )
-        parser.add_argument(
-            "-u",
-            "--url",
-            type=str,
-            default="localhost:5000",
-            help='use the provided base URL "S" instead of the default "localhost:5000/"',
-            metavar="S",
         )
 
     @classmethod
@@ -333,9 +339,8 @@ def main():
     parser = create_parser()
     args = parse_args(parser, sys.argv[1:])
 
-    if args.func is None:
+    if not args.func:
         # no argument provided, so print the help message
-        # TODO: Check if there's a better way of doing this?
         parser.print_help()
         return
 
