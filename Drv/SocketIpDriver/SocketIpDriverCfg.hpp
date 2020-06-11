@@ -24,7 +24,8 @@ enum SocketIpCfg {
     RECONNECT_AUTOMATICALLY = 1,      // Attempt to reconnect when a socket closes
     MAX_SEND_ITERATIONS = 0xFFFF,     // Maximum send iterations
     MAX_RECV_BUFFER_SIZE = 2048,      // Maximum and allocation size of the send buffer. TODO: use buffer manager
-    PRE_CONNECTION_RETRY_INTERVAL_MS = 1000 // Interval between connection retries before main recv thread starts
+    PRE_CONNECTION_RETRY_INTERVAL_MS = 1000, // Interval between connection retries before main recv thread starts
+    MAX_HOSTNAME_SIZE = 256 // Maximum stored hostname
 };
 
 
