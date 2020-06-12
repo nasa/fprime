@@ -21,7 +21,7 @@ namespace Fw {
              *       function, a do-nothing version will be run.
              * \param U32 trap: trap number
              */
-            virtual void doTrap(U32 trap);
+            virtual void doTrap(U32 trap) = 0;
     };
 }
 #endif

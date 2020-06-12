@@ -19,8 +19,7 @@
 
 # There are some standard files that are included for reference
 
-SRC = \	
-	TrapHandler.cpp
+SRC =
 
 HDR = \	
 	TrapHandler.hpp
