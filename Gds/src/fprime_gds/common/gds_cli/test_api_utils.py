@@ -6,6 +6,7 @@ import os
 import types
 from typing import Any, Dict, List
 
+from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.pipeline.standard import StandardPipeline
@@ -80,6 +81,34 @@ def get_upcoming_event(
     )
     return test_api.find_history_item(
         event_filter, test_api.get_event_test_history(), start_time, timeout
+    )
+
+
+def get_upcoming_channel(
+    test_api: IntegrationTestAPI,
+    search_filter: predicates.predicate,
+    start_time="NOW",
+    timeout: int = 5,
+) -> ChData:
+    """
+    Returns the next telemetry update matching the given search filter that occurs after this is called. Times out after the given amount if no matching new updates are found.
+
+    :param test_api: An API instance that will be called to find the next update
+    :param search_filter: A predicate each found update is tested against; if
+        the item doesn't test "True" against this, we ignore it and keep
+        searching
+    :param start_time: An optional index or predicate to specify the earliest
+        update time to search for
+    :param timeout: The maximum time (in seconds) to wait for an update
+
+    :return: The first "ChData" found that passes the filter, or "None" if no
+        such update is found within time
+    """
+    event_filter = predicates.satisfies_all(
+        [search_filter, predicates.telemetry_predicate()]
+    )
+    return test_api.find_history_item(
+        event_filter, test_api.get_telemetry_test_history(), start_time, timeout
     )
 
 
