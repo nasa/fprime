@@ -7,8 +7,10 @@ import types
 from typing import Any, Dict, List
 
 from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.sys_data import SysData
+from fprime_gds.common.gds_cli.filtering_utils import cmd_predicate
 from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.templates.data_template import DataTemplate
 from fprime_gds.common.testing_fw import predicates
@@ -91,7 +93,9 @@ def get_upcoming_channel(
     timeout: int = 5,
 ) -> ChData:
     """
-    Returns the next telemetry update matching the given search filter that occurs after this is called. Times out after the given amount if no matching new updates are found.
+    Returns the next telemetry update matching the given search filter that
+    occurs after this is called. Times out after the given amount if no
+    matching new updates are found.
 
     :param test_api: An API instance that will be called to find the next update
     :param search_filter: A predicate each found update is tested against; if
@@ -104,11 +108,40 @@ def get_upcoming_channel(
     :return: The first "ChData" found that passes the filter, or "None" if no
         such update is found within time
     """
-    event_filter = predicates.satisfies_all(
+    channel_filter = predicates.satisfies_all(
         [search_filter, predicates.telemetry_predicate()]
     )
     return test_api.find_history_item(
-        event_filter, test_api.get_telemetry_test_history(), start_time, timeout
+        channel_filter, test_api.get_telemetry_test_history(), start_time, timeout
+    )
+
+
+def get_upcoming_command(
+    test_api: IntegrationTestAPI,
+    search_filter: predicates.predicate,
+    start_time="NOW",
+    timeout: int = 5,
+) -> CmdData:
+    """
+    Returns the next command matching the given search filter that occurs after
+    this is called. Times out after the given amount if no matching new updates
+    are found.
+
+    :param test_api: An API instance that will be called to find the next
+        command
+    :param search_filter: A predicate each found command is tested against; if
+        the item doesn't test "True" against this, we ignore it and keep
+        searching
+    :param start_time: An optional index or predicate to specify the earliest
+        command time to search for
+    :param timeout: The maximum time (in seconds) to wait for a command
+
+    :return: The first "CmdData" found that passes the filter, or "None" if no
+        such command is found within time
+    """
+    command_filter = predicates.satisfies_all([search_filter, cmd_predicate()])
+    return test_api.find_history_item(
+        command_filter, test_api.get_command_test_history(), start_time, timeout
     )
 
 

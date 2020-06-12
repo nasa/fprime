@@ -3,6 +3,7 @@ A set of utility classes and functions for filtering the items we want to return
 to the user in the GDS CLI
 """
 
+from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.testing_fw import predicates
 
@@ -153,3 +154,26 @@ def get_full_filter_predicate(
     search_pred = get_search_predicate(search_string)
 
     return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
+
+
+class cmd_predicate(predicates.predicate):
+    def __init__(self):
+        """
+        A predicate for specifying a CmdData object from data_types.cmd_data.
+        This predicate can be used to search a history.
+        """
+        pass
+
+    def __call__(self, cmd):
+        """
+        The cmd_predicate checks that the object is an instance of CmdData.
+
+        :param cmd: an instance of CmdData (object)
+        """
+        return isinstance(cmd, CmdData)
+
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "True IFF: x is a CmdData object"
