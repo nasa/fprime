@@ -10,6 +10,7 @@ import argparse
 import sys
 
 import fprime_gds.common.gds_cli.channels as channels
+import fprime_gds.common.gds_cli.commands as commands
 import fprime_gds.common.gds_cli.events as events
 
 
@@ -216,7 +217,7 @@ class CommandsParser(CliCommandParserBase):
         """
         Returns the function that should be executed when "commands" is called
         """
-        return PLACEHOLDER_FUNC
+        return commands.CommandsCommand.handle_arguments
 
 
 class CommandSendParser(CliCommandParserBase):
