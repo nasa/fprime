@@ -36,6 +36,7 @@ class StandardPipeline(object):
     This class provides for basic log files as a fallback for storing events as well. These logs are stored in a given
     directory, which is created on the initialization of this class.
     """
+
     def __init__(self):
         """
         Set core variables to None or their composition handlers.
@@ -49,7 +50,9 @@ class StandardPipeline(object):
         self.__histories = histories.Histories()
         self.__filing = files.Filing()
 
-    def setup(self, config, dictionary, down_store, logging_prefix=None, packet_spec=None):
+    def setup(
+        self, config, dictionary, down_store, logging_prefix=None, packet_spec=None
+    ):
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
@@ -63,13 +66,22 @@ class StandardPipeline(object):
             logging_prefix = StandardPipeline.get_dated_logging_dir()
         # Loads the distributor and client socket
         self.distributor = fprime_gds.common.distributor.distributor.Distributor(config)
-        self.client_socket = fprime_gds.common.client_socket.client_socket.ThreadedTCPSocketClient()
+        self.client_socket = (
+            fprime_gds.common.client_socket.client_socket.ThreadedTCPSocketClient()
+        )
         # Setup dictionaries encoders and decoders
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
-        self.coders.setup_coders(self.dictionaries, self.distributor, self.client_socket)
+        self.coders.setup_coders(
+            self.dictionaries, self.distributor, self.client_socket
+        )
         self.histories.setup_histories(self.coders)
-        self.files.setup_file_handling(down_store, self.coders.file_encoder, self.coders.file_decoder, self.distributor,
-                                       logging_prefix)
+        self.files.setup_file_handling(
+            down_store,
+            self.coders.file_encoder,
+            self.coders.file_decoder,
+            self.distributor,
+            logging_prefix,
+        )
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
         # Final setup step is to make a logging directory, and register in the logger
@@ -96,7 +108,9 @@ class StandardPipeline(object):
         :param prefix: logging prefix to use
         """
         # Setup the logging pipeline (register it to all its data sources)
-        logger = fprime_gds.common.logger.data_logger.DataLogger(log_dir, verbose=True, csv=True)
+        logger = fprime_gds.common.logger.data_logger.DataLogger(
+            log_dir, verbose=True, csv=True
+        )
         self.logger = logger
         self.coders.register_channel_consumer(self.logger)
         self.coders.register_event_consumer(self.logger)
@@ -111,7 +125,9 @@ class StandardPipeline(object):
         :param port: port of middleware
         """
         self.client_socket.connect(address, port)
-        self.client_socket.register_to_server(fprime_gds.common.client_socket.client_socket.GUI_TAG)
+        self.client_socket.register_to_server(
+            fprime_gds.common.client_socket.client_socket.GUI_TAG
+        )
 
     def disconnect(self):
         """
@@ -130,7 +146,9 @@ class StandardPipeline(object):
             command_template = self.dictionaries.command_name[command]
         else:
             command_template = self.dictionaries.command_id[command]
-        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
+        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(
+            tuple(args), command_template
+        )
         cmd_data.time = fprime.common.models.serialize.time_type.TimeType()
         cmd_data.time.set_datetime(datetime.datetime.now(), 2)
         self.coders.send_command(cmd_data)
