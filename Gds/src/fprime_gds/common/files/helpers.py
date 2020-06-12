@@ -23,6 +23,7 @@ class Timeout(object):
     """
     Starts a timeout thread and will respond with a callback to a function when the timeout expires.
     """
+
     def __init__(self):
         """ Sets up needed member variables """
         self.__timer = None
@@ -68,6 +69,7 @@ class FileStates(enum.Enum):
     """
     An enumeration of states used in the file uplinker and downlinker.
     """
+
     IDLE = 0
     RUNNING = 1
     CANCELED = 2
@@ -76,6 +78,7 @@ class FileStates(enum.Enum):
 
 class CFDPChecksum(object):
     """ Class running the CFDG checksum """
+
     def __init__(self):
         """ Set initial value as zero """
         self.__value = 0
@@ -84,10 +87,14 @@ class CFDPChecksum(object):
         """ Update the checksum """
         while data:
             padding_len = offset % 4
-            calc_bytes = bytes([0] * padding_len) + data[:4 - padding_len] + bytes([0, 0, 0, 0])
-            self.__value = (self.__value + struct.unpack_from(">I", calc_bytes, 0)[0]) & 0xffffffff
+            calc_bytes = (
+                bytes([0] * padding_len) + data[: 4 - padding_len] + bytes([0, 0, 0, 0])
+            )
+            self.__value = (
+                self.__value + struct.unpack_from(">I", calc_bytes, 0)[0]
+            ) & 0xFFFFFFFF
             # Update pointers
-            data = data[4 - padding_len:]
+            data = data[4 - padding_len :]
             offset = offset + (4 - padding_len)
 
     @property
@@ -99,6 +106,7 @@ class TransmitFile(object):
     """
     Wraps the file information needed for the uplink and downlinking processes.
     """
+
     def __init__(self, source, destination, log_dir=None):
         """ Construct the uplink file """
         self.__mode = None
@@ -125,8 +133,12 @@ class TransmitFile(object):
         self.__fd = open(filepath, self.__mode)
         self.__start = datetime.datetime.utcnow()
         if self.__log_dir is not None:
-            self.__log_handler = logging.FileHandler(os.path.join(self.__log_dir,
-                                                                 "{}.log".format(os.path.basename(filepath))), "w")
+            self.__log_handler = logging.FileHandler(
+                os.path.join(
+                    self.__log_dir, "{}.log".format(os.path.basename(filepath))
+                ),
+                "w",
+            )
 
     def read(self, chunk):
         """ Read the chunk from the file """
@@ -210,15 +222,17 @@ def file_to_dict(files, uplink=True):
     """
     current = []
     for item in files:
-        current.append({
-            "source": item.source,
-            "destination": item.destination,
-            "size": item.size,
-            "current": item.seek,
-            "state": item.state,
-            "percent": int(item.seek/item.size * 100.0),
-            "uplink": uplink,
-            "start": item.start,
-            "end": item.end
-        })
+        current.append(
+            {
+                "source": item.source,
+                "destination": item.destination,
+                "size": item.size,
+                "current": item.seek,
+                "state": item.state,
+                "percent": int(item.seek / item.size * 100.0),
+                "uplink": uplink,
+                "start": item.start,
+                "end": item.end,
+            }
+        )
     return current
