@@ -3,9 +3,13 @@ A file containing utilities for interacting with the Integration Test API
 """
 
 import os
+import types
+from typing import Any, Dict, List
 
 from fprime_gds.common.data_types.event_data import EventData
+from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.pipeline.standard import StandardPipeline
+from fprime_gds.common.templates.data_template import DataTemplate
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 from fprime_gds.common.utils.config_manager import ConfigManager
@@ -65,14 +69,11 @@ def get_upcoming_event(
         the event doesn't test "True" against this, we ignore it and keep
         searching
     :param start_time: An optional index or predicate to specify the earliest
-        event to search for; defaults to only accepting events after the time
-        this function is called
-    :param timeout: The maximum time (in seconds) to wait for an event; if no
-        event is found that passes the search filter within this time, we stop
-        and return None
+        event time to search for
+    :param timeout: The maximum time (in seconds) to wait for an event
 
     :return: The first "EventData" found that passes the filter, or "None" if no
-        such event is found
+        such event is found within time
     """
     event_filter = predicates.satisfies_all(
         [search_filter, predicates.event_predicate()]
@@ -80,3 +81,35 @@ def get_upcoming_event(
     return test_api.find_history_item(
         event_filter, test_api.get_event_test_history(), start_time, timeout
     )
+
+
+# TODO: Possibly move to a different file, since it doesn't directly use the API
+def get_item_list(
+    item_dictionary: Dict[Any, DataTemplate],
+    search_filter: predicates.predicate,
+    template_to_data: types.FunctionType,
+) -> List[SysData]:
+    """
+    Returns an ID-sorted list containing all the possible item types that could
+    occur on the running F' instance, and information about each one.
+
+    :param item_dictionary: A dictionary full of DataTemplate objects containing
+        the events you want to list
+    :param search_filter: A Test API predicate used to filter out which items
+        to include in the returned list
+    :param template_to_data: A callback function accepting a single DataTemplate
+        object and returning a SysData object
+
+    :return: An ID sorted list with all the items from the given dictionary
+        AFTEr being filtered
+    """
+    # Dictionary has DataTemplates by default, so convert them to SysData so
+    # filtering will work properly (several predicates assume SysData types)
+    event_data_list = list(
+        map(lambda x: template_to_data(x[1]), item_dictionary.items())
+    )
+
+    # Filter by using the given predicate on the event values
+    event_data_list = list(filter(lambda x: search_filter(x), event_data_list))
+    event_data_list.sort(key=lambda x: x.get_id())
+    return event_data_list

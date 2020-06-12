@@ -2,81 +2,71 @@
 Handles getting events from the GDS based on some user-specified criteria
 """
 
+import json
+import types
+from typing import List
 
-import time
-
-import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
+import fprime_gds.common.gds_cli.misc_utils as misc_utils
+import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 
 from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.testing_fw import predicates
 
 
-# TODO: Refactor these methods into different utility files
-
-
-def get_event_string(event, json: bool = False) -> str:
+# TODO: Need to do user tests to find a better print format
+def get_event_string(event, as_json: bool = False) -> str:
     """
     Takes in the given event object and prints out a human-readable string
     representation of its information.
 
     # TODO: possibly make this a generic "get SysData string" instead?
     :param event: The event to create a string for
-    :param json: Return a JSON-string representation of the given event instead
+    :param as_json: Return a JSON-string representation of the given event
+        instead
     :return: A readable string of the event information
     """
     # TODO: Implement this properly!
     if not event:
         return "No matching item found"
+    if as_json:
+        # TODO: "json.dumps" doesn't seem to work correctly yet?
+        pass
     return event.get_str(verbose=True)
 
 
-def get_events_list(
-    project_dictionary: Dictionaries, search_filter: predicates.predicate
+def print_events_list(
+    project_dictionary: Dictionaries,
+    filter_predicate: predicates.predicate,
+    json: bool = False,
 ):
     """
-    Returns an object containing all the possible event types that could occur
-    on the running F' instance, and information about each one.
+    Gets a list of possible events that can occur in the system and prints their
+    details out in an ID-sorted list
+
+    :param project_dictionary: The dictionary object for the project containing
+        the event type definitions
+    :param filter_predicate:
+    :param json: Whether to print out each item in JSON format or not
     """
-    # Dictionary has EventTemplates by default, so convert them to EventData
-    # so filtering will work properly
-    event_dictionary = project_dictionary.event_id
-    event_data_list = list(
-        map(lambda x: EventData.get_empty_obj(x[1]), event_dictionary.items())
+    event_list = test_api_utils.get_item_list(
+        project_dictionary.event_id, filter_predicate, EventData.get_empty_obj
     )
-
-    # Filter by using the given predicate on the event values
-    event_data_list = list(filter(lambda x: search_filter(x), event_data_list))
-    event_data_list.sort(key=lambda x: x.get_id())
-    return event_data_list
+    for event in event_list:
+        print(get_event_string(event, json))
 
 
-# TODO: Find a better name for this, if possible?
-def repeat_until_interrupt(func, *args):
+def print_upcoming_event(
+    api,
+    filter_predicate: predicates.predicate,
+    min_start_time="NOW",
+    json: bool = False,
+):
     """
-    Continues to call the input function with the given arguments until the
-    user interrupts it.
-
-    :param func: The function you want to call repeatedly. This MUST return a
-        new, updated tuple of the arguments passed into it in the same order,
-        which will be used as the new arguments in the next iteration. This is
-        done to allow for persistent state between iterations; if needed, create
-        a wrapper for your original function to do this.
-    :param args: All keyword arguments you want to pass into "func"
-    """
-    try:
-        while True:
-            args = func(*args)
-    except KeyboardInterrupt:
-        pass
-
-
-# TODO: Try to eliminate need for boolean flag "json" if possible?
-def print_upcoming_event(api, filter_predicate, min_start_time="NOW", json=False):
-    """
-    Prints out the next upcoming event information that matches the given filter
-    in a way usable by the "follow" function's API
+    Prints out the next upcoming event information after the given time that
+    matches the given filter (in a way usable by the "repeat_until_interrupt"
+    function)
     """
     event_object = test_api_utils.get_upcoming_event(
         api, filter_predicate, min_start_time
@@ -88,16 +78,21 @@ def print_upcoming_event(api, filter_predicate, min_start_time="NOW", json=False
     return (api, filter_predicate, min_start_time, json)
 
 
+# TODO: Should I try and make a generic version of this to share with commands
+# and telemetry, or keep their functionality separate so they're not
+# co-dependent?
 # TODO: Should separate frontend printing code from backend data-getting
-# TODO: Figure out how to refactor this set of arguments to make it more simple?
+# ...at the same time, might be a good idea to keep this strongly coupled to the
+# CLI interface code so they stay in sync? (This is essentially frontend code
+# right now, but might not have sufficient separation of concerns)
 def get_events_output(
     dictionary_path: str,
     ip_address: str,
     port: int,
     list: bool,
     follow: bool,
-    ids,
-    components,
+    ids: List[int],
+    components: List[str],
     search: str,
     json: bool,
 ):
@@ -119,16 +114,15 @@ def get_events_output(
     )
 
     # TODO: Try and refactor this to avoid nested if statements?
-    # TODO: Need to do user tests to find a better print format
     if list:
-        event_objects = get_events_list(pipeline.dictionaries, filter_predicate)
-        for event in event_objects:
-            print(get_event_string(event, json))
+        print_events_list(pipeline.dictionaries, filter_predicate, json)
     else:
         if follow:
-            repeat_until_interrupt(print_upcoming_event, api, filter_predicate)
+            misc_utils.repeat_until_interrupt(
+                print_upcoming_event, api, filter_predicate, "NOW", json
+            )
         else:
-            print_upcoming_event(api, filter_predicate)
+            print_upcoming_event(api, filter_predicate, json=json)
 
     # TODO: Disable Test API from also logging to console somehow?
 
