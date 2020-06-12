@@ -12,7 +12,6 @@ import fprime_gds.common.gds_cli.events as events
 def standard_parser():
     return fprime_cli.create_parser()
 
-
 def default_valid_args_dict(updated_values_dict={}):
     """
     The output arguments dictionary for a valid channels/commands/events
@@ -21,13 +20,14 @@ def default_valid_args_dict(updated_values_dict={}):
     """
     dictionary = {
         "func": fprime_cli.PLACEHOLDER_FUNC,
+        "dictionary_path": None,
+        "ip_address": "127.0.0.1",
+        "port": 50050,
         "list": False,
-        "session": None,
-        "follow": None,
-        "id": None,
-        "component": None,
+        "follow": False,
+        "ids": None,
+        "components": None,
         "search": None,
-        "url": "localhost:5000",
         "json": False,
     }
     dictionary.update(updated_values_dict)
@@ -52,18 +52,20 @@ def default_valid_args_dict(updated_values_dict={}):
                 "list": False,
                 "key": None,
                 "arguments": None,
-                "url": "localhost:5000",
+                "dictionary_path": None,
+                "ip_address": "127.0.0.1",
+                "port": 50050,
             },
         ),
         (["events"], default_valid_args_dict({"func": events.get_events_output}),),
         (["channels", "-l"], default_valid_args_dict({"list": True}),),
         (["channels", "--list"], default_valid_args_dict({"list": True}),),
-        (["channels", "-s", "348"], default_valid_args_dict({"session": 348}),),
-        (["channels", "-f", "0.1"], default_valid_args_dict({"follow": 0.1}),),
-        (["commands", "-i", "10"], default_valid_args_dict({"id": [10]}),),
+        (["channels", "-d", "follow/the/yellow/brick/road"], default_valid_args_dict({"dictionary_path": "follow/the/yellow/brick/road"}),),
+        (["channels", "-f"], default_valid_args_dict({"follow": True}),),
+        (["commands", "-i", "10"], default_valid_args_dict({"ids": [10]}),),
         (
             ["commands", "-i", "3", "4", "8"],
-            default_valid_args_dict({"id": [3, 4, 8]}),
+            default_valid_args_dict({"ids": [3, 4, 8]}),
         ),
         (
             [
@@ -82,7 +84,7 @@ def default_valid_args_dict(updated_values_dict={}):
             default_valid_args_dict(
                 {
                     "func": events.get_events_output,
-                    "component": [
+                    "components": [
                         "Grover's Corners",
                         "Sutton County",
                         "New Hampshire",
@@ -103,9 +105,9 @@ def default_valid_args_dict(updated_values_dict={}):
             ),
         ),
         (
-            ["events", "-u", "jpl.nasa.gov"],
+            ["events", "-ip", "jpl.nasa.gov"],
             default_valid_args_dict(
-                {"func": events.get_events_output, "url": "jpl.nasa.gov"}
+                {"func": events.get_events_output, "ip_address": "jpl.nasa.gov"}
             ),
         ),
         (
@@ -133,9 +135,9 @@ def test_command_send_no_command_given_error(standard_parser):
 
 @pytest.mark.gds_cli
 def test_components_no_search_term_given_error(standard_parser):
-    # Not giving any Session ID after giving the option should raise an error
+    # Not giving any string after giving the option should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["commands", "-s"])
+        fprime_cli.parse_args(standard_parser, ["commands", "-S"])
 
 
 @pytest.mark.gds_cli
