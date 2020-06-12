@@ -1,9 +1,9 @@
-'''
+"""
 Created on Dec 18, 2014
 
 @author: tcanham
 
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
@@ -14,11 +14,11 @@ from fprime.constants import DATA_ENCODING
 from .type_exceptions import *
 from . import type_base
 
+
 @type_base.serialize
 @type_base.deserialize
 class StringType(type_base.BaseType):
-
-    def __init__(self, val = None, max_string_len=None):
+    def __init__(self, val=None, max_string_len=None):
         """
         Constructor
         @param val: Default value for the string, if None then empty string.
@@ -28,13 +28,13 @@ class StringType(type_base.BaseType):
         self.__max_string_len = max_string_len
 
         if val == None:
-            return;
+            return
 
         self._check_val(val)
 
     def _check_val(self, val):
         if not type(val) == type(str()) and not type(val) == type(u""):
-            raise TypeMismatchException(type(str()),type(val))
+            raise TypeMismatchException(type(str()), type(val))
 
     @property
     def val(self):
@@ -61,30 +61,34 @@ class StringType(type_base.BaseType):
                 raise StringSizeException(s, self.__max_string_len)
 
         # store string value plus size - place size in front
-        buff = struct.pack('>H',len(self.val))
-        if sys.version_info >= (3,0):
+        buff = struct.pack(">H", len(self.val))
+        if sys.version_info >= (3, 0):
             buff = buff + self.val.encode(DATA_ENCODING)
         else:
             buff = buff + self.val
         return buff
 
-
-    def deserialize(self,data, offset):
+    def deserialize(self, data, offset):
         """
         """
         # make sure enough space to extract integer size
         if len(data) < 3:
-            raise DeserializeException("Not enough data to deserialize! Needed: %d Left: %d" % (4,offset))
+            raise DeserializeException(
+                "Not enough data to deserialize! Needed: %d Left: %d" % (4, offset)
+            )
 
         # subtract size of int for stored string size
-        strSize = struct.unpack_from('>H',data,offset)[0]
+        strSize = struct.unpack_from(">H", data, offset)[0]
 
         if len(data) - offset - 2 < strSize:
-            raise DeserializeException("Not enough data to deserialize! Needed: %d Left: %d" % (strSize,offset))
+            raise DeserializeException(
+                "Not enough data to deserialize! Needed: %d Left: %d"
+                % (strSize, offset)
+            )
 
         # get string value here
-        tmp_data = data[offset+2:offset+2+strSize]
-        if sys.version_info >= (3,0):
+        tmp_data = data[offset + 2 : offset + 2 + strSize]
+        if sys.version_info >= (3, 0):
             self.val = tmp_data.decode(DATA_ENCODING)
         else:
             self.val = tmp_data
@@ -97,13 +101,13 @@ class StringType(type_base.BaseType):
     def getSize(self):
         """
         """
-        return len(self.val) + struct.calcsize('>H');
+        return len(self.val) + struct.calcsize(">H")
+
+    def __repr__(self):
+        return "String"
 
 
-    def __repr__(self): return 'String'
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("string")
     try:
         val = StringType("This is a string")
@@ -111,11 +115,7 @@ if __name__ == '__main__':
         buff = val.serialize()
         type_base.showBytes(buff)
         val2 = StringType()
-        val2.deserialize(buff,0)
+        val2.deserialize(buff, 0)
         print("Deserialize: %s" % val2.val)
     except TypeException as e:
-        print("Exception: %s"%e.getMsg())
-
-
-
-
+        print("Exception: %s" % e.getMsg())
