@@ -6,7 +6,6 @@ where else to put. Please find a better home for them when you have time (i.e.
 a more organized file).
 """
 
-from collections import namedtuple
 import types
 
 from fprime_gds.common.data_types.sys_data import SysData
@@ -35,61 +34,6 @@ def repeat_until_interrupt(func: types.FunctionType, *args):
                 args = new_args
     except KeyboardInterrupt:
         pass
-
-
-QueryCommandArgs = namedtuple(
-    "QueryCommandArgs",
-    "dictionary_path ip_address port list follow ids components search json",
-)
-
-
-def query_command_template(
-    print_item_list_func: types.FunctionType,
-    print_upcoming_item_func: types.FunctionType,
-    args: QueryCommandArgs,
-):
-    """
-    Takes in the given arguments and uses them to print out a formatted string
-    of items the user wants to see from the Test API; if the option is present,
-    repeat doing this until the user exits the program.
-
-    :param print_item_list_func: A function that, given an F' dictionary, a
-        Test API predicate, and some print options, can get a sorted list of
-        items from the dictionary and print them
-    :param print_upcoming_item_func: A function that given a Test API instance,
-        a Test API predicate, and printing options, will retrieve an item and
-        print it. Must support "misc_utils.repeat_until_interrupt" usage
-    :param args: The command-line arguments passed in by the user. For
-        descriptions of these arguments, and more function details, see:
-        Gds/src/fprime_gds/executables/fprime_cli.py
-    """
-    # ==========================================================================
-    pipeline, api = test_api_utils.initialize_test_api(
-        args.dictionary_path, server_ip=args.ip_address, server_port=args.port
-    )
-    # ==========================================================================
-
-    filter_predicate = filtering_utils.get_full_filter_predicate(
-        args.ids, args.components, args.search
-    )
-
-    # TODO: Try and refactor this to avoid nested if statements?
-    if args.list:
-        print_item_list_func(pipeline.dictionaries, filter_predicate, args.json)
-    else:
-        if args.follow:
-            repeat_until_interrupt(
-                print_upcoming_item_func, api, filter_predicate, "NOW", args.json
-            )
-        else:
-            print_upcoming_item_func(api, filter_predicate, json=args.json)
-
-    # TODO: Disable Test API from also logging to console somehow?
-
-    # ==========================================================================
-    pipeline.disconnect()
-    api.teardown()
-    # ==========================================================================
 
 
 # TODO: Need to do user tests to find a better print format

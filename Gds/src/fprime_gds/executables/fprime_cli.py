@@ -29,7 +29,7 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
         "-d",
         "--dictionary-path",
         type=str,
-        help="path from the current working directory to the \"<project name>AppDictionary.xml\" file for the project you're using the API with",
+        help='path from the current working directory to the "<project name>AppDictionary.xml" file for the project you\'re using the API with',
         metavar="PATH",
     )
     parser.add_argument(
@@ -37,7 +37,7 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
         "--ip-address",
         type=str,
         default="127.0.0.1",
-        help='connect to the GDS server using the given IP or hostname (default=127.0.0.1 (i.e. localhost))',
+        help="connect to the GDS server using the given IP or hostname (default=127.0.0.1 (i.e. localhost))",
         metavar="IP",
     )
     parser.add_argument(
@@ -45,7 +45,7 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
         "--port",
         type=int,
         default=50050,
-        help='connect to the GDS server using the given port number (default=50050)',
+        help="connect to the GDS server using the given port number (default=50050)",
         metavar="PORT",
     )
 
@@ -68,7 +68,7 @@ def add_history_arguments(parser: argparse.ArgumentParser, command_name: str):
         "-f",
         "--follow",
         action="store_true",
-        help='continue polling the API and printing out new %s to the console until the user exits (via CTRL+C)'
+        help="continue polling the API and printing out new %s to the console until the user exits (via CTRL+C)"
         % (command_name),
     )
     parser.add_argument(
@@ -307,7 +307,7 @@ class EventsParser(CliCommandParserBase):
         """
         Returns the function that should be executed when "events" is called
         """
-        return events.get_events_output
+        return events.EventsCommand.handle_arguments
 
 
 def create_parser():
