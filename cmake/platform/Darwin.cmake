@@ -8,6 +8,7 @@ add_definitions(-DTGT_OS_TYPE_DARWIN)
 # Find an appropriate thread library
 message(STATUS "Requiring thread library")
 FIND_PACKAGE ( Threads REQUIRED )
+set(FPRIME_USE_POSIX ON)
 
 # Darwin specific flags: shared, C, and C++ settings
 set(DARWIN_COMMON
