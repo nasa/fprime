@@ -14,7 +14,7 @@ import xml.etree.ElementTree
 
 # Dependencies required by basic types
 BASIC_DEPENDENCIES = {
-    "component":    ["Fw_Cfg", "Fw_Types", "Fw_Comp"],
+    "component":    ["Fw_Cfg", "Fw_Types"],
     "port":         ["Fw_Cfg", "Fw_Types", "Fw_Port"],
     "interface":    ["Fw_Cfg", "Fw_Types", "Fw_Port"],
     "assembly":     ["Fw_Cfg", "Fw_Types"],
@@ -29,9 +29,9 @@ BASIC_DEPENDENCIES = {
 }
 # Component type importations
 KIND_DEPENDENCIES = {
-    "passive": [],
-    "queued": ["Os"],
-    "active": ["Os"],
+    "passive": ["Fw_Comp"],
+    "queued": ["Fw_CompQueued"], # Depends on the queued portion of Fw_Comp
+    "active": ["Fw_CompQueued"],
     "guarded_input": ["Os"]
 }
 
@@ -56,8 +56,9 @@ DEPENDENCY_ORDER = [
     "Fw_Log",
     "Fw_Tlm",
     "Fw_Prm",
+    "Fw_Comp",
     "Os",
-    "Fw_Comp"
+    "Fw_CompQueued"
     ]
 # Oh, also dependencies need to be listed in reverse order.
 DEPENDENCY_ORDER.reverse()
