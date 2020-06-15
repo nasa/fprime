@@ -8,6 +8,7 @@
 #include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/EightyCharString.hpp>
 #include <stdio.h>
 
 namespace Svc {
@@ -212,6 +213,16 @@ namespace Svc {
 		Fw::LogStringArg msg(arg1.toChar());
     	// Echo the NO_OP_STRING args here.
     	this->log_ACTIVITY_HI_NoOpStringReceived(msg);
+    	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    }
+
+    void CommandDispatcherImpl::CMD_NO_OP_ARRAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::ArrayType arg1) {
+        Fw::EightyCharString s;
+        arg1.toString(s);
+
+		Fw::LogStringArg msg(s.toChar());
+    	// Echo the NO_OP_ARRAY args here.
+    	this->log_ACTIVITY_HI_NoOpArrayReceived(msg);
     	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 

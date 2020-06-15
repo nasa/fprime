@@ -14,6 +14,7 @@
 #ifndef COMMANDDISPATCHERIMPL_HPP_
 #define COMMANDDISPATCHERIMPL_HPP_
 
+#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherImplCfg.hpp>
@@ -112,6 +113,14 @@ namespace Svc {
             //!  \param cmdSeq the assigned sequence number for the command
             //!  \param arg1 the string argument
             void CMD_NO_OP_STRING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& arg1);
+            //!  \brief A test command with array type argument
+            //!
+            //!  A test command that receives an array type argument
+            //!
+            //!  \param opCode the NO_OP_ARRAY opcode.
+            //!  \param cmdSeq the assigned sequence number for the command
+            //!  \param arg1 the array type argument
+            void CMD_NO_OP_ARRAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::ArrayType arg1);
             //!  \brief A test command with different argument types
             //!
             //!  A test command that receives a set of arguments of different types

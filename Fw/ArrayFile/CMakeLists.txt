@@ -6,6 +6,6 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ArrayTypeAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/ArrayTypeArrayAi.xml"
 )
 register_fprime_module()

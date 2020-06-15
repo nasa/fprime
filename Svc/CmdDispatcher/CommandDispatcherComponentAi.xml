@@ -2,6 +2,7 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <component name="CommandDispatcher" kind="active" namespace="Svc">
+    <import_array_type>Fw/ArrayFile/ArrayTypeArrayAi.xml</import_array_type>
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
@@ -84,6 +85,17 @@
             <comment>
             Clear command tracking info to recover from components not returning status
             </comment>
+        </command>
+        <!-- NO_OP_ARRAY command -->
+        <command kind="async" opcode="4" mnemonic="CMD_NO_OP_ARRAY">
+            <comment>
+            No-op array command
+            </comment>
+            <args>
+                <arg name="arg1" type="Fw::ArrayType">
+                    <comment>The Array command argument</comment>
+                </arg>
+            </args>
         </command>
     </commands>
     <events>
@@ -216,6 +228,17 @@
                     <comment>Arg3</comment>
                 </arg>
            </args>       
+        </event>
+        <event id="10" name="NoOpArrayReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP Array=%s" >
+        	<comment>
+        	The command dispatcher has successfully recieved a NO-OP array command
+        	</comment>
+
+            <args>
+                <arg name="message" type="string" size="255">
+                    <comment>The NO-OP array that is generated</comment>
+                </arg>
+           </args>
         </event>
     </events>
     <telemetry>
