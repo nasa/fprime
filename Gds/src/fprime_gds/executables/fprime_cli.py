@@ -313,8 +313,7 @@ class EventsParser(CliCommandParserBase):
         """
         Returns the function that should be executed when "events" is called
         """
-        # NOTE: Need to instantiate instance of class for classmethod to be valid
-        return events.EventsCommand().handle_arguments
+        return events.EventsCommand.handle_arguments
 
 
 def create_parser():
