@@ -28,11 +28,15 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
     want to specify
     """
     parser.add_argument(
-        "-d",
-        "--dictionary-path",
+        # TODO: Somehow make this optional and autosearch for the dictionary?
+        # NOTE: Python 3.5 doesn't convert positional arg names w/ dashes to
+        # underscores (i.e. 'a-b' => 'a_b'), unlike w/ optional args, so we have
+        # to use the underscore in the name here so we can use this name in
+        # functions with keyword arguments
+        "dictionary_path",
         type=str,
         help='path from the current working directory to the "<project name>AppDictionary.xml" file for the project you\'re using the API with',
-        metavar="PATH",
+        metavar="dictionary-path",
     )
     parser.add_argument(
         "-ip",
@@ -243,11 +247,11 @@ class CommandSendParser(CliCommandParserBase):
         Add all the required and optional arguments for this command to the
         given parser
         """
+        add_connection_arguments(parser)
         parser.add_argument(
             "command_name",
             help='the full name of the command you want to execute in "<component>.<name>" form',
         )
-        add_connection_arguments(parser)
         parser.add_argument(
             "-l",
             "--list",
@@ -309,7 +313,8 @@ class EventsParser(CliCommandParserBase):
         """
         Returns the function that should be executed when "events" is called
         """
-        return events.EventsCommand.handle_arguments
+        # NOTE: Need to instantiate instance of class for classmethod to be valid
+        return events.EventsCommand().handle_arguments
 
 
 def create_parser():

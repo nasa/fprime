@@ -67,7 +67,6 @@ class QueryHistoryCommand(BaseCommand):
         """
         pass
 
-    # TODO: Somehow link this directly to the parser arguments in fprime_cli?
     # TODO: Just use args/kwargs instead of this massive argument list? But I
     # kind of do want some coupling with the frontend code to keep these in sync
     # TODO: Should separate frontend printing code from backend data-getting

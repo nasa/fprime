@@ -7,7 +7,7 @@
 # distributions. In addition it provides an integration and test layer to allow for automated
 # testing of F prime distributions.
 #
-# Endpoints: 
+# Endpoints:
 # - fprime-gds: run the F prime GDS
 #
 # Optional Features:
@@ -68,7 +68,7 @@ integrated configuration with ground in-the-loop.
     author_email='Michael.D.Starch@jpl.nasa.gov',
     ####
     # Included Packages:
-    # 
+    #
     # Will search for and included all python packages under the "src" directory.  The root package
     # is set to 'src' to avoid package names of the form src.fprime_gds. This will also ensure that
     # files included in MANIFEST.in are included in their respective packages.
@@ -87,7 +87,10 @@ integrated configuration with ground in-the-loop.
     entry_points={
         'gui_scripts': [
             'fprime-gds = fprime_gds.executables.run_deployment:main'
-        ]
+        ],
+        'console_scripts': [
+            'fprime-cli = fprime_gds.executables.fprime_cli:main'
+        ],
     },
     ####
     # Classifiers:
