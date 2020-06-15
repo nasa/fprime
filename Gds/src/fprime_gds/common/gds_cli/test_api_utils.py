@@ -38,13 +38,7 @@ def initialize_test_api(
     :param server_ip: The IP of the GDS server you want to connect to
     :param server_port: The port for the Test API on the GDS server
     """
-    if not app_dictionary_path:
-        # TODO: Somehow search for this dynamically? Or is there no way around?
-        local_dir = os.path.dirname(__file__)
-        app_dictionary_path = os.path.join(
-            local_dir, "../../../../../Ref/Top/RefTopologyAppDictionary.xml"
-        )
-
+    # TODO: Somehow search for the dictionary path dynamically?
     pipeline = StandardPipeline()
     pipeline.setup(ConfigManager(), app_dictionary_path, "/tmp")
     pipeline.connect(server_ip, server_port)
