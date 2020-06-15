@@ -43,6 +43,7 @@ from fprime.common.models.serialize.i64_type import *
 
 from fprime.common.models.serialize.string_type import *
 from fprime.common.models.serialize.serializable_type import *
+from fprime.common.models.serialize.array_type import *
 
 class XmlLoader(dict_loader.DictLoader):
     '''Class to help load xml based dictionaries'''
@@ -61,6 +62,14 @@ class XmlLoader(dict_loader.DictLoader):
     SER_MEMB_FMT_STR_TAG = "format_specifier"
     SER_MEMB_DESC_TAG = "description"
     SER_MEMB_TYPE_TAG = "type"
+
+    # Xml section names and tags for array types
+    ARR_SECT = "arrays"
+    ARR_TYPE_TAG = "type"
+    ARR_SIZE_TAG = "size"
+    ARR_FORMAT_TAG = "format"
+    ARR_DEFAULT_TAG = "default"
+    ARR_DEFAULT_VALUE_TAG = "value"
 
     # Xml sction names and tags for argument sections
     ARGS_SECT = "args"
@@ -83,6 +92,7 @@ class XmlLoader(dict_loader.DictLoader):
         # to be parsed multiple times
         self.enums = dict()
         self.serializable_types = dict()
+        self.array_types = dict()
 
     def get_xml_tree(self, path):
         '''
@@ -265,6 +275,65 @@ class XmlLoader(dict_loader.DictLoader):
         return None
 
 
+    def get_array_type(self, type_name, xml_obj):
+        '''
+        Parses and retuns an array type object for the given type name.
+
+        Looks in the arrays section of the xml dict.
+
+        Args:
+            type_name (string): Name of the type to parse
+            xml_obj (lxml etree root): Parsed Xml object to find type in
+
+        Returns:
+            If the type name could be found in the xml_obj, a corresponding
+            object of a type derived from ArrayType is returned.
+            Otherwise, None is returned. The caller will hold the only reference
+            to the object.
+        '''
+
+        f = open("debugthis.txt", "a")
+        f.write(type_name)
+        f.close
+        
+        # Check if there is already a parsed version of this array
+        if (type_name in self.array_types):
+            # Return a copy, so that the objects are not shared
+            return deepcopy(self.array_types[type_name])
+
+        # Check if the dictionary has an array section
+        arr_section = self.get_xml_section(self.ARR_SECT, xml_obj)
+        if (arr_section == None):
+            return None
+
+        for arr_type in arr_section:
+            # Check if this array matches the type name
+            if (arr_type.get(self.ARR_TYPE_TAG) == type_name):
+                # Go through default members
+                memb_section = self.get_xml_section(self.ARR_DEFAULT_TAG, arr_type)
+
+                # If there is no default member section, this type is invalid
+                if (memb_section == None):
+                    return None
+
+                # Make config
+                arr_type = self.get_xml_section(self.ARR_TYPE_TAG, arr_type)
+                arr_size = self.get_xml_section(self.ARR_SIZE_TAG, arr_type)
+                arr_format = self.get_xml_section(self.ARR_FORMAT_TAG, arr_type)
+
+                members = []
+                for memb in memb_section:
+                    val = memb.get(self.ARR_DEFAULT_VALUE_TAG)
+                    members.append(val)
+
+                arr_obj = ArrayType(type_name, members)
+
+                self.array_types[type_name] = arr_obj
+                return arr_obj
+
+        return None
+
+
     def parse_type(self, type_name, xml_item, xml_tree):
         '''
         Parses the given type string and returns a type object.
@@ -309,7 +378,7 @@ class XmlLoader(dict_loader.DictLoader):
             if self.STR_LEN_TAG not in xml_item.attrib:
                 print("Trying to parse string type, but found %s field"%
                       self.STR_LEN_TAG)
-                return None
+                return one
             return StringType(max_string_len=int(xml_item.get(self.STR_LEN_TAG), 0))
         else:
             # First try Serialized types:
@@ -319,6 +388,11 @@ class XmlLoader(dict_loader.DictLoader):
 
             # Now try enums:
             result = self.get_enum_type(type_name, xml_tree)
+            if result != None:
+                return result
+
+            # Now try arrays:
+            result = self.get_array_type(type_name, xml_tree)
             if result != None:
                 return result
 

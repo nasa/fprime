@@ -34,6 +34,7 @@ from fprime.common.models.serialize.i64_type import *
 
 from fprime.common.models.serialize.string_type import *
 from fprime.common.models.serialize.serializable_type import *
+from fprime.common.models.serialize.array_type import *
 
 from copy import deepcopy
 
@@ -172,6 +173,8 @@ class CmdData(sys_data.SysData):
         elif type(arg_type) == type(StringType()):
             arg_type.val = arg_val
         elif type(arg_type) == type(SerializableType()):
+            pass
+        elif type(arg_type) == type(ArrayType()):
             pass
         else:
             raise CommandArgumentException('Argument value could not be converted to type object')

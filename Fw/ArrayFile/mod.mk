@@ -13,4 +13,4 @@
 
 # There are some standard files that are included for reference
 
-SRC = 	ArrayFileAi.xml
+SRC = 	ArrayTypeArrayAi.xml
