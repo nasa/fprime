@@ -110,6 +110,8 @@ def get_upcoming_channel(
     )
 
 
+# TODO: This currently doesn't seem to return anything, even when commands
+# happen?
 def get_upcoming_command(
     test_api: IntegrationTestAPI,
     search_filter: predicates.predicate,

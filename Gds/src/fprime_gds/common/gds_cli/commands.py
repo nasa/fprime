@@ -14,6 +14,29 @@ from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.testing_fw import predicates
 
 
+def get_cmd_template_string(temp):
+    cmd_string = "%s (%d) | Takes %d arguments.\n" % (
+        temp.get_full_name(),
+        temp.get_id(),
+        len(temp.get_args()),
+    )
+
+    for arg in temp.get_args():
+        arg_description = "--no description--"
+        # TODO: Compare against actual module, not just the name (but EnumType
+        # is a serializable type from the dictionary?
+        if type(arg[2]).__name__ == "EnumType":
+            arg_description = str(arg[2].keys())
+
+        cmd_string += "\t%s (%s): %s\n" % (
+            arg[0],
+            type(arg[2]).__name__,
+            arg_description,
+        )
+
+    return cmd_string
+
+
 class CommandsCommand(QueryHistoryCommand):
     """
     Takes in the given arguments and prints an appropriate formatted string of
@@ -41,16 +64,18 @@ class CommandsCommand(QueryHistoryCommand):
             channels
         :param json: Whether to print out each item in JSON format or not
         """
-
-        # TODO: This empty command causes errors; find a more robust method?
+        # TODO: Trying to create a blank command causes errors; find a more
+        # robust method?
         def create_empty_command(cmd_template):
-            return CmdData(("",), cmd_template)
+            return cmd_template
 
         command_list = test_api_utils.get_item_list(
             project_dictionary.command_id, filter_predicate, create_empty_command
         )
+
+        # TODO: Actually use JSON?
         for command in command_list:
-            print(misc_utils.get_item_string(command, json))
+            print(get_cmd_template_string(command))
 
     @classmethod
     def print_upcoming_item(
@@ -64,9 +89,6 @@ class CommandsCommand(QueryHistoryCommand):
         Prints out the next upcoming command data after the given time that
         matches the given filter (in a way usable by the
         "repeat_until_interrupt" function).
-
-        TODO: This currently doesn't seem to return anything, even when commands
-        happen?
         """
         command_object = test_api_utils.get_upcoming_command(
             api, filter_predicate, min_start_time
