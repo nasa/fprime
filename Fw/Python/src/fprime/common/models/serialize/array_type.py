@@ -55,23 +55,29 @@ class ArrayType(type_base.BaseType):
         JSONable type
         """
         members = {}
+        members["name"] = self.__typename
+        members["type"] = self.__arr_type
+        members["size"] = self.__arr_size
+        members["format"] = self.__arr_format
         members["defaults"] = []
-        for member in self.default_list:
+        for member in self.__default_list:
             members["defaults"].append(member.to_jsonable())
         return members
 
     @property
-    def mem_list(self):
-        return self.__mem_list
+    def default_list(self):
+        return self.__default_list
 
-
-    @default_list.setter
-    def default_list(self, ml):
+    def default_list(self, dl):
         """
         @todo: add arg type checking
         """
-        self.__default_list = ml
+        self.__default_list = dl
 
+    # All Gds types have a value, array will redirect to defaults
+    @property
+    def val(self):
+        return self.__default_list
 
     def serialize(self):
         if self.mem_list == None:

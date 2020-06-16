@@ -5,7 +5,7 @@
         chanTlm         |   61 (0x3d)   |          20           |             20             |             None              |         0        
      sendBuffComp       |   81 (0x51)   |          20           |             20             |              14               |         9        
      recvBuffComp       |  101 (0x65)   |          20           |             20             |               5               |         9        
-        cmdDisp         |  121 (0x79)   |          20           |             20             |              10               |        10        
+        cmdDisp         |  121 (0x79)   |          20           |             20             |              11               |        11        
          prmDb          |  141 (0x8d)   |          20           |             20             |               8               |         8        
     rateGroup2Comp      |  161 (0xa1)   |          20           |             20             |               2               |         2        
           SG1           |  181 (0xb5)   |          20           |             20             |               3               |         3        

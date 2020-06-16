@@ -216,8 +216,11 @@ namespace Svc {
     	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 
-    void CommandDispatcherImpl::CMD_NO_OP_ARRAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::ArrayType arg1) {
+    void CommandDispatcherImpl::CMD_NO_OP_ARRAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         Fw::EightyCharString s;
+        U32 num1 = (U32) 12U;
+        U32 num2 = (U32) 1234U;
+        Fw::ArrayType arg1 = Fw::ArrayType(num1, num2);
         arg1.toString(s);
 
 		Fw::LogStringArg msg(s.toChar());

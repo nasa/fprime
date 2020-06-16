@@ -66,10 +66,11 @@ class XmlLoader(dict_loader.DictLoader):
 
     # Xml section names and tags for array types
     ARR_SECT = "arrays"
+    ARR_NAME_TAG = "name"
     ARR_TYPE_TAG = "type"
     ARR_SIZE_TAG = "size"
     ARR_FORMAT_TAG = "format"
-    ARR_DEFAULT_TAG = "default"
+    ARR_DEFAULT_TAG = "defaults"
     ARR_DEFAULT_VALUE_TAG = "value"
 
     # Xml sction names and tags for argument sections
@@ -288,10 +289,6 @@ class XmlLoader(dict_loader.DictLoader):
             Otherwise, None is returned. The caller will hold the only reference
             to the object.
         '''
-
-        f = open("debugthis.txt", "a")
-        f.write(type_name)
-        f.close
         
         # Check if there is already a parsed version of this array
         if (type_name in self.array_types):
@@ -303,27 +300,28 @@ class XmlLoader(dict_loader.DictLoader):
         if (arr_section == None):
             return None
 
-        for arr_type in arr_section:
-            # Check if this array matches the type name
-            if (arr_type.get(self.ARR_TYPE_TAG) == type_name):
+        for arr_memb in arr_section:
+            # Check if this array matches the name name
+            if (arr_memb.get(self.ARR_NAME_TAG) == type_name):
                 # Go through default members
-                memb_section = self.get_xml_section(self.ARR_DEFAULT_TAG, arr_type)
+                default_section = self.get_xml_section(self.ARR_DEFAULT_TAG, arr_memb)
 
                 # If there is no default member section, this type is invalid
-                if (memb_section == None):
+                if (default_section == None):
                     return None
 
                 # Make config
-                arr_type = self.get_xml_section(self.ARR_TYPE_TAG, arr_type)
-                arr_size = self.get_xml_section(self.ARR_SIZE_TAG, arr_type)
-                arr_format = self.get_xml_section(self.ARR_FORMAT_TAG, arr_type)
+                arr_type = arr_memb.get(self.ARR_TYPE_TAG)
+                arr_size = arr_memb.get(self.ARR_SIZE_TAG)
+                arr_format = arr_memb.get(self.ARR_FORMAT_TAG)
+                config = (arr_type, arr_size, arr_format)
 
-                members = []
-                for memb in memb_section:
+                defaults = []
+                for memb in default_section:
                     val = memb.get(self.ARR_DEFAULT_VALUE_TAG)
-                    members.append(val)
+                    defaults.append(val)
 
-                arr_obj = ArrayType(type_name, members)
+                arr_obj = ArrayType(type_name, config, defaults)
 
                 self.array_types[type_name] = arr_obj
                 return arr_obj
@@ -347,9 +345,9 @@ class XmlLoader(dict_loader.DictLoader):
             Object of a class derived from the TypeBase class if successful,
             Raises an exception if the parsing fails. The caller will hold the
             only reference to the object.
-        """
-
-        if type_name == "I8":
+        '''
+        
+        if (type_name == "I8"):
             return I8Type()
         elif type_name == "I16":
             return I16Type()
