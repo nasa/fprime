@@ -76,7 +76,7 @@ def generate_enum(xml_file):
         #
         fp = open_file(name, "hpp")
         c = enum_hpp.enum_hpp()
-        write_template(fp, c, name, namespace, items, max_value)
+        write_template(fp, c, name, namespace, items, max_value, comments)
         fp.close()
         #
         # Generate the cpp file

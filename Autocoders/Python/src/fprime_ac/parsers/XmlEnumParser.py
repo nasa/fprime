@@ -97,8 +97,6 @@ class XmlEnumParser(object):
         else:
             self.__namespace = None
         
-        print(self.__name + " " + self.__namespace)
-        
         for enum_tag in enum:
             if enum_tag.tag == 'item':
                 item = enum_tag.attrib
