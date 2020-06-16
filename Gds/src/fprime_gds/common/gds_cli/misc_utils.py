@@ -6,9 +6,11 @@ where else to put. Please find a better home for them when you have time (i.e.
 a more organized file).
 """
 
+import json
 import types
 
 from fprime_gds.common.data_types.sys_data import SysData
+from fprime_gds.flask.json import GDSJsonEncoder
 
 
 def repeat_until_interrupt(func: types.FunctionType, *args):
@@ -49,8 +51,7 @@ def get_item_string(item: SysData, as_json: bool = False) -> str:
         return "No matching item found"
 
     if as_json:
-        # TODO: "json.dumps" doesn't seem to work correctly yet?
-        pass
+        return json.dumps(item, indent=2, cls=GDSJsonEncoder)
     # TODO: "get_str" isn't on the base sys_data class, but is on all the query
     # items we care about so far (i.e. EventData, ChannelData, CommandData)
     return item.get_str(verbose=True)

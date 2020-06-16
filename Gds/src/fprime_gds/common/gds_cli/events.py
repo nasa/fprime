@@ -26,7 +26,7 @@ def get_event_string(event: EventData, as_json: bool = False) -> str:
     :return: A readable string of the event information
     """
     # TODO: Implement this properly!
-    return misc_utils.get_item_string(event)
+    return misc_utils.get_item_string(event, as_json)
 
 
 class EventsCommand(QueryHistoryCommand):
