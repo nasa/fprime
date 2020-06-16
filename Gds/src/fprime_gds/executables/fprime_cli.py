@@ -11,15 +11,8 @@ import sys
 
 import fprime_gds.common.gds_cli.channels as channels
 import fprime_gds.common.gds_cli.commands as commands
+import fprime_gds.common.gds_cli.command_send as command_send
 import fprime_gds.common.gds_cli.events as events
-
-
-def PLACEHOLDER_FUNC(**kwargs):
-    """
-    TODO: REMOVE!
-    A placeholder function that just prints out the arguments it's given
-    """
-    print(kwargs)
 
 
 def add_connection_arguments(parser: argparse.ArgumentParser):
@@ -141,7 +134,7 @@ class CliCommandParserBase(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def add_arguments(cls, parser):
+    def add_arguments(cls, parser: argparse.ArgumentParser):
         """
         Add all the required and optional arguments for this command to the
         given parser
@@ -252,25 +245,13 @@ class CommandSendParser(CliCommandParserBase):
             "command_name",
             help='the full name of the command you want to execute in "<component>.<name>" form',
         )
-        parser.add_argument(
-            "-l",
-            "--list",
-            action="store_true",
-            help="list all commands available on the current F Prime instance; identical to `commands --list`",
-        )
-        parser.add_argument(
-            "-k",
-            "--key",
-            type=str,
-            help='the sanity-check key to prevent accidental commands from being sent; "K" should be given as "0xfeedcafe" to send an actual command, otherwise no command will be sent',
-            metavar="K",
-        )
         # NOTE: Type set to string because we don't know the type beforehand
         parser.add_argument(
             "-args",
             "--arguments",
             nargs="*",
             type=str,
+            default=[],
             help="provide a space-separated set of arguments to the command being sent",
         )
 
@@ -280,7 +261,7 @@ class CommandSendParser(CliCommandParserBase):
         Returns the function that should be executed when "command-send" is
         called
         """
-        return PLACEHOLDER_FUNC
+        return command_send.CommandSendCommand.handle_arguments
 
 
 class EventsParser(CliCommandParserBase):
@@ -320,7 +301,7 @@ def create_parser():
     parser = argparse.ArgumentParser(
         description="provides utilities for dealing with random numbers"
     )
-    parser.add_argument("-V", "--version", action="version", version="1.0.0")
+    parser.add_argument("-V", "--version", action="version", version="0.0.1")
 
     # Add subcommands to the parser
     subparsers = parser.add_subparsers(dest="func")
@@ -332,7 +313,7 @@ def create_parser():
     return parser
 
 
-def parse_args(parser, arguments):
+def parse_args(parser: argparse.ArgumentParser, arguments):
     """
     Parses the given arguments and returns the resulting namespace; having this
     separate allows for unit testing if needed

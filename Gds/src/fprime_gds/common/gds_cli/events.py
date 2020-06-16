@@ -3,7 +3,6 @@ Handles executing the "events" CLI command for the GDS
 """
 
 import types
-from typing import List
 
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 import fprime_gds.common.gds_cli.misc_utils as misc_utils

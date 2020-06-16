@@ -3,6 +3,8 @@ A set of utility classes and functions for filtering the items we want to return
 to the user in the GDS CLI
 """
 
+from typing import Iterable
+
 from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.data_types.sys_data import SysData
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
@@ -32,7 +34,7 @@ class id_predicate(predicates.predicate):
         return "x.id == {}".format(self.id)
 
 
-def get_id_predicate(ids) -> predicates.predicate:
+def get_id_predicate(ids: Iterable[int]) -> predicates.predicate:
     """
     Returns a Test API predicate that only accepts items with one of the given
     type IDs (if no IDs are given, accept all items).
@@ -78,7 +80,7 @@ class component_predicate(predicates.predicate):
         return 'x is in component "{}"'.format(self.comp)
 
 
-def get_component_predicate(components) -> predicates.predicate:
+def get_component_predicate(components: Iterable[str]) -> predicates.predicate:
     """
     Returns a Test API predicate that only accepts items from one of the given
     components (if no components are given, accept all items).

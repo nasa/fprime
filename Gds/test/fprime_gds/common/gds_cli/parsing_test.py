@@ -7,6 +7,7 @@ import pytest
 
 import fprime_gds.common.gds_cli.channels as channels
 import fprime_gds.common.gds_cli.commands as commands
+import fprime_gds.common.gds_cli.command_send as command_send
 import fprime_gds.common.gds_cli.events as events
 import fprime_gds.executables.fprime_cli as fprime_cli
 
@@ -23,7 +24,7 @@ def default_valid_args_dict(updated_values_dict={}):
     key/value pairs to update this dictionary as necessary for a given test
     """
     dictionary = {
-        "func": fprime_cli.PLACEHOLDER_FUNC,
+        "func": None,
         "dictionary_path": "PATH",
         "ip_address": "127.0.0.1",
         "port": 50050,
@@ -77,8 +78,6 @@ def default_valid_events_dict(updated_values_dict={}):
             {
                 "func": fprime_cli.PLACEHOLDER_FUNC,
                 "command_name": "some.command.name",
-                "list": False,
-                "key": None,
                 "arguments": None,
                 "dictionary_path": "PATH",
                 "ip_address": "127.0.0.1",

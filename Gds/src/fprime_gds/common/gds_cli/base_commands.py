@@ -3,24 +3,26 @@ A collection of base classes used for the backend implementations of the GDS
 CLI commands
 """
 
+import abc
 import types
-from typing import List
+from typing import Iterable
 
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
-
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 
 
-class BaseCommand:
+class BaseCommand(abc.ABC):
     """
     The base class for implementing a GDS CLI command's functionality, once
     arguments are parsed and passed into this command.
     """
 
     @classmethod
+    @abc.abstractmethod
     def handle_arguments(cls, *args, **kwargs):
         """
         Do something to handle the input arguments given
@@ -36,6 +38,7 @@ class QueryHistoryCommand(BaseCommand):
     """
 
     @classmethod
+    @abc.abstractmethod
     def print_items_list(
         cls,
         project_dictionary: Dictionaries,
@@ -54,9 +57,10 @@ class QueryHistoryCommand(BaseCommand):
         pass
 
     @classmethod
+    @abc.abstractmethod
     def print_upcoming_item(
         cls,
-        api,
+        api: IntegrationTestAPI,
         filter_predicate: predicates.predicate,
         min_start_time="NOW",
         json: bool = False,
@@ -69,7 +73,7 @@ class QueryHistoryCommand(BaseCommand):
 
     @classmethod
     def get_filter_predicate(
-        cls, ids: List[int], components: List[str], search: str
+        cls, ids: Iterable[int], components: Iterable[str], search: str
     ) -> predicates.predicate:
         """
         Returns a predicate that will be used for filtering out which objects to
@@ -89,8 +93,8 @@ class QueryHistoryCommand(BaseCommand):
         port: int,
         list: bool,
         follow: bool,
-        ids: List[int],
-        components: List[str],
+        ids: Iterable[int],
+        components: Iterable[str],
         search: str,
         json: bool,
         *args,
