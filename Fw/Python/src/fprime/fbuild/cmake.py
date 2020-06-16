@@ -366,7 +366,10 @@ class CMakeHandler(object):
 
     def get_toolchain_config(self):
         """Returns the default toolchain"""
-        return self.settings.get("default_toolchain", "native"), self.settings.get("toolchain_locations", [])
+        return (
+            self.settings.get("default_toolchain", "native"),
+            self.settings.get("toolchain_locations", []),
+        )
 
     def load_settings(self, settings_file, cmake_dir):
         """
@@ -374,7 +377,9 @@ class CMakeHandler(object):
         """
         # Non-generate targets can read the settings file location directly from the build-cache
         if settings_file is None:
-            settings_file = self.get_fprime_configuration(fprime.fbuild.settings.IniSettings.SET_ENV, cmake_dir)
+            settings_file = self.get_fprime_configuration(
+                fprime.fbuild.settings.IniSettings.SET_ENV, cmake_dir
+            )
         self.settings = fprime.fbuild.settings.IniSettings.load(settings_file)
 
     @staticmethod
