@@ -30,7 +30,10 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
   // Constructors
   // ----------------------------------------------------------------------
-  
+
+  #for $com in $comments:
+  //! $com
+  #end for  
   ${name} :: ${name}(void):Serializable()
   {
     this->e = (t)0;
@@ -70,9 +73,17 @@ namespace ${namespace} {
 #set $value_iter = 0
 #for $item_name,$item_value,$item_comment in $items_list:
 #if $value_iter == 0
+#if $item_value < 2147483648:
 a == $item_value#slurp
+#else:
+a == ${item_value}U#slurp
+#end if
 #else
+#if $item_value < 2147483648:
  || a == $item_value#slurp
+#else:
+ || a == ${item_value}U#slurp
+#end if
 #end if
 #set $value_iter = $value_iter + 1
 #end for
@@ -99,9 +110,17 @@ a == $item_value#slurp
 #for $item_name,$item_value,$item_comment in $items_list:
 #if int($item_value) > -1
 #if $value_iter == 0
+#if $item_value < 2147483648:
 a == $item_value#slurp
+#else:
+a == ${item_value}U#slurp
+#end if
 #else
+#if $item_value < 2147483648:
  || a == $item_value#slurp
+#else
+ || a == ${item_value}U#slurp
+#end if
 #end if
 #set $value_iter = $value_iter + 1
 #end if
