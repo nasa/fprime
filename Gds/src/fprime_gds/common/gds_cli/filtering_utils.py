@@ -68,7 +68,7 @@ class component_predicate(predicates.predicate):
             item_component = item.get_comp_name()
         elif hasattr(item.get_template(), "get_comp_name"):
             # TODO: Technically law of Minerva violation (acceptable?)
-            item.get_template().get_comp_name()
+            item_component = item.get_template().get_comp_name()
         return self.comp == item_component
 
     def __str__(self):
