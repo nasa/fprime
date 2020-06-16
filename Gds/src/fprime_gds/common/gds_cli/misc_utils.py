@@ -9,8 +9,6 @@ a more organized file).
 import types
 
 from fprime_gds.common.data_types.sys_data import SysData
-import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
-import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 
 
 def repeat_until_interrupt(func: types.FunctionType, *args):
