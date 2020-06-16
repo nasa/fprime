@@ -91,11 +91,6 @@
             <comment>
             No-op array command
             </comment>
-            <args>
-                <arg name="arg1" type="Fw::ArrayType">
-                    <comment>The Array command argument</comment>
-                </arg>
-            </args>
         </command>
     </commands>
     <events>
@@ -229,16 +224,16 @@
                 </arg>
            </args>       
         </event>
-        <event id="10" name="NoOpArrayReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP Array=%s" >
+        <event id="10" name="NoOpArrayReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP Array: example=%s" >
         	<comment>
         	The command dispatcher has successfully recieved a NO-OP array command
         	</comment>
 
             <args>
-                <arg name="message" type="string" size="255">
-                    <comment>The NO-OP array that is generated</comment>
+                <arg name="message" type="string" size="40">
+                    <comment>An example array</comment>
                 </arg>
-           </args>
+           </args> 
         </event>
     </events>
     <telemetry>

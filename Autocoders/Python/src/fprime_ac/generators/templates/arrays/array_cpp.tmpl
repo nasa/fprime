@@ -90,8 +90,10 @@ namespace ${namespace} {
     ) :
       Serializable()
   {
+#set $k = 0
 #for $i in $range(1, $size + 1)
-    this->elements[0] = e${i};
+    this->elements[$k] = e${i};
+#set $k = $k + 1
 #end for
   }
   
@@ -198,7 +200,7 @@ void ${name}::toString(Fw::StringBase& text) const {
     );
     outputString[FW_ARRAY_TO_STRING_BUFFER_SIZE-1] = 0; // NULL terminate
 
-    (Fw::EightyCharString)text = outputString;
+    text = outputString;
 }
 
 \#endif

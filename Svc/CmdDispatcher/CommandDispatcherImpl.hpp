@@ -119,8 +119,7 @@ namespace Svc {
             //!
             //!  \param opCode the NO_OP_ARRAY opcode.
             //!  \param cmdSeq the assigned sequence number for the command
-            //!  \param arg1 the array type argument
-            void CMD_NO_OP_ARRAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::ArrayType arg1);
+            void CMD_NO_OP_ARRAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
             //!  \brief A test command with different argument types
             //!
             //!  A test command that receives a set of arguments of different types

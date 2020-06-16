@@ -37,6 +37,7 @@ from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 from fprime_ac.parsers import XmlTopologyParser
+from fprime_ac.parsers import XmlArrayParser
 
 from lxml import etree
 
@@ -320,6 +321,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             # create a new XML tree for dictionary
             enum_list = etree.Element("enums")
             serializable_list = etree.Element("serializables")
+            array_list = etree.Element("arrays")
             command_list = etree.Element("commands")
             event_list = etree.Element("events")
             telemetry_list = etree.Element("channels")
@@ -604,8 +606,43 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
                         parameter_list.append(param_elem)
 
+                # Check for arrays
+                if (parsed_xml_dict[comp_type].get_array_type_files() != None):
+                    array_file_list = parsed_xml_dict[comp_type].get_array_type_files()
+                    for array_file in array_file_list:
+                        array_file = search_for_file("Array", array_file)
+                        array_model = XmlArrayParser.XmlArrayParser(array_file)
+                        if (len(array_model.get_includes()) != 0):
+                            raise Exception("%s: Can only include one level of serializable for dictionaries"%serializable_file)
+                        array_elem = etree.Element("array")
+
+                        array_name = array_model.get_namespace() + "::" + array_model.get_name()
+                        array_elem.attrib["name"] = array_name
+                        
+                        array_type = array_model.get_type()
+                        array_elem.attrib["type"] = array_type
+
+                        array_type_id = array_model.get_type_id()
+                        array_elem.attrib["type_id"] = array_type_id
+
+                        array_size = array_model.get_size()
+                        array_elem.attrib["size"] = array_size
+
+                        array_format = array_model.get_format()
+                        array_elem.attrib["format"] = array_format
+
+                        members_elem = etree.Element("defaults")
+                        for d_val in array_model.get_default():
+                            member_elem = etree.Element("default")
+                            member_elem.attrib["value"] = d_val
+                            members_elem.append(member_elem)
+
+                        array_elem.append(members_elem)
+                        array_list.append(array_elem)
+
             topology_dict.append(enum_list)
             topology_dict.append(serializable_list)
+            topology_dict.append(array_list)
             topology_dict.append(command_list)
             topology_dict.append(event_list)
             topology_dict.append(telemetry_list)
