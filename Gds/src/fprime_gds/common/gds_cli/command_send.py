@@ -23,7 +23,8 @@ class CommandSendCommand(BaseCommand):
         command_name: str,
         arguments: List[str],
         *args,
-        **kwargs):
+        **kwargs
+    ):
         """
         Handle the command-send arguments to connect to the Test API correctly,
         then send the command via the Test API.

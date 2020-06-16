@@ -5,17 +5,24 @@ Handles executing the "commands" CLI command for the GDS
 import types
 from typing import List
 
+from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
-
-from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
+from fprime_gds.common.templates.cmd_template import CmdTemplate
 from fprime_gds.common.testing_fw import predicates
 
 
-def get_cmd_template_string(temp, as_json: bool = False):
+def get_cmd_template_string(temp: CmdTemplate, as_json: bool = False) -> str:
+    """
+    Converts the given command template into a human-readable string.
+
+    :param temp: The CmdTemplate to convert to a string
+    :param as_json: Whether or not to return a JSON representation of "temp"
+    :return: A readable string version of "temp"
+    """
     if as_json:
         return misc_utils.get_item_string(temp, as_json)
 
