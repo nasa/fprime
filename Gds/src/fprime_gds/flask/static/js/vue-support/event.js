@@ -10,7 +10,7 @@
 import {filter, timeToString} from "./utils.js";
 import {config} from "../config.js";
 
-let OPREG = /Opcode (0x\d+)/;
+let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
 
 /**
  * events-list:
