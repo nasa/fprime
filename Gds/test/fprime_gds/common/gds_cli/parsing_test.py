@@ -76,9 +76,9 @@ def default_valid_events_dict(updated_values_dict={}):
         (
             ["command-send", "PATH", "some.command.name"],
             {
-                "func": fprime_cli.PLACEHOLDER_FUNC,
+                "func": command_send.CommandSendCommand.handle_arguments,
                 "command_name": "some.command.name",
-                "arguments": None,
+                "arguments": [],
                 "dictionary_path": "PATH",
                 "ip_address": "127.0.0.1",
                 "port": 50050,

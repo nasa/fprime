@@ -15,7 +15,10 @@ from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.testing_fw import predicates
 
 
-def get_cmd_template_string(temp):
+def get_cmd_template_string(temp, as_json: bool = False):
+    if as_json:
+        return misc_utils.get_item_string(temp, as_json)
+
     cmd_string = "%s (%d) | Takes %d arguments.\n" % (
         temp.get_full_name(),
         temp.get_id(),
@@ -95,7 +98,9 @@ class CommandsCommand(QueryHistoryCommand):
 
         id_pred = filtering_utils.get_id_predicate(ids)
         comp_pred = filtering_utils.get_component_predicate(components)
-        search_pred = filtering_utils.get_search_predicate(search, get_cmd_template_string)
+        search_pred = filtering_utils.get_search_predicate(
+            search, get_cmd_template_string
+        )
 
         return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
 
