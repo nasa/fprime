@@ -16,6 +16,7 @@ endif()
 enable_testing()
 include( CTest )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+add_custom_target(check_leak COMMAND ${CMAKE_CTEST_COMMAND} -T memcheck)
 
 ####
 # Function `unit_test_component_autocoder`:
@@ -120,12 +121,17 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
+    add_dependencies(check_leak ${UT_EXE_NAME})
     
     # Check target for this module
     if (NOT TARGET "${MODULE_NAME}_check")
 	    add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
     endif()
-	add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
+    if (NOT TARGET "${MODULE_NAME}_check_leak")
+	    add_custom_target("${MODULE_NAME}_check_leak" COMMAND ${CMAKE_CTEST_COMMAND} --verbose -T memcheck)
+    endif()
+    add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
+    add_dependencies("${MODULE_NAME}_check_leak" ${UT_EXE_NAME})
     
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)

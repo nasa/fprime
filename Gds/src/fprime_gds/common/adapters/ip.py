@@ -29,7 +29,9 @@ def check_port(address, port):
         socket_trial = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_trial.bind((address, port))
     except socket.error as err:
-        raise ValueError("Error with address/port of '{}:{}' : {}".format(address, port, err))
+        raise ValueError(
+            "Error with address/port of '{}:{}' : {}".format(address, port, err)
+        )
     finally:
         socket_trial.close()
 
@@ -40,8 +42,11 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     and port, but one uses TCP and the other uses UDP. Writes go to the TCP connection, and reads request data from
     both. This data is concatenated and returned up the stack for processing.
     """
-    KEEPALIVE_INTERVAL = 0.500 # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
-    KEEPALIVE_DATA = b"sitting well" # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
+
+    KEEPALIVE_INTERVAL = (
+        0.500  # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
+    )
+    KEEPALIVE_DATA = b"sitting well"  # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
     MAXIMUM_DATA_SIZE = 4096
 
     def __init__(self, address, port):
@@ -72,9 +77,15 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             self.thudp.start()
             # Start up a keep-alive ping if desired. This will hit the TCP uplink, and die if the connection is down
             if IpAdapter.KEEPALIVE_INTERVAL is not None:
-                self.keepalive = threading.Thread(target=self.th_alive, args=[float(self.KEEPALIVE_INTERVAL)]).start()
+                self.keepalive = threading.Thread(
+                    target=self.th_alive, args=[float(self.KEEPALIVE_INTERVAL)]
+                ).start()
         except (ValueError, TypeError) as exc:
-            LOGGER.error("Failed to start keep-alive thread. {}: {}".format(type(exc).__name__, str(exc)))
+            LOGGER.error(
+                "Failed to start keep-alive thread. {}: {}".format(
+                    type(exc).__name__, str(exc)
+                )
+            )
 
     def close(self):
         """Close the adapter, by setting the stop flag"""
@@ -131,17 +142,17 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         return {
             ("--ip-address",): {
-                "dest":"address",
-                "type":str,
-                "default":"0.0.0.0",
-                "help":"Address of the IP adapter server. Default: %(default)s"
+                "dest": "address",
+                "type": str,
+                "default": "0.0.0.0",
+                "help": "Address of the IP adapter server. Default: %(default)s",
             },
             ("--ip-port",): {
-                "dest":"port",
-                "type":int,
+                "dest": "port",
+                "type": int,
                 "default": 50000,
-                "help":"Port of the IP adapter server. Default: %(default)s"
-            }
+                "help": "Port of the IP adapter server. Default: %(default)s",
+            },
         }
 
     @classmethod
@@ -159,14 +170,25 @@ class IpHandler(object):
     Base handler for IP types. This will provide the basic methods, and synchronization for reading/writing to multiple
     child implementations, namely: UDP and TCP. These child objects can then be instantiated individually.
     """
-    ERROR_RETRY_INTERVAL = 1 # Seconds between a non-timeout error and a socket reconnection
-    MAX_CLIENT_BACKLOG = 1 # One client backlog, allowing for reconnects
+
+    ERROR_RETRY_INTERVAL = (
+        1  # Seconds between a non-timeout error and a socket reconnection
+    )
+    MAX_CLIENT_BACKLOG = 1  # One client backlog, allowing for reconnects
     # Connection states, it will go between these states
     CONNECTING = "CONNECTING"
     CONNECTED = "CONNECTED"
     CLOSED = "CLOSED"
 
-    def __init__(self, address, port, type, server=True, logger=logging.getLogger("ip_handler"), post_connect=None):
+    def __init__(
+        self,
+        address,
+        port,
+        type,
+        server=True,
+        logger=logging.getLogger("ip_handler"),
+        post_connect=None,
+    ):
         """
         Initialize this handler. This will set the variables, and start up the internal receive thread.
         :param address: address of the handler
@@ -194,7 +216,10 @@ class IpHandler(object):
         while self.running and self.CONNECTED != self.connected:
             try:
                 # Prevent reconnects when the socket is connected. Socket should be closed on all errors
-                if self.connected == IpHandler.CLOSED and self.next_connect < time.time():
+                if (
+                    self.connected == IpHandler.CLOSED
+                    and self.next_connect < time.time()
+                ):
                     self.connected = IpHandler.CONNECTING
                     self.socket = socket.socket(socket.AF_INET, self.type)
                     if self.server:
@@ -203,8 +228,13 @@ class IpHandler(object):
                         self.socket.connect((self.address, self.port))
                     self.open_impl()
                     self.connected = IpHandler.CONNECTED
-                    self.logger.info("{} connected to {}:{}"
-                                .format("Server" if self.server else "Client", self.address, self.port))
+                    self.logger.info(
+                        "{} connected to {}:{}".format(
+                            "Server" if self.server else "Client",
+                            self.address,
+                            self.port,
+                        )
+                    )
                     # Post connect handshake
                     if self.post_connect is not None:
                         self.write(self.post_connect)
@@ -212,8 +242,11 @@ class IpHandler(object):
             except ConnectionAbortedError:
                 return False
             except socket.error as exc:
-                self.logger.warning("Failed to open socket at {}:{}, retrying: {}: {}"
-                                    .format(self.address, self.port, type(exc).__name__, str(exc)))
+                self.logger.warning(
+                    "Failed to open socket at {}:{}, retrying: {}: {}".format(
+                        self.address, self.port, type(exc).__name__, str(exc)
+                    )
+                )
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()
         return self.connected == self.CONNECTED
@@ -246,7 +279,11 @@ class IpHandler(object):
         except socket.error as exc:
             if self.running:
                 self.close()
-                self.logger.warning("Read failure attempting reconnection. {}: {}".format(type(exc).__name__, str(exc)))
+                self.logger.warning(
+                    "Read failure attempting reconnection. {}: {}".format(
+                        type(exc).__name__, str(exc)
+                    )
+                )
                 self.open()
         return b""
 
@@ -262,7 +299,9 @@ class IpHandler(object):
             return True
         except socket.error as exc:
             if self.running:
-                self.logger.warning("Write failure: {}".format(type(exc).__name__, str(exc)))
+                self.logger.warning(
+                    "Write failure: {}".format(type(exc).__name__, str(exc))
+                )
         return False
 
     @staticmethod
@@ -282,13 +321,23 @@ class TcpHandler(IpHandler):
     """
     An IpAdapter that allows for interfacing with TCP socket.
     """
-    def __init__(self,  address, port, server=True, logger=logging.getLogger("tcp_handler"), post_connect=None):
+
+    def __init__(
+        self,
+        address,
+        port,
+        server=True,
+        logger=logging.getLogger("tcp_handler"),
+        post_connect=None,
+    ):
         """
         Init the TCP adapter with port and address
         :param address: address of TCP
         :param port: port of TCP
         """
-        super(TcpHandler, self).__init__(address, port, socket.SOCK_STREAM, server, logger, post_connect)
+        super(TcpHandler, self).__init__(
+            address, port, socket.SOCK_STREAM, server, logger, post_connect
+        )
         self.client = None
         self.client_address = None
 
@@ -337,13 +386,18 @@ class UdpHandler(IpHandler):
     """
     Handler for UDP traffic. This will work in unison with the TCP adapter.
     """
-    def __init__(self,  address, port, server=True, logger=logging.getLogger("udp_handler")):
+
+    def __init__(
+        self, address, port, server=True, logger=logging.getLogger("udp_handler")
+    ):
         """
         Init UDP with address and port
         :param address: address of UDP
         :param port: port of UDP
         """
-        super(UdpHandler, self).__init__(address, port, socket.SOCK_DGRAM, server, logger)
+        super(UdpHandler, self).__init__(
+            address, port, socket.SOCK_DGRAM, server, logger
+        )
 
     def open_impl(self):
         """No extra steps required"""

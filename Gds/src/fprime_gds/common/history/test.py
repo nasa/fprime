@@ -15,6 +15,7 @@ class TestHistory(History):
     A receive-ordered history to support the GDS test api. This history adds support for specifying
     start with predicates and python's bracket notation.
     """
+
     ###########################################################################
     #   History Functions
     ###########################################################################

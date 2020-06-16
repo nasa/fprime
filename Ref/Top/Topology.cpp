@@ -248,5 +248,6 @@ void exitTasks(void) {
     cmdSeq.exit();
     pingRcvr.exit();
     socketIpDriver.exitSocketTask();
+    cmdSeq.deallocateBuffer(seqMallocator);
 }
 

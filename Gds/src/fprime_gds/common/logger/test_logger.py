@@ -21,10 +21,12 @@ from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.utils.exceptions import WorkbookAlreadySaved
 
+
 class TestLogger:
     """
     User-accessible colors. Can be used for the color arguments
     """
+
     BROWN = "E6CCB3"
     RED = "FF9999"
     ORANGE = "FFCC99"
@@ -42,8 +44,8 @@ class TestLogger:
     ITALICS = "ITALICS"
     UNDERLINED = "UNDERLINED"
 
-    __align = Alignment(vertical='top', wrap_text=True)
-    __font_name = 'calibri'
+    __align = Alignment(vertical="top", wrap_text=True)
+    __font_name = "calibri"
     __time_fmt = "%H:%M:%S.%f"
 
     def __init__(self, output_path, time_format=None, font_name=None):
@@ -60,7 +62,9 @@ class TestLogger:
                 "Test Logger requires a filename where the output can be saved."
             )
         self.start_time = time.time()
-        date_string = datetime.datetime.fromtimestamp(self.start_time).strftime("%Y-%m-%dT%H:%M:%S")
+        date_string = datetime.datetime.fromtimestamp(self.start_time).strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
         self.filename = os.path.join(output_path, "TestLog_{}.xlsx".format(date_string))
         self.workbook = Workbook(write_only=True)
         self.worksheet = self.workbook.create_sheet()
@@ -76,12 +80,16 @@ class TestLogger:
         else:
             self.font_name = font_name
 
-        timestring = datetime.datetime.fromtimestamp(self.start_time).strftime(self.time_format)
-        self.worksheet.column_dimensions['A'].width = len(timestring) + 1
-        self.worksheet.column_dimensions['D'].width = 120
+        timestring = datetime.datetime.fromtimestamp(self.start_time).strftime(
+            self.time_format
+        )
+        self.worksheet.column_dimensions["A"].width = len(timestring) + 1
+        self.worksheet.column_dimensions["D"].width = 120
 
         top = []
-        date_string = datetime.datetime.fromtimestamp(self.start_time).strftime("%H:%M:%S.%f on %m/%d/%Y")
+        date_string = datetime.datetime.fromtimestamp(self.start_time).strftime(
+            "%H:%M:%S.%f on %m/%d/%Y"
+        )
         top.append(self.__get_cell("Test began at " + date_string))
         self.worksheet.append(top)
 
@@ -123,7 +131,11 @@ class TestLogger:
                 self.worksheet.append(row)
         except WorkbookAlreadySaved:
             self.ws_saved = True
-            print("{} [{}] {}".format(timestring, "TestLogger", "Workbook has already been saved."))
+            print(
+                "{} [{}] {}".format(
+                    timestring, "TestLogger", "Workbook has already been saved."
+                )
+            )
         finally:
             self.lock.release()
 

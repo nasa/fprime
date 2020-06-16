@@ -1,4 +1,4 @@
-'''
+"""
 @brief Encoder for Packet data
 
 This encoder takes in PktData objects, serializes them, and sends the results
@@ -35,7 +35,7 @@ Serialized Packet format:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 
@@ -56,10 +56,10 @@ from fprime.common.models.serialize.u32_type import U32Type
 
 
 class PktEncoder(Encoder):
-    '''Encoder class for packet data'''
+    """Encoder class for packet data"""
 
     def __init__(self, dest="GUI", config=None):
-        '''
+        """
         Constructor
 
         Args:
@@ -71,7 +71,7 @@ class PktEncoder(Encoder):
 
         Returns:
             An initialized PktEncoder object
-        '''
+        """
         super(PktEncoder, self).__init__(dest, config)
 
         self.len_obj = self.config.get_type("msg_len")
@@ -79,7 +79,7 @@ class PktEncoder(Encoder):
         self.id_obj = self.config.get_type("pkt_id")
 
     def encode_api(self, data):
-        '''
+        """
         Encodes the given PktData object as binary data and returns the result.
 
         Args:
@@ -87,7 +87,7 @@ class PktEncoder(Encoder):
 
         Returns:
             Encoded version of the data argument as binary data
-        '''
+        """
         # TODO Should we verify that it is a PktData object? Or is that too much
         #      overhead.
         pkt_temp = data.get_template()
@@ -108,7 +108,7 @@ class PktEncoder(Encoder):
         self.len_obj.val = len_val
         len_bin = self.len_obj.serialize()
 
-        binary_data = (len_bin + desc_bin + id_bin + time_bin + ch_bin)
+        binary_data = len_bin + desc_bin + id_bin + time_bin + ch_bin
 
         return binary_data
 
@@ -116,7 +116,7 @@ class PktEncoder(Encoder):
 if __name__ == "__main__":
     # Unit Tests
     config = ConfigManager()
-    config.set('types', 'msg_len', 'U16')
+    config.set("types", "msg_len", "U16")
 
     enc = PktEncoder()
     enc_config = PktEncoder("GUI", config)
@@ -142,26 +142,29 @@ if __name__ == "__main__":
     long_len_bin = "\x00\x00\x00\x18"
     short_len_bin = "\x00\x18"
 
-    reg_expected = (long_len_bin + desc_bin + id_bin + time_bin + ch_bin)
-    config_expected = (short_len_bin + desc_bin + id_bin + time_bin + ch_bin)
+    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + ch_bin
+    config_expected = short_len_bin + desc_bin + id_bin + time_bin + ch_bin
 
     reg_output = enc.encode_api(pkt_obj)
 
-    if (reg_output != reg_expected):
-        print ("FAIL: expected regular output to be %s, but found %s"%
-               (list(reg_expected), list(reg_output)))
+    if reg_output != reg_expected:
+        print(
+            "FAIL: expected regular output to be %s, but found %s"
+            % (list(reg_expected), list(reg_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 1")
 
     config_output = enc_config.encode_api(pkt_obj)
 
-    if (config_output != config_expected):
-        print("FAIL: expected configured output to be %s, but found %s"%
-              (list(config_expected), list(config_output)))
+    if config_output != config_expected:
+        print(
+            "FAIL: expected configured output to be %s, but found %s"
+            % (list(config_expected), list(config_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 2")
 
     print("ALL TESTS PASSED!")
-
