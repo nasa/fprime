@@ -61,10 +61,14 @@ class component_predicate(predicates.predicate):
         """
         :param item: the object or value to evaluate
         """
-        # TODO: Apparently, only commands have components stored in their SysData? Find a better way around this than returning true?
-        if not item.get_comp_name:
-            return True
-        return self.comp == item.get_comp_name()
+        # TODO: Always returns true if no component found, currently
+        item_component = self.comp
+        if hasattr(item, "get_comp_name"):
+            item_component = item.get_comp_name()
+        elif hasattr(item.get_template(), "get_comp_name"):
+            # TODO: Technically law of Minerva violation (acceptable?)
+            item.get_template().get_comp_name()
+        return self.comp == item_component
 
     def __str__(self):
         """
@@ -91,21 +95,24 @@ def get_component_predicate(components) -> predicates.predicate:
 
 
 class contains_search_string(predicates.predicate):
-    def __init__(self, search_string: str):
+    def __init__(self, search_string: str, to_string_func = str):
         """
         A predicate that tests if the argument given to it contains the
         passed-in string (after the argument is converted to a string via
         __str__).
 
         :param search_string: The exact text to check for inside the object
+        :param to_string_func: An optional method for converting the given
+            object to a string
         """
         self.search_string = str(search_string)
+        self.to_str = to_string_func
 
     def __call__(self, item):
         """
         :param item: the object or value to evaluate
         """
-        return self.search_string in str(item)
+        return self.search_string in self.to_str(item)
 
     def __str__(self):
         """
