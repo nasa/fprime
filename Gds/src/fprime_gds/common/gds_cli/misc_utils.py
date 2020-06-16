@@ -1,9 +1,9 @@
 """
 TODO: Find more appropriate places for these.
 
-This is the Isle of Misfit Functions used by the GDS CLI that I wasn't sure
-where else to put. Please find a better home for them when you have time (i.e.
-a more organized file).
+This is the Isle of Misfit Functions used by the GDS CLI, ones that I wasn't
+sure where else to put. Please find a better home for them when you have time
+(i.e. a more organized file).
 """
 
 import json
