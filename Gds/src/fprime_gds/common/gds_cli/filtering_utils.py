@@ -5,6 +5,7 @@ to the user in the GDS CLI
 
 from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.data_types.sys_data import SysData
+import fprime_gds.common.gds_cli.misc_utils as misc_utils
 from fprime_gds.common.testing_fw import predicates
 
 
@@ -95,7 +96,7 @@ def get_component_predicate(components) -> predicates.predicate:
 
 
 class contains_search_string(predicates.predicate):
-    def __init__(self, search_string: str, to_string_func = str):
+    def __init__(self, search_string: str, to_string_func=str):
         """
         A predicate that tests if the argument given to it contains the
         passed-in string (after the argument is converted to a string via
@@ -121,7 +122,7 @@ class contains_search_string(predicates.predicate):
         return 'str(x) contains "{}"'.format(self.search_string)
 
 
-def get_search_predicate(search_string: str) -> predicates.predicate:
+def get_search_predicate(search_string: str, to_str=str) -> predicates.predicate:
     """
     Returns a Test API predicate that only accepts items whose string
     representation contains the exact given term.
@@ -131,7 +132,7 @@ def get_search_predicate(search_string: str) -> predicates.predicate:
         it's converted to a string
     """
     if search_string:
-        return contains_search_string(search_string)
+        return contains_search_string(search_string, to_str)
     return predicates.always_true()
 
 
@@ -158,7 +159,7 @@ def get_full_filter_predicate(
 
     id_pred = get_id_predicate(ids)
     comp_pred = get_component_predicate(components)
-    search_pred = get_search_predicate(search_string)
+    search_pred = get_search_predicate(search_string, misc_utils.get_item_string)
 
     return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
 

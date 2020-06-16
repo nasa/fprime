@@ -6,6 +6,7 @@ import types
 from typing import List
 
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
+import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 
@@ -22,15 +23,18 @@ def get_cmd_template_string(temp):
     )
 
     for arg in temp.get_args():
-        arg_description = "--no description--"
+        arg_name, arg_description, arg_type = arg
+        if not arg_description:
+            arg_description = "--no description--"
         # TODO: Compare against actual module, not just the name (but EnumType
-        # is a serializable type from the dictionary?
-        if type(arg[2]).__name__ == "EnumType":
-            arg_description = str(arg[2].keys())
+        # is a serializable type from the dictionary?)
+        if type(arg_type).__name__ == "EnumType":
+            # TODO: Find way to combine this w/ description, if one exists?
+            arg_description = str(arg_type.keys())
 
         cmd_string += "\t%s (%s): %s\n" % (
-            arg[0],
-            type(arg[2]).__name__,
+            arg_name,
+            type(arg_type).__name__,
             arg_description,
         )
 
@@ -76,6 +80,24 @@ class CommandsCommand(QueryHistoryCommand):
         # TODO: Actually use JSON?
         for command in command_list:
             print(get_cmd_template_string(command))
+
+    @classmethod
+    def get_filter_predicate(
+        cls, ids: List[int], components: List[str], search: str
+    ) -> predicates.predicate:
+        """
+        Returns a predicate that will be used for filtering out which objects to
+        search for.
+
+        TODO: Currently assumes a template will be passed in
+        """
+        return_all = predicates.always_true()
+
+        id_pred = filtering_utils.get_id_predicate(ids)
+        comp_pred = filtering_utils.get_component_predicate(components)
+        search_pred = filtering_utils.get_search_predicate(search, get_cmd_template_string)
+
+        return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
 
     @classmethod
     def print_upcoming_item(

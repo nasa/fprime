@@ -67,6 +67,16 @@ class QueryHistoryCommand(BaseCommand):
         """
         pass
 
+    @classmethod
+    def get_filter_predicate(
+        cls, ids: List[int], components: List[str], search: str
+    ) -> predicates.predicate:
+        """
+        Returns a predicate that will be used for filtering out which objects to
+        search for.
+        """
+        return filtering_utils.get_full_filter_predicate(ids, components, search)
+
     # TODO: Just use args/kwargs instead of this massive argument list? But I
     # kind of do want some coupling with the frontend code to keep these in sync
     # TODO: Should separate frontend printing code from backend data-getting
@@ -100,9 +110,7 @@ class QueryHistoryCommand(BaseCommand):
         )
         # ======================================================================
 
-        filter_predicate = filtering_utils.get_full_filter_predicate(
-            ids, components, search
-        )
+        filter_predicate = cls.get_filter_predicate(ids, components, search)
 
         # TODO: Try and refactor this to avoid nested if statements?
         if list:
