@@ -61,7 +61,7 @@ class CommandsCommand(QueryHistoryCommand):
     """
 
     @classmethod
-    def print_items_list(
+    def _print_items_list(
         cls,
         project_dictionary: Dictionaries,
         filter_predicate: predicates.predicate,
@@ -92,7 +92,7 @@ class CommandsCommand(QueryHistoryCommand):
             print(get_cmd_template_string(command, json))
 
     @classmethod
-    def get_filter_predicate(
+    def _get_filter_predicate(
         cls, ids: List[int], components: List[str], search: str
     ) -> predicates.predicate:
         """
@@ -110,7 +110,7 @@ class CommandsCommand(QueryHistoryCommand):
         return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
 
     @classmethod
-    def print_upcoming_item(
+    def _print_upcoming_item(
         cls,
         api,
         filter_predicate: predicates.predicate,

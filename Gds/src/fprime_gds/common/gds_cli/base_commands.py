@@ -34,11 +34,14 @@ class QueryHistoryCommand(BaseCommand):
     The base class for a set of related GDS CLI commands that need to query and
     display received data from telemetry channels, F' events, command histories,
     or similar functionalities with closely-related interfaces.
+
+    TODO: Should separate frontend printing code from backend data-getting
+    (this is basically frontend code right now, which isn't necessarily bad)
     """
 
     @classmethod
     @abc.abstractmethod
-    def print_items_list(
+    def _print_items_list(
         cls,
         project_dictionary: Dictionaries,
         filter_predicate: predicates.predicate,
@@ -57,7 +60,7 @@ class QueryHistoryCommand(BaseCommand):
 
     @classmethod
     @abc.abstractmethod
-    def print_upcoming_item(
+    def _print_upcoming_item(
         cls,
         api: IntegrationTestAPI,
         filter_predicate: predicates.predicate,
@@ -71,7 +74,7 @@ class QueryHistoryCommand(BaseCommand):
         pass
 
     @classmethod
-    def get_filter_predicate(
+    def _get_filter_predicate(
         cls, ids: Iterable[int], components: Iterable[str], search: str
     ) -> predicates.predicate:
         """
@@ -82,8 +85,6 @@ class QueryHistoryCommand(BaseCommand):
 
     # TODO: Just use args/kwargs instead of this massive argument list? But I
     # kind of do want some coupling with the frontend code to keep these in sync
-    # TODO: Should separate frontend printing code from backend data-getting
-    # (this is basically frontend code right now, which isn't necessarily bad)
     @classmethod
     def handle_arguments(
         cls,
@@ -113,18 +114,20 @@ class QueryHistoryCommand(BaseCommand):
         )
         # ======================================================================
 
-        search_filter = cls.get_filter_predicate(ids, components, search)
+        # TODO: Link printing code to filtering, so that searching ALWAYS
+        # searches the same kinds of strings as are printed
+        search_filter = cls._get_filter_predicate(ids, components, search)
 
         # TODO: If combinatorial explosion w/ options becomes an issue,
         # refactor this to avoid if/else structure?
         if list:
-            cls.print_items_list(pipeline.dictionaries, search_filter, json)
+            cls._print_items_list(pipeline.dictionaries, search_filter, json)
         elif follow:
             misc_utils.repeat_until_interrupt(
-                cls.print_upcoming_item, api, search_filter, "NOW", json
+                cls._print_upcoming_item, api, search_filter, "NOW", json
             )
         else:
-            cls.print_upcoming_item(api, search_filter, json=json)
+            cls._print_upcoming_item(api, search_filter, json=json)
 
         # ======================================================================
         pipeline.disconnect()
