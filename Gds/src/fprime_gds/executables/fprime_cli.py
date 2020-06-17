@@ -8,6 +8,7 @@ command with the user-provided arguments on the GDS
 import abc
 import argparse
 import sys
+from typing import Callable
 
 import fprime_gds.common.gds_cli.channels as channels
 import fprime_gds.common.gds_cli.commands as commands
@@ -143,7 +144,7 @@ class CliCommandParserBase(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def get_command_func(cls):
+    def get_command_func(cls) -> Callable:
         """
         Returns the function that should be executed when this command is called
         """
@@ -176,7 +177,7 @@ class ChannelsParser(CliCommandParserBase):
         add_history_arguments(parser, "channels")
 
     @classmethod
-    def get_command_func(cls):
+    def get_command_func(cls) -> Callable:
         """
         Returns the function that should be executed when "channels" is called
         """
@@ -210,7 +211,7 @@ class CommandsParser(CliCommandParserBase):
         add_history_arguments(parser, "commands")
 
     @classmethod
-    def get_command_func(cls):
+    def get_command_func(cls) -> Callable:
         """
         Returns the function that should be executed when "commands" is called
         """
@@ -244,6 +245,7 @@ class CommandSendParser(CliCommandParserBase):
         parser.add_argument(
             "command_name",
             help='the full name of the command you want to execute in "<component>.<name>" form',
+            metavar="command-name",
         )
         # NOTE: Type set to string because we don't know the type beforehand
         parser.add_argument(
@@ -256,7 +258,7 @@ class CommandSendParser(CliCommandParserBase):
         )
 
     @classmethod
-    def get_command_func(cls):
+    def get_command_func(cls) -> Callable:
         """
         Returns the function that should be executed when "command-send" is
         called
@@ -290,7 +292,7 @@ class EventsParser(CliCommandParserBase):
         add_history_arguments(parser, "events")
 
     @classmethod
-    def get_command_func(cls):
+    def get_command_func(cls) -> Callable:
         """
         Returns the function that should be executed when "events" is called
         """

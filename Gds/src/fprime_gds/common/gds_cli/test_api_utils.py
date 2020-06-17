@@ -49,7 +49,6 @@ def initialize_test_api(
     return (pipeline, api)
 
 
-# TODO: Possibly convert to function that can take arbitrary predicates for awaiting data?
 def get_upcoming_event(
     test_api: IntegrationTestAPI,
     search_filter: predicates.predicate,
@@ -159,7 +158,7 @@ def get_item_list(
         object and returning a SysData object
 
     :return: An ID sorted list with all the items from the given dictionary
-        AFTEr being filtered
+        AFTER being filtered
     """
     # Dictionary has DataTemplates by default, so convert them to SysData so
     # filtering will work properly (several predicates assume SysData types)

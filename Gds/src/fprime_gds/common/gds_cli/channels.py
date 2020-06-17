@@ -2,9 +2,6 @@
 Handles executing the "channels" CLI command for the GDS
 """
 
-import types
-from typing import List
-
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
@@ -42,7 +39,9 @@ class ChannelsCommand(QueryHistoryCommand):
         :param json: Whether to print out each item in JSON format or not
         """
         channel_list = test_api_utils.get_item_list(
-            project_dictionary.channel_id, filter_predicate, ChData.get_empty_obj
+            item_dictionary=project_dictionary.channel_id,
+            search_filter=filter_predicate,
+            template_to_data=ChData.get_empty_obj,
         )
         for channel in channel_list:
             print(misc_utils.get_item_string(channel, json))
@@ -59,10 +58,6 @@ class ChannelsCommand(QueryHistoryCommand):
         Prints out the next upcoming channel data after the given time that
         matches the given filter (in a way usable by the
         "repeat_until_interrupt" function).
-
-        # TODO: Possibly move this implementation to the base class? Not sure if
-        # other query commands will do anything significantly different besides
-        # different print/event-getting functions
         """
         channel_object = test_api_utils.get_upcoming_channel(
             api, filter_predicate, min_start_time
