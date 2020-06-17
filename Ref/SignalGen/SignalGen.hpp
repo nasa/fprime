@@ -15,6 +15,7 @@
 
 #include <Fw/Types/ByteArray.hpp>
 #include <Fw/Types/ConstByteArray.hpp>
+#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <Os/File.hpp>
 #include <Os/ValidateFile.hpp>
 #include <Ref/SignalGen/SignalGenComponentAc.hpp>
@@ -49,6 +50,10 @@ namespace Ref {
         );
         void SignalGen_Skip_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
+        U32 cmdSeq /*!< The command sequence number*/
+        );
+        void CMD_NO_OP_ARRAY_cmdHandler(
+        FwOpcodeType opCode, /*!< The opcode*/ 
         U32 cmdSeq /*!< The command sequence number*/
         );
 

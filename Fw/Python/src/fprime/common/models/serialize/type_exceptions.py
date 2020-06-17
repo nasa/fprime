@@ -47,7 +47,11 @@ class TypeMismatchException(TypeException):
 
 class ArrayLengthException(TypeException):
     def __init__(self, arr_type, expected_len, actual_len):
-        super(ArrayLengthException,self).__init__("Array type %s is of length %s, actual length %s found!" %(arr_type, expected_len, actual_len))
+        super(ArrayLengthException, self).__init__(
+            "Array type %s is of length %s, actual length %s found!"
+            % (arr_type, expected_len, actual_len)
+        )
+
 
 class EnumMismatchException(TypeException):
     def __init__(self, enum, bad_member):

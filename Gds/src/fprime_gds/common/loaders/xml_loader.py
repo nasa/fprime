@@ -272,9 +272,8 @@ class XmlLoader(dict_loader.DictLoader):
 
         return None
 
-
     def get_array_type(self, type_name, xml_obj):
-        '''
+        """
         Parses and retuns an array type object for the given type name.
 
         Looks in the arrays section of the xml dict.
@@ -288,26 +287,26 @@ class XmlLoader(dict_loader.DictLoader):
             object of a type derived from ArrayType is returned.
             Otherwise, None is returned. The caller will hold the only reference
             to the object.
-        '''
-        
+        """
+
         # Check if there is already a parsed version of this array
-        if (type_name in self.array_types):
+        if type_name in self.array_types:
             # Return a copy, so that the objects are not shared
             return deepcopy(self.array_types[type_name])
 
         # Check if the dictionary has an array section
         arr_section = self.get_xml_section(self.ARR_SECT, xml_obj)
-        if (arr_section == None):
+        if arr_section == None:
             return None
 
         for arr_memb in arr_section:
             # Check if this array matches the name name
-            if (arr_memb.get(self.ARR_NAME_TAG) == type_name):
+            if arr_memb.get(self.ARR_NAME_TAG) == type_name:
                 # Go through default members
                 default_section = self.get_xml_section(self.ARR_DEFAULT_TAG, arr_memb)
 
                 # If there is no default member section, this type is invalid
-                if (default_section == None):
+                if default_section == None:
                     return None
 
                 # Make config
@@ -328,7 +327,6 @@ class XmlLoader(dict_loader.DictLoader):
 
         return None
 
-
     def parse_type(self, type_name, xml_item, xml_tree):
         """
         Parses the given type string and returns a type object.
@@ -345,9 +343,9 @@ class XmlLoader(dict_loader.DictLoader):
             Object of a class derived from the TypeBase class if successful,
             Raises an exception if the parsing fails. The caller will hold the
             only reference to the object.
-        '''
-        
-        if (type_name == "I8"):
+        """
+
+        if type_name == "I8":
             return I8Type()
         elif type_name == "I16":
             return I16Type()
@@ -371,8 +369,9 @@ class XmlLoader(dict_loader.DictLoader):
             return BoolType()
         elif type_name == "string":
             if self.STR_LEN_TAG not in xml_item.attrib:
-                print("Trying to parse string type, but found %s field"%
-                      self.STR_LEN_TAG)
+                print(
+                    "Trying to parse string type, but found %s field" % self.STR_LEN_TAG
+                )
                 return one
             return StringType(max_string_len=int(xml_item.get(self.STR_LEN_TAG), 0))
         else:

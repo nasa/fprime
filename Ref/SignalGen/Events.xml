@@ -31,4 +31,14 @@
       </arg>
       </args>
   </event>
+  <event id="10" name="NoOpArrayReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP Array: example=%s" >
+    <comment>
+      The command dispatcher has successfully recieved a NO-OP array command
+    </comment>
+    <args>
+      <arg name="message" type="string" size="40">
+        <comment>An example array</comment>
+      </arg>
+    </args>
+  </event>
 </events>
