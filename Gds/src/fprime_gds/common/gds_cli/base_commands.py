@@ -126,8 +126,6 @@ class QueryHistoryCommand(BaseCommand):
         else:
             cls.print_upcoming_item(api, search_filter, json=json)
 
-        # TODO: Disable Test API from also logging to console somehow?
-
         # ======================================================================
         pipeline.disconnect()
         api.teardown()

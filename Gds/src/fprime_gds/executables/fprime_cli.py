@@ -90,7 +90,7 @@ def add_history_arguments(parser: argparse.ArgumentParser, command_name: str):
         metavar="COMP",
     )
     parser.add_argument(
-        "-S",
+        "-s",
         "--search",
         type=str,
         help='only show %s whose name or output string exactly matches or contains the entire given string "STRING"'

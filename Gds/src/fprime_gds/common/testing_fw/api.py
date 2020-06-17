@@ -1149,7 +1149,7 @@ class IntegrationTestAPI(DataHandler):
                 self.ret_val = []
                 if predicates.is_predicate(count):
                     self.count_pred = count
-                else: 
+                else:
                     self.count_pred = predicates.equal_to(count)
                 self.search_pred = search_pred
                 self.repeats = False
@@ -1212,10 +1212,9 @@ class IntegrationTestAPI(DataHandler):
         """
         if not isinstance(message, str):
             message = str(message)
-        if self.logger is None:
-            print("[{}] {}".format(sender, message))
-        else:
+        if self.logger:
             self.logger.log_message(message, sender, color, style, case_id)
+        # TODO: Re-add way of printing to console?
 
     def __assert_pred(self, name, predicate, value, msg="", expect=False):
         """
