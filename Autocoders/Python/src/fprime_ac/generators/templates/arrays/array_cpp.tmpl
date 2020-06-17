@@ -175,7 +175,7 @@ namespace ${namespace} {
 
 void ${name}::toString(Fw::StringBase& text) const {
 
-    static const char * formatString = "["
+    static const char * formatString = "[ "
 #for $index in $range(0, $size):
 #if $index != $size - 1:
       "[${format}], "
