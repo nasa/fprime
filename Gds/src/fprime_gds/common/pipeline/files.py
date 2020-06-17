@@ -15,6 +15,7 @@ class Filing(object):
     """
     A composition object that holds references to a FileUplinker and file downlinker.
     """
+
     def __init__(self):
         """
         The filing composition consists of an uplinker and a downlinker
@@ -22,7 +23,9 @@ class Filing(object):
         self.__uplinker = None
         self.__downlinker = None
 
-    def setup_file_handling(self, down_store, file_encoder, file_decoder, distributor, log_dir):
+    def setup_file_handling(
+        self, down_store, file_encoder, file_decoder, distributor, log_dir
+    ):
         """
         Sets up the file handling (uplink and downlink) from a pair of encoders and decoders
         :param down_store: downlink storafe directory
@@ -30,7 +33,9 @@ class Filing(object):
         :param file_decoder: file decoder for downlink
         """
         self.__uplinker = fprime_gds.common.files.uplinker.FileUplinker(file_encoder)
-        self.__downlinker = fprime_gds.common.files.downlinker.FileDownlinker(down_store, log_dir=log_dir)
+        self.__downlinker = fprime_gds.common.files.downlinker.FileDownlinker(
+            down_store, log_dir=log_dir
+        )
         file_decoder.register(self.__downlinker)
         distributor.register("FW_PACKET_HAND", self.__uplinker)
 

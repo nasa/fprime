@@ -64,3 +64,9 @@ core
 py_dict
 .settings
 build-fprime-automatic*
+
+/Ref/bin
+/ci-venv/
+/ci-logs*
+TesterBase.*
+GTestBase.*

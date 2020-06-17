@@ -23,7 +23,7 @@ function fail_and_stop()
     echo -e "${RED}---------------- ERROR ----------------" 1>&2
     echo    "${1}" 1>&2
     echo -e "---------------------------------------${NOCOLOR}" 1>&2
-    LASTLOG=`ls -trd "${LOG_DIR}/"*.err.log | tail -1`
+    LASTLOG=$(ls -td $(find "${LOG_DIR}" -name "*err.log" -type f) | head -1)
     if [ -f "${LASTLOG}" ]
     then
     

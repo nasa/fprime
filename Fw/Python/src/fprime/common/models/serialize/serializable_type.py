@@ -1,9 +1,9 @@
-'''
+"""
 Created on Dec 18, 2014
 
 @author: tcanham
 
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
@@ -12,6 +12,7 @@ from . import type_base
 from . import u32_type
 from . import string_type
 from . import enum_type
+
 
 @type_base.serialize
 @type_base.deserialize
@@ -28,23 +29,24 @@ class SerializableType(type_base.BaseType):
                   OR mem_list = [ ("member",<ref to BaseType>, format string), ... ].
                   The member descriptions can be None
     """
-    def __init__(self, typename, mem_list = None):
+
+    def __init__(self, typename, mem_list=None):
         """
         Constructor
         """
 
         if not type(typename) == type(str()):
-            raise TypeMismatchException(type(str()),type(typename))
+            raise TypeMismatchException(type(str()), type(typename))
 
         self.__typename = typename
         self.__val = []
         setattr(self, "mem_list", None)
 
         if mem_list == None or len(mem_list) == 0:
-            return;
+            return
 
         if not type(mem_list) == type(list()):
-            raise TypeMismatchException(type(list()),type(mem_list))
+            raise TypeMismatchException(type(list()), type(mem_list))
 
         # Check if the member list contains a description or not
         if len(mem_list[0]) == 3:
@@ -58,16 +60,16 @@ class SerializableType(type_base.BaseType):
         for (memberName, memberVal, format_string, desc) in mem_list:
             # member name should be a string
             if not type(memberName) == type(str()):
-                raise TypeMismatchException(type(str()),type(memberName))
+                raise TypeMismatchException(type(str()), type(memberName))
             # member value should be a derived class of TypeBase
             if not issubclass(type(memberVal), type_base.BaseType):
-                raise TypeMismatchException(type(type_base.BaseType),type(memberVal))
+                raise TypeMismatchException(type(type_base.BaseType), type(memberVal))
             # format string should be string
             if not type(format_string) == type(str()):
-                raise TypeMismatchException(type(str()),type(format_string))
+                raise TypeMismatchException(type(str()), type(format_string))
             # Description should be a string
             if desc != None and not type(desc) == type(str()):
-                raise TypeMismatchException(type(str()),type(desc))
+                raise TypeMismatchException(type(str()), type(desc))
 
         self.__mem_list = mem_list
 
@@ -85,14 +87,12 @@ class SerializableType(type_base.BaseType):
     def mem_list(self):
         return self.__mem_list
 
-
     @mem_list.setter
     def mem_list(self, ml):
         """
         @todo: add arg type checking
         """
         self.__mem_list = ml
-
 
     def serialize(self):
         if self.mem_list == None:
@@ -104,7 +104,6 @@ class SerializableType(type_base.BaseType):
             serStream += memberVal.serialize()
 
         return serStream
-
 
     def deserialize(self, data, offset):
         self.__val = []
@@ -121,25 +120,26 @@ class SerializableType(type_base.BaseType):
         size = 0
         for (memberName, memberVal, format_string, desc) in self.mem_list:
             size += memberVal.getSize()
-        return size;
+        return size
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("Serializable")
     try:
-        i32Mem    = u32_type.U32Type(1000000)
+        i32Mem = u32_type.U32Type(1000000)
         stringMem = string_type.StringType("something to say")
-        members   = { "MEMB1":0 , "MEMB2":6, "MEMB3":9 }
-        enumMem   = enum_type.EnumType("SomeEnum",members,"MEMB3")
-        #print enumMem.val
+        members = {"MEMB1": 0, "MEMB2": 6, "MEMB3": 9}
+        enumMem = enum_type.EnumType("SomeEnum", members, "MEMB3")
+        # print enumMem.val
 
-        memList = [ ("mem1",i32Mem),("mem2",stringMem),("mem3",enumMem)]
+        memList = [("mem1", i32Mem), ("mem2", stringMem), ("mem3", enumMem)]
 
         serType = SerializableType("ASerType", memList)
 
         print("Value: %s" % repr(memList))
         buff = serType.serialize()
         type_base.showBytes(buff)
-        serType2 = SerializableType("ASerType",memList)
+        serType2 = SerializableType("ASerType", memList)
         serType2.deserialize(buff, len(buff))
         print("Deserialized: %s" % repr(serType2.mem_list))
     except TypeException as e:

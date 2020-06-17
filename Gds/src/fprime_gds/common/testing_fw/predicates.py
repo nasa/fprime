@@ -448,7 +448,9 @@ class args_predicate(predicate):
 
 
 class event_predicate(predicate):
-    def __init__(self, id_pred=None, args_pred=None, severity_pred=None, time_pred=None):
+    def __init__(
+        self, id_pred=None, args_pred=None, severity_pred=None, time_pred=None
+    ):
         """
         A predicate for specifying an EventData object from data_types.event_data. This predicate
         can be used to search a history. If arguments passed into this constructor are not

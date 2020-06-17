@@ -21,6 +21,7 @@ class UplinkQueue(object):
     while waiting. It also owns the thread that starts uplink. This thread watches for the current uplink to finish, and
     then it starts the next one and returns to a quiescent state.
     """
+
     def __init__(self, uplinker):
         """
         Constructs the uplink queue with a reference to the object that run the uplink.
@@ -101,7 +102,7 @@ class UplinkQueue(object):
                 # Wait until the file is finished, then release again waiting for more files
                 self.busy.acquire()
                 self.busy.release()
-            time.sleep(0.010) # Don't busy spin, but yield and sleep
+            time.sleep(0.010)  # Don't busy spin, but yield and sleep
 
     def current(self):
         """
@@ -114,7 +115,9 @@ class UplinkQueue(object):
         """ Exit event to shutdown the thread """
         self.__exit.set()
         self.running = False
-        self.queue.put(None) # Force an end to the wait for a file, if an uplink is not in-progress
+        self.queue.put(
+            None
+        )  # Force an end to the wait for a file, if an uplink is not in-progress
 
     def join(self):
         """ Join with this uplinker """
@@ -126,6 +129,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     File uplinking component. Keeps track of the currently uplinking file, and registers as a receiver for the handshake
     packets that are send back on each packet.
     """
+
     CHUNK_SIZE = 256
 
     def __init__(self, file_encoder, chunk=CHUNK_SIZE, timeout=20):
@@ -151,7 +155,9 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         :param destination: (optional) destination to uplink to. Default: current destination + file's basename
         """
         if destination is None:
-            destination = os.path.join(self.__destination_dir, os.path.basename(filepath))
+            destination = os.path.join(
+                self.__destination_dir, os.path.basename(filepath)
+            )
         self.queue.enqueue(filepath, destination)
 
     def exit(self):
@@ -202,13 +208,22 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """
         # Prevent multiple uplinks at once
         if self.state != FileStates.IDLE:
-            raise FileUplinkerBusyException("Currently uplinking file '{}' cannot start uplinking '{}'"
-                                            .format(self.active.source, file_obj.source))
+            raise FileUplinkerBusyException(
+                "Currently uplinking file '{}' cannot start uplinking '{}'".format(
+                    self.active.source, file_obj.source
+                )
+            )
         self.state = FileStates.RUNNING
         self.active = file_obj
         self.active.open()
-        self.send(StartPacketData(self.get_next_sequence(), self.active.size,
-                                  self.active.source, self.active.destination))
+        self.send(
+            StartPacketData(
+                self.get_next_sequence(),
+                self.active.size,
+                self.active.source,
+                self.active.destination,
+            )
+        )
 
     def send(self, packet_data):
         """
@@ -229,9 +244,11 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
             return
         # If it is an end-wait or a cancel state, respond without reading next chunk
         if self.state == FileStates.END_WAIT:
-            self.active.state = "FINISHED" if self.active.state != "CANCELED" else "CANCELED"
+            self.active.state = (
+                "FINISHED" if self.active.state != "CANCELED" else "CANCELED"
+            )
             self.state = FileStates.IDLE
-            self.queue.busy.release() # Allow the queue to continue
+            self.queue.busy.release()  # Allow the queue to continue
             self.__timeout.stop()
             return
         elif self.state == FileStates.CANCELED:
@@ -240,12 +257,16 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
             return
         # Read next chunk of data.  b'' means the file is empty
         outgoing = self.active.read(self.chunk)
-        if outgoing == b'':
-            self.send(EndPacketData(self.get_next_sequence(), self.active.checksum.value))
+        if outgoing == b"":
+            self.send(
+                EndPacketData(self.get_next_sequence(), self.active.checksum.value)
+            )
             self.finish()
         else:
             self.active.checksum.update(outgoing, self.active.seek)
-            self.send(DataPacketData(self.get_next_sequence(), self.active.seek, outgoing))
+            self.send(
+                DataPacketData(self.get_next_sequence(), self.active.seek, outgoing)
+            )
             self.active.seek += len(outgoing)
 
     def cancel(self):
@@ -257,7 +278,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         if self.state == FileStates.RUNNING:
             self.state = FileStates.CANCELED
             self.active.state = "CANCELED"
-            #self.queue.pause()
+            # self.queue.pause()
 
     def timeout(self):
         """ Handles timeout o file packet by finishing the upload immediately, and setting the state to timeout """
@@ -315,4 +336,5 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
 class FileUplinkerBusyException(Exception):
     """ File uplinker is busy and cannot uplink more files """
+
     pass

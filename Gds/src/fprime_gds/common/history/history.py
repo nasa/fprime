@@ -17,6 +17,7 @@ class History(fprime_gds.common.handlers.DataHandler):
     want to maintain a different order, this should be made clear to the user and still support the
     calls in this History class.
     """
+
     @abc.abstractmethod
     def retrieve(self, start=None):
         """
@@ -40,7 +41,9 @@ class History(fprime_gds.common.handlers.DataHandler):
         Returns:
             an ordered list of objects
         """
-        raise NotImplementedError("This history didn't override the retrieve_new method.")
+        raise NotImplementedError(
+            "This history didn't override the retrieve_new method."
+        )
 
     @abc.abstractmethod
     def clear(self, start=None):
