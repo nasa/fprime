@@ -12,7 +12,7 @@ import sys
 import time
 import glob
 import logging
-
+import traceback
 
 from optparse import OptionParser
 
@@ -1456,4 +1456,5 @@ if __name__ == '__main__':
         main()
     except Exception as exc:
         print(exc, file=sys.stderr)
+        traceback.print_exc(file=sys.stdout)
         sys.exit(-1)

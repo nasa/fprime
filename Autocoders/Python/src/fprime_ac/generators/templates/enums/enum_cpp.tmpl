@@ -108,7 +108,7 @@ a == $item_value#slurp
 #end for
 , static_cast<t>(a));
 #else
-    FW_ASSERT(a >= 0 && a <= $max_value, static_cast<t>(a));
+    FW_ASSERT(a <= $max_value, static_cast<t>(a));
 #end if
     this->e = static_cast<t>(a);
     return *this;
