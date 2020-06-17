@@ -9,6 +9,13 @@ import parsers.variable_list_parser
 # Fifth entry in list: make rule for generating code 
 
 xml_gen_dictionary = {
+                        'Enum': 
+                            [
+                            'EnumAi.xml',
+                            ['EnumAc.cpp',],
+                            ['EnumAc.hpp',],
+                            '\tcd $(BUILD_ROOT)/<module_dir> && $(MKDIR) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR) && $(AC_ENUM_GEN) $(notdir $<) $(DEP_FILE_ARG) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR)/$(basename $(notdir $<)).dep'
+                            ],
                         'Serializable': 
                             [
                             'SerializableAi.xml',
@@ -75,7 +82,7 @@ test_bin_target = """
 $(BUILD_ROOT)/<module_dir>/$(OUTPUT_DIR)/$(BIN_PREFIX)test_<last_dir>$(BIN_SUFFIX): $(TEST_MODS_LIBS_<module_name>_$(BUILD)) $(TEST_OBJS_<module_name>_$(BUILD))
 	$(MKDIR) $(@D)
 	$(LINK_LIB) $(LINK_LIB_FLAGS) $(LIBRARY_TO) $(basename $@)_test_lib$(LIB_SUFFIX) $(TEST_OBJS_<module_name>_$(BUILD))
-	$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $(LIBS_START) $(basename $@)_test_lib$(LIB_SUFFIX) $(TEST_MODS_LIBS_<module_name>_$(BUILD)) $(TEST_LIBS_<module_name>_$(BUILD)) $(LINK_LIBS) $(LIBS_END) 
+	$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $(LIBS_START) $(basename $@)_test_lib$(LIB_SUFFIX) $(TEST_MODS_LIBS_<module_name>_$(BUILD)) $(TEST_LIBS_<module_name>_$(BUILD)) $(LINK_LIBS) $(LIBS_END) $(TEST_LINK_ARGS_<module_name>_$(BUILD))
 
 # clean unit test binary
 test_<module_name>_clean: $(foreach module,$(TEST_MODS_<module_name>_$(BUILD)),$(module)_bin_clean)
@@ -154,6 +161,7 @@ class ModMkParser:
         self.post_defines_dictionary = {} # holds extra defines by target
         self.test_mods_dictionary = {} # hold module libraries to link test binary to 
         self.test_libs_dictionary = {} # hold libraries to link test binary
+        self.test_link_args_dictionary = {} # Hold special link arguments for test binaries
         self.ac_extra_list = [] # holds extra AC files
         
         self.subdir_parser_list = [] # holds a collection of parsers for each subdirectory 
@@ -177,6 +185,7 @@ class ModMkParser:
             self.test_source_dictionary[target] = []
             self.test_libs_dictionary[target] = []
             self.test_mods_dictionary[target] = []
+            self.test_link_args_dictionary[target] = []
             self.defines_dictionary[target] = ""
             self.post_defines_dictionary[target] = ""
 
@@ -307,6 +316,11 @@ class ModMkParser:
                         raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                     self.test_libs_dictionary[target] = value.split(" ")
                     
+                if var == "TEST_LINK_ARGS" + starget:
+                    if line.count("=") != 1:
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
+                    self.test_link_args_dictionary[target] = value.split(" ")
+
                 if var == "COMPARGS" + starget:
                     self.defines_dictionary[target] = value
                         
@@ -498,6 +512,18 @@ class ModMkParser:
             if target != "":
                 file_descriptor.write("\t\t$(TEST_LIBS_" + self.module_name + ")\n")    
         
+        for target in list(self.test_link_args_dictionary.keys()):
+
+            file_descriptor.write("\nTEST_LINK_ARGS_" + self.module_name + target + " := \\\n")
+            # write each test module library    
+            for lib in self.test_link_args_dictionary[target]:
+                if lib != "":
+                    file_descriptor.write("\t\t" + lib + " \\\n")
+
+            # add variable for common modules
+            if target != "":
+                file_descriptor.write("\t\t$(TEST_LINK_ARGS_" + self.module_name + ")\n")    
+
         for target in list(self.defines_dictionary.keys()):
             
             file_descriptor.write("\nDEFINES_" + self.directory_string + target + " := " + self.defines_dictionary[target] + " \\\n")
@@ -558,7 +584,7 @@ class ModMkParser:
                         (base,extension) = os.path.splitext(source_file)
                         bin_file_descriptor.write("-include $(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/" + base + ".d\n")
                         bin_file_descriptor.write("$(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/$(OBJ_PREFIX)" + base + "$(OBJ_SUFFIX): $(BUILD_ROOT)/" + self.directory + "/" + source + "\n")
-                        if (extension == ".c"):
+                        if (extension == ".c" or extension == ".S" or extension == ".s"):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CC) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                         elif ((extension == ".cpp") or (extension == ".cc") or (extension == ".asm")):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CXX) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CXXFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
@@ -637,7 +663,7 @@ class ModMkParser:
                         (base,extension) = os.path.splitext(source_file)
                         bin_file_descriptor.write("-include $(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/" + base + ".d\n")
                         bin_file_descriptor.write("$(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/$(OBJ_PREFIX)" + base + "$(OBJ_SUFFIX): $(BUILD_ROOT)/" + self.directory + "/" + source + "\n")
-                        if (extension == ".c"):
+                        if (extension == ".c" or extension == ".S" or extension == ".s"):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CC) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                         elif ((extension == ".cpp") or (extension == ".cc")):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CXX) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CXXFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
