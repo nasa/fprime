@@ -247,7 +247,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         if False in [x[-3:] == 'hpp' or x[-1:] == 'h' for x in c.c_includes_list]:
             PRINT.info("ERROR: Only .hpp or .h files can be given within <include_header> tag!!!")
             sys.exit(-1)
-        c.xml_includes_list = obj.get_serial_includes()
+        c.xml_includes_list = obj.get_serial_includes() + obj.get_enum_includes()
         if False in [x[-6:] == 'Ai.xml' for x in c.xml_includes_list]:
             PRINT.info("ERROR: Only xml files can be given within <import_serializable_type> tag!!!")
             sys.exit(-1)

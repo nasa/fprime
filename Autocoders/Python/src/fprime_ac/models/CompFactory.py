@@ -288,7 +288,7 @@ class CompFactory:
                         modifier = a.get_modifier()
                         size = a.get_size()
                         arg_obj_list.append(Arg.Arg(name, atype, modifier, size, comment))
-                    port_obj.set(namespace, arg_obj_list, incl_list, None, if_comment)
+                    port_obj.set(namespace, arg_obj_list, incl_list, None, None, if_comment)
                     port_obj.set_return(return_type,return_modifier)
                     # check some rules
                     # 1) No return values for async ports
