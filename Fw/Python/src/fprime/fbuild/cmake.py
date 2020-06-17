@@ -27,8 +27,8 @@ import selectors
 import atexit
 import fprime.fbuild
 
-COMMENT_REGEX = re.compile("\s*#.*")
-SUBSTIT_REGEX = re.compile("\$\(([^)]*)\)")
+COMMENT_REGEX = re.compile(r"\s*#.*")
+SUBSTIT_REGEX = re.compile(r"\$\(([^)]*)\)")
 
 class CMakeBuildCache(object):
     """
@@ -327,7 +327,8 @@ class CMakeHandler(object):
                 tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) + [""]
                 if len(tokens) >= 2:
                     self.environment[tokens[0]] = self.sub_environment_values(tokens[1])
-
+        for key, val in self.environment.items():
+            print("****{ENV}", key, val)
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
         """
@@ -389,6 +390,9 @@ class CMakeHandler(object):
         cargs.extend(arguments)
         if self.verbose:
             print("[CMAKE] '{}'".format(" ".join(cargs)))
+            for key, val in cm_environ.items():
+                print("[CMAKE]     {}={}".format(key, val))
+
         # In order to get proper console highlighting while still getting access to the output, we need to create a
         # pseudo-terminal. This will allow the proc to write to one side, and our select below to read from the other
         # side. Most importantly, pseudo-terminal usage will trick CMake into highlighting for us.

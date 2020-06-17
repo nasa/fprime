@@ -23,7 +23,7 @@ set_target_properties(
   EXCLUDE_FROM_ALL TRUE
 )
 set(UT_MOD_DEPS
-  Fw_Comp
+  Fw_CompQueued
   Os
 )
 

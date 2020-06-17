@@ -6,9 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/PassiveComponentBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.cpp"
 )
 # Note: no autocoding files, so basic includes must be hard-coded
 set(MOD_DEPS
@@ -17,8 +15,12 @@ set(MOD_DEPS
   Fw/Obj
   Fw/Port
 )
-# For shared libraries, Os must exist in the module list
-if (BUILD_SHARED_LIBS)
-    list(APPEND MOD_DEPS "Os")
-endif()
 register_fprime_module()
+# Makes active component its own library such that it can depend on Os where
+# passive components do not.
+list(APPEND MOD_DEPS Os Fw/Comp)
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
+)
+register_fprime_module("${SOURCE_FILES}" "${MOD_DEPS}" "Fw_CompQueued")
