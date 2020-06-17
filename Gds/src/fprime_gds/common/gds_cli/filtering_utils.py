@@ -3,7 +3,7 @@ A set of utility classes and functions for filtering the items we want to return
 to the user in the GDS CLI
 """
 
-from typing import Iterable
+from typing import Any, Callable, Iterable
 
 from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.data_types.sys_data import SysData
@@ -12,20 +12,20 @@ from fprime_gds.common.testing_fw import predicates
 
 
 class id_predicate(predicates.predicate):
-    def __init__(self, id):
+    def __init__(self, id: int):
         """
-        A predicate that tests if the SysData argument given to it is of a given
-        ID type.
+        A predicate that tests if the SysData or DataTemplate argument given to
+        it is of a given ID type.
 
         :param id: The ID to compare the item against
         """
         self.id = id
 
-    def __call__(self, item: SysData):
+    def __call__(self, item):
         """
         :param item: The object or value to evaluate
         """
-        return self.id == item.get_id()
+        return hasattr(item, "get_id") and self.id == item.get_id()
 
     def __str__(self):
         """
@@ -53,14 +53,15 @@ def get_id_predicate(ids: Iterable[int]) -> predicates.predicate:
 class component_predicate(predicates.predicate):
     def __init__(self, component: str):
         """
-        A predicate that tests if the SysData argument given is from the given
-        component. If there is no component information found, returns True.
+        A predicate that tests if the SysData or DataTemplate argument given is
+        from the given component. If there is no component information found,
+        returns True.
 
         :param component: The component name to check for
         """
         self.comp = component
 
-    def __call__(self, item: SysData):
+    def __call__(self, item):
         """
         :param item: the object or value to evaluate
         """
@@ -90,7 +91,6 @@ def get_component_predicate(components: Iterable[str]) -> predicates.predicate:
     :return: A predicate that checks if a SysData object come from one of the
         given components
     """
-    # TODO: Implement this!
     if components:
         component_preds = [component_predicate(comp) for comp in components]
         return predicates.satisfies_any(component_preds)
@@ -98,7 +98,7 @@ def get_component_predicate(components: Iterable[str]) -> predicates.predicate:
 
 
 class contains_search_string(predicates.predicate):
-    def __init__(self, search_string: str, to_string_func=str):
+    def __init__(self, search_string: str, to_string_func: Callable[[Any], str] = str):
         """
         A predicate that tests if the argument given to it contains the
         passed-in string (after the argument is converted to a string via
@@ -124,7 +124,9 @@ class contains_search_string(predicates.predicate):
         return 'str(x) contains "{}"'.format(self.search_string)
 
 
-def get_search_predicate(search_string: str, to_str=str) -> predicates.predicate:
+def get_search_predicate(
+    search_string: str, to_str: Callable[[Any], str] = str
+) -> predicates.predicate:
     """
     Returns a Test API predicate that only accepts items whose string
     representation contains the exact given term.
@@ -138,10 +140,8 @@ def get_search_predicate(search_string: str, to_str=str) -> predicates.predicate
     return predicates.always_true()
 
 
-# TODO: Predicates currently act on Data objects; might make more sense to
-# act on templates to be more generic?
 def get_full_filter_predicate(
-    ids, components, search_string: str
+    ids: Iterable[int], components: Iterable[str], search_string: str
 ) -> predicates.predicate:
     """
     Returns a Test API predicate to only get recent data from the specified
@@ -178,7 +178,7 @@ class cmd_predicate(predicates.predicate):
         """
         The cmd_predicate checks that the object is an instance of CmdData.
 
-        :param cmd: an instance of CmdData (object)
+        :param cmd: an object to check for being a CmdData object
         """
         return isinstance(cmd, CmdData)
 

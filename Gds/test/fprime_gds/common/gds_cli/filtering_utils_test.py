@@ -99,3 +99,11 @@ def test_string_filter_case_sensitive(sample_event):
     lower_filter = filtering_utils.contains_search_string("luggage_combination")
     assert upper_filter(sample_event)
     assert not lower_filter(sample_event)
+
+
+@pytest.mark.gds_cli
+def test_search_predicate_case_sensitive(sample_event):
+    upper_filter = filtering_utils.get_search_predicate("Luggage_Combination")
+    lower_filter = filtering_utils.get_search_predicate("luggage_combination")
+    assert upper_filter(sample_event)
+    assert not lower_filter(sample_event)

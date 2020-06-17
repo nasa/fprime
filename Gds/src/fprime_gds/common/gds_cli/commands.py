@@ -2,7 +2,6 @@
 Handles executing the "commands" CLI command for the GDS
 """
 
-import types
 from typing import List
 
 from fprime_gds.common.data_types.cmd_data import CmdData
@@ -24,7 +23,7 @@ def get_cmd_template_string(temp: CmdTemplate, as_json: bool = False) -> str:
     :return: A readable string version of "temp"
     """
     if as_json:
-        return misc_utils.get_item_string(temp, as_json)
+        return misc_utils.get_item_json_string(temp)
 
     cmd_string = "%s (%d) | Takes %d arguments.\n" % (
         temp.get_full_name(),
@@ -39,7 +38,7 @@ def get_cmd_template_string(temp: CmdTemplate, as_json: bool = False) -> str:
         # TODO: Compare against actual module, not just the name (but EnumType
         # is a serializable type from the dictionary?)
         if type(arg_type).__name__ == "EnumType":
-            # TODO: Find way to combine this w/ description, if one exists?
+            # TODO: Find good way to combine this w/ description, if one exists?
             arg_description = str(arg_type.keys())
 
         cmd_string += "\t%s (%s): %s\n" % (
@@ -78,18 +77,19 @@ class CommandsCommand(QueryHistoryCommand):
             channels
         :param json: Whether to print out each item in JSON format or not
         """
-        # TODO: Trying to create a blank command causes errors; find a more
-        # robust method?
+        # NOTE: Trying to create a blank CmdData causes errors, so currently
+        # just using templates (i.e. this function does nothing)
         def create_empty_command(cmd_template):
             return cmd_template
 
         command_list = test_api_utils.get_item_list(
-            project_dictionary.command_id, filter_predicate, create_empty_command
+            item_dictionary=project_dictionary.command_id,
+            search_filter=filter_predicate,
+            template_to_data=create_empty_command,
         )
 
-        # TODO: Actually use JSON?
         for command in command_list:
-            print(get_cmd_template_string(command))
+            print(get_cmd_template_string(command, json))
 
     @classmethod
     def get_filter_predicate(
@@ -98,8 +98,6 @@ class CommandsCommand(QueryHistoryCommand):
         """
         Returns a predicate that will be used for filtering out which objects to
         search for.
-
-        TODO: Currently assumes a template will be passed in
         """
         return_all = predicates.always_true()
 

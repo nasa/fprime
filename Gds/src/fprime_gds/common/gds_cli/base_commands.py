@@ -4,7 +4,6 @@ CLI commands
 """
 
 import abc
-import types
 from typing import Iterable
 
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
@@ -114,18 +113,18 @@ class QueryHistoryCommand(BaseCommand):
         )
         # ======================================================================
 
-        filter_predicate = cls.get_filter_predicate(ids, components, search)
+        search_filter = cls.get_filter_predicate(ids, components, search)
 
-        # TODO: Try and refactor this to avoid nested if statements?
+        # TODO: If combinatorial explosion w/ options becomes an issue,
+        # refactor this to avoid if/else structure?
         if list:
-            cls.print_items_list(pipeline.dictionaries, filter_predicate, json)
+            cls.print_items_list(pipeline.dictionaries, search_filter, json)
+        elif follow:
+            misc_utils.repeat_until_interrupt(
+                cls.print_upcoming_item, api, search_filter, "NOW", json
+            )
         else:
-            if follow:
-                misc_utils.repeat_until_interrupt(
-                    cls.print_upcoming_item, api, filter_predicate, "NOW", json
-                )
-            else:
-                cls.print_upcoming_item(api, filter_predicate, json=json)
+            cls.print_upcoming_item(api, search_filter, json=json)
 
         # TODO: Disable Test API from also logging to console somehow?
 

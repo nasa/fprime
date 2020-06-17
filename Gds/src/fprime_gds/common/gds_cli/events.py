@@ -2,8 +2,6 @@
 Handles executing the "events" CLI command for the GDS
 """
 
-import types
-
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
@@ -56,7 +54,9 @@ class EventsCommand(QueryHistoryCommand):
         :param json: Whether to print out each item in JSON format or not
         """
         event_list = test_api_utils.get_item_list(
-            project_dictionary.event_id, filter_predicate, EventData.get_empty_obj
+            item_dictionary=project_dictionary.event_id,
+            search_filter=filter_predicate,
+            template_to_data=EventData.get_empty_obj,
         )
         for event in event_list:
             print(get_event_string(event, json))
