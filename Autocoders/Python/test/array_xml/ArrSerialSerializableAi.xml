@@ -8,7 +8,7 @@
     <members>
         <member name="Member1" type="U32" comment = "Example member 1"/>
         <member name="Member2" type="U32" comment = "Example member 2"/>
-        <member name="Member3" type="Example::InternalType" comment = "Example array member">
+        <member name="Member3" type="InternalType" comment = "Example array member">
         </member>
     </members>
 </serializable>

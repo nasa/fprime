@@ -30,6 +30,6 @@ namespace Example {
         Fw::EightyCharString s;
         array1.toString(s);
         
-        printf("%s Invoked ArrayIn_handler();\n%s", this->getObjName(), portNum, s);
+        printf("%s Invoked ArrayIn_handler(%d);\n%s", this->getObjName(), portNum, s);
     }
 };
