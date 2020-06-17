@@ -38,7 +38,7 @@ class EventsCommand(QueryHistoryCommand):
     """
 
     @classmethod
-    def print_items_list(
+    def _print_items_list(
         cls,
         project_dictionary: Dictionaries,
         filter_predicate: predicates.predicate,
@@ -62,7 +62,7 @@ class EventsCommand(QueryHistoryCommand):
             print(get_event_string(event, json))
 
     @classmethod
-    def print_upcoming_item(
+    def _print_upcoming_item(
         cls,
         api,
         filter_predicate: predicates.predicate,
