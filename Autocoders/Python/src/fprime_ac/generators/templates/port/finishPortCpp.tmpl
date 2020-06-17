@@ -36,9 +36,9 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
         this->m_port->invoke(${args_string});
 \#if FW_PORT_SERIALIZATION            
     } else if (this->m_serPort) {
- #if len($args) > 0:
+
         Fw::SerializeStatus status;
- #end if
+
         ${name}PortBuffer _buffer;
  #set $num = 0
  #for $arg in $args:

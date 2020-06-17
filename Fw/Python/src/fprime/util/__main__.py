@@ -10,8 +10,8 @@ import fprime.util.build_helper
 
 def main():
     """ Run wrapper, to point a console_script at """
-    fprime.util.build_helper.utility_entry(args=sys.argv[1:])
+    return fprime.util.build_helper.utility_entry(args=sys.argv[1:])
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

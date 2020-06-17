@@ -8,10 +8,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/ValidateFile.hpp>
-#include <iostream>
 #include <stdio.h>
-
-using namespace std;
 
 namespace Svc {
 

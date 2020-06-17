@@ -200,6 +200,11 @@ namespace Os {
         return false;
     }
 
+    TaskId Task::getOsIdentifier(void) {
+        TaskId T;
+        return T;
+    }
+
     Task::TaskStatus Task::join(void **value_ptr) {
         NATIVE_INT_TYPE stat = 0;
         if (!(this->m_handle)) {

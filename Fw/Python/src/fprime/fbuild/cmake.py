@@ -27,6 +27,8 @@ import selectors
 import atexit
 import fprime.fbuild
 
+COMMENT_REGEX = re.compile("\s*#.*")
+SUBSTIT_REGEX = re.compile("\$\(([^)]*)\)")
 
 class CMakeBuildCache(object):
     """
@@ -66,6 +68,7 @@ class CMakeHandler(object):
         """
         Instantiate a basic CMake handler.
         """
+        self.environment = {}
         self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
@@ -186,7 +189,9 @@ class CMakeHandler(object):
         if not possible_parents:
             raise CMakeProjectException(cmake_dir, "Does not define any of the cache fields: {}"
                                         .format(",".join(CMakeHandler.CMAKE_LOCATION_FIELDS)))
-        full_parents = map(os.path.abspath, possible_parents)
+        # Common-prefix will fail in the case that two directories share a common prefix in their name
+        # So force directory separator to force common prefix to only work on full directory names
+        full_parents = map(lambda dir: os.path.abspath(dir) + os.sep, possible_parents)
         # Parents *are* the common prefix for their children
         parents = filter(lambda parent: os.path.commonprefix([parent, path]) == parent, full_parents)
 
@@ -209,7 +214,7 @@ class CMakeHandler(object):
         # Check that a parent is the true parent
         if nearest_parent is None:
             raise CMakeOrphanException(path)
-        return os.path.relpath(path, nearest_parent), nearest_parent
+        return os.path.relpath(path, nearest_parent), nearest_parent.rstrip(os.sep)
 
     def get_fprime_configuration(self, fields, cmake_dir=None):
         """
@@ -285,6 +290,44 @@ class CMakeHandler(object):
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
+    def sub_environment_values(self, value):
+        """
+        Substitute all values of the form $(ABC) in the string.
+        :return: subbed out value
+        """
+        # Find all matches and iterate backwards substituting as we go
+        matches = list(SUBSTIT_REGEX.finditer(value))
+        matches.reverse()
+        for match in matches:
+            subkey = match.group(1)
+            subval = self.environment.get(subkey, os.environ.get(subkey, ""))
+            value = value[:match.start()] + subval + value[match.end():]
+        return value
+
+
+    def setup_environment_from_file(self, build_dir, environment_file=None):
+        """
+        Sets the environment to apply to CMake commands.  Will read from the supplied file.  If None is supplied, it
+        will try and detect the the environment file from variables set in the cache.  If no file is supplied, nor any
+        set in the cache, then it is ignored.
+        """
+        try:
+            environment_file = environment_file if environment_file is not None else self._read_values_from_cache(["FPRIME_BUILD_ENVIRONMENT"], build_dir)[0]
+        except CMakeException:
+            print("[WARNING] Could not read CMake cache. Will not use 'FPRIME_BUILD_ENVIRONMENT' for environment.")
+        # Nothing to set
+        if environment_file is None:
+            return
+        elif not os.path.isfile(environment_file):
+            raise CMakeException("Environment file '{}' does not exist".format(environment_file))
+        print("[INFO] Reading environment from: {}".format(environment_file))
+        with open(environment_file, "r") as file_handle:
+            for line in file_handle.readlines():
+                # No need to quote, accounts for blanks
+                tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) + [""]
+                if len(tokens) >= 2:
+                    self.environment[tokens[0]] = self.sub_environment_values(tokens[1])
+
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
         """
@@ -338,6 +381,7 @@ class CMakeHandler(object):
         Note: !!! this function has potential File System side-effects !!!
         """
         cm_environ = copy.copy(os.environ)
+        cm_environ.update(self.environment)
         cm_environ.update(environment)
         cargs = ["cmake"]
         if not write_override:
@@ -449,8 +493,8 @@ class CMakeInvalidBuildException(CMakeException):
     def __init__(self, build_dir):
         """ Force an appropriate message """
         super(CMakeInvalidBuildException, self)\
-            .__init__("{} is not a CMake build directory. Please setup using 'fprime-util generate"
-                      .format(build_dir, build_dir))
+            .__init__("{} is not a CMake build directory. Please setup using 'fprime-util generate'"
+                      .format(build_dir))
 
 
 class CMakeExecutionException(CMakeException):

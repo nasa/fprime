@@ -1,0 +1,197 @@
+        -:    0:Source:/home/vwong/sphinx-sat/LfNeasc/Common/Util/RateLimiter.cpp
+        -:    0:Programs:3
+        -:    1:// ====================================================================== 
+        -:    2:// \title  RateLimiter.cpp
+        -:    3:// \author vwong
+        -:    4:// \brief  cpp file for a rate limiter utility class
+        -:    5://
+        -:    6:// \copyright
+        -:    7:// Copyright 2009-2015, by the California Institute of Technology.
+        -:    8:// ALL RIGHTS RESERVED.  United States Government Sponsorship
+        -:    9:// acknowledged. Any commercial use must be negotiated with the Office
+        -:   10:// of Technology Transfer at the California Institute of Technology.
+        -:   11:// 
+        -:   12:// This software may be subject to U.S. export control laws and
+        -:   13:// regulations.  By accepting this document, the user agrees to comply
+        -:   14:// with all U.S. export laws and regulations.  User has the
+        -:   15:// responsibility to obtain export licenses, or other export authority
+        -:   16:// as may be required before exporting such information to foreign
+        -:   17:// countries or providing access to foreign persons.
+        -:   18:// ====================================================================== 
+        -:   19:
+        -:   20:#include <LfNeasc/Common/Util/RateLimiter.hpp>
+        -:   21:
+        -:   22:namespace LfNeasc {
+        -:   23:
+       17:   24:  RateLimiter ::
+        -:   25:    RateLimiter (
+        -:   26:        U32 counterCycle,
+        -:   27:        U32 timeCycle
+        -:   28:    ) :
+        -:   29:      m_counterCycle(counterCycle),
+       17:   30:      m_timeCycle(timeCycle)
+        -:   31:  {
+       17:   32:    this->reset();
+       17:   33:  }
+        -:   34:
+        1:   35:  RateLimiter ::
+        -:   36:    RateLimiter () :
+        -:   37:      m_counterCycle(0),
+        1:   38:      m_timeCycle(0)
+        -:   39:  {
+        1:   40:    this->reset();
+        1:   41:  }
+        -:   42:
+        9:   43:  void RateLimiter ::
+        -:   44:    setCounterCycle(
+        -:   45:        U32 counterCycle
+        -:   46:    )
+        -:   47:  {
+        9:   48:    this->m_counterCycle = counterCycle;
+        9:   49:  }
+        -:   50:
+        9:   51:  void RateLimiter ::
+        -:   52:    setTimeCycle(
+        -:   53:        U32 timeCycle
+        -:   54:    )
+        -:   55:  {
+        9:   56:    this->m_timeCycle = timeCycle;
+        9:   57:  }
+        -:   58:
+       50:   59:  void RateLimiter ::
+        -:   60:    reset()
+        -:   61:  {
+       50:   62:    this->resetCounter();
+       50:   63:    this->resetTime();
+       50:   64:  }
+        -:   65:
+       50:   66:  void RateLimiter ::
+        -:   67:    resetCounter()
+        -:   68:  {
+       50:   69:    this->m_counter = 0;
+       50:   70:  }
+        -:   71:
+       50:   72:  void RateLimiter ::
+        -:   73:    resetTime()
+        -:   74:  {
+       50:   75:    this->m_time = Fw::Time();
+       50:   76:    this->m_timeAtNegativeInfinity = true;
+       50:   77:  }
+        -:   78:
+        3:   79:  void RateLimiter ::
+        -:   80:    setCounter(
+        -:   81:        U32 counter
+        -:   82:    )
+        -:   83:  {
+        3:   84:    this->m_counter = counter;
+        3:   85:  }
+        -:   86:
+        3:   87:  void RateLimiter ::
+        -:   88:    setTime(
+        -:   89:        Fw::Time time
+        -:   90:    )
+        -:   91:  {
+        3:   92:    this->m_time = time;
+        3:   93:    this->m_timeAtNegativeInfinity = false;
+        3:   94:  }
+        -:   95:
+  1340023:   96:  bool RateLimiter ::
+        -:   97:    trigger(
+        -:   98:        Fw::Time time
+        -:   99:    )
+        -:  100:  {
+        -:  101:    // NB: this implements a 4-bit decision, logically equivalent to this pseudo-code
+        -:  102:    //
+        -:  103:    // A = HAS_COUNTER, B = HAS_TIME, C = COUNTER_TRIGGER, D = TIME_TRIGGER
+        -:  104:    //
+        -:  105:    // if (!A && !B) => true
+        -:  106:    // if (A && B) => C || D
+        -:  107:    // if (A) => C
+        -:  108:    // if (B) => D
+        -:  109:    // false
+        -:  110:    //
+  1340023:  111:    if (this->m_counterCycle == 0 && this->m_timeCycle == 0) {
+   110002:  112:      return true;
+        -:  113:    }
+        -:  114:
+        -:  115:    // evaluate trigger criteria
+  1230021:  116:    bool shouldTrigger = false;
+  1230021:  117:    if (this->m_counterCycle > 0) {
+   930015:  118:      shouldTrigger = shouldTrigger || this->shouldCounterTrigger();
+        -:  119:    }
+  1230021:  120:    if (this->m_timeCycle > 0) {
+  1200015:  121:      shouldTrigger = shouldTrigger || this->shouldTimeTrigger(time);
+        -:  122:    }
+        -:  123:
+        -:  124:    // update states
+  1230021:  125:    if (this->m_counterCycle > 0) {
+   930015:  126:      this->updateCounter(shouldTrigger);
+        -:  127:    }
+  1230021:  128:    if (this->m_timeCycle > 0) {
+  1200015:  129:      this->updateTime(shouldTrigger, time);
+        -:  130:    }
+        -:  131:
+  1230021:  132:    return shouldTrigger;
+        -:  133:  }
+        -:  134:
+    40007:  135:  bool RateLimiter ::
+        -:  136:    trigger()
+        -:  137:  {
+    40007:  138:    FW_ASSERT(this->m_timeCycle == 0);
+    40007:  139:    return trigger(Fw::Time::zero());
+        -:  140:  }
+        -:  141:
+   930015:  142:  bool RateLimiter ::
+        -:  143:    shouldCounterTrigger()
+        -:  144:  {
+   930015:  145:    FW_ASSERT(this->m_counterCycle > 0);
+        -:  146:
+        -:  147:    // trigger at 0
+   930015:  148:    bool shouldTrigger = (this->m_counter == 0);
+        -:  149:
+   930015:  150:    return shouldTrigger;
+        -:  151:  }
+        -:  152:
+  1191951:  153:  bool RateLimiter ::
+        -:  154:    shouldTimeTrigger(Fw::Time time)
+        -:  155:  {
+  1191951:  156:    FW_ASSERT(this->m_timeCycle > 0);
+        -:  157:
+        -:  158:    // trigger at prev trigger time + time cycle seconds OR when time is at negative infinity
+  1191951:  159:    Fw::Time timeCycle = Fw::Time(this->m_timeCycle, 0);
+  2383902:  160:    Fw::Time nextTrigger = Fw::Time::add(this->m_time, timeCycle);
+  1191951:  161:    bool shouldTrigger = (time >= nextTrigger) || this->m_timeAtNegativeInfinity;
+        -:  162:
+  2383902:  163:    return shouldTrigger;
+        -:  164:  }
+        -:  165:
+   930015:  166:  void RateLimiter ::
+        -:  167:    updateCounter(bool triggered)
+        -:  168:  {
+   930015:  169:    FW_ASSERT(this->m_counterCycle > 0);
+        -:  170:
+   930015:  171:    if (triggered) {
+        -:  172:      // triggered, set to next state
+    15626:  173:      this->m_counter = 1;
+        -:  174:
+        -:  175:    } else {
+        -:  176:      // otherwise, just increment and maybe wrap
+   914389:  177:      if (++this->m_counter >= this->m_counterCycle) {
+    10258:  178:        this->m_counter = 0;
+        -:  179:      }
+        -:  180:    }
+   930015:  181:  }
+        -:  182:
+  1200015:  183:  void RateLimiter ::
+        -:  184:    updateTime(bool triggered, Fw::Time time)
+        -:  185:  {
+  1200015:  186:    FW_ASSERT(this->m_timeCycle > 0);
+        -:  187:
+  1200015:  188:    if (triggered) {
+        -:  189:      // mark time of trigger
+    19891:  190:      this->m_time = time;
+        -:  191:    }
+  1200015:  192:    this->m_timeAtNegativeInfinity = false;
+  1200015:  193:  }
+        -:  194:
+        3:  195:} // end namespace LfNeasc

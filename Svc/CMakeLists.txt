@@ -11,6 +11,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WatchDog/")
 
 # Components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveLogger/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapter/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferManager/")
