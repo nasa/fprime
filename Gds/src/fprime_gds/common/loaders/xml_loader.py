@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base class for all loaders that load dictionaries from xml dictionaries
 
 The XmlLoader class inherits from the DictLoader base class and is intended
@@ -12,7 +12,7 @@ helper functions
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 
@@ -45,8 +45,9 @@ from fprime.common.models.serialize.string_type import *
 from fprime.common.models.serialize.serializable_type import *
 from fprime.common.models.serialize.array_type import *
 
+
 class XmlLoader(dict_loader.DictLoader):
-    '''Class to help load xml based dictionaries'''
+    """Class to help load xml based dictionaries"""
 
     ENUM_SECT = "enums"
     ENUM_TYPE_TAG = "type"
@@ -81,12 +82,12 @@ class XmlLoader(dict_loader.DictLoader):
     STR_LEN_TAG = "len"
 
     def __init__(self):
-        '''
+        """
         Constructor
 
         Returns:
             An initialized loader object
-        '''
+        """
         super(XmlLoader, self).__init__()
 
         # These dicts hold already parsed enum objects so things don't need
@@ -96,7 +97,7 @@ class XmlLoader(dict_loader.DictLoader):
         self.array_types = dict()
 
     def get_xml_tree(self, path):
-        '''
+        """
         Reads the xml file at the given path and parses it using lxml
 
         Args:
@@ -105,7 +106,7 @@ class XmlLoader(dict_loader.DictLoader):
         Returns:
             An lxml etree root object containing the parsed xml file
             information. Raises an exception if there is an error.
-        '''
+        """
         # Check that dictionary path exists
         if not os.path.isfile(path):
             raise exceptions.GseControllerUndefinedFileException(path)
@@ -113,16 +114,15 @@ class XmlLoader(dict_loader.DictLoader):
         # Create xml parser
         xml_parser = etree.XMLParser(remove_comments=True)
 
-        fd = open(path, 'r')
+        fd = open(path, "r")
 
         # Parse xml and get element tree object we can retrieve data from
         element_tree = etree.parse(fd, parser=xml_parser)
 
         return element_tree.getroot()
 
-
     def get_xml_section(self, section_name, xml_root):
-        '''
+        """
         Retrieve the given section in the xml tree if it exists
 
         Args:
@@ -131,16 +131,15 @@ class XmlLoader(dict_loader.DictLoader):
 
         Returns:
             The xml object of the desired section if found, or None if not
-        '''
+        """
         for section in xml_root:
             if section.tag == section_name:
                 return section
 
         return None
 
-
     def get_args_list(self, xml_obj, xml_tree):
-        '''
+        """
         Parses and returns a standard xml dict arguments section:
           Section name: "args"
           Object tags: "arg"
@@ -157,7 +156,7 @@ class XmlLoader(dict_loader.DictLoader):
             (arg name [string], arg description [string or None], arg obj
             [python object derived from TypeBase]). If there is no args section
             or there are no arguments in the args section, [] is returned.
-        '''
+        """
         args = []
         args_section = self.get_xml_section(self.ARGS_SECT, xml_obj)
 
@@ -170,16 +169,15 @@ class XmlLoader(dict_loader.DictLoader):
                 arg_typ_obj = self.parse_type(arg_type_name, arg, xml_tree)
 
                 arg_desc = None
-                if (self.ARG_DESC_TAG in arg_dict):
+                if self.ARG_DESC_TAG in arg_dict:
                     arg_desc = arg_dict[self.ARG_DESC_TAG]
 
                 args.append((arg_name, arg_desc, arg_typ_obj))
 
         return args
 
-
     def get_enum_type(self, enum_name, xml_obj):
-        '''
+        """
         Parses and retuns an Enum object for the given enum name.
 
         Looks in the enums section of the xml dict.
@@ -192,21 +190,21 @@ class XmlLoader(dict_loader.DictLoader):
             If the enum name could be found in the xml_obj, a corresponding
             object of type EnumType is returned. Otherwise, None is returned.
             The caller will hold the only reference to the object.
-        '''
+        """
         # Check if there is an already parsed version of this enum
-        if (enum_name in self.enums):
+        if enum_name in self.enums:
             # Return a copy, so that the objects are not shared
             #  (Could cause nasty issues if two places try to deserialize)
             return deepcopy(self.enums[enum_name])
 
         # Check if the dictionary has an enum section
         enum_section = self.get_xml_section(self.ENUM_SECT, xml_obj)
-        if (enum_section == None):
+        if enum_section == None:
             return None
 
         for enum in enum_section:
             # Check enum name
-            if (enum.get(self.ENUM_TYPE_TAG) == enum_name):
+            if enum.get(self.ENUM_TYPE_TAG) == enum_name:
                 # Go through all possible values of the enum
                 members = dict()
                 for item in enum:
@@ -221,9 +219,8 @@ class XmlLoader(dict_loader.DictLoader):
 
         return None
 
-
     def get_serializable_type(self, type_name, xml_obj):
-        '''
+        """
         Parses and retuns a serializable type object for the given type name.
 
         Looks in the serializables section of the xml dict.
@@ -237,25 +234,25 @@ class XmlLoader(dict_loader.DictLoader):
             object of a type derived from SerializableType is returned.
             Otherwise, None is returned. The caller will hold the only reference
             to the object.
-        '''
+        """
         # Check if there is already a parsed version of this serializable
-        if (type_name in self.serializable_types):
+        if type_name in self.serializable_types:
             # Return a copy, so that the objects are not shared
             return deepcopy(self.serializable_types[type_name])
 
         # Check if the dictionary has an enum section
         ser_section = self.get_xml_section(self.SER_SECT, xml_obj)
-        if (ser_section == None):
+        if ser_section == None:
             return None
 
         for ser_type in ser_section:
             # Check if this serializable matches the type name
-            if (ser_type.get(self.SER_TYPE_TAG) == type_name):
+            if ser_type.get(self.SER_TYPE_TAG) == type_name:
                 # Go through members
                 memb_section = self.get_xml_section(self.SER_MEMB_SECT, ser_type)
 
                 # If there is no member section, this type is invalid
-                if (memb_section == None):
+                if memb_section == None:
                     return None
 
                 members = []
@@ -275,9 +272,8 @@ class XmlLoader(dict_loader.DictLoader):
 
         return None
 
-
     def get_array_type(self, type_name, xml_obj):
-        '''
+        """
         Parses and retuns an array type object for the given type name.
 
         Looks in the arrays section of the xml dict.
@@ -291,26 +287,26 @@ class XmlLoader(dict_loader.DictLoader):
             object of a type derived from ArrayType is returned.
             Otherwise, None is returned. The caller will hold the only reference
             to the object.
-        '''
-        
+        """
+
         # Check if there is already a parsed version of this array
-        if (type_name in self.array_types):
+        if type_name in self.array_types:
             # Return a copy, so that the objects are not shared
             return deepcopy(self.array_types[type_name])
 
         # Check if the dictionary has an array section
         arr_section = self.get_xml_section(self.ARR_SECT, xml_obj)
-        if (arr_section == None):
+        if arr_section == None:
             return None
 
         for arr_memb in arr_section:
             # Check if this array matches the name name
-            if (arr_memb.get(self.ARR_NAME_TAG) == type_name):
+            if arr_memb.get(self.ARR_NAME_TAG) == type_name:
                 # Go through default members
                 default_section = self.get_xml_section(self.ARR_DEFAULT_TAG, arr_memb)
 
                 # If there is no default member section, this type is invalid
-                if (default_section == None):
+                if default_section == None:
                     return None
 
                 # Make config
@@ -331,9 +327,8 @@ class XmlLoader(dict_loader.DictLoader):
 
         return None
 
-
     def parse_type(self, type_name, xml_item, xml_tree):
-        '''
+        """
         Parses the given type string and returns a type object.
 
         Args:
@@ -348,34 +343,35 @@ class XmlLoader(dict_loader.DictLoader):
             Object of a class derived from the TypeBase class if successful,
             Raises an exception if the parsing fails. The caller will hold the
             only reference to the object.
-        '''
-        
-        if (type_name == "I8"):
+        """
+
+        if type_name == "I8":
             return I8Type()
-        elif (type_name == "I16"):
+        elif type_name == "I16":
             return I16Type()
-        elif (type_name == "I32"):
+        elif type_name == "I32":
             return I32Type()
-        elif (type_name == "I64"):
+        elif type_name == "I64":
             return I64Type()
-        elif (type_name == "U8"):
+        elif type_name == "U8":
             return U8Type()
-        elif (type_name == "U16"):
+        elif type_name == "U16":
             return U16Type()
-        elif (type_name == "U32"):
+        elif type_name == "U32":
             return U32Type()
-        elif (type_name == "U64"):
+        elif type_name == "U64":
             return U64Type()
-        elif (type_name == "F32"):
+        elif type_name == "F32":
             return F32Type()
-        elif (type_name == "F64"):
+        elif type_name == "F64":
             return F64Type()
-        elif (type_name == "bool"):
+        elif type_name == "bool":
             return BoolType()
-        elif (type_name == "string"):
+        elif type_name == "string":
             if self.STR_LEN_TAG not in xml_item.attrib:
-                print("Trying to parse string type, but found %s field"%
-                      self.STR_LEN_TAG)
+                print(
+                    "Trying to parse string type, but found %s field" % self.STR_LEN_TAG
+                )
                 return one
             return StringType(max_string_len=int(xml_item.get(self.STR_LEN_TAG), 0))
         else:
@@ -396,5 +392,5 @@ class XmlLoader(dict_loader.DictLoader):
 
             # Abandon all hope
             raise exceptions.GseControllerParsingException(
-                    "Could not find type %s"%type_name)
-
+                "Could not find type %s" % type_name
+            )

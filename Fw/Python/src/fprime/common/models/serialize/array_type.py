@@ -1,7 +1,7 @@
-'''
+"""
 Created on May 29, 2020
 @author: jishii
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
@@ -10,6 +10,7 @@ from . import type_base
 from . import u32_type
 from . import string_type
 from . import enum_type
+
 
 @type_base.serialize
 @type_base.deserialize
@@ -27,13 +28,14 @@ class ArrayType(type_base.BaseType):
 
     @param param: default_list = [ values... ]
     """
-    def __init__(self, typename, config_info, default_list = None):
+
+    def __init__(self, typename, config_info, default_list=None):
         """
         Constructor
         """
 
         if not type(typename) == type(str()):
-            raise TypeMismatchException(type(str()),type(typename))
+            raise TypeMismatchException(type(str()), type(typename))
 
         self.__typename = typename
         setattr(self, "default_list", None)
@@ -43,11 +45,11 @@ class ArrayType(type_base.BaseType):
         self.__arr_format = config_info[2]
 
         if default_list == None or len(default_list) == 0:
-            return;
+            return
 
         if not type(default_list) == type(list()):
-            raise TypeMismatchException(type(list()),type(default_list))
-            
+            raise TypeMismatchException(type(list()), type(default_list))
+
         self.__default_list = default_list
 
     def to_jsonable(self):
@@ -90,7 +92,6 @@ class ArrayType(type_base.BaseType):
 
         return arrStream
 
-
     def deserialize(self, data, offset):
         self.__val = []
         for arrVal in self.mem_list:
@@ -116,7 +117,8 @@ class ArrayType(type_base.BaseType):
             total += val.getSize()
         return total
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("Array")
     try:
         mem1 = u32_type.U32Type(100)
@@ -124,16 +126,15 @@ if __name__ == '__main__':
         mem3 = u32_type.U32Type(22394)
 
         config_list = ("U32", 3, "%u")
-        defaultList = [ mem1, mem2, mem3 ]
+        defaultList = [mem1, mem2, mem3]
 
         arrType = SerializableType("ArrayType", config_list, defaultList)
 
         print("Value: %s" % repr(defaultList))
         buff = defaultType.serialize()
         type_base.showBytes(buff)
-        arrType2 = ArrayType("ArrayType",defaultList)
+        arrType2 = ArrayType("ArrayType", defaultList)
         arrType2.deserialize(buff, len(buff))
         print("Deserialized: %s" % repr(arrType2.default_list))
     except TypeException as e:
         print("Exception: %s" % e.getMsg())
-
