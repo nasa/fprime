@@ -7,7 +7,6 @@ receiver of these delegated functions.
 
 @author mstarch
 """
-import six
 import io
 import os
 import re
@@ -25,6 +24,7 @@ import selectors
 
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
+import six
 import fprime.fbuild
 import fprime.fbuild.settings
 
