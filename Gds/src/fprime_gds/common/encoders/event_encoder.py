@@ -1,4 +1,4 @@
-'''
+"""
 @brief Encoder for Event data
 
 This encoder takes in EventData objects, serializes them, and sends the results
@@ -35,7 +35,7 @@ Serialized Event format:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 
@@ -55,10 +55,10 @@ from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 class EventEncoder(Encoder):
-    '''Encoder class for event data'''
+    """Encoder class for event data"""
 
     def __init__(self, dest="GUI", config=None):
-        '''
+        """
         Constructor
 
         Args:
@@ -70,7 +70,7 @@ class EventEncoder(Encoder):
 
         Returns:
             An initialized EventEncoder object
-        '''
+        """
         super(EventEncoder, self).__init__(dest, config)
 
         self.len_obj = self.config.get_type("msg_len")
@@ -78,7 +78,7 @@ class EventEncoder(Encoder):
         self.id_obj = self.config.get_type("event_id")
 
     def encode_api(self, data):
-        '''
+        """
         Encodes the given EventData object as binary data and returns the result.
 
         Args:
@@ -86,7 +86,7 @@ class EventEncoder(Encoder):
 
         Returns:
             Encoded version of the data argument as binary data
-        '''
+        """
         # TODO Should we verify that it is a EventData object? Or is that too
         #      much overhead. Also, should we verify the object is non-empty
         #      (aka its arguments field is non-None)
@@ -108,21 +108,27 @@ class EventEncoder(Encoder):
         self.len_obj.val = len_val
         len_bin = self.len_obj.serialize()
 
-        binary_data = (len_bin + desc_bin + id_bin + time_bin + arg_bin)
+        binary_data = len_bin + desc_bin + id_bin + time_bin + arg_bin
 
         return binary_data
+
 
 if __name__ == "__main__":
     # Unit Tests
     config = ConfigManager()
-    config.set('types', 'msg_len', 'U16')
+    config.set("types", "msg_len", "U16")
 
     enc = EventEncoder()
     enc_config = EventEncoder("GUI", config)
 
-    temp = EventTemplate(101, "test_ch", "test_comp",
-                         [("a1", "a1", U32Type()), ("a2", "a2", U32Type())],
-                         EventSeverity["DIAGNOSTIC"], "%d %d")
+    temp = EventTemplate(
+        101,
+        "test_ch",
+        "test_comp",
+        [("a1", "a1", U32Type()), ("a2", "a2", U32Type())],
+        EventSeverity["DIAGNOSTIC"],
+        "%d %d",
+    )
 
     time_obj = TimeType(2, 0, 1533758629, 123456)
 
@@ -135,31 +141,39 @@ if __name__ == "__main__":
     long_len_bin = "\x00\x00\x00\x1b"
     short_len_bin = "\x00\x1b"
 
-    reg_expected = (long_len_bin + desc_bin + id_bin + time_bin + arg_bin)
-    config_expected = (short_len_bin + desc_bin + id_bin + time_bin + arg_bin)
+    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + arg_bin
+    config_expected = short_len_bin + desc_bin + id_bin + time_bin + arg_bin
 
     reg_output = enc.encode_api(event_obj)
 
-    if (reg_output != reg_expected):
-        print ("FAIL: expected regular output to be %s, but found %s"%
-               (list(reg_expected), list(reg_output)))
+    if reg_output != reg_expected:
+        print(
+            "FAIL: expected regular output to be %s, but found %s"
+            % (list(reg_expected), list(reg_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 1")
 
     config_output = enc_config.encode_api(event_obj)
 
-    if (config_output != config_expected):
-        print("FAIL: expected configured output to be %s, but found %s"%
-              (list(config_expected), list(config_output)))
+    if config_output != config_expected:
+        print(
+            "FAIL: expected configured output to be %s, but found %s"
+            % (list(config_expected), list(config_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 2")
 
-
-    temp = EventTemplate(102, "test_ch2", "test_comp2",
-                        [("a1", "a1", U8Type()), ("a2", "a2", U16Type())],
-                         EventSeverity["DIAGNOSTIC"], "%d %d")
+    temp = EventTemplate(
+        102,
+        "test_ch2",
+        "test_comp2",
+        [("a1", "a1", U8Type()), ("a2", "a2", U16Type())],
+        EventSeverity["DIAGNOSTIC"],
+        "%d %d",
+    )
 
     time_obj = TimeType(2, 0, 1533758628, 123457)
 
@@ -172,26 +186,29 @@ if __name__ == "__main__":
     long_len_bin = "\x00\x00\x00\x16"
     short_len_bin = "\x00\x16"
 
-    reg_expected = (long_len_bin + desc_bin + id_bin + time_bin + arg_bin)
-    config_expected = (short_len_bin + desc_bin + id_bin + time_bin + arg_bin)
+    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + arg_bin
+    config_expected = short_len_bin + desc_bin + id_bin + time_bin + arg_bin
 
     reg_output = enc.encode_api(event_obj)
 
-    if (reg_output != reg_expected):
-        print ("FAIL: expected regular output to be %s, but found %s"%
-               (list(reg_expected), list(reg_output)))
+    if reg_output != reg_expected:
+        print(
+            "FAIL: expected regular output to be %s, but found %s"
+            % (list(reg_expected), list(reg_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 3")
 
     config_output = enc_config.encode_api(event_obj)
 
-    if (config_output != config_expected):
-        print("FAIL: expected configured output to be %s, but found %s"%
-              (list(config_expected), list(config_output)))
+    if config_output != config_expected:
+        print(
+            "FAIL: expected configured output to be %s, but found %s"
+            % (list(config_expected), list(config_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 4")
 
     print("ALL TESTS PASSED!")
-

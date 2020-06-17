@@ -55,9 +55,20 @@ ACTION_MAP = {
         "target": "check",
         "build-suffix": UT_SUFFIX
     },
+    "check-leak": {
+        "description": "Run unit tests with memcheck for single component/deployment",
+        "target": "check_leak",
+        "build-suffix": UT_SUFFIX
+    },
     "check-all": {
         "description": "Runs all unit tests for deployment",
         "target": "check",
+        "build-suffix": UT_SUFFIX,
+        "top-target": True
+    },
+    "check-leak-all": {
+        "description": "Run unit tests with memcheck for single component/deployment",
+        "target": "check_leak",
         "build-suffix": UT_SUFFIX,
         "top-target": True
     },

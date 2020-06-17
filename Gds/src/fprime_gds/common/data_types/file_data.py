@@ -1,11 +1,11 @@
-'''
+"""
 @brief Class to store data from each specific file_data type
 
 @date Created July 10, 2019
 @author Blake A. Harriman
 
 @bug No known bugs
-'''
+"""
 import abc
 from enum import Enum
 
@@ -16,20 +16,22 @@ class FilePacketType(Enum):
     """
     An enumeration of available file packets
     """
+
     START = 0
     DATA = 1
     END = 2
     CANCEL = 3
 
 
-#Takes care of the START packets that the file_decoder will receive
+# Takes care of the START packets that the file_decoder will receive
 class StartPacketData(sys_data.SysData):
-    '''
+    """
     The StartPacketData class stores the start packet information
-    '''
-    #Initializes the start packet data with all of the necessary information
+    """
+
+    # Initializes the start packet data with all of the necessary information
     def __init__(self, seqID, size, sourcePath, destPath):
-        '''
+        """
         Constructor.
 
         Args:
@@ -43,24 +45,26 @@ class StartPacketData(sys_data.SysData):
 
         Returns:
             An initialized StartPacketData object
-        '''
+        """
 
         self.packetType = FilePacketType.START
         self.seqID = seqID
         self.size = size
-        #self.lengthSP = lengthSP
+        # self.lengthSP = lengthSP
         self.sourcePath = sourcePath
-        #self.lengthDP = lengthDP
+        # self.lengthDP = lengthDP
         self.destPath = destPath
 
-#Takes care of the DATA packets that the file_decoder will receive
+
+# Takes care of the DATA packets that the file_decoder will receive
 class DataPacketData(sys_data.SysData):
-    '''
+    """
     The DataPacketData class stores the data packet information
-    '''
-    #Initializes the data packet data with all of the necessary information
+    """
+
+    # Initializes the data packet data with all of the necessary information
     def __init__(self, seqID, offset, dataVar):
-        '''
+        """
         Constructor.
 
         Args:
@@ -72,7 +76,7 @@ class DataPacketData(sys_data.SysData):
 
         Returns:
             An initialized DataPacketData object
-        '''
+        """
 
         self.packetType = FilePacketType.DATA
         self.seqID = seqID
@@ -81,14 +85,15 @@ class DataPacketData(sys_data.SysData):
         self.length = len(self.dataVar)
 
 
-#Takes care of the END packets that the file_decoder will receive
+# Takes care of the END packets that the file_decoder will receive
 class EndPacketData(sys_data.SysData):
-    '''
+    """
     The EndPacketData class stores the end packet information
-    '''
-    #Initializes the end packet data with all of the necessary information
+    """
+
+    # Initializes the end packet data with all of the necessary information
     def __init__(self, seqID, hashValue):
-        '''
+        """
         Constructor.
 
         Args:
@@ -98,20 +103,22 @@ class EndPacketData(sys_data.SysData):
 
         Returns:
             An initialized EndPacketData object
-        '''
+        """
 
         self.packetType = FilePacketType.END
         self.seqID = seqID
         self.hashValue = hashValue
 
-#Takes care of the CANCEL packets that the file_decoder will receive
+
+# Takes care of the CANCEL packets that the file_decoder will receive
 class CancelPacketData(sys_data.SysData):
-    '''
+    """
     The CancelPacketData class stores the cancel packet information
-    '''
-    #Initializes the cancel packet data with all of the necessary information
+    """
+
+    # Initializes the cancel packet data with all of the necessary information
     def __init__(self, seqID):
-        '''
+        """
         Constructor.
 
         Args:
@@ -120,8 +127,6 @@ class CancelPacketData(sys_data.SysData):
 
         Returns:
             An initialized StartPacketData object
-        '''
+        """
         self.packetType = FilePacketType.CANCEL
         self.seqID = seqID
-
-
