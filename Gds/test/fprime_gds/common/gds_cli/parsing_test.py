@@ -131,7 +131,7 @@ def default_valid_events_dict(updated_values_dict={}):
             ),
         ),
         (
-            ["events", "-S", "per.aspera.ad.astra", "PATH"],
+            ["events", "s", "per.aspera.ad.astra", "PATH"],
             default_valid_events_dict({"search": "per.aspera.ad.astra"}),
         ),
         (
@@ -169,7 +169,7 @@ def test_command_send_no_command_given_error(standard_parser):
 def test_components_no_search_term_given_error(standard_parser):
     # Not giving any string after giving the option should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["commands", "PATH", "-S"])
+        fprime_cli.parse_args(standard_parser, ["commands", "PATH", "-s"])
 
 
 @pytest.mark.gds_cli
