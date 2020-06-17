@@ -18,6 +18,7 @@ class ChannelDictionary(flask_restful.Resource):
     """
     Channel dictionary endpoint. Will return dictionary when hit with a GET.
     """
+
     def __init__(self, dictionary):
         """
         Constructor used to setup for dictionary.
@@ -35,6 +36,7 @@ class ChannelHistory(flask_restful.Resource):
     """
     Endpoint to return telemetry history data with optional time argument.
     """
+
     def __init__(self, history):
         """
         Constructor used to setup time argument to this history.
@@ -42,7 +44,9 @@ class ChannelHistory(flask_restful.Resource):
         :param dictionary: dictionary holding channel list
         """
         self.parser = flask_restful.reqparse.RequestParser()
-        self.parser.add_argument("session", required=True, help="Session key for fetching data.")
+        self.parser.add_argument(
+            "session", required=True, help="Session key for fetching data."
+        )
         self.history = history
 
     def get(self):
@@ -55,7 +59,9 @@ class ChannelHistory(flask_restful.Resource):
         for chan in new_chans:
             # Add the 'display_text' to the event, along with a getter
             if chan.template.fmt_str is not None:
-                setattr(chan, "display_text", chan.template.fmt_str % (chan.val_obj.val))
+                setattr(
+                    chan, "display_text", chan.template.fmt_str % (chan.val_obj.val)
+                )
                 func = lambda this: this.display_text
                 setattr(chan, "get_display_text", types.MethodType(func, chan))
         return {"history": new_chans}

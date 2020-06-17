@@ -16,10 +16,12 @@ from fprime.common.models.serialize.i32_type import I32Type
 
 from fprime_gds.common.templates.ch_template import ChTemplate
 from fprime_gds.common.data_types.ch_data import ChData
+
 """
 These unit tests were quickly modified from the original tests on the predicate history.
 They all run, but may not be written in an optimized way.
 """
+
 
 class HistoryTestCases(unittest.TestCase):
     def setUp(self):
@@ -224,7 +226,6 @@ class HistoryTestCases(unittest.TestCase):
         except TypeError:
             correct_error = True
         assert correct_error, "The History should have raised a TypeError"
-        
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-'''
+"""
 @brief Channel Decoder class used to parse binary channel telemetry data
 
 Decoders are responsible for taking in serialized data and parsing it into
@@ -15,7 +15,7 @@ Example data that would be sent to a decoder that parses channels:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 import copy
 
@@ -25,11 +25,12 @@ from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.type_exceptions import *
 
+
 class ChDecoder(Decoder):
-    '''Decoder class for Channel data'''
+    """Decoder class for Channel data"""
 
     def __init__(self, ch_dict):
-        '''
+        """
         ChDecoder class constructor
 
         Args:
@@ -38,12 +39,12 @@ class ChDecoder(Decoder):
 
         Returns:
             An initialized channel decoder object.
-        '''
+        """
         super(ChDecoder, self).__init__()
         self.__dict = ch_dict
 
     def decode_api(self, data):
-        '''
+        """
         Decodes the given data and returns the result.
 
         This function allows for non-registered code to call the same decoding
@@ -55,7 +56,7 @@ class ChDecoder(Decoder):
         Returns:
             Parsed version of the channel telemetry data in the form of a
             ChData object or None if the data is not decodable
-        '''
+        """
         ptr = 0
 
         # Decode Ch ID here...
@@ -77,11 +78,11 @@ class ChDecoder(Decoder):
 
             return ChData(val_obj, ch_time, ch_temp)
         else:
-            print("Channel decode error: id %d not in dictionary"%ch_id)
+            print("Channel decode error: id %d not in dictionary" % ch_id)
             return None
 
     def decode_ch_val(self, val_data, offset, template):
-        '''
+        """
         Decodes the given channel's value from the given data
 
         Args:
@@ -94,7 +95,7 @@ class ChDecoder(Decoder):
             the BaseType class. The val_data has been deserialized using this
             object, and so the channel value can be retrieved from the obj's
             val field.
-        '''
+        """
         # This line creates a new object of the same type as the template's
         # type_obj. This allows us to use the new object to deserialize and
         # store the data value. If we did not do this, the template's object
@@ -106,4 +107,3 @@ class ChDecoder(Decoder):
         val_obj.deserialize(val_data, offset)
 
         return val_obj
-

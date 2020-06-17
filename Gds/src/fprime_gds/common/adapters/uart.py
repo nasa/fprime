@@ -23,8 +23,39 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     Supplies a data source adapter that is pulling data off from a UART wire using PySerial. This is setup using a
     device handle and a baudrate for the given serial device.
     """
-    BAUDS = [50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400,
-             460800, 500000, 576000, 921600, 1000000, 1152000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000]
+
+    BAUDS = [
+        50,
+        75,
+        110,
+        134,
+        150,
+        200,
+        300,
+        600,
+        1200,
+        1800,
+        2400,
+        4800,
+        9600,
+        19200,
+        38400,
+        57600,
+        115200,
+        230400,
+        460800,
+        500000,
+        576000,
+        921600,
+        1000000,
+        1152000,
+        1500000,
+        2000000,
+        2500000,
+        3000000,
+        3500000,
+        4000000,
+    ]
 
     def __init__(self, device, baud):
         """
@@ -87,9 +118,11 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             # Read as much data as possible, while ensuring to block if no data is available at this time. Note: as much
             # data is read as possible to avoid a long-return time to this call. Minimum data to read is one byte in
             # order to block this function while data is incoming.
-            data = self.serial.read(1) # Force a block for at least 1 character
+            data = self.serial.read(1)  # Force a block for at least 1 character
             while self.serial.in_waiting:
-                data += self.serial.read(self.serial.in_waiting) # Drain the incoming data queue
+                data += self.serial.read(
+                    self.serial.in_waiting
+                )  # Drain the incoming data queue
         except serial.serialutil.SerialException as exc:
             LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
             self.close()
@@ -101,21 +134,23 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         Returns a dictionary of flag to argparse-argument dictionaries for use with argparse to setup arguments.
         :return: dictionary of flag to argparse arguments for use with argparse
         """
-        available = list(map(lambda info: info.device, list_ports.comports(include_links=True)))
+        available = list(
+            map(lambda info: info.device, list_ports.comports(include_links=True))
+        )
         default = "/dev/ttyACM0" if not available else available[-1]
         return {
-            ("--uart-device", ): {
+            ("--uart-device",): {
                 "dest": "device",
                 "type": str,
                 "default": default,
-                "help": "UART device representing the FSW. Default: %(default)s"
+                "help": "UART device representing the FSW. Default: %(default)s",
             },
-            ("--uart-baud", ): {
-                "dest":"baud",
-                "type":int,
+            ("--uart-baud",): {
+                "dest": "baud",
+                "type": int,
                 "default": 9600,
-                "help": "Baud rate of the serial device. Default: %(default)s"
-            }
+                "help": "Baud rate of the serial device. Default: %(default)s",
+            },
         }
 
     @classmethod
@@ -127,14 +162,22 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         ports = map(lambda info: info.device, list_ports.comports(include_links=True))
         if not args["device"] in ports:
-            raise ValueError("Serial port '{}' not valid. Available ports: {}".format(ports))
+            raise ValueError(
+                "Serial port '{}' not valid. Available ports: {}".format(ports)
+            )
         # Note: baud rate may not *always* work. These are a superset
         baud = 0
         try:
             baud = int(args["baud"])
         except ValueError:
-            raise ValueError("Serial baud rate '{}' not integer. Use one of: {}"
-                             .format(args["baud"], SerialAdapter.BAUDS))
+            raise ValueError(
+                "Serial baud rate '{}' not integer. Use one of: {}".format(
+                    args["baud"], SerialAdapter.BAUDS
+                )
+            )
         if not int(baud) in SerialAdapter.BAUDS:
-            raise ValueError("Serial baud rate '{}' not supported. Use one of: {}"
-                             .format(baud, SerialAdapter.BAUDS))
+            raise ValueError(
+                "Serial baud rate '{}' not supported. Use one of: {}".format(
+                    baud, SerialAdapter.BAUDS
+                )
+            )

@@ -22,7 +22,11 @@ def get_data_dir():
     """
     if type(fprime.fbuild.builder()) == fprime.fbuild.CMakeHandler:
         return os.path.join(os.path.dirname(__file__), "cmake-data")
-    raise Exception("Test data directory not setup for {} builder class".format(type(fprime.fbuild.builder())))
+    raise Exception(
+        "Test data directory not setup for {} builder class".format(
+            type(fprime.fbuild.builder())
+        )
+    )
 
 
 def test_hash_finder():
@@ -30,8 +34,12 @@ def test_hash_finder():
     Tests that the hash finder works given a known builds.
     """
     build_dir = os.path.join(os.path.dirname(__file__), "cmake-data", "testbuild")
-    assert fprime.fbuild.builder().find_hashed_file(build_dir, 0xdeadbeef) == ["Abc: 0xdeadbeef\n"]
-    assert fprime.fbuild.builder().find_hashed_file(build_dir, 0xc0dec0de) == ["HJK: 0xc0dec0de\n"]
+    assert fprime.fbuild.builder().find_hashed_file(build_dir, 0xDEADBEEF) == [
+        "Abc: 0xdeadbeef\n"
+    ]
+    assert fprime.fbuild.builder().find_hashed_file(build_dir, 0xC0DEC0DE) == [
+        "HJK: 0xc0dec0de\n"
+    ]
 
 
 def test_needed_functions():
@@ -39,8 +47,13 @@ def test_needed_functions():
     Test the needed functions for the given builder. This will ensure that the public interface to the builder is
     implemented as expected.
     """
-    needed_funcs = ["get_include_info", "find_nearest_standard_build", "execute_known_target", "get_include_locations",
-                    "get_fprime_configuration"]
+    needed_funcs = [
+        "get_include_info",
+        "find_nearest_standard_build",
+        "execute_known_target",
+        "get_include_locations",
+        "get_fprime_configuration",
+    ]
     for func in needed_funcs:
         assert hasattr(fprime.fbuild.builder(), func)
 
@@ -51,9 +64,17 @@ def test_get_fprime_configuration():
     """
     configs = fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS
     test_data = {
-        "grand-unified": ("/home/user11/fprime/Ref/..", None, "/home/user11/fprime/Ref/.."),
-        "subdir": ("/home/user11/Proj", "/home/user11/Proj/lib1;/home/user11/Proj/lib2", "/home/user11/Proj/fprime"),
-        "external": ("/home/user11/Proj", "/opt/lib1;/opt/lib2", "/opt/fprime")
+        "grand-unified": (
+            "/home/user11/fprime/Ref/..",
+            None,
+            "/home/user11/fprime/Ref/..",
+        ),
+        "subdir": (
+            "/home/user11/Proj",
+            "/home/user11/Proj/lib1;/home/user11/Proj/lib2",
+            "/home/user11/Proj/fprime",
+        ),
+        "external": ("/home/user11/Proj", "/opt/lib1;/opt/lib2", "/opt/fprime"),
     }
     for key in test_data.keys():
         build_dir = os.path.join(get_data_dir(), key)
@@ -69,8 +90,13 @@ def test_get_include_locations():
     """
     test_data = {
         "grand-unified": ["/home/user11/fprime"],
-        "subdir": ["/home/user11/Proj", "/home/user11/Proj/lib1", "/home/user11/Proj/lib2", "/home/user11/Proj/fprime"],
-        "external": ["/home/user11/Proj", "/opt/lib1", "/opt/lib2", "/opt/fprime"]
+        "subdir": [
+            "/home/user11/Proj",
+            "/home/user11/Proj/lib1",
+            "/home/user11/Proj/lib2",
+            "/home/user11/Proj/fprime",
+        ],
+        "external": ["/home/user11/Proj", "/opt/lib1", "/opt/lib2", "/opt/fprime"],
     }
     for key in test_data.keys():
         build_dir = os.path.join(get_data_dir(), key)
@@ -85,29 +111,45 @@ def test_get_include_info():
     # Test data setup, format build_dir to tuples of path, expected result. Note: None means expect Orphan exception
     test_data = {
         "grand-unified": [
-            ("/home/user11/fprime/Svc/SomeComp1", ("Svc/SomeComp1", "/home/user11/fprime")),
-            ("/home/user11/fprime/Ref/SomeComp2", ("Ref/SomeComp2", "/home/user11/fprime")),
-            ("/home/user11/fprime/Ref/SomeComp2/../SomeComp1", ("Ref/SomeComp1", "/home/user11/fprime")),
-            ("/home/user11/external-sw/NachoDeploy/SomeComp3", None)
+            (
+                "/home/user11/fprime/Svc/SomeComp1",
+                ("Svc/SomeComp1", "/home/user11/fprime"),
+            ),
+            (
+                "/home/user11/fprime/Ref/SomeComp2",
+                ("Ref/SomeComp2", "/home/user11/fprime"),
+            ),
+            (
+                "/home/user11/fprime/Ref/SomeComp2/../SomeComp1",
+                ("Ref/SomeComp1", "/home/user11/fprime"),
+            ),
+            ("/home/user11/external-sw/NachoDeploy/SomeComp3", None),
         ],
         "subdir": [
-            ("/home/user11/Proj/fprime/Svc/SomeComp1", ("Svc/SomeComp1", "/home/user11/Proj/fprime")),
+            (
+                "/home/user11/Proj/fprime/Svc/SomeComp1",
+                ("Svc/SomeComp1", "/home/user11/Proj/fprime"),
+            ),
             # An insidious case where the path contains a common prefix as another possible location without being an
             # exact directory.  Notice /home/user11/Proj/fprime-something/Comps/SomeComp1 contains a non-exact common
             # prefix with the directory /home/user11/Proj/fprime. i.e. /home/user11/Proj/fprime is a prefix but
             # /home/user11/Proj/fprime/ is not.
-            ("/home/user11/Proj/fprime-something/Comps/SomeComp1",
-             ("fprime-something/Comps/SomeComp1", "/home/user11/Proj")),
+            (
+                "/home/user11/Proj/fprime-something/Comps/SomeComp1",
+                ("fprime-something/Comps/SomeComp1", "/home/user11/Proj"),
+            ),
             ("/home/user11/Proj/Ref/SomeComp2", ("Ref/SomeComp2", "/home/user11/Proj")),
-            ("/home/user11/Proj/Ref/SomeComp2/../../fprime/Svc/SomeComp1",
-             ("Svc/SomeComp1", "/home/user11/Proj/fprime")),
-            ("/home/user11/external-sw/NachoDeploy/SomeComp3", None)
+            (
+                "/home/user11/Proj/Ref/SomeComp2/../../fprime/Svc/SomeComp1",
+                ("Svc/SomeComp1", "/home/user11/Proj/fprime"),
+            ),
+            ("/home/user11/external-sw/NachoDeploy/SomeComp3", None),
         ],
         "external": [
             ("/opt/fprime/Svc/SomeComp1", ("Svc/SomeComp1", "/opt/fprime")),
             ("/home/user11/Proj/Ref/SomeComp2", ("Ref/SomeComp2", "/home/user11/Proj")),
-            ("/opt/something/else/external-sw/NachoDeploy/SomeComp3", None)
-        ]
+            ("/opt/something/else/external-sw/NachoDeploy/SomeComp3", None),
+        ],
     }
     # Run through all the above data look for matching ansers
     for key in test_data.keys():
@@ -128,15 +170,28 @@ def test_find_nearest_std_build():
     in the tree outside the erroneous paths. This should not be a problem unless standard builds exist on the root of
     the file system, as the rest of the path will be non-sensical.
     """
-    NAME_CONST = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.replace("{}", "")
+    NAME_CONST = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.replace(
+        "{}", ""
+    )
     test_dir = get_data_dir()
     test_data = [
-        ("abcdefg", "testbuild/subdir1/subdir2/subdir3", "testbuild/subdir1/" + NAME_CONST + "abcdefg"),
-        ("default", "testbuild/subdir1/subdir2/subdir3",
-         "testbuild/subdir1/subdir2/subdir3/" + NAME_CONST + "default"),
-        ("abcdefg", "testbuild/subdir1/subdir2", "testbuild/subdir1/" + NAME_CONST + "abcdefg"),
+        (
+            "abcdefg",
+            "testbuild/subdir1/subdir2/subdir3",
+            "testbuild/subdir1/" + NAME_CONST + "abcdefg",
+        ),
+        (
+            "default",
+            "testbuild/subdir1/subdir2/subdir3",
+            "testbuild/subdir1/subdir2/subdir3/" + NAME_CONST + "default",
+        ),
+        (
+            "abcdefg",
+            "testbuild/subdir1/subdir2",
+            "testbuild/subdir1/" + NAME_CONST + "abcdefg",
+        ),
         ("default", "testbuild/subdir1/subdir2", "testbuild/" + NAME_CONST + "default"),
-        ("abcdefg", "/nonexistent/dirone/someotherpath", None)
+        ("abcdefg", "/nonexistent/dirone/someotherpath", None),
     ]
     for platform, path, truth in test_data:
         if truth is not None:
@@ -158,12 +213,16 @@ def test_generate():
     try:
         test_flags = [{}, {"CMAKE_BUILD_TYPE": "Testing"}]
         # Build Ref with flags
-        path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..", "Ref")
+        path = os.path.join(
+            os.path.dirname(__file__), "..", "..", "..", "..", "..", "Ref"
+        )
         for flags in test_flags:
             # Create a temp directory and register its deletion at the end of the program run
             tempdir = tempfile.mkdtemp()
             rms.append(tempdir)
-            fprime.fbuild.builder().generate_build(path, tempdir, flags, ignore_output=True)
+            fprime.fbuild.builder().generate_build(
+                path, tempdir, flags, ignore_output=True
+            )
         # Expect errors for this step
         path = "/nopath/somesuch/nothing"
         with pytest.raises(fprime.fbuild.cmake.CMakeProjectException):
@@ -183,19 +242,27 @@ def test_targets():
     # Build Ref with flags
     tempdir = None
     try:
-        fprime_root = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
+        fprime_root = os.path.join(
+            os.path.dirname(__file__), "..", "..", "..", "..", ".."
+        )
         # Create a temp directory and register its deletion at the end of the program run
         tempdir = tempfile.mkdtemp()
-        fprime.fbuild.builder().generate_build(os.path.join(fprime_root, "Ref"), tempdir, {"CMAKE_BUILD_TYPE": "Testing"})
-        test_data = [(os.path.join(fprime_root, "Ref"), ""),
-                     (os.path.join(fprime_root, "Svc", "CmdDispatcher"), ""),
-                     (os.path.join(fprime_root, "Svc", "CmdDispatcher"), "ut_exe"),
-                     (os.path.join(fprime_root, "Svc", "CmdDispatcher"), "check")]
+        fprime.fbuild.builder().generate_build(
+            os.path.join(fprime_root, "Ref"), tempdir, {"CMAKE_BUILD_TYPE": "Testing"}
+        )
+        test_data = [
+            (os.path.join(fprime_root, "Ref"), ""),
+            (os.path.join(fprime_root, "Svc", "CmdDispatcher"), ""),
+            (os.path.join(fprime_root, "Svc", "CmdDispatcher"), "ut_exe"),
+            (os.path.join(fprime_root, "Svc", "CmdDispatcher"), "check"),
+        ]
         # Loop over all directories and target pairs ensuing things work
         for path, target in test_data:
             fprime.fbuild.builder().execute_known_target(target, tempdir, path)
-        test_data = [(os.path.join(fprime_root, "Svc", "CmdDispatcher"), "nontarget1"),
-                     (os.path.join(fprime_root, "Svc", "CmdDispatcher3Not"), "")]
+        test_data = [
+            (os.path.join(fprime_root, "Svc", "CmdDispatcher"), "nontarget1"),
+            (os.path.join(fprime_root, "Svc", "CmdDispatcher3Not"), ""),
+        ]
         # Loop over all paths and target pairs looking for expected Exceptions
         for path, target in test_data:
             with pytest.raises(fprime.fbuild.cmake.CMakeException):
