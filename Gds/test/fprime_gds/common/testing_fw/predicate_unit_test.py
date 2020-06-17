@@ -40,13 +40,17 @@ class PredicateTestCases(unittest.TestCase):
 
         try:
             pred.__call__(2)
-            assert False, "invoking an incomplete subclass didn't raise NotImplementedError"
+            assert (
+                False
+            ), "invoking an incomplete subclass didn't raise NotImplementedError"
         except NotImplementedError:
             assert True, "invoking an incomplete subclass raised NotImplementedError"
 
         try:
             str(pred)
-            assert False, "invoking an incomplete subclass didn't raise NotImplementedError"
+            assert (
+                False
+            ), "invoking an incomplete subclass didn't raise NotImplementedError"
         except NotImplementedError:
             assert True, "invoking an incomplete subclass raised NotImplementedError"
 
@@ -202,20 +206,24 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
     def test_args_predicates(self):
-        a_list = ['a', 'p','p','l','e']
-        pred = predicates.args_predicate(['a', 'p','p','l','e'])
+        a_list = ["a", "p", "p", "l", "e"]
+        pred = predicates.args_predicate(["a", "p", "p", "l", "e"])
         assert pred(a_list), "The list {} should have been accepted".format(a_list)
-        a_list[4] = 'r'
-        assert not pred(a_list), "The list {} should not have been accepted".format(a_list)
-        a_list = ['a', 'p','p','l']
-        assert not pred(a_list), "The list {} should not have been accepted".format(a_list)
+        a_list[4] = "r"
+        assert not pred(a_list), "The list {} should not have been accepted".format(
+            a_list
+        )
+        a_list = ["a", "p", "p", "l"]
+        assert not pred(a_list), "The list {} should not have been accepted".format(
+            a_list
+        )
 
-        a_list = ['a', 'p','p','l','e']
-        pred = predicates.args_predicate(['a','p','p','l',None])
+        a_list = ["a", "p", "p", "l", "e"]
+        pred = predicates.args_predicate(["a", "p", "p", "l", None])
         assert pred(a_list), "The list {} should have been accepted".format(a_list)
         a_list[4] = 7
         assert pred(a_list), "The list {} should have been accepted".format(a_list)
-        a_list[4] = 'r'
+        a_list[4] = "r"
         assert pred(a_list), "The list {} should have been accepted".format(a_list)
 
         l_pred = predicates.within_range(0, 10)
@@ -224,13 +232,17 @@ class PredicateTestCases(unittest.TestCase):
         n_list = [1, 2, 3, 4, 5, 6]
         assert pred(n_list), "The list {} should have been accepted".format(n_list)
 
-        for i in range(0,10):
+        for i in range(0, 10):
             n_list[0] = i
             assert pred(n_list), "The list {} should have been accepted".format(n_list)
         n_list[0] = -5
-        assert not pred(n_list), "The list {} should not have been accepted".format(n_list)
+        assert not pred(n_list), "The list {} should not have been accepted".format(
+            n_list
+        )
         n_list[0] = 15
-        assert not pred(n_list), "The list {} should not have been accepted".format(n_list)
+        assert not pred(n_list), "The list {} should not have been accepted".format(
+            n_list
+        )
 
         pred = predicates.args_predicate(8)
         assert pred(8), "The value 8 should have been accepted."
@@ -242,9 +254,15 @@ class PredicateTestCases(unittest.TestCase):
         update2 = ChData(StringType("apple"), TimeType(), temp2)
 
         pred = predicates.telemetry_predicate()
-        assert pred(update1), "If no fields are specified a ChData object should return True"
-        assert pred(update2), "If no fields are specified a ChData object should return True"
-        assert not pred("diff object"), "Anything that's not a ChData object should be False"
+        assert pred(
+            update1
+        ), "If no fields are specified a ChData object should return True"
+        assert pred(
+            update2
+        ), "If no fields are specified a ChData object should return True"
+        assert not pred(
+            "diff object"
+        ), "Anything that's not a ChData object should be False"
         assert not pred(5), "Anything that's not a ChData object should be False"
         self.check_str(pred)
 
@@ -257,7 +275,7 @@ class PredicateTestCases(unittest.TestCase):
         val_pred = predicates.equal_to("apple")
         pred = predicates.telemetry_predicate(value_pred=val_pred)
         assert not pred(update1), "This predicate on the value 20 should return False"
-        assert pred(update2), "This predicate on the value \"apple\" should return True"
+        assert pred(update2), 'This predicate on the value "apple" should return True'
         self.check_str(pred)
 
         time_pred = predicates.equal_to(0)
@@ -269,29 +287,48 @@ class PredicateTestCases(unittest.TestCase):
         val_pred = predicates.within_range(10, 30)
         pred = predicates.telemetry_predicate(id_pred, val_pred, time_pred)
         assert pred(update1), "Specifying all fields should return True for update 1"
-        assert not pred(update2), "Specifying all fields should return False for update 2"
+        assert not pred(
+            update2
+        ), "Specifying all fields should return False for update 2"
         self.check_str(pred)
 
     def test_event_predicates(self):
-        args1_def = [
-            ("name", "string", StringType()),
-            ("age", "int", I32Type())
-        ]
-        temp1 = EventTemplate(1, "Test Msg 1", "Predicate Tester", args1_def, EventSeverity.ACTIVITY_LO, "")
+        args1_def = [("name", "string", StringType()), ("age", "int", I32Type())]
+        temp1 = EventTemplate(
+            1,
+            "Test Msg 1",
+            "Predicate Tester",
+            args1_def,
+            EventSeverity.ACTIVITY_LO,
+            "",
+        )
         args1 = (StringType("John"), I32Type(35))
         msg1 = EventData(args1, TimeType(), temp1)
         args2_def = [
             ("description", "string", StringType()),
-            ("count", "int", I32Type())
+            ("count", "int", I32Type()),
         ]
-        temp2 = EventTemplate(2, "Test Msg 2", "Predicate Tester", args2_def, EventSeverity.ACTIVITY_HI, "")
+        temp2 = EventTemplate(
+            2,
+            "Test Msg 2",
+            "Predicate Tester",
+            args2_def,
+            EventSeverity.ACTIVITY_HI,
+            "",
+        )
         args2 = (StringType("Dozen"), I32Type(12))
         msg2 = EventData(args2, TimeType(), temp2)
 
         pred = predicates.event_predicate()
-        assert pred(msg1), "If no fields are specified an EventData object should return True"
-        assert pred(msg2), "If no fields are specified an EventData object should return True"
-        assert not pred("diff object"), "Anything that's not an EventData object should be False"
+        assert pred(
+            msg1
+        ), "If no fields are specified an EventData object should return True"
+        assert pred(
+            msg2
+        ), "If no fields are specified an EventData object should return True"
+        assert not pred(
+            "diff object"
+        ), "Anything that's not an EventData object should be False"
         assert not pred(5), "Anything that's not a EventData object should be False"
         self.check_str(pred)
 
@@ -303,21 +340,33 @@ class PredicateTestCases(unittest.TestCase):
 
         args_pred = predicates.args_predicate([None, None])
         pred = predicates.event_predicate(args_pred=args_pred)
-        assert pred(msg1), "This predicate should return True, as it expects an event with 2 args"
-        assert pred(msg2), "This predicate should return True, as it expects an event with 2 args"
+        assert pred(
+            msg1
+        ), "This predicate should return True, as it expects an event with 2 args"
+        assert pred(
+            msg2
+        ), "This predicate should return True, as it expects an event with 2 args"
         self.check_str(pred)
 
         args_pred = predicates.args_predicate(["John", 35])
         pred = predicates.event_predicate(args_pred=args_pred)
-        assert pred(msg1), "This predicate should return True as msg1 has args (str John, int32 35)"
-        assert not pred(msg2), "This predicate should return False as msg2 has args (str Dozen, int32 12)"
+        assert pred(
+            msg1
+        ), "This predicate should return True as msg1 has args (str John, int32 35)"
+        assert not pred(
+            msg2
+        ), "This predicate should return False as msg2 has args (str Dozen, int32 12)"
         self.check_str(pred)
 
         severity_pred = predicates.equal_to(EventSeverity.ACTIVITY_LO)
         pred = predicates.event_predicate(severity_pred=severity_pred)
         assert severity_pred(msg1.get_severity())
-        assert pred(msg1), "This predicate should return True as msg1 has an ACTIVITY_LO severity"
-        assert not pred(msg2), "This predicate should return False as msg2 has an ACTIVITY_HI severity"
+        assert pred(
+            msg1
+        ), "This predicate should return True as msg1 has an ACTIVITY_LO severity"
+        assert not pred(
+            msg2
+        ), "This predicate should return False as msg2 has an ACTIVITY_HI severity"
         self.check_str(pred)
 
         time_pred = predicates.equal_to(0)

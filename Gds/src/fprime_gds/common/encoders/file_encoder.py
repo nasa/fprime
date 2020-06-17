@@ -52,10 +52,12 @@ from fprime_gds.common.utils.data_desc_type import DataDescType
 
 from fprime.constants import DATA_ENCODING
 
+
 class FileEncoder(encoder.Encoder):
     """
     Encodes the file data. This plugs into the uplink system and allows for data to be sent to the spacecraft.
     """
+
     def __init__(self, config=None):
         """
         Constructs a file encoder. Defaults to FSW as destination..
@@ -89,9 +91,11 @@ class FileEncoder(encoder.Encoder):
         elif data.packetType == FilePacketType.END:
             out_data += struct.pack(">I", data.hashValue)
         elif data.packetType != FilePacketType.CANCEL:
-            raise Exception("Invalid packet type found while encoding: {}".format(data.packetType))
+            raise Exception(
+                "Invalid packet type found while encoding: {}".format(data.packetType)
+            )
         descriptor = U32Type(DataDescType["FW_PACKET_FILE"].value).serialize()
         length_obj = self.config.get_type("msg_len")
         length_obj.val = len(descriptor) + len(out_data)
-        header = U32Type( 0x5A5A5A5A ).serialize() + length_obj.serialize() + descriptor
-        return  header + out_data
+        header = U32Type(0x5A5A5A5A).serialize() + length_obj.serialize() + descriptor
+        return header + out_data

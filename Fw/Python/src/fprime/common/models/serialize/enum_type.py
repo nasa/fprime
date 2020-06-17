@@ -1,12 +1,13 @@
-'''
+"""
 Created on Dec 18, 2014
 @author: tcanham, reder
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
 from .type_exceptions import *
 from . import type_base
+
 
 @type_base.serialize
 @type_base.deserialize
@@ -21,14 +22,15 @@ class EnumType(type_base.BaseType):
     @param: enum_dict = { "member":val, ...}  member value dict.
     @param: val = "member name" Optional member name for serializing only.
     """
-    def __init__(self, typename="", enum_dict={"UNDEFINED":0}, val = None):
+
+    def __init__(self, typename="", enum_dict={"UNDEFINED": 0}, val=None):
         """
         Constructor
         """
         # Check input value for member selected
         if val != None:
             if not type(val) == type(str()):
-                raise TypeMismatchException(type(str()),type(val))
+                raise TypeMismatchException(type(str()), type(val))
         else:
             val = "UNDEFINED"
         self.__val = val
@@ -41,16 +43,16 @@ class EnumType(type_base.BaseType):
 
         # Check enum is a dict
         if not type(enum_dict) == type(dict()):
-            raise TypeMismatchException(type(dict()),type(val))
+            raise TypeMismatchException(type(dict()), type(val))
 
         # scan the dictionary to see if it is formatted correctly
         for member in list(enum_dict.keys()):
             # member name should be a string
             if not type(member) == type(str()):
-                raise TypeMismatchException(type(str()),type(member))
+                raise TypeMismatchException(type(str()), type(member))
             # member value should be an integer
             if not type(enum_dict[member]) == type(int()):
-                raise TypeMismatchException(type(int()),enum_dict[member])
+                raise TypeMismatchException(type(int()), enum_dict[member])
 
         self.__enum_dict = enum_dict
         self.__do_check = True
@@ -58,21 +60,19 @@ class EnumType(type_base.BaseType):
         self._check_val(val)
 
     def _check_val(self, val):
-      # make sure requested value is found in enum members
-      if val != "UNDEFINED" and self.__do_check:
-          if val not in list(self.__enum_dict.keys()):
-              raise EnumMismatchException(self.__typename, val)
+        # make sure requested value is found in enum members
+        if val != "UNDEFINED" and self.__do_check:
+            if val not in list(self.__enum_dict.keys()):
+                raise EnumMismatchException(self.__typename, val)
 
     @property
     def val(self):
         return self.__val
 
-
     @val.setter
     def val(self, val):
         self._check_val(val)
         self.__val = val
-
 
     def keys(self):
         """
@@ -80,14 +80,11 @@ class EnumType(type_base.BaseType):
         """
         return list(self.__enum_dict.keys())
 
-
     def typename(self):
         return self.__typename
 
-
     def enum_dict(self):
         return self.__enum_dict
-
 
     def serialize(self):
         """
@@ -98,16 +95,15 @@ class EnumType(type_base.BaseType):
         if self.val == None:
             raise NotInitializedException(type(self))
         #
-        return self._serialize('>i', self.__enum_dict[self.val])
+        return self._serialize(">i", self.__enum_dict[self.val])
 
-
-    def deserialize(self,data,offset):
+    def deserialize(self, data, offset):
         """
         Utilize deserialized decorator here...
         """
 
         self.__do_check = False
-        self._deserialize('>i', data, offset)
+        self._deserialize(">i", data, offset)
         self.__do_check = True
         # search for value in enum_list
         # print self.__enum_dict
@@ -120,26 +116,26 @@ class EnumType(type_base.BaseType):
         if self.val not in list(self.__enum_dict.keys()):
             raise TypeRangeException(self.val)
 
-
     def getSize(self):
         # enum value stored as unsigned int
-        #return struct.calcsize('>i');
-        return 4;
+        # return struct.calcsize('>i');
+        return 4
 
-    def __repr__(self): return 'Enum'
+    def __repr__(self):
+        return "Enum"
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("ENUM")
     try:
-        members = { "MEMB1":0 , "MEMB2":6, "MEMB3":9 }
+        members = {"MEMB1": 0, "MEMB2": 6, "MEMB3": 9}
         print("Members: ", members)
-        val = EnumType("SomeEnum",members,"MEMB3")
+        val = EnumType("SomeEnum", members, "MEMB3")
         print("Value: %s" % val.val)
         buff = val.serialize()
         type_base.showBytes(buff)
-        val2 = EnumType("SomeEnum",members)
-        val2.deserialize(buff,len(buff))
+        val2 = EnumType("SomeEnum", members)
+        val2.deserialize(buff, len(buff))
         print("Deserialize: %s" % val2.val)
     except TypeException as e:
-        print("Exception: %s"%e.getMsg())
-
+        print("Exception: %s" % e.getMsg())

@@ -10,6 +10,7 @@ class FlaskLogger(flask_restful.Resource):
     """
     Command dictionary endpoint. Will return dictionary when hit with a GET.
     """
+
     def __init__(self, logdir):
         """
         Constructor used to setup the log directory.

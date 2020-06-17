@@ -1,8 +1,8 @@
-'''
+"""
 Created on August 16, 2019
 
 @author: tcanham
-'''
+"""
 from __future__ import print_function
 import time
 
@@ -14,11 +14,13 @@ from fprime.common.models.serialize.u8_type import *
 
 import zlib
 
+
 class SeqBinaryWriter(object):
     """
     Write out the Binary (ASTERIA) form of sequencer file.
     """
-    def __init__(self, timebase=0xffff):
+
+    def __init__(self, timebase=0xFFFF):
         """
         Constructor
         """
@@ -39,36 +41,48 @@ class SeqBinaryWriter(object):
         """
 
         def __time_tag(cmd_obj):
-          '''
+            """
           TODO: support a timebase in the cmd obj? This is mission specific, so it is tough to handle. For now
           I am hardcoding this to 2 which is TB_NONE
-          '''
-          #return TimeType(timeBase=2, seconds=cmd_obj.getSeconds(), useconds=cmd_obj.getUseconds()).serialize()
-          # TKC - new command time format
-          return U32Type( cmd_obj.getSeconds() ).serialize() + U32Type( cmd_obj.getUseconds() ).serialize()
+          """
+            # return TimeType(timeBase=2, seconds=cmd_obj.getSeconds(), useconds=cmd_obj.getUseconds()).serialize()
+            # TKC - new command time format
+            return (
+                U32Type(cmd_obj.getSeconds()).serialize()
+                + U32Type(cmd_obj.getUseconds()).serialize()
+            )
 
         def __descriptor(cmd_obj):
-          # subtract 1 from the value because enum34 enums start at 1, and this can't be changed
-          return U8Type(cmd_obj.getDescriptor().value-1).serialize()
+            # subtract 1 from the value because enum34 enums start at 1, and this can't be changed
+            return U8Type(cmd_obj.getDescriptor().value - 1).serialize()
 
         def __command(cmd_obj):
-          command = U32Type( 0 ).serialize() # serialize combuffer type enum: FW_PACKET_COMMAND
-          command += U32Type( cmd_obj.getOpCode() ).serialize() # serialize opcode
-          # Command arguments
-          for arg in cmd_obj.getArgs():
-              command += arg[2].serialize()
-          return command
+            command = U32Type(
+                0
+            ).serialize()  # serialize combuffer type enum: FW_PACKET_COMMAND
+            command += U32Type(cmd_obj.getOpCode()).serialize()  # serialize opcode
+            # Command arguments
+            for arg in cmd_obj.getArgs():
+                command += arg[2].serialize()
+            return command
 
         def __length(command):
-          return U32Type( len(command) ).serialize()
+            return U32Type(len(command)).serialize()
 
         def __print(byteBuffer):
             print("Byte buffer size: %d" % len(byteBuffer))
-            for entry in range(0,len(byteBuffer)):
-                print("Byte %d: 0x%02X (%c)"%(entry,struct.unpack("B",byteBuffer[entry])[0],struct.unpack("B",byteBuffer[entry])[0]))
+            for entry in range(0, len(byteBuffer)):
+                print(
+                    "Byte %d: 0x%02X (%c)"
+                    % (
+                        entry,
+                        struct.unpack("B", byteBuffer[entry])[0],
+                        struct.unpack("B", byteBuffer[entry])[0],
+                    )
+                )
 
         # This is no longer in the sequence file format.
-        #def __checksum(data):
+        # def __checksum(data):
         #  csum = 0
         #  for entry in range(0,len(data)):
         #    byte = struct.unpack("B",data[entry])[0]
@@ -88,7 +102,7 @@ class SeqBinaryWriter(object):
 
         # Checksum:
         # This is no longer in the sequence file format.
-        #checksum = __checksum(header + length + command)
+        # checksum = __checksum(header + length + command)
 
         # Debug printing (comment out when not debugging):
         # print "descriptor:"
@@ -115,30 +129,32 @@ class SeqBinaryWriter(object):
             sequence += self.__binaryCmdRecord(cmd)
         size = len(sequence)
         if self.__timebase == 0xFFFF:
-            tb_txt = b'ANY'
+            tb_txt = b"ANY"
         else:
             tb_txt = bytes(self.__timebase)
-            
+
         print("Sequence is %d bytes with timebase %s" % (size, tb_txt))
 
         header = b""
-        header += U32Type( size + 4 ).serialize() # Write out size of the sequence file in bytes here
-        header += U32Type( num_records ).serialize() # Write number of records
-        header += U16Type( self.__timebase ).serialize() # Write time base
-        header += U8Type( 0xFF ).serialize() # write time context
-        sequence = header + sequence # Write the list of command records here
+        header += U32Type(
+            size + 4
+        ).serialize()  # Write out size of the sequence file in bytes here
+        header += U32Type(num_records).serialize()  # Write number of records
+        header += U16Type(self.__timebase).serialize()  # Write time base
+        header += U8Type(0xFF).serialize()  # write time context
+        sequence = header + sequence  # Write the list of command records here
         # compute CRC. Ported from Utils/Hassh/libcrc/libcrc.h (update_crc_32)
         crc = self.computeCrc(sequence)
 
-        print("CRC: %d (0x%04X)"%(crc,crc))
+        print("CRC: %d (0x%04X)" % (crc, crc))
         try:
-            sequence += U32Type( crc ).serialize()
+            sequence += U32Type(crc).serialize()
         except TypeMismatchException as typeErr:
             print("Exception: %s" % typeErr.getMsg())
             raise
 
         # Write the list of command records here
-        self.__fd.write( sequence )
+        self.__fd.write(sequence)
 
     def close(self):
         """
@@ -149,25 +165,25 @@ class SeqBinaryWriter(object):
     def computeCrc(self, buff):
         # See http://stackoverflow.com/questions/30092226/how-to-calculate-crc32-with-python-to-match-online-results
         # RE: signed to unsigned CRC
-        return zlib.crc32(buff)% (1<<32)
+        return zlib.crc32(buff) % (1 << 32)
+
 
 class SeqAsciiWriter(object):
     """
     Write out the ASCII record form of sequencer file.
     """
+
     def __init__(self):
         """
         Constructor
         """
         self.__fd = None
 
-
     def open(self, filename):
         """
         Open the ASCII file
         """
         self.__fd = open(filename, "w")
-
 
     def __getCmdString(self, cmd_obj):
         """
@@ -177,11 +193,10 @@ class SeqAsciiWriter(object):
         opcode = cmd_obj.getOpCode()
         args = cmd_obj.getArgs()
         #
-        cmd = "%s (0x%x)" % (mnemonic,int(opcode))
+        cmd = "%s (0x%x)" % (mnemonic, int(opcode))
         for arg in args:
             cmd += ", %s" % arg[2].val
         return cmd
-
 
     def write(self, seq_cmds_list):
         """
@@ -190,10 +205,8 @@ class SeqAsciiWriter(object):
         for cmd in seq_cmds_list:
             self.__fd.write(self.__getCmdString(cmd) + "\n")
 
-
     def close(self):
         """
         Close the ASCII file
         """
         self.__fd.close()
-

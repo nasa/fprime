@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base class for all decoders. Defines the Decoder interface.
 
 Decoders are responsible for taking in serialized data and parsing it into
@@ -18,18 +18,23 @@ allow consumers to receive raw data.
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 import abc
 
 import fprime_gds.common.handlers
 
 
-class Decoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers.HandlerRegistrar, abc.ABC):
+class Decoder(
+    fprime_gds.common.handlers.DataHandler,
+    fprime_gds.common.handlers.HandlerRegistrar,
+    abc.ABC,
+):
     """
     Base class for all decoder classes. This defines the "decode_api" function to allow for decoding of raw bytes. In
     addition it has a "data_callback" function implementation that decodes and sends out all results.
     """
+
     def data_callback(self, data, sender=None):
         """
         Data callback which calls the decode_api function exactly once. Then it passes the results to all registered
@@ -69,7 +74,7 @@ if __name__ == "__main__":
 
         decoder1.data_callback("hello")
 
-        if (decoder1.decode_api("hello") != "hello"):
+        if decoder1.decode_api("hello") != "hello":
             print("Decoder Unit tests failed")
         else:
             print("Decoder Unit tests passed")

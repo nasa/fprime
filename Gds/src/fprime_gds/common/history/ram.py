@@ -18,6 +18,7 @@ class RamHistory(History):
     Chronological variant of history.  This is intended to be registered with the decoders in order
     to handle incoming objects, and store them for retrieval.
     """
+
     def __init__(self):
         """
         Constructor used to set-up in-memory store for history
@@ -85,7 +86,6 @@ class RamHistory(History):
             del self.objects[:earliest]
             for key in self.retrieved_cursors.keys():
                 self.retrieved_cursors[key] -= earliest
-
 
     def size(self):
         """

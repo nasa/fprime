@@ -18,7 +18,7 @@ import struct
 
 def CHECKSUM_CALC(data):
     """ Initial checksum implementation for FpFramerDeframer. """
-    return 0xcafecafe
+    return 0xCAFECAFE
 
 
 class FramerDeframer(abc.ABC):
@@ -26,6 +26,7 @@ class FramerDeframer(abc.ABC):
     Abstract base class of the Framer/Deframer variety. Framers and Deframers have to define two methods, one for
     framing a set of bytes and one for deframing a set of bytes into packets.
     """
+
     @abc.abstractmethod
     def frame(self):
         """
@@ -81,10 +82,11 @@ class FpFramerDeframer(FramerDeframer):
 
     Where a token is a big-endian integer of TOKEN_SIZE bytes in length (see below)
     """
+
     # Size of an F prime framing token, and the type based on that size
     TOKEN_SIZE = 4
     # Total size of header data based on token size
-    HEADER_SIZE = (TOKEN_SIZE * 2)
+    HEADER_SIZE = TOKEN_SIZE * 2
     # Size of checksum value, and the hardcoded value before CRC32 is available
     CHECKSUM_SIZE = 4
     MAXIMUM_DATA_SIZE = 4096
@@ -107,15 +109,17 @@ class FpFramerDeframer(FramerDeframer):
         """
         if FpFramerDeframer.TOKEN_SIZE == 4:
             FpFramerDeframer.TOKEN_TYPE = "I"
-            FpFramerDeframer.START_TOKEN =  0xdeadbeef
+            FpFramerDeframer.START_TOKEN = 0xDEADBEEF
         elif FpFramerDeframer.TOKEN_SIZE == 2:
             FpFramerDeframer.TOKEN_TYPE = "H"
-            FpFramerDeframer.START_TOKEN = 0xbeef
+            FpFramerDeframer.START_TOKEN = 0xBEEF
         elif FpFramerDeframer.TOKEN_SIZE == 1:
             FpFramerDeframer.TOKEN_TYPE = "B"
-            FpFramerDeframer.START_TOKEN = 0xef
+            FpFramerDeframer.START_TOKEN = 0xEF
         else:
-            raise ValueError("Invalid TOKEN_SIZE of {0}".format(FpFramerDeframer.TOKEN_SIZE))
+            raise ValueError(
+                "Invalid TOKEN_SIZE of {0}".format(FpFramerDeframer.TOKEN_SIZE)
+            )
         FpFramerDeframer.HEADER_FORMAT = ">" + (FpFramerDeframer.TOKEN_TYPE * 2)
 
     def frame(self, data):
@@ -125,7 +129,9 @@ class FpFramerDeframer(FramerDeframer):
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
-        framed = struct.pack(FpFramerDeframer.HEADER_FORMAT, FpFramerDeframer.START_TOKEN, len(data))
+        framed = struct.pack(
+            FpFramerDeframer.HEADER_FORMAT, FpFramerDeframer.START_TOKEN, len(data)
+        )
         framed += data
         framed += struct.pack(">I", CHECKSUM_CALC(framed))
         return framed
@@ -147,16 +153,27 @@ class FpFramerDeframer(FramerDeframer):
         while len(data) >= FpFramerDeframer.HEADER_SIZE:
             # Read header information including start token and size and check if we have enough for the total size
             start, data_size = struct.unpack_from(FpFramerDeframer.HEADER_FORMAT, data)
-            total_size = FpFramerDeframer.HEADER_SIZE + data_size + FpFramerDeframer.CHECKSUM_SIZE
+            total_size = (
+                FpFramerDeframer.HEADER_SIZE
+                + data_size
+                + FpFramerDeframer.CHECKSUM_SIZE
+            )
             # Invalid frame, rotate away a Byte and keep processing
-            if start != FpFramerDeframer.START_TOKEN or data_size >= FpFramerDeframer.MAXIMUM_DATA_SIZE:
+            if (
+                start != FpFramerDeframer.START_TOKEN
+                or data_size >= FpFramerDeframer.MAXIMUM_DATA_SIZE
+            ):
                 data = data[1:]
                 continue
             # If the pool is large enough to read the whole frame, then read it
             elif len(data) >= total_size:
-                deframed, check = struct.unpack_from(">{0}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE)
+                deframed, check = struct.unpack_from(
+                    ">{0}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE
+                )
                 # If the checksum is valid, return the packet. Otherwise continue to rotate
-                if check == CHECKSUM_CALC(data[:data_size + FpFramerDeframer.HEADER_SIZE]):
+                if check == CHECKSUM_CALC(
+                    data[: data_size + FpFramerDeframer.HEADER_SIZE]
+                ):
                     data = data[total_size:]
                     return deframed, data
                 # Bad checksum, rotate 1 and keep looking for non-garbage
@@ -184,7 +201,8 @@ class TcpServerFramerDeframer(FramerDeframer):
     WARNING: this is a non-symmetric framer/deframer as the Tcp Server's protocol isn't symmetric. Therefore, it should
     never be used to deframe its own framed data.
     """
-    START_STRING = 'ZZZZ'
+
+    START_STRING = "ZZZZ"
 
     def frame(self, data):
         """
@@ -215,9 +233,9 @@ class TcpServerFramerDeframer(FramerDeframer):
         if len(data) < 8:
             return None, data
         # Read the length and break if not enough data
-        data_len, = struct.unpack_from(">I", data, 4)
+        (data_len,) = struct.unpack_from(">I", data, 4)
         if len(data) < data_len + 8:
             return None, data
-        packet = data[8:data_len + 8]
-        data = data[data_len + 8:]
+        packet = data[8 : data_len + 8]
+        data = data[data_len + 8 :]
         return packet, data

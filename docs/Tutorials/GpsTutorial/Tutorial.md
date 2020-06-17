@@ -817,7 +817,9 @@ application's files and modify them to construct our topology.
 From the `GpsApp` directory run the following:
 ```shell
 cp -r ../Ref/Top ./Top
+rm ./Top/RefTopologyAppDictionary.xml ./Top/RefTopologyAppAi_IDTableLog.txt ./Top/RefTopologyAppID.csv
 ```
+**Note:** do not worry if the removed files do not exist, the remove is there to clean-up files generated during a build.
 
 ### Update the GpsApp CmakeLists.txt
 
