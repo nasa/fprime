@@ -11,41 +11,45 @@ import sys
 
 from fprime.constants import DATA_ENCODING
 
-from .type_exceptions import *
+from .type_exceptions import TypeException
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import NotInitializedException
+from .type_exceptions import StringSizeException
+from .type_exceptions import DeserializeException
 from . import type_base
 
 
 @type_base.serialize
 @type_base.deserialize
 class StringType(type_base.BaseType):
-    def __init__(self, val=None, max_string_len=None):
+    def __init__(self, val_=None, max_string_len=None):
         """
         Constructor
         @param val: Default value for the string, if None then empty string.
         @param max_string: Maximum allowed string length set in auto-code.
         """
-        self.__val = val
+        self.__val = val_
         self.__max_string_len = max_string_len
 
-        if val == None:
+        if val_ == None:
             return
 
-        self._check_val(val)
+        self._check_val(val_)
 
-    def _check_val(self, val):
-        if not type(val) == type(str()) and not type(val) == type(u""):
-            raise TypeMismatchException(type(str()), type(val))
+    def _check_val(self, val_):
+        if not type(val_) == type(str()) and not type(val_) == type(u""):
+            raise TypeMismatchException(type(str()), type(val_))
 
     @property
     def val(self):
         return self.__val
 
     @val.setter
-    def val(self, val):
-        self._check_val(val)
-        if not type(val) == type(str()):
-            val = val.encode("utf-8")
-        self.__val = val
+    def val(self, val_):
+        self._check_val(val_)
+        if not type(val_) == type(str()):
+            val_ = val_.encode("utf-8")
+        self.__val = val_
 
     def serialize(self):
         """
@@ -61,12 +65,12 @@ class StringType(type_base.BaseType):
                 raise StringSizeException(s, self.__max_string_len)
 
         # store string value plus size - place size in front
-        buff = struct.pack(">H", len(self.val))
+        buff_ = struct.pack(">H", len(self.val))
         if sys.version_info >= (3, 0):
-            buff = buff + self.val.encode(DATA_ENCODING)
+            buff_ = buff_ + self.val.encode(DATA_ENCODING)
         else:
-            buff = buff + self.val
-        return buff
+            buff_ = buff_ + self.val
+        return buff_
 
     def deserialize(self, data, offset):
         """

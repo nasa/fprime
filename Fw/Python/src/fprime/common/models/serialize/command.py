@@ -7,32 +7,20 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # Import the types this way so they do not need prefixing for execution.
-from .type_exceptions import *
-from .type_base import *
+# Import only types that you will use to avoid pylint warnings
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeException
+from .type_exceptions import ArgLengthMismatchException
+from .type_exceptions import ArgNotFoundException
 
-from .bool_type import *
-from .enum_type import *
-from .f32_type import *
-from .f64_type import *
+from . import type_base
+from .type_base import BaseType
 
-from .u8_type import *
-from .u16_type import *
-from .u32_type import *
-from .u64_type import *
-
-from .i8_type import *
-from .i16_type import *
-from .i32_type import *
-from .i64_type import *
-
-from .time_type import *
-
-from .string_type import *
-from .serializable_type import *
+from .f32_type import F32Type
+from .u32_type import U32Type
 
 from enum import Enum
 
-import struct
 import copy
 
 Descriptor = Enum(value="Descriptor", names="ABSOLUTE RELATIVE")
@@ -108,7 +96,8 @@ class Command(object):
         ser_data = opcode.serialize()
 
         ## then, serialize arguments
-        for (arg_name, arg_desc, arg_type) in self.__arguments:
+        # unused variables that start with dummy are ignored by pylint
+        for (dummy_arg_name, dummy_arg_desc, arg_type) in self.__arguments: 
             ser_data += arg_type.serialize()
         return ser_data
 
