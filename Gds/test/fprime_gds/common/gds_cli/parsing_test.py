@@ -2,6 +2,7 @@
 A set of PyTest-style unit tests for parsing commands
 """
 
+import os
 import pytest
 
 
@@ -17,6 +18,14 @@ def standard_parser():
     return fprime_cli.create_parser()
 
 
+def get_path_relative_to_file(path: str) -> str:
+    """
+    Converts the given path to one relative to this file.
+    """
+    dirname = os.path.dirname(__file__)
+    return os.path.join(dirname, path)
+
+
 def default_valid_args_dict(updated_values_dict={}):
     """
     The output arguments dictionary for a valid channels/commands/events
@@ -25,7 +34,7 @@ def default_valid_args_dict(updated_values_dict={}):
     """
     dictionary = {
         "func": None,
-        "dictionary_path": "PATH",
+        "dictionary": get_path_relative_to_file("TestDictionary.xml"),
         "ip_address": "127.0.0.1",
         "port": 50050,
         "list": False,
@@ -71,38 +80,40 @@ def default_valid_events_dict(updated_values_dict={}):
         ([], {"func": None}),
         # TODO: Unsure how to test help/version args, since they exit the program?
         # (["-h"], {"func": None}),
-        (["channels", "PATH"], default_valid_channels_dict(),),
-        (["commands", "PATH"], default_valid_commands_dict(),),
+        (["channels"], default_valid_channels_dict(),),
+        (["commands"], default_valid_commands_dict(),),
         (
-            ["command-send", "PATH", "some.command.name"],
+            ["command-send", "some.command.name"],
             {
                 "func": command_send.CommandSendCommand.handle_arguments,
                 "command_name": "some.command.name",
                 "arguments": [],
-                "dictionary_path": "PATH",
+                "dictionary": get_path_relative_to_file("TestDictionary.xml"),
                 "ip_address": "127.0.0.1",
                 "port": 50050,
             },
         ),
-        (["events", "PATH"], default_valid_events_dict(),),
-        (["channels", "PATH", "-l"], default_valid_channels_dict({"list": True}),),
-        (["channels", "PATH", "--list"], default_valid_channels_dict({"list": True}),),
         (
-            ["channels", "follow/the/yellow/brick/road"],
-            default_valid_channels_dict(
-                {"dictionary_path": "follow/the/yellow/brick/road"}
+            ["events", "-d", "../testing_fw/UnitTestDictionary.xml"],
+            default_valid_events_dict(
+                {
+                    "dictionary": get_path_relative_to_file(
+                        "../testing_fw/UnitTestDictionary.xml"
+                    )
+                }
             ),
         ),
-        (["channels", "PATH", "-f"], default_valid_channels_dict({"follow": True}),),
-        (["commands", "PATH", "-i", "10"], default_valid_commands_dict({"ids": [10]}),),
+        (["channels", "-l"], default_valid_channels_dict({"list": True}),),
+        (["channels", "--list"], default_valid_channels_dict({"list": True}),),
+        (["channels", "-f"], default_valid_channels_dict({"follow": True}),),
+        (["commands", "-i", "10"], default_valid_commands_dict({"ids": [10]}),),
         (
-            ["commands", "PATH", "-i", "3", "4", "8"],
+            ["commands", "-i", "3", "4", "8"],
             default_valid_commands_dict({"ids": [3, 4, 8]}),
         ),
         (
             [
                 "events",
-                "PATH",
                 "-c",
                 "Grover's Corners",
                 "Sutton County",
@@ -131,14 +142,14 @@ def default_valid_events_dict(updated_values_dict={}):
             ),
         ),
         (
-            ["events", "s", "per.aspera.ad.astra", "PATH"],
+            ["events", "-s", "per.aspera.ad.astra"],
             default_valid_events_dict({"search": "per.aspera.ad.astra"}),
         ),
         (
-            ["events", "-ip", "jpl.nasa.gov", "PATH"],
+            ["events", "-ip", "jpl.nasa.gov"],
             default_valid_events_dict({"ip_address": "jpl.nasa.gov"}),
         ),
-        (["events", "-j", "PATH"], default_valid_events_dict({"json": True}),),
+        (["events", "-j"], default_valid_events_dict({"json": True}),),
     ],
 )
 @pytest.mark.gds_cli
@@ -152,49 +163,42 @@ def test_output_after_parsing_valid_input(
 
 
 @pytest.mark.gds_cli
-def test_no_path_given_error(standard_parser):
-    # Not giving any path to a dictionary should raise an error
-    with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["channels"])
-
-
-@pytest.mark.gds_cli
 def test_command_send_no_command_given_error(standard_parser):
     # Not giving a command option here should raise a "SystemExit" exception
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["command-send", "PATH"])
+        fprime_cli.parse_args(standard_parser, ["command-send"])
 
 
 @pytest.mark.gds_cli
 def test_components_no_search_term_given_error(standard_parser):
     # Not giving any string after giving the option should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["commands", "PATH", "-s"])
+        fprime_cli.parse_args(standard_parser, ["commands", "-s"])
 
 
 @pytest.mark.gds_cli
 def test_id_flag_no_ids_given_error(standard_parser):
     # Not giving any IDs after giving the option should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["channels", "PATH", "-i"])
+        fprime_cli.parse_args(standard_parser, ["channels", "-i"])
 
 
 @pytest.mark.gds_cli
 def test_id_flag_float_id_given_error(standard_parser):
     # Giving a non-integer ID here should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["events", "PATH", "-i", "34.8"])
+        fprime_cli.parse_args(standard_parser, ["events", "-i", "34.8"])
 
 
 @pytest.mark.gds_cli
 def test_id_flag_string_id_given_error(standard_parser):
     # Giving a non-integer ID here should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["channels", "PATH", "-i", "crashtime"])
+        fprime_cli.parse_args(standard_parser, ["channels", "-i", "crashtime"])
 
 
 @pytest.mark.gds_cli
 def test_components_no_components_given_error(standard_parser):
     # Not giving any components after giving the option should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["events", "PATH", "-c"])
+        fprime_cli.parse_args(standard_parser, ["events", "-c"])
