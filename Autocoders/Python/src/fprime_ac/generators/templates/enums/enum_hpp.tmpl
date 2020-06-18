@@ -26,7 +26,9 @@
 \#include "Fw/Types/BasicTypes.hpp"
 \#include "Fw/Types/Serializable.hpp"
 
+#if $namespace
 namespace ${namespace} {
+#end if
   class ${name} : public Fw::Serializable
   {
     public:
@@ -153,5 +155,7 @@ namespace ${namespace} {
     //! The enumeration value
     t e;
   };
+#if $namespace
 }
+#end if
 #endif
