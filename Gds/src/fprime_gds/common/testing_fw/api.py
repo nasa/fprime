@@ -19,11 +19,13 @@ from fprime_gds.common.history.chrono import ChronologicalHistory
 from fprime.common.models.serialize.time_type import TimeType
 from fprime_gds.common.handlers import DataHandler
 
+
 class IntegrationTestAPI(DataHandler):
     """
     A value used to begin searches after the current contents in a history and only search future
     items
     """
+
     NOW = "NOW"
 
     def __init__(self, pipeline, logpath=None, fsw_order=True):
@@ -212,7 +214,6 @@ class IntegrationTestAPI(DataHandler):
             time_pred: an optional predicate to specify the flight software timestamp
         """
         self.event_log_filter = self.get_event_pred(event, args, severity, time_pred)
-
 
     ######################################################################################
     #   History Functions
@@ -417,7 +418,9 @@ class IntegrationTestAPI(DataHandler):
         start = self.telemetry_history.size()
         self.send_command(command, args)
         if isinstance(channels, list):
-            return self.assert_telemetry_sequence(channels, start=start, timeout=timeout)
+            return self.assert_telemetry_sequence(
+                channels, start=start, timeout=timeout
+            )
         else:
             return self.assert_telemetry(channels, start=start, timeout=timeout)
 
@@ -615,7 +618,9 @@ class IntegrationTestAPI(DataHandler):
             the ChData object found during the search
         """
         pred = self.get_telemetry_pred(channel, value, time_pred)
-        result = self.await_telemetry(channel, value, time_pred, history, start, timeout)
+        result = self.await_telemetry(
+            channel, value, time_pred, history, start, timeout
+        )
         msg = "checks if item search found a correct update"
         self.__assert_pred("Telemetry received", pred, result, msg)
         return result
@@ -736,7 +741,14 @@ class IntegrationTestAPI(DataHandler):
         return predicates.event_predicate(event, args, severity, time_pred)
 
     def await_event(
-        self, event, args=None, severity=None, time_pred=None, history=None, start="NOW", timeout=5
+        self,
+        event,
+        args=None,
+        severity=None,
+        time_pred=None,
+        history=None,
+        start="NOW",
+        timeout=5,
     ):
         """
         A search for a single event message received. By default, the call will only await until a
@@ -827,7 +839,14 @@ class IntegrationTestAPI(DataHandler):
     #   Event Asserts
     ######################################################################################
     def assert_event(
-        self, event, args=None, severity=None, time_pred=None, history=None, start=None, timeout=0
+        self,
+        event,
+        args=None,
+        severity=None,
+        time_pred=None,
+        history=None,
+        start=None,
+        timeout=0,
     ):
         """
         An assert on a single event message received. If the history doesn't have the
@@ -945,6 +964,7 @@ class IntegrationTestAPI(DataHandler):
         """
         This exception is used by the history searches to signal the end of the timeout.
         """
+
         pass
 
     def __timeout_sig_handler(self, signum, frame):
@@ -1149,7 +1169,7 @@ class IntegrationTestAPI(DataHandler):
                 self.ret_val = []
                 if predicates.is_predicate(count):
                     self.count_pred = count
-                else: 
+                else:
                     self.count_pred = predicates.equal_to(count)
                 self.search_pred = search_pred
                 self.repeats = False

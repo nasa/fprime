@@ -36,6 +36,7 @@ TELEMETRY_PACKETIZER := $(BUILD_ROOT)/mk/bin/run_tlm_packetizer.sh
 AC_INTERFACE_GEN := $(CODE_GEN) --build_root
 # DEFAULT Dictionary
 AC_COMPONENT_GEN := $(CODE_GEN) --build_root --default_topology_dict --gen_report --html_docs --html_doc_dir $(HTML_DOC_SUBDIR) --md_docs --md_doc_dir $(MD_DOC_SUBDIR)
+AC_ENUM_GEN := $(CODE_GEN) 
 #
 AC_TEST_COMPONENT_GEN := $(CODE_GEN) --build_root -u
 #

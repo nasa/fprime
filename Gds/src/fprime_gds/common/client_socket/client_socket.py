@@ -8,16 +8,17 @@ import select
 from fprime_gds.common.handlers import DataHandler
 
 from fprime.constants import DATA_ENCODING
+
 # Constants for public use
 GUI_TAG = "GUI"
 FSW_TAG = "FSW"
 
 
 class ThreadedTCPSocketClient(DataHandler):
-    '''
+    """
     Threaded TCP client that connects to the socket server that serves packets from the flight
     software
-    '''
+    """
 
     def __init__(self, sock=None, dest=FSW_TAG):
         """
@@ -41,21 +42,21 @@ class ThreadedTCPSocketClient(DataHandler):
         self.stop_event = threading.Event()
 
     def get_data_bytes(self, string_data):
-        '''
+        """
         Convert the data bytes from string to bytes
         :param string_data: data in string format
         :return: data in bytes format
-        '''
+        """
         if sys.version_info >= (3, 0):
             return string_data.encode(DATA_ENCODING)
         return string_data
 
     def get_data_string(self, bytes_data):
-        '''
+        """
         Convert the data bytes from string to bytes
         :param bytes_data: data in bytes format
         :return: data in string format
-        '''
+        """
         if sys.version_info >= (3, 0):
             return bytes_data.decode(DATA_ENCODING)
         return bytes_data
@@ -70,7 +71,7 @@ class ThreadedTCPSocketClient(DataHandler):
         self.__distributors.append(distributor)
 
     def register_to_server(self, register_as):
-        '''
+        """
         Registers the caller to the server as type register_as
 
         This function assumes the socket connects to an fprime TCP server
@@ -78,8 +79,8 @@ class ThreadedTCPSocketClient(DataHandler):
         Args:
             register_as (string): How to identify this process to the TCP server
                                   Can be either "FSW" or "GUI"
-        '''
-        data = "Register %s\n"%register_as
+        """
+        data = "Register %s\n" % register_as
 
         self.sock.send(self.get_data_bytes(data))
 
@@ -135,4 +136,3 @@ class ThreadedTCPSocketClient(DataHandler):
                 chunk = self.sock.recv(1024)
                 for d in self.__distributors:
                     d.on_recv(chunk)
-

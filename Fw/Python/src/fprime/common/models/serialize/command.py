@@ -1,8 +1,8 @@
-'''
+"""
 Created on Jan 5, 2015
 
 @author: tcanham
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 
@@ -35,44 +35,56 @@ from enum import Enum
 import struct
 import copy
 
-Descriptor = Enum(value='Descriptor', names='ABSOLUTE RELATIVE')
+Descriptor = Enum(value="Descriptor", names="ABSOLUTE RELATIVE")
+
 
 class Command(object):
-    '''
+    """
     classdocs
-    '''
-    def __init__(self, component, mnemonic, opcode, description, arguments, seconds=0, useconds=0, descriptor=Descriptor.RELATIVE):
-        '''
+    """
+
+    def __init__(
+        self,
+        component,
+        mnemonic,
+        opcode,
+        description,
+        arguments,
+        seconds=0,
+        useconds=0,
+        descriptor=Descriptor.RELATIVE,
+    ):
+        """
         Constructor
-        '''
+        """
 
         ## Make sure correct types are passed
 
         if not type(component) == type(str()):
-            raise TypeMismatchException(type(str()),type(component))
+            raise TypeMismatchException(type(str()), type(component))
 
         if not type(mnemonic) == type(str()):
-            raise TypeMismatchException(type(str()),type(mnemonic))
+            raise TypeMismatchException(type(str()), type(mnemonic))
 
         if not type(opcode) == type(int()):
-            raise TypeMismatchException(type(int()),type(opcode))
+            raise TypeMismatchException(type(int()), type(opcode))
 
         if not type(description) == type(str()):
-            raise TypeMismatchException(type(str()),type(description))
+            raise TypeMismatchException(type(str()), type(description))
 
         if not type(arguments) == type(list()):
-            raise TypeMismatchException(type(list()),type(arguments))
+            raise TypeMismatchException(type(list()), type(arguments))
 
-        for (argname,argdesc,argtype) in arguments:
+        for (argname, argdesc, argtype) in arguments:
             #
             if not type(argname) == type(str()):
-                raise TypeMismatchException(type(int()),type(argname))
+                raise TypeMismatchException(type(int()), type(argname))
             #
             if not type(argdesc) == type(str()):
-                raise TypeMismatchException(type(int()),type(argdesc))
+                raise TypeMismatchException(type(int()), type(argdesc))
             #
             if not issubclass(type(argtype), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()),type(argtype))
+                raise TypeMismatchException(type(BaseType()), type(argtype))
 
         # Initialize command internal variables
         self.__component = component
@@ -88,9 +100,9 @@ class Command(object):
         self.setDescriptor(descriptor)
 
     def serialize(self):
-        '''
+        """
         Serializes command arguments
-        '''
+        """
         ## first, serialize opcode
         opcode = U32Type(self.__opcode)
         ser_data = opcode.serialize()
@@ -99,7 +111,6 @@ class Command(object):
         for (arg_name, arg_desc, arg_type) in self.__arguments:
             ser_data += arg_type.serialize()
         return ser_data
-
 
     def getComponent(self):
         return self.__component
@@ -127,12 +138,12 @@ class Command(object):
 
     def setSeconds(self, seconds):
         if not type(seconds) == type(int()):
-          raise TypeMismatchException(type(int()),type(seconds))
+            raise TypeMismatchException(type(int()), type(seconds))
         self.__secs = seconds
 
     def setUseconds(self, useconds):
         if not type(useconds) == type(int()):
-          raise TypeMismatchException(type(int()),type(useconds))
+            raise TypeMismatchException(type(int()), type(useconds))
         self.__usecs = useconds
 
     def setDescriptor(self, descriptor):
@@ -150,15 +161,15 @@ class Command(object):
         """
         ### double check argument types
         if not type(arg_name) == type(str()):
-            raise TypeMismatchException(type(str()),type(arg_name))
+            raise TypeMismatchException(type(str()), type(arg_name))
 
         if not issubclass(type(arg_type), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()),type(arg_type))
+            raise TypeMismatchException(type(BaseType()), type(arg_type))
 
         new_arg_list = list()
         found = False
         ### search for argument
-        for (arg, arg_desc,arg_value) in self.__arguments:
+        for (arg, arg_desc, arg_value) in self.__arguments:
             if arg_name == arg:
                 arg_value = arg_type
                 found = True
@@ -169,32 +180,38 @@ class Command(object):
         self.__arguments = new_arg_list
 
     def setArgs(self, values):
-      '''
+        """
       Given a list of values for the arguments, set the command arguments in order.
       @param values: raw python values (floats, ints, and strings) that will be converted
       into arg_types and stored as the command arg
-      '''
+      """
 
-      # Make sure that the correct number of arguments is given
-      if len(values) != len(self.__arguments):
-        raise ArgLengthMismatchException(len(self.__arguments), len(values))
+        # Make sure that the correct number of arguments is given
+        if len(values) != len(self.__arguments):
+            raise ArgLengthMismatchException(len(self.__arguments), len(values))
 
-      # Set the new arguments by converting each value to an type:
-      new_arg_list = list()
-      for value, (arg_name, arg_desc, arg_value) in zip(values, self.__arguments):
-        new_value = copy.deepcopy(arg_value)
-        new_value.val = value
-        new_arg_list.append((arg_name, arg_desc, new_value))
-      self.__arguments = new_arg_list
+        # Set the new arguments by converting each value to an type:
+        new_arg_list = list()
+        for value, (arg_name, arg_desc, arg_value) in zip(values, self.__arguments):
+            new_value = copy.deepcopy(arg_value)
+            new_value.val = value
+            new_arg_list.append((arg_name, arg_desc, new_value))
+        self.__arguments = new_arg_list
 
-if __name__ == '__main__':
 
-    arglist = [ ("arg1", "some test argument", U32Type(0)), ("arg2", "some test argument2", F32Type(0.0))]
+if __name__ == "__main__":
+
+    arglist = [
+        ("arg1", "some test argument", U32Type(0)),
+        ("arg2", "some test argument2", F32Type(0.0)),
+    ]
 
     try:
-        testCommand = Command("SomeComponent","TEST_CMD",0x123,"Test Command",arglist)
+        testCommand = Command(
+            "SomeComponent", "TEST_CMD", 0x123, "Test Command", arglist
+        )
     except TypeException as e:
-        print("Exception: %s"%e.getMsg())
+        print("Exception: %s" % e.getMsg())
     t = U32Type(3)
     t2 = F32Type(123.456)
     try:

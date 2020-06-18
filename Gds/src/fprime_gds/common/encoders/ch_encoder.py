@@ -1,4 +1,4 @@
-'''
+"""
 @brief Encoder for channel data
 
 This encoder takes in ChData objects, serializes them, and sends the results to
@@ -30,7 +30,7 @@ Serialized Ch format:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 
@@ -46,11 +46,12 @@ from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
 
+
 class ChEncoder(Encoder):
-    '''Encoder class for channel data'''
+    """Encoder class for channel data"""
 
     def __init__(self, dest="GUI", config=None):
-        '''
+        """
         Constructor
 
         Args:
@@ -62,7 +63,7 @@ class ChEncoder(Encoder):
 
         Returns:
             An initialized ChEncoder object
-        '''
+        """
         # Stores dest, and sets up config
         super(ChEncoder, self).__init__(dest, config)
 
@@ -71,7 +72,7 @@ class ChEncoder(Encoder):
         self.id_obj = self.config.get_type("ch_id")
 
     def encode_api(self, data):
-        '''
+        """
         Encodes the given ChData object as binary data and returns the result.
 
         Args:
@@ -79,7 +80,7 @@ class ChEncoder(Encoder):
 
         Returns:
             Encoded version of the data argument as binary data
-        '''
+        """
         # TODO Should we verify that it is a ChData object? Or is that too much
         #      overhead. Also, should we verify the object is non-empty (aka
         #      its value object is non-None)
@@ -99,7 +100,7 @@ class ChEncoder(Encoder):
         self.len_obj.val = len_val
         len_bin = self.len_obj.serialize()
 
-        binary_data = (len_bin + desc_bin + id_bin + time_bin + val_bin)
+        binary_data = len_bin + desc_bin + id_bin + time_bin + val_bin
 
         return binary_data
 
@@ -107,7 +108,7 @@ class ChEncoder(Encoder):
 if __name__ == "__main__":
     # Unit Tests
     config = ConfigManager()
-    config.set('types', 'msg_len', 'U16')
+    config.set("types", "msg_len", "U16")
 
     enc = ChEncoder()
     enc_config = ChEncoder("GUI", config)
@@ -125,27 +126,30 @@ if __name__ == "__main__":
     long_len_bin = "\x00\x00\x00\x17"
     short_len_bin = "\x00\x17"
 
-    reg_expected = (long_len_bin + desc_bin + id_bin + time_bin + val_bin)
-    config_expected = (short_len_bin + desc_bin + id_bin + time_bin + val_bin)
+    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + val_bin
+    config_expected = short_len_bin + desc_bin + id_bin + time_bin + val_bin
 
     reg_output = enc.encode_api(ch_obj)
 
-    if (reg_output != reg_expected):
-        print ("FAIL: expected regular output to be %s, but found %s"%
-               (list(reg_expected), list(reg_output)))
+    if reg_output != reg_expected:
+        print(
+            "FAIL: expected regular output to be %s, but found %s"
+            % (list(reg_expected), list(reg_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 1")
 
     config_output = enc_config.encode_api(ch_obj)
 
-    if (config_output != config_expected):
-        print("FAIL: expected configured output to be %s, but found %s"%
-              (list(config_expected), list(config_output)))
+    if config_output != config_expected:
+        print(
+            "FAIL: expected configured output to be %s, but found %s"
+            % (list(config_expected), list(config_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 2")
-
 
     temp = ChTemplate(102, "test_ch2", "test_comp2", U16Type())
 
@@ -160,26 +164,29 @@ if __name__ == "__main__":
     long_len_bin = "\x00\x00\x00\x15"
     short_len_bin = "\x00\x15"
 
-    reg_expected = (long_len_bin + desc_bin + id_bin + time_bin + val_bin)
-    config_expected = (short_len_bin + desc_bin + id_bin + time_bin + val_bin)
+    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + val_bin
+    config_expected = short_len_bin + desc_bin + id_bin + time_bin + val_bin
 
     reg_output = enc.encode_api(ch_obj)
 
-    if (reg_output != reg_expected):
-        print ("FAIL: expected regular output to be %s, but found %s"%
-               (list(reg_expected), list(reg_output)))
+    if reg_output != reg_expected:
+        print(
+            "FAIL: expected regular output to be %s, but found %s"
+            % (list(reg_expected), list(reg_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 3")
 
     config_output = enc_config.encode_api(ch_obj)
 
-    if (config_output != config_expected):
-        print("FAIL: expected configured output to be %s, but found %s"%
-              (list(config_expected), list(config_output)))
+    if config_output != config_expected:
+        print(
+            "FAIL: expected configured output to be %s, but found %s"
+            % (list(config_expected), list(config_output))
+        )
         sys.exit(-1)
     else:
         print("PASSED test 4")
 
     print("ALL TESTS PASSED!")
-

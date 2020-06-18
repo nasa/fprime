@@ -14,6 +14,7 @@ class DataHandler(abc.ABC):
     Defines the necessary functions required to handle data as part of the F prime project. This allows any implementor
     to be used to handle data.
     """
+
     @abc.abstractmethod
     def data_callback(self, data, sender=None):
         """
@@ -31,6 +32,7 @@ class HandlerRegistrar(abc.ABC):
     Defines a class that will take in registrants and remember them for calling back later. These objects should be of
     the type "DataHandler" as this handler will send data back to these handlers when asked to do so.
     """
+
     def __init__(self):
         """
         Constructor defining the internal lists needed to store the registrants.

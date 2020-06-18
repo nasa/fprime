@@ -19,7 +19,7 @@ RUN groupadd fprime && \
     usermod -u 1001 fprime && \
 # Installing system components
     apt-get update && apt-get install -y --no-install-recommends \
-    bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv && \
+    bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind && \
     mkdir -p /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -32,6 +32,7 @@ ENV LC_ALL C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
+## Example docker container with F prime code copied in:
 #FROM fprime-base AS fprime-docker
 #    COPY . /opt/fprime
 #    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
@@ -50,6 +51,10 @@ ENTRYPOINT ["/bin/bash"]
 #
 # This sets up an image for use within a CI build system. This is currently configured for the
 # Jenkins CI system. This means a Jenkins user is created, setup and ready to run.
+#
+# This is the last image in the file because the Jenkins server used by F prime does not expose
+# the --target argument for building the docker image.  As such, this image is the one built and
+# used for Jenkins.
 ####
 FROM fprime-base AS jenkins-ci
 RUN groupadd jenkins && \

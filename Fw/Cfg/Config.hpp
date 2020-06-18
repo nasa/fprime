@@ -270,7 +270,7 @@
 
 // Specifies the maximum size of a string in an interface call
 #ifndef FW_INTERNAL_INTERFACE_STRING_MAX_SIZE
-#define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE           40   //!< Max size of interface string parameter type
+#define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE           256   //!< Max size of interface string parameter type
 #endif
 
 // enables text logging of events as well as data logging. Adds a second logging port for text output.

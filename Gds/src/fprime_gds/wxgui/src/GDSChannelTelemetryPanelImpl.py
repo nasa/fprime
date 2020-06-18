@@ -1,11 +1,11 @@
-'''
+"""
 @brief Implementation class for the channel telemetry panel
 
 @date Created July 16, 2018
 @author Josef X. Biberstein
 
 @bug No known bugs
-'''
+"""
 from __future__ import absolute_import
 
 import wx
@@ -23,10 +23,11 @@ from fprime_gds.common.utils.config_manager import ConfigManager
 ## Class ChannelTelemetryImpl
 ###########################################################################
 
-class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
-    '''Implmentation class. Defines functionality of the channel telemetry panel.'''
 
-    def __init__( self, parent, ch_dict={}, config=None ):
+class ChannelTelemetryImpl(GDSChannelTelemetryPanelGUI.ChannelTelemetry):
+    """Implmentation class. Defines functionality of the channel telemetry panel."""
+
+    def __init__(self, parent, ch_dict={}, config=None):
         """Constructor for the ChannelTelemetryImpl
 
         Arguments:
@@ -35,16 +36,40 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         self.ch_dict = ch_dict
         self.config = config
 
-        GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__ ( self, parent)
+        GDSChannelTelemetryPanelGUI.ChannelTelemetry.__init__(self, parent)
 
         self.dv_model = ChannelTelemDataViewModel(self, ch_dict)
-    
+
         self.ChannelTelemDataViewCtl.AssociateModel(self.dv_model)
 
-        self.ChannelTelemDataViewCtl.AppendTextColumn("Channel", 0, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=350, align=wx.ALIGN_NOT)
-        self.ChannelTelemDataViewCtl.AppendTextColumn("ID", 1, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=50, align=wx.ALIGN_NOT)
-        self.ChannelTelemDataViewCtl.AppendTextColumn("Time", 2, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=150, align=wx.ALIGN_NOT)
-        self.ChannelTelemDataViewCtl.AppendTextColumn("Value", 3, mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE, width=-1, align=wx.ALIGN_NOT)
+        self.ChannelTelemDataViewCtl.AppendTextColumn(
+            "Channel",
+            0,
+            mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
+            width=350,
+            align=wx.ALIGN_NOT,
+        )
+        self.ChannelTelemDataViewCtl.AppendTextColumn(
+            "ID",
+            1,
+            mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
+            width=50,
+            align=wx.ALIGN_NOT,
+        )
+        self.ChannelTelemDataViewCtl.AppendTextColumn(
+            "Time",
+            2,
+            mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
+            width=150,
+            align=wx.ALIGN_NOT,
+        )
+        self.ChannelTelemDataViewCtl.AppendTextColumn(
+            "Value",
+            3,
+            mode=wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
+            width=-1,
+            align=wx.ALIGN_NOT,
+        )
 
         # NOTE could just make the first column sortable cause sorting by the others doesn't really make sense
         for c in self.ChannelTelemDataViewCtl.Columns:
@@ -52,7 +77,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
         self.ChannelTelemDataViewCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
 
-    def __del__( self ):
+    def __del__(self):
         self.dv_model.DecRef()
 
     def data_callback(self, data, sender=None):
@@ -63,7 +88,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         """
         if self.dv_model.RefCount > 1:
             # Use CallAfter to avoid race condition
-            wx.CallAfter(self.dv_model.UpdateModel,data)
+            wx.CallAfter(self.dv_model.UpdateModel, data)
 
     def getChannelTelemDataViewState(self):
         """Get the internal data list used by the model to populate the data view for telem panel
@@ -93,7 +118,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
             cpy_out = ""
             for r in rows:
                 o = self.dv_model.ItemToObject(r)
-                cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+                cpy_out += o.get_str(verbose=True, csv=True) + "\n"
 
             clipboard = wx.TextDataObject()
             # Set data object value
@@ -115,7 +140,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         cpy_out = ""
         for r in rows:
             o = self.dv_model.ItemToObject(r)
-            cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+            cpy_out += o.get_str(verbose=True, csv=True) + "\n"
 
         clipboard = wx.TextDataObject()
         # Set data object value
@@ -124,14 +149,16 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(clipboard)
             wx.TheClipboard.Close()
-            
+
     # Override these handlers to implement functionality for GUI elements
-    def onChannelTelemContextMenu( self, event ):
+    def onChannelTelemContextMenu(self, event):
 
         # This is called to create a context menu in the data view to allow calling of copy through a right click
-        if not hasattr(self, 'copy_context_id'):
+        if not hasattr(self, "copy_context_id"):
             self.copy_context_id = wx.NewId()
-            self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
+            self.Bind(
+                wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id
+            )
 
         menu = wx.Menu()
         cpy = menu.Append(self.copy_context_id, "copy")
@@ -141,10 +168,12 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
         event.Skip()
 
-    def onChannelTelemSelectChannelsButtonClick( self, event ):
+    def onChannelTelemSelectChannelsButtonClick(self, event):
 
         # Get a new channel filter by prompting the user with a dialog
-        dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(self, self.ch_dict, config=self.config)
+        dlog = GDSChannelFilterDialogImpl.ChannelFilterDialogImpl(
+            self, self.ch_dict, config=self.config
+        )
         ret = dlog.ShowModal()
         if ret == 0:
             self.dv_model.ChangeFilter(dlog.GetFilter())
@@ -152,7 +181,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         dlog.Destroy()
         event.Skip()
 
-    def onChannelTelemShowHexCheckBoxClick( self, event ):
+    def onChannelTelemShowHexCheckBoxClick(self, event):
 
         # Display channel IDs as hexidecimal values
         self.ChannelTelemDataViewCtl.SelectAll()
@@ -162,7 +191,7 @@ class ChannelTelemetryImpl (GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         self.ChannelTelemDataViewCtl.UnselectAll()
         event.Skip()
 
-    def onClickResetFilter( self, event ):
+    def onClickResetFilter(self, event):
 
         # Clear the filter
         self.dv_model.ChangeFilter([])
@@ -178,7 +207,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
     """
 
     def __init__(self, parent, ch_dict, config=None):
-        '''
+        """
         Constructor
 
         Args:
@@ -186,11 +215,11 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                     Channel dictionary
             config (ConfigManager obj, default=None): ConfigManager with color
                    information. If None, defaults used
-        '''
+        """
 
         wx.dataview.PyDataViewModel.__init__(self)
 
-        if config==None:
+        if config == None:
             config = ConfigManager()
 
         self.config = config
@@ -198,10 +227,9 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         # Colors in config object are Hex codes stored as strings.
         #  Convert the string to an int, and then convert to a wxPython Colour
-        self.red = wx.Colour(int(self.config.get('colors', 'red'), 16))
-        self.orange = wx.Colour(int(self.config.get('colors', 'orange'), 16))
-        self.yellow = wx.Colour(int(self.config.get('colors', 'yellow'), 16))
-
+        self.red = wx.Colour(int(self.config.get("colors", "red"), 16))
+        self.orange = wx.Colour(int(self.config.get("colors", "orange"), 16))
+        self.yellow = wx.Colour(int(self.config.get("colors", "yellow"), 16))
 
         # All the possible ChData objects that we can possibly recieve
         self.data = []
@@ -246,11 +274,12 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             dict -- mapping from column index to type
         """
 
-        mapper = { 0 : 'string',
-                   1 : 'string',
-                   2 : 'string',
-                   3 : 'string', # the real value is an int, but the renderer should convert it okay
-                   }
+        mapper = {
+            0: "string",
+            1: "string",
+            2: "string",
+            3: "string",  # the real value is an int, but the renderer should convert it okay
+        }
 
         return mapper[col]
 
@@ -283,8 +312,10 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
                 return len(self.chs_seen)
             else:
-                
-                gen = [x for x in self.data if x.template.get_full_name() in self.filter]
+
+                gen = [
+                    x for x in self.data if x.template.get_full_name() in self.filter
+                ]
                 for obj in gen:
                     children.append(self.ObjectToItem(obj))
 
@@ -348,23 +379,26 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         if isinstance(node, ChData):
             if node.val_obj != None:
                 if self.parent.ChannelTelemShowHexCheckBox.Value == True:
-                    mapper = { 0 : str(node.template.get_full_name()),
-                            1 : str(hex(node.template.id)),
-                            2 : str(node.time.to_readable()),
-                            3 : node.get_val_str()
-                            }     
+                    mapper = {
+                        0: str(node.template.get_full_name()),
+                        1: str(hex(node.template.id)),
+                        2: str(node.time.to_readable()),
+                        3: node.get_val_str(),
+                    }
                 else:
-                    mapper = { 0 : str(node.template.get_full_name()),
-                            1 : str(node.template.id),
-                            2 : str(node.time.to_readable()),
-                            3 : node.get_val_str()
-                            }     
+                    mapper = {
+                        0: str(node.template.get_full_name()),
+                        1: str(node.template.id),
+                        2: str(node.time.to_readable()),
+                        3: node.get_val_str(),
+                    }
             else:
-                mapper = { 0 : str(node.template.get_full_name()),
-                        1 : str(node.template.id),
-                        2 : u"",
-                        3 : u""
-                        }
+                mapper = {
+                    0: str(node.template.get_full_name()),
+                    1: str(node.template.id),
+                    2: u"",
+                    3: u"",
+                }
 
             return mapper[col]
 
@@ -385,30 +419,48 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
-            
+
             if node.val_obj != None:
-                if node.template.low_red != None and node.val_obj.val < node.template.low_red:
-                
+                if (
+                    node.template.low_red != None
+                    and node.val_obj.val < node.template.low_red
+                ):
+
                     attr.SetColour(self.red)
                     attr.SetBold(True)
-                elif node.template.high_red != None and node.val_obj.val > node.template.high_red:
-                    
+                elif (
+                    node.template.high_red != None
+                    and node.val_obj.val > node.template.high_red
+                ):
+
                     attr.SetColour(self.red)
                     attr.SetBold(True)
-                elif node.template.low_orange != None and node.val_obj.val < node.template.low_orange:
-                    
+                elif (
+                    node.template.low_orange != None
+                    and node.val_obj.val < node.template.low_orange
+                ):
+
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
-                elif node.template.high_orange != None and node.val_obj.val > node.template.high_orange:
-                    
+                elif (
+                    node.template.high_orange != None
+                    and node.val_obj.val > node.template.high_orange
+                ):
+
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
-                elif node.template.low_yellow != None and node.val_obj.val < node.template.low_yellow:
-                    
+                elif (
+                    node.template.low_yellow != None
+                    and node.val_obj.val < node.template.low_yellow
+                ):
+
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
-                elif node.template.high_yellow != None and node.val_obj.val > node.template.high_yellow:
-                    
+                elif (
+                    node.template.high_yellow != None
+                    and node.val_obj.val > node.template.high_yellow
+                ):
+
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
         return True
@@ -440,7 +492,9 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
                 # If there is no filter, add the new_data to the view
                 if self.filter == []:
-                    self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
+                    self.ItemAdded(
+                        wx.dataview.NullDataViewItem, self.ObjectToItem(new_data)
+                    )
                 # If there is a filter, tell the updated member of the full Ch list to update in the view
                 elif self.new_data.template.get_full_name() in self.filter:
                     self.ItemChanged(self.ObjectToItem(null_member))
@@ -463,7 +517,6 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
             filt {list} -- list of channel full names that we want to display
         """
 
-
         # Don't do anything if the filters are the same
         if self.filter == filt:
             return
@@ -474,7 +527,11 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         # Reset filter - add back all the channels in the data_seen list
         if filt == []:
-            c = [self.ObjectToItem(d) for d in self.data if d.template.get_full_name() in self.prev_filter]
+            c = [
+                self.ObjectToItem(d)
+                for d in self.data
+                if d.template.get_full_name() in self.prev_filter
+            ]
 
             for i in c:
                 self.ItemDeleted(wx.dataview.NullDataViewItem, i)
@@ -492,16 +549,28 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 # Add everything from data that is in the filter
                 for d in self.data:
                     if d.template.get_full_name() in filt:
-                        self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                        self.ItemAdded(
+                            wx.dataview.NullDataViewItem, self.ObjectToItem(d)
+                        )
 
             else:
                 for d in self.data:
                     # Remove everything in prev filter but not in new filter
-                    if d.template.get_full_name() in self.prev_filter and d.template.get_full_name() not in filt:
-                        self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                    if (
+                        d.template.get_full_name() in self.prev_filter
+                        and d.template.get_full_name() not in filt
+                    ):
+                        self.ItemDeleted(
+                            wx.dataview.NullDataViewItem, self.ObjectToItem(d)
+                        )
                     # Add everything not in prev filter but in new filter
-                    elif d.template.get_full_name() not in self.prev_filter and d.template.get_full_name() in filt:
-                        self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
+                    elif (
+                        d.template.get_full_name() not in self.prev_filter
+                        and d.template.get_full_name() in filt
+                    ):
+                        self.ItemAdded(
+                            wx.dataview.NullDataViewItem, self.ObjectToItem(d)
+                        )
 
     def SetData(self, data):
         """Set the data used by this model to populate the data view
@@ -521,6 +590,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         """
 
         return self.chs_seen
+
 
 '''
 Implementation for nesting channels inside of packets in the DataViewCtrl in case someone ever wants to implement that again - Josef Biberstein (jxb@mit.edu)
@@ -756,5 +826,3 @@ Implementation for nesting channels inside of packets in the DataViewCtrl in cas
                 old_data.time.__dict__ = new_data.time.__dict__.copy()
                 self.ItemChanged(self.ObjectToItem(old_data))
 '''
-
-

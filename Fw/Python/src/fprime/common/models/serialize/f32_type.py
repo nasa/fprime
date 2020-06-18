@@ -1,12 +1,13 @@
-'''
+"""
 Created on Dec 18, 2014
 @author: tcanham, reder
-'''
+"""
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
 from .type_exceptions import *
 from . import type_base
+
 
 @type_base.serialize
 @type_base.deserialize
@@ -14,13 +15,14 @@ class F32Type(type_base.BaseType):
     """
     Representation of the F32 type
     """
-    def __init__(self, val = None):
+
+    def __init__(self, val=None):
         """
         Constructor
         """
         self.__val = val
         if val == None:
-            return;
+            return
 
         self._check_val(val)
 
@@ -41,32 +43,32 @@ class F32Type(type_base.BaseType):
         """
         Utilize serialize decorator here...
         """
-        return self._serialize('>f')
+        return self._serialize(">f")
 
-    def deserialize(self,data,offset):
+    def deserialize(self, data, offset):
         """
         Utilize deserialized decorator here...
         """
         # first, deserialize 32-bit word
-        self._deserialize('>f', data, offset)
+        self._deserialize(">f", data, offset)
 
     def getSize(self):
-        return struct.calcsize('>f');
+        return struct.calcsize(">f")
 
-    def __repr__(self): return 'F32'
+    def __repr__(self):
+        return "F32"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("F32")
     try:
         val = F32Type(3.6)
         print("Value: %s" % str(val.val))
         buff = val.serialize()
         type_base.showBytes(buff)
-        print("Serialized: ",repr(buff))
+        print("Serialized: ", repr(buff))
         val2 = F32Type()
-        val2.deserialize(buff,len(buff))
+        val2.deserialize(buff, len(buff))
         print("Deserialize: %f" % val2.val)
     except TypeException as e:
         print("Exception: %s" % e.getMsg())
-

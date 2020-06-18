@@ -110,12 +110,12 @@ endfunction(generate_module)
 # Generates a library as part of F prime. This runs the AC and all the other items for the build.
 # It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
 # and library deps.
-#
+# - *MODULE_NAME:* module name of library to build
 # - *SOURCE_FILES_INPUT:* source files that will be split into AC and normal sources.
 # - *DEPS_INPUT:* dependencies bound for link and cmake dependencies
 #
 ####
-function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
+function(generate_library MODULE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
   # their separate peices. 
   #
@@ -126,8 +126,6 @@ function(generate_library SOURCE_FILES_INPUT DEPS_INPUT)
   split_source_files("${SOURCE_FILES_INPUT}")
   split_dependencies("${DEPS_INPUT}")
 
-  # Sets MODULE_NAME to unique name based on path, and then adds the library of
-  get_module_name(${CMAKE_CURRENT_LIST_DIR})
   message(STATUS "Adding library: ${MODULE_NAME}")
   # Add the library name
   add_library(
