@@ -8,7 +8,7 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
 
 echo -e "${BLUE}Running static analysis (pylama) on python code${NOCOLOR}"
-pylama -o ${SCRIPT_DIR}/setup.cfg ${FPRIME_DIR}
+pylama -o ${SCRIPT_DIR}/pylama-ci.cfg ${FPRIME_DIR}
 # PYLAMA_PID=$!
 # Wait for pylama to finish
 # wait $PYLAMA_PID
