@@ -38,7 +38,9 @@
 \#include <${t}>
 #end for
 
+#if $namespace
 namespace ${namespace} {
+#end if
   class ${name} : public Fw::Serializable
   {
     public:
@@ -180,6 +182,8 @@ namespace ${namespace} {
   
   };
 
+#if $namespace
 }
+#end if
 
 #endif

@@ -29,7 +29,9 @@
 
 \#include "${name}ArrayAc.hpp"
 
+#if $namespace
 namespace ${namespace} {
+#end if
 
   // ----------------------------------------------------------------------
   // Constructors
@@ -241,4 +243,6 @@ void ${name}::toString(Fw::StringBase& text) const {
     return status;
   }
 
+#if $namespace
 }
+#end if
