@@ -5,38 +5,40 @@ Created on Dec 18, 2014
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import NotInitializedException
+from .type_exceptions import TypeException
+from .type_exceptions import TypeMismatchException
 from . import type_base
 
 
 @type_base.serialize
 @type_base.deserialize
 class BoolType(type_base.BaseType):
-    def __init__(self, val=None):
+    def __init__(self, val_=None):
         """
         Constructor
         """
-        self.__val = val
-        if val == None:
+        self.__val = val_
+        if val_ == None:
             return
 
         self.__do_check = True
-        self._check_val(val)
+        self._check_val(val_)
 
-    def _check_val(self, val):
+    def _check_val(self, val_):
         # Make sure deserialize can set val
-        if val is not None and self.__do_check:
-            if not type(val) == type(bool()):
-                raise TypeMismatchException(type(bool()), type(val))
+        if val_ is not None and self.__do_check:
+            if not type(val_) == type(bool()):
+                raise TypeMismatchException(type(bool()), type(val_))
 
     @property
     def val(self):
         return self.__val
 
     @val.setter
-    def val(self, val):
-        self._check_val(val)
-        self.__val = val
+    def val(self, val_):
+        self._check_val(val_)
+        self.__val = val_
 
     def serialize(self):
         if self.val == None:

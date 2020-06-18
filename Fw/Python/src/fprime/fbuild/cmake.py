@@ -13,7 +13,6 @@ import os
 import re
 import pty
 import sys
-import copy
 import time
 import shutil
 import tempfile
@@ -27,7 +26,7 @@ import selectors
 import atexit
 import fprime.fbuild
 
-COMMENT_REGEX = re.compile("\s*#.*")
+COMMENT_REGEX = re.compile(r"\s*#.*")
 
 
 class CMakeBuildCache(object):
@@ -158,7 +157,7 @@ class CMakeHandler(object):
                 run_args + fleshed_args, write_override=True, environment=environment
             )
 
-    def find_hashed_file(self, build_dir, hash):
+    def find_hashed_file(self, build_dir, hash_):
         """
         Find a file from a hash
         :param build_dir: build directory to search
@@ -172,7 +171,7 @@ class CMakeHandler(object):
             )
         with open(hashes_file, "r") as file_handle:
             lines = filter(
-                lambda line: "{:x}".format(hash) in line, file_handle.readlines()
+                lambda line: "{:x}".format(hash_) in line, file_handle.readlines()
             )
         return list(lines)
 
@@ -448,7 +447,7 @@ class CMakeHandler(object):
         workdir=None,
         print_output=True,
         write_override=False,
-        environment={},
+        environment=None,
     ):
         """
         Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
@@ -461,7 +460,10 @@ class CMakeHandler(object):
         :return: (stdout, stderr)
         Note: !!! this function has potential File System side-effects !!!
         """
-        cm_environ = copy.copy(os.environ)
+        if environment is None:
+            environment = {}
+
+        cm_environ = os.environ.copy()
         cm_environ.update(self.environment)
         cm_environ.update(environment)
         cargs = ["cmake"]
@@ -536,7 +538,7 @@ class CMakeHandler(object):
                     line = key.fileobj.readline().decode().replace("\r\n", "\n")
                 # Some systems (like running inside Docker) raise an io error instead of returning "" when the device
                 # is ended. Not sure why this is, but the effect is the same, on IOError assume end-of-input
-                except IOError as ioe:
+                except IOError as dummy_ioe:
                     line = ""
                 appendable.append(line)
                 # Streams are EOF when the line returned is empty. Once this occurs, we are responsible for closing the
@@ -558,7 +560,6 @@ class CMakeHandler(object):
 class CMakeException(Exception):
     """ Error occurred within this CMake package """
 
-    pass
 
 
 class CMakeInconsistencyException(CMakeException):

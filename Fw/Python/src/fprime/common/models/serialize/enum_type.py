@@ -4,8 +4,12 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-import struct
-from .type_exceptions import *
+from .type_exceptions import TypeException
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
+from .type_exceptions import EnumMismatchException
+from .type_exceptions import NotInitializedException
+
 from . import type_base
 
 
@@ -23,17 +27,17 @@ class EnumType(type_base.BaseType):
     @param: val = "member name" Optional member name for serializing only.
     """
 
-    def __init__(self, typename="", enum_dict={"UNDEFINED": 0}, val=None):
+    def __init__(self, typename="", enum_dict=None, val_=None):
         """
         Constructor
         """
         # Check input value for member selected
-        if val != None:
-            if not type(val) == type(str()):
+        if val_ != None:
+            if not type(val_) == type(str()):
                 raise TypeMismatchException(type(str()), type(val))
         else:
-            val = "UNDEFINED"
-        self.__val = val
+            val_ = "UNDEFINED"
+        self.__val = val_
 
         # Check type of typename
         if not type(typename) == type(str()):
@@ -41,6 +45,10 @@ class EnumType(type_base.BaseType):
 
         self.__typename = typename
 
+        # Check if enum is None
+        if enum_dict is None:
+            enum_dict={"UNDEFINED": 0}
+            
         # Check enum is a dict
         if not type(enum_dict) == type(dict()):
             raise TypeMismatchException(type(dict()), type(val))
@@ -57,22 +65,22 @@ class EnumType(type_base.BaseType):
         self.__enum_dict = enum_dict
         self.__do_check = True
 
-        self._check_val(val)
+        self._check_val(val_)
 
-    def _check_val(self, val):
+    def _check_val(self, val_):
         # make sure requested value is found in enum members
-        if val != "UNDEFINED" and self.__do_check:
-            if val not in list(self.__enum_dict.keys()):
-                raise EnumMismatchException(self.__typename, val)
+        if val_ != "UNDEFINED" and self.__do_check:
+            if val_ not in list(self.__enum_dict.keys()):
+                raise EnumMismatchException(self.__typename, val_)
 
     @property
     def val(self):
         return self.__val
 
     @val.setter
-    def val(self, val):
-        self._check_val(val)
-        self.__val = val
+    def val(self, val_):
+        self._check_val(val_)
+        self.__val = val_
 
     def keys(self):
         """

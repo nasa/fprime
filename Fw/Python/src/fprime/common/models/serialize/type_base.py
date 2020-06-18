@@ -7,7 +7,9 @@ Replaced type base class with decorators
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import AbstractMethodException
+from .type_exceptions import DeserializeException
+from .type_exceptions import NotInitializedException
 
 #
 #
@@ -20,7 +22,6 @@ class BaseType(object):
         """
         Constructor.
         """
-        pass
 
     def serialize(self, *args):
         """

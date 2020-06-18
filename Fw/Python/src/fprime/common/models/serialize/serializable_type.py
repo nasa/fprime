@@ -6,8 +6,9 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-import struct
-from .type_exceptions import *
+from .type_exceptions import TypeException
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import NotInitializedException
 from . import type_base
 from . import u32_type
 from . import string_type
@@ -77,11 +78,11 @@ class SerializableType(type_base.BaseType):
         """
         JSONable type
         """
-        members = {}
+        members_ = {}
         for member in self.mem_list:
-            members[member[0]] = {"format": member[2], "description": member[3]}
-            members[member[0]].update(member[1].to_jsonable())
-        return members
+            members_[member[0]] = {"format": member[2], "description": member[3]}
+            members_[member[0]].update(member[1].to_jsonable())
+        return members_
 
     @property
     def mem_list(self):
@@ -100,14 +101,15 @@ class SerializableType(type_base.BaseType):
 
         # iterate through members and serialize each one
         serStream = ""
-        for (memberName, memberVal, format_string, desc) in self.mem_list:
+        # pylint allows unused variables with 'dummy_' prefix
+        for (dummy_memberName, memberVal, dummy_format_string, dummy_desc) in self.mem_list:
             serStream += memberVal.serialize()
 
         return serStream
 
     def deserialize(self, data, offset):
         self.__val = []
-        for (memberName, memberVal, format_string, desc) in self.mem_list:
+        for (dummy_memberName, memberVal, dummy_format_string, dummy_desc) in self.mem_list:
             memberVal.deserialize(data, offset)
             self.__val.append(memberVal.val)
             offset += memberVal.getSize()
@@ -118,7 +120,7 @@ class SerializableType(type_base.BaseType):
 
     def getSize(self):
         size = 0
-        for (memberName, memberVal, format_string, desc) in self.mem_list:
+        for (dummy_memberName, memberVal, dummy_format_string, dummy_desc) in self.mem_list:
             size += memberVal.getSize()
         return size
 
