@@ -25,7 +25,9 @@
 \#include "Fw/Types/Assert.hpp"
 \#include "${name}EnumAc.hpp"
 
+#if $namespace
 namespace ${namespace} {
+#end if
 
   // ----------------------------------------------------------------------
   // Constructors
@@ -178,4 +180,6 @@ a == ${item_value}U#slurp
       this->e = static_cast<t>(es);
     return status;
   }
+#if $namespace
 }
+#end if
