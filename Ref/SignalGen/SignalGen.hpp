@@ -15,10 +15,10 @@
 
 #include <Fw/Types/ByteArray.hpp>
 #include <Fw/Types/ConstByteArray.hpp>
-#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <Os/File.hpp>
 #include <Os/ValidateFile.hpp>
 #include <Ref/SignalGen/SignalGenComponentAc.hpp>
+#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <cmath>
 
 namespace Ref {
@@ -52,7 +52,7 @@ namespace Ref {
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq /*!< The command sequence number*/
         );
-        void CMD_NO_OP_ARRAY_cmdHandler(
+        void SignalGen_GenerateArray_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/ 
         U32 cmdSeq /*!< The command sequence number*/
         );
