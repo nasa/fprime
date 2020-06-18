@@ -77,6 +77,7 @@ class PortFactory:
         port_obj = x.get_interface()
         include_header_files_list = x.get_include_header_files()
         include_header_serial_files_list = x.get_includes_serial_files() + x.get_include_array_files()
+        include_header_enum_files_list =  x.get_include_enum_files()
         args_obj_list = x.get_args()
         #
         port_namespace = port_obj.get_namespace()
@@ -101,7 +102,7 @@ class PortFactory:
         # Instance the port here...
         #
         the_port = Port.Port(None, port_name, None, None, None, None, None, port_xml_filename)
-        the_port.set(port_namespace, args_list, include_header_files_list, include_header_serial_files_list, port_comment)
+        the_port.set(port_namespace, args_list, include_header_files_list, include_header_serial_files_list, include_header_enum_files_list, port_comment)
         the_port.set_return(port_return_type, port_return_modifier)
         return the_port
 
