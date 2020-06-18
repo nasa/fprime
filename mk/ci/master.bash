@@ -16,6 +16,10 @@ elif [[ "${TESTS}" == "QUICK" ]]
 then
     TESTS="${SCRIPT_DIR}/tests/20-fputil.bash ${SCRIPT_DIR}/tests/30-ints.bash"
     export TEST_TYPE="QUICK"    
+elif [[ "${TESTS}" == "STATIC" ]]
+then
+    TESTS="${SCRIPT_DIR}/tests/40-pylama.bash"
+    export TEST_TYPE="STATIC"    
 fi
 
 #### NEEDED ENVIRONMENT ####
@@ -23,7 +27,12 @@ export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
 export LOG_DIR="${FPRIME_DIR}/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
-. "${SCRIPT_DIR}/bootstrap.bash" 
+# bootstrap is not required for static analysis
+if [[ "${TEST_TYPE}" != "STATIC" ]]
+then
+    . "${SCRIPT_DIR}/bootstrap.bash" 
+fi
+
 # Loop through all scripts in  tests directory and run them
 for test_script in ${TESTS}
 do
