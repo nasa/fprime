@@ -2,7 +2,6 @@
 A file containing utilities for interacting with the Integration Test API
 """
 
-import os
 import types
 from typing import Any, Dict, List
 

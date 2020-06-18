@@ -2,52 +2,16 @@
 Handles executing the "commands" CLI command for the GDS
 """
 
-from typing import List
+from typing import Iterable
 
 from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
-import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 from fprime_gds.common.testing_fw import predicates
-
-
-def get_cmd_template_string(temp: CmdTemplate, as_json: bool = False) -> str:
-    """
-    Converts the given command template into a human-readable string.
-
-    :param temp: The CmdTemplate to convert to a string
-    :param as_json: Whether or not to return a JSON representation of "temp"
-    :return: A readable string version of "temp"
-    """
-    if as_json:
-        return misc_utils.get_item_json_string(temp)
-
-    cmd_string = "%s (%d) | Takes %d arguments.\n" % (
-        temp.get_full_name(),
-        temp.get_id(),
-        len(temp.get_args()),
-    )
-
-    for arg in temp.get_args():
-        arg_name, arg_description, arg_type = arg
-        if not arg_description:
-            arg_description = "--no description--"
-        # TODO: Compare against actual module, not just the name (but EnumType
-        # is a serializable type from the dictionary?)
-        if type(arg_type).__name__ == "EnumType":
-            # TODO: Find good way to combine this w/ description, if one exists?
-            arg_description = str(arg_type.keys())
-
-        cmd_string += "\t%s (%s): %s\n" % (
-            arg_name,
-            type(arg_type).__name__,
-            arg_description,
-        )
-
-    return cmd_string
+from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 
 
 class CommandsCommand(QueryHistoryCommand):
@@ -61,15 +25,15 @@ class CommandsCommand(QueryHistoryCommand):
     """
 
     @classmethod
-    def _print_items_list(
+    def _get_items_list(
         cls,
         project_dictionary: Dictionaries,
         filter_predicate: predicates.predicate,
         json: bool = False,
-    ):
+    ) -> Iterable[CmdTemplate]:
         """
-        Gets a list of available in the system and prints their details out in
-        an ID-sorted list.
+        Gets a list of available commands in the system and return them in an
+        ID-sorted list.
 
         :param project_dictionary: The dictionary object for the project
             containing the command definitions
@@ -79,54 +43,64 @@ class CommandsCommand(QueryHistoryCommand):
         """
         # NOTE: Trying to create a blank CmdData causes errors, so currently
         # just using templates (i.e. this function does nothing)
-        def create_empty_command(cmd_template):
-            return cmd_template
+        create_empty_command = lambda cmd_template: cmd_template
 
         command_list = test_api_utils.get_item_list(
             item_dictionary=project_dictionary.command_id,
             search_filter=filter_predicate,
             template_to_data=create_empty_command,
         )
-
-        for command in command_list:
-            print(get_cmd_template_string(command, json))
+        return command_list
 
     @classmethod
-    def _get_filter_predicate(
-        cls, ids: List[int], components: List[str], search: str
-    ) -> predicates.predicate:
-        """
-        Returns a predicate that will be used for filtering out which objects to
-        search for.
-        """
-        return_all = predicates.always_true()
-
-        id_pred = filtering_utils.get_id_predicate(ids)
-        comp_pred = filtering_utils.get_component_predicate(components)
-        search_pred = filtering_utils.get_search_predicate(
-            search, get_cmd_template_string
-        )
-
-        return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
-
-    @classmethod
-    def _print_upcoming_item(
+    def _get_upcoming_item(
         cls,
-        api,
+        api: IntegrationTestAPI,
         filter_predicate: predicates.predicate,
         min_start_time="NOW",
-        json: bool = False,
-    ):
+    ) -> CmdData:
         """
-        Prints out the next upcoming command data after the given time that
-        matches the given filter (in a way usable by the
-        "repeat_until_interrupt" function).
+        Returns the next upcoming channel data after the given time that
+        matches the given filter.
         """
-        command_object = test_api_utils.get_upcoming_command(
+        return test_api_utils.get_upcoming_channel(
             api, filter_predicate, min_start_time
         )
-        print(misc_utils.get_item_string(command_object, json))
-        # Update time so we catch all events since the last one
-        if command_object:
-            min_start_time = predicates.greater_than(command_object.get_time())
-        return (api, filter_predicate, min_start_time, json)
+
+    @classmethod
+    def _get_item_string(cls, item: CmdTemplate, json: bool = False,) -> str:
+        """
+        Converts the given command template into a human-readable string.
+
+        :param item: The CmdTemplate to convert to a string
+        :param json: Whether or not to return a JSON representation of "temp"
+        :return: A readable string version of "item"
+        """
+        if not item:
+            return "No matching commands found"
+        if json:
+            return misc_utils.get_item_json_string(item)
+
+        cmd_string = "%s (%d) | Takes %d arguments.\n" % (
+            item.get_full_name(),
+            item.get_id(),
+            len(item.get_args()),
+        )
+
+        for arg in item.get_args():
+            arg_name, arg_description, arg_type = arg
+            if not arg_description:
+                arg_description = "--no description--"
+            # TODO: Compare against actual module, not just the name (but
+            # how, since EnumType is a serializable type from the dictionary?)
+            if type(arg_type).__name__ == "EnumType":
+                # TODO: Find good way to combine this w/ description, if one exists?
+                arg_description = str(arg_type.keys())
+
+            cmd_string += "\t%s (%s): %s\n" % (
+                arg_name,
+                type(arg_type).__name__,
+                arg_description,
+            )
+
+        return cmd_string
