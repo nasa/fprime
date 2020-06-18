@@ -17,7 +17,7 @@ class CommandSendCommand(BaseCommand):
     @classmethod
     def handle_arguments(
         cls,
-        dictionary_path: str,
+        dictionary: str,
         ip_address: str,
         port: int,
         command_name: str,
@@ -36,7 +36,7 @@ class CommandSendCommand(BaseCommand):
         # recurs in several places?
         # ======================================================================
         pipeline, api = test_api_utils.initialize_test_api(
-            dictionary_path, server_ip=ip_address, server_port=port
+            dictionary, server_ip=ip_address, server_port=port
         )
         # ======================================================================
 

@@ -7,6 +7,7 @@ command with the user-provided arguments on the GDS
 
 import abc
 import argparse
+import os
 import sys
 from typing import Callable
 
@@ -14,6 +15,7 @@ import fprime_gds.common.gds_cli.channels as channels
 import fprime_gds.common.gds_cli.commands as commands
 import fprime_gds.common.gds_cli.command_send as command_send
 import fprime_gds.common.gds_cli.events as events
+from fprime_gds.executables.cli import GdsParser
 
 
 def add_connection_arguments(parser: argparse.ArgumentParser):
@@ -22,15 +24,11 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
     want to specify
     """
     parser.add_argument(
-        # TODO: Somehow make this optional and autosearch for the dictionary?
-        # NOTE: Python 3.5 doesn't convert positional arg names w/ dashes to
-        # underscores (i.e. 'a-b' => 'a_b'), unlike w/ optional args, so we have
-        # to use the underscore in the name here so we can use this name in
-        # functions with keyword arguments
-        "dictionary_path",
+        "-d",
+        "--dictionary",
         type=str,
-        help='path from the current working directory to the "<project name>AppDictionary.xml" file for the project you\'re using the API with',
-        metavar="dictionary-path",
+        default=None,
+        help='path from the current working directory to the "<project name>Dictionary.xml" file for the project you\'re using the API with; if unused, tries to search the current working directory for such a file',
     )
     parser.add_argument(
         "-ip",
@@ -315,12 +313,34 @@ def create_parser():
     return parser
 
 
+def add_valid_dictionary(args: argparse.Namespace) -> argparse.Namespace:
+    """
+    Takes in the given parsed arguments and, if no F' dictionary has been given,
+    attempt to search for one in the current working directory. Throw an error
+    if none can be found OR if the given dictionary is invalid.
+    """
+    if not hasattr(args, "dictionary"):
+        args.dictionary = None
+    args.deploy = os.getcwd()
+    args.config = None
+    args = GdsParser.handle_arguments(args, kwargs={})
+    # Delete unused arguments here
+    del args.config
+    del args.deploy
+    return args
+
+
 def parse_args(parser: argparse.ArgumentParser, arguments):
     """
     Parses the given arguments and returns the resulting namespace; having this
     separate allows for unit testing if needed
     """
-    return parser.parse_args(arguments)
+    args = parser.parse_args(arguments)
+
+    # TODO: In the future not all commands may need the dictionary, so this may
+    # not be the right place
+    args = add_valid_dictionary(args)
+    return args
 
 
 def main():
