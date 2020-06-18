@@ -59,7 +59,7 @@ def add_history_arguments(parser: argparse.ArgumentParser, command_name: str):
         "-l",
         "--list",
         action="store_true",
-        help="list all possible %s types the current F Prime instance could produce, based on the %s dictionary, sorted by %s type ID; ignores the session ID"
+        help="list all possible %s types the current F Prime instance could produce, based on the %s dictionary, sorted by %s type ID"
         % (command_name[:-1], command_name, command_name[:-1]),
     )
     parser.add_argument(

@@ -60,10 +60,10 @@ class CommandsCommand(QueryHistoryCommand):
         min_start_time="NOW",
     ) -> CmdData:
         """
-        Returns the next upcoming channel data after the given time that
+        Returns the most recent command happening after the given time that
         matches the given filter.
         """
-        return test_api_utils.get_upcoming_channel(
+        return test_api_utils.get_upcoming_command(
             api, filter_predicate, min_start_time
         )
 
