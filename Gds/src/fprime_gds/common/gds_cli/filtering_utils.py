@@ -6,8 +6,6 @@ to the user in the GDS CLI
 from typing import Any, Callable, Iterable
 
 from fprime_gds.common.data_types.cmd_data import CmdData
-from fprime_gds.common.data_types.sys_data import SysData
-import fprime_gds.common.gds_cli.misc_utils as misc_utils
 from fprime_gds.common.testing_fw import predicates
 
 
@@ -132,6 +130,8 @@ def get_search_predicate(
     representation contains the exact given term.
 
     :param search_string: The substring to look for in the given object
+    :param to_str: An optional function for converting a given object to a
+        string
     :return: A predicate that checks if an object contains "search_string" when
         it's converted to a string
     """
@@ -141,7 +141,10 @@ def get_search_predicate(
 
 
 def get_full_filter_predicate(
-    ids: Iterable[int], components: Iterable[str], search_string: str
+    ids: Iterable[int],
+    components: Iterable[str],
+    search_string: str,
+    to_str: Callable[[Any], str] = str,
 ) -> predicates.predicate:
     """
     Returns a Test API predicate to only get recent data from the specified
@@ -153,6 +156,8 @@ def get_full_filter_predicate(
     :param components: A list of possible components to accept (empty if we
         should accept SysData from any component)
     :param search_string: The substring to look for in the given object
+    :param to_str: An optional function for converting a given object to a
+        string
 
     :return: A predicate that only accepts SysData objects with the given
         IDs, components, and search term
@@ -161,7 +166,7 @@ def get_full_filter_predicate(
 
     id_pred = get_id_predicate(ids)
     comp_pred = get_component_predicate(components)
-    search_pred = get_search_predicate(search_string, misc_utils.get_item_string)
+    search_pred = get_search_predicate(search_string, to_str)
 
     return predicates.satisfies_all([return_all, id_pred, comp_pred, search_pred])
 
