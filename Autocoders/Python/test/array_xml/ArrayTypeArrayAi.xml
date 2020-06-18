@@ -8,6 +8,6 @@
     <format>%s</format>
 
     <default>
-        <value>Example::InternalType(1,2,3,4)</value>
+        <value>InternalType(1,2,3,4)</value>
     </default>
 </array>

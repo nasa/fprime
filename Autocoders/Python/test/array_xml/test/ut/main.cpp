@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 
     cout << "Initialize Arrays";
 
-    Example::InternalType array1 = Example::InternalType(6,7,120,444);
+    InternalType array1 = InternalType(6,7,120,444);
     Example::ArrayType array2 = Example::ArrayType(array1);
     Example::ArrSerial serial1;
             
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 
 
     // Save copy of enums to test against post-serialization
-    Example::InternalType array1Save = array1;
+    InternalType array1Save = array1;
     Example::ArrayType array2Save = array2;
 
     cout << "Deserializing arrays" << endl;
