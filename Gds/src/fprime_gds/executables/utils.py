@@ -13,21 +13,28 @@ import subprocess
 try:
     InterruptedError
 except NameError:
+
     class InterruptedError(Exception):
         pass
 
+
 class ProcessNotStableException(Exception):
     """ Process did not start up stably. Thus there was a problem. """
+
     def __init__(self, name, code, lifespan):
         """ Constructor to help with messages"""
-        super(ProcessNotStableException, self).__init__("{} stopped with code {} sooner than {} seconds"
-                                                        .format(name, code, lifespan))
+        super(ProcessNotStableException, self).__init__(
+            "{} stopped with code {} sooner than {} seconds".format(
+                name, code, lifespan
+            )
+        )
 
 
 class AppWrapperException(Exception):
     """
     An exception occurred while tying to start the app wrapper. This will encapsulate that message.
     """
+
     pass
 
 
@@ -38,6 +45,7 @@ def register_process_assassin(process, log=None):
     :param process: the process to kill.
     :param log: a paired log file to kill as well.
     """
+
     def assassin():
         """
         Kill process and ensure that it is really really dead.
@@ -68,6 +76,7 @@ def register_process_assassin(process, log=None):
                 log.close()
         except (KeyboardInterrupt, OSError, InterruptedError, IOError) as exc:
             pass
+
     atexit.register(assassin)
 
 
@@ -91,19 +100,29 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
             print("[INFO] Log File: {0}".format(logfile))
             file_handler = open(logfile, "wb", 0)
     except IOError as exc:
-        raise AppWrapperException("Failed to open: {} with error {}.".format(logfile, str(exc)))
+        raise AppWrapperException(
+            "Failed to open: {} with error {}.".format(logfile, str(exc))
+        )
     # Spawn the process. Uses pexpect, as this will force the process to output data immediately, rather than buffering
     # the output. That way the log file is fully up-to-date.
     try:
-        child = subprocess.Popen(arguments, stdout=file_handler, stderr=subprocess.STDOUT, env=env)
+        child = subprocess.Popen(
+            arguments, stdout=file_handler, stderr=subprocess.STDOUT, env=env
+        )
         register_process_assassin(child, file_handler)
         # If launch time is specified, then wait for it to be stable
         if launch_time is not None:
             time.sleep(launch_time)
             child.poll()
             if child.returncode is not None:
-                raise ProcessNotStableException(arguments[0], child.returncode, launch_time)
+                raise ProcessNotStableException(
+                    arguments[0], child.returncode, launch_time
+                )
         return child
     except Exception as exc:
-        raise AppWrapperException("Failed to run application: {0}. Error: {1}".format(" ".join(arguments), exc))
+        raise AppWrapperException(
+            "Failed to run application: {0}. Error: {1}".format(
+                " ".join(arguments), exc
+            )
+        )
     return None

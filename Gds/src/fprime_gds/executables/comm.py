@@ -58,6 +58,7 @@ class Uplinker(object):
     Note: this class also implements an uplink handshake to the other side of the ground system, to ensure that uplinked
     items do not roll this process over via the thundering herd.
     """
+
     RETRY_COUNT = 3
 
     def __init__(self, uplink_adapter, ground, downlinker):
@@ -82,15 +83,20 @@ class Uplinker(object):
         :param data: data to be framed.
         """
         data_packets = self.ground.receive_all()
-        for valid_packet in filter(lambda packet: packet is not None and len(packet) > 0, data_packets):
+        for valid_packet in filter(
+            lambda packet: packet is not None and len(packet) > 0, data_packets
+        ):
             framed = self.framer.frame(valid_packet)
             for retry in range(0, Uplinker.RETRY_COUNT):
                 if self.uplink_adapter.write(framed):
                     self.downlink.queue_downlink(Uplinker.get_handshake(valid_packet))
                     break
             else:
-                raise UplinkFailureException("Uplink failed to send {} bytes of data after {} retries"
-                                             .format(len(framed), Uplinker.RETRY_COUNT))
+                raise UplinkFailureException(
+                    "Uplink failed to send {} bytes of data after {} retries".format(
+                        len(framed), Uplinker.RETRY_COUNT
+                    )
+                )
 
     def stop(self):
         """ Stop the thread depends will close the ground resource which may be blocking """
@@ -119,13 +125,14 @@ class Uplinker(object):
             # Shutdown exception handling, only keep exception when running
             except OSError:
                 if self.running:
-                   raise
+                    raise
 
 
 class UplinkFailureException(Exception):
     """
     After all retries were complete, uplink has still failed
     """
+
     pass
 
 
@@ -139,6 +146,7 @@ class Downlinker(object):
     4. Sending all deframed packets out to ground system
     5. Repeat steps 1-4
     """
+
     def __init__(self, downlink_adapter, ground):
         """
         Downlinker requires an adapter reference to flight side (incoming data), and ground side handler(outgoing data).
@@ -150,7 +158,7 @@ class Downlinker(object):
         self.ground = ground
         self.running = True
         self.deframer = FpFramerDeframer()
-        self.pool = b''
+        self.pool = b""
         self.enqueued = queue.Queue()
 
     def downlink(self):
@@ -195,17 +203,31 @@ def parse_args(args):
     :param args: list of arguments to parse
     :return: namespace argument
     """
-    parser = argparse.ArgumentParser(description="Connects data from F prime flight software to the GDS tcp server")
+    parser = argparse.ArgumentParser(
+        description="Connects data from F prime flight software to the GDS tcp server"
+    )
     # Setup this parser to handle MiddleWare arguments
     fprime_gds.executables.cli.MiddleWareParser.add_args(parser)
 
     # Add a parser for each adapter
-    subparsers = parser.add_subparsers(help="Type of adapter used for processing", dest="subcommand")
-    for adapter_name in fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys():
-        adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[adapter_name]
+    subparsers = parser.add_subparsers(
+        help="Type of adapter used for processing", dest="subcommand"
+    )
+    for (
+        adapter_name
+    ) in fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys():
+        adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[
+            adapter_name
+        ]
         # Check adapter real quick before moving on
-        if not hasattr(adapter, "get_arguments") or not callable(getattr(adapter, "get_arguments", None)):
-            LOGGER.error("'{}' does not have 'get_arguments' method, skipping.".format(adapter_name))
+        if not hasattr(adapter, "get_arguments") or not callable(
+            getattr(adapter, "get_arguments", None)
+        ):
+            LOGGER.error(
+                "'{}' does not have 'get_arguments' method, skipping.".format(
+                    adapter_name
+                )
+            )
             continue
         subparse = subparsers.add_parser(adapter_name)
         # Add arguments for the parser
@@ -227,10 +249,15 @@ def main():
     Main program, degenerates into the run loop.
     :return: return code
     """
-    args, _ = fprime_gds.executables.cli.ParserBase.parse_args([fprime_gds.executables.cli.LogDeployParser,
-                                                                fprime_gds.executables.cli.MiddleWareParser,
-                                                                fprime_gds.executables.cli.CommParser],
-                                                               description="F prime communications layer.", client=True)
+    args, _ = fprime_gds.executables.cli.ParserBase.parse_args(
+        [
+            fprime_gds.executables.cli.LogDeployParser,
+            fprime_gds.executables.cli.MiddleWareParser,
+            fprime_gds.executables.cli.CommParser,
+        ],
+        description="F prime communications layer.",
+        client=True,
+    )
     # First setup the ground handler to talk to the ground system.
     ground = fprime_gds.common.adapters.ground.TCPGround(args.tts_addr, args.tts_port)
     # Create an adapter from input arguments in order to talk to the flight deployment.
@@ -257,6 +284,7 @@ def main():
     down_thread.join()
     up_thread.join()
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

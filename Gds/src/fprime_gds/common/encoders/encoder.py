@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base class for all encoders. Defines the Encoder interface.
 
 Encoders are responsible for taking data objects and serializing them into
@@ -19,18 +19,23 @@ purpose is to define the interface for an encoder.
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 import abc
 
 import fprime_gds.common.handlers
 from fprime_gds.common.utils.config_manager import ConfigManager
 
 
-class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers.HandlerRegistrar, abc.ABC):
+class Encoder(
+    fprime_gds.common.handlers.DataHandler,
+    fprime_gds.common.handlers.HandlerRegistrar,
+    abc.ABC,
+):
     """
     Base class for all encoder classes. This defines the "encode_api" function to allow for decoding of raw bytes. In
     addition it has a "data_callback" function implementation that decodes and sends out all results.
     """
+
     def __init__(self, config=None):
         """
         Encoder class constructor
@@ -54,13 +59,12 @@ class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers
         encoded = self.encode_api(data)
         if encoded is not None:
             self.send_to_all(encoded)
-        #TODO: log None values here
+        # TODO: log None values here
         return encoded
-
 
     @abc.abstractmethod
     def encode_api(self, data):
-        '''
+        """
         Encodes the given data and returns the result.
 
         This function allows for non-registered code to utilize the same
@@ -68,5 +72,5 @@ class Encoder(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers
         data_callback function.
         :param data: data to be encoded as rae bytes
         :return: encoded data bytes
-        '''
+        """
         pass

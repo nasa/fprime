@@ -46,6 +46,7 @@ from fprime.common.models.serialize.serializable_type import *
 from fprime.common.models.serialize.array_type import *
 
 
+
 class XmlLoader(dict_loader.DictLoader):
     """Class to help load xml based dictionaries"""
 
@@ -372,7 +373,7 @@ class XmlLoader(dict_loader.DictLoader):
                 print(
                     "Trying to parse string type, but found %s field" % self.STR_LEN_TAG
                 )
-                return one
+                return None
             return StringType(max_string_len=int(xml_item.get(self.STR_LEN_TAG), 0))
         else:
             # First try Serialized types:

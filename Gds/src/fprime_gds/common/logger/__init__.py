@@ -20,7 +20,14 @@ def configure_py_log(directory=None, filename=sys.argv[0], mode="w"):
     :param mode: of file to write
     """
     if directory is None:
-        logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s")
+        logging.basicConfig(
+            level=logging.INFO,
+            format="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s",
+        )
     else:
-        logging.basicConfig(filename=os.path.join(directory, filename), filemode=mode,
-                            level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s")
+        logging.basicConfig(
+            filename=os.path.join(directory, filename),
+            filemode=mode,
+            level=logging.INFO,
+            format="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s",
+        )

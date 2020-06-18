@@ -11,11 +11,14 @@ import struct
 import fprime_gds.common.handlers
 
 
-class OutgoingRouter(fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers.HandlerRegistrar):
+class OutgoingRouter(
+    fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers.HandlerRegistrar
+):
     """
     Handshake router that inspects the originating caller and notes it in a table. This table can then be consulted when
     the data returns for sending handshakes back to the originating object.
     """
+
     def __init__(self):
         """
         Construct the outgoing router with a dictioanry to map IDs
@@ -41,6 +44,7 @@ class IncomingRouter(fprime_gds.common.handlers.DataHandler):
     Handshake router that inspects the returning handshake packet, and routes back to the originating object found in
     the outgoing router.
     """
+
     def data_callback(self, data, sender=None):
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads

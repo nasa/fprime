@@ -163,24 +163,24 @@ class CmdData(sys_data.SysData):
             raise CommandArgumentException(
                 "Argument value could not be converted to type object"
             )
-        if type(arg_type) == type(BoolType()):
+        if isinstance(arg_type, BoolType):
             if arg_val == "False":
                 av = False
             else:
                 av = True
             arg_type.val = av
-        elif type(arg_type) == type(EnumType()):
+        elif isinstance(arg_type, EnumType):
             arg_type.val = arg_val
-        elif isinstance(type(arg_type), (F64Type, F32Type)):
+        elif isinstance(arg_type, (F64Type, F32Type)):
             arg_type.val = float(arg_val)
         elif isinstance(
             arg_type,
             (I64Type, U64Type, I32Type, U32Type, I16Type, U16Type, I8Type, U8Type),
         ):
             arg_type.val = int(arg_val, 0)
-        elif type(arg_type) == type(StringType()):
+        elif isinstance(arg_type, StringType):
             arg_type.val = arg_val
-        elif type(arg_type) == type(SerializableType()):
+        elif isinstance(arg_type, SerializableType):
             pass
         elif type(arg_type) == type(ArrayType()):
             pass
