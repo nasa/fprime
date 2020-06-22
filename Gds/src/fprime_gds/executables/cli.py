@@ -439,7 +439,7 @@ class GdsParser(ParserBase):
                     args.dictionary
                 )
             )
-        elif args.deploy is not None:
+        elif args.deploy is not None and not args.dictionary:
             xml_dict = ParserBase.find_in(".*Dictionary.xml", args.deploy, True)
             py_dict = ParserBase.find_in("py_dict", args.deploy, False)
             if xml_dict is None and py_dict is None:
@@ -449,7 +449,7 @@ class GdsParser(ParserBase):
                     )
                 )
             args.dictionary = py_dict if xml_dict is None else xml_dict
-        else:
+        elif not args.deploy and not args.dictionary:
             raise ValueError(
                 "User must supply either the '--dictionary' or '--deployment' argument"
             )
