@@ -21,6 +21,17 @@ class BaseCommand(abc.ABC):
     """
 
     @classmethod
+    def _log(cls, log_text: str):
+        """
+        Takes the given string and logs it (by default, logs all output to the
+        console). Will ignore empty strings.
+
+        :param log_text: The string to print out
+        """
+        if log_text:
+            print(log_text)
+
+    @classmethod
     @abc.abstractmethod
     def handle_arguments(cls, *args, **kwargs):
         """
@@ -92,17 +103,6 @@ class QueryHistoryCommand(BaseCommand):
         :return: A string representation of "item"
         """
         return misc_utils.get_item_string(item, json)
-
-    @classmethod
-    def _log(cls, log_text: str):
-        """
-        Takes the given string and logs it (by default, logs all output to the
-        console). Will ignore empty strings.
-
-        :param log_text: The string to print out
-        """
-        if log_text:
-            print(log_text)
 
     # TODO: Just use args/kwargs instead of this massive argument list? But I
     # kind of do want some coupling with the frontend code to keep these in sync
