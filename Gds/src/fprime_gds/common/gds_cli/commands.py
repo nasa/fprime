@@ -87,6 +87,10 @@ class CommandsCommand(QueryHistoryCommand):
             len(item.get_args()),
         )
 
+        cmd_description = item.get_description()
+        if cmd_description:
+            cmd_string += "Description: %s\n" % (cmd_description)
+
         for arg in item.get_args():
             arg_name, arg_description, arg_type = arg
             if not arg_description:
