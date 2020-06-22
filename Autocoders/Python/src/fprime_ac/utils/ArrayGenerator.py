@@ -80,7 +80,9 @@ def generate_array(xml_file):
         format_string = array_xml.get_format()
         default_values = array_xml.get_default()
         type_id = array_xml.get_type_id()
-        string_size = int(array_xml.get_string_size())
+        string_size = array_xml.get_string_size()
+        if string_size:
+            string_size = int(string_size)
         comments = array_xml.get_comments()
         include_headers = array_xml.get_include_header_files()
         import_serializables = array_xml.get_includes()

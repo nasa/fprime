@@ -22,7 +22,7 @@ namespace Example {
         Fw::EightyCharString s;
         array1.toString(s);
 
-        printf("%s Invoked ExArrayIn_handler();\n%s", this->getObjName(), s);
+        printf("%s Invoked ExArrayIn_handler();\n%s", this->getObjName(), s.toChar());
         this->ArrayOut_out(0, array1, serial1);
     }
     
@@ -30,6 +30,6 @@ namespace Example {
         Fw::EightyCharString s;
         array1.toString(s);
         
-        printf("%s Invoked ArrayIn_handler(%d);\n%s", this->getObjName(), portNum, s);
+        printf("%s Invoked ArrayIn_handler(%d);\n%s", this->getObjName(), portNum, s.toChar());
     }
 };
