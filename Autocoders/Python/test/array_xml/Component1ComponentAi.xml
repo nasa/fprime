@@ -8,8 +8,8 @@
 
     <comment>A demonstration component with arrays</comment>
     <ports>
-        <port name="ExEnumIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
-        <port name="EnumIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
-        <port name="EnumOut" kind="output" data_type="Example::Port1" max_number="1"/>
+        <port name="ExArrayIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
+        <port name="ArrayIn" kind="async_input" data_type="Example::Port1" max_number="1"/>
+        <port name="ArrayOut" kind="output" data_type="Example::Port1" max_number="1"/>
     </ports>
 </component>

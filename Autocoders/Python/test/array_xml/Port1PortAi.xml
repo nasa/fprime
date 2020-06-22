@@ -13,7 +13,7 @@
             <comment>Example array arg</comment>
         </arg>
         <arg name="Arg2" type="Example::ArrSerial">
-            <comment>Example serial arg w enum</comment>
+            <comment>Example serial arg w array</comment>
         </arg>
     </args>
 </interface>

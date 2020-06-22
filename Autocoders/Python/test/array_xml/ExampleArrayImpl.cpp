@@ -18,15 +18,15 @@ namespace Example {
         Component1ComponentBase::init(queueDepth);
     }
 
-    void ExampleArrayImpl::ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1) {
+    void ExampleArrayImpl::ExArrayIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1) {
         Fw::EightyCharString s;
         array1.toString(s);
 
         printf("%s Invoked ExArrayIn_handler();\n%s", this->getObjName(), s);
-        this->EnumOut_out(0, array1, serial1);
+        this->ArrayOut_out(0, array1, serial1);
     }
     
-    void ExampleArrayImpl::EnumIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1) {
+    void ExampleArrayImpl::ArrayIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1) {
         Fw::EightyCharString s;
         array1.toString(s);
         
