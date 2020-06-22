@@ -42,7 +42,7 @@ def open_file(name, type):
         sys.exit(-1)
     return fp
 
-def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_path, comments, include_headers, import_serializables, import_enums, import_arrays):
+def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, string_size, include_path, comments, include_headers, import_serializables, import_enums, import_arrays):
     '''
     Set up and write out templates here
     '''
@@ -53,6 +53,7 @@ def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, de
     c.format = format_string
     c.default = default_values
     c.uuid = type_id # uuid = type_id
+    c.string_size = string_size
     c.comments = comments
     c.include_headers = include_headers
     c.import_serializables = import_serializables
@@ -79,6 +80,7 @@ def generate_array(xml_file):
         format_string = array_xml.get_format()
         default_values = array_xml.get_default()
         type_id = array_xml.get_type_id()
+        string_size = int(array_xml.get_string_size())
         comments = array_xml.get_comments()
         include_headers = array_xml.get_include_header_files()
         import_serializables = array_xml.get_includes()
@@ -108,14 +110,14 @@ def generate_array(xml_file):
         #
         fp = open_file(name, "hpp")
         c = array_hpp.array_hpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_path, comments, headers, serials, enums, arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = array_cpp.array_cpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, include_path, comments, headers, serials, enums, arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
         fp.close()
         return True
     else:

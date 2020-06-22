@@ -196,6 +196,9 @@ class XmlArrayParser(object):
     def get_comments(self):
         return self.__comments
 
+    def get_string_size(self):
+        return self.__string_size
+
     def get_include_path(self):
         return self.__include_path
 

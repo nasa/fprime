@@ -53,7 +53,7 @@ namespace ${namespace} {
     enum {
         SIZE=${size},
 #if $type == "string":
-        SERIALIZED_SIZE = SIZE * sizeof(${string_type})
+        SERIALIZED_SIZE = SIZE * ${string_size}
 #else:
         SERIALIZED_SIZE = SIZE * sizeof(${type})
 #end if
