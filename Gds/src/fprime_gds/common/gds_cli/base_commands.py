@@ -41,7 +41,7 @@ class QueryHistoryCommand(BaseCommand):
 
     @classmethod
     @abc.abstractmethod
-    def _get_items_list(
+    def _get_item_list(
         cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
     ) -> Iterable:
         """
@@ -56,7 +56,7 @@ class QueryHistoryCommand(BaseCommand):
         pass
 
     @classmethod
-    def _get_items_list_string(cls, items: Iterable, json: bool = False,) -> str:
+    def _get_item_list_string(cls, items: Iterable, json: bool = False,) -> str:
         """
         Takes a list of items from the dictionary and returns a human-readable
         string containing their details.
@@ -92,6 +92,17 @@ class QueryHistoryCommand(BaseCommand):
         :return: A string representation of "item"
         """
         return misc_utils.get_item_string(item, json)
+
+    @classmethod
+    def _log(cls, log_text: str):
+        """
+        Takes the given string and logs it (by default, logs all output to the
+        console). Will ignore empty strings.
+
+        :param log_text: The string to print out
+        """
+        if log_text:
+            print(log_text)
 
     # TODO: Just use args/kwargs instead of this massive argument list? But I
     # kind of do want some coupling with the frontend code to keep these in sync
@@ -135,13 +146,13 @@ class QueryHistoryCommand(BaseCommand):
         # TODO: If combinatorial explosion w/ options becomes an issue,
         # refactor this to avoid if/else structure?
         if list:
-            items = cls._get_items_list(pipeline.dictionaries, search_filter)
-            print(cls._get_items_list_string(items, json))
+            items = cls._get_item_list(pipeline.dictionaries, search_filter)
+            cls._log(cls._get_item_list_string(items, json))
         elif follow:
 
             def print_upcoming_item(min_start_time="NOW"):
                 item = cls._get_upcoming_item(api, search_filter, min_start_time)
-                print(item_to_string(item))
+                cls._log(item_to_string(item))
                 # Update time so we catch the next item since the last one
                 if item:
                     min_start_time = predicates.greater_than(item.get_time())
@@ -150,7 +161,7 @@ class QueryHistoryCommand(BaseCommand):
             misc_utils.repeat_until_interrupt(print_upcoming_item, "NOW")
         else:
             item = cls._get_upcoming_item(api, search_filter, "NOW")
-            print(item_to_string(item))
+            cls._log(item_to_string(item))
 
         # ======================================================================
         pipeline.disconnect()

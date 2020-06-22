@@ -25,7 +25,7 @@ class CommandsCommand(QueryHistoryCommand):
     """
 
     @classmethod
-    def _get_items_list(
+    def _get_item_list(
         cls,
         project_dictionary: Dictionaries,
         filter_predicate: predicates.predicate,

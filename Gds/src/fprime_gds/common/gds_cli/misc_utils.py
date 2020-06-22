@@ -59,7 +59,7 @@ def get_item_string(item: SysData, as_json: bool = False) -> str:
     :return: A readable string of the item information
     """
     if not item:
-        return "No matching item found"
+        return ""
 
     if as_json:
         return get_item_json_string(item)
