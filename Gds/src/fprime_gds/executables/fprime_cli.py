@@ -8,9 +8,10 @@ command with the user-provided arguments on the GDS
 
 import abc
 import argparse
+from copy import deepcopy
 import os
 import sys
-from typing import Callable
+from typing import Callable, List
 
 import argcomplete
 
@@ -24,6 +25,7 @@ import fprime_gds.common.gds_cli.commands as commands
 import fprime_gds.common.gds_cli.command_send as command_send
 import fprime_gds.common.gds_cli.events as events
 """
+from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.executables.cli import GdsParser
 
 
@@ -246,6 +248,40 @@ class CommandSendParser(CliCommandParserBase):
         )
         return command_send_parser
 
+    @staticmethod
+    def get_dictionary_path(current_args: argparse.Namespace) -> str:
+        """
+        Returns the current project dictionary, either one provided by the user
+        or the first one found in the current working directory. Raises an
+        exception if neither one is found.
+        """
+        args = deepcopy(current_args)
+        if not hasattr(args, "dictionary"):
+            args.dictionary = None
+        args.deploy = os.getcwd()
+        args.config = None
+        args = GdsParser.handle_arguments(args, kwargs={})
+        return args.dictionary
+
+    @staticmethod
+    def complete_command_name(
+        prefix: str, parsed_args: argparse.Namespace, **kwargs
+    ) -> List[str]:
+        """
+        Returns a list of all command names that could possibly complete the
+        given prefix
+        """
+        dict_path = ""
+        try:
+            dict_path = CommandSendParser.get_dictionary_path(parsed_args)
+        except ValueError:
+            argcomplete.warn("No dictionary found to get command names from")
+            return []
+        dictionary = Dictionaries()
+        dictionary.load_dictionaries(dict_path, None)
+        command_names = dictionary.command_name.keys()
+        return [name for name in command_names if name.startswith(prefix)]
+
     @classmethod
     def add_arguments(cls, parser: argparse.ArgumentParser):
         """
@@ -257,7 +293,7 @@ class CommandSendParser(CliCommandParserBase):
             "command_name",
             help='the full name of the command you want to execute in "<component>.<name>" form',
             metavar="command-name",
-        )
+        ).completer = cls.complete_command_name
         # NOTE: Type set to string because we don't know the type beforehand
         parser.add_argument(
             "-args",
@@ -336,14 +372,7 @@ def add_valid_dictionary(args: argparse.Namespace) -> argparse.Namespace:
     attempt to search for one in the current working directory. Throw an error
     if none can be found OR if the given dictionary is invalid.
     """
-    if not hasattr(args, "dictionary"):
-        args.dictionary = None
-    args.deploy = os.getcwd()
-    args.config = None
-    args = GdsParser.handle_arguments(args, kwargs={})
-    # Delete unused arguments here
-    del args.config
-    del args.deploy
+    args.dictionary = CommandSendParser.get_dictionary_path(args)
     return args
 
 

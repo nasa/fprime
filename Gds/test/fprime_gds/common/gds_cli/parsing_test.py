@@ -5,11 +5,6 @@ A set of PyTest-style unit tests for parsing commands
 import os
 import pytest
 
-
-import fprime_gds.common.gds_cli.channels as channels
-import fprime_gds.common.gds_cli.commands as commands
-import fprime_gds.common.gds_cli.command_send as command_send
-import fprime_gds.common.gds_cli.events as events
 import fprime_gds.executables.fprime_cli as fprime_cli
 
 
@@ -50,7 +45,7 @@ def default_valid_args_dict(updated_values_dict={}):
 
 def default_valid_channels_dict(updated_values_dict={}):
     dictionary = default_valid_args_dict(
-        {"func": channels.ChannelsCommand.handle_arguments}
+        {"func": fprime_cli.ChannelsParser.command_func}
     )
     dictionary.update(updated_values_dict)
     return dictionary
@@ -58,16 +53,14 @@ def default_valid_channels_dict(updated_values_dict={}):
 
 def default_valid_commands_dict(updated_values_dict={}):
     dictionary = default_valid_args_dict(
-        {"func": commands.CommandsCommand.handle_arguments}
+        {"func": fprime_cli.CommandsParser.command_func}
     )
     dictionary.update(updated_values_dict)
     return dictionary
 
 
 def default_valid_events_dict(updated_values_dict={}):
-    dictionary = default_valid_args_dict(
-        {"func": events.EventsCommand.handle_arguments}
-    )
+    dictionary = default_valid_args_dict({"func": fprime_cli.EventsParser.command_func})
     dictionary.update(updated_values_dict)
     return dictionary
 
@@ -85,7 +78,7 @@ def default_valid_events_dict(updated_values_dict={}):
         (
             ["command-send", "some.command.name"],
             {
-                "func": command_send.CommandSendCommand.handle_arguments,
+                "func": fprime_cli.CommandSendParser.command_func,
                 "command_name": "some.command.name",
                 "arguments": [],
                 "dictionary": get_path_relative_to_file("TestDictionary.xml"),
