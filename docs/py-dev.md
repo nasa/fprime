@@ -1,17 +1,23 @@
 # F' Python Guidelines
 
-## Install For Development Instrucitons
+## Required Development Installs
 
-Setup the virtual enviroment per the isntall guide, but install the python packages using the following
+Setup the virtual enviroment per the install guide, but install the python packages using the following
 
 ```bash
 pip install -e fprime/Fw/Python[dev]
 pip install -e fprime/Gds/
 ```
 
+After you have installed the python packages you need to set up pre-commit hooks using the following command
+
+```bash
+pre-commit install
+```
+
 ## Unit Tests
 
-Probably one of the most important part of developing code. We use pytest
+Probably one of the most important parts of developing code. We use pytest
 
 ```bash
 cd fprime/Fw/Python/
@@ -38,7 +44,26 @@ black path/to/folder/
 
 ### Git Pre-commit hooks
 
-TODO
+If you followed the Development Install Instrucitons above you will have automatically set up pre-commit hooks.
+These will run automatically whenever you commit your code.
+Currently the only pre-commit hook we have is called 'black'. Black automatically formats your python code so that it is consistent with the rest of the FPrime python code. Here is roughly what it will look like.
+
+```bash
+$ git commit -m "Add new python code"
+Format Python Code (black)...............................................Passed
+[master 3415f7dd] Add new python code
+ 1 file changed, 30 insertions(+)
+```
+
+If black decides to format your code the commit will fail, meaning that you will have to stage the changes made by the formatter and run the commit again.
+
+If for some reason black's formatting introduces a bug into your code you can optionally skip the pre-commit hook by modifying the 'SKIP' environment variable in bash. For example...
+
+```bash
+SKIP=black git commit -m "foo"
+```
+
+However this should only be used in an emergency. If SKIP is used for all of your commits it will dramatically reduce code quality over time.
 
 ### Why did we choose black
 
