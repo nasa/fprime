@@ -20,6 +20,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import datetime
+
 # from pytz import TimeBase
 from enum import Enum
 import math
@@ -135,34 +136,34 @@ class TimeType(type_base.BaseType):
         return TimeBase(self.__timeBase.val)
 
     @timeBase.setter
-    def timeBase(self, val_):
-        self._check_time_base(val_)
-        self.__timeBase = u16_type.U16Type(val_)
+    def timeBase(self, val):
+        self._check_time_base(val)
+        self.__timeBase = u16_type.U16Type(val)
 
     @property
     def timeContext(self):
         return self.__timeContext.val
 
     @timeContext.setter
-    def timeContext(self, val_):
-        self.__timeContext = u8_type.U8Type(val_)
+    def timeContext(self, val):
+        self.__timeContext = u8_type.U8Type(val)
 
     @property
     def seconds(self):
         return self.__secs.val
 
     @seconds.setter
-    def seconds(self, val_):
-        self.__secs = u32_type.U32Type(val_)
+    def seconds(self, val):
+        self.__secs = u32_type.U32Type(val)
 
     @property
     def useconds(self):
         return self.__usecs.val
 
     @useconds.setter
-    def useconds(self, val_):
-        self._check_useconds(val_)
-        self.__usecs = u32_type.U32Type(val_)
+    def useconds(self, val):
+        self._check_useconds(val)
+        self.__usecs = u32_type.U32Type(val)
 
     def serialize(self):
         """
@@ -505,11 +506,11 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
     print("\n")
 
     try:
-        val_ = TimeType(t_base, t_context, secs, usecs)
+        val = TimeType(t_base, t_context, secs, usecs)
         print(("creating: TimeType(%d, %d, %d, %d)" % (t_base, t_context, secs, usecs)))
-        print((str(val_)))
+        print((str(val)))
 
-        buff = val_.serialize()
+        buff = val.serialize()
         print(("Serialized: %s" % repr(buff)))
         type_base.showBytes(buff)
 

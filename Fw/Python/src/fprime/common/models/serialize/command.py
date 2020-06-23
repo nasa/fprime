@@ -8,16 +8,16 @@ from __future__ import absolute_import
 
 # Import the types this way so they do not need prefixing for execution.
 # Import only types that you will use to avoid pylint warnings
-from .type_exceptions import TypeMismatchException
-from .type_exceptions import TypeException
-from .type_exceptions import ArgLengthMismatchException
-from .type_exceptions import ArgNotFoundException
+from type_exceptions import TypeMismatchException
+from type_exceptions import TypeException
+from type_exceptions import ArgLengthMismatchException
+from type_exceptions import ArgNotFoundException
 
-from . import type_base
-from .type_base import BaseType
+from fprime.common.models.serialize import type_base
+from fprime.common.models.serialize.type_base import BaseType
 
-from .f32_type import F32Type
-from .u32_type import U32Type
+from fprime.common.models.serialize.f32_type import F32Type
+from fprime.common.models.serialize.u32_type import U32Type
 
 from enum import Enum
 
@@ -97,7 +97,7 @@ class Command(object):
 
         ## then, serialize arguments
         # unused variables that start with dummy are ignored by pylint
-        for (dummy_arg_name, dummy_arg_desc, arg_type) in self.__arguments: 
+        for (dummy_arg_name, dummy_arg_desc, arg_type) in self.__arguments:
             ser_data += arg_type.serialize()
         return ser_data
 
