@@ -2,17 +2,20 @@
 A suite of unit tests for testing utilities the GDS CLI uses
 """
 
+from copy import deepcopy
 import pytest
 
+from fprime_gds.common.data_types.pkt_data import PktData
 from fprime_gds.common.data_types.sys_data import SysData
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime_gds.common.templates.data_template import DataTemplate
+from fprime_gds.common.templates.pkt_template import PktTemplate
 from fprime_gds.common.testing_fw import predicates
 
 # ==============================================================================
-# Test misc_utils.increment_with_interrupt
+# Test misc_utils.repeat_until_interrupt
 # ==============================================================================
 
 
@@ -139,25 +142,12 @@ def test_repeat_with_function_returning_enclosed_string_valid():
 
 @pytest.fixture
 def item_template_dictionary():
-    template_12 = DataTemplate()
-    template_12.id = 12
-    template_12.name = "OneTwo"
-
-    template_34 = DataTemplate()
-    template_34.id = 34
-    template_34.name = "ThreeFour"
-
-    template_56 = DataTemplate()
-    template_56.id = 56
-    template_56.name = "FiveSix"
-
-    template_78 = DataTemplate()
-    template_78.id = 78
-    template_78.name = "SevenEight"
-
-    template_sur = DataTemplate()
-    template_sur.id = 0
-    template_sur.name = "SURPRISE!"
+    # TODO: Can't instantiate raw data template, so instead instantiating Pkt
+    template_12 = PktTemplate(pkt_id=12, pkt_name="OneTwo", ch_temp_list=[])
+    template_34 = PktTemplate(pkt_id=34, pkt_name="ThreeFour", ch_temp_list=[])
+    template_56 = PktTemplate(pkt_id=56, pkt_name="FiveSix", ch_temp_list=[])
+    template_78 = PktTemplate(pkt_id=78, pkt_name="SevenEight", ch_temp_list=[])
+    template_sur = PktTemplate(pkt_id=0, pkt_name="SURPRISE!", ch_temp_list=[])
 
     return {
         "12": template_12,
@@ -168,47 +158,81 @@ def item_template_dictionary():
     }
 
 
-def t2d(template):
-    # TODO: Currently unable to actually instantiate SysData (bug in its init?)
-    data = SysData()
-    data.id = template.get_id()
-    data.template = template
-    return data
+def t2d(template: DataTemplate) -> SysData:
+    """
+    Convers a DataTemplate object to a SysData object
+    """
+    # TODO: Currently unable to actually instantiate SysData (bug in its init?),
+    # so instantiating ChData instead
+    return PktData([], None, template)
+
+
+def assert_equal_template_dictionaries(dict1, dict2):
+    assert dict1.keys() == dict2.keys()
+    for key in dict1:
+        assert dict1[key].get_id() == dict2[key].get_id()
+        assert dict1[key].get_name() == dict2[key].get_name()
+
+
+def assert_equal_data_lists(list1, list2):
+    assert len(list1) == len(list2)
+    for item1, item2 in zip(list1, list2):
+        assert item1.get_id() == item2.get_id()
 
 
 @pytest.mark.gds_cli
 def test_valid_get_item_list(item_template_dictionary):
+    original_dict = deepcopy(item_template_dictionary)
     item_list = test_api_utils.get_item_list(
         item_dictionary=item_template_dictionary,
         search_filter=predicates.always_true(),
         template_to_data=t2d,
     )
 
-    assert item_list == [
-        t2d(item_template_dictionary["SURPRISE!"]),
-        t2d(item_template_dictionary["12"]),
-        t2d(item_template_dictionary["34"]),
-        t2d(item_template_dictionary["56"]),
-        t2d(item_template_dictionary["78"]),
-    ]
+    # Test all items present AND in ID-sorted order
+    assert_equal_data_lists(
+        item_list,
+        [
+            t2d(item_template_dictionary["SURPRISE!"]),
+            t2d(item_template_dictionary["12"]),
+            t2d(item_template_dictionary["34"]),
+            t2d(item_template_dictionary["56"]),
+            t2d(item_template_dictionary["78"]),
+        ],
+    )
     # Check nothing changed in the original dictionary
-    assert item_template_dictionary == item_template_dictionary()
+    assert_equal_template_dictionaries(item_template_dictionary, original_dict)
 
 
 @pytest.mark.gds_cli
 def test_get_item_list_with_id_filter(item_template_dictionary):
+    original_dict = deepcopy(item_template_dictionary)
     item_list = test_api_utils.get_item_list(
         item_dictionary=item_template_dictionary,
         search_filter=filtering_utils.get_full_filter_predicate([12, 34], [], None),
         template_to_data=t2d,
     )
 
-    assert item_list == [
-        t2d(item_template_dictionary["12"]),
-        t2d(item_template_dictionary["34"]),
-    ]
+    assert_equal_data_lists(
+        item_list,
+        [t2d(item_template_dictionary["12"]), t2d(item_template_dictionary["34"]),],
+    )
     # Check nothing changed in the original dictionary
-    assert item_template_dictionary == item_template_dictionary()
+    assert_equal_template_dictionaries(item_template_dictionary, original_dict)
+
+
+@pytest.mark.gds_cli
+def test_get_empty_item_list_with_unused_id(item_template_dictionary):
+    original_dict = deepcopy(item_template_dictionary)
+    item_list = test_api_utils.get_item_list(
+        item_dictionary=item_template_dictionary,
+        search_filter=filtering_utils.get_full_filter_predicate([451], [], None),
+        template_to_data=t2d,
+    )
+
+    assert item_list == []
+    # Check nothing changed in the original dictionary
+    assert_equal_template_dictionaries(item_template_dictionary, original_dict)
 
 
 @pytest.mark.gds_cli

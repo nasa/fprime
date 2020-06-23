@@ -37,7 +37,6 @@ def initialize_test_api(
     :param server_ip: The IP of the GDS server you want to connect to
     :param server_port: The port for the Test API on the GDS server
     """
-    # TODO: Somehow search for the dictionary path dynamically?
     pipeline = StandardPipeline()
     pipeline.setup(ConfigManager(), app_dictionary_path, "/tmp")
     pipeline.connect(server_ip, server_port)

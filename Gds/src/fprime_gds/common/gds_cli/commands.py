@@ -77,7 +77,7 @@ class CommandsCommand(QueryHistoryCommand):
         :return: A readable string version of "item"
         """
         if not item:
-            return "No matching commands found"
+            return misc_utils.get_item_string(item)
         if json:
             return misc_utils.get_item_json_string(item)
 
