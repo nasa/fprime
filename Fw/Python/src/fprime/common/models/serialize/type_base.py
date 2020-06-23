@@ -64,7 +64,7 @@ def deserialize(Class):
                 "Not enough data to deserialize! Needed: %d Left: %d"
                 % (self.getSize(), offset)
             )
-        self.val = struct.unpack_from(tformat, data, offset)[0]
+        self.val = struct.unpack_from(tformat, bytes(data), offset)[0]
 
     setattr(Class, "_deserialize", _deserialize)
 
@@ -103,8 +103,8 @@ def showBytes(byteBuffer):
             "Byte %d: 0x%02X (%c)"
             % (
                 entry,
-                struct.unpack("B", byteBuffer[entry])[0],
-                struct.unpack("B", byteBuffer[entry])[0],
+                struct.unpack("B", bytes([byteBuffer[entry]]))[0],
+                struct.unpack("B", bytes([byteBuffer[entry]]))[0],
             )
         )
 

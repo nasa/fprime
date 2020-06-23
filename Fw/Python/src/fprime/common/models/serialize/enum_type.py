@@ -4,7 +4,6 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from .type_exceptions import TypeException
 from .type_exceptions import TypeMismatchException
 from .type_exceptions import TypeRangeException
 from .type_exceptions import EnumMismatchException
@@ -27,17 +26,17 @@ class EnumType(type_base.BaseType):
     @param: val = "member name" Optional member name for serializing only.
     """
 
-    def __init__(self, typename="", enum_dict=None, val_=None):
+    def __init__(self, typename="", enum_dict=None, val=None):
         """
         Constructor
         """
         # Check input value for member selected
-        if val_ != None:
-            if not type(val_) == type(str()):
+        if val != None:
+            if not type(val) == type(str()):
                 raise TypeMismatchException(type(str()), type(val))
         else:
-            val_ = "UNDEFINED"
-        self.__val = val_
+            val = "UNDEFINED"
+        self.__val = val
 
         # Check type of typename
         if not type(typename) == type(str()):
@@ -47,8 +46,8 @@ class EnumType(type_base.BaseType):
 
         # Check if enum is None
         if enum_dict is None:
-            enum_dict={"UNDEFINED": 0}
-            
+            enum_dict = {"UNDEFINED": 0}
+
         # Check enum is a dict
         if not type(enum_dict) == type(dict()):
             raise TypeMismatchException(type(dict()), type(val))
@@ -65,22 +64,22 @@ class EnumType(type_base.BaseType):
         self.__enum_dict = enum_dict
         self.__do_check = True
 
-        self._check_val(val_)
+        self._check_val(val)
 
-    def _check_val(self, val_):
+    def _check_val(self, val):
         # make sure requested value is found in enum members
-        if val_ != "UNDEFINED" and self.__do_check:
-            if val_ not in list(self.__enum_dict.keys()):
-                raise EnumMismatchException(self.__typename, val_)
+        if val != "UNDEFINED" and self.__do_check:
+            if val not in list(self.__enum_dict.keys()):
+                raise EnumMismatchException(self.__typename, val)
 
     @property
     def val(self):
         return self.__val
 
     @val.setter
-    def val(self, val_):
-        self._check_val(val_)
-        self.__val = val_
+    def val(self, val):
+        self._check_val(val)
+        self.__val = val
 
     def keys(self):
         """
@@ -134,16 +133,4 @@ class EnumType(type_base.BaseType):
 
 
 if __name__ == "__main__":
-    print("ENUM")
-    try:
-        members = {"MEMB1": 0, "MEMB2": 6, "MEMB3": 9}
-        print("Members: ", members)
-        val = EnumType("SomeEnum", members, "MEMB3")
-        print("Value: %s" % val.val)
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        val2 = EnumType("SomeEnum", members)
-        val2.deserialize(buff, len(buff))
-        print("Deserialize: %s" % val2.val)
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())
+    pass

@@ -11,7 +11,6 @@ import sys
 
 from fprime.constants import DATA_ENCODING
 
-from .type_exceptions import TypeException
 from .type_exceptions import TypeMismatchException
 from .type_exceptions import NotInitializedException
 from .type_exceptions import StringSizeException
@@ -22,34 +21,34 @@ from . import type_base
 @type_base.serialize
 @type_base.deserialize
 class StringType(type_base.BaseType):
-    def __init__(self, val_=None, max_string_len=None):
+    def __init__(self, val=None, max_string_len=None):
         """
         Constructor
         @param val: Default value for the string, if None then empty string.
         @param max_string: Maximum allowed string length set in auto-code.
         """
-        self.__val = val_
+        self.__val = val
         self.__max_string_len = max_string_len
 
-        if val_ == None:
+        if val == None:
             return
 
-        self._check_val(val_)
+        self._check_val(val)
 
-    def _check_val(self, val_):
-        if not type(val_) == type(str()) and not type(val_) == type(u""):
-            raise TypeMismatchException(type(str()), type(val_))
+    def _check_val(self, val):
+        if not type(val) == type(str()) and not type(val) == type(u""):
+            raise TypeMismatchException(type(str()), type(val))
 
     @property
     def val(self):
         return self.__val
 
     @val.setter
-    def val(self, val_):
-        self._check_val(val_)
-        if not type(val_) == type(str()):
-            val_ = val_.encode("utf-8")
-        self.__val = val_
+    def val(self, val):
+        self._check_val(val)
+        if not type(val) == type(str()):
+            val = val.encode("utf-8")
+        self.__val = val
 
     def serialize(self):
         """
@@ -112,14 +111,4 @@ class StringType(type_base.BaseType):
 
 
 if __name__ == "__main__":
-    print("string")
-    try:
-        val = StringType("This is a string")
-        print("Value: %s" % val.val)
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        val2 = StringType()
-        val2.deserialize(buff, 0)
-        print("Deserialize: %s" % val2.val)
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())
+    pass

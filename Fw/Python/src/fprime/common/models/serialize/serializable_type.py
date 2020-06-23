@@ -6,13 +6,9 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from .type_exceptions import TypeException
 from .type_exceptions import TypeMismatchException
 from .type_exceptions import NotInitializedException
 from . import type_base
-from . import u32_type
-from . import string_type
-from . import enum_type
 
 
 @type_base.serialize
@@ -100,16 +96,26 @@ class SerializableType(type_base.BaseType):
             raise NotInitializedException(type(self))
 
         # iterate through members and serialize each one
-        serStream = ""
+        serStream = b""
         # pylint allows unused variables with 'dummy_' prefix
-        for (dummy_memberName, memberVal, dummy_format_string, dummy_desc) in self.mem_list:
+        for (
+            dummy_memberName,
+            memberVal,
+            dummy_format_string,
+            dummy_desc,
+        ) in self.mem_list:
             serStream += memberVal.serialize()
 
         return serStream
 
     def deserialize(self, data, offset):
         self.__val = []
-        for (dummy_memberName, memberVal, dummy_format_string, dummy_desc) in self.mem_list:
+        for (
+            dummy_memberName,
+            memberVal,
+            dummy_format_string,
+            dummy_desc,
+        ) in self.mem_list:
             memberVal.deserialize(data, offset)
             self.__val.append(memberVal.val)
             offset += memberVal.getSize()
@@ -120,29 +126,15 @@ class SerializableType(type_base.BaseType):
 
     def getSize(self):
         size = 0
-        for (dummy_memberName, memberVal, dummy_format_string, dummy_desc) in self.mem_list:
+        for (
+            dummy_memberName,
+            memberVal,
+            dummy_format_string,
+            dummy_desc,
+        ) in self.mem_list:
             size += memberVal.getSize()
         return size
 
 
 if __name__ == "__main__":
-    print("Serializable")
-    try:
-        i32Mem = u32_type.U32Type(1000000)
-        stringMem = string_type.StringType("something to say")
-        members = {"MEMB1": 0, "MEMB2": 6, "MEMB3": 9}
-        enumMem = enum_type.EnumType("SomeEnum", members, "MEMB3")
-        # print enumMem.val
-
-        memList = [("mem1", i32Mem), ("mem2", stringMem), ("mem3", enumMem)]
-
-        serType = SerializableType("ASerType", memList)
-
-        print("Value: %s" % repr(memList))
-        buff = serType.serialize()
-        type_base.showBytes(buff)
-        serType2 = SerializableType("ASerType", memList)
-        serType2.deserialize(buff, len(buff))
-        print("Deserialized: %s" % repr(serType2.mem_list))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())
+    pass
