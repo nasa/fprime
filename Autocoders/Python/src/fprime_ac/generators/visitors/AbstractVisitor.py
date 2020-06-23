@@ -17,6 +17,7 @@ import logging
 import os
 import sys
 import time
+from fprime_ac.utils.buildroot import build_root_relative_path, get_nearest_build_root, BuildRootMissingException
 #
 # Python extention modules and custom interfaces
 #
@@ -156,3 +157,15 @@ class AbstractVisitor:
     def isInput(self, str):
         return str != None and str.lower() == "input"
 
+    def relativePath(self):
+        '''
+        If BUILD_ROOT is set, get the relative path to current execution location
+        '''
+        path = os.getcwd()
+        try:
+            relative_path = build_root_relative_path(path)
+        except BuildRootMissingException as bre:
+                PRINT.info("ERROR: BUILD_ROOT and current execution path (%s) not consistent! %s" % (path, str(bre)))
+                sys.exit(-1)
+        DEBUG.debug("Relative path: %s", relative_path)
+        return relative_path

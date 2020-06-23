@@ -21,9 +21,6 @@ import sys
 
 from fprime_ac.utils import TypesList
 
-# Global used for environment BUILD_ROOT
-BUILD_ROOT = None
-
 class ModelParser(object):
     """
     This class provides a single entry point returning items from

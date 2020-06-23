@@ -7,10 +7,12 @@ class called "Dictionaries".
 @author mstarch
 """
 import os
+
 # Py Loaders
 import fprime_gds.common.loaders.cmd_py_loader
 import fprime_gds.common.loaders.event_py_loader
 import fprime_gds.common.loaders.ch_py_loader
+
 # XML Loaders
 import fprime_gds.common.loaders.cmd_xml_loader
 import fprime_gds.common.loaders.event_xml_loader
@@ -30,6 +32,7 @@ class Dictionaries(object):
     6. Event names to Events
     7. Packet IDs to Packets
     """
+
     def __init__(self):
         """ Constructor of the dictionaries object """
         self._command_id_dict = None
@@ -51,16 +54,28 @@ class Dictionaries(object):
         if os.path.isdir(dictionary):
             # Events
             event_loader = fprime_gds.common.loaders.event_py_loader.EventPyLoader()
-            self._event_id_dict = event_loader.get_id_dict(os.path.join(dictionary, "events"))
-            self._event_name_dict = event_loader.get_name_dict(os.path.join(dictionary, "events"))
+            self._event_id_dict = event_loader.get_id_dict(
+                os.path.join(dictionary, "events")
+            )
+            self._event_name_dict = event_loader.get_name_dict(
+                os.path.join(dictionary, "events")
+            )
             # Commands
             command_loader = fprime_gds.common.loaders.cmd_py_loader.CmdPyLoader()
-            self._command_id_dict = command_loader.get_id_dict(os.path.join(dictionary, "commands"))
-            self._command_name_dict = command_loader.get_name_dict(os.path.join(dictionary, "commands"))
+            self._command_id_dict = command_loader.get_id_dict(
+                os.path.join(dictionary, "commands")
+            )
+            self._command_name_dict = command_loader.get_name_dict(
+                os.path.join(dictionary, "commands")
+            )
             # Channels
             channel_loader = fprime_gds.common.loaders.ch_py_loader.ChPyLoader()
-            self._channel_id_dict = channel_loader.get_id_dict(os.path.join(dictionary, "channels"))
-            self._channel_name_dict = channel_loader.get_name_dict(os.path.join(dictionary, "channels"))
+            self._channel_id_dict = channel_loader.get_id_dict(
+                os.path.join(dictionary, "channels")
+            )
+            self._channel_name_dict = channel_loader.get_name_dict(
+                os.path.join(dictionary, "channels")
+            )
         # XML dictionaries
         elif os.path.isfile(dictionary):
             # Events
@@ -76,11 +91,15 @@ class Dictionaries(object):
             self._channel_id_dict = channel_loader.get_id_dict(dictionary)
             self._channel_name_dict = channel_loader.get_name_dict(dictionary)
         else:
-            raise Exception("[ERROR] Dictionary '{}' does not exist.".format(dictionary))
+            raise Exception(
+                "[ERROR] Dictionary '{}' does not exist.".format(dictionary)
+            )
         # Check for packet specification
         if packet_spec is not None:
             packet_loader = fprime_gds.common.loaders.pkt_xml_loader.PktXmlLoader()
-            self._packet_dict = packet_loader.get_id_dict(packet_spec, self._channel_name_dict)
+            self._packet_dict = packet_loader.get_id_dict(
+                packet_spec, self._channel_name_dict
+            )
         else:
             self._packet_dict = None
 
@@ -118,4 +137,3 @@ class Dictionaries(object):
     def packet(self):
         """ Packet dictionary """
         return self._packet_dict
-

@@ -87,7 +87,7 @@ class TimeTypeTestCases(unittest.TestCase):
         t3 = self.t0 + 3
         t15_1 = t3 - 1.5
         assert self.t15 == t15_1, "subtracting 1.5 from three gives 1.5"
-        t27 = t3 - .3
+        t27 = t3 - 0.3
         assert t27 == 2.7, "subtracting .3 from 3 equals 2.7"
         t15_1 = 3 - self.t15
         assert self.t15 == t15_1, "subtracting 1.5 from three gives 1.5"

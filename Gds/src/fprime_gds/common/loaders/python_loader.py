@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base class for all loaders that load dictionaries of python fragments
 
 The PythonLoader class inherits from the DictLoader base class and is intended
@@ -13,7 +13,7 @@ this class will be empty.
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import absolute_import
 
 import importlib
@@ -25,11 +25,12 @@ import glob
 from . import dict_loader
 from fprime_gds.common.data_types import exceptions
 
+
 class PythonLoader(dict_loader.DictLoader):
-    '''Class to help load python file based dictionaries'''
+    """Class to help load python file based dictionaries"""
 
     def read_dict(self, path, use_superpkg=False):
-        '''
+        """
         Reads all python modules at the given path and constructs a dict list
 
         This function assumes that path is a directory containing many python
@@ -52,7 +53,7 @@ class PythonLoader(dict_loader.DictLoader):
             A list of dictionaries. Each dictionary represents one loaded module
             and for keys has the names of the fields in the file and for values
             has the values of those fields.
-        '''
+        """
         modules = self.import_modules(path, use_superpkg)
 
         module_dicts = []
@@ -61,16 +62,15 @@ class PythonLoader(dict_loader.DictLoader):
             mod_dict = dict()
             for field in dir(module):
                 # Verify it is not a hidden field (doesn't start with "__")
-                if (field.find("__") != 0):
+                if field.find("__") != 0:
                     mod_dict[field] = getattr(module, field)
 
             module_dicts.append(mod_dict)
 
         return module_dicts
 
-
     def import_modules(self, path, use_superpkg):
-        '''
+        """
         Imports all modules in the given directory.
 
         Args:
@@ -85,7 +85,7 @@ class PythonLoader(dict_loader.DictLoader):
 
         Returns:
             A list of module objects of all the newly imported modules
-        '''
+        """
         # Verify path is a directory
         if not os.path.isdir(path):
             raise exceptions.GseControllerUndefinedDirectoryException(path)
@@ -95,7 +95,7 @@ class PythonLoader(dict_loader.DictLoader):
         (rest_of_path, superpkg) = os.path.split(superpkg_path)
 
         # Make sure the directory we are importing from is in the python path
-        if (use_superpkg):
+        if use_superpkg:
             sys.path.append(rest_of_path)
         else:
             sys.path.append(superpkg_path)
@@ -105,13 +105,12 @@ class PythonLoader(dict_loader.DictLoader):
         sys.path.append(superpkg_path + os.sep + "serializable")
 
         # Compute a list of all files to import
-        all_files = glob.glob(path + os.sep + '*.py')
-
+        all_files = glob.glob(path + os.sep + "*.py")
 
         module_files = []
         for py_file in all_files:
             (file_path, file_name) = os.path.split(py_file)
-            if (file_name != "__init__.py"):
+            if file_name != "__init__.py":
                 module_files.append(file_name)
 
         # Import modules
@@ -119,22 +118,15 @@ class PythonLoader(dict_loader.DictLoader):
         for mf in module_files:
             # Strip off .py from name by splitting at '.' and taking the first
             # string
-            mod_name = mf.split('.')[0]
+            mod_name = mf.split(".")[0]
 
-            if (use_superpkg):
-                import_name = "%s.%s.%s"%(superpkg, pkg, mod_name)
+            if use_superpkg:
+                import_name = "%s.%s.%s" % (superpkg, pkg, mod_name)
             else:
-                import_name = "%s.%s"%(pkg, mod_name)
+                import_name = "%s.%s" % (pkg, mod_name)
 
             m = importlib.import_module(import_name)
 
             module_list.append(m)
 
         return module_list
-
-
-
-
-
-
-

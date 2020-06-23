@@ -5,7 +5,7 @@
 # down to the GDS config layers, and is used to specify a dictionary and packet spec for specifying
 # the event, channels, and commands setup.
 #
-# Note: flask configuration is all done via Python files 
+# Note: flask configuration is all done via Python files
 #
 ####
 import os
@@ -23,7 +23,7 @@ LOG_DIR = os.environ.get("LOG_DIR", None)
 SERVE_LOGS = os.environ.get("SERVE_LOGS", "YES") == "YES"
 UPLOADED_UPLINK_DEST = uplink_dir
 UPLOADS_DEFAULT_DEST = uplink_dir
-MAX_CONTENT_LENGTH = 32 * 1024 * 1024 # Max length of request is 32MiB
+MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # Max length of request is 32MiB
 
 # Gds config setup
 GDS_CONFIG = fprime_gds.common.utils.config_manager.ConfigManager()
@@ -31,6 +31,4 @@ GDS_CONFIG = fprime_gds.common.utils.config_manager.ConfigManager()
 for dir in [LOG_DIR, UPLOADED_UPLINK_DEST, UPLOADS_DEFAULT_DEST, DOWNLINK_DIR]:
     os.makedirs(dir, exist_ok=True)
 
-#TODO: load real config
-
-
+# TODO: load real config

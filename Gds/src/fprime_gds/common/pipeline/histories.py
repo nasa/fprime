@@ -17,6 +17,7 @@ class Histories(object):
     2. Event history
     3. Command history (short-circuited feedback from encoder)
     """
+
     def __init__(self):
         """ Constructor of histories composer """
         self._command_hist = None

@@ -7,20 +7,20 @@ import binascii
 ## Class StatusImpl
 ###########################################################################
 
-class StatusImpl ( GDSStatusPanelGUI.Status ):
+
+class StatusImpl(GDSStatusPanelGUI.Status):
     """Implementation of the status panel tab
     """
 
-    
-    def __init__( self, parent, config=None ):
-        GDSStatusPanelGUI.Status.__init__ ( self, parent)
+    def __init__(self, parent, config=None):
+        GDSStatusPanelGUI.Status.__init__(self, parent)
         self._send_msg_buffer = []
         self._recv_msg_buffer = []
 
         # Start text control updating service
         self.update_text_ctrl()
 
-    def __del__( self ):
+    def __del__(self):
         pass
 
     def update_text_ctrl(self):
@@ -34,7 +34,7 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
         self._send_msg_buffer = []
         self._recv_msg_buffer = []
         wx.CallLater(500, self.update_text_ctrl)
-    
+
     # [00 12 34 ...]
     # Some data was sent
     def send(self, data, dest):
@@ -44,7 +44,16 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
             data {bin} -- binary data packet
             dest {string} -- where the data will be sent by the server
         """
-        str_data = "[" +" ".join(["{0:2x}".format(byte if type(byte) != str else ord(byte)) for byte in data]) + "]\n\n"
+        str_data = (
+            "["
+            + " ".join(
+                [
+                    "{0:2x}".format(byte if type(byte) != str else ord(byte))
+                    for byte in data
+                ]
+            )
+            + "]\n\n"
+        )
         self._send_msg_buffer.append(str_data)
 
     # Some data was recvd
@@ -54,7 +63,15 @@ class StatusImpl ( GDSStatusPanelGUI.Status ):
         Arguments:
             data {bin} --binnary data string that was recved
         """
-        str_data = "[" +" ".join(["{0:2x}".format(byte if type(byte) != str else ord(byte)) for byte in data]) + "]\n\n"
+        str_data = (
+            "["
+            + " ".join(
+                [
+                    "{0:2x}".format(byte if type(byte) != str else ord(byte))
+                    for byte in data
+                ]
+            )
+            + "]\n\n"
+        )
 
         self._recv_msg_buffer.append(str_data)
-

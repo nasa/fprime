@@ -1,4 +1,4 @@
-'''
+"""
 @brief Main frame factory class
 
 This class demonstrated how to set up a pipeline with the GDS API and provides
@@ -8,7 +8,7 @@ an interface for creating additional GDS windows that use this pipeline
 @author Josef Biberstein
 
 @bug No known bugs
-'''
+"""
 from __future__ import absolute_import
 
 from fprime_gds.common.loaders import ch_py_loader, ch_xml_loader
@@ -37,7 +37,7 @@ import datetime
 
 
 class MainFrameFactory(object):
-    '''Factory that creates new windows for the GDS'''
+    """Factory that creates new windows for the GDS"""
 
     def __init__(self, opts, config):
         """Constructor for the Main panel factory
@@ -74,9 +74,12 @@ class MainFrameFactory(object):
 
         # Setup log file location
         d = datetime.datetime.now()
-        self.log_dir = opts.log_dir_path + os.sep + "%d_%02d_%02d-%02d_%02d_%02d"%(
-                                                    d.year, d.month, d.day,
-                                                    d.hour, d.minute, d.second)
+        self.log_dir = (
+            opts.log_dir_path
+            + os.sep
+            + "%d_%02d_%02d-%02d_%02d_%02d"
+            % (d.year, d.month, d.day, d.hour, d.minute, d.second)
+        )
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
 
@@ -88,18 +91,28 @@ class MainFrameFactory(object):
         """
 
         if len(self.main_frame_instances) > 0:
-            frame = GDSMainFrameImpl.MainFrameImpl(None, self, \
-                evnt_pnl_state=self.main_frame_instances[0].event_pnl.getEventLogState(), \
-                tlm_pnl_state=self.main_frame_instances[0].telem_pnl.getChannelTelemDataViewState(), \
-                status_bar_state=self.main_frame_instances[0].status_bar.get_state(), ch_dict=self.ch_dict, config=self.config)
+            frame = GDSMainFrameImpl.MainFrameImpl(
+                None,
+                self,
+                evnt_pnl_state=self.main_frame_instances[
+                    0
+                ].event_pnl.getEventLogState(),
+                tlm_pnl_state=self.main_frame_instances[
+                    0
+                ].telem_pnl.getChannelTelemDataViewState(),
+                status_bar_state=self.main_frame_instances[0].status_bar.get_state(),
+                ch_dict=self.ch_dict,
+                config=self.config,
+            )
 
             self.register_all(frame)
 
             self.main_frame_instances.append(frame)
             frame.Show(True)
         else:
-            raise Exception("Please run setup_pipline() before using this method to create another window")
-
+            raise Exception(
+                "Please run setup_pipline() before using this method to create another window"
+            )
 
     def setup_pipeline(self):
         """Setup the pipeline of data from the client to the GUI. Creates one instance of main GDS window for you.
@@ -110,7 +123,7 @@ class MainFrameFactory(object):
         # Create Distributor and client socket
         self.dist = distributor.Distributor(self.config)
         self.client_socket = client_socket.ThreadedTCPSocketClient()
-        
+
         # Choose the dictionary type we will use
         if self.opts.generated_path != None:
             use_py_dicts = True
@@ -122,14 +135,22 @@ class MainFrameFactory(object):
         # Create Dictionaries
         if use_py_dicts:
             self.evnt_ldr = event_py_loader.EventPyLoader()
-            eid_dict = self.evnt_ldr.get_id_dict(self.opts.generated_path + os.sep + "events")
+            eid_dict = self.evnt_ldr.get_id_dict(
+                self.opts.generated_path + os.sep + "events"
+            )
 
             self.cmd_ldr = cmd_py_loader.CmdPyLoader()
-            self.cmd_name_dict = self.cmd_ldr.get_name_dict(self.opts.generated_path + os.sep + "commands")
+            self.cmd_name_dict = self.cmd_ldr.get_name_dict(
+                self.opts.generated_path + os.sep + "commands"
+            )
 
             self.ch_ldr = ch_py_loader.ChPyLoader()
-            ch_dict = self.ch_ldr.get_id_dict(self.opts.generated_path + os.sep + "channels")
-            ch_name_dict = self.ch_ldr.get_name_dict(self.opts.generated_path + os.sep + "channels")
+            ch_dict = self.ch_ldr.get_id_dict(
+                self.opts.generated_path + os.sep + "channels"
+            )
+            ch_name_dict = self.ch_ldr.get_name_dict(
+                self.opts.generated_path + os.sep + "channels"
+            )
         else:
             self.evnt_ldr = event_xml_loader.EventXmlLoader()
             eid_dict = self.evnt_ldr.get_id_dict(self.opts.xml_dict_path)
@@ -155,11 +176,10 @@ class MainFrameFactory(object):
 
         # Register client socket to encoder
         self.cmd_enc.register(self.client_socket)
-        
-        #Regist the file decoder consumer
+
+        # Regist the file decoder consumer
         self.file_dec.register(self.consumer)
 
-        
         # Register the event and channel decoders to the distributor for their
         # respective data types
         self.dist.register("FW_PACKET_LOG", self.event_dec)
@@ -169,13 +189,15 @@ class MainFrameFactory(object):
         # If a packet specification file is availiable, initialize and register
         # a packet decoder
         # TODO find a cleaner way to handle implementations without a packet spec
-        if (self.opts.pkt_spec_path != None):
+        if self.opts.pkt_spec_path != None:
             self.pkt_ldr = pkt_xml_loader.PktXmlLoader()
             pkt_dict = self.pkt_ldr.get_id_dict(self.opts.pkt_spec_path, ch_name_dict)
             self.pkt_dec = pkt_decoder.PktDecoder(pkt_dict, ch_dict)
             self.dist.register("FW_PACKET_PACKETIZED_TLM", self.pkt_dec)
 
-        frame = GDSMainFrameImpl.MainFrameImpl(None, self, ch_dict=ch_dict, config=self.config)
+        frame = GDSMainFrameImpl.MainFrameImpl(
+            None, self, ch_dict=ch_dict, config=self.config
+        )
 
         # Register the decoders/encoders to the panels
         self.register_all(frame)
@@ -187,23 +209,23 @@ class MainFrameFactory(object):
         self.logger = data_logger.DataLogger(self.log_dir, verbose=True, csv=True)
         self.event_dec.register(self.logger)
         self.ch_dec.register(self.logger)
-        if (self.opts.pkt_spec_path != None):
+        if self.opts.pkt_spec_path != None:
             self.pkt_dec.register(self.logger)
         self.client_socket.register_distributor(self.logger)
         self.cmd_enc.register(self.logger)
 
     def register_all(self, frame):
-        '''
+        """
         Register all decoders, encoders and panels
 
         Args:
             frame (MainFrameImpl): Main frame implementation object with panels
                                    to register
-        '''
+        """
         self.event_dec.register(frame.event_pnl)
         self.ch_dec.register(frame.telem_pnl)
 
-        if (self.opts.pkt_spec_path != None):
+        if self.opts.pkt_spec_path != None:
             self.pkt_dec.register(frame.telem_pnl)
 
         # Register the status panel so that it can dump ray data to the consol
@@ -214,4 +236,3 @@ class MainFrameFactory(object):
 
         self.client_socket.register_distributor(frame)
         self.cmd_enc.register(frame)
-

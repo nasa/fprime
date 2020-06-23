@@ -1,4 +1,4 @@
-'''
+"""
 @brief Decoder for event data
 
 This decoder takes in serialized events, parses them, and packages the results
@@ -13,7 +13,7 @@ Example data structure:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 from __future__ import print_function
 import copy
 
@@ -24,11 +24,12 @@ from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import *
 import traceback
 
+
 class EventDecoder(decoder.Decoder):
-    '''Decoder class for event data'''
+    """Decoder class for event data"""
 
     def __init__(self, event_dict):
-        '''
+        """
         EventDecoder class constructor
 
         Args:
@@ -37,12 +38,12 @@ class EventDecoder(decoder.Decoder):
 
         Returns:
             An initialized EventDecoder object.
-        '''
+        """
         super(EventDecoder, self).__init__()
         self.__dict = event_dict
 
     def decode_api(self, data):
-        '''
+        """
         Decodes the given data and returns the result.
 
         This function allows for non-registered code to call the same decoding
@@ -54,7 +55,7 @@ class EventDecoder(decoder.Decoder):
         Returns:
             Parsed version of the event data in the form of a EventData object
             or None if the data is not decodable
-        '''
+        """
         ptr = 0
 
         # Decode event ID here...
@@ -75,11 +76,11 @@ class EventDecoder(decoder.Decoder):
 
             return event_data.EventData(arg_vals, event_time, event_temp)
         else:
-            print("Event decode error: id %d not in dictionary"%event_id)
+            print("Event decode error: id %d not in dictionary" % event_id)
             return None
 
     def decode_args(self, arg_data, offset, template):
-        '''
+        """
         Decodes the serialized event arguments
 
         The event arguments are each serialized and then appended to each other.
@@ -96,7 +97,7 @@ class EventDecoder(decoder.Decoder):
             Each element in the tuple is an instance of the same class as the
             corresponding arg_type object in the template parameter. Returns
             none if the arguments can't be parsed
-        '''
+        """
         arg_results = []
         args = template.get_args()
 
@@ -113,12 +114,10 @@ class EventDecoder(decoder.Decoder):
                 arg_obj.deserialize(arg_data, offset)
                 arg_results.append(arg_obj)
             except TypeException as e:
-                print("Event decode exception %s"%(e.getMsg()))
+                print("Event decode exception %s" % (e.getMsg()))
                 traceback.print_exc()
                 return None
-
 
             offset = offset + arg_obj.getSize()
 
         return tuple(arg_results)
-
