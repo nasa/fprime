@@ -10,3 +10,10 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SignalGen.cpp"
 )
 register_fprime_module()
+### UTs ###
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/SignalGenComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+)
+register_fprime_ut()
