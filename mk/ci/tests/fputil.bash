@@ -17,21 +17,22 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # :param deploy($2): deployment to run on
 ####
 function fputil_action {
-    export WORKDIR="${1}"
+    export DEPLOYMENT="${1}"
     export TARGET="${2}"
+    export WORKDIR="${DEPLOYMENT}/${3}"
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
-        cd "${WORKDIR}"
+        cd "${DEPLOYMENT}"
         PLATFORM=""
         # Setup special platform for check/check-all
-        if [[ "${TARGET}" == check* ]] && [[ "${WORKDIR}" == */RPI ]]
+        if [[ "${TARGET}" == check* ]] && [[ "${DEPLOYMENT}" == */RPI ]]
         then
                 PLATFORM="${CHECK_TARGET_PLATFORM}"
                 if [[ "${TEST_TYPE}" == "QUICK" ]]
                 then
-                    echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
-                    fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
-                        || fail_and_stop "Failed to generate before ${WORKDIR//\//_} '${TARGET}' execution"
+                    echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
+                    fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+                        || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
                 fi
         fi
   
@@ -49,10 +50,11 @@ function fputil_action {
         if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
 >>>>>>> hpaulson: fixing merge issues
         then
-            echo "[INFO] Generating build cache before ${WORKDIR//\//_} '${TARGET}' execution"
-            fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
-                || fail_and_stop "Failed to generate before ${WORKDIR//\//_} '${TARGET}' execution"
+            echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
+            fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+                || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
         fi
+        cd "${WORKDIR}"
         echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
         fprime-util "${TARGET}" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
             || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
