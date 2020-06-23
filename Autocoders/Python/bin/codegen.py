@@ -37,9 +37,10 @@ from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 from fprime_ac.parsers import XmlTopologyParser
-from fprime_ac.parsers import XmlArrayParser
+from fprime_ac.utils.buildroot import get_build_roots, set_build_roots, search_for_file, BuildRootMissingException, BuildRootCollisionException
 
 from lxml import etree
+
 
 # Comment back in when converters added
 # from converters import AmpcsCommandConverter
@@ -78,9 +79,6 @@ CONFIG = ConfigManager.ConfigManager.getInstance()
 
 # Build a default log file name
 SYS_TIME = time.gmtime()
-
-# Build Root environmental variable if one exists.
-BUILD_ROOT = None
 
 # Deployment name from topology XML only
 DEPLOYMENT = None
@@ -297,7 +295,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
-            os.environ["DICT_DIR"] = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT) + os.sep + DEPLOYMENT + os.sep + "py_dict"
+            os.environ["DICT_DIR"] = get_build_roots()[0] + os.sep + DEPLOYMENT + os.sep + "py_dict"
             dict_dir = os.environ["DICT_DIR"]
             PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
             import shutil
@@ -680,7 +678,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     return(topology_model)
 
 def generate_component_instance_dictionary(the_parsed_component_xml , opt , topology_model):
-    global BUILD_ROOT
     global DEPLOYMENT
 
     #
@@ -785,9 +782,6 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     Creates a component meta-model, configures visitors and
     generates the component files.  Nothing is returned.
     """
-    global BUILD_ROOT
-    #
-
     parsed_port_xml_list = []
     if opt.gen_report:
         report_file = open("%sReport.txt"%xml_filename.replace("Ai.xml",""),"w")
@@ -1339,28 +1333,6 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     # close file
     dep_file.close()
 
-def search_for_file(file_type, file_path):
-    '''
-    Searches for a given included port or serializable by looking in three places:
-     - The specified BUILD_ROOT
-     - The F Prime core
-     - The exact specified path
-    @param file_type: type of file searched for
-    @param file_path: path to look for based on offset
-    @return: full path of file
-    '''
-    core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
-    for possible in [BUILD_ROOT, core, None]:
-        if not possible is None:
-            checker = os.path.join(possible, file_path)
-        else:
-            checker = file_path
-        if os.path.exists(checker):
-            DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
-            return checker
-    else:
-        PRINT.info("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
-        sys.exit(-1)
 
 def main():
     """
@@ -1368,7 +1340,6 @@ def main():
     """
     global ERROR   # prevent local creation of variable
     global VERBOSE # prevent local creation of variable
-    global BUILD_ROOT # environmental variable if set
     global GEN_TEST_CODE # indicate if test code should be generated
     global DEPLOYMENT # deployment set in topology xml only and used to install new instance dicts
 
@@ -1435,9 +1406,7 @@ def main():
             PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
             sys.exit(-1)
         else:
-            BUILD_ROOT = os.environ['BUILD_ROOT']
-            ModelParser.BUILD_ROOT = BUILD_ROOT
-            #PRINT.info("BUILD_ROOT set to %s"%BUILD_ROOT)
+            set_build_roots(os.environ.get("BUILD_ROOT"))
 
     for xml_filename in xml_filenames:
 
@@ -1490,7 +1459,7 @@ def main():
 
         if opt.dependency_file != None:
             if opt.build_root_flag:
-                generate_dependency_file(opt.dependency_file, xml_filename, BUILD_ROOT, dependency_parser,xml_type)
+                generate_dependency_file(opt.dependency_file, xml_filename, get_build_roots()[0], dependency_parser,xml_type)
 
 
     # Always return to directory where we started.

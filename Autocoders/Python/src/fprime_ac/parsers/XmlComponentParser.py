@@ -22,6 +22,7 @@ import sys
 import time
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
+from fprime_ac.utils.buildroot import locate_build_root, BuildRootCollisionException, BuildRootMissingException
 from optparse import OptionParser
 from lxml import etree
 from lxml import isoschematron
@@ -161,12 +162,10 @@ class XmlComponentParser(object):
             elif comp_tag.tag == 'import_array_type':
                 self.__import_array_type_files.append(comp_tag.text)
             elif comp_tag.tag == 'import_dictionary':
-                for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR',"")]:
-                    dict_file = os.path.join(possible, comp_tag.text)
-                    if os.path.isfile(dict_file) == True:
-                        break
-                else:
-                    stri = "ERROR: Could not find specified dictionary XML file %s." % dict_file
+                try:
+                    dict_file = locate_build_root(comp_tag.text)
+                except (BuildRootMissingException, BuildRootCollisionException) as bre:
+                    stri = "ERROR: Could not find specified dictionary XML file. %s" % (comp_tag.text, str(bre))
                     raise IOError(stri)
                 PRINT.info("Reading external dictionary %s"%dict_file)
                 dict_fd = open(dict_file,'r')

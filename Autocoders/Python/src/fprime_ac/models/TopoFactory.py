@@ -36,6 +36,7 @@ from fprime_ac.models import Topology
 #from builtins import True
 #from Canvas import Window
 
+from fprime_ac.utils.buildroot import locate_build_root, BuildRootCollisionException, BuildRootMissingException
 from fprime_ac.parsers import XmlComponentParser
 
 # Global logger init. below.
@@ -102,10 +103,11 @@ class TopoFactory:
         componentXMLNameToComponent = {} #Dictionary maps XML names to processes component objects so redundant processing is avoided
         components = []
         for comp_xml_path in x.get_comp_type_file_header_dict():
-            for possible in [os.environ.get("BUILD_ROOT"), os.environ.get("FPRIME_CORE_DIR")]:
-                file_path = os.path.join(possible, comp_xml_path)
-                if os.path.exists(file_path):
-                    break
+            try:
+                file_path = locate_build_root(comp_xml_path)
+            except (BuildRootMissingException, BuildRootCollisionException) as bre:
+                stri = "ERROR: Could not find XML file %s. %s" % (comp_xml_path, str(bre))
+                raise IOError(stri)
             processedXML = XmlComponentParser.XmlComponentParser(file_path)
             comp_name = processedXML.get_component().get_name()
             componentXMLNameToComponent[comp_name] = processedXML

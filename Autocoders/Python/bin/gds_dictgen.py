@@ -29,6 +29,7 @@ from fprime_ac.parsers import XmlSerializeParser
 # Parsers to read the XML
 from fprime_ac.parsers import XmlParser
 from fprime_ac.parsers import XmlTopologyParser
+from fprime_ac.utils.buildroot import get_build_roots, set_build_roots, search_for_file, BuildRootMissingException, BuildRootCollisionException
 
 from lxml import etree
 
@@ -48,9 +49,6 @@ VERBOSE = False
 # Global logger init. below.
 PRINT = logging.getLogger('output')
 DEBUG = logging.getLogger('debug')
-
-# Build Root environmental variable if one exists.
-BUILD_ROOT = None
 
 # Deployment name from topology XML only
 DEPLOYMENT = None
@@ -168,7 +166,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     else:
                         type_name = member_type
                         if member_type == "string":
-                            member_elem.attrib["len"] = member.get_size()
+                            member_elem.attrib["len"] = member_size
                     member_elem.attrib["type"] = type_name
                     members_elem.append(member_elem)
                 serializable_elem.append(members_elem)
@@ -457,36 +455,12 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
     
     return(topology_model)
 
-def search_for_file(file_type, file_path):
-    '''
-    Searches for a given included port or serializable by looking in three places:
-    - The specified BUILD_ROOT
-    - The F Prime core
-    - The exact specified path
-    @param file_type: type of file searched for
-    @param file_path: path to look for based on offset
-    @return: full path of file
-    '''
-    core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
-    for possible in [BUILD_ROOT, core, None]:
-        if not possible is None:
-            checker = os.path.join(possible, file_path)
-        else:
-            checker = file_path
-        if os.path.exists(checker):
-            DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
-            return checker
-    else:
-        if VERBOSE:
-            print("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
-        sys.exit(-1)
 
 def main():
     """
     Main program.
     """
     global VERBOSE # prevent local creation of variable
-    global BUILD_ROOT # environmental variable if set
     global DEPLOYMENT # deployment set in topology xml only and used to install new instance dicts
     
     CONFIG = ConfigManager.ConfigManager.getInstance()
@@ -510,18 +484,16 @@ def main():
     # Check for BUILD_ROOT variable for XML port searches
     #
     if not opt.build_root_overwrite == None:
-        BUILD_ROOT = opt.build_root_overwrite
-        ModelParser.BUILD_ROOT = BUILD_ROOT
+        set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % BUILD_ROOT)
+            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
     else:
         if ('BUILD_ROOT' in os.environ.keys()) == False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
-        BUILD_ROOT = os.environ['BUILD_ROOT']
-        ModelParser.BUILD_ROOT = BUILD_ROOT
+        set_build_roots(os.environ["BUILD_ROOT"])
         if VERBOSE:
-            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
+            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
 
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")

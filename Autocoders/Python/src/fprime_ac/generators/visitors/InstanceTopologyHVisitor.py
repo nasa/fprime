@@ -29,6 +29,7 @@ from fprime_ac.models import ModelParser
 #from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
+from fprime_ac.utils.buildroot import build_root_relative_path, locate_build_root, get_nearest_build_root, BuildRootMissingException
 #
 # Import precompiled templates here
 #
@@ -133,20 +134,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for the base classes but also for Port types
         @parms args: the instance of the concrete element to operation on.
         """
-
-        # If BUILD_ROOT is set get me the relative path to current execution location
-        relative_path = None
-        path = os.getcwd()
-        # normalize path to Linux separators - TKC
-        path = path.replace("\\","/")
-        if ModelParser.BUILD_ROOT != None:
-            path = os.path.normpath(os.path.realpath(path))
-            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
-            if path[:len(build_root)].lower() == build_root.lower():
-                relative_path = path[len(build_root+'/'):]
-            else:
-                PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
-                sys.exit(-1)
+        relative_path = self.relativePath()
         #
         DEBUG.debug("Relative path: %s", relative_path)
         #
@@ -221,7 +209,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
                 xml_path = xml_name
                 xml_path = xml_path.strip()
                 xml_path = xml_path.replace("i.xml" , '')
-                xml_path = xml_path.replace(ModelParser.BUILD_ROOT , '')
                 xml_path += "c.hpp"
             c.component_import_list.append(xml_path)
 

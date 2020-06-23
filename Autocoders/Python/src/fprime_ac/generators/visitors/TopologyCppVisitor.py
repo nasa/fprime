@@ -34,6 +34,7 @@ from fprime_ac.generators import formatters
 #
 from fprime_ac.generators.templates.topology import includes1TopologyCpp
 from fprime_ac.generators.templates.topology import publicTopologyCpp
+from fprime_ac.utils.buildroot import build_root_relative_path, BuildRootMissingException
 #from fprime_ac.generators.templates import finishTopologyCpp
 #
 # Universal globals used within module go here.
@@ -133,20 +134,7 @@ class TopologyCppVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for the base classes but also for Port types
         @parms args: the instance of the concrete element to operation on.
         """
-
-        # If BUILD_ROOT is set get me the relative path to current execution location
-        relative_path = None
-        path = os.getcwd()
-        # normalize path to Linux separators - TKC
-        path = path.replace("\\","/")
-        if ModelParser.BUILD_ROOT != None:
-            path = os.path.normpath(os.path.realpath(path))
-            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
-            if path[:len(build_root)].lower() == build_root.lower():
-                relative_path = path[len(build_root+'/'):]
-            else:
-                PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
-                sys.exit(-1)
+        relative_path = self.relativePath()
         #
         DEBUG.debug("Relative path: %s", relative_path)
         #

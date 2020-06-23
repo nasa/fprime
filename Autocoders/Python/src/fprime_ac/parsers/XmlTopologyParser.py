@@ -30,6 +30,7 @@ except ImportError:
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
+from fprime_ac.utils.buildroot import locate_build_root, BuildRootCollisionException, BuildRootMissingException
 #from builtins import file
 #
 # Python extention modules and custom interfaces
@@ -201,17 +202,13 @@ class XmlTopologyParser(object):
         # For each component xml file specified assign it to a component instance object
         PRINT.info("\nSearching for component XML files")
         for xml_file in self.__comp_type_files:
-            core = os.environ.get("FPRIME_CORE_DIR")
-            for possible in [ModelParser.BUILD_ROOT, core, None]:
-                if not possible is None:
-                    checker = os.path.join(possible, xml_file)
-                else:
-                    checker = xml_file
-                if os.path.exists(checker):
-                    break
-            else:
+            try:
+                xml_file = locate_build_root(xml_file)
+            except BuildRootMissingException:
                 PRINT.info("WARNING: Could not find XML file: %s" % xml_file)
-            xml_file = checker.strip()
+            except BuildRootCollisionException as bre:
+                stri = "ERROR: Could not find specified dictionary XML file. %s" % (xml_file, str(bre))
+                raise IOError(stri)
             if os.path.exists(xml_file) == True:
                 PRINT.info("Found component XML file: %s" % xml_file)
                 xml_parsed = XmlComponentParser.XmlComponentParser(xml_file)

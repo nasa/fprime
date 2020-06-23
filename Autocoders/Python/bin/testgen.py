@@ -51,6 +51,8 @@ from fprime_ac.generators.writers import GTestCppWriter
 from fprime_ac.generators.writers import TestImplHWriter
 from fprime_ac.generators.writers import TestImplCppWriter
 from fprime_ac.generators.writers import TestMainWriter
+from fprime_ac.utils.buildroot import get_build_roots, set_build_roots, search_for_file, BuildRootMissingException, BuildRootCollisionException
+
 
 #Generators to produce the code
 try:
@@ -250,29 +252,6 @@ def generate_tests(opt, component_model):
         print("Generated test files for " + component_model.get_xml_filename())
 
 
-def search_for_file(file_type, file_path):
-    '''
-    Searches for a given included port or serializable by looking in three places:
-    - The specified BUILD_ROOT
-    - The F Prime core
-    - The exact specified path
-    @param file_type: type of file searched for
-    @param file_path: path to look for based on offset
-    @return: full path of file
-    '''
-    core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
-    for possible in [BUILD_ROOT, core, None]:
-        if not possible is None:
-            checker = os.path.join(possible, file_path)
-        else:
-            checker = file_path
-        if os.path.exists(checker):
-            DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
-            return checker
-    else:
-        print("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
-        sys.exit(-1)
-
 def main():
     """
     Main program.
@@ -306,18 +285,16 @@ def main():
     # Check for BUILD_ROOT variable for XML port searches
     #
     if not opt.build_root_overwrite == None:
-        BUILD_ROOT = opt.build_root_overwrite
-        ModelParser.BUILD_ROOT = BUILD_ROOT
+        set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % BUILD_ROOT)
+            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
     else:
         if ('BUILD_ROOT' in os.environ.keys()) == False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
-        BUILD_ROOT = os.environ['BUILD_ROOT']
-        ModelParser.BUILD_ROOT = BUILD_ROOT
+        set_build_roots(os.environ["BUILD_ROOT"])
         if VERBOSE:
-            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
+            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
     
     #
     # Write test component
