@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 
 """
 Parses the given CLI command for the F' GDS, and then executes the correct
@@ -11,10 +12,18 @@ import os
 import sys
 from typing import Callable
 
+import argcomplete
+
+"""
+TODO: These modules are now only lazily loaded below as needed, due to slow
+performance when importing them; if possible, find a way to speed up the actual
+importing
+
 import fprime_gds.common.gds_cli.channels as channels
 import fprime_gds.common.gds_cli.commands as commands
 import fprime_gds.common.gds_cli.command_send as command_send
 import fprime_gds.common.gds_cli.events as events
+"""
 from fprime_gds.executables.cli import GdsParser
 
 
@@ -29,7 +38,7 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
         type=str,
         default=None,
         help='path from the current working directory to the "<project name>Dictionary.xml" file for the project you\'re using the API with; if unused, tries to search the current working directory for such a file',
-    )
+    ).completer = argcomplete.completers.FilesCompleter(allowednames=[".xml", ".py"])
     parser.add_argument(
         "-ip",
         "--ip-address",
@@ -118,7 +127,7 @@ class CliCommandParserBase(abc.ABC):
         """
         command_parser = cls.create_subparser(parent_parser)
         cls.add_arguments(command_parser)
-        command_parser.set_defaults(func=cls.get_command_func())
+        command_parser.set_defaults(func=cls.command_func)
 
     @classmethod
     @abc.abstractmethod
@@ -142,9 +151,9 @@ class CliCommandParserBase(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def get_command_func(cls) -> Callable:
+    def command_func(cls, *args, **kwargs) -> Callable:
         """
-        Returns the function that should be executed when this command is called
+        Executes the appropriate function when this command is called
         """
         pass
 
@@ -175,11 +184,13 @@ class ChannelsParser(CliCommandParserBase):
         add_history_arguments(parser, "channels")
 
     @classmethod
-    def get_command_func(cls) -> Callable:
+    def command_func(cls, *args, **kwargs):
         """
-        Returns the function that should be executed when "channels" is called
+        Executes the appropriate function when "channels" is called
         """
-        return channels.ChannelsCommand.handle_arguments
+        import fprime_gds.common.gds_cli.channels as channels
+
+        channels.ChannelsCommand.handle_arguments(*args, **kwargs)
 
 
 class CommandsParser(CliCommandParserBase):
@@ -209,11 +220,13 @@ class CommandsParser(CliCommandParserBase):
         add_history_arguments(parser, "commands")
 
     @classmethod
-    def get_command_func(cls) -> Callable:
+    def command_func(cls, *args, **kwargs):
         """
-        Returns the function that should be executed when "commands" is called
+        Executes the appropriate function when "commands" is called
         """
-        return commands.CommandsCommand.handle_arguments
+        import fprime_gds.common.gds_cli.commands as commands
+
+        commands.CommandsCommand.handle_arguments(*args, **kwargs)
 
 
 class CommandSendParser(CliCommandParserBase):
@@ -256,12 +269,13 @@ class CommandSendParser(CliCommandParserBase):
         )
 
     @classmethod
-    def get_command_func(cls) -> Callable:
+    def command_func(cls, *args, **kwargs):
         """
-        Returns the function that should be executed when "command-send" is
-        called
+        Executes the appropriate function when "command_send" is called
         """
-        return command_send.CommandSendCommand.handle_arguments
+        import fprime_gds.common.gds_cli.command_send as command_send
+
+        command_send.CommandSendCommand.handle_arguments(*args, **kwargs)
 
 
 class EventsParser(CliCommandParserBase):
@@ -290,11 +304,13 @@ class EventsParser(CliCommandParserBase):
         add_history_arguments(parser, "events")
 
     @classmethod
-    def get_command_func(cls) -> Callable:
+    def command_func(cls, *args, **kwargs):
         """
-        Returns the function that should be executed when "events" is called
+        Executes the appropriate function when "events_parser" is called
         """
-        return events.EventsCommand.handle_arguments
+        import fprime_gds.common.gds_cli.events as events
+
+        events.EventsCommand.handle_arguments(*args, **kwargs)
 
 
 def create_parser():
@@ -305,6 +321,7 @@ def create_parser():
 
     # Add subcommands to the parser
     subparsers = parser.add_subparsers(dest="func")
+
     ChannelsParser.add_subparser(subparsers)
     CommandsParser.add_subparser(subparsers)
     CommandSendParser.add_subparser(subparsers)
@@ -346,6 +363,7 @@ def parse_args(parser: argparse.ArgumentParser, arguments):
 def main():
     # parse arguments, not including the name of this script
     parser = create_parser()
+    argcomplete.autocomplete(parser)
     args = parse_args(parser, sys.argv[1:])
 
     if not args.func:
