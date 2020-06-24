@@ -8,15 +8,19 @@
 # F prime common components.
 #
 #  Environment and CMake Variables:
-#   1. FPRIME_CORE_DIR: the root directory of F prime's core code
-#   2. FPRIME_CURRENT_BUILD_ROOT: BUILD_ROOT for the core F prime code. *MUST* be
+#   1. $ENV{FPRIME_LOCATION}: root directory of F prime's core code
 #          reset when building custom code outside of source tree.
 ####
 
 # Defines the FPRIME_CORE_DIR directory to be the core of the F prime build. It is
 # used to specify where F prime core lives allowing it to be separate from the
 # add-ons used by projects.
-set(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
+get_filename_component(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+if (NOT "${FPRIME_CORE_DIR}" STREQUAL "$ENV{FPRIME_LOCATION}")
+    message(FATAL_ERROR "Fprime location $ENV{FPRIME_LOCATION} inconsistent with ${FPRIME_CORE_DIR}. Check settings.ini")
+endif()
+get_filename_component(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
+
 message(STATUS "F prime core directory set to: ${FPRIME_CORE_DIR}")
 # Clear hashes file
 file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
@@ -30,6 +34,9 @@ endif()
 # Store settings filee and register a dependency on it
 set(FPRIME_SETTINGS_FILE "$ENV{FPRIME_SETTINGS_FILE}" CACHE PATH "F prime settings file tracking" FORCE)
 set(FPRIME_ENVIRONMENT_FILE "$ENV{FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file tracking" FORCE)
+set(FPRIME_BUILD_LOCATIONS "${FPRIME_CORE_DIR}" $ENV{FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
+list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
+message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "$ENV{FPRIME_SETTINGS_FILE}")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "$ENV{FPRIME_ENVIRONMENT_FILE}")
 
@@ -53,12 +60,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Target.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
-# BUILD_ROOT is used by F prime to help run the auto-coders, and as a relative
-# path from which to do internal operations.
-set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "F prime BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 if ("${PROJECT_AC_CONSTANTS_FILE}" STREQUAL "" )
-    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_CURRENT_BUILD_ROOT}/Fw/Cfg/AcConstants.ini")
+    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_CORE_DIR}/Fw/Cfg/AcConstants.ini")
 endif()
 message(STATUS "Using autocoder constants file: ${PROJECT_AC_CONSTANTS_FILE}")
 
