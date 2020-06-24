@@ -29,7 +29,6 @@ import fprime.fbuild.settings
 
 COMMENT_REGEX = re.compile(r"\s*#.*")
 
-
 class CMakeBuildCache(object):
     """
     Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
@@ -275,6 +274,7 @@ class CMakeHandler(object):
                 if prefix != item or (accum is not None and len(accum) > len(item))
                 else item
             )
+
         parents = list(parents)
         nearest_parent = functools.reduce(parent_reducer, parents, None)
         # Check that a parent is the true parent
@@ -323,17 +323,21 @@ class CMakeHandler(object):
         source_dir = os.path.abspath(source_dir)
         args = {} if args is None else args
         # Pass in needed F prime settings
-        needed = [("FPRIME_FRAMEWORK_PATH", "framework_path"),
-                  ("FPRIME_LIBRARY_LOCATIONS", "library_locations"),
-                  ("FPRIME_PROJECT_ROOT", "project_root"),
-                  ("FPRIME_SETTINGS_FILE", "settings_file"),
-                  ("FPRIME_ENVIRONMENT_FILE", "environment_file")]
+        needed = [
+            ("FPRIME_FRAMEWORK_PATH", "framework_path"),
+            ("FPRIME_LIBRARY_LOCATIONS", "library_locations"),
+            ("FPRIME_PROJECT_ROOT", "project_root"),
+            ("FPRIME_SETTINGS_FILE", "settings_file"),
+            ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
+        ]
         # Update args from settings file
         for cache, setting in needed:
             if setting in self.settings:
                 args[cache] = self.settings[setting]
         if "FPRIME_LIBRARY_LOCATIONS" in args:
-            args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(args["FPRIME_LIBRARY_LOCATIONS"])
+            args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(
+                args["FPRIME_LIBRARY_LOCATIONS"]
+            )
         fleshed_args = map(
             lambda key: ("{}={}" if key.startswith("--") else "-D{}={}").format(
                 key, args[key]
@@ -381,7 +385,8 @@ class CMakeHandler(object):
         project_root = self.settings.get("project_root", project_path)
         return (
             self.settings.get("default_toolchain", "native"),
-            [self.settings.get("framework_path"), project_root] + self.settings.get("library_locations", [])
+            [self.settings.get("framework_path"), project_root]
+            + self.settings.get("library_locations", []),
         )
 
     def load_settings(self, settings_file, cmake_dir):
