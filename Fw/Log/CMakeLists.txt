@@ -23,10 +23,10 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/LogTest.cpp"
 )
 set(UT_MOD_DEPS
-  "${FPRIME_CORE_DIR}/Fw/Com"
-  "${FPRIME_CORE_DIR}/Fw/Obj"
-  "${FPRIME_CORE_DIR}/Fw/Port"
-  "${FPRIME_CORE_DIR}/Fw/Time"
-  "${FPRIME_CORE_DIR}/Fw/Types"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Com"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Obj"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Port"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
 )
 register_fprime_ut()

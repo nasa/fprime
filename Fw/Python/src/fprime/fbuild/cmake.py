@@ -238,8 +238,9 @@ class CMakeHandler(object):
         """
         path = (
             os.path.abspath(path) if path is not None else os.path.abspath(os.getcwd())
-        )
+        ) + os.sep
         possible_parents = self.get_include_locations(cmake_dir)
+        print(path, possible_parents)
         # Check there is some possible parent
         if not possible_parents:
             raise CMakeProjectException(
@@ -275,7 +276,8 @@ class CMakeHandler(object):
                 if prefix != item or (accum is not None and len(accum) > len(item))
                 else item
             )
-
+        parents = list(parents)
+        print(parents)
         nearest_parent = functools.reduce(parent_reducer, parents, None)
         # Check that a parent is the true parent
         if nearest_parent is None:

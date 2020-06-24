@@ -45,10 +45,11 @@ class IniSettings():
         for path in all_paths:
             if path == "" or path is None:
                 continue
-            elif not os.path.exists(path):
+            full_path = os.path.abspath(os.path.normpath(os.path.join(base_dir, path)))
+            if not os.path.exists(full_path):
                 raise FprimeSettingsException("Non-existant path '{}' found in section '{}' option '{}' of file '{}'"
                                               .format(path, section, key, ini_file))
-            expanded.append(os.path.abspath(os.path.normpath(os.path.join(base_dir, path))))
+            expanded.append(full_path)
         return expanded
 
 
