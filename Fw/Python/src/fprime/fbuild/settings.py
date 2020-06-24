@@ -26,7 +26,7 @@ class IniSettings():
               if os.path.isfile(os.path.join(path, needle)):
                   return os.path.abspath(os.path.normpath(path))
               path = os.path.dirname(path)
-         raise FprimeLocationUnknownException("Please set 'fprime_location' in [fprime] section in 'settings.ini")
+         raise FprimeLocationUnknownException("Please set 'framework_path' in [fprime] section in 'settings.ini")
 
 
     @staticmethod

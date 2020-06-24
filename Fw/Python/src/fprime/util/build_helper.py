@@ -143,7 +143,7 @@ def validate(parsed):
         parsed.jobs = 1
     # Check platforms for existing toolchain, unless the default is specified.
     if parsed.command == "generate":
-        toolchain = find_toolchain(parsed.platform)
+        toolchain = find_toolchain(parsed.platform, parsed.path)
         print("[INFO] Using toolchain file {} for platform {}".format(toolchain, parsed.platform))
         if toolchain is not None:
             cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
@@ -154,20 +154,22 @@ def validate(parsed):
     return cmake_args, make_args
 
 
-def find_toolchain(platform):
+def find_toolchain(platform, path):
     """
     Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
     prime provided toolchains
     :param platform: platform supplied by user for finding toolchain automatically
+    :param path: path to the CMakeLists.txt directory, which acts as a default location if project_root not set
     :return: toolchain file
     """
-    default_toolchain, toolchain_locations = fprime.fbuild.builder().get_toolchain_config()
+    default_toolchain, toolchain_locations = fprime.fbuild.builder().get_toolchain_config(path)
     toolchain = default_toolchain if platform == "default" else platform
     # If toolchain is the native target, this is supplied by CMake and we exit here.
     if toolchain == "native":
         return None
     # Otherwise, find locations of toolchain files using the specified locations from settings.
     else:
+        print(toolchain_locations, toolchain)
         toolchains_paths = list(map(lambda loc: os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake"),
                                     toolchain_locations))
         toolchains = list(filter(os.path.exists, toolchains_paths))
