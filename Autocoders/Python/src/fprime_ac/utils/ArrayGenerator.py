@@ -42,13 +42,14 @@ def open_file(name, type):
         sys.exit(-1)
     return fp
 
-def write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, string_size, include_path, comments, include_headers, import_serializables, import_enums, import_arrays):
+def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comments, include_headers, import_serializables, import_enums, import_arrays):
     '''
     Set up and write out templates here
     '''
     c.name = name
     c.namespace = namespace
     c.type = arr_type
+    c.typeinfo = arr_typeinfo
     c.size = arr_size
     c.format = format_string
     c.default = default_values
@@ -76,6 +77,7 @@ def generate_array(xml_file):
         name = array_xml.get_name()
         namespace = array_xml.get_namespace()
         arr_type = array_xml.get_type()
+        arr_typeinfo = array_xml.get_typeinfo()
         arr_size = int(array_xml.get_size())
         format_string = array_xml.get_format()
         default_values = array_xml.get_default()
@@ -112,14 +114,14 @@ def generate_array(xml_file):
         #
         fp = open_file(name, "hpp")
         c = array_hpp.array_hpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = array_cpp.array_cpp()
-        write_template(fp, c, name, namespace, arr_type, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
         fp.close()
         return True
     else:

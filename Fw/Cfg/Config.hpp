@@ -302,7 +302,7 @@
 
 #if FW_ARRAY_TO_STRING
 #ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE
-#define FW_ARRAY_TO_STRING_BUFFER_SIZE 255  //!< Size of string to store toString() string output
+#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  //!< Size of string to store toString() string output
 #endif
 #endif
 

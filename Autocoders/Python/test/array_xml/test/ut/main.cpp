@@ -1,5 +1,6 @@
 #include <Autocoders/Python/test/array_xml/Component1ComponentAc.hpp>
 #include <Autocoders/Python/test/array_xml/InternalTypeArrayAc.hpp>
+#include <Autocoders/Python/test/array_xml/StringArrayArrayAc.hpp>
 #include <Autocoders/Python/test/array_xml/ArrayTypeArrayAc.hpp>
 #include <Autocoders/Python/test/array_xml/Port1PortAc.hpp>
 #include <Autocoders/Python/test/array_xml/ArrSerialSerializableAc.hpp>
@@ -9,6 +10,7 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/Assert.hpp>
 
 #include <bitset>
@@ -76,14 +78,33 @@ int main(int argc, char* argv[]) {
     
     setbuf(stdout, NULL);
 
-    cout << "Initialize Arrays";
+    cout << "Initialize Arrays" << endl;
 
     InternalType array1 = InternalType(6,7,120,444);
     Example::ArrayType array2 = Example::ArrayType(array1);
+    // Create string array for serializable
+    Fw::EightyCharString mem1 = "Member 1";
+    Fw::EightyCharString mem2 = "Member 2";
+    Fw::EightyCharString mem3 = "Member 3";
+    StringArray array3 = StringArray(mem1, mem2, mem3);
     Example::ArrSerial serial1;
-            
+
+    // Print toString outputs for each array
+    cout << "Print toString for arrays" << endl;
+
+    Fw::EightyCharString tostring1;
+    Fw::EightyCharString tostring2;
+    Fw::EightyCharString tostring3;
+    array1.toString(tostring1);
+    array2.toString(tostring2);
+    array3.toString(tostring3);
+
+    cout << "Integer array: " << tostring1 << endl;
+    cout << "2D integer array: " << tostring2 << endl;
+    cout << "String array: " << tostring3 << endl;
+
     // Serialize arrays
-    cout << "Serialize arrays";
+    cout << "Serialize arrays" << endl;
     U8 buffer1[1024];
     U8 buffer2[1024];
     
@@ -141,6 +162,7 @@ int main(int argc, char* argv[]) {
     serial1.setMember1(integer1);
     serial1.setMember2(integer2);
     serial1.setMember3(array1);
+    serial1.setMember4(array3);
             
     // // Invoke ports to test array usage
     // cout << "Invoking input ports..." << endl;
