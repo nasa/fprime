@@ -111,7 +111,12 @@ def validate(parsed):
         # Get settings file default
         if parsed.command == "generate" and parsed.settings is None:
             parsed.setting = os.path.join(parsed.path, "settings.ini")
-        fprime.fbuild.builder().load_settings(parsed.setting, parsed.build_dir)
+            fprime.fbuild.builder().load_settings(parsed.setting, parsed.build_dir)
+        elif parsed.command == "generate":
+            fprime.fbuild.builder().load_settings(None, parsed.build_dir)
+        else:
+            settings_file_from_cache, = fprime.fbuild.builder().get_fprime_configuration("FPRIME_SETTINGS_FILE", parsed.build_dir)
+            fprime.fbuild.builder().load_settings(None if settings_file_from_cache == "" else settings_file_from_cache, parsed.build_dir)
     except fprime.fbuild.cmake.CMakeProjectException as exc:
         print("[ERROR] {}".format(exc))
         sys.exit(1)
@@ -138,10 +143,10 @@ def validate(parsed):
         parsed.jobs = 1
     # Check platforms for existing toolchain, unless the default is specified.
     if parsed.command == "generate":
-        toolchain = parsed.platform
-        toolchains = find_toolchain(toolchain)
-        print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
-        cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
+        toolchain = find_toolchain(parsed.platform)
+        print("[INFO] Using toolchain file {} for platform {}".format(toolchain, parsed.platform))
+        if toolchain is not None:
+            cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
     # Build type only for generate, jobs only for non-generate
     if parsed.command != "generate":
         parsed.settings = None # Force to load from cache if possible
@@ -161,19 +166,20 @@ def find_toolchain(platform):
     # If toolchain is the native target, this is supplied by CMake and we exit here.
     if toolchain == "native":
         return None
-    # If toolchain is in Fprime supplied toolchains return that now
-    elif toolchain in DEFAULT_FPRIME_TOOLCHAINS:
-        return toolchain
     # Otherwise, find locations of toolchain files using the specified locations from settings.
-    elif toolchain not in DEFAULT_FPRIME_TOOLCHAINS:
-        toolchains_paths = map(lambda loc: os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake"),
-                               toolchain_locations)
+    else:
+        toolchains_paths = list(map(lambda loc: os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake"),
+                                    toolchain_locations))
         toolchains = list(filter(os.path.exists, toolchains_paths))
         if not toolchains:
             print("[ERROR] Toolchain file {} does not exist at any of {}"
                   .format(toolchain + ".cmake", ", ".join(list(toolchains_paths))))
             sys.exit(-1)
-    return toolchains
+        elif len(toolchains) > 1:
+            print("[ERROR] Toolchain file {} found multiple times. Aborting."
+                  .format(toolchain + ".cmake", ", ".join(list(toolchains))))
+            sys.exit(-1)
+    return toolchains[0]
 
 
 def parse_args(args):

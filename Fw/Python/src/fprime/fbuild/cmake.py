@@ -368,7 +368,7 @@ class CMakeHandler(object):
         """Returns the default toolchain"""
         return (
             self.settings.get("default_toolchain", "native"),
-            self.settings.get("toolchain_locations", []),
+            [self.settings.get("fprime_location")] + self.settings.get("fprime_library_locations", [])
         )
 
     def load_settings(self, settings_file, cmake_dir):
