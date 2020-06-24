@@ -82,36 +82,32 @@ class IniSettings():
         proj_root = None if not proj_root else proj_root[0]
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(confparse, "fprime", "environment_file", settings_file)
-        env_file = None if not env_file else env_file[0]
+        env_file = settings_file if not env_file else env_file[0]
         libraries = IniSettings.read_safe_path(confparse, "fprime", "library_locations", settings_file)
-        if env_file is not None:
-            env_parser = configparser.ConfigParser()
-            env_parser.read(env_file)
-        else:
-            env_parser = confparse
-        environment = IniSettings.load_environment(env_parser)
+        environment = IniSettings.load_environment(env_file)
         settings = {
             "settings_file": settings_file,
             "framework_path": fprime_location,
             "library_locations": libraries,
             "default_toolchain": confparse.get("fprime", "default_toolchain", fallback="native"),
+            "environment_file": env_file,
             "environment": environment
         }
-        # Set environment file
-        if env_file is not None:
-            settings["environment_file"] = env_file
         # Set the project root
         if proj_root is not None:
             settings["project_root"] = proj_root
         return settings
 
     @staticmethod
-    def load_environment(parser):
+    def load_environment(env_file):
         """
         Load the environment from the given parser.
-        :param parser: parser to load environment from
+        :param env_file: load environment from this file
         :return: environment dictionary
         """
+        parser = configparser.ConfigParser()
+        parser.optionxform = str 
+        parser.read(env_file)
         env_dict = {}
         try:
             for key, value in parser.items("environment"):
