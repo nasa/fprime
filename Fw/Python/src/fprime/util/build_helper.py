@@ -128,6 +128,13 @@ def validate(parsed):
               .format(fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform), exc,
                       parsed.path), file=sys.stderr)
         sys.exit(2)
+    except fprime.fbuild.settings.FprimeLocationUnknownException as exc:
+        print("[ERROR] Cannot determine F prime framework location. {}".format(exc))
+        sys.exit(2)
+    except fprime.fbuild.settings.FprimeSettingsException as exc:
+        print("[ERROR] Problem with F prime settings file. {}".format(exc))
+        sys.exit(2)
+
     cache_file = os.path.join(parsed.build_dir, "CMakeCache.txt")
     # Check for generate validation
     if parsed.command == "generate" and os.path.exists(parsed.build_dir):
@@ -169,7 +176,6 @@ def find_toolchain(platform, path):
         return None
     # Otherwise, find locations of toolchain files using the specified locations from settings.
     else:
-        print(toolchain_locations, toolchain)
         toolchains_paths = list(map(lambda loc: os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake"),
                                     toolchain_locations))
         toolchains = list(filter(os.path.exists, toolchains_paths))
