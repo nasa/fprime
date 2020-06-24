@@ -74,11 +74,11 @@ class SerializableType(type_base.BaseType):
         """
         JSONable type
         """
-        members_ = {}
+        members = {}
         for member in self.mem_list:
-            members_[member[0]] = {"format": member[2], "description": member[3]}
-            members_[member[0]].update(member[1].to_jsonable())
-        return members_
+            members[member[0]] = {"format": member[2], "description": member[3]}
+            members[member[0]].update(member[1].to_jsonable())
+        return members
 
     @property
     def mem_list(self):

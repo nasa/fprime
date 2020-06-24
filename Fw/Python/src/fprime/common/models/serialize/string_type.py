@@ -64,12 +64,12 @@ class StringType(type_base.BaseType):
                 raise StringSizeException(s, self.__max_string_len)
 
         # store string value plus size - place size in front
-        buff_ = struct.pack(">H", len(self.val))
+        buff = struct.pack(">H", len(self.val))
         if sys.version_info >= (3, 0):
-            buff_ = buff_ + self.val.encode(DATA_ENCODING)
+            buff = buff + self.val.encode(DATA_ENCODING)
         else:
-            buff_ = buff_ + self.val
-        return buff_
+            buff = buff + self.val
+        return buff
 
     def deserialize(self, data, offset):
         """

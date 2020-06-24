@@ -101,7 +101,7 @@ class TimeType(type_base.BaseType):
             None if valid, raises TypeRangeException if not valid.
         """
         if (useconds < 0) or (useconds > 999999):
-            raise TypeRangeException(usecs)
+            raise TypeRangeException(useconds)
 
     def _check_time_base(self, time_base):
         """
@@ -172,7 +172,7 @@ class TimeType(type_base.BaseType):
         Returns:
             Byte array containing serialized time type
         """
-        buf = ""
+        buf = b""
         buf += self.__timeBase.serialize()
         buf += self.__timeContext.serialize()
         buf += self.__secs.serialize()
@@ -518,10 +518,10 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
         val2.deserialize(buff, 0)
         print(
             "Deserialized: TimeType(%s, %d, %d, %d)"
-            % (val2.timeBase, val2.timeContext, val2.seconds, val2.useconds)
+            % (val2.timeBase.value, val2.timeContext, val2.seconds, val2.useconds)
         )
 
-        if val2.timeBase != t_base:
+        if val2.timeBase.value != t_base:
             return False
         elif val2.timeContext != t_context:
             return False
@@ -540,69 +540,4 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
 
 
 if __name__ == "__main__":
-    TIME_SIZE = 11
-    test_buff = bytearray("\x01\x02\x03\x00\x02\x03\x00\x00\x00\x04\x00\x00\x00\x05")
-    test_offset = 3
-    test_base = 2
-    test_context = 3
-    test_secs = 4
-    test_usecs = 5
-
-    in_no_err_list = [
-        (TimeBase["TB_NONE"].value, 1, 100, 999999),
-        (TimeBase["TB_PROC_TIME"].value, 0xFF, 1234567, 2952),
-        (TimeBase["TB_WORKSTATION_TIME"].value, 8, 1529430215, 12),
-        (TimeBase["TB_SC_TIME"].value, 231, 1344230277, 123456),
-        (TimeBase["TB_FPGA_TIME"].value, 78, 10395, 24556),
-        (TimeBase["TB_DONT_CARE"].value, 0xB3, 12390819, 12356),
-    ]
-
-    in_err_list = [
-        (10, 58, 15345, 0),
-        (TimeBase["TB_NONE"].value, 1, 3, -1),
-        (TimeBase["TB_WORKSTATION_TIME"].value, 1, 700000, 1234567),
-    ]
-
-    passed = 0
-    failed = 0
-
-    print("TimeType Tests")
-    print("--------------------------------------------------------------------")
-
-    val = TimeType()
-    size = val.getSize()
-    if size != TIME_SIZE:
-        print(("Test Failed, getSize() returned %d, expected %d" % (size, TIME_SIZE)))
-        failed += 1
-    else:
-        print(("Test Passed, getSize() returned %d" % size))
-        passed += 1
-
-    print("\nNext %d tests expected to be exception free" % len(in_no_err_list))
-
-    for (t_base, t_context, secs, usecs) in in_no_err_list:
-        result = ser_deser_test(t_base, t_context, secs, usecs)
-
-        if result:
-            print("Test Passed\n\n")
-            passed += 1
-        else:
-            print("Test FAILED\n\n")
-            failed += 1
-
-    print("\nNext %d tests expected to have exceptions" % len(in_err_list))
-
-    for (t_base, t_context, secs, usecs) in in_err_list:
-        result = ser_deser_test(t_base, t_context, secs, usecs, should_err=True)
-
-        if result:
-            print("Test Passed\n\n")
-            passed += 1
-        else:
-            print("Test FAILED\n\n")
-            failed += 1
-
-    print("-------------------------------------------------------------------")
-    print("Results:")
-    print(("\tPassed: %d" % passed))
-    print(("\tFAILED: %d" % failed))
+    pass

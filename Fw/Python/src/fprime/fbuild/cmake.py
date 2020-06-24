@@ -157,7 +157,7 @@ class CMakeHandler(object):
                 run_args + fleshed_args, write_override=True, environment=environment
             )
 
-    def find_hashed_file(self, build_dir, hash_):
+    def find_hashed_file(self, build_dir, hash):
         """
         Find a file from a hash
         :param build_dir: build directory to search
@@ -171,7 +171,7 @@ class CMakeHandler(object):
             )
         with open(hashes_file, "r") as file_handle:
             lines = filter(
-                lambda line: "{:x}".format(hash_) in line, file_handle.readlines()
+                lambda line: "{:x}".format(hash) in line, file_handle.readlines()
             )
         return list(lines)
 
@@ -559,7 +559,6 @@ class CMakeHandler(object):
 
 class CMakeException(Exception):
     """ Error occurred within this CMake package """
-
 
 
 class CMakeInconsistencyException(CMakeException):
