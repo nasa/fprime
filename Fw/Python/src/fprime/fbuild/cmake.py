@@ -74,7 +74,7 @@ class CMakeHandler(object):
     CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
     CMAKE_LOCATION_FIELDS = [
         "FPRIME_PROJECT_ROOT",
-        "FPRIME_LIBRARRY_LOCATIONS",
+        "FPRIME_LIBRARY_LOCATIONS",
         "FPRIME_FRAMEWORK_PATH",
     ]
 
