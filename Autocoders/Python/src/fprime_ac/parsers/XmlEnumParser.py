@@ -102,13 +102,12 @@ class XmlEnumParser(object):
                 item = enum_tag.attrib
                 if not 'comment' in item:
                     item['comment'] = ""
-            
+                self.__items.append((item['name'],item['value'],item['comment']))
                 if not 'value' in item:
                     item['value'] = ""
             elif enum_tag.tag == 'comment':
                 self.__comments.append(enum_tag.text)
-            
-            self.__items.append((item['name'],item['value'],item['comment']))
+
 
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid

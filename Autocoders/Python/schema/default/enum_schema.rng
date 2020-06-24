@@ -35,11 +35,11 @@
                     <ref name = "item_definition"></ref>
                 </oneOrMore>
 
-                <optional>
-                    <attribute name = "comment">
+                <oneOrMore>
+                    <element name = "comment">
                         <text/>
-                    </attribute>
-                </optional>
+                    </element>
+                </oneOrMore>
             </interleave>
         </element>
     </define>
