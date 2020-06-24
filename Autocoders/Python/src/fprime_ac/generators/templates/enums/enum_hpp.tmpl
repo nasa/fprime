@@ -40,17 +40,9 @@ namespace ${namespace} {
 #for $item_name,$item_value,$item_comment in $items_list:
 #if not $item_value == ""
 #if not item_comment == ""
-#if $item_value < 2147483648:
     ${item_name} = ${item_value}, //!< ${item_comment}
-#else:
-    ${item_name} = ${item_value}U, //!< ${item_comment}
-#end if
 #else
-#if $item_value < 2147483648:
     ${item_name} = ${item_value},
-#else:
-    ${item_name} = ${item_value}U,
-#end if
 #end if
 #else
 #if not item_comment == ""
