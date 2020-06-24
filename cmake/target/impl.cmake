@@ -37,7 +37,7 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_BUILD_LOCATIONS}
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-      ${FPRIME_CORE_DIR}/Autocoders/Python/bin/implgen.py ${AI_XML}
+      ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/implgen.py ${AI_XML}
       DEPENDS ${AI_XML}
     )
     # Add dependencies to codegen

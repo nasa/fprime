@@ -37,7 +37,7 @@
 #
 # ```
 # FIND_PACKAGE ( Threads REQUIRED )
-# include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+# include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
 # ```
 #
 # **Note:** much of this is done already in *-common.cmake for Linux. If using a linux-like system,
@@ -70,4 +70,4 @@ FIND_PACKAGE ( Threads REQUIRED )
 #         as other system headers. Other global headers can be placed here.
 #         Note: Typically, the Linux directory is a good default, as it grabs
 #         standard types from <stdint.h>. 
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")

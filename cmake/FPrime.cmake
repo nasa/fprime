@@ -12,16 +12,21 @@
 #          reset when building custom code outside of source tree.
 ####
 
-# Defines the FPRIME_CORE_DIR directory to be the core of the F prime build. It is
+# Defines the FPRIME_FRAMEWORK_PATH directory to be the core of the F prime build. It is
 # used to specify where F prime core lives allowing it to be separate from the
 # add-ons used by projects.
-get_filename_component(FPRIME_CORE_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
-if (NOT "${FPRIME_CORE_DIR}" STREQUAL "$ENV{FPRIME_LOCATION}")
-    message(FATAL_ERROR "Fprime location $ENV{FPRIME_LOCATION} inconsistent with ${FPRIME_CORE_DIR}. Check settings.ini")
+get_filename_component(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+get_filename_component(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+
+
+
+
+if (NOT "${FPRIME_FRAMEWORK_PATH}" STREQUAL "$ENV{FPRIME_LOCATION}")
+    message(FATAL_ERROR "Fprime location $ENV{FPRIME_LOCATION} inconsistent with ${FPRIME_FRAMEWORK_PATH}. Check settings.ini")
 endif()
 get_filename_component(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
 
-message(STATUS "F prime core directory set to: ${FPRIME_CORE_DIR}")
+message(STATUS "F prime core directory set to: ${FPRIME_FRAMEWORK_PATH}")
 # Clear hashes file
 file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 
@@ -34,7 +39,7 @@ endif()
 # Store settings filee and register a dependency on it
 set(FPRIME_SETTINGS_FILE "$ENV{FPRIME_SETTINGS_FILE}" CACHE PATH "F prime settings file tracking" FORCE)
 set(FPRIME_ENVIRONMENT_FILE "$ENV{FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file tracking" FORCE)
-set(FPRIME_BUILD_LOCATIONS "${FPRIME_CORE_DIR}" $ENV{FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
+set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" $ENV{FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
 message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "$ENV{FPRIME_SETTINGS_FILE}")
@@ -61,7 +66,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Target.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
 if ("${PROJECT_AC_CONSTANTS_FILE}" STREQUAL "" )
-    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_CORE_DIR}/Fw/Cfg/AcConstants.ini")
+    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini")
 endif()
 message(STATUS "Using autocoder constants file: ${PROJECT_AC_CONSTANTS_FILE}")
 
@@ -86,8 +91,8 @@ register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory. Same with the project directory for separated projects.
 include_directories("${FPRIME_PROJECT_ROOT}")
-include_directories(SYSTEM "${FPRIME_CORE_DIR}")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}")
 # Ignore GTest for non-test builds
 if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
-    include_directories(SYSTEM "${FPRIME_CORE_DIR}/gtest/include")
+    include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/gtest/include")
 endif()

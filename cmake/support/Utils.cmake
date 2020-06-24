@@ -97,7 +97,7 @@ function(fprime_ai_info XML_PATH MODULE_NAME)
   # Run the parser and capture the output. If an error occcurs, that fatals CMake as we cannot continue
   set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
-      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
+      COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
 	  OUTPUT_VARIABLE AI_OUTPUT
   )

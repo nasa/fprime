@@ -16,7 +16,7 @@ def set_build_roots(build_root_arg):
     :param build_root_arg: argument supplied as build root
     """
     global BUILD_ROOTS
-    normalized = map(lambda path: os.path.normpath(os.path.realpath(path)), build_root_arg.split(";"))
+    normalized = map(lambda path: os.path.normpath(os.path.realpath(path)), build_root_arg.split(":"))
     build_root_elements = set(normalized)
     # Update global store
     BUILD_ROOTS = build_root_elements

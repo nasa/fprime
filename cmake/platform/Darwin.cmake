@@ -21,4 +21,4 @@ set(CMAKE_CXX_FLAGS
   "${CMAKE_CXX_FLAGS} ${DARWIN_COMMON} -std=c++11"
 )
 # Add linux include path which is compatable with Darwin for StandardTypes.hpp
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")

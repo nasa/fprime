@@ -45,12 +45,12 @@ endfunction(cheetah)
 function(serialns AI_XML)
     # Executes while CMake is running
     execute_process(
-        COMMAND ${FPRIME_CORE_DIR}/cmake/support/parser/serializable_xml_ns.py "${AI_XML}"
+        COMMAND ${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/serializable_xml_ns.py "${AI_XML}"
         RESULT_VARIABLE ERR_RETURN
         OUTPUT_VARIABLE NS
     )
     if (${ERR_RETURN})
-        message(FATAL_ERROR "${FPRIME_CORE_DIR}/cmake/parser/serializable_xml_ns.py ${AI_XML} failed.")
+        message(FATAL_ERROR "${FPRIME_FRAMEWORK_PATH}/cmake/parser/serializable_xml_ns.py ${AI_XML} failed.")
     endif()
     set(SERIAL_NS "${NS}" PARENT_SCOPE)
 endfunction(serialns)
@@ -103,12 +103,13 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS)
   if (NOT "${TO_MK_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
       message(FATAL_ERROR "Output directory: ${TO_MK_DIR} differs from expected output directory ${CMAKE_CURRENT_BINARY_DIR}")
   endif()
+  string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
   add_custom_command(
       OUTPUT  ${OUTPUT_PRODUCTS}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_BUILD_LOCATIONS}
+      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR}
-      ${FPRIME_CORE_DIR}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML}
+      ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${CPP_NAME} ${HPP_NAME} ${CMAKE_CURRENT_BINARY_DIR}
       #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${HPP_NAME} ${AC_FINAL_HEADER}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME} ${HPP_NAME}
