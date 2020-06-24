@@ -76,35 +76,4 @@ class CommandsCommand(QueryHistoryCommand):
         :param json: Whether or not to return a JSON representation of "temp"
         :return: A readable string version of "item"
         """
-        if not item:
-            return misc_utils.get_item_string(item)
-        if json:
-            return misc_utils.get_item_json_string(item)
-
-        cmd_string = "%s (%d) | Takes %d arguments.\n" % (
-            item.get_full_name(),
-            item.get_id(),
-            len(item.get_args()),
-        )
-
-        cmd_description = item.get_description()
-        if cmd_description:
-            cmd_string += "Description: %s\n" % (cmd_description)
-
-        for arg in item.get_args():
-            arg_name, arg_description, arg_type = arg
-            if not arg_description:
-                arg_description = "--no description--"
-            # TODO: Compare against actual module, not just the name (but
-            # how, since EnumType is a serializable type from the dictionary?)
-            if type(arg_type).__name__ == "EnumType":
-                # TODO: Find good way to combine this w/ description, if one exists?
-                arg_description = str(arg_type.keys())
-
-            cmd_string += "\t%s (%s): %s\n" % (
-                arg_name,
-                type(arg_type).__name__,
-                arg_description,
-            )
-
-        return cmd_string
+        return misc_utils.get_cmd_template_string(item, json)

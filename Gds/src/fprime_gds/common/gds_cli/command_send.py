@@ -8,7 +8,7 @@ from typing import List
 from fprime.common.models.serialize.type_exceptions import NotInitializedException
 from fprime_gds.common.data_types.cmd_data import CommandArgumentsException
 from fprime_gds.common.gds_cli.base_commands import BaseCommand
-from fprime_gds.common.gds_cli.commands import CommandsCommand
+import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.templates.cmd_template import CmdTemplate
@@ -71,7 +71,7 @@ class CommandSendCommand(BaseCommand):
         )
         # TODO: Refactor CommandsCommand's method into a common class, since
         # this is technically a private method?
-        return CommandsCommand._get_item_string(command_template)
+        return misc_utils.get_cmd_template_string(command_template)
 
     # TODO: Cut down on the number of arguments here?
     @classmethod
