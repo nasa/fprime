@@ -129,15 +129,11 @@ class QueryHistoryCommand(BaseCommand):
         For descriptions of these arguments, and more function details, see:
             Gds/src/fprime_gds/executables/fprime_cli.py
         """
-        # ======================================================================
-        pipeline, api = test_api_utils.initialize_test_api(
-            dictionary, server_ip=ip_address, server_port=port
-        )
-        # ======================================================================
-
         # Link printing code to filtering, so that searching ALWAYS searches
         # the same strings as are printed
-        # TODO: Possibly make separate filters for item/item_list strings?
+        # TODO: Possibly make separate filters for item/item_list strings, since
+        # there's currently no guarantee they'll be the same if this base class
+        # is overridden?
         item_to_string = lambda x: cls._get_item_string(x, json)
         search_filter = filtering_utils.get_full_filter_predicate(
             ids, components, search, to_str=item_to_string
@@ -146,10 +142,20 @@ class QueryHistoryCommand(BaseCommand):
         # TODO: If combinatorial explosion w/ options becomes an issue,
         # refactor this to avoid if/else structure?
         if list:
-            items = cls._get_item_list(pipeline.dictionaries, search_filter)
+            project_dictionary = Dictionaries()
+            project_dictionary.load_dictionaries(dictionary, packet_spec=None)
+            items = cls._get_item_list(project_dictionary, search_filter)
             cls._log(cls._get_item_list_string(items, json))
-        elif follow:
+            return
 
+        # ======================================================================
+        # Set up Test API
+        pipeline, api = test_api_utils.initialize_test_api(
+            dictionary, server_ip=ip_address, server_port=port
+        )
+        # ======================================================================
+
+        if follow:
             def print_upcoming_item(min_start_time="NOW"):
                 item = cls._get_upcoming_item(api, search_filter, min_start_time)
                 cls._log(item_to_string(item))
@@ -164,6 +170,7 @@ class QueryHistoryCommand(BaseCommand):
             cls._log(item_to_string(item))
 
         # ======================================================================
+        # Tear down Test API
         pipeline.disconnect()
         api.teardown()
         # ======================================================================
