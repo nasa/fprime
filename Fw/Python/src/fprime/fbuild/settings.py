@@ -52,7 +52,6 @@ class IniSettings():
             expanded.append(full_path)
         return expanded
 
-
     @staticmethod
     def load(settings_file):
         """
@@ -69,41 +68,42 @@ class IniSettings():
             fprime_location = IniSettings.find_fprime()
             return {
                  "fprime_location": fprime_location,
-                 "environment": {
-                     "FPRIME_LOCATION": fprime_location
-                 }
             }
         confparse = configparser.ConfigParser()
         confparse.read(settings_file)
         # Search through F prime locations
-        fprime_location = IniSettings.read_safe_path(confparse, "fprime", "fprime_location", settings_file)
+        fprime_location = IniSettings.read_safe_path(confparse, "fprime", "framework_path", settings_file)
         if not fprime_location:
             fprime_location = IniSettings.find_fprime()
         else:
             fprime_location = fprime_location[0]
+        # Read project root if it is available
+        proj_root = IniSettings.read_safe_path(confparse, "fprime", "project_root", settings_file)
+        proj_root = None if not proj_root else proj_root[0]
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(confparse, "fprime", "environment_file", settings_file)
         env_file = None if not env_file else env_file[0]
-        libraries = IniSettings.read_safe_path(confparse, "fprime", "fprime_library_locations", settings_file)
+        libraries = IniSettings.read_safe_path(confparse, "fprime", "library_locations", settings_file)
         if env_file is not None:
             env_parser = configparser.ConfigParser()
             env_parser.read(env_file)
         else:
             env_parser = confparse
         environment = IniSettings.load_environment(env_parser)
-        # Force some environment settings
-        if env_file is not None:
-            environment["FPRIME_ENVIRONMENT_FILE"] = env_file
-        environment["FPRIME_SETTINGS_FILE"] = settings_file
-        environment["FPRIME_LOCATION"] = fprime_location
-        if libraries:
-            environment["FPRIME_LIBRARY_LOCATIONS"] = ";".join(libraries)
-        return {
-            "fprime_location": fprime_location,
-            "fprime_library_locations": libraries,
+        settings = {
+            "settings_file": settings_file,
+            "framework_path": fprime_location,
+            "library_locations": libraries,
             "default_toolchain": confparse.get("fprime", "default_toolchain", fallback="native"),
             "environment": environment
         }
+        # Set environment file
+        if env_file is not None:
+            settings["environment_file"] = env_file
+        # Set the project root
+        if proj_root is not None:
+            settings["project_root"] = proj_root
+        return settings
 
     @staticmethod
     def load_environment(parser):
