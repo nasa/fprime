@@ -7,27 +7,31 @@ settings from the settings.default file that is part of the F prime deployment d
 @author mstarch
 """
 import os
-import configparser # Written after PY2 eol
+import configparser  # Written after PY2 eol
 
 
-class IniSettings():
+class IniSettings:
     """Class to load settings from INI files"""
+
     DEF_FILE = "settings.ini"
     SET_ENV = "FPRIME_SETTINGS_FILE"
 
     @staticmethod
     def find_fprime():
-         """
+        """
          Finds F prime by recursing parent to parent until a matching directory is found.
          """
-         needle = os.path.join("cmake", "FPrime.cmake") # If the F prime cmake file exists
-         path = os.getcwd()
-         while path != os.path.dirname(path):
-              if os.path.isfile(os.path.join(path, needle)):
-                  return os.path.abspath(os.path.normpath(path))
-              path = os.path.dirname(path)
-         raise FprimeLocationUnknownException("Please set 'framework_path' in [fprime] section in 'settings.ini")
-
+        needle = os.path.join(
+            "cmake", "FPrime.cmake"
+        )  # If the F prime cmake file exists
+        path = os.getcwd()
+        while path != os.path.dirname(path):
+            if os.path.isfile(os.path.join(path, needle)):
+                return os.path.abspath(os.path.normpath(path))
+            path = os.path.dirname(path)
+        raise FprimeLocationUnknownException(
+            "Please set 'framework_path' in [fprime] section in 'settings.ini"
+        )
 
     @staticmethod
     def read_safe_path(parser, section, key, ini_file):
@@ -47,8 +51,11 @@ class IniSettings():
                 continue
             full_path = os.path.abspath(os.path.normpath(os.path.join(base_dir, path)))
             if not os.path.exists(full_path):
-                raise FprimeSettingsException("Non-existant path '{}' found in section '{}' option '{}' of file '{}'"
-                                              .format(path, section, key, ini_file))
+                raise FprimeSettingsException(
+                    "Non-existant path '{}' found in section '{}' option '{}' of file '{}'".format(
+                        path, section, key, ini_file
+                    )
+                )
             expanded.append(full_path)
         return expanded
 
@@ -61,37 +68,51 @@ class IniSettings():
         :param build_dir: (optional) directory to search for settings.ini. Must be specified if file is not.
         :return: a dictionary of needed settings
         """
-        settings_file = settings_file if settings_file is not None else os.path.join(IniSettings.DEF_FILE)
+        settings_file = (
+            settings_file
+            if settings_file is not None
+            else os.path.join(IniSettings.DEF_FILE)
+        )
         # Check file existence if specified
         if not os.path.exists(settings_file):
             print("[WARNING] Failed to find settings file: {}".format(settings_file))
             fprime_location = IniSettings.find_fprime()
             return {
-                 "fprime_location": fprime_location,
+                "fprime_location": fprime_location,
             }
         confparse = configparser.ConfigParser()
         confparse.read(settings_file)
         # Search through F prime locations
-        fprime_location = IniSettings.read_safe_path(confparse, "fprime", "framework_path", settings_file)
+        fprime_location = IniSettings.read_safe_path(
+            confparse, "fprime", "framework_path", settings_file
+        )
         if not fprime_location:
             fprime_location = IniSettings.find_fprime()
         else:
             fprime_location = fprime_location[0]
         # Read project root if it is available
-        proj_root = IniSettings.read_safe_path(confparse, "fprime", "project_root", settings_file)
+        proj_root = IniSettings.read_safe_path(
+            confparse, "fprime", "project_root", settings_file
+        )
         proj_root = None if not proj_root else proj_root[0]
         # Read separate environment file if necessary
-        env_file = IniSettings.read_safe_path(confparse, "fprime", "environment_file", settings_file)
+        env_file = IniSettings.read_safe_path(
+            confparse, "fprime", "environment_file", settings_file
+        )
         env_file = settings_file if not env_file else env_file[0]
-        libraries = IniSettings.read_safe_path(confparse, "fprime", "library_locations", settings_file)
+        libraries = IniSettings.read_safe_path(
+            confparse, "fprime", "library_locations", settings_file
+        )
         environment = IniSettings.load_environment(env_file)
         settings = {
             "settings_file": settings_file,
             "framework_path": fprime_location,
             "library_locations": libraries,
-            "default_toolchain": confparse.get("fprime", "default_toolchain", fallback="native"),
+            "default_toolchain": confparse.get(
+                "fprime", "default_toolchain", fallback="native"
+            ),
             "environment_file": env_file,
-            "environment": environment
+            "environment": environment,
         }
         # Set the project root
         if proj_root is not None:
@@ -106,22 +127,24 @@ class IniSettings():
         :return: environment dictionary
         """
         parser = configparser.ConfigParser()
-        parser.optionxform = str 
+        parser.optionxform = str
         parser.read(env_file)
         env_dict = {}
         try:
             for key, value in parser.items("environment"):
                 env_dict[key] = value
         except configparser.NoSectionError:
-            pass # Ignore missing environment
+            pass  # Ignore missing environment
         return env_dict
 
 
 class FprimeLocationUnknownException(Exception):
     """ Fprime location could not be determined """
+
     pass
 
 
 class FprimeSettingsException(Exception):
     """ An exception for handling F prime settings misconfiguration """
+
     pass

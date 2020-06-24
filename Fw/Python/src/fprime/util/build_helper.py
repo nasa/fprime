@@ -185,7 +185,7 @@ def find_toolchain(platform, path):
             sys.exit(-1)
         elif len(toolchains) > 1:
             print("[ERROR] Toolchain file {} found multiple times. Aborting."
-                  .format(toolchain + ".cmake", ", ".join(list(toolchains))))
+                  .format(toolchain + ".cmake"))
             sys.exit(-1)
     return toolchains[0]
 
