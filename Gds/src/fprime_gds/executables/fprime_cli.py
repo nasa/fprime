@@ -248,6 +248,7 @@ class CommandSendParser(CliCommandParserBase):
         )
         return command_send_parser
 
+    # TODO: Move to a more general function?
     @staticmethod
     def get_dictionary_path(current_args: argparse.Namespace) -> str:
         """
