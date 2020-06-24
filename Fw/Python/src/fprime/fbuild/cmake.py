@@ -216,7 +216,7 @@ class CMakeHandler(object):
         config_fields = self.get_fprime_configuration(
             CMakeHandler.CMAKE_LOCATION_FIELDS, cmake_dir
         )
-        non_null = filter(lambda item: item is not None, config_fields)
+        non_null = filter(lambda item: item is not None and item != "", config_fields)
         # Read cache fields for each possible directory the build_dir, and the new tempdir
         locations = itertools.chain(*map(lambda value: value.split(";"), non_null))
         mapped = map(os.path.abspath, locations)
