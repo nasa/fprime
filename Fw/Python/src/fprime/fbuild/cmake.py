@@ -74,7 +74,7 @@ class CMakeHandler(object):
     CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
     CMAKE_LOCATION_FIELDS = [
         "FPRIME_PROJECT_ROOT",
-        "FPRIME_LIBRARIES",
+        "FPRIME_LIBRARRY_LOCATIONS",
         "FPRIME_FRAMEWORK_PATH",
     ]
 
@@ -240,7 +240,6 @@ class CMakeHandler(object):
             os.path.abspath(path) if path is not None else os.path.abspath(os.getcwd())
         ) + os.sep
         possible_parents = self.get_include_locations(cmake_dir)
-        print(path, possible_parents)
         # Check there is some possible parent
         if not possible_parents:
             raise CMakeProjectException(
@@ -277,7 +276,6 @@ class CMakeHandler(object):
                 else item
             )
         parents = list(parents)
-        print(parents)
         nearest_parent = functools.reduce(parent_reducer, parents, None)
         # Check that a parent is the true parent
         if nearest_parent is None:
@@ -334,6 +332,8 @@ class CMakeHandler(object):
         for cache, setting in needed:
             if setting in self.settings:
                 args[cache] = self.settings[setting]
+        if "FPRIME_LIBRARY_LOCATIONS" in args:
+            args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(args["FPRIME_LIBRARY_LOCATIONS"])
         fleshed_args = map(
             lambda key: ("{}={}" if key.startswith("--") else "-D{}={}").format(
                 key, args[key]
@@ -376,11 +376,12 @@ class CMakeHandler(object):
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
-    def get_toolchain_config(self):
+    def get_toolchain_config(self, project_path):
         """Returns the default toolchain"""
+        project_root = self.settings.get("project_root", project_path)
         return (
             self.settings.get("default_toolchain", "native"),
-            [self.settings.get("fprime_location")] + self.settings.get("fprime_library_locations", [])
+            [self.settings.get("framework_path"), project_root] + self.settings.get("library_locations", [])
         )
 
     def load_settings(self, settings_file, cmake_dir):
