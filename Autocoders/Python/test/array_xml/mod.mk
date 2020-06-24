@@ -13,7 +13,8 @@
 
  # There are some standard files that are included for reference
 
- SRC = ArrayTypeArrayAi.xml \
+ SRC = StringArrayArrayAi.xml \
+       ArrayTypeArrayAi.xml \
 	  InternalTypeArrayAi.xml \
        ArrSerialSerializableAi.xml \
        Port1PortAi.xml \

@@ -74,6 +74,8 @@ class XmlArrayParser(object):
         
         self.Config = ConfigManager.ConfigManager.getInstance()
 
+        typeslist = ["I8", "I8", "BYTE", "I16", "U16", "I32", "U32", "I64", "U64", "F32", "F64", "bool", "ENUM", "string"]
+
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise IOError(stri)
@@ -83,7 +85,7 @@ class XmlArrayParser(object):
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd,parser=xml_parser)
-        
+
         #Validate against current schema. if more are imported later in the process, they will be reevaluated
         relax_file_handler = open(ROOTDIR + self.Config.get('schema', 'array') , 'r')
         relax_parsed = etree.parse(relax_file_handler)
@@ -112,8 +114,14 @@ class XmlArrayParser(object):
                 self.__format = array_tag.text
             elif array_tag.tag == 'type':
                 self.__type = array_tag.text
+                # Check if using external type
+                if not self.__type in typeslist:
+                    self.__typeinfo = "extern"
+                else:
+                    self.__typeinfo = "basic"
+
                 if 'string_size' in array_tag.attrib:
-                    self.__string_size = array_tag['string_size']
+                    self.__string_size = array_tag.attrib['string_size']
             elif array_tag.tag == 'typeid':
                 self.__type_id = array_tag.text
             elif array_tag.tag == 'size':
@@ -180,6 +188,9 @@ class XmlArrayParser(object):
 
     def get_type(self):
         return self.__type
+
+    def get_typeinfo(self):
+        return self.__typeinfo
     
     def get_size(self):
         return self.__size
