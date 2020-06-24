@@ -16,6 +16,9 @@ from fprime.common.models.serialize.i32_type import I32Type
 from fprime.common.models.serialize.i64_type import I64Type
 from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.time_type import TimeBase
+from fprime.common.models.serialize.time_type import ser_deser_test
 from fprime.common.models.serialize.u8_type import U8Type
 from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
@@ -185,7 +188,74 @@ if __name__ == "__main__":
         print("Exception: %s" % e.getMsg())
 
     # test_time_type
-    # already has its own unit test file
+    TIME_SIZE = 11
+    test_buff = bytearray(
+        "\x01\x02\x03\x00\x02\x03\x00\x00\x00\x04\x00\x00\x00\x05", "utf-8"
+    )
+    test_offset = 3
+    test_base = 2
+    test_context = 3
+    test_secs = 4
+    test_usecs = 5
+
+    in_no_err_list = [
+        (TimeBase["TB_NONE"].value, 1, 100, 999999),
+        (TimeBase["TB_PROC_TIME"].value, 0xFF, 1234567, 2952),
+        (TimeBase["TB_WORKSTATION_TIME"].value, 8, 1529430215, 12),
+        (TimeBase["TB_SC_TIME"].value, 231, 1344230277, 123456),
+        (TimeBase["TB_FPGA_TIME"].value, 78, 10395, 24556),
+        (TimeBase["TB_DONT_CARE"].value, 0xB3, 12390819, 12356),
+    ]
+
+    in_err_list = [
+        (10, 58, 15345, 0),
+        (TimeBase["TB_NONE"].value, 1, 3, -1),
+        (TimeBase["TB_WORKSTATION_TIME"].value, 1, 700000, 1234567),
+    ]
+
+    passed = 0
+    failed = 0
+
+    print("\nTimeType Tests")
+    print("--------------------------------------------------------------------")
+
+    val = TimeType()
+    size = val.getSize()
+    if size != TIME_SIZE:
+        print(("Test Failed, getSize() returned %d, expected %d" % (size, TIME_SIZE)))
+        failed += 1
+    else:
+        print(("Test Passed, getSize() returned %d" % size))
+        passed += 1
+
+    print("\nNext %d tests expected to be exception free" % len(in_no_err_list))
+
+    for (t_base, t_context, secs, usecs) in in_no_err_list:
+        result = ser_deser_test(t_base, t_context, secs, usecs)
+
+        if result:
+            print("Test Passed\n\n")
+            passed += 1
+        else:
+            print("Test FAILED\n\n")
+            failed += 1
+
+    print("\nNext %d tests expected to have exceptions" % len(in_err_list))
+
+    for (t_base, t_context, secs, usecs) in in_err_list:
+        result = ser_deser_test(t_base, t_context, secs, usecs, should_err=True)
+
+        if result:
+            print("Test Passed\n\n")
+            passed += 1
+        else:
+            print("Test FAILED\n\n")
+            failed += 1
+
+    print("-------------------------------------------------------------------")
+    print("Results:")
+    print(("\tPassed: %d" % passed))
+    print(("\tFAILED: %d" % failed))
 
     # test_u8_type
     print("\nU8")
