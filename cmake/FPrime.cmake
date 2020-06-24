@@ -27,6 +27,11 @@ if(NOT CMAKE_BUILD_TYPE)
 else()
     string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 endif()
+# Store settings filee and register a dependency on it
+set(FPRIME_SETTINGS_FILE "$ENV{FPRIME_SETTINGS_FILE}" CACHE PATH "F prime settings file tracking" FORCE)
+set(FPRIME_ENVIRONMENT_FILE "$ENV{FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file tracking" FORCE)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "$ENV{FPRIME_SETTINGS_FILE}")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "$ENV{FPRIME_ENVIRONMENT_FILE}")
 
 # Include the Options, and platform files. These are files that change the build
 # setup. Users may need to add items to these files in order to ensure that all

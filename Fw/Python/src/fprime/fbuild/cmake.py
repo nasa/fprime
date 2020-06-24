@@ -7,7 +7,6 @@ receiver of these delegated functions.
 
 @author mstarch
 """
-import six
 import io
 import os
 import re
@@ -25,10 +24,10 @@ import selectors
 
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
+import six
 import fprime.fbuild
+import fprime.fbuild.settings
 
-COMMENT_REGEX = re.compile("\s*#.*")
-SUBSTIT_REGEX = re.compile("\$\(([^)]*)\)")
 
 
 class CMakeBuildCache(object):
@@ -83,7 +82,7 @@ class CMakeHandler(object):
         """
         Instantiate a basic CMake handler.
         """
-        self.environment = {}
+        self.settings = {}
         self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
@@ -365,53 +364,18 @@ class CMakeHandler(object):
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
-    def sub_environment_values(self, value):
-        """
-        Substitute all values of the form $(ABC) in the string.
-        :return: subbed out value
-        """
-        # Find all matches and iterate backwards substituting as we go
-        matches = list(SUBSTIT_REGEX.finditer(value))
-        matches.reverse()
-        for match in matches:
-            subkey = match.group(1)
-            subval = self.environment.get(subkey, os.environ.get(subkey, ""))
-            value = value[:match.start()] + subval + value[match.end():]
-        return value
+    def get_toolchain_config(self):
+        """Returns the default toolchain"""
+        return (
+            self.settings.get("default_toolchain", "native"),
+            self.settings.get("toolchain_locations", []),
+        )
 
-
-    def setup_environment_from_file(self, build_dir, environment_file=None):
+    def load_settings(self, settings_file, cmake_dir):
         """
-        Sets the environment to apply to CMake commands.  Will read from the supplied file.  If None is supplied, it
-        will try and detect the the environment file from variables set in the cache.  If no file is supplied, nor any
-        set in the cache, then it is ignored.
+        Loads the default settigns for this build Could include environment settings and a default toolchain.
         """
-        try:
-            environment_file = (
-                environment_file
-                if environment_file is not None
-                else self._read_values_from_cache(
-                    ["FPRIME_BUILD_ENVIRONMENT"], build_dir
-                )[0]
-            )
-        except CMakeException:
-            print(
-                "[WARNING] Could not read CMake cache. Will not use 'FPRIME_BUILD_ENVIRONMENT' for environment."
-            )
-        # Nothing to set
-        if environment_file is None:
-            return
-        elif not os.path.isfile(environment_file):
-            raise CMakeException(
-                "Environment file '{}' does not exist".format(environment_file)
-            )
-        print("[INFO] Reading environment from: {}".format(environment_file))
-        with open(environment_file, "r") as file_handle:
-            for line in file_handle.readlines():
-                # No need to quote, accounts for blanks
-                tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) + [""]
-                if len(tokens) >= 2:
-                    self.environment[tokens[0]] = self.sub_environment_values(tokens[1])
+        self.settings = fprime.fbuild.settings.IniSettings.load(settings_file)
 
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
@@ -477,7 +441,7 @@ class CMakeHandler(object):
         Note: !!! this function has potential File System side-effects !!!
         """
         cm_environ = copy.copy(os.environ)
-        cm_environ.update(self.environment)
+        cm_environ.update(self.settings.get("environment", {}))
         cm_environ.update(environment)
         cargs = ["cmake"]
         if not write_override:
@@ -485,6 +449,9 @@ class CMakeHandler(object):
         cargs.extend(arguments)
         if self.verbose:
             print("[CMAKE] '{}'".format(" ".join(cargs)))
+            for key, val in cm_environ.items():
+                print("[CMAKE]     {}={}".format(key, val))
+
         # In order to get proper console highlighting while still getting access to the output, we need to create a
         # pseudo-terminal. This will allow the proc to write to one side, and our select below to read from the other
         # side. Most importantly, pseudo-terminal usage will trick CMake into highlighting for us.
