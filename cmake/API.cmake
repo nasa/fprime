@@ -171,8 +171,14 @@ function(register_fprime_module)
     elseif(${CMAKE_DEBUG_OUTPUT})
         message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
+    if (${ARGC} GREATER 2)
+        set(MODULE_NAME "${ARGV2}")
+    else()
+        # Sets MODULE_NAME to unique name based on path, and then adds the library of
+        get_module_name(${CMAKE_CURRENT_LIST_DIR})
+    endif()
     # Explicit call to module register
-    generate_library("${SC_IFS}" "${MD_IFS}")
+    generate_library("${MODULE_NAME}" "${SC_IFS}" "${MD_IFS}")
 endfunction(register_fprime_module)
 
 ####

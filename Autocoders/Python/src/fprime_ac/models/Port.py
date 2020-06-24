@@ -76,7 +76,7 @@ class Port(object):
         self.__return_modifier = None
 
 
-    def set(self, namespace, arg_obj_list, incl_list, incl_serial_list, if_comment):
+    def set(self, namespace, arg_obj_list, incl_list, incl_serial_list, incl_enum_list, if_comment):
         """
         Set type specific stuff for port type here.
         Not instance specific stuff.
@@ -90,6 +90,7 @@ class Port(object):
         self.__arg_obj_list = arg_obj_list
         self.__incl_list     = incl_list
         self.__incl_serial_list = incl_serial_list
+        self.__incl_enum_list = incl_enum_list
         self.__if_comment    = if_comment
 
 
@@ -203,6 +204,11 @@ class Port(object):
         """
         """
         return self.__incl_serial_list
+
+    def get_enum_includes(self):
+        """
+        """
+        return self.__incl_enum_list
 
     def get_target_comp(self):
         return self.__target_comp
