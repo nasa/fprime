@@ -27,6 +27,64 @@
 ####
 
 ####
+# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, and `FPRIME_LIBRARY_LOCATIONS`:
+#
+# These locations specify the locations of the needed F prime items. These are described below
+# and each has a default if not set.
+# 
+# FPRIME_FRAMEWORK_PATH: location of F prime, always the directory above this file, however; 
+#                        since it is supplied by the project, it is asserted to be correct.
+#
+# FPRIME_PROJECT_ROOT: root of the project directory to detect partial paths and include pathes
+#                      from.  If not supplied, it is assumed to be FPRIME_FRAMEWORK_PATH if
+#                      PROJECT_SOURCE_DIR is a child of FPRIME_FRAMEWORK_PATH otherwise 
+#                      PROJECT_SOURCE_DIR is used as the project root.
+#
+# FPRIME_LIBRARY_LOCATIONS: locations of libraries included in the build. ; separated to be
+#                           a cmake list. If not supplied: "" is used.
+#
+# Additional locations FPRIME_SETTINGS_FILE and FPRIME_ENVIRONMENT_FILE:
+#
+# These files are used for settings in fprime-util. If suppled (typically only by fprime-util) then
+# they will be added as dependencies into the build system.
+####
+get_filename_component(DETECTED_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+if (DEFINED FPRIME_FRAMEWORK_PATH)
+     get_filename_component(FPRIME_FRAMEWORK_PATH "${FPRIME_FRAMEWORK_PATH}" ABSOLUTE)
+     # Sanity check the framework path as supplied
+     if (NOT FPRIME_FRAMEWORK_PATH STREQUAL DETECTED_FRAMEWORK_PATH)
+         message(FATAL_ERROR "Inconsistent FPrime location: ${FPRIME_FRAMEWORK_PATH}. Check settings.ini")
+     endif()
+endif()
+# Force framework path to be absolute
+set(FPRIME_FRAMEWORK_PATH "${DETECTED_FRAMEWORK_PATH}" CACHE PATH "F Prime framework location" FORCE)
+
+# Setup project root
+get_filename_component(FULL_PROJECT_PATH "${CMAKE_PROJECT_DIR}" ABSOLUTE)
+file(RELATIVE_PATH TEMP_PATH "${FULL_PROJECT_PATH}" "${FPRIME_FRAMEWORK_PATH}")
+# If defined then force it to be absolute
+if (DEFINED FPRIME_PROJECT_ROOT)
+    get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
+    set(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT_ABS}" CACHE PATH "F Prime project location" FORCE)
+# Forces framework path as project root, if a child
+elseif( "${TEMP_PATH}" MATCHES "^\.\..*" )
+    set(FPRIME_PROJECT_ROOT "${FPRIME_FRAMEWORK_PATH}" CACHE PATH "F Prime project location" FORCE)
+# Force PROJECT_ROOT
+else()
+    set(FPRIME_PROJECT_ROOT "${FULL_PROJECT_PATH}" CACHE PATH "F Prime project location" FORCE)
+endif()
+# Force  FPRIME_LIBRARY_LOCATIONS to be absolute
+set(FPRIME_LIBRARY_LOCATIONS_ABS)
+foreach (LIBLOC  ${FPRIME_LIBRARY_LOCATIONS})
+    get_filename_component(LIBLOC_ABS "${LIBLOC}" ABSOLUTE)
+    list(APPEND FPRIME_LIBRARY_LOCATIONS_ABS "${LIBLOC_ABS}")
+endforeach()
+set(FPRIME_LIBRARY_LOCATIONS "${FPRIME_LIBRARY_LOCATIONS_ABS}" CACHE STRING "F prime library locations" FORCE)
+# Add in addition file dependencies from CMake
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_SETTINGS_FILE}")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
+
+####
 # `CMAKE_DEBUG_OUTPUT:`
 #
 # Turns on the reporting of debug output of the CMake build. Can help refine the CMake system,
@@ -70,8 +128,12 @@ option(GENERATE_HERITAGE_PY_DICT "Generate F prime python dictionaries instead o
 option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
 
 
-# Note: document other system options here.
-
+# Set build type, if unser
+if(NOT CMAKE_BUILD_TYPE) 
+    set(CMAKE_BUILD_TYPE DEBUG)
+else()
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+endif()
 
 ####
 # `TESTING:`
