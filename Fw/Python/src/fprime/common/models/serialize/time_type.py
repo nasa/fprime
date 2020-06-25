@@ -236,22 +236,22 @@ class TimeType(type_base.BaseType):
             return (x > y) - (x < y)  # added to support Python 2/3
 
         # Compare Base
-        base_cmp = cmp(t1.__timeBase.val, t2.__timeBase.val)
+        base_cmp = cmp(t1.timeBase.value, t2.timeBase.value)
         if base_cmp != 0:
             return base_cmp
 
         # Compare seconds
-        sec_cmp = cmp(t1.__secs.val, t2.__secs.val)
+        sec_cmp = cmp(t1.seconds, t2.seconds)
         if sec_cmp != 0:
             return sec_cmp
 
         # Compare usecs
-        usec_cmp = cmp(t1.__usecs.val, t2.__usecs.val)
+        usec_cmp = cmp(t1.useconds, t2.useconds)
         if usec_cmp != 0:
             return usec_cmp
 
         # Compare contexts
-        return cmp(t1.__timeContext.val, t2.__timeContext.val)
+        return cmp(t1.timeContext, t2.timeContext)
 
     def __str__(self):
         """
