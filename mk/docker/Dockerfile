@@ -19,7 +19,7 @@ RUN groupadd fprime && \
     usermod -u 1001 fprime && \
 # Installing system components
     apt-get update && apt-get install -y --no-install-recommends \
-    bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind pylama && \
+    bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind && \
     mkdir -p /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

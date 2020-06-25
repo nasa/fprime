@@ -9,11 +9,8 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 
 echo -e "${BLUE}Running static analysis (pylama) on python code${NOCOLOR}"
 pylama -o ${SCRIPT_DIR}/pylama-ci.cfg ${FPRIME_DIR}
-# PYLAMA_PID=$!
-# Wait for pylama to finish
-# wait $PYLAMA_PID
+
 RET_PYLAMA=$?
-echo "${RED}${RET_PYLAMA}${NOCOLOR}"
 
 if [[ ${RET_PYLAMA} -ne 0 ]]
 then 

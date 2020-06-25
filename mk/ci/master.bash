@@ -27,11 +27,7 @@ export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
 export LOG_DIR="${FPRIME_DIR}/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
-# bootstrap is not required for static analysis
-if [[ "${TEST_TYPE}" != "STATIC" ]]
-then
-    . "${SCRIPT_DIR}/bootstrap.bash" 
-fi
+. "${SCRIPT_DIR}/bootstrap.bash" 
 
 # Loop through all scripts in  tests directory and run them
 for test_script in ${TESTS}
