@@ -33,6 +33,8 @@ import sys
 from setuptools import find_packages
 from setuptools import setup
 
+import src.fastentrypoints
+
 ####
 # GDS Packages:
 #
