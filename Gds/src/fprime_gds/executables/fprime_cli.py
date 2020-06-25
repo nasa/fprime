@@ -40,7 +40,7 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
         type=str,
         default=None,
         help='path from the current working directory to the "<project name>Dictionary.xml" file for the project you\'re using the API with; if unused, tries to search the current working directory for such a file',
-    ).completer = argcomplete.completers.FilesCompleter(allowednames=[".xml", ".py"])
+    )
     parser.add_argument(
         "-ip",
         "--ip-address",
@@ -209,7 +209,7 @@ class CommandsParser(CliCommandParserBase):
         """
         commands_parser = parent_parser.add_parser(
             "commands",
-            description="prints out the history of new commands that have been received by the F Prime instance, sorted by timestamp",
+            description="prints out new commands that have been received by the F Prime instance, sorted by timestamp (NOTE: listing available commands works currently, but command history is unimplemented; use 'events' instead to see received commands)",
         )
         return commands_parser
 
@@ -352,9 +352,9 @@ class EventsParser(CliCommandParserBase):
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        description="provides utilities for dealing with random numbers"
+        description="provides utilities for interacting with the F' Ground Data System (GDS)"
     )
-    parser.add_argument("-V", "--version", action="version", version="0.0.1")
+    parser.add_argument("-V", "--version", action="version", version="0.0.2")
 
     # Add subcommands to the parser
     subparsers = parser.add_subparsers(dest="func")
@@ -386,7 +386,12 @@ def parse_args(parser: argparse.ArgumentParser, arguments):
 
     # TODO: In the future not all commands may need the dictionary, so this may
     # not be the right place
-    args = add_valid_dictionary(args)
+    try:
+        args = add_valid_dictionary(args)
+    except ValueError:
+        print("No valid project dictionary found")
+        sys.exit()
+
     return args
 
 
