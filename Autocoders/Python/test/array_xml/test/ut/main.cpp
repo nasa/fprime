@@ -52,23 +52,7 @@ void constructArchitecture(void) {
     Fw::PortBase::setTrace(true);
     
     simpleReg_ptr = new Fw::SimpleObjRegistry();
-    
-    // // Instantiate the inst1 and inst2
-    // inst1   = new Example::ExampleArrayImpl("inst1");
-    // inst2   = new Example::ExampleArrayImpl("inst2");
-    
-    // // Connect inst1 to inst2
-    // inst1->setArrayOut_OutputPort(0, inst2->get_ArrayIn_InputPort(0));
-    
-    // // Connect inst2 to inst1
-    // inst2->set_ArrayOut_OutputPort(0, inst1->get_ArrayIn_InputPort(0));
-    
-    // // Instantiate components
-    // inst1->init(100);
-    // inst2->init(100);
-    // inst1->start(0, 100, 10 * 1024);
-    // inst2->start(0, 100, 10 * 1024);
-    
+
     dumparch();
 }
 
@@ -163,20 +147,6 @@ int main(int argc, char* argv[]) {
     serial1.setMember2(integer2);
     serial1.setMember3(array1);
     serial1.setMember4(array3);
-            
-    // // Invoke ports to test array usage
-    // cout << "Invoking input ports..." << endl;
-    // cout << "Invoking inst1..." << endl;
-    // inst1->get_ExArrayIn_InputPort(0)->invoke(array1, serial1);
-            
-    // // Wait for port handler to execute
-    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            
-    // cout << "Invoking inst2..." << endl;
-    // inst2->get_ExArrayIn_InputPort(0)->invoke(array1, serial1);
-            
-    // // Wait for port handler to execute
-    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
             
     cout << "Invoked ports" << endl;
 
