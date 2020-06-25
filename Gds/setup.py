@@ -29,13 +29,9 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import print_function
 
-import os
 import sys
 from setuptools import find_packages
 from setuptools import setup
-from setuptools.command.develop import develop
-from setuptools.command.install import install
-import subprocess
 
 ####
 # GDS Packages:
@@ -44,43 +40,6 @@ import subprocess
 # excludes the 'fprime_gds.tkgui' package, and then includes it if the Python version is < 2.
 ####
 gds_packages = find_packages("src", exclude=["*tkgui*"])
-
-
-def install_autocomplete(script_name):
-    """
-    Enables tab-completion for the given script, using the argparse module
-    TODO: Add support for different shell types (currently only works for
-    bash)
-    """
-    subprocess.call(["./bin/install_autocomplete_bash.sh", script_name])
-
-
-class RunCommandsOnInstall(install):
-    """
-    A class that runs shell commands after this is installed normally
-    """
-
-    def run(self):
-        """
-        The function that actually runs the commands
-        """
-        install.run(self)
-        install_autocomplete("fprime-cli")
-
-
-class RunCommandsOnDevInstall(develop):
-    """
-    A class that runs shell commands after this is installed in developer mode
-    """
-
-    def run(self):
-        """
-        The function that actually runs the commands
-        """
-        develop.run(self)
-        install_autocomplete("fprime-cli")
-
-
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
 # then distutils.
 setup(
@@ -174,5 +133,4 @@ integrated configuration with ground in-the-loop.
         # WX GUI options
         "wx-gui": "wxPython",
     },
-    cmdclass={"develop": RunCommandsOnInstall, "install": RunCommandsOnDevInstall,},
 )
