@@ -26,10 +26,7 @@
 ###
 from __future__ import absolute_import
 from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import print_function
 
-import sys
 from setuptools import find_packages
 from setuptools import setup
 
@@ -60,7 +57,7 @@ integrated configuration with ground in-the-loop.
     """,
     url="https://github.com/nasa/fprime",
     keywords=["fprime", "gds", "embedded", "nasa"],
-    project_urls={"Issue Tracker": "https://github.com/nasa/fprime/issues",},
+    project_urls={"Issue Tracker": "https://github.com/nasa/fprime/issues"},
     # Package author, not F prime author
     author="Michael Starch",
     author_email="Michael.D.Starch@jpl.nasa.gov",

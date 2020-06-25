@@ -28,14 +28,13 @@ class FramerDeframer(abc.ABC):
     """
 
     @abc.abstractmethod
-    def frame(self):
+    def frame(self, data):
         """
         Frames outgoing data in the specified format. Expects incoming raw bytes to frame, and adds on the needed header
         and footer bytes. This new array of bytes is returned from the method.
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
-        pass
 
     @abc.abstractmethod
     def deframe(self, data, no_copy=False):
@@ -49,7 +48,6 @@ class FramerDeframer(abc.ABC):
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)
         """
-        pass
 
     def deframe_all(self, data, no_copy):
         """

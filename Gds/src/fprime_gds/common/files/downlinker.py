@@ -12,13 +12,14 @@ to the correct log files and destination filse
 from __future__ import print_function
 
 import logging
+import os
 
 import fprime.constants
-from fprime_gds.common.decoders import decoder
 import fprime_gds.common.handlers
-from fprime_gds.common.files.helpers import *
-from fprime_gds.common.data_types.file_data import *
-
+from fprime_gds.common.files.helpers import FileStates
+from fprime_gds.common.files.helpers import file_to_dict
+from fprime_gds.common.files.helpers import TransmitFile
+from fprime_gds.common.data_types.file_data import FilePacketType
 
 LOGGER = logging.getLogger("downlink")
 LOGGER.setLevel(logging.INFO)

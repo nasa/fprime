@@ -89,7 +89,7 @@ class SysData(object):
 
         # Compare by id second (just let multiple events at the same time with
         # the same id be counted as equal
-        return cmp(x.id, y.id)
+        return time_type.cmp(x.id, y.id)
 
 
 if __name__ == "__main__":
