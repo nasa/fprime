@@ -21,7 +21,7 @@ from fprime_gds.common.decoders import decoder
 from fprime_gds.common.data_types import event_data
 from fprime.common.models.serialize import u32_type
 from fprime.common.models.serialize import time_type
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import TypeException
 import traceback
 
 
@@ -103,7 +103,7 @@ class EventDecoder(decoder.Decoder):
 
         # For each argument, use the arg_obj deserialize method to get the value
         for arg in args:
-            (arg_name, arg_desc, template_arg_obj) = arg
+            (dummy_arg_name, dummy_arg_desc, template_arg_obj) = arg
 
             # Create a new instance of the argument's type object so we don't
             # use the template's object for deserialization and storage of the

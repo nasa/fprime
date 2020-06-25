@@ -24,7 +24,6 @@ class DataHandler(abc.ABC):
         :param data: data to be handled by this class
         :param sender: (optional) id of sender, otherwise None
         """
-        pass
 
 
 class HandlerRegistrar(abc.ABC):

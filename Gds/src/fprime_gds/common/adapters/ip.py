@@ -46,7 +46,9 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     KEEPALIVE_INTERVAL = (
         0.500  # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
     )
-    KEEPALIVE_DATA = b"sitting well"  # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
+    KEEPALIVE_DATA = (
+        b"sitting well"
+    )  # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
     MAXIMUM_DATA_SIZE = 4096
 
     def __init__(self, address, port):
@@ -300,7 +302,7 @@ class IpHandler(object):
         except socket.error as exc:
             if self.running:
                 self.logger.warning(
-                    "Write failure: {}".format(type(exc).__name__, str(exc))
+                    "Write failure: {}: {}".format(type(exc).__name__, str(exc))
                 )
         return False
 
@@ -401,17 +403,15 @@ class UdpHandler(IpHandler):
 
     def open_impl(self):
         """No extra steps required"""
-        pass
 
     def close_impl(self):
         """No extra steps required"""
-        pass
 
     def read_impl(self):
         """
         Receive from the UDP handler. This involves receiving from an unconnected socket.
         """
-        (data, address) = self.socket.recvfrom(IpAdapter.MAXIMUM_DATA_SIZE)
+        (data, dummy_address) = self.socket.recvfrom(IpAdapter.MAXIMUM_DATA_SIZE)
         return data
 
     def write_impl(self, message):
