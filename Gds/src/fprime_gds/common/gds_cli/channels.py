@@ -50,11 +50,12 @@ class ChannelsCommand(QueryHistoryCommand):
         api: IntegrationTestAPI,
         filter_predicate: predicates.predicate,
         min_start_time="NOW",
+        timeout: float = 5,
     ) -> ChData:
         """
         Returns the next upcoming channel data after the given time that
         matches the given filter.
         """
         return test_api_utils.get_upcoming_channel(
-            api, filter_predicate, min_start_time
+            api, filter_predicate, min_start_time, timeout
         )

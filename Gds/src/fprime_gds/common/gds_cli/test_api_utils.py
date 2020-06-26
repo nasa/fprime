@@ -49,7 +49,7 @@ def get_upcoming_event(
     test_api: IntegrationTestAPI,
     search_filter: predicates.predicate,
     start_time="NOW",
-    timeout: int = 5,
+    timeout: float = 5,
 ) -> EventData:
     """
     Returns the next event matching the given search filter that occurs after
@@ -70,8 +70,9 @@ def get_upcoming_event(
     event_filter = predicates.satisfies_all(
         [search_filter, predicates.event_predicate()]
     )
+    # TODO: Test API only takes integer timeouts?
     return test_api.find_history_item(
-        event_filter, test_api.get_event_test_history(), start_time, timeout
+        event_filter, test_api.get_event_test_history(), start_time, int(timeout)
     )
 
 
@@ -79,7 +80,7 @@ def get_upcoming_channel(
     test_api: IntegrationTestAPI,
     search_filter: predicates.predicate,
     start_time="NOW",
-    timeout: int = 5,
+    timeout: float = 5,
 ) -> ChData:
     """
     Returns the next telemetry update matching the given search filter that
@@ -100,8 +101,9 @@ def get_upcoming_channel(
     channel_filter = predicates.satisfies_all(
         [search_filter, predicates.telemetry_predicate()]
     )
+    # TODO: Test API only takes integer timeouts?
     return test_api.find_history_item(
-        channel_filter, test_api.get_telemetry_test_history(), start_time, timeout
+        channel_filter, test_api.get_telemetry_test_history(), start_time, int(timeout)
     )
 
 

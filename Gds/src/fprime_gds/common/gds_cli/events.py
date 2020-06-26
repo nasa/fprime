@@ -49,9 +49,12 @@ class EventsCommand(QueryHistoryCommand):
         api: IntegrationTestAPI,
         filter_predicate: predicates.predicate,
         min_start_time="NOW",
+        timeout: float = 5,
     ) -> EventData:
         """
         Retrieves an F' item that's occurred since the given time and returns
         its data.
         """
-        return test_api_utils.get_upcoming_event(api, filter_predicate, min_start_time)
+        return test_api_utils.get_upcoming_event(
+            api, filter_predicate, min_start_time, timeout
+        )
