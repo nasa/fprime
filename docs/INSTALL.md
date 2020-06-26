@@ -101,7 +101,7 @@ installation).
 
 ## (Optional) Installing Tab Completion
 
-Several of F´s command line utilities support tab completion. To enable these tools to use it, see the [instructions here](../Gds/docs/gdsCLI/AUTOCOMPLETE.md).
+Several of F´s command line utilities support tab completion. To enable these tools to use it, see the [instructions here](./gds/AUTOCOMPLETE.md).
 
 ## Troubleshooting
 
