@@ -18,7 +18,14 @@ def get_path_relative_to_file(path: str) -> str:
     Converts the given path to one relative to this file.
     """
     dirname = os.path.dirname(__file__)
-    return os.path.join(dirname, path)
+    return os.path.realpath(os.path.join(dirname, path))
+
+
+def default_project_dictionary():
+    """
+    The project dictionary to use for normal tests
+    """
+    return get_path_relative_to_file("../testing_fw/UnitTestDictionary.xml")
 
 
 def default_valid_args_dict(updated_values_dict={}):
@@ -29,7 +36,7 @@ def default_valid_args_dict(updated_values_dict={}):
     """
     dictionary = {
         "func": None,
-        "dictionary": get_path_relative_to_file("TestDictionary.xml"),
+        "dictionary": default_project_dictionary(),
         "ip_address": "127.0.0.1",
         "port": 50050,
         "list": False,
@@ -69,8 +76,8 @@ def default_valid_events_dict(updated_values_dict={}):
 @pytest.mark.parametrize(
     "input_cli_arguments, expected_args_dict",
     [
-        ("", {"func": None}),
-        ([], {"func": None}),
+        ("", {"func": None, "dictionary": default_project_dictionary(),},),
+        ([], {"func": None, "dictionary": default_project_dictionary(),},),
         # TODO: Unsure how to test help/version args, since they exit the program?
         # (["-h"], {"func": None}),
         (["channels"], default_valid_channels_dict(),),
@@ -81,19 +88,15 @@ def default_valid_events_dict(updated_values_dict={}):
                 "func": fprime_cli.CommandSendParser.command_func,
                 "command_name": "some.command.name",
                 "arguments": [],
-                "dictionary": get_path_relative_to_file("TestDictionary.xml"),
+                "dictionary": default_project_dictionary(),
                 "ip_address": "127.0.0.1",
                 "port": 50050,
             },
         ),
         (
-            ["events", "-d", "../testing_fw/UnitTestDictionary.xml"],
+            ["events", "-d", "someDictionary.xml"],
             default_valid_events_dict(
-                {
-                    "dictionary": get_path_relative_to_file(
-                        "../testing_fw/UnitTestDictionary.xml"
-                    )
-                }
+                {"dictionary": get_path_relative_to_file("someDictionary.xml")}
             ),
         ),
         (["channels", "-l"], default_valid_channels_dict({"list": True}),),
