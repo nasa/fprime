@@ -122,7 +122,7 @@ class ChData(sys_data.SysData):
         """
         time_str_nice = self.time.to_readable(time_zone)
         raw_time_str = str(self.time)
-        ch_name = self.template.get_name()
+        ch_name = self.template.get_full_name()
         fmt_str = self.template.get_format_str()
         if self.val_obj == None:
             ch_val = "EMPTY CH OBJ"
