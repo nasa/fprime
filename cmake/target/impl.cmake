@@ -32,10 +32,11 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
         return()
     endif()
     string(REPLACE "CompnentAi.xml" "${AI_XML}" "ComponentImpl" BASE_TEMPLATE)
+    string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     # Try to generate dictionaries for every AC input file
     add_custom_target("${TARGET_NAME}" 
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT=${FPRIME_BUILD_LOCATIONS}
+      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
       ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/implgen.py ${AI_XML}
       DEPENDS ${AI_XML}
