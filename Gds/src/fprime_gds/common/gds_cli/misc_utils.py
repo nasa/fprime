@@ -11,7 +11,12 @@ from typing import Callable
 
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.templates.cmd_template import CmdTemplate
+
+"""
+NOTE: Module is now lazy-loaded below for performance reasons; if possible, find
+a better way to do this
 from fprime_gds.flask.json import GDSJsonEncoder
+"""
 
 
 def repeat_until_interrupt(func: Callable, *args):
@@ -45,6 +50,8 @@ def get_item_json_string(gds_item, tab_spaces: int = 2) -> str:
     :param tab_spaces: The (number of spaces to use for indented lines
     :return: A string of the gds_item in JSON format
     """
+    from fprime_gds.flask.json import GDSJsonEncoder
+
     return json.dumps(gds_item, indent=tab_spaces, cls=GDSJsonEncoder)
 
 
