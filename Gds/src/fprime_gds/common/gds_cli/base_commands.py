@@ -85,6 +85,7 @@ class QueryHistoryCommand(BaseCommand):
         api: IntegrationTestAPI,
         filter_predicate: predicates.predicate,
         min_start_time="NOW",
+        timeout: float = 5.0,
     ):
         """
         Retrieves an F' item that's occurred since the given time and returns
@@ -159,7 +160,7 @@ class QueryHistoryCommand(BaseCommand):
         ip_address: str,
         port: int,
         list: bool,
-        follow: bool,
+        timeout: float,
         ids: Iterable[int],
         components: Iterable[str],
         search: str,
@@ -190,8 +191,10 @@ class QueryHistoryCommand(BaseCommand):
         )
         # ======================================================================
 
-        if follow:
-
+        if timeout:
+            item = cls._get_upcoming_item(api, search_filter, "NOW", timeout)
+            cls._log(cls._get_item_string(item, json))
+        else:
             def print_upcoming_item(min_start_time="NOW"):
                 item = cls._get_upcoming_item(api, search_filter, min_start_time)
                 cls._log(cls._get_item_string(item, json))
@@ -201,9 +204,6 @@ class QueryHistoryCommand(BaseCommand):
                 return (min_start_time,)
 
             misc_utils.repeat_until_interrupt(print_upcoming_item, "NOW")
-        else:
-            item = cls._get_upcoming_item(api, search_filter, "NOW")
-            cls._log(cls._get_item_string(item, json))
 
         # ======================================================================
         # Tear down Test API
