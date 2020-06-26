@@ -104,6 +104,52 @@ class QueryHistoryCommand(BaseCommand):
         """
         return misc_utils.get_item_string(item, json)
 
+    @classmethod
+    def _get_search_filter(
+        cls,
+        ids: Iterable[int],
+        components: Iterable[str],
+        search: str,
+        json: bool = False,
+    ) -> predicates.predicate:
+        """
+        Returns a predicate that can be used to filter any received messages.
+        This is done to link printing code to filtering, so that filtering ALWAYS filters the same strings as are printed.
+
+        TODO: Possibly make separate filters for item/item_list strings, since
+        there's currently no guarantee they'll be the same if this base class
+        is overridden?
+
+        :param item: The F' item to convert to a string
+        :param json: Whether to convert each item to a JSON representation
+            before filtering them
+        :return: A string representation of "item"
+        """
+        item_to_string = lambda x: cls._get_item_string(x, json)
+        return filtering_utils.get_full_filter_predicate(
+            ids, components, search, to_str=item_to_string
+        )
+
+    @classmethod
+    def _list_all_possible_items(
+        cls, dictionary_path: str, search_filter: predicates.predicate, json: bool
+    ) -> str:
+        """
+        Returns a string of the the information for all relevant possible items
+        for this command, filtered using the given predicate.
+
+        :param dictionary_path: The string path to the dictionary file we should
+            look for possible items in
+        :param search_filter: The predicate to filter the items with
+        :param json: Whether to print out each item in JSON format or not
+        :return: A string describing each item relevant to this command that
+            passes the given filter
+        """
+        project_dictionary = Dictionaries()
+        project_dictionary.load_dictionaries(dictionary_path, packet_spec=None)
+        items = cls._get_item_list(project_dictionary, search_filter)
+        return cls._get_item_list_string(items, json)
+
     # TODO: Just use args/kwargs instead of this massive argument list? But I
     # kind of do want some coupling with the frontend code to keep these in sync
     @classmethod
@@ -129,23 +175,12 @@ class QueryHistoryCommand(BaseCommand):
         For descriptions of these arguments, and more function details, see:
             Gds/src/fprime_gds/executables/fprime_cli.py
         """
-        # Link printing code to filtering, so that searching ALWAYS searches
-        # the same strings as are printed
-        # TODO: Possibly make separate filters for item/item_list strings, since
-        # there's currently no guarantee they'll be the same if this base class
-        # is overridden?
-        item_to_string = lambda x: cls._get_item_string(x, json)
-        search_filter = filtering_utils.get_full_filter_predicate(
-            ids, components, search, to_str=item_to_string
-        )
+        search_filter = cls._get_search_filter(ids, components, search, json)
 
         # TODO: If combinatorial explosion w/ options becomes an issue,
         # refactor this to avoid if/else structure?
         if list:
-            project_dictionary = Dictionaries()
-            project_dictionary.load_dictionaries(dictionary, packet_spec=None)
-            items = cls._get_item_list(project_dictionary, search_filter)
-            cls._log(cls._get_item_list_string(items, json))
+            cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
             return
 
         # ======================================================================
@@ -156,9 +191,10 @@ class QueryHistoryCommand(BaseCommand):
         # ======================================================================
 
         if follow:
+
             def print_upcoming_item(min_start_time="NOW"):
                 item = cls._get_upcoming_item(api, search_filter, min_start_time)
-                cls._log(item_to_string(item))
+                cls._log(cls._get_item_string(item, json))
                 # Update time so we catch the next item since the last one
                 if item:
                     min_start_time = predicates.greater_than(item.get_time())
@@ -167,7 +203,7 @@ class QueryHistoryCommand(BaseCommand):
             misc_utils.repeat_until_interrupt(print_upcoming_item, "NOW")
         else:
             item = cls._get_upcoming_item(api, search_filter, "NOW")
-            cls._log(item_to_string(item))
+            cls._log(cls._get_item_string(item, json))
 
         # ======================================================================
         # Tear down Test API
