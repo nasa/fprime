@@ -3,18 +3,20 @@ The implementation code for the command-send GDS CLI commands
 """
 
 import difflib
-from typing import List
+from typing import Iterable, List
 
 from fprime.common.models.serialize.type_exceptions import NotInitializedException
 from fprime_gds.common.data_types.cmd_data import CommandArgumentsException
-from fprime_gds.common.gds_cli.base_commands import BaseCommand
+from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.templates.cmd_template import CmdTemplate
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 
 
-class CommandSendCommand(BaseCommand):
+class CommandSendCommand(QueryHistoryCommand):
     """
     The implementation for sending a command via the GDS to the spacecraft
     """
@@ -73,6 +75,54 @@ class CommandSendCommand(BaseCommand):
         # this is technically a private method?
         return misc_utils.get_cmd_template_string(command_template)
 
+    @classmethod
+    def _get_item_list(
+        cls,
+        project_dictionary: Dictionaries,
+        filter_predicate: predicates.predicate,
+        json: bool = False,
+    ) -> Iterable[CmdTemplate]:
+        """
+        Gets a list of available commands in the system and return them in an
+        ID-sorted list.
+
+        :param project_dictionary: The dictionary object for the project
+            containing the command definitions
+        :param filter_predicate: Test API predicate used to filter shown
+            channels
+        :param json: Whether to print out each item in JSON format or not
+        """
+        # NOTE: Trying to create a blank CmdData causes errors, so currently
+        # just using templates (i.e. this function does nothing)
+        create_empty_command = lambda cmd_template: cmd_template
+
+        command_list = test_api_utils.get_item_list(
+            item_dictionary=project_dictionary.command_id,
+            search_filter=filter_predicate,
+            template_to_data=create_empty_command,
+        )
+        return command_list
+
+    @classmethod
+    def _get_upcoming_item(
+        cls, api, filter_predicate, min_start_time="",
+    ):
+        """
+        TODO: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class?
+        """
+        pass
+
+    @classmethod
+    def _get_item_string(cls, item: CmdTemplate, json: bool = False,) -> str:
+        """
+        Converts the given command template into a human-readable string.
+
+        :param item: The CmdTemplate to convert to a string
+        :param json: Whether or not to return a JSON representation of "temp"
+        :return: A readable string version of "item"
+        """
+        return misc_utils.get_cmd_template_string(item, json)
+
     # TODO: Cut down on the number of arguments here?
     @classmethod
     def handle_arguments(
@@ -82,6 +132,11 @@ class CommandSendCommand(BaseCommand):
         port: int,
         command_name: str,
         arguments: List[str],
+        list: bool,
+        ids: Iterable[int],
+        components: Iterable[str],
+        search: str,
+        json: bool,
         *args,
         **kwargs
     ):
@@ -92,6 +147,11 @@ class CommandSendCommand(BaseCommand):
         For more details on these arguments, see the command-send definition at:
             Gds/src/fprime_gds/executables/fprime_cli.py
         """
+        search_filter = cls._get_search_filter(ids, components, search, json)
+        if list:
+            cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
+            return
+
         # TODO: Make this api setup part of a decorator somehow, since it
         # recurs in several places?
         # ======================================================================
