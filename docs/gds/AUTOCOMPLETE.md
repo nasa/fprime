@@ -4,6 +4,8 @@
 
 While you can start using the GDS command line tools immediately after installing F´, they'll be missing **tab completion**, a handy feature of modern shells that will automatically try to complete the command/option you're typing when you press - surprise - the `[TAB]` key. If more than one option is available, you can hit `[TAB]` twice to display all your choices.
 
+![An example of tab-completion](tab_complete_commands.gif)
+
 Currently, you can use tab completion in the GDS CLI tool to complete sub-command names, options, file paths, and even the available commands on the F´ instance you're running. If there's anything you think we're missing, let us know through
 [a new GitHub issue](https://github.com/nasa/fprime/issues/new).
 
