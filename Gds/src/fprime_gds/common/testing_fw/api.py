@@ -1232,10 +1232,9 @@ class IntegrationTestAPI(DataHandler):
         """
         if not isinstance(message, str):
             message = str(message)
-        if self.logger is None:
-            print("[{}] {}".format(sender, message))
-        else:
+        if self.logger:
             self.logger.log_message(message, sender, color, style, case_id)
+        # TODO: Re-add way of printing to console?
 
     def __assert_pred(self, name, predicate, value, msg="", expect=False):
         """
