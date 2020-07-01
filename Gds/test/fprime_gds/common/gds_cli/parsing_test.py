@@ -40,7 +40,7 @@ def default_valid_args_dict(updated_values_dict={}):
         "ip_address": "127.0.0.1",
         "port": 50050,
         "list": False,
-        "follow": False,
+        "timeout": 0.0,
         "ids": None,
         "components": None,
         "search": None,
@@ -58,11 +58,16 @@ def default_valid_channels_dict(updated_values_dict={}):
     return dictionary
 
 
-def default_valid_commands_dict(updated_values_dict={}):
+def default_valid_command_send_dict(updated_values_dict={}):
     dictionary = default_valid_args_dict(
-        {"func": fprime_cli.CommandsParser.command_func}
+        {
+            "func": fprime_cli.CommandSendParser.command_func,
+            "arguments": [],
+            "command_name": None,
+        }
     )
     dictionary.update(updated_values_dict)
+    del dictionary["timeout"]
     return dictionary
 
 
@@ -76,36 +81,25 @@ def default_valid_events_dict(updated_values_dict={}):
 @pytest.mark.parametrize(
     "input_cli_arguments, expected_args_dict",
     [
-        ("", {"func": None, "dictionary": default_project_dictionary(),},),
-        ([], {"func": None, "dictionary": default_project_dictionary(),},),
-        # TODO: Unsure how to test help/version args, since they exit the program?
-        # (["-h"], {"func": None}),
         (["channels"], default_valid_channels_dict(),),
-        (["commands"], default_valid_commands_dict(),),
         (
             ["command-send", "some.command.name"],
-            {
-                "func": fprime_cli.CommandSendParser.command_func,
-                "command_name": "some.command.name",
-                "arguments": [],
-                "dictionary": default_project_dictionary(),
-                "ip_address": "127.0.0.1",
-                "port": 50050,
-            },
+            default_valid_command_send_dict({"command_name": "some.command.name"}),
         ),
         (
+            # TODO: This test is currently failing because an invalid dictionary throws an exception; figure out way to test -d flag?
             ["events", "-d", "someDictionary.xml"],
             default_valid_events_dict(
                 {"dictionary": get_path_relative_to_file("someDictionary.xml")}
             ),
         ),
         (["channels", "-l"], default_valid_channels_dict({"list": True}),),
-        (["channels", "--list"], default_valid_channels_dict({"list": True}),),
-        (["channels", "-f"], default_valid_channels_dict({"follow": True}),),
-        (["commands", "-i", "10"], default_valid_commands_dict({"ids": [10]}),),
+        (["command-send", "--list"], default_valid_command_send_dict({"list": True}),),
+        (["channels", "-t", "4"], default_valid_channels_dict({"timeout": 4.0}),),
+        (["events", "-i", "10"], default_valid_events_dict({"ids": [10]}),),
         (
-            ["commands", "-i", "3", "4", "8"],
-            default_valid_commands_dict({"ids": [3, 4, 8]}),
+            ["events", "-i", "3", "4", "8"],
+            default_valid_events_dict({"ids": [3, 4, 8]}),
         ),
         (
             [
@@ -158,8 +152,23 @@ def test_output_after_parsing_valid_input(
     assert args_dict == expected_args_dict
 
 
+# TODO: Unsure how to test help/version args, since they exit the program?
 @pytest.mark.gds_cli
-def test_command_send_no_command_given_error(standard_parser):
+def test_empty_input_exits_programs(standard_parser):
+    # Not giving a command option here should raise a "SystemExit" exception
+    with pytest.raises(SystemExit):
+        fprime_cli.parse_args(standard_parser, [""])
+
+
+@pytest.mark.gds_cli
+def test_no_input_exits_programs(standard_parser):
+    # Not giving a command option here should raise a "SystemExit" exception
+    with pytest.raises(SystemExit):
+        fprime_cli.parse_args(standard_parser, [])
+
+
+@pytest.mark.gds_cli
+def test_command_send_no_command_or_list_given_error(standard_parser):
     # Not giving a command option here should raise a "SystemExit" exception
     with pytest.raises(SystemExit):
         fprime_cli.parse_args(standard_parser, ["command-send"])
@@ -169,7 +178,7 @@ def test_command_send_no_command_given_error(standard_parser):
 def test_components_no_search_term_given_error(standard_parser):
     # Not giving any string after giving the option should raise an error
     with pytest.raises(SystemExit):
-        fprime_cli.parse_args(standard_parser, ["commands", "-s"])
+        fprime_cli.parse_args(standard_parser, ["channels", "-s"])
 
 
 @pytest.mark.gds_cli
