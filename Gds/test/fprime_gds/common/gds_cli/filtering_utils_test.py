@@ -81,13 +81,21 @@ def test_valid_rejecting_filter(sample_event, rejecting_input_filter):
 
 
 @pytest.mark.gds_cli
-def test_string_filter_valid_function_passing(sample_event):
-    def get_event_component(eventData) -> str:
-        return eventData.get_template().get_comp_name()
+def test_event_string_has_component(sample_event):
+    component_filter = filtering_utils.contains_search_string("helmet")
+    assert component_filter(sample_event)
 
-    default_filter = filtering_utils.contains_search_string("helmet")
+
+@pytest.mark.gds_cli
+def test_string_filter_valid_function_passing(sample_event):
+    crazy_string = "tHaT'sAmAzInG..."
+
+    def get_crazy_string(eventData) -> str:
+        return crazy_string
+
+    default_filter = filtering_utils.contains_search_string(crazy_string)
     function_filter = filtering_utils.contains_search_string(
-        "helmet", get_event_component
+        crazy_string, get_crazy_string
     )
     assert not default_filter(sample_event)
     assert function_filter(sample_event)
@@ -107,3 +115,39 @@ def test_search_predicate_case_sensitive(sample_event):
     lower_filter = filtering_utils.get_search_predicate("luggage_combination")
     assert upper_filter(sample_event)
     assert not lower_filter(sample_event)
+
+
+@pytest.mark.gds_cli
+def test_time_greater_than_predicate():
+    time1 = time_type.TimeType(seconds=1593610856, useconds=223451)
+    time2 = time_type.TimeType(seconds=1593610856, useconds=223502)
+
+    time_pred = predicates.greater_than(time1)
+    assert not time_pred(time1)
+    assert time_pred(time2)
+
+
+@pytest.mark.gds_cli
+def test_comparing_item_to_time_fails(sample_event):
+    """
+    Test that comparing a time to an event is problematic, since this assertion
+    SHOULD always be true but is, in fact, false because we're comparing a data
+    object to a time object
+    """
+    time = time_type.TimeType(seconds=12345)
+    sample_event.time = time_type.TimeType(seconds=9999999)
+
+    time_pred = predicates.greater_than(time)
+    # This SHOULD return true, but it doesn't
+    assert not time_pred(sample_event)
+
+
+@pytest.mark.gds_cli
+def test_comparing_item_to_converted_time_succeeds(sample_event):
+    time = time_type.TimeType(seconds=12345)
+    sample_event.time = time_type.TimeType(seconds=9999999)
+
+    time_pred = predicates.greater_than(time)
+    converted_time_pred = filtering_utils.time_to_data_predicate(time_pred)
+    # Now, this returns the correct value
+    assert converted_time_pred(sample_event)

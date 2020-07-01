@@ -6,6 +6,7 @@ to the user in the GDS CLI
 from typing import Any, Callable, Iterable
 
 from fprime_gds.common.data_types.cmd_data import CmdData
+from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.testing_fw import predicates
 
 
@@ -192,3 +193,28 @@ class cmd_predicate(predicates.predicate):
         Returns a string outlining the evaluation done by the predicate.
         """
         return "True IFF: x is a CmdData object"
+
+
+class time_to_data_predicate(predicates.predicate):
+    def __init__(self, time_predicate: predicates.predicate):
+        """
+        Converts the given predicate from one called on an F' TimeType to one
+        that can be called on a SysData type
+        :param time_predicate: a predicate that expects a TimeType object to be
+            passed in
+        """
+        self.time_pred = time_predicate
+
+    def __call__(self, item: SysData):
+        """
+        Gets the given item's time and checks it using the passed-in predicate
+
+        :param item: an object to check for being a CmdData object
+        """
+        return self.time_pred(item.get_time())
+
+    def __str__(self):
+        """
+        Returns a string outlining the evaluation done by the predicate.
+        """
+        return "x = x.get_time(), {}".format(self.time_pred)
