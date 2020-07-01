@@ -102,6 +102,20 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <uplink v-bind:upfiles="upfiles" v-bind:uploader="uploader" v-bind:running="running" v-show="currentTab == 'Uplink'"></uplink>
                     <downlink v-bind:downfiles="downfiles" v-show="currentTab == 'Downlink'"></downlink>
                     <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
+                    <dashboard v-show="currentTab == 'Dashboard'"></dashboard>
+                </div>
+            </template>
+            <!--
+            Dashboard:
+
+            The dashboard template displays a user-configurable collection of other utilities from the GUI; by default, asks the user to upload a configuration file specifying the dashboard setup.
+
+            TODO: Actually implement this properly
+            -->
+            <template id="dashboard-template">
+                <div>
+                    <h2>This is your Dashboard</h2>
+                    <h4>There are many like it, but this one is yours.</h4>
                 </div>
             </template>
             <!--

@@ -13,6 +13,7 @@ import {UplinkMixins} from "./uplink.js";
 import {DownlinkMixins} from "./downlink.js";
 import {LogMixins} from "./log.js";
 import {config} from "../config.js"
+import './dashboard.js';    // Import is necessary so that it can find the dashboard component???
 /**
  * tabbed-ect:
  *
@@ -30,7 +31,7 @@ Vue.component("tabbed-etc", {
             let hash = window.location.hash.replace("#", "");
             return {
                 "currentTab": (hash == "")? "Commanding" : hash,
-                "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs"],
+                "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs", "Dashboard"],
                 "config": config
             }
         },
