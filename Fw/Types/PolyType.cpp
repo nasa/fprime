@@ -400,6 +400,80 @@ namespace Fw {
 
     }
 
+    bool PolyType::operator<(const PolyType &other) const {
+
+        // if type doesn't match, not equal
+        if (this->m_dataType != other.m_dataType) {
+            return false;
+        } else {
+            // check based on type
+            bool result = false;
+            switch (this->m_dataType) {
+                case TYPE_U8:
+                    result = (this->m_val.u8Val < other.m_val.u8Val);
+                    break;
+                case TYPE_I8:
+                    result = (this->m_val.i8Val < other.m_val.i8Val);
+                    break;
+#if FW_HAS_16_BIT
+                case TYPE_U16:
+                    result = (this->m_val.u16Val < other.m_val.u16Val);
+                    break;
+                case TYPE_I16:
+                    result = (this->m_val.i16Val < other.m_val.i16Val);
+                    break;
+#endif
+#if FW_HAS_32_BIT
+                case TYPE_U32:
+                    result = (this->m_val.u32Val < other.m_val.u32Val);
+                    break;
+                case TYPE_I32:
+                    result = (this->m_val.i32Val < other.m_val.i32Val);
+                    break;
+#endif
+#if FW_HAS_64_BIT
+                case TYPE_U64:
+                    result = (this->m_val.u64Val < other.m_val.u64Val);
+                    break;
+                case TYPE_I64:
+                    result = (this->m_val.i64Val < other.m_val.i64Val);
+                    break;
+#endif
+#if FW_HAS_F64
+                case TYPE_F64:
+                    result = (this->m_val.f64Val < other.m_val.f64Val);
+                    break;
+#endif
+                case TYPE_F32:
+                    result = (this->m_val.f32Val < other.m_val.f32Val);
+                    break;
+                case TYPE_BOOL: // fall through, shouldn't test bool
+                case TYPE_PTR: // fall through, shouldn't test pointers
+                case TYPE_NOTYPE:
+                    result = false;
+                    break;
+                default:
+                    FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(this->m_dataType));
+                    return false; // for compiler
+            }
+            return result;
+        }
+
+    }
+
+    bool PolyType::operator>(const PolyType &other) const {
+        return other.operator<(*this);
+    }
+
+    bool PolyType::operator>=(const PolyType &other) const {
+        return (this->operator>(other)) || (this->operator==(other));
+    }
+
+    bool PolyType::operator<=(const PolyType &other) const {
+        return (this->operator<(other)) || (this->operator==(other));
+    }
+
+
     SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
 
         // store type
