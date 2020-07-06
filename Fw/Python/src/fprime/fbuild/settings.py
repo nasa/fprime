@@ -95,6 +95,11 @@ class IniSettings:
             confparse, "fprime", "project_root", settings_file
         )
         proj_root = None if not proj_root else proj_root[0]
+        # Read ac constants if it is available
+        ac_consts = IniSettings.read_safe_path(
+            confparse, "fprime", "ac_constants", settings_file
+        )
+        ac_consts = None if not ac_consts else ac_consts[0]
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(
             confparse, "fprime", "environment_file", settings_file
@@ -117,6 +122,9 @@ class IniSettings:
         # Set the project root
         if proj_root is not None:
             settings["project_root"] = proj_root
+        # Set AC constants if available
+        if ac_consts is not None:
+            settings["ac_constants"] = ac_consts
         return settings
 
     @staticmethod

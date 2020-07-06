@@ -27,7 +27,8 @@
 ####
 
 ####
-# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, and `FPRIME_LIBRARY_LOCATIONS`:
+# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
+# and `FPRIME_AC_CONSTANTS_FILE`:
 #
 # These locations specify the locations of the needed F prime items. These are described below
 # and each has a default if not set.
@@ -90,6 +91,10 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     get_filename_component(FPRIME_ENVIRONMENT_FILE  "${FPRIME_ENVIRONMENT_FILE}" ABSOLUTE)
     set(FPRIME_ENVIRONMENT_FILE "${FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file" FORCE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
+endif()
+# Override the AC constants file when specified
+if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
+    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini")
 endif()
 
 ####
