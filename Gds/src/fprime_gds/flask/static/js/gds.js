@@ -12,7 +12,7 @@ import {TabETCVue}  from "./vue-support/tabetc.js"
 
 // Loader is used to run AJAX queries against a known endpoints. This interacts with the REST backend to load data
 // from the remainder of the GDS.
-let loader = new Loader();
+export let loader = new Loader();
 // Uploader uses the loader object to handle the file uploading extensions used to get files onto the server in
 // preparation for the file uplinker.
 let uploader = new Uploader(loader);

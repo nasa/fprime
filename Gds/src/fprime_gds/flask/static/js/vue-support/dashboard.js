@@ -7,6 +7,10 @@
  * TODO: Implement the rest of this
  */
 
+import {CommandMixins} from "./command.js";
+import {loader} from "../gds.js";
+
+
 const PlaceholderTextComp = Vue.component("placeholder-text-todo", {
     template: `<pre> <slot></slot> </pre>`
 });
@@ -45,10 +49,42 @@ Vue.component("dashboard", {
 
                 // Try to append text programmatically via a new component
                 thisVueComp.addVueComponent("placeholder-text-todo", undefined, [`${thisVueComp.fileText}`]);
+
+                // TODO: See if there's a cleaner way to initialize this?
+                thisVueComp.addVueComponent(
+                    "command-input",
+                    {
+                        mixins: [
+                            CommandMixins
+                        ],
+                        propsData: CommandMixins.setupCommands(loader.endpoints["command-dict"].data, loader),
+                        mounted() {
+                            //"this" will refer to the Vue Command-input component
+                            // TODO: Avoid duplication w/ Commands constructor?
+                            this.vue = this;
+
+                            CommandMixins.initializeCommands(this);
+
+                            // TODO: Is this acceptable, or duplication of polling on gds.js?
+                            const historyCallback = function (data) {this.updateCommandHistory(data["history"]);}
+                            const boundCallback = historyCallback.bind(this);
+                            loader.registerPoller("commands", boundCallback);
+                        }
+                    }
+                );
             };
             fileReader.readAsText(configFile);
         },
 
+        /**
+         * Adds the given Vue component to this dashboard
+         *
+         * @param {*} compName The name of the component you want to add
+         * @param {*} initialOptions An object containing the initialization
+         * options you want to pass to the new component
+         * @param {*} slots A list of values you want to place in the Vue slots
+         * on the component
+         */
         addVueComponent(compName, initialOptions={}, slots=[]) {
             const ComponentConstructor = Vue.options.components[compName]; // TODO: Only gets globally registered components; is that acceptable?
             const compInstance = new ComponentConstructor(initialOptions);

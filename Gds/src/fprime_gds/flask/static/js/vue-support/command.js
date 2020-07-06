@@ -243,6 +243,13 @@ export let CommandMixins = {
      */
     updateCommandHistory(cmdhist) {
         this.vue.cmdhist.push(...cmdhist);
+    },
+
+    methods: {
+        // TODO: Allows for mixin to be used on Vue components without explicitly calling Object.assign()
+        updateCommandHistory(cmdhist) {
+            this.cmdhist.push(...cmdhist);
+        }
     }
 };
 /**
