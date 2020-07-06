@@ -8,6 +8,7 @@
  */
 
 import {CommandMixins} from "./command.js";
+import {EventMixins} from "./event.js";
 import {loader} from "../gds.js";
 
 
@@ -69,6 +70,28 @@ Vue.component("dashboard", {
                             const historyCallback = function (data) {this.updateCommandHistory(data["history"]);}
                             const boundCallback = historyCallback.bind(this);
                             loader.registerPoller("commands", boundCallback);
+                        }
+                    }
+                );
+
+                thisVueComp.addVueComponent(
+                    "event-list",
+                    {
+                        mixins: [
+                            EventMixins
+                        ],
+                        propsData: {
+                            events: [], // TODO: Not sure if this is actually used?
+                            commands: loader.endpoints["command-dict"].data
+                        },
+                        data: EventMixins.setupEvents(),
+                        mounted() {
+                            //"this" will refer to the Vue Events-list component
+
+                            // TODO: Is this acceptable, or duplication of polling on gds.js?
+                            const historyCallback = function (data) {this.updateEvents(data["history"]);}
+                            const boundCallback = historyCallback.bind(this);
+                            loader.registerPoller("events", boundCallback);
                         }
                     }
                 );

@@ -111,6 +111,21 @@ export let EventMixins = {
      */
     setupEvents() {
         return {"events": [], "eventsActive": false};
+    },
+
+    methods: {
+        // TODO: Exposes the methods to vue components without explicit need to assign them; should go with one style or the other to avoid duplicate code?
+        updateEvents(newEvents) {
+            let timeout = config.dataTimeout * 1000;
+            this.events.push(...newEvents);
+            // Set active events, and register a timeout to turn it off again
+            if (newEvents.length > 0) {
+                let vue_self = this;
+                vue_self.eventsActive = true;
+                clearTimeout(this.eventTimeout);
+                this.eventTimeout = setTimeout(() => vue_self.eventsActive = false, timeout);
+            }
+        }
     }
 };
 
