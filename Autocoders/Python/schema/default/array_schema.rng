@@ -39,7 +39,7 @@
 
                 <element name = "type">
                     <optional>
-                        <attribute name = "string_size">
+                        <attribute name = "size">
                             <a:documentation>Optional string size in addition to required array size.</a:documentation>
                             <data type = "integer"></data>
                         </attribute>
