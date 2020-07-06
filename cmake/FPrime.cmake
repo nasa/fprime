@@ -25,6 +25,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Options.cmake")
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
 message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
+message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 # Include validation file next, as it checks that everything is in-order
@@ -41,10 +42,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Target.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
-if ("${PROJECT_AC_CONSTANTS_FILE}" STREQUAL "" )
-    set(PROJECT_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini")
-endif()
-message(STATUS "Using autocoder constants file: ${PROJECT_AC_CONSTANTS_FILE}")
 
 # Set the install directory for the package
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
