@@ -23,14 +23,27 @@ Vue.component("dashboard", {
     template: "#dashboard-template",
     data: function() {
         return {
-            fileText: ""
+            fileText: "",
+            creationActions: {}
         };
     },
     methods: {
-        parseConfigText() {
-            // Takes in the given configuration text and returns a component to
-            // place inside this dashboard
-            // TODO: Implement this!
+        /**
+         * Takes in the given configuration line and does the appropriate
+         * action to the dashboard, e.g. adding a new component with the given
+         * specifications
+         *
+         * @param {*} line A string representing a single line of a
+         * configuration file
+         */
+        parseConfigLine(line) {
+            // TODO: Implement this properly! Currently just looks for the literal name of the item to add, and adds it if found
+            const firstWord = line.trim().split(" ")[0];
+            console.log(firstWord);
+            const action = this.creationActions[firstWord];
+            if (action) {
+                action();
+            };
         },
 
         /**
@@ -51,7 +64,34 @@ Vue.component("dashboard", {
                 // Try to append text programmatically via a new component
                 thisVueComp.addVueComponent("placeholder-text-todo", undefined, [`${thisVueComp.fileText}`]);
 
-                // TODO: See if there's a cleaner way to initialize this?
+                const textLines = thisVueComp.fileText.split(/\r?\n/);
+                textLines.forEach(thisVueComp.parseConfigLine);
+            };
+            fileReader.readAsText(configFile);
+        },
+
+        /**
+         * Adds the given Vue component to this dashboard
+         *
+         * @param {*} compName The name of the component you want to add
+         * @param {*} initialOptions An object containing the initialization
+         * options you want to pass to the new component
+         * @param {*} slots A list of values you want to place in the Vue slots
+         * on the component
+         */
+        addVueComponent(compName, initialOptions={}, slots=[]) {
+            const ComponentConstructor = Vue.options.components[compName]; // TODO: Only gets globally registered components; is that acceptable?
+            const compInstance = new ComponentConstructor(initialOptions);
+            compInstance.$slots.default = slots;
+            compInstance.$mount();
+            this.$refs["dashboard-widgets-container"].appendChild(compInstance.$el);
+        }
+    },
+    created() {
+        // TODO: Find a cleaner way to define this (i.e. refactor the whole mess)
+        const thisVueComp = this;
+        this.creationActions = {
+            "command-input": function() {
                 thisVueComp.addVueComponent(
                     "command-input",
                     {
@@ -73,7 +113,8 @@ Vue.component("dashboard", {
                         }
                     }
                 );
-
+            },
+            "event-list": function() {
                 thisVueComp.addVueComponent(
                     "event-list",
                     {
@@ -95,25 +136,7 @@ Vue.component("dashboard", {
                         }
                     }
                 );
-            };
-            fileReader.readAsText(configFile);
-        },
-
-        /**
-         * Adds the given Vue component to this dashboard
-         *
-         * @param {*} compName The name of the component you want to add
-         * @param {*} initialOptions An object containing the initialization
-         * options you want to pass to the new component
-         * @param {*} slots A list of values you want to place in the Vue slots
-         * on the component
-         */
-        addVueComponent(compName, initialOptions={}, slots=[]) {
-            const ComponentConstructor = Vue.options.components[compName]; // TODO: Only gets globally registered components; is that acceptable?
-            const compInstance = new ComponentConstructor(initialOptions);
-            compInstance.$slots.default = slots;
-            compInstance.$mount();
-            this.$refs["dashboard-widgets-container"].appendChild(compInstance.$el);
-        }
+            }
+        };
     }
 });
