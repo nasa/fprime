@@ -120,8 +120,8 @@ class XmlArrayParser(object):
                 else:
                     self.__typeinfo = "basic"
 
-                if 'string_size' in array_tag.attrib:
-                    self.__string_size = array_tag.attrib['string_size']
+                if 'size' in array_tag.attrib:
+                    self.__string_size = array_tag.attrib['size']
             elif array_tag.tag == 'typeid':
                 self.__type_id = array_tag.text
             elif array_tag.tag == 'size':
