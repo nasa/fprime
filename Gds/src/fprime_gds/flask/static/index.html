@@ -122,6 +122,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         <label for="config-file">Choose a Layout Configuration File:</label>
                         <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
                     </div>
+                    <div ref="dashboard-widgets-container"></div>
                 </div>
             </template>
             <!--

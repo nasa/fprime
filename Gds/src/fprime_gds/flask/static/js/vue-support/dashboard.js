@@ -44,13 +44,17 @@ Vue.component("dashboard", {
                 thisVueComp.fileText = evt.target.result;
 
                 // Try to append text programmatically via a new component
-                const TextComponentConstructor = Vue.options.components["placeholder-text-todo"]; // TODO: Only gets globally registered components; is that acceptable?
-                const textInstance = new TextComponentConstructor();
-                textInstance.$slots.default = [`${thisVueComp.fileText}`];
-                textInstance.$mount();
-                thisVueComp.$el.appendChild(textInstance.$el);
+                thisVueComp.addVueComponent("placeholder-text-todo", undefined, [`${thisVueComp.fileText}`]);
             };
             fileReader.readAsText(configFile);
+        },
+
+        addVueComponent(compName, initialOptions={}, slots=[]) {
+            const ComponentConstructor = Vue.options.components[compName]; // TODO: Only gets globally registered components; is that acceptable?
+            const compInstance = new ComponentConstructor(initialOptions);
+            compInstance.$slots.default = slots;
+            compInstance.$mount();
+            this.$refs["dashboard-widgets-container"].appendChild(compInstance.$el);
         }
     }
 });
