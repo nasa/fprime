@@ -137,10 +137,6 @@ namespace Drv {
         if ((socketFd = ::socket(AF_INET, protocol, 0)) == -1) {
             return SOCK_FAILED_TO_GET_SOCKET;
         }
-        // Set timeout socket option
-        struct timeval timeout;
-        timeout.tv_sec = this->m_timeoutSeconds;
-        timeout.tv_usec = this->m_timeoutMicroseconds;
         // Set up the address port and name
         address.sin_family = AF_INET;
         address.sin_port = htons(this->m_port);
@@ -151,6 +147,10 @@ namespace Drv {
   #ifdef TGT_OS_TYPE_VXWORKS
         address.sin_addr.s_addr = inet_addr(this->m_hostname);
   #else
+        // Set timeout socket option
+        struct timeval timeout;
+        timeout.tv_sec = this->m_timeoutSeconds;
+        timeout.tv_usec = this->m_timeoutMicroseconds;
         // set socket write to timeout after 1 sec
         if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
             (void) ::close(socketFd);
@@ -205,12 +205,12 @@ namespace Drv {
             I32 sent = 0;
             // Output to send UDP
             if (this->m_sendUdp) {
-                sent = ::sendto(this->m_socketOutFd, reinterpret_cast<char*>(data + total), size - total, SOCKET_SEND_FLAGS,
+                sent = ::sendto(this->m_socketOutFd, data + total, size - total, SOCKET_SEND_FLAGS,
                               reinterpret_cast<struct sockaddr *>(&this->m_state->m_udpAddr), sizeof(this->m_state->m_udpAddr));
             }
             // Output to send TCP
             else {
-                sent = ::send(this->m_socketOutFd, reinterpret_cast<const char*>(data + total), size - total, SOCKET_SEND_FLAGS);
+                sent = ::send(this->m_socketOutFd, data + total, size - total, SOCKET_SEND_FLAGS);
             }
             // Error is EINTR, just try again
             if (sent == -1 && errno == EINTR) {
@@ -240,7 +240,7 @@ namespace Drv {
 
         SocketIpStatus status = SOCK_SUCCESS;
         // Attempt to recv out data
-        size = ::recv(m_socketInFd, reinterpret_cast<char*>(data), MAX_RECV_BUFFER_SIZE, SOCKET_RECV_FLAGS);
+        size = ::recv(m_socketInFd, data, MAX_RECV_BUFFER_SIZE, SOCKET_RECV_FLAGS);
         // Error returned, and it wasn't an interrupt, nor a reset
         if (size == -1 && errno != EINTR && errno != ECONNRESET) {
             Fw::Logger::logMsg("[ERROR] IP recv failed ERRNO: %d\n", errno);

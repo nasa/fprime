@@ -23,7 +23,7 @@ namespace Os {
         if( FileSystem::OP_OK != fs_status ) {
             return File::BAD_SIZE;
         }
-        const NATIVE_INT_TYPE max_itr = fileSize/VFILE_HASH_CHUNK_SIZE + 1;
+        const NATIVE_INT_TYPE max_itr = static_cast<NATIVE_INT_TYPE>(fileSize/VFILE_HASH_CHUNK_SIZE + 1);
         
         // Read all data from file and update hash:
         Utils::Hash hash;
