@@ -21,25 +21,27 @@ Vue.component("dashboard", {
         "placeholder-text-todo": PlaceholderTextComp
     },
     template: "#dashboard-template",
+
     data: function() {
         return {
             fileText: "",
-            creationActions: {}
+            creationActions: {},
+            createdComponents: []
         };
     },
+
     methods: {
         /**
          * Takes in the given configuration line and does the appropriate
          * action to the dashboard, e.g. adding a new component with the given
          * specifications
          *
-         * @param {*} line A string representing a single line of a
+         * @param {string} line A string representing a single line of a
          * configuration file
          */
         parseConfigLine(line) {
             // TODO: Implement this properly! Currently just looks for the literal name of the item to add, and adds it if found
             const firstWord = line.trim().split(" ")[0];
-            console.log(firstWord);
             const action = this.creationActions[firstWord];
             if (action) {
                 action();
@@ -55,6 +57,8 @@ Vue.component("dashboard", {
          * @param configFile: A user-uploaded configuration file
          */
         configureDashboard(configFile) {
+            this.removeAllComponents();
+
             const fileReader = new FileReader();
             // TODO: Check if better way to bind "this"?
             const thisVueComp = this;   // Reference to Vue component for use in callback; needed due to "this" changing meaning inside function
@@ -73,7 +77,7 @@ Vue.component("dashboard", {
         /**
          * Adds the given Vue component to this dashboard
          *
-         * @param {*} compName The name of the component you want to add
+         * @param {string} compName The name of the component you want to add
          * @param {*} initialOptions An object containing the initialization
          * options you want to pass to the new component
          * @param {*} slots A list of values you want to place in the Vue slots
@@ -85,6 +89,19 @@ Vue.component("dashboard", {
             compInstance.$slots.default = slots;
             compInstance.$mount();
             this.$refs["dashboard-widgets-container"].appendChild(compInstance.$el);
+            this.createdComponents.push(compInstance);
+        },
+
+        /**
+         * Removes all the existing components on the dashboard
+         */
+        removeAllComponents() {
+            this.createdComponents.forEach((comp) => {
+                // Remove the rendered element from the DOM, then destroy it in
+                // Vue
+                comp.$el.remove();
+                comp.$destroy();
+            });
         }
     },
     created() {
@@ -114,6 +131,7 @@ Vue.component("dashboard", {
                     }
                 );
             },
+
             "event-list": function() {
                 thisVueComp.addVueComponent(
                     "event-list",
@@ -127,8 +145,6 @@ Vue.component("dashboard", {
                         },
                         data: EventMixins.setupEvents(),
                         mounted() {
-                            //"this" will refer to the Vue Events-list component
-
                             // TODO: Is this acceptable, or duplication of polling on gds.js?
                             const historyCallback = function (data) {this.updateEvents(data["history"]);}
                             const boundCallback = historyCallback.bind(this);
