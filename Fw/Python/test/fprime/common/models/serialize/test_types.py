@@ -1,5 +1,4 @@
 """
-(test) bool_type.py
 
 Tests the serialization and deserialization of all the types in Fw/Python/src/fprime/common/models/serialize/
 
