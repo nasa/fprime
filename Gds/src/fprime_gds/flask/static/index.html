@@ -113,16 +113,17 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             TODO: Actually implement this properly
             -->
             <template id="dashboard-template">
-                <div>
-                    <h2>This is your Dashboard</h2>
-                    <h4>There are many like it, but this one is yours.</h4>
-
-                    <div>
-                        <!-- TODO: Break this out into its own component, or not worth it? -->
-                        <label for="config-file">Choose a Layout Configuration File:</label>
-                        <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <h2>This is your Dashboard</h2>
+                        <h4>There are many like it, but this one is yours.</h4>
+                        <div>
+                            <!-- TODO: Break this out into its own component, or not worth it? -->
+                            <label for="config-file">Choose a Layout Configuration File:</label>
+                            <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
+                        </div>
                     </div>
-                    <div ref="dashboard-widgets-container"></div>
+                    <div ref="dashboard-widgets-container" class="fp-flex-repeater"></div>
                 </div>
             </template>
             <!--

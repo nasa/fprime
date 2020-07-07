@@ -16,9 +16,28 @@ const PlaceholderTextComp = Vue.component("placeholder-text-todo", {
     template: `<pre> <slot></slot> </pre>`
 });
 
+const PlaceholderBox = Vue.component("box-container", {
+    props: {
+        title: {
+            type: String,
+            default: ""
+        },
+        color: {
+            type: String,
+            default: "rgba(0, 0, 0, 0.0)"   // Transparent
+        }
+    },
+    // TODO: Figure out better way to handle styles here, e.g. through classes?
+    template: `<div style="display: flex; flex-wrap: nowrap; width: 100%;" v-bind:style="{background: color}">
+        <h3>{{ title }}</h3>
+        <slot></slot>
+    </div>`
+});
+
 Vue.component("dashboard", {
     components: {
-        "placeholder-text-todo": PlaceholderTextComp
+        "placeholder-text-todo": PlaceholderTextComp,
+        "box-container": PlaceholderBox
     },
     template: "#dashboard-template",
 
@@ -26,7 +45,8 @@ Vue.component("dashboard", {
         return {
             fileText: "",
             creationActions: {},
-            createdComponents: []
+            createdComponents: [],
+            componentContainer: {}
         };
     },
 
@@ -88,7 +108,7 @@ Vue.component("dashboard", {
             const compInstance = new ComponentConstructor(initialOptions);
             compInstance.$slots.default = slots;
             compInstance.$mount();
-            this.$refs["dashboard-widgets-container"].appendChild(compInstance.$el);
+            this.componentContainer.appendChild(compInstance.$el);
             this.createdComponents.push(compInstance);
         },
 
@@ -104,8 +124,11 @@ Vue.component("dashboard", {
             });
         }
     },
-    created() {
+    mounted() {
         // TODO: Find a cleaner way to define this (i.e. refactor the whole mess)
+        // Have to wait until component is mounted for $refs to be initialized
+        this.componentContainer = this.$refs["dashboard-widgets-container"];
+
         const thisVueComp = this;
         this.creationActions = {
             "command-input": function() {
@@ -152,6 +175,21 @@ Vue.component("dashboard", {
                         }
                     }
                 );
+            },
+
+            "box-container": function() {
+                thisVueComp.addVueComponent(
+                    "box-container",
+                    {
+                        propsData: {
+                            title: "THE BOX",
+                            color: "orange"
+                        }
+                    }
+                );
+                // Set new container to this box
+                // TODO: Set this as the parent element as well?
+                thisVueComp.componentContainer = thisVueComp.createdComponents.slice(-1)[0].$el
             }
         };
     }
