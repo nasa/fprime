@@ -1,8 +1,5 @@
 from __future__ import print_function
 import re
-import sys
-import copy
-import functools
 from datetime import datetime, timedelta
 
 from fprime_gds.common.models.common.command import Descriptor
@@ -59,8 +56,8 @@ class SeqFileParser(object):
         """
 
             def replaceSpacesAndCommas(matchobj):
-                s = re.sub("\s", "_", matchobj.group(0))
-                s = re.sub("\,", "_", s)
+                s = re.sub(r"\s", "_", matchobj.group(0))
+                s = re.sub(r"\,", "_", s)
                 return s
 
             # ignore all spaces in quotes:
@@ -178,10 +175,10 @@ class SeqFileParser(object):
                     epoch = datetime.utcfromtimestamp(0)
                 delta = (dt - epoch).total_seconds()
             else:
-                raise GseControllerParsingException(
+                raise gseExceptions.GseControllerParsingException(
                     "Line %d: %s"
                     % (
-                        i + 1,
+                        lineNumber + 1,
                         "Invalid time descriptor '"
                         + d
                         + "' found. Descriptor should either be 'A' for absolute times or 'R' for relative times",

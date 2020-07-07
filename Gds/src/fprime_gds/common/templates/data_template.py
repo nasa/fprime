@@ -26,7 +26,6 @@ class DataTemplate(object):
             Initialized Template object
         """
         # Initialize at least id and name here
-        pass
 
     def get_id(self):
         raise NotImplementedError

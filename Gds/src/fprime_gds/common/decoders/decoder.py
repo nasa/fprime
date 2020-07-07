@@ -60,22 +60,4 @@ class Decoder(
 
 
 if __name__ == "__main__":
-    # Unit tests
-    # (don't check functionality, just test code path's for exceptions)
-
-    try:
-        decoder1 = Decoder()
-        decoder2 = Decoder()
-        decoder3 = Decoder()
-
-        decoder1.register(decoder2)
-        decoder1.register(decoder3)
-
-        decoder1.data_callback("hello")
-
-        if decoder1.decode_api("hello") != "hello":
-            print("Decoder Unit tests failed")
-        else:
-            print("Decoder Unit tests passed")
-    except:
-        print("Decoder Unit tests failed")
+    pass
