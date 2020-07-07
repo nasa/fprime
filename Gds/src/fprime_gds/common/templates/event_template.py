@@ -11,12 +11,10 @@ or cmdSeq_CS_CmdStarted
 """
 from __future__ import absolute_import
 
-from enum import Enum
-
 from . import data_template
 
 from fprime.common.models.serialize import type_base
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime_gds.common.utils.event_severity import EventSeverity
 
 
@@ -114,7 +112,7 @@ class EventTemplate(data_template.DataTemplate):
         return self.format_str
 
     def get_description(self):
-        self.description
+        return self.description
 
     def get_args(self):
         """

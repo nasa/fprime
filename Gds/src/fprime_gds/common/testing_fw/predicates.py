@@ -55,15 +55,15 @@ def is_predicate(pred):
     return False
 
 
-def get_descriptive_string(value, predicate):
+def get_descriptive_string(value, pred_function):
     """
     a helper function that formats a predicate and argument in a nice human-readable format
 
     Args:
         value: the argument of the predicate
-        predicate: a predicate function
+        pred_function: a predicate function
     """
-    return "F({}), where F(x) evaluates\n\t {}".format(value, predicate)
+    return "F({}), where F(x) evaluates\n\t {}".format(value, pred_function)
 
 
 ##########################################################################################
@@ -307,10 +307,10 @@ class is_not_a_member_of(predicate):
 # Logic predicates
 ##########################################################################################
 class always_true(predicate):
-    def __call__(self, object):
+    def __call__(self, obj):
         """
         used as a placeholder by other predicates. This is like a logical TRUE signal.
-        :param object: the object or value to evaluate
+        :param obj: the object or value to evaluate
         """
         return True
 

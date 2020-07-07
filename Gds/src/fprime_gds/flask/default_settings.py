@@ -28,7 +28,7 @@ MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # Max length of request is 32MiB
 # Gds config setup
 GDS_CONFIG = fprime_gds.common.utils.config_manager.ConfigManager()
 
-for dir in [LOG_DIR, UPLOADED_UPLINK_DEST, UPLOADS_DEFAULT_DEST, DOWNLINK_DIR]:
-    os.makedirs(dir, exist_ok=True)
+for directory in [LOG_DIR, UPLOADED_UPLINK_DEST, UPLOADS_DEFAULT_DEST, DOWNLINK_DIR]:
+    os.makedirs(directory, exist_ok=True)
 
 # TODO: load real config
