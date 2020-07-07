@@ -20,7 +20,7 @@ namespace Fw {
   void FilePacket::PathName ::
     initialize(const char *const value)
   {
-    const U32 length = ::strnlen(value, MAX_LENGTH);
+    const U8 length = static_cast<U8>(::strnlen(value, MAX_LENGTH));
     this->length = length;
     this->value = value;
   }
