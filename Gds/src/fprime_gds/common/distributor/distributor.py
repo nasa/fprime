@@ -194,7 +194,7 @@ class Distributor(object):
         self.__buf = leftover_data
 
         for raw_msg in raw_msgs:
-            (dummy_length, data_desc, msg) = self.parse_raw_msg_api(raw_msg)
+            (length, data_desc, msg) = self.parse_raw_msg_api(raw_msg)
 
             data_desc_key = data_desc_type.DataDescType(data_desc).name
 

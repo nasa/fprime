@@ -411,7 +411,7 @@ class UdpHandler(IpHandler):
         """
         Receive from the UDP handler. This involves receiving from an unconnected socket.
         """
-        (data, dummy_address) = self.socket.recvfrom(IpAdapter.MAXIMUM_DATA_SIZE)
+        (data, address) = self.socket.recvfrom(IpAdapter.MAXIMUM_DATA_SIZE)
         return data
 
     def write_impl(self, message):

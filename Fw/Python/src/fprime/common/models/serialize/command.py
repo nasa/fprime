@@ -97,7 +97,7 @@ class Command(object):
 
         ## then, serialize arguments
         # unused variables that start with dummy are ignored by pylint
-        for (dummy_arg_name, dummy_arg_desc, arg_type) in self.__arguments:
+        for (arg_name, arg_desc, arg_type) in self.__arguments:
             ser_data += arg_type.serialize()
         return ser_data
 

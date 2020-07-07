@@ -97,25 +97,14 @@ class SerializableType(type_base.BaseType):
 
         # iterate through members and serialize each one
         serStream = b""
-        # pylint allows unused variables with 'dummy_' prefix
-        for (
-            dummy_memberName,
-            memberVal,
-            dummy_format_string,
-            dummy_desc,
-        ) in self.mem_list:
+        for (memberName, memberVal, format_string, desc) in self.mem_list:
             serStream += memberVal.serialize()
 
         return serStream
 
     def deserialize(self, data, offset):
         self.__val = []
-        for (
-            dummy_memberName,
-            memberVal,
-            dummy_format_string,
-            dummy_desc,
-        ) in self.mem_list:
+        for (memberName, memberVal, format_string, desc) in self.mem_list:
             memberVal.deserialize(data, offset)
             self.__val.append(memberVal.val)
             offset += memberVal.getSize()
@@ -126,12 +115,7 @@ class SerializableType(type_base.BaseType):
 
     def getSize(self):
         size = 0
-        for (
-            dummy_memberName,
-            memberVal,
-            dummy_format_string,
-            dummy_desc,
-        ) in self.mem_list:
+        for (memberName, memberVal, format_string, desc) in self.mem_list:
             size += memberVal.getSize()
         return size
 
