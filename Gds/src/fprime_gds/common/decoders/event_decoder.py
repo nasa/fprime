@@ -103,7 +103,7 @@ class EventDecoder(decoder.Decoder):
 
         # For each argument, use the arg_obj deserialize method to get the value
         for arg in args:
-            (dummy_arg_name, dummy_arg_desc, template_arg_obj) = arg
+            (arg_name, arg_desc, template_arg_obj) = arg
 
             # Create a new instance of the argument's type object so we don't
             # use the template's object for deserialization and storage of the
