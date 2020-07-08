@@ -47,17 +47,7 @@ const CommandWrapper = Vue.component("command-wrapper", {
     template: `<command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"></command-input>`,
 
     data: function() {
-        return {
-            // TODO: Find a way to initialize this prior to mounting
-            commands: [],
-            cmdhist: [],
-            loader: undefined
-        }
-    },
-
-    created() {
-        const props = CommandMixins.setupCommands(loader.endpoints["command-dict"].data, loader);
-        ({commands: this.commands, cmdhist: this.cmdhist, loader: this.loader} = props);
+        return CommandMixins.setupCommands(loader.endpoints["command-dict"].data, loader);
     },
 
     mounted() {
@@ -73,11 +63,29 @@ const CommandWrapper = Vue.component("command-wrapper", {
     }
 });
 
+//  TODO: This should be incorporated in the original component
+const EventWrapper = Vue.component("event-wrapper", {
+    mixins: [EventMixins],
+    template: `<event-list v-bind:events="events" commands="loader.endpoints['command-dict'].data"></event-list>`,
+
+    data: function() {
+        return EventMixins.setupEvents();
+    },
+
+    mounted() {
+        // TODO: NOT ACCEPTABLE, destroys the previous history poller
+        const historyCallback = function (data) {this.updateEvents(data["history"]);}
+        const boundCallback = historyCallback.bind(this);
+        loader.registerPoller("events", boundCallback);
+    }
+});
+
 Vue.component("dashboard", {
     components: {
         "dashboard-box": DashboardBox,
         "dashboard-row": DashboardRow,
         "v-runtime-template": VRuntimeTemplate,
+        "event-wrapper": EventWrapper
     },
     template: "#dashboard-template",
 
@@ -96,7 +104,6 @@ Vue.component("dashboard", {
          */
         configureDashboard(configFile) {
             const fileReader = new FileReader();
-            // TODO: Check if better way to bind "this"?
             const thisVueComp = this;   // Reference to Vue component for use in callback; needed due to "this" changing meaning inside function
             fileReader.onload = function(event) {
                 const fileText = event.target.result;
