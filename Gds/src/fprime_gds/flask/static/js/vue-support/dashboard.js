@@ -4,42 +4,17 @@
  * Vue support for the dashboard screen, which holds a user-configurable menu
  * containing other components.
  *
- * TODO: Implement the rest of this
  */
 
 import VRuntimeTemplate from "../../third-party/js/v-runtime-template.js"
 
+import {DashboardBox} from "./dashboard-box.js";
+import {DashboardRow} from "./dashboard-row.js";
 import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
 import {loader} from "../gds.js";
 
 // TODO: Move other components into separate files
-
-const DashboardBox = Vue.component("dashboard-box", {
-    props: {
-        title: {
-            type: String,
-            default: ""
-        },
-        color: {
-            type: String,
-            default: "transparent"
-        }
-    },
-    // TODO: Figure out better way to handle styles here, e.g. through classes?
-    template: `<fieldset v-bind:style="{background: color}">
-        <legend style="background: black; color: white;">{{ title }}</legend>
-        <slot></slot>
-    </fieldset>`
-});
-
-// An element that contains/marks a horizontal row of components in the dash
-const DashboardRow = Vue.component("dashboard-row", {
-    // TODO: Figure out better way to handle styles here, e.g. through classes?
-    template: `<div style="display: flex; flex-wrap: nowrap; width: 100%;">
-        <slot></slot>
-    </div>`
-});
 
 //  TODO: This should be incorporated in the original component
 const CommandWrapper = Vue.component("command-wrapper", {
@@ -85,7 +60,6 @@ Vue.component("dashboard", {
         "dashboard-box": DashboardBox,
         "dashboard-row": DashboardRow,
         "v-runtime-template": VRuntimeTemplate,
-        "event-wrapper": EventWrapper
     },
     template: "#dashboard-template",
 
