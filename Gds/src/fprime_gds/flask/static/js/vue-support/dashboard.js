@@ -28,8 +28,16 @@ const PlaceholderBox = Vue.component("box-container", {
         }
     },
     // TODO: Figure out better way to handle styles here, e.g. through classes?
-    template: `<div style="display: flex; flex-wrap: nowrap; width: 100%;" v-bind:style="{background: color}">
-        <h3>{{ title }}</h3>
+    template: `<fieldset v-bind:style="{background: color}">
+        <legend style="background: black; color: white;">{{ title }}</legend>
+        <slot></slot>
+    </fieldset>`
+});
+
+// An element that contains/marks a horizontal row of components in the dash
+const DashboardRow = Vue.component("dashboard-row", {
+    // TODO: Figure out better way to handle styles here, e.g. through classes?
+    template: `<div style="display: flex; flex-wrap: nowrap; width: 100%;">
         <slot></slot>
     </div>`
 });
@@ -147,6 +155,7 @@ Vue.component("dashboard", {
                             CommandMixins.initializeCommands(this);
 
                             // TODO: Is this acceptable, or duplication of polling on gds.js?
+                            // NOT ACCEPTABLE, destroys the previous
                             const historyCallback = function (data) {this.updateCommandHistory(data["history"]);}
                             const boundCallback = historyCallback.bind(this);
                             loader.registerPoller("commands", boundCallback);

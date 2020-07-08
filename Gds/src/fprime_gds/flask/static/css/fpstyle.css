@@ -80,6 +80,7 @@ body, .fp-full-height {
     overflow: hidden;
     flex-grow: 1;
     position: relative;
+    min-height: 10em;
 }
 .fp-scrollable {
     position: absolute;
