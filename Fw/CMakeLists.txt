@@ -11,6 +11,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Tlm/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Prm/")
 
 # Framework subdirectories
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ArrayFile/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cfg/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFile/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Comp/")

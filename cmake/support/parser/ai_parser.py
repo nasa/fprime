@@ -24,7 +24,8 @@ BASIC_DEPENDENCIES = {
     "telemetry":    ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Tlm"],
     "parameters":   ["Fw_Cfg", "Fw_Types", "Fw_Prm"],
     "internal_interfaces": [],
-    "enum": []
+    "enum": [],
+    "array": []
 }
 # Component type importations
 KIND_DEPENDENCIES = {
@@ -156,7 +157,7 @@ def read_xml_file(root, import_base):
     if kind in KIND_DEPENDENCIES:
         dependencies.update(KIND_DEPENDENCIES[kind])
     # Import component/serialzable/port types
-    for import_type in ["import_port_type", "import_component_type", "import_serializable_type", "include_header", "import_enum_type"]:
+    for import_type in ["import_port_type", "import_component_type", "import_serializable_type", "include_header", "import_enum_type", "import_array_type"]:
         dependencies.update(read_fprime_import(import_type, root))
     # Other items based on what tags are declared here specifically
     for extra in BASIC_DEPENDENCIES.keys():
