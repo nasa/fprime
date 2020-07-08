@@ -118,7 +118,6 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         <h2>This is your Dashboard</h2>
                         <h4>There are many like it, but this one is yours.</h4>
                         <div>
-                            <!-- TODO: Break this out into its own component, or not worth it? -->
                             <label for="config-file">Choose a Layout Configuration File:</label>
                             <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
                         </div>

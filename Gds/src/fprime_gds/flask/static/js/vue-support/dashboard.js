@@ -13,10 +13,7 @@ import {CommandMixins} from "./command.js";
 import {EventMixins} from "./event.js";
 import {loader} from "../gds.js";
 
-// TODO: Delete placeholder components, move the rest into separate files
-const PlaceholderTextComp = Vue.component("placeholder-text-todo", {
-    template: `<pre> <slot></slot> </pre>`
-});
+// TODO: Move other components into separate files
 
 const DashboardBox = Vue.component("dashboard-box", {
     props: {
@@ -26,7 +23,7 @@ const DashboardBox = Vue.component("dashboard-box", {
         },
         color: {
             type: String,
-            default: "rgba(0, 0, 0, 0.0)"   // Transparent
+            default: "transparent"
         }
     },
     // TODO: Figure out better way to handle styles here, e.g. through classes?
@@ -44,12 +41,43 @@ const DashboardRow = Vue.component("dashboard-row", {
     </div>`
 });
 
+//  TODO: This should be incorporated in the original component
+const CommandWrapper = Vue.component("command-wrapper", {
+    mixins: [CommandMixins],
+    template: `<command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"></command-input>`,
+
+    data: function() {
+        return {
+            // TODO: Find a way to initialize this prior to mounting
+            commands: [],
+            cmdhist: [],
+            loader: undefined
+        }
+    },
+
+    created() {
+        const props = CommandMixins.setupCommands(loader.endpoints["command-dict"].data, loader);
+        ({commands: this.commands, cmdhist: this.cmdhist, loader: this.loader} = props);
+    },
+
+    mounted() {
+        //"this" will refer to the Vue Command-input component
+        // TODO: Avoid duplication w/ Commands constructor?
+        this.vue = this;
+        CommandMixins.initializeCommands(this);
+
+        // TODO: NOT ACCEPTABLE, destroys the previous history poller
+        const historyCallback = function (data) {this.updateCommandHistory(data["history"]);}
+        const boundCallback = historyCallback.bind(this);
+        loader.registerPoller("commands", boundCallback);
+    }
+});
+
 Vue.component("dashboard", {
     components: {
         "dashboard-box": DashboardBox,
         "dashboard-row": DashboardRow,
-        "placeholder-text-todo": PlaceholderTextComp,
-        "v-runtime-template": VRuntimeTemplate
+        "v-runtime-template": VRuntimeTemplate,
     },
     template: "#dashboard-template",
 
@@ -72,7 +100,8 @@ Vue.component("dashboard", {
             const thisVueComp = this;   // Reference to Vue component for use in callback; needed due to "this" changing meaning inside function
             fileReader.onload = function(event) {
                 const fileText = event.target.result;
-                thisVueComp.userTemplate = `${fileText}`;
+                // Wrap user content in div so Vue can display everything with single parent (otherwise, only 1st element would be displayed)
+                thisVueComp.userTemplate = `<div class="fp-flex-repeater">${fileText}</div>`;
             };
             fileReader.readAsText(configFile);
         }
