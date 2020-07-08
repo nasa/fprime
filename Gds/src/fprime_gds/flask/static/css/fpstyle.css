@@ -148,3 +148,28 @@ table {
 table td:last-child {
     width: 100%;
 }
+
+
+/**
+ * Dashboard CSS Styles for styling components specific to the Dashboard page
+ */
+.fp-dashboard-box {
+    margin: 2px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.fp-dashboard-box-title {
+    width: initial;
+    color: white;
+    background: black;
+    border-radius: 5px;
+}
+.fp-dashboard-row {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+.fp-dashboard-row > * {
+    flex-grow: 1; /* Makes items inside the row take up the remaining space horizontally */
+}

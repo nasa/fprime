@@ -6,8 +6,8 @@
  */
 
 export const DashboardRow = Vue.component("dashboard-row", {
-    // TODO: Figure out better way to handle styles here, e.g. through classes?
-    template: `<div style="display: flex; flex-wrap: nowrap; width: 100%;">
-        <slot></slot>
-    </div>`
+    template: `
+        <div class="fp-dashboard-row">
+            <slot></slot>
+        </div>`
 });
