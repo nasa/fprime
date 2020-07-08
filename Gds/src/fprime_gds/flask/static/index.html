@@ -123,7 +123,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
                         </div>
                     </div>
-                    <div ref="dashboard-widgets-container" class="fp-flex-repeater"></div>
+                    <v-runtime-template v-bind:template="userTemplate">
+                        <!-- User-specified components go here -->
+                    </v-runtime-template>
                 </div>
             </template>
             <!--
