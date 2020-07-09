@@ -7,7 +7,7 @@
 
 export const DashboardRow = Vue.component("dashboard-row", {
     template: `
-        <div class="fp-dashboard-row">
+        <div class="row no-gutters">
             <slot></slot>
         </div>`
 });
