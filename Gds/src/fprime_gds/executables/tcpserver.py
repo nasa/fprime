@@ -15,7 +15,6 @@ import struct
 import errno
 
 from fprime.constants import DATA_ENCODING
-import argparse
 from optparse import OptionParser
 
 __version__ = 0.1
