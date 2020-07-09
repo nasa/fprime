@@ -10,50 +10,6 @@ import VRuntimeTemplate from "../../third-party/js/v-runtime-template.js"
 
 import {DashboardBox} from "./dashboard-box.js";
 import {DashboardRow} from "./dashboard-row.js";
-/*//import {CommandMixins} from "./command.js";
-//import {EventMixins} from "./event.js";
-import {_loader} from "../loader.js";
-
-// TODO: Move other components into separate files
-
-//  TODO: This should be incorporated in the original component
-const CommandWrapper = Vue.component("command-wrapper", {
-    mixins: [CommandMixins],
-    template: `<command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"></command-input>`,
-
-    data: function() {
-        return CommandMixins.setupCommands(loader.endpoints["command-dict"].data, loader);
-    },
-
-    mounted() {
-        //"this" will refer to the Vue Command-input component
-        // TODO: Avoid duplication w/ Commands constructor?
-        this.vue = this;
-        CommandMixins.initializeCommands(this);
-
-        // TODO: NOT ACCEPTABLE, destroys the previous history poller
-        const historyCallback = function (data) {this.updateCommandHistory(data["history"]);}
-        const boundCallback = historyCallback.bind(this);
-        loader.registerPoller("commands", boundCallback);
-    }
-});
-
-//  TODO: This should be incorporated in the original component
-const EventWrapper = Vue.component("event-wrapper", {
-    mixins: [EventMixins],
-    template: `<event-list v-bind:events="events" commands="loader.endpoints['command-dict'].data"></event-list>`,
-
-    data: function() {
-        return EventMixins.setupEvents();
-    },
-
-    mounted() {
-        // TODO: NOT ACCEPTABLE, destroys the previous history poller
-        const historyCallback = function (data) {this.updateEvents(data["history"]);}
-        const boundCallback = historyCallback.bind(this);
-        loader.registerPoller("events", boundCallback);
-    }
-});*/
 
 Vue.component("dashboard", {
     components: {

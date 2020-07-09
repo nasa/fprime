@@ -69,14 +69,13 @@ Vue.component("channel-table", {
                 }
             ];
             // Check bounds.
-            let style = "";
             for (let i = 0; i < bounds.length; i++) {
                 let bound = bounds[i];
                 if ((bound.bounds[0] != null && value < bound.bounds[0]) ||
                     (bound.bounds[1] != null && value < bound.bounds[1])) {
                     return bound.class;
                 } else if (bound.bounds[0] != null || bound.bounds[1] != null) {
-                    style = "table-success";
+                    return "table-success";
                 }
             }
             return "";
@@ -105,4 +104,3 @@ Vue.component("channel-table", {
         }
     }
 });
-
