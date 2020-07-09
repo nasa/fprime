@@ -6,14 +6,18 @@
  *
  * @author mstarch
  */
-import {ChannelMixins} from "./channel.js";
-import {CommandMixins} from "./command.js";
-import {EventMixins} from "./event.js";
-import {UplinkMixins} from "./uplink.js";
-import {DownlinkMixins} from "./downlink.js";
-import {LogMixins} from "./log.js";
 import {config} from "../config.js"
-import './dashboard.js';    // Import is necessary so that it can find the dashboard component???
+
+// Child component imports ensures that the Vue components exist before using them
+import "./channel.js"
+import "./command.js"
+import "./downlink.js"
+import "./event.js"
+import "./log.js"
+import "./uplink.js"
+import "./dashboard.js"
+import {_datastore} from "../datastore.js";
+
 /**
  * tabbed-ect:
  *
@@ -22,7 +26,6 @@ import './dashboard.js';    // Import is necessary so that it can find the dashb
  */
 Vue.component("tabbed-etc", {
     template: "#tabetc-template",
-    props:["commands", "loader", "uploader", "running", "downfiles", "cmdhist", "events", "channels", "upfiles", "logs", "eventsActive", "channelsActive"],
     data:
         /**
          * Function to return a dictionary of data items. currentTab is set based on the initial URL.
@@ -32,7 +35,8 @@ Vue.component("tabbed-etc", {
             return {
                 "currentTab": (hash == "")? "Commanding" : hash,
                 "tabs": ["Commanding", "Events", "Channels", "Uplink", "Downlink", "Logs", "Dashboard"],
-                "config": config
+                "config": config,
+                "active": _datastore.active
             }
         },
     methods: {
@@ -56,51 +60,13 @@ Vue.component("tabbed-etc", {
          * Determines if none are active by checking if active channels or events have been detected recently.
          * @return {boolean} no active data flow
          */
-        noneActive() {
-            return !(this.eventsActive || this.channelsActive);
+        orb() {
+            let orb = false;
+            for (let i = 0; i < this.active.length; i++) {
+                orb = orb || this.active[i];
+            }
+            return orb;
         }
 
     }
 });
-
-/**
- * TabETC:
- *
- * Class implementing the vue-items used to do a tabbed version of the F´ setup. This allows it to be exported and
- * interacted with outside of the knowledge of the raw Vue component.
- */
-export class TabETCVue {
-    /**
-     * Constructs the tabbed element from the input variables.
-     * @param element: HTML element ID to render to
-     * @param commands: commands list to render in a drop down
-     * @param channels: channel templates list
-     * @param loader: loader used to handle F prime REST
-     * @param uploader: uploader used to handle F prime file uplink
-     */
-    constructor(element, commands, channels, loader, uploader) {
-        //Mixin functions for each of the components
-        Object.assign(TabETCVue.prototype, CommandMixins);
-        Object.assign(TabETCVue.prototype, EventMixins);
-        Object.assign(TabETCVue.prototype, ChannelMixins);
-        Object.assign(TabETCVue.prototype, UplinkMixins);
-        Object.assign(TabETCVue.prototype, DownlinkMixins);
-        Object.assign(TabETCVue.prototype, LogMixins);
-
-        let data = {
-            ...this.setupCommands(commands, loader),
-            ...this.setupEvents(),
-            ...this.setupChannels(channels),
-            ...this.setupLogs(),
-            ...this.setupUplink(uploader),
-            ...this.setupDownlink()
-        };
-        // Create a vue object
-        this.vue = new Vue({
-            el: element,
-            data: data
-        });
-        // Initialize the commands portion
-        this.initializeCommands();
-    }
-}

@@ -6,16 +6,22 @@
  *
  * @author mstarch
  */
-import {Loader} from "./loader.js"
-import {Uploader} from "./uploader.js"
-import {TabETCVue}  from "./vue-support/tabetc.js"
+import {_loader} from "./loader.js"
+import {_uploader} from "./uploader.js"
+import  {_datastore} from "./datastore.js";
+
+//Import all vue objects such that the components are defined
+import "./vue-support/tabetc.js"
+
+
+
 
 // Loader is used to run AJAX queries against a known endpoints. This interacts with the REST backend to load data
 // from the remainder of the GDS.
-export let loader = new Loader();
+export let loader = _loader;
 // Uploader uses the loader object to handle the file uploading extensions used to get files onto the server in
 // preparation for the file uplinker.
-let uploader = new Uploader(loader);
+let uploader = _uploader;
 
 /**
  * Constructs the vue and registers all data polling functions used to pull data into the UI. These polls are attached
@@ -24,17 +30,9 @@ let uploader = new Uploader(loader);
  * Note: this function should be called as a result of the loader's setup function completing.
  */
 function setupBindings() {
-    let tabView = new TabETCVue("#tabetc",
-        loader.endpoints["command-dict"].data,
-        loader.endpoints["channel-dict"].data,
-        loader, uploader);
-    // Register all pollers for data from the backend
-    loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
-    loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
-    loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
-    loader.registerPoller("logdata", function (data) {tabView.updateLogs(data);});
-    loader.registerPoller("upfiles", function (data) {tabView.updateUpfiles(data["files"], data["running"]);});
-    loader.registerPoller("downfiles", function (data) {tabView.updateDownfiles(data["files"]);});
+    //Startup the global datastore *before* setting-up the Vue application, as Vue needs a configured datastore
+    _datastore.startup();
+    let vue = new Vue({el: "#tabetc"});
 }
 
 /**
