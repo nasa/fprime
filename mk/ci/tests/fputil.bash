@@ -89,7 +89,7 @@ function integration_test {
         (
             cd "${WORKDIR}/test"
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests" 
-            pytest 
+            timeout --kill-after=10s 180s pytest
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID

@@ -158,7 +158,8 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     :param logs: directory to place logs
     :return: process
     """
-    gse_env = os.environ.copy().update(
+    gse_env = os.environ.copy()
+    gse_env.update(
         {
             "DICTIONARY": str(dictionary),
             "FLASK_APP": "fprime_gds.flask.app",
