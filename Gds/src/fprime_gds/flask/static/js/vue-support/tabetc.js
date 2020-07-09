@@ -15,6 +15,7 @@ import "./downlink.js"
 import "./event.js"
 import "./log.js"
 import "./uplink.js"
+import "./dashboard.js"
 import {_datastore} from "../datastore.js";
 
 /**

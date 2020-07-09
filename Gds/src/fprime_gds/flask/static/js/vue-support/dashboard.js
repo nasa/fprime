@@ -10,9 +10,9 @@ import VRuntimeTemplate from "../../third-party/js/v-runtime-template.js"
 
 import {DashboardBox} from "./dashboard-box.js";
 import {DashboardRow} from "./dashboard-row.js";
-import {CommandMixins} from "./command.js";
-import {EventMixins} from "./event.js";
-import {loader} from "../gds.js";
+/*//import {CommandMixins} from "./command.js";
+//import {EventMixins} from "./event.js";
+import {_loader} from "../loader.js";
 
 // TODO: Move other components into separate files
 
@@ -53,7 +53,7 @@ const EventWrapper = Vue.component("event-wrapper", {
         const boundCallback = historyCallback.bind(this);
         loader.registerPoller("events", boundCallback);
     }
-});
+});*/
 
 Vue.component("dashboard", {
     components: {
