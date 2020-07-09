@@ -119,7 +119,10 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         <h4>There are many like it, but this one is yours.</h4>
                         <div>
                             <label for="config-file">Choose a Layout Configuration File:</label>
-                            <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
+                            <input type="file"
+                                   name="config-file"
+                                   accept="application/xml"
+                                   v-on:change="configureDashboard($event.target.files[0])">
                         </div>
                     </div>
                     <v-runtime-template v-bind:template="userTemplate">
