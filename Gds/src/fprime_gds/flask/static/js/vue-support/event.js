@@ -7,8 +7,7 @@
  *
  * @author mstarch
  */
-import {filter, timeToString} from "./utils.js";
-import {config} from "../config.js";
+import {timeToString} from "./utils.js";
 import {_datastore} from "../datastore.js";
 
 let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
@@ -30,6 +29,14 @@ Vue.component("event-list", {
         fields: {
             type: Array,
             default: null
+        },
+        /**
+         * The search text to initialize the table filter with (defaults to
+         * nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
         }
     },
     data: function() {

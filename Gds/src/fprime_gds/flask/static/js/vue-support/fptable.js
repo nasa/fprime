@@ -273,10 +273,23 @@ Vue.component("fp-table", {
         clearRows: {
             type: Function,
             default: null
+        },
+        /**
+         * The search text to initialize the filter with (defaults to nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
         }
     },
     // Required data items (unique for each table instance)
-    data: function() {return {matching: [], editing: false, view: []}},
+    data: function() {
+        return {
+            matching: (this.filterText) ? [this.filterText] : [],
+            editing: false,
+            view: []
+        }
+    },
     methods: {
         /**
          * Process the checked-child message. This should add or remove names from the view.

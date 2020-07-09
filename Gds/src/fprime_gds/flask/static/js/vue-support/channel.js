@@ -25,6 +25,14 @@ Vue.component("channel-table", {
         fields: {
             type: Array,
             default: null
+        },
+        /**
+         * The search text to initialize the table filter with (defaults to
+         * nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
         }
     },
     data: function() {
