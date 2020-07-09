@@ -5,16 +5,17 @@
  * backend. This requires a special endpoint, and a special upload call that can set the destination and construct the
  * file upload packet.
  *
+ * The primary class Uploader is designed as a singleton and should be used and exported once.
  * @author mstarch
  */
+import {_loader} from "./loader.js";
+
 export class Uploader {
     /**
      * Setup the endpoint, and wrap a supplied Loader object.
-     * @param loader: loader used for AJAX queries
      */
-    constructor(loader) {
-        this.endpoint = "/upload/files"
-        this.loader = loader
+    constructor() {
+        this.endpoint = "/upload/files";
     }
     /**
      * Takes in a list of files that have been selected by the files input type, and a destination (on the embedded
@@ -26,13 +27,13 @@ export class Uploader {
      */
     upload(files, destination) {
         return new Promise((success, error) => {
-            this.loader.load("/upload/destination", "PUT", {"destination": destination}).then( () => {
+            _loader.load("/upload/destination", "PUT", {"destination": destination}).then( () => {
                 let data = new FormData();
                 while(0 < files.length) {
                     let file = files.shift();
                     data.append(file.file.name, file.file);
                 }
-                this.loader.load(this.endpoint, "POST", data, false).then(success).catch(error);
+                _loader.load(this.endpoint, "POST", data, false).then(success).catch(error);
             });
         });
     }
@@ -41,14 +42,14 @@ export class Uploader {
      * @return {Promise<any> | number | Promise<boolean> | void | boolean}
      */
     pause() {
-        return this.loader.load("/upload/files", "PUT", {"action": "pause-all"});
+        return _loader.load("/upload/files", "PUT", {"action": "pause-all"});
     }
     /**
      * Unpause the uplinker. This will send the command to the backend to unpause.
      * @return {Promise<any> | number | Promise<boolean> | void | boolean}
      */
     unpause() {
-        return this.loader.load("/upload/files", "PUT", {"action": "unpause-all"});
+        return _loader.load("/upload/files", "PUT", {"action": "unpause-all"});
     }
     /**
      * Send a command to the server to command a specific file. This  allows files to be canceled and/or removed from
@@ -58,6 +59,7 @@ export class Uploader {
      * @return {Promise<any> | number | Promise<boolean> | void | boolean}
      */
     command(file, action) {
-        return this.loader.load("/upload/files", "PUT", {"source": file, "action": action});
+        return _loader.load("/upload/files", "PUT", {"source": file, "action": action});
     }
 };
+export let _uploader = new Uploader();

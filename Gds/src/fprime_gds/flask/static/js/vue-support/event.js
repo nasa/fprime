@@ -9,6 +9,7 @@
  */
 import {filter, timeToString} from "./utils.js";
 import {config} from "../config.js";
+import {_datastore} from "../datastore.js";
 
 let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
 
@@ -19,7 +20,21 @@ let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
  * needed method to configure fp-table to render events.
  */
 Vue.component("event-list", {
-    props:["events", "commands"],
+    props: {
+        /**
+         * fields:
+         *
+         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
+         * this object's display.
+         */
+        fields: {
+            type: Array,
+            default: null
+        }
+    },
+    data: function() {
+        return {"events": _datastore.events, "commands": _datastore.commands};
+    },
     template: "#event-list-template",
     methods: {
         /**
@@ -81,73 +96,3 @@ Vue.component("event-list", {
         }
     }
 });
-/**
- * EventMixins:
- *
- * This set of functions should be mixed in as member functions to the F´ wrappers around the above Vue.js component.
- * These provide the functions required to update events on the fly.
- *
- * Note: to mixin these functions: Object.assign(EventMixins)
- */
-export let EventMixins = {
-    /**
-     * Update the list of events with the supplied new list of events.
-     * @param newEvents: new full list of events to render
-     */
-    updateEvents(newEvents) {
-        let timeout = config.dataTimeout * 1000;
-        this.vue.events.push(...newEvents);
-        // Set active events, and register a timeout to turn it off again
-        if (newEvents.length > 0) {
-            let vue_self = this.vue;
-            vue_self.eventsActive = true;
-            clearTimeout(this.eventTimeout);
-            this.eventTimeout = setTimeout(() => vue_self.eventsActive = false, timeout);
-        }
-    },
-    /**
-     * Sets up the needed event data items.
-     * @return {[], []} an empty list to fill with events
-     */
-    setupEvents() {
-        return {"events": [], "eventsActive": false};
-    },
-
-    methods: {
-        // TODO: Exposes the methods to vue components without explicit need to assign them; should go with one style or the other to avoid duplicate code?
-        updateEvents(newEvents) {
-            let timeout = config.dataTimeout * 1000;
-            this.events.push(...newEvents);
-            // Set active events, and register a timeout to turn it off again
-            if (newEvents.length > 0) {
-                let vue_self = this;
-                vue_self.eventsActive = true;
-                clearTimeout(this.eventTimeout);
-                this.eventTimeout = setTimeout(() => vue_self.eventsActive = false, timeout);
-            }
-        }
-    }
-};
-
-/**
- * EventView:
- *
- * A wrapper for the event-list viewable. This is stand-alone and could be used anywhere that an events list is needed.
- * It will setup the Vue.js component and mixin the above needed functions.
- *
- * @author mstarch
- */
-export class EventView {
-    /**
-     * Creates a ChannelView that delegates to a Vue.js view.
-     * @param elemid: HTML ID of the element to render to
-     */
-    constructor(elemid) {
-        Object.assign(EventView.prototype, EventMixins);
-        this.vue = new Vue({
-            el: elemid,
-            data: this.setupEvents()
-        });
-    }
-
-}

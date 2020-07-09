@@ -6,16 +6,30 @@
  *
  * @author mstarch
  */
-import {filter, timeToString} from "./utils.js"
+import {timeToString} from "./utils.js"
 import "./fptable.js";
-import {config} from "../config.js";
+import {_datastore} from "../datastore.js";
 /**
  * channel-table:
  *
  * Manages the full channel table. This includes calculating the filtered channels based on a given filtering function.
  */
 Vue.component("channel-table", {
-    props:["channels"],
+    props: {
+        /**
+         * fields:
+         *
+         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
+         * this object's display.
+         */
+        fields: {
+            type: Array,
+            default: null
+        }
+    },
+    data: function() {
+        return {"channels": _datastore.channels};
+    },
     template: "#channel-table-template",
     // Defined methods
     methods: {
@@ -91,67 +105,4 @@ Vue.component("channel-table", {
         }
     }
 });
-/**
- * ChannelMixins:
- *
- * These functions mixin to allow the use of the above channel view. This means that it will collapse a list of readings
- * to a unique set of channels.
- */
-export let ChannelMixins = {
-    /**
-     * Update the list of channels with the supplied new list of channels.
-     * @param newChannels: new full list of channels to render
-     */
-    updateChannels(newChannels) {
-        let timeout = config.dataTimeout * 1000;
-        // Loop over all dictionaries
-        for (let i = 0; i < newChannels.length; i++) {
-            let channel = newChannels[i];
-            let id = channel.id;
-            this.vue.channels[id] = channel;
-        }
-        // Set active channels, and register a timeout to turn it off again
-        if (newChannels.length > 0) {
-            let vue_self = this.vue;
-            vue_self.channelsActive = true;
-            clearTimeout(this.channelTimeout);
-            this.channelTimeout = setTimeout(() => vue_self.channelsActive = false, timeout);
-        }
-    },
-    /**
-     * Sets up the needed channel data items.  Adding new keys to an object won't be detected, so we will pre-populate
-     * the object with the items from the template.
-     * @param templates: templates for each channel
-     * @return {"channels": {}} an empty list to fill with channels
-     */
-    setupChannels(templates) {
-        let channels = {};
-        // Create a list of empty items
-        for (let key in templates) {
-            channels[key] = {id: key, template: templates[key], val: null, time: null};
-        }
-        return {"channels": channels, "channelsActive": false};
-    }
-};
 
-/**
- * ChannelView:
- *
- * A wrapper for the channel-list viewable. This particular instance is supported by Vue.js in order to render the
- * channels as a table.
- *
- * @author mstarch
- */
-export class ChannelView {
-    /**
-     * Creates a ChannelView that delegates to a Vue.js view.
-     * @param elemid: HTML ID of the element to render to
-     */
-    constructor(elemid, loader) {
-        Object.assign(ChannelView.prototype, ChannelMixins);
-        this.vue = new Vue({
-            el: elemid,
-            data: this.setupChannels(loader)
-        });
-    }
-}

@@ -13,7 +13,13 @@
  */
 import {config} from "./config.js";
 
-export class Loader {
+/**
+ * Loader:
+ *
+ * Loader that is used to pull in data from the REST API. This loader is intended to be a singleton and thus will be
+ * instantiated and exported once.
+ */
+class Loader {
     /**
      * Sets up the list of endpoints, and preps for the initial loading of the dictionaries.
      */
@@ -182,5 +188,6 @@ export class Loader {
             }
         }
     }
-}
+};
+export let _loader = new Loader();
 

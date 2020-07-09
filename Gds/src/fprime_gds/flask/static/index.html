@@ -40,20 +40,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
         where Vue JS is allowed to display its items.
         -->
         <div id="tabetc" class="container-fluid fp-flex-repeater fp-full-height">
-            <tabbed-etc
-                    v-bind:commands="commands"
-                    v-bind:loader="loader"
-                    v-bind:uploader="uploader"
-                    v-bind:events="events"
-                    v-bind:channels="channels"
-                    v-bind:cmdhist="cmdhist"
-                    v-bind:upfiles="upfiles"
-                    v-bind:downfiles="downfiles"
-                    v-bind:running="running"
-                    v-bind:logs="logs"
-                    v-bind:events-active="eventsActive"
-                    v-bind:channels-active="channelsActive"
-            ></tabbed-etc>
+            <tabbed-etc></tabbed-etc>
         </div>
         <!--
         Templates:
@@ -88,21 +75,20 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                 </form>
                             </ul>
                             <span class="navbar-brand">
-                                    <img v-bind:src="noneActive ? config.dataErrorIcon : config.dataSuccessIcon"
+                                    <img v-bind:src="orb ? config.dataSuccessIcon : config.dataErrorIcon"
                                          width="30" height="30">
                                 </span>
                         </nav>
                         <h1>{{ config.projectName }}: {{ currentTab }}</h1>
                     </div>
                     <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
-                    <command-input v-bind:commands="commands" v-bind:loader="loader" v-bind:cmdhist="cmdhist"
-                                   v-show="currentTab == 'Commanding'"></command-input>
-                    <channel-table v-bind:channels="channels" v-show="currentTab == 'Channels'"></channel-table>
-                    <event-list v-bind:events="events" v-show="currentTab == 'Events'" v-bind:commands="commands"></event-list>
-                    <uplink v-bind:upfiles="upfiles" v-bind:uploader="uploader" v-bind:running="running" v-show="currentTab == 'Uplink'"></uplink>
-                    <downlink v-bind:downfiles="downfiles" v-show="currentTab == 'Downlink'"></downlink>
-                    <logging v-bind:logs="logs" v-show="currentTab == 'Logs'"></logging>
-                    <dashboard v-show="currentTab == 'Dashboard'"></dashboard>
+                    <command-input v-show="currentTab == 'Commanding'"></command-input>
+                    <channel-table v-show="currentTab == 'Channels'"></channel-table>
+                    <event-list    v-show="currentTab == 'Events'"></event-list>
+                    <uplink        v-show="currentTab == 'Uplink'"></uplink>
+                    <downlink      v-show="currentTab == 'Downlink'"></downlink>
+                    <logging       v-show="currentTab == 'Logs'"></logging>
+                    <dashboard     v-show="currentTab == 'Dashboard'"></dashboard>
                 </div>
             </template>
             <!--
@@ -123,7 +109,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <input type="file" name="config-file" v-on:change="configureDashboard($event.target.files[0])">
                         </div>
                     </div>
-                    <div ref="dashboard-widgets-container" class="fp-flex-repeater"></div>
+                    <div ref="dashboard-widgets-container" class="fp-flex-repeater">
+                    </div>
                 </div>
             </template>
             <!--
@@ -189,6 +176,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                   :item-to-columns="columnify"
                                   :item-to-unique="keyify"
                                   :click-action="clickAction"
+                                  :fields="fields"
                         ></fp-table>
                     </div>
                 </div>
@@ -240,6 +228,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                           :row-style="style"
                           :item-to-unique="keyify"
                           :clear-rows="clearEvents"
+                          :fields="fields"
                 ></fp-table>
             </template>
             <!--
@@ -256,6 +245,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :support-views="true"
                          :item-to-view-name="itemToName"
                          :item-hide="channelHider"
+                         :fields="fields"
                ></fp-table>
             </template>
             <!-- Uplink;
@@ -391,7 +381,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                             <input type="checkbox" v-on:input="checkAll" ref="allbox"
                                                 :checked="view.length == items.length">
                                         </th>
-                                        <th v-for="column in headerColumns">{{ column }}</th>
+                                        <th v-for="column in calculatedHeaderColumns">{{ column }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -404,6 +394,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                         v-on:row-checked="checkedChild"
                                         :click-action="clickAction"
                                         :all-items="filteredItems"
+                                        :visible="visibleIndicies"
                                     >
                                     </tr>
                                 </tbody>
