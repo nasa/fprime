@@ -59,11 +59,9 @@ class StandardPipeline(object):
         :param config: config object used when constructing the pipeline.
         :param dictionary: dictionary path. Used to setup loading of dictionaries.
         :param down_store: downlink storage directory
-        :param logging_prefix: logging prefix. Logs will be placed in a dated directory under this prefix
+        :param logging_prefix: logging prefix. Defaults to not logging at all.
         :param packet_spec: location of packetized telemetry XML specification.
         """
-        if logging_prefix is None:
-            logging_prefix = StandardPipeline.get_dated_logging_dir()
         # Loads the distributor and client socket
         self.distributor = fprime_gds.common.distributor.distributor.Distributor(config)
         self.client_socket = (
@@ -85,14 +83,15 @@ class StandardPipeline(object):
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
         # Final setup step is to make a logging directory, and register in the logger
-        self.setup_logging(logging_prefix)
+        if logging_prefix:
+            self.setup_logging(logging_prefix)
 
     @classmethod
     def get_dated_logging_dir(cls, prefix=os.path.expanduser("~")):
         """
         Sets up the dated subdirectory based upon a given prefix
         :param prefix:
-        :return:
+        :return: Path to new directory where logs will be stored for this pipeline
         """
         # Setup log file location
         dts = datetime.datetime.now()
