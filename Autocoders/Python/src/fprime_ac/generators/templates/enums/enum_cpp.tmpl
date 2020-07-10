@@ -33,9 +33,7 @@ namespace ${namespace} {
   // Constructors
   // ----------------------------------------------------------------------
 
-  #for $com in $comment:
-  //! $com
-  #end for  
+  //! $comment
   ${name} :: ${name}(void):Serializable()
   {
     this->e = (t)0;
