@@ -43,11 +43,8 @@ Serialized command format:
 from __future__ import absolute_import
 
 from . import encoder
-from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime.common.models.serialize.u32_type import U32Type
 from fprime_gds.common.utils.data_desc_type import DataDescType
-
-import binascii
 
 
 class CmdEncoder(encoder.Encoder):
