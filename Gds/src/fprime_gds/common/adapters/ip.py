@@ -55,7 +55,6 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         will be created, if the interval is not none.
         """
         self.stop = False
-        self.keepalive = None
         self.tcp = TcpHandler(address, port)
         self.udp = UdpHandler(address, port)
         self.thtcp = None
@@ -77,14 +76,13 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             self.thudp.start()
             # Start up a keep-alive ping if desired. This will hit the TCP uplink, and die if the connection is down
             if IpAdapter.KEEPALIVE_INTERVAL is not None:
-                self.keepalive = threading.Thread(
+                threading.Thread(
                     target=self.th_alive, args=[float(self.KEEPALIVE_INTERVAL)]
                 ).start()
         except (ValueError, TypeError) as exc:
             LOGGER.error(
-                "Failed to start keep-alive thread. {}: {}".format(
-                    type(exc).__name__, str(exc)
-                )
+                "Failed to start keep-alive thread. %s: %s"
+                % (type(exc).__name__, str(exc))
             )
 
     def close(self):
@@ -184,7 +182,7 @@ class IpHandler(object):
         self,
         address,
         port,
-        type,
+        adapter_type,
         server=True,
         logger=logging.getLogger("ip_handler"),
         post_connect=None,
@@ -193,10 +191,10 @@ class IpHandler(object):
         Initialize this handler. This will set the variables, and start up the internal receive thread.
         :param address: address of the handler
         :param port: port of the handler
-        :param type: type of this adapter. socket.SOCK_STREAM or socket.SOCK_DGRAM
+        :param adapter_type: type of this adapter. socket.SOCK_STREAM or socket.SOCK_DGRAM
         """
         self.running = True
-        self.type = type
+        self.type = adapter_type
         self.address = address
         self.next_connect = 0
         self.port = port
@@ -229,11 +227,12 @@ class IpHandler(object):
                     self.open_impl()
                     self.connected = IpHandler.CONNECTED
                     self.logger.info(
-                        "{} connected to {}:{}".format(
+                        "%s connected to %s:%d",
+                        (
                             "Server" if self.server else "Client",
                             self.address,
                             self.port,
-                        )
+                        ),
                     )
                     # Post connect handshake
                     if self.post_connect is not None:
@@ -243,9 +242,8 @@ class IpHandler(object):
                 return False
             except socket.error as exc:
                 self.logger.warning(
-                    "Failed to open socket at {}:{}, retrying: {}: {}".format(
-                        self.address, self.port, type(exc).__name__, str(exc)
-                    )
+                    "Failed to open socket at %s:%d, retrying: %s: %s",
+                    (self.address, self.port, type(exc).__name__, str(exc)),
                 )
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()
@@ -280,9 +278,8 @@ class IpHandler(object):
             if self.running:
                 self.close()
                 self.logger.warning(
-                    "Read failure attempting reconnection. {}: {}".format(
-                        type(exc).__name__, str(exc)
-                    )
+                    "Read failure attempting reconnection. %s: %s",
+                    (type(exc).__name__, str(exc)),
                 )
                 self.open()
         return b""
@@ -300,7 +297,7 @@ class IpHandler(object):
         except socket.error as exc:
             if self.running:
                 self.logger.warning(
-                    "Write failure: {}: {}".format(type(exc).__name__, str(exc))
+                    "Write failure: %s: %s", (type(exc).__name__, str(exc))
                 )
         return False
 
