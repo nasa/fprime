@@ -140,6 +140,22 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 </div>
             </template>
             <!--
+            Command History:
+
+            Displays a list of previously-sent commands.
+            -->
+            <template id="command-history-template">
+                <div class="fp-flex-repeater">
+                    <fp-table :header-columns="['Command Time', 'Command Id', 'Command Mnemonic', 'Command Args']"
+                              :items="cmdhist"
+                              :item-to-columns="columnify"
+                              :item-to-unique="keyify"
+                              :fields="fields"
+                              :filter-text="filterText"
+                    ></fp-table>
+                </div>
+            </template>
+            <!--
             Command Input:
 
             Displays a list of selectable commands. It also displays the list of arguments available to be sent with the
@@ -169,19 +185,6 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                 Send Command
                             </button>
                         </div>
-                    </div>
-                    <div class="fp-flex-repeater">
-                        <div class="fp-flex-header">
-                            <h2>Command History</h2>
-                        </div>
-                        <fp-table :header-columns="['Command Time', 'Command Id', 'Command Mnemonic', 'Command Args']"
-                                  :items="cmdhist"
-                                  :item-to-columns="columnify"
-                                  :item-to-unique="keyify"
-                                  :click-action="clickAction"
-                                  :fields="fields"
-                                  :filter-text="filterText"
-                        ></fp-table>
                     </div>
                 </div>
             </template>

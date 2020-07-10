@@ -88,7 +88,12 @@ Vue.component("command-input", {
     },
     data: function() {
         let selected = _datastore.commands["cmdDisp.CMD_NO_OP"];
-        return {"commands": _datastore.commands, "loader": _loader, "cmdhist": _datastore.command_history, "matching": "", "selected": selected, "active": false}
+        return {
+            "commands": _datastore.commands,
+            "loader": _loader,
+            "selected": selected,
+            "active": false
+        }
     },
     template: "#command-input-template",
     methods: {
@@ -138,34 +143,6 @@ Vue.component("command-input", {
                     }
                     _self.active = false;
                 });
-        },
-        /**
-         * Action to perform on a row when it has ben clicked by the user.
-         * @param item: item to click
-         */
-        clickAction(item) {
-            this.selected = item.template;
-            this.selected.args = [...item.args];
-        },
-        /**
-         * Converts a given item into columns.
-         * @param item: item to convert to columns
-         */
-        columnify(item) {
-            let values = [];
-            for (let i = 0; i < item.args.length; i++) {
-                values.push(item.args[i].value);
-            }
-            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, values];
-        },
-        /**
-         * Take the given item and converting it to a unique key by merging the id and time together with a prefix
-         * indicating the type of the item. Also strip spaces.
-         * @param item: item to convert
-         * @return {string} unique key
-         */
-        keyify(item) {
-            return "cmd-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         }
     },
     computed: {
@@ -187,6 +164,68 @@ Vue.component("command-input", {
                     }
                     return 1;
                 });
+        }
+    }
+});
+
+/**
+ * command-history:
+ *
+ * Displays a list of previously-sent commands to the GDS.
+ */
+/**
+ * command-input:
+ *
+ * Input command form Vue object. This allows for sending commands from the GDS.
+ */
+Vue.component("command-history", {
+    props: {
+        /**
+         * fields:
+         *
+         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
+         * this object's display.
+         */
+        fields: {
+            type: Array,
+            default: null
+        },
+        /**
+         * The search text to initialize the table filter with (defaults to
+         * nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
+        }
+    },
+    data: function() {
+        return {
+            "cmdhist": _datastore.command_history,
+            "matching": ""
+        }
+    },
+    template: "#command-history-template",
+    methods: {
+        /**
+         * Converts a given item into columns.
+         * @param item: item to convert to columns
+         */
+        columnify(item) {
+            let values = [];
+            for (let i = 0; i < item.args.length; i++) {
+                values.push(item.args[i].value);
+            }
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, values];
+        },
+        /**
+         * Take the given item and converting it to a unique key by merging the id and time together with a prefix
+         * indicating the type of the item. Also strip spaces.
+         * @param item: item to convert
+         * @return {string} unique key
+         */
+        keyify(item) {
+            return "cmd-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         }
     }
 });
