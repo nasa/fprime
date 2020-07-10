@@ -5,7 +5,8 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
 from . import type_base
 
 
@@ -60,18 +61,3 @@ class U16Type(type_base.BaseType):
 
     def __repr__(self):
         return "U16"
-
-
-if __name__ == "__main__":
-    print("U16")
-    try:
-        val = U16Type(1000)
-        print("Val: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = U16Type()
-        val2.deserialize(buff, len(buff))
-        print("Deser: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

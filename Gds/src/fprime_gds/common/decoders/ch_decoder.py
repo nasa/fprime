@@ -23,7 +23,6 @@ from fprime_gds.common.decoders.decoder import Decoder
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.type_exceptions import *
 
 
 class ChDecoder(Decoder):

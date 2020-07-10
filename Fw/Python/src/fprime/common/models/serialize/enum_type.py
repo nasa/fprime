@@ -4,8 +4,11 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-import struct
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
+from .type_exceptions import EnumMismatchException
+from .type_exceptions import NotInitializedException
+
 from . import type_base
 
 
@@ -23,7 +26,7 @@ class EnumType(type_base.BaseType):
     @param: val = "member name" Optional member name for serializing only.
     """
 
-    def __init__(self, typename="", enum_dict={"UNDEFINED": 0}, val=None):
+    def __init__(self, typename="", enum_dict=None, val=None):
         """
         Constructor
         """
@@ -40,6 +43,10 @@ class EnumType(type_base.BaseType):
             raise TypeMismatchException(type(str()), type(val))
 
         self.__typename = typename
+
+        # Check if enum is None
+        if enum_dict is None:
+            enum_dict = {"UNDEFINED": 0}
 
         # Check enum is a dict
         if not type(enum_dict) == type(dict()):
@@ -123,19 +130,3 @@ class EnumType(type_base.BaseType):
 
     def __repr__(self):
         return "Enum"
-
-
-if __name__ == "__main__":
-    print("ENUM")
-    try:
-        members = {"MEMB1": 0, "MEMB2": 6, "MEMB3": 9}
-        print("Members: ", members)
-        val = EnumType("SomeEnum", members, "MEMB3")
-        print("Value: %s" % val.val)
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        val2 = EnumType("SomeEnum", members)
-        val2.deserialize(buff, len(buff))
-        print("Deserialize: %s" % val2.val)
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

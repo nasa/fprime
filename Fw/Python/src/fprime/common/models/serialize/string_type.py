@@ -11,7 +11,10 @@ import sys
 
 from fprime.constants import DATA_ENCODING
 
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import NotInitializedException
+from .type_exceptions import StringSizeException
+from .type_exceptions import DeserializeException
 from . import type_base
 
 
@@ -105,17 +108,3 @@ class StringType(type_base.BaseType):
 
     def __repr__(self):
         return "String"
-
-
-if __name__ == "__main__":
-    print("string")
-    try:
-        val = StringType("This is a string")
-        print("Value: %s" % val.val)
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        val2 = StringType()
-        val2.deserialize(buff, 0)
-        print("Deserialize: %s" % val2.val)
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

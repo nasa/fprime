@@ -2,7 +2,6 @@
 @brief Class to log raw binary input and output as well as telemetry and events
 """
 
-import datetime
 import os
 
 import fprime_gds.common.handlers

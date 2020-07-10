@@ -4,7 +4,8 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
 from . import type_base
 
 
@@ -59,18 +60,3 @@ class U32Type(type_base.BaseType):
 
     def __repr__(self):
         return "U32"
-
-
-if __name__ == "__main__":
-    print("U32")
-    try:
-        val = U32Type(1000000)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = U32Type()
-        val2.deserialize(buff, len(buff))
-        print("Deserialize: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())
