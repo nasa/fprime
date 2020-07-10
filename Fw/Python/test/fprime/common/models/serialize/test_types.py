@@ -177,14 +177,6 @@ def test_time_type():
     Tests the TimeType serialization and deserialization
     """
     TIME_SIZE = 11
-    # test_buff = bytearray(
-    #     "\x01\x02\x03\x00\x02\x03\x00\x00\x00\x04\x00\x00\x00\x05", "utf-8"
-    # )
-    # test_offset = 3
-    # test_base = 2
-    # test_context = 3
-    # test_secs = 4
-    # test_usecs = 5
 
     in_no_err_list = [
         (TimeBase["TB_NONE"].value, 1, 100, 999999),

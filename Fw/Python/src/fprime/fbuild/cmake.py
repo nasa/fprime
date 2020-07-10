@@ -545,7 +545,7 @@ class CMakeHandler(object):
                     line = key.fileobj.readline().decode().replace("\r\n", "\n")
                 # Some systems (like running inside Docker) raise an io error instead of returning "" when the device
                 # is ended. Not sure why this is, but the effect is the same, on IOError assume end-of-input
-                except IOError as dummy_ioe:
+                except IOError:
                     line = ""
                 appendable.append(line)
                 # Streams are EOF when the line returned is empty. Once this occurs, we are responsible for closing the

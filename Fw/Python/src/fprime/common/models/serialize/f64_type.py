@@ -56,7 +56,3 @@ class F64Type(type_base.BaseType):
 
     def __repr__(self):
         return "F64"
-
-
-if __name__ == "__main__":
-    pass

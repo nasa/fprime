@@ -118,7 +118,3 @@ class SerializableType(type_base.BaseType):
         for (memberName, memberVal, format_string, desc) in self.mem_list:
             size += memberVal.getSize()
         return size
-
-
-if __name__ == "__main__":
-    pass

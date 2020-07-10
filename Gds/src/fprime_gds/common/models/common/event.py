@@ -114,7 +114,3 @@ class Event(object):
 
     def getArgs(self):
         return self.__arguments
-
-
-if __name__ == "__main__":
-    pass

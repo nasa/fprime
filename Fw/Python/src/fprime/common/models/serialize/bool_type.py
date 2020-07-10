@@ -65,7 +65,3 @@ class BoolType(type_base.BaseType):
 
     def __repr__(self):
         return "Bool"
-
-
-if __name__ == "__main__":
-    pass

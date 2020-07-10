@@ -131,7 +131,3 @@ class ChTemplate(data_template.DataTemplate):
 
     def get_high_red(self):
         return self.high_red
-
-
-if __name__ == "__main__":
-    pass

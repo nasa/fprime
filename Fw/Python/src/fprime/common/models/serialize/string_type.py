@@ -108,7 +108,3 @@ class StringType(type_base.BaseType):
 
     def __repr__(self):
         return "String"
-
-
-if __name__ == "__main__":
-    pass

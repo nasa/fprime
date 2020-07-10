@@ -61,7 +61,3 @@ class U8Type(type_base.BaseType):
 
     def __repr__(self):
         return "U8"
-
-
-if __name__ == "__main__":
-    pass
