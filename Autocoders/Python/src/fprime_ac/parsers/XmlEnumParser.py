@@ -55,7 +55,7 @@ class XmlEnumParser(object):
 
         self.__xml_filename = xml_file
         self.__items = []
-        self.__comment = []
+        self.__comment = None
         
         self.Config = ConfigManager.ConfigManager.getInstance()
 
@@ -106,7 +106,7 @@ class XmlEnumParser(object):
                 if not 'value' in item:
                     item['value'] = ""
             elif enum_tag.tag == 'comment':
-                self.__comment.append(enum_tag.text)
+                self.__comment = enum_tag.text
 
 
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
