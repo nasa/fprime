@@ -82,7 +82,6 @@ class Command(object):
         self.__arguments = arguments
 
         # If part of a sequence we need to set these as well
-        # @todo: Need setter and getters
         self.setSeconds(seconds)
         self.setUseconds(useconds)
         self.setDescriptor(descriptor)
@@ -96,7 +95,6 @@ class Command(object):
         ser_data = opcode.serialize()
 
         ## then, serialize arguments
-        # unused variables that start with dummy are ignored by pylint
         for (arg_name, arg_desc, arg_type) in self.__arguments:
             ser_data += arg_type.serialize()
         return ser_data

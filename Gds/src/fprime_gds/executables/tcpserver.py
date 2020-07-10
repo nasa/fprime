@@ -541,8 +541,6 @@ def main(argv=None):
         server_thread.start()
         udp_server_thread.daemon = False
         udp_server_thread.start()
-        # p = os.getpid()
-        # print "Process ID: %s" % p
 
         while not shutdown_event.is_set():
             server_thread.join(timeout=5.0)

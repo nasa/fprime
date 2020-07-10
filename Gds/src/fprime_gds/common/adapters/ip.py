@@ -43,12 +43,10 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     both. This data is concatenated and returned up the stack for processing.
     """
 
-    KEEPALIVE_INTERVAL = (
-        0.500  # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
-    )
-    KEEPALIVE_DATA = (
-        b"sitting well"
-    )  # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
+    # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
+    KEEPALIVE_INTERVAL = 0.500
+    # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
+    KEEPALIVE_DATA = b"sitting well"
     MAXIMUM_DATA_SIZE = 4096
 
     def __init__(self, address, port):

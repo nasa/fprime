@@ -57,7 +57,3 @@ class Decoder(
         :param data: binary data to decode
         :return: decoded data object
         """
-
-
-if __name__ == "__main__":
-    pass

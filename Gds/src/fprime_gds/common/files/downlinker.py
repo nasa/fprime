@@ -192,7 +192,3 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     @property
     def directory(self):
         return self.__directory
-
-
-if __name__ == "__main__":
-    pass

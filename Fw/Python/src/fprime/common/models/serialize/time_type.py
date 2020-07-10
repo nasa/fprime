@@ -21,7 +21,6 @@ from __future__ import absolute_import
 
 import datetime
 
-# from pytz import TimeBase
 from enum import Enum
 import math
 
@@ -537,7 +536,3 @@ def ser_deser_test(t_base, t_context, secs, usecs, should_err=False):
             return True
         else:
             return False
-
-
-if __name__ == "__main__":
-    pass

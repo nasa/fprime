@@ -61,7 +61,3 @@ class U16Type(type_base.BaseType):
 
     def __repr__(self):
         return "U16"
-
-
-if __name__ == "__main__":
-    pass

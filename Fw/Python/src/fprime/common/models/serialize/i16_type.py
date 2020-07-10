@@ -62,7 +62,3 @@ class I16Type(type_base.BaseType):
 
     def __repr__(self):
         return "I16"
-
-
-if __name__ == "__main__":
-    pass

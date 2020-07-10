@@ -10,24 +10,6 @@ from fprime.common.models.serialize.type_exceptions import TypeException
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime.common.models.serialize.type_base import BaseType
 
-# from fprime.common.models.serialize.bool_type import *
-# from fprime.common.models.serialize.enum_type import *
-# from fprime.common.models.serialize.f32_type import *
-# from fprime.common.models.serialize.f64_type import *
-
-# from fprime.common.models.serialize.u8_type import *
-# from fprime.common.models.serialize.u16_type import *
-# from fprime.common.models.serialize.u32_type import *
-# from fprime.common.models.serialize.u64_type import *
-
-# from fprime.common.models.serialize.i8_type import *
-# from fprime.common.models.serialize.i16_type import *
-# from fprime.common.models.serialize.i32_type import *
-# from fprime.common.models.serialize.i64_type import *
-
-# from fprime.common.models.serialize.string_type import *
-# from fprime.common.models.serialize.serializable_type import *
-
 
 class Channel(object):
     """
@@ -188,7 +170,3 @@ class Channel(object):
         if not ch == False or not ch == True:
             ch = True
         self.__changed = ch
-
-
-if __name__ == "__main__":
-    pass

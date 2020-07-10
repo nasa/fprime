@@ -199,7 +199,3 @@ class ConfigManager(configparser.ConfigParser):
         self.add_section(section)
         for (key, value) in self.__prop[section].items():
             self.set(section, key, str(value))
-
-
-if __name__ == "__main__":
-    pass

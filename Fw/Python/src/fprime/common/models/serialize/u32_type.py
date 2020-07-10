@@ -60,7 +60,3 @@ class U32Type(type_base.BaseType):
 
     def __repr__(self):
         return "U32"
-
-
-if __name__ == "__main__":
-    pass
