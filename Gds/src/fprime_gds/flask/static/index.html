@@ -179,7 +179,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                 <command-argument :argument="argument"></command-argument>
                             </div>
                         </div>
-                        <div class="form-row">
+                        <div class="row no-gutters">
                             <button type="button" class="col-2 btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
                             <button type="button" :disabled="active" class="col-2 btn btn-success" v-on:click="sendCommand">
                                 Send Command
@@ -370,16 +370,15 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="fp-table-template">
                 <div class="fp-flex-repeater">
-                    <div class="row fp-flex-header">
-                        <div class="col-7"></div>
-                        <div class="col-1">Filters:</div>
-                        <div v-bind:class="clearRows != null ? 'col-3' : 'col-4'">
+                    <div class="row fp-flex-header no-gutters justify-content-end">
+                        <div class="mx-1">Filters:</div>
+                        <div class="ml-1" v-bind:class="clearRows != null ? 'col-3' : 'col-4'">
                             <v-select id="fp-table-filter" :clearable="true" :searchable="true" :taggable="true"
                                       :no-drop="true" :options="[]" :multiple="true"
                                       v-model="matching">
                             </v-select>
                         </div>
-                        <button class="col-1 btn btn-danger" v-if="clearRows != null" v-on:click="clearRows">Clear</button>
+                        <button class="col-2 ml-2 btn btn-danger" v-if="clearRows != null" v-on:click="clearRows">Clear</button>
                     </div>
                     <div class="fp-scroll-container">
                         <div class="fp-scrollable">
@@ -422,9 +421,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <div type="button" class="btn btn-success" v-on:click="saveView">Done</div>
                         </div>
                     </div>
-                    <div class="row fp-flex-header" v-if="!editing">
-                        <div class="col-10"></div>
-                        <button type="button" class="col-2 btn btn-primary" v-if="supportViews && !editing"
+                    <div class="row fp-flex-header no-gutters justify-content-end" v-if="!editing">
+                        <button type="button" class="col-3 btn btn-primary" v-if="supportViews && !editing"
                                 v-on:click="editViews">Edit View</button>
                     </div>
                 </div>
