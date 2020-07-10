@@ -6,7 +6,6 @@
 from __future__ import print_function
 import os
 import sys
-import copy
 import platform
 import webbrowser
 import fprime_gds.executables.cli
