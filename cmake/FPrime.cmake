@@ -26,6 +26,7 @@ set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
 message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
+message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 # Include validation file next, as it checks that everything is in-order
@@ -73,3 +74,4 @@ include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}")
 if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
     include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/gtest/include")
 endif()
+include_directories("${FPRIME_CONFIG_DIR}")

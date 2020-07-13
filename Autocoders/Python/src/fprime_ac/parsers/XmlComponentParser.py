@@ -83,8 +83,9 @@ class XmlComponentParser(object):
         self.special_ports = self.Config._ConfigManager__prop['special_ports']
 
         ## get costants file name and read it in
-
-        constants_file = ROOTDIR + os.sep + self.Config.get('constants','constants_file')
+        constants_file = self.Config.get('constants', 'constants_file')
+        if not os.path.isabs(constants_file):
+            constants_file = os.path.join(ROOTDIR, constants_file)
         ## make sure it is a real file
         if os.path.isfile(constants_file):
             if six.PY2:
