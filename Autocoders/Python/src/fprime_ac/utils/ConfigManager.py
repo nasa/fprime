@@ -311,7 +311,8 @@ class ConfigManager(parent):
         self.__prop['constants'] = dict()
         # where the constants file is relative to BUILD_ROOT
         # constants will be in the INI file format supported by the ConfigParser library
-        self.__prop['constants']['constants_file'] = "Fw/Cfg/AcConstants.ini"
+        self.__prop['constants']['constants_file'] = os.environ.get("FPRIME_AC_CONSTANTS_FILE",
+                                                                    os.path.join("config", "AcConstants.ini"))
         self._setSectionDefaults('constants')
 
 

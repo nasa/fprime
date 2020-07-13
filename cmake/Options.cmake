@@ -94,11 +94,11 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
 endif()
 # Override the AC constants file when specified
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini" CACHE PATH "F prime AC constants.ini file")
+    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
 endif()
 # Settings for F config directory
 if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/" CACHE PATH "F prime configuration header directory")
+    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
 endif()
 
 ####
