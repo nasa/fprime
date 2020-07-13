@@ -13,7 +13,7 @@
         -:   18:// ====================================================================== 
         -:   19:
         -:   20:#include <stdio.h>
-        -:   21:#include <Fw/Cfg/Config.hpp>
+        -:   21:#include <FpConfig.hpp>
         -:   22:#include <Svc/TlmChan/TlmChanComponentAc.hpp>
         -:   23:#include <Fw/Types/Assert.hpp>
         -:   24:#if FW_ENABLE_TEXT_LOGGING

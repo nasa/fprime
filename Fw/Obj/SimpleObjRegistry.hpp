@@ -17,7 +17,7 @@
  *
  */
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 

@@ -28,7 +28,7 @@
 
 ####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
-# and `FPRIME_AC_CONSTANTS_FILE`:
+# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
 #
 # These locations specify the locations of the needed F prime items. These are described below
 # and each has a default if not set.
@@ -94,7 +94,11 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
 endif()
 # Override the AC constants file when specified
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini")
+    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/AcConstants.ini" CACHE PATH "F prime AC constants.ini file")
+endif()
+# Settings for F config directory
+if (NOT DEFINED FPRIME_CONFIG_DIR)
+    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/Fw/Cfg/" CACHE PATH "F prime configuration header directory")
 endif()
 
 ####

@@ -12,7 +12,7 @@
 #ifndef FW_PRM_BUFFER_HPP
 #define FW_PRM_BUFFER_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>

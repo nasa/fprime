@@ -330,6 +330,7 @@ class CMakeHandler(object):
             ("FPRIME_SETTINGS_FILE", "settings_file"),
             ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
             ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
+            ("FPRIME_CONFIG_DIR", "config_dir"),
         ]
         # Update args from settings file
         for cache, setting in needed:

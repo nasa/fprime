@@ -13,7 +13,7 @@
 
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Os/Task.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 
 namespace Fw {
