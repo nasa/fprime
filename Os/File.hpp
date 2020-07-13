@@ -1,7 +1,7 @@
 #ifndef _File_hpp_
 #define _File_hpp_
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
 namespace Os {

@@ -1,7 +1,7 @@
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/EightyCharString.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <stdio.h>
 

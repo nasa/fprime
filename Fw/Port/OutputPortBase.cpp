@@ -1,4 +1,4 @@
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <Fw/Port/OutputPortBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>

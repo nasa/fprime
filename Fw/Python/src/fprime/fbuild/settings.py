@@ -100,6 +100,12 @@ class IniSettings:
             confparse, "fprime", "ac_constants", settings_file
         )
         ac_consts = None if not ac_consts else ac_consts[0]
+        # Read include constants if it is available
+        config_dir = IniSettings.read_safe_path(
+            confparse, "fprime", "config_directory", settings_file
+        )
+        config_dir = None if not config_dir else ac_consts[0]
+
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(
             confparse, "fprime", "environment_file", settings_file
@@ -125,6 +131,9 @@ class IniSettings:
         # Set AC constants if available
         if ac_consts is not None:
             settings["ac_constants"] = ac_consts
+        # Set the config dir
+        if config_dir is not None:
+            settings["config_dir"] = config_dir
         return settings
 
     @staticmethod
