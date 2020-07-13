@@ -6,6 +6,7 @@
 // To add include directives here, put them in a file called Include/Enum1EnumAc.hpp
 
 namespace Example {
+  //! Test enum_xml example enum
   class Enum1 : public Fw::Serializable
   {
     public:

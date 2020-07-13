@@ -53,6 +53,7 @@ class XmlPortsParser(object):
         self.__root = None
         self.__include_serializable_files = []
         self.__include_enum_files = []
+        self.__include_array_files = []
         self.__include_header_files = []
         #
         self.__config       = ConfigManager.ConfigManager.getInstance()
@@ -75,7 +76,7 @@ class XmlPortsParser(object):
 
 
         #Validate against schema
-        relax_file_handler = open(ROOTDIR +self.__config.get('schema' , 'interface') , 'r')
+        relax_file_handler = open(ROOTDIR + self.__config.get('schema' , 'interface') , 'r')
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -107,6 +108,8 @@ class XmlPortsParser(object):
                 self.__include_serializable_files.append(interface_tag.text)
             elif interface_tag.tag == 'import_enum_type':
                 self.__include_enum_files.append(interface_tag.text)
+            elif interface_tag.tag == 'import_array_type':
+                self.__include_array_files.append(interface_tag.text)
             elif interface_tag.tag == 'args':
                 for arg in interface_tag:
                     if arg.tag != 'arg':
@@ -221,6 +224,12 @@ class XmlPortsParser(object):
         Return a list of all imported enum XML files.
         """
         return self.__include_enum_files
+
+    def get_include_array_files(self):
+        """
+        Return a list of all imported array XML files.
+        """
+        return self.__include_array_files
 
     def get_interface(self):
         """

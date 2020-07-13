@@ -33,4 +33,9 @@
   <command kind="async" opcode="2" mnemonic="SignalGen_Skip">
     <comment>Skip next sample</comment>
   </command>
+  <command kind="async" opcode="3" mnemonic="SignalGen_GenerateArray">
+    <comment>
+    No-op array command
+    </comment>
+  </command>
 </commands>

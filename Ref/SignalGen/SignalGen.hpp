@@ -18,6 +18,7 @@
 #include <Os/File.hpp>
 #include <Os/ValidateFile.hpp>
 #include <Ref/SignalGen/SignalGenComponentAc.hpp>
+#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <cmath>
 
 namespace Ref {
@@ -49,6 +50,10 @@ namespace Ref {
         );
         void SignalGen_Skip_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
+        U32 cmdSeq /*!< The command sequence number*/
+        );
+        void SignalGen_GenerateArray_cmdHandler(
+        FwOpcodeType opCode, /*!< The opcode*/ 
         U32 cmdSeq /*!< The command sequence number*/
         );
 

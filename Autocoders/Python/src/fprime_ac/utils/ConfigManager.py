@@ -116,6 +116,7 @@ class ConfigManager(parent):
         self.__prop['schema']["serializable"]           = '/Autocoders/Python/schema/default/serializable_schema.rng'
         self.__prop['schema']["parameters"]             = '/Autocoders/Python/schema/default/parameters_schema.rng'
         self.__prop['schema']["enum"]                   = '/Autocoders/Python/schema/default/enum_schema.rng'
+        self.__prop['schema']["array"]                  = '/Autocoders/Python/schema/default/array_schema.rng'
         self._setSectionDefaults('schema')
         ################################################################
         # Schematron parameters here.
@@ -129,6 +130,7 @@ class ConfigManager(parent):
         self.__prop['schematron']["top_unique"]         = '/Autocoders/Python/schema/default/top_uniqueness_schematron.rng'
         self.__prop['schematron']["active_comp"]        = '/Autocoders/Python/schema/default/active_comp_schematron.rng'
         self.__prop['schematron']["enum_value"]         = '/Autocoders/Python/schema/default/enum_value_schematron.rng'
+        self.__prop['schematron']["array_default"]      = '/Autocoders/Python/schema/default/array_schematron.rng'
         self._setSectionDefaults('schematron')
         ################################################################
         # component parameters here.

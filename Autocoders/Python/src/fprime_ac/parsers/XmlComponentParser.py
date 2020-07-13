@@ -57,6 +57,7 @@ class XmlComponentParser(object):
         self.__include_header_files = []
         self.__import_dictionary_files = []
         self.__import_enum_type_files = []
+        self.__import_array_type_files = []
         #
         self.__is_component_xml = False
         #
@@ -159,6 +160,8 @@ class XmlComponentParser(object):
                 self.__import_serializable_type_files.append(comp_tag.text)
             elif comp_tag.tag == 'import_enum_type':
                 self.__import_enum_type_files.append(comp_tag.text)
+            elif comp_tag.tag == 'import_array_type':
+                self.__import_array_type_files.append(comp_tag.text)
             elif comp_tag.tag == 'import_dictionary':
                 try:
                     dict_file = locate_build_root(comp_tag.text)
@@ -1016,6 +1019,12 @@ class XmlComponentParser(object):
         Return a list of all imported enum type XML files.
         """
         return self.__import_enum_type_files
+
+    def get_array_type_files(self):
+        """
+        Return a list of all imported array type XML files.
+        """
+        return self.__import_array_type_files
 
     def get_imported_dictionary_files(self):
         """

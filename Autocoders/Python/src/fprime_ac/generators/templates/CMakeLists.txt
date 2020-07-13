@@ -4,6 +4,7 @@ set_property(GLOBAL PROPERTY CODEGEN_OUTPUTS)
 
 # Create target for autocoder
 
+include("${CMAKE_CURRENT_LIST_DIR}/arrays/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/channels/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/commands/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/component/CMakeLists.txt")

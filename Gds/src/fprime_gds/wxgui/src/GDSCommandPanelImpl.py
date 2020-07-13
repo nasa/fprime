@@ -21,6 +21,7 @@ from fprime.common.models.serialize.i64_type import *
 
 from fprime.common.models.serialize.string_type import *
 from fprime.common.models.serialize.serializable_type import *
+from fprime.common.models.serialize.array_type import *
 
 from fprime_gds.common.data_types import cmd_data
 
@@ -177,6 +178,8 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
                     arg_name,
                 )
             elif type(arg_type) == type(SerializableType()):
+                pass
+            elif type(arg_type) == type(ArrayType()):
                 pass
 
             self.arginputs.append(k)

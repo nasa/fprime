@@ -5,6 +5,7 @@
 # Broken topology
 #add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
 #add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array_xml")
 #add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_multi_inst")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_res")

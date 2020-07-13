@@ -76,7 +76,7 @@ class PortFactory:
         x = the_parsed_port_xml
         port_obj = x.get_interface()
         include_header_files_list = x.get_include_header_files()
-        include_header_serial_files_list = x.get_includes_serial_files()
+        include_header_serial_files_list = x.get_includes_serial_files() + x.get_include_array_files()
         include_header_enum_files_list =  x.get_include_enum_files()
         args_obj_list = x.get_args()
         #
