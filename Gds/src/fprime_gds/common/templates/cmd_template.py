@@ -11,10 +11,10 @@ Instances of this class describe a specific command type.
 from __future__ import absolute_import
 
 import copy
-from enum import Enum
 from . import data_template
 from fprime.common.models.serialize.type_base import BaseType
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+from fprime.common.models.serialize.type_exceptions import ArgLengthMismatchException
 
 
 class CmdTemplate(data_template.DataTemplate):

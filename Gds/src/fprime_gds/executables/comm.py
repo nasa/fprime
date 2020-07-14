@@ -133,8 +133,6 @@ class UplinkFailureException(Exception):
     After all retries were complete, uplink has still failed
     """
 
-    pass
-
 
 class Downlinker(object):
     """

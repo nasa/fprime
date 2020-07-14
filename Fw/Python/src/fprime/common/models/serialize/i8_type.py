@@ -5,7 +5,8 @@ Created on Dec 18, 2014
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
 from . import type_base
 
 
@@ -53,25 +54,10 @@ class I8Type(type_base.BaseType):
         """
         Utilize deserialized decorator here...
         """
-        self._deserialize("B", data, offset)
+        self._deserialize("b", data, offset)
 
     def getSize(self):
-        return struct.calcsize("B")
+        return struct.calcsize("b")
 
     def __repr__(self):
         return "I8"
-
-
-if __name__ == "__main__":
-    print("I8")
-    try:
-        val = I8Type(-2)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = I8Type()
-        val2.deserialize(buff, len(buff))
-        print("Deserialize: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

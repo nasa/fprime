@@ -18,6 +18,7 @@ class CmdXmlLoader(XmlLoader):
     """Class to laode xml based command dictionaries"""
 
     CMD_SECT = "commands"
+    EVENT_SECT = "events"
 
     COMP_TAG = "component"
     MNEMONIC_TAG = "mnemonic"

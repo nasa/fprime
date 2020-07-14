@@ -5,6 +5,7 @@ CLI commands
 
 import abc
 from typing import Iterable
+import sys
 
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
@@ -30,6 +31,8 @@ class BaseCommand(abc.ABC):
         """
         if log_text:
             print(log_text)
+            sys.stdout.flush()
+
 
     @classmethod
     @abc.abstractmethod
@@ -195,12 +198,16 @@ class QueryHistoryCommand(BaseCommand):
             item = cls._get_upcoming_item(api, search_filter, "NOW", timeout)
             cls._log(cls._get_item_string(item, json))
         else:
+
             def print_upcoming_item(min_start_time="NOW"):
                 item = cls._get_upcoming_item(api, search_filter, min_start_time)
                 cls._log(cls._get_item_string(item, json))
                 # Update time so we catch the next item since the last one
                 if item:
                     min_start_time = predicates.greater_than(item.get_time())
+                    min_start_time = filtering_utils.time_to_data_predicate(
+                        min_start_time
+                    )
                 return (min_start_time,)
 
             misc_utils.repeat_until_interrupt(print_upcoming_item, "NOW")

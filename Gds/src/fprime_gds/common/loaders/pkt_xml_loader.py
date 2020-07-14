@@ -7,9 +7,6 @@
 @bug No known bugs
 """
 
-import os
-from lxml import etree
-
 # Custom python modules
 from fprime_gds.common.loaders.xml_loader import XmlLoader
 from fprime_gds.common.data_types import exceptions
@@ -104,7 +101,7 @@ class PktXmlLoader(XmlLoader):
         """
         packet_list = self.get_xml_tree(path)
         if packet_list.tag != self.PKT_LIST_TAG:
-            raise exceptions.GseControllerParseException(
+            raise exceptions.GseControllerParsingException(
                 "expected packet list to have tag %s, but found %s"
                 % (self.PKT_LIST_TAG, packet_list.tag)
             )

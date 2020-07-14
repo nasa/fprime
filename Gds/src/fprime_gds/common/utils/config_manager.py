@@ -16,28 +16,24 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 """
 from __future__ import print_function
 
-import os
-import sys
-import glob
-
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
 
 # Custom type modules
-from fprime.common.models.serialize.f32_type import *
-from fprime.common.models.serialize.f64_type import *
+from fprime.common.models.serialize.f32_type import F32Type
+from fprime.common.models.serialize.f64_type import F64Type
 
-from fprime.common.models.serialize.u8_type import *
-from fprime.common.models.serialize.u16_type import *
-from fprime.common.models.serialize.u32_type import *
-from fprime.common.models.serialize.u64_type import *
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.u64_type import U64Type
 
-from fprime.common.models.serialize.i8_type import *
-from fprime.common.models.serialize.i16_type import *
-from fprime.common.models.serialize.i32_type import *
-from fprime.common.models.serialize.i64_type import *
+from fprime.common.models.serialize.i8_type import I8Type
+from fprime.common.models.serialize.i16_type import I16Type
+from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.i64_type import I64Type
 
 
 class ConfigBadTypeException(Exception):
@@ -91,7 +87,7 @@ class ConfigManager(configparser.ConfigParser):
             f (string): Path to a file object to read
         """
         self.file_path = f
-        self.readfp(open(f))
+        self.read_file(open(f))
 
     @staticmethod
     def get_instance():
@@ -116,7 +112,7 @@ class ConfigManager(configparser.ConfigParser):
 
         Returns:
             If the name is valid, returns an object of a type derived from
-            TypeBase. Otherwise, raises ConfigNonexistentException
+            TypeBase. Otherwise, raises ConfigBadTypeException
         """
         type_str = self.get("types", name)
 
@@ -143,7 +139,7 @@ class ConfigManager(configparser.ConfigParser):
         else:
             # These are types for parsing, so they need to be number types
             # Other types can be added later
-            raise ConfigNonexistentException(type_str)
+            raise ConfigBadTypeException(name, type_str)
 
     def get_file_path(self):
         """
@@ -203,7 +199,3 @@ class ConfigManager(configparser.ConfigParser):
         self.add_section(section)
         for (key, value) in self.__prop[section].items():
             self.set(section, key, str(value))
-
-
-if __name__ == "__main__":
-    pass

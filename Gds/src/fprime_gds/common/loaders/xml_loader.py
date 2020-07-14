@@ -16,7 +16,6 @@ helper functions
 from __future__ import print_function
 from __future__ import absolute_import
 
-import sys
 import os
 from copy import deepcopy
 from lxml import etree
@@ -26,23 +25,23 @@ from . import dict_loader
 from fprime_gds.common.data_types import exceptions
 
 # Custom type modules
-from fprime.common.models.serialize.bool_type import *
-from fprime.common.models.serialize.enum_type import *
-from fprime.common.models.serialize.f32_type import *
-from fprime.common.models.serialize.f64_type import *
+from fprime.common.models.serialize.bool_type import BoolType
+from fprime.common.models.serialize.enum_type import EnumType
+from fprime.common.models.serialize.f32_type import F32Type
+from fprime.common.models.serialize.f64_type import F64Type
 
-from fprime.common.models.serialize.u8_type import *
-from fprime.common.models.serialize.u16_type import *
-from fprime.common.models.serialize.u32_type import *
-from fprime.common.models.serialize.u64_type import *
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.u64_type import U64Type
 
-from fprime.common.models.serialize.i8_type import *
-from fprime.common.models.serialize.i16_type import *
-from fprime.common.models.serialize.i32_type import *
-from fprime.common.models.serialize.i64_type import *
+from fprime.common.models.serialize.i8_type import I8Type
+from fprime.common.models.serialize.i16_type import I16Type
+from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.i64_type import I64Type
 
-from fprime.common.models.serialize.string_type import *
-from fprime.common.models.serialize.serializable_type import *
+from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.serializable_type import SerializableType
 
 
 class XmlLoader(dict_loader.DictLoader):

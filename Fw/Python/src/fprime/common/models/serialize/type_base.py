@@ -7,7 +7,9 @@ Replaced type base class with decorators
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import AbstractMethodException
+from .type_exceptions import DeserializeException
+from .type_exceptions import NotInitializedException
 
 #
 #
@@ -20,7 +22,6 @@ class BaseType(object):
         """
         Constructor.
         """
-        pass
 
     def serialize(self, *args):
         """
@@ -63,7 +64,7 @@ def deserialize(Class):
                 "Not enough data to deserialize! Needed: %d Left: %d"
                 % (self.getSize(), offset)
             )
-        self.val = struct.unpack_from(tformat, data, offset)[0]
+        self.val = struct.unpack_from(tformat, bytes(data, "utf-8"), offset)[0]
 
     setattr(Class, "_deserialize", _deserialize)
 
@@ -102,11 +103,7 @@ def showBytes(byteBuffer):
             "Byte %d: 0x%02X (%c)"
             % (
                 entry,
-                struct.unpack("B", byteBuffer[entry])[0],
-                struct.unpack("B", byteBuffer[entry])[0],
+                struct.unpack("B", bytes([byteBuffer[entry]]))[0],
+                struct.unpack("B", bytes([byteBuffer[entry]]))[0],
             )
         )
-
-
-if __name__ == "__main__":
-    pass

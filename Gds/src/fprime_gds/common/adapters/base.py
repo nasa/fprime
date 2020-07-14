@@ -22,11 +22,9 @@ class BaseAdapter(abc.ABC):
 
     def open(self):
         """Null default implementation """
-        pass
 
     def close(self):
         """Null default implementation """
-        pass
 
     @abc.abstractmethod
     def read(self):
@@ -35,7 +33,6 @@ class BaseAdapter(abc.ABC):
         :param size: maximum size of data to read before breaking
         :return: byte array of data, or b'' if no data was read
         """
-        pass
 
     @abc.abstractmethod
     def write(self, frame):
@@ -44,7 +41,6 @@ class BaseAdapter(abc.ABC):
         :param frame: framed data to uplink
         :return: True if data sent through adapter, False otherwise
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -54,7 +50,6 @@ class BaseAdapter(abc.ABC):
         command line arguments to the user. Note: these should be globally unique args, e.g. --ip-address
         :return: dictionary, keys of tuple of arg flags and value of list of other arguments to argparse's add_argument
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -64,7 +59,6 @@ class BaseAdapter(abc.ABC):
         should be raised describing the problem with these arguments.
         :param args: arguments as dictionary
         """
-        pass
 
     @classmethod
     def get_adapters(cls):

@@ -13,7 +13,7 @@ from __future__ import absolute_import
 from . import python_loader
 from fprime_gds.common.templates import event_template
 from fprime_gds.common.utils.event_severity import EventSeverity
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
 
 class EventPyLoader(python_loader.PythonLoader):
