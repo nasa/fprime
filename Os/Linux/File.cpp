@@ -36,7 +36,7 @@ namespace Os {
         }
     }
 
-    File::Status File::open(const char* fileName, File::Mode mode) {
+    File::Status File::open(const char* fileName, File::Mode mode, bool include_excl) {
 
         NATIVE_INT_TYPE flags = 0;
         Status stat = OP_OK;
@@ -98,6 +98,10 @@ namespace Os {
         this->m_mode = mode;
         this->m_fd = fd;
         return stat;
+    }
+
+    bool File::isOpen(void) {
+      return this->m_fd > 0;
     }
 
     File::Status File::prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len) {

@@ -31,6 +31,33 @@ namespace Os {
         getRawTime(this->m_stopTime);
     }
 
+    IntervalTimer::RawTime IntervalTimer::getDiffRaw(void) {
+        return getDiffRaw(this->m_stopTime,this->m_stopTime);
+    }
+
+    IntervalTimer::RawTime IntervalTimer::getDiffRaw(const RawTime& t1, const RawTime& t2) {
+        RawTime diff;
+        const U64 al = (((U64) t1.upper << 32) + (U64) t1.lower);
+        const U64 bl = (((U64) t2.upper << 32) + (U64) t2.lower);
+        if (t2.lower > t1.lower) {
+            diff.lower = 0xFFFFFFFF - (t2.lower - t1.lower - 1);
+            diff.upper = t1.upper - t2.upper - 1;
+        } else {
+            diff.lower = (U32) (al - bl);
+            diff.upper = (U32) ((U64)(al - bl) >> 32);
+        }
+        return diff;
+    }
+
+    IntervalTimer::RawTime IntervalTimer::getSumRaw(const RawTime& t1, const RawTime& t2) {
+        RawTime sum;
+        const U64 al = (((U64) t1.upper << 32) + (U64) t1.lower);
+        const U64 bl = (((U64) t2.upper << 32) + (U64) t2.lower);
+        sum.lower = (U32) (al + bl);
+        sum.upper = (U32) ((U64)(al + bl) >> 32);
+        return sum;
+    }
+
     U32 IntervalTimer::getDiffUsec(void) {
         return getDiffUsec(this->m_stopTime, this->m_startTime);
     }
