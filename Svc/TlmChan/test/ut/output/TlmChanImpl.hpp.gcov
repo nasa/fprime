@@ -16,7 +16,7 @@
         -:   21:#define TELEMCHANIMPL_HPP_
         -:   22:
         -:   23:#include <Svc/TlmChan/TlmChanComponentAc.hpp>
-        -:   24:#include <Svc/TlmChan/TlmChanImplCfg.hpp>
+        -:   24:#include <TlmChanImplCfg.hpp>
         -:   25:#include <Os/Mutex.hpp>
         -:   26:#include <Fw/Tlm/TlmPacket.hpp>
         -:   27:

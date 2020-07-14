@@ -10,7 +10,7 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverTypes.hpp>
-#include <Drv/SocketIpDriver/SocketIpDriverCfg.hpp>
+#include <SocketIpDriverCfg.hpp>
 
 namespace Drv {
 

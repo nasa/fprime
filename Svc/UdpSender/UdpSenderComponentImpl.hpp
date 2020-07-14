@@ -14,7 +14,7 @@
 #define UdpSender_HPP
 
 #include <Svc/UdpSender/UdpSenderComponentAc.hpp>
-#include <Svc/UdpSender/UdpSenderComponentImplCfg.hpp>
+#include <UdpSenderComponentImplCfg.hpp>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 

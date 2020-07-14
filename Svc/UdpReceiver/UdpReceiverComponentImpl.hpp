@@ -14,7 +14,7 @@
 #define UdpReceiver_HPP
 
 #include "Svc/UdpReceiver/UdpReceiverComponentAc.hpp"
-#include "Svc/UdpReceiver/UdpReceiverComponentImplCfg.hpp"
+#include "UdpReceiverComponentImplCfg.hpp"
 
 namespace Svc {
 

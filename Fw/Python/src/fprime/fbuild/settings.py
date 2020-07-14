@@ -104,7 +104,7 @@ class IniSettings:
         config_dir = IniSettings.read_safe_path(
             confparse, "fprime", "config_directory", settings_file
         )
-        config_dir = None if not config_dir else ac_consts[0]
+        config_dir = None if not config_dir else config_dir[0]
 
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(
