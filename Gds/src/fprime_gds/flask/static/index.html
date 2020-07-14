@@ -108,7 +108,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <input type="file"
                                    name="config-file"
                                    accept="application/xml"
-                                   v-on:change="configureDashboard($event.target.files[0])">
+                                   v-on:change="configureDashboardFromFile($event.target.files[0])">
                         </div>
                     </div>
                     <v-runtime-template v-bind:template="userTemplate">
