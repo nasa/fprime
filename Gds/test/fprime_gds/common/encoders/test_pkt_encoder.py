@@ -7,10 +7,8 @@ Created on Jul 10, 2020
 
 from __future__ import absolute_import
 
-import pytest
 
 from fprime_gds.common.encoders.pkt_encoder import PktEncoder
-from fprime_gds.common.utils.data_desc_type import DataDescType
 from fprime_gds.common.data_types.pkt_data import PktData
 from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime_gds.common.templates.ch_template import ChTemplate

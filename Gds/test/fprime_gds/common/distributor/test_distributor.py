@@ -7,7 +7,6 @@ Created on Jul 10, 2020
 
 from __future__ import absolute_import
 
-import pytest
 
 from fprime_gds.common.distributor.distributor import Distributor
 from fprime_gds.common.utils import config_manager

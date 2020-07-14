@@ -124,7 +124,7 @@ class SeqFileParser(object):
                 def parseTimeString(timeFmt):
                     try:
                         return datetime.strptime(timeStr, timeFmt)
-                    except gseExceptions.GseControllerParsingException(timeStr):
+                    except:
                         return None
 
                 for fmt in timeFmts:
