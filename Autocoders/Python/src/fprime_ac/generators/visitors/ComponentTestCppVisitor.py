@@ -20,6 +20,7 @@ class ComponentTestCppVisitor(TestVisitorBase.TestVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentTestCpp")
 
     def emitCppParams(self, params):

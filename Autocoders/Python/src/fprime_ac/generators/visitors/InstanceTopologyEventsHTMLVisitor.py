@@ -60,6 +60,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Constructor.
         """
+        super().__init__()
         #self.initBase(self, "HTMLCmdTable")
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.__form         = formatters.Formatters()

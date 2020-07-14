@@ -22,6 +22,7 @@ class GTestHWriter(GTestWriterBase.GTestWriterBase):
     FILE_NAME = "GTestBase.hpp"
 
     def __init__(self):
+        super().__init__()
         self.initBase("GTestH")
 
     def emitHppParams(self, params):

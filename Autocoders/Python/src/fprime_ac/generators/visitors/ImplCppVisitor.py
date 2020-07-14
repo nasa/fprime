@@ -23,6 +23,7 @@ class ImplCppVisitor(ImplVisitorBase.ImplVisitorBase):
     __config   = None
 
     def __init__(self):
+        super().__init__()
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.initBase("ImplCpp")
 

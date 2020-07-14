@@ -22,6 +22,7 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
     FILE_NAME = "TesterBase.cpp"
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentTestCpp")
 
     def emitCppParams(self, params):

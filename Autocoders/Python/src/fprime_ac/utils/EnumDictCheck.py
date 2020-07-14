@@ -185,9 +185,9 @@ def cmd_dict_enum_size_check(filename, verbose=False):
             integertypename = integertypename[1:]
             value = int(integertypename)
             if key[0:3] != "All":
-		enums[key].set_bits(value)
+                enums[key].set_bits(value)
 
-            	if key in enum_info:
+                if key in enum_info:
                 # Skip the ones we generated.
                     if key.find("InstanceId") == -1:
                         print("Duplicate enumeration usages: %s." % (key))

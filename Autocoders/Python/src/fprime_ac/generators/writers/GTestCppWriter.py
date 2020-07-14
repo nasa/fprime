@@ -22,6 +22,7 @@ class GTestCppWriter(GTestWriterBase.GTestWriterBase):
     FILE_NAME = "GTestBase.cpp"
 
     def __init__(self):
+        super().__init__()
         self.initBase("GTestCpp")
 
     def emitCppParams(self, params):

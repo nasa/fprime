@@ -20,6 +20,7 @@ class ComponentTestHVisitor(TestVisitorBase.TestVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentTestH")
 
     def emitHppParams(self, params):

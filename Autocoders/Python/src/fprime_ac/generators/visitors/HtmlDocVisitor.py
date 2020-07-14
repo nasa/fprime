@@ -40,6 +40,7 @@ class HtmlDocVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("HtmlDoc")
 
     def htmlStartPage(self, obj):

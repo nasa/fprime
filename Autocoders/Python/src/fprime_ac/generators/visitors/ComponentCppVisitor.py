@@ -20,6 +20,7 @@ class ComponentCppVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentCpp")
 
     def startSourceFilesVisit(self, obj):

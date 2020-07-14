@@ -52,7 +52,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
     __visitor = None
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def _writeTmpl(self, c, visit_str):
         """

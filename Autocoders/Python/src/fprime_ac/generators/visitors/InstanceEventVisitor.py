@@ -61,6 +61,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
         """
         Constructor.
         """
+        super().__init__()
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.__form         = formatters.Formatters.getInstance()
         self.__form_comment = formatters.CommentFormatters()

@@ -51,7 +51,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
     __writer = None
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def _writeTmpl(self, c, write_str):
         """

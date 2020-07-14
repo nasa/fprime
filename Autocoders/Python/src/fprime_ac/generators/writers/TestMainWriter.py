@@ -23,6 +23,7 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
     FILE_NAME = "TestMain.cpp"
     
     def __init__(self):
+        super().__init__()
         self.initBase("TestMainCpp")
     
     def emitCppParams(self, params):

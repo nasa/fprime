@@ -61,6 +61,7 @@ class TopologyCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Constructor.
         """
+        super().__init__()
         self.__config       = ConfigManager.ConfigManager.getInstance()
         self.__form         = formatters.Formatters()
         self.__form_comment = formatters.CommentFormatters()

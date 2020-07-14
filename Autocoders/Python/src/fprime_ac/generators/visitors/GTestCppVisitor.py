@@ -20,6 +20,7 @@ class GTestCppVisitor(GTestVisitorBase.GTestVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("GTestCpp")
 
     def emitCppParams(self, params):

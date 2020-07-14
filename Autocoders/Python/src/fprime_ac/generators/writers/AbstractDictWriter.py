@@ -28,4 +28,4 @@ class AbstractDictWriter(object):
         """
             Method defined by inheriting class that writes dictionary data into a specific file
             """
-        raise '# DictWriter.write() - Implementation Error: you must supply your own concrete implementation.'
+        raise NotImplementedError('# DictWriter.write() - you must supply your own concrete implementation.')

@@ -22,6 +22,7 @@ class ComponentTestHWriter(TestWriterBase.TestWriterBase):
     FILE_NAME = "TesterBase.hpp"
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentTestH")
 
     def emitHppParams(self, params):

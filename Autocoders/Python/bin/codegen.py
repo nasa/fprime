@@ -1049,14 +1049,14 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
             defaultChannelHeader(channel_model)
             defaultChannelBody(channel_model)
 
-    if opt.ampcs_dict and not opt.default_topology_dict:
-        if opt.dict_dir == None:
-            PRINT.info("Dictionary output directory not specified!")
-            raise IOError
-        os.environ["AMPCS_DICT_DIR"] = opt.dict_dir
-        AmpcsCommandConverter.AmpcsCommandConverter(component_model).writeFile(opt.dict_dir)
-        AmpcsTelemetryConverter.AmpcsTelemetryConverter(component_model).writeFile(opt.dict_dir)
-        AmpcsEventConverter.AmpcsEventConverter(component_model).writeFile(opt.dict_dir)
+    #if opt.ampcs_dict and not opt.default_topology_dict:
+    #    if opt.dict_dir == None:
+    #        PRINT.info("Dictionary output directory not specified!")
+    #        raise IOError
+    #    os.environ["AMPCS_DICT_DIR"] = opt.dict_dir
+    #    AmpcsCommandConverter.AmpcsCommandConverter(component_model).writeFile(opt.dict_dir)
+    #    AmpcsTelemetryConverter.AmpcsTelemetryConverter(component_model).writeFile(opt.dict_dir)
+    #    AmpcsEventConverter.AmpcsEventConverter(component_model).writeFile(opt.dict_dir)
 
     if opt.html_docs:
         if opt.html_doc_dir == None:
@@ -1111,7 +1111,6 @@ def generate_port(the_parsed_port_xml, port_file):
     # Configure each visitor here.
     #
     if "Ai" in port_file:
-        base = port_file.split("Ai")[0]
         base = type
         h_instance_name = base + "_H"
         cpp_instance_name = base + "_Cpp"

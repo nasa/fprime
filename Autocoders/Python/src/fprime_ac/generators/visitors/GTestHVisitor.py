@@ -20,6 +20,7 @@ class GTestHVisitor(GTestVisitorBase.GTestVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("GTestH")
 
     def emitHppParams(self, params):

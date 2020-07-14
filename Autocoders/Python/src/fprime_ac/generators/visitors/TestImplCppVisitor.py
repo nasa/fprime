@@ -22,6 +22,7 @@ class TestImplCppVisitor(TestImplVisitorBase.TestImplVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("TestImplCpp")
 
     def emitPortParams(self, params):
