@@ -27,7 +27,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TypesTest.cpp"
 )
 set(UT_MOD_DEPS
-  "${FPRIME_CORE_DIR}/Os"
+  "${FPRIME_FRAMEWORK_PATH}/Os"
 )
 register_fprime_ut()
 

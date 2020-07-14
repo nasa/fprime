@@ -29,6 +29,8 @@ from fprime_ac.utils import ConfigManager
 from fprime_ac.models import ModelParser
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
+
+from fprime_ac.utils.buildroot import build_root_relative_path, get_nearest_build_root, BuildRootMissingException
 #
 # Global logger init. below.
 PRINT = logging.getLogger('output')
@@ -304,7 +306,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         '''
         Configurable override for includes
         '''
-        relative_path = self.relativePath(obj)
+        relative_path = self.relativePath()
         if self.__config.get("includes","comp_include_path") == "None":
             if relative_path != None:
                 c.comp_include_path = relative_path
@@ -792,7 +794,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             for si in obj.get_serializables()
         ]
         s_includes = [
-            sinc.replace("Ai.xml","Ac.hpp").replace(os.environ["BUILD_ROOT"]+"/","")
+            sinc.replace("Ai.xml","Ac.hpp").replace(get_nearest_build_root(sinc)+"/","")
             for sinc in ser_includes
         ]
         c.ser_includes = s_includes
@@ -921,22 +923,4 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         pass
 
-    def relativePath(self, obj):
-        '''
-        If BUILD_ROOT is set, get the relative path to current execution location
-        '''
-        relative_path = None
-        path = os.getcwd()
-        # normalize path to Linux separators - TKC
-        path = path.replace("\\","/")
-        if ModelParser.BUILD_ROOT != None:
-            path = os.path.normpath(os.path.realpath(path))
-            build_root = os.path.normpath(os.path.realpath(ModelParser.BUILD_ROOT))
-            if path[:len(build_root)].lower() == build_root.lower():
-                relative_path = path[len(build_root+'/'):]
-            else:
-                PRINT.info("ERROR: BUILD_ROOT (%s) and current execution path (%s) not consistent!" % (ModelParser.BUILD_ROOT,path))
-                sys.exit(-1)
-        DEBUG.debug("Relative path: %s", relative_path)
-        return relative_path
 

@@ -16,7 +16,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTest.cpp"
 )
 set(UT_MOD_DEPS
-  "${FPRIME_CORE_DIR}/Fw/Time"
-  "${FPRIME_CORE_DIR}/Fw/Types"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
 )
 register_fprime_ut()

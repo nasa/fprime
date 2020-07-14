@@ -108,6 +108,15 @@ def validate(parsed):
         elif parsed.build_dir is None:
             build_inst_name = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform)
             parsed.build_dir = os.path.join(parsed.path, build_inst_name)
+        # Get settings file default
+        if parsed.command == "generate" and parsed.settings is None:
+            parsed.setting = os.path.join(parsed.path, "settings.ini")
+            fprime.fbuild.builder().load_settings(parsed.setting, parsed.build_dir)
+        elif parsed.command == "generate":
+            fprime.fbuild.builder().load_settings(None, parsed.build_dir)
+        else:
+            settings_file_from_cache, = fprime.fbuild.builder().get_fprime_configuration("FPRIME_SETTINGS_FILE", parsed.build_dir)
+            fprime.fbuild.builder().load_settings(None if settings_file_from_cache == "" else settings_file_from_cache, parsed.build_dir)
     except fprime.fbuild.cmake.CMakeProjectException as exc:
         print("[ERROR] {}".format(exc))
         sys.exit(1)
@@ -119,10 +128,13 @@ def validate(parsed):
               .format(fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(parsed.platform), exc,
                       parsed.path), file=sys.stderr)
         sys.exit(2)
-    # Check enviornment if specidied
-    if parsed.environment is not None and not os.path.isfile(parsed.environment):
-        print("[ERROR] Environment file {} does not exist".format(parsed.environment))
-        sys.exit(3)
+    except fprime.fbuild.settings.FprimeLocationUnknownException as exc:
+        print("[ERROR] Cannot determine F prime framework location. {}".format(exc))
+        sys.exit(2)
+    except fprime.fbuild.settings.FprimeSettingsException as exc:
+        print("[ERROR] Problem with F prime settings file. {}".format(exc))
+        sys.exit(2)
+
     cache_file = os.path.join(parsed.build_dir, "CMakeCache.txt")
     # Check for generate validation
     if parsed.command == "generate" and os.path.exists(parsed.build_dir):
@@ -138,29 +150,44 @@ def validate(parsed):
         parsed.jobs = 1
     # Check platforms for existing toolchain, unless the default is specified.
     if parsed.command == "generate":
-        # Look for default toolchains via FPRIME_DEFAULT_TOOLCHAIN_NAME
-        toolchain = parsed.platform
-        if toolchain == "default":
-            toolchain = fprime.fbuild.builder().get_fprime_configuration("FPRIME_DEFAULT_TOOLCHAIN_NAME",
-                                                                         cmake_dir=parsed.path)[0]
-        elif toolchain == "native":
-            toolchain = None
-        # Find locations of toolchain files, assuming a non-None toolchain is asked for
+        toolchain = find_toolchain(parsed.platform, parsed.path)
+        print("[INFO] Using toolchain file {} for platform {}".format(toolchain, parsed.platform))
         if toolchain is not None:
-            locations = fprime.fbuild.builder().get_include_locations(parsed.path)
-            toolchains_paths = map(lambda loc: os.path.join(loc, "cmake", "toolchain",
-                                                            toolchain + ".cmake"), locations)
-            toolchains = list(filter(os.path.exists, toolchains_paths))
-            if not toolchains:
-                print("[ERROR] Toolchain file {} does not exist at any of {}"
-                      .format(toolchain + ".cmake", ", ".join(list(toolchains_paths))))
-                sys.exit(-1)
-            print("[INFO] Using toolchain file {} for platform {}".format(toolchains[0], parsed.platform))
-            cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchains[0]})
+            cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
     # Build type only for generate, jobs only for non-generate
     if parsed.command != "generate":
+        parsed.settings = None # Force to load from cache if possible
         make_args.update({"--jobs": parsed.jobs})
     return cmake_args, make_args
+
+
+def find_toolchain(platform, path):
+    """
+    Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
+    prime provided toolchains
+    :param platform: platform supplied by user for finding toolchain automatically
+    :param path: path to the CMakeLists.txt directory, which acts as a default location if project_root not set
+    :return: toolchain file
+    """
+    default_toolchain, toolchain_locations = fprime.fbuild.builder().get_toolchain_config(path)
+    toolchain = default_toolchain if platform == "default" else platform
+    # If toolchain is the native target, this is supplied by CMake and we exit here.
+    if toolchain == "native":
+        return None
+    # Otherwise, find locations of toolchain files using the specified locations from settings.
+    else:
+        toolchains_paths = list(map(lambda loc: os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake"),
+                                    toolchain_locations))
+        toolchains = list(filter(os.path.exists, toolchains_paths))
+        if not toolchains:
+            print("[ERROR] Toolchain file {} does not exist at any of {}"
+                  .format(toolchain + ".cmake", ", ".join(list(toolchains_paths))))
+            sys.exit(-1)
+        elif len(toolchains) > 1:
+            print("[ERROR] Toolchain file {} found multiple times. Aborting."
+                  .format(toolchain + ".cmake"))
+            sys.exit(-1)
+    return toolchains[0]
 
 
 def parse_args(args):
@@ -172,7 +199,7 @@ def parse_args(args):
     # Common parser specifying common arguments input into the utility
     common_parser = argparse.ArgumentParser(description="Common Parser for Common Ingredients.")
     common_parser.add_argument("platform", nargs="?", default="default",
-                               help="F prime build platform (e.g. Linux, Darwin). Default specified in CMakeLists.txt.")
+                               help="F prime build platform (e.g. Linux, Darwin). Default specified in settings.ini")
     common_parser.add_argument("-b", "--build-dir", dest="build_dir", default=None,
                                help="F prime build directory to generate, or existing build to operate on.")
     common_parser.add_argument("-p", "--path", default=os.getcwd(),
@@ -180,8 +207,7 @@ def parse_args(args):
     common_parser.add_argument("-j", "--jobs", default=1, type=int,
                                help="F prime parallel job count. Default: %(default)s.")
     common_parser.add_argument("-v", "--verbose", default=False, action="store_true", help="Turn on verbose output.")
-    common_parser.add_argument("-e", "--environment", default=None,
-                               help="File path to read for environment settings for build.")
+    #common_parser.add_argument("-s", "--setting", default=None, help="File path to read for settings for build.")
     # Main parser for the whole application
     parsers = {}
     parser = argparse.ArgumentParser(description="F prime helper application.")
@@ -190,6 +216,8 @@ def parse_args(args):
     for key in ACTION_MAP.keys():
         parsers[key] = subparsers.add_parser(key, description=ACTION_MAP[key]["description"], parents=[common_parser],
                                              add_help=False)
+    parsers["generate"].add_argument("--settings", dest="settings", default=None,
+                                     help="F prime settings file to load")
     parsers["generate"].add_argument("--build-type", dest="build_type", default="Testing",
                                      choices=["Release", "Debug", "Testing"],
                                      help="CMake build type passed to CMake system.")
@@ -297,7 +325,6 @@ def utility_entry(args=sys.argv[1:]):
                 raise
         else:
             action = ACTION_MAP[parsed.command]
-            fprime.fbuild.builder().setup_environment_from_file(parsed.build_dir + action["build-suffix"], parsed.environment)
             fprime.fbuild.builder().execute_known_target(action["target"], parsed.build_dir + action["build-suffix"],
                                                          parsed.path, cmake_args, make_args,
                                                          action.get("top-target", False))

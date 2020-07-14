@@ -7,7 +7,6 @@ receiver of these delegated functions.
 
 @author mstarch
 """
-import six
 import io
 import os
 import re
@@ -25,10 +24,9 @@ import selectors
 
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
+import six
 import fprime.fbuild
-
-COMMENT_REGEX = re.compile(r"\s*#.*")
-SUBSTIT_REGEX = re.compile(r"\$\(([^)]*)\)")
+import fprime.fbuild.settings
 
 
 class CMakeBuildCache(object):
@@ -75,7 +73,7 @@ class CMakeHandler(object):
     CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
     CMAKE_LOCATION_FIELDS = [
         "FPRIME_PROJECT_ROOT",
-        "FPRIME_LIBRARIES",
+        "FPRIME_LIBRARY_LOCATIONS",
         "FPRIME_FRAMEWORK_PATH",
     ]
 
@@ -83,7 +81,7 @@ class CMakeHandler(object):
         """
         Instantiate a basic CMake handler.
         """
-        self.environment = {}
+        self.settings = {}
         self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
@@ -217,7 +215,7 @@ class CMakeHandler(object):
         config_fields = self.get_fprime_configuration(
             CMakeHandler.CMAKE_LOCATION_FIELDS, cmake_dir
         )
-        non_null = filter(lambda item: item is not None, config_fields)
+        non_null = filter(lambda item: item is not None and item != "", config_fields)
         # Read cache fields for each possible directory the build_dir, and the new tempdir
         locations = itertools.chain(*map(lambda value: value.split(";"), non_null))
         mapped = map(os.path.abspath, locations)
@@ -239,7 +237,7 @@ class CMakeHandler(object):
         """
         path = (
             os.path.abspath(path) if path is not None else os.path.abspath(os.getcwd())
-        )
+        ) + os.sep
         possible_parents = self.get_include_locations(cmake_dir)
         # Check there is some possible parent
         if not possible_parents:
@@ -277,6 +275,7 @@ class CMakeHandler(object):
                 else item
             )
 
+        parents = list(parents)
         nearest_parent = functools.reduce(parent_reducer, parents, None)
         # Check that a parent is the true parent
         if nearest_parent is None:
@@ -323,6 +322,24 @@ class CMakeHandler(object):
         # We will CD for build, so this path must become absolute
         source_dir = os.path.abspath(source_dir)
         args = {} if args is None else args
+        # Pass in needed F prime settings
+        needed = [
+            ("FPRIME_FRAMEWORK_PATH", "framework_path"),
+            ("FPRIME_LIBRARY_LOCATIONS", "library_locations"),
+            ("FPRIME_PROJECT_ROOT", "project_root"),
+            ("FPRIME_SETTINGS_FILE", "settings_file"),
+            ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
+            ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
+            ("FPRIME_CONFIG_DIR", "config_dir"),
+        ]
+        # Update args from settings file
+        for cache, setting in needed:
+            if setting in self.settings:
+                args[cache] = self.settings[setting]
+        if "FPRIME_LIBRARY_LOCATIONS" in args:
+            args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(
+                args["FPRIME_LIBRARY_LOCATIONS"]
+            )
         fleshed_args = map(
             lambda key: ("{}={}" if key.startswith("--") else "-D{}={}").format(
                 key, args[key]
@@ -365,52 +382,20 @@ class CMakeHandler(object):
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
-    def sub_environment_values(self, value):
-        """
-        Substitute all values of the form $(ABC) in the string.
-        :return: subbed out value
-        """
-        # Find all matches and iterate backwards substituting as we go
-        matches = list(SUBSTIT_REGEX.finditer(value))
-        matches.reverse()
-        for match in matches:
-            subkey = match.group(1)
-            subval = self.environment.get(subkey, os.environ.get(subkey, ""))
-            value = value[: match.start()] + subval + value[match.end() :]
-        return value
+    def get_toolchain_config(self, project_path):
+        """Returns the default toolchain"""
+        project_root = self.settings.get("project_root", project_path)
+        return (
+            self.settings.get("default_toolchain", "native"),
+            [self.settings.get("framework_path"), project_root]
+            + self.settings.get("library_locations", []),
+        )
 
-    def setup_environment_from_file(self, build_dir, environment_file=None):
+    def load_settings(self, settings_file, cmake_dir):
         """
-        Sets the environment to apply to CMake commands.  Will read from the supplied file.  If None is supplied, it
-        will try and detect the the environment file from variables set in the cache.  If no file is supplied, nor any
-        set in the cache, then it is ignored.
+        Loads the default settigns for this build Could include environment settings and a default toolchain.
         """
-        try:
-            environment_file = (
-                environment_file
-                if environment_file is not None
-                else self._read_values_from_cache(
-                    ["FPRIME_BUILD_ENVIRONMENT"], build_dir
-                )[0]
-            )
-        except CMakeException:
-            print(
-                "[WARNING] Could not read CMake cache. Will not use 'FPRIME_BUILD_ENVIRONMENT' for environment."
-            )
-        # Nothing to set
-        if environment_file is None:
-            return
-        elif not os.path.isfile(environment_file):
-            raise CMakeException(
-                "Environment file '{}' does not exist".format(environment_file)
-            )
-        print("[INFO] Reading environment from: {}".format(environment_file))
-        with open(environment_file, "r") as file_handle:
-            for line in file_handle.readlines():
-                # No need to quote, accounts for blanks
-                tokens = COMMENT_REGEX.sub("", line.strip()).split(None, 1) + [""]
-                if len(tokens) >= 2:
-                    self.environment[tokens[0]] = self.sub_environment_values(tokens[1])
+        self.settings = fprime.fbuild.settings.IniSettings.load(settings_file)
 
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
@@ -476,7 +461,7 @@ class CMakeHandler(object):
         Note: !!! this function has potential File System side-effects !!!
         """
         cm_environ = copy.copy(os.environ)
-        cm_environ.update(self.environment)
+        cm_environ.update(self.settings.get("environment", {}))
         cm_environ.update(environment)
         cargs = ["cmake"]
         if not write_override:

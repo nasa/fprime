@@ -13,4 +13,4 @@ message(STATUS "Requiring thread library")
 FIND_PACKAGE ( Threads REQUIRED )
 
 # Add Linux specific headers into the system
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")

@@ -101,7 +101,7 @@ def compare_genfile(filename):
 def test_enum():
     """
     Tests that enum xml is being generated correctly
-    This test requires PYTONPATH, BUILD_ROOT, and FPRIME_CORE_DIR build vars to be set
+    This test requires PYTONPATH, BUILD_ROOT, and FPRIME_FRAMEWORK_PATH build vars to be set
 
     @TODO: This test and others need the cmake setup instructions.
     """
@@ -117,8 +117,8 @@ def test_enum():
         else:
             assert False
         
-        if "FPRIME_CORE_DIR" in os.environ.keys():
-            print("Found FPRIME_CORE_DIR = {}".format(os.environ['FPRIME_CORE_DIR']))
+        if "FPRIME_FRAMEWORK_PATH" in os.environ.keys():
+            print("Found FPRIME_FRAMEWORK_PATH = {}".format(os.environ['FPRIME_FRAMEWORK_PATH']))
         else:
             assert False
         

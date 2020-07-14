@@ -1,7 +1,7 @@
 #ifndef _FileSystem_hpp_
 #define _FileSystem_hpp_
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/EightyCharString.hpp>
 

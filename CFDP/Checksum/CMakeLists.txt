@@ -20,8 +20,8 @@ set(UT_SOURCE_FILES
 )
 
 set(UT_MOD_DEPS
-  "${FPRIME_CORE_DIR}/CFDP/Checksum"
-  "${FPRIME_CORE_DIR}/Fw/Types"
+  "${FPRIME_FRAMEWORK_PATH}/CFDP/Checksum"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
 )
 register_fprime_ut()
 # Add GTest directory
