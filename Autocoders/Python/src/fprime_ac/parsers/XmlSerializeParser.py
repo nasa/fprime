@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#===============================================================================
+# ===============================================================================
 # NAME: XmlSerializeParser.py
 #
 # DESCRIPTION:  This class parses the XML serializable types files.
@@ -12,7 +12,7 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -24,8 +24,16 @@ from optparse import OptionParser
 from lxml import etree
 import hashlib
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
-from fprime_ac.utils.buildroot import locate_build_root, BuildRootCollisionException, BuildRootMissingException
+from fprime_ac.utils.exceptions import (
+    FprimeXmlException,
+    FprimeRngXmlValidationException,
+)
+from fprime_ac.utils.buildroot import (
+    locate_build_root,
+    BuildRootCollisionException,
+    BuildRootMissingException,
+)
+
 #
 # Python extention modules and custom interfaces
 #
@@ -35,24 +43,24 @@ from fprime_ac.utils.buildroot import locate_build_root, BuildRootCollisionExcep
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 
 format_dictionary = {
-            "U8":"%u",
-            "I8":"%d",
-            "U16":"%u",
-            "I16":"%d",
-            "U32":"%u",
-            "I32":"%d",
-            "U64":"%lu",
-            "I64":"%ld",
-            "F32":"%g",
-            "F64":"%g",
-            "bool":"%s",
-            "string":"%s",
-            "ENUM":"%d"
-                     }
+    "U8": "%u",
+    "I8": "%d",
+    "U16": "%u",
+    "I16": "%d",
+    "U32": "%u",
+    "I32": "%d",
+    "U64": "%lu",
+    "I64": "%ld",
+    "F32": "%g",
+    "F64": "%g",
+    "bool": "%s",
+    "string": "%s",
+    "ENUM": "%d",
+}
 #
 class XmlSerializeParser(object):
     """
@@ -60,6 +68,7 @@ class XmlSerializeParser(object):
     serializable type documents.  The class is instanced with
     an XML file name.
     """
+
     def __init__(self, xml_file=None):
         """
         Given a well formed XML file (xml_file), read it and turn it into
@@ -86,132 +95,150 @@ class XmlSerializeParser(object):
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise IOError(stri)
-        fd = open(xml_file,'r')
-#        xml_file = os.path.basename(xml_file)
+        fd = open(xml_file, "r")
+        #        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
-        self.__config       = ConfigManager.ConfigManager.getInstance()
+        self.__config = ConfigManager.ConfigManager.getInstance()
 
         #
 
         xml_parser = etree.XMLParser(remove_comments=True)
-        element_tree = etree.parse(fd,parser=xml_parser)
+        element_tree = etree.parse(fd, parser=xml_parser)
 
-        #Validate new imports using their root tag as a key to find what schema to use
-        rng_file = self.__config.get('schema' , element_tree.getroot().tag.lower()).lstrip("/")
+        # Validate new imports using their root tag as a key to find what schema to use
+        rng_file = self.__config.get(
+            "schema", element_tree.getroot().tag.lower()
+        ).lstrip("/")
         try:
             rng_file = locate_build_root(rng_file)
         except (BuildRootMissingException, BuildRootCollisionException) as bre:
-            stri = "ERROR: Could not find specified RNG file %s. %s" % (rng_file, str(bre))
+            stri = "ERROR: Could not find specified RNG file %s. %s" % (
+                rng_file,
+                str(bre),
+            )
             raise IOError(stri)
-        file_handler = open(rng_file, 'r')
+        file_handler = open(rng_file, "r")
         relax_parsed = etree.parse(file_handler)
         file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
 
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
-            msg = "XML file {} is not valid according to schema {}.".format(xml_file , rng_file)
+            msg = "XML file {} is not valid according to schema {}.".format(
+                xml_file, rng_file
+            )
             raise FprimeXmlException(msg)
 
         serializable = element_tree.getroot()
         if serializable.tag != "serializable":
-            PRINT.info("%s is not a serializable definition file"%xml_file)
+            PRINT.info("%s is not a serializable definition file" % xml_file)
             sys.exit(-1)
 
-        print("Parsing Serializable %s" %serializable.attrib['name'])
+        print("Parsing Serializable %s" % serializable.attrib["name"])
 
-        self.__name = serializable.attrib['name']
+        self.__name = serializable.attrib["name"]
 
-        if 'namespace' in serializable.attrib:
-            self.__namespace = serializable.attrib['namespace']
+        if "namespace" in serializable.attrib:
+            self.__namespace = serializable.attrib["namespace"]
         else:
             self.__namespace = None
 
-        if 'typeid' in serializable.attrib:
-            self.__type_id = serializable.attrib['typeid']
+        if "typeid" in serializable.attrib:
+            self.__type_id = serializable.attrib["typeid"]
         else:
             self.__type_id = None
 
         for serializable_tag in serializable:
-            if serializable_tag.tag == 'comment':
+            if serializable_tag.tag == "comment":
                 self.__comment = serializable_tag.text.strip()
-            elif serializable_tag.tag == 'include_header':
+            elif serializable_tag.tag == "include_header":
                 self.__include_header_files.append(serializable_tag.text)
-            elif serializable_tag.tag == 'import_serializable_type':
+            elif serializable_tag.tag == "import_serializable_type":
                 self.__includes.append(serializable_tag.text)
-            elif serializable_tag.tag == 'import_enum_type':
+            elif serializable_tag.tag == "import_enum_type":
                 self.__include_enum_files.append(serializable_tag.text)
-            elif serializable_tag.tag == 'import_array_type':
+            elif serializable_tag.tag == "import_array_type":
                 self.__include_array_files.append(serializable_tag.text)
-            elif serializable_tag.tag == 'members':
+            elif serializable_tag.tag == "members":
                 for member in serializable_tag:
-                    if member.tag != 'member':
-                        PRINT.info("%s: Invalid tag %s in serializable member definition"%(xml_file,member.tag))
+                    if member.tag != "member":
+                        PRINT.info(
+                            "%s: Invalid tag %s in serializable member definition"
+                            % (xml_file, member.tag)
+                        )
                         sys.exit(-1)
-                    n = member.attrib['name']
-                    t = member.attrib['type']
-                    if 'size' in list(member.attrib.keys()):
+                    n = member.attrib["name"]
+                    t = member.attrib["type"]
+                    if "size" in list(member.attrib.keys()):
                         if t == "ENUM":
-                            PRINT.info("%s: Member %s: arrays of enums not supported yet!"%(xml_file,n))
+                            PRINT.info(
+                                "%s: Member %s: arrays of enums not supported yet!"
+                                % (xml_file, n)
+                            )
                             sys.exit(-1)
-                        s = member.attrib['size']
+                        s = member.attrib["size"]
                         if not s.isdigit():
-                            PRINT.info("%s: Member %s: size must be a number"%(xml_file,n))
+                            PRINT.info(
+                                "%s: Member %s: size must be a number" % (xml_file, n)
+                            )
                             sys.exit(-1)
                     else:
                         s = None
-                    if 'format' in list(member.attrib.keys()):
-                        f = member.attrib['format']
+                    if "format" in list(member.attrib.keys()):
+                        f = member.attrib["format"]
                     else:
                         if t in list(format_dictionary.keys()):
                             f = format_dictionary[t]
-                        else: # Must be included type, which will use toString method
+                        else:  # Must be included type, which will use toString method
                             f = "%s"
-                    if t == 'string':
+                    if t == "string":
                         if s == None:
-                            PRINT.info("%s: member %s string must specify size tag"%(xml_file,member.tag))
+                            PRINT.info(
+                                "%s: member %s string must specify size tag"
+                                % (xml_file, member.tag)
+                            )
                             sys.exit(-1)
 
-                    if 'comment' in list(member.attrib.keys()):
-                        c = member.attrib['comment']
+                    if "comment" in list(member.attrib.keys()):
+                        c = member.attrib["comment"]
                     else:
                         c = None
 
                     for member_tag in member:
-                        if member_tag.tag == 'enum' and t == 'ENUM':
-                            en = member_tag.attrib['name']
+                        if member_tag.tag == "enum" and t == "ENUM":
+                            en = member_tag.attrib["name"]
                             enum_members = []
                             for mem in member_tag:
-                                mn = mem.attrib['name']
+                                mn = mem.attrib["name"]
                                 if "value" in list(mem.attrib.keys()):
-                                    v = mem.attrib['value']
+                                    v = mem.attrib["value"]
                                 else:
                                     v = None
                                 if "comment" in list(mem.attrib.keys()):
-                                    mc = mem.attrib['comment'].strip()
+                                    mc = mem.attrib["comment"].strip()
                                 else:
                                     mc = None
-                                enum_members.append((mn,v,mc))
-                            t = ((t,en),enum_members)
+                                enum_members.append((mn, v, mc))
+                            t = ((t, en), enum_members)
                         else:
-                            PRINT.info("%s: Invalid member tag %s in serializable member %s"%(xml_file,member_tag.tag,n))
+                            PRINT.info(
+                                "%s: Invalid member tag %s in serializable member %s"
+                                % (xml_file, member_tag.tag, n)
+                            )
                             sys.exit(-1)
 
-
                     self.__members.append((n, t, s, f, c))
-
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.
         #
 
-        if not 'typeid' in serializable.attrib:
+        if not "typeid" in serializable.attrib:
             s = etree.tostring(element_tree.getroot())
             h = hashlib.sha256(s)
             n = h.hexdigest()
             self.__type_id = "0x" + n.upper()[-8:]
-
 
     def is_serializable(self):
         """
@@ -243,13 +270,12 @@ class XmlSerializeParser(object):
         """
         return self.__include_header_files
 
-
     def get_includes(self):
         """
         Returns a list of all imported XML serializable files.
         """
         return self.__includes
-    
+
     def get_include_enums(self):
         """
         Returns a list of all imported XML enum files.
@@ -268,7 +294,6 @@ class XmlSerializeParser(object):
         """
         return self.__comment
 
-
     def get_members(self):
         """
         Returns a list of member (name, type, optional size, optional format, optional comment) needed.
@@ -276,7 +301,7 @@ class XmlSerializeParser(object):
         return self.__members
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     xmlfile = sys.argv[1]
     print("Ports XML parse test (%s)" % xmlfile)
     xml_parser = XmlSerializeParser(xmlfile)
@@ -290,9 +315,5 @@ if __name__ == '__main__':
     for i in xml_parser.get_includes():
         print("XML Include: %s" % i)
     print("Members:")
-    for (n,t,c) in xml_parser.get_members():
-        print("Name: %s, Type: %s, Comment: %s" % (n,t,c))
-
-
-
-
+    for (n, t, c) in xml_parser.get_members():
+        print("Name: %s, Type: %s, Comment: %s" % (n, t, c))

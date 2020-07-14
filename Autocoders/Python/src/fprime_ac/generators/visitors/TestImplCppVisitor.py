@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplCppVisitor.py
 #
 # DESCRIPTION: A visitor class for generating test implementation cpp files.
@@ -9,12 +9,13 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.utils import ConfigManager
 
 from fprime_ac.generators.templates.test_impl import cpp
 from fprime_ac.generators.visitors import TestImplVisitorBase
+
 
 class TestImplCppVisitor(TestImplVisitorBase.TestImplVisitorBase):
     """

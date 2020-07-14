@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: Port.py
 #
 # DESCRIPTION:  This is a Command meta-model sort of class.  It is
@@ -14,7 +14,7 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -32,15 +32,29 @@ import time
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 class Command(object):
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.
     """
-    def __init__(self, mnemonic, opcodes, args, sync=None, priority = None, comment=None, xml_filename=None, component_name=None , component_base_name = None , base_opcode = None , full = None):
+
+    def __init__(
+        self,
+        mnemonic,
+        opcodes,
+        args,
+        sync=None,
+        priority=None,
+        comment=None,
+        xml_filename=None,
+        component_name=None,
+        component_base_name=None,
+        base_opcode=None,
+        full=None,
+    ):
         """
         Constructor
         @param mnemonic:  Name of command instance (each instance must be unique)
@@ -64,9 +78,10 @@ class Command(object):
         self.__base_opcode = base_opcode
         self.__full = full
         #
-#         self.__target_comp = None
-#         self.__target_command = None
-#         self.__target_type = None
+
+    #         self.__target_comp = None
+    #         self.__target_command = None
+    #         self.__target_type = None
 
     def get_xml_filename(self):
         """
@@ -116,7 +131,6 @@ class Command(object):
         """
         return self.__if_comment
 
-
     def get_args(self):
         """
         Return a list of Arg objects for each argument.
@@ -137,6 +151,7 @@ class Command(object):
     def get_base_opcode(self):
         return self.__base_opcode
 
+
 #     def get_target_comp(self):
 #         return self.__target_comp
 #
@@ -154,5 +169,3 @@ class Command(object):
 #
 #     def set_target_type(self, type):
 #         self.__target_type = type
-
-

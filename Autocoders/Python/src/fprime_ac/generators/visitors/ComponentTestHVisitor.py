@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: ComponentTestHVisitor.py
 #
 # DESCRIPTION: A visitor for generating component test header files
@@ -9,10 +9,11 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.generators.visitors import TestVisitorBase
 from fprime_ac.generators.templates.test import hpp
+
 
 class ComponentTestHVisitor(TestVisitorBase.TestVisitorBase):
     """
@@ -40,7 +41,6 @@ class ComponentTestHVisitor(TestVisitorBase.TestVisitorBase):
         c.param_maxHistorySize = (
             "maxHistorySize",
             "const U32",
-            "The maximum size of each history"
+            "The maximum size of each history",
         )
         self._writeTmpl(c, "startSourceFilesVisit")
-

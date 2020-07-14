@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: ImplHVisitor.py
 #
 # DESCRIPTION: A visitor class for generating component implementation
@@ -10,18 +10,20 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.utils import ConfigManager
 
 from fprime_ac.generators.templates.impl import hpp
 from fprime_ac.generators.visitors import ImplVisitorBase
 
+
 class ImplHVisitor(ImplVisitorBase.ImplVisitorBase):
     """
     A visitor class for generating component implementation header files.
     """
-    __config   = None
+
+    __config = None
 
     def __init__(self):
         super().__init__()

@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplHVisitor.py
 #
 # DESCRIPTION: A visitor class for generating test implementation
@@ -10,18 +10,20 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.utils import ConfigManager
 
 from fprime_ac.generators.templates.test_impl import hpp
 from fprime_ac.generators.visitors import TestImplVisitorBase
 
+
 class TestImplHVisitor(TestImplVisitorBase.TestImplVisitorBase):
     """
     A visitor class for generating test implementation header files.
     """
-    __config   = None
+
+    __config = None
 
     def __init__(self):
         super().__init__()

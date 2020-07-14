@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: GTestCppWriter.py
 #
 # DESCRIPTION: A writer for generating component gtest base implemetation files.
@@ -9,16 +9,17 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.generators.writers import GTestWriterBase
 from fprime_ac.generators.templates.gtest import cpp
+
 
 class GTestCppWriter(GTestWriterBase.GTestWriterBase):
     """
     A writer for generating component gtest base implemetation files.
     """
-    
+
     FILE_NAME = "GTestBase.cpp"
 
     def __init__(self):
@@ -35,9 +36,9 @@ class GTestCppWriter(GTestWriterBase.GTestWriterBase):
         c = cpp.cpp()
         self.initGTest(obj, c)
         c.emit_cpp_params = self.emitCppParams
-        c.file_message = "      << \"  File:     \" << __callSiteFileName << \"\\n\"\n"
-        c.line_message = "      << \"  Line:     \" << __callSiteLineNumber << \"\\n\""
-        c.failure_message = "<< \"\\n\"\n" + c.file_message + c.line_message
+        c.file_message = '      << "  File:     " << __callSiteFileName << "\\n"\n'
+        c.line_message = '      << "  Line:     " << __callSiteLineNumber << "\\n"'
+        c.failure_message = '<< "\\n"\n' + c.file_message + c.line_message
         c.LTLT = "<<"
         self._writeTmpl(c, "startSourceFilesWrite")
 

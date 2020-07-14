@@ -1,15 +1,15 @@
-#===============================================================================
+# ===============================================================================
 # NAME:  AbstractGenerator.py
 #
 # DESCRIPTION: The abstract generator defines the interface
-#	           for each element or in this case
+# 	           for each element or in this case
 #              portition of code to be generated.  We use
 #              the python __call__ method to make
 #              direct calls to generators.
 #
 # USAGE: Normally these will be instanced by a Factory
 #        then each one will have the needed visitors
-#	     added.
+# 	     added.
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -17,7 +17,7 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -26,6 +26,7 @@ import os
 import sys
 import time
 from optparse import OptionParser
+
 #
 # Python extention modules and custom interfaces
 #
@@ -35,11 +36,12 @@ from optparse import OptionParser
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 
 #
 # Module class or classes go here.
+
 
 class AbstractGenerator:
     """
@@ -48,6 +50,7 @@ class AbstractGenerator:
     use the python __call__ method as the
     main call to produce code generation by visitors.
     """
+
     def __init__(self):
         """
         Constructor.
@@ -59,16 +62,22 @@ class AbstractGenerator:
         Main execution point.
         Calls the accept method on each visitor to generate the code.
         """
-        raise Exception("AbstractGenerator.__call__() - Implementation Error: you must supply your own concrete implementation.")
+        raise Exception(
+            "AbstractGenerator.__call__() - Implementation Error: you must supply your own concrete implementation."
+        )
 
     def accept(self, visitor):
         """
         Execute the visit call on this object.
         """
-        raise Exception("AbstractFace.accept.accept(v) - Implementation Error: you must supply your own concrete implementation.")
+        raise Exception(
+            "AbstractFace.accept.accept(v) - Implementation Error: you must supply your own concrete implementation."
+        )
 
     def addVisitor(self, visitor):
         """
 	    Method to add the visitor to a list of visitors.
 	    """
-        raise Exception("AbstractFace.accept.addVisitor(v) - Implementation Error: you must supply your own concrete implementation.")
+        raise Exception(
+            "AbstractFace.accept.addVisitor(v) - Implementation Error: you must supply your own concrete implementation."
+        )

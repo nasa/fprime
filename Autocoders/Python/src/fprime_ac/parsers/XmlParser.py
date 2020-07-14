@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: XmlParser.py
 #
 # DESCRIPTION:  This parses the XML component description files.
@@ -11,7 +11,7 @@
 #
 # Copyright 2007, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -31,8 +31,8 @@ from lxml import etree
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 class XmlParser(object):
     def __init__(self, xml_file=None):
@@ -42,7 +42,7 @@ class XmlParser(object):
             stri = "ERROR: Could not find specified XML file {}.".format(xml_file)
             raise IOError(stri)
 
-        fd = open(xml_file,'r')
+        fd = open(xml_file, "r")
 
         element_tree = etree.parse(fd)
         self.__root = element_tree.getroot().tag
@@ -53,4 +53,3 @@ class XmlParser(object):
         """
         """
         return self.__root
-

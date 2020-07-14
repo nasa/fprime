@@ -1,12 +1,12 @@
-#===============================================================================
+# ===============================================================================
 # NAME: InitFiles
 #
 # DESCRIPTION:  The InitFiles class is the main entry point
-#				for generation of initiallization code (e.g.
+# 				for generation of initiallization code (e.g.
 #               opening files and namming) for code generation.
 #
 # USAGE: Nominally the InitFiles.__call__ is called by using the
-#		 instance name.  The instance name is the function
+# 		 instance name.  The instance name is the function
 #        called with a suitable argument object containing
 #        all needed model information to generate the code.
 #
@@ -16,41 +16,44 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 import logging
-#import os
-#import sys
-#import time
+
+# import os
+# import sys
+# import time
 #
 # Python extention modules and custom interfaces
 #
 from fprime_ac.generators.visitors import AbstractVisitor
+
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 # Module class or classes go here.
+
 
 class InitFiles:
     """
     Defines the interface concrete class implementation that drives code generation.
     """
+
     __visitor_list = []
-    __obj          = None
+    __obj = None
 
     def __init__(self):
         """
         Constructor.
         """
         self.__visitor_list = list()
-
 
     def __call__(self, args):
         """
@@ -64,7 +67,6 @@ class InitFiles:
         for v in self.__visitor_list:
             self.accept(v)
 
-
     def accept(self, visitor):
         """
         The operation in Visitor design pattern that takes a visitor as an argument
@@ -75,9 +77,12 @@ class InitFiles:
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):
             visitor.initFilesVisit(self.__obj)
         else:
-            DEBUG.error('InitFiles.accept() - the given visitor is not a subclass of AbstractVisitor!')
-            raise Exception('InitFiles.accept() - the given visitor is not a subclass of AbstractVisitor!')
-
+            DEBUG.error(
+                "InitFiles.accept() - the given visitor is not a subclass of AbstractVisitor!"
+            )
+            raise Exception(
+                "InitFiles.accept() - the given visitor is not a subclass of AbstractVisitor!"
+            )
 
     def addVisitor(self, visitor):
         """
@@ -87,9 +92,12 @@ class InitFiles:
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):
             self.__visitor_list.append(visitor)
         else:
-            DEBUG.error('InitFiles.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-            raise Exception('InitFiles.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!')
-
+            DEBUG.error(
+                "InitFiles.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
+            )
+            raise Exception(
+                "InitFiles.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
+            )
 
     def getObj(self):
         """

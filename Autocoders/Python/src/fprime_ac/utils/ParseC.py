@@ -16,13 +16,14 @@ from time import clock
 comma = Literal(",").suppress()
 equal = Literal("=").suppress()
 space = Literal(" ").suppress()
-left_brace  = Literal("{").suppress()
-left_paren  = Literal("(").suppress()
+left_brace = Literal("{").suppress()
+left_paren = Literal("(").suppress()
 right_brace = Literal("}").suppress()
 right_paren = Literal(")").suppress()
-semicolon   = Literal(";").suppress()
-identifier  = Word(alphas+"_", alphas+nums+"_$")   # c-identifier
+semicolon = Literal(";").suppress()
+identifier = Word(alphas + "_", alphas + nums + "_$")  # c-identifier
 decORhex = nums + "ABCDEFXabcdefx"
+
 
 def ParseNumDefine(defname, filename, loadfile=True):
     """
@@ -40,7 +41,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     or if the value can not be represented as an integer.
     """
     if loadfile not in (True, False):
-        raise ValueError('%r: invalid loadfile argument' % loadfile)
+        raise ValueError("%r: invalid loadfile argument" % loadfile)
 
     results = ""
 
@@ -51,14 +52,14 @@ def ParseNumDefine(defname, filename, loadfile=True):
     if loadfile == True:
 
         if not os.path.isfile(filename):
-            raise IOError('%r: file not found.' % filename)
+            raise IOError("%r: file not found." % filename)
 
         fd = open(filename)
 
         try:
             data = fd.read()
         except:
-            raise IOError('%r: error reading file.' % filename)
+            raise IOError("%r: error reading file." % filename)
         else:
             fd.close()
 
@@ -80,7 +81,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     # define values, and return them as strings. The string value
     # may be more useful.
 
-    parser = (keyword + name + Optional(left_paren) + Word(nums) + Optional(right_paren))
+    parser = keyword + name + Optional(left_paren) + Word(nums) + Optional(right_paren)
 
     parser.ignore(cStyleComment)
     parser.ignore(Literal("//") + restOfLine)
@@ -89,7 +90,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     # as a single string. This string is the value of the define without
     # optional parenthesis.
 
-    for toks,start,end in parser.scanString(data, 1):
+    for toks, start, end in parser.scanString(data, 1):
         # Return the first one we find. There should only be one, but
         # any conditional compilation in the code could result in a
         # wrong value returned.
@@ -117,7 +118,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     """
 
     if loadfile not in (True, False):
-        raise ValueError('%r: invalid loadfile argument' % loadfile)
+        raise ValueError("%r: invalid loadfile argument" % loadfile)
 
     dictionary = {}
 
@@ -133,7 +134,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
             # with existance test for MSL_ROOT.
             # LJR - 15 Nov. 2007
             ##################
-            if 'MSL_ROOT' in os.environ:
+            if "MSL_ROOT" in os.environ:
                 msl_root = os.environ["MSL_ROOT"]
             else:
                 str = "MSL_ROOT is not defined in the environment."
@@ -141,8 +142,11 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
                 raise KeyError(str)
             filename = msl_root + os.sep + filename
             if not os.path.isfile(filename):
-            ######################
-                str = 'ERROR: utils.ParseC.ParseTypedefEnum: %s file not found.' % filename
+                ######################
+                str = (
+                    "ERROR: utils.ParseC.ParseTypedefEnum: %s file not found."
+                    % filename
+                )
                 print(str)
                 raise IOError(str)
 
@@ -151,7 +155,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         try:
             data = fd.read()
         except:
-            raise IOError('%r: error reading file.' % filename)
+            raise IOError("%r: error reading file." % filename)
         else:
             fd.close()
 
@@ -161,7 +165,10 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         data = filename
 
     if (typename == "" or typename == None) == True:
-        str = "ERROR: utils.ParseC.ParseTypedefEnum typename argument empty (%s)" % typename
+        str = (
+            "ERROR: utils.ParseC.ParseTypedefEnum typename argument empty (%s)"
+            % typename
+        )
         print(str)
         raise ValueError(str)
 
@@ -172,7 +179,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
     parser = Forward()
 
-    keyword   = Literal("typedef enum").suppress()
+    keyword = Literal("typedef enum").suppress()
     typetoken = Literal(typename).suppress()
 
     # 04/23/07: Fix allows for nagative numbers.
@@ -188,8 +195,16 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
     val = Word("=" + " " + "-" + decORhex + "(int)") + restOfLine.suppress()
 
-    enums = (identifier + Optional(comma + restOfLine.suppress() ^ val))
-    parser = (keyword + Optional(identifier).suppress() + left_brace + ZeroOrMore(enums) + right_brace + typetoken + semicolon)
+    enums = identifier + Optional(comma + restOfLine.suppress() ^ val)
+    parser = (
+        keyword
+        + Optional(identifier).suppress()
+        + left_brace
+        + ZeroOrMore(enums)
+        + right_brace
+        + typetoken
+        + semicolon
+    )
 
     parser.ignore(cStyleComment)
     parser.ignore(Literal("//") + restOfLine)
@@ -216,7 +231,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # the typedef is multiply defined.
 
     toks = []
-    for toks,start,end in parser.scanString(data, 1):
+    for toks, start, end in parser.scanString(data, 1):
         continue
 
         # Nothing in the loop. We just want the tokens. The tokens are
@@ -236,8 +251,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
     # In ANSI/ISO C, enums must be legal int values. On MSL FSW target,
     # that means 32-bits, signed. Need to convert hex values to signed int.
-    sign_bit  = int( "0x8" + "0" * 7, 0 )
-    sign_mask = int( "0x7" + "F" * 7, 0 )
+    sign_bit = int("0x8" + "0" * 7, 0)
+    sign_mask = int("0x7" + "F" * 7, 0)
     pt = ""
     val = 0
 
@@ -270,7 +285,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
             if typename == debugOnType:
                 print(typename + "(2):")
                 print(t[1:])
-                print(int(t[1:],0))
+                print(int(t[1:], 0))
             val = int(t[1:], 0)
             if val & sign_bit:
                 val = -((~val & sign_mask) + 1)
@@ -308,7 +323,7 @@ def ParseTypedefEnumValue(name, typename, filename, loadfile=True):
     enums = ParseTypedefEnum(typename, filename, loadfile)
 
     if name not in enums:
-        raise ValueError('%r: enumeration not found' % name)
+        raise ValueError("%r: enumeration not found" % name)
 
     return int(enums[name])
 
@@ -346,36 +361,36 @@ typedef enum cmd_status {
 
 """
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-##################################################
+    ##################################################
 
     typename = "CmdStatus"
     enumname = "CMD_FAILED_MODE_CHECK"
 
     print()
     print("Checking ParseTypedefEnumValue...")
-    print('Typedef: %s' % typename)
+    print("Typedef: %s" % typename)
 
     result = ParseTypedefEnumValue(enumname, typename, testdata, False)
 
     print("The value of %s is: %d." % (enumname, result))
 
-##################################################
+    ##################################################
 
     index = 0
     typename = "CmdStatus"
 
     print()
     print("Checking ParseTypedefEnum...")
-    print('Typedef: %s' % typename)
+    print("Typedef: %s" % typename)
 
     results = ParseTypedefEnum(typename, testdata, False)
 
     for key, value in list(results.items()):
         print("    " + str(key) + " -> " + str(value))
 
-##################################################
+    ##################################################
 
     print()
     print("Checking ParseNumDefine...")

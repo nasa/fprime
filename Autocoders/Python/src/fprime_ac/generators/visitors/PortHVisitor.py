@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: PortHVisitor.py
 #
 # DESCRIPTION: A visitor responsible for the generation of header file
@@ -10,7 +10,7 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -21,15 +21,18 @@ import time
 import datetime
 from optparse import OptionParser
 from getpass import getuser
+
 #
 # Python extention modules and custom interfaces
 #
-#from Cheetah import Template
-#from fprime_ac.utils import version
+# from Cheetah import Template
+# from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
-#from fprime_ac.utils import DiffAndRename
+
+# from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
+
 #
 # Import precompiled templates here
 #
@@ -41,13 +44,14 @@ from fprime_ac.generators.templates.port import publicPortH
 from fprime_ac.generators.templates.port import protectedPortH
 from fprime_ac.generators.templates.port import privatePortH
 from fprime_ac.generators.templates.port import finishPortH
+
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 # Module class or classes go here.
 class PortHVisitor(AbstractVisitor.AbstractVisitor):
@@ -55,10 +59,11 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
     A visitor class responsible for generation of component header
     classes in C++.
     """
+
     __instance = None
-    __config   = None
-    __fp       = None
-    __form     = None
+    __config = None
+    __fp = None
+    __form = None
     __form_comment = None
 
     def __init__(self):
@@ -66,13 +71,12 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         Constructor.
         """
         super().__init__()
-        self.__config       = ConfigManager.ConfigManager.getInstance()
-        self.__form         = formatters.Formatters()
+        self.__config = ConfigManager.ConfigManager.getInstance()
+        self.__form = formatters.Formatters()
         self.__form_comment = formatters.CommentFormatters()
         DEBUG.info("PortHVisitor: Instanced.")
-        self.bodytext       = ""
-        self.prototypetext  = ""
-
+        self.bodytext = ""
+        self.prototypetext = ""
 
     def _get_args_string(self, obj):
         """
@@ -86,14 +90,17 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             #
             # Grab enum type here...
             if type(t) == type(tuple()):
-                if t[0][0].upper() == 'ENUM':
+                if t[0][0].upper() == "ENUM":
                     t = t[0][1]
                 else:
-                    PRINT.info("ERROR: Ill formed enumeration type...(name: %s, type: %s" % (arg.get_name(), arg.get_type()))
+                    PRINT.info(
+                        "ERROR: Ill formed enumeration type...(name: %s, type: %s"
+                        % (arg.get_name(), arg.get_type())
+                    )
                     sys.exit(-1)
             else:
                 t = arg.get_type()
-                
+
             if t == "string":
                 t = arg.get_name() + "String"
             if t == "buffer":
@@ -109,7 +116,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
 
             arg_str += "%s%s" % (t, arg.get_name())
             arg_str += ", "
-        arg_str = arg_str.strip(', ')
+        arg_str = arg_str.strip(", ")
         return arg_str
 
     def _get_args_sum_string(self, obj):
@@ -130,7 +137,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 t = arg.get_name() + "String"
             if t == "buffer":
                 t = arg.get_name() + "Buffer"
-            
+
             #
             # Make size for pointer modifier here...
             if arg.get_modifier() == "pointer":
@@ -142,17 +149,37 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 if t[0][0].upper() == "ENUM":
                     t = "sizeof(NATIVE_INT_TYPE)"
                 else:
-                    PRINT.info("ERROR: Ill formed enumeration type...(name: %s, type: %s" % (arg.get_name(), arg.get_type()))
+                    PRINT.info(
+                        "ERROR: Ill formed enumeration type...(name: %s, type: %s"
+                        % (arg.get_name(), arg.get_type())
+                    )
                     sys.exit(-1)
-            elif (t in ["U8","U16","U32","U64","I8","I16","I32","I64","F32",'F64',
-                        'bool','FwOpcodeType','FwChanIdType','FwEventIdType','FwPrmIdType',
-                        'NATIVE_INT_TYPE','NATIVE_UINT_TYPE', 'POINTER_CAST']):
+            elif t in [
+                "U8",
+                "U16",
+                "U32",
+                "U64",
+                "I8",
+                "I16",
+                "I32",
+                "I64",
+                "F32",
+                "F64",
+                "bool",
+                "FwOpcodeType",
+                "FwChanIdType",
+                "FwEventIdType",
+                "FwPrmIdType",
+                "NATIVE_INT_TYPE",
+                "NATIVE_UINT_TYPE",
+                "POINTER_CAST",
+            ]:
                 t = "sizeof(" + t + cl
             else:
                 t = t + "::SERIALIZED_SIZE"
             arg_str += t
             arg_str += " + "
-        arg_str = arg_str.strip(' + ')
+        arg_str = arg_str.strip(" + ")
         return arg_str
 
     def _get_args_list(self, obj):
@@ -160,59 +187,65 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         Return a list of port argument tuples
         """
         arg_list = list()
-        
+
         for arg in obj.get_args():
             n = arg.get_name()
             t = arg.get_type()
             m = arg.get_modifier()
             s = arg.get_size()
             c = arg.get_comment()
-            arg_list.append((n,t,m,s,c))
-            
+            arg_list.append((n, t, m, s, c))
+
         return arg_list
 
     def _writeTmpl(self, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug('PortHVisitor:%s' % visit_str)
-        DEBUG.debug('===================================')
+        DEBUG.debug("PortHVisitor:%s" % visit_str)
+        DEBUG.debug("===================================")
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
-        DEBUG.debug('===================================')
-
+        DEBUG.debug("===================================")
 
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
         @parms args: the instance of the concrete element to operation on.
         """
-        # Build filename here...        
-        if self.__config.get("port","XMLDefaultFileName") == "True":
-            filename = obj.get_type() + self.__config.get("port","PortH")
-            PRINT.info("Generating code filename: %s, using XML namespace and name attributes..." % filename)
+        # Build filename here...
+        if self.__config.get("port", "XMLDefaultFileName") == "True":
+            filename = obj.get_type() + self.__config.get("port", "PortH")
+            PRINT.info(
+                "Generating code filename: %s, using XML namespace and name attributes..."
+                % filename
+            )
         else:
             xml_file = obj.get_xml_filename()
             x = xml_file.split(".")
-            s = self.__config.get("port","PortXML").split(".")
+            s = self.__config.get("port", "PortXML").split(".")
             l = len(s[0])
             #
             if (x[0][-l:] == s[0]) & (x[1] == s[1]):
-                filename = x[0].split(s[0])[0] + self.__config.get("port","PortH")
-                PRINT.info("Generating code filename: %s, using default XML filename prefix..." % filename)
+                filename = x[0].split(s[0])[0] + self.__config.get("port", "PortH")
+                PRINT.info(
+                    "Generating code filename: %s, using default XML filename prefix..."
+                    % filename
+                )
             else:
-                msg = "XML file naming format not allowed (must be XXXPortAi.xml), Filename: %s" % xml_file
+                msg = (
+                    "XML file naming format not allowed (must be XXXPortAi.xml), Filename: %s"
+                    % xml_file
+                )
                 PRINT.info(msg)
-                raise 
-        
-        
+                raise
+
         # Open file for writting here...
-        DEBUG.info('Open file: %s' % filename)
-        self.__fp = open(filename,'w')
+        DEBUG.info("Open file: %s" % filename)
+        self.__fp = open(filename, "w")
         if self.__fp == None:
             raise Exception("Could not open %s file.") % filename
-        DEBUG.info('Completed')
-
+        DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):
         """
@@ -226,7 +259,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.user = getuser()
         self._writeTmpl(c, "startSourceFilesVisit")
 
-
     def includes1Visit(self, obj):
         """
         Defined to generate includes within a file.
@@ -236,7 +268,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c = includes1PortH.includes1PortH()
         self._writeTmpl(c, "includes1Visit")
 
-
     def includes2Visit(self, obj):
         """
         Defined to generate internal includes within a file.
@@ -245,14 +276,20 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = includes2PortH.includes2PortH()
         c.c_includes_list = obj.get_includes()
-        if False in [x[-3:] == 'hpp' or x[-1:] == 'h' for x in c.c_includes_list]:
-            PRINT.info("ERROR: Only .hpp or .h files can be given within <include_header> tag!!!")
+        if False in [x[-3:] == "hpp" or x[-1:] == "h" for x in c.c_includes_list]:
+            PRINT.info(
+                "ERROR: Only .hpp or .h files can be given within <include_header> tag!!!"
+            )
             sys.exit(-1)
         c.xml_includes_list = obj.get_serial_includes() + obj.get_enum_includes()
-        if False in [x[-6:] == 'Ai.xml' for x in c.xml_includes_list]:
-            PRINT.info("ERROR: Only xml files can be given within <import_serializable_type> tag!!!")
+        if False in [x[-6:] == "Ai.xml" for x in c.xml_includes_list]:
+            PRINT.info(
+                "ERROR: Only xml files can be given within <import_serializable_type> tag!!!"
+            )
             sys.exit(-1)
-        c.xml_includes_list = [x.replace('Ai.xml','Ac.hpp') for x in  c.xml_includes_list]
+        c.xml_includes_list = [
+            x.replace("Ai.xml", "Ac.hpp") for x in c.xml_includes_list
+        ]
         self._writeTmpl(c, "includes2Visit")
 
     def _get_enum_string_list(self, enum_list):
@@ -264,13 +301,13 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         for e in enum_list:
             # No value, No comment
             if (e[1] == None) and (e[2] == None):
-                s = "%s," % (e[0]) 
+                s = "%s," % (e[0])
             # No value, With comment
             elif (e[1] == None) and (e[2] != None):
-                s = "%s,  // %s" % (e[0],e[2]) 
+                s = "%s,  // %s" % (e[0], e[2])
             # With value, No comment
             elif (e[1] != None) and (e[2] == None):
-                s = "%s = %s," % (e[0],e[1]) 
+                s = "%s = %s," % (e[0], e[1])
             # With value and comment
             elif (e[1] != None) and (e[2] != None):
                 s = "%s = %s,  // %s" % (e)
@@ -290,29 +327,28 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         if obj.get_namespace() == None:
             c.namespace_list = None
         else:
-            c.namespace_list = obj.get_namespace().split('::')
+            c.namespace_list = obj.get_namespace().split("::")
         c.name = obj.get_type()
         c.desc = obj.get_comment()
         #
         # Get any enum types here for the option generation of typedef's
-        # enum_type_list is enum types of form 
-        #[(('ENUM', name of typedef), [ list of (name, value, comment) enumerations]), (...), (...), ...]
+        # enum_type_list is enum types of form
+        # [(('ENUM', name of typedef), [ list of (name, value, comment) enumerations]), (...), (...), ...]
         #
         c.enum_type_list = []
         t = [x.get_type() for x in obj.get_args()]
         # if a return type add it to the list to scan for enum
         r = obj.get_return()
-        if (r != None):
+        if r != None:
             t += obj.get_return()
         enum_list = [x for x in t if type(x) == type(tuple())]
         for e in enum_list:
             c.enum_type_list.append(self._get_enum_string_list(e))
-        #print c.enum_type_list
-        
-        c.arg_list = self._get_args_list(obj)
-        
-        self._writeTmpl(c, "namespaceVisit")
+        # print c.enum_type_list
 
+        c.arg_list = self._get_args_list(obj)
+
+        self._writeTmpl(c, "namespaceVisit")
 
     def publicVisit(self, obj):
         """
@@ -342,7 +378,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         #
         self._writeTmpl(c, "publicVisit")
 
-
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
@@ -350,7 +385,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = protectedPortH.protectedPortH()
         self._writeTmpl(c, "protectedVisit")
-
 
     def privateVisit(self, obj):
         """
@@ -361,7 +395,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.name = obj.get_type()
         self._writeTmpl(c, "privateVisit")
 
-
     def finishSourceFilesVisit(self, obj):
         """
         Defined to generate ending static code within files.
@@ -370,9 +403,9 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         if obj.get_namespace() == None:
             c.namespace_list = None
         else:
-            c.namespace_list = obj.get_namespace().split('::')
+            c.namespace_list = obj.get_namespace().split("::")
         c.name = obj.get_type()
-        c.name_space = obj.get_namespace();
+        c.name_space = obj.get_namespace()
         c.desc = obj.get_comment()
         c.args_string = self._get_args_string(obj)
         r = obj.get_return()

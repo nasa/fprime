@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: ComponentCppVisitor.py
 #
 # DESCRIPTION: A visitor for generating component implemetation files.
@@ -9,10 +9,11 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.generators.visitors import ComponentVisitorBase
 from fprime_ac.generators.templates.component import cpp
+
 
 class ComponentCppVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """

@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: TopologyIDVisitor.py
 #
 # DESCRIPTION: A visitor responsible for the generation of component
@@ -10,7 +10,7 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -19,38 +19,43 @@ import os
 import sys
 import time
 from optparse import OptionParser
+
 #
 # Python extention modules and custom interfaces
 #
-#from Cheetah import Template
-#from fprime_ac.utils import version
+# from Cheetah import Template
+# from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
 from fprime_ac.models import ModelParser
-#from fprime_ac.utils import DiffAndRename
+
+# from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
+
 #
 # Import precompiled templates here
 #
 from fprime_ac.generators.templates.topology import publicTopologyID
-#from fprime_ac.generators.templates import finishTopologyCpp
+
+# from fprime_ac.generators.templates import finishTopologyCpp
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 # Module class or classes go here.
 class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
     """
     A visitor class responsible for generation of base ID/window range export CSV files
     """
+
     __instance = None
-    __config   = None
-    __fp       = None
-    __form     = None
+    __config = None
+    __fp = None
+    __form = None
     __form_comment = None
     __model_parser = None
 
@@ -59,25 +64,23 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         Constructor.
         """
         super().__init__()
-        self.__config       = ConfigManager.ConfigManager.getInstance()
-        self.__form         = formatters.Formatters()
+        self.__config = ConfigManager.ConfigManager.getInstance()
+        self.__form = formatters.Formatters()
         self.__form_comment = formatters.CommentFormatters()
         self.__model_parser = ModelParser.ModelParser.getInstance()
         DEBUG.info("TopologyIDVisitor: Instanced.")
-        self.bodytext       = ""
-        self.prototypetext  = ""
-
+        self.bodytext = ""
+        self.prototypetext = ""
 
     def _writeTmpl(self, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug('TopologyIDVisitor:%s' % visit_str)
-        DEBUG.debug('===================================')
+        DEBUG.debug("TopologyIDVisitor:%s" % visit_str)
+        DEBUG.debug("===================================")
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
-        DEBUG.debug('===================================')
-
+        DEBUG.debug("===================================")
 
     def initFilesVisit(self, obj):
         """
@@ -88,34 +91,40 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         if len(obj.get_comp_list()) > 0:
             xml_file = obj.get_comp_list()[0].get_xml_filename()
             x = xml_file.split(".")
-            s = self.__config.get("assembly","TopologyXML").split(".")
+            s = self.__config.get("assembly", "TopologyXML").split(".")
             l = len(s[0])
             #
             if (x[0][-l:] == s[0]) & (x[1] == s[1]):
-                filename = x[0].split(s[0])[0] + self.__config.get("assembly","TopologyID")
-                PRINT.info("Generating code filename: %s topology, using default XML filename prefix..." % filename)
+                filename = x[0].split(s[0])[0] + self.__config.get(
+                    "assembly", "TopologyID"
+                )
+                PRINT.info(
+                    "Generating code filename: %s topology, using default XML filename prefix..."
+                    % filename
+                )
             else:
-                msg = "XML file naming format not allowed (must be XXXAppAi.xml), Filename: %s" % xml_file
+                msg = (
+                    "XML file naming format not allowed (must be XXXAppAi.xml), Filename: %s"
+                    % xml_file
+                )
                 PRINT.info(msg)
                 raise
 
             # Open file for writting here...
-            DEBUG.info('Open file: %s' % filename)
-            self.__fp = open(filename,'w')
+            DEBUG.info("Open file: %s" % filename)
+            self.__fp = open(filename, "w")
             if self.__fp == None:
                 raise Exception("Could not open %s file.") % filename
-            DEBUG.info('Completed')
+            DEBUG.info("Completed")
         else:
-            PRINT.info('ERROR: NO COMPONENTS FOUND IN TOPOLOGY XML FILE...')
+            PRINT.info("ERROR: NO COMPONENTS FOUND IN TOPOLOGY XML FILE...")
             sys.exit(-1)
-
 
     def startSourceFilesVisit(self, obj):
         """
         Defined to generate starting static code within files.
         """
         pass
-
 
     def includes1Visit(self, obj):
         """
@@ -125,7 +134,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         """
         pass
 
-
     def includes2Visit(self, obj):
         """
         Defined to generate internal includes within a file.
@@ -133,7 +141,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         pass
-
 
     def namespaceVisit(self, obj):
         """
@@ -143,7 +150,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         """
         pass
 
-
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
@@ -151,24 +157,24 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = publicTopologyID.publicTopologyID()
 
-        c.id_list = [] #Contents will be strings in the form 'component name,instance name,base id,window range'
+        c.id_list = (
+            []
+        )  # Contents will be strings in the form 'component name,instance name,base id,window range'
 
         #
-        #Generate Set Window/Base ID Method
+        # Generate Set Window/Base ID Method
         for id_tuple in obj.get_base_id_list():
             n = id_tuple[0]
             type = id_tuple[3].get_type()
             base_id = id_tuple[1]
             window_id = id_tuple[2]
 
-            instance_list = [type, n , base_id , window_id]
-
+            instance_list = [type, n, base_id, window_id]
 
             c.id_list.append(",".join(str(x) for x in instance_list))
         #
 
         self._writeTmpl(c, "publicVisit")
-
 
     def protectedVisit(self, obj):
         """
@@ -177,7 +183,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         """
         pass
 
-
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
@@ -185,12 +190,10 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         """
         pass
 
-
     def finishSourceFilesVisit(self, obj):
         """
         Defined to generate ending static code within files.
         """
-        #c = finishComponentCpp.finishComponentCpp()
-        #self._writeTmpl(c, "finishSourceFilesVisit")
+        # c = finishComponentCpp.finishComponentCpp()
+        # self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
-

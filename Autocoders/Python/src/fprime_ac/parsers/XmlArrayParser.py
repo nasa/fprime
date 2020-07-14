@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-#===============================================================================
+# ===============================================================================
 # NAME: XmlArrayParser.py
 #
-# DESCRIPTION: This class parses the XML Array types files. 
+# DESCRIPTION: This class parses the XML Array types files.
 #
-# USAGE: 
+# USAGE:
 #
 # AUTHOR: jishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
@@ -12,7 +12,7 @@
 #
 # Copyright 2020, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -26,7 +26,11 @@ from optparse import OptionParser
 from lxml import etree
 from lxml import isoschematron
 from fprime_ac.parsers import XmlParser
-from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
+from fprime_ac.utils.exceptions import (
+    FprimeXmlException,
+    FprimeRngXmlValidationException,
+)
+
 #
 # Python extention modules and custom interfaces
 #
@@ -36,8 +40,8 @@ from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidatio
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
 class XmlArrayParser(object):
@@ -54,7 +58,7 @@ class XmlArrayParser(object):
         self.__name = ""
         self.__namespace = None
 
-      # List of C++ include files for serializable *.hpp file
+        # List of C++ include files for serializable *.hpp file
         self.__include_header_files = []
         # List of XML serializable description dependencies
         self.__includes = []
@@ -71,23 +75,38 @@ class XmlArrayParser(object):
         self.__size = None
         self.__default = []
         self.__xml_filename = xml_file
-        
+
         self.Config = ConfigManager.ConfigManager.getInstance()
 
-        typeslist = ["I8", "I8", "BYTE", "I16", "U16", "I32", "U32", "I64", "U64", "F32", "F64", "bool", "ENUM", "string"]
+        typeslist = [
+            "I8",
+            "I8",
+            "BYTE",
+            "I16",
+            "U16",
+            "I32",
+            "U32",
+            "I64",
+            "U64",
+            "F32",
+            "F64",
+            "bool",
+            "ENUM",
+            "string",
+        ]
 
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise IOError(stri)
-        fd = open(xml_file,'r')
+        fd = open(xml_file, "r")
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
         xml_parser = etree.XMLParser(remove_comments=True)
-        element_tree = etree.parse(fd,parser=xml_parser)
+        element_tree = etree.parse(fd, parser=xml_parser)
 
-        #Validate against current schema. if more are imported later in the process, they will be reevaluated
-        relax_file_handler = open(ROOTDIR + self.Config.get('schema', 'array') , 'r')
+        # Validate against current schema. if more are imported later in the process, they will be reevaluated
+        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"), "r")
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -96,23 +115,23 @@ class XmlArrayParser(object):
         if not relax_compiled.validate(element_tree):
             raise FprimeRngXmlValidationException(relax_compiled.error_log)
 
-        self.validate_xml(xml_file, element_tree, 'schematron', 'array_default')
-        
+        self.validate_xml(xml_file, element_tree, "schematron", "array_default")
+
         array = element_tree.getroot()
         if array.tag != "array":
-            PRINT.info("%s is not an array definition file" % xml_file)            
+            PRINT.info("%s is not an array definition file" % xml_file)
             sys.exit(-1)
-            
-        print("Parsing Array %s" %array.attrib['name'])
-        self.__name = array.attrib['name']
-            
-        if 'namespace' in array.attrib:
-            self.__namespace = array.attrib['namespace']
-        
+
+        print("Parsing Array %s" % array.attrib["name"])
+        self.__name = array.attrib["name"]
+
+        if "namespace" in array.attrib:
+            self.__namespace = array.attrib["namespace"]
+
         for array_tag in array:
-            if array_tag.tag == 'format':
+            if array_tag.tag == "format":
                 self.__format = array_tag.text
-            elif array_tag.tag == 'type':
+            elif array_tag.tag == "type":
                 self.__type = array_tag.text
                 # Check if using external type
                 if not self.__type in typeslist:
@@ -120,31 +139,31 @@ class XmlArrayParser(object):
                 else:
                     self.__typeinfo = "basic"
 
-                if 'size' in array_tag.attrib:
-                    self.__string_size = array_tag.attrib['size']
-            elif array_tag.tag == 'typeid':
+                if "size" in array_tag.attrib:
+                    self.__string_size = array_tag.attrib["size"]
+            elif array_tag.tag == "typeid":
                 self.__type_id = array_tag.text
-            elif array_tag.tag == 'size':
+            elif array_tag.tag == "size":
                 self.__size = array_tag.text
-            elif array_tag.tag == 'default':
+            elif array_tag.tag == "default":
                 for value_tag in array_tag:
                     self.__default.append(value_tag.text)
-            elif array_tag.tag == 'comment':
+            elif array_tag.tag == "comment":
                 self.__comments.append(array_tag.text)
-            elif array_tag.tag == 'include_header':
+            elif array_tag.tag == "include_header":
                 self.__include_header_files.append(array_tag.text)
-            elif array_tag.tag == 'import_serializable_type':
+            elif array_tag.tag == "import_serializable_type":
                 self.__includes.append(array_tag.text)
-            elif array_tag.tag == 'import_enum_type':
+            elif array_tag.tag == "import_enum_type":
                 self.__include_enum_files.append(array_tag.text)
-            elif array_tag.tag == 'import_array_type':
+            elif array_tag.tag == "import_array_type":
                 self.__include_array_files.append(array_tag.text)
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.
         #
 
-        if not 'typeid' in array.attrib:
+        if not "typeid" in array.attrib:
             s = etree.tostring(element_tree.getroot())
             h = hashlib.sha256(s)
             n = h.hexdigest()
@@ -158,31 +177,48 @@ class XmlArrayParser(object):
 
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
-        if not validator_type in self.Config or not validator_name in self.Config[validator_type]:
-            msg = "XML Validator type " + validator_type + " not found in ConfigManager instance"
+        if (
+            not validator_type in self.Config
+            or not validator_name in self.Config[validator_type]
+        ):
+            msg = (
+                "XML Validator type "
+                + validator_type
+                + " not found in ConfigManager instance"
+            )
             raise FprimeXmlException(msg)
-                                
+
         # Create proper xml validator tool
-        validator_file_handler = open(ROOTDIR + self.Config.get(validator_type, validator_name), 'r')
+        validator_file_handler = open(
+            ROOTDIR + self.Config.get(validator_type, validator_name), "r"
+        )
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
-        if validator_type == 'schema':
+        if validator_type == "schema":
             validator_compiled = etree.RelaxNG(validator_parsed)
-        elif validator_type == 'schematron':
+        elif validator_type == "schematron":
             validator_compiled = isoschematron.Schematron(validator_parsed)
-                                                
+
         # Validate XML file
         if not validator_compiled.validate(parsed_xml_tree):
-            if validator_type == 'schema':
-                msg = "XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+            if validator_type == "schema":
+                msg = "XML file {} is not valid according to {} {}.".format(
+                    dict_file,
+                    validator_type,
+                    ROOTDIR + self.Config.get(validator_type, validator_name),
+                )
                 raise FprimeXmlException(msg)
-            elif validator_type == 'schematron':
-                msg = "WARNING: XML file {} is not valid according to {} {}.".format(dict_file, validator_type, ROOTDIR + self.Config.get(validator_type, validator_name))
+            elif validator_type == "schematron":
+                msg = "WARNING: XML file {} is not valid according to {} {}.".format(
+                    dict_file,
+                    validator_type,
+                    ROOTDIR + self.Config.get(validator_type, validator_name),
+                )
                 PRINT.info(msg)
 
     def get_name(self):
         return self.__name
-    
+
     def get_namespace(self):
         return self.__namespace
 
@@ -191,7 +227,7 @@ class XmlArrayParser(object):
 
     def get_typeinfo(self):
         return self.__typeinfo
-    
+
     def get_size(self):
         return self.__size
 
@@ -215,10 +251,10 @@ class XmlArrayParser(object):
 
     def get_include_header_files(self):
         return self.__include_header_files
-    
+
     def get_includes(self):
         return self.__includes
-        
+
     def get_include_enum_files(self):
         return self.__include_enum_files
 
@@ -226,12 +262,14 @@ class XmlArrayParser(object):
         return self.__include_array_files
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     xmlfile = sys.argv[1]
     xml = XmlParser.XmlParser(xmlfile)
     print("Type of XML is: %s" % xml())
     print("Array XML parse test (%s)" % xmlfile)
     xml_parser = XmlArrayParser(xmlfile)
-    print("Array name: %s, namespace: %s" % (xml_parser.get_name(),xml_parser.get_namespace()))
+    print(
+        "Array name: %s, namespace: %s"
+        % (xml_parser.get_name(), xml_parser.get_namespace())
+    )
     print("Size: %s, member type: %s" % (self.get_size(), self.get_type()))
-

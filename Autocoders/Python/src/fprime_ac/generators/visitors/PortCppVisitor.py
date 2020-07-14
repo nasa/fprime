@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: PortCppVisitor.py
 #
 # DESCRIPTION: A visitor responsible for the generation of each port
@@ -10,7 +10,7 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -20,17 +20,23 @@ import sys
 import time
 import datetime
 from optparse import OptionParser
+
 #
 # Python extention modules and custom interfaces
 #
-#from Cheetah import Template
-#from fprime_ac.utils import version
+# from Cheetah import Template
+# from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
 from fprime_ac.models import ModelParser
-#from fprime_ac.utils import DiffAndRename
+
+# from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
-from fprime_ac.utils.buildroot import build_root_relative_path, BuildRootMissingException
+from fprime_ac.utils.buildroot import (
+    build_root_relative_path,
+    BuildRootMissingException,
+)
+
 #
 # Import precompiled templates here
 #
@@ -39,13 +45,14 @@ from fprime_ac.generators.templates.port import namespacePortCpp
 from fprime_ac.generators.templates.port import publicPortCpp
 from fprime_ac.generators.templates.port import privatePortCpp
 from fprime_ac.generators.templates.port import finishPortCpp
+
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 # Module class or classes go here.
 class PortCppVisitor(AbstractVisitor.AbstractVisitor):
@@ -53,10 +60,11 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
     A visitor class responsible for generation of component header
     classes in C++.
     """
+
     __instance = None
-    __config   = None
-    __fp       = None
-    __form     = None
+    __config = None
+    __fp = None
+    __form = None
     __form_comment = None
 
     def __init__(self):
@@ -64,12 +72,12 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         Constructor.
         """
         super().__init__()
-        self.__config       = ConfigManager.ConfigManager.getInstance()
-        self.__form         = formatters.Formatters()
+        self.__config = ConfigManager.ConfigManager.getInstance()
+        self.__form = formatters.Formatters()
         self.__form_comment = formatters.CommentFormatters()
         DEBUG.info("PortCppVisitor: Instanced.")
-        self.bodytext       = ""
-        self.prototypetext  = ""
+        self.bodytext = ""
+        self.prototypetext = ""
 
     def _get_args_proto_string(self, obj):
         """
@@ -83,10 +91,13 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             #
             # Grab enum type here...
             if type(t) == type(tuple()):
-                if t[0][0].upper() == 'ENUM':
+                if t[0][0].upper() == "ENUM":
                     t = t[0][1]
                 else:
-                    PRINT.info("ERROR: Ill formed enumeration type...(name: %s, type: %s" % (arg.get_name(), arg.get_type()))
+                    PRINT.info(
+                        "ERROR: Ill formed enumeration type...(name: %s, type: %s"
+                        % (arg.get_name(), arg.get_type())
+                    )
                     sys.exit(-1)
             else:
                 t = arg.get_type()
@@ -107,7 +118,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
 
             arg_str += "%s%s" % (t, arg.get_name())
             arg_str += ", "
-        arg_str = arg_str.strip(', ')
+        arg_str = arg_str.strip(", ")
         return arg_str
 
     def _get_args_string(self, obj):
@@ -120,7 +131,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         for arg in args:
             arg_str += "%s" % arg.get_name()
             arg_str += ", "
-        arg_str = arg_str.strip(', ')
+        arg_str = arg_str.strip(", ")
         return arg_str
 
     def _get_args_list(self, obj):
@@ -135,20 +146,19 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             m = arg.get_modifier()
             s = arg.get_size()
             c = arg.get_comment()
-            arg_list.append((n,t,m,s,c))
+            arg_list.append((n, t, m, s, c))
 
         return arg_list
-
 
     def _writeTmpl(self, c, visit_str):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug('PortCppVisitor:%s' % visit_str)
-        DEBUG.debug('===================================')
+        DEBUG.debug("PortCppVisitor:%s" % visit_str)
+        DEBUG.debug("===================================")
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
-        DEBUG.debug('===================================')
+        DEBUG.debug("===================================")
 
     def initFilesVisit(self, obj):
         """
@@ -156,37 +166,44 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         # Build filename here...
-        if self.__config.get("port","XMLDefaultFileName") == "True":
-            filename = obj.get_type() + self.__config.get("port","PortCpp")
-            PRINT.info("Generating code filename: %s, using XML namespace and name attributes..." % filename)
+        if self.__config.get("port", "XMLDefaultFileName") == "True":
+            filename = obj.get_type() + self.__config.get("port", "PortCpp")
+            PRINT.info(
+                "Generating code filename: %s, using XML namespace and name attributes..."
+                % filename
+            )
         else:
             xml_file = obj.get_xml_filename()
             x = xml_file.split(".")
-            s = self.__config.get("port","PortXML").split(".")
+            s = self.__config.get("port", "PortXML").split(".")
             l = len(s[0])
             #
             if (x[0][-l:] == s[0]) & (x[1] == s[1]):
-                filename = x[0].split(s[0])[0] + self.__config.get("port","PortCpp")
-                PRINT.info("Generating code filename: %s, using default XML filename prefix..." % filename)
+                filename = x[0].split(s[0])[0] + self.__config.get("port", "PortCpp")
+                PRINT.info(
+                    "Generating code filename: %s, using default XML filename prefix..."
+                    % filename
+                )
             else:
-                msg = "XML file naming format not allowed (must be XXXPortAi.xml), Filename: %s" % xml_file
+                msg = (
+                    "XML file naming format not allowed (must be XXXPortAi.xml), Filename: %s"
+                    % xml_file
+                )
                 PRINT.info(msg)
                 raise
 
         # Open file for writting here...
-        DEBUG.info('Open file: %s' % filename)
-        self.__fp = open(filename,'w')
+        DEBUG.info("Open file: %s" % filename)
+        self.__fp = open(filename, "w")
         if self.__fp == None:
             raise Exception("Could not open %s file.") % filename
-        DEBUG.info('Completed')
-
+        DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):
         """
         Defined to generate starting static code within files.
         """
         pass
-
 
     def includes1Visit(self, obj):
         """
@@ -199,20 +216,19 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         DEBUG.debug("Relative path: %s", relative_path)
         #
         c = includes1PortCpp.includes1PortCpp()
-        c.include_file = obj.get_xml_filename().replace("PortAi.xml","PortAc.hpp")
+        c.include_file = obj.get_xml_filename().replace("PortAi.xml", "PortAc.hpp")
         #
         # Added configurable override for includes for testing
         #
-        if self.__config.get("includes","port_include_path") == "None":
+        if self.__config.get("includes", "port_include_path") == "None":
             if relative_path != None:
                 c.port_include_path = relative_path
             else:
                 c.port_include_path = obj.get_namespace()
         else:
-            c.port_include_path = self.__config.get("includes","port_include_path")
+            c.port_include_path = self.__config.get("includes", "port_include_path")
         #
         self._writeTmpl(c, "includes1Visit")
-
 
     def includes2Visit(self, obj):
         """
@@ -221,7 +237,6 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         pass
-
 
     def namespaceVisit(self, obj):
         """
@@ -233,13 +248,12 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         if obj.get_namespace() == None:
             c.namespace_list = None
         else:
-            c.namespace_list = obj.get_namespace().split('::')
+            c.namespace_list = obj.get_namespace().split("::")
         c.name = obj.get_type()
 
         c.arg_list = self._get_args_list(obj)
 
         self._writeTmpl(c, "namespaceVisit")
-
 
     def publicVisit(self, obj):
         """
@@ -269,7 +283,6 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c.return_type = return_type + return_modifier
         self._writeTmpl(c, "publicVisit")
 
-
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
@@ -285,7 +298,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         for i in t:
             if type(i[1]) == type(tuple()):
                 if i[1][0][0] == "ENUM":
-                    i2 = (i[0],i[1][0][1])
+                    i2 = (i[0], i[1][0][1])
             else:
                 i2 = i
             t2.append(i2)
@@ -303,8 +316,8 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c.enum_marker = []
         for i in tmp:
             if type(i[1]) == type(tuple()):
-                if i[1][0][0].upper() == 'ENUM':
-                    c.enum_marker.append('ENUM')
+                if i[1][0][0].upper() == "ENUM":
+                    c.enum_marker.append("ENUM")
                 else:
                     c.enum_marker.append(None)
             else:
@@ -332,7 +345,6 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         #
         self._writeTmpl(c, "privateVisit")
 
-
     def finishSourceFilesVisit(self, obj):
         """
         Defined to generate ending static code within files.
@@ -341,17 +353,19 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         if obj.get_namespace() == None:
             c.namespace_list = None
         else:
-            c.namespace_list = obj.get_namespace().split('::')
+            c.namespace_list = obj.get_namespace().split("::")
         c.name = obj.get_type()
         c.args_string = self._get_args_string(obj)
         c.args_proto_string = self._get_args_proto_string(obj)
-        c.args = [(a.get_name(), a.get_type(), a.get_modifier()) for a in obj.get_args()]
+        c.args = [
+            (a.get_name(), a.get_type(), a.get_modifier()) for a in obj.get_args()
+        ]
         # Make a enum marker list here for template to use...
         c.enum_marker = []
         for i in c.args:
             if type(i[1]) == type(tuple()):
-                if i[1][0][0].upper() == 'ENUM':
-                    c.enum_marker.append('ENUM')
+                if i[1][0][0].upper() == "ENUM":
+                    c.enum_marker.append("ENUM")
                 else:
                     c.enum_marker.append(None)
             else:

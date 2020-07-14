@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: HtmlDocVisitor.py
 #
 # DESCRIPTION: A visitor for generating component dictionary doc files
@@ -9,21 +9,23 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 import logging
 import os
 import sys
 import time
 import datetime
 from optparse import OptionParser
+
 #
 # Python extention modules and custom interfaces
 #
-#from Cheetah import Template
-#from fprime_ac.utils import version
+# from Cheetah import Template
+# from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
 from fprime_ac.models import ModelParser
-#from fprime_ac.utils import DiffAndRename
+
+# from fprime_ac.utils import DiffAndRename
 from fprime_ac.utils import DictTypeConverter
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
@@ -31,8 +33,9 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import ComponentVisitorBase
 from fprime_ac.generators.templates.html import HtmlDocPage
 
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
+
 
 class HtmlDocVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """

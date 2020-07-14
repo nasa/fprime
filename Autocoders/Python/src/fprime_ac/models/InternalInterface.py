@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME:     InternalInterface.py
 #
 # DESCRIPTION:  This is a Command meta-model sort of class.  It is
@@ -14,7 +14,7 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
@@ -32,15 +32,25 @@ import time
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
 class InternalInterface(object):
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.
     """
-    def __init__(self, name, priority, full, args, comment=None, xml_filename=None, component_name=None):
+
+    def __init__(
+        self,
+        name,
+        priority,
+        full,
+        args,
+        comment=None,
+        xml_filename=None,
+        component_name=None,
+    ):
         """
         Constructor
         @param pname:  Name of command instance (each instance must be unique)
@@ -57,9 +67,10 @@ class InternalInterface(object):
         self.__xml_filename = xml_filename
         self.__component_name = component_name
         #
-#         self.__target_comp = None
-#         self.__target_command = None
-#         self.__target_type = None
+
+    #         self.__target_comp = None
+    #         self.__target_command = None
+    #         self.__target_type = None
 
     def get_xml_filename(self):
         """
@@ -99,4 +110,3 @@ class InternalInterface(object):
 
     def get_component_name(self):
         return self.__component_name
-

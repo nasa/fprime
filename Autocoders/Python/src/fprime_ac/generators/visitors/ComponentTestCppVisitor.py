@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: ComponentTestCppVisitor.py
 #
 # DESCRIPTION: A visitor for generating component test implemetation files.
@@ -9,10 +9,11 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.generators.visitors import TestVisitorBase
 from fprime_ac.generators.templates.test import cpp
+
 
 class ComponentTestCppVisitor(TestVisitorBase.TestVisitorBase):
     """
@@ -37,6 +38,9 @@ class ComponentTestCppVisitor(TestVisitorBase.TestVisitorBase):
         self.initTest(obj, c)
         c.emit_cpp_params = self.emitCppParams
         c.emit_cpp_port_params = self.emitCppPortParams
-        c.param_maxHistorySize = ("maxHistorySize", "const U32", "The maximum size of each history")
+        c.param_maxHistorySize = (
+            "maxHistorySize",
+            "const U32",
+            "The maximum size of each history",
+        )
         self._writeTmpl(c, "startSourceFilesVisit")
-

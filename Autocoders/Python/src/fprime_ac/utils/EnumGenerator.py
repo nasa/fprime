@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#===============================================================================
+# ===============================================================================
 # NAME: EnumGenerator.py
 #
 # DESCRIPTION: A generator to produce serializable enum's
@@ -10,7 +10,7 @@
 #
 # Copyright 2018, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 import sys
 import os
@@ -20,10 +20,11 @@ from fprime_ac.generators.templates.enums import enum_cpp
 from fprime_ac.generators.templates.enums import enum_hpp
 from fprime_ac.generators.templates.enums import enum_py
 
+
 def open_file(name, type):
-    '''
+    """
     Open the file for writing
-    '''
+    """
     #
     gse_serializable_install_dir = "DefaultDict" + os.sep + "serializable"
     if type == "py":
@@ -37,22 +38,24 @@ def open_file(name, type):
     else:
         filename = name + "EnumAc." + type
     #
-    fp = open(filename,'w')
+    fp = open(filename, "w")
     if fp == None:
         print("Could not open file %s" % filename)
         sys.exit(-1)
     return fp
 
+
 def write_template(fp, c, name, namespace, items, max_value, comment):
-    '''
+    """
     Set up and write out templates here
-    '''
+    """
     c.name = name
     c.namespace = namespace
     c.items_list = items
     c.max_value = max_value
     c.comment = comment
     fp.writelines(c.__str__())
+
 
 def generate_enum(xml_file):
     """
@@ -61,7 +64,7 @@ def generate_enum(xml_file):
     generate nothing.
     """
     xml = XmlParser.XmlParser(xml_file)
-    if xml() == 'enum':
+    if xml() == "enum":
         #
         # Parse enum xml here
         #
@@ -96,7 +99,7 @@ def generate_enum(xml_file):
     else:
         return False
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     xmlfile = sys.argv[1]
     print(generate_enum(xmlfile))
-    

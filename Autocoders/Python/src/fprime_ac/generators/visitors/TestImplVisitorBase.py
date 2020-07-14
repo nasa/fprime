@@ -1,4 +1,4 @@
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplVisitorBase.py
 #
 # DESCRIPTION: A base class for TestImpl visitors
@@ -9,9 +9,10 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.generators.visitors import ComponentVisitorBase
+
 
 class TestImplVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
     """
@@ -22,4 +23,3 @@ class TestImplVisitorBase(ComponentVisitorBase.ComponentVisitorBase):
         self.init(obj, c)
         c.component_base = c.name() + "ComponentBase"
         c.gtest_base = c.name() + "GTestBase"
-

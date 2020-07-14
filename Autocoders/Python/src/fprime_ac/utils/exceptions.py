@@ -9,11 +9,13 @@ Exceptions defined for the Autocoder. This is active refactoring work, and may b
 
 class FprimeException(Exception):
     """ Base Exception for FprimeException """
+
     pass
 
 
 class FprimeRngXmlValidationException(FprimeException):
     """ XML Exception from within the validation phase """
+
     def __init__(self, error_list):
         """
         Construct the exception from a user supplied message and a set of validation errors.
@@ -26,4 +28,5 @@ class FprimeRngXmlValidationException(FprimeException):
 
 class FprimeXmlException(FprimeException):
     """ Generic XML error """
+
     pass
