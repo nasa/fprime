@@ -98,6 +98,10 @@ namespace Fw {
 #endif
 
             const PolyType& operator=(const PolyType &src); //!< PolyType operator=
+            bool operator<(const PolyType &other) const; //!< PolyType operator<
+            bool operator>(const PolyType &other) const; //!< PolyType operator>
+            bool operator>=(const PolyType &other) const; //!< PolyType operator>=
+            bool operator<=(const PolyType &other) const; //!< PolyType operator<=
             bool operator==(const PolyType &other) const; //!< PolyType operator==
             bool operator!=(const PolyType &other) const; //!< PolyType operator!=
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< Serialize function
