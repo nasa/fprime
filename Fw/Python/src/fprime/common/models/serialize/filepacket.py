@@ -17,9 +17,9 @@ from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
 import six
-from .u32_type import *
-from .u16_type import *
-from .u8_type import *
+from .u32_type import U32Type
+from .u16_type import U16Type
+from .u8_type import U8Type
 
 from enum import Enum
 
@@ -236,14 +236,14 @@ class FilePacket:
         ptr = 0
 
         """
-      self.__filePacket.header.pktType.deserialize(buf, ptr)
-      ptr += self.__filePacket.header.pktType.getSize()
+        self.__filePacket.header.pktType.deserialize(buf, ptr)
+        ptr += self.__filePacket.header.pktType.getSize()
 
-      self.__filePacket.header.seqIdx.deserialize(buf, ptr)
-      ptr += self.__seqIdx.getSize()
+        self.__filePacket.header.seqIdx.deserialize(buf, ptr)
+        ptr += self.__seqIdx.getSize()
 
-      self.__filePacket.deserialize(buf, ptr)
-      """
+        self.__filePacket.deserialize(buf, ptr)
+        """
         self.__filePacket.deserialize(buf, ptr)
 
     def getBufSize(self):

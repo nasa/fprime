@@ -31,7 +31,6 @@ class GroundHandler(abc.ABC):
         """
         Opens any needed resources and prepares the system for receiving and sending.
         """
-        pass
 
     @abc.abstractmethod
     def receive_all(self):
@@ -40,16 +39,14 @@ class GroundHandler(abc.ABC):
         These packets should be fully-deframed and ready for reframing in the comm-layer specified format.
         :return: list deframed packets
         """
-        pass
 
     @abc.abstractmethod
-    def send_all(self):
+    def send_all(self, frames):
         """
         Receive all packet available from the ground layer. This will return full ground packets up to the uplinker.
         These packets should be fully-deframed and ready for reframing in the comm-layer specified format.
         :return: list deframed packets
         """
-        pass
 
 
 class TCPGround(GroundHandler):

@@ -61,7 +61,7 @@ class EncodingDecoding(object):
         self.file_decoder = fprime_gds.common.decoders.file_decoder.FileDecoder()
         self.packet_decoder = None
         if dictionaries.packet is not None:
-            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(
+            self.packet_decoder = fprime_gds.common.decoders.pkt_decoder.PktDecoder(
                 dictionaries.packet, dictionaries.channel_id
             )
         # Register client socket to encoder
@@ -144,7 +144,7 @@ class EncodingDecoding(object):
         """
         self.command_subscribers.append(consumer)
 
-    def register_packet_consumer(self, consumer):
+    def deregister_packet_consumer(self, consumer):
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.

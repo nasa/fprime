@@ -13,8 +13,8 @@ from __future__ import absolute_import
 
 from . import data_template
 
-from fprime.common.models.serialize.type_base import *
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_base import BaseType
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
 
 class ChTemplate(data_template.DataTemplate):
@@ -131,7 +131,3 @@ class ChTemplate(data_template.DataTemplate):
 
     def get_high_red(self):
         return self.high_red
-
-
-if __name__ == "__main__":
-    pass

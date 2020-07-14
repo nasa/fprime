@@ -4,24 +4,17 @@ import socket
 import threading
 
 try:
-    import queue
     import socketserver
 except ImportError:
-    import Queue as queue
     import SocketServer as socketserver
 import time
 import os
 import signal
 import sys
 import struct
-import select
-import multiprocessing
 import errno
-import time
-import logging
 
 from fprime.constants import DATA_ENCODING
-from fprime.common.models.serialize.type_base import *
 from optparse import OptionParser
 
 __version__ = 0.1
@@ -548,8 +541,6 @@ def main(argv=None):
         server_thread.start()
         udp_server_thread.daemon = False
         udp_server_thread.start()
-        p = os.getpid()
-        # print "Process ID: %s" % p
 
         while not shutdown_event.is_set():
             server_thread.join(timeout=5.0)

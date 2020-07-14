@@ -7,32 +7,20 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # Import the types this way so they do not need prefixing for execution.
-from .type_exceptions import *
-from .type_base import *
+# Import only types that you will use to avoid pylint warnings
+from type_exceptions import TypeMismatchException
+from type_exceptions import TypeException
+from type_exceptions import ArgLengthMismatchException
+from type_exceptions import ArgNotFoundException
 
-from .bool_type import *
-from .enum_type import *
-from .f32_type import *
-from .f64_type import *
+from fprime.common.models.serialize import type_base
+from fprime.common.models.serialize.type_base import BaseType
 
-from .u8_type import *
-from .u16_type import *
-from .u32_type import *
-from .u64_type import *
-
-from .i8_type import *
-from .i16_type import *
-from .i32_type import *
-from .i64_type import *
-
-from .time_type import *
-
-from .string_type import *
-from .serializable_type import *
+from fprime.common.models.serialize.f32_type import F32Type
+from fprime.common.models.serialize.u32_type import U32Type
 
 from enum import Enum
 
-import struct
 import copy
 
 Descriptor = Enum(value="Descriptor", names="ABSOLUTE RELATIVE")
@@ -94,7 +82,6 @@ class Command(object):
         self.__arguments = arguments
 
         # If part of a sequence we need to set these as well
-        # @todo: Need setter and getters
         self.setSeconds(seconds)
         self.setUseconds(useconds)
         self.setDescriptor(descriptor)

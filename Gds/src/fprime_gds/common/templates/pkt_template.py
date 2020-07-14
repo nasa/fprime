@@ -15,7 +15,7 @@ from __future__ import absolute_import
 from . import data_template
 from . import ch_template
 
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
 
 class PktTemplate(data_template.DataTemplate):

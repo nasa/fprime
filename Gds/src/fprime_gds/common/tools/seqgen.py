@@ -20,15 +20,14 @@ import argparse
 
 # from optparse import OptionParser
 
-from fprime.common.models.serialize.type_exceptions import *
+from fprime.common.models.serialize.type_exceptions import TypeException
+from fprime.common.models.serialize.type_exceptions import ArgLengthMismatchException
 
 __author__ = "Tim Canham"
 __version__ = "1.0"
 __email__ = "timothy.canham@jpl.nasa.gov"
 
 # try:
-from fprime_gds.common.models.common.command import Descriptor
-from fprime_gds.common.models.common.command import Command
 from fprime_gds.common.encoders.seq_writer import SeqBinaryWriter
 from fprime_gds.common.loaders.cmd_xml_loader import CmdXmlLoader
 from fprime_gds.common.data_types import exceptions as gseExceptions

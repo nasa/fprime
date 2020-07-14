@@ -35,8 +35,6 @@ class AppWrapperException(Exception):
     An exception occurred while tying to start the app wrapper. This will encapsulate that message.
     """
 
-    pass
-
 
 def register_process_assassin(process, log=None):
     """
@@ -59,7 +57,7 @@ def register_process_assassin(process, log=None):
             else:
                 process.kill(signal.SIGINT)
             time.sleep(1)
-        except (KeyboardInterrupt, OSError, InterruptedError) as exc:
+        except (KeyboardInterrupt, OSError, InterruptedError):
             pass
         # Second attempt is to terminate with extreme prejudice. No process will survive this, ensuring that it is
         # really, really dead. Supports both pexpect and subprocess.
@@ -68,13 +66,13 @@ def register_process_assassin(process, log=None):
                 process.kill()
             else:
                 process.kill(signal.SIGKILL)
-        except (KeyboardInterrupt, OSError, InterruptedError) as exc:
+        except (KeyboardInterrupt, OSError, InterruptedError):
             pass
         # Might as well close the log file because dead men tell no tales.
         try:
             if log is not None:
                 log.close()
-        except (KeyboardInterrupt, OSError, InterruptedError, IOError) as exc:
+        except (KeyboardInterrupt, OSError, InterruptedError, IOError):
             pass
 
     atexit.register(assassin)

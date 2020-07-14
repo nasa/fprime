@@ -26,12 +26,11 @@
 ###
 from __future__ import absolute_import
 from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import print_function
 
-import sys
 from setuptools import find_packages
 from setuptools import setup
+
+import src.fastentrypoints
 
 ####
 # GDS Packages:
@@ -60,7 +59,7 @@ integrated configuration with ground in-the-loop.
     """,
     url="https://github.com/nasa/fprime",
     keywords=["fprime", "gds", "embedded", "nasa"],
-    project_urls={"Issue Tracker": "https://github.com/nasa/fprime/issues",},
+    project_urls={"Issue Tracker": "https://github.com/nasa/fprime/issues"},
     # Package author, not F prime author
     author="Michael Starch",
     author_email="Michael.D.Starch@jpl.nasa.gov",
@@ -85,7 +84,8 @@ integrated configuration with ground in-the-loop.
     # standard use of utilities that ship as part of F prime.
     ####
     entry_points={
-        "gui_scripts": ["fprime-gds = fprime_gds.executables.run_deployment:main"]
+        "gui_scripts": ["fprime-gds = fprime_gds.executables.run_deployment:main"],
+        "console_scripts": ["fprime-cli = fprime_gds.executables.fprime_cli:main"],
     },
     ####
     # Classifiers:
@@ -119,6 +119,7 @@ integrated configuration with ground in-the-loop.
         "flask_restful",
         "fprime>=1.3.0",
         "flask_uploads @ git+https://github.com/maxcountryman/flask-uploads@f66d7dc93e684fa0a3a4350a38e41ae00483a796",
+        "argcomplete",
     ],
     extras_require={
         # I and T API

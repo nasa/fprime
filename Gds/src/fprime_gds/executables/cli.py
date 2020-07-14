@@ -35,7 +35,7 @@ try:
     import fprime_gds.wxgui.tools.gds
 
     GUIS.append("wx")
-except ImportError as exc:
+except ImportError:
     pass
 
 
@@ -54,7 +54,6 @@ class ParserBase(abc.ABC):
         Produce a parser that will handle the given arguments. These parsers can be combined for a CLI for a tool by
         assembling them as parent processors to a parser for the given tool.
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -66,7 +65,6 @@ class ParserBase(abc.ABC):
         :param args: arguments namespace of processed arguments
         :return: namespace with processed results of arguments.
         """
-        pass
 
     @staticmethod
     def parse_args(
@@ -439,7 +437,7 @@ class GdsParser(ParserBase):
                     args.dictionary
                 )
             )
-        elif args.deploy is not None:
+        elif args.deploy is not None and not args.dictionary:
             xml_dict = ParserBase.find_in(".*Dictionary.xml", args.deploy, True)
             py_dict = ParserBase.find_in("py_dict", args.deploy, False)
             if xml_dict is None and py_dict is None:
@@ -449,7 +447,7 @@ class GdsParser(ParserBase):
                     )
                 )
             args.dictionary = py_dict if xml_dict is None else xml_dict
-        else:
+        elif not args.deploy and not args.dictionary:
             raise ValueError(
                 "User must supply either the '--dictionary' or '--deployment' argument"
             )

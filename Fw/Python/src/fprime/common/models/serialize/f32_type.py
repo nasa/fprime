@@ -5,7 +5,8 @@ Created on Dec 18, 2014
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+
 from . import type_base
 
 
@@ -57,18 +58,3 @@ class F32Type(type_base.BaseType):
 
     def __repr__(self):
         return "F32"
-
-
-if __name__ == "__main__":
-    print("F32")
-    try:
-        val = F32Type(3.6)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = F32Type()
-        val2.deserialize(buff, len(buff))
-        print("Deserialize: %f" % val2.val)
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

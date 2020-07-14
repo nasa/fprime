@@ -6,7 +6,6 @@
 
 @bug No known bugs
 """
-import abc
 from enum import Enum
 
 from fprime_gds.common.data_types import sys_data
