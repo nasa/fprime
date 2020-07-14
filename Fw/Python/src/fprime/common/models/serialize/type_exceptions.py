@@ -6,7 +6,6 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-import struct
 
 # Exception classes for all types
 

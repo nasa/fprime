@@ -5,7 +5,8 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
 from . import type_base
 
 
@@ -60,18 +61,3 @@ class U8Type(type_base.BaseType):
 
     def __repr__(self):
         return "U8"
-
-
-if __name__ == "__main__":
-    print("U8")
-    try:
-        val = U8Type(8)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = U8Type()
-        val2.deserialize(buff, len(buff))
-        print("Deserialized: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

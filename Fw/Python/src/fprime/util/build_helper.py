@@ -287,11 +287,14 @@ def purge_functionality(build_dir, force=False):
         shutil.rmtree(dirname, ignore_errors=True)
 
 
-def utility_entry(args=sys.argv[1:]):
+def utility_entry(args=None):
     """
     Main interface to F prime utility.
     :return: return code of the function.
     """
+    if args is None:
+        args=sys.argv[1:]
+
     parsed = None
     try:
         parsed, cmake_args, make_args, automatic_build_dir = parse_args(args)

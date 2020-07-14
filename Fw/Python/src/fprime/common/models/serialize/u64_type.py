@@ -4,7 +4,8 @@ Created on Dec 18, 2014
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
 from . import type_base
 
 
@@ -59,31 +60,3 @@ class U64Type(type_base.BaseType):
 
     def __repr__(self):
         return "U64"
-
-
-if __name__ == "__main__":
-
-    def showBytes(byteBuffer):
-        print("Byte buffer size: %d" % len(byteBuffer))
-        for entry in range(0, len(byteBuffer)):
-            print(
-                "Byte %d: 0x%02X (%c)"
-                % (
-                    entry,
-                    struct.unpack("B", byteBuffer[entry])[0],
-                    struct.unpack("B", byteBuffer[entry])[0],
-                )
-            )
-
-    print("U64")
-    try:
-        val = U64Type(1000000)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = U64Type()
-        val2.deserialize(buff, len(buff))
-        print("Deserialized: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

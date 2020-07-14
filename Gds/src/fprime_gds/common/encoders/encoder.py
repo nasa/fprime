@@ -73,4 +73,3 @@ class Encoder(
         :param data: data to be encoded as rae bytes
         :return: encoded data bytes
         """
-        pass

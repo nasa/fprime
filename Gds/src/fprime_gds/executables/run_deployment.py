@@ -7,7 +7,6 @@ from __future__ import print_function
 import os
 import sys
 import copy
-import argparse
 import platform
 import webbrowser
 import fprime_gds.executables.cli
@@ -159,7 +158,8 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     :param logs: directory to place logs
     :return: process
     """
-    gse_env = copy.copy(os.environ).update(
+    gse_env = os.environ.copy()
+    gse_env.update(
         {
             "DICTIONARY": str(dictionary),
             "FLASK_APP": "fprime_gds.flask.app",

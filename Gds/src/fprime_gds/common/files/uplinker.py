@@ -9,10 +9,18 @@ handshake packet in return before the next chunk is sent out.
 """
 import time
 import queue
+import os
+import threading
 
 import fprime_gds.common.handlers
-from fprime_gds.common.files.helpers import *
-from fprime_gds.common.data_types.file_data import *
+from fprime_gds.common.files.helpers import FileStates
+from fprime_gds.common.files.helpers import file_to_dict
+from fprime_gds.common.files.helpers import Timeout
+from fprime_gds.common.files.helpers import TransmitFile
+from fprime_gds.common.data_types.file_data import StartPacketData
+from fprime_gds.common.data_types.file_data import EndPacketData
+from fprime_gds.common.data_types.file_data import CancelPacketData
+from fprime_gds.common.data_types.file_data import DataPacketData
 
 
 class UplinkQueue(object):
@@ -336,5 +344,3 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
 class FileUplinkerBusyException(Exception):
     """ File uplinker is busy and cannot uplink more files """
-
-    pass

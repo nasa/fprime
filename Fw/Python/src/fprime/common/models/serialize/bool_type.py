@@ -2,10 +2,10 @@
 Created on Dec 18, 2014
 @author: tcanham, reder
 """
-from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import NotInitializedException
+from .type_exceptions import TypeMismatchException
 from . import type_base
 
 
@@ -65,17 +65,3 @@ class BoolType(type_base.BaseType):
 
     def __repr__(self):
         return "Bool"
-
-
-if __name__ == "__main__":
-    print("bool")
-    try:
-        val = BoolType(True)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        val2 = BoolType()
-        val2.deserialize(buff, len(buff))
-        print("Deserialized: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

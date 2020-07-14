@@ -6,7 +6,8 @@ Created on Dec 18, 2014
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
-from .type_exceptions import *
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeRangeException
 from . import type_base
 
 
@@ -61,18 +62,3 @@ class I64Type(type_base.BaseType):
 
     def __repr__(self):
         return "I64"
-
-
-if __name__ == "__main__":
-    print("I64")
-    try:
-        val = I64Type(-2000000)
-        print("Value: %s" % str(val.val))
-        buff = val.serialize()
-        type_base.showBytes(buff)
-        print("Serialized: ", repr(buff))
-        val2 = I64Type()
-        val2.deserialize(buff, len(buff))
-        print("Deserialize: %s" % str(val2.val))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

@@ -39,7 +39,9 @@ class OutgoingRouter(
         self.send_to_all(bytes_data)
 
 
-class IncomingRouter(fprime_gds.common.handlers.DataHandler):
+class IncomingRouter(
+    fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers.HandlerRegistrar
+):
     """
     Handshake router that inspects the returning handshake packet, and routes back to the originating object found in
     the outgoing router.

@@ -9,7 +9,6 @@
 
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime.common.models.serialize.time_type import TimeType
 
 
 class PktData(SysData):
