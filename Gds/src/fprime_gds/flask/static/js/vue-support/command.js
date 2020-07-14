@@ -76,14 +76,6 @@ Vue.component("command-input", {
         fields: {
             type: Array,
             default: null
-        },
-        /**
-         * The search text to initialize the table filter with (defaults to
-         * nothing)
-         */
-        filterText: {
-            type: String,
-            default: ""
         }
     },
     data: function() {
@@ -197,6 +189,14 @@ Vue.component("command-history", {
         filterText: {
             type: String,
             default: ""
+        },
+        /**
+         * A list of item ID names saying what rows in the table should be
+         * shown; defaults to an empty list, meaning "show all items"
+         */
+        itemsShown: {
+            type: Array,
+            default: []
         }
     },
     data: function() {
@@ -226,6 +226,17 @@ Vue.component("command-history", {
          */
         keyify(item) {
             return "cmd-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
+        },
+        /**
+         * Returns if the given item should be hidden in the data table; by
+         * default, shows all items. If the "itemsShown" property is set, only
+         * show items with the given names
+         *
+         * @param item: The given F' data item
+         * @return {boolean} Whether or not the item is shown
+         */
+        isItemHidden(item) {
+            return this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name);
         }
     }
 });

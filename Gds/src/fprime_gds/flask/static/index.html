@@ -83,6 +83,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     </div>
                     <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
                     <command-input v-show="currentTab == 'Commanding'"></command-input>
+                    <command-history v-show="currentTab == 'Commanding'"></command-history>
                     <channel-table v-show="currentTab == 'Channels'"></channel-table>
                     <event-list    v-show="currentTab == 'Events'"></event-list>
                     <uplink        v-show="currentTab == 'Uplink'"></uplink>
@@ -150,8 +151,10 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                               :items="cmdhist"
                               :item-to-columns="columnify"
                               :item-to-unique="keyify"
+                              :item-hide="isItemHidden"
                               :fields="fields"
                               :filter-text="filterText"
+                              :initial-views="itemsShown"
                     ></fp-table>
                 </div>
             </template>
@@ -234,9 +237,11 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                           :item-to-columns="columnify"
                           :row-style="style"
                           :item-to-unique="keyify"
+                          :item-hide="isItemHidden"
                           :clear-rows="clearEvents"
                           :fields="fields"
                           :filter-text="filterText"
+                          :initial-views="itemsShown"
                 ></fp-table>
             </template>
             <!--
@@ -255,6 +260,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :item-hide="channelHider"
                          :fields="fields"
                          :filter-text="filterText"
+                         :initial-views="itemsShown"
                ></fp-table>
             </template>
             <!-- Uplink;

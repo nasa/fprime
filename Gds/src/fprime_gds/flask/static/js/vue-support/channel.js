@@ -33,6 +33,14 @@ Vue.component("channel-table", {
         filterText: {
             type: String,
             default: ""
+        },
+        /**
+         * A list of item ID names saying what rows in the table should be
+         * shown; defaults to an empty list, meaning "show all items"
+         */
+        itemsShown: {
+            type: Array,
+            default: []
         }
     },
     data: function() {
@@ -102,7 +110,9 @@ Vue.component("channel-table", {
          * @return {boolean}
          */
         channelHider(item) {
-            return item.val == null || item.time == null;
+            return item.val == null
+                || item.time == null
+                || (this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name));
         }
     },
     // Computed methods

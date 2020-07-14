@@ -280,6 +280,14 @@ Vue.component("fp-table", {
         filterText: {
             type: String,
             default: ""
+        },
+        /**
+         * The initial views to show in this table, if views are enabled
+         * (defaults to empty list)
+         */
+        initialViews: {
+            type: Array,
+            default: []
         }
     },
     // Required data items (unique for each table instance)
@@ -287,7 +295,8 @@ Vue.component("fp-table", {
         return {
             matching: (this.filterText) ? [this.filterText] : [],
             editing: false,
-            view: []
+            // use Vue.util.extend to copy by data, not by reference
+            view: Vue.util.extend([], this.initialViews)
         }
     },
     methods: {
