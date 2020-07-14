@@ -145,7 +145,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                     sys.exit(-1)
             elif (t in ["U8","U16","U32","U64","I8","I16","I32","I64","F32",'F64',
                         'bool','FwOpcodeType','FwChanIdType','FwEventIdType','FwPrmIdType',
-                        'NATIVE_INT_TYPE','NATIVE_UINT_TYPE']):
+                        'NATIVE_INT_TYPE','NATIVE_UINT_TYPE', 'POINTER_CAST']):
                 t = "sizeof(" + t + cl
             else:
                 t = t + "::SERIALIZED_SIZE"
