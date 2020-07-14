@@ -447,8 +447,10 @@ namespace Fw {
                 case TYPE_F32:
                     result = (this->m_val.f32Val < other.m_val.f32Val);
                     break;
+                case TYPE_PTR:
+                    result = (this->m_val.ptrVal < other.m_val.ptrVal);
+                    break;
                 case TYPE_BOOL: // fall through, shouldn't test bool
-                case TYPE_PTR: // fall through, shouldn't test pointers
                 case TYPE_NOTYPE:
                     result = false;
                     break;
