@@ -14,7 +14,7 @@
 
 #include <Svc/PolyDb/PolyDbComponentAc.hpp>
 #include <Fw/Types/PolyType.hpp>
-#include <Svc/PolyDb/PolyDbImplCfg.hpp>
+#include <PolyDbImplCfg.hpp>
 
 namespace Svc {
 

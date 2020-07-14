@@ -15,7 +15,7 @@
         -:   19:*/
         -:   20:
         -:   21:#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
-        -:   22:#include <Svc/ActiveRateGroup/ActiveRateGroupImplCfg.hpp>
+        -:   22:#include <ActiveRateGroupImplCfg.hpp>
         -:   23:#include <Fw/Types/BasicTypes.hpp>
         -:   24:#include <Fw/Types/Assert.hpp>
         -:   25:#include <Os/Log.hpp>

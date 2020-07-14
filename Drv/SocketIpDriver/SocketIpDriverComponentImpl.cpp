@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
-#include <Drv/SocketIpDriver/SocketIpDriverCfg.hpp>
+#include <SocketIpDriverCfg.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>

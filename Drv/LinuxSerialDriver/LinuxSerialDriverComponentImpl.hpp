@@ -14,7 +14,7 @@
 #define LinuxSerialDriver_HPP
 
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentAc.hpp>
-#include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImplCfg.hpp>
+#include <LinuxSerialDriverComponentImplCfg.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Drv {

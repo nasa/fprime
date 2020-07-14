@@ -10,7 +10,7 @@
 
 #include <Svc/ActiveLogger/ActiveLoggerComponentAc.hpp>
 #include <Fw/Log/LogPacket.hpp>
-#include <Svc/ActiveLogger/ActiveLoggerImplCfg.hpp>
+#include <ActiveLoggerImplCfg.hpp>
 
 namespace Svc {
 

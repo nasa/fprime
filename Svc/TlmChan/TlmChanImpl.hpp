@@ -14,7 +14,7 @@
 #define TELEMCHANIMPL_HPP_
 
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
-#include <Svc/TlmChan/TlmChanImplCfg.hpp>
+#include <TlmChanImplCfg.hpp>
 #include <Os/Mutex.hpp>
 #include <Fw/Tlm/TlmPacket.hpp>
 
