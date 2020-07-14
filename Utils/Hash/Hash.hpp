@@ -61,6 +61,12 @@ namespace Utils {
       //!
       void init(void);
 
+      //! Set hash value to specified value
+      //!
+      void setHashValue(
+          HashBuffer &value //! Hash value
+      );
+
       //! Update an incremental computation with new data
       //!
       void update(
@@ -73,6 +79,10 @@ namespace Utils {
       void final(
           HashBuffer& buffer //! The result
       );
+
+      //! Finalize an incremental computation and return the result
+      //!
+      void final(U32 &hashvalue);
 
       //! Get the file extension for the supported hash type
       //! E.g., could return "SHA256"
