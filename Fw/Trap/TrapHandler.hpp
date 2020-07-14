@@ -1,6 +1,6 @@
 #ifndef FW_TRAP_HPP
 #define FW_TRAP_HPP
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
 namespace Fw {

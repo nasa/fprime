@@ -26,6 +26,7 @@ class EncodingDecoding(object):
     4. Command encoding
     5. File encoding
     """
+
     def __init__(self):
         """
         Setup the encoders and decoder member variables.
@@ -51,13 +52,18 @@ class EncodingDecoding(object):
         # Create encoders and decoders using dictionaries
         self.file_encoder = fprime_gds.common.encoders.file_encoder.FileEncoder()
         self.command_encoder = fprime_gds.common.encoders.cmd_encoder.CmdEncoder()
-        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(dictionaries.event_id)
-        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(dictionaries.channel_id)
+        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(
+            dictionaries.event_id
+        )
+        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(
+            dictionaries.channel_id
+        )
         self.file_decoder = fprime_gds.common.decoders.file_decoder.FileDecoder()
         self.packet_decoder = None
         if dictionaries.packet is not None:
-            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(dictionaries.packet,
-                                                                                   dictionaries.channel_id)
+            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(
+                dictionaries.packet, dictionaries.channel_id
+            )
         # Register client socket to encoder
         self.command_encoder.register(sender)
         self.file_encoder.register(sender)

@@ -29,7 +29,12 @@
                 </attribute>
             </optional>
             
-            <!-- Required elements -->
+            <!-- Elements -->
+            <optional>
+                <!-- Optional Comments -->
+                <ref name = "comment_define"></ref>
+            </optional>
+
             <oneOrMore>
                 <ref name = "item_definition"></ref>
             </oneOrMore>

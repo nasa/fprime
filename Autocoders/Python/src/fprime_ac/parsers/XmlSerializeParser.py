@@ -25,7 +25,7 @@ from lxml import etree
 import hashlib
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeXmlException, FprimeRngXmlValidationException
-
+from fprime_ac.utils.buildroot import locate_build_root, BuildRootCollisionException, BuildRootMissingException
 #
 # Python extention modules and custom interfaces
 #
@@ -74,6 +74,8 @@ class XmlSerializeParser(object):
         self.__includes = []
         # List of XML enum type files
         self.__include_enum_files = []
+        # List of XML array type files
+        self.__include_array_files = []
         # Comment block of text for serializable
         self.__comment = ""
         # List of (name, type, comment) tuples
@@ -96,12 +98,11 @@ class XmlSerializeParser(object):
         element_tree = etree.parse(fd,parser=xml_parser)
 
         #Validate new imports using their root tag as a key to find what schema to use
-        for possible in [os.environ.get('BUILD_ROOT'), os.environ.get('FPRIME_CORE_DIR',"")]:
-            rng_file = os.path.join(possible, self.__config.get('schema' , element_tree.getroot().tag.lower()).lstrip("/"))
-            if os.path.isfile(rng_file) == True:
-                break
-        else:
-            stri = "ERROR: Could not find specified RNG file %s." % rng_file
+        rng_file = self.__config.get('schema' , element_tree.getroot().tag.lower()).lstrip("/")
+        try:
+            rng_file = locate_build_root(rng_file)
+        except (BuildRootMissingException, BuildRootCollisionException) as bre:
+            stri = "ERROR: Could not find specified RNG file %s. %s" % (rng_file, str(bre))
             raise IOError(stri)
         file_handler = open(rng_file, 'r')
         relax_parsed = etree.parse(file_handler)
@@ -110,7 +111,7 @@ class XmlSerializeParser(object):
 
         # 2/3 conversion
         if not relax_compiled.validate(element_tree):
-            msg = "XML file {} is not valid according to schema {}.".format(xml_file , os.environ["BUILD_ROOT"] +self.__config.get('schema' , element_tree.getroot().tag.lower()))
+            msg = "XML file {} is not valid according to schema {}.".format(xml_file , rng_file)
             raise FprimeXmlException(msg)
 
         serializable = element_tree.getroot()
@@ -141,6 +142,8 @@ class XmlSerializeParser(object):
                 self.__includes.append(serializable_tag.text)
             elif serializable_tag.tag == 'import_enum_type':
                 self.__include_enum_files.append(serializable_tag.text)
+            elif serializable_tag.tag == 'import_array_type':
+                self.__include_array_files.append(serializable_tag.text)
             elif serializable_tag.tag == 'members':
                 for member in serializable_tag:
                     if member.tag != 'member':
@@ -253,6 +256,11 @@ class XmlSerializeParser(object):
         """
         return self.__include_enum_files
 
+    def get_include_arrays(self):
+        """
+        Returns a list of all imported XML array files.
+        """
+        return self.__include_array_files
 
     def get_comment(self):
         """

@@ -18,7 +18,7 @@ set(UT_MOD_DEPS
     Os_Stubs
 )
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Svc/PrmDb/PrmDbComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/PrmDb/PrmDbComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
 )

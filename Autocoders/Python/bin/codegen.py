@@ -12,7 +12,7 @@ import sys
 import time
 import glob
 import logging
-
+import traceback
 
 from optparse import OptionParser
 
@@ -20,6 +20,7 @@ from fprime_ac.utils import Logger
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils import DictTypeConverter
 from fprime_ac.utils import EnumGenerator
+from fprime_ac.utils import ArrayGenerator
 
 
 # Meta-model for Component only generation
@@ -36,8 +37,11 @@ from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 from fprime_ac.parsers import XmlTopologyParser
+from fprime_ac.parsers import XmlArrayParser
+from fprime_ac.utils.buildroot import get_build_roots, set_build_roots, search_for_file, BuildRootMissingException, BuildRootCollisionException
 
 from lxml import etree
+
 
 # Comment back in when converters added
 # from converters import AmpcsCommandConverter
@@ -76,9 +80,6 @@ CONFIG = ConfigManager.ConfigManager.getInstance()
 
 # Build a default log file name
 SYS_TIME = time.gmtime()
-
-# Build Root environmental variable if one exists.
-BUILD_ROOT = None
 
 # Deployment name from topology XML only
 DEPLOYMENT = None
@@ -295,7 +296,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
-            os.environ["DICT_DIR"] = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT) + os.sep + DEPLOYMENT + os.sep + "py_dict"
+            os.environ["DICT_DIR"] = get_build_roots()[0] + os.sep + DEPLOYMENT + os.sep + "py_dict"
             dict_dir = os.environ["DICT_DIR"]
             PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
             import shutil
@@ -319,6 +320,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             # create a new XML tree for dictionary
             enum_list = etree.Element("enums")
             serializable_list = etree.Element("serializables")
+            array_list = etree.Element("arrays")
             command_list = etree.Element("commands")
             event_list = etree.Element("events")
             telemetry_list = etree.Element("channels")
@@ -603,8 +605,43 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
                         parameter_list.append(param_elem)
 
+                # Check for arrays
+                if (parsed_xml_dict[comp_type].get_array_type_files() != None):
+                    array_file_list = parsed_xml_dict[comp_type].get_array_type_files()
+                    for array_file in array_file_list:
+                        array_file = search_for_file("Array", array_file)
+                        array_model = XmlArrayParser.XmlArrayParser(array_file)
+                        if (len(array_model.get_includes()) != 0):
+                            raise Exception("%s: Can only include one level of serializable for dictionaries"%serializable_file)
+                        array_elem = etree.Element("array")
+
+                        array_name = array_model.get_namespace() + "::" + array_model.get_name()
+                        array_elem.attrib["name"] = array_name
+                        
+                        array_type = array_model.get_type()
+                        array_elem.attrib["type"] = array_type
+
+                        array_type_id = array_model.get_type_id()
+                        array_elem.attrib["type_id"] = array_type_id
+
+                        array_size = array_model.get_size()
+                        array_elem.attrib["size"] = array_size
+
+                        array_format = array_model.get_format()
+                        array_elem.attrib["format"] = array_format
+
+                        members_elem = etree.Element("defaults")
+                        for d_val in array_model.get_default():
+                            member_elem = etree.Element("default")
+                            member_elem.attrib["value"] = d_val
+                            members_elem.append(member_elem)
+
+                        array_elem.append(members_elem)
+                        array_list.append(array_elem)
+
             topology_dict.append(enum_list)
             topology_dict.append(serializable_list)
+            topology_dict.append(array_list)
             topology_dict.append(command_list)
             topology_dict.append(event_list)
             topology_dict.append(telemetry_list)
@@ -642,7 +679,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     return(topology_model)
 
 def generate_component_instance_dictionary(the_parsed_component_xml , opt , topology_model):
-    global BUILD_ROOT
     global DEPLOYMENT
 
     #
@@ -747,9 +783,6 @@ def generate_component(the_parsed_component_xml, xml_filename, opt , topology_mo
     Creates a component meta-model, configures visitors and
     generates the component files.  Nothing is returned.
     """
-    global BUILD_ROOT
-    #
-
     parsed_port_xml_list = []
     if opt.gen_report:
         report_file = open("%sReport.txt"%xml_filename.replace("Ai.xml",""),"w")
@@ -1145,7 +1178,8 @@ def generate_serializable(the_serial_xml, opt):
     n = the_serial_xml.get_name()
     ns = the_serial_xml.get_namespace()
     c = the_serial_xml.get_comment()
-    i = the_serial_xml.get_includes() + the_serial_xml.get_include_enums()
+    i = the_serial_xml.get_includes() + the_serial_xml.get_include_enums() \
+        + the_serial_xml.get_include_arrays()
     i2 = the_serial_xml.get_include_header_files()
     m = the_serial_xml.get_members()
     t = the_serial_xml.get_typeid()
@@ -1263,11 +1297,14 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     # assemble list of files
 
     if type == "interface":
-        file_list = parser.get_include_header_files() + parser.get_includes_serial_files() + parser.get_include_enum_files()
+        file_list = parser.get_include_header_files() + parser.get_includes_serial_files() + parser.get_include_enum_files() \
+            + parser.get_include_array_files()
     elif type == "component":
-        file_list = parser.get_port_type_files() + parser.get_header_files() + parser.get_serializable_type_files() + parser.get_imported_dictionary_files() + parser.get_enum_type_files()
+        file_list = parser.get_port_type_files() + parser.get_header_files() + parser.get_serializable_type_files() \
+            + parser.get_imported_dictionary_files() + parser.get_enum_type_files() + parser.get_array_type_files()
     elif type == "serializable":
-        file_list = parser.get_include_header_files() + parser.get_includes() + parser.get_include_enums()
+        file_list = parser.get_include_header_files() + parser.get_includes() + parser.get_include_enums() \
+            + parser.get_include_arrays()
     elif type == "assembly" or  type == "deployment":
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
@@ -1297,28 +1334,6 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     # close file
     dep_file.close()
 
-def search_for_file(file_type, file_path):
-    '''
-    Searches for a given included port or serializable by looking in three places:
-     - The specified BUILD_ROOT
-     - The F Prime core
-     - The exact specified path
-    @param file_type: type of file searched for
-    @param file_path: path to look for based on offset
-    @return: full path of file
-    '''
-    core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
-    for possible in [BUILD_ROOT, core, None]:
-        if not possible is None:
-            checker = os.path.join(possible, file_path)
-        else:
-            checker = file_path
-        if os.path.exists(checker):
-            DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
-            return checker
-    else:
-        PRINT.info("ERROR: %s xml specification file %s does not exist!" % (file_type,file_path))
-        sys.exit(-1)
 
 def main():
     """
@@ -1326,7 +1341,6 @@ def main():
     """
     global ERROR   # prevent local creation of variable
     global VERBOSE # prevent local creation of variable
-    global BUILD_ROOT # environmental variable if set
     global GEN_TEST_CODE # indicate if test code should be generated
     global DEPLOYMENT # deployment set in topology xml only and used to install new instance dicts
 
@@ -1393,9 +1407,7 @@ def main():
             PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
             sys.exit(-1)
         else:
-            BUILD_ROOT = os.environ['BUILD_ROOT']
-            ModelParser.BUILD_ROOT = BUILD_ROOT
-            #PRINT.info("BUILD_ROOT set to %s"%BUILD_ROOT)
+            set_build_roots(os.environ.get("BUILD_ROOT"))
 
     for xml_filename in xml_filenames:
 
@@ -1433,13 +1445,22 @@ def main():
             else:
                 ERROR = True
             os.chdir(curdir)
+        elif xml_type == "array":
+            DEBUG.info("Detected Array XML so Generating hpp, cpp, and py files...")
+            curdir = os.getcwd()
+            if ArrayGenerator.generate_array(xml_filename):
+                ERROR = False
+                PRINT.info("Completed generating files for %s Array XML..." % xml_filename)
+            else:
+                ERROR = True
+            os.chdir(curdir)
         else:
             PRINT.info("Invalid XML found...this format not supported")
             ERROR=True
 
         if opt.dependency_file != None:
             if opt.build_root_flag:
-                generate_dependency_file(opt.dependency_file, xml_filename, BUILD_ROOT, dependency_parser,xml_type)
+                generate_dependency_file(opt.dependency_file, xml_filename, get_build_roots()[0], dependency_parser,xml_type)
 
 
     # Always return to directory where we started.
@@ -1456,4 +1477,5 @@ if __name__ == '__main__':
         main()
     except Exception as exc:
         print(exc, file=sys.stderr)
+        traceback.print_exc(file=sys.stdout)
         sys.exit(-1)

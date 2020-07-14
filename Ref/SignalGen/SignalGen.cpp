@@ -13,6 +13,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Ref/SignalGen/SignalGen.hpp>
+#include <Fw/Types/EightyCharString.hpp>
 #include <Utils/Hash/Hash.hpp>
 #include <algorithm>
 #include <cmath>
@@ -172,9 +173,18 @@ namespace Ref {
       this->SKIP_NEXT = true;
     }
 
+    void SignalGen::SignalGen_GenerateArray_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+      Fw::EightyCharString s;
+      U32 num1 = (U32) 12U;
+      U32 num2 = (U32) 1234U;
+      Fw::ArrayType arg1 = Fw::ArrayType(num1, num2);
+      arg1.toString(s);
 
-
-
+      Fw::LogStringArg msg(s.toChar());
+      // Echo the GenerateArray args here.
+      this->log_ACTIVITY_HI_SignalGen_GenerateArray_Received(msg);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    }
 
 
 

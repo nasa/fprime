@@ -81,6 +81,10 @@ namespace Drv {
               NATIVE_INT_TYPE cpuAffinity = -1 //!< CPU affinity of the task to start
       );
 
+      //! Task to join nondetached pthreads 
+      //!
+      Os::Task::TaskStatus joinSocketTask(void** value_ptr);
+
       //! Set the stop flag on the thread's loop such that it will shutdown promptly
       //!
       void exitSocketTask();

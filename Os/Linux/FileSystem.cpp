@@ -1,4 +1,4 @@
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>

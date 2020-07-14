@@ -15,7 +15,7 @@ register_fprime_module()
 
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Svc/RateGroupDriver/RateGroupDriverComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/RateGroupDriver/RateGroupDriverComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateGroupDriverTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateGroupDriverImplTester.cpp"
 )

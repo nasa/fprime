@@ -18,7 +18,7 @@ set(SOURCE_FILES
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Svc/CmdSequencer/CmdSequencerComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/CmdSequencer/CmdSequencerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/AMPCS.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandBuffers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Health.cpp"

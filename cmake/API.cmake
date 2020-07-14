@@ -25,7 +25,7 @@
 # directories. This creates a directed acyclic graph of modules, one subtree of which will be built
 # for each executable in the system.
 #
-# This directory is computed based off the `FPRIME_CURRENT_BUILD_ROOT` variable. It must be set to
+# This directory is computed based off the closes path in `FPRIME_BUILD_LOCATIONS`. It must be set to
 # be used. Otherwise, an error will occure.
 #
 # A user can specify an optional argument to set the build-space, creating a sub-directory under
@@ -43,21 +43,19 @@
 #                          https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 ####
 function(add_fprime_subdirectory FP_SOURCE_DIR)
-	# Check if the binary and source directory are in agreement. If they agree, then normally add
-	# the directory, as no adjustments need be made.
+    # Check if the binary and source directory are in agreement. If they agree, then normally add
+    # the directory, as no adjustments need be made.
     get_filename_component(CBD_NAME "${CMAKE_CURRENT_BINARY_DIR}" NAME)
-	get_filename_component(CSD_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
-	if ("${CBD_NAME}" STREQUAL "${CSD_NAME}")
-		add_subdirectory(${ARGV})
-		return()
-	endif()
-    # Cannot run without `FPRIME_CURRENT_BUILD_ROOT`
-    if (NOT DEFINED FPRIME_CURRENT_BUILD_ROOT)
-        message(FATAL_ERROR "FPRIME_CURRENT_BUILD_ROOT not defined. Please include 'FPrime.cmake'")
-    elseif (${ARGC} GREATER 2)
+    get_filename_component(CSD_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
+    if ("${CBD_NAME}" STREQUAL "${CSD_NAME}")
+        add_subdirectory(${ARGV})
+        return()
+    endif()
+    if (${ARGC} GREATER 2)
         message(FATAL_ERROR "Cannot use 'add_fprime_subdirectory' with [binary_dir] argument.")
     endif()
-	file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CURRENT_BUILD_ROOT}" "${FP_SOURCE_DIR}")
+    get_nearest_build_root("${FP_SOURCE_DIR}")
+    file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
     # Add component subdirectories using normal add_subdirectory with overriden binary_dir
     add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}" ${ARGN})
 endfunction(add_fprime_subdirectory)
@@ -171,8 +169,15 @@ function(register_fprime_module)
     elseif(${CMAKE_DEBUG_OUTPUT})
         message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
+    if (${ARGC} GREATER 2)
+        set(MODULE_NAME "${ARGV2}")
+    else()
+        # Sets MODULE_NAME to unique name based on path, and then adds the library of
+        get_module_name(${CMAKE_CURRENT_LIST_DIR})
+    endif()
+    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
-    generate_library("${SC_IFS}" "${MD_IFS}")
+    generate_library("${MODULE_NAME}" "${SC_IFS}" "${MD_IFS}")
 endfunction(register_fprime_module)
 
 ####
@@ -284,6 +289,7 @@ function(register_fprime_executable)
     elseif(${CMAKE_DEBUG_OUTPUT})
         message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
+    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
     generate_executable("${EX_NAME}" "${SC_IFS}" "${MD_IFS}")
 endfunction(register_fprime_executable)
@@ -345,7 +351,7 @@ endfunction(register_fprime_executable)
 #
 # ```
 # set(UT_SOURCE_FILES
-#   "${FPRIME_CORE_DIR}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
+#   "${FPRIME_FRAMEWORK_PATH}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
 #   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
 #   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
 # )
@@ -360,7 +366,7 @@ endfunction(register_fprime_executable)
 #
 # ```
 # set(UT_SOURCE_FILES
-#   "${FPRIME_CORE_DIR}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
+#   "${FPRIME_FRAMEWORK_PATH}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
 #   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
 #   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
 # )
@@ -405,6 +411,7 @@ function(register_fprime_ut)
             message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
         endif()
     endif()
+    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
     generate_ut("${UT_NAME}" "${SC_IFS}" "${MD_IFS}")
 endfunction(register_fprime_ut)
@@ -438,8 +445,8 @@ function(register_fprime_target TARGET_FILE_PATH)
     list(APPEND TMP "${TARGET_FILE_PATH}")
     list(REMOVE_DUPLICATES TMP)
     SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom F prime targtes" FORCE)
-	#Setup global target. Note: module targets found during module processing
-	setup_global_target("${TARGET_FILE_PATH}")
+    #Setup global target. Note: module targets found during module processing
+    setup_global_target("${TARGET_FILE_PATH}")
 endfunction(register_fprime_target)
 
 #### Documentation links

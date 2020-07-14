@@ -31,4 +31,14 @@
       </arg>
       </args>
   </event>
+  <event id="1" name="SignalGen_GenerateArray_Received" severity="ACTIVITY_HI" format_string = "Received a GenerateArray Command: example=%s" >
+    <comment>
+      The command dispatcher has successfully recieved a no op array command
+    </comment>
+    <args>
+      <arg name="message" type="string" size="40">
+        <comment>An example array</comment>
+      </arg>
+    </args>
+  </event>
 </events>

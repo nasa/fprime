@@ -288,7 +288,7 @@ class CompFactory:
                         modifier = a.get_modifier()
                         size = a.get_size()
                         arg_obj_list.append(Arg.Arg(name, atype, modifier, size, comment))
-                    port_obj.set(namespace, arg_obj_list, incl_list, None, if_comment)
+                    port_obj.set(namespace, arg_obj_list, incl_list, None, None, if_comment)
                     port_obj.set_return(return_type,return_modifier)
                     # check some rules
                     # 1) No return values for async ports
@@ -312,12 +312,15 @@ class CompFactory:
                 PRINT.info("ERROR: %s: Queued component \"%s\" needs at least one sync/guarded port or command" % (the_parsed_component_xml.get_xml_filename(), comp_name))
                 sys.exit(-1)
 
+        parsed_array_list = []
+        for array_file in the_parsed_component_xml.get_array_type_files():
+            parsed_array_list.append(array_file.replace("Ai.xml", "Ac.hpp"))
 
         #
         # Instance the component here...
         #
         the_component = Component.Component(comp_namespace, comp_name, comp_kind, comp_comment, comp_modeler, port_obj_list, command_obj_list, channel_obj_list, parameter_obj_list, event_obj_list, internal_interface_obj_list, serializable_obj_list, comp_xml_filename)
-        the_component.set_xml_port_files(comp_xml_port_files)
+        the_component.set_xml_port_files(comp_xml_port_files + parsed_array_list)
         the_component.set_c_header_files(comp_c_header_files)
         if (has_guarded_ports):
             the_component.set_has_guarded_ports()

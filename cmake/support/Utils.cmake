@@ -5,6 +5,24 @@
 # be made. Those files should go in *AC_Utils.cmake*.
 ####
 
+
+function(get_nearest_build_root DIRECTORY_PATH)
+    set(FOUND_BUILD_ROOT "${DIRECTORY_PATH}")
+    set(LAST_REL "${DIRECTORY_PATH}")
+    foreach(FPRIME_BUILD_LOC ${FPRIME_BUILD_LOCATIONS})
+        file(RELATIVE_PATH TEMP_MODULE ${FPRIME_BUILD_LOC} ${DIRECTORY_PATH})
+        string(LENGTH "${LAST_REL}" LEN1)
+        string(LENGTH "${TEMP_MODULE}" LEN2)
+        if (LEN2 LESS LEN1 AND TEMP_MODULE MATCHES "^[^./].*")
+            set(FOUND_BUILD_ROOT "${FPRIME_BUILD_LOC}")
+            set(LAST_REL "${TEMP_MODULE}")
+        endif()
+    endforeach()
+    if ("${FOUND_BUILD_ROOT}" STREQUAL "${DIRECTORY_PATH}")
+        message(FATAL_ERROR "No build root found for: ${DIRECTORY_PATH}")
+    endif()
+    set(FPRIME_CLOSEST_BUILD_ROOT "${FOUND_BUILD_ROOT}" PARENT_SCOPE)
+endfunction()
 ####
 # Function `get_module_name`:
 #
@@ -26,7 +44,8 @@ function(get_module_name DIRECTORY_PATH)
   # forward in the calculation.
   if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
       # Get path name relative to the root directory
-      file(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CURRENT_BUILD_ROOT} ${DIRECTORY_PATH})
+      get_nearest_build_root(${DIRECTORY_PATH})  
+      File(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CLOSEST_BUILD_ROOT} ${DIRECTORY_PATH})
   else()
       set(TEMP_MODULE_NAME ${DIRECTORY_PATH})
   endif()
@@ -78,7 +97,7 @@ function(fprime_ai_info XML_PATH MODULE_NAME)
   # Run the parser and capture the output. If an error occcurs, that fatals CMake as we cannot continue
   set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
-      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
+      COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
 	  OUTPUT_VARIABLE AI_OUTPUT
   )
@@ -159,8 +178,8 @@ endfunction(split_dependencies)
 # hashes.txt. This allows for asserts on file ID not string.
 ####
 function(set_hash_flag SRC)
-    get_filename_component(FPRIME_CURRENT_BUILD_ROOT_ABS "${FPRIME_CURRENT_BUILD_ROOT}" ABSOLUTE)
-    string(REPLACE "${FPRIME_CURRENT_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
+    get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
+    string(REPLACE "${FPRIME_CLOSEST_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
     string(MD5 HASH_VAL "${SHORT_SRC}")
     string(SUBSTRING "${HASH_VAL}" 0 8 HASH_32)
     file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")

@@ -38,7 +38,7 @@ active components with OS supported threads. This can be done with the following
 
 ```
 FIND_PACKAGE ( Threads REQUIRED )
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
 ```
 
 **Note:** much of this is done already in *-common.cmake for Linux. If using a linux-like system,

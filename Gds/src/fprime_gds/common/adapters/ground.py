@@ -25,6 +25,7 @@ class GroundHandler(abc.ABC):
     1. receive_all: receives any and all frames from the ground layer for uplink to the spacecraft
     2. send_all: sends any and all frames to the ground system from the spacecraft's downlink
     """
+
     @abc.abstractmethod
     def open(self):
         """
@@ -55,13 +56,16 @@ class TCPGround(GroundHandler):
     """
     Interface class defining necessary functions to talk to the GDS.
     """
+
     def __init__(self, address="127.0.0.1", port=50050):
         """
         Initialize this interface with the address and port needed to connect to the GDS.
         :param address: Address of the tcp server. Default 127.0.0.1
         :param port: port of the tcp server. Default: 50000
         """
-        self.tcp = TcpHandler(address, port, False, LOGGER, post_connect=b"Register FSW\n")
+        self.tcp = TcpHandler(
+            address, port, False, LOGGER, post_connect=b"Register FSW\n"
+        )
         self.data = bytearray()
         self.deframer = TcpServerFramerDeframer()
 
@@ -98,6 +102,3 @@ class TCPGround(GroundHandler):
         for packet in frames:
             framed = self.deframer.frame(packet)
             self.tcp.write(framed)
-
-
-

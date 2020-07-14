@@ -18,6 +18,7 @@ from fprime_ac.models import ModelParser
 from fprime_ac.parsers import XmlTopologyParser
 from fprime_ac.parsers import XmlSerializeParser
 from fprime_ac.utils import Logger
+from fprime_ac.utils.buildroot import get_build_roots, set_build_roots, locate_build_root, BuildRootMissingException, BuildRootCollisionException
 
 # Version label for now
 class Version:
@@ -98,14 +99,20 @@ def main():
     else:
         xmlFilename = args[0]
 
-    # Check for BUILD_ROOT env. variable
-    if ('BUILD_ROOT' in list(os.environ.keys())) == False:
-        PRINT.info("ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path...")
-        sys.exit(-1)
+    #
+    # Check for BUILD_ROOT variable for XML port searches
+    #
+    if not opt.build_root_overwrite == None:
+        set_build_roots(opt.build_root_overwrite)
+        if VERBOSE:
+            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
     else:
-        BUILD_ROOT = os.environ['BUILD_ROOT']
-        ModelParser.BUILD_ROOT = BUILD_ROOT
-        PRINT.info("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
+        if ('BUILD_ROOT' in os.environ.keys()) == False:
+            print("ERROR: Build root not set to root build path...")
+            sys.exit(-1)
+        set_build_roots(os.environ["BUILD_ROOT"])
+        if VERBOSE:
+            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
 
     parsedTopology = XmlTopologyParser.XmlTopologyParser(xmlFilename)
     deployment = parsedTopology.get_deployment()

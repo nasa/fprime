@@ -14,7 +14,7 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Os/Queue.hpp>
 #include <Os/Task.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 
 namespace Fw {

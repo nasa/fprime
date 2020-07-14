@@ -103,7 +103,8 @@ $emit_cpp_params([ $param_maxHistorySize ])
     #end if
   #end for
   #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
-    #if len($typed_user_output_ports) > 0:
+    #set $params = $port_params[$instance]
+    #if len($typed_user_output_ports) > 0 and len($params) > 0:
     // Destroy port histories
     delete this->fromPortHistory_${instance};
     #end if

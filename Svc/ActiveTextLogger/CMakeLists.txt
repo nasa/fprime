@@ -18,7 +18,7 @@ set(UT_MOD_DEPS
     Os_Stubs
 )
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Svc/ActiveTextLogger/ActiveTextLoggerComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveTextLogger/ActiveTextLoggerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTextLoggerTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )
