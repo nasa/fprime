@@ -3,7 +3,7 @@
 # Currently only needed for cpp code since python and js works by default
 #
 # @author: Hunter Paulson
-# @modified: 2020-07-14
+# @modified: 2020-07-15
 ##############
 
 
@@ -33,9 +33,8 @@ extraction:
         configure:   
             command:
         before_index:
-            - "cd Ref/"
             - "fprime-util generate"
         index:   
             build_command:
-                - "cd Ref/"
+                - "cd build-fprime-automatic-default/"
                 - "fprime-util build-all"
