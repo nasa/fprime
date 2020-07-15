@@ -4,6 +4,7 @@
  * This file contains utility functions used by various parts of the vue-support system. Each item here intended for use
  * elsewhere should be "export"ed as then they can then be imported for use elsewhere.
  */
+
 /**
  * Filter the given items by looking for a the matching string inside the list of items.  Each item is converted to a
  * string using the ifun parameter, and then the matching parameter is searched for in that converted string. Everything
@@ -42,6 +43,7 @@ export function filter(items, matching, ifun) {
     }
     return output;
 }
+
 /**
  * Convert a given F´ time into a string for display purposes.
  * @param time: f´ time to convert
@@ -56,4 +58,33 @@ export function timeToString(time) {
         return date.toISOString();
     }
     return time.seconds + "." + time.microseconds;
+}
+
+/**
+ * Converts an attribute string with space-separated values into a string
+ * array, counting items enclosed in the "encloseChar" as a single element
+ *
+ * (e.g. "Alpha Bravo 'Charlie Delta'" => ["Alpha", "Bravo", "Charlie Delta"]
+ * @param {string} attributeString the string to convert to a list
+ * @return {Array} Array of individual string items in attributeString
+ */
+export function attributeStringToList(attributeString, encloseChar="'") {
+    const ec = encloseChar;
+    // Will match enclosed strings AND include their enclosingChars, too
+    const enclosedStringsRegex = new RegExp(`${ec}(.*?)${ec}`, "g");
+    let enclosedStrings = attributeString.match(enclosedStringsRegex);
+
+    if (enclosedStrings) {
+        // Remove enclosing chars from these items
+        const allEnclosing = new RegExp(ec, "g")
+        enclosedStrings = enclosedStrings.map(x => x.replace(allEnclosing, ''));
+
+        // Remove enclosed strings
+        attributeString = attributeString.replace(enclosedStringsRegex, '').trim();
+    }
+    const otherStrings = attributeString.split(/\s+/);
+
+    const allItems = otherStrings.concat(enclosedStrings);
+    // filter out empty/null strings
+    return allItems.filter(x => !!x);
 }

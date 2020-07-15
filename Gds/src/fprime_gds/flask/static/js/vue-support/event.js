@@ -7,7 +7,7 @@
  *
  * @author mstarch
  */
-import {timeToString} from "./utils.js";
+import {attributeStringToList, timeToString} from "./utils.js";
 import {_datastore} from "../datastore.js";
 
 let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
@@ -27,8 +27,8 @@ Vue.component("event-list", {
          * this object's display.
          */
         fields: {
-            type: Array,
-            default: null
+            type: String,
+            default: ""
         },
         /**
          * The search text to initialize the table filter with (defaults to
@@ -43,8 +43,8 @@ Vue.component("event-list", {
          * shown; defaults to an empty list, meaning "show all items"
          */
         itemsShown: {
-            type: Array,
-            default: []
+            type: String,
+            default: ""
         }
     },
     data: function() {
@@ -135,6 +135,12 @@ Vue.component("event-list", {
          */
         componentEvents() {
             return this.events.slice(this.eventsOffset);
+        },
+        fieldsArray() {
+            return attributeStringToList(this.fields);
+        },
+        itemsShownArray() {
+            return attributeStringToList(this.itemsShown);
         }
     }
 });

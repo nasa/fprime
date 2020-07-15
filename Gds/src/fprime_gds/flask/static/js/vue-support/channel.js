@@ -6,7 +6,7 @@
  *
  * @author mstarch
  */
-import {timeToString} from "./utils.js"
+import {attributeStringToList, timeToString} from "./utils.js"
 import "./fptable.js";
 import {_datastore} from "../datastore.js";
 /**
@@ -23,8 +23,8 @@ Vue.component("channel-table", {
          * this object's display.
          */
         fields: {
-            type: Array,
-            default: null
+            type: String,
+            default: ""
         },
         /**
          * The search text to initialize the table filter with (defaults to
@@ -39,8 +39,8 @@ Vue.component("channel-table", {
          * shown; defaults to an empty list, meaning "show all items"
          */
         itemsShown: {
-            type: Array,
-            default: []
+            type: String,
+            default: ""
         }
     },
     data: function() {
@@ -119,6 +119,12 @@ Vue.component("channel-table", {
     computed: {
         conform() {
             return Object.values(this.channels);
+        },
+        fieldsArray() {
+            return attributeStringToList(this.fields);
+        },
+        itemsShownArray() {
+            return attributeStringToList(this.itemsShown);
         }
     }
 });

@@ -152,9 +152,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                               :item-to-columns="columnify"
                               :item-to-unique="keyify"
                               :item-hide="isItemHidden"
-                              :fields="fields"
+                              :fields="fieldsArray"
                               :filter-text="filterText"
-                              :initial-views="itemsShown"
+                              :initial-views="itemsShownArray"
                     ></fp-table>
                 </div>
             </template>
@@ -239,9 +239,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                           :item-to-unique="keyify"
                           :item-hide="isItemHidden"
                           :clear-rows="clearEvents"
-                          :fields="fields"
+                          :fields="fieldsArray"
                           :filter-text="filterText"
-                          :initial-views="itemsShown"
+                          :initial-views="itemsShownArray"
                 ></fp-table>
             </template>
             <!--
@@ -258,9 +258,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :support-views="true"
                          :item-to-view-name="itemToName"
                          :item-hide="channelHider"
-                         :fields="fields"
+                         :fields="fieldsArray"
                          :filter-text="filterText"
-                         :initial-views="itemsShown"
+                         :initial-views="itemsShownArray"
                ></fp-table>
             </template>
             <!-- Uplink;

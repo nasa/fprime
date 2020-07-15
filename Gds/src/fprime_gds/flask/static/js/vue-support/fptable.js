@@ -391,7 +391,7 @@ Vue.component("fp-table", {
          * @return {null|Uint8Array}
          */
         visibleIndices: function() {
-            if (this.fields == null) {
+            if (this.fields == null || this.fields.length == 0) {
                 return null;
             }
             return this.fields.map(field => this.headerColumns.indexOf(field)).filter(index => index != -1);
@@ -406,7 +406,7 @@ Vue.component("fp-table", {
          */
         calculatedHeaderColumns: function() {
             // Check for null full-display
-            if (this.fields == null) {
+            if (this.fields == null || this.fields.length == 0) {
                 return this.headerColumns;
             }
             return this.fields.filter(field => this.headerColumns.indexOf(field) != -1);

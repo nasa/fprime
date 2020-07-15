@@ -5,7 +5,7 @@
  */
 // Setup component for select
 import "../../third-party/js/vue-select.js"
-import {timeToString,filter} from "./utils.js";
+import {attributeStringToList, timeToString} from "./utils.js";
 import {_datastore} from "../datastore.js";
 import {_loader} from "../loader.js";
 
@@ -66,18 +66,6 @@ Vue.component("command-item", {
  * Input command form Vue object. This allows for sending commands from the GDS.
  */
 Vue.component("command-input", {
-    props: {
-        /**
-         * fields:
-         *
-         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
-         * this object's display.
-         */
-        fields: {
-            type: Array,
-            default: null
-        }
-    },
     data: function() {
         let selected = _datastore.commands["cmdDisp.CMD_NO_OP"];
         return {
@@ -179,8 +167,8 @@ Vue.component("command-history", {
          * this object's display.
          */
         fields: {
-            type: Array,
-            default: null
+            type: String,
+            default: ""
         },
         /**
          * The search text to initialize the table filter with (defaults to
@@ -195,8 +183,8 @@ Vue.component("command-history", {
          * shown; defaults to an empty list, meaning "show all items"
          */
         itemsShown: {
-            type: Array,
-            default: []
+            type: String,
+            default: ""
         }
     },
     data: function() {
@@ -237,6 +225,14 @@ Vue.component("command-history", {
          */
         isItemHidden(item) {
             return this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name);
+        }
+    },
+    computed: {
+        fieldsArray() {
+            return attributeStringToList(this.fields);
+        },
+        itemsShownArray() {
+            return attributeStringToList(this.itemsShown);
         }
     }
 });
