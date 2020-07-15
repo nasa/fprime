@@ -16,7 +16,7 @@
 
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <Os/Mutex.hpp>
-#include <Svc/CmdDispatcher/CommandDispatcherImplCfg.hpp>
+#include <CommandDispatcherImplCfg.hpp>
 
 namespace Svc {
 
