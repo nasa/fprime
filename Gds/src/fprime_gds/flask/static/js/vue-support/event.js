@@ -48,7 +48,12 @@ Vue.component("event-list", {
         }
     },
     data: function() {
-        return {"events": _datastore.events, "commands": _datastore.commands};
+        return {
+            // NOTE: Events/command lists shared across all component instances
+            "events": _datastore.events,
+            "eventsOffset": 0,
+            "commands": _datastore.commands
+        };
     },
     template: "#event-list-template",
     methods: {
@@ -103,11 +108,11 @@ Vue.component("event-list", {
             return "evt-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         },
         /**
-         * A function to clear the events pane to remove events that have already been seen. Note: this action is
+         * A function to clear this events pane to remove events that have already been seen. Note: this action is
          * irrecoverable.
          */
         clearEvents() {
-            return this.events.splice(0, this.events.length);
+            this.eventsOffset = this.events.length;
         },
         /**
          * Returns if the given item should be hidden in the data table; by
@@ -119,6 +124,17 @@ Vue.component("event-list", {
          */
         isItemHidden(item) {
             return this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name);
+        }
+    },
+    computed: {
+        /**
+         * Returns a list of events that should be visible on this component
+         * instance, to support instance-specific clearing
+         *
+         * @return {Array} The list of event items this instance can show
+         */
+        componentEvents() {
+            return this.events.slice(this.eventsOffset);
         }
     }
 });

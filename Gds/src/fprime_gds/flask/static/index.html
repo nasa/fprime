@@ -233,7 +233,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="event-list-template">
                 <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity', 'Event Description']"
-                          :items="events"
+                          :items="componentEvents"
                           :item-to-columns="columnify"
                           :row-style="style"
                           :item-to-unique="keyify"
