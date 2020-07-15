@@ -64,7 +64,7 @@ def deserialize(Class):
                 "Not enough data to deserialize! Needed: %d Left: %d"
                 % (self.getSize(), offset)
             )
-        self.val = struct.unpack_from(tformat, bytes(data, "utf-8"), offset)[0]
+        self.val = struct.unpack_from(tformat, bytes(data), offset)[0]
 
     setattr(Class, "_deserialize", _deserialize)
 

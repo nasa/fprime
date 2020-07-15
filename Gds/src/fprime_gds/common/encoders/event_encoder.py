@@ -36,34 +36,20 @@ Serialized Event format:
 
 @bug No known bugs
 """
-from __future__ import print_function
 from __future__ import absolute_import
 
 from .encoder import Encoder
-from fprime_gds.common.data_types.event_data import EventData
-from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime_gds.common.utils.data_desc_type import DataDescType
-
-# For unit tests
-import sys
-from fprime_gds.common.templates.event_template import EventTemplate
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 class EventEncoder(Encoder):
     """Encoder class for event data"""
 
-    def __init__(self, dest="GUI", config=None):
+    def __init__(self, config=None):
         """
         Constructor
 
         Args:
-            dest (string, "FSW" or "GUI", default="GUI"): Destination for binary
-                  data produced by encoder.
             config (ConfigManager, default=None): Object with configuration data
                     for the sizes of fields in the binary data. If None passed,
                     defaults are used.
@@ -71,7 +57,7 @@ class EventEncoder(Encoder):
         Returns:
             An initialized EventEncoder object
         """
-        super(EventEncoder, self).__init__(dest, config)
+        super(EventEncoder, self).__init__(config)
 
         self.len_obj = self.config.get_type("msg_len")
         self.desc_obj = self.config.get_type("msg_desc")
@@ -100,7 +86,7 @@ class EventEncoder(Encoder):
 
         time_bin = data.get_time().serialize()
 
-        arg_bin = ""
+        arg_bin = b""
         for arg in data.get_args():
             arg_bin += arg.serialize()
 
@@ -111,104 +97,3 @@ class EventEncoder(Encoder):
         binary_data = len_bin + desc_bin + id_bin + time_bin + arg_bin
 
         return binary_data
-
-
-if __name__ == "__main__":
-    # Unit Tests
-    config = ConfigManager()
-    config.set("types", "msg_len", "U16")
-
-    enc = EventEncoder()
-    enc_config = EventEncoder("GUI", config)
-
-    temp = EventTemplate(
-        101,
-        "test_ch",
-        "test_comp",
-        [("a1", "a1", U32Type()), ("a2", "a2", U32Type())],
-        EventSeverity["DIAGNOSTIC"],
-        "%d %d",
-    )
-
-    time_obj = TimeType(2, 0, 1533758629, 123456)
-
-    event_obj = EventData((U32Type(42), U32Type(10)), time_obj, temp)
-
-    desc_bin = "\x00\x00\x00\x02"
-    id_bin = "\x00\x00\x00\x65"
-    time_bin = "\x00\x02\x00\x5b\x6b\x4c\xa5\x00\x01\xe2\x40"
-    arg_bin = "\x00\x00\x00\x2a\x00\x00\x00\x0a"
-    long_len_bin = "\x00\x00\x00\x1b"
-    short_len_bin = "\x00\x1b"
-
-    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + arg_bin
-    config_expected = short_len_bin + desc_bin + id_bin + time_bin + arg_bin
-
-    reg_output = enc.encode_api(event_obj)
-
-    if reg_output != reg_expected:
-        print(
-            "FAIL: expected regular output to be %s, but found %s"
-            % (list(reg_expected), list(reg_output))
-        )
-        sys.exit(-1)
-    else:
-        print("PASSED test 1")
-
-    config_output = enc_config.encode_api(event_obj)
-
-    if config_output != config_expected:
-        print(
-            "FAIL: expected configured output to be %s, but found %s"
-            % (list(config_expected), list(config_output))
-        )
-        sys.exit(-1)
-    else:
-        print("PASSED test 2")
-
-    temp = EventTemplate(
-        102,
-        "test_ch2",
-        "test_comp2",
-        [("a1", "a1", U8Type()), ("a2", "a2", U16Type())],
-        EventSeverity["DIAGNOSTIC"],
-        "%d %d",
-    )
-
-    time_obj = TimeType(2, 0, 1533758628, 123457)
-
-    event_obj = EventData((U8Type(128), U16Type(40)), time_obj, temp)
-
-    desc_bin = "\x00\x00\x00\x02"
-    id_bin = "\x00\x00\x00\x66"
-    time_bin = "\x00\x02\x00\x5b\x6b\x4c\xa4\x00\x01\xe2\x41"
-    arg_bin = "\x80\x00\x28"
-    long_len_bin = "\x00\x00\x00\x16"
-    short_len_bin = "\x00\x16"
-
-    reg_expected = long_len_bin + desc_bin + id_bin + time_bin + arg_bin
-    config_expected = short_len_bin + desc_bin + id_bin + time_bin + arg_bin
-
-    reg_output = enc.encode_api(event_obj)
-
-    if reg_output != reg_expected:
-        print(
-            "FAIL: expected regular output to be %s, but found %s"
-            % (list(reg_expected), list(reg_output))
-        )
-        sys.exit(-1)
-    else:
-        print("PASSED test 3")
-
-    config_output = enc_config.encode_api(event_obj)
-
-    if config_output != config_expected:
-        print(
-            "FAIL: expected configured output to be %s, but found %s"
-            % (list(config_expected), list(config_output))
-        )
-        sys.exit(-1)
-    else:
-        print("PASSED test 4")
-
-    print("ALL TESTS PASSED!")
