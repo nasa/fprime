@@ -55,6 +55,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         will be created, if the interval is not none.
         """
         self.stop = False
+        self.keepalive = None
         self.tcp = TcpHandler(address, port)
         self.udp = UdpHandler(address, port)
         self.thtcp = None
@@ -76,9 +77,10 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             self.thudp.start()
             # Start up a keep-alive ping if desired. This will hit the TCP uplink, and die if the connection is down
             if IpAdapter.KEEPALIVE_INTERVAL is not None:
-                threading.Thread(
+                self.keepalive = threading.Thread(
                     target=self.th_alive, args=[float(self.KEEPALIVE_INTERVAL)]
-                ).start()
+                )
+                self.keepalive.start()
         except (ValueError, TypeError) as exc:
             LOGGER.error(
                 "Failed to start keep-alive thread. %s: %s"

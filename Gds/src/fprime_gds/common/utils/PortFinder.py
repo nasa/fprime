@@ -54,6 +54,7 @@ def IsPortUsed(port):
             )
 
         portUsed = False
+
     except:
         # print 'error:', sys.exc_info()[0]
         portUsed = True

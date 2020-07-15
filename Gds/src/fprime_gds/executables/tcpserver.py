@@ -32,7 +32,7 @@ FSW_ids = []
 GUI_ids = []
 
 
-def signal_handler():
+def signal_handler(_, _):
     print("Ctrl-C received, server shutting down.")
     shutdown_event.set()
 
