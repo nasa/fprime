@@ -71,12 +71,12 @@ def write_tester_lines(fileopen, section_type):
     Write test cases inside "fileopen" at whatever location
     "fileopen" is currently pointing to
     """
-    testgen_dir = (
-        "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
-    )
+    testgen_dir = os.path.join("Autocoders", "Python", "test", "testgen")
     if section_type == "TESTER_METHODS":
         # Test case method initializations found in local file
-        with open(testdir + "__tester_handcoded_methods.txt") as methodstub:
+        with open(
+            os.path.join(testdir, "__tester_handcoded_methods.txt")
+        ) as methodstub:
             for line in methodstub:
                 fileopen.write(line)
     if section_type == "TESTER_HEADERS":
@@ -165,39 +165,32 @@ def compare_genfile(filename):
     if not (
         filecmp.cmp(
             filename,
-            testdir
-            + "templates"
-            + os.sep
-            + "{}".format(filename).replace(".", "_")
-            + ".txt",
+            os.path.join(
+                testdir, "templates", "{}.txt".format(filename).replace(".", "_")
+            ),
         )
     ):
         print(
-            "WARNING: {} generated incorrectly according to Autocoders"
-            + os.sep
-            + "Python"
-            + os.sep
-            + "test"
-            + os.sep
-            + "enum_xml"
-            + os.sep
-            + "templates"
-            + os.sep
-            + "{}".format(filename, filename.replace(".", "_") + ".txt")
+            "WARNING: {} generated incorrectly according to Autocoders".format(
+                os.path.join(
+                    "Python",
+                    "test",
+                    "enum_xml",
+                    "templates",
+                    "{}.txt".format(filename.replace(".", "_")),
+                )
+            )
         )
         diff_lines = file_diff(
             filename,
-            testdir
-            + "templates"
-            + os.sep
-            + "{}".format(filename).replace(".", "_")
-            + ".txt",
+            os.path.join(
+                testdir, "templates", "{}.txt".format(filename).replace(".", "_")
+            ),
         )
         print(
-            "WARNING: the following lines from "
-            + filename
-            + " differ from the template: "
-            + str(diff_lines)
+            "WARNING: the following lines from {} differ from the template: {}".format(
+                filename, str(diff_lines)
+            )
         )
     else:
         print("{} is consistent with expected template".format(filename))
@@ -212,41 +205,40 @@ def test_testgen():
     try:
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
         curdir = os.getcwd()
-        testdir = os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
-        testutdir = testdir + "test" + os.sep + "ut"
+        testdir = os.path.join(
+            os.environ["BUILD_ROOT"], "Autocoders", "Python", "test", "testgen"
+        )
+        testutdir = os.path.join(testdir, "test", "ut")
         os.chdir(testdir)
 
-        bindir = (
-            os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
-            + os.sep
-        )
+        bindir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin")
 
         # Autocode component and port
         pport1 = pexpect.spawn(
-            "python " + bindir + "codegen.py -v " + testdir + "MathOpPortAi.xml"
+            "python "
+            + os.path.join(bindir, "codegen.py")
+            + " -v "
+            + testdir
+            + "MathOpPortAi.xml"
         )
         pport1.expect(
             "(?=.*Generating code filename: MathOpPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathOpPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*"
         )
         pport2 = pexpect.spawn(
-            "python " + bindir + "codegen.py -v " + testdir + "MathResultPortAi.xml"
+            "python "
+            + os.path.join(bindir, "codegen.py")
+            + " -v "
+            + testdir
+            + "MathResultPortAi.xml"
         )
         pport2.expect(
             "(?=.*Generating code filename: MathResultPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathResultPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*"
         )
         pcomp = pexpect.spawn(
             "python "
-            + bindir
-            + "codegen.py -v "
-            + testdir
-            + "MathSenderComponentAi.xml"
+            + os.path.join(bindir, "codegen.py")
+            + " -v "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
         )
         pcomp.expect("(?=.*MathSender)(?=.*MathOp)(?=.*MathResult)(?!.*ERROR).*")
 
@@ -256,11 +248,10 @@ def test_testgen():
 
         # Autocode tests
         p = pexpect.spawn(
-            "python "
-            + bindir
-            + "testgen.py -v -f "
-            + testdir
-            + "MathSenderComponentAi.xml"
+            "python"
+            + os.path.join(bindir, "testgen.py")
+            + " -v -f "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
         )
 
         p.expect(
@@ -279,11 +270,10 @@ def test_testgen():
 
         # Run testgen again to generate main with test cases
         p2 = pexpect.spawn(
-            "python "
-            + bindir
-            + "testgen.py -v -m "
-            + testdir
-            + "MathSenderComponentAi.xml"
+            "python"
+            + os.path.join(bindir, "testgen.py")
+            + " -v -m "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
         )
 
         p2.expect(
@@ -301,7 +291,7 @@ def test_testgen():
         compare_genfile("TestMain.cpp")
 
         try:
-            rootdir = tempfile.mkdtemp() + os.sep
+            rootdir = tempfile.mkdtemp()
             os.chdir(rootdir)
 
             # Create build dir for unit tests if it doesn't exist
@@ -313,18 +303,15 @@ def test_testgen():
 
             # Run cmake to configure testgen test
             if not os.path.exists(
-                builddir
-                + "F-Prime"
-                + os.sep
-                + "Autocoders"
-                + os.sep
-                + "Python"
-                + os.sep
-                + "test"
-                + os.sep
-                + "testgen"
-                + os.sep
-                + "Makefile"
+                os.path.join(
+                    builddir,
+                    "F-Prime",
+                    "Autocoders",
+                    "Python",
+                    "test",
+                    "testgen",
+                    "Makefile",
+                )
             ):
                 pcmake = pexpect.spawn(
                     "cmake {} -DCMAKE_BUILD_TYPE=TESTING".format(
@@ -342,13 +329,8 @@ def test_testgen():
 
             print("Built testgen unit test")
 
-            utdir = (
-                builddir
-                + "bin"
-                + os.sep
-                + os.uname()[0]
-                + os.sep
-                + "Autocoders_Python_test_testgen_ut_exe"
+            utdir = os.path.join(
+                builddir, "bin", os.uname()[0], "Autocoders_Python_test_testgen_ut_exe"
             )
 
             # Run ut

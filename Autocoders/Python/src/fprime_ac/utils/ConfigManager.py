@@ -62,9 +62,9 @@ class ConfigManager(parent):
         # Append other paths to look in here.
 
         # Look in next one, the home directory of the user.
-        files.append(os.environ["HOME"] + os.sep + config_file_name)
+        files.append(os.path.join(os.environ["HOME"], config_file_name))
         # Look in last directory first, the current directory
-        files.append(os.path.realpath(os.curdir) + os.sep + config_file_name)
+        files.append(os.path.join(os.path.realpath(os.curdir), config_file_name))
         self.read(files)
 
     def getInstance():

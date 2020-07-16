@@ -100,39 +100,32 @@ def compare_genfile(filename):
     if not (
         filecmp.cmp(
             filename,
-            testdir
-            + "templates"
-            + os.sep
-            + "{}".format(filename).replace(".", "_")
-            + ".txt",
+            os.path.join(
+                testdir, "templates", "{}.txt".format(filename).replace(".", "_")
+            ),
         )
     ):
         print(
-            "WARNING: {} generated incorrectly according to Autocoders"
-            + os.sep
-            + "Python"
-            + os.sep
-            + "test"
-            + os.sep
-            + "enum_xml"
-            + os.sep
-            + "templates"
-            + os.sep
-            + "{}".format(filename, filename.replace(".", "_") + ".txt")
+            "WARNING: {} generated incorrectly according to Autocoders".format(
+                os.path.join(
+                    "Python",
+                    "test",
+                    "enum_xml",
+                    "templates",
+                    "{}.txt".format(filename.replace(".", "_")),
+                )
+            )
         )
         diff_lines = file_diff(
             filename,
-            testdir
-            + "templates"
-            + os.sep
-            + "{}".format(filename).replace(".", "_")
-            + ".txt",
+            os.path.join(
+                testdir, "templates", "{}.txt".format(filename).replace(".", "_")
+            ),
         )
         print(
-            "WARNING: the following lines from "
-            + filename
-            + " differ from the template: "
-            + str(diff_lines)
+            "WARNING: the following lines from {} differ from the template: {}".format(
+                filename, str(diff_lines)
+            )
         )
     else:
         print("{} is consistent with expected template".format(filename))
@@ -147,20 +140,12 @@ def test_testgen():
     try:
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
         curdir = os.getcwd()
-        testdir = os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + "Python" + os.sep + "test" + os.sep + "implgen" + os.sep
+        testdir = os.path.join(
+            os.environ["BUILD_ROOT"], "Autocoders", "Python", "test", "implgen"
+        )
         os.chdir(testdir)
 
-        bindir = (
-            os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
-            + os.sep
-        )
+        bindir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin")
 
         if os.path.exists("MathSenderComponentImpl.cpp-template"):
             os.remove("MathSenderComponentImpl.cpp-template")
@@ -170,10 +155,9 @@ def test_testgen():
         # Run component through implgen
         p = pexpect.spawn(
             "python "
-            + bindir
-            + "implgen.py -v "
-            + testdir
-            + "MathSenderComponentAi.xml"
+            + os.path.join(bindir, "implgen.py")
+            + " -v "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
         )
         p.expect("(?!.*ERROR).*", timeout=5)
 

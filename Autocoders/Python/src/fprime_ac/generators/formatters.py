@@ -1343,7 +1343,7 @@ class Formatters:
         if self.subThreadTest(mod_id) == True and len(context_list) > 0:
             instance_enum = self.subThreadModuleFirstCap(mod_id) + "AcInstanceId"
             d = self.subThreadDir(mod_id)
-            file = d + os.sep + mod_id + "_ac_pub.h"
+            file = os.path.join(d, mod_id + "_ac_pub.h")
             arg_comment = (
                 "This argument specifies which %s subtask will receive the command."
                 % (mod_id)

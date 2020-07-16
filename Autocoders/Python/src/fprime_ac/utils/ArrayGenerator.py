@@ -25,7 +25,7 @@ def open_file(name, type):
     Open the file for writing
     """
     #
-    gse_serializable_install_dir = "DefaultDict" + os.sep + "serializable"
+    gse_serializable_install_dir = os.path.join("DefaultDict", "serializable")
     if type == "py":
         filename = name + ".py"
         #

@@ -10,12 +10,8 @@ import os
 import sys
 import shutil
 
-sys.path.append(
-    os.environ["BUILD_ROOT"] + os.sep + "Fw" + os.sep + "Python" + os.sep + "src"
-)
-sys.path.append(
-    os.environ["BUILD_ROOT"] + os.sep + "Gds" + os.sep + "src"
-)  # Add GDS modules
+sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Fw", "Python", "src"))
+sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Gds", "src"))  # Add GDS modules
 from fprime_gds.common.loaders.xml_loader import XmlLoader
 
 from fprime_ac.parsers import XmlTopologyParser
@@ -141,7 +137,7 @@ def get_serializables_from_comp_xml(comp_xml):
     loader = XmlLoader()
     # Find serializables in imported file
     for serial_file in serial_imports:
-        serial_path = os.environ["BUILD_ROOT"] + os.sep + serial_file
+        serial_path = os.path.join(os.environ["BUILD_ROOT"], serial_file)
         if os.path.exists(serial_path):
             opened_serial = loader.get_xml_tree(serial_path)
             find_serial_from_serial(opened_serial, serial_list, "imports")
@@ -169,7 +165,7 @@ def get_enums_from_comp_xml(comp_xml):
     loader = XmlLoader()
     # Find enums in imported dictionary
     for dict_file in dict_imports:
-        dict_path = os.environ["BUILD_ROOT"] + os.sep + dict_file
+        dict_path = os.path.join(os.environ["BUILD_ROOT"], dict_file)
         if os.path.exists(dict_path):
             opened_dict = loader.get_xml_tree(dict_path)
             find_enum_from_dict(opened_dict, enum_list, "imports")
@@ -528,8 +524,8 @@ def check_generated_files(testdir):
     expected_cmd_modules = ["Inst1_" + o + ".py" for o in inst1_command_names] + [
         "Inst2_" + o + ".py" for o in inst2_command_names
     ]
-    if os.path.exists(testdir + os.sep + "commands"):
-        files = os.listdir(testdir + os.sep + "commands")
+    if os.path.exists(os.path.join(testdir, "commands")):
+        files = os.listdir(os.path.join(testdir, "commands"))
         files = filter_non_src_files(files)
         for mod in expected_cmd_modules:
             if not mod in files:
@@ -550,8 +546,8 @@ def check_generated_files(testdir):
     expected_chan_modules = ["Inst1_" + o + ".py" for o in inst1_channel_names] + [
         "Inst2_" + o + ".py" for o in inst2_channel_names
     ]
-    if os.path.exists(testdir + os.sep + "channels"):
-        files = os.listdir(testdir + os.sep + "channels")
+    if os.path.exists(os.path.join(testdir, "channels")):
+        files = os.listdir(os.path.join(testdir, "channels"))
         files = filter_non_src_files(files)
         for mod in expected_chan_modules:
             if not mod in files:
@@ -572,8 +568,8 @@ def check_generated_files(testdir):
     expected_evr_modules = ["Inst1_" + o + ".py" for o in inst1_event_names] + [
         "Inst2_" + o + ".py" for o in inst2_event_names
     ]
-    if os.path.exists(testdir + os.sep + "events"):
-        files = os.listdir(testdir + os.sep + "events")
+    if os.path.exists(os.path.join(testdir, "events")):
+        files = os.listdir(os.path.join(testdir, "events"))
         files = filter_non_src_files(files)
         for mod in expected_evr_modules:
             if not mod in files:
@@ -592,8 +588,8 @@ def check_generated_files(testdir):
     expected_param_modules = ["Inst1_" + o + ".py" for o in inst1_parameter_names] + [
         "Inst2_" + o + ".py" for o in inst2_parameter_names
     ]
-    if os.path.exists(testdir + os.sep + "parameters"):
-        files = os.listdir(testdir + os.sep + "parameters")
+    if os.path.exists(os.path.join(testdir, "parameters")):
+        files = os.listdir(os.path.join(testdir, "parameters"))
         files = filter_non_src_files(files)
         for mod in expected_param_modules:
             if not mod in files:
@@ -737,18 +733,12 @@ def test_dictgen():
     try:
 
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
-        testdir = os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + "Python" + os.sep + "test" + os.sep + "dictgen"
+        testdir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders")
+        testdir = os.path.join(testdir + "Python", "test", "dictgen")
         os.chdir(testdir)
 
         bindir = (
-            os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
+            os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin")
             + os.sep
         )
 
@@ -801,10 +791,9 @@ def test_dictgen():
             compare_genfile(pymod)
 
         # Evaluate imports on each of the pymods to show they work properly
-        dictgen_dir = (
-            os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep + "Python"
+        dictgen_dir = os.path.join(
+            os.environ["BUILD_ROOT"], "Autocoders", "Python", "test", "dictgen"
         )
-        dictgen_dir += os.sep + "test" + os.sep + "dictgen" + os.sep
         sys.path.append(dictgen_dir)
 
         # TODO: FIGURE OUT HOW TO MAKE SERIALIZED TYPE IMPORTS WORK

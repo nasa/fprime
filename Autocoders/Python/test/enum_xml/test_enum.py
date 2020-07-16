@@ -142,14 +142,12 @@ def test_enum():
         curdir = os.getcwd()
 
         # Need to cd into test directory in order to add test to CMakeList
-        testdir = os.sep + os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + os.sep + "Python" + os.sep + "test" + os.sep
+        testdir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "test")
         os.chdir(testdir)
 
         # Need to cd into test directory in order to run codegen, will return after completion
-        enumtestdir = os.sep + os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
-        enumtestdir = (
-            enumtestdir + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml"
+        enumtestdir = os.path.join(
+            os.environ["BUILD_ROOT"], "Autocoders", "Python", "test", "enum_xml"
         )
         os.chdir(enumtestdir)
 
@@ -158,20 +156,10 @@ def test_enum():
         ## Spawn executable
         cmd = (
             "python "
-            + os.sep
-            + os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
-        )
-        cmd = (
-            cmd
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
-            + os.sep
-            + "codegen.py Enum1EnumAi.xml"
+            + os.path.join(
+                os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin", "codegen.py"
+            )
+            + " Enum1EnumAi.xml"
         )
         penum = pexpect.spawn(cmd)
         penum.expect("(?=.*Enum1EnumAi.xml)(?!.*ERROR).*", timeout=5)
@@ -179,20 +167,10 @@ def test_enum():
 
         cmd = (
             "python "
-            + os.sep
-            + os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
-        )
-        cmd = (
-            cmd
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
-            + os.sep
-            + "codegen.py Serial1SerializableAi.xml"
+            + os.path.join(
+                os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin", "codegen.py"
+            )
+            + " Serial1SerializableAi.xml"
         )
         print(cmd)
         pserial = pexpect.spawn(cmd)
@@ -206,20 +184,10 @@ def test_enum():
 
         cmd = (
             "python "
-            + os.sep
-            + os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
-        )
-        cmd = (
-            cmd
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
-            + os.sep
-            + "codegen.py Port1PortAi.xml"
+            + os.path.join(
+                os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin", "codegen.py"
+            )
+            + " Port1PortAi.xml"
         )
         pport = pexpect.spawn(cmd)
         pport.expect(
@@ -229,21 +197,12 @@ def test_enum():
 
         cmd = (
             "python "
-            + os.sep
-            + os.environ["BUILD_ROOT"]
-            + os.sep
-            + "Autocoders"
-            + os.sep
+            + os.path.join(
+                os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin", "codegen.py"
+            )
+            + " Component1ComponentAi.xml"
         )
-        cmd = (
-            cmd
-            + os.sep
-            + "Python"
-            + os.sep
-            + "bin"
-            + os.sep
-            + "codegen.py Component1ComponentAi.xml"
-        )
+
         pcomp = pexpect.spawn(cmd)
         pcomp.expect("(?=.*Component1)(?=.*Port1)(?=.*Serial1)(?!.*ERROR).*", timeout=5)
         print("Component XML autocoded\n")
@@ -266,7 +225,7 @@ def test_enum():
 
         expect_step = "cmake"
         try:
-            builddir = tempfile.mkdtemp() + os.sep
+            builddir = tempfile.mkdtemp()
             os.chdir(builddir)
 
             pcmake = pexpect.spawn(
@@ -295,14 +254,8 @@ def test_enum():
             enum2_literal_data = [-8324876, 21, 2000999333, 2, -1952875139, 2]
             serial1_data = [0, 10, 67, 4837, 82739845, 3434534]
             serial2_data = [22839745, 3453, 2, 1, 9808973, 99]
-            cmd = builddir
-            cmd = (
-                cmd
-                + "bin"
-                + os.sep
-                + os.uname()[0]
-                + os.sep
-                + "Autocoders_Python_test_enum_xml_ut_exe"
+            cmd = os.path.join(
+                builddir, "bin", os.uname()[0], "Autocoders_Python_test_enum_xml_ut_exe"
             )
             ptestrun = pexpect.spawn(cmd)
 

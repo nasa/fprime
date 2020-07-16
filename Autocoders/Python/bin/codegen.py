@@ -103,11 +103,9 @@ def moveCAndHFiles(path_prefix):
     to a specific directory.
     """
     for f in glob.glob("*.c"):
-        fp = path_prefix + os.sep + f
-        os.rename(f, fp)
+        os.rename(f, os.path.join(path_prefix, f))
     for f in glob.glob("*.h"):
-        fp = path_prefix + os.sep + f
-        os.rename(f, fp)
+        os.rename(f, os.path.join(path_prefix, f))
 
 
 def cleanUp():
@@ -437,9 +435,10 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
-            os.environ["DICT_DIR"] = (
-                get_build_roots()[0] + os.sep + DEPLOYMENT + os.sep + "py_dict"
+            os.environ["DICT_DIR"] = os.path.join(
+                get_build_roots()[0], DEPLOYMENT, "py_dict"
             )
+
             dict_dir = os.environ["DICT_DIR"]
             PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
             import shutil
@@ -1013,17 +1012,6 @@ def generate_component_instance_dictionary(
             defaultStartChannel(channel_model, topology_model)
             defaultChannelHeader(channel_model, topology_model)
             defaultChannelBody(channel_model, topology_model)
-
-
-#     if opt.ampcs_topology_dict:
-#         # Hack to always write AMPCS into correct deployment path...
-#         # Note note removing it first...
-#         os.environ["AMPCS_DICT_DIR"] = BUILD_ROOT + os.sep + DEPLOYMENT + os.sep + "dict" + os.sep + "AMPCS"
-#         dict_dir = os.environ["AMPCS_DICT_DIR"]
-#         PRINT.info("Overriding for AMPCS dictionaries the --dict_dir option with xml derived path: %s", dict_dir)
-#         InstanceAmpcsCommandConverter.InstanceAmpcsCommandConverter(component_model , topology_model).writeFile(dict_dir)
-#         InstanceAmpcsTelemetryConverter.InstanceAmpcsTelemetryConverter(component_model , topology_model).writeFile(dict_dir)
-#         InstanceAmpcsEventConverter.InstanceAmpcsEventConverter(component_model , topology_model).writeFile(dict_dir)
 
 
 def generate_component(

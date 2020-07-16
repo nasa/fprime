@@ -139,7 +139,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
                 str = "MSL_ROOT is not defined in the environment."
                 print(str)
                 raise KeyError(str)
-            filename = msl_root + os.sep + filename
+            filename = os.path.join(msl_root, filename)
             if not os.path.isfile(filename):
                 ######################
                 str = (
