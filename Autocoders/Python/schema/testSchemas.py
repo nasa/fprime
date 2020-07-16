@@ -9,16 +9,16 @@ To add tests, go down to the setup function.
 
 class schema_test:
     """
-	schema_test is a base object for conducting tests on schemas.
-	"""
+    schema_test is a base object for conducting tests on schemas.
+    """
 
     def __init__(self, schema_name, schema_path):
         """
-		Starts object.
+        Starts object.
 
-		schema_name - Name to refer to schema by
-		schema_path - Path to retrieve RelaxNG schema
-		"""
+        schema_name - Name to refer to schema by
+        schema_path - Path to retrieve RelaxNG schema
+        """
         self.__schema_name = schema_name
         self.__schema_path = schema_path
 
@@ -28,8 +28,8 @@ class schema_test:
 
     def __validate_and_compile(self):
         """
-		Validates and compiles the schemas specified on instantiation.
-		"""
+        Validates and compiles the schemas specified on instantiation.
+        """
         self.__validate_file(self.__schema_path, "RNG")
 
         # Read schema file
@@ -46,8 +46,8 @@ class schema_test:
 
     def __validate_file(self, file_name, extension):
         """
-		Ensures file exists and has the proper extension.
-		"""
+        Ensures file exists and has the proper extension.
+        """
         if not os.path.exists(file_name):
             raise Exception("File does not exist - {}.".format(file_name))
 
@@ -62,8 +62,8 @@ class schema_test:
 
     def __get_parsed_relaxng(self, file_path):
         """
-		Returns root tag assuming file path is correct
-		"""
+        Returns root tag assuming file path is correct
+        """
         # Read schema file
         handler = file(file_path, "r")
 
@@ -77,24 +77,24 @@ class schema_test:
 
     def add_test(self, test_name, xml_path, error_class, parsed_xml=None):
         """
-		Add test case to object.
+        Add test case to object.
 
-		test_name - Way of identifiying the test
-		xml_path - Path to xml test file
-		error_class - What sort of error that is going to be thrown. If error_class == None, it is assumed that the test will pass without raising exceptions.
-		parsed_xml - Add the etree of the XML if available.
-		"""
+        test_name - Way of identifiying the test
+        xml_path - Path to xml test file
+        error_class - What sort of error that is going to be thrown. If error_class == None, it is assumed that the test will pass without raising exceptions.
+        parsed_xml - Add the etree of the XML if available.
+        """
         test_set = (test_name, xml_path, error_class, parsed_xml)
 
         self.__test_set_list.append(test_set)
 
     def parse_and_add_directory(self, list_of_root_tags, directory):
         """
-		Parses through directory and all subdirectories and adds tests to object test lists
+        Parses through directory and all subdirectories and adds tests to object test lists
 
-		list_of_root_tags - list of root tags to check for
-		directory - directory to look in
-		"""
+        list_of_root_tags - list of root tags to check for
+        directory - directory to look in
+        """
 
         # Check if directory exists and list_of_root_tags isn't empty
 
@@ -128,22 +128,22 @@ class schema_test:
 
     def run_all_tests(self):
         """
-		Runs all the tests consecutivley.
-		"""
+        Runs all the tests consecutivley.
+        """
         for index in range(len(self.__test_set_list)):
             self.run_test(index)
 
     def get_test_amount(self):
         """
-		Returns the amount of tests in the object.
-		"""
+        Returns the amount of tests in the object.
+        """
 
         return len(self.__test_set_list)
 
     def run_test(self, index):
         """
-		Runs test of index
-		"""
+        Runs test of index
+        """
         if index >= len(self.__test_set_list):
             raise Exception("Illegal index was accessed")
 
@@ -196,15 +196,15 @@ class schema_test:
 
     def print_header(self):
         """
-		Prints a header string for a schema_test object.
-		"""
+        Prints a header string for a schema_test object.
+        """
         print("\nTesting {} - {}\n".format(self.__schema_name, self.__schema_path))
 
 
 def setup():
     """
-	Sets up and returns test_list, which is a set of schema_test objects.
-	"""
+    Sets up and returns test_list, which is a set of schema_test objects.
+    """
     test_list = []
 
     # Create schema object

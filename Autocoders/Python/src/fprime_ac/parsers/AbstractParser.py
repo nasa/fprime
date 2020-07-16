@@ -2,7 +2,7 @@
 # NAME:  abstract_face.py
 #
 # DESCRIPTION: The abstract parser defines the some shared interfaces
-# 	           for parsing, validation and in common
+#                for parsing, validation and in common
 #              getter methods for component, port and assembly
 #              XML.
 #

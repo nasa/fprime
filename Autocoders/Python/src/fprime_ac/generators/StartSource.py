@@ -2,11 +2,11 @@
 # NAME: StartSource
 #
 # DESCRIPTION:  The StartSource class is the main entry point
-# 				for generation of beginning and header comments code
+#                 for generation of beginning and header comments code
 #               in code generation.
 #
 # USAGE: Nominally the StartSource.__call__ is called by using the
-# 		 instance name.  The instance name is the function
+#          instance name.  The instance name is the function
 #        called with a suitable argument object containing
 #        all needed model information to generate the code.
 #
@@ -88,7 +88,7 @@ class StartSource:
         """
         Add a visitor to the list of vistors.
         @param visitor: the visitor to add, must be derived from AbstractVisitor.
-	    """
+        """
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):
             self.__visitor_list.append(visitor)
         else:

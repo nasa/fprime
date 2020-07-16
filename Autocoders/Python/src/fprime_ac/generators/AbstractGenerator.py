@@ -2,14 +2,14 @@
 # NAME:  AbstractGenerator.py
 #
 # DESCRIPTION: The abstract generator defines the interface
-# 	           for each element or in this case
+#                for each element or in this case
 #              portition of code to be generated.  We use
 #              the python __call__ method to make
 #              direct calls to generators.
 #
 # USAGE: Normally these will be instanced by a Factory
 #        then each one will have the needed visitors
-# 	     added.
+#          added.
 #
 # AUTHOR: reder
 # EMAIL:  reder@jpl.nasa.gov
@@ -71,8 +71,8 @@ class AbstractGenerator:
 
     def addVisitor(self, visitor):
         """
-	    Method to add the visitor to a list of visitors.
-	    """
+        Method to add the visitor to a list of visitors.
+        """
         raise Exception(
             "AbstractFace.accept.addVisitor(v) - Implementation Error: you must supply your own concrete implementation."
         )

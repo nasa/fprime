@@ -2,10 +2,10 @@
 # NAME: HtmlDoc
 #
 # DESCRIPTION:  The HtmlDoc class is the main entry point
-# 				for generation of html documentation for ground interfaces
+#                 for generation of html documentation for ground interfaces
 #
 # USAGE: Nominally the includes1Visit.__call__ is called by using the
-# 		 instance name.  The instance name is the function
+#          instance name.  The instance name is the function
 #        called with a suitable argument object containing
 #        all needed model information to generate the code.
 #
@@ -87,7 +87,7 @@ class HtmlDocPage:
         """
         Add a visitor to the list of vistors.
         @param visitor: the visitor to add, must be derived from AbstractVisitor.
-	    """
+        """
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):
             self.__visitor_list.append(visitor)
         else:

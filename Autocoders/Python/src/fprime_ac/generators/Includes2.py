@@ -2,10 +2,10 @@
 # NAME: Includes2
 #
 # DESCRIPTION:  The Includes2 class is the main entry point
-# 				for generation of a second set of include files.
+#                 for generation of a second set of include files.
 #
 # USAGE: Nominally the Includes2.__call__ is called by using the
-# 		 instance name.  The instance name is the function
+#          instance name.  The instance name is the function
 #        called with a suitable argument object containing
 #        all needed model information to generate the code.
 #
@@ -87,7 +87,7 @@ class Includes2:
         """
         Add a visitor to the list of vistors.
         @param visitor: the visitor to add, must be derived from AbstractVisitor.
-	    """
+        """
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):
             self.__visitor_list.append(visitor)
         else:
