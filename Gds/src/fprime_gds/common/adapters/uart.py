@@ -100,7 +100,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             assert written == len(frame)
             return True
         except serial.serialutil.SerialException as exc:
-            LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
+            LOGGER.warning("Serial exception caught: %s. Reconnecting.", (str(exc)))
             self.close()
         return False
 
@@ -124,7 +124,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
                     self.serial.in_waiting
                 )  # Drain the incoming data queue
         except serial.serialutil.SerialException as exc:
-            LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
+            LOGGER.warning("Serial exception caught: %s. Reconnecting.", (str(exc)))
             self.close()
         return data
 

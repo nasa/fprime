@@ -54,10 +54,11 @@ def IsPortUsed(port):
             )
 
         portUsed = False
+
     except:
         # print 'error:', sys.exc_info()[0]
         portUsed = True
-        if isinstance(s, socket):
+        if isinstance(s, socket.socket):
             s.close()
 
     return portUsed

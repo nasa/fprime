@@ -68,7 +68,7 @@ class CommandHistory(flask_restful.Resource):
         Return the command history object
         """
         args = self.parser.parse_args()
-        return_set = {"history": self.history.retrieve(session=args.get("session"))}
+        return_set = {"history": self.history.retrieve(start=args.get("session"))}
         self.history.clear()
         return return_set
 
@@ -77,7 +77,7 @@ class CommandHistory(flask_restful.Resource):
         Delete the event history for a given session. This keeps the data all clear like.
         """
         args = self.parser.parse_args()
-        self.history.clear(session=args.get("session"))
+        self.history.clear(start=args.get("session"))
 
 
 class Command(flask_restful.Resource):

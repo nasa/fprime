@@ -121,7 +121,7 @@ class Uplinker(object):
             try:
                 self.uplink()
             except UplinkFailureException as ufe:
-                LOGGER.warning("Uplink exception occured: {}".format(ufe))
+                LOGGER.warning("Uplink exception occured: %s", (ufe))
             # Shutdown exception handling, only keep exception when running
             except OSError:
                 if self.running:
@@ -222,9 +222,7 @@ def parse_args(args):
             getattr(adapter, "get_arguments", None)
         ):
             LOGGER.error(
-                "'{}' does not have 'get_arguments' method, skipping.".format(
-                    adapter_name
-                )
+                "'%s' does not have 'get_arguments' method, skipping.", (adapter_name)
             )
             continue
         subparse = subparsers.add_parser(adapter_name)

@@ -38,16 +38,16 @@ class TestHistory(History):
 
         self.retrieved_cursor = 0
 
-    def data_callback(self, data_object, sender=None):
+    def data_callback(self, data, sender=None):
         """
         Data callback to push an object on the history. This callback will only add data_objects
         that satisfy the filter predicate.
 
         Args:
-            data_object: object to store
+            data: object to store
         """
-        if self.filter(data_object):
-            self.objects.append(data_object)
+        if self.filter(data):
+            self.objects.append(data)
 
     def retrieve(self, start=None):
         """

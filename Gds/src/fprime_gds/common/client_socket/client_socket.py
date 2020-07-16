@@ -94,7 +94,7 @@ class ThreadedTCPSocketClient(DataHandler):
         try:
             self.sock.connect((host, port))
             self.__data_recv_thread.start()
-        except:
+        except OSError:
             print("There was a problem connecting to the TCP Server")
             exit(-1)
 

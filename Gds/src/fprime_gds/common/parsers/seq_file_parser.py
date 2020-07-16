@@ -9,30 +9,30 @@ from fprime_gds.common.data_types import exceptions as gseExceptions
 class SeqFileParser(object):
     def parse(self, filename):
         """
-      Generator that parses an input sequence file and returns a tuple
-      for each valid line of the sequence file.
-      @param seqfile: A sequence file name (usually a .seq extension)
-      @return A list of tuples:
-        (lineNumber, descriptor, seconds, useconds, mnemonic, arguments)
-      """
+        Generator that parses an input sequence file and returns a tuple
+        for each valid line of the sequence file.
+        @param seqfile: A sequence file name (usually a .seq extension)
+        @return A list of tuples:
+            (lineNumber, descriptor, seconds, useconds, mnemonic, arguments)
+        """
 
         def subQuoted(f, string):
             """
-        Run a substitution function on only substrings within a string that are surrounded
-        by single or double quotes
-        @param f: a string substitution acting on matchobjs
-        @param string: the string to perform the substitution on
-        @return the substituted string
-        """
+            Run a substitution function on only substrings within a string that are surrounded
+            by single or double quotes
+            @param f: a string substitution acting on matchobjs
+            @param string: the string to perform the substitution on
+            @return the substituted string
+            """
             s = re.sub(r'"[^"]*"', f, string)
             return re.sub(r"'[^']*'", f, s)
 
         def removeTrailingComments(string):
             """
-        Remove any trailing comments (proceded by ';') in a string
-        @param string: the string to perform comment removal on
-        @return the string without trailing comments
-        """
+            Remove any trailing comments (proceded by ';') in a string
+            @param string: the string to perform comment removal on
+            @return the string without trailing comments
+            """
 
             def replaceSemis(matchobj):
                 return matchobj.group(0).replace(";", " ")
@@ -49,11 +49,11 @@ class SeqFileParser(object):
 
         def splitString(string):
             """
-        Split a string with ' ' or ',' as a delimiter. Ignore any delimiters
-        found within quoted substrings.
-        @param string: the string to perform the split on
-        @return a list representing the split string
-        """
+            Split a string with ' ' or ',' as a delimiter. Ignore any delimiters
+            found within quoted substrings.
+            @param string: the string to perform the split on
+            @return a list representing the split string
+            """
 
             def replaceSpacesAndCommas(matchobj):
                 s = re.sub(r"\s", "_", matchobj.group(0))
@@ -73,10 +73,10 @@ class SeqFileParser(object):
 
         def parseArgs(args):
             """
-        Turn .seq command argument list into their appropriate python types
-        @param args: a list of parsed arguments
-        @return a list of arguments as native python types
-        """
+            Turn .seq command argument list into their appropriate python types
+            @param args: a list of parsed arguments
+            @return a list of arguments as native python types
+            """
 
             def parseArg(arg):
                 # See if argument is a string, if so remove the quotes and return it:
@@ -107,19 +107,19 @@ class SeqFileParser(object):
 
         def parseTime(lineNumber, time):
             """
-        Parse a time string and return the command descriptor, seconds, and useconds of the time string
-        @param lineNumber: the current line number where the time string was parsed
-        @param time: the time string to parse
-        @return a tuple (descriptor, seconds, useconds)
-        """
+            Parse a time string and return the command descriptor, seconds, and useconds of the time string
+            @param lineNumber: the current line number where the time string was parsed
+            @param time: the time string to parse
+            @return a tuple (descriptor, seconds, useconds)
+            """
 
             def parseTimeStringOption(timeStr, timeFmts):
                 """
-          Parse a time string by trying to use different time formats, until one succeeds
-          @param timeStr: the time string
-          @param timeFmts: the time format used to parse the string
-          @return the datetime object containing the parsed string
-          """
+                Parse a time string by trying to use different time formats, until one succeeds
+                @param timeStr: the time string
+                @param timeFmts: the time format used to parse the string
+                @return the datetime object containing the parsed string
+                """
 
                 def parseTimeString(timeFmt):
                     try:
@@ -135,19 +135,19 @@ class SeqFileParser(object):
 
             def parseRelative(timeStr):
                 """
-          Parse a relative time string
-          @param timeStr: the time string
-          @return the datetime object containing the parsed string
-          """
+                Parse a relative time string
+                @param timeStr: the time string
+                @return the datetime object containing the parsed string
+                """
                 options = ["%H:%M:%S.%f", "%H:%M:%S"]
                 return parseTimeStringOption(timeStr, options)
 
             def parseAbsolute(timeStr):
                 """
-          Parse an absolute time string
-          @param timeStr: the time string
-          @return the datetime object containing the parsed string
-          """
+                Parse an absolute time string
+                @param timeStr: the time string
+                @return the datetime object containing the parsed string
+                """
                 options = ["%Y-%jT%H:%M:%S.%f", "%Y-%jT%H:%M:%S"]
                 return parseTimeStringOption(timeStr, options)
 
