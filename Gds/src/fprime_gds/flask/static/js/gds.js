@@ -14,15 +14,6 @@ import  {_datastore} from "./datastore.js";
 import "./vue-support/tabetc.js"
 
 
-
-
-// Loader is used to run AJAX queries against a known endpoints. This interacts with the REST backend to load data
-// from the remainder of the GDS.
-export let loader = _loader;
-// Uploader uses the loader object to handle the file uploading extensions used to get files onto the server in
-// preparation for the file uplinker.
-let uploader = _uploader;
-
 /**
  * Constructs the vue and registers all data polling functions used to pull data into the UI. These polls are attached
  * to the handling functions used to deal with this data. Sets up a tabbed view for GDS functions.
@@ -40,11 +31,11 @@ function setupBindings() {
  * loader's setup function, providing the "setupBindings" function as its callback.
  */
 document.addEventListener("DOMContentLoaded", function(event) {
-    loader.setup().then(setupBindings).catch(console.error);
+    _loader.setup().then(setupBindings).catch(console.error);
 });
 /**
  * Teardown best effort code.
  */
 window.onbeforeunload = function (e) {
-    loader.destroy();
+    _loader.destroy();
 };

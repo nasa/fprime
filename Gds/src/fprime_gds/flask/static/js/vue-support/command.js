@@ -5,7 +5,7 @@
  */
 // Setup component for select
 import "../../third-party/js/vue-select.js"
-import {attributeStringToList, timeToString} from "./utils.js";
+import {listExistsAndItemNameNotInList, timeToString} from "./utils.js";
 import {_datastore} from "../datastore.js";
 import {_loader} from "../loader.js";
 
@@ -167,7 +167,7 @@ Vue.component("command-history", {
          * this object's display.
          */
         fields: {
-            type: String,
+            type: [Array, String],
             default: ""
         },
         /**
@@ -183,7 +183,7 @@ Vue.component("command-history", {
          * shown; defaults to an empty list, meaning "show all items"
          */
         itemsShown: {
-            type: String,
+            type: [Array, String],
             default: ""
         }
     },
@@ -224,15 +224,7 @@ Vue.component("command-history", {
          * @return {boolean} Whether or not the item is shown
          */
         isItemHidden(item) {
-            return this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name);
-        }
-    },
-    computed: {
-        fieldsArray() {
-            return attributeStringToList(this.fields);
-        },
-        itemsShownArray() {
-            return attributeStringToList(this.itemsShown);
+            return listExistsAndItemNameNotInList(this.itemsShown, item);;
         }
     }
 });

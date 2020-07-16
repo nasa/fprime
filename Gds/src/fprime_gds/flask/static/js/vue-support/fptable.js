@@ -1,4 +1,4 @@
-import {filter} from "./utils.js";
+import {filter, toArrayIfString} from "./utils.js";
 
 /**
  * fp-row:
@@ -154,6 +154,7 @@ Vue.component("file-row", {
         }
     }
 });
+
 /**
  * fp-table:
  *
@@ -171,13 +172,13 @@ Vue.component("fp-table", {
     //Properties used by fp-table
     props: {
         /**
-         * fields:
+         * initialFields:
          *
-         * 'fields' is an accept-list of fields (columns) to display. Use null if all fields should be displayed. If not
+         * 'initialFields' is an accept-list of fields (columns) to display. Use null if all fields should be displayed. If not
          * supplied default is null such that all fields will be printed.
          */
-        fields: {
-            type: Array,
+        initialFields: {
+            type: [Array, String],
             default: null
         },
         /**
@@ -286,7 +287,7 @@ Vue.component("fp-table", {
          * (defaults to empty list)
          */
         initialViews: {
-            type: Array,
+            type: [Array, String],
             default: []
         }
     },
@@ -296,7 +297,8 @@ Vue.component("fp-table", {
             matching: (this.filterText) ? [this.filterText] : [],
             editing: false,
             // use Vue.util.extend to copy by data, not by reference
-            view: Vue.util.extend([], this.initialViews)
+            view: Vue.util.extend([], toArrayIfString(this.initialViews)),
+            fields: Vue.util.extend([], toArrayIfString(this.initialFields))
         }
     },
     methods: {

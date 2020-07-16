@@ -7,7 +7,7 @@
  *
  * @author mstarch
  */
-import {attributeStringToList, timeToString} from "./utils.js";
+import {listExistsAndItemNameNotInList, timeToString} from "./utils.js";
 import {_datastore} from "../datastore.js";
 
 let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
@@ -27,7 +27,7 @@ Vue.component("event-list", {
          * this object's display.
          */
         fields: {
-            type: String,
+            type: [Array, String],
             default: ""
         },
         /**
@@ -43,7 +43,7 @@ Vue.component("event-list", {
          * shown; defaults to an empty list, meaning "show all items"
          */
         itemsShown: {
-            type: String,
+            type: [Array, String],
             default: ""
         }
     },
@@ -123,7 +123,7 @@ Vue.component("event-list", {
          * @return {boolean} Whether or not the item is shown
          */
         isItemHidden(item) {
-            return this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name);
+            return listExistsAndItemNameNotInList(this.itemsShown, item);
         }
     },
     computed: {
@@ -135,12 +135,6 @@ Vue.component("event-list", {
          */
         componentEvents() {
             return this.events.slice(this.eventsOffset);
-        },
-        fieldsArray() {
-            return attributeStringToList(this.fields);
-        },
-        itemsShownArray() {
-            return attributeStringToList(this.itemsShown);
         }
     }
 });

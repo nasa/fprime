@@ -96,14 +96,10 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             Dashboard:
 
             The dashboard template displays a user-configurable collection of other utilities from the GUI; by default, asks the user to upload a configuration file specifying the dashboard setup.
-
-            TODO: Actually implement this properly
             -->
             <template id="dashboard-template">
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">
-                        <h2>This is your Dashboard</h2>
-                        <h4>There are many like it, but this one is yours.</h4>
                         <div>
                             <label for="config-file">Choose a Layout Configuration File:</label>
                             <input type="file"
@@ -152,9 +148,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                               :item-to-columns="columnify"
                               :item-to-unique="keyify"
                               :item-hide="isItemHidden"
-                              :fields="fieldsArray"
+                              :initial-fields="fields"
                               :filter-text="filterText"
-                              :initial-views="itemsShownArray"
+                              :initial-views="itemsShown"
                     ></fp-table>
                 </div>
             </template>
@@ -239,9 +235,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                           :item-to-unique="keyify"
                           :item-hide="isItemHidden"
                           :clear-rows="clearEvents"
-                          :fields="fieldsArray"
+                          :initial-fields="fields"
                           :filter-text="filterText"
-                          :initial-views="itemsShownArray"
+                          :initial-views="itemsShown"
                 ></fp-table>
             </template>
             <!--
@@ -258,9 +254,9 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :support-views="true"
                          :item-to-view-name="itemToName"
                          :item-hide="channelHider"
-                         :fields="fieldsArray"
+                         :initial-fields="fields"
                          :filter-text="filterText"
-                         :initial-views="itemsShownArray"
+                         :initial-views="itemsShown"
                ></fp-table>
             </template>
             <!-- Uplink;

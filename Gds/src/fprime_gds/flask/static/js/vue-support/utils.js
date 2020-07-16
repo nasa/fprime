@@ -88,3 +88,33 @@ export function attributeStringToList(attributeString, encloseChar="'") {
     // filter out empty/null strings
     return allItems.filter(x => !!x);
 }
+
+/**
+ * Converts an attribute string to an array if needed; if it's already an array,
+ * leave it unchanged, otherwise convert it
+ * @param {Array, String} stringOrArray
+ * @return {Array} The array version of the input
+ */
+export function toArrayIfString(stringOrArray) {
+    if (!stringOrArray) {
+        // Return empty array if null
+        return []
+    }
+    if (Array.isArray(stringOrArray)) {
+        return stringOrArray;
+    }
+    return attributeStringToList(stringOrArray);
+}
+
+/**
+ * Returns true if the given list has a length greater than 0 and the given
+ * item is inside the list, false otherwise (will also accept strings)
+ * @param {Array} list The list to check
+ * @param {*} item Item to look for inside list
+ * @return {boolean} True if list is non-empty and item is not inside, false otherwise
+ *
+ */
+export function listExistsAndItemNameNotInList(list, item) {
+    // TODO: Very specific conditions; should probably be broken into separate conditions, but this is what's used to hide rows on several components
+    return list.length > 0 && !list.includes(item.template.name);
+}

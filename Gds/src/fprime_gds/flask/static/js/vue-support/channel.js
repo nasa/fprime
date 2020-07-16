@@ -6,7 +6,7 @@
  *
  * @author mstarch
  */
-import {attributeStringToList, timeToString} from "./utils.js"
+import {listExistsAndItemNameNotInList, timeToString} from "./utils.js"
 import "./fptable.js";
 import {_datastore} from "../datastore.js";
 /**
@@ -23,7 +23,7 @@ Vue.component("channel-table", {
          * this object's display.
          */
         fields: {
-            type: String,
+            type: [Array, String],
             default: ""
         },
         /**
@@ -39,7 +39,7 @@ Vue.component("channel-table", {
          * shown; defaults to an empty list, meaning "show all items"
          */
         itemsShown: {
-            type: String,
+            type: [Array, String],
             default: ""
         }
     },
@@ -112,19 +112,13 @@ Vue.component("channel-table", {
         channelHider(item) {
             return item.val == null
                 || item.time == null
-                || (this.itemsShown.length > 0 && !this.itemsShown.includes(item.template.full_name));
+                || listExistsAndItemNameNotInList(this.itemsShown, item);
         }
     },
     // Computed methods
     computed: {
         conform() {
             return Object.values(this.channels);
-        },
-        fieldsArray() {
-            return attributeStringToList(this.fields);
-        },
-        itemsShownArray() {
-            return attributeStringToList(this.itemsShown);
         }
     }
 });

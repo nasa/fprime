@@ -21,7 +21,8 @@ Vue.component("dashboard", {
 
     data: function() {
         return {
-            userTemplate: ``,
+            userTemplate: `<h2>This is your Dashboard</h2>
+            <h4>There are many like it, but this one is yours.</h4>`,
         };
     },
 
@@ -68,13 +69,13 @@ Vue.component("dashboard", {
         },
 
         /**
-         * Returns a stored dashboard configuration; returns an empty string if
+         * Returns a stored dashboard configuration; returns a default string if
          * no such configuration has been set before
          */
         _getConfigurationText() {
             const storedText = localStorage.getItem("dashboardConfigurationText");
             if (storedText) { return storedText; }
-            return "";
+            return this.userTemplate;
         }
     },
 
