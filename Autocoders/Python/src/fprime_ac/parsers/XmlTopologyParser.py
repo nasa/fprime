@@ -79,8 +79,7 @@ class XmlTopologyParser:
         element_tree = etree.parse(fd)
 
         # Validate against schema
-        relax_file_handler = open(
-            ROOTDIR + self.__config.get("schema", "assembly"))
+        relax_file_handler = open(ROOTDIR + self.__config.get("schema", "assembly"))
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -213,8 +212,7 @@ class XmlTopologyParser:
                 PRINT.info("WARNING: Could not find XML file: %s" % xml_file)
             except BuildRootCollisionException as bre:
                 stri = "ERROR: Could not find specified dictionary XML file. {}".format(
-                    xml_file,
-                    str(bre),
+                    xml_file, str(bre),
                 )
                 raise OSError(stri)
             if os.path.exists(xml_file) == True:
@@ -273,7 +271,8 @@ class XmlTopologyParser:
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name))
+            ROOTDIR + self.Config.get(validator_type, validator_name)
+        )
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
         if validator_type == "schema":

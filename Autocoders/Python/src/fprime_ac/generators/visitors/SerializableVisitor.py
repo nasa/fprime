@@ -170,7 +170,9 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         if namespace == None:
             output_dir = "%s/serializable/" % (dict_dir)
         else:
-            output_dir = "{}/serializable/{}".format(dict_dir, namespace.replace("::", "/"))
+            output_dir = "{}/serializable/{}".format(
+                dict_dir, namespace.replace("::", "/")
+            )
 
         # make directory
         if not (os.path.isdir(output_dir)):

@@ -176,7 +176,6 @@ class ParseFatalException(ParseBaseException):
        is found; stops all parsing immediately"""
 
 
-
 class ReparseException(ParseBaseException):
     def __init_(self, newstring, restartLoc):
         self.newParseText = newstring
@@ -1488,8 +1487,7 @@ class Word(Token):
 
             if self.initCharsOrig != self.bodyCharsOrig:
                 self.strRepr = "W:({},{})".format(
-                    charsAsStr(self.initCharsOrig),
-                    charsAsStr(self.bodyCharsOrig),
+                    charsAsStr(self.initCharsOrig), charsAsStr(self.bodyCharsOrig),
                 )
             else:
                 self.strRepr = "W:(%s)" % charsAsStr(self.initCharsOrig)
@@ -1706,8 +1704,7 @@ class QuotedString(Token):
 
         if self.strRepr is None:
             self.strRepr = "quoted string, starting with {} ending with {}".format(
-                self.quoteChar,
-                self.endQuoteChar,
+                self.quoteChar, self.endQuoteChar,
             )
 
         return self.strRepr

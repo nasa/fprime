@@ -22,7 +22,6 @@ import pexpect
 from pexpect import TIMEOUT, EOF
 
 
-
 def test_schematron():
     """
     Tests that schematron files are properly running and asserting

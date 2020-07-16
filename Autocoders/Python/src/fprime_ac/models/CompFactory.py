@@ -473,7 +473,9 @@ def main():
         print(port.get_args())
         for arg in port.get_args():
             print(
-                "\t{} : {}  # {}".format(arg.get_name(), arg.get_type(), arg.get_comment())
+                "\t{} : {}  # {}".format(
+                    arg.get_name(), arg.get_type(), arg.get_comment()
+                )
             )
 
 

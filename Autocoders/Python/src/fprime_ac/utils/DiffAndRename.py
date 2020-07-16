@@ -220,7 +220,9 @@ def renameAsErroneous(fileName, script=None):
     errfileName = fileName + timeTag + ".errors"
     os.rename(origfileName, errfileName)
     if script:
-        PRINT.error("{}: this generated file is invalid: {}".format(script, errfileName))
+        PRINT.error(
+            "{}: this generated file is invalid: {}".format(script, errfileName)
+        )
     else:
         PRINT.error("This generated file is invalid: %s" % errfileName)
 

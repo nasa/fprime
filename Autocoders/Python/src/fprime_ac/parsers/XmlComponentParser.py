@@ -179,8 +179,7 @@ class XmlComponentParser:
                     dict_file = locate_build_root(comp_tag.text)
                 except (BuildRootMissingException, BuildRootCollisionException) as bre:
                     stri = "ERROR: Could not find specified dictionary XML file. {}".format(
-                        comp_tag.text,
-                        str(bre),
+                        comp_tag.text, str(bre),
                     )
                     raise OSError(stri)
                 PRINT.info("Reading external dictionary %s" % dict_file)
@@ -1215,7 +1214,8 @@ class XmlComponentParser:
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name))
+            ROOTDIR + self.Config.get(validator_type, validator_name)
+        )
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
         if validator_type == "schema":

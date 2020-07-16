@@ -393,7 +393,9 @@ class CommentFormatters:
                             formatted_comment = " * %s" % this_line
                     else:
                         this_line = this_line.strip()
-                        formatted_comment = "{}\n * {}".format(formatted_comment, this_line)
+                        formatted_comment = "{}\n * {}".format(
+                            formatted_comment, this_line
+                        )
                     this_line = this_word
                 self._dlog(ddt2, "len_with_word = %d" % len_with_word)
                 self._dlog(ddt2, "this_line is: %s" % this_line)
@@ -496,7 +498,6 @@ class Formatters:
 
         name = name.lower()
         name_list = name.split("_")
-
 
         # If the first part is a module name with an '_' then assume
         # the form of the name is module_subtask and split them.

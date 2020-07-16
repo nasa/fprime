@@ -11,7 +11,6 @@ class FprimeException(Exception):
     """ Base Exception for FprimeException """
 
 
-
 class FprimeRngXmlValidationException(FprimeException):
     """ XML Exception from within the validation phase """
 
@@ -27,4 +26,3 @@ class FprimeRngXmlValidationException(FprimeException):
 
 class FprimeXmlException(FprimeException):
     """ Generic XML error """
-

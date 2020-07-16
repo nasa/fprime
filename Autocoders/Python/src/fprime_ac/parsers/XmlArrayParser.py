@@ -188,7 +188,8 @@ class XmlArrayParser:
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name))
+            ROOTDIR + self.Config.get(validator_type, validator_name)
+        )
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
         if validator_type == "schema":

@@ -152,7 +152,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
         comp_type = comp.get_type()
         comp_name = comp.get_name()
         comp_id = int(comp.get_base_id())
-        PRINT.debug("Processing {} [{}] ({})".format(comp_name, comp_type, hex(comp_id)))
+        PRINT.debug(
+            "Processing {} [{}] ({})".format(comp_name, comp_type, hex(comp_id))
+        )
 
         # check for included serializable XML
         if parsed_xml_dict[comp_type].get_serializable_type_files() != None:
@@ -192,9 +194,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     if type(member_type) == type(tuple()):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
-                            serializable_type,
-                            member_name,
-                            member_type[0][1],
+                            serializable_type, member_name, member_type[0][1],
                         )
                         # Add enum entry
                         enum_elem = etree.Element("enum")
@@ -249,9 +249,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     if type(arg_type) == type(tuple()):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
-                            comp_type,
-                            arg.get_name(),
-                            arg_type[0][1],
+                            comp_type, arg.get_name(), arg_type[0][1],
                         )
                         # Add enum entry
                         enum_elem = etree.Element("enum")
@@ -304,9 +302,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 if type(channel_type) == type(tuple()):
                     enum_value = 0
                     type_name = "{}::{}::{}".format(
-                        comp_type,
-                        chan.get_name(),
-                        channel_type[0][1],
+                        comp_type, chan.get_name(), channel_type[0][1],
                     )
                     # Add enum entry
                     enum_elem = etree.Element("enum")
@@ -370,9 +366,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     if type(arg_type) == type(tuple()):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
-                            comp_type,
-                            arg.get_name(),
-                            arg_type[0][1],
+                            comp_type, arg.get_name(), arg_type[0][1],
                         )
                         # Add enum entry
                         enum_elem = etree.Element("enum")
@@ -434,9 +428,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 if type(arg_type) == type(tuple()):
                     enum_value = 0
                     type_name = "{}::{}::{}".format(
-                        comp_type,
-                        arg.get_name(),
-                        arg_type[0][1],
+                        comp_type, arg.get_name(), arg_type[0][1],
                     )
                     # Add enum entry
                     enum_elem = etree.Element("enum")

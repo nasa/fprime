@@ -54,6 +54,7 @@ from fprime_ac.utils.buildroot import (
 # Generators to produce the code
 try:
     from fprime_ac.generators import GenFactory
+
     assert GenFactory is not None
 except ImportError as ime:
     print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)

@@ -528,9 +528,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             if type(member_type) == type(tuple()):
                                 enum_value = 0
                                 type_name = "{}::{}::{}".format(
-                                    serializable_type,
-                                    member_name,
-                                    member_type[0][1],
+                                    serializable_type, member_name, member_type[0][1],
                                 )
                                 # Add enum entry
                                 enum_elem = etree.Element("enum")
@@ -580,9 +578,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             if type(arg_type) == type(tuple()):
                                 enum_value = 0
                                 type_name = "{}::{}::{}".format(
-                                    comp_type,
-                                    arg.get_name(),
-                                    arg_type[0][1],
+                                    comp_type, arg.get_name(), arg_type[0][1],
                                 )
                                 # Add enum entry
                                 enum_elem = etree.Element("enum")
@@ -638,9 +634,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         if type(channel_type) == type(tuple()):
                             enum_value = 0
                             type_name = "{}::{}::{}".format(
-                                comp_type,
-                                chan.get_name(),
-                                channel_type[0][1],
+                                comp_type, chan.get_name(), channel_type[0][1],
                             )
                             # Add enum entry
                             enum_elem = etree.Element("enum")
@@ -705,9 +699,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             if type(arg_type) == type(tuple()):
                                 enum_value = 0
                                 type_name = "{}::{}::{}".format(
-                                    comp_type,
-                                    arg.get_name(),
-                                    arg_type[0][1],
+                                    comp_type, arg.get_name(), arg_type[0][1],
                                 )
                                 # Add enum entry
                                 enum_elem = etree.Element("enum")
@@ -770,9 +762,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         if type(arg_type) == type(tuple()):
                             enum_value = 0
                             type_name = "{}::{}::{}".format(
-                                comp_type,
-                                arg.get_name(),
-                                arg_type[0][1],
+                                comp_type, arg.get_name(), arg_type[0][1],
                             )
                             # Add enum entry
                             enum_elem = etree.Element("enum")

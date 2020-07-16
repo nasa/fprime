@@ -366,7 +366,9 @@ class Parser:
         for child in children:
             childName = child.getName()
             DEBUG.debug(
-                "countSubtree: element {} childName={}".format(element.getName(), childName)
+                "countSubtree: element {} childName={}".format(
+                    element.getName(), childName
+                )
             )
             if childName in expectedChildren:
                 try:

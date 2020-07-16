@@ -73,8 +73,7 @@ class XmlPortsParser:
         element_tree = etree.parse(fd, parser=xml_parser)
 
         # Validate against schema
-        relax_file_handler = open(
-            ROOTDIR + self.__config.get("schema", "interface"))
+        relax_file_handler = open(ROOTDIR + self.__config.get("schema", "interface"))
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
