@@ -1,5 +1,6 @@
 from __future__ import absolute_import
-import wx
+from fprime.common.models.serialize.int_types import I8Type
+
 from . import GDSCommandPanelGUI
 from . import GDSArgItemTextCtl
 from . import GDSArgItemComboBox
@@ -14,7 +15,6 @@ from fprime.common.models.serialize.u16_type import *
 from fprime.common.models.serialize.u32_type import *
 from fprime.common.models.serialize.u64_type import *
 
-from fprime.common.models.serialize.i8_type import *
 from fprime.common.models.serialize.i16_type import *
 from fprime.common.models.serialize.i32_type import *
 from fprime.common.models.serialize.i64_type import *

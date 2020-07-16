@@ -15,7 +15,7 @@ from fprime.common.models.serialize.bool_type import BoolType
 from fprime.common.models.serialize.enum_type import EnumType
 from fprime.common.models.serialize.f32_type import F32Type
 from fprime.common.models.serialize.f64_type import F64Type
-from fprime.common.models.serialize.i8_type import I8Type
+from fprime.common.models.serialize.int_types import I8Type
 from fprime.common.models.serialize.i16_type import I16Type
 from fprime.common.models.serialize.i32_type import I32Type
 from fprime.common.models.serialize.i64_type import I64Type

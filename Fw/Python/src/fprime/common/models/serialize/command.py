@@ -8,10 +8,10 @@ from __future__ import absolute_import
 
 # Import the types this way so they do not need prefixing for execution.
 # Import only types that you will use to avoid pylint warnings
-from type_exceptions import TypeMismatchException
-from type_exceptions import TypeException
-from type_exceptions import ArgLengthMismatchException
-from type_exceptions import ArgNotFoundException
+from .type_exceptions import TypeMismatchException
+from .type_exceptions import TypeException
+from .type_exceptions import ArgLengthMismatchException
+from .type_exceptions import ArgNotFoundException
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize.type_base import BaseType

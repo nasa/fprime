@@ -30,7 +30,7 @@ from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.u64_type import U64Type
 
-from fprime.common.models.serialize.i8_type import I8Type
+from fprime.common.models.serialize.int_types import I8Type
 from fprime.common.models.serialize.i16_type import I16Type
 from fprime.common.models.serialize.i32_type import I32Type
 from fprime.common.models.serialize.i64_type import I64Type

@@ -20,6 +20,7 @@ class U32Type(type_base.BaseType):
         """
         Constructor
         """
+        super().__init__()
         self.__val = val
         if val == None:
             return
@@ -34,14 +35,7 @@ class U32Type(type_base.BaseType):
         if (val < 0) or (val > pow(2, 32) - 1):
             raise TypeRangeException(val)
 
-    @property
-    def val(self):
-        return self.__val
 
-    @val.setter
-    def val(self, val):
-        self._check_val(val)
-        self.__val = val
 
     def serialize(self):
         """

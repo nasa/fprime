@@ -22,6 +22,7 @@ class I64Type(type_base.BaseType):
         """
         Constructor
         """
+        super().__init__()
         self.__val = val
         if val == None:
             return

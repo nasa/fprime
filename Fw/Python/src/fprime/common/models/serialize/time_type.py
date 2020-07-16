@@ -80,7 +80,7 @@ class TimeType(type_base.BaseType):
         # |  2 bytes  |    1 byte    | 4 bytes |   4 bytes    |
         # |-----------|--------------|---------|--------------|
         # | Time Base | Time Context | Seconds | Microseconds |
-
+        super().__init__()
         self._check_time_base(time_base)
         self._check_useconds(useconds)
 

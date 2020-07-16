@@ -27,6 +27,7 @@ class StringType(type_base.BaseType):
         @param val: Default value for the string, if None then empty string.
         @param max_string: Maximum allowed string length set in auto-code.
         """
+        super().__init__()
         self.__val = val
         self.__max_string_len = max_string_len
 
