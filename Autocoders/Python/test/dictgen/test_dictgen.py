@@ -20,13 +20,10 @@ from fprime_gds.common.loaders.xml_loader import XmlLoader
 
 from fprime_ac.parsers import XmlTopologyParser
 
-import subprocess
-from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
 
 import filecmp
-import logging
 import time
 
 
@@ -740,7 +737,6 @@ def test_dictgen():
     try:
 
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
-        curdir = os.getcwd()
         testdir = os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
         testdir = testdir + "Python" + os.sep + "test" + os.sep + "dictgen"
         os.chdir(testdir)
@@ -844,7 +840,7 @@ def test_dictgen():
         print("-------Expected Output-------")
         print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         print("EOF Error. Pexpect did not find expected output in program output.")
         #        print ("-------Program Output-------")
         #        print (ptestrun.before)

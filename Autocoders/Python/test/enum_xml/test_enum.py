@@ -9,13 +9,10 @@ components, porttypes, and serializables.
 
 import os
 
-import subprocess
-from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
 
 import filecmp
-import logging
 import time
 import tempfile
 import shutil
@@ -505,7 +502,7 @@ def test_enum():
         print("-------Expected Output-------")
         print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         if expect_step == "enum":
             print(
                 "EOF Error. Pattern was not matched. Enum1EnumAi.xml generated errors when run in codegen.py"

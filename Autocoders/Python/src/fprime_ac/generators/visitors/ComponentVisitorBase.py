@@ -16,11 +16,8 @@
 # Python standard modules
 #
 import logging
-import os
 import sys
-import time
 import datetime
-from optparse import OptionParser
 from getpass import getuser
 
 #
@@ -412,7 +409,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             (name, priority, full) = xxx_todo_changeme4
             return "INT_IF_" + name.upper()
 
-        il = self.__model_parser.getInternalInterfacesList(obj)
+        self.__model_parser.getInternalInterfacesList(obj)
         interface_types = self.mapPartial(h, c.internal_interfaces)
 
         c.msg_types = port_types + cmd_types + interface_types

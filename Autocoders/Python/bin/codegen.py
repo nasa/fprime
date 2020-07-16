@@ -6,7 +6,6 @@
 # from XML definition files.
 #
 # ===============================================================================
-import utils.pathmaker
 import os
 import sys
 import time
@@ -28,7 +27,6 @@ from fprime_ac.models import CompFactory
 from fprime_ac.models import PortFactory
 from fprime_ac.models import TopoFactory
 from fprime_ac.models import Serialize
-from fprime_ac.models import ModelParser
 
 
 # Parsers to read the XML
@@ -1655,7 +1653,8 @@ def main():
     global DEPLOYMENT  # deployment set in topology xml only and used to install new instance dicts
 
     ERROR = False
-    CONFIG = ConfigManager.ConfigManager.getInstance()
+    # Sets up the initial (singleton) instance
+    ConfigManager.ConfigManager.getInstance()
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag

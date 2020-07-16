@@ -17,9 +17,6 @@
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
 
 #
 # Python extention modules and custom interfaces

@@ -15,11 +15,8 @@
 # Python standard modules
 #
 import logging
-import os
 import sys
-import time
 import datetime
-from optparse import OptionParser
 from getpass import getuser
 
 #

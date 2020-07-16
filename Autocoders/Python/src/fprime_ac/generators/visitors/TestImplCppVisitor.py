@@ -11,7 +11,6 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
-from fprime_ac.utils import ConfigManager
 
 from fprime_ac.generators.templates.test_impl import cpp
 from fprime_ac.generators.visitors import TestImplVisitorBase

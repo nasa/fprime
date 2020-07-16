@@ -22,10 +22,6 @@
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
-from optparse import OptionParser
 
 #
 # Python extention modules and custom interfaces
@@ -55,7 +51,6 @@ class AbstractGenerator:
         """
         Constructor.
         """
-        pass
 
     def __call__(self, args):
         """

@@ -10,7 +10,6 @@ Exceptions defined for the Autocoder. This is active refactoring work, and may b
 class FprimeException(Exception):
     """ Base Exception for FprimeException """
 
-    pass
 
 
 class FprimeRngXmlValidationException(FprimeException):
@@ -29,4 +28,3 @@ class FprimeRngXmlValidationException(FprimeException):
 class FprimeXmlException(FprimeException):
     """ Generic XML error """
 
-    pass

@@ -7,18 +7,13 @@ Checks that the testgen tool is properly generating its test cpp/hpp.
 """
 
 import os
-import sys
 
-import subprocess
-from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
-from optparse import OptionParser
 
 import shutil
 import tempfile
 import filecmp
-import logging
 import time
 
 # Version label for now
@@ -398,7 +393,7 @@ def test_testgen():
         print("-------Expected Output-------")
         print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         print("EOF Error. Pexpect did not find expected output in program output.")
         #        print ("-------Program Output-------")
         #        print (ptestrun.before)

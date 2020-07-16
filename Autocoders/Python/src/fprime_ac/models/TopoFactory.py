@@ -16,13 +16,9 @@
 # Python standard modules
 #
 
-import os
 import sys
-import time
-import socket
 import logging
 
-from . import CompFactory
 
 
 from fprime_ac.utils import Logger
@@ -427,7 +423,6 @@ class TopoFactory:
                 % assembly_window
             )
 
-        base_ids_list = []
         out_base_ids_list = []
 
         assembly_base_id = int(assembly_base_id)

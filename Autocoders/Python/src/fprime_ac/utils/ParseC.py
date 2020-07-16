@@ -10,7 +10,6 @@
 
 import os
 from .pyparsing import *
-from time import clock
 
 # Constants
 comma = Literal(",").suppress()

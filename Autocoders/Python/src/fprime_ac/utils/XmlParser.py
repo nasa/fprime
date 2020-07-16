@@ -19,9 +19,6 @@
 #
 import logging
 import os
-import sys
-import time
-from optparse import OptionParser
 from genshi import XML
 
 #

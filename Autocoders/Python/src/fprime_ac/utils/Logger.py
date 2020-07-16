@@ -29,10 +29,7 @@
 # Python standard modules
 #
 import logging
-import os
-import os.path
 import sys
-import time
 
 #
 # Universal globals used within module

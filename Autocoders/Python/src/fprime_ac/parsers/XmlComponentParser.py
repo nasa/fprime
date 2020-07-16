@@ -19,7 +19,6 @@
 import logging
 import os
 import sys
-import time
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import (
     FprimeXmlException,
@@ -30,7 +29,6 @@ from fprime_ac.utils.buildroot import (
     BuildRootCollisionException,
     BuildRootMissingException,
 )
-from optparse import OptionParser
 from lxml import etree
 from lxml import isoschematron
 
@@ -39,7 +37,6 @@ try:
 except ImportError:
     import ConfigParser as configparser
 # from __builtin__ import None
-from pickle import NONE
 
 # For Python determination
 import six
@@ -968,9 +965,7 @@ class XmlComponentParser(object):
                             sys.exit(-1)
                     self.__internal_interfaces.append(internal_interface_obj)
                 ## Check if there was at least 1 interface
-                if len(self.__internal_interfaces) > 0:
-                    has_internal_interfaces = True
-                else:
+                if len(self.__internal_interfaces) == 0:
                     PRINT.info(
                         "Warning: No interfaces defined within the 'internal_interfaces' tag "
                     )

@@ -18,8 +18,6 @@
 # ===============================================================================
 
 import os
-import sys
-import time
 import re
 import logging
 
@@ -499,8 +497,6 @@ class Formatters(object):
         name = name.lower()
         name_list = name.split("_")
 
-        name2 = name
-        warning_flag = False
 
         # If the first part is a module name with an '_' then assume
         # the form of the name is module_subtask and split them.
@@ -520,14 +516,14 @@ class Formatters(object):
         if name_list[0] == id:
             name_list = name_list[1:]
         else:
-            warning_flag = True
+            pass
 
         # If new first item is subtask name take it off.
         if name_list[0] == sub_task:
             name_list = name_list[1:]
         else:
             if sub_task != "":
-                warning_flag = True
+                pass
 
         if sub_task == "":
             name_str = id + str
@@ -980,7 +976,6 @@ class Formatters(object):
         pad = 0
 
         fname = name.strip()
-        fname_len = len(fname)
 
         arg_list = list()
         type_list = list()
@@ -1006,14 +1001,6 @@ class Formatters(object):
             arg_list.append(l[1])
             type_list.append(l[0])
             comment_list.append(self.formComment(arg[2].strip()))
-
-        # Find maximum length of each thing. The goal here is to format all
-        # lines on the longest line to make things look pretty. This is all
-        # just formatting at this time.
-
-        max_arg_len = max(list(map(len, arg_list)))
-        max_type_len = max(list(map(len, type_list)))
-        max_comment_len = max(list(map(len, comment_list)))
 
         # Build a list of strings that have all the argument types, and
         # argument names aligned on the longest lines.

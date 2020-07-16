@@ -16,10 +16,7 @@
 #
 import logging
 import os
-import sys
-import time
 import datetime
-from optparse import OptionParser
 from getpass import getuser
 
 #
@@ -28,7 +25,6 @@ from getpass import getuser
 # from Cheetah import Template
 # from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
-from fprime_ac.models import ModelParser
 
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.utils import DictTypeConverter

@@ -19,8 +19,6 @@
 import logging
 import os
 import sys
-import time
-from optparse import OptionParser
 from lxml import etree
 import hashlib
 from fprime_ac.utils import ConfigManager

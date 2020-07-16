@@ -15,10 +15,7 @@
 # Python standard modules
 #
 import logging
-import os
 import sys
-import time
-from optparse import OptionParser
 
 #
 # Python extention modules and custom interfaces
@@ -124,7 +121,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate starting static code within files.
         """
-        pass
 
     def includes1Visit(self, obj):
         """
@@ -132,7 +128,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for the base classes but also for Port types
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def includes2Visit(self, obj):
         """
@@ -140,7 +135,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for data type includes and system includes.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def namespaceVisit(self, obj):
         """
@@ -148,7 +142,6 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         Also any pre-condition code is generated.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def publicVisit(self, obj):
         """
@@ -181,14 +174,12 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate protected stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def finishSourceFilesVisit(self, obj):
         """

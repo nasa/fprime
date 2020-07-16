@@ -15,10 +15,7 @@
 # Python standard modules
 #
 import logging
-import os
 import sys
-import time
-from optparse import OptionParser
 
 #
 # Python extention modules and custom interfaces
@@ -141,7 +138,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate starting static code within files.
         """
-        pass
 
     def includes1Visit(self, obj):
         """
@@ -168,12 +164,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
             if not obj.connect_only:
                 c.is_ptr = True
                 obj.is_ptr = True
-
-        #
-        # Hack to fix the include file so it is consistent...
-        if self.__config.get("component", "XMLDefaultFileName") == "False":
-            namespace_flag = ""
-        #
 
         c.component_header_list = []
         for component in temp:
@@ -251,7 +241,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for data type includes and system includes.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def namespaceVisit(self, obj):
         """
@@ -259,7 +248,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         Also any pre-condition code is generated.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def publicVisit(self, obj):
         """
@@ -272,7 +260,6 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         #
         component_list = []
         connection_list = []
-        port_list = []
 
         c.name = obj.get_name()
         c.kind = obj
@@ -347,9 +334,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         for id_tuple in obj.get_base_id_list():
             n = id_tuple[0]
             base_id = id_tuple[1]
-            window_id = id_tuple[2]
 
-            declaration_template = None
             if obj.is_ptr:
                 declaration_template = """{}_ptr->setIdBase({});""".format(n, base_id)
             else:
@@ -434,14 +419,12 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate protected stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def finishSourceFilesVisit(self, obj):
         """

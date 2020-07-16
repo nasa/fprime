@@ -17,9 +17,7 @@
 import logging
 import os
 import sys
-import time
 import datetime
-from optparse import OptionParser
 from getpass import getuser
 
 #
@@ -84,9 +82,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         for (name, mtype, size, format, comment) in obj.get_members():
-            typename = mtype
             if type(mtype) == type(tuple()):
-                typename = mtype[0][1]
                 arg_str += "%s %s, " % (mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const %s::%sString& %s, " % (obj.get_name(), name, name)
@@ -169,7 +165,6 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         # file location will be based on namespace
 
         namespace = obj.get_namespace()
-        typename = obj.get_name()
         dict_dir = os.environ["DICT_DIR"]
 
         if namespace == None:

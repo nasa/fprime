@@ -16,24 +16,16 @@
 import os
 import sys
 import time
-import glob
 import logging
-import argparse
 
 
 from optparse import OptionParser
 
-from fprime_ac.utils import Logger
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
 
 
 # Meta-model for Component only generation
 from fprime_ac.models import CompFactory
-from fprime_ac.models import PortFactory
-from fprime_ac.models import TopoFactory
-from fprime_ac.models import Serialize
-from fprime_ac.models import ModelParser
 
 
 # Parsers to read the XML
@@ -42,7 +34,6 @@ from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 
-from lxml import etree
 
 from fprime_ac.generators.writers import ComponentTestHWriter
 from fprime_ac.generators.writers import ComponentTestCppWriter
@@ -63,6 +54,7 @@ from fprime_ac.utils.buildroot import (
 # Generators to produce the code
 try:
     from fprime_ac.generators import GenFactory
+    assert GenFactory is not None
 except ImportError as ime:
     print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
     sys.exit(1)
@@ -102,9 +94,6 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
-
-    current_dir = os.getcwd()
-
     usage = "usage: %prog [options] [xml_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
@@ -267,7 +256,6 @@ def generate_tests(opt, component_model):
             if find_tests:
                 if "// @Testname:" in line:
                     # Remove whitespace
-                    comment = "".join(line.split())
                     override_name = line[line.index("// @Testname:") + 13 :].strip()
                     # Store location of all names to override
                     override_dict[override_name] = len(test_cases)
@@ -309,7 +297,7 @@ def main():
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag
-    CONFIG = ConfigManager.ConfigManager.getInstance()
+    ConfigManager.ConfigManager.getInstance()
 
     #
     # Handle command line arguments

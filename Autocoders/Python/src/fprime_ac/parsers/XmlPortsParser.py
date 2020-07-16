@@ -19,8 +19,6 @@
 import logging
 import os
 import sys
-import time
-from optparse import OptionParser
 from lxml import etree
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeRngXmlValidationException

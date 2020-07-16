@@ -15,11 +15,7 @@
 # Python standard modules
 #
 import logging
-import os
 import sys
-import time
-import datetime
-from optparse import OptionParser
 
 #
 # Python extention modules and custom interfaces
@@ -27,7 +23,6 @@ from optparse import OptionParser
 # from Cheetah import Template
 # from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
-from fprime_ac.models import ModelParser
 
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
@@ -91,9 +86,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         for (name, mtype, size, format, comment) in obj.get_members():
-            typename = mtype
             if type(mtype) == type(tuple()):
-                typename = mtype[0][1]
                 arg_str += "%s %s, " % (mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const %s::%sString& %s, " % (obj.get_name(), name, name)
@@ -210,7 +203,6 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate starting static code within files.
         """
-        pass
 
     def includes1Visit(self, obj):
         """
@@ -247,7 +239,6 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for data type includes and system includes.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def namespaceVisit(self, obj):
         """
@@ -284,14 +275,12 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate protected stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def finishSourceFilesVisit(self, obj):
         """

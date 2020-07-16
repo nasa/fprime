@@ -17,8 +17,6 @@
 import logging
 import os
 import sys
-import time
-from optparse import OptionParser
 
 #
 # Python extention modules and custom interfaces
@@ -30,7 +28,6 @@ from fprime_ac.models import ModelParser
 
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
-from fprime_ac.generators.visitors import ComponentVisitorBase
 from fprime_ac.generators import formatters
 
 #
@@ -126,7 +123,6 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate starting static code within files.
         """
-        pass
 
     def includes1Visit(self, obj):
         """
@@ -134,7 +130,6 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for the base classes but also for Port types
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def includes2Visit(self, obj):
         """
@@ -142,7 +137,6 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         Usually used for data type includes and system includes.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def namespaceVisit(self, obj):
         """
@@ -150,7 +144,6 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         Also any pre-condition code is generated.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def initTelemetryParams(self, obj, c):
         """
@@ -186,14 +179,12 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate protected stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
         @parms args: the instance of the concrete element to operation on.
         """
-        pass
 
     def finishSourceFilesVisit(self, obj):
         """

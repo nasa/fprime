@@ -16,7 +16,6 @@
 import logging
 import os
 import sys
-import time
 from fprime_ac.utils.buildroot import (
     build_root_relative_path,
     get_nearest_build_root,

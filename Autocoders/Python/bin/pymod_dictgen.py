@@ -44,6 +44,7 @@ from fprime_ac.utils.buildroot import (
 # Generators to produce the code
 try:
     from fprime_ac.generators import GenFactory
+    assert GenFactory is not None
 except ImportError as ime:
     print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
     sys.exit(1)
@@ -77,9 +78,6 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
-
-    current_dir = os.getcwd()
-
     usage = "usage: %prog [options] [xml_topology_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = """This script reads F' topology XML and produces GDS Python Dictionaries. They are generated into your build dir under a py_dict directory"""
@@ -261,7 +259,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
             print("Dictionary output directory not specified!, defaulting to cwd")
         opt.dict_dir = os.getcwd()
     os.environ["DICT_DIR"] = opt.dict_dir
-    default_dict_generator = GenFactory.GenFactory.getInstance()
+
     # iterate through command instances
     for command_model in component_model.get_commands():
         if VERBOSE:
@@ -277,7 +275,6 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
         instCommandWriter.DictHeaderWrite(parameter_model, topology_model)
         instCommandWriter.DictBodyWrite(parameter_model, topology_model)
 
-    default_dict_generator = GenFactory.GenFactory.getInstance()
     # iterate through command instances
     for event_model in component_model.get_events():
         if VERBOSE:
@@ -286,7 +283,6 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
         instEventWriter.DictHeaderWrite(event_model, topology_model)
         instEventWriter.DictBodyWrite(event_model, topology_model)
 
-    default_dict_generator = GenFactory.GenFactory.getInstance()
     # iterate through command instances
     for channel_model in component_model.get_channels():
         if VERBOSE:
@@ -306,7 +302,7 @@ def main():
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag
-    CONFIG = ConfigManager.ConfigManager.getInstance()
+    ConfigManager.ConfigManager.getInstance()
 
     # Check for BUILD_ROOT env. variable
     if ("BUILD_ROOT" in os.environ.keys()) == False:

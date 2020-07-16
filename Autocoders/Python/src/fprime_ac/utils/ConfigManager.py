@@ -21,7 +21,6 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 import os
-import sys
 
 # 2/3 support
 try:

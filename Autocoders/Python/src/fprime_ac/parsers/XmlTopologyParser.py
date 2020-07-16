@@ -18,16 +18,9 @@
 #
 import logging
 import os
-import sys
-import time
-from optparse import OptionParser
 from lxml import etree
 from lxml import isoschematron
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import (
@@ -47,7 +40,6 @@ from fprime_ac.utils.buildroot import (
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
-from fprime_ac.models import ModelParser
 
 #
 # Global logger init. below.

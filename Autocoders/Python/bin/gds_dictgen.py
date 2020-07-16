@@ -18,7 +18,6 @@ import logging
 
 from optparse import OptionParser
 
-from fprime_ac.models import ModelParser
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils import DictTypeConverter
 
@@ -72,9 +71,6 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
-
-    current_dir = os.getcwd()
-
     usage = "usage: %prog [options] [xml_topology_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = (
@@ -113,7 +109,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
     model = TopoFactory.TopoFactory.getInstance()
     topology_model = model.create(the_parsed_topology_xml)
 
-    generator = GenFactory.GenFactory.getInstance()
+    GenFactory.GenFactory.getInstance()
 
     # uses the topology model to process the items
     # create list of used parsed component xmls
@@ -568,7 +564,7 @@ def main():
     global VERBOSE  # prevent local creation of variable
     global DEPLOYMENT  # deployment set in topology xml only and used to install new instance dicts
 
-    CONFIG = ConfigManager.ConfigManager.getInstance()
+    ConfigManager.ConfigManager.getInstance()
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag

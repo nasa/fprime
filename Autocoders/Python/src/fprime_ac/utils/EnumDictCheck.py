@@ -136,7 +136,6 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
         if line.find("<enum_typedef ") != -1:
 
-            max_value = 0
             fields = line.split('"')
 
             # The key is the type name.

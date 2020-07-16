@@ -8,8 +8,6 @@ Checks that the implgen tool is properly generating its impl cpp/hpp.
 
 import os
 
-import subprocess
-from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
 
@@ -200,7 +198,7 @@ def test_testgen():
         print("-------Expected Output-------")
         print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         print("EOF Error. Pexpect did not find expected output in program output.")
         #        print ("-------Program Output-------")
         #        print (ptestrun.before)

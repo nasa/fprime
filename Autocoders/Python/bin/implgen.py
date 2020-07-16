@@ -17,24 +17,16 @@ setup_fprime_autocoder_path()
 import os
 import sys
 import time
-import glob
 import logging
-import argparse
 
 
 from optparse import OptionParser
 
-from fprime_ac.utils import Logger
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
 
 
 # Meta-model for Component only generation
 from fprime_ac.models import CompFactory
-from fprime_ac.models import PortFactory
-from fprime_ac.models import TopoFactory
-from fprime_ac.models import Serialize
-from fprime_ac.models import ModelParser
 
 
 # Parsers to read the XML
@@ -43,7 +35,6 @@ from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 
-from lxml import etree
 from fprime_ac.generators.writers import ImplCppWriter
 from fprime_ac.generators.writers import ImplHWriter
 from fprime_ac.utils.buildroot import (
@@ -54,10 +45,11 @@ from fprime_ac.utils.buildroot import (
     BuildRootCollisionException,
 )
 
-# Generators to produce the code
+# Generators to produce the code must exist. Check her by importing and assserting
 try:
     from fprime_ac.generators import GenFactory
-except ImportError as ime:
+    assert GenFactory is not None
+except (ImportError, AssertionError) as ime:
     print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
     sys.exit(1)
 
@@ -96,9 +88,6 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
-
-    current_dir = os.getcwd()
-
     usage = "usage: %prog [options] [xml_filename]"
     vers = "%prog " + VERSION.id + " " + VERSION.comment
     program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
@@ -223,7 +212,7 @@ def main():
     Parser = pinit()
     (opt, args) = Parser.parse_args()
     VERBOSE = opt.verbose_flag
-    CONFIG = ConfigManager.ConfigManager.getInstance()
+    ConfigManager.ConfigManager.getInstance()
 
     #
     # Handle command line arguments

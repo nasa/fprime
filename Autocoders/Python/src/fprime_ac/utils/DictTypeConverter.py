@@ -20,7 +20,6 @@ class DictTypeConverter(object):
             if t[0][0].upper() != "ENUM":
                 print("ERROR: Expected ENUM type in channel args list...")
                 sys.exit(-1)
-            enum_type = t[0][1]
             type_string += 'EnumType("' + t[0][1] + '",{'
 
             for (mname, mval, mcomment) in t[1]:

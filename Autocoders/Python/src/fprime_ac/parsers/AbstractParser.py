@@ -20,10 +20,6 @@
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
-from optparse import OptionParser
 
 #
 # Python extention modules and custom interfaces
@@ -52,7 +48,6 @@ class AbstractParser(object):
         """
         Constructor.
         """
-        pass
 
     def get(self, name):
         """

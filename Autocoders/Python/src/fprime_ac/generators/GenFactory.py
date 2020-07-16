@@ -16,14 +16,10 @@
 # Python standard modules
 #
 
-import os
-import sys
-import time
 import socket
 import logging
 
 from fprime_ac.utils import Logger
-from fprime_ac.utils import ConfigManager
 
 from .visitors import ComponentCppVisitor
 from .visitors import ComponentHVisitor

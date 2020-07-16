@@ -80,7 +80,7 @@ def _ustr(obj):
         # it won't break any existing code.
         return str(obj)
 
-    except UnicodeEncodeError as e:
+    except UnicodeEncodeError:
         # The Python docs (http://docs.python.org/ref/customization.html#l2h-182)
         # state that "The return value must be a string object". However, does a
         # unicode object (being a subclass of basestring) count as a "string
@@ -169,14 +169,12 @@ class ParseException(ParseBaseException):
         - col - returns the column number of the exception text
         - line - returns the line containing the exception text
     """
-    pass
 
 
 class ParseFatalException(ParseBaseException):
     """user-throwable exception thrown when inconsistent parse content
        is found; stops all parsing immediately"""
 
-    pass
 
 
 class ReparseException(ParseBaseException):
@@ -580,7 +578,6 @@ def _defaultExceptionDebugAction(instring, loc, expr, exc):
 
 def nullDebugAction(*args):
     """'Do-nothing' debug action, to suppress debugging output during parsing."""
-    pass
 
 
 class ParserElement(object):
@@ -2155,7 +2152,7 @@ class Or(ParseExpression):
                 if err.loc > maxExcLoc:
                     maxException = err
                     maxExcLoc = err.loc
-            except IndexError as err:
+            except IndexError:
                 if len(instring) > maxExcLoc:
                     maxException = ParseException(
                         instring, len(instring), e.errmsg, self
@@ -2223,7 +2220,7 @@ class MatchFirst(ParseExpression):
                 if err.loc > maxExcLoc:
                     maxException = err
                     maxExcLoc = err.loc
-            except IndexError as err:
+            except IndexError:
                 if len(instring) > maxExcLoc:
                     maxException = ParseException(
                         instring, len(instring), e.errmsg, self

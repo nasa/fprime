@@ -16,18 +16,11 @@ sys.path.append(
 sys.path.append(
     os.environ["BUILD_ROOT"] + os.sep + "Gds" + os.sep + "src"
 )  # Add GDS modules
-from fprime_gds.common.loaders.xml_loader import XmlLoader
 
-from fprime_ac.parsers import XmlTopologyParser
 
-import subprocess
-from subprocess import CalledProcessError
 import pexpect
 from pexpect import TIMEOUT, EOF
 
-import filecmp
-import logging
-import time
 
 
 def test_schematron():
@@ -37,7 +30,6 @@ def test_schematron():
     try:
 
         # cd into test directory to find test files (code/test/schematron can only find files this way)
-        curdir = os.getcwd()
         testdir = os.environ["BUILD_ROOT"] + os.sep + "Autocoders" + os.sep
         testdir = (
             testdir
@@ -177,7 +169,7 @@ def test_schematron():
         print("-------Expected Output-------")
         print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         print("EOF Error. Pexpect did not find expected output in program output.")
         #        print ("-------Program Output-------")
         #        print (ptestrun.before)

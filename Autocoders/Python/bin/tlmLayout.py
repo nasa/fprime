@@ -19,16 +19,10 @@
 # Python standard modules
 #
 
-import logging
-import os
-import sys
-import time
 import argparse
 import csv
-import datetime
 import copy
 from Cheetah.Template import Template
-from tkinter.constants import NONE
 
 #
 # Python extention modules and custom interfaces
@@ -567,7 +561,6 @@ class CsvFile:
 
     def process(self, name):
         global tlm_input_line_num
-        m_file_name = name
         try:
             m_fp = open(name, "rU")
         except:
@@ -668,7 +661,6 @@ def id_to_channel_map():
     Return an association list of ID to channel number assignments.
     NOTE: the channel number is intended to be 1553 sub-address.
     """
-    pass
 
 
 def output_cpp(output_file, template_file):
@@ -710,12 +702,10 @@ def output_cpp(output_file, template_file):
 
 def output_html():
     global tlm_packet_list
-    pass
 
 
 def output_dict():
     global tlm_packet_list
-    pass
 
 
 def output(cpp_output_file, template_file):

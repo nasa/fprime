@@ -16,7 +16,6 @@
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
-import os
 import sys
 
 from fprime_ac.utils import TypesList
@@ -32,9 +31,8 @@ class ModelParser(object):
 
     def __init__(self):
         """
-	    Constructor.
-	    """
-        pass
+        Constructor.
+        """
 
     def getInstance():
         """
@@ -348,7 +346,6 @@ class ModelParser(object):
     def getTelemEnumList(self, obj):
         enum_list = []
         for channel in obj.get_channels():
-            n = channel.get_name()
             t = channel.get_type()
             #
             # Check and get enum type here...
@@ -399,7 +396,6 @@ class ModelParser(object):
     def getParamEnumList(self, obj):
         enum_list = []
         for parameter in obj.get_parameters():
-            n = parameter.get_name()
             t = parameter.get_type()
             #
             # Check and get enum type here...
@@ -454,7 +450,6 @@ class ModelParser(object):
         for command in obj.get_commands():
             args = command.get_args()
             for a in args:
-                n = a.get_name()
                 t = a.get_type()
                 #
                 # Check and get enum type here...
@@ -541,7 +536,6 @@ class ModelParser(object):
         for event in obj.get_events():
             args = event.get_args()
             for a in args:
-                n = a.get_name()
                 t = a.get_type()
                 #
                 # Check and get enum type here...
@@ -698,7 +692,6 @@ class ModelParser(object):
         for internal_interface in obj.get_internal_interfaces():
             args = internal_interface.get_args()
             for a in args:
-                n = a.get_name()
                 t = a.get_type()
                 #
                 # Check and get enum type here...
