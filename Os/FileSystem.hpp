@@ -26,8 +26,6 @@ namespace Os {
 			OTHER_ERROR, //!<  other OS-specific error
 		} Status;
 
-    static const U16 FILE_COPY_BLOCK_SIZE = 256; //!< File operation chunk size
-
 		Status createDirectory(const char* path); //!<  create a new directory at location path
 		Status removeDirectory(const char* path); //!<  remove a directory at location path
 		Status readDirectory(const char* path,  const U32 maxNum, Fw::EightyCharString fileArray[], U32& numFiles);	//!< read the contents of a directory.  Size of fileArray should be maxNum.
