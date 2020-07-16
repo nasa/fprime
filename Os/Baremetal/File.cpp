@@ -10,6 +10,10 @@ namespace Os {
 
     File::~File() {}
 
+    File::Status File::open(const char* fileName, File::Mode mode) {
+        return NOT_OPENED;
+    }
+
     File::Status File::open(const char* fileName, File::Mode mode, bool include_excl) {
         return NOT_OPENED;
     }
