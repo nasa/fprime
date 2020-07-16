@@ -231,6 +231,18 @@ Vue.component("fp-table", {
             default: false
         },
         /**
+         * compact:
+         *
+         * 'compact' allows the user to hide filters/buttons/headers/etc. to
+         * only show the table itself for a cleaner view
+         *
+         * default: false
+         */
+        compact: {
+            type: Boolean,
+            default: false
+        },
+        /**
          * itemToViewName:
          *
          * 'itemToViewName' provides a function that converts from an item to a view's name. This allows the views to

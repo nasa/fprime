@@ -41,6 +41,14 @@ Vue.component("channel-table", {
         itemsShown: {
             type: [Array, String],
             default: ""
+        },
+        /**
+         * 'compact' allows the user to hide filters/buttons/headers/etc. to
+         * only show the table itself for a cleaner view
+         */
+        compact: {
+            type: Boolean,
+            default: false
         }
     },
     data: function() {

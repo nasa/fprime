@@ -151,6 +151,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                               :initial-fields="fields"
                               :filter-text="filterText"
                               :initial-views="itemsShown"
+                              :compact="compact"
                     ></fp-table>
                 </div>
             </template>
@@ -238,6 +239,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                           :initial-fields="fields"
                           :filter-text="filterText"
                           :initial-views="itemsShown"
+                          :compact="compact"
                 ></fp-table>
             </template>
             <!--
@@ -257,6 +259,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :initial-fields="fields"
                          :filter-text="filterText"
                          :initial-views="itemsShown"
+                         :compact="compact"
                ></fp-table>
             </template>
             <!-- Uplink;
@@ -372,7 +375,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="fp-table-template">
                 <div class="fp-flex-repeater">
-                    <div class="row fp-flex-header no-gutters justify-content-end">
+                    <div class="row fp-flex-header no-gutters justify-content-end" v-if="!compact">
                         <div class="mx-1">Filters:</div>
                         <div class="ml-1" v-bind:class="clearRows != null ? 'col-3' : 'col-4'">
                             <v-select id="fp-table-filter" :clearable="true" :searchable="true" :taggable="true"
@@ -385,7 +388,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <div class="fp-scroll-container">
                         <div class="fp-scrollable">
                             <table  class="sortable table table-bordered table-hover">
-                                <thead>
+                                <thead v-if="!compact">
                                     <tr>
                                         <th v-if="editing" class="sorttable_nosort">
                                             <input type="checkbox" v-on:input="checkAll" ref="allbox"
@@ -412,7 +415,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         </div>
                     </div>
                     <!-- If the table supports editing views, these features support the edit context of the view -->
-                    <div class="row fp-flex-header" v-if="editing">
+                    <div class="row fp-flex-header" v-if="editing && !compact">
                         <div class="col-4"></div>
                         <div class="btn-group col-8">
                             <div type="button" class="btn btn-danger" v-on:click="clearView">Clear</div>
@@ -423,7 +426,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <div type="button" class="btn btn-success" v-on:click="saveView">Done</div>
                         </div>
                     </div>
-                    <div class="row fp-flex-header no-gutters justify-content-end" v-if="!editing">
+                    <div class="row fp-flex-header no-gutters justify-content-end" v-if="!editing && !compact">
                         <button type="button" class="col-3 btn btn-primary" v-if="supportViews && !editing"
                                 v-on:click="editViews">Edit View</button>
                     </div>
