@@ -25,7 +25,7 @@ def b_make_ut_test():
 def c_port_send_test():
     cn = 10
     cs = "Some_String"
-    expect_string = ".*\*\*\* Huey: cmd = {cmd_number} str = {cmd_string}.*".format(
+    expect_string = r".*\*\*\* Huey: cmd = {cmd_number} str = {cmd_string}.*".format(
         cmd_number=cn, cmd_string=cs
     )
     print(expect_string)
@@ -37,7 +37,7 @@ def c_port_send_test():
         p.sendline("10")
         p.expect(".*short string:.*", timeout=3)
         p.sendline("Some_String")
-        p.expect(".*\(huey or duey\):.*", timeout=3)
+        p.expect(r".*\(huey or duey\):.*", timeout=3)
         p.sendline("huey")
         p.expect(expect_string, timeout=5)
         p.expect(".*q to quit:.*", timeout=3)

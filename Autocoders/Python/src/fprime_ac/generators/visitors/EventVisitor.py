@@ -96,7 +96,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         self.__fp = list()
 
         if len(obj.get_ids()) == 1:
-            pyfile = "%s/%s.py" % (output_dir, obj.get_name())
+            pyfile = "{}/{}.py".format(output_dir, obj.get_name())
             fd = open(pyfile, "w")
             if fd == None:
                 raise Exception("Could not open %s file." % pyfile)

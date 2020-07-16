@@ -562,9 +562,9 @@ class CsvFile:
     def process(self, name):
         global tlm_input_line_num
         try:
-            m_fp = open(name, "rU")
+            m_fp = open(name)
         except:
-            print(("Error opening " + name))
+            print("Error opening " + name)
             exit()
         m_reader = csv.reader(m_fp, dialect="excel")
 

@@ -54,7 +54,7 @@ PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
-class XmlComponentParser(object):
+class XmlComponentParser:
     def __init__(self, xml_file=None):
         self.__root = None
         self.__import_port_type_files = []
@@ -80,9 +80,9 @@ class XmlComponentParser(object):
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            raise IOError(stri)
+            raise OSError(stri)
 
-        fd = open(xml_file, "r")
+        fd = open(xml_file)
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         #
@@ -96,10 +96,7 @@ class XmlComponentParser(object):
             constants_file = os.path.join(ROOTDIR, constants_file)
         ## make sure it is a real file
         if os.path.isfile(constants_file):
-            if six.PY2:
-                self.__const_parser = configparser.SafeConfigParser()
-            else:
-                self.__const_parser = configparser.ConfigParser()
+            self.__const_parser = configparser.ConfigParser()
             self.__const_parser.read(constants_file)
         else:
             self.__const_parser = None
@@ -108,7 +105,7 @@ class XmlComponentParser(object):
         element_tree = etree.parse(fd, parser=xml_parser)
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
-        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "component"), "r")
+        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "component"))
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -181,13 +178,13 @@ class XmlComponentParser(object):
                 try:
                     dict_file = locate_build_root(comp_tag.text)
                 except (BuildRootMissingException, BuildRootCollisionException) as bre:
-                    stri = "ERROR: Could not find specified dictionary XML file. %s" % (
+                    stri = "ERROR: Could not find specified dictionary XML file. {}".format(
                         comp_tag.text,
                         str(bre),
                     )
-                    raise IOError(stri)
+                    raise OSError(stri)
                 PRINT.info("Reading external dictionary %s" % dict_file)
-                dict_fd = open(dict_file, "r")
+                dict_fd = open(dict_file)
                 dict_parser = etree.XMLParser(remove_comments=True)
                 dict_element_tree = etree.parse(dict_fd, parser=xml_parser)
 
@@ -1177,7 +1174,7 @@ class XmlComponentParser(object):
             sys.exit(-1)
         # check for more than one $
         if var.count("$") > 1:
-            PRINT.info("%s: Invalid variable %s" % (file, var))
+            PRINT.info("{}: Invalid variable {}".format(file, var))
             sys.exit(-1)
         # try to find variable
         if not section in self.__const_parser.sections():
@@ -1218,8 +1215,7 @@ class XmlComponentParser(object):
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name), "r"
-        )
+            ROOTDIR + self.Config.get(validator_type, validator_name))
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
         if validator_type == "schema":
@@ -1335,7 +1331,7 @@ class XmlComponentParser(object):
         return self.__events
 
 
-class Component(object):
+class Component:
     """
     Data container for a component.
     """
@@ -1371,7 +1367,7 @@ class Component(object):
         self.__comment = comment
 
 
-class Port(object):
+class Port:
     """
     Data container for all the port name, type, etc. associated with component.
     """
@@ -1444,7 +1440,7 @@ class Port(object):
         return self.__max_number
 
 
-class CommandArg(object):
+class CommandArg:
     """
     Data container for an command argument
     """
@@ -1474,7 +1470,7 @@ class CommandArg(object):
         self.__comment = comment
 
 
-class Command(object):
+class Command:
     """
     Data container for all the mnemonic, opcode, etc. associated with a command.
     """
@@ -1539,7 +1535,7 @@ class Command(object):
         return self.__base_opcode
 
 
-class InternalInterfaceArg(object):
+class InternalInterfaceArg:
     """
     Data container for an interface argument
     """
@@ -1569,7 +1565,7 @@ class InternalInterfaceArg(object):
         self.__comment = comment
 
 
-class InternalInterface(object):
+class InternalInterface:
     """
     Data container for all the arguments, etc associated with an internal interface.
     """
@@ -1610,7 +1606,7 @@ class InternalInterface(object):
         self.__args += (arg,)
 
 
-class Channel(object):
+class Channel:
     """
     Data container for a telemetry channel definition.
     """
@@ -1695,7 +1691,7 @@ class Channel(object):
         self.__units.append((name, gain, offset))
 
 
-class Parameter(object):
+class Parameter:
     """
     Data container for a parameter type definition.
     """
@@ -1769,7 +1765,7 @@ class Parameter(object):
         return self.__base_saveop
 
 
-class EventArg(object):
+class EventArg:
     """
     Data container for an event argument
     """
@@ -1799,7 +1795,7 @@ class EventArg(object):
         self.__comment = comment
 
 
-class Event(object):
+class Event:
     """
     Data Container for an event
     """

@@ -366,7 +366,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         event_html_instance_name = base + "_Event_HTML"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
 
     # Figures out what visitor to use
     if opt.default_topology_dict or opt.xml_topology_dict:
@@ -483,7 +483,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 comp_name = comp.get_name()
                 comp_id = int(comp.get_base_id())
                 PRINT.debug(
-                    "Processing %s [%s] (%s)" % (comp_name, comp_type, hex(comp_id))
+                    "Processing {} [{}] ({})".format(comp_name, comp_type, hex(comp_id))
                 )
 
                 # check for included serializable XML
@@ -527,7 +527,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 member_elem.attrib["description"] = member_comment
                             if type(member_type) == type(tuple()):
                                 enum_value = 0
-                                type_name = "%s::%s::%s" % (
+                                type_name = "{}::{}::{}".format(
                                     serializable_type,
                                     member_name,
                                     member_type[0][1],
@@ -579,7 +579,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             arg_type = arg.get_type()
                             if type(arg_type) == type(tuple()):
                                 enum_value = 0
-                                type_name = "%s::%s::%s" % (
+                                type_name = "{}::{}::{}".format(
                                     comp_type,
                                     arg.get_name(),
                                     arg_type[0][1],
@@ -637,7 +637,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         channel_type = chan.get_type()
                         if type(channel_type) == type(tuple()):
                             enum_value = 0
-                            type_name = "%s::%s::%s" % (
+                            type_name = "{}::{}::{}".format(
                                 comp_type,
                                 chan.get_name(),
                                 channel_type[0][1],
@@ -704,7 +704,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             arg_type = arg.get_type()
                             if type(arg_type) == type(tuple()):
                                 enum_value = 0
-                                type_name = "%s::%s::%s" % (
+                                type_name = "{}::{}::{}".format(
                                     comp_type,
                                     arg.get_name(),
                                     arg_type[0][1],
@@ -769,7 +769,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         arg_type = parameter.get_type()
                         if type(arg_type) == type(tuple()):
                             enum_value = 0
-                            type_name = "%s::%s::%s" % (
+                            type_name = "{}::{}::{}".format(
                                 comp_type,
                                 arg.get_name(),
                                 arg_type[0][1],
@@ -931,7 +931,7 @@ def generate_component_instance_dictionary(
         PRINT.info(
             "Topology model was not specified. Please also input a topology model when running this command."
         )
-        raise IOError
+        raise OSError
 
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
 
@@ -1190,7 +1190,7 @@ def generate_component(
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
 
     #
     if opt.impl_flag:
@@ -1278,7 +1278,7 @@ def generate_component(
     if opt.default_dict:
         if opt.dict_dir == None:
             PRINT.info("Dictionary output directory not specified!")
-            raise IOError
+            raise OSError
         os.environ["DICT_DIR"] = opt.dict_dir
         default_dict_generator = GenFactory.GenFactory.getInstance()
         # iterate through command instances
@@ -1345,7 +1345,7 @@ def generate_component(
     if opt.html_docs:
         if opt.html_doc_dir == None:
             PRINT.info("HTML documentation output directory not specified!")
-            raise IOError
+            raise OSError
 
         os.environ["HTML_DOC_SUBDIR"] = opt.html_doc_dir
         html_doc_generator = GenFactory.GenFactory.getInstance()
@@ -1362,7 +1362,7 @@ def generate_component(
     if opt.md_docs:
         if opt.md_doc_dir == None:
             PRINT.info("MD documentation output directory not specified!")
-            raise IOError
+            raise OSError
 
         os.environ["MD_DOC_SUBDIR"] = opt.md_doc_dir
         md_doc_generator = GenFactory.GenFactory.getInstance()
@@ -1403,7 +1403,7 @@ def generate_port(the_parsed_port_xml, port_file):
         cpp_instance_name = base + "_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
     #
     generator.configureVisitor(h_instance_name, "PortCppVisitor", True, True)
     generator.configureVisitor(cpp_instance_name, "PortHVisitor", True, True)
@@ -1483,7 +1483,7 @@ def generate_serializable(the_serial_xml, opt):
         cpp_instance_name = base + "_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
     #
     generator = GenFactory.GenFactory.getInstance()
     generator.configureVisitor(h_instance_name, "SerialCppVisitor", True, True)
@@ -1496,7 +1496,7 @@ def generate_serializable(the_serial_xml, opt):
             # borrow source visitor pattern for serializable dictionary
             if opt.dict_dir == None:
                 PRINT.info("Dictionary output directory not specified!")
-                raise IOError
+                raise OSError
             os.environ["DICT_DIR"] = opt.dict_dir
             generator.configureVisitor("SerialDict", "SerializableVisitor", True, True)
 
@@ -1507,7 +1507,7 @@ def generate_serializable(the_serial_xml, opt):
             # borrow source visitor pattern for serializable dictionary
             if opt.dict_dir == None:
                 PRINT.info("Dictionary output directory not specified!")
-                raise IOError
+                raise OSError
             os.environ["DICT_DIR"] = opt.dict_dir
             print("\n")
             print(opt.dict_dir)

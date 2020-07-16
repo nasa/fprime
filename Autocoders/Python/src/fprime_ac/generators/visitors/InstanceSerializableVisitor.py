@@ -83,16 +83,16 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = ""
         for (name, mtype, size, format, comment) in obj.get_members():
             if type(mtype) == type(tuple()):
-                arg_str += "%s %s, " % (mtype[0][1], name)
+                arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
-                arg_str += "const %s::%sString& %s, " % (obj.get_name(), name, name)
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
-                arg_str += "const %s& %s, " % (mtype, name)
+                arg_str += "const {}& {}, ".format(mtype, name)
             elif size != None:
-                arg_str += "const %s* %s, " % (mtype, name)
+                arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
-                arg_str += "%s %s" % (mtype, name)
+                arg_str += "{} {}".format(mtype, name)
                 arg_str += ", "
 
         arg_str = arg_str.strip(", ")
@@ -110,7 +110,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
                 mtype = mtype[0][1]
                 typeinfo = "enum"
             elif mtype == "string":
-                mtype = "%s::%sString" % (obj.get_name(), name)
+                mtype = "{}::{}String".format(obj.get_name(), name)
                 typeinfo = "string"
             elif mtype not in typelist:
                 typeinfo = "extern"
@@ -131,10 +131,10 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
                 s = "%s," % (e[0])
             # No value, With comment
             elif (e[1] == None) and (e[2] != None):
-                s = "%s,  // %s" % (e[0], e[2])
+                s = "{},  // {}".format(e[0], e[2])
             # With value, No comment
             elif (e[1] != None) and (e[2] == None):
-                s = "%s = %s," % (e[0], e[1])
+                s = "{} = {},".format(e[0], e[1])
             # With value and comment
             elif (e[1] != None) and (e[2] != None):
                 s = "%s = %s,  // %s" % (e)
@@ -170,7 +170,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         if namespace == None:
             output_dir = "%s/serializable/" % (dict_dir)
         else:
-            output_dir = "%s/serializable/%s" % (dict_dir, namespace.replace("::", "/"))
+            output_dir = "{}/serializable/{}".format(dict_dir, namespace.replace("::", "/"))
 
         # make directory
         if not (os.path.isdir(output_dir)):
@@ -178,7 +178,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         pyfile = output_dir + "/" + obj.get_name() + ".py"
 
         # make empty __init__.py
-        open("%s/%s" % (output_dir, "__init__.py"), "w").close()
+        open("{}/{}".format(output_dir, "__init__.py"), "w").close()
 
         # Open file for writting here...
         DEBUG.info("Open file: %s" % pyfile)

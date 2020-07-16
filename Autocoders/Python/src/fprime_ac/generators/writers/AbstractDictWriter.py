@@ -13,7 +13,7 @@
 # ===============================================================================
 
 
-class AbstractDictWriter(object):
+class AbstractDictWriter:
     """
         This abstract class defines the commonality between all autocoded
         dictgen files.

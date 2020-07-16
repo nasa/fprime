@@ -126,7 +126,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
     enum = None
     results = EnumCheckResults()
 
-    fd = open(filename, "r")
+    fd = open(filename)
 
     for line in fd:
 

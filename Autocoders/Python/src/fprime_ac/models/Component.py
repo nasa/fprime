@@ -31,7 +31,7 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Component(object):
+class Component:
     """
     This is a very simple component meta-model class.
     Note: associations to Port instances as needed.

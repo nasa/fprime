@@ -31,15 +31,15 @@ from lxml import etree
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class XmlParser(object):
+class XmlParser:
     def __init__(self, xml_file=None):
         self.__root = None
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file {}.".format(xml_file)
-            raise IOError(stri)
+            raise OSError(stri)
 
-        fd = open(xml_file, "r")
+        fd = open(xml_file)
 
         element_tree = etree.parse(fd)
         self.__root = element_tree.getroot().tag

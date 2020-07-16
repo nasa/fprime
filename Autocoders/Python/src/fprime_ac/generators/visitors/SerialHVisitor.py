@@ -86,16 +86,16 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = ""
         for (name, mtype, size, format, comment) in obj.get_members():
             if type(mtype) == type(tuple()):
-                arg_str += "%s %s, " % (mtype[0][1], name)
+                arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
-                arg_str += "const %s::%sString& %s, " % (obj.get_name(), name, name)
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
-                arg_str += "const %s& %s, " % (mtype, name)
+                arg_str += "const {}& {}, ".format(mtype, name)
             elif size != None:
-                arg_str += "const %s* %s, " % (mtype, name)
+                arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
-                arg_str += "%s %s" % (mtype, name)
+                arg_str += "{} {}".format(mtype, name)
                 arg_str += ", "
 
         arg_str = arg_str.strip(", ")
@@ -113,7 +113,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 mtype = mtype[0][1]
                 typeinfo = "enum"
             elif mtype == "string":
-                mtype = "%s::%sString" % (obj.get_name(), name)
+                mtype = "{}::{}String".format(obj.get_name(), name)
                 typeinfo = "string"
             elif mtype not in typelist:
                 typeinfo = "extern"
@@ -134,10 +134,10 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 s = "%s," % (e[0])
             # No value, With comment
             elif (e[1] == None) and (e[2] != None):
-                s = "%s,  // %s" % (e[0], e[2])
+                s = "{},  // {}".format(e[0], e[2])
             # With value, No comment
             elif (e[1] != None) and (e[2] == None):
-                s = "%s = %s," % (e[0], e[1])
+                s = "{} = {},".format(e[0], e[1])
             # With value and comment
             elif (e[1] != None) and (e[2] != None):
                 s = "%s = %s,  // %s" % (e)

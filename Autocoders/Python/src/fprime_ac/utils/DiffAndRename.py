@@ -38,8 +38,8 @@ def compare_except_lines(file1, file2, linesOkToBeDifferent):
     if missingFile:
         return -1
 
-    old = open(file1, "r").readlines()
-    new = open(file2, "r").readlines()
+    old = open(file1).readlines()
+    new = open(file2).readlines()
 
     # print "LEN OLD = %d " % len(old)
     # print "LEN NEW = %d " % len(new)
@@ -93,7 +93,7 @@ def compareAndRename(filename, dated_files_enable=False, except_lines_list=[]):
     if not os.path.exists(filename + ".new"):
         str = "ERROR: Cannot find %s.new" % filename
         print(str)
-        raise IOError(str)
+        raise OSError(str)
 
     # No old file exists so just move it
     if not os.path.exists(filename):
@@ -111,7 +111,7 @@ def compareAndRename(filename, dated_files_enable=False, except_lines_list=[]):
             if os.path.exists(filename + timeTag):
                 os.remove(filename + timeTag)
             os.rename(filename, filename + ".old" + timeTag)
-            print("...moved old file to %s.old%s" % (filename, timeTag))
+            print("...moved old file to {}.old{}".format(filename, timeTag))
         #
         if os.path.exists(filename):
             os.remove(filename)
@@ -125,7 +125,7 @@ def compareAndRename(filename, dated_files_enable=False, except_lines_list=[]):
                 os.remove(filename + ".new" + timeTag)
             os.rename(filename_new, filename + ".new" + timeTag)
             print("...new %s did not differ from old file." % filename)
-            print("...keeping new file as %s.new%s" % (filename, timeTag))
+            print("...keeping new file as {}.new{}".format(filename, timeTag))
         #
         else:
             os.remove(filename_new)
@@ -153,8 +153,8 @@ def DiffAndRename(filename, dated_files_enable=True):
         print("... done creating new %s" % filename)
         return
 
-    old = open(filename, "r").readlines()
-    new = open(filename + ".new", "r").readlines()
+    old = open(filename).readlines()
+    new = open(filename + ".new").readlines()
 
     # print "LEN OLD = %d " % len(old)
     # print "LEN NEW = %d " % len(new)
@@ -189,7 +189,7 @@ def DiffAndRename(filename, dated_files_enable=True):
                 if os.path.exists(filename + timeTag):
                     os.remove(filename + timeTag)
                 os.rename(filename, filename + ".old" + timeTag)
-                print("... moved old file to %s.old%s" % (filename, timeTag))
+                print("... moved old file to {}.old{}".format(filename, timeTag))
             os.rename(filename + ".new", filename)
             print("... and replaced old with new %s" % filename)
         else:
@@ -199,7 +199,7 @@ def DiffAndRename(filename, dated_files_enable=True):
                     os.remove(filename + ".new" + timeTag)
                 os.rename(filename + ".new", filename + ".new" + timeTag)
                 print("... new %s did not differ from old file." % filename)
-                print("... keeping new file as %s.new%s" % (filename, timeTag))
+                print("... keeping new file as {}.new{}".format(filename, timeTag))
             else:
                 os.remove(filename + ".new")
                 print("... removing new file")
@@ -220,7 +220,7 @@ def renameAsErroneous(fileName, script=None):
     errfileName = fileName + timeTag + ".errors"
     os.rename(origfileName, errfileName)
     if script:
-        PRINT.error("%s: this generated file is invalid: %s" % (script, errfileName))
+        PRINT.error("{}: this generated file is invalid: {}".format(script, errfileName))
     else:
         PRINT.error("This generated file is invalid: %s" % errfileName)
 

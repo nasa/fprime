@@ -76,7 +76,7 @@ def write_tester_lines(fileopen, section_type):
     )
     if section_type == "TESTER_METHODS":
         # Test case method initializations found in local file
-        with open(testdir + "__tester_handcoded_methods.txt", "r") as methodstub:
+        with open(testdir + "__tester_handcoded_methods.txt") as methodstub:
             for line in methodstub:
                 fileopen.write(line)
     if section_type == "TESTER_HEADERS":
@@ -93,8 +93,8 @@ def file_diff(file1, file2):
     Returns set of line numbers from file1 which differ from file2
     """
     diff_lines = set()
-    with open(file1, "r") as file1open:
-        with open(file2, "r") as file2open:
+    with open(file1) as file1open:
+        with open(file2) as file2open:
             count = 0
             # Compare line by line until a file hits EOF
             while 1:

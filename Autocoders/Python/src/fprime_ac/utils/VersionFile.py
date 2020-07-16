@@ -27,7 +27,7 @@ def VersionFile(filename, vtype="copy"):
 
         # check the vtype parameter
         if vtype not in ("copy", "rename"):
-            raise ValueError("Unknown vtype %r" % (vtype,))
+            raise ValueError("Unknown vtype {!r}".format(vtype))
 
         # Determine root filename so extension doesn't get longer
         n, e = os.path.splitext(filename)
@@ -52,7 +52,7 @@ def VersionFile(filename, vtype="copy"):
                     os.rename(filename, new_file)
                 return True
 
-        raise RuntimeError("Can't %s %r, all name taken" % (vtype, filename))
+        raise RuntimeError("Can't {} {!r}, all name taken".format(vtype, filename))
 
     return False
 

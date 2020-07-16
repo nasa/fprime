@@ -31,10 +31,7 @@ except ImportError:
 # For Python determination
 import six
 
-if six.PY2:
-    parent = configparser.SafeConfigParser
-else:
-    parent = configparser.ConfigParser
+parent = configparser.ConfigParser
 
 
 class ConfigManager(parent):
@@ -385,7 +382,7 @@ if __name__ == "__main__":
     print()
     print("IPC section defaults:")
     for (key, value) in config.items("ipc"):
-        print("%s = %s" % (key, value))
+        print("{} = {}".format(key, value))
     print()
     print("Get some of the ipc values:")
     print("h_pub_suffix = %s" % config.get("ipc", "h_pub_suffix"))

@@ -31,7 +31,7 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Arg(object):
+class Arg:
     """
     This is a very simple arg meta-model class.
     Note: This class is a container of basic argument information.

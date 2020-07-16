@@ -47,7 +47,7 @@ PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
-class XmlTopologyParser(object):
+class XmlTopologyParser:
     def __init__(self, xml_file=None):
         self.__root = None
         self.__is_topology_xml = False
@@ -58,9 +58,9 @@ class XmlTopologyParser(object):
         self.__comment = ""
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            raise IOError(stri)
+            raise OSError(stri)
 
-        fd = open(xml_file, "r")
+        fd = open(xml_file)
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         self.__instances = []
@@ -80,8 +80,7 @@ class XmlTopologyParser(object):
 
         # Validate against schema
         relax_file_handler = open(
-            ROOTDIR + self.__config.get("schema", "assembly"), "r"
-        )
+            ROOTDIR + self.__config.get("schema", "assembly"))
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -213,11 +212,11 @@ class XmlTopologyParser(object):
             except BuildRootMissingException:
                 PRINT.info("WARNING: Could not find XML file: %s" % xml_file)
             except BuildRootCollisionException as bre:
-                stri = "ERROR: Could not find specified dictionary XML file. %s" % (
+                stri = "ERROR: Could not find specified dictionary XML file. {}".format(
                     xml_file,
                     str(bre),
                 )
-                raise IOError(stri)
+                raise OSError(stri)
             if os.path.exists(xml_file) == True:
                 PRINT.info("Found component XML file: %s" % xml_file)
                 xml_parsed = XmlComponentParser.XmlComponentParser(xml_file)
@@ -274,8 +273,7 @@ class XmlTopologyParser(object):
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name), "r"
-        )
+            ROOTDIR + self.Config.get(validator_type, validator_name))
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
         if validator_type == "schema":
@@ -384,7 +382,7 @@ class XmlTopologyParser(object):
         return self.__prepend_instance_name
 
 
-class Connection(object):
+class Connection:
     """
     Storage for connection data
     """
@@ -455,7 +453,7 @@ class Connection(object):
         return self.__comment
 
 
-class Instance(object):
+class Instance:
     """
     Instance of components to connect
     """
@@ -533,10 +531,10 @@ if __name__ == "__main__":
 
     print("Instances:")
     for x in instances:
-        print("Name: %s, Type: %s" % (x.get_name(), x.get_type()))
+        print("Name: {}, Type: {}".format(x.get_name(), x.get_type()))
     print("Connections:")
     for c in connections:
-        print("Name: %s, Type: %s" % (c.get_name(), c.get_type()))
+        print("Name: {}, Type: {}".format(c.get_name(), c.get_type()))
         print("Source: Component is %s, Port is %s, Port Type is %s" % (c.get_source()))
         print("Target: Component is %s, Port is %s, Port Type is %s" % (c.get_target()))
         print("Comment: %s" % c.get_comment())

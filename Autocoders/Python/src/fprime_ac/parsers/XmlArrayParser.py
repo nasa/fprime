@@ -42,7 +42,7 @@ PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
-class XmlArrayParser(object):
+class XmlArrayParser:
     """
     An XML parser class that uses lxml.etree to consume an XML
     array type documents.  The class is instanced with an XML file name.
@@ -95,8 +95,8 @@ class XmlArrayParser(object):
 
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            raise IOError(stri)
-        fd = open(xml_file, "r")
+            raise OSError(stri)
+        fd = open(xml_file)
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
@@ -104,7 +104,7 @@ class XmlArrayParser(object):
         element_tree = etree.parse(fd, parser=xml_parser)
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
-        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"), "r")
+        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"))
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -188,8 +188,7 @@ class XmlArrayParser(object):
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name), "r"
-        )
+            ROOTDIR + self.Config.get(validator_type, validator_name))
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
         if validator_type == "schema":
@@ -270,4 +269,4 @@ if __name__ == "__main__":
         "Array name: %s, namespace: %s"
         % (xml_parser.get_name(), xml_parser.get_namespace())
     )
-    print("Size: %s, member type: %s" % (self.get_size(), self.get_type()))
+    print("Size: {}, member type: {}".format(self.get_size(), self.get_type()))

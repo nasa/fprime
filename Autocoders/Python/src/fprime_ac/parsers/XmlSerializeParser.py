@@ -60,7 +60,7 @@ format_dictionary = {
     "ENUM": "%d",
 }
 #
-class XmlSerializeParser(object):
+class XmlSerializeParser:
     """
     An XML parser class that uses lxml.etree to consume an XML
     serializable type documents.  The class is instanced with
@@ -92,8 +92,8 @@ class XmlSerializeParser(object):
         #
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            raise IOError(stri)
-        fd = open(xml_file, "r")
+            raise OSError(stri)
+        fd = open(xml_file)
         #        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
@@ -111,12 +111,12 @@ class XmlSerializeParser(object):
         try:
             rng_file = locate_build_root(rng_file)
         except (BuildRootMissingException, BuildRootCollisionException) as bre:
-            stri = "ERROR: Could not find specified RNG file %s. %s" % (
+            stri = "ERROR: Could not find specified RNG file {}. {}".format(
                 rng_file,
                 str(bre),
             )
-            raise IOError(stri)
-        file_handler = open(rng_file, "r")
+            raise OSError(stri)
+        file_handler = open(rng_file)
         relax_parsed = etree.parse(file_handler)
         file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -178,7 +178,7 @@ class XmlSerializeParser(object):
                         s = member.attrib["size"]
                         if not s.isdigit():
                             PRINT.info(
-                                "%s: Member %s: size must be a number" % (xml_file, n)
+                                "{}: Member {}: size must be a number".format(xml_file, n)
                             )
                             sys.exit(-1)
                     else:
@@ -314,4 +314,4 @@ if __name__ == "__main__":
         print("XML Include: %s" % i)
     print("Members:")
     for (n, t, c) in xml_parser.get_members():
-        print("Name: %s, Type: %s, Comment: %s" % (n, t, c))
+        print("Name: {}, Type: {}, Comment: {}".format(n, t, c))

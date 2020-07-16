@@ -111,7 +111,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 t = t + " "
 
-            arg_str += "%s%s" % (t, arg.get_name())
+            arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
         arg_str = arg_str.strip(", ")
         return arg_str
@@ -301,10 +301,10 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 s = "%s," % (e[0])
             # No value, With comment
             elif (e[1] == None) and (e[2] != None):
-                s = "%s,  // %s" % (e[0], e[2])
+                s = "{},  // {}".format(e[0], e[2])
             # With value, No comment
             elif (e[1] != None) and (e[2] == None):
-                s = "%s = %s," % (e[0], e[1])
+                s = "{} = {},".format(e[0], e[1])
             # With value and comment
             elif (e[1] != None) and (e[2] != None):
                 s = "%s = %s,  // %s" % (e)

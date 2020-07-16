@@ -23,8 +23,8 @@ def file_diff(file1, file2):
     Returns set of line numbers from file1 which differ from file2
     """
     diff_lines = set()
-    with open(file1, "r") as file1open:
-        with open(file2, "r") as file2open:
+    with open(file1) as file1open:
+        with open(file2) as file2open:
             count = 0
             while 1:
                 line1 = file1open.readline()

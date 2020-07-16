@@ -51,14 +51,14 @@ def ParseNumDefine(defname, filename, loadfile=True):
     if loadfile == True:
 
         if not os.path.isfile(filename):
-            raise IOError("%r: file not found." % filename)
+            raise OSError("%r: file not found." % filename)
 
         fd = open(filename)
 
         try:
             data = fd.read()
         except:
-            raise IOError("%r: error reading file." % filename)
+            raise OSError("%r: error reading file." % filename)
         else:
             fd.close()
 
@@ -147,14 +147,14 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
                     % filename
                 )
                 print(str)
-                raise IOError(str)
+                raise OSError(str)
 
         fd = open(filename)
 
         try:
             data = fd.read()
         except:
-            raise IOError("%r: error reading file." % filename)
+            raise OSError("%r: error reading file." % filename)
         else:
             fd.close()
 
@@ -244,7 +244,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # start at 0.
 
     if len(toks) == 0:
-        str = "ERROR: could not find ENUM (%s) in %s" % (typename, filename)
+        str = "ERROR: could not find ENUM ({}) in {}".format(typename, filename)
         print(str)
         raise ValueError(str)
 

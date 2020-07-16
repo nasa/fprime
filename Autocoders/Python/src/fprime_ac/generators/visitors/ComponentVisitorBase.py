@@ -891,7 +891,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Get the strings for a function parameter in a .cpp file
         """
         name, type = param[:2]
-        param_str = "%s %s" % (type, name)
+        param_str = "{} {}".format(type, name)
         return param_str, ""
 
     def paramStrsHpp(self, param):
@@ -899,7 +899,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Get the strings for a function parameter in a .hpp file
         """
         name, type, comment = param[:3]
-        param_str = "%s %s" % (type, name)
+        param_str = "{} {}".format(type, name)
         comment_str = " " + self.doxygenPostComment(comment)
         return param_str, comment_str
 
@@ -908,7 +908,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Get the strings for a port function parameter in a .cpp file
         """
         name, type, comment, modifier = param[:4]
-        param_str = "%s %s%s" % (type, modifier, name)
+        param_str = "{} {}{}".format(type, modifier, name)
         return param_str, ""
 
     def portParamStrsHpp(self, param):
@@ -916,7 +916,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Get the strings for a port function parameter in a .hpp file
         """
         name, type, comment, modifier = param[:4]
-        param_str = "%s %s%s" % (type, modifier, name)
+        param_str = "{} {}{}".format(type, modifier, name)
         comment_str = " " + self.doxygenPostComment(comment)
         return param_str, comment_str
 

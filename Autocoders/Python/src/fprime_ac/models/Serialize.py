@@ -30,7 +30,7 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Serialize(object):
+class Serialize:
     """
     This is a simple meta-model representation for generation of Serializable class types.
     """

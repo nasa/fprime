@@ -21,7 +21,7 @@ import sys
 from fprime_ac.utils import TypesList
 
 
-class ModelParser(object):
+class ModelParser:
     """
     This class provides a single entry point returning items from
     the meta-model configuration used for component code generation.
@@ -242,7 +242,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s%s" % (x[1], x[3], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}{}".format(x[1], x[3], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -526,7 +526,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -613,7 +613,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -639,7 +639,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2

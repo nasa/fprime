@@ -111,7 +111,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 t = t + " "
 
-            arg_str += "%s%s" % (t, arg.get_name())
+            arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
         arg_str = arg_str.strip(", ")
         return arg_str

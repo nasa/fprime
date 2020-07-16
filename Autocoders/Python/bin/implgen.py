@@ -250,7 +250,7 @@ def main():
     #
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
     #
     # Create python dictionaries
     #

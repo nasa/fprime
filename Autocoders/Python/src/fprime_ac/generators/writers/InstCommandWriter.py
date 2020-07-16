@@ -177,7 +177,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 DEBUG.info("Completed {} open".format(pyfile))
 
         else:
-            print(("Invalid type {}".format(obj)))
+            print("Invalid type {}".format(obj))
             sys.exit(-1)
 
         # Open file for writing here...

@@ -31,7 +31,7 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Topology(object):
+class Topology:
     """
     This is a very simple topology meta-model class.
     """

@@ -74,10 +74,10 @@ def search_for_file(file_type, file_path):
         checker = locate_build_root(file_path)
         return checker
     except BuildRootMissingException:
-        print("ERROR: %s xml specification file %s does not exist!" % (file_type, file_path), file=sys.stderr)
+        print("ERROR: {} xml specification file {} does not exist!".format(file_type, file_path), file=sys.stderr)
         sys.exit(-1)
     except BuildRootCollisionException as brc:
-        print("ERROR: %s xml specification file exists multiple times %s" % (file_type, str(brc)), file=sys.stderr)
+        print("ERROR: {} xml specification file exists multiple times {}".format(file_type, str(brc)), file=sys.stderr)
         sys.exit(-1)
 
 

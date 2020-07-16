@@ -215,7 +215,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
         PRINT.info(
             "Topology model was not specified. Please also input a topology model when running this command."
         )
-        raise IOError
+        raise OSError
 
     port_type_files_list = the_parsed_component_xml.get_port_type_files()
 
@@ -344,7 +344,7 @@ def main():
 
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
     #
     # Create python dictionaries
     #

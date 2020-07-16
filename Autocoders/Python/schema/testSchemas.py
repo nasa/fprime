@@ -198,7 +198,7 @@ class schema_test:
         """
 		Prints a header string for a schema_test object.
 		"""
-        print(("\nTesting {} - {}\n".format(self.__schema_name, self.__schema_path)))
+        print("\nTesting {} - {}\n".format(self.__schema_name, self.__schema_path))
 
 
 def setup():

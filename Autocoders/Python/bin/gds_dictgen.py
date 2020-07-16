@@ -152,7 +152,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
         comp_type = comp.get_type()
         comp_name = comp.get_name()
         comp_id = int(comp.get_base_id())
-        PRINT.debug("Processing %s [%s] (%s)" % (comp_name, comp_type, hex(comp_id)))
+        PRINT.debug("Processing {} [{}] ({})".format(comp_name, comp_type, hex(comp_id)))
 
         # check for included serializable XML
         if parsed_xml_dict[comp_type].get_serializable_type_files() != None:
@@ -191,7 +191,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                         member_elem.attrib["description"] = member_comment
                     if type(member_type) == type(tuple()):
                         enum_value = 0
-                        type_name = "%s::%s::%s" % (
+                        type_name = "{}::{}::{}".format(
                             serializable_type,
                             member_name,
                             member_type[0][1],
@@ -248,7 +248,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     arg_type = arg.get_type()
                     if type(arg_type) == type(tuple()):
                         enum_value = 0
-                        type_name = "%s::%s::%s" % (
+                        type_name = "{}::{}::{}".format(
                             comp_type,
                             arg.get_name(),
                             arg_type[0][1],
@@ -303,7 +303,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 channel_type = chan.get_type()
                 if type(channel_type) == type(tuple()):
                     enum_value = 0
-                    type_name = "%s::%s::%s" % (
+                    type_name = "{}::{}::{}".format(
                         comp_type,
                         chan.get_name(),
                         channel_type[0][1],
@@ -369,7 +369,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     arg_type = arg.get_type()
                     if type(arg_type) == type(tuple()):
                         enum_value = 0
-                        type_name = "%s::%s::%s" % (
+                        type_name = "{}::{}::{}".format(
                             comp_type,
                             arg.get_name(),
                             arg_type[0][1],
@@ -433,7 +433,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 arg_type = parameter.get_type()
                 if type(arg_type) == type(tuple()):
                     enum_value = 0
-                    type_name = "%s::%s::%s" % (
+                    type_name = "{}::{}::{}".format(
                         comp_type,
                         arg.get_name(),
                         arg_type[0][1],
@@ -598,7 +598,7 @@ def main():
 
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
 
     xml_type = XmlParser.XmlParser(xml_filename)()
 

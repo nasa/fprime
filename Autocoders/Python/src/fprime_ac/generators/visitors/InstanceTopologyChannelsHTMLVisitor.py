@@ -110,7 +110,7 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
                     try:
                         self.__fp_dict[name] = open(filename, "w")
                         DEBUG.info("Completed")
-                    except IOError:
+                    except OSError:
                         PRINT.info("Could not open %s file." % filename)
                         sys.exit(-1)
                     DEBUG.info(
@@ -165,7 +165,7 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
                 if t[0] in list(self.__fp_dict.keys()):
                     # print "\tInstance: %s, Base ID: %s\n" % (t[0],t[1])
                     cobj = t[3].get_comp_xml()
-                    c.name = "%s:%s" % (t[0], k)
+                    c.name = "{}:{}".format(t[0], k)
                     c.base_id = t[1]
                     c.has_telemetry = len(cobj.get_channels()) > 0
                     c.has_channels = c.has_telemetry

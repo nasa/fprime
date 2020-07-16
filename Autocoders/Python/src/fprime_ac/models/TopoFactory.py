@@ -133,11 +133,11 @@ class TopoFactory:
             try:
                 file_path = locate_build_root(comp_xml_path)
             except (BuildRootMissingException, BuildRootCollisionException) as bre:
-                stri = "ERROR: Could not find XML file %s. %s" % (
+                stri = "ERROR: Could not find XML file {}. {}".format(
                     comp_xml_path,
                     str(bre),
                 )
-                raise IOError(stri)
+                raise OSError(stri)
             processedXML = XmlComponentParser.XmlComponentParser(file_path)
             comp_name = processedXML.get_component().get_name()
             componentXMLNameToComponent[comp_name] = processedXML
@@ -252,11 +252,9 @@ class TopoFactory:
 
             if id in event_id_list:
                 print(
-                    (
                         "IDCollisionError: Event ID {} in component {} is used more than once in the same component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             event_id_list.append(id)
@@ -272,11 +270,9 @@ class TopoFactory:
 
             if id in channel_id_list:
                 print(
-                    (
                         "IDCollisionError: Channel ID {} in component {} is used more than once in the same component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             channel_id_list.append(id)
@@ -292,11 +288,9 @@ class TopoFactory:
 
             if id in command_id_list:
                 print(
-                    (
                         "IDCollisionError: Command ID {} in component {} is used more than once in the same component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             command_id_list.append(id)
@@ -314,11 +308,9 @@ class TopoFactory:
 
             if id in parameter_id_list:
                 print(
-                    (
                         "IDCollisionError: Parameter ID {} in component {} is used more than once in the same component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             parameter_id_list.append(id)
@@ -333,20 +325,16 @@ class TopoFactory:
 
             if id in parameter_opcode_list:
                 print(
-                    (
                         "IDCollisionError: Parameter set opcode {} in component {} is used more than once in the same component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             if id in command_id_list:
                 print(
-                    (
                         "IDCollisionError: Parameter set opcode {} in component {} is the same as another command id in this component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             parameter_opcode_list.append(id)
@@ -360,20 +348,16 @@ class TopoFactory:
 
             if id in parameter_opcode_list:
                 print(
-                    (
                         "IDCollisionError: Parameter save opcode {} in component {} is used more than once in the same component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             if id in command_id_list:
                 print(
-                    (
                         "IDCollisionError: Parameter save opcode {} in component {} is the same as another command id in this component.".format(
                             id, comp_xml.get_component().get_name()
                         )
-                    )
                 )
                 sys.exit(-1)
             parameter_opcode_list.append(id)

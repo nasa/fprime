@@ -111,7 +111,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
                     try:
                         self.__fp_dict[name] = open(filename, "w")
                         DEBUG.info("Completed")
-                    except IOError:
+                    except OSError:
                         PRINT.info("Could not open %s file." % filename)
                         sys.exit(-1)
                     DEBUG.info(
@@ -161,7 +161,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
                 # print "\tInstance: %s, Base ID: %s\n" % (t[0],t[1])
                 cmd_list = t[3].get_comp_xml().get_commands()
                 cobj = t[3].get_comp_xml()
-                c.name = "%s:%s" % (t[0], k)
+                c.name = "{}:{}".format(t[0], k)
                 if len(cmd_list) > 0:
                     c.has_commands = True
                     c.base_id = t[1]

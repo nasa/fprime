@@ -28,7 +28,7 @@ PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 
 
-class CommentFormatters(object):
+class CommentFormatters:
     """
     This class contains a collection of format methods to format a comment
     string. These are derived from the legacy code in gen_msg.py but may
@@ -202,14 +202,14 @@ class CommentFormatters(object):
             if "@code" == line.strip():
                 trim_left_spaces = line.find("@code")
                 trimwhitespace = False
-            elif "\code" == line.strip():
-                trim_left_spaces = line.find("\code")
+            elif r"\code" == line.strip():
+                trim_left_spaces = line.find(r"\code")
                 trimwhitespace = False
-            elif "@endcode" == line.strip() or "\endcode" == line.strip():
+            elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
             elif trimwhitespace == False and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and "\code" == line.strip():
+            elif trimwhitespace == False and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -296,14 +296,14 @@ class CommentFormatters(object):
             if "@code" == line.strip():
                 trim_left_spaces = line.find("@code")
                 trimwhitespace = False
-            elif "\code" == line.strip():
-                trim_left_spaces = line.find("\code")
+            elif r"\code" == line.strip():
+                trim_left_spaces = line.find(r"\code")
                 trimwhitespace = False
-            elif "@endcode" == line.strip() or "\endcode" == line.strip():
+            elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
             elif trimwhitespace == False and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and "\code" == line.strip():
+            elif trimwhitespace == False and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -393,7 +393,7 @@ class CommentFormatters(object):
                             formatted_comment = " * %s" % this_line
                     else:
                         this_line = this_line.strip()
-                        formatted_comment = "%s\n * %s" % (formatted_comment, this_line)
+                        formatted_comment = "{}\n * {}".format(formatted_comment, this_line)
                     this_line = this_word
                 self._dlog(ddt2, "len_with_word = %d" % len_with_word)
                 self._dlog(ddt2, "this_line is: %s" % this_line)
@@ -405,13 +405,13 @@ class CommentFormatters(object):
             formatted_comment = " * %s" % this_line
         else:
             this_line = this_line.strip()
-            formatted_comment = "%s\n * %s" % (formatted_comment, this_line)
+            formatted_comment = "{}\n * {}".format(formatted_comment, this_line)
 
         self._dlog(ddt, "formatted_comment ==\n%s" % formatted_comment)
         return formatted_comment
 
 
-class Formatters(object):
+class Formatters:
     """
     Class that provides a collection of routines to format strings for
     code generation.  The start of this class is generic for doing
@@ -784,9 +784,9 @@ class Formatters(object):
         """
 
         if arg[3] == "":
-            return "%s %s" % (arg[1], arg[0])
+            return "{} {}".format(arg[1], arg[0])
         else:
-            return "%s %s[%s]" % (arg[1], arg[0], arg[3])
+            return "{} {}[{}]".format(arg[1], arg[0], arg[3])
 
     def oneLineFun(self, name, args):
         """
@@ -801,7 +801,7 @@ class Formatters(object):
         @param args: List of argument tuples.
         """
         if self.commentInArgsPresent(args) == True:
-            func_string = "%s%s(" % (name, 80 * " ")
+            func_string = "{}{}(".format(name, 80 * " ")
         else:
             func_string = "%s( " % name
 
@@ -1033,14 +1033,14 @@ class Formatters(object):
         format_func = fname + "(\n"
 
         for line in type_args_list[:-1]:
-            format_func += "%s%s\n" % (pad * " ", line)
+            format_func += "{}{}\n".format(pad * " ", line)
 
         # Last line if not a prototype then no '\n' at end.
         if len(args) > 1:
             if proto == True:
-                format_func += "%s%s\n" % (pad * " ", type_args_list[-1])
+                format_func += "{}{}\n".format(pad * " ", type_args_list[-1])
             else:
-                format_func += "%s%s" % (pad * " ", type_args_list[-1])
+                format_func += "{}{}".format(pad * " ", type_args_list[-1])
 
         # print "Formatted function call"
         # print format_func
@@ -1276,7 +1276,7 @@ class Formatters(object):
             if arg[3] == "":
                 arg_list.append(arg[0].strip() + ";")
             else:
-                arg_list.append("%s[%s];" % (arg[0].strip(), arg[3].strip()))
+                arg_list.append("{}[{}];".format(arg[0].strip(), arg[3].strip()))
 
             comment_list.append(self.formComment(arg[2].strip()))
 

@@ -1,4 +1,4 @@
-class DictTypeConverter(object):
+class DictTypeConverter:
     def __init__(self):
         pass
 
@@ -53,7 +53,7 @@ class DictTypeConverter(object):
             else:  # set up serializable imports
                 # Path to serializable is going to be the namespace.type
                 ser_type = t.split("::")
-                type_string += "%s.%s()" % (".".join(ser_type), ser_type[-1])
+                type_string += "{}.{}()".format(".".join(ser_type), ser_type[-1])
                 ser_import = ".".join(ser_type)
         return (type_string, ser_import, type_name, use_size)
 

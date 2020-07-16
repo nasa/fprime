@@ -36,7 +36,7 @@ PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
-class XmlPortsParser(object):
+class XmlPortsParser:
     """
     An XML parser class that uses lxml.etree to consume an XML
     port type documents.
@@ -63,8 +63,8 @@ class XmlPortsParser(object):
         #
         if os.path.isfile(xml_file) == False:
             str = "ERROR: Could not find specified XML file %s." % xml_file
-            raise IOError(str)
-        fd = open(xml_file, "r")
+            raise OSError(str)
+        fd = open(xml_file)
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
         #
@@ -74,8 +74,7 @@ class XmlPortsParser(object):
 
         # Validate against schema
         relax_file_handler = open(
-            ROOTDIR + self.__config.get("schema", "interface"), "r"
-        )
+            ROOTDIR + self.__config.get("schema", "interface"))
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -256,7 +255,7 @@ class XmlPortsParser(object):
         return self.__args
 
 
-class Interface(object):
+class Interface:
     """
     Data container for an interface.
     Note in the context of this architecture
@@ -300,7 +299,7 @@ class Interface(object):
         return self.__return_modifier
 
 
-class Arg(object):
+class Arg:
     """
     Data container for all the port name, type, etc. associated with component.
     """
@@ -363,6 +362,6 @@ if __name__ == "__main__":
     print()
     print("Args:")
     for arg in args_list:
-        print("Name: %s, Type: %s" % (arg.get_name(), arg.get_type()))
+        print("Name: {}, Type: {}".format(arg.get_name(), arg.get_type()))
         print("Port comment:")
         print(arg.get_comment())

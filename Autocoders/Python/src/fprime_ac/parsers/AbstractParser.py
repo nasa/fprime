@@ -37,7 +37,7 @@ DEBUG = logging.getLogger("debug")
 # Module class or classes go here.
 
 
-class AbstractParser(object):
+class AbstractParser:
     """
     Defines the common interfaces for component, port and assembly XML
     parsing, validation.   This is intended to be used by future

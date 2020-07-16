@@ -105,7 +105,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp1 = list()
 
             if len(obj.get_opcodes()) == 1:
-                pyfile = "%s/%s.py" % (output_dir, obj.get_mnemonic())
+                pyfile = "{}/{}.py".format(output_dir, obj.get_mnemonic())
                 fd = open(pyfile, "w")
                 if fd == None:
                     raise Exception("Could not open %s file." % pyfile)
@@ -131,13 +131,13 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 # set/save opcode numbers had better match
                 if len(obj.get_set_opcodes()) != len(obj.get_save_opcodes()):
                     raise Exception("set/save opcode quantities do not match!")
-                pyfile = "%s/%s_PRM_SET.py" % (output_dir, self.__stem)
+                pyfile = "{}/{}_PRM_SET.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
                 if fd == None:
                     raise Exception("Could not open %s file." % pyfile)
                 self.__fp1.append(fd)
 
-                pyfile = "%s/%s_PRM_SAVE.py" % (output_dir, self.__stem)
+                pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
                 if fd == None:
                     raise Exception("Could not open %s file." % pyfile)
@@ -163,7 +163,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     DEBUG.info("Completed %s open" % pyfile)
 
         else:
-            print(("Invalid type %s" % type(obj)))
+            print("Invalid type %s" % type(obj))
             sys.exit(-1)
 
         # Open file for writing here...

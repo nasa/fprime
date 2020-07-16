@@ -32,7 +32,7 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Channel(object):
+class Channel:
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.

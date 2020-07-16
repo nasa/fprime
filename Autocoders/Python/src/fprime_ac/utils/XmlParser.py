@@ -33,7 +33,7 @@ from genshi import XML
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Parser(object):
+class Parser:
     """
     An XML parser class that uses Genshi streams to consume an XML document
     into a tree of Element objects. The class is instanced with an optional
@@ -75,9 +75,9 @@ class Parser(object):
         if os.path.isfile(filename) == False:
             str = "ERROR: Could not find specified XML file %s." % filename
             PRINT.info(str)
-            raise IOError(str)
+            raise OSError(str)
 
-        return open(filename, "r").read()
+        return open(filename).read()
 
     def addStartVisitor(self, element_name, visitor):
         """
@@ -366,7 +366,7 @@ class Parser(object):
         for child in children:
             childName = child.getName()
             DEBUG.debug(
-                "countSubtree: element %s childName=%s" % (element.getName(), childName)
+                "countSubtree: element {} childName={}".format(element.getName(), childName)
             )
             if childName in expectedChildren:
                 try:
@@ -397,7 +397,7 @@ class Parser(object):
                 print("Data: %s" % e.getData())
                 print("Attr:")
                 for attr in list(e.getAttr().keys()):
-                    print("  %s = %s" % (attr, e.getAttr(attr)))
+                    print("  {} = {}".format(attr, e.getAttr(attr)))
                 child = e.getElements()
                 self.dump2(child)
 
@@ -411,11 +411,11 @@ class Parser(object):
         else:
             for e in elist:
                 tabs = level * "  "
-                print("%sElement: %s" % (tabs, e.getName()))
-                print("%sData: %s" % (tabs, e.getData()))
+                print("{}Element: {}".format(tabs, e.getName()))
+                print("{}Data: {}".format(tabs, e.getData()))
                 print("%sAttr:" % tabs)
                 for attr in list(e.getAttr().keys()):
-                    print("%s%s = %s" % (tabs, attr, e.getAttr(attr)))
+                    print("{}{} = {}".format(tabs, attr, e.getAttr(attr)))
                 self.dump2(e.getElements(), level + 1)
 
 

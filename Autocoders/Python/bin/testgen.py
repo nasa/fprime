@@ -241,7 +241,7 @@ def generate_tests(opt, component_model):
     # generate TEST stubs in TestMain.cpp class
 
     if opt.maincpp:
-        testhpp = open("Tester.hpp", "r")
+        testhpp = open("Tester.hpp")
 
         find_tests = False
         test_cases = []
@@ -335,7 +335,7 @@ def main():
     #
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")
-        raise IOError
+        raise OSError
     #
     # Create python dictionaries
     #

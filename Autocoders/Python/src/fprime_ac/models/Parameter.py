@@ -32,7 +32,7 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
-class Parameter(object):
+class Parameter:
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.
