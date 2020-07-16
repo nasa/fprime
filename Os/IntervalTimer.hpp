@@ -47,24 +47,6 @@ namespace Os {
              */
             U32 getDiffUsec(void);
 
-            /**
-             * Returns the raw difference between stop and start values
-             * \return RawTime: time difference in the interval
-             */
-            RawTime getDiffRaw(void);
-
-            /**
-             * Returns the raw difference between supplied values, t1-t2
-             * \return RawTime: time difference in the interval [t1,t2]
-             */
-             static RawTime getDiffRaw(const RawTime& t1, const RawTime& t2);
-
-            /**
-             * Returns the raw sum between supplied values, t1-t2
-             * \return RawTime: time sum
-             */
-             static RawTime getSumRaw(const RawTime& t1, const RawTime& t2);
-
             //------------ Platform Functions ------------
             // Platform functions, typically do need to be implemented by an OS support package, as
             // they are dependent on the platform definition of "RawTime".
