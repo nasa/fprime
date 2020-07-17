@@ -125,7 +125,7 @@ class InstanceTopologyCppVisitor(AbstractVisitor.AbstractVisitor):
             # Open file for writting here...
             DEBUG.info("Open file: %s" % filename)
             self.__fp = open(filename, "w")
-            if self.__fp == None:
+            if self.__fp is None:
                 raise Exception("Could not open %s file.") % filename
             DEBUG.info("Completed")
         else:
@@ -176,7 +176,7 @@ class InstanceTopologyCppVisitor(AbstractVisitor.AbstractVisitor):
             #
             # Added configurable override for includes for testing
             if self.__config.get("includes", "comp_include_path") == "None":
-                if relative_path != None:
+                if relative_path is not None:
                     path = relative_path
                 else:
                     path = component.get_namespace()
@@ -302,7 +302,7 @@ class InstanceTopologyCppVisitor(AbstractVisitor.AbstractVisitor):
         for component in component_list:
             # Partition instance names
             n = component["name"]  # Save name
-            if part == None:
+            if part is None:
                 pass
             else:
                 component["name"] = part + "_" + component["name"]

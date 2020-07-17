@@ -113,7 +113,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             raise
 
         for instance_obj in instance_obj_list:
-            if instance_obj[3].get_dict_short_name() != None:
+            if instance_obj[3].get_dict_short_name() is not None:
                 fname = "{}_{}".format(
                     instance_obj[3].get_dict_short_name(), obj.get_name()
                 )
@@ -128,7 +128,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             pyfile = "{}/{}.py".format(output_dir, fname)
             DEBUG.info("Open file: {}".format(pyfile))
             fd = open(pyfile, "w")
-            if fd == None:
+            if fd is None:
                 raise Exception("Could not open {} file.".format(pyfile))
             DEBUG.info("Completed {} open".format(pyfile))
             self.__fp[fname] = fd
@@ -166,7 +166,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
 
         for instance_obj in instance_obj_list:
             c = EventBody.EventBody()
-            if instance_obj[3].get_dict_short_name() != None:
+            if instance_obj[3].get_dict_short_name() is not None:
                 fname = "{}_{}".format(
                     instance_obj[3].get_dict_short_name(), obj.get_name()
                 )
@@ -211,7 +211,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                     type_name,
                     dontcare,
                 ) = DictTypeConverter.DictTypeConverter().convert(t, s)
-                if ser_import != None:
+                if ser_import is not None:
                     c.ser_import_list.append(ser_import)
                 # convert format specifier if necessary
                 if type_name == "enum":
@@ -219,7 +219,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                         c.format_string, arg_num, "d", "s"
                     )
                     # check for an error
-                    if format_string == None:
+                    if format_string is None:
                         PRINT.info(
                             "Event %s in component %s had error processing format specifier"
                             % (c.name, c.component)

@@ -82,7 +82,7 @@ class Topology:
         """
         Converts the __base_id_list into a dictionary, where the base component name corresponds to a list of tuples
         """
-        if self.__base_id_dict == None:
+        if self.__base_id_dict is None:
             self.__base_id_dict = {}
             for base_id_tuple in self.__base_id_list:
                 inst = base_id_tuple[3]
@@ -111,7 +111,7 @@ class Topology:
 
         """self.__instance_header_dict = {}
         for xml_name in instance_header_dict:
-            if instance_header_dict[xml_name] != None:
+            if instance_header_dict[xml_name] is not None:
                 self.__instance_header_dict[xml_name] = instance_header_dict[xml_name]
             else:
                 temp_name = xml_name

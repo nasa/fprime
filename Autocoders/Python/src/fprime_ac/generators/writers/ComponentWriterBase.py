@@ -133,7 +133,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         """
         Emit a doxygen post comment
         """
-        if comment == None or comment == "":
+        if comment is None or comment == "":
             return ""
         else:
             return "/*!< " + comment + "*/"
@@ -142,7 +142,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         """
         Emit a doxygen pre comment
         """
-        if comment == None or comment == "":
+        if comment is None or comment == "":
             return ""
         else:
             return "/*! " + comment + "*/"
@@ -151,7 +151,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         """
         Emit a comment
         """
-        if comment == None or comment == "":
+        if comment is None or comment == "":
             return ""
         else:
             return "/* " + comment + "*/"
@@ -303,7 +303,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         """
         relative_path = self.relativePath(obj)
         if self.__config.get("includes", "comp_include_path") == "None":
-            if relative_path != None:
+            if relative_path is not None:
                 c.comp_include_path = relative_path.replace("/test/ut", "")
             else:
                 c.comp_include_path = obj.get_namespace()
@@ -763,7 +763,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.modeler = obj.get_modeler()
         c.name = obj.get_name
         c.component_base = c.name() + "ComponentBase"
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -863,7 +863,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         result = []
         for x in l:
             y = f(x)
-            if y != None:
+            if y is not None:
                 # check if list
                 if type(y) == type(list()):
                     result += y
@@ -880,7 +880,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         """
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open file %s") % filename
         DEBUG.info("Completed")
 

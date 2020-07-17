@@ -284,7 +284,7 @@ class XmlComponentParser:
                     )
                     opcode_bases = opcode_base.split(",")
                     # Check number of instances
-                    if self.__instances == None:
+                    if self.__instances is None:
                         self.__instances = len(opcode_bases)
                     else:
                         if len(opcode_bases) != self.__instances:
@@ -312,7 +312,7 @@ class XmlComponentParser:
                     o = command.attrib["opcode"]
                     # check to see if there is a base opcode specified
                     opcode_list = list()
-                    if opcode_bases != None:
+                    if opcode_bases is not None:
                         # walk through opcode base list
                         for base in opcode_base_list:
                             opcode_list.append("0x%X" % (int(o, base=0) + base))
@@ -420,7 +420,7 @@ class XmlComponentParser:
                     )
                     telemetry_bases = telemetry_base.split(",")
                     # Check number of instances
-                    if self.__instances == None:
+                    if self.__instances is None:
                         self.__instances = len(telemetry_bases)
                     else:
                         if len(telemetry_bases) != self.__instances:
@@ -447,7 +447,7 @@ class XmlComponentParser:
                     i = channel.attrib["id"]
                     # check to see if there is a base id specified
                     id_list = list()
-                    if telemetry_bases != None:
+                    if telemetry_bases is not None:
                         # walk through opcode base list
                         for base in telemetry_base_list:
                             id_list.append("0x%X" % (int(i, base=0) + base))
@@ -575,7 +575,7 @@ class XmlComponentParser:
                     )
                     event_bases = event_base.split(",")
                     # Check number of instances
-                    if self.__instances == None:
+                    if self.__instances is None:
                         self.__instances = len(event_bases)
                     else:
                         if len(event_bases) != self.__instances:
@@ -603,7 +603,7 @@ class XmlComponentParser:
                     i = event.attrib["id"]
                     # check to see if there is a base id specified
                     id_list = list()
-                    if event_bases != None:
+                    if event_bases is not None:
                         # walk through opcode base list
                         for base in event_base_list:
                             id_list.append("0x%X" % (int(i, base=0) + base))
@@ -727,7 +727,7 @@ class XmlComponentParser:
                     )
                     parameter_bases = parameter_base.split(",")
                     # Check number of instances
-                    if self.__instances == None:
+                    if self.__instances is None:
                         self.__instances = len(parameter_bases)
                     else:
                         if len(parameter_bases) != self.__instances:
@@ -752,7 +752,7 @@ class XmlComponentParser:
                     )
                     opcode_bases = opcode_base.split(",")
                     # Check number of instances
-                    if self.__instances == None:
+                    if self.__instances is None:
                         self.__instances = len(opcode_bases)
                     else:
                         if len(opcode_bases) != self.__instances:
@@ -778,7 +778,7 @@ class XmlComponentParser:
                     i = parameter.attrib["id"]
                     # check to see if there is a base id specified
                     parameter_id_list = list()
-                    if parameter_bases != None:
+                    if parameter_bases is not None:
                         for base in parameter_base_list:
                             parameter_id_list.append("0x%X" % (int(i, base=0) + base))
                     else:
@@ -789,7 +789,7 @@ class XmlComponentParser:
 
                     setop = parameter.attrib["set_opcode"]
                     set_opcode_list = list()
-                    if opcode_bases != None:
+                    if opcode_bases is not None:
                         # walk through opcode base list
                         for base in opcode_base_list:
                             set_opcode_list.append("0x%X" % (int(setop, base=0) + base))
@@ -798,7 +798,7 @@ class XmlComponentParser:
 
                     saveop = parameter.attrib["save_opcode"]
                     save_opcode_list = list()
-                    if opcode_bases != None:
+                    if opcode_bases is not None:
                         # walk through opcode base list
                         for base in opcode_base_list:
                             save_opcode_list.append(
@@ -1160,7 +1160,7 @@ class XmlComponentParser:
         if var[0] != "$":
             return var
         # make sure file was read in if a variable is defined
-        if self.__const_parser == None:
+        if self.__const_parser is None:
             PRINT.info(
                 "%s: Variable %s defined with no constants file %s"
                 % (

@@ -131,7 +131,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Emit a doxygen post comment
         """
-        if comment == None or comment == "":
+        if comment is None or comment == "":
             return ""
         else:
             return "/*!< " + comment + "*/"
@@ -140,7 +140,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Emit a doxygen pre comment
         """
-        if comment == None or comment == "":
+        if comment is None or comment == "":
             return ""
         else:
             return "/*! " + comment + "*/"
@@ -149,7 +149,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Emit a comment
         """
-        if comment == None or comment == "":
+        if comment is None or comment == "":
             return ""
         else:
             return "/* " + comment + "*/"
@@ -301,7 +301,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         relative_path = self.relativePath()
         if self.__config.get("includes", "comp_include_path") == "None":
-            if relative_path != None:
+            if relative_path is not None:
                 c.comp_include_path = relative_path
             else:
                 c.comp_include_path = obj.get_namespace()
@@ -757,7 +757,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.modeler = obj.get_modeler()
         c.name = obj.get_name
         c.component_base = c.name() + "ComponentBase"
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -857,7 +857,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         result = []
         for x in l:
             y = f(x)
-            if y != None:
+            if y is not None:
                 # check if list
                 if type(y) == type(list()):
                     result += y
@@ -874,7 +874,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open file %s") % filename
         DEBUG.info("Completed")
 

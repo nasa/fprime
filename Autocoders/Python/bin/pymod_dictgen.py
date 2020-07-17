@@ -150,14 +150,14 @@ def generate_pymods(the_parsed_topology_xml, xml_filename, opt):
     #
     # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
     #
-    if opt.dict_dir == None:
+    if opt.dict_dir is None:
         os.environ["DICT_DIR"] = os.getcwd()
     else:
         os.environ["DICT_DIR"] = opt.dict_dir
 
     xml_list = []
     for parsed_xml_type in parsed_xml_dict:
-        if parsed_xml_dict[parsed_xml_type] == None:
+        if parsed_xml_dict[parsed_xml_type] is None:
             print(
                 "ERROR: XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(
                     parsed_xml_type
@@ -210,7 +210,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
     parsed_serializable_xml_list = []
     # uses the topology model to process the items
     # checks if the topology model exists
-    if topology_model == None:
+    if topology_model is None:
         PRINT.info(
             "Topology model was not specified. Please also input a topology model when running this command."
         )
@@ -253,7 +253,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
     instCommandWriter = InstCommandWriter.InstCommandWriter()
     instEventWriter = InstEventWriter.InstEventWriter()
 
-    if opt.dict_dir == None:
+    if opt.dict_dir is None:
         if VERBOSE:
             print("Dictionary output directory not specified!, defaulting to cwd")
         opt.dict_dir = os.getcwd()
@@ -329,7 +329,7 @@ def main():
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if not opt.build_root_overwrite == None:
+    if not opt.build_root_overwrite is None:
         set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
             print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))

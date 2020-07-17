@@ -232,7 +232,7 @@ def main():
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if not opt.build_root_overwrite == None:
+    if not opt.build_root_overwrite is None:
         set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
             print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))

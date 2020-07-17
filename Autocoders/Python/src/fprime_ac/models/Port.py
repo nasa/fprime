@@ -121,7 +121,7 @@ class Port:
         """
         Return a tuple of (type, modifier).  If (None,None) return None.
         """
-        if (self.__return_modifier == None) and (self.__return_type == None):
+        if (self.__return_modifier is None) and (self.__return_type is None):
             return None
         else:
             return (self.__return_type, self.__return_modifier)

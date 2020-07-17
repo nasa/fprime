@@ -1337,7 +1337,7 @@ class Formatters:
         """
         Prepend instance id enum arg to args and return new list.
         """
-        # if context_list == None:
+        # if context_list is None:
         #    return args
 
         if self.subThreadTest(mod_id) == True and len(context_list) > 0:

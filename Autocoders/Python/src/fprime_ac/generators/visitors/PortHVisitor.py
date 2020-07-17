@@ -244,7 +244,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writting here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
@@ -301,16 +301,16 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         enum_str_list = []
         for e in enum_list:
             # No value, No comment
-            if (e[1] == None) and (e[2] == None):
+            if (e[1] is None) and (e[2] is None):
                 s = "%s," % (e[0])
             # No value, With comment
-            elif (e[1] == None) and (e[2] != None):
+            elif (e[1] is None) and (e[2] is not None):
                 s = "{},  // {}".format(e[0], e[2])
             # With value, No comment
-            elif (e[1] != None) and (e[2] == None):
+            elif (e[1] is not None) and (e[2] is None):
                 s = "{} = {},".format(e[0], e[1])
             # With value and comment
-            elif (e[1] != None) and (e[2] != None):
+            elif (e[1] is not None) and (e[2] is not None):
                 s = "%s = %s,  // %s" % (e)
             else:
                 pass
@@ -325,7 +325,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         c = namespacePortH.namespacePortH()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -340,7 +340,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         t = [x.get_type() for x in obj.get_args()]
         # if a return type add it to the list to scan for enum
         r = obj.get_return()
-        if r != None:
+        if r is not None:
             t += obj.get_return()
         enum_list = [x for x in t if type(x) == type(tuple())]
         for e in enum_list:
@@ -362,7 +362,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.args_sum_str = self._get_args_sum_string(obj)
         r = obj.get_return()
         # Include optional return type here...
-        if r != None:
+        if r is not None:
             return_type = r[0]
             if type(return_type) == type(tuple()):
                 return_type = return_type[0][1]
@@ -401,7 +401,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate ending static code within files.
         """
         c = finishPortH.finishPortH()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -411,7 +411,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         c.args_string = self._get_args_string(obj)
         r = obj.get_return()
         # Include optional return type here...
-        if r != None:
+        if r is not None:
             return_type = r[0]
             if type(return_type) == type(tuple()):
                 return_type = return_type[0][1]

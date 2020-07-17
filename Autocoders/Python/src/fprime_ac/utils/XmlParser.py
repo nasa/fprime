@@ -62,7 +62,7 @@ class Parser:
         self.__node_end_visit_dict = dict()
         self.__node_start_visit_dict = dict()
 
-        if xml_file == None:
+        if xml_file is None:
             self.__xml_string = None
         else:
             self.__xml_string = self._make_string(xml_file)
@@ -152,7 +152,7 @@ class Parser:
         single parse tree.
         """
 
-        if self.__xml_string == None:
+        if self.__xml_string is None:
             return
         else:
             self.__node_stack = list()
@@ -206,7 +206,7 @@ class Parser:
                 # requirement for parsing a second file is that it has a same
                 # named root Element.
 
-                if self.__root != None and root_name_checked == False:
+                if self.__root is not None and root_name_checked == False:
 
                     if self.__root.getName() == name:
 
@@ -389,7 +389,7 @@ class Parser:
         """
         Dump from root over the tree.
         """
-        if self.__root == None:
+        if self.__root is None:
             return
 
         elist = self.__root.getElements()
@@ -453,7 +453,7 @@ class Element:
         """
         Get an attribute value.
         """
-        if key == None:
+        if key is None:
             return self.attribute
         else:
             return self.attribute.get(key)

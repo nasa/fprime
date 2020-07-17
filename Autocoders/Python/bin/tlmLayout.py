@@ -584,7 +584,7 @@ def sched_cycle_ids_max(max_cycle):
     cycle_offset = None
     i = 0
 
-    if tlm_period == None:
+    if tlm_period is None:
         return []
 
     for p in tlm_packet_list:
@@ -613,7 +613,7 @@ def sched_cycle_ids(max_cycle):
     cycle_id_list = [list() for _ in range(max_cycle)]
     cycle_offset = None
 
-    if tlm_period == None:
+    if tlm_period is None:
         return []
 
     for p in tlm_packet_list:

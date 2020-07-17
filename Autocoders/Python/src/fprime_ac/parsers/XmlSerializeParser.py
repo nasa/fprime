@@ -189,7 +189,7 @@ class XmlSerializeParser:
                         else:  # Must be included type, which will use toString method
                             f = "%s"
                     if t == "string":
-                        if s == None:
+                        if s is None:
                             PRINT.info(
                                 "%s: member %s string must specify size tag"
                                 % (xml_file, member.tag)

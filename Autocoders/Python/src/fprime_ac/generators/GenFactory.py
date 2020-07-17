@@ -359,7 +359,7 @@ class GenFactory:
         visitors (code producers) are instanced.
         """
         # Instance this list only once for all elements
-        if self.__visitor_list == None:
+        if self.__visitor_list is None:
             self.__visitor_list = list()
             #
             # Insert each of the code producer visitors into the list of

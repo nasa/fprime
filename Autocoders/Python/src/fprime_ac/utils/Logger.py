@@ -62,7 +62,7 @@ def connectOutputLogger(file=None, logger_name="output"):
     std_output.setFormatter(formatter)
     logger.addHandler(std_output)
     # log to a file
-    if file != None:
+    if file is not None:
         file_output = logging.FileHandler(file)
         file_output.setFormatter(formatter)
         logger.addHandler(file_output)
@@ -99,7 +99,7 @@ def connectDebugLogger(
         std_output.setFormatter(formatter)
         logger.addHandler(std_output)
     # log to a file
-    if file != None:
+    if file is not None:
         file_output = logging.FileHandler(file)
         file_output.setFormatter(formatter)
         logger.addHandler(file_output)

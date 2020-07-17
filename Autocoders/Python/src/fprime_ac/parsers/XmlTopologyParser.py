@@ -241,7 +241,7 @@ class XmlTopologyParser:
             kind = inst.get_kind()
             xml_file = inst.get_comp_xml()
 
-            if xml_file == None:
+            if xml_file is None:
                 PRINT.info(
                     "WARNING: No component XML present setting instance named: %s to kind: %s, maximum ID's used is unknown"
                     % (name, kind)

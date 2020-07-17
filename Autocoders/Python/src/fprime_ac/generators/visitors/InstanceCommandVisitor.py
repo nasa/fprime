@@ -126,7 +126,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
             # Otherwise, it will be the instance name + command name
             self.__fp1 = {}
             for instance_obj in instance_obj_list:
-                if instance_obj[3].get_dict_short_name() != None:
+                if instance_obj[3].get_dict_short_name() is not None:
                     fname = "{}_{}".format(
                         instance_obj[3].get_dict_short_name(), obj.get_mnemonic()
                     )
@@ -140,7 +140,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open {} file.".format(pyfile))
                 DEBUG.info("Completed {} open".format(pyfile))
                 self.__fp1[fname] = fd
@@ -152,7 +152,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
             self.__stem = obj.get_name().upper()
 
             for instance_obj in instance_obj_list:
-                if instance_obj[3].get_dict_short_name() != None:
+                if instance_obj[3].get_dict_short_name() is not None:
                     fname = "{}_{}".format(
                         instance_obj[3].get_dict_short_name(), self.__stem
                     )
@@ -166,7 +166,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp1[fname] = fd
                 DEBUG.info("Completed {} open".format(pyfile))
@@ -174,7 +174,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp2[fname] = fd
                 DEBUG.info("Completed {} open".format(pyfile))
@@ -240,7 +240,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
             for instance_obj in instance_obj_list:
                 c = CommandBody.CommandBody()
                 # only add the suffix if there is more than one opcode per command
-                if instance_obj[3].get_dict_short_name() != None:
+                if instance_obj[3].get_dict_short_name() is not None:
                     fname = "{}_{}".format(
                         instance_obj[3].get_dict_short_name(), obj.get_mnemonic()
                     )
@@ -272,7 +272,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                     ) = DictTypeConverter.DictTypeConverter().convert(
                         arg_obj.get_type(), arg_obj.get_size()
                     )
-                    if ser_import != None:
+                    if ser_import is not None:
                         c.ser_import_list.append(ser_import)
                     c.arglist.append(
                         (arg_obj.get_name(), arg_obj.get_comment(), type_string)
@@ -285,7 +285,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 # Set Command
                 c = CommandBody.CommandBody()
 
-                if instance_obj[3].get_dict_short_name() != None:
+                if instance_obj[3].get_dict_short_name() is not None:
                     fname = "{}_{}".format(
                         instance_obj[3].get_dict_short_name(), self.__stem
                     )
@@ -319,7 +319,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 ) = DictTypeConverter.DictTypeConverter().convert(
                     obj.get_type(), obj.get_size()
                 )
-                if ser_import != None:
+                if ser_import is not None:
                     c.ser_import_list.append(ser_import)
                 c.arglist.append((obj.get_name(), obj.get_comment(), type_string))
                 self._writeTmpl(c, self.__fp1[fname], "commandBodyVisit")
@@ -328,7 +328,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
             for instance_obj in instance_obj_list:
                 # Set Command
                 c = CommandBody.CommandBody()
-                if instance_obj[3].get_dict_short_name() != None:
+                if instance_obj[3].get_dict_short_name() is not None:
                     fname = "{}_{}".format(
                         instance_obj[3].get_dict_short_name(), self.__stem
                     )

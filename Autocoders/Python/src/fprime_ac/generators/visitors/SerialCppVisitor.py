@@ -91,7 +91,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size != None:
+            elif size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -109,7 +109,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         args = obj.get_members()
         arg_str = ""
         for arg in args:
-            if arg[2] != None and arg[1] != "string":
+            if arg[2] is not None and arg[1] != "string":
                 arg_str += prefix + "%s" % arg[0]
                 arg_str += ", "
                 arg_str += "%s" % arg[2]
@@ -194,7 +194,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writting here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
@@ -224,7 +224,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         # Added configurable override for includes for testing
         #
         if self.__config.get("includes", "serial_include_path") == "None":
-            if relative_path != None:
+            if relative_path is not None:
                 c.include_path = relative_path
             else:
                 c.include_path = obj.get_namespace()
@@ -246,7 +246,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         c = namespaceSerialCpp.namespaceSerialCpp()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -286,7 +286,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate ending static code within files.
         """
         c = finishSerialCpp.finishSerialCpp()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")

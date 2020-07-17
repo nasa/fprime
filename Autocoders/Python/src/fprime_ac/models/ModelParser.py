@@ -161,13 +161,13 @@ class ModelParser:
             ret_tuple = port.get_return()
             ret_dict[name] = "void "
             # print "Port: %s" % name
-            if ret_tuple != None:
+            if ret_tuple is not None:
                 t = ret_tuple[0]
                 # check for enumeration
                 if type(t) == type(tuple()):
                     t = t[0][1]
                     # append namespace
-                    if port.get_namespace() != None:
+                    if port.get_namespace() is not None:
                         t = port.get_namespace() + "::" + t
                 m = ret_tuple[1]
                 if m == "pointer":
@@ -355,11 +355,11 @@ class ModelParser:
                     mem_list = t[1]
                     member_lines = []
                     for member in mem_list:
-                        if member[1] != None:
+                        if member[1] is not None:
                             mem_init = " = %s" % member[1]
                         else:
                             mem_init = ""
-                        if member[2] != None:
+                        if member[2] is not None:
                             mem_comment = " //<! %s" % member[2]
                         else:
                             mem_comment = ""
@@ -405,11 +405,11 @@ class ModelParser:
                     mem_list = t[1]
                     member_lines = []
                     for member in mem_list:
-                        if member[1] != None:
+                        if member[1] is not None:
                             mem_init = " = %s" % member[1]
                         else:
                             mem_init = ""
-                        if member[2] != None:
+                        if member[2] is not None:
                             mem_comment = " //<! %s" % member[2]
                         else:
                             mem_comment = ""
@@ -459,11 +459,11 @@ class ModelParser:
                         mem_list = t[1]
                         member_lines = []
                         for member in mem_list:
-                            if member[1] != None:
+                            if member[1] is not None:
                                 mem_init = " = %s" % member[1]
                             else:
                                 mem_init = ""
-                            if member[2] != None:
+                            if member[2] is not None:
                                 mem_comment = " //<! %s" % member[2]
                             else:
                                 mem_comment = ""
@@ -545,11 +545,11 @@ class ModelParser:
                         mem_list = t[1]
                         member_lines = []
                         for member in mem_list:
-                            if member[1] != None:
+                            if member[1] is not None:
                                 mem_init = " = %s" % member[1]
                             else:
                                 mem_init = ""
-                            if member[2] != None:
+                            if member[2] is not None:
                                 mem_comment = " //<! %s" % member[2]
                             else:
                                 mem_comment = ""
@@ -701,11 +701,11 @@ class ModelParser:
                         mem_list = t[1]
                         member_lines = []
                         for member in mem_list:
-                            if member[1] != None:
+                            if member[1] is not None:
                                 mem_init = " = %s" % member[1]
                             else:
                                 mem_init = ""
-                            if member[2] != None:
+                            if member[2] is not None:
                                 mem_comment = " //<! %s" % member[2]
                             else:
                                 mem_comment = ""

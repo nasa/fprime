@@ -87,7 +87,7 @@ class TestWriterBase(ComponentWriterBase.ComponentWriterBase):
     def getParamPort(self, c):
         def f(instance, type):
             namespace = c.port_namespaces[type]
-            if namespace == None:
+            if namespace is None:
                 namespace = ""
             if type == "Serial":
                 type = namespace + "::InputSerializePort"

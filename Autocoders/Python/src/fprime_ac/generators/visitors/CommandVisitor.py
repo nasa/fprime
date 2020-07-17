@@ -110,7 +110,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             if len(obj.get_opcodes()) == 1:
                 pyfile = "{}/{}.py".format(output_dir, obj.get_mnemonic())
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open %s file." % pyfile)
                 self.__fp1.append(fd)
             else:
@@ -120,7 +120,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     inst += 1
                     DEBUG.info("Open file: %s" % pyfile)
                     fd = open(pyfile, "w")
-                    if fd == None:
+                    if fd is None:
                         raise Exception("Could not open %s file." % pyfile)
                     DEBUG.info("Completed %s open" % pyfile)
                     self.__fp1.append(fd)
@@ -136,13 +136,13 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     raise Exception("set/save opcode quantities do not match!")
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open %s file." % pyfile)
                 self.__fp1.append(fd)
 
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open %s file." % pyfile)
                 self.__fp2.append(fd)
             else:
@@ -151,7 +151,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     pyfile = "%s/%s_%d_PRM_SET.py" % (output_dir, self.__stem, inst)
                     DEBUG.info("Open file: %s" % pyfile)
                     fd = open(pyfile, "w")
-                    if fd == None:
+                    if fd is None:
                         raise Exception("Could not open %s file." % pyfile)
                     self.__fp1.append(fd)
                     DEBUG.info("Completed %s open" % pyfile)
@@ -159,7 +159,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     pyfile = "%s/%s_%d_PRM_SAVE.py" % (output_dir, self.__stem, inst)
                     DEBUG.info("Open file: %s" % pyfile)
                     fd = open(pyfile, "w")
-                    if fd == None:
+                    if fd is None:
                         raise Exception("Could not open %s file." % pyfile)
                     self.__fp2.append(fd)
                     inst += 1
@@ -242,7 +242,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     ) = DictTypeConverter.DictTypeConverter().convert(
                         arg_obj.get_type(), arg_obj.get_size()
                     )
-                    if ser_import != None:
+                    if ser_import is not None:
                         c.ser_import_list.append(ser_import)
                     c.arglist.append(
                         (arg_obj.get_name(), arg_obj.get_comment(), type_string)
@@ -276,7 +276,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 ) = DictTypeConverter.DictTypeConverter().convert(
                     obj.get_type(), obj.get_size()
                 )
-                if ser_import != None:
+                if ser_import is not None:
                     c.ser_import_list.append(ser_import)
                 c.arglist.append((obj.get_name(), obj.get_comment(), type_string))
                 self._writeTmpl(c, self.__fp1[inst], "commandBodyVisit")

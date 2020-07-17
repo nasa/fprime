@@ -171,13 +171,13 @@ class AbstractWriter:
         )
 
     def isSync(self, str):
-        return str != None and str.lower() == "sync"
+        return str is not None and str.lower() == "sync"
 
     def isAsync(self, str):
-        return str != None and str.lower() == "async"
+        return str is not None and str.lower() == "async"
 
     def isSerial(self, str):
-        return str != None and str.lower() == "serial"
+        return str is not None and str.lower() == "serial"
 
     def isInput(self, str):
-        return str != None and str.lower() == "input"
+        return str is not None and str.lower() == "input"

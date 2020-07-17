@@ -418,11 +418,11 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         #             abbrev_dictionary = {} #sets an abbrev to be equal to the associated channel name
         #             max_char_amount = 3
         #             for parsed_xml_type in parsed_xml_dict:
-        #                 if parsed_xml_dict[parsed_xml_type] == None:
+        #                 if parsed_xml_dict[parsed_xml_type] is None:
         #                     PRINT.info("XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
         #                     raise Exception()
         #                 for chan in parsed_xml_dict[parsed_xml_type].get_channels():
-        #                     if chan.get_abbrev() == None:
+        #                     if chan.get_abbrev() is None:
         #                         PRINT.info("Channel {} of component type {} has no abbreviation. Please specify the abbreviation in the component XML file.".format(chan.get_name() , parsed_xml_type))
         #                     elif chan.get_abbrev() not in abbrev_dictionary:
         #                         abbrev_dictionary[chan.get_abbrev()] = (chan.get_name() , parsed_xml_type)
@@ -454,7 +454,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         #
         xml_list = []
         for parsed_xml_type in parsed_xml_dict:
-            if parsed_xml_dict[parsed_xml_type] == None:
+            if parsed_xml_dict[parsed_xml_type] is None:
                 PRINT.info(
                     "XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(
                         parsed_xml_type
@@ -488,7 +488,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 )
 
                 # check for included serializable XML
-                if parsed_xml_dict[comp_type].get_serializable_type_files() != None:
+                if parsed_xml_dict[comp_type].get_serializable_type_files() is not None:
                     serializable_file_list = parsed_xml_dict[
                         comp_type
                     ].get_serializable_type_files()
@@ -524,7 +524,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             member_elem.attrib[
                                 "format_specifier"
                             ] = member_format_specifier
-                            if member_comment != None:
+                            if member_comment is not None:
                                 member_elem.attrib["description"] = member_comment
                             if type(member_type) == type(tuple()):
                                 enum_value = 0
@@ -539,12 +539,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     enum_mem = etree.Element("item")
                                     enum_mem.attrib["name"] = membername
                                     # keep track of incrementing enum value
-                                    if value != None:
+                                    if value is not None:
                                         enum_value = int(value)
 
                                     enum_mem.attrib["value"] = "%d" % enum_value
                                     enum_value = enum_value + 1
-                                    if comment != None:
+                                    if comment is not None:
                                         enum_mem.attrib["description"] = comment
                                     enum_elem.append(enum_mem)
                                 enum_list.append(enum_elem)
@@ -558,7 +558,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         serializable_list.append(serializable_elem)
 
                 # check for commands
-                if parsed_xml_dict[comp_type].get_commands() != None:
+                if parsed_xml_dict[comp_type].get_commands() is not None:
                     for command in parsed_xml_dict[comp_type].get_commands():
                         PRINT.debug("Processing Command %s" % command.get_mnemonic())
                         command_elem = etree.Element("command")
@@ -589,12 +589,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     enum_mem = etree.Element("item")
                                     enum_mem.attrib["name"] = membername
                                     # keep track of incrementing enum value
-                                    if value != None:
+                                    if value is not None:
                                         enum_value = int(value)
 
                                     enum_mem.attrib["value"] = "%d" % enum_value
                                     enum_value = enum_value + 1
-                                    if comment != None:
+                                    if comment is not None:
                                         enum_mem.attrib["description"] = comment
                                     enum_elem.append(enum_mem)
                                 enum_list.append(enum_elem)
@@ -608,7 +608,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_list.append(command_elem)
 
                 # check for channels
-                if parsed_xml_dict[comp_type].get_channels() != None:
+                if parsed_xml_dict[comp_type].get_channels() is not None:
                     for chan in parsed_xml_dict[comp_type].get_channels():
                         PRINT.debug("Processing Channel %s" % chan.get_name())
                         channel_elem = etree.Element("channel")
@@ -617,11 +617,11 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         channel_elem.attrib["id"] = "%s" % (
                             hex(int(chan.get_ids()[0], base=0) + comp_id)
                         )
-                        if chan.get_format_string() != None:
+                        if chan.get_format_string() is not None:
                             channel_elem.attrib[
                                 "format_string"
                             ] = chan.get_format_string()
-                        if chan.get_comment() != None:
+                        if chan.get_comment() is not None:
                             channel_elem.attrib["description"] = chan.get_comment()
 
                         channel_elem.attrib["id"] = "%s" % (
@@ -645,12 +645,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 enum_mem = etree.Element("item")
                                 enum_mem.attrib["name"] = membername
                                 # keep track of incrementing enum value
-                                if value != None:
+                                if value is not None:
                                     enum_value = int(value)
 
                                 enum_mem.attrib["value"] = "%d" % enum_value
                                 enum_value = enum_value + 1
-                                if comment != None:
+                                if comment is not None:
                                     enum_mem.attrib["description"] = comment
                                 enum_elem.append(enum_mem)
                             enum_list.append(enum_elem)
@@ -659,24 +659,24 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                             if channel_type == "string":
                                 channel_elem.attrib["len"] = chan.get_size()
                         (lr, lo, ly, hy, ho, hr) = chan.get_limits()
-                        if lr != None:
+                        if lr is not None:
                             channel_elem.attrib["low_red"] = lr
-                        if lo != None:
+                        if lo is not None:
                             channel_elem.attrib["low_orange"] = lo
-                        if ly != None:
+                        if ly is not None:
                             channel_elem.attrib["low_yellow"] = ly
-                        if hy != None:
+                        if hy is not None:
                             channel_elem.attrib["high_yellow"] = hy
-                        if ho != None:
+                        if ho is not None:
                             channel_elem.attrib["high_orange"] = ho
-                        if hr != None:
+                        if hr is not None:
                             channel_elem.attrib["hight_red"] = hr
 
                         channel_elem.attrib["type"] = type_name
                         telemetry_list.append(channel_elem)
 
                 # check for events
-                if parsed_xml_dict[comp_type].get_events() != None:
+                if parsed_xml_dict[comp_type].get_events() is not None:
                     for event in parsed_xml_dict[comp_type].get_events():
                         PRINT.debug("Processing Event %s" % event.get_name())
                         event_elem = etree.Element("event")
@@ -710,12 +710,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                     enum_mem = etree.Element("item")
                                     enum_mem.attrib["name"] = membername
                                     # keep track of incrementing enum value
-                                    if value != None:
+                                    if value is not None:
                                         enum_value = int(value)
 
                                     enum_mem.attrib["value"] = "%d" % enum_value
                                     enum_value = enum_value + 1
-                                    if comment != None:
+                                    if comment is not None:
                                         enum_mem.attrib["description"] = comment
                                     enum_elem.append(enum_mem)
                                 enum_list.append(enum_elem)
@@ -735,7 +735,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         event_list.append(event_elem)
 
                 # check for parameters
-                if parsed_xml_dict[comp_type].get_parameters() != None:
+                if parsed_xml_dict[comp_type].get_parameters() is not None:
                     for parameter in parsed_xml_dict[comp_type].get_parameters():
                         PRINT.debug("Processing Parameter %s" % chan.get_name())
                         param_default = None
@@ -773,16 +773,16 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 enum_mem = etree.Element("item")
                                 enum_mem.attrib["name"] = membername
                                 # keep track of incrementing enum value
-                                if value != None:
+                                if value is not None:
                                     enum_value = int(value)
 
                                 enum_mem.attrib["value"] = "%d" % enum_value
                                 enum_value = enum_value + 1
-                                if comment != None:
+                                if comment is not None:
                                     enum_mem.attrib["description"] = comment
                                 enum_elem.append(enum_mem)
                                 # assign default to be first enum member
-                                if param_default == None:
+                                if param_default is None:
                                     param_default = membername
                             enum_list.append(enum_elem)
                         else:
@@ -821,14 +821,14 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         param_elem.attrib["id"] = "%s" % (
                             hex(int(parameter.get_ids()[0], base=0) + comp_id)
                         )
-                        if parameter.get_default() != None:
+                        if parameter.get_default() is not None:
                             param_default = parameter.get_default()
                         param_elem.attrib["default"] = param_default
 
                         parameter_list.append(param_elem)
 
                 # Check for arrays
-                if parsed_xml_dict[comp_type].get_array_type_files() != None:
+                if parsed_xml_dict[comp_type].get_array_type_files() is not None:
                     array_file_list = parsed_xml_dict[comp_type].get_array_type_files()
                     for array_file in array_file_list:
                         array_file = search_for_file("Array", array_file)
@@ -918,7 +918,7 @@ def generate_component_instance_dictionary(
     parsed_serializable_xml_list = []
     # uses the topology model to process the items
     # checks if the topology model exists
-    if topology_model == None:
+    if topology_model is None:
         PRINT.info(
             "Topology model was not specified. Please also input a topology model when running this command."
         )
@@ -1256,7 +1256,7 @@ def generate_component(
 
     # if requested, generate ground system dictionary
     if opt.default_dict:
-        if opt.dict_dir == None:
+        if opt.dict_dir is None:
             PRINT.info("Dictionary output directory not specified!")
             raise OSError
         os.environ["DICT_DIR"] = opt.dict_dir
@@ -1314,7 +1314,7 @@ def generate_component(
             defaultChannelBody(channel_model)
 
     # if opt.ampcs_dict and not opt.default_topology_dict:
-    #    if opt.dict_dir == None:
+    #    if opt.dict_dir is None:
     #        PRINT.info("Dictionary output directory not specified!")
     #        raise IOError
     #    os.environ["AMPCS_DICT_DIR"] = opt.dict_dir
@@ -1323,7 +1323,7 @@ def generate_component(
     #    AmpcsEventConverter.AmpcsEventConverter(component_model).writeFile(opt.dict_dir)
 
     if opt.html_docs:
-        if opt.html_doc_dir == None:
+        if opt.html_doc_dir is None:
             PRINT.info("HTML documentation output directory not specified!")
             raise OSError
 
@@ -1340,7 +1340,7 @@ def generate_component(
         finisher(component_model)
 
     if opt.md_docs:
-        if opt.md_doc_dir == None:
+        if opt.md_doc_dir is None:
             PRINT.info("MD documentation output directory not specified!")
             raise OSError
 
@@ -1474,7 +1474,7 @@ def generate_serializable(the_serial_xml, opt):
             PRINT.info("Dictionary: Skipping %s because of external includes" % (f))
         else:
             # borrow source visitor pattern for serializable dictionary
-            if opt.dict_dir == None:
+            if opt.dict_dir is None:
                 PRINT.info("Dictionary output directory not specified!")
                 raise OSError
             os.environ["DICT_DIR"] = opt.dict_dir
@@ -1485,7 +1485,7 @@ def generate_serializable(the_serial_xml, opt):
             PRINT.info("Dictionary: Skipping %s because of external includes" % (f))
         else:
             # borrow source visitor pattern for serializable dictionary
-            if opt.dict_dir == None:
+            if opt.dict_dir is None:
                 PRINT.info("Dictionary output directory not specified!")
                 raise OSError
             os.environ["DICT_DIR"] = opt.dict_dir
@@ -1560,7 +1560,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         "\\", "/"
     )
     # if path to substitute is specified, replace with build root
-    if subst_path_local != None:
+    if subst_path_local is not None:
         full_path = full_path.replace(subst_path_local, "$(BUILD_ROOT)")
 
     # print("sub: %s\ndep_file: %s\ntdir: %s\ntfile: %s\nfp: %s"%(subst_path_local,filename,target_directory,target_file_local,full_path))
@@ -1607,7 +1607,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
     # write dependencies
     for include in file_list:
         # print("include %s\n"%include)
-        if subst_path_local != None:
+        if subst_path_local is not None:
             full_path = "$(BUILD_ROOT)/" + include.replace("\\", "/")
         else:
             PRINT.info(
@@ -1669,7 +1669,7 @@ def main():
     log_level_dict["ERROR"] = logging.ERROR
     log_level_dict["CRITICAL"] = logging.CRITICAL
 
-    if log_level_dict[log_level] == None:
+    if log_level_dict[log_level] is None:
         stdout_enable = False
     else:
         stdout_enable = True
@@ -1757,7 +1757,7 @@ def main():
             PRINT.info("Invalid XML found...this format not supported")
             ERROR = True
 
-        if opt.dependency_file != None:
+        if opt.dependency_file is not None:
             if opt.build_root_flag:
                 generate_dependency_file(
                     opt.dependency_file,

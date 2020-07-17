@@ -27,7 +27,7 @@ class DictTypeConverter:
 
             for (mname, mval, mcomment) in t[1]:
                 # check for member value
-                if mval != None:
+                if mval is not None:
                     curr_memb_val = int(mval)
                 type_string += '"%s":%d,' % (mname, curr_memb_val)
                 curr_memb_val += 1

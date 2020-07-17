@@ -114,7 +114,7 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
             # Open file for writting here...
             DEBUG.info("Open file: %s" % filename)
             self.__fp = open(filename, "w")
-            if self.__fp == None:
+            if self.__fp is None:
                 raise Exception("Could not open %s file.") % filename
             DEBUG.info("Completed")
         else:

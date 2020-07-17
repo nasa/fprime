@@ -261,7 +261,7 @@ if __name__ == "__main__":
 
     status = cmd_dict_enum_size_check(filename, True)
 
-    if status == None:
+    if status is None:
         print("Error perform dictionary enumeration check.")
         sys.exit(-1)
 

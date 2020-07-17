@@ -363,7 +363,7 @@ class TopoFactory:
             if id > highest_ID:
                 highest_ID = id
 
-        if highest_ID != None:
+        if highest_ID is not None:
             return highest_ID + 1
 
     def __compute_component_ID_amount(self, comp_xml):
@@ -393,12 +393,12 @@ class TopoFactory:
         @return: List of tuples of form (instance name, base id, window size)
         """
         # Assign the assembly baseId and window size or use default if none exists
-        if assembly_base_id == None:
+        if assembly_base_id is None:
             assembly_base_id = self.__config.get("assembly", "baseID")
             PRINT.info(
                 "WARNING: No assembly base Id set, defaulting to %s" % assembly_base_id
             )
-        if assembly_window == None:
+        if assembly_window is None:
             assembly_window = self.__config.get("assembly", "window")
             PRINT.info(
                 "WARNING: No assembly base Id window size set, defaulting to %s"
@@ -426,7 +426,7 @@ class TopoFactory:
 
         for inst in instances:
             t = self.__set_base_id_list(id, window, inst)
-            if inst.get_base_id() == None:
+            if inst.get_base_id() is None:
                 initial_comp_without_ID.append(t)
             else:
                 initial_comp_with_ID.append(t)
@@ -470,10 +470,10 @@ class TopoFactory:
             ):
                 break
 
-            if len(initial_comp_with_ID) > 0 and with_ID_obj == None:
+            if len(initial_comp_with_ID) > 0 and with_ID_obj is None:
                 with_ID_obj = initial_comp_with_ID.pop(0)
 
-            if len(initial_comp_without_ID) > 0 and without_ID_obj == None:
+            if len(initial_comp_without_ID) > 0 and without_ID_obj is None:
                 without_ID_obj = initial_comp_without_ID.pop(0)
 
             next_poss_id = (
@@ -481,13 +481,13 @@ class TopoFactory:
             )  # The next possible id that can be taken
 
             if (
-                with_ID_obj == None and without_ID_obj != None
+                with_ID_obj is None and without_ID_obj is not None
             ):  # If there is nothing in the with ID list, but items exist in the without ID list
                 without_ID_obj[1] = next_poss_id
                 out_base_ids_list.append(without_ID_obj)
                 without_ID_obj = None
             elif (
-                with_ID_obj != None and without_ID_obj == None
+                with_ID_obj is not None and without_ID_obj is None
             ):  # If items exist in the with  ID list but don't in the without ID list
                 out_base_ids_list.append(with_ID_obj)
                 with_ID_obj = None
@@ -576,7 +576,7 @@ class TopoFactory:
         If base_id_list is None, the routing prints the header
         """
 
-        if base_id_tuple == None:
+        if base_id_tuple is None:
             print_item = " | ".join(
                 header[1] * " " + header[0] + header[1] * " "
                 for header in self.__table_info
@@ -586,7 +586,7 @@ class TopoFactory:
 
         else:
             ns = ""
-            if base_id_tuple[3].get_base_max_id_window() == None:
+            if base_id_tuple[3].get_base_max_id_window() is None:
                 ns = " (D)"
             data_row = []
             data_row.append(str(base_id_tuple[0]))
@@ -640,7 +640,7 @@ class TopoFactory:
             a) if it is greater, use the base ID from the instance
             b) if it is not greater, add the base ID from the instance and the base ID from the topology model and use the sum
         """
-        if inst.get_base_id() == None:
+        if inst.get_base_id() is None:
             b = None
         else:
             if id > abs(int(inst.get_base_id())):
@@ -667,7 +667,7 @@ class TopoFactory:
         3) If the calculated window size is larger than the new window size, thrown an error
         """
 
-        if inst.get_base_id_window() != None:
+        if inst.get_base_id_window() is not None:
             w = abs(int(inst.get_base_id_window()))
             PRINT.info(
                 "{} instance reseting base id window range to instance specified size ({})".format(
@@ -734,16 +734,16 @@ def main():
         print("    Namespace: " + component.get_namespace())
         print("    Name: " + component.get_name())
         print("    Type: " + component.get_kind())
-        if component.get_comment() != None:
+        if component.get_comment() is not None:
             print("    Comment: " + component.get_comment())
         print("    Output Ports:")
         for port in component.get_ports():
             print("        Name: " + port.get_name())
             print("        Port Type: " + port.get_type())
             print("        Direction: " + port.get_direction())
-            if port.get_sync() != None:
+            if port.get_sync() is not None:
                 print("        Sync: " + port.get_sync())
-            if port.get_comment() != None:
+            if port.get_comment() is not None:
                 print("        Comment: " + port.get_comment())
             print("        Target Component: " + port.get_target_comp())
             print("        Target Port: " + port.get_target_port())

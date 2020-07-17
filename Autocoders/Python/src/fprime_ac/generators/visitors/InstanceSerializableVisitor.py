@@ -91,7 +91,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size != None:
+            elif size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -130,16 +130,16 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         enum_str_list = []
         for e in enum_list:
             # No value, No comment
-            if (e[1] == None) and (e[2] == None):
+            if (e[1] is None) and (e[2] is None):
                 s = "%s," % (e[0])
             # No value, With comment
-            elif (e[1] == None) and (e[2] != None):
+            elif (e[1] is None) and (e[2] is not None):
                 s = "{},  // {}".format(e[0], e[2])
             # With value, No comment
-            elif (e[1] != None) and (e[2] == None):
+            elif (e[1] is not None) and (e[2] is None):
                 s = "{} = {},".format(e[0], e[1])
             # With value and comment
-            elif (e[1] != None) and (e[2] != None):
+            elif (e[1] is not None) and (e[2] is not None):
                 s = "%s = %s,  // %s" % (e)
             else:
                 pass
@@ -170,7 +170,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         namespace = obj.get_namespace()
         dict_dir = os.environ["DICT_DIR"]
 
-        if namespace == None:
+        if namespace is None:
             output_dir = "%s/serializable/" % (dict_dir)
         else:
             output_dir = "{}/serializable/{}".format(
@@ -188,7 +188,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writting here...
         DEBUG.info("Open file: %s" % pyfile)
         self.__fp = open(pyfile, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open %s file.") % pyfile
         DEBUG.info("Completed")
 
@@ -240,7 +240,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
                     f, 0, "d", "s"
                 )
                 # check for an error
-                if format_string == None:
+                if format_string is None:
                     PRINT.info(
                         'Member %s in serializable %s had error processing format specifier "%s"'
                         % (n, c.name, f)

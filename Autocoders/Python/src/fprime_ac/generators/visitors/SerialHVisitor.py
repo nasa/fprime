@@ -94,7 +94,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size != None:
+            elif size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -133,16 +133,16 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         enum_str_list = []
         for e in enum_list:
             # No value, No comment
-            if (e[1] == None) and (e[2] == None):
+            if (e[1] is None) and (e[2] is None):
                 s = "%s," % (e[0])
             # No value, With comment
-            elif (e[1] == None) and (e[2] != None):
+            elif (e[1] is None) and (e[2] is not None):
                 s = "{},  // {}".format(e[0], e[2])
             # With value, No comment
-            elif (e[1] != None) and (e[2] == None):
+            elif (e[1] is not None) and (e[2] is None):
                 s = "{} = {},".format(e[0], e[1])
             # With value and comment
-            elif (e[1] != None) and (e[2] != None):
+            elif (e[1] is not None) and (e[2] is not None):
                 s = "%s = %s,  // %s" % (e)
             else:
                 pass
@@ -202,7 +202,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writting here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
@@ -258,7 +258,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         c = namespaceSerialH.namespaceSerialH()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -310,7 +310,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = finishSerialH.finishSerialH()
         c.name = obj.get_name()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")

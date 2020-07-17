@@ -114,7 +114,7 @@ def main():
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if not opts.build_root_overwrite == None:
+    if not opts.build_root_overwrite is None:
         set_build_roots(opts.build_root_overwrite)
     else:
         if ("BUILD_ROOT" in os.environ.keys()) == False:

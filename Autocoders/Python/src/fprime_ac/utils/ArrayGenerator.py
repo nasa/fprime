@@ -43,7 +43,7 @@ def open_file(name, type):
         filename = name + "ArrayAc." + type
     #
     fp = open(filename, "w")
-    if fp == None:
+    if fp is None:
         print("Could not open file %s" % filename)
         sys.exit(-1)
     return fp

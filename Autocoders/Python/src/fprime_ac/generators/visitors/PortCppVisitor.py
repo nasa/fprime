@@ -189,7 +189,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writting here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp == None:
+        if self.__fp is None:
             raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
@@ -214,7 +214,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # Added configurable override for includes for testing
         #
         if self.__config.get("includes", "port_include_path") == "None":
-            if relative_path != None:
+            if relative_path is not None:
                 c.port_include_path = relative_path
             else:
                 c.port_include_path = obj.get_namespace()
@@ -237,7 +237,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
         c = namespacePortCpp.namespacePortCpp()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -259,7 +259,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args = [a.get_name() for a in obj.get_args()]
         r = obj.get_return()
         # Include optional return type here...
-        if r != None:
+        if r is not None:
             return_type = r[0]
             if type(return_type) == type(tuple()):
                 return_type = return_type[0][1]
@@ -329,7 +329,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args_string = self._get_args_string(obj)
         #
         c.ret_flag = obj.get_return()
-        if c.ret_flag != None:
+        if c.ret_flag is not None:
             c.ret_flag = True
         else:
             c.ret_flag = False
@@ -341,7 +341,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate ending static code within files.
         """
         c = finishPortCpp.finishPortCpp()
-        if obj.get_namespace() == None:
+        if obj.get_namespace() is None:
             c.namespace_list = None
         else:
             c.namespace_list = obj.get_namespace().split("::")
@@ -372,7 +372,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         #
         r = obj.get_return()
         # Include optional return type here...
-        if r != None:
+        if r is not None:
             c.ret_flag = True
             return_type = r[0]
             if type(return_type) == type(tuple()):

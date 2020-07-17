@@ -124,7 +124,7 @@ def dumpObj(
         else:
             attrs.append((slot, attr))
     # If we still don't know object class, try these two approaches
-    if objclass == None:
+    if objclass is None:
         objclass = getattr(obj, "__class__").__name__
         # This seems a more reliable way to get class names.
         DEBUG.debug("Instance of class '" + str(objclass) + "' at second pass...")

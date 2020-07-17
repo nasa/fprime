@@ -102,7 +102,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         if len(obj.get_ids()) == 1:
             pyfile = "{}/{}.py".format(output_dir, obj.get_name())
             fd = open(pyfile, "w")
-            if fd == None:
+            if fd is None:
                 raise Exception("Could not open %s file." % pyfile)
             self.__fp.append(fd)
         else:
@@ -112,7 +112,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                 inst += 1
                 DEBUG.info("Open file: %s" % pyfile)
                 fd = open(pyfile, "w")
-                if fd == None:
+                if fd is None:
                     raise Exception("Could not open %s file." % pyfile)
                 DEBUG.info("Completed %s open" % pyfile)
                 self.__fp.append(fd)
@@ -166,7 +166,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                     type_name,
                     dontcare,
                 ) = DictTypeConverter.DictTypeConverter().convert(t, s)
-                if ser_import != None:
+                if ser_import is not None:
                     c.ser_import_list.append(ser_import)
                 # convert format specifier if necessary
                 if type_name == "enum":
@@ -174,7 +174,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                         c.format_string, arg_num, "d", "s"
                     )
                     # check for an error
-                    if format_string == None:
+                    if format_string is None:
                         PRINT.info(
                             "Event %s in component %s had error processing format specifier"
                             % (c.name, c.component)

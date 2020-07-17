@@ -87,7 +87,7 @@ class CompFactory:
         comp_kind = comp_obj.get_kind()
         comp_comment = comp_obj.get_comment()
         comp_modeler = comp_obj.get_modeler()
-        if comp_namespace == None:
+        if comp_namespace is None:
             comp_full_name = comp_name
         else:
             comp_full_name = comp_namespace + "::" + comp_name
@@ -297,7 +297,7 @@ class CompFactory:
             if (
                 (t not in interface_xml_list)
                 and (t.lower() != "serial")
-                and (port_obj.get_role() == None)
+                and (port_obj.get_role() is None)
             ):
                 PRINT.info(
                     "ERROR: Missing port type definition in component XML (name: %s, type: %s)"
@@ -350,7 +350,7 @@ class CompFactory:
                     port_obj.set_return(return_type, return_modifier)
                     # check some rules
                     # 1) No return values for async ports
-                    if (port_obj.get_sync() == "async") and (return_type != None):
+                    if (port_obj.get_sync() == "async") and (return_type is not None):
                         PRINT.info(
                             'ERROR: %s: Port "%s" cannot be asynchronous and have a return value'
                             % (
@@ -361,7 +361,7 @@ class CompFactory:
                         sys.exit(-1)
                     # 2) Serial ports can't have roles
                     if (port_obj.get_type() == "Serial") and (
-                        port_obj.get_role() != None
+                        port_obj.get_role() is not None
                     ):
                         PRINT.info(
                             'ERROR: %s: Port "%s" cannot have a role and be a serialized port'
