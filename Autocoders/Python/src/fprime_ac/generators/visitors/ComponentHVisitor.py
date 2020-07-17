@@ -10,9 +10,14 @@
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
-
+import sys
 from fprime_ac.generators.visitors import ComponentVisitorBase
-from fprime_ac.generators.templates.component import hpp
+
+try:
+    from fprime_ac.generators.templates.component import hpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 
 class ComponentHVisitor(ComponentVisitorBase.ComponentVisitorBase):

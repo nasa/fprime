@@ -178,8 +178,8 @@ class XmlComponentParser:
                 try:
                     dict_file = locate_build_root(comp_tag.text)
                 except (BuildRootMissingException, BuildRootCollisionException) as bre:
-                    stri = "ERROR: Could not find specified dictionary XML file. {}".format(
-                        comp_tag.text, str(bre),
+                    stri = "ERROR: Could not find specified dictionary XML file. {}. Error: {}".format(
+                        comp_tag.text, str(bre)
                     )
                     raise OSError(stri)
                 PRINT.info("Reading external dictionary %s" % dict_file)

@@ -205,12 +205,6 @@ class XmlPortsParser:
             del a
         del self.__port
 
-    def is_interface(self):
-        """
-        Return true if interface tag found, else return false
-        """
-        return self.__in_port
-
     def get_xml_filename(self):
         """
         Return the original XML filename parsed.
@@ -338,29 +332,3 @@ class Arg:
 
     def set_type(self, type):
         self.__type = type
-
-
-if __name__ == "__main__":
-
-    xmlfile = "../../test/Msg1InterfaceAi.xml"
-
-    print("Ports XML parse test (%s)" % xmlfile)
-
-    xml_parser = XmlPortsParser(xmlfile)
-
-    interface = xml_parser.get_interface()
-    port_type_file_list = xml_parser.get_include_header_files()
-    args_list = xml_parser.get_args()
-
-    print(
-        "Namespace: %s Interface name: %s"
-        % (interface.get_namespace(), interface.get_name())
-    )
-    print("Interface comment:")
-    print(interface.get_comment())
-    print()
-    print("Args:")
-    for arg in args_list:
-        print("Name: {}, Type: {}".format(arg.get_name(), arg.get_type()))
-        print("Port comment:")
-        print(arg.get_comment())

@@ -372,12 +372,6 @@ def test_enum():
                             serial1_data[i],
                             serial2_data[i],
                             enum_dict[enum2_data[i]],
-                            enum_dict[enum1_data[i]]
-                            if (i % 2) + 1 == 1
-                            else enum_dict[enum2_data[i]],
-                            serial1_data[i],
-                            serial2_data[i],
-                            enum_dict[enum2_data[i]],
                         ),
                         timeout=3,
                     )
@@ -410,13 +404,7 @@ def test_enum():
                             else enum_dict[enum2_data[i]],
                             serial1_data[i],
                             serial2_data[i],
-                            enum_dict[enum2_data[i]],
-                            enum_dict[enum1_data[i]]
-                            if ((i + 1) % 2) + 1 == 1
-                            else enum_dict[enum2_data[i]],
-                            serial1_data[i],
-                            serial2_data[i],
-                            enum_dict[enum2_data[i]],
+                            enum2_literal_data[i],
                         ),
                         timeout=3,
                     )

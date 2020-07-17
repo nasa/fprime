@@ -1,4 +1,5 @@
 def Enum1():
+    # pylint: disable=E0602
     return DefaultEnumType(
         "Enum1",
         {

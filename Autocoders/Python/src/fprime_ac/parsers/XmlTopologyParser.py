@@ -211,8 +211,8 @@ class XmlTopologyParser:
             except BuildRootMissingException:
                 PRINT.info("WARNING: Could not find XML file: %s" % xml_file)
             except BuildRootCollisionException as bre:
-                stri = "ERROR: Could not find specified dictionary XML file. {}".format(
-                    xml_file, str(bre),
+                stri = "ERROR: Could not find specified dictionary XML file. {}. Error: {}".format(
+                    xml_file, str(bre)
                 )
                 raise OSError(stri)
             if os.path.exists(xml_file) == True:
@@ -258,10 +258,7 @@ class XmlTopologyParser:
 
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
-        if (
-            not validator_type in self.Config
-            or not validator_name in self.Config[validator_type]
-        ):
+        if not self.Config.has_option(validator_type, validator_name):
             msg = (
                 "XML Validator type "
                 + validator_type

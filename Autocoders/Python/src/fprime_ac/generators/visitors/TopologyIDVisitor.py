@@ -32,7 +32,11 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.topology import publicTopologyID
+try:
+    from fprime_ac.generators.templates.topology import publicTopologyID
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 # from fprime_ac.generators.templates import finishTopologyCpp
 #
@@ -105,7 +109,7 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
                     % xml_file
                 )
                 PRINT.info(msg)
-                raise
+                raise ValueError(msg)
 
             # Open file for writting here...
             DEBUG.info("Open file: %s" % filename)

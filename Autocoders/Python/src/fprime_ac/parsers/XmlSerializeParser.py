@@ -239,12 +239,6 @@ class XmlSerializeParser:
             n = h.hexdigest()
             self.__type_id = "0x" + n.upper()[-8:]
 
-    def is_serializable(self):
-        """
-        Return true if serializable tag found, else return false
-        """
-        return self.__in_serialize
-
     def get_typeid(self):
         """
         Return a generated type ID from contents of XML file.
@@ -298,21 +292,3 @@ class XmlSerializeParser:
         Returns a list of member (name, type, optional size, optional format, optional comment) needed.
         """
         return self.__members
-
-
-if __name__ == "__main__":
-    xmlfile = sys.argv[1]
-    print("Ports XML parse test (%s)" % xmlfile)
-    xml_parser = XmlSerializeParser(xmlfile)
-    print("Serializable: %s" % xml_parser.is_serializable())
-    print("File: %s" % xml_parser.get_xml_filename())
-    print("Namespace: %s" % xml_parser.get_namespace())
-    print("Name: %s" % xml_parser.get_name())
-    print("Comment: %s" % xml_parser.get_comment())
-    for i in xml_parser.get_include_header_files():
-        print("C Include: %s" % i)
-    for i in xml_parser.get_includes():
-        print("XML Include: %s" % i)
-    print("Members:")
-    for (n, t, c) in xml_parser.get_members():
-        print("Name: {}, Type: {}, Comment: {}".format(n, t, c))

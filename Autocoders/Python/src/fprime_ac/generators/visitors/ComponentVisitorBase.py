@@ -111,7 +111,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                     % xml_file
                 )
                 PRINT.info(msg)
-                raise
+                raise ValueError(msg)
         return filename
 
     def commandArgsStr(self):

@@ -365,7 +365,7 @@ class Packet:
             and it.m_data_type != "float"
             and it.m_data_type != "text"
         ):
-            self.err_msg("Invalid date type: '" + it.data_tyoe + "'")
+            self.err_msg("Invalid date type: '" + it.m_data_type + "'")
 
         it.m_constant_value = line[3]
         if it.m_data_type == "integer":

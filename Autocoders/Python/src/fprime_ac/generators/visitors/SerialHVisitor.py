@@ -33,15 +33,18 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.serialize import startSerialH
-from fprime_ac.generators.templates.serialize import includes1SerialH
-from fprime_ac.generators.templates.serialize import includes2SerialH
-from fprime_ac.generators.templates.serialize import namespaceSerialH
-from fprime_ac.generators.templates.serialize import publicSerialH
-from fprime_ac.generators.templates.serialize import protectedSerialH
-from fprime_ac.generators.templates.serialize import privateSerialH
-from fprime_ac.generators.templates.serialize import finishSerialH
-
+try:
+    from fprime_ac.generators.templates.serialize import startSerialH
+    from fprime_ac.generators.templates.serialize import includes1SerialH
+    from fprime_ac.generators.templates.serialize import includes2SerialH
+    from fprime_ac.generators.templates.serialize import namespaceSerialH
+    from fprime_ac.generators.templates.serialize import publicSerialH
+    from fprime_ac.generators.templates.serialize import protectedSerialH
+    from fprime_ac.generators.templates.serialize import privateSerialH
+    from fprime_ac.generators.templates.serialize import finishSerialH
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)

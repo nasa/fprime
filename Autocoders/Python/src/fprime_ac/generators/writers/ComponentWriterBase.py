@@ -109,7 +109,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
                     % xml_file
                 )
                 PRINT.info(msg)
-                raise
+                raise ValueError(msg)
         return filename
 
     def commandArgsStr(self):

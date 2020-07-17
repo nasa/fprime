@@ -12,6 +12,7 @@
 # ===============================================================================
 import logging
 import os
+import sys
 
 #
 # Python extention modules and custom interfaces
@@ -22,7 +23,12 @@ import os
 # from fprime_ac.utils import DiffAndRename
 
 from fprime_ac.generators.visitors import ComponentVisitorBase
-from fprime_ac.generators.templates.md import MdDocPage
+
+try:
+    from fprime_ac.generators.templates.md import MdDocPage
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")

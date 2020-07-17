@@ -161,8 +161,14 @@ def main():
     for inst in parsedTopology.get_instances():
         serializableFilenames = inst.get_comp_xml().get_serializable_type_files()
         for filename in serializableFilenames:
+            for build_root in get_build_roots():
+                if os.path.exists(os.path.join(build_root, filename)):
+                    break
+            else:
+                raise FileNotFoundError(os.path.join(build_root, filename))
+
             parsedSerializable = XmlSerializeParser.XmlSerializeParser(
-                BUILD_ROOT + "/" + filename
+                os.path.join(build_root, filename)
             )
             name = parsedSerializable.get_name()
             namespace = parsedSerializable.get_namespace()

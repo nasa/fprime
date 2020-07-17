@@ -10,9 +10,14 @@
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
-
+import sys
 from fprime_ac.generators.visitors import GTestVisitorBase
-from fprime_ac.generators.templates.gtest import hpp
+
+try:
+    from fprime_ac.generators.templates.gtest import hpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 
 class GTestHVisitor(GTestVisitorBase.GTestVisitorBase):

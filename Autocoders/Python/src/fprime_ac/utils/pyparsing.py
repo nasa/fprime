@@ -104,7 +104,7 @@ class _Constants:
     pass
 
 
-alphas = string.lowercase + string.uppercase
+alphas = string.ascii_letters
 nums = string.digits
 hexnums = nums + "ABCDEFabcdef"
 alphanums = alphas + nums
@@ -1184,7 +1184,7 @@ class Token(ParserElement):
     def setName(self, name):
         s = super().setName(name)
         self.errmsg = "Expected " + self.name
-        s.myException.msg = self.errmsg
+        self.myException.msg = self.errmsg
         return s
 
 
@@ -2717,7 +2717,7 @@ class Upcase(TokenConverter):
         )
 
     def postParse(self, instring, loc, tokenlist):
-        return list(map(string.upper, tokenlist))
+        return list(map(lambda token: token.upper(), tokenlist))
 
 
 class Combine(TokenConverter):
@@ -2823,7 +2823,7 @@ class OnlyOnce:
             return results
         raise ParseException(s, l, "")
 
-    def reset():
+    def reset(self):
         self.called = False
 
 

@@ -122,22 +122,11 @@ class Command:
         """
         return self.__comment
 
-    def get_ifcomment(self):
-        """
-        Return interface comment for the command.
-        """
-        return self.__if_comment
-
     def get_args(self):
         """
         Return a list of Arg objects for each argument.
         """
         return self.__arg_obj_list
-
-    def get_serial_includes(self):
-        """
-        """
-        return self.__incl_serial_list
 
     def get_component_name(self):
         return self.__component_name

@@ -35,9 +35,12 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.events import EventHeader
-from fprime_ac.generators.templates.events import EventBody
-
+try:
+    from fprime_ac.generators.templates.events import EventHeader
+    from fprime_ac.generators.templates.events import EventBody
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)

@@ -33,8 +33,11 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.html import HtmlChannelTablePage
-
+try:
+    from fprime_ac.generators.templates.html import HtmlChannelTablePage
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)

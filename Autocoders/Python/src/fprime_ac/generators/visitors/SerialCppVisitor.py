@@ -31,12 +31,16 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.serialize import includes1SerialCpp
-from fprime_ac.generators.templates.serialize import namespaceSerialCpp
-from fprime_ac.generators.templates.serialize import publicSerialCpp
+try:
+    from fprime_ac.generators.templates.serialize import includes1SerialCpp
+    from fprime_ac.generators.templates.serialize import namespaceSerialCpp
+    from fprime_ac.generators.templates.serialize import publicSerialCpp
 
-# from fprime_ac.generators.templates import privateSerialCpp
-from fprime_ac.generators.templates.serialize import finishSerialCpp
+    # from fprime_ac.generators.templates import privateSerialCpp
+    from fprime_ac.generators.templates.serialize import finishSerialCpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 from fprime_ac.utils.buildroot import (
     build_root_relative_path,

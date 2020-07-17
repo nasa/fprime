@@ -141,7 +141,7 @@ class Component:
         self.__parameter_obj_list = parameters
 
     def set_serializables(self, serializables):
-        self.__serializable_obj_list = serializable
+        self.__serializable_obj_list = serializables
 
     def set_xml_port_files(self, x):
         self.__xml_port_files = x

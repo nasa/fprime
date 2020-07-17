@@ -27,20 +27,19 @@ from fprime_ac.utils import ConfigManager
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
-from fprime_ac.utils.buildroot import (
-    build_root_relative_path,
-    BuildRootMissingException,
-)
 
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.port import includes1PortCpp
-from fprime_ac.generators.templates.port import namespacePortCpp
-from fprime_ac.generators.templates.port import publicPortCpp
-from fprime_ac.generators.templates.port import privatePortCpp
-from fprime_ac.generators.templates.port import finishPortCpp
-
+try:
+    from fprime_ac.generators.templates.port import includes1PortCpp
+    from fprime_ac.generators.templates.port import namespacePortCpp
+    from fprime_ac.generators.templates.port import publicPortCpp
+    from fprime_ac.generators.templates.port import privatePortCpp
+    from fprime_ac.generators.templates.port import finishPortCpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
@@ -185,7 +184,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                     % xml_file
                 )
                 PRINT.info(msg)
-                raise
+                raise ValueError(msg)
 
         # Open file for writting here...
         DEBUG.info("Open file: %s" % filename)

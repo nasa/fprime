@@ -37,9 +37,12 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.commands import CommandHeader
-from fprime_ac.generators.templates.commands import CommandBody
-
+try:
+    from fprime_ac.generators.templates.commands import CommandHeader
+    from fprime_ac.generators.templates.commands import CommandBody
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)

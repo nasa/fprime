@@ -267,8 +267,8 @@ class ModelParser:
         (e.g. msg_type_arg_dict['Msg type name'] => [(name,type,comment),(name,type,comment),...]
         """
         msg_type_arg_dict = dict()
-        port_instance_name_list = self._get_ports_list(obj)
-        args_dict = self._get_port_args_dict(obj)
+        port_instance_name_list = self.getPortsList(obj)
+        args_dict = self.getPortArgsDict(obj)
         #
         for msg_type in msg_types_list:
             for port in port_instance_name_list:

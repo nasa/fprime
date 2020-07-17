@@ -13,7 +13,12 @@
 import sys
 
 from fprime_ac.generators.writers import TestWriterBase
-from fprime_ac.generators.templates.test import test_main
+
+try:
+    from fprime_ac.generators.templates.test import test_main
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 
 class TestMainWriter(TestWriterBase.TestWriterBase):

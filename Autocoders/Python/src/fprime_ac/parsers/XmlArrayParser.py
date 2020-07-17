@@ -175,10 +175,7 @@ class XmlArrayParser:
 
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
-        if (
-            not validator_type in self.Config
-            or not validator_name in self.Config[validator_type]
-        ):
+        if not self.Config.has_option(validator_type, validator_name):
             msg = (
                 "XML Validator type "
                 + validator_type
@@ -258,16 +255,3 @@ class XmlArrayParser:
 
     def get_include_array_files(self):
         return self.__include_array_files
-
-
-if __name__ == "__main__":
-    xmlfile = sys.argv[1]
-    xml = XmlParser.XmlParser(xmlfile)
-    print("Type of XML is: %s" % xml())
-    print("Array XML parse test (%s)" % xmlfile)
-    xml_parser = XmlArrayParser(xmlfile)
-    print(
-        "Array name: %s, namespace: %s"
-        % (xml_parser.get_name(), xml_parser.get_namespace())
-    )
-    print("Size: {}, member type: {}".format(self.get_size(), self.get_type()))

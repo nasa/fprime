@@ -1,5 +1,6 @@
 import pytest
 import os
+import sys
 from lxml import etree
 
 """
@@ -33,7 +34,7 @@ class schema_test:
         self.__validate_file(self.__schema_path, "RNG")
 
         # Read schema file
-        relax_file_handler = file(self.__schema_path, "r")
+        relax_file_handler = open(self.__schema_path, "r")
 
         # Parse schema file
         relax_parsed = etree.parse(relax_file_handler)
@@ -65,7 +66,7 @@ class schema_test:
         Returns root tag assuming file path is correct
         """
         # Read schema file
-        handler = file(file_path, "r")
+        handler = open(file_path, "r")
 
         # Parse schema file
         parsed = etree.parse(handler)
@@ -153,13 +154,13 @@ class schema_test:
 
         if not xml_parsed:
             self.__validate_file(test_set[1], "XML")
-            xml_file_handler = file(test_set[1], "r")
+            xml_file_handler = open(test_set[1], "r")
             xml_parsed = etree.parse(xml_file_handler)
             xml_file_handler.close()
 
         if test_set[2]:
             with pytest.raises(test_set[2]) as excinfo:
-                self.__compiled.assertTrue(xml_parsed)
+                self.__compiled.assertValid(xml_parsed)
                 if excinfo:
                     print(
                         "Schema "
@@ -176,11 +177,11 @@ class schema_test:
                     print("File path - " + test_set[1])
                     print(excinfo)
                     print("\n")
-                    raise
+                    sys.exit(1)
 
         else:
             try:
-                self.__compiled.assertTrue(xml_parsed)
+                self.__compiled.assertValid(xml_parsed)
             except:
                 print(
                     "Schema "

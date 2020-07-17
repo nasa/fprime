@@ -21,14 +21,14 @@ class AbstractDictWriter:
 
     def __init__(self, model):
         """
-            @param cmd_tlm_data: Model containing all relevant data for template
-            """
+        @param cmd_tlm_data: Model containing all relevant data for template
+        """
         self.model = model
 
     def write(self):
         """
-            Method defined by inheriting class that writes dictionary data into a specific file
-            """
+        Method defined by inheriting class that writes dictionary data into a specific file
+        """
         raise NotImplementedError(
             "# DictWriter.write() - you must supply your own concrete implementation."
         )

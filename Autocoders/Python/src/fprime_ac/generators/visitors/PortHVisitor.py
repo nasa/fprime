@@ -33,14 +33,18 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.port import startPortH
-from fprime_ac.generators.templates.port import includes1PortH
-from fprime_ac.generators.templates.port import includes2PortH
-from fprime_ac.generators.templates.port import namespacePortH
-from fprime_ac.generators.templates.port import publicPortH
-from fprime_ac.generators.templates.port import protectedPortH
-from fprime_ac.generators.templates.port import privatePortH
-from fprime_ac.generators.templates.port import finishPortH
+try:
+    from fprime_ac.generators.templates.port import startPortH
+    from fprime_ac.generators.templates.port import includes1PortH
+    from fprime_ac.generators.templates.port import includes2PortH
+    from fprime_ac.generators.templates.port import namespacePortH
+    from fprime_ac.generators.templates.port import publicPortH
+    from fprime_ac.generators.templates.port import protectedPortH
+    from fprime_ac.generators.templates.port import privatePortH
+    from fprime_ac.generators.templates.port import finishPortH
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 #
 # Universal globals used within module go here.
@@ -235,7 +239,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                     % xml_file
                 )
                 PRINT.info(msg)
-                raise
+                raise ValueError(msg)
 
         # Open file for writting here...
         DEBUG.info("Open file: %s" % filename)

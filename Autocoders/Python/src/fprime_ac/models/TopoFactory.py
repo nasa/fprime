@@ -509,7 +509,8 @@ class TopoFactory:
         prev = None
         act_wind = 0
         for t in out_base_ids_list:
-            if prev != None:
+            if prev is not None:
+                # pylint: disable=E1136
                 act_wind = t[1] - prev[1]
             save_buffer = self.__print_base_id_table(prev, act_wind, save_buffer)
             prev = t

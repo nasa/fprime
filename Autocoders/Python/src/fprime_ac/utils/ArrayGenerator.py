@@ -16,8 +16,13 @@ import sys
 import os
 from fprime_ac.parsers import XmlParser
 from fprime_ac.parsers import XmlArrayParser
-from fprime_ac.generators.templates.arrays import array_cpp
-from fprime_ac.generators.templates.arrays import array_hpp
+
+try:
+    from fprime_ac.generators.templates.arrays import array_cpp
+    from fprime_ac.generators.templates.arrays import array_hpp
+except ImportError:
+    print("ERROR: generate python templates first")
+    sys.exit(-1)
 
 
 def open_file(name, type):

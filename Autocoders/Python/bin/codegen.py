@@ -435,10 +435,14 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
-            os.environ["DICT_DIR"] = os.path.join(
-                get_build_roots()[0], DEPLOYMENT, "py_dict"
-            )
-
+            for build_root in get_build_roots():
+                if not os.path.exists(os.path.join(build_root, DEPLOYMENT)):
+                    continue
+                os.environ["DICT_DIR"] = os.path.join(build_root, DEPLOYMENT, "py_dict")
+            else:
+                raise FileNotFoundError(
+                    "{} not found in any of: {}".format(DEPLOYMENT, get_build_roots())
+                )
             dict_dir = os.environ["DICT_DIR"]
             PRINT.info("Removing old instanced topology dictionaries in: %s", dict_dir)
             import shutil
@@ -1760,7 +1764,7 @@ def main():
                 generate_dependency_file(
                     opt.dependency_file,
                     xml_filename,
-                    get_build_roots()[0],
+                    list(get_build_roots())[0],
                     dependency_parser,
                     xml_type,
                 )

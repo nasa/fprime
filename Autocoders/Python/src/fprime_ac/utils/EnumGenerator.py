@@ -16,9 +16,14 @@ import sys
 import os
 from fprime_ac.parsers import XmlParser
 from fprime_ac.parsers import XmlEnumParser
-from fprime_ac.generators.templates.enums import enum_cpp
-from fprime_ac.generators.templates.enums import enum_hpp
-from fprime_ac.generators.templates.enums import enum_py
+
+try:
+    from fprime_ac.generators.templates.enums import enum_cpp
+    from fprime_ac.generators.templates.enums import enum_hpp
+    from fprime_ac.generators.templates.enums import enum_py
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 
 def open_file(name, type):

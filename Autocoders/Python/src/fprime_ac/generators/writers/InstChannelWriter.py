@@ -14,6 +14,7 @@
 #
 # Python standard modules
 #
+import sys
 import logging
 import os
 import datetime
@@ -34,9 +35,12 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.channels import ChannelHeader
-from fprime_ac.generators.templates.channels import ChannelBody
-
+try:
+    from fprime_ac.generators.templates.channels import ChannelHeader
+    from fprime_ac.generators.templates.channels import ChannelBody
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
@@ -62,7 +66,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
         """
         Constructor.
         """
-        super().__init__()
+        super().__init__(None)
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.__form = formatters.Formatters.getInstance()
         self.__form_comment = formatters.CommentFormatters()

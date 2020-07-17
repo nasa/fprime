@@ -33,8 +33,11 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.html import HtmlEventsTablePage
-
+try:
+    from fprime_ac.generators.templates.html import HtmlEventsTablePage
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)
@@ -150,15 +153,9 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Make a list of event args into a string
         """
-
-        def f(args):
-            def g(lst):
-                name = lst[0]
-                return name
-
-            return self.argsString(list(map(g, args)))
-
-        return f
+        return list(
+            map(lambda name, val: name, self.__model_parser.getEventArgsDict().items())
+        )
 
     def publicVisit(self, obj):
         """

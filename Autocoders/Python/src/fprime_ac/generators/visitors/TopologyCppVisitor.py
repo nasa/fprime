@@ -32,12 +32,12 @@ from fprime_ac.generators import formatters
 #
 # Import precompiled templates here
 #
-from fprime_ac.generators.templates.topology import includes1TopologyCpp
-from fprime_ac.generators.templates.topology import publicTopologyCpp
-from fprime_ac.utils.buildroot import (
-    build_root_relative_path,
-    BuildRootMissingException,
-)
+try:
+    from fprime_ac.generators.templates.topology import includes1TopologyCpp
+    from fprime_ac.generators.templates.topology import publicTopologyCpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
 
 # from fprime_ac.generators.templates import finishTopologyCpp
 #
@@ -111,7 +111,7 @@ class TopologyCppVisitor(AbstractVisitor.AbstractVisitor):
                     % xml_file
                 )
                 PRINT.info(msg)
-                raise
+                raise ValueError(msg)
             #
             # Get the partN, partition label from XML file name if there is one.
             # For no partition it is simply None.  This is used only for ARINC653
