@@ -153,9 +153,12 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Make a list of event args into a string
         """
-        return list(
-            map(lambda name, val: name, self.__model_parser.getEventArgsDict().items())
-        )
+        def f(args):
+            def g(lst):
+                name = lst[0]
+                return name
+            return self.argsString(list(map(g, args)))
+        return f
 
     def publicVisit(self, obj):
         """
