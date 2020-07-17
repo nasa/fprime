@@ -249,7 +249,6 @@ def test_files_matching_pattern(pattern):
 
 
 if __name__ == "__main__":
-    import datetime
     import fnmatch
 
     data = """

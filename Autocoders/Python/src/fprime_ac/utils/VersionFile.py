@@ -58,8 +58,6 @@ def VersionFile(filename, vtype="copy"):
 
 
 if __name__ == "__main__":
-    import os
-
     # Create a dummy file 'test.txt'
     tfn = "test.txt"
     open(tfn, "w").close()

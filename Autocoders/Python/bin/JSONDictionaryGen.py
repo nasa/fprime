@@ -19,10 +19,7 @@ from fprime_ac.parsers import XmlSerializeParser
 from fprime_ac.utils import Logger
 from fprime_ac.utils.buildroot import (
     get_build_roots,
-    set_build_roots,
-    locate_build_root,
-    BuildRootMissingException,
-    BuildRootCollisionException,
+    set_build_roots
 )
 
 # Version label for now

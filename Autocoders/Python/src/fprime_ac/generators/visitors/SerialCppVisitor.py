@@ -42,11 +42,6 @@ except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
 
-from fprime_ac.utils.buildroot import (
-    build_root_relative_path,
-    BuildRootMissingException,
-)
-
 #
 # Universal globals used within module go here.
 # (DO NOT USE MANY!)

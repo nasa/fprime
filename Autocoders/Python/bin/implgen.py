@@ -41,8 +41,6 @@ from fprime_ac.utils.buildroot import (
     get_build_roots,
     set_build_roots,
     search_for_file,
-    BuildRootMissingException,
-    BuildRootCollisionException,
 )
 
 # Generators to produce the code must exist. Check her by importing and assserting

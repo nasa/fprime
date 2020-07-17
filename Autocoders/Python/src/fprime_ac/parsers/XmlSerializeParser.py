@@ -24,7 +24,6 @@ import hashlib
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import (
     FprimeXmlException,
-    FprimeRngXmlValidationException,
 )
 from fprime_ac.utils.buildroot import (
     locate_build_root,

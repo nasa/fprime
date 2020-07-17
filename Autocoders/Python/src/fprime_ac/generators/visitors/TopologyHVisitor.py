@@ -39,12 +39,6 @@ except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
 
-from fprime_ac.utils.buildroot import (
-    build_root_relative_path,
-    get_nearest_build_root,
-    BuildRootMissingException,
-)
-
 # from fprime_ac.generators.templates import finishTopologyCpp
 #
 # Universal globals used within module go here.
