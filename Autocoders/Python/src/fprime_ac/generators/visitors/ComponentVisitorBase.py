@@ -28,9 +28,7 @@ from fprime_ac.models import ModelParser
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.generators import formatters
 
-from fprime_ac.utils.buildroot import (
-    get_nearest_build_root,
-)
+from fprime_ac.utils.buildroot import get_nearest_build_root
 
 #
 # Global logger init. below.

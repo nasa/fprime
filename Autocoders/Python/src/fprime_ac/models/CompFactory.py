@@ -20,7 +20,6 @@ import sys
 import logging
 
 
-
 from fprime_ac.models import Component
 from fprime_ac.models import Port
 from fprime_ac.models import Command
