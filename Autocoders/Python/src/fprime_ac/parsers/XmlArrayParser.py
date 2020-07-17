@@ -23,7 +23,6 @@ import hashlib
 from fprime_ac.utils import ConfigManager
 from lxml import etree
 from lxml import isoschematron
-from fprime_ac.parsers import XmlParser
 from fprime_ac.utils.exceptions import (
     FprimeXmlException,
     FprimeRngXmlValidationException,

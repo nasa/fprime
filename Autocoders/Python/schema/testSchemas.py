@@ -34,7 +34,7 @@ class schema_test:
         self.__validate_file(self.__schema_path, "RNG")
 
         # Read schema file
-        relax_file_handler = open(self.__schema_path, "r")
+        relax_file_handler = open(self.__schema_path)
 
         # Parse schema file
         relax_parsed = etree.parse(relax_file_handler)
@@ -66,7 +66,7 @@ class schema_test:
         Returns root tag assuming file path is correct
         """
         # Read schema file
-        handler = open(file_path, "r")
+        handler = open(file_path)
 
         # Parse schema file
         parsed = etree.parse(handler)
@@ -154,7 +154,7 @@ class schema_test:
 
         if not xml_parsed:
             self.__validate_file(test_set[1], "XML")
-            xml_file_handler = open(test_set[1], "r")
+            xml_file_handler = open(test_set[1])
             xml_parsed = etree.parse(xml_file_handler)
             xml_file_handler.close()
 

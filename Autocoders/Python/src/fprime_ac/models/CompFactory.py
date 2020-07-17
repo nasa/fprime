@@ -19,10 +19,7 @@
 import sys
 import logging
 
-from fprime_ac.utils import Logger
 
-from fprime_ac.parsers import XmlComponentParser
-from fprime_ac.parsers import XmlPortsParser
 
 from fprime_ac.models import Component
 from fprime_ac.models import Port

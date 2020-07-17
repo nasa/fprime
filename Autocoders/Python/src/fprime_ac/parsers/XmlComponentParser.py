@@ -39,7 +39,6 @@ except ImportError:
 # from __builtin__ import None
 
 # For Python determination
-import six
 
 #
 # Python extension modules and custom interfaces

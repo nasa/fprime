@@ -9,7 +9,7 @@
 # conditional compilation code.
 
 import os
-from .pyparsing import *
+from .pyparsing import Forward, Literal, Optional, Word, ZeroOrMore, alphas, cStyleComment, nums, restOfLine
 
 # Constants
 comma = Literal(",").suppress()

@@ -71,7 +71,7 @@ def write_tester_lines(fileopen, section_type):
     Write test cases inside "fileopen" at whatever location
     "fileopen" is currently pointing to
     """
-    testgen_dir = os.path.join("Autocoders", "Python", "test", "testgen")
+    testdir = os.path.join("Autocoders", "Python", "test", "testgen")
     if section_type == "TESTER_METHODS":
         # Test case method initializations found in local file
         with open(
