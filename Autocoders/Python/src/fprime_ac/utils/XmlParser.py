@@ -376,7 +376,7 @@ class Parser:
                     DEBUG.debug(
                         "duplicate %s for %d time" % (childName, found[childName])
                     )
-                except:
+                except KeyError:
                     found[childName] = 1
                     DEBUG.debug("first %s" % childName)
             else:

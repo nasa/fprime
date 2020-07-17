@@ -229,7 +229,7 @@ class TopoFactory:
         """
         try:
             out = int(float(id_string))
-        except:
+        except TypeError, ValueError:
             out = int(id_string, 16)
 
         return out

@@ -65,12 +65,8 @@ def ParseNumDefine(defname, filename, loadfile=True):
 
         fd = open(filename)
 
-        try:
-            data = fd.read()
-        except:
-            raise OSError("%r: error reading file." % filename)
-        else:
-            fd.close()
+        data = fd.read()
+        fd.close()
 
     else:
         # The file is already in memory. We just need to get
@@ -161,12 +157,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
 
         fd = open(filename)
 
-        try:
-            data = fd.read()
-        except:
-            raise OSError("%r: error reading file." % filename)
-        else:
-            fd.close()
+        data = fd.read()
+        fd.close()
 
     else:
         # The file is already in memory.  We just need to get

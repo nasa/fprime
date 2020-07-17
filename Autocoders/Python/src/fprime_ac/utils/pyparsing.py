@@ -1426,7 +1426,7 @@ class Word(Token):
                 )
             try:
                 self.re = re.compile(self.reString)
-            except:
+            except re.error, TypeError:
                 self.re = None
 
     def parseImpl(self, instring, loc, doActions=True):
@@ -1474,7 +1474,7 @@ class Word(Token):
     def __str__(self):
         try:
             return super().__str__()
-        except:
+        except AttributeError:
             pass
 
         if self.strRepr is None:
@@ -1550,7 +1550,7 @@ class Regex(Token):
     def __str__(self):
         try:
             return super().__str__()
-        except:
+        except AttributeError:
             pass
 
         if self.strRepr is None:
@@ -1699,7 +1699,7 @@ class QuotedString(Token):
     def __str__(self):
         try:
             return super().__str__()
-        except:
+        except AttributeError:
             pass
 
         if self.strRepr is None:
@@ -1765,7 +1765,7 @@ class CharsNotIn(Token):
     def __str__(self):
         try:
             return super().__str__()
-        except:
+        except AttributeError:
             pass
 
         if self.strRepr is None:
@@ -2021,7 +2021,7 @@ class ParseExpression(ParserElement):
     def __str__(self):
         try:
             return super().__str__()
-        except:
+        except AttributeError:
             pass
 
         if self.strRepr is None:
@@ -2400,7 +2400,7 @@ class ParseElementEnhance(ParserElement):
     def __str__(self):
         try:
             return super().__str__()
-        except:
+        except AttributeError:
             pass
 
         if self.strRepr is None and self.expr is not None:

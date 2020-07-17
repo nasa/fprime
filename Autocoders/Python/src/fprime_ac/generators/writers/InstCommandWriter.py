@@ -254,7 +254,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c.mnemonic = fname
                 try:
                     c.opcode = hex(int(float(obj.get_base_opcode())) + instance_obj[1])
-                except:
+                except ValueError, TypeError:
                     c.opcode = hex(int(obj.get_base_opcode(), 16) + instance_obj[1])
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
@@ -301,7 +301,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
 
                 try:
                     c.opcode = hex(int(float(obj.get_base_setop())) + instance_obj[1])
-                except:
+                except ValueError, TypeError:
                     c.opcode = hex(int(obj.get_base_setop(), 16) + instance_obj[1])
 
                 c.description = obj.get_comment()
@@ -344,7 +344,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
 
                 try:
                     c.opcode = hex(int(float(obj.get_base_saveop())) + instance_obj[1])
-                except:
+                except ValueError, TypeError:
                     c.opcode = hex(int(obj.get_base_saveop(), 16) + instance_obj[1])
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()

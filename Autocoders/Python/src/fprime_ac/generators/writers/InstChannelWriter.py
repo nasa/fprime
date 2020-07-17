@@ -185,7 +185,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
                 )
             try:
                 c.id = hex(instance_obj[1] + int(float(obj.get_ids()[0])))
-            except:
+            except ValueError, TypeError:
                 c.id = hex(instance_obj[1] + int(obj.get_ids()[0], 16))
 
             c.description = obj.get_comment()
