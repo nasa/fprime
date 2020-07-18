@@ -245,7 +245,7 @@ class IpHandler(object):
             except socket.error as exc:
                 self.logger.warning(
                     "Failed to open socket at %s:%d, retrying: %s: %s",
-                    (self.address, self.port, type(exc).__name__, str(exc)),
+                    self.address, self.port, type(exc).__name__, str(exc)
                 )
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()

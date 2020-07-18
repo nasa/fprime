@@ -142,7 +142,8 @@ class EncodingDecoding(object):
         Registers a history with the standard pipeline.
         :param consumer: consumer of packets
         """
-        self.command_subscribers.append(consumer)
+        if self.packet_decoder is not None:
+            self.packet_decoder.append(consumer)
 
     def deregister_packet_consumer(self, consumer):
         """
