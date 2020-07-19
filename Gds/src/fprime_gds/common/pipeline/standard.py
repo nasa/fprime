@@ -21,7 +21,7 @@ import fprime_gds.common.logger.data_logger
 from . import dictionaries, encoding, files, histories
 
 
-class StandardPipeline(object):
+class StandardPipeline:
     """
     Class used to encapsulate all of the components of a standard pipeline. The life-cycle of this class follows the
     basic steps:

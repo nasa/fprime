@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import re
 from datetime import datetime, timedelta
 
@@ -7,7 +5,7 @@ from fprime_gds.common.data_types import exceptions as gseExceptions
 from fprime_gds.common.models.common.command import Descriptor
 
 
-class SeqFileParser(object):
+class SeqFileParser:
     def parse(self, filename):
         """
         Generator that parses an input sequence file and returns a tuple
@@ -190,7 +188,7 @@ class SeqFileParser(object):
             return descriptor, seconds, useconds
 
         # Open the sequence file and parse each line:
-        with open(filename, "r") as inputFile:
+        with open(filename) as inputFile:
             for i, line in enumerate(inputFile):
                 line = line.strip()
                 # ignore blank lines and comments

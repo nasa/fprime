@@ -6,7 +6,6 @@ GDS CLI uses
 import pytest
 
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
-import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime.common.models.serialize import time_type
 from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.templates.event_template import EventTemplate

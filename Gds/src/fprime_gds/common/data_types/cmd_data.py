@@ -9,7 +9,6 @@ argument values.
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 from copy import deepcopy
 
@@ -205,5 +204,5 @@ class CommandArgumentsException(Exception):
         """
         Handle a list of errors as an exception.
         """
-        super(CommandArgumentsException, self).__init__(" ".join(errors))
+        super().__init__(" ".join(errors))
         self.errors = errors

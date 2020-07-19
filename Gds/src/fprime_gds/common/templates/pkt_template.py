@@ -10,7 +10,6 @@ describe the packet with ID 5 and channels A, B, and C in that order.
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
@@ -36,8 +35,8 @@ class PktTemplate(data_template.DataTemplate):
         if not type(pkt_id) == type(int()):
             raise TypeMismatchException(type(int()), type(pkt_id))
 
-        if not type(pkt_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(pkt_name))
+        if not type(pkt_name) == type(""):
+            raise TypeMismatchException(type(""), type(pkt_name))
 
         if not type(ch_temp_list) == type(list()):
             raise TypeMismatchException(type(list()), type(ch_temp_list))

@@ -28,7 +28,7 @@ class ArgItemComboBox(wx.Panel):
         self.m_argWindow = wx.ComboBox(
             self,
             wx.ID_ANY,
-            u"Combo!",
+            "Combo!",
             wx.DefaultPosition,
             wx.DefaultSize,
             combo_options,
@@ -86,7 +86,7 @@ class ComboEnumValidator(wx.Validator):
         comboBox = self.GetWindow()
         text = comboBox.GetStringSelection()
 
-        if type(text) != unicode or text == u"":
+        if type(text) != unicode or text == "":
             wx.MessageBox(
                 "You must select an Enum value from the dropdown menu to continue",
                 "Error",

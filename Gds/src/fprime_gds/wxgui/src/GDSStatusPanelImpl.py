@@ -1,7 +1,3 @@
-from __future__ import absolute_import
-
-import binascii
-
 import wx
 
 from . import GDSStatusPanelGUI

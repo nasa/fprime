@@ -6,7 +6,6 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from fprime_gds.common.templates import cmd_template
 
@@ -31,7 +30,7 @@ class CmdPyLoader(python_loader.PythonLoader):
         Returns:
             An initialized loader object
         """
-        super(CmdPyLoader, self).__init__()
+        super().__init__()
 
     def construct_dicts(self, path):
         """

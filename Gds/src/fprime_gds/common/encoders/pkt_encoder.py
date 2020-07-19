@@ -36,7 +36,6 @@ Serialized Packet format:
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from .encoder import Encoder
 from fprime_gds.common.utils.data_desc_type import DataDescType
@@ -57,7 +56,7 @@ class PktEncoder(Encoder):
         Returns:
             An initialized PktEncoder object
         """
-        super(PktEncoder, self).__init__(config)
+        super().__init__(config)
 
         self.len_obj = self.config.get_type("msg_len")
         self.desc_obj = self.config.get_type("msg_desc")

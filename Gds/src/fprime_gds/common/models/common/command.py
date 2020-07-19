@@ -3,7 +3,6 @@ Created on Jan 5, 2015
 
 @author: tcanham
 """
-from __future__ import print_function
 
 import copy
 from enum import Enum
@@ -24,7 +23,7 @@ from fprime.common.models.serialize.u32_type import U32Type
 Descriptor = Enum(value="Descriptor", names="ABSOLUTE RELATIVE")
 
 
-class Command(object):
+class Command:
     """
     classdocs
     """
@@ -46,27 +45,27 @@ class Command(object):
 
         ## Make sure correct types are passed
 
-        if not type(component) == type(str()):
-            raise TypeMismatchException(type(str()), type(component))
+        if not type(component) == type(""):
+            raise TypeMismatchException(type(""), type(component))
 
-        if not type(mnemonic) == type(str()):
-            raise TypeMismatchException(type(str()), type(mnemonic))
+        if not type(mnemonic) == type(""):
+            raise TypeMismatchException(type(""), type(mnemonic))
 
         if not type(opcode) == type(int()):
             raise TypeMismatchException(type(int()), type(opcode))
 
-        if not type(description) == type(str()):
-            raise TypeMismatchException(type(str()), type(description))
+        if not type(description) == type(""):
+            raise TypeMismatchException(type(""), type(description))
 
         if not type(arguments) == type(list()):
             raise TypeMismatchException(type(list()), type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(str()):
+            if not type(argname) == type(""):
                 raise TypeMismatchException(type(int()), type(argname))
             #
-            if not type(argdesc) == type(str()):
+            if not type(argdesc) == type(""):
                 raise TypeMismatchException(type(int()), type(argdesc))
             #
             if not issubclass(type(argtype), type(BaseType())):
@@ -146,8 +145,8 @@ class Command(object):
         @param arg_type: object type to store arugment value in.
         """
         ### double check argument types
-        if not type(arg_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(arg_name))
+        if not type(arg_name) == type(""):
+            raise TypeMismatchException(type(""), type(arg_name))
 
         if not issubclass(type(arg_type), type(BaseType())):
             raise TypeMismatchException(type(BaseType()), type(arg_type))

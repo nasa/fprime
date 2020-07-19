@@ -178,7 +178,6 @@ class cmd_predicate(predicates.predicate):
         A predicate for specifying a CmdData object from data_types.cmd_data.
         This predicate can be used to search a history.
         """
-        pass
 
     def __call__(self, cmd):
         """

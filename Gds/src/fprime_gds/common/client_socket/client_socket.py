@@ -1,9 +1,7 @@
 # TODO documentation
-from __future__ import print_function
 
 import select
 import socket
-import sys
 import threading
 
 from fprime.constants import DATA_ENCODING
@@ -47,8 +45,7 @@ class ThreadedTCPSocketClient(DataHandler):
         :param string_data: data in string format
         :return: data in bytes format
         """
-        if sys.version_info >= (3, 0):
-            return string_data.encode(DATA_ENCODING)
+        return string_data.encode(DATA_ENCODING)
         return string_data
 
     def get_data_string(self, bytes_data):
@@ -57,8 +54,7 @@ class ThreadedTCPSocketClient(DataHandler):
         :param bytes_data: data in bytes format
         :return: data in string format
         """
-        if sys.version_info >= (3, 0):
-            return bytes_data.decode(DATA_ENCODING)
+        return bytes_data.decode(DATA_ENCODING)
         return bytes_data
 
     def register_distributor(self, distributor):

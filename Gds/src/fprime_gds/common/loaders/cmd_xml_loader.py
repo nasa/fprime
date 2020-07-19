@@ -6,7 +6,6 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from fprime_gds.common.data_types import exceptions
 from fprime_gds.common.templates.cmd_template import CmdTemplate

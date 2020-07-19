@@ -16,7 +16,7 @@ from fprime.common.models.serialize import time_type
 from fprime_gds.common.templates import data_template
 
 
-class SysData(object):
+class SysData:
     """
     The SysData class defines the interface for system data classes which are
     for specific data readings/events

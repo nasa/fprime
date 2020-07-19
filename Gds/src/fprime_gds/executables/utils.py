@@ -22,7 +22,7 @@ class ProcessNotStableException(Exception):
 
     def __init__(self, name, code, lifespan):
         """ Constructor to help with messages"""
-        super(ProcessNotStableException, self).__init__(
+        super().__init__(
             "{} stopped with code {} sooner than {} seconds".format(
                 name, code, lifespan
             )
@@ -71,7 +71,7 @@ def register_process_assassin(process, log=None):
         try:
             if log is not None:
                 log.close()
-        except (KeyboardInterrupt, OSError, InterruptedError, IOError):
+        except (KeyboardInterrupt, OSError, InterruptedError):
             pass
 
     atexit.register(assassin)
@@ -96,7 +96,7 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
         if logfile is not None:
             print("[INFO] Log File: {}".format(logfile))
             file_handler = open(logfile, "wb", 0)
-    except IOError as exc:
+    except OSError as exc:
         raise AppWrapperException(
             "Failed to open: {} with error {}.".format(logfile, str(exc))
         )

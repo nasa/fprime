@@ -1,5 +1,4 @@
 # TODO Documentation
-from __future__ import absolute_import
 
 import wx
 from fprime_gds.common.data_types.event_data import EventData
@@ -34,7 +33,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
         self.EventLogDataListCtl.AppendTextColumn("Name", 1, width=150)
         self.EventLogDataListCtl.AppendTextColumn("ID", 2)
         self.EventLogDataListCtl.AppendTextColumn("Severity", 3, width=110)
-        self.EventLogDataListCtl.AppendTextColumn(u"Message", 4)
+        self.EventLogDataListCtl.AppendTextColumn("Message", 4)
         self.EventLogSeverityComboBox.Append("")
         for i in EventSeverity:
             self.EventLogSeverityComboBox.Append(i.name)
@@ -145,7 +144,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
             )
 
         menu = wx.Menu()
-        cpy = menu.Append(self.copy_context_id, "copy")
+        menu.Append(self.copy_context_id, "copy")
 
         self.PopupMenu(menu)
         menu.Destroy()
@@ -156,7 +155,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
 
     def onEventLogApplyFilterButtonClick(self, event):
         search_term = self.EventLogSeachKeywordTextCtl.GetLineText(0)
-        if search_term == u"":
+        if search_term == "":
             search_term = None
         try:
             severity = EventSeverity[self.EventLogSeverityComboBox.GetStringSelection()]

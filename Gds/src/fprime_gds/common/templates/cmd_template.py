@@ -8,7 +8,6 @@ Instances of this class describe a specific command type.
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 import copy
 
@@ -37,27 +36,27 @@ class CmdTemplate(data_template.DataTemplate):
             description: (Optional) Description of the cmd (string)
         """
         # Make sure correct types are passed
-        if not type(component) == type(str()):
-            raise TypeMismatchException(type(str()), type(component))
+        if not type(component) == type(""):
+            raise TypeMismatchException(type(""), type(component))
 
-        if not type(mnemonic) == type(str()):
-            raise TypeMismatchException(type(str()), type(mnemonic))
+        if not type(mnemonic) == type(""):
+            raise TypeMismatchException(type(""), type(mnemonic))
 
         if not type(opcode) == type(int()):
             raise TypeMismatchException(type(int()), type(opcode))
 
-        if description is not None and not type(description) == type(str()):
-            raise TypeMismatchException(type(str()), type(description))
+        if description is not None and not type(description) == type(""):
+            raise TypeMismatchException(type(""), type(description))
 
         if not type(arguments) == type(list()):
             raise TypeMismatchException(type(list()), type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(str()):
+            if not type(argname) == type(""):
                 raise TypeMismatchException(type(int()), type(argname))
             #
-            if argdesc is not None and not type(argdesc) == type(str()):
+            if argdesc is not None and not type(argdesc) == type(""):
                 raise TypeMismatchException(type(int()), type(argdesc))
             #
             if not issubclass(type(argtype), type(BaseType())):

@@ -27,7 +27,7 @@ from fprime_gds.common.files.helpers import (
 )
 
 
-class UplinkQueue(object):
+class UplinkQueue:
     """
     Handles queuing of files to send to the uplinker. This offloads the work of determining when done, and what to do
     while waiting. It also owns the thread that starts uplink. This thread watches for the current uplink to finish, and

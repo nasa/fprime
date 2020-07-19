@@ -9,7 +9,6 @@ to the correct log files and destination filse
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 import logging
 import os

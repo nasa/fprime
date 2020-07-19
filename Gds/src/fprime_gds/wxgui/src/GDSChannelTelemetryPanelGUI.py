@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -39,13 +37,13 @@ class ChannelTelemetry(wx.Panel):
         bSizer6.Add(self.ChannelTelemDataViewCtl, 10, wx.ALL | wx.EXPAND, 5)
 
         sbSizer8 = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, u"Channel Telemetry Filtering"), wx.HORIZONTAL
+            wx.StaticBox(self, wx.ID_ANY, "Channel Telemetry Filtering"), wx.HORIZONTAL
         )
 
         self.ChannelTelemSelectChannelsButton = wx.Button(
             sbSizer8.GetStaticBox(),
             wx.ID_ANY,
-            u"Select Channels",
+            "Select Channels",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -60,7 +58,7 @@ class ChannelTelemetry(wx.Panel):
         self.ChannelTelemResetFilterButton = wx.Button(
             sbSizer8.GetStaticBox(),
             wx.ID_ANY,
-            u"Reset Filter",
+            "Reset Filter",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -70,7 +68,7 @@ class ChannelTelemetry(wx.Panel):
         self.m_staticText3 = wx.StaticText(
             sbSizer8.GetStaticBox(),
             wx.ID_ANY,
-            u"Active Filter Selected",
+            "Active Filter Selected",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -96,7 +94,7 @@ class ChannelTelemetry(wx.Panel):
         self.ChannelTelemShowHexCheckBox = wx.CheckBox(
             sbSizer8.GetStaticBox(),
             wx.ID_ANY,
-            u"Show Hex",
+            "Show Hex",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,

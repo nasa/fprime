@@ -3,7 +3,6 @@ Created on August 16, 2019
 
 @author: tcanham
 """
-from __future__ import print_function
 
 import struct
 import zlib
@@ -14,7 +13,7 @@ from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
 
 
-class SeqBinaryWriter(object):
+class SeqBinaryWriter:
     """
     Write out the Binary (ASTERIA) form of sequencer file.
     """
@@ -167,7 +166,7 @@ class SeqBinaryWriter(object):
         return zlib.crc32(buff) % (1 << 32)
 
 
-class SeqAsciiWriter(object):
+class SeqAsciiWriter:
     """
     Write out the ASCII record form of sequencer file.
     """

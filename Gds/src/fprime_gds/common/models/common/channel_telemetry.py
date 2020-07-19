@@ -3,7 +3,6 @@ Created on Apr. 27, 2015
 
 @author: reder
 """
-from __future__ import print_function
 
 from fprime.common.models.serialize.type_base import BaseType
 
@@ -14,7 +13,7 @@ from fprime.common.models.serialize.type_exceptions import (
 )
 
 
-class Channel(object):
+class Channel:
     """
     Channel class is for deserialize channel telemetry value.
     Really this is a container since the type will have it's own deserialize
@@ -42,14 +41,14 @@ class Channel(object):
         #
         ## Make sure correct types are passed
         #
-        if not type(name) == type(str()):
-            raise TypeMismatchException(type(str()), type(name))
+        if not type(name) == type(""):
+            raise TypeMismatchException(type(""), type(name))
 
         if not type(channel_id) == type(int()):
             raise TypeMismatchException(type(int()), type(channel_id))
 
-        if not type(ch_description) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_description))
+        if not type(ch_description) == type(""):
+            raise TypeMismatchException(type(""), type(ch_description))
 
         if not issubclass(type(ch_type), type(BaseType())):
             raise TypeMismatchException(type(BaseType()), type(ch_type))

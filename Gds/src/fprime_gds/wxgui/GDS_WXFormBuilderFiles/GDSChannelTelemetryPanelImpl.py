@@ -1,5 +1,4 @@
 import GDSChannelTelemetryPanelGUI
-import wx
 
 ###########################################################################
 ## Class ChannelTelemetryImpl

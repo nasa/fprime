@@ -6,7 +6,6 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import, print_function
 
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime_gds.common.templates import event_template
@@ -35,7 +34,7 @@ class EventPyLoader(python_loader.PythonLoader):
         Returns:
             An initialized loader object
         """
-        super(EventPyLoader, self).__init__()
+        super().__init__()
 
     # TODO does this strange interface where you actually only call functions
     # defined in the python loader and not this very convinient looking function

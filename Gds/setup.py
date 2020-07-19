@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 ####
 # fprime_gds Python Package:
 #
@@ -24,11 +23,9 @@
 # pip install -e ./Gds
 # ```
 ###
-from __future__ import absolute_import, print_function
 
 from setuptools import find_packages, setup
 
-import src.fastentrypoints
 
 ####
 # GDS Packages:

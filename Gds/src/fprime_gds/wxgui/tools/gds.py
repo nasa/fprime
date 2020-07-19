@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# encoding: utf-8
 """
 This is the Fprime Ground data system GUI (GDS). It displays telemetry and event
 data from an Fprime deployment. Additionally, the GDS allows for commands to be
@@ -10,7 +9,6 @@ sent to the Fprime deployment.
 
 @copyright:  2018 California Institute of Technology. All rights reserved.
 """
-from __future__ import print_function
 
 import os
 import sys
@@ -20,7 +18,6 @@ from time import sleep
 import wx
 from fprime_gds.common.client_socket import client_socket
 from fprime_gds.common.utils import config_manager
-from fprime_gds.wxgui.src.GDSMainFrameImpl import MainFrameImpl
 from fprime_gds.wxgui.src.main_frame_factory import MainFrameFactory
 
 __all__ = []

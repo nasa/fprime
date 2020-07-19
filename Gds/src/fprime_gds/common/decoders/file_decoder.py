@@ -9,7 +9,6 @@ in file_data objects.
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 import struct
 
@@ -34,7 +33,7 @@ class FileDecoder(decoder.Decoder):
             An initialized FileDecoder object.
         """
 
-        super(FileDecoder, self).__init__()
+        super().__init__()
 
     def decode_api(self, data):
         """

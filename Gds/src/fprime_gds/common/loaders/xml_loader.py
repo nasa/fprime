@@ -13,7 +13,6 @@ helper functions
 
 @bug No known bugs
 """
-from __future__ import absolute_import, print_function
 
 import os
 from copy import deepcopy
@@ -85,7 +84,7 @@ class XmlLoader(dict_loader.DictLoader):
         Returns:
             An initialized loader object
         """
-        super(XmlLoader, self).__init__()
+        super().__init__()
 
         # These dicts hold already parsed enum objects so things don't need
         # to be parsed multiple times
@@ -111,7 +110,7 @@ class XmlLoader(dict_loader.DictLoader):
         # Create xml parser
         xml_parser = etree.XMLParser(remove_comments=True)
 
-        fd = open(path, "r")
+        fd = open(path)
 
         # Parse xml and get element tree object we can retrieve data from
         element_tree = etree.parse(fd, parser=xml_parser)

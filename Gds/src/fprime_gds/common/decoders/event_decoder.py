@@ -14,7 +14,6 @@ Example data structure:
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 import copy
 import traceback
@@ -39,7 +38,7 @@ class EventDecoder(decoder.Decoder):
         Returns:
             An initialized EventDecoder object.
         """
-        super(EventDecoder, self).__init__()
+        super().__init__()
         self.__dict = event_dict
 
     def decode_api(self, data):

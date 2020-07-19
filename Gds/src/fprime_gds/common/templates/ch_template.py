@@ -9,7 +9,6 @@ reading)
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from fprime.common.models.serialize.type_base import BaseType
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
@@ -58,20 +57,20 @@ class ChTemplate(data_template.DataTemplate):
         if not type(ch_id) == type(int()):
             raise TypeMismatchException(type(int()), type(ch_id))
 
-        if not type(ch_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_name))
+        if not type(ch_name) == type(""):
+            raise TypeMismatchException(type(""), type(ch_name))
 
-        if not type(comp_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(comp_name))
+        if not type(comp_name) == type(""):
+            raise TypeMismatchException(type(""), type(comp_name))
 
         if not issubclass(type(ch_type_obj), type(BaseType())):
             raise TypeMismatchException(type(BaseType()), type(ch_type_obj))
 
-        if ch_fmt_str is not None and not type(ch_fmt_str) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_fmt_str))
+        if ch_fmt_str is not None and not type(ch_fmt_str) == type(""):
+            raise TypeMismatchException(type(""), type(ch_fmt_str))
 
-        if ch_desc is not None and not type(ch_desc) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_desc))
+        if ch_desc is not None and not type(ch_desc) == type(""):
+            raise TypeMismatchException(type(""), type(ch_desc))
 
         # Initialize event internal variables
         self.id = ch_id

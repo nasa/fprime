@@ -147,7 +147,6 @@ class CliCommandParserBase(abc.ABC):
         Creates the parser for this command as a subparser of the given one,
         and then returns it
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -156,7 +155,6 @@ class CliCommandParserBase(abc.ABC):
         Add all the required and optional arguments for this command to the
         given parser
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -164,7 +162,6 @@ class CliCommandParserBase(abc.ABC):
         """
         Executes the appropriate function when this command is called
         """
-        pass
 
 
 class ChannelsParser(CliCommandParserBase):

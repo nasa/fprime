@@ -5,8 +5,6 @@ Created on Jul 10, 2020
 @author: Josef Biberstein, Joseph Paetz, hpaulson
 """
 
-from __future__ import absolute_import
-
 
 from fprime_gds.common.distributor.distributor import Distributor
 from fprime_gds.common.utils import config_manager
@@ -69,11 +67,9 @@ def test_distributor():
         desc_2,
         test_desc_2,
     )
-    assert test_msg_1 == data_1, "expected 1st msg to be %s but found %s" % (
-        list(data_1),
-        list(test_msg_1),
+    assert test_msg_1 == data_1, "expected 1st msg to be {} but found {}".format(
+        list(data_1), list(test_msg_1),
     )
-    assert test_msg_2 == data_2, "expected 2nd msg to be %s but found %s" % (
-        list(data_2),
-        list(test_msg_2),
+    assert test_msg_2 == data_2, "expected 2nd msg to be {} but found {}".format(
+        list(data_2), list(test_msg_2),
     )

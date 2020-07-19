@@ -9,7 +9,6 @@ or cmdSeq_CS_CmdStarted
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
@@ -44,30 +43,30 @@ class EventTemplate(data_template.DataTemplate):
         if not type(event_id) == type(int()):
             raise TypeMismatchException(type(int()), type(event_id))
 
-        if not type(name) == type(str()):
-            raise TypeMismatchException(type(str()), type(name))
+        if not type(name) == type(""):
+            raise TypeMismatchException(type(""), type(name))
 
-        if not type(component) == type(str()):
-            raise TypeMismatchException(type(str()), type(component))
+        if not type(component) == type(""):
+            raise TypeMismatchException(type(""), type(component))
 
-        if not type(format_str) == type(str()):
-            raise TypeMismatchException(type(str()), type(format_str))
+        if not type(format_str) == type(""):
+            raise TypeMismatchException(type(""), type(format_str))
 
         if not type(args) == type(list()):
             raise TypeMismatchException(type(list()), type(args))
 
         for (arg_name, arg_desc, arg_type) in args:
-            if not type(arg_name) == type(str()):
-                raise TypeMismatchException(type(str()), type(arg_name))
+            if not type(arg_name) == type(""):
+                raise TypeMismatchException(type(""), type(arg_name))
 
-            if arg_desc is not None and not type(arg_desc) == type(str()):
-                raise TypeMismatchException(type(str()), type(arg_desc))
+            if arg_desc is not None and not type(arg_desc) == type(""):
+                raise TypeMismatchException(type(""), type(arg_desc))
 
             if not issubclass(type(arg_type), type(type_base.BaseType())):
                 raise TypeMismatchException(type(type_base.BaseType()), type(arg_type))
 
-        if description is not None and not type(description) == type(str()):
-            raise TypeMismatchException(type(str()), type(description))
+        if description is not None and not type(description) == type(""):
+            raise TypeMismatchException(type(""), type(description))
 
         if not isinstance(severity, EventSeverity):
             raise TypeMismatchException("EventSeverity", type(severity))

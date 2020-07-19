@@ -6,7 +6,6 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from fprime_gds.common.templates.ch_template import ChTemplate
 
@@ -38,7 +37,7 @@ class ChPyLoader(PythonLoader):
         Returns:
             An initialized loader object
         """
-        super(ChPyLoader, self).__init__()
+        super().__init__()
 
     def construct_dicts(self, path):
         """

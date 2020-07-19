@@ -9,7 +9,6 @@ an interface for creating additional GDS windows that use this pipeline
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 import datetime
 import os
@@ -38,7 +37,7 @@ from fprime_gds.common.logger import data_logger
 from . import GDSMainFrameImpl
 
 
-class MainFrameFactory(object):
+class MainFrameFactory:
     """Factory that creates new windows for the GDS"""
 
     def __init__(self, opts, config):

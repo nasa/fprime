@@ -1,8 +1,5 @@
-from __future__ import absolute_import
-
 from itertools import cycle
 
-import wx
 from fprime.common.models.serialize.array_type import *
 from fprime.common.models.serialize.bool_type import *
 from fprime.common.models.serialize.enum_type import *
@@ -204,7 +201,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
                 arglist.append(i.getSelection())
 
         s = self.CmdsComboBox.GetStringSelection()
-        if s != u"":
+        if s != "":
             temp = self.cname_dict[s]
             data_obj = cmd_data.CmdData(tuple(arglist), temp)
 
@@ -219,7 +216,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
 
     def onCmdHistSearchButtonClick(self, event):
 
-        if self.CmdHistSearchTextCtl.GetLineText(0) != u"":
+        if self.CmdHistSearchTextCtl.GetLineText(0) != "":
             if self.CmdHistSearchTextCtl.GetLineText(0) != self._previous_search_term:
                 self._previous_search_term = self.CmdHistSearchTextCtl.GetLineText(0)
                 self.updateCmdSearchPool()

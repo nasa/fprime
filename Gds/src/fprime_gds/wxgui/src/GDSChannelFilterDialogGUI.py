@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -21,7 +19,7 @@ class ChannelFilterDialog(wx.Dialog):
             self,
             parent,
             id=wx.ID_ANY,
-            title=u"Choose Filter Members",
+            title="Choose Filter Members",
             pos=wx.DefaultPosition,
             size=wx.Size(635, 401),
             style=wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP,
@@ -43,7 +41,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.m_staticText1 = wx.StaticText(
             self.m_panel1,
             wx.ID_ANY,
-            u"Channels to Exclude",
+            "Channels to Exclude",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -69,7 +67,7 @@ class ChannelFilterDialog(wx.Dialog):
         bSizer8.Add((0, 0), 1, wx.EXPAND, 5)
 
         self.ButtonAddChannel = wx.Button(
-            self.m_panel1, wx.ID_ANY, u"Add >", wx.DefaultPosition, wx.DefaultSize, 0
+            self.m_panel1, wx.ID_ANY, "Add >", wx.DefaultPosition, wx.DefaultSize, 0
         )
         self.ButtonAddChannel.SetFont(
             wx.Font(
@@ -87,7 +85,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.ButtonAddAllChannels = wx.Button(
             self.m_panel1,
             wx.ID_ANY,
-            u"Add All >>",
+            "Add All >>",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -106,7 +104,7 @@ class ChannelFilterDialog(wx.Dialog):
         bSizer8.Add(self.ButtonAddAllChannels, 1, wx.ALIGN_CENTER | wx.ALL, 5)
 
         self.ButtonRemoveChannel = wx.Button(
-            self.m_panel1, wx.ID_ANY, u"< Rem", wx.DefaultPosition, wx.DefaultSize, 0
+            self.m_panel1, wx.ID_ANY, "< Rem", wx.DefaultPosition, wx.DefaultSize, 0
         )
         self.ButtonRemoveChannel.SetFont(
             wx.Font(
@@ -124,7 +122,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.ButtonRemoveAllChannels = wx.Button(
             self.m_panel1,
             wx.ID_ANY,
-            u"<< Rem All",
+            "<< Rem All",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -151,7 +149,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.m_staticText2 = wx.StaticText(
             self.m_panel1,
             wx.ID_ANY,
-            u"Channels to Show",
+            "Channels to Show",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -179,7 +177,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.m_staticText4 = wx.StaticText(
             self.m_panel1,
             wx.ID_ANY,
-            u"Current File",
+            "Current File",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -190,7 +188,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.TextCtrlFileName = wx.TextCtrl(
             self.m_panel1,
             wx.ID_ANY,
-            u"None",
+            "None",
             wx.DefaultPosition,
             wx.DefaultSize,
             wx.TE_READONLY,
@@ -200,7 +198,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.ButtonSaveFilter = wx.Button(
             self.m_panel1,
             wx.ID_ANY,
-            u"Save Filter",
+            "Save Filter",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -210,7 +208,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.ButtonLoadFilter = wx.Button(
             self.m_panel1,
             wx.ID_ANY,
-            u"Load Filter",
+            "Load Filter",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -220,7 +218,7 @@ class ChannelFilterDialog(wx.Dialog):
         self.ButtionApplyFilter = wx.Button(
             self.m_panel1,
             wx.ID_ANY,
-            u"Apply Filter",
+            "Apply Filter",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -228,7 +226,7 @@ class ChannelFilterDialog(wx.Dialog):
         bSizer4.Add(self.ButtionApplyFilter, 1, wx.ALL, 5)
 
         self.ButtonCancel = wx.Button(
-            self.m_panel1, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0
+            self.m_panel1, wx.ID_ANY, "Close", wx.DefaultPosition, wx.DefaultSize, 0
         )
         bSizer4.Add(self.ButtonCancel, 1, wx.ALL, 5)
 

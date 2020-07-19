@@ -40,7 +40,6 @@ Serialized command format:
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 import struct
 
@@ -66,7 +65,7 @@ class FileEncoder(encoder.Encoder):
                     for the sizes of fields in the binary data. If None passed,
                     defaults are used.
         """
-        super(FileEncoder, self).__init__(config)
+        super().__init__(config)
         self.len_obj = self.config.get_type("msg_len")
 
     def encode_api(self, data):

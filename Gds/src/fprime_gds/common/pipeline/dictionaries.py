@@ -20,7 +20,7 @@ import fprime_gds.common.loaders.event_py_loader
 import fprime_gds.common.loaders.event_xml_loader
 
 
-class Dictionaries(object):
+class Dictionaries:
     """
     Dictionaries class to encapsulate the many different dictionaries used in the system. This includes the following
     dictionary types:

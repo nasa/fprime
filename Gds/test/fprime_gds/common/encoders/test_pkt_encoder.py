@@ -5,8 +5,6 @@ Created on Jul 10, 2020
 @author: Joseph Paetz, hpaulson
 """
 
-from __future__ import absolute_import
-
 
 from fprime_gds.common.encoders.pkt_encoder import PktEncoder
 from fprime_gds.common.data_types.pkt_data import PktData

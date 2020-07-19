@@ -5,8 +5,6 @@ Created on Jul 10, 2020
 @author: Joseph Paetz, hpaulson
 """
 
-from __future__ import absolute_import
-
 
 from fprime_gds.common.encoders.event_encoder import EventEncoder
 from fprime_gds.common.data_types.event_data import EventData

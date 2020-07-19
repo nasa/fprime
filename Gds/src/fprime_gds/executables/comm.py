@@ -15,7 +15,6 @@ Note: assuming the module containing the ground adapter has been imported, then 
 
 @author lestarch
 """
-from __future__ import print_function
 
 import argparse
 import logging
@@ -43,7 +42,7 @@ except ImportError:
 LOGGER = logging.getLogger("comm")
 
 
-class Uplinker(object):
+class Uplinker:
     """
     Pulls out the code useful for uplink into a single designated place. This will run as a thread, which essentially
     calls does the following:
@@ -133,7 +132,7 @@ class UplinkFailureException(Exception):
     """
 
 
-class Downlinker(object):
+class Downlinker:
     """
     Handles the actions associated with downlinking. This boils down to the following steps:
 

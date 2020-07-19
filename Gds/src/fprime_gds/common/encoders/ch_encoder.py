@@ -31,7 +31,6 @@ Serialized Ch format:
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from .encoder import Encoder
 from fprime_gds.common.utils.data_desc_type import DataDescType
@@ -53,7 +52,7 @@ class ChEncoder(Encoder):
             An initialized ChEncoder object
         """
         # sets up config
-        super(ChEncoder, self).__init__(config)
+        super().__init__(config)
 
         self.len_obj = self.config.get_type("msg_len")
         self.desc_obj = self.config.get_type("msg_desc")

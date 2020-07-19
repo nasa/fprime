@@ -1,5 +1,4 @@
 import GDSStatusPanelGUI
-import wx
 
 ###########################################################################
 ## Class StatusImpl

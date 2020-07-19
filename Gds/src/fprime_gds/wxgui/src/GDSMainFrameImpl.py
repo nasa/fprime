@@ -1,7 +1,3 @@
-from __future__ import absolute_import
-
-import os
-
 import wx
 
 from . import (
@@ -59,10 +55,10 @@ class MainFrameImpl(GDSMainFrameGUI.MainFrame):
         if status_bar_state:
             self.status_bar.set_state(status_bar_state)
 
-        self.TabNotebook.AddPage(self.cmd_pnl, u"Commands", False)
-        self.TabNotebook.AddPage(self.event_pnl, u"Log Events", False)
-        self.TabNotebook.AddPage(self.telem_pnl, u"Channel Telemetry", False)
-        self.TabNotebook.AddPage(self.status_pnl, u"Status", False)
+        self.TabNotebook.AddPage(self.cmd_pnl, "Commands", False)
+        self.TabNotebook.AddPage(self.event_pnl, "Log Events", False)
+        self.TabNotebook.AddPage(self.telem_pnl, "Channel Telemetry", False)
+        self.TabNotebook.AddPage(self.status_pnl, "Status", False)
 
         self.main_frame_factory = factory
 

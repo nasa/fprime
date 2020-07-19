@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import print_function
 
 import os
 import sys
@@ -123,7 +122,7 @@ def main(argv=None):
 
 
 def process_command_file(file):
-    lines = open(file, "rU").readlines()
+    lines = open(file).readlines()
     command_list = list()
     for line in lines:
         # first, strip whitespace

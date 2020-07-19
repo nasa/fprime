@@ -19,7 +19,7 @@ from fprime_gds.common.utils import config_manager, data_desc_type
 
 
 # NOTE decoder function to call is called data_callback(data)
-class Distributor(object):
+class Distributor:
     """
     A distributor contains a socket client that connects to a ThreadedTCPServer.
     It then sends and recvs data from a FPrime deployment.
@@ -196,4 +196,3 @@ class Distributor(object):
 
             for d in self.__decoders[data_desc_key]:
                 d.data_callback(msg)
-

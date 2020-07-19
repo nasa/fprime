@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -30,7 +28,7 @@ class LogEvents(wx.Panel):
         bSizer41 = wx.BoxSizer(wx.VERTICAL)
 
         sbSizer61 = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, u"Event Log Messages"), wx.VERTICAL
+            wx.StaticBox(self, wx.ID_ANY, "Event Log Messages"), wx.VERTICAL
         )
 
         self.EventLogDataListCtl = wx.dataview.DataViewListCtrl(
@@ -49,7 +47,7 @@ class LogEvents(wx.Panel):
         bSizer5.Add((0, 0), 1, wx.EXPAND, 5)
 
         self.EventLogScrollCheckBox = wx.CheckBox(
-            self, wx.ID_ANY, u"Scroll", wx.DefaultPosition, wx.DefaultSize, 0
+            self, wx.ID_ANY, "Scroll", wx.DefaultPosition, wx.DefaultSize, 0
         )
         bSizer5.Add(
             self.EventLogScrollCheckBox,
@@ -59,7 +57,7 @@ class LogEvents(wx.Panel):
         )
 
         self.EventLogClearButton = wx.Button(
-            self, wx.ID_ANY, u"Clear", wx.DefaultPosition, wx.DefaultSize, 0
+            self, wx.ID_ANY, "Clear", wx.DefaultPosition, wx.DefaultSize, 0
         )
         bSizer5.Add(
             self.EventLogClearButton,
@@ -72,7 +70,7 @@ class LogEvents(wx.Panel):
 
         sbSizer7 = wx.StaticBoxSizer(
             wx.StaticBox(
-                self, wx.ID_ANY, u"Display Only Log Event Messages Containing Keywords"
+                self, wx.ID_ANY, "Display Only Log Event Messages Containing Keywords"
             ),
             wx.HORIZONTAL,
         )
@@ -92,7 +90,7 @@ class LogEvents(wx.Panel):
         self.m_staticText2 = wx.StaticText(
             sbSizer7.GetStaticBox(),
             wx.ID_ANY,
-            u"Severity",
+            "Severity",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -104,7 +102,7 @@ class LogEvents(wx.Panel):
         self.EventLogSeverityComboBox = wx.ComboBox(
             sbSizer7.GetStaticBox(),
             wx.ID_ANY,
-            u"Combo!",
+            "Combo!",
             wx.DefaultPosition,
             wx.DefaultSize,
             EventLogSeverityComboBoxChoices,
@@ -117,7 +115,7 @@ class LogEvents(wx.Panel):
         self.EventLogApplyFilterButton = wx.Button(
             sbSizer7.GetStaticBox(),
             wx.ID_ANY,
-            u"Apply Filter",
+            "Apply Filter",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -129,7 +127,7 @@ class LogEvents(wx.Panel):
         self.EventLogResetFilterButton = wx.Button(
             sbSizer7.GetStaticBox(),
             wx.ID_ANY,
-            u"Reset",
+            "Reset",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,

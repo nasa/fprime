@@ -14,7 +14,6 @@ this class will be empty.
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 import glob
 import importlib

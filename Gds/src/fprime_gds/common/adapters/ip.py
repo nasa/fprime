@@ -29,7 +29,7 @@ def check_port(address, port):
     try:
         socket_trial = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_trial.bind((address, port))
-    except socket.error as err:
+    except OSError as err:
         raise ValueError(
             "Error with address/port of '{}:{}' : {}".format(address, port, err)
         )
@@ -166,7 +166,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         check_port(args["address"], args["port"])
 
 
-class IpHandler(object):
+class IpHandler:
     """
     Base handler for IP types. This will provide the basic methods, and synchronization for reading/writing to multiple
     child implementations, namely: UDP and TCP. These child objects can then be instantiated individually.
@@ -243,10 +243,13 @@ class IpHandler(object):
             # All errors (timeout included) we should close down the socket, which sets self.connected
             except ConnectionAbortedError:
                 return False
-            except socket.error as exc:
+            except OSError as exc:
                 self.logger.warning(
                     "Failed to open socket at %s:%d, retrying: %s: %s",
-                    self.address, self.port, type(exc).__name__, str(exc)
+                    self.address,
+                    self.port,
+                    type(exc).__name__,
+                    str(exc),
                 )
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()
@@ -277,7 +280,7 @@ class IpHandler(object):
         # This will block waiting for data
         try:
             return self.read_impl()
-        except socket.error as exc:
+        except OSError as exc:
             if self.running:
                 self.close()
                 self.logger.warning(
@@ -297,7 +300,7 @@ class IpHandler(object):
         try:
             self.write_impl(message)
             return True
-        except socket.error as exc:
+        except OSError as exc:
             if self.running:
                 self.logger.warning(
                     "Write failure: %s: %s", (type(exc).__name__, str(exc))
@@ -335,7 +338,7 @@ class TcpHandler(IpHandler):
         :param address: address of TCP
         :param port: port of TCP
         """
-        super(TcpHandler, self).__init__(
+        super().__init__(
             address, port, socket.SOCK_STREAM, server, logger, post_connect
         )
         self.client = None
@@ -395,9 +398,7 @@ class UdpHandler(IpHandler):
         :param address: address of UDP
         :param port: port of UDP
         """
-        super(UdpHandler, self).__init__(
-            address, port, socket.SOCK_DGRAM, server, logger
-        )
+        super().__init__(address, port, socket.SOCK_DGRAM, server, logger)
 
     def open_impl(self):
         """No extra steps required"""

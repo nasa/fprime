@@ -3,7 +3,6 @@ Created on Feb. 9, 2015
 
 @author: reder
 """
-from __future__ import print_function
 
 import traceback
 from enum import Enum
@@ -21,7 +20,7 @@ Severity = Enum(
 )
 
 
-class Event(object):
+class Event:
     """
     Event class is for deserializing log event messages.
     THis is essentially the equivalent of EVR's in MSL, SMAP, etc.
@@ -36,28 +35,28 @@ class Event(object):
 
         ## Make sure correct types are passed
 
-        if not type(name) == type(str()):
-            raise TypeMismatchException(type(str()), type(name))
+        if not type(name) == type(""):
+            raise TypeMismatchException(type(""), type(name))
 
         if not type(event_id) == type(int()):
             raise TypeMismatchException(type(int()), type(event_id))
 
-        if not type(format_string) == type(str()):
-            raise TypeMismatchException(type(str()), type(format_string))
+        if not type(format_string) == type(""):
+            raise TypeMismatchException(type(""), type(format_string))
 
-        if not type(event_description) == type(str()):
-            raise TypeMismatchException(type(str()), type(event_description))
+        if not type(event_description) == type(""):
+            raise TypeMismatchException(type(""), type(event_description))
 
         if not type(arguments) == type(list()):
             raise TypeMismatchException(type(list()), type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(str()):
-                raise TypeMismatchException(type(str()), type(argname))
+            if not type(argname) == type(""):
+                raise TypeMismatchException(type(""), type(argname))
             #
-            if not type(argdesc) == type(str()):
-                raise TypeMismatchException(type(str()), type(argdesc))
+            if not type(argdesc) == type(""):
+                raise TypeMismatchException(type(""), type(argdesc))
             #
             if not issubclass(type(argtype), type(BaseType())):
                 raise TypeMismatchException(type(BaseType()), type(argtype))

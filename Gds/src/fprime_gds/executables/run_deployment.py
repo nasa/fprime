@@ -3,7 +3,6 @@
 #
 # Runs a deployment. Starts a GUI, a TCPServer, and the deployment application.
 ####
-from __future__ import print_function
 import os
 import sys
 import platform
@@ -67,7 +66,7 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
         print("[ERROR] {}.".format(str(awe)), file=sys.stderr)
         try:
             if logfile is not None:
-                with open(logfile, "r") as file_handle:
+                with open(logfile) as file_handle:
                     for line in file_handle.readlines():
                         print("    [LOG] {}".format(line.strip()), file=sys.stderr)
         except Exception:

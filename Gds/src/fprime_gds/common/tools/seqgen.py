@@ -39,7 +39,7 @@ __email__ = "timothy.canham@jpl.nasa.gov"
 
 class SeqGenException(gseExceptions.GseControllerException):
     def __init__(self, val):
-        super(SeqGenException, self).__init__(str(val))
+        super().__init__(str(val))
 
 
 # except:

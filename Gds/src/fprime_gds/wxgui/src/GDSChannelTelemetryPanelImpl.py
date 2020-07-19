@@ -6,13 +6,10 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
-import inspect
 from copy import deepcopy
 
 import wx
-from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime_gds.common.data_types.ch_data import *
 from fprime_gds.common.data_types.pkt_data import *
 from fprime_gds.common.utils.config_manager import ConfigManager
@@ -161,7 +158,7 @@ class ChannelTelemetryImpl(GDSChannelTelemetryPanelGUI.ChannelTelemetry):
             )
 
         menu = wx.Menu()
-        cpy = menu.Append(self.copy_context_id, "copy")
+        menu.Append(self.copy_context_id, "copy")
 
         self.PopupMenu(menu)
         menu.Destroy()
@@ -396,8 +393,8 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 mapper = {
                     0: str(node.template.get_full_name()),
                     1: str(node.template.id),
-                    2: u"",
-                    3: u"",
+                    2: "",
+                    3: "",
                 }
 
             return mapper[col]

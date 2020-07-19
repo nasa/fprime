@@ -5,8 +5,6 @@ Created on Jul 10, 2020
 @author: Joseph Paetz, hpaulson
 """
 
-from __future__ import absolute_import
-
 
 from fprime_gds.common.encoders.ch_encoder import ChEncoder
 from fprime_gds.common.templates.ch_template import ChTemplate

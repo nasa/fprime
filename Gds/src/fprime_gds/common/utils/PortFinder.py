@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# encoding: utf-8
 """
 This module is used to find an available socket port.
 
@@ -11,11 +10,9 @@ This module is used to find an available socket port.
 
 @contact:    reder@jpl.nasa.gov
 """
-from __future__ import print_function
 
 import socket
 import subprocess
-import sys
 
 from fprime.constants import DATA_ENCODING
 
@@ -30,8 +27,7 @@ def getstatusoutput(cmd):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
     )
     (out, err) = process.communicate()
-    if sys.version_info >= (3, 0):
-        out = out.decode(DATA_ENCODING)
+    out = out.decode(DATA_ENCODING)
     assert err is None, "Failed to force standard error to standard out"
     return (process.returncode, out)
 

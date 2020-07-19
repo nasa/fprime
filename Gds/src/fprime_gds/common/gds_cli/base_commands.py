@@ -39,7 +39,6 @@ class BaseCommand(abc.ABC):
         """
         Do something to handle the input arguments given
         """
-        pass
 
 
 class QueryHistoryCommand(BaseCommand):
@@ -66,7 +65,6 @@ class QueryHistoryCommand(BaseCommand):
         :param filter_predicate: Test API predicate used to filter shown items
         :return: An iterable collection of items that passed the filter
         """
-        pass
 
     @classmethod
     def _get_item_list_string(cls, items: Iterable, json: bool = False,) -> str:
@@ -93,7 +91,6 @@ class QueryHistoryCommand(BaseCommand):
         Retrieves an F' item that's occurred since the given time and returns
         its data.
         """
-        pass
 
     # TODO: Need to do user tests to find a better print format
     @classmethod

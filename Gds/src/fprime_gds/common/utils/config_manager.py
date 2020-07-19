@@ -14,7 +14,6 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 @lisence Copyright 2018, California Institute of Technology.
          ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 """
-from __future__ import print_function
 
 # Custom type modules
 from fprime.common.models.serialize.f32_type import F32Type

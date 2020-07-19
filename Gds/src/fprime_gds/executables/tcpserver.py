@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import print_function
 
 import errno
 import os
@@ -219,7 +218,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                     print("socket timed out and shutdown is requested")
                     return b"Quit\n"
                 continue
-            except socket.error as err:
+            except OSError as err:
                 if err.errno == errno.ECONNRESET:
                     print(
                         "Socket error "
@@ -393,7 +392,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         FSW receives commands of various lengths.
         """
         data = ""
-        dst = header.split(b" ")[1].strip(b" ")
+        header.split(b" ")[1].strip(b" ")
         # Read telemetry data here...
         tlm_packet_size = packet[:4]
         size = struct.unpack(">I", tlm_packet_size)[0]
@@ -470,7 +469,7 @@ class DestObj:
         try:
             # print "about to send data to " + self.name
             self.socket.send(msg)
-        except socket.error as err:
+        except OSError as err:
             print("Socket error " + str(err.errno) + " occurred on send().")
 
     def fileno(self):

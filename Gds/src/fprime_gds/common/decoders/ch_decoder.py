@@ -16,7 +16,6 @@ Example data that would be sent to a decoder that parses channels:
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 import copy
 
@@ -40,7 +39,7 @@ class ChDecoder(Decoder):
         Returns:
             An initialized channel decoder object.
         """
-        super(ChDecoder, self).__init__()
+        super().__init__()
         self.__dict = ch_dict
 
     def decode_api(self, data):

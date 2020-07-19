@@ -16,7 +16,7 @@ import fprime_gds.common.encoders.cmd_encoder
 import fprime_gds.common.encoders.file_encoder
 
 
-class EncodingDecoding(object):
+class EncodingDecoding:
     """
     Sets up and runs the encoding and decoding for the standard pipeline. This include the following encoders and
     decoders for standard setups:

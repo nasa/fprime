@@ -32,7 +32,7 @@ class PktXmlLoader(XmlLoader):
         Returns:
             An initialized loader object
         """
-        super(PktXmlLoader, self).__init__()
+        super().__init__()
 
     def get_id_dict(self, path, ch_name_dict):
         """

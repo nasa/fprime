@@ -19,7 +19,7 @@ import struct
 import threading
 
 
-class Timeout(object):
+class Timeout:
     """
     Starts a timeout thread and will respond with a callback to a function when the timeout expires.
     """
@@ -76,7 +76,7 @@ class FileStates(enum.Enum):
     END_WAIT = 3  # Waiting for the handshake for CANCEL or END packet
 
 
-class CFDPChecksum(object):
+class CFDPChecksum:
     """ Class running the CFDG checksum """
 
     def __init__(self):
@@ -102,7 +102,7 @@ class CFDPChecksum(object):
         return self.__value
 
 
-class TransmitFile(object):
+class TransmitFile:
     """
     Wraps the file information needed for the uplink and downlinking processes.
     """
