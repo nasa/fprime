@@ -4,9 +4,8 @@
 # Runs a deployment. Starts a GUI, a TCPServer, and the deployment application.
 ####
 from __future__ import print_function
-
-import copy
 import os
+import sys
 import platform
 import sys
 import webbrowser

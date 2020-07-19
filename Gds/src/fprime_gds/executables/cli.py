@@ -89,7 +89,7 @@ class ParserBase(abc.ABC):
             for parser_base in parser_classes:
                 args = parser_base.handle_arguments(args, **kwargs)
         except ValueError as ver:
-            print("[ERROR] Failed to pars arguments: {}".format(ver), file=sys.stderr)
+            print("[ERROR] Failed to parse arguments: {}".format(ver), file=sys.stderr)
             sys.exit(-1)
         return args, parser
 

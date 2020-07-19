@@ -55,11 +55,11 @@ class ChannelHistory(flask_restful.Resource):
         Return the telemetry history object
         """
         args = self.parser.parse_args()
-        new_chans = self.history.retrieve(session=args.get("session"))
+        new_chans = self.history.retrieve(start=args.get("session"))
         self.history.clear()
         for chan in new_chans:
             # Add the 'display_text' to the event, along with a getter
-            if chan.template.fmt_str is not None:
+            if chan.template.get_format_str() is not None:
                 setattr(
                     chan, "display_text", chan.template.fmt_str % (chan.val_obj.val)
                 )
@@ -72,4 +72,4 @@ class ChannelHistory(flask_restful.Resource):
         Delete the event history for a given session. This keeps the data all clear like.
         """
         args = self.parser.parse_args()
-        self.history.clear(session=args.get("session"))
+        self.history.clear(start=args.get("session"))

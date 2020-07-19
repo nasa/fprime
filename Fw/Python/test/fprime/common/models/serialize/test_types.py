@@ -1,5 +1,4 @@
 """
-
 Tests the serialization and deserialization of all the types in Fw/Python/src/fprime/common/models/serialize/
 
 Created on Jun 25, 2020

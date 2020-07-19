@@ -87,6 +87,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         self.active = TransmitFile(
             source_path,
             os.path.join(self.__directory, self.sanitize(dest_path)),
+            size,
             self.__log_dir,
         )
         self.active.open("wb+")
@@ -127,7 +128,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             )
         self.sequence += 1
 
-    def handle_cancel(self, data):
+    def handle_cancel(self, _):
         """
         Handle cancel packet.
         :param data: cancel packet, ignored.

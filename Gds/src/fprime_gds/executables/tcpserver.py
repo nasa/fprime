@@ -34,7 +34,7 @@ FSW_ids = []
 GUI_ids = []
 
 
-def signal_handler(signal, frame):
+def signal_handler(*_):
     print("Ctrl-C received, server shutting down.")
     shutdown_event.set()
 
@@ -135,32 +135,32 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
     def processRegistration(self, cmd):
 
         params = cmd.split()
-        id = 0
+        process_id = 0
 
         if params[0] == b"Register":
             LOCK.acquire()
             name = params[1]
             if b"FSW" in name:
                 if FSW_clients:
-                    id = sorted(FSW_ids)[-1] + 1
+                    process_id = sorted(FSW_ids)[-1] + 1
 
-                name = params[1] + b"_" + bytes(id)
+                name = params[1] + b"_" + bytes(process_id)
                 FSW_clients.append(name)
-                FSW_ids.append(id)
+                FSW_ids.append(process_id)
             elif b"GUI" in name:
                 if GUI_clients:
-                    id = sorted(GUI_ids)[-1] + 1
+                    process_id = sorted(GUI_ids)[-1] + 1
 
-                name = params[1] + b"_" + bytes(id)
+                name = params[1] + b"_" + bytes(process_id)
                 GUI_clients.append(name)
-                GUI_ids.append(id)
+                GUI_ids.append(process_id)
 
             SERVER.dest_obj[name] = DestObj(name, self.request)
             LOCK.release()
 
             self.registered = True
             self.name = name
-            self.id = id
+            self.id = process_id
             print("Registered client " + self.name.decode(DATA_ENCODING))
 
     #################################################

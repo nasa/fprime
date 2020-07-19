@@ -16,7 +16,7 @@ import copy
 import struct
 
 
-def CHECKSUM_CALC(data):
+def CHECKSUM_CALC(_):
     """ Initial checksum implementation for FpFramerDeframer. """
     return 0xCAFECAFE
 

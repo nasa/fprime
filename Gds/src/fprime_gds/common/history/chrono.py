@@ -40,17 +40,17 @@ class ChronologicalHistory(History):
 
         self.retrieved_cursor = 0
 
-    def data_callback(self, data_object, sender=None):
+    def data_callback(self, data, sender=None):
         """
         Data callback to push an object on the history. This callback will only add data_objects
         that satisfy the filter predicate.
 
         Args:
-            data_object: object to store
+            data: object to store
         """
-        if self.filter(data_object):
-            self.__insert_chrono(data_object, self.new_objects)
-            index = self.__insert_chrono(data_object, self.objects)
+        if self.filter(data):
+            self.__insert_chrono(data, self.new_objects)
+            index = self.__insert_chrono(data, self.objects)
             self.retrieved_cursor = min(index, self.retrieved_cursor)
 
     def retrieve(self, start=None):

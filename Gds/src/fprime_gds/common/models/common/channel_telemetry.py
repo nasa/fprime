@@ -24,7 +24,7 @@ class Channel(object):
     def __init__(
         self,
         name,
-        id,
+        channel_id,
         comp_name,
         ch_description,
         ch_type,
@@ -45,8 +45,8 @@ class Channel(object):
         if not type(name) == type(str()):
             raise TypeMismatchException(type(str()), type(name))
 
-        if not type(id) == type(int()):
-            raise TypeMismatchException(type(int()), type(id))
+        if not type(channel_id) == type(int()):
+            raise TypeMismatchException(type(int()), type(channel_id))
 
         if not type(ch_description) == type(str()):
             raise TypeMismatchException(type(str()), type(ch_description))
@@ -57,7 +57,7 @@ class Channel(object):
         # Initialize event internal variables
         self.__name = name
         self.__comp_name = comp_name
-        self.__id = id
+        self.__id = channel_id
         self.__ch_desc = ch_description
         self.__ch_type = ch_type
         self.__format_string = ch_format_string

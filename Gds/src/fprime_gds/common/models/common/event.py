@@ -27,7 +27,9 @@ class Event(object):
     THis is essentially the equivalent of EVR's in MSL, SMAP, etc.
     """
 
-    def __init__(self, name, id, severity, format_string, event_description, arguments):
+    def __init__(
+        self, name, event_id, severity, format_string, event_description, arguments
+    ):
         """
         Constructor
         """
@@ -37,8 +39,8 @@ class Event(object):
         if not type(name) == type(str()):
             raise TypeMismatchException(type(str()), type(name))
 
-        if not type(id) == type(int()):
-            raise TypeMismatchException(type(int()), type(id))
+        if not type(event_id) == type(int()):
+            raise TypeMismatchException(type(int()), type(event_id))
 
         if not type(format_string) == type(str()):
             raise TypeMismatchException(type(str()), type(format_string))
@@ -62,7 +64,7 @@ class Event(object):
 
         # Initialize event internal variables
         self.__name = name
-        self.__id = id
+        self.__id = event_id
         self.__severity = severity
         self.__format_string = format_string
         self.__event_description = event_description
