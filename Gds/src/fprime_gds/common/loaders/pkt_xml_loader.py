@@ -7,9 +7,10 @@
 @bug No known bugs
 """
 
+from fprime_gds.common.data_types import exceptions
+
 # Custom python modules
 from fprime_gds.common.loaders.xml_loader import XmlLoader
-from fprime_gds.common.data_types import exceptions
 from fprime_gds.common.templates.pkt_template import PktTemplate
 
 

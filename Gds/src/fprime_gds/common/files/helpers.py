@@ -11,12 +11,12 @@ enable both file uplink and downlink to share the same structures. This includes
 
 @author mstarch, and Blake A. Harriman's work
 """
-import os
+import datetime
 import enum
+import logging
+import os
 import struct
 import threading
-import datetime
-import logging
 
 
 class Timeout(object):

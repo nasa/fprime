@@ -6,9 +6,9 @@ retrieval operations. This history will re-order itself based on FSW time.
 
 :author: koran
 """
-from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.history.history import History
 from fprime.common.models.serialize.time_type import TimeType
+from fprime_gds.common.history.history import History
+from fprime_gds.common.testing_fw import predicates
 
 
 class ChronologicalHistory(History):

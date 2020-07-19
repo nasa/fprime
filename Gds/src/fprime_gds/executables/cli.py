@@ -7,22 +7,22 @@ code that they are importing.
 
 @author mstarch
 """
-import os
-import re
 import abc
-import sys
-import copy
-import errno
 import argparse
+import copy
 import datetime
-import platform
+import errno
 import importlib
+import os
+import platform
+import re
+import sys
 
-import fprime_gds.common.utils.config_manager
 import fprime_gds.common.adapters.base
 
 # Include basic adapters
 import fprime_gds.common.adapters.ip
+import fprime_gds.common.utils.config_manager
 
 try:
     import fprime_gds.common.adapters.uart

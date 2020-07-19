@@ -16,10 +16,8 @@ import os
 
 import fprime.constants
 import fprime_gds.common.handlers
-from fprime_gds.common.files.helpers import FileStates
-from fprime_gds.common.files.helpers import file_to_dict
-from fprime_gds.common.files.helpers import TransmitFile
 from fprime_gds.common.data_types.file_data import FilePacketType
+from fprime_gds.common.files.helpers import FileStates, TransmitFile, file_to_dict
 
 LOGGER = logging.getLogger("downlink")
 LOGGER.setLevel(logging.INFO)

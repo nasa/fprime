@@ -7,8 +7,8 @@
 @bug No known bugs
 """
 
-from fprime_gds.common.data_types import sys_data
 from fprime.common.models.serialize import time_type
+from fprime_gds.common.data_types import sys_data
 
 
 class ChData(sys_data.SysData):
@@ -74,7 +74,7 @@ class ChData(sys_data.SysData):
         Returns:
             The channel reading
         """
-        if self.val_obj == None:
+        if self.val_obj is None:
             return None
         else:
             return self.val_obj.val
@@ -124,7 +124,7 @@ class ChData(sys_data.SysData):
         raw_time_str = str(self.time)
         ch_name = self.template.get_full_name()
         fmt_str = self.template.get_format_str()
-        if self.val_obj == None:
+        if self.val_obj is None:
             ch_val = "EMPTY CH OBJ"
         elif fmt_str:
             ch_val = fmt_str % (self.val_obj.val)
@@ -148,9 +148,9 @@ class ChData(sys_data.SysData):
                 ch_val,
             )
         elif not verbose and csv:
-            return "%s,%s,%s" % (time_str_nice, ch_name, ch_val)
+            return "{},{},{}".format(time_str_nice, ch_name, ch_val)
         else:
-            return "%s: %s = %s" % (time_str_nice, ch_name, ch_val)
+            return "{}: {} = {}".format(time_str_nice, ch_name, ch_val)
 
     def get_val_str(self):
 
@@ -158,7 +158,7 @@ class ChData(sys_data.SysData):
         Convert the value to a string, using the format specifier if provided
         """
         fmt_str = self.template.get_format_str()
-        if self.val_obj == None:
+        if self.val_obj is None:
             return ""
         elif fmt_str:
             return fmt_str % (self.val_obj.val)

@@ -11,31 +11,25 @@ argument values.
 """
 from __future__ import print_function
 
-from fprime_gds.common.data_types import sys_data
+from copy import deepcopy
 
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.time_type import TimeBase
-
+from fprime.common.models.serialize.array_type import ArrayType
 from fprime.common.models.serialize.bool_type import BoolType
 from fprime.common.models.serialize.enum_type import EnumType
 from fprime.common.models.serialize.f32_type import F32Type
 from fprime.common.models.serialize.f64_type import F64Type
-
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime.common.models.serialize.u64_type import U64Type
-
 from fprime.common.models.serialize.i8_type import I8Type
 from fprime.common.models.serialize.i16_type import I16Type
 from fprime.common.models.serialize.i32_type import I32Type
 from fprime.common.models.serialize.i64_type import I64Type
-
-from fprime.common.models.serialize.string_type import StringType
 from fprime.common.models.serialize.serializable_type import SerializableType
-from fprime.common.models.serialize.array_type import ArrayType
-
-from copy import deepcopy
+from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.time_type import TimeBase, TimeType
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.u64_type import U64Type
+from fprime_gds.common.data_types import sys_data
 
 
 class CmdData(sys_data.SysData):
@@ -133,7 +127,7 @@ class CmdData(sys_data.SysData):
         raw_time_str = str(self.time)
         name = self.template.get_full_name()
 
-        if self.args == None:
+        if self.args is None:
             arg_str = "EMPTY COMMAND OBJ"
         else:
             # The arguments are currently serializable objects which cannot be
@@ -153,9 +147,9 @@ class CmdData(sys_data.SysData):
                 arg_str,
             )
         elif not verbose and csv:
-            return "%s,%s,%s" % (time_str, name, arg_str)
+            return "{},{},{}".format(time_str, name, arg_str)
         else:
-            return "%s: %s : %s" % (time_str, name, arg_str)
+            return "{}: {} : {}".format(time_str, name, arg_str)
 
     def convert_arg_value(self, arg_val, arg_type):
         if arg_val is None:

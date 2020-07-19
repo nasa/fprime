@@ -6,13 +6,14 @@ and decoding into a single component that the be composed into the standard pipe
 
 @mstarch
 """
-# Encoders and Decoders
-import fprime_gds.common.encoders.file_encoder
-import fprime_gds.common.encoders.cmd_encoder
+import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.event_decoder
 import fprime_gds.common.decoders.file_decoder
-import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.pkt_decoder
+import fprime_gds.common.encoders.cmd_encoder
+
+# Encoders and Decoders
+import fprime_gds.common.encoders.file_encoder
 
 
 class EncodingDecoding(object):

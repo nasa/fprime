@@ -5,18 +5,20 @@
 # this framework.
 #
 ####
-import os
 import logging
+import os
+
 import flask
 import flask_restful
 import flask_uploads
 
+import fprime_gds.flask.channels
+
 # Import the Flask API implementations
 import fprime_gds.flask.commands
 import fprime_gds.flask.events
-import fprime_gds.flask.channels
-import fprime_gds.flask.logs
 import fprime_gds.flask.json
+import fprime_gds.flask.logs
 import fprime_gds.flask.updown
 
 from . import components

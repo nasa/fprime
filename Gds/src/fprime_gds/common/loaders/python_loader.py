@@ -16,14 +16,15 @@ this class will be empty.
 """
 from __future__ import absolute_import
 
-import importlib
-import sys
-import os
 import glob
+import importlib
+import os
+import sys
+
+from fprime_gds.common.data_types import exceptions
 
 # Custom Python Modules
 from . import dict_loader
-from fprime_gds.common.data_types import exceptions
 
 
 class PythonLoader(dict_loader.DictLoader):
@@ -121,9 +122,9 @@ class PythonLoader(dict_loader.DictLoader):
             mod_name = mf.split(".")[0]
 
             if use_superpkg:
-                import_name = "%s.%s.%s" % (superpkg, pkg, mod_name)
+                import_name = "{}.{}.{}".format(superpkg, pkg, mod_name)
             else:
-                import_name = "%s.%s" % (pkg, mod_name)
+                import_name = "{}.{}".format(pkg, mod_name)
 
             m = importlib.import_module(import_name)
 

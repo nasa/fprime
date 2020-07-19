@@ -12,10 +12,9 @@ describe the packet with ID 5 and channels A, B, and C in that order.
 """
 from __future__ import absolute_import
 
-from . import data_template
-from . import ch_template
-
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+
+from . import ch_template, data_template
 
 
 class PktTemplate(data_template.DataTemplate):

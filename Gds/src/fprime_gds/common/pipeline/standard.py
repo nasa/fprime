@@ -12,17 +12,13 @@ import datetime
 import os.path
 
 import fprime.common.models.serialize.time_type
-
-import fprime_gds.common.logger.data_logger
-import fprime_gds.common.distributor.distributor
 import fprime_gds.common.client_socket.client_socket
 import fprime_gds.common.data_types.cmd_data
+import fprime_gds.common.distributor.distributor
+import fprime_gds.common.logger.data_logger
 
 # Local imports for the sake of composition
-from . import dictionaries
-from . import encoding
-from . import histories
-from . import files
+from . import dictionaries, encoding, files, histories
 
 
 class StandardPipeline(object):

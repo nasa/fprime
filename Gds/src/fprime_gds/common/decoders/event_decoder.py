@@ -15,14 +15,14 @@ Example data structure:
 @bug No known bugs
 """
 from __future__ import print_function
-import copy
 
-from fprime_gds.common.decoders import decoder
-from fprime_gds.common.data_types import event_data
-from fprime.common.models.serialize import u32_type
-from fprime.common.models.serialize import time_type
-from fprime.common.models.serialize.type_exceptions import TypeException
+import copy
 import traceback
+
+from fprime.common.models.serialize import time_type, u32_type
+from fprime.common.models.serialize.type_exceptions import TypeException
+from fprime_gds.common.data_types import event_data
+from fprime_gds.common.decoders import decoder
 
 
 class EventDecoder(decoder.Decoder):

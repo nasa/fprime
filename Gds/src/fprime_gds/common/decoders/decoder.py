@@ -20,6 +20,7 @@ allow consumers to receive raw data.
 @bug No known bugs
 """
 from __future__ import print_function
+
 import abc
 
 import fprime_gds.common.handlers

@@ -7,11 +7,12 @@ across a Tcp and/or UDP network interface.
 
 @author lestarch
 """
-import time
 import logging
-import socket
 import queue
+import socket
 import threading
+import time
+
 import fprime_gds.common.adapters.base
 import fprime_gds.common.logger
 

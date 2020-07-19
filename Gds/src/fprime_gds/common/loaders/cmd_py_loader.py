@@ -8,9 +8,10 @@
 """
 from __future__ import absolute_import
 
+from fprime_gds.common.templates import cmd_template
+
 # Custom Python Modules
 from . import python_loader
-from fprime_gds.common.templates import cmd_template
 
 
 class CmdPyLoader(python_loader.PythonLoader):

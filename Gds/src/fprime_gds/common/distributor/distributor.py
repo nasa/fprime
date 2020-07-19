@@ -18,8 +18,7 @@ from __future__ import print_function
 import sys
 
 from fprime.common.models.serialize import u32_type
-from fprime_gds.common.utils import data_desc_type
-from fprime_gds.common.utils import config_manager
+from fprime_gds.common.utils import config_manager, data_desc_type
 
 
 # NOTE decoder function to call is called data_callback(data)
@@ -42,7 +41,7 @@ class Distributor(object):
                    information on what types the message fields are. If None,
                    defaults are used.
         """
-        if config == None:
+        if config is None:
             # Retrieve defaults for the configs
             config = config_manager.ConfigManager()
 
@@ -267,13 +266,17 @@ if __name__ == "__main__":
 
     if test_msg_1 != data_1:
         print(
-            "expected 1st msg to be %s but found %s" % (list(data_1), list(test_msg_1))
+            "expected 1st msg to be {} but found {}".format(
+                list(data_1), list(test_msg_1)
+            )
         )
         sys.exit(-1)
 
     if test_msg_2 != data_2:
         print(
-            "expected 2nd msg to be %s but found %s" % (list(data_2), list(test_msg_2))
+            "expected 2nd msg to be {} but found {}".format(
+                list(data_2), list(test_msg_2)
+            )
         )
         sys.exit(-1)
 

@@ -16,23 +16,22 @@ Note: assuming the module containing the ground adapter has been imported, then 
 @author lestarch
 """
 from __future__ import print_function
-import sys
-import queue
+
 import argparse
-import threading
 import logging
-import fprime_gds.common.logger
+import queue
+import sys
+import threading
 
 # Required adapters built on standard tools
 import fprime_gds.common.adapters.base
 import fprime_gds.common.adapters.ground
 import fprime_gds.common.adapters.ip
-from fprime_gds.common.adapters.framing import FpFramerDeframer
-
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime_gds.common.utils.data_desc_type import DataDescType
-
+import fprime_gds.common.logger
 import fprime_gds.executables.cli
+from fprime.common.models.serialize.u32_type import U32Type
+from fprime_gds.common.adapters.framing import FpFramerDeframer
+from fprime_gds.common.utils.data_desc_type import DataDescType
 
 # Uses non-standard PIP package pyserial, so test the waters before getting a hard-import crash
 try:

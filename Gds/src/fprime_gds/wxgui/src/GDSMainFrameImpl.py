@@ -1,13 +1,16 @@
 from __future__ import absolute_import
-import wx
-from . import GDSMainFrameGUI
-from . import GDSChannelTelemetryPanelImpl
-from . import GDSStatusPanelImpl
-from . import GDSCommandPanelImpl
-from . import GDSLogEventPanelImpl
 
 import os
 
+import wx
+
+from . import (
+    GDSChannelTelemetryPanelImpl,
+    GDSCommandPanelImpl,
+    GDSLogEventPanelImpl,
+    GDSMainFrameGUI,
+    GDSStatusPanelImpl,
+)
 
 ###########################################################################
 ## Class MainFrameImpl
@@ -124,7 +127,7 @@ class MainFrameImpl(GDSMainFrameGUI.MainFrame):
 			dest {string} -- destination string needed to creat the full binary string sent
 		"""
 
-        self.updateBytesSent(len("A5A5 %s %s" % (dest, data)))
+        self.updateBytesSent(len("A5A5 {} {}".format(dest, data)))
 
     # Override these handlers to implement functionality for GUI elements
     def onMainFrameClose(self, event):

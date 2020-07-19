@@ -6,14 +6,14 @@
 
 @bug No known bugs
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+from fprime_gds.common.templates import event_template
+from fprime_gds.common.utils.event_severity import EventSeverity
 
 # Custom Python Modules
 from . import python_loader
-from fprime_gds.common.templates import event_template
-from fprime_gds.common.utils.event_severity import EventSeverity
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
 
 class EventPyLoader(python_loader.PythonLoader):

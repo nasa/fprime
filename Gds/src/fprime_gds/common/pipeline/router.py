@@ -8,6 +8,7 @@ originating object correctly.
 @author mstarch
 """
 import struct
+
 import fprime_gds.common.handlers
 
 

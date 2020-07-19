@@ -5,10 +5,13 @@ Created on Apr. 27, 2015
 """
 from __future__ import print_function
 
-# Import the types this way so they do not need prefixing for execution.
-from fprime.common.models.serialize.type_exceptions import TypeException
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime.common.models.serialize.type_base import BaseType
+
+# Import the types this way so they do not need prefixing for execution.
+from fprime.common.models.serialize.type_exceptions import (
+    TypeException,
+    TypeMismatchException,
+)
 
 
 class Channel(object):

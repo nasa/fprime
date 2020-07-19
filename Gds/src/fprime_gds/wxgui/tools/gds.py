@@ -11,17 +11,17 @@ sent to the Fprime deployment.
 @copyright:  2018 California Institute of Technology. All rights reserved.
 """
 from __future__ import print_function
-import sys
-import os
-from time import sleep
-from argparse import ArgumentParser
-import wx
 
+import os
+import sys
+from argparse import ArgumentParser
+from time import sleep
+
+import wx
 from fprime_gds.common.client_socket import client_socket
 from fprime_gds.common.utils import config_manager
-from fprime_gds.wxgui.src.main_frame_factory import MainFrameFactory
 from fprime_gds.wxgui.src.GDSMainFrameImpl import MainFrameImpl
-
+from fprime_gds.wxgui.src.main_frame_factory import MainFrameFactory
 
 __all__ = []
 __version__ = 1.0
@@ -103,63 +103,63 @@ def get_args():
     args = parser.parse_args()
 
     # Verify Arguments
-    if args.generated_path == None and args.xml_dict_path == None:
+    if args.generated_path is None and args.xml_dict_path is None:
         sys.stderr.write(
             "Either -d or -x argument must be used to indicate a dictionary path"
         )
         return None
 
-    if args.generated_path != None and not os.path.exists(args.generated_path):
+    if args.generated_path is not None and not os.path.exists(args.generated_path):
         sys.stderr.write(
             "Error: Dictionary directory %s does not exist." % args.generated_path
         )
         return None
-    elif args.generated_path != None and not os.path.isdir(args.generated_path):
+    elif args.generated_path is not None and not os.path.isdir(args.generated_path):
         sys.stderr.write(
             "Error: Generated Dictionary path %s is not a directory"
             % args.generated_path
         )
         return None
 
-    if args.xml_dict_path != None and not os.path.exists(args.xml_dict_path):
+    if args.xml_dict_path is not None and not os.path.exists(args.xml_dict_path):
         sys.stderr.write(
             "Error: Dictionary directory %s does not exist." % args.xml_dict_path
         )
         return None
-    elif args.xml_dict_path != None and not os.path.isfile(args.xml_dict_path):
+    elif args.xml_dict_path is not None and not os.path.isfile(args.xml_dict_path):
         sys.stderr.write(
             "Error: Generated Dictionary path %s is not a file" % args.xml_dict_path
         )
         return None
 
-    if args.pkt_spec_path != None and not os.path.exists(args.pkt_spec_path):
+    if args.pkt_spec_path is not None and not os.path.exists(args.pkt_spec_path):
         sys.stderr.write(
             "Error: Dictionary directory %s does not exist." % args.pkt_spec_path
         )
         return None
-    elif args.pkt_spec_path != None and not os.path.isfile(args.pkt_spec_path):
+    elif args.pkt_spec_path is not None and not os.path.isfile(args.pkt_spec_path):
         sys.stderr.write(
             "Error: Generated Dictionary path %s is not a file" % args.pkt_spec_path
         )
         return None
 
-    if args.log_dir_path != None and not os.path.exists(args.log_dir_path):
+    if args.log_dir_path is not None and not os.path.exists(args.log_dir_path):
         sys.stderr.write(
             "Error: Dictionary directory %s does not exist." % args.log_dir_path
         )
         return None
-    elif args.log_dir_path != None and not os.path.isdir(args.log_dir_path):
+    elif args.log_dir_path is not None and not os.path.isdir(args.log_dir_path):
         sys.stderr.write(
             "Error: Generated Dictionary path %s is not a directory" % args.log_dir_path
         )
         return None
 
-    if args.config_path != None and not os.path.exists(args.config_path):
+    if args.config_path is not None and not os.path.exists(args.config_path):
         sys.stderr.write(
             "Error: Dictionary directory %s does not exist." % args.config_path
         )
         return None
-    elif args.config_path != None and not os.path.isfile(args.config_path):
+    elif args.config_path is not None and not os.path.isfile(args.config_path):
         sys.stderr.write(
             "Error: Generated Dictionary path %s is not a file" % args.config_path
         )
@@ -183,12 +183,12 @@ def main(argv=None):
     Command line options.
     """
     args = get_args()
-    if args == None:
+    if args is None:
         return -1
 
     # Setup the configuration file
     config = config_manager.ConfigManager()
-    if args.config_path != None:
+    if args.config_path is not None:
         config.set_configs(args.config_path)
     else:
         print("No Configuration File in options, using defaults")

@@ -14,10 +14,10 @@ https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode
 
 :author: koran
 """
-import os
-import time
 import datetime
+import os
 import threading
+import time
 
 # If openpyxl isn't installed, ignore all functionality in this module
 try:

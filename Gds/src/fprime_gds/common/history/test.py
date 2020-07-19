@@ -6,8 +6,8 @@ retrieval operations
 
 :author: koran
 """
-from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.history.history import History
+from fprime_gds.common.testing_fw import predicates
 
 
 class TestHistory(History):

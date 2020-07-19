@@ -1,5 +1,5 @@
-import wx
 import GDSCommandPanelGUI
+import wx
 
 ###########################################################################
 ## Class CommandsImpl

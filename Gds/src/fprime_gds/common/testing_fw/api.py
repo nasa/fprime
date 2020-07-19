@@ -7,17 +7,16 @@ telemetry and dictionaries.
 
 :author: koran
 """
-import time
 import signal
-
-from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.history.test import TestHistory
-from fprime_gds.common.logger.test_logger import TestLogger
-from fprime_gds.common.utils.event_severity import EventSeverity
-from fprime_gds.common.history.chrono import ChronologicalHistory
+import time
 
 from fprime.common.models.serialize.time_type import TimeType
 from fprime_gds.common.handlers import DataHandler
+from fprime_gds.common.history.chrono import ChronologicalHistory
+from fprime_gds.common.history.test import TestHistory
+from fprime_gds.common.logger.test_logger import TestLogger
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 class IntegrationTestAPI(DataHandler):
@@ -345,7 +344,7 @@ class IntegrationTestAPI(DataHandler):
             command: the mnemonic (str) or ID (int) of the command to send
             args: a list of command arguments.
         """
-        if args == None:
+        if args is None:
             args = []
 
         msg = "Sending Command: {} {}".format(command, args)

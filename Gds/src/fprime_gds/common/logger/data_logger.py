@@ -6,8 +6,8 @@ import os
 
 import fprime_gds.common.handlers
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.cmd_data import CmdData
+from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.pkt_data import PktData
 
 

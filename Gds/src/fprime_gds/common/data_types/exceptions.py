@@ -38,7 +38,7 @@ class GseControllerParsingException(GseControllerException):
 class GseControllerMnemonicMismatchException(GseControllerException):
     def __init__(self, val1, val2):
         super(GseControllerMnemonicMismatchException, self).__init__(
-            "ID mismatch (%s, %s)!" % (str(val1), str(val2))
+            "ID mismatch ({}, {})!".format(str(val1), str(val2))
         )
 
 

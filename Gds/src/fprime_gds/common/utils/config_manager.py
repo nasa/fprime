@@ -16,24 +16,22 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 """
 from __future__ import print_function
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
 # Custom type modules
 from fprime.common.models.serialize.f32_type import F32Type
 from fprime.common.models.serialize.f64_type import F64Type
-
+from fprime.common.models.serialize.i8_type import I8Type
+from fprime.common.models.serialize.i16_type import I16Type
+from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.i64_type import I64Type
 from fprime.common.models.serialize.u8_type import U8Type
 from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.u64_type import U64Type
 
-from fprime.common.models.serialize.i8_type import I8Type
-from fprime.common.models.serialize.i16_type import I16Type
-from fprime.common.models.serialize.i32_type import I32Type
-from fprime.common.models.serialize.i64_type import I64Type
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 
 class ConfigBadTypeException(Exception):
@@ -46,7 +44,9 @@ class ConfigBadTypeException(Exception):
             type_str (string): Bad type string that caused the error
         """
         print(
-            "Invalid type string %s read in configuration %s" % (type_str, config_name)
+            "Invalid type string {} read in configuration {}".format(
+                type_str, config_name
+            )
         )
 
 

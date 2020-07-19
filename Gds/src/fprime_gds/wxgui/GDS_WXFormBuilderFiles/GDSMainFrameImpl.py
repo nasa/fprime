@@ -1,9 +1,9 @@
-import wx
-import GDSMainFrameGUI
 import GDSChannelTelemetryPanelImpl
-import GDSStatusPanelImpl
 import GDSCommandPanelImpl
 import GDSLogEventPanelImpl
+import GDSMainFrameGUI
+import GDSStatusPanelImpl
+import wx
 
 ###########################################################################
 ## Class MainFrameImpl

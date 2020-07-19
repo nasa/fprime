@@ -7,20 +7,24 @@ handshake packet in return before the next chunk is sent out.
 
 @author lestarch
 """
-import time
-import queue
 import os
+import queue
 import threading
+import time
 
 import fprime_gds.common.handlers
-from fprime_gds.common.files.helpers import FileStates
-from fprime_gds.common.files.helpers import file_to_dict
-from fprime_gds.common.files.helpers import Timeout
-from fprime_gds.common.files.helpers import TransmitFile
-from fprime_gds.common.data_types.file_data import StartPacketData
-from fprime_gds.common.data_types.file_data import EndPacketData
-from fprime_gds.common.data_types.file_data import CancelPacketData
-from fprime_gds.common.data_types.file_data import DataPacketData
+from fprime_gds.common.data_types.file_data import (
+    CancelPacketData,
+    DataPacketData,
+    EndPacketData,
+    StartPacketData,
+)
+from fprime_gds.common.files.helpers import (
+    FileStates,
+    Timeout,
+    TransmitFile,
+    file_to_dict,
+)
 
 
 class UplinkQueue(object):

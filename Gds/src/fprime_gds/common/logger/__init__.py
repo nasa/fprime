@@ -6,9 +6,9 @@ loggers without calling basic config.
 
 @author mstarch
 """
+import logging
 import os
 import sys
-import logging
 
 
 def configure_py_log(directory=None, filename=sys.argv[0], mode="w"):

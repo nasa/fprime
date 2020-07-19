@@ -4,8 +4,8 @@ CLI commands
 """
 
 import abc
-from typing import Iterable
 import sys
+from typing import Iterable
 
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
@@ -32,7 +32,6 @@ class BaseCommand(abc.ABC):
         if log_text:
             print(log_text)
             sys.stdout.flush()
-
 
     @classmethod
     @abc.abstractmethod

@@ -8,15 +8,16 @@ class called "Dictionaries".
 """
 import os
 
+import fprime_gds.common.loaders.ch_py_loader
+import fprime_gds.common.loaders.ch_xml_loader
+
 # Py Loaders
 import fprime_gds.common.loaders.cmd_py_loader
-import fprime_gds.common.loaders.event_py_loader
-import fprime_gds.common.loaders.ch_py_loader
 
 # XML Loaders
 import fprime_gds.common.loaders.cmd_xml_loader
+import fprime_gds.common.loaders.event_py_loader
 import fprime_gds.common.loaders.event_xml_loader
-import fprime_gds.common.loaders.ch_xml_loader
 
 
 class Dictionaries(object):

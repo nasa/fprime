@@ -11,10 +11,10 @@ reading)
 """
 from __future__ import absolute_import
 
-from . import data_template
-
 from fprime.common.models.serialize.type_base import BaseType
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+
+from . import data_template
 
 
 class ChTemplate(data_template.DataTemplate):
@@ -67,10 +67,10 @@ class ChTemplate(data_template.DataTemplate):
         if not issubclass(type(ch_type_obj), type(BaseType())):
             raise TypeMismatchException(type(BaseType()), type(ch_type_obj))
 
-        if ch_fmt_str != None and not type(ch_fmt_str) == type(str()):
+        if ch_fmt_str is not None and not type(ch_fmt_str) == type(str()):
             raise TypeMismatchException(type(str()), type(ch_fmt_str))
 
-        if ch_desc != None and not type(ch_desc) == type(str()):
+        if ch_desc is not None and not type(ch_desc) == type(str()):
             raise TypeMismatchException(type(str()), type(ch_desc))
 
         # Initialize event internal variables
@@ -94,7 +94,7 @@ class ChTemplate(data_template.DataTemplate):
         Returns:
             The full name (component.channel) for this channel
         """
-        return "%s.%s" % (self.comp_name, self.name)
+        return "{}.{}".format(self.comp_name, self.name)
 
     def get_id(self):
         return self.id

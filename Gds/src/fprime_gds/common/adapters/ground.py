@@ -8,11 +8,12 @@ available to to the comm layer, and currently a single implementation used to at
 @author lestarch
 """
 from __future__ import print_function
+
 import abc
 import logging
 
-from .ip import TcpHandler
 from .framing import TcpServerFramerDeframer
+from .ip import TcpHandler
 
 LOGGER = logging.getLogger("gds_sender")
 

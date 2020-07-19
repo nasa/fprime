@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import wx
 import PexpectRunnerConsolGUI
+import wx
 
 ###########################################################################
 ## Class PexpectRunnerImp

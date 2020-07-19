@@ -14,8 +14,8 @@ This module is used to find an available socket port.
 from __future__ import print_function
 
 import socket
-import sys
 import subprocess
+import sys
 
 from fprime.constants import DATA_ENCODING
 

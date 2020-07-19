@@ -2,22 +2,21 @@ import os
 import sys
 import unittest
 
+from fprime.common.models.serialize.i32_type import I32Type
+from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.time_type import TimeType
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.event_data import EventData
+from fprime_gds.common.templates.ch_template import ChTemplate
+from fprime_gds.common.templates.event_template import EventTemplate
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.utils.event_severity import EventSeverity
+
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, "../../../../src")
 fprimeName = os.path.join(filename, "../../../../../Fw/Python/src")
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
-
-from fprime_gds.common.testing_fw import predicates
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.i32_type import I32Type
-from fprime.common.models.serialize.string_type import StringType
-
-from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.utils.event_severity import EventSeverity
-from fprime_gds.common.templates.event_template import EventTemplate
-from fprime_gds.common.data_types.event_data import EventData
 
 
 class PredicateTestCases(unittest.TestCase):

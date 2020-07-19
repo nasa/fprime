@@ -11,10 +11,14 @@ Instances of this class describe a specific command type.
 from __future__ import absolute_import
 
 import copy
-from . import data_template
+
 from fprime.common.models.serialize.type_base import BaseType
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
-from fprime.common.models.serialize.type_exceptions import ArgLengthMismatchException
+from fprime.common.models.serialize.type_exceptions import (
+    ArgLengthMismatchException,
+    TypeMismatchException,
+)
+
+from . import data_template
 
 
 class CmdTemplate(data_template.DataTemplate):
@@ -42,7 +46,7 @@ class CmdTemplate(data_template.DataTemplate):
         if not type(opcode) == type(int()):
             raise TypeMismatchException(type(int()), type(opcode))
 
-        if description != None and not type(description) == type(str()):
+        if description is not None and not type(description) == type(str()):
             raise TypeMismatchException(type(str()), type(description))
 
         if not type(arguments) == type(list()):
@@ -53,7 +57,7 @@ class CmdTemplate(data_template.DataTemplate):
             if not type(argname) == type(str()):
                 raise TypeMismatchException(type(int()), type(argname))
             #
-            if argdesc != None and not type(argdesc) == type(str()):
+            if argdesc is not None and not type(argdesc) == type(str()):
                 raise TypeMismatchException(type(int()), type(argdesc))
             #
             if not issubclass(type(argtype), type(BaseType())):
@@ -76,7 +80,7 @@ class CmdTemplate(data_template.DataTemplate):
         Returns:
             The full name (component.channel) for this event
         """
-        return "%s.%s" % (self.comp_name, self.mnemonic)
+        return "{}.{}".format(self.comp_name, self.mnemonic)
 
     def get_comp_name(self):
         return self.comp_name

@@ -7,8 +7,8 @@
 ## PLEASE DO *NOT* EDIT THIS FILE!
 ###########################################################################
 
-import wx
 import GDSLogEventPanelGUI
+import wx
 
 ###########################################################################
 ## Class LogEventsImpl

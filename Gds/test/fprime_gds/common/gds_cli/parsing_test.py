@@ -3,6 +3,7 @@ A set of PyTest-style unit tests for parsing commands
 """
 
 import os
+
 import pytest
 
 import fprime_gds.executables.fprime_cli as fprime_cli

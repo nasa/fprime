@@ -7,8 +7,8 @@
 @bug No known bugs
 """
 
-from fprime_gds.common.data_types import sys_data
 from fprime.common.models.serialize import time_type
+from fprime_gds.common.data_types import sys_data
 
 
 class EventData(sys_data.SysData):
@@ -95,7 +95,7 @@ class EventData(sys_data.SysData):
         severity = self.template.get_severity()
         format_str = self.template.get_format_str()
 
-        if self.args == None:
+        if self.args is None:
             arg_str = "EMPTY EVENT OBJ"
         else:
             # The arguments are currently serializable objects which cannot be
@@ -123,9 +123,9 @@ class EventData(sys_data.SysData):
                 arg_str,
             )
         elif not verbose and csv:
-            return "%s,%s,%s,%s" % (time_str, name, severity, arg_str)
+            return "{},{},{},{}".format(time_str, name, severity, arg_str)
         else:
-            return "%s: %s %s : %s" % (time_str, name, severity, arg_str)
+            return "{}: {} {} : {}".format(time_str, name, severity, arg_str)
 
     def __str__(self):
         """

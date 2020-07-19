@@ -36,23 +36,23 @@ Serialized Packet format:
 
 @bug No known bugs
 """
-from __future__ import print_function
-from __future__ import absolute_import
-
-from .encoder import Encoder
-from fprime_gds.common.data_types.pkt_data import PktData
-from fprime_gds.common.utils.config_manager import ConfigManager
-from fprime_gds.common.utils.data_desc_type import DataDescType
+from __future__ import absolute_import, print_function
 
 # For Unit Test
 import sys
-from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.templates.pkt_template import PktTemplate
-from fprime_gds.common.data_types.ch_data import ChData
+
 from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.u8_type import U8Type
 from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.pkt_data import PktData
+from fprime_gds.common.templates.ch_template import ChTemplate
+from fprime_gds.common.templates.pkt_template import PktTemplate
+from fprime_gds.common.utils.config_manager import ConfigManager
+from fprime_gds.common.utils.data_desc_type import DataDescType
+
+from .encoder import Encoder
 
 
 class PktEncoder(Encoder):

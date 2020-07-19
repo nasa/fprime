@@ -10,6 +10,7 @@ Note: this RAM history treats "start times" as session tokens to remember where 
 :author: lestarch
 """
 import threading
+
 from fprime_gds.common.history.history import History
 
 

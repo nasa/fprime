@@ -116,7 +116,7 @@ class FpFramerDeframer(FramerDeframer):
             FpFramerDeframer.START_TOKEN = 0xEF
         else:
             raise ValueError(
-                "Invalid TOKEN_SIZE of {0}".format(FpFramerDeframer.TOKEN_SIZE)
+                "Invalid TOKEN_SIZE of {}".format(FpFramerDeframer.TOKEN_SIZE)
             )
         FpFramerDeframer.HEADER_FORMAT = ">" + (FpFramerDeframer.TOKEN_TYPE * 2)
 
@@ -166,7 +166,7 @@ class FpFramerDeframer(FramerDeframer):
             # If the pool is large enough to read the whole frame, then read it
             elif len(data) >= total_size:
                 deframed, check = struct.unpack_from(
-                    ">{0}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE
+                    ">{}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE
                 )
                 # If the checksum is valid, return the packet. Otherwise continue to rotate
                 if check == CHECKSUM_CALC(

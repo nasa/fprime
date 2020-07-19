@@ -8,9 +8,10 @@
 """
 from __future__ import absolute_import
 
+from fprime_gds.common.templates.ch_template import ChTemplate
+
 # Custom Python Modules
 from .python_loader import PythonLoader
-from fprime_gds.common.templates.ch_template import ChTemplate
 
 
 class ChPyLoader(PythonLoader):

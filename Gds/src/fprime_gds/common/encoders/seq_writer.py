@@ -6,13 +6,12 @@ Created on August 16, 2019
 from __future__ import print_function
 
 import struct
-
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
-
 import zlib
+
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+from fprime.common.models.serialize.u8_type import U8Type
+from fprime.common.models.serialize.u16_type import U16Type
+from fprime.common.models.serialize.u32_type import U32Type
 
 
 class SeqBinaryWriter(object):
@@ -193,7 +192,7 @@ class SeqAsciiWriter(object):
         opcode = cmd_obj.getOpCode()
         args = cmd_obj.getArgs()
         #
-        cmd = "%s (0x%x)" % (mnemonic, int(opcode))
+        cmd = "{} (0x{:x})".format(mnemonic, int(opcode))
         for arg in args:
             cmd += ", %s" % arg[2].val
         return cmd

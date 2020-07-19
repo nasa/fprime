@@ -36,22 +36,22 @@ Serialized Event format:
 
 @bug No known bugs
 """
-from __future__ import print_function
-from __future__ import absolute_import
-
-from .encoder import Encoder
-from fprime_gds.common.data_types.event_data import EventData
-from fprime_gds.common.utils.config_manager import ConfigManager
-from fprime_gds.common.utils.data_desc_type import DataDescType
+from __future__ import absolute_import, print_function
 
 # For unit tests
 import sys
-from fprime_gds.common.templates.event_template import EventTemplate
+
 from fprime.common.models.serialize.time_type import TimeType
 from fprime.common.models.serialize.u8_type import U8Type
 from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.u32_type import U32Type
+from fprime_gds.common.data_types.event_data import EventData
+from fprime_gds.common.templates.event_template import EventTemplate
+from fprime_gds.common.utils.config_manager import ConfigManager
+from fprime_gds.common.utils.data_desc_type import DataDescType
 from fprime_gds.common.utils.event_severity import EventSeverity
+
+from .encoder import Encoder
 
 
 class EventEncoder(Encoder):

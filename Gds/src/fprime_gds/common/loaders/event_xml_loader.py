@@ -8,11 +8,12 @@
 """
 from __future__ import absolute_import
 
+from fprime_gds.common.data_types import exceptions
+from fprime_gds.common.templates.event_template import EventTemplate
+from fprime_gds.common.utils.event_severity import EventSeverity
+
 # Custom Python Modules
 from .xml_loader import XmlLoader
-from fprime_gds.common.templates.event_template import EventTemplate
-from fprime_gds.common.data_types import exceptions
-from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 class EventXmlLoader(XmlLoader):
@@ -46,7 +47,7 @@ class EventXmlLoader(XmlLoader):
 
         # Check if xml dict has events section
         event_section = self.get_xml_section(self.EVENT_SECT, xml_tree)
-        if event_section == None:
+        if event_section is None:
             # TODO make this its own error (XML section err or something)
             raise exceptions.GseControllerParsingException(
                 "Xml dict did not have a %s section" % self.EVENT_SECT

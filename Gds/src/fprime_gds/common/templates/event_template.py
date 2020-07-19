@@ -11,11 +11,11 @@ or cmdSeq_CS_CmdStarted
 """
 from __future__ import absolute_import
 
-from . import data_template
-
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime_gds.common.utils.event_severity import EventSeverity
+
+from . import data_template
 
 
 class EventTemplate(data_template.DataTemplate):
@@ -60,13 +60,13 @@ class EventTemplate(data_template.DataTemplate):
             if not type(arg_name) == type(str()):
                 raise TypeMismatchException(type(str()), type(arg_name))
 
-            if arg_desc != None and not type(arg_desc) == type(str()):
+            if arg_desc is not None and not type(arg_desc) == type(str()):
                 raise TypeMismatchException(type(str()), type(arg_desc))
 
             if not issubclass(type(arg_type), type(type_base.BaseType())):
                 raise TypeMismatchException(type(type_base.BaseType()), type(arg_type))
 
-        if description != None and not type(description) == type(str()):
+        if description is not None and not type(description) == type(str()):
             raise TypeMismatchException(type(str()), type(description))
 
         if not isinstance(severity, EventSeverity):
@@ -88,7 +88,7 @@ class EventTemplate(data_template.DataTemplate):
         Returns:
             The full name (component.channel) for this event
         """
-        return "%s.%s" % (self.comp_name, self.name)
+        return "{}.{}".format(self.comp_name, self.name)
 
     def get_id(self):
         return self.id

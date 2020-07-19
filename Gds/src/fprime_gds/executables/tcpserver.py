@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 from __future__ import print_function
+
+import errno
+import os
+import signal
 import socket
+import struct
+import sys
 import threading
+import time
+from optparse import OptionParser
+
+from fprime.constants import DATA_ENCODING
 
 try:
     import socketserver
 except ImportError:
     import SocketServer as socketserver
-import time
-import os
-import signal
-import sys
-import struct
-import errno
 
-from fprime.constants import DATA_ENCODING
-from optparse import OptionParser
 
 __version__ = 0.1
 __date__ = "2015-04-03"
@@ -485,7 +487,7 @@ def main(argv=None):
                 ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
     program_version = "v0.1"
     program_build_date = "%s" % __updated__
-    program_version_string = "%%prog %s (%s)" % (program_version, program_build_date)
+    program_version_string = "%prog {} ({})".format(program_version, program_build_date)
     program_longdesc = (
         """"""  # optional - give further explanation about what the program does
     )
@@ -531,7 +533,7 @@ def main(argv=None):
         LOCK = server.lock_obj
         ip, port = server.server_address
 
-        print("TCP Socket Server listening on host addr %s, port %s" % (HOST, PORT))
+        print("TCP Socket Server listening on host addr {}, port {}".format(HOST, PORT))
         # Start a thread with the server -- that thread will then start one
         # more thread for each request
         server_thread = threading.Thread(target=server.serve_forever)

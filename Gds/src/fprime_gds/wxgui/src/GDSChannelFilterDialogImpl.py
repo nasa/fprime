@@ -1,7 +1,10 @@
 from __future__ import absolute_import
-import wx
-from . import GDSChannelFilterDialogGUI
+
 import csv
+
+import wx
+
+from . import GDSChannelFilterDialogGUI
 
 ###########################################################################
 ## Class ChannelFilterDialogImpl

@@ -1,13 +1,13 @@
 # TODO documentation
 from __future__ import print_function
-import sys
-import socket
-import threading
-import select
 
-from fprime_gds.common.handlers import DataHandler
+import select
+import socket
+import sys
+import threading
 
 from fprime.constants import DATA_ENCODING
+from fprime_gds.common.handlers import DataHandler
 
 # Constants for public use
 GUI_TAG = "GUI"

@@ -3,13 +3,14 @@ A suite of unit tests for testing utilities the GDS CLI uses
 """
 
 from copy import deepcopy
+
 import pytest
 
-from fprime_gds.common.data_types.pkt_data import PktData
-from fprime_gds.common.data_types.sys_data import SysData
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
+from fprime_gds.common.data_types.pkt_data import PktData
+from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.templates.data_template import DataTemplate
 from fprime_gds.common.templates.pkt_template import PktTemplate
 from fprime_gds.common.testing_fw import predicates
