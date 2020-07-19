@@ -778,7 +778,7 @@ class ParserElement:
                     loc, tokens = self.parseImpl(instring, preloc, doActions)
                 except IndexError:
                     raise ParseException(instring, len(instring), self.errmsg, self)
-            # ~ except ReparseException, retryEx:
+            # ~ except ReparseException as retryEx:
             # ~ pass
             except ParseException as err:
                 # ~ print "Exception raised:", err
@@ -1427,7 +1427,7 @@ class Word(Token):
                 )
             try:
                 self.re = re.compile(self.reString)
-            except re.error, TypeError:
+            except (re.error, TypeError):
                 self.re = None
 
     def parseImpl(self, instring, loc, doActions=True):
