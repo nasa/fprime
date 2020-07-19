@@ -107,14 +107,14 @@ class TransmitFile(object):
     Wraps the file information needed for the uplink and downlinking processes.
     """
 
-    def __init__(self, source, destination, log_dir=None):
+    def __init__(self, source, destination, size=None, log_dir=None):
         """ Construct the uplink file """
         self.__mode = None
         self.__start = None
         self.__end = None
         self.__source = source
         self.__destination = destination
-        self.__size = os.path.getsize(source)
+        self.__size = size if size is not None else os.path.getsize(source)
         self.__seek = 0
         self.__state = "QUEUED"
         self.__fd = None

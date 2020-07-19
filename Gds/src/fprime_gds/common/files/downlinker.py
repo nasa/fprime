@@ -89,6 +89,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         self.active = TransmitFile(
             source_path,
             os.path.join(self.__directory, self.sanitize(dest_path)),
+            size,
             self.__log_dir,
         )
         self.active.open("wb+")
