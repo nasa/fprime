@@ -33,7 +33,7 @@ class ArrayType(type_base.BaseType):
         """
         Constructor
         """
-
+        super().__init__()
         if not type(typename) == type(str()):
             raise TypeMismatchException(type(str()), type(typename))
 

@@ -4,6 +4,7 @@ Created on Dec 18, 2014
 @author: reder
 Replaced type base class with decorators
 """
+import abc
 from __future__ import print_function
 from __future__ import absolute_import
 import struct
@@ -11,30 +12,27 @@ from .type_exceptions import AbstractMethodException
 from .type_exceptions import DeserializeException
 from .type_exceptions import NotInitializedException
 
-#
-#
-class BaseType(object):
+
+class BaseType(abc.ABC):
     """
-    An abstract base class to define all type classes.
+    An abstract base defining the methods supported by all base classes.
     """
 
-    def __init__(self):
+    @abc.abstractmethod
+    def serialize(self):
         """
-        Constructor.
+        Serializes the current object type.
         """
+        pass
 
-    def serialize(self, *args):
-        """
-        AbstractSerialize interface
-        """
-        raise AbstractMethodException("serialize")
-
-    def deserialize(self, *args):
+    @abc.abstractmethod
+    def deserialize(self, ):
         """
         AbstractDeserialize interface
         """
         raise AbstractMethodException("deserialize")
 
+    @abc.abstractmethod
     def getSize(self):
         """
         Abstract getSize interface
@@ -48,6 +46,39 @@ class BaseType(object):
         if hasattr(self, "val"):
             return {"value": self.val, "type": str(self)}
         raise AbstractMethodException("to_jsonable")
+
+
+@abc.ABC
+class ValueType(BaseType):
+    """
+    An abstract base type used to represent a single value. This defines the value property, allowing for setting and
+    reading from the .val member.
+    """
+    def __init__(self):
+        """ Defines the single value """
+        self.__val = None
+
+    @abc.abstractmethod
+    def validate(self):
+        """
+        Checks the val for validity with respect to the current type. This will raise TypeMissmatchException when the
+        validation fails of the val's type fails. It will raise TypeRangeException when val is out of range.
+        :raises TypeMismatchException: value has incorrect type, TypeRangeException: val is out of range
+        """
+        pass
+
+    @property
+    def val(self):
+        """ Getter for .val """
+        return self.__val
+
+    @val.setter
+    def val(self, val):
+        """ Setter for .val calls validate internally """
+        self.validate(val)
+        self.__val = val
+
+
 
 
 #

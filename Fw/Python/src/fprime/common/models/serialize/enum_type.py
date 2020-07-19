@@ -30,6 +30,7 @@ class EnumType(type_base.BaseType):
         """
         Constructor
         """
+        super().__init__()
         # Check input value for member selected
         if val != None:
             if not type(val) == type(str()):
