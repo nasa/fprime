@@ -38,7 +38,7 @@ class EventTemplate(data_template.DataTemplate):
             format_str: Format string for the event's arguments
             description: (Optional) Event Description
         """
-
+        super().__init__()
         # Make sure correct types are passed
         if not type(event_id) == type(int()):
             raise TypeMismatchException(type(int()), type(event_id))

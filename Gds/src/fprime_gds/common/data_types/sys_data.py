@@ -32,11 +32,11 @@ class SysData:
         Returns:
             An initialized SysData object
         """
-        if not self.id:
+        if not hasattr(self, "id"):
             self.id = 0
-        if not self.template:
+        if not hasattr(self, "template"):
             self.template = data_template.DataTemplate()
-        if not self.time:
+        if not hasattr(self, "time"):
             self.time = time_type.TimeType()
 
     def get_id(self):

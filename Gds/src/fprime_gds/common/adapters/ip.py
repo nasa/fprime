@@ -7,6 +7,7 @@ across a Tcp and/or UDP network interface.
 
 @author lestarch
 """
+import abc
 import logging
 import queue
 import socket
@@ -165,7 +166,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         check_port(args["address"], args["port"])
 
-
+@abc.ABC
 class IpHandler:
     """
     Base handler for IP types. This will provide the basic methods, and synchronization for reading/writing to multiple
@@ -231,11 +232,9 @@ class IpHandler:
                     self.connected = IpHandler.CONNECTED
                     self.logger.info(
                         "%s connected to %s:%d",
-                        (
                             "Server" if self.server else "Client",
                             self.address,
                             self.port,
-                        ),
                     )
                     # Post connect handshake
                     if self.post_connect is not None:
@@ -255,6 +254,10 @@ class IpHandler:
                 self.close()
         return self.connected == self.CONNECTED
 
+    @abc.abstractmethod
+    def open_impl(self):
+        """ Implementation of the handler's open call"""
+
     def close(self):
         """
         Close this specific IP handler. This involves setting connected to False, and closing non-null sockets.
@@ -265,6 +268,10 @@ class IpHandler:
         finally:
             self.socket = None
             self.connected = IpHandler.CLOSED
+
+    @abc.abstractmethod
+    def close_impl(self):
+        """ Implementation of the handler's close call"""
 
     def stop(self):
         """ Stop the handler from reconnecting and close"""
@@ -285,10 +292,14 @@ class IpHandler:
                 self.close()
                 self.logger.warning(
                     "Read failure attempting reconnection. %s: %s",
-                    (type(exc).__name__, str(exc)),
+                    type(exc).__name__, str(exc),
                 )
                 self.open()
         return b""
+
+    @abc.abstractmethod
+    def read_impl(self):
+        """ Implementation of the handler's read call"""
 
     def write(self, message):
         """
@@ -303,9 +314,13 @@ class IpHandler:
         except OSError as exc:
             if self.running:
                 self.logger.warning(
-                    "Write failure: %s: %s", (type(exc).__name__, str(exc))
+                    "Write failure: %s: %s", type(exc).__name__, str(exc)
                 )
         return False
+
+    @abc.abstractmethod
+    def write_impl(self, message):
+        """ Implementation of the handler's write call"""
 
     @staticmethod
     def kill_socket(sock):

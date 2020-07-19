@@ -52,8 +52,8 @@ class ChTemplate(data_template.DataTemplate):
             high_orange: (Optional) Above this the value will be in orange alert
             high_red: (Optional) Above this the value will be in red alert
         """
+        super().__init__()
         # Make sure correct types are passed
-        # TODO do we need to do this check
         if not type(ch_id) == type(int()):
             raise TypeMismatchException(type(int()), type(ch_id))
 

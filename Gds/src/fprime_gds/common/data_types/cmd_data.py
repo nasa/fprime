@@ -49,6 +49,7 @@ class CmdData(sys_data.SysData):
         Returns:
             An initialized CmdData object
         """
+        super().__init__()
         self.id = cmd_temp.get_id()
         self.template = cmd_temp
         self.arg_vals = cmd_args
@@ -174,7 +175,7 @@ class CmdData(sys_data.SysData):
             arg_type.val = arg_val
         elif isinstance(arg_type, SerializableType):
             pass
-        elif type(arg_type) == type(ArrayType()):
+        elif isinstance(arg_type, ArrayType):
             pass
         else:
             raise CommandArgumentException(

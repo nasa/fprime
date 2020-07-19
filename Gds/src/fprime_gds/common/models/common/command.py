@@ -79,7 +79,6 @@ class Command:
         self.__arguments = arguments
 
         # If part of a sequence we need to set these as well
-        # @todo: Need setter and getters
         self.setSeconds(seconds)
         self.setUseconds(useconds)
         self.setDescriptor(descriptor)

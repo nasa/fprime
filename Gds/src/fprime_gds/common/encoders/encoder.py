@@ -21,10 +21,12 @@ purpose is to define the interface for an encoder.
 @bug No known bugs
 """
 import abc
+import logging
 
 import fprime_gds.common.handlers
 from fprime_gds.common.utils.config_manager import ConfigManager
 
+LOGGER = logging.getLogger("encoder")
 
 class Encoder(
     fprime_gds.common.handlers.DataHandler,
@@ -59,7 +61,8 @@ class Encoder(
         encoded = self.encode_api(data)
         if encoded is not None:
             self.send_to_all(encoded)
-        # TODO: log None values here
+        else:
+            LOGGER.warning("Encoder of type %s encoded 'None' type object", type(self))
         return encoded
 
     @abc.abstractmethod

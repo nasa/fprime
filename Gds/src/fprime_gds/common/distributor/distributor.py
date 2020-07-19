@@ -58,7 +58,7 @@ class Distributor:
         self.len_obj = config.get_type("msg_len")
 
     # NOTE we could use either the type of the object or an enum as the type argument. It should indicate what the decoder decodes.
-    # TODO implement as an ENUM name as key
+
     def register(self, typeof, obj):
         """
         Register a decoder with the distributor
@@ -67,7 +67,6 @@ class Distributor:
             typeof {string} -- The name of the data descriptor that the decoder will decode
             obj {decoder} -- The decoder object that will process the data
         """
-        # TODO check that typeof is a valid DataDescType Enum value
         self.__decoders[typeof].append(obj)
 
     def parse_into_raw_msgs_api(self, data):
@@ -176,11 +175,12 @@ class Distributor:
                              more than one message.
         """
         # NOTE make data sizes selectable with a configuration later
-        # TODO: Currently, the TCPServer sends the client just the raw bytes,
+        # NOTE: Currently, the TCPServer sends the client just the raw bytes,
         #       without headers. This means that we don't have a good way to
         #       figure out where the head of the messages are when we decode
         #       them here. Ideally, the client would just be sending individual
-        #       messages.
+        #       messages. This is handled in the comm layer, sending individual
+        #       messages through the TCP Server.
 
         # Add new data to end of buffer
 

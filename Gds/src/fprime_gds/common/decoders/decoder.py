@@ -21,9 +21,11 @@ allow consumers to receive raw data.
 """
 
 import abc
+import logging
 
 import fprime_gds.common.handlers
 
+LOGGER = logging.getLogger("decoder")
 
 class Decoder(
     fprime_gds.common.handlers.DataHandler,
@@ -45,7 +47,8 @@ class Decoder(
         decoded = self.decode_api(data)
         if decoded is not None:
             self.send_to_all(decoded)
-        # TODO: log None values here
+            return
+        LOGGER.warning("Decoder of type %s produced 'None' decoded object", type(self))
 
     @abc.abstractmethod
     def decode_api(self, data):

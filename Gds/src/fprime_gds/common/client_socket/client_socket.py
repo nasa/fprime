@@ -1,4 +1,8 @@
-# TODO documentation
+"""
+client_socket.py:
+
+Socket used to attach to the TCP server as a client and read/write data.
+"""
 
 import select
 import socket

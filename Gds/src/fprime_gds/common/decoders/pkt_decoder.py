@@ -40,7 +40,6 @@ class PktDecoder(ChDecoder):
         Returns:
             An initialized PktDecoder object
         """
-        # TODO: we don't actually use this channel dictionary since the ch_temp objects are from the pkt dict
         super().__init__(ch_dict)
 
         self.__dict = pkt_name_dict

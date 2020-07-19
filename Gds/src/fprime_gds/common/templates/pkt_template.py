@@ -31,7 +31,7 @@ class PktTemplate(data_template.DataTemplate):
                          order of the list is the order of the channels in the
                          packet.
         """
-        # TODO is this check necessary
+        super().__init__()
         if not type(pkt_id) == type(int()):
             raise TypeMismatchException(type(int()), type(pkt_id))
 

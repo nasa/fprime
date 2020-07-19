@@ -38,6 +38,7 @@ Serialized Event format:
 """
 
 from .encoder import Encoder
+from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.utils.data_desc_type import DataDescType
 
 
@@ -72,9 +73,7 @@ class EventEncoder(Encoder):
         Returns:
             Encoded version of the data argument as binary data
         """
-        # TODO Should we verify that it is a EventData object? Or is that too
-        #      much overhead. Also, should we verify the object is non-empty
-        #      (aka its arguments field is non-None)
+        assert isinstance(data, EventData), "Encoder handling incorrect type"
         event_temp = data.get_template()
 
         self.desc_obj.val = DataDescType["FW_PACKET_LOG"].value

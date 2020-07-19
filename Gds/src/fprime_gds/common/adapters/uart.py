@@ -9,10 +9,15 @@ drivers.
 """
 
 import logging
+import sys
 
 import fprime_gds.common.adapters.base
-import serial
-from serial.tools import list_ports
+try:
+    import serial
+    from serial.tools import list_ports
+except ImportError:
+    print("[ERROR] Cannot used uart adapter without pyserial", file=sys.stderr)
+    sys.exit(-1)
 
 LOGGER = logging.getLogger("serial_adapter")
 

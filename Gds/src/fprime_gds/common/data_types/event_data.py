@@ -33,7 +33,7 @@ class EventData(sys_data.SysData):
         Returns:
             An initialized EventData object
         """
-        # TODO refactor so that arguments are actually of BaseType objects
+        super().__init__()
         self.id = event_temp.get_id()
         self.args = event_args
         self.time = event_time

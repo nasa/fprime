@@ -34,8 +34,8 @@ class SeqBinaryWriter:
     def __binaryCmdRecord(self, cmd_obj):
         """
         Return the binary command record the sequencer is expecting.
-        @todo: Currently the command descriptor is always zero for immediate commands.
-        @todo: Execution time tags needed in command objects and seq_panel.
+        @todo: Currently the command descriptor is always zero for immediate commands and execution time tags needed in
+        command objects and seq_panel.
         """
 
         def __time_tag(cmd_obj):

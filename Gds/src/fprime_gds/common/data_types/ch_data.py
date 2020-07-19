@@ -30,6 +30,7 @@ class ChData(sys_data.SysData):
         Returns:
             An initialized ChData object
         """
+        super().__init__()
         self.id = ch_temp.get_id()
         self.val_obj = ch_val_obj
         self.time = ch_time

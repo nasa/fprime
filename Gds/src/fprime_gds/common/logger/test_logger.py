@@ -180,13 +180,16 @@ class TestLogger:
 
         cell = WriteOnlyCell(self.worksheet, value=string)
         if color is not None:
+            # pylint: disable=E0237
             cell.fill = PatternFill("solid", fgColor=color)
+        # pylint: disable=E0237
         cell.font = Font(
             name=self.font_name,
             bold=(style == self.BOLD),
             italic=(style == self.ITALICS),
             underline=("single" if style == self.UNDERLINED else "none"),
         )
+        # pylint: disable=E0237
         cell.alignment = self.__align
         return cell
 

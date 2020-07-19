@@ -25,15 +25,6 @@ class PktXmlLoader(XmlLoader):
     ID_FIELD = "id"  # key to retrieve the packet id
     CH_NAME_FIELD = "name"  # key to retrieve the name from each ch elem
 
-    def __init__(self):
-        """
-        Constructor
-
-        Returns:
-            An initialized loader object
-        """
-        super().__init__()
-
     def get_id_dict(self, path, ch_name_dict):
         """
         Returns the python dictionary keyed by ids for the given path

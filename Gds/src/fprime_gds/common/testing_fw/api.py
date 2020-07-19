@@ -1077,6 +1077,7 @@ class IntegrationTestAPI(DataHandler):
 
         class __ItemSearcher(self.__HistorySearcher):
             def __init__(self, log, search_pred):
+                super().__init__()
                 self.log = log
                 self.search_pred = search_pred
                 self.repeats = False
@@ -1125,6 +1126,7 @@ class IntegrationTestAPI(DataHandler):
 
         class __SequenceSearcher(self.__HistorySearcher):
             def __init__(self, log, seq_preds):
+                super().__init__()
                 self.log = log
                 self.ret_val = []
                 self.seq_preds = seq_preds.copy()
@@ -1185,6 +1187,7 @@ class IntegrationTestAPI(DataHandler):
 
         class __CountSearcher(self.__HistorySearcher):
             def __init__(self, log, count, search_pred):
+                super().__init__()
                 self.log = log
                 self.ret_val = []
                 if predicates.is_predicate(count):

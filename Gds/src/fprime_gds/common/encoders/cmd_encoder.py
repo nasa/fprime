@@ -44,6 +44,7 @@ Serialized command format:
 
 from . import encoder
 from fprime.common.models.serialize.u32_type import U32Type
+from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.utils.data_desc_type import DataDescType
 
 
@@ -75,7 +76,7 @@ class CmdEncoder(encoder.Encoder):
         Returns:
             Encoded version of the data argument as binary data
         """
-        # TODO we should be able to handle multiple destinations, not just FSW
+        assert isinstance(data, CmdData), "Encoder handling incorrect type"
         cmd_temp = data.get_template()
 
         desc = U32Type(0x5A5A5A5A).serialize()

@@ -23,18 +23,6 @@ from fprime_gds.common.decoders import decoder
 class FileDecoder(decoder.Decoder):
     """Decoder class for file data"""
 
-    def __init__(self):
-        """
-        FileDecoder class constructor
-
-        Args:
-            None
-        Returns:
-            An initialized FileDecoder object.
-        """
-
-        super().__init__()
-
     def decode_api(self, data):
         """
         Decodes the given data and returns the result.

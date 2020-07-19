@@ -35,6 +35,7 @@ class CmdTemplate(data_template.DataTemplate):
                        Arg description may be None.
             description: (Optional) Description of the cmd (string)
         """
+        super().__init__()
         # Make sure correct types are passed
         if not type(component) == type(""):
             raise TypeMismatchException(type(""), type(component))

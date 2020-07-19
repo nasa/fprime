@@ -30,15 +30,6 @@ class ChPyLoader(PythonLoader):
     HIGH_O_FIELD = "HIGH_ORANGE"
     HIGH_R_FIELD = "HIGH_RED"
 
-    def __init__(self):
-        """
-        Constructor
-
-        Returns:
-            An initialized loader object
-        """
-        super().__init__()
-
     def construct_dicts(self, path):
         """
         Constructs and returns python dictionaries keyed on id and name
@@ -59,7 +50,6 @@ class ChPyLoader(PythonLoader):
             name fields respectively and the values should be ChTemplate
             objects.
         """
-        # TODO currently, we are always using the superpkg when importing, is this OK?
         # We do need it sometimes, so if we don't always set it to true, we will need to pass an arg
         module_dicts = self.read_dict(path, use_superpkg=True)
 

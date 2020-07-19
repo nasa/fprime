@@ -144,7 +144,7 @@ class EncodingDecoding:
         :param consumer: consumer of packets
         """
         if self.packet_decoder is not None:
-            self.packet_decoder.append(consumer)
+            self.packet_decoder.register(consumer)
 
     def deregister_packet_consumer(self, consumer):
         """
