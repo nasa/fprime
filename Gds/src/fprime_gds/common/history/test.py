@@ -16,6 +16,7 @@ class TestHistory(History):
     start with predicates and python's bracket notation.
     """
 
+    __test__ = False
     ###########################################################################
     #   History Functions
     ###########################################################################

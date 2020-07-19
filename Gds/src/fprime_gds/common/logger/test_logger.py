@@ -36,6 +36,7 @@ class TestLogger:
     User-accessible colors. Can be used for the color arguments
     """
 
+    __test__ = False
     BROWN = "E6CCB3"
     RED = "FF9999"
     ORANGE = "FFCC99"

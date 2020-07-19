@@ -952,7 +952,6 @@ class IntegrationTestAPI(DataHandler):
         def __init__(self):
             self.ret_val = None
             self.repeats = False
-            raise NotImplementedError()
 
         def search_current_history(self, items):
             """
