@@ -6,21 +6,20 @@ Checks that the dictgen tools are properly generating python/xml dicts.
 @author jishii
 """
 
+import filecmp
 import os
-import sys
 import shutil
+import sys
+import time
+
+import pexpect
+from pexpect import EOF, TIMEOUT
+
+from fprime_ac.parsers import XmlTopologyParser
+from fprime_gds.common.loaders.xml_loader import XmlLoader
 
 sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Fw", "Python", "src"))
 sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Gds", "src"))  # Add GDS modules
-from fprime_gds.common.loaders.xml_loader import XmlLoader
-
-from fprime_ac.parsers import XmlTopologyParser
-
-import pexpect
-from pexpect import TIMEOUT, EOF
-
-import filecmp
-import time
 
 
 def file_diff(file1, file2):

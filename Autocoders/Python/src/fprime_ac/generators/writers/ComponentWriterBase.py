@@ -15,23 +15,24 @@
 #
 # Python standard modules
 #
+import datetime
 import logging
 import os
 import sys
-import datetime
 from getpass import getuser
+
+from fprime_ac.generators import formatters
+from fprime_ac.generators.writers import AbstractWriter
+from fprime_ac.models import ModelParser
 
 #
 # Python extention modules and custom interfaces
 #
 from fprime_ac.utils import ConfigManager
-from fprime_ac.models import ModelParser
-from fprime_ac.generators.writers import AbstractWriter
-from fprime_ac.generators import formatters
 from fprime_ac.utils.buildroot import (
+    BuildRootMissingException,
     build_root_relative_path,
     get_nearest_build_root,
-    BuildRootMissingException,
 )
 
 #

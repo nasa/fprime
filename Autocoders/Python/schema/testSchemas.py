@@ -1,7 +1,9 @@
-import pytest
 import os
 import sys
+
+import pytest
 from lxml import etree
+
 
 """
 To add tests, go down to the setup function.

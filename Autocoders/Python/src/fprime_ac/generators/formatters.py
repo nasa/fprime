@@ -17,10 +17,9 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
+import logging
 import os
 import re
-import logging
-
 
 from fprime_ac.utils import ConfigManager
 

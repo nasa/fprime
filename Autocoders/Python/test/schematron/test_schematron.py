@@ -7,15 +7,14 @@ Checks that the schematron RNG schema files for topology, component, and diction
 """
 
 import os
-import sys
 import shutil
+import sys
+
+import pexpect
+from pexpect import EOF, TIMEOUT
 
 sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Fw", "Python", "src"))
 sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Gds", "src"))  # Add GDS modules
-
-
-import pexpect
-from pexpect import TIMEOUT, EOF
 
 
 def test_schematron():

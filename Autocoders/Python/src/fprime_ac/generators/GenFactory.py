@@ -16,72 +16,66 @@
 # Python standard modules
 #
 
-import socket
 import logging
+import socket
 
 from fprime_ac.utils import Logger
 
-from .visitors import ComponentCppVisitor
-from .visitors import ComponentHVisitor
-from .visitors import ImplCppVisitor
-from .visitors import ImplHVisitor
-from .visitors import PortCppVisitor
-from .visitors import PortHVisitor
-from .visitors import SerialCppVisitor
-from .visitors import SerialHVisitor
-from .visitors import TopologyCppVisitor
-from .visitors import TopologyHVisitor
-from .visitors import TopologyIDVisitor
-
-from .visitors import InstanceTopologyHVisitor
-from .visitors import InstanceTopologyCppVisitor
-from .visitors import InstanceTopologyCmdHTMLVisitor
-from .visitors import InstanceTopologyChannelsHTMLVisitor
-from .visitors import InstanceTopologyEventsHTMLVisitor
-
-from .visitors import ComponentTestHVisitor
-from .visitors import ComponentTestCppVisitor
-from .visitors import GTestHVisitor
-from .visitors import GTestCppVisitor
-from .visitors import TestImplCppVisitor
-from .visitors import TestImplHVisitor
-
-from .visitors import CommandVisitor
-from .visitors import EventVisitor
-from .visitors import ChannelVisitor
-from .visitors import SerializableVisitor
-
-from .visitors import InstanceCommandVisitor
-from .visitors import InstanceEventVisitor
-from .visitors import InstanceChannelVisitor
-from .visitors import InstanceSerializableVisitor
-
-from .visitors import HtmlDocVisitor
-from .visitors import MdDocVisitor
-
-from . import InitFiles
-from . import StartSource
-from . import Includes1
-from . import Includes2
-from . import Namespace
-from . import Public
-from . import Protected
-from . import Private
-from . import FinishSource
-
-from . import DictStart
-from . import DictHeader
-from . import DictBody
-
-from . import InstanceDictStart
-from . import InstanceDictHeader
-from . import InstanceDictBody
-
-from . import HtmlDocPage
-from . import HtmlStartPage
-
-from . import MdDocPage
-from . import MdStartPage
+from . import (
+    DictBody,
+    DictHeader,
+    DictStart,
+    FinishSource,
+    HtmlDocPage,
+    HtmlStartPage,
+    Includes1,
+    Includes2,
+    InitFiles,
+    InstanceDictBody,
+    InstanceDictHeader,
+    InstanceDictStart,
+    MdDocPage,
+    MdStartPage,
+    Namespace,
+    Private,
+    Protected,
+    Public,
+    StartSource,
+)
+from .visitors import (
+    ChannelVisitor,
+    CommandVisitor,
+    ComponentCppVisitor,
+    ComponentHVisitor,
+    ComponentTestCppVisitor,
+    ComponentTestHVisitor,
+    EventVisitor,
+    GTestCppVisitor,
+    GTestHVisitor,
+    HtmlDocVisitor,
+    ImplCppVisitor,
+    ImplHVisitor,
+    InstanceChannelVisitor,
+    InstanceCommandVisitor,
+    InstanceEventVisitor,
+    InstanceSerializableVisitor,
+    InstanceTopologyChannelsHTMLVisitor,
+    InstanceTopologyCmdHTMLVisitor,
+    InstanceTopologyCppVisitor,
+    InstanceTopologyEventsHTMLVisitor,
+    InstanceTopologyHVisitor,
+    MdDocVisitor,
+    PortCppVisitor,
+    PortHVisitor,
+    SerialCppVisitor,
+    SerialHVisitor,
+    SerializableVisitor,
+    TestImplCppVisitor,
+    TestImplHVisitor,
+    TopologyCppVisitor,
+    TopologyHVisitor,
+    TopologyIDVisitor,
+)
 
 # Global logger init. below.
 PRINT = logging.getLogger("output")

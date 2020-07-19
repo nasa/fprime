@@ -3,9 +3,9 @@ fprime_ac.utils.buildroot:
 
 Helper functions to deal with build root.
 """
+import functools
 import os
 import sys
-import functools
 
 BUILD_ROOTS = set() # One global build root set, to rule them all
 

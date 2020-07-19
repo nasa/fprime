@@ -16,28 +16,21 @@
 # Python standard modules
 #
 
-import sys
 import logging
+import sys
 
-
-from fprime_ac.utils import Logger
-from fprime_ac.utils import ConfigManager
-
-from fprime_ac.parsers import XmlTopologyParser
-
-from fprime_ac.models import Component
-from fprime_ac.models import Port
-from fprime_ac.models import Topology
+from fprime_ac.models import Component, Port, Topology
+from fprime_ac.parsers import XmlComponentParser, XmlTopologyParser
+from fprime_ac.utils import ConfigManager, Logger
+from fprime_ac.utils.buildroot import (
+    BuildRootCollisionException,
+    BuildRootMissingException,
+    locate_build_root,
+)
 
 # from builtins import True
 # from Canvas import Window
 
-from fprime_ac.utils.buildroot import (
-    locate_build_root,
-    BuildRootCollisionException,
-    BuildRootMissingException,
-)
-from fprime_ac.parsers import XmlComponentParser
 
 # Global logger init. below.
 PRINT = logging.getLogger("output")

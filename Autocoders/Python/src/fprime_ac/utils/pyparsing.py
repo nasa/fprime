@@ -60,11 +60,12 @@ __version__ = "1.4.5"
 __versionTime__ = "16 December 2006 07:20"
 __author__ = "Paul McGuire <ptmcg@users.sourceforge.net>"
 
-import string
-import copy, sys
-import warnings
+import copy
 import re
 import sre_constants
+import string
+import sys
+import warnings
 import xml.sax.saxutils
 
 # ~ sys.stderr.write( "testing pyparsing module, version %s, %s\n" % (__version__,__versionTime__ ) )

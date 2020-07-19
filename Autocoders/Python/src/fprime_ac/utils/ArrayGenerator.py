@@ -12,10 +12,10 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
-import sys
 import os
-from fprime_ac.parsers import XmlParser
-from fprime_ac.parsers import XmlArrayParser
+import sys
+
+from fprime_ac.parsers import XmlArrayParser, XmlParser
 
 try:
     from fprime_ac.generators.templates.arrays import array_cpp

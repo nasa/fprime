@@ -11,6 +11,8 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 import sys
+
+from fprime_ac.generators.writers import ImplWriterBase
 from fprime_ac.utils import ConfigManager
 
 try:
@@ -18,7 +20,6 @@ try:
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
-from fprime_ac.generators.writers import ImplWriterBase
 
 
 class ImplCppWriter(ImplWriterBase.ImplWriterBase):

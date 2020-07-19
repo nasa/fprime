@@ -14,23 +14,23 @@
 #
 # Python standard modules
 #
+import datetime
 import logging
 import os
 import sys
-import datetime
 from getpass import getuser
+
+from fprime_ac.generators import formatters
+
+# from fprime_ac.utils import DiffAndRename
+from fprime_ac.generators.visitors import AbstractVisitor
 
 #
 # Python extention modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
-
-# from fprime_ac.utils import DiffAndRename
-from fprime_ac.generators.visitors import AbstractVisitor
-from fprime_ac.generators import formatters
+from fprime_ac.utils import ConfigManager, DictTypeConverter
 
 #
 # Import precompiled templates here

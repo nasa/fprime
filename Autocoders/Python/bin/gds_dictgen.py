@@ -12,29 +12,20 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
+import logging
 import os
 import sys
-import logging
-
 from optparse import OptionParser
 
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
+from lxml import etree
 
 # Meta-model for Component only generation
 from fprime_ac.models import TopoFactory
-from fprime_ac.parsers import XmlSerializeParser
 
 # Parsers to read the XML
-from fprime_ac.parsers import XmlParser
-from fprime_ac.parsers import XmlTopologyParser
-from fprime_ac.utils.buildroot import (
-    get_build_roots,
-    set_build_roots,
-    search_for_file,
-)
-
-from lxml import etree
+from fprime_ac.parsers import XmlParser, XmlSerializeParser, XmlTopologyParser
+from fprime_ac.utils import ConfigManager, DictTypeConverter
+from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
 
 # Generators to produce the code
 try:

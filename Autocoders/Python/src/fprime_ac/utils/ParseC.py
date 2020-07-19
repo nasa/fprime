@@ -9,6 +9,7 @@
 # conditional compilation code.
 
 import os
+
 from .pyparsing import (
     Forward,
     Literal,

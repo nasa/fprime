@@ -16,9 +16,10 @@
 import logging
 import os
 import sys
+
 from fprime_ac.utils.buildroot import (
-    build_root_relative_path,
     BuildRootMissingException,
+    build_root_relative_path,
 )
 
 #

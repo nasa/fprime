@@ -16,18 +16,20 @@
 #
 # Python standard modules
 #
+import hashlib
 import logging
 import os
 import sys
+
 from lxml import etree
-import hashlib
+
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.exceptions import FprimeXmlException
 from fprime_ac.utils.buildroot import (
-    locate_build_root,
     BuildRootCollisionException,
     BuildRootMissingException,
+    locate_build_root,
 )
+from fprime_ac.utils.exceptions import FprimeXmlException
 
 #
 # Python extention modules and custom interfaces

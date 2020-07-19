@@ -17,16 +17,17 @@
 import logging
 import sys
 
+from fprime_ac.generators import formatters
+
+# from fprime_ac.utils import DiffAndRename
+from fprime_ac.generators.visitors import AbstractVisitor
+
 #
 # Python extention modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
-
-# from fprime_ac.utils import DiffAndRename
-from fprime_ac.generators.visitors import AbstractVisitor
-from fprime_ac.generators import formatters
 
 #
 # Import precompiled templates here

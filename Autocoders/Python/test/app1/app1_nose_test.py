@@ -1,7 +1,7 @@
 import os
-
 import subprocess
 from subprocess import CalledProcessError
+
 import pexpect
 from pexpect import TIMEOUT
 

@@ -11,6 +11,7 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 import sys
+
 from fprime_ac.generators.visitors import ComponentVisitorBase
 
 try:

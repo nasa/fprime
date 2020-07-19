@@ -16,19 +16,20 @@
 # Python standard modules
 #
 
-import sys
 import logging
+import sys
 
-
-from fprime_ac.models import Component
-from fprime_ac.models import Port
-from fprime_ac.models import Command
-from fprime_ac.models import Channel
-from fprime_ac.models import Parameter
-from fprime_ac.models import Event
-from fprime_ac.models import InternalInterface
-from fprime_ac.models import Arg
-from fprime_ac.models import Serialize
+from fprime_ac.models import (
+    Arg,
+    Channel,
+    Command,
+    Component,
+    Event,
+    InternalInterface,
+    Parameter,
+    Port,
+    Serialize,
+)
 
 # Global logger init. below.
 PRINT = logging.getLogger("output")

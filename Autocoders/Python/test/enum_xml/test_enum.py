@@ -7,15 +7,14 @@ components, porttypes, and serializables.
 @author jishii
 """
 
+import filecmp
 import os
+import shutil
+import tempfile
+import time
 
 import pexpect
-from pexpect import TIMEOUT, EOF
-
-import filecmp
-import time
-import tempfile
-import shutil
+from pexpect import EOF, TIMEOUT
 
 
 def file_diff(file1, file2):

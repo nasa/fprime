@@ -5,11 +5,11 @@
 #    DiffAndRename
 #
 
+import datetime
+import logging
 import os
 import stat
 import time
-import datetime
-import logging
 
 # Global logger initialization
 PRINT = logging.getLogger("output")

@@ -14,6 +14,8 @@ import logging
 import os
 import sys
 
+from fprime_ac.generators.visitors import ComponentVisitorBase
+
 #
 # Python extention modules and custom interfaces
 #
@@ -22,7 +24,6 @@ import sys
 
 # from fprime_ac.utils import DiffAndRename
 
-from fprime_ac.generators.visitors import ComponentVisitorBase
 
 try:
     from fprime_ac.generators.templates.md import MdDocPage

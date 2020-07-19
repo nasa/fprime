@@ -6,44 +6,36 @@
 # from XML definition files.
 #
 # ===============================================================================
+import glob
+import logging
 import os
 import sys
 import time
-import glob
-import logging
 import traceback
-
 from optparse import OptionParser
-
-from fprime_ac.utils import Logger
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
-from fprime_ac.utils import EnumGenerator
-from fprime_ac.utils import ArrayGenerator
-
-
-# Meta-model for Component only generation
-from fprime_ac.models import CompFactory
-from fprime_ac.models import PortFactory
-from fprime_ac.models import TopoFactory
-from fprime_ac.models import Serialize
-
-
-# Parsers to read the XML
-from fprime_ac.parsers import XmlParser
-from fprime_ac.parsers import XmlComponentParser
-from fprime_ac.parsers import XmlPortsParser
-from fprime_ac.parsers import XmlSerializeParser
-from fprime_ac.parsers import XmlTopologyParser
-from fprime_ac.parsers import XmlArrayParser
-from fprime_ac.utils.buildroot import (
-    get_build_roots,
-    set_build_roots,
-    search_for_file,
-)
 
 from lxml import etree
 
+# Meta-model for Component only generation
+from fprime_ac.models import CompFactory, PortFactory, Serialize, TopoFactory
+
+# Parsers to read the XML
+from fprime_ac.parsers import (
+    XmlArrayParser,
+    XmlComponentParser,
+    XmlParser,
+    XmlPortsParser,
+    XmlSerializeParser,
+    XmlTopologyParser,
+)
+from fprime_ac.utils import (
+    ArrayGenerator,
+    ConfigManager,
+    DictTypeConverter,
+    EnumGenerator,
+    Logger,
+)
+from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
 
 # Comment back in when converters added
 # from converters import AmpcsCommandConverter

@@ -18,17 +18,18 @@ import logging
 import os
 import sys
 
+from fprime_ac.generators import formatters
+
+# from fprime_ac.utils import DiffAndRename
+from fprime_ac.generators.visitors import AbstractVisitor
+from fprime_ac.models import ModelParser
+
 #
 # Python extention modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
-from fprime_ac.models import ModelParser
-
-# from fprime_ac.utils import DiffAndRename
-from fprime_ac.generators.visitors import AbstractVisitor
-from fprime_ac.generators import formatters
 
 #
 # Import precompiled templates here
@@ -153,11 +154,14 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Make a list of event args into a string
         """
+
         def f(args):
             def g(lst):
                 name = lst[0]
                 return name
+
             return self.argsString(list(map(g, args)))
+
         return f
 
     def publicVisit(self, obj):

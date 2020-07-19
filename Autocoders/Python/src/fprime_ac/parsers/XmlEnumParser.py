@@ -19,13 +19,14 @@
 import logging
 import os
 import sys
-from fprime_ac.utils import ConfigManager
-from lxml import etree
-from lxml import isoschematron
+
+from lxml import etree, isoschematron
+
 from fprime_ac.parsers import XmlParser
+from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import (
-    FprimeXmlException,
     FprimeRngXmlValidationException,
+    FprimeXmlException,
 )
 
 #

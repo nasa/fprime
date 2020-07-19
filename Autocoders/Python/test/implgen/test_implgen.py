@@ -6,13 +6,13 @@ Checks that the implgen tool is properly generating its impl cpp/hpp.
 @author jishii
 """
 
+import filecmp
 import os
+import time
 
 import pexpect
-from pexpect import TIMEOUT, EOF
+from pexpect import EOF, TIMEOUT
 
-import time
-import filecmp
 
 # Version label for now
 class Version:

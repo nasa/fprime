@@ -19,18 +19,19 @@
 import logging
 import os
 import sys
+
+from lxml import etree, isoschematron
+
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.exceptions import (
-    FprimeXmlException,
-    FprimeRngXmlValidationException,
-)
 from fprime_ac.utils.buildroot import (
-    locate_build_root,
     BuildRootCollisionException,
     BuildRootMissingException,
+    locate_build_root,
 )
-from lxml import etree
-from lxml import isoschematron
+from fprime_ac.utils.exceptions import (
+    FprimeRngXmlValidationException,
+    FprimeXmlException,
+)
 
 try:
     import configparser

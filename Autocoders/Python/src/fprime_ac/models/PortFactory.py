@@ -18,13 +18,9 @@
 
 import logging
 
-from fprime_ac.utils import Logger
-
+from fprime_ac.models import Arg, Port
 from fprime_ac.parsers import XmlPortsParser
-
-from fprime_ac.models import Port
-from fprime_ac.models import Arg
-
+from fprime_ac.utils import Logger
 
 # Global logger init. below.
 PRINT = logging.getLogger("output")

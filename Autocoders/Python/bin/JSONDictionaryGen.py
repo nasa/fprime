@@ -7,17 +7,16 @@ DESCRIPTION: Reads topology XML to produce command, EVR, and channel JSON
 AUTHOR: Aaron Doubek-Kraft aarondou@jpl.nasa.gov
 """
 
-import os
-import logging
 import json
+import logging
+import os
 import sys
-
 from optparse import OptionParser
 
-from fprime_ac.parsers import XmlTopologyParser
-from fprime_ac.parsers import XmlSerializeParser
+from fprime_ac.parsers import XmlSerializeParser, XmlTopologyParser
 from fprime_ac.utils import Logger
 from fprime_ac.utils.buildroot import get_build_roots, set_build_roots
+
 
 # Version label for now
 class Version:

@@ -22,14 +22,15 @@
 # ===============================================================================
 import os
 
+# For Python determination
+import six
+
 # 2/3 support
 try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
 
-# For Python determination
-import six
 
 parent = configparser.ConfigParser
 

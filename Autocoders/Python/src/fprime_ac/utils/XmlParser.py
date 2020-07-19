@@ -19,6 +19,7 @@
 #
 import logging
 import os
+
 from genshi import XML
 
 #

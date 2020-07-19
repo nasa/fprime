@@ -20,8 +20,9 @@
 #
 
 import argparse
-import csv
 import copy
+import csv
+
 from Cheetah.Template import Template
 
 #

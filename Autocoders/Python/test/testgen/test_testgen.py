@@ -6,15 +6,15 @@ Checks that the testgen tool is properly generating its test cpp/hpp.
 @author jishii
 """
 
+import filecmp
 import os
-
-import pexpect
-from pexpect import TIMEOUT, EOF
-
 import shutil
 import tempfile
-import filecmp
 import time
+
+import pexpect
+from pexpect import EOF, TIMEOUT
+
 
 # Version label for now
 class Version:
