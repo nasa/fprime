@@ -13,7 +13,6 @@ import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.testing_fw.api import IntegrationTestAPI
 
 
 class CommandSendCommand(QueryHistoryCommand):
@@ -39,13 +38,14 @@ class CommandSendCommand(QueryHistoryCommand):
         closest_matches = difflib.get_close_matches(command_name, known_commands, n=num)
         return closest_matches
 
-    # TODO: Make this a method on one of the pipeline classes instead?
     @staticmethod
     def get_command_template(
         project_dictionary: Dictionaries, command_name: str
     ) -> CmdTemplate:
         """
         Retrieves the command template for the given command name
+
+        TODO: Make this a method on one of the pipeline classes instead?
 
         :param project_dictionary: The dictionary object for this project
             containing the item type definitions
@@ -71,16 +71,11 @@ class CommandSendCommand(QueryHistoryCommand):
         command_template = CommandSendCommand.get_command_template(
             project_dictionary, command_name
         )
-        # TODO: Refactor CommandsCommand's method into a common class, since
-        # this is technically a private method?
         return misc_utils.get_cmd_template_string(command_template)
 
     @classmethod
     def _get_item_list(
-        cls,
-        project_dictionary: Dictionaries,
-        filter_predicate: predicates.predicate,
-        json: bool = False,
+        cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
     ) -> Iterable[CmdTemplate]:
         """
         Gets a list of available commands in the system and return them in an
@@ -90,7 +85,6 @@ class CommandSendCommand(QueryHistoryCommand):
             containing the command definitions
         :param filter_predicate: Test API predicate used to filter shown
             channels
-        :param json: Whether to print out each item in JSON format or not
         """
         # NOTE: Trying to create a blank CmdData causes errors, so currently
         # just using templates (i.e. this function does nothing)
@@ -105,12 +99,11 @@ class CommandSendCommand(QueryHistoryCommand):
 
     @classmethod
     def _get_upcoming_item(
-        cls, api, filter_predicate, min_start_time="",
+        cls, api, filter_predicate, min_start_time="NOW", timeout=5.0,
     ):
         """
         TODO: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class?
         """
-        pass
 
     @classmethod
     def _get_item_string(cls, item: CmdTemplate, json: bool = False,) -> str:
@@ -123,7 +116,6 @@ class CommandSendCommand(QueryHistoryCommand):
         """
         return misc_utils.get_cmd_template_string(item, json)
 
-    # TODO: Cut down on the number of arguments here?
     @classmethod
     def handle_arguments(
         cls,
@@ -152,8 +144,6 @@ class CommandSendCommand(QueryHistoryCommand):
             cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
             return
 
-        # TODO: Make this api setup part of a decorator somehow, since it
-        # recurs in several places?
         # ======================================================================
         pipeline, api = test_api_utils.initialize_test_api(
             dictionary, server_ip=ip_address, server_port=port

@@ -70,7 +70,7 @@ def get_upcoming_event(
     event_filter = predicates.satisfies_all(
         [search_filter, predicates.event_predicate()]
     )
-    # TODO: Test API only takes integer timeouts?
+    # Test API only takes integer timeouts
     return test_api.find_history_item(
         event_filter, test_api.get_event_test_history(), start_time, int(timeout)
     )
@@ -101,13 +101,12 @@ def get_upcoming_channel(
     channel_filter = predicates.satisfies_all(
         [search_filter, predicates.telemetry_predicate()]
     )
-    # TODO: Test API only takes integer timeouts?
+    # Test API only takes integer timeouts
     return test_api.find_history_item(
         channel_filter, test_api.get_telemetry_test_history(), start_time, int(timeout)
     )
 
 
-# TODO: Possibly move to a different file, since it doesn't directly use the API
 def get_item_list(
     item_dictionary: Dict[Any, DataTemplate],
     search_filter: predicates.predicate,
@@ -134,6 +133,6 @@ def get_item_list(
     )
 
     # Filter by using the given predicate on the event values
-    event_data_list = list(filter(lambda x: search_filter(x), event_data_list))
+    event_data_list = list(filter(search_filter, event_data_list))
     event_data_list.sort(key=lambda x: x.get_id())
     return event_data_list

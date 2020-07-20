@@ -33,14 +33,12 @@ class BaseCommand(abc.ABC):
             print(log_text)
             sys.stdout.flush()
 
-
     @classmethod
     @abc.abstractmethod
     def handle_arguments(cls, *args, **kwargs):
         """
         Do something to handle the input arguments given
         """
-        pass
 
 
 class QueryHistoryCommand(BaseCommand):
@@ -67,7 +65,6 @@ class QueryHistoryCommand(BaseCommand):
         :param filter_predicate: Test API predicate used to filter shown items
         :return: An iterable collection of items that passed the filter
         """
-        pass
 
     @classmethod
     def _get_item_list_string(cls, items: Iterable, json: bool = False,) -> str:
@@ -94,9 +91,7 @@ class QueryHistoryCommand(BaseCommand):
         Retrieves an F' item that's occurred since the given time and returns
         its data.
         """
-        pass
 
-    # TODO: Need to do user tests to find a better print format
     @classmethod
     def _get_item_string(cls, item, json: bool = False,) -> str:
         """
@@ -121,8 +116,8 @@ class QueryHistoryCommand(BaseCommand):
         This is done to link printing code to filtering, so that filtering ALWAYS filters the same strings as are printed.
 
         TODO: Possibly make separate filters for item/item_list strings, since
-        there's currently no guarantee they'll be the same if this base class
-        is overridden?
+        there's currently no guarantee they'll be the same if
+        _get_item_list_string is overridden?
 
         :param item: The F' item to convert to a string
         :param json: Whether to convert each item to a JSON representation
@@ -154,8 +149,8 @@ class QueryHistoryCommand(BaseCommand):
         items = cls._get_item_list(project_dictionary, search_filter)
         return cls._get_item_list_string(items, json)
 
-    # TODO: Just use args/kwargs instead of this massive argument list? But I
-    # kind of do want some coupling with the frontend code to keep these in sync
+    # Explicit rgument list instead of args/kwargs used to have some coupling
+    # with the frontend code to keep these in sync
     @classmethod
     def handle_arguments(
         cls,
@@ -181,8 +176,6 @@ class QueryHistoryCommand(BaseCommand):
         """
         search_filter = cls._get_search_filter(ids, components, search, json)
 
-        # TODO: If combinatorial explosion w/ options becomes an issue,
-        # refactor this to avoid if/else structure?
         if list:
             cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
             return
