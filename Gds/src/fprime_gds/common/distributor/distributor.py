@@ -13,7 +13,7 @@ descriptor header will be passed on to the registered objects.
 
 @bug No known bugs
 """
-import fprime.common.models.serialize.int_type
+import fprime.common.models.serialize.numerical_types
 from fprime_gds.common.utils import config_manager, data_desc_type
 
 
@@ -154,7 +154,7 @@ class Distributor:
         length = self.len_obj.val
 
         # Parse Descriptor type
-        desc_obj = fprime.common.models.serialize.int_types.U32Type()
+        desc_obj = fprime.common.models.serialize.numerical_types.U32Type()
         desc_obj.deserialize(raw_msg, offset)
         offset += desc_obj.getSize()
         desc = desc_obj.val
