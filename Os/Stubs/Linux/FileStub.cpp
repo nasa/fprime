@@ -80,6 +80,10 @@ namespace Os {
     }
 
     File::Status File::open(const char* fileName, File::Mode mode) {
+      return this->open(fileName, mode, true);
+    }
+
+    File::Status File::open(const char* fileName, File::Mode mode, bool include_excl) {
 
         if (openInterceptor) {
             File::Status stat;
