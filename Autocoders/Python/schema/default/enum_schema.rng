@@ -30,14 +30,16 @@
             </optional>
             
             <!-- Elements -->
-            <optional>
-                <!-- Optional Comments -->
-                <ref name = "comment_define"></ref>
-            </optional>
+            <interleave>
+                <optional>
+                    <!-- Optional Comments -->
+                    <ref name = "comment_define"></ref>
+                </optional>
 
-            <oneOrMore>
-                <ref name = "item_definition"></ref>
-            </oneOrMore>
+                <oneOrMore>
+                    <ref name = "item_definition"></ref>
+                </oneOrMore>
+            </interleave>
         </element>
     </define>
     
