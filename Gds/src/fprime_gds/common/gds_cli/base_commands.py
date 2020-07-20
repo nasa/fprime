@@ -149,7 +149,7 @@ class QueryHistoryCommand(BaseCommand):
         items = cls._get_item_list(project_dictionary, search_filter)
         return cls._get_item_list_string(items, json)
 
-    # Explicit rgument list instead of args/kwargs used to have some coupling
+    # Explicit argument list instead of args/kwargs used to have some coupling
     # with the frontend code to keep these in sync
     @classmethod
     def handle_arguments(
