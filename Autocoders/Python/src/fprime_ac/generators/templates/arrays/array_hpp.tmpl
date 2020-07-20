@@ -1,6 +1,7 @@
 ##
 ## Template to stamp out serializable arrays .hpp file
 ##
+#import re
 // ====================================================================== 
 // \title  ${name}.hpp
 // \author Auto-generated
@@ -41,6 +42,9 @@
 
 #if $namespace
 namespace ${namespace} {
+#end if
+#if $comment
+  //! $re.sub("\n *", "\n  //! ", $comment)
 #end if
   class ${name} : public Fw::Serializable
   {

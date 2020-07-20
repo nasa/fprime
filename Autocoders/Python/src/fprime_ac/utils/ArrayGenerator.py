@@ -42,7 +42,7 @@ def open_file(name, type):
         sys.exit(-1)
     return fp
 
-def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comments, include_headers, import_serializables, import_enums, import_arrays):
+def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comment, include_headers, import_serializables, import_enums, import_arrays):
     '''
     Set up and write out templates here
     '''
@@ -55,7 +55,7 @@ def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, for
     c.default = default_values
     c.uuid = type_id # uuid = type_id
     c.string_size = string_size
-    c.comments = comments
+    c.comment = comment
     c.include_headers = include_headers
     c.import_serializables = import_serializables
     c.import_enums = import_enums
@@ -85,7 +85,7 @@ def generate_array(xml_file):
         string_size = array_xml.get_string_size()
         if string_size:
             string_size = int(string_size)
-        comments = array_xml.get_comments()
+        comment = array_xml.get_comment()
         include_headers = array_xml.get_include_header_files()
         import_serializables = array_xml.get_includes()
         import_enums = array_xml.get_include_enum_files()
@@ -114,14 +114,14 @@ def generate_array(xml_file):
         #
         fp = open_file(name, "hpp")
         c = array_hpp.array_hpp()
-        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comment, headers, serials, enums, arrays)
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = array_cpp.array_cpp()
-        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comments, headers, serials, enums, arrays)
+        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comment, headers, serials, enums, arrays)
         fp.close()
         return True
     else:
