@@ -28,7 +28,7 @@ import fprime_gds.common.adapters.ground
 import fprime_gds.common.adapters.ip
 import fprime_gds.common.logger
 import fprime_gds.executables.cli
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U32Type
 from fprime_gds.common.adapters.framing import FpFramerDeframer
 from fprime_gds.common.utils.data_desc_type import DataDescType
 

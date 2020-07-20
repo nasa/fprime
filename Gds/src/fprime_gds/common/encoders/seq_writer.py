@@ -8,9 +8,7 @@ import struct
 import zlib
 
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U8Type, U16Type, U32Type
 
 
 class SeqBinaryWriter:

@@ -17,9 +17,7 @@ from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
 import six
-from .u32_type import U32Type
-from .u16_type import U16Type
-from .u8_type import U8Type
+from .numerical_types import U8Type, U16Type, U32Type
 
 from enum import Enum
 

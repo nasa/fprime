@@ -8,7 +8,6 @@ import copy
 from enum import Enum
 
 from fprime.common.models.serialize import type_base
-from fprime.common.models.serialize.f32_type import F32Type
 from fprime.common.models.serialize.type_base import BaseType
 
 # Import the types this way so they do not need prefixing for execution.
@@ -18,7 +17,7 @@ from fprime.common.models.serialize.type_exceptions import (
     TypeException,
     TypeMismatchException,
 )
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U32Type, F32Type
 
 Descriptor = Enum(value="Descriptor", names="ABSOLUTE RELATIVE")
 

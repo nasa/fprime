@@ -25,12 +25,10 @@ from enum import Enum
 import math
 
 # Custom Python Modules
+import fprime.common.models.serialize.numerical_types
 from fprime.common.models.serialize.type_exceptions import TypeException
 from fprime.common.models.serialize.type_exceptions import TypeRangeException
 from fprime.common.models.serialize import type_base
-from fprime.common.models.serialize import u32_type
-from fprime.common.models.serialize import u16_type
-from fprime.common.models.serialize import u8_type
 
 TimeBase = Enum(
     "TimeBase",
@@ -84,10 +82,10 @@ class TimeType(type_base.BaseType):
         self._check_time_base(time_base)
         self._check_useconds(useconds)
 
-        self.__timeBase = u16_type.U16Type(time_base)
-        self.__timeContext = u8_type.U8Type(time_context)
-        self.__secs = u32_type.U32Type(seconds)
-        self.__usecs = u32_type.U32Type(useconds)
+        self.__timeBase = fprime.common.models.serialize.numerical_types.U16Type(time_base)
+        self.__timeContext = fprime.common.models.serialize.numerical_types.U8Type(time_context)
+        self.__secs = fprime.common.models.serialize.numerical_types.U32Type(seconds)
+        self.__usecs = fprime.common.models.serialize.numerical_types.U32Type(useconds)
 
     def _check_useconds(self, useconds):
         """
@@ -137,7 +135,7 @@ class TimeType(type_base.BaseType):
     @timeBase.setter
     def timeBase(self, val):
         self._check_time_base(val)
-        self.__timeBase = u16_type.U16Type(val)
+        self.__timeBase = fprime.common.models.serialize.numerical_types.U16Type(val)
 
     @property
     def timeContext(self):
@@ -145,7 +143,7 @@ class TimeType(type_base.BaseType):
 
     @timeContext.setter
     def timeContext(self, val):
-        self.__timeContext = u8_type.U8Type(val)
+        self.__timeContext = fprime.common.models.serialize.numerical_types.U8Type(val)
 
     @property
     def seconds(self):
@@ -153,7 +151,7 @@ class TimeType(type_base.BaseType):
 
     @seconds.setter
     def seconds(self, val):
-        self.__secs = u32_type.U32Type(val)
+        self.__secs = fprime.common.models.serialize.numerical_types.U32Type(val)
 
     @property
     def useconds(self):
@@ -162,7 +160,7 @@ class TimeType(type_base.BaseType):
     @useconds.setter
     def useconds(self, val):
         self._check_useconds(val)
-        self.__usecs = u32_type.U32Type(val)
+        self.__usecs = fprime.common.models.serialize.numerical_types.U32Type(val)
 
     def serialize(self):
         """
@@ -331,9 +329,9 @@ class TimeType(type_base.BaseType):
         self._check_time_base(time_base)
         self._check_useconds(useconds)
 
-        self.__timeBase = u16_type.U16Type(time_base)
-        self.__secs = u32_type.U32Type(seconds)
-        self.__usecs = u32_type.U32Type(useconds)
+        self.__timeBase = fprime.common.models.serialize.numerical_types.U16Type(time_base)
+        self.__secs = fprime.common.models.serialize.numerical_types.U32Type(seconds)
+        self.__usecs = fprime.common.models.serialize.numerical_types.U32Type(useconds)
 
     def __repr__(self):
         return "Time"

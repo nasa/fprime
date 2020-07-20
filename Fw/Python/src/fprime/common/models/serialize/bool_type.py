@@ -4,65 +4,37 @@ Created on Dec 18, 2014
 """
 from __future__ import absolute_import
 import struct
-from .type_exceptions import NotInitializedException
-from .type_exceptions import TypeMismatchException
-from . import type_base
+from .type_exceptions import DeserializeException, NotInitializedException, TypeMismatchException
+from .type_base import ValueType
 
 
-@type_base.serialize
-@type_base.deserialize
-class BoolType(type_base.BaseType):
-    def __init__(self, val=None):
-        """
-        Constructor
-        """
-        super().__init__()
-        self.__val = val
-        if val == None:
-            return
+class BoolType(ValueType):
+    """
+    Representation of a boolean type that will be stored for F prime. True values are stored as a U8 of 0xFF and False
+    is stored as a U8 of 0x00.
+    """
+    TRUE = 0xFF
+    FALSE = 0x00
 
-        self.__do_check = True
-        self._check_val(val)
-
-    def _check_val(self, val):
-        # Make sure deserialize can set val
-        if val is not None and self.__do_check:
-            if not type(val) == type(bool()):
-                raise TypeMismatchException(type(bool()), type(val))
-
-    @property
-    def val(self):
-        return self.__val
-
-    @val.setter
-    def val(self, val):
-        self._check_val(val)
-        self.__val = val
+    def validate(self, val):
+        """ Validate the given class """
+        if not isinstance(bool, val):
+            raise TypeMismatchException(bool, type(val))
 
     def serialize(self):
-        if self.val == None:
+        """ Serialize a boolean value"""
+        if self.val is None:
             raise NotInitializedException(type(self))
-
-        if self.val:
-            return struct.pack("B", 0xFF)
-        else:
-            return struct.pack("B", 0x00)
+        return struct.pack("B", 0xFF if self.val else 0x00)
 
     def deserialize(self, data, offset):
         """
         Utilize deserialized decorator here...
         """
-        self.__do_check = False
-        self._deserialize("B", data, offset)
-        self.__do_check = True
-
-        if self.val == 0xFF:
-            self.val = True
-        else:
-            self.val = False
+        try:
+            return struct.unpack_from("B", self.TRUE if self.val else self.FALSE)
+        except struct.error:
+            raise DeserializeException("Not enough bytes to deserialize bool.")
 
     def getSize(self):
         return struct.calcsize("B")
-
-    def __repr__(self):
-        return "Bool"

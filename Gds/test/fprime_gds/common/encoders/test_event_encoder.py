@@ -11,9 +11,7 @@ from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime_gds.common.templates.event_template import EventTemplate
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U8Type, U16Type, U32Type
 from fprime_gds.common.utils.event_severity import EventSeverity
 
 

@@ -5,8 +5,6 @@ Created on Dec 18, 2014
 Replaced type base class with decorators
 """
 import abc
-from __future__ import print_function
-from __future__ import absolute_import
 import struct
 from .type_exceptions import AbstractMethodException
 from .type_exceptions import DeserializeException
@@ -26,7 +24,7 @@ class BaseType(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def deserialize(self, ):
+    def deserialize(self, offset):
         """
         AbstractDeserialize interface
         """
@@ -39,6 +37,10 @@ class BaseType(abc.ABC):
         """
         raise AbstractMethodException("getSize")
 
+    def __repr__(self):
+        """ Produces a string representation of a given type """
+        return type(self).replace("Type", "")
+
     def to_jsonable(self):
         """
         Converts this type to a JSON serializable object
@@ -48,21 +50,25 @@ class BaseType(abc.ABC):
         raise AbstractMethodException("to_jsonable")
 
 
-@abc.ABC
-class ValueType(BaseType):
+class ValueType(BaseType, abc.ABC):
     """
     An abstract base type used to represent a single value. This defines the value property, allowing for setting and
     reading from the .val member.
     """
-    def __init__(self):
+    def __init__(self, val=None):
         """ Defines the single value """
         self.__val = None
+        # Run full setter
+        if val is not None:
+            self.val = val
+
 
     @abc.abstractmethod
-    def validate(self):
+    def validate(self, val):
         """
         Checks the val for validity with respect to the current type. This will raise TypeMissmatchException when the
         validation fails of the val's type fails. It will raise TypeRangeException when val is out of range.
+        :param val: value to validate
         :raises TypeMismatchException: value has incorrect type, TypeRangeException: val is out of range
         """
         pass
@@ -78,6 +84,24 @@ class ValueType(BaseType):
         self.validate(val)
         self.__val = val
 
+
+    @abc.abstractmethod
+    @staticmethod
+    def get_serialize_format():
+        """ Gets the format serialization string such that the class can be serialized via struct """
+
+    def serialize(self):
+        """ Serializes this type using struct and the val property """
+        if self.val is None:
+            raise NotInitializedException(type(self))
+        return struct.pack(self.get_serialize_format(), self.val)
+
+    def deserialize(self, data, offset):
+        """ Serializes this type using struct and the val property """
+        try:
+            self.val = struct.unpack_from(self.get_serialize_format(), data, offset)[0]
+        except struct.error as err:
+            raise DeserializeException(str(err))
 
 
 

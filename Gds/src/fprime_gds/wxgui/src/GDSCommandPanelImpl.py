@@ -3,18 +3,10 @@ from itertools import cycle
 from fprime.common.models.serialize.array_type import *
 from fprime.common.models.serialize.bool_type import *
 from fprime.common.models.serialize.enum_type import *
-from fprime.common.models.serialize.f32_type import *
-from fprime.common.models.serialize.f64_type import *
-from fprime.common.models.serialize.int_types import I8Type
-from fprime.common.models.serialize.i16_type import *
-from fprime.common.models.serialize.i32_type import *
-from fprime.common.models.serialize.i64_type import *
+from fprime.common.models.serialize.numerical_types import I8Type, I16Type, I32Type, I64Type, U8Type, U16Type, U32Type, \
+    U64Type, F32Type, F64Type
 from fprime.common.models.serialize.serializable_type import *
 from fprime.common.models.serialize.string_type import *
-from fprime.common.models.serialize.u8_type import *
-from fprime.common.models.serialize.u16_type import *
-from fprime.common.models.serialize.u32_type import *
-from fprime.common.models.serialize.u64_type import *
 from fprime_gds.common.data_types import cmd_data
 
 from . import GDSArgItemComboBox, GDSArgItemTextCtl, GDSCommandPanelGUI

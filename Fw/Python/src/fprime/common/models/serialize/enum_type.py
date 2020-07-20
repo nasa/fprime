@@ -2,91 +2,57 @@
 Created on Dec 18, 2014
 @author: tcanham, reder
 """
-from __future__ import print_function
-from __future__ import absolute_import
-from .type_exceptions import TypeMismatchException
-from .type_exceptions import TypeRangeException
-from .type_exceptions import EnumMismatchException
-from .type_exceptions import NotInitializedException
-
-from . import type_base
+import struct
+from .type_exceptions import DeserializeException, EnumMismatchException, NotInitializedException, TypeMismatchException, TypeRangeException
+from .type_base import ValueType
 
 
-@type_base.serialize
-@type_base.deserialize
-class EnumType(type_base.BaseType):
+class EnumType(ValueType):
     """
-    Representation of the ENUM type
+    Representation of the ENUM type.
 
     The enumeration takes a dictionary that stores the enumeration members
     and current value as a string. The member values will have to be computed
     containing code based on C enum rules
-    @param: typename = "SomeTypeName" string  Name of the type.
-    @param: enum_dict = { "member":val, ...}  member value dict.
-    @param: val = "member name" Optional member name for serializing only.
     """
-
     def __init__(self, typename="", enum_dict=None, val=None):
         """
         Constructor
+        :param typename: name of the enumeration type
+        :param enum_dict: dictionary of value to integer representation
+        :param val: value of the enumeration
         """
         super().__init__()
-        # Check input value for member selected
-        if val != None:
-            if not type(val) == type(str()):
-                raise TypeMismatchException(type(str()), type(val))
-        else:
-            val = "UNDEFINED"
-        self.__val = val
-
-        # Check type of typename
-        if not type(typename) == type(str()):
-            raise TypeMismatchException(type(str()), type(val))
-
+        if not isinstance(typename, str):
+            raise TypeMismatchException(str, type(val))
         self.__typename = typename
-
-        # Check if enum is None
+        # Setup the enum dictionary
         if enum_dict is None:
             enum_dict = {"UNDEFINED": 0}
-
-        # Check enum is a dict
-        if not type(enum_dict) == type(dict()):
-            raise TypeMismatchException(type(dict()), type(val))
-
-        # scan the dictionary to see if it is formatted correctly
-        for member in list(enum_dict.keys()):
-            # member name should be a string
-            if not type(member) == type(str()):
-                raise TypeMismatchException(type(str()), type(member))
-            # member value should be an integer
-            if not type(enum_dict[member]) == type(int()):
-                raise TypeMismatchException(type(int()), enum_dict[member])
-
+        # Check if the enum dict is an instance of dictionary
         self.__enum_dict = enum_dict
-        self.__do_check = True
+        # Set val to undefined if not set
+        if val is None:
+            val = "UNDEFINED"
+        self.val = val
 
-        self._check_val(val)
-
-    def _check_val(self, val):
-        # make sure requested value is found in enum members
-        if val != "UNDEFINED" and self.__do_check:
-            if val not in list(self.__enum_dict.keys()):
-                raise EnumMismatchException(self.__typename, val)
-
-    @property
-    def val(self):
-        return self.__val
-
-    @val.setter
-    def val(self, val):
-        self._check_val(val)
-        self.__val = val
+    def validate(self, val):
+        """ Validate the value passed into the enumeration """
+        if isinstance(self.enum_dict(), dict):
+            raise TypeMismatchException(dict, type(val))
+        for member in self.keys():
+            if not isinstance(member, str):
+                raise TypeMismatchException(str, type(member))
+            elif not isinstance(self.enum_dict()[member], int):
+                raise TypeMismatchException(int, self.enum_dict()[member])
+        if val != "UNDEFINED" and val not in self.keys():
+            raise EnumMismatchException(self.__typename, val)
 
     def keys(self):
         """
         Return all the enum key values.
         """
-        return list(self.__enum_dict.keys())
+        return list(self.enum_dict().keys())
 
     def typename(self):
         return self.__typename
@@ -96,38 +62,32 @@ class EnumType(type_base.BaseType):
 
     def serialize(self):
         """
-        Utilize serialize decorator here...
+        Serialize the enumeration type using an int type
         """
         # for enums, take the string value and convert it to
         # the numeric equivalent
-        if self.val == None:
+        if self.val is None:
             raise NotInitializedException(type(self))
-        #
-        return self._serialize(">i", self.__enum_dict[self.val])
+        return struct.pack(">i", self.enum_dict()[self.val])
 
     def deserialize(self, data, offset):
         """
-        Utilize deserialized decorator here...
+        Deserialize the enumeration using an int type
         """
-
-        self.__do_check = False
-        self._deserialize(">i", data, offset)
-        self.__do_check = True
-        # search for value in enum_list
-        # print self.__enum_dict
-        # print self.val
-        #
-        for member in list(self.__enum_dict.keys()):
-            if self.__enum_dict[member] == self.val:
-                self.val = member
-
-        if self.val not in list(self.__enum_dict.keys()):
-            raise TypeRangeException(self.val)
+        try:
+            int_val = struct.unpack_from(">i", data, offset)[0]
+        except:
+            raise DeserializeException("Could not deserialize enum value. Needed: {} bytes Found: {}"
+                                       .format(self.getSize(), len(data[offset:])))
+        for key, val in self.enum_dict().items():
+            if int_val == val:
+                self.val = key
+                break
+        # Value not found, invalid enumeration value
+        else:
+            raise TypeRangeException(int_val)
 
     def getSize(self):
-        # enum value stored as unsigned int
-        # return struct.calcsize('>i');
-        return 4
+        """ Calculates the size based on the size of an integer used to store it """
+        return struct.calcsize('>i');
 
-    def __repr__(self):
-        return "Enum"

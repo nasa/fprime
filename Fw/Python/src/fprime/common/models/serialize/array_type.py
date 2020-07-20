@@ -2,139 +2,86 @@
 Created on May 29, 2020
 @author: jishii
 """
-from __future__ import print_function
-from __future__ import absolute_import
-import struct
-from .type_exceptions import *
-from . import type_base
-from . import u32_type
-from . import string_type
-from . import enum_type
+from .type_exceptions import ArrayLengthException, TypeMismatchException
+from .type_base import ValueType
 
 
-@type_base.serialize
-@type_base.deserialize
-class ArrayType(type_base.BaseType):
+class ArrayType(ValueType):
     """
     Representation of the Array type (comparable to the ANY type)
 
-    The serializable type is a container for other instances of
-    BaseType, including itself.
-
-    @param param: typename = "SomeTypeName" string
+    The array type is a fixed size container of a single type of members.
 
     Configuration data for array type (the type of members, size of array, and format string for all members)
-    @param param: config_info = (type, size, format)
-
-    @param param: default_list = [ values... ]
     """
 
-    def __init__(self, typename, config_info, default_list=None):
+    def __init__(self, typename, config_info, values=None):
         """
-        Constructor
+        Constructor of the array type.
+        :param typename: name of this array type
+        :param config_info: (type, size, format)
+        :param values: [ values... ]
         """
         super().__init__()
-        if not type(typename) == type(str()):
-            raise TypeMismatchException(type(str()), type(typename))
-
+        if not isinstance(typename, str):
+            raise TypeMismatchException(str, type(typename))
         self.__typename = typename
-        setattr(self, "default_list", None)
-
-        self.__arr_type = config_info[0]
-        self.__arr_size = config_info[1]
-        self.__arr_format = config_info[2]
-
-        if default_list == None or len(default_list) == 0:
+        self.__arr_type, self.__arr_size, self.__arr_format = config_info
+        # Set value only if it is a valid, non-empty list
+        if not values:
             return
+        self.val = values
 
-        if not type(default_list) == type(list()):
-            raise TypeMismatchException(type(list()), type(default_list))
-
-        self.__default_list = default_list
+    def validate(self, val):
+        """ Validates the values of the array """
+        if not self.val:
+            return
+        size = self.__arr_size
+        if len(self.val) != size:
+            raise ArrayLengthException(self.__arr_type, size, len(self.val))
+        for i in range(self.__arr_size):
+            if not isinstance(self.val[i], self.__arr_type):
+                raise TypeMismatchException(self.__arr_type, type(self.val[i]))
 
     def to_jsonable(self):
         """
         JSONable type
         """
-        members = {}
-        members["name"] = self.__typename
-        members["type"] = self.__arr_type
-        members["size"] = self.__arr_size
-        members["format"] = self.__arr_format
-        members["defaults"] = []
-        for member in self.__default_list:
-            members["defaults"].append(member.to_jsonable())
+        members = {"name": self.__typename, "type": self.__typename, "size": self.__arr_size, "format": self.__arr_format,
+                   "values": [member.to_jsonable() for member in self.val]}
         return members
 
-    @property
-    def default_list(self):
-        return self.__default_list
-
-    def default_list(self, dl):
-        """
-        @todo: add arg type checking
-        """
-        self.__default_list = dl
-
-    # All Gds types have a value, array will redirect to defaults
-    @property
-    def val(self):
-        return self.__default_list
-
     def serialize(self):
-        if self.mem_list == None:
+        """ Serialize the array by serializing the elements one by one """
+        if self.val is not None:
             raise NotInitializedException(type(self))
-
-        # iterate through members and serialize each one
-        arrStream = ""
-        for val in self.default_list:
-            arrStream += val.serialize()
-
-        return arrStream
+        return b"".join([item.serialize() for item in self.val])
 
     def deserialize(self, data, offset):
-        self.__val = []
-        for arrVal in self.mem_list:
-            arrVal.deserialize(data, offset)
-            self.__val.append(arrVal.val)
-            offset += arrVal.getSize()
+        """ Deserialize the members of the array """
+        values = []
+        for i in range(self.__arr_size):
+            item = self.arr_type()
+            item.deserialize(data, offset + i * item.getSize())
+            values.append(item)
+        self.val = valuess
 
     @property
     def arr_type(self):
+        """ Property representing the size of the array """
         return self.__arr_type
 
     @property
     def arr_size(self):
+        """ Property representing the number of elements of the array """
         return self.__arr_size
 
     @property
     def arr_format(self):
+        """ Property representing the format string of an item in the array """
         return self.__arr_format
 
     def getSize(self):
-        total = 0
-        for val in self.__default_list:
-            total += val.getSize()
-        return total
+        """ Return the size of the array """
+        return sum([item.getSize() for item in self.val])
 
-
-if __name__ == "__main__":
-    print("Array")
-    try:
-        mem1 = u32_type.U32Type(100)
-        mem2 = u32_type.U32Type(938)
-        mem3 = u32_type.U32Type(22394)
-
-        config_list = ("U32", 3, "%u")
-        defaultList = [mem1, mem2, mem3]
-
-        arrType = SerializableType("ArrayType", config_list, defaultList)
-
-        print("Value: %s" % repr(defaultList))
-        buff = defaultType.serialize()
-        type_base.showBytes(buff)
-        arrType2 = ArrayType("ArrayType", defaultList)
-        arrType2.deserialize(buff, len(buff))
-        print("Deserialized: %s" % repr(arrType2.default_list))
-    except TypeException as e:
-        print("Exception: %s" % e.getMsg())

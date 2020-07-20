@@ -10,8 +10,7 @@ from fprime_gds.common.encoders.ch_encoder import ChEncoder
 from fprime_gds.common.templates.ch_template import ChTemplate
 from fprime_gds.common.utils.config_manager import ConfigManager
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U16Type, U32Type
 from fprime_gds.common.data_types.ch_data import ChData
 
 

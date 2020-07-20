@@ -4,10 +4,7 @@ Created on Dec 18, 2014
 @author: tcanham
 
 """
-from __future__ import print_function
-from __future__ import absolute_import
 import struct
-import sys
 
 from fprime.constants import DATA_ENCODING
 
@@ -18,94 +15,60 @@ from .type_exceptions import DeserializeException
 from . import type_base
 
 
-@type_base.serialize
-@type_base.deserialize
-class StringType(type_base.BaseType):
+class StringType(type_base.ValueType):
+    """
+    String type representation for F prime. This is a value type that stores a half-word first for representing the
+    length of this given string.
+    """
     def __init__(self, val=None, max_string_len=None):
         """
-        Constructor
-        @param val: Default value for the string, if None then empty string.
-        @param max_string: Maximum allowed string length set in auto-code.
+        Constructor to build a string
+        @param val: value form which to create a string. Default: None.
+        @param max_string: maximum length of the string. Default: None, not used.
         """
-        super().__init__()
-        self.__val = val
         self.__max_string_len = max_string_len
+        super().__init__(val)
 
-        if val == None:
-            return
-
-        self._check_val(val)
-
-    def _check_val(self, val):
-        if not type(val) == type(str()) and not type(val) == type(u""):
-            raise TypeMismatchException(type(str()), type(val))
-
-    @property
-    def val(self):
-        return self.__val
-
-    @val.setter
-    def val(self, val):
-        self._check_val(val)
-        if not type(val) == type(str()):
-            val = val.encode("utf-8")
-        self.__val = val
+    def validate(self, val):
+        """ Validates that this is a string """
+        if not isinstance(val, str):
+            raise TypeMismatchException(str, type(val))
+        elif self.__max_string_len is not None and len(val) > self.__max_string_len:
+            raise StringSizeException(len(self.val), self.__max_string_len)
 
     def serialize(self):
         """
+        Serializes the string in a binary format
         """
         # If val is never set then it is init exception...
-        if self.val == None:
+        if self.val is None:
             raise NotInitializedException(type(self))
-
-        # If max_string_len is set check that string size does not exceed...
-        if not self.__max_string_len == None:
-            s = len(self.val)
-            if s > self.__max_string_len:
-                raise StringSizeException(s, self.__max_string_len)
-
-        # store string value plus size - place size in front
-        buff = struct.pack(">H", len(self.val))
-        if sys.version_info >= (3, 0):
-            buff = buff + self.val.encode(DATA_ENCODING)
-        else:
-            buff = buff + self.val
+        # Check string size before serializing
+        elif self.__max_string_len is not None and len(self.val) > self.__max_string_len:
+            raise StringSizeException(len(self.val), self.__max_string_len)
+        # Pack the string size first then return the encoded data
+        buff = struct.pack(">H", len(self.val)) + self.val.encode(DATA_ENCODING)
         return buff
 
     def deserialize(self, data, offset):
         """
+        Deserializes a string from the given data buffer.
         """
-        # make sure enough space to extract integer size
-        if len(data) < 3:
-            raise DeserializeException(
-                "Not enough data to deserialize! Needed: %d Left: %d" % (4, offset)
-            )
-
-        # subtract size of int for stored string size
-        strSize = struct.unpack_from(">H", data, offset)[0]
-
-        if len(data) - offset - 2 < strSize:
-            raise DeserializeException(
-                "Not enough data to deserialize! Needed: %d Left: %d"
-                % (strSize, offset)
-            )
-
-        # get string value here
-        tmp_data = data[offset + 2 : offset + 2 + strSize]
-        if sys.version_info >= (3, 0):
-            self.val = tmp_data.decode(DATA_ENCODING)
-        else:
-            self.val = tmp_data
-        # If max_string_len is set check that string size does not exceed...
-        if not self.__max_string_len == None:
-            s = len(self.val)
-            if s > self.__max_string_len:
-                raise StringSizeException(s, self.__max_string_len)
+        try:
+            val_size = struct.unpack_from(">H", data, offset)[0]
+            # Deal with not enough data left in the buffer
+            if len(data[offset + 2:])  < val_size:
+                raise DeserializeException("Not enough data to deserialize string data. Needed: {} Left: {}"
+                                           .format(val_size, len(data[offset + 2:])))
+            # Deal with a string that is larger than max string
+            elif self.__max_string_len is not None and val_size > self.__max_string_len:
+                raise StringSizeException(val_size, self.__max_string_len)
+            self.val = data[offset + 2:offset + 2 + val_size].decode(DATA_ENCODING)
+        except struct.error:
+            raise DeserializeException("Not enough bytes to deserialize string length.")
 
     def getSize(self):
         """
+        Get the size of this object
         """
-        return len(self.val) + struct.calcsize(">H")
-
-    def __repr__(self):
-        return "String"
+        return  struct.calcsize(">H") + len(self.val)

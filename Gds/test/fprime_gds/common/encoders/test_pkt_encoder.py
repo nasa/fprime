@@ -13,9 +13,7 @@ from fprime_gds.common.templates.ch_template import ChTemplate
 from fprime_gds.common.templates.pkt_template import PktTemplate
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U8Type, U16Type, U32Type
 
 
 def test_pkt_encoder():
