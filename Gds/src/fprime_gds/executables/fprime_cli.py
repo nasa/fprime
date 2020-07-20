@@ -77,6 +77,7 @@ def add_search_arguments(parser: argparse.ArgumentParser, command_name: str):
     parser.add_argument(
         "-l",
         "--list",
+        dest="is_printing_list",
         action="store_true",
         help="list all possible %s types the current F Prime instance could produce, based on the %s dictionary, sorted by %s type ID"
         % (command_name[:-1], command_name, command_name[:-1]),
@@ -308,7 +309,7 @@ class CommandSendParser(CliCommandParserBase):
         missing, try to set them automatically if possible and error if this is
         not possible
         """
-        if not (args.command_name or args.list):
+        if not (args.command_name or args.is_printing_list):
             parser.error("One of command-name or -l/--list is required")
 
         args = super().validate_args(parser, args)

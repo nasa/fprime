@@ -7,13 +7,31 @@ sure where else to put. Please find a better home for them when you have time
 """
 
 import json
-from typing import Callable
+from typing import Callable, Iterable, NamedTuple
 
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 
 # NOTE: 'GDSJsonEncoder' module is now lazy-loaded below for performance
 # reasons
+
+
+# Define some tuples containing sets of arguments used by GDS CLI commands;
+# For more details on these arguments, see argument definitions at:
+#           Gds/src/fprime_gds/executables/fprime_cli.py
+ConnectionInfo = NamedTuple(
+    "ConnectionInfo", [("dictionary", str), ("ip_address", str), ("port", int)]
+)
+SearchInfo = NamedTuple(
+    "SearchInfo",
+    [
+        ("is_printing_list", bool),
+        ("ids", Iterable[int]),
+        ("components", Iterable[str]),
+        ("search", str),
+        ("json", bool),
+    ],
+)
 
 
 def repeat_until_interrupt(func: Callable, *args):

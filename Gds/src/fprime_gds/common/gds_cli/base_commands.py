@@ -46,9 +46,6 @@ class QueryHistoryCommand(BaseCommand):
     The base class for a set of related GDS CLI commands that need to query and
     display received data from telemetry channels, F' events, command histories,
     or similar functionalities with closely-related interfaces.
-
-    TODO: Should separate frontend printing code from backend data-getting
-    (this is basically frontend code right now, which isn't necessarily bad)
     """
 
     @classmethod
@@ -149,22 +146,12 @@ class QueryHistoryCommand(BaseCommand):
         items = cls._get_item_list(project_dictionary, search_filter)
         return cls._get_item_list_string(items, json)
 
-    # Explicit argument list instead of args/kwargs used to have some coupling
-    # with the frontend code to keep these in sync
     @classmethod
-    def handle_arguments(
+    def _execute_query(
         cls,
-        dictionary: str,
-        ip_address: str,
-        port: int,
-        list: bool,
+        connection_info: misc_utils.ConnectionInfo,
+        search_info: misc_utils.SearchInfo,
         timeout: float,
-        ids: Iterable[int],
-        components: Iterable[str],
-        search: str,
-        json: bool,
-        *args,
-        **kwargs
     ):
         """
         Takes in the given arguments and uses them to print out a formatted
@@ -174,9 +161,11 @@ class QueryHistoryCommand(BaseCommand):
         For descriptions of these arguments, and more function details, see:
             Gds/src/fprime_gds/executables/fprime_cli.py
         """
-        search_filter = cls._get_search_filter(ids, components, search, json)
+        dictionary, ip_address, port = tuple(connection_info)
+        is_printing_list, ids, components, search, json = tuple(search_info)
 
-        if list:
+        search_filter = cls._get_search_filter(ids, components, search, json)
+        if is_printing_list:
             cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
             return
 
@@ -210,3 +199,23 @@ class QueryHistoryCommand(BaseCommand):
         pipeline.disconnect()
         api.teardown()
         # ======================================================================
+
+    @classmethod
+    def handle_arguments(cls, *args, **kwargs):
+        """
+        Handle the given input arguments, then execute the command itself
+
+        TODO: This is currently just a pass-through method
+        """
+        connection_info = misc_utils.ConnectionInfo(
+            kwargs["dictionary"], kwargs["ip_address"], kwargs["port"]
+        )
+        search_info = misc_utils.SearchInfo(
+            kwargs["is_printing_list"],
+            kwargs["ids"],
+            kwargs["components"],
+            kwargs["search"],
+            kwargs["json"],
+        )
+
+        cls._execute_query(connection_info, search_info, kwargs["timeout"])
