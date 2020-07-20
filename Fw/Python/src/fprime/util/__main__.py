@@ -5,6 +5,7 @@ This acts as the main entry point for the fprime.util module. This allows users 
 This will include the build_helper scripts and run them.
 """
 import sys
+
 import fprime.util.build_helper
 
 

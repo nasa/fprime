@@ -8,11 +8,13 @@ import struct
 
 from fprime.constants import DATA_ENCODING
 
-from .type_exceptions import TypeMismatchException
-from .type_exceptions import NotInitializedException
-from .type_exceptions import StringSizeException
-from .type_exceptions import DeserializeException
 from . import type_base
+from .type_exceptions import (
+    DeserializeException,
+    NotInitializedException,
+    StringSizeException,
+    TypeMismatchException,
+)
 
 
 class StringType(type_base.ValueType):
@@ -20,6 +22,7 @@ class StringType(type_base.ValueType):
     String type representation for F prime. This is a value type that stores a half-word first for representing the
     length of this given string.
     """
+
     def __init__(self, val=None, max_string_len=None):
         """
         Constructor to build a string
@@ -44,7 +47,9 @@ class StringType(type_base.ValueType):
         if self.val is None:
             raise NotInitializedException(type(self))
         # Check string size before serializing
-        elif self.__max_string_len is not None and len(self.val) > self.__max_string_len:
+        elif (
+            self.__max_string_len is not None and len(self.val) > self.__max_string_len
+        ):
             raise StringSizeException(len(self.val), self.__max_string_len)
         # Pack the string size first then return the encoded data
         buff = struct.pack(">H", len(self.val)) + self.val.encode(DATA_ENCODING)
@@ -57,13 +62,16 @@ class StringType(type_base.ValueType):
         try:
             val_size = struct.unpack_from(">H", data, offset)[0]
             # Deal with not enough data left in the buffer
-            if len(data[offset + 2:])  < val_size:
-                raise DeserializeException("Not enough data to deserialize string data. Needed: {} Left: {}"
-                                           .format(val_size, len(data[offset + 2:])))
+            if len(data[offset + 2 :]) < val_size:
+                raise DeserializeException(
+                    "Not enough data to deserialize string data. Needed: {} Left: {}".format(
+                        val_size, len(data[offset + 2 :])
+                    )
+                )
             # Deal with a string that is larger than max string
             elif self.__max_string_len is not None and val_size > self.__max_string_len:
                 raise StringSizeException(val_size, self.__max_string_len)
-            self.val = data[offset + 2:offset + 2 + val_size].decode(DATA_ENCODING)
+            self.val = data[offset + 2 : offset + 2 + val_size].decode(DATA_ENCODING)
         except struct.error:
             raise DeserializeException("Not enough bytes to deserialize string length.")
 
@@ -71,4 +79,4 @@ class StringType(type_base.ValueType):
         """
         Get the size of this object
         """
-        return  struct.calcsize(">H") + len(self.val)
+        return struct.calcsize(">H") + len(self.val)

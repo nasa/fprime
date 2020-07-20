@@ -6,8 +6,8 @@ settings from the settings.default file that is part of the F prime deployment d
 
 @author mstarch
 """
-import os
 import configparser  # Written after PY2 eol
+import os
 
 
 class IniSettings:
@@ -104,7 +104,7 @@ class IniSettings:
         config_dir = IniSettings.read_safe_path(
             confparse, "fprime", "config_directory", settings_file
         )
-        config_dir = None if not config_dir else ac_consts[0]
+        config_dir = None if not config_dir else config_dir[0]
 
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(
@@ -158,10 +158,6 @@ class IniSettings:
 class FprimeLocationUnknownException(Exception):
     """ Fprime location could not be determined """
 
-    pass
-
 
 class FprimeSettingsException(Exception):
     """ An exception for handling F prime settings misconfiguration """
-
-    pass

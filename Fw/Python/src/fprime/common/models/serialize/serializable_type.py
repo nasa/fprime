@@ -4,12 +4,9 @@ Created on Dec 18, 2014
 @author: tcanham
 
 """
-import copy
-from __future__ import print_function
-from __future__ import absolute_import
-from .type_exceptions import TypeMismatchException
-from .type_exceptions import NotInitializedException
+
 from .type_base import BaseType, ValueType
+from .type_exceptions import NotInitializedException, TypeMismatchException
 
 
 class SerializableType(ValueType):
@@ -36,10 +33,14 @@ class SerializableType(ValueType):
         self.__typename = typename
         # If the member list is defined, stamp in None for any missing descriptions
         if mem_list:
-            new_mem_list = [entry if len(entry) == 4 else (entry[0], entry[1], entry[2], None) for entry in mem_list]
+            new_mem_list = [
+                entry if len(entry) == 4 else (entry[0], entry[1], entry[2], None)
+                for entry in mem_list
+            ]
         # Set the member list then set the value
         self.mem_list = new_mem_list
-        self.val = val
+        if val is not None:
+            self.val = val
 
     def validate(self, val=None):
         """ Validate this object including member list and values """
@@ -52,11 +53,11 @@ class SerializableType(ValueType):
             # Check each of these members for correct types
             if not isinstance(member_name, str):
                 raise TypeMismatchException(str, type(member_name))
-            elif isinstance(member_val, BaseType):
+            elif not isinstance(member_val, BaseType):
                 raise TypeMismatchException(BaseType, type(member_val))
             elif not isinstance(format_string, str):
                 raise TypeMismatchException(str, type(format_string))
-            elif not isinstance(description, str):
+            elif description is not None and not isinstance(description, str):
                 raise TypeMismatchException(str, type(description))
         # When a value is set and is not empty we need to set the member properties
         if not val:
@@ -64,7 +65,9 @@ class SerializableType(ValueType):
         # If a value is supplied then check each value against the member list
         for val_member, list_entry in zip(val, self.mem_list):
             _, member_list_val, _, _ = list_entry
-            member_list_val.validate(val_member) # Insure that the the val_member is consistent with the existing member
+            member_list_val.validate(
+                val_member
+            )  # Insure that the the val_member is consistent with the existing member
 
     @property
     def mem_list(self):
@@ -84,7 +87,9 @@ class SerializableType(ValueType):
         """ Serializes the members of the serializable """
         if self.mem_list is None:
             raise NotInitializedException(type(self))
-        return b"".join([member_val.serialize() for _, member_val, _, _ in self.mem_list])
+        return b"".join(
+            [member_val.serialize() for _, member_val, _, _ in self.mem_list]
+        )
 
     def deserialize(self, data, offset):
         """ Deserialize the values of each of the members """
@@ -98,16 +103,16 @@ class SerializableType(ValueType):
     @property
     def val(self):
         """ Getter for .val """
-        return super().val
+        return ValueType.val.fget(self)
 
     @val.setter
     def val(self, val):
         """ Setter for .val calls validate internally """
-        super().val = val
+        ValueType.val.fset(self, val)
         # When a value is set, we need to set the member properties
         for val_member, list_entry in zip(val, self.mem_list):
             _, member_list_val, _, _ = list_entry
-            list_entry.val = val_member
+            member_list_val.val = val_member
 
     def getSize(self):
         """ The size of a struct is the size of all the members """

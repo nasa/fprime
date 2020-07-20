@@ -3,8 +3,15 @@ Created on Dec 18, 2014
 @author: tcanham, reder
 """
 import struct
-from .type_exceptions import DeserializeException, EnumMismatchException, NotInitializedException, TypeMismatchException, TypeRangeException
+
 from .type_base import ValueType
+from .type_exceptions import (
+    DeserializeException,
+    EnumMismatchException,
+    NotInitializedException,
+    TypeMismatchException,
+    TypeRangeException,
+)
 
 
 class EnumType(ValueType):
@@ -15,6 +22,7 @@ class EnumType(ValueType):
     and current value as a string. The member values will have to be computed
     containing code based on C enum rules
     """
+
     def __init__(self, typename="", enum_dict=None, val=None):
         """
         Constructor
@@ -38,8 +46,8 @@ class EnumType(ValueType):
 
     def validate(self, val):
         """ Validate the value passed into the enumeration """
-        if isinstance(self.enum_dict(), dict):
-            raise TypeMismatchException(dict, type(val))
+        if not isinstance(self.enum_dict(), dict):
+            raise TypeMismatchException(dict, type(self.enum_dict()))
         for member in self.keys():
             if not isinstance(member, str):
                 raise TypeMismatchException(str, type(member))
@@ -77,8 +85,11 @@ class EnumType(ValueType):
         try:
             int_val = struct.unpack_from(">i", data, offset)[0]
         except:
-            raise DeserializeException("Could not deserialize enum value. Needed: {} bytes Found: {}"
-                                       .format(self.getSize(), len(data[offset:])))
+            raise DeserializeException(
+                "Could not deserialize enum value. Needed: {} bytes Found: {}".format(
+                    self.getSize(), len(data[offset:])
+                )
+            )
         for key, val in self.enum_dict().items():
             if int_val == val:
                 self.val = key
@@ -89,5 +100,4 @@ class EnumType(ValueType):
 
     def getSize(self):
         """ Calculates the size based on the size of an integer used to store it """
-        return struct.calcsize('>i');
-
+        return struct.calcsize(">i")

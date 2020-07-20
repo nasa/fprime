@@ -5,20 +5,26 @@ Created on Jun 25, 2020
 @author: hpaulson
 """
 
-from __future__ import absolute_import
 
 import pytest
 
-from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize.bool_type import BoolType
 from fprime.common.models.serialize.enum_type import EnumType
-from fprime.common.models.serialize.numerical_types import I8Type, I16Type, I32Type, I64Type, U8Type, U16Type, U32Type, \
-    U64Type, F32Type, F64Type
+from fprime.common.models.serialize.numerical_types import (
+    F32Type,
+    F64Type,
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+)
 from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime.common.models.serialize.string_type import StringType
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.time_type import TimeBase
-from fprime.common.models.serialize.time_type import ser_deser_test
+from fprime.common.models.serialize.time_type import TimeBase, TimeType, ser_deser_test
 
 
 def test_bool_type():

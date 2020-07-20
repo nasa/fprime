@@ -2,8 +2,12 @@
 Created on May 29, 2020
 @author: jishii
 """
-from .type_exceptions import ArrayLengthException, TypeMismatchException
 from .type_base import ValueType
+from .type_exceptions import (
+    ArrayLengthException,
+    NotInitializedException,
+    TypeMismatchException,
+)
 
 
 class ArrayType(ValueType):
@@ -47,8 +51,13 @@ class ArrayType(ValueType):
         """
         JSONable type
         """
-        members = {"name": self.__typename, "type": self.__typename, "size": self.__arr_size, "format": self.__arr_format,
-                   "values": [member.to_jsonable() for member in self.val]}
+        members = {
+            "name": self.__typename,
+            "type": self.__typename,
+            "size": self.__arr_size,
+            "format": self.__arr_format,
+            "values": [member.to_jsonable() for member in self.val],
+        }
         return members
 
     def serialize(self):
@@ -64,7 +73,7 @@ class ArrayType(ValueType):
             item = self.arr_type()
             item.deserialize(data, offset + i * item.getSize())
             values.append(item)
-        self.val = valuess
+        self.val = values
 
     @property
     def arr_type(self):
@@ -84,4 +93,3 @@ class ArrayType(ValueType):
     def getSize(self):
         """ Return the size of the array """
         return sum([item.getSize() for item in self.val])
-

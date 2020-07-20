@@ -7,28 +7,26 @@ receiver of these delegated functions.
 
 @author mstarch
 """
-import io
-import os
-import re
-import pty
-import sys
-import time
-import shutil
-import tempfile
-import subprocess
-import itertools
-import functools
-import collections
-import selectors
-
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
-import six
+import collections
+import functools
+import itertools
+import os
+import pty
+import re
+import selectors
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+
 import fprime.fbuild
 import fprime.fbuild.settings
 
 
-class CMakeBuildCache(object):
+class CMakeBuildCache:
     """
     Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
     call take a long time. This cache will hold the results to prevent recalculation.
@@ -64,7 +62,7 @@ class CMakeBuildCache(object):
         return self.tempdir
 
 
-class CMakeHandler(object):
+class CMakeHandler:
     """
     CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.
     """
@@ -156,11 +154,11 @@ class CMakeHandler(object):
                 run_args + fleshed_args, write_override=True, environment=environment
             )
 
-    def find_hashed_file(self, build_dir, hash):
+    def find_hashed_file(self, build_dir, hash_value):
         """
         Find a file from a hash
         :param build_dir: build directory to search
-        :param hash: hash number
+        :param hash_value: hash number
         :return: filename
         """
         hashes_file = os.path.join(build_dir, "hashes.txt")
@@ -168,9 +166,9 @@ class CMakeHandler(object):
             raise CMakeException(
                 "Failed to find {}, was the build generated.".format(hashes_file)
             )
-        with open(hashes_file, "r") as file_handle:
+        with open(hashes_file) as file_handle:
             lines = filter(
-                lambda line: "{:x}".format(hash) in line, file_handle.readlines()
+                lambda line: "{:x}".format(hash_value) in line, file_handle.readlines()
             )
         return list(lines)
 
@@ -289,7 +287,7 @@ class CMakeHandler(object):
         :param cmake_dir: a cmake directory (project or build) to used. default: None, use existing temp cached build.
         :return: list of values, or Nones
         """
-        if isinstance(fields, six.string_types):
+        if isinstance(fields, str):
             fields = [fields]
         # Setup the build_dir if it can be detected. Without a cache or specified value, we can crash
         build_dir = self._build_directory_from_cmake_dir(cmake_dir)
@@ -407,7 +405,7 @@ class CMakeHandler(object):
         if not os.path.isfile(cmake_file):
             raise CMakeProjectException(source_dir, "No CMakeLists.txt is defined")
         # Test the cmake_file for project(
-        with open(cmake_file, "r") as file_handle:
+        with open(cmake_file) as file_handle:
             project_lines = list(
                 filter(lambda line: "project(" in line, file_handle.readlines())
             )
@@ -491,10 +489,7 @@ class CMakeHandler(object):
         os.close(pty_out_w)
         os.close(pty_err_w)
         ret, stdout, stderr = self._communicate(
-            proc,
-            io.open(pty_out_r, mode="rb"),
-            io.open(pty_err_r, mode="rb"),
-            print_output,
+            proc, open(pty_out_r, mode="rb"), open(pty_err_r, mode="rb"), print_output,
         )
         # Raising an exception when the return code is non-zero allows us to handle the exception internally if it is
         # needed. Thus we do not just exit.
@@ -540,7 +535,7 @@ class CMakeHandler(object):
                     line = key.fileobj.readline().decode().replace("\r\n", "\n")
                 # Some systems (like running inside Docker) raise an io error instead of returning "" when the device
                 # is ended. Not sure why this is, but the effect is the same, on IOError assume end-of-input
-                except IOError:
+                except OSError:
                     line = ""
                 appendable.append(line)
                 # Streams are EOF when the line returned is empty. Once this occurs, we are responsible for closing the
@@ -568,7 +563,7 @@ class CMakeInconsistencyException(CMakeException):
 
     def __init__(self, project_cmake, build_dir):
         """ Force an appropriate message """
-        super(CMakeInconsistencyException, self).__init__(
+        super().__init__(
             "{} is inconsistent with build {}. Regenerate the build".format(
                 project_cmake, build_dir
             )
@@ -580,9 +575,7 @@ class CMakeOrphanException(CMakeException):
 
     def __init__(self, file_dir):
         """ Force an appropriate message """
-        super(CMakeOrphanException, self).__init__(
-            "{} is outside the F prime project".format(file_dir)
-        )
+        super().__init__("{} is outside the F prime project".format(file_dir))
 
 
 class CMakeProjectException(CMakeException):
@@ -590,7 +583,7 @@ class CMakeProjectException(CMakeException):
 
     def __init__(self, project_dir, error):
         """ Force an appropriate message """
-        super(CMakeProjectException, self).__init__(
+        super().__init__(
             "{} is an invalid F prime deployment. {}".format(project_dir, error)
         )
 
@@ -600,7 +593,7 @@ class CMakeInvalidBuildException(CMakeException):
 
     def __init__(self, build_dir):
         """ Force an appropriate message """
-        super(CMakeInvalidBuildException, self).__init__(
+        super().__init__(
             "{} is not a CMake build directory. Please setup using 'fprime-util generate'".format(
                 build_dir
             )
@@ -612,7 +605,7 @@ class CMakeExecutionException(CMakeException):
 
     def __init__(self, message, stderr, printed):
         """ The error data should be stored """
-        super(CMakeExecutionException, self).__init__(message)
+        super().__init__(message)
         self.stderr = stderr
         self.need = not printed
 
@@ -636,6 +629,4 @@ class CMakeNoSuchTargetException(CMakeException):
 
     def __init__(self, build_dir, target):
         """  Better messaging for this exception """
-        super(CMakeNoSuchTargetException, self).__init__(
-            "{} does not support target {}".format(build_dir, target)
-        )
+        super().__init__("{} does not support target {}".format(build_dir, target))

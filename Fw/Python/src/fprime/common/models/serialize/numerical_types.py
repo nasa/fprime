@@ -6,28 +6,57 @@ that map to stdint.h integer sizes, that is, 8-bit, 16-bit, 32-bit, and 64-bit s
 
 @author mstarch
 """
-import re
 import abc
+import re
+import struct
 
 from .type_base import ValueType
-from .type_exceptions import DeserializeException, NotInitializedException, TypeMismatchException, TypeRangeException
+from .type_exceptions import (
+    DeserializeException,
+    NotInitializedException,
+    TypeMismatchException,
+    TypeRangeException,
+)
 
 BITS_RE = re.compile(r"[IUF](\d\d?)")
+
 
 class NumericalType(ValueType, abc.ABC):
     """ Numerical types that can be serialized using struct and are of some power of 2 byte width """
 
     @classmethod
-    def __get_bits(cls):
+    def get_bits(cls):
         """ Gets the integer bits of a given type """
-        match = BITS_RE.match(cls)
-        assert match, "Type {} does not follow format I#Type nor U#Type required of integer types".format(cls)
+        match = BITS_RE.match(cls.__name__)
+        assert (
+            match
+        ), "Type {} does not follow format I#Type U#Type nor F#Type required of numerical types".format(
+            cls
+        )
         return int(match.group(1))
 
     @classmethod
     def getSize(cls):
         """ Gets the size of the integer based on the size specified in the class name """
-        return int(cls.__get_bits()/8)
+        return int(cls.get_bits() / 8)
+
+    @staticmethod
+    @abc.abstractmethod
+    def get_serialize_format():
+        """ Gets the format serialization string such that the class can be serialized via struct """
+
+    def serialize(self):
+        """ Serializes this type using struct and the val property """
+        if self.val is None:
+            raise NotInitializedException(type(self))
+        return struct.pack(self.get_serialize_format(), self.val)
+
+    def deserialize(self, data, offset):
+        """ Serializes this type using struct and the val property """
+        try:
+            self.val = struct.unpack_from(self.get_serialize_format(), data, offset)[0]
+        except struct.error as err:
+            raise DeserializeException(str(err))
 
 
 class IntegerType(NumericalType, abc.ABC):
@@ -38,10 +67,10 @@ class IntegerType(NumericalType, abc.ABC):
         if not isinstance(val, int):
             raise TypeMismatchException(int, type(val))
         min_val = 0
-        max_val = 1 << self.__get_integer_bits()
-        if self.startswith("I"):
-            min_val -= int(max_val/2)
-            max_val -= int(max_val/2)
+        max_val = 1 << self.get_bits()
+        if self.__class__.__name__.startswith("I"):
+            min_val -= int(max_val / 2)
+            max_val -= int(max_val / 2)
         if val < min_val or val >= max_val:
             raise TypeRangeException(val)
 
@@ -66,48 +95,61 @@ class I8Type(IntegerType):
 
 class I16Type(IntegerType):
     """ Double byte integer type. Represents C shorts """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return ">h"
 
+
 class I32Type(IntegerType):
     """ Four byte integer type. Represents C int32_t, """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return ">i"
 
+
 class I64Type(IntegerType):
     """ Eight byte integer type. Represents C int64_t, """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return ">q"
 
+
 class U8Type(IntegerType):
     """ Single byte integer type. Represents C chars """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return "B"
 
+
 class U16Type(IntegerType):
     """ Double byte integer type. Represents C shorts """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return ">H"
 
+
 class U32Type(IntegerType):
     """ Four byte integer type. Represents C unt32_t, """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return ">I"
 
+
 class U64Type(IntegerType):
     """ Eight byte integer type. Represents C unt64_t, """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
@@ -116,14 +158,16 @@ class U64Type(IntegerType):
 
 class F32Type(FloatType):
     """ Eight byte integer type. Represents C unt64_t, """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
         return ">f"
 
 
-class F64Type(IntegerType):
+class F64Type(FloatType):
     """ Eight byte integer type. Represents C unt64_t, """
+
     @staticmethod
     def get_serialize_format():
         """ Allows serialization using struct """
