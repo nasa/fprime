@@ -62,8 +62,8 @@ class XmlArrayParser(object):
         self.__include_enum_files = []
         # List of XML array type files
         self.__include_array_files = []
-        self.__comment = []
-
+        
+        self.__comment = None
         self.__format = None
         self.__type_id = None
         self.__string_size = None
