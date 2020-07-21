@@ -27,6 +27,7 @@ import fprime_gds.common.handlers
 
 LOGGER = logging.getLogger("decoder")
 
+
 class Decoder(
     fprime_gds.common.handlers.DataHandler,
     fprime_gds.common.handlers.HandlerRegistrar,

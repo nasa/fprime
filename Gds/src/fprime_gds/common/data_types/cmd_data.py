@@ -15,8 +15,18 @@ from copy import deepcopy
 from fprime.common.models.serialize.array_type import ArrayType
 from fprime.common.models.serialize.bool_type import BoolType
 from fprime.common.models.serialize.enum_type import EnumType
-from fprime.common.models.serialize.numerical_types import I8Type, I16Type, I32Type, I64Type, U8Type, U16Type, U32Type, \
-    U64Type, F32Type, F64Type
+from fprime.common.models.serialize.numerical_types import (
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    F32Type,
+    F64Type,
+)
 from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime.common.models.serialize.string_type import StringType
 from fprime.common.models.serialize.time_type import TimeBase, TimeType

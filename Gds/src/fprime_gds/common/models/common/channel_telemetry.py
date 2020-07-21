@@ -41,17 +41,17 @@ class Channel:
         #
         ## Make sure correct types are passed
         #
-        if not type(name) == type(""):
-            raise TypeMismatchException(type(""), type(name))
+        if not isinstance(name, str):
+            raise TypeMismatchException(str, type(name))
 
-        if not type(channel_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(channel_id))
+        if not isinstance(channel_id, int):
+            raise TypeMismatchException(int, type(channel_id))
 
-        if not type(ch_description) == type(""):
-            raise TypeMismatchException(type(""), type(ch_description))
+        if not isinstance(ch_description, str):
+            raise TypeMismatchException(str, type(ch_description))
 
-        if not issubclass(type(ch_type), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()), type(ch_type))
+        if not isinstance(ch_type, BaseType):
+            raise TypeMismatchException(BaseType, type(ch_type))
 
         # Initialize event internal variables
         self.__name = name

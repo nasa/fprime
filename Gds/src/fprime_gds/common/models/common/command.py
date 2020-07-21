@@ -44,31 +44,31 @@ class Command:
 
         ## Make sure correct types are passed
 
-        if not type(component) == type(""):
-            raise TypeMismatchException(type(""), type(component))
+        if not isinstance(component, str):
+            raise TypeMismatchException(str, type(component))
 
-        if not type(mnemonic) == type(""):
-            raise TypeMismatchException(type(""), type(mnemonic))
+        if not isinstance(mnemonic, str):
+            raise TypeMismatchException(str, type(mnemonic))
 
-        if not type(opcode) == type(int()):
-            raise TypeMismatchException(type(int()), type(opcode))
+        if not isinstance(opcode, int):
+            raise TypeMismatchException(int, type(opcode))
 
-        if not type(description) == type(""):
-            raise TypeMismatchException(type(""), type(description))
+        if not isinstance(description, str):
+            raise TypeMismatchException(str, type(description))
 
-        if not type(arguments) == type(list()):
-            raise TypeMismatchException(type(list()), type(arguments))
+        if not isinstance(arguments, list):
+            raise TypeMismatchException(list, type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(""):
-                raise TypeMismatchException(type(int()), type(argname))
+            if not isinstance(argname, str):
+                raise TypeMismatchException(str, type(argname))
             #
-            if not type(argdesc) == type(""):
-                raise TypeMismatchException(type(int()), type(argdesc))
+            if not isinstance(argdesc, str):
+                raise TypeMismatchException(str, type(argdesc))
             #
-            if not issubclass(type(argtype), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()), type(argtype))
+            if not isinstance(argtype, BaseType):
+                raise TypeMismatchException(BaseType, type(argtype))
 
         # Initialize command internal variables
         self.__component = component
@@ -120,17 +120,17 @@ class Command:
         return self.__arguments
 
     def setSeconds(self, seconds):
-        if not type(seconds) == type(int()):
-            raise TypeMismatchException(type(int()), type(seconds))
+        if not isinstance(seconds, int):
+            raise TypeMismatchException(int, type(seconds))
         self.__secs = seconds
 
     def setUseconds(self, useconds):
-        if not type(useconds) == type(int()):
-            raise TypeMismatchException(type(int()), type(useconds))
+        if not isinstance(useconds, int):
+            raise TypeMismatchException(int, type(useconds))
         self.__usecs = useconds
 
     def setDescriptor(self, descriptor):
-        if not type(descriptor) == type(Descriptor.ABSOLUTE):
+        if not isinstance(descriptor, type(Descriptor.ABSOLUTE)):
             raise TypeMismatchException(type(Descriptor.ABSOLUTE), type(descriptor))
         self.__desc = descriptor
 
@@ -143,11 +143,11 @@ class Command:
         @param arg_type: object type to store arugment value in.
         """
         ### double check argument types
-        if not type(arg_name) == type(""):
-            raise TypeMismatchException(type(""), type(arg_name))
+        if not isinstance(arg_name, str):
+            raise TypeMismatchException(str, type(arg_name))
 
-        if not issubclass(type(arg_type), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()), type(arg_type))
+        if not isinstance(arg_type, BaseType):
+            raise TypeMismatchException(BaseType, type(arg_type))
 
         new_arg_list = list()
         found = False

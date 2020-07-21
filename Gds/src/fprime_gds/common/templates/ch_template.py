@@ -54,23 +54,23 @@ class ChTemplate(data_template.DataTemplate):
         """
         super().__init__()
         # Make sure correct types are passed
-        if not type(ch_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(ch_id))
+        if not isinstance(ch_id, int):
+            raise TypeMismatchException(int, type(ch_id))
 
-        if not type(ch_name) == type(""):
-            raise TypeMismatchException(type(""), type(ch_name))
+        if not isinstance(ch_name, str):
+            raise TypeMismatchException(str, type(ch_name))
 
-        if not type(comp_name) == type(""):
-            raise TypeMismatchException(type(""), type(comp_name))
+        if not isinstance(comp_name, str):
+            raise TypeMismatchException(str, type(comp_name))
 
-        if not issubclass(type(ch_type_obj), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()), type(ch_type_obj))
+        if not isinstance(ch_type_obj, BaseType):
+            raise TypeMismatchException(BaseType, type(ch_type_obj))
 
-        if ch_fmt_str is not None and not type(ch_fmt_str) == type(""):
-            raise TypeMismatchException(type(""), type(ch_fmt_str))
+        if ch_fmt_str is not None and not isinstance(ch_fmt_str, str):
+            raise TypeMismatchException(str, type(ch_fmt_str))
 
-        if ch_desc is not None and not type(ch_desc) == type(""):
-            raise TypeMismatchException(type(""), type(ch_desc))
+        if ch_desc is not None and not isinstance(ch_desc, str):
+            raise TypeMismatchException(str, type(ch_desc))
 
         # Initialize event internal variables
         self.id = ch_id

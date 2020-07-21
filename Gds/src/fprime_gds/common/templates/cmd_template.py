@@ -37,31 +37,31 @@ class CmdTemplate(data_template.DataTemplate):
         """
         super().__init__()
         # Make sure correct types are passed
-        if not type(component) == type(""):
-            raise TypeMismatchException(type(""), type(component))
+        if not isinstance(component, str):
+            raise TypeMismatchException(str, type(component))
 
-        if not type(mnemonic) == type(""):
-            raise TypeMismatchException(type(""), type(mnemonic))
+        if not isinstance(mnemonic, str):
+            raise TypeMismatchException(str, type(mnemonic))
 
-        if not type(opcode) == type(int()):
-            raise TypeMismatchException(type(int()), type(opcode))
+        if not isinstance(opcode, int):
+            raise TypeMismatchException(int, type(opcode))
 
-        if description is not None and not type(description) == type(""):
-            raise TypeMismatchException(type(""), type(description))
+        if description is not None and not isinstance(description, str):
+            raise TypeMismatchException(str, type(description))
 
-        if not type(arguments) == type(list()):
-            raise TypeMismatchException(type(list()), type(arguments))
+        if not isinstance(arguments, list):
+            raise TypeMismatchException(list, type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(""):
-                raise TypeMismatchException(type(int()), type(argname))
+            if not isinstance(argname, str):
+                raise TypeMismatchException(int, type(argname))
             #
-            if argdesc is not None and not type(argdesc) == type(""):
-                raise TypeMismatchException(type(int()), type(argdesc))
+            if argdesc is not None and not isinstance(argdesc, str):
+                raise TypeMismatchException(int, type(argdesc))
             #
-            if not issubclass(type(argtype), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()), type(argtype))
+            if not isinstance(argtype, BaseType):
+                raise TypeMismatchException(BaseType, type(argtype))
 
         # Initialize command internal variables
         self.comp_name = component

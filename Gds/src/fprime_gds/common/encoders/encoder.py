@@ -28,6 +28,7 @@ from fprime_gds.common.utils.config_manager import ConfigManager
 
 LOGGER = logging.getLogger("encoder")
 
+
 class Encoder(
     fprime_gds.common.handlers.DataHandler,
     fprime_gds.common.handlers.HandlerRegistrar,

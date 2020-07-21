@@ -27,7 +27,6 @@ class EventPyLoader(python_loader.PythonLoader):
     DESC_FIELD = "EVENT_DESCRIPTION"
     ARGS_FIELD = "ARGUMENTS"
 
-
     def construct_dicts(self, path):
         """
         Constructs and returns python dictionaries keyed on id and name

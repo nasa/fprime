@@ -32,14 +32,14 @@ class PktTemplate(data_template.DataTemplate):
                          packet.
         """
         super().__init__()
-        if not type(pkt_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(pkt_id))
+        if not isinstance(pkt_id, int):
+            raise TypeMismatchException(int, type(pkt_id))
 
-        if not type(pkt_name) == type(""):
-            raise TypeMismatchException(type(""), type(pkt_name))
+        if not isinstance(pkt_name, str):
+            raise TypeMismatchException(str, type(pkt_name))
 
-        if not type(ch_temp_list) == type(list()):
-            raise TypeMismatchException(type(list()), type(ch_temp_list))
+        if not isinstance(ch_temp_list, list):
+            raise TypeMismatchException(list, type(ch_temp_list))
 
         for ch in ch_temp_list:
             if not isinstance(ch, ch_template.ChTemplate):

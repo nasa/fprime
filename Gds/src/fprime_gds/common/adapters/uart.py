@@ -12,6 +12,7 @@ import logging
 import sys
 
 import fprime_gds.common.adapters.base
+
 try:
     import serial
     from serial.tools import list_ports

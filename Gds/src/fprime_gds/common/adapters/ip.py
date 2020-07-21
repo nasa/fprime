@@ -166,6 +166,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         check_port(args["address"], args["port"])
 
+
 class IpHandler(abc.ABC):
     """
     Base handler for IP types. This will provide the basic methods, and synchronization for reading/writing to multiple
@@ -231,9 +232,9 @@ class IpHandler(abc.ABC):
                     self.connected = IpHandler.CONNECTED
                     self.logger.info(
                         "%s connected to %s:%d",
-                            "Server" if self.server else "Client",
-                            self.address,
-                            self.port,
+                        "Server" if self.server else "Client",
+                        self.address,
+                        self.port,
                     )
                     # Post connect handshake
                     if self.post_connect is not None:
@@ -291,7 +292,8 @@ class IpHandler(abc.ABC):
                 self.close()
                 self.logger.warning(
                     "Read failure attempting reconnection. %s: %s",
-                    type(exc).__name__, str(exc),
+                    type(exc).__name__,
+                    str(exc),
                 )
                 self.open()
         return b""

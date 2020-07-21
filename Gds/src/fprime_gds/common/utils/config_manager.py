@@ -17,8 +17,18 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 import configparser
 
 # Custom type modules
-from fprime.common.models.serialize.numerical_types import I8Type, I16Type, I32Type, I64Type, U8Type, U16Type, U32Type, \
-    U64Type, F32Type, F64Type
+from fprime.common.models.serialize.numerical_types import (
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    F32Type,
+    F64Type,
+)
 
 
 class ConfigBadTypeException(Exception):

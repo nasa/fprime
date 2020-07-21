@@ -193,7 +193,6 @@ class Downlinker:
             self.downlink()
 
 
-
 def main():
     """
     Main program, degenerates into the run loop.

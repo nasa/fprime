@@ -35,31 +35,31 @@ class Event:
 
         ## Make sure correct types are passed
 
-        if not type(name) == type(""):
-            raise TypeMismatchException(type(""), type(name))
+        if not isinstance(name, str):
+            raise TypeMismatchException(str, type(name))
 
-        if not type(event_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(event_id))
+        if not isinstance(event_id, int):
+            raise TypeMismatchException(int, type(event_id))
 
-        if not type(format_string) == type(""):
-            raise TypeMismatchException(type(""), type(format_string))
+        if not isinstance(format_string, str):
+            raise TypeMismatchException(str, type(format_string))
 
-        if not type(event_description) == type(""):
-            raise TypeMismatchException(type(""), type(event_description))
+        if not isinstance(event_description, str):
+            raise TypeMismatchException(str, type(event_description))
 
-        if not type(arguments) == type(list()):
-            raise TypeMismatchException(type(list()), type(arguments))
+        if not isinstance(arguments, list):
+            raise TypeMismatchException(list, type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(""):
-                raise TypeMismatchException(type(""), type(argname))
+            if not isinstance(argname, str):
+                raise TypeMismatchException(str, type(argname))
             #
-            if not type(argdesc) == type(""):
-                raise TypeMismatchException(type(""), type(argdesc))
+            if not isinstance(argdesc, str):
+                raise TypeMismatchException(str, type(argdesc))
             #
-            if not issubclass(type(argtype), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()), type(argtype))
+            if not isinstance(argtype, BaseType):
+                raise TypeMismatchException(BaseType, type(argtype))
 
         # Initialize event internal variables
         self.__name = name
