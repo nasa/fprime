@@ -112,9 +112,9 @@ class QueryHistoryCommand(BaseCommand):
         Returns a predicate that can be used to filter any received messages.
         This is done to link printing code to filtering, so that filtering ALWAYS filters the same strings as are printed.
 
-        TODO: Possibly make separate filters for item/item_list strings, since
-        there's currently no guarantee they'll be the same if
-        _get_item_list_string is overridden?
+        NOTE: Currently assumes that item list strings will contain the
+        individual strings of each items to work with both, which there's no
+        guarantee of if _get_item_list_string is overridden
 
         :param item: The F' item to convert to a string
         :param json: Whether to convert each item to a JSON representation
@@ -205,7 +205,7 @@ class QueryHistoryCommand(BaseCommand):
         """
         Handle the given input arguments, then execute the command itself
 
-        TODO: This is currently just a pass-through method
+        NOTE: This is currently just a pass-through method
         """
         connection_info = misc_utils.ConnectionInfo(
             kwargs["dictionary"], kwargs["ip_address"], kwargs["port"]

@@ -202,10 +202,10 @@ def parse_args(args):
     :return: namespace argument
     """
     parser = argparse.ArgumentParser(
-        description="Connects data from F prime flight software to the GDS tcp server",
-        # Setup this parser to handle MiddleWare arguments
-        parents=[fprime_gds.executables.cli.MiddleWareParser.get_parser()],
+        description="Connects data from F prime flight software to the GDS tcp server"
     )
+    # Setup this parser to handle MiddleWare arguments
+    fprime_gds.executables.cli.MiddleWareParser.add_args(parser)
 
     # Add a parser for each adapter
     subparsers = parser.add_subparsers(
@@ -229,14 +229,10 @@ def parse_args(args):
         # Add arguments for the parser
         for argument in adapter.get_arguments().keys():
             subparse.add_argument(*argument, **adapter.get_arguments()[argument])
+    args = parser.parse_args(args)
     try:
-        args, extras = parser.parse_known_args(args)
-        # Convert list of extra arguments to arg/value dict
-        extras_it = iter(extras)
-        extras_dict = dict(zip(extras_it, extras_it))
-        fprime_gds.common.logger.configure_py_log(
-            extras_dict["logs"], "comm-adapter.log"
-        )
+        extras = fprime_gds.executables.cli.refine(parser, args)
+        fprime_gds.common.logger.configure_py_log(extras["logs"], "comm-adapter.log")
     except ValueError as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         parser.print_help(sys.stderr)

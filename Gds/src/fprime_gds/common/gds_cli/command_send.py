@@ -175,7 +175,7 @@ class CommandSendCommand(QueryHistoryCommand):
         """
         Handle the given input arguments, then execute the command itself
 
-        TODO: This is currently just a pass-through method
+        NOTE: This is currently just a pass-through method
         """
         connection_info = misc_utils.ConnectionInfo(
             kwargs["dictionary"], kwargs["ip_address"], kwargs["port"]

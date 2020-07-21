@@ -22,10 +22,10 @@ import fprime_gds.flask.updown
 from . import components
 
 # Update logging to avoid redundant messages
-logger = logging.getLogger("werkzeug")
-logger.setLevel(logging.WARN)
-logger = logging.getLogger("downlink")
-logger.setLevel(logging.INFO)
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.WARN)
+log = logging.getLogger("downlink")
+log.setLevel(logging.INFO)
 
 
 def construct_app():

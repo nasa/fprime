@@ -226,13 +226,15 @@ class IpHandler(object):
                         self.socket.bind((self.address, self.port))
                     else:
                         self.socket.connect((self.address, self.port))
-                    self._open_impl()
+                    self.open_impl()
                     self.connected = IpHandler.CONNECTED
                     self.logger.info(
                         "%s connected to %s:%d",
-                        "Server" if self.server else "Client",
-                        self.address,
-                        self.port,
+                        (
+                            "Server" if self.server else "Client",
+                            self.address,
+                            self.port,
+                        ),
                     )
                     # Post connect handshake
                     if self.post_connect is not None:
@@ -243,10 +245,7 @@ class IpHandler(object):
             except socket.error as exc:
                 self.logger.warning(
                     "Failed to open socket at %s:%d, retrying: %s: %s",
-                    self.address,
-                    self.port,
-                    type(exc).__name__,
-                    str(exc),
+                    (self.address, self.port, type(exc).__name__, str(exc)),
                 )
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()
@@ -257,7 +256,7 @@ class IpHandler(object):
         Close this specific IP handler. This involves setting connected to False, and closing non-null sockets.
         """
         try:
-            self._close_impl()
+            self.close_impl()
             IpHandler.kill_socket(self.socket)
         finally:
             self.socket = None
@@ -271,19 +270,18 @@ class IpHandler(object):
     def read(self):
         """
         Reads a single message after ensuring that the socket is fully open. On a non-timeout error, close the socket in
-        preparation for a reconnect. This internally will call the child's _read_impl
+        preparation for a reconnect. This internally will call the child's read_impl
         :return: data read from TCP server or b"" when nothing is available
         """
         # This will block waiting for data
         try:
-            return self._read_impl()
+            return self.read_impl()
         except socket.error as exc:
             if self.running:
                 self.close()
                 self.logger.warning(
                     "Read failure attempting reconnection. %s: %s",
-                    type(exc).__name__,
-                    str(exc),
+                    (type(exc).__name__, str(exc)),
                 )
                 self.open()
         return b""
@@ -291,43 +289,19 @@ class IpHandler(object):
     def write(self, message):
         """
         Writes a single message after ensuring that the socket is fully open. On any error, close the socket in
-        preparation for a reconnect. This internally will call the child's _write_impl
+        preparation for a reconnect. This internally will call the child's write_impl
         :param message: message to send
         :return: True if all data was written, False otherwise
         """
         try:
-            self._write_impl(message)
+            self.write_impl(message)
             return True
         except socket.error as exc:
             if self.running:
                 self.logger.warning(
-                    "Write failure: %s: %s", type(exc).__name__, str(exc)
+                    "Write failure: %s: %s", (type(exc).__name__, str(exc))
                 )
         return False
-
-    def _open_impl(self):
-        """
-        Implementation to open this adapter. Will be overridden by child class.
-        """
-        pass
-
-    def _close_impl(self):
-        """
-        Implementation to close this adapter. Will be overridden by child class.
-        """
-        pass
-
-    def _read_impl(self):
-        """
-        Implementation to read a message. Will be overridden by child class.
-        """
-        pass
-
-    def _write_impl(self, message):
-        """
-        Implementation to send a message. Will be overridden by child class.
-        """
-        pass
 
     @staticmethod
     def kill_socket(sock):
@@ -366,7 +340,7 @@ class TcpHandler(IpHandler):
         self.client = None
         self.client_address = None
 
-    def _open_impl(self):
+    def open_impl(self):
         """
         Open up this particular adapter. This adapter
         """
@@ -378,7 +352,7 @@ class TcpHandler(IpHandler):
         else:
             self.client = self.socket
 
-    def _close_impl(self):
+    def close_impl(self):
         """
         Close the TCP socket that was spawned as appropriate.
         """
@@ -388,7 +362,7 @@ class TcpHandler(IpHandler):
             self.client = None
             self.client_address = None
 
-    def _read_impl(self):
+    def read_impl(self):
         """
         Specific read implementation for the TCP handler. This involves reading from the spawned client socket, not the
         primary socket.
@@ -396,7 +370,7 @@ class TcpHandler(IpHandler):
         data = self.client.recv(IpAdapter.MAXIMUM_DATA_SIZE)
         return data
 
-    def _write_impl(self, message):
+    def write_impl(self, message):
         """
         Send is implemented with TCP. It will send it to the connected client.
         :param message: message to send out
@@ -424,20 +398,20 @@ class UdpHandler(IpHandler):
             address, port, socket.SOCK_DGRAM, server, logger
         )
 
-    def _open_impl(self):
+    def open_impl(self):
         """No extra steps required"""
 
-    def _close_impl(self):
+    def close_impl(self):
         """No extra steps required"""
 
-    def _read_impl(self):
+    def read_impl(self):
         """
         Receive from the UDP handler. This involves receiving from an unconnected socket.
         """
         (data, address) = self.socket.recvfrom(IpAdapter.MAXIMUM_DATA_SIZE)
         return data
 
-    def _write_impl(self, message):
+    def write_impl(self, message):
         """
         Write not implemented with UDP
         """
