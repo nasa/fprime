@@ -7,8 +7,8 @@
  *
  * @author mstarch
  */
-import {filter, timeToString} from "./utils.js";
-import {config} from "../config.js";
+import {listExistsAndItemNameNotInList, timeToString} from "./utils.js";
+import {_datastore} from "../datastore.js";
 
 let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
 
@@ -19,7 +19,50 @@ let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
  * needed method to configure fp-table to render events.
  */
 Vue.component("event-list", {
-    props:["events", "commands"],
+    props: {
+        /**
+         * fields:
+         *
+         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
+         * this object's display.
+         */
+        fields: {
+            type: [Array, String],
+            default: ""
+        },
+        /**
+         * The search text to initialize the table filter with (defaults to
+         * nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
+        },
+        /**
+         * A list of item ID names saying what rows in the table should be
+         * shown; defaults to an empty list, meaning "show all items"
+         */
+        itemsShown: {
+            type: [Array, String],
+            default: ""
+        },
+        /**
+         * 'compact' allows the user to hide filters/buttons/headers/etc. to
+         * only show the table itself for a cleaner view
+         */
+        compact: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data: function() {
+        return {
+            // NOTE: Events/command lists shared across all component instances
+            "events": _datastore.events,
+            "eventsOffset": 0,
+            "commands": _datastore.commands
+        };
+    },
     template: "#event-list-template",
     methods: {
         /**
@@ -73,66 +116,33 @@ Vue.component("event-list", {
             return "evt-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         },
         /**
-         * A function to clear the events pane to remove events that have already been seen. Note: this action is
+         * A function to clear this events pane to remove events that have already been seen. Note: this action is
          * irrecoverable.
          */
         clearEvents() {
-            return this.events.splice(0, this.events.length);
+            this.eventsOffset = this.events.length;
+        },
+        /**
+         * Returns if the given item should be hidden in the data table; by
+         * default, shows all items. If the "itemsShown" property is set, only
+         * show items with the given names
+         *
+         * @param item: The given F' data item
+         * @return {boolean} Whether or not the item is shown
+         */
+        isItemHidden(item) {
+            return listExistsAndItemNameNotInList(this.itemsShown, item);
+        }
+    },
+    computed: {
+        /**
+         * Returns a list of events that should be visible on this component
+         * instance, to support instance-specific clearing
+         *
+         * @return {Array} The list of event items this instance can show
+         */
+        componentEvents() {
+            return this.events.slice(this.eventsOffset);
         }
     }
 });
-/**
- * EventMixins:
- *
- * This set of functions should be mixed in as member functions to the F´ wrappers around the above Vue.js component.
- * These provide the functions required to update events on the fly.
- *
- * Note: to mixin these functions: Object.assign(EventMixins)
- */
-export let EventMixins = {
-    /**
-     * Update the list of events with the supplied new list of events.
-     * @param newEvents: new full list of events to render
-     */
-    updateEvents(newEvents) {
-        let timeout = config.dataTimeout * 1000;
-        this.vue.events.push(...newEvents);
-        // Set active events, and register a timeout to turn it off again
-        if (newEvents.length > 0) {
-            let vue_self = this.vue;
-            vue_self.eventsActive = true;
-            clearTimeout(this.eventTimeout);
-            this.eventTimeout = setTimeout(() => vue_self.eventsActive = false, timeout);
-        }
-    },
-    /**
-     * Sets up the needed event data items.
-     * @return {[], []} an empty list to fill with events
-     */
-    setupEvents() {
-        return {"events": [], "eventsActive": false};
-    }
-};
-
-/**
- * EventView:
- *
- * A wrapper for the event-list viewable. This is stand-alone and could be used anywhere that an events list is needed.
- * It will setup the Vue.js component and mixin the above needed functions.
- *
- * @author mstarch
- */
-export class EventView {
-    /**
-     * Creates a ChannelView that delegates to a Vue.js view.
-     * @param elemid: HTML ID of the element to render to
-     */
-    constructor(elemid) {
-        Object.assign(EventView.prototype, EventMixins);
-        this.vue = new Vue({
-            el: elemid,
-            data: this.setupEvents()
-        });
-    }
-
-}
