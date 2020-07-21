@@ -38,14 +38,12 @@ class ArrayType(ValueType):
 
     def validate(self, val):
         """ Validates the values of the array """
-        if not self.val:
-            return
         size = self.__arr_size
-        if len(self.val) != size:
-            raise ArrayLengthException(self.__arr_type, size, len(self.val))
+        if len(val) != size:
+            raise ArrayLengthException(self.__arr_type, size, len(val))
         for i in range(self.__arr_size):
-            if not isinstance(self.val[i], self.__arr_type):
-                raise TypeMismatchException(self.__arr_type, type(self.val[i]))
+            if not isinstance(val[i], self.__arr_type):
+                raise TypeMismatchException(self.__arr_type, type(val[i]))
 
     def to_jsonable(self):
         """
@@ -62,7 +60,7 @@ class ArrayType(ValueType):
 
     def serialize(self):
         """ Serialize the array by serializing the elements one by one """
-        if self.val is not None:
+        if self.val is None:
             raise NotInitializedException(type(self))
         return b"".join([item.serialize() for item in self.val])
 

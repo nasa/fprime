@@ -50,7 +50,6 @@ class ThreadedTCPSocketClient(DataHandler):
         :return: data in bytes format
         """
         return string_data.encode(DATA_ENCODING)
-        return string_data
 
     def get_data_string(self, bytes_data):
         """
@@ -59,7 +58,6 @@ class ThreadedTCPSocketClient(DataHandler):
         :return: data in string format
         """
         return bytes_data.decode(DATA_ENCODING)
-        return bytes_data
 
     def register_distributor(self, distributor):
         """Registers a fprime.gds.distributor object with this socket
