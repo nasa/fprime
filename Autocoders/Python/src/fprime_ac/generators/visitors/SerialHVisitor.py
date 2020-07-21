@@ -89,7 +89,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         for (name, mtype, size, format, comment) in obj.get_members():
-            if type(mtype) == type(tuple()):
+            if isinstance(mtype,  tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
@@ -113,7 +113,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
 
         for (name, mtype, size, format, comment) in obj.get_members():
             typeinfo = None
-            if type(mtype) == type(tuple()):
+            if isinstance(mtype,  tuple):
                 mtype = mtype[0][1]
                 typeinfo = "enum"
             elif mtype == "string":
@@ -266,7 +266,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
 
         c.enum_type_list = []
         t = [x[1] for x in obj.get_members()]
-        enum_list = [x for x in t if type(x) == type(tuple())]
+        enum_list = [x for x in t if type(x) == tuple]
         for e in enum_list:
             c.enum_type_list.append(self._get_enum_string_list(e))
 

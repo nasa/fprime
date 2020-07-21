@@ -180,20 +180,20 @@ def get_enums_from_comp_xml(comp_xml):
 
     for cmd in comp_cmds:
         for arg in cmd.get_args():
-            if type(arg.get_type()) is tuple:
+            if isinstance(arg.get_type(), tuple):
                 enum_list["compxml"].append(arg.get_type())
 
     for evr in comp_evrs:
         for arg in evr.get_args():
-            if type(arg.get_type()) is tuple:
+            if isinstance(arg.get_type(), tuple):
                 enum_list["compxml"].append(arg.get_type())
 
     for chan in comp_chans:
-        if type(chan.get_type()) is tuple:
+        if isinstance(chan.get_type(), tuple):
             enum_list["compxml"].append(chan.get_type())
 
     for param in comp_params:
-        if type(param.get_type()) is tuple:
+        if isinstance(param.get_type(), tuple):
             enum_list["compxml"].append(param.get_type())
 
     return enum_list

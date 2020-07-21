@@ -85,7 +85,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             t = arg.get_type()
             #
             # Grab enum type here...
-            if type(t) == type(tuple()):
+            if isinstance(t,  tuple):
                 if t[0][0].upper() == "ENUM":
                     t = t[0][1]
                 else:
@@ -262,7 +262,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # Include optional return type here...
         if r is not None:
             return_type = r[0]
-            if type(return_type) == type(tuple()):
+            if isinstance(return_type,  tuple):
                 return_type = return_type[0][1]
             if r[1] == "pointer":
                 return_modifier = " *"
@@ -288,7 +288,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         t2 = []
         for i in t:
-            if type(i[1]) == type(tuple()):
+            if isinstance(i[1],  tuple):
                 if i[1][0][0] == "ENUM":
                     i2 = (i[0], i[1][0][1])
             else:
@@ -307,7 +307,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # Make a enum marker list here for template to use...
         c.enum_marker = []
         for i in tmp:
-            if type(i[1]) == type(tuple()):
+            if isinstance(i[1],  tuple):
                 if i[1][0][0].upper() == "ENUM":
                     c.enum_marker.append("ENUM")
                 else:
@@ -355,7 +355,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # Make a enum marker list here for template to use...
         c.enum_marker = []
         for i in c.args:
-            if type(i[1]) == type(tuple()):
+            if isinstance(i[1],  tuple):
                 if i[1][0][0].upper() == "ENUM":
                     c.enum_marker.append("ENUM")
                 else:
@@ -376,7 +376,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         if r is not None:
             c.ret_flag = True
             return_type = r[0]
-            if type(return_type) == type(tuple()):
+            if isinstance(return_type,  tuple):
                 return_type = return_type[0][1]
             if r[1] == "pointer":
                 return_modifier = " *"

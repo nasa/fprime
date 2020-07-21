@@ -85,7 +85,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         for (name, mtype, size, format, comment) in obj.get_members():
-            if type(mtype) == type(tuple()):
+            if isinstance(mtype,  tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
@@ -109,7 +109,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
 
         for (name, mtype, size, format, comment) in obj.get_members():
             typeinfo = None
-            if type(mtype) == type(tuple()):
+            if isinstance(mtype,  tuple):
                 mtype = mtype[0][1]
                 typeinfo = "enum"
             elif mtype == "string":

@@ -105,7 +105,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 obj.get_component_base_name()
             ]
         except Exception:
-            if type(obj) == Parameter.Parameter or type(obj) == Command.Command:
+            if isinstance(obj,  Parameter.Parameter) or isinstance(obj, Command.Command):
                 PRINT.info(
                     "ERROR: Could not find instance object for component "
                     + obj.get_component_base_name()

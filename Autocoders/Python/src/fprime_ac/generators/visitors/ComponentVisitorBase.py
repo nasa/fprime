@@ -859,7 +859,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             y = f(x)
             if y is not None:
                 # check if list
-                if type(y) == type(list()):
+                if isinstance(y,  list):
                     result += y
                 else:
                     result += [y]

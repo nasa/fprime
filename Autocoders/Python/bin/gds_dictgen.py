@@ -180,7 +180,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     member_elem.attrib["format_specifier"] = member_format_specifier
                     if member_comment is not None:
                         member_elem.attrib["description"] = member_comment
-                    if type(member_type) == type(tuple()):
+                    if isinstance(member_type,  tuple):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
                             serializable_type, member_name, member_type[0][1],
@@ -235,7 +235,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     arg_elem = etree.Element("arg")
                     arg_elem.attrib["name"] = arg.get_name()
                     arg_type = arg.get_type()
-                    if type(arg_type) == type(tuple()):
+                    if isinstance(arg_type,  tuple):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
                             comp_type, arg.get_name(), arg_type[0][1],
@@ -288,7 +288,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 if "comment" in list(channel_elem.attrib.keys()):
                     channel_elem.attrib["description"] = channel_elem.attrib["comment"]
                 channel_type = chan.get_type()
-                if type(channel_type) == type(tuple()):
+                if isinstance(channel_type,  tuple):
                     enum_value = 0
                     type_name = "{}::{}::{}".format(
                         comp_type, chan.get_name(), channel_type[0][1],
@@ -352,7 +352,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     arg_elem = etree.Element("arg")
                     arg_elem.attrib["name"] = arg.get_name()
                     arg_type = arg.get_type()
-                    if type(arg_type) == type(tuple()):
+                    if isinstance(arg_type,  tuple):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
                             comp_type, arg.get_name(), arg_type[0][1],
@@ -414,7 +414,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 arg_elem = etree.Element("arg")
                 arg_elem.attrib["name"] = "val"
                 arg_type = parameter.get_type()
-                if type(arg_type) == type(tuple()):
+                if isinstance(arg_type,  tuple):
                     enum_value = 0
                     type_name = "{}::{}::{}".format(
                         comp_type, arg.get_name(), arg_type[0][1],
