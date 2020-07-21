@@ -339,7 +339,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         enum_elem = etree.Element("enum")
                         enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
                         enum_elem.attrib["type"] = enum_type
-                        members_elem = etree.Element("members")
                         for (member_name, member_value, member_comment) in enum_model.get_items():
                             enum_mem = etree.Element("item")
                             enum_mem.attrib["name"] = member_name
@@ -372,7 +371,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 enum_elem = etree.Element("enum")
                                 enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
                                 enum_elem.attrib["type"] = enum_type
-                                members_elem = etree.Element("members")
                                 for (member_name, member_value, member_comment) in enum_model.get_items():
                                     enum_mem = etree.Element("item")
                                     enum_mem.attrib["name"] = member_name
