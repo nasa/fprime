@@ -388,8 +388,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <div class="fp-scroll-container">
                         <div class="fp-scrollable">
                             <table  class="sortable table table-bordered table-hover">
-                                <thead v-if="!compact">
-                                    <tr>
+                                <thead>
+                                    <tr v-if="!compact">
                                         <th v-if="editing" class="sorttable_nosort">
                                             <input type="checkbox" v-on:input="checkAll" ref="allbox"
                                                 :checked="view.length == items.length">
