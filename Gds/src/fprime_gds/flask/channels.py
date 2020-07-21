@@ -61,7 +61,7 @@ class ChannelHistory(flask_restful.Resource):
             # Add the 'display_text' to the event, along with a getter
             if chan.template.get_format_str() is not None:
                 setattr(
-                    chan, "display_text", chan.template.fmt_str % (chan.val_obj.val)
+                    chan, "display_text", chan.template.get_format_str() % (chan.val_obj.val)
                 )
                 func = lambda this: this.display_text
                 setattr(chan, "get_display_text", types.MethodType(func, chan))
