@@ -22,7 +22,7 @@ namespace Fw {
 	const ParamBuffer& ParamBuffer::operator=(const ParamBuffer& other) {
 	    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-        return other;
+        return *this;
 	}
 
     NATIVE_UINT_TYPE ParamBuffer::getBuffCapacity(void) const {

@@ -41,7 +41,7 @@ namespace CFDP {
     operator=(const Checksum& checksum)
   {
     this->value = checksum.value;
-    return checksum;
+    return *this;
   }
     
   bool Checksum ::
