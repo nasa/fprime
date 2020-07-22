@@ -32,6 +32,39 @@
             
             <!-- Elements -->
             <interleave>
+                <optional>
+                    <!-- Optional Comments -->
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+                <zeroOrMore>
+                    <element name = "include_header">
+                        <a:documentation>Defines the header file of the interface.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_serializable_type">
+                        <a:documentation>Imports serializable types.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_enum_type">
+                        <a:documentation>Imports enum types.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_array_type">
+                        <a:documentation>Import array XML files.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
                 <element name = "format">
                     <a:documentation>Used to format data into readable content on the ground system software.</a:documentation>
                     <text/>
@@ -68,40 +101,6 @@
                         </element>
                     </oneOrMore>
                 </element>
-
-                <optional>
-                    <attribute name = "comment">
-                        <text/>
-                    </attribute>
-                </optional>
-
-                <zeroOrMore>
-                    <element name = "include_header">
-                        <a:documentation>Defines the header file of the interface.</a:documentation>
-                        <data type="anyURI"></data>
-                    </element>
-                </zeroOrMore>
-
-                <zeroOrMore>
-                    <element name = "import_serializable_type">
-                        <a:documentation>Imports serializable types.</a:documentation>
-                        <data type="anyURI"></data>
-                    </element>
-                </zeroOrMore>
-
-                <zeroOrMore>
-                    <element name = "import_enum_type">
-                        <a:documentation>Imports enum types.</a:documentation>
-                        <data type="anyURI"></data>
-                    </element>
-                </zeroOrMore>
-
-                <zeroOrMore>
-                    <element name = "import_array_type">
-                        <a:documentation>Import array XML files.</a:documentation>
-                        <data type="anyURI"></data>
-                    </element>
-                </zeroOrMore>
             </interleave>
         </element>
     </define>
