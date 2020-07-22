@@ -102,68 +102,14 @@ namespace Fw {
         return this->toChar();
     }
 
-    // Adapted from:
-    // http://www.leidinger.net/FreeBSD/dox/libkern/html/d5/de6/strlcat_8c_source.html
-    // strlcat source not standard, so borrowing.
-
-       /*-
-        * Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
-        * All rights reserved.
-        *
-        * Redistribution and use in source and binary forms, with or without
-        * modification, are permitted provided that the following conditions
-        * are met:
-        * 1. Redistributions of source code must retain the above copyright
-        *    notice, this list of conditions and the following disclaimer.
-        * 2. Redistributions in binary form must reproduce the above copyright
-        *    notice, this list of conditions and the following disclaimer in the
-        *    documentation and/or other materials provided with the distribution.
-        * 3. The name of the author may not be used to endorse or promote products
-        *    derived from this software without specific prior written permission.
-        *
-        * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
-        * THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-        * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-        * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-        * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-        * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-        * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-        * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-        */
-
     void StringBase::appendBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        // size not used
-        char *d = (char*) this->toChar();
-        char *dst = d;
-
-        const char *s = buff;
-        NATIVE_UINT_TYPE n = this->getCapacity();
-        NATIVE_UINT_TYPE siz = n;
-        NATIVE_UINT_TYPE dlen;
-
-        /* Find the end of buffer and adjust bytes left but don't go past end */
-        while (n-- != 0 && *d != '\0') {
-            d++;
-        }
-
-        dlen = d - dst;
-        n = siz - dlen;
-
-        if (n == 0) {
-            return;
-        }
-
-        while (*s != '\0') {
-            if (n != 1) {
-                *d++ = *s;
-                n--;
-            }
-            s++;
-        }
-        *d = '\0';
-
+        const U32 capacity = this->getCapacity();
+        const U32 length = this->length();
+        FW_ASSERT(capacity > length, capacity, length);
+        // Subtract 1 to leave space for null terminator
+        const U32 remaining = capacity - length - 1;
+        FW_ASSERT(remaining < capacity, remaining, capacity);
+        (void) strncat((char*) this->toChar(), buff, remaining);
     }
 
 }
