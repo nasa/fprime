@@ -230,7 +230,7 @@ namespace ${namespace} {
     operator==(const ${name}& other) const 
   {
     for (U32 i = 0; i < SIZE; ++i) {
-      if ((*this)[i] != other[i]) {
+      if (!((*this)[i] == other[i])) {
         return false;
       }
     }
