@@ -20,27 +20,27 @@ Example::ExampleEnumImpl* inst1 = 0;
 Example::ExampleEnumImpl* inst2 = 0;
 
 void constructArchitecture(void) {
-    
+
     // Instantiate the inst1 and inst2
     inst1   = new Example::ExampleEnumImpl("inst1");
     inst2   = new Example::ExampleEnumImpl("inst2");
-    
+
     // Connect inst1 to inst2
     inst1->set_EnumOut_OutputPort(0, inst2->get_EnumIn_InputPort(0));
-    
+
     // Connect inst2 to inst1
     inst2->set_EnumOut_OutputPort(0, inst1->get_EnumIn_InputPort(0));
-    
+
     // Instantiate components
     inst1->init(100);
     inst2->init(100);
-    
+
 }
 
 Example::Enum1::t getEnumConstant() {
     Example::Enum1::t c = Example::Enum1::Item1;
     const U32 i = STest::Pick::lowerUpper(0, 4);
-    
+
     switch(i) {
         case 0:
             c = Example::Enum1::Item1;
@@ -61,14 +61,14 @@ Example::Enum1::t getEnumConstant() {
             FW_ASSERT(0, i);
             break;
     }
-    
+
     return c;
 }
 
 Example::Enum1::t getNonnegativeConstant() {
     Example::Enum1::t c = Example::Enum1::Item1;
     const U32 i = STest::Pick::lowerUpper(0, 2);
-    
+
     switch(i) {
         case 0:
             c = Example::Enum1::Item2;
@@ -83,14 +83,14 @@ Example::Enum1::t getNonnegativeConstant() {
             FW_ASSERT(0, i);
             break;
     }
-    
+
     return c;
 }
 
 Example::Enum1::t getNegativeConstant() {
     Example::Enum1::t c = Example::Enum1::Item1;
     const U32 i = STest::Pick::lowerUpper(0, 1);
-    
+
     switch(i) {
         case 0:
             c = Example::Enum1::Item1;
@@ -102,7 +102,7 @@ Example::Enum1::t getNegativeConstant() {
             FW_ASSERT(0, i);
             break;
     }
-    
+
     return c;
 }
 
@@ -134,12 +134,12 @@ TEST(EnumXML, InvalidConstant) {
 }
 
 TEST(EnumXML, OK) {
-    
+
     Example::Enum1 enum1;
     Example::Enum1 enum2;
     Example::Enum1 enum3;
     Example::Serial1 serial1;
-    
+
     enum1 = getEnumFromI32();
     cout << "Created first enum: " << enum1 << endl;
 
@@ -148,15 +148,15 @@ TEST(EnumXML, OK) {
 
     enum3 = getEnumFromU32();
     cout << "Created third enum: " << enum3 << endl;
-    
+
     // Save copy of enums to test against post-serialization
     Example::Enum1 enum1Save = enum1;
     Example::Enum1 enum2Save = enum2;
-    
+
     int serial_arg1 = 0;
-    
+
     int serial_arg2 = 0;
-    
+
     // Serialize enums
     U8 buffer1[1024];
     U8 buffer2[1024];
@@ -164,10 +164,10 @@ TEST(EnumXML, OK) {
     Fw::SerialBuffer enumSerial2 = Fw::SerialBuffer(buffer2, sizeof(buffer2));
     ASSERT_EQ(enumSerial1.serialize(enum1), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum1" << endl;
-    
+
     ASSERT_EQ(enumSerial2.serialize(enum2), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum2" << endl;
-    
+
     cout << "Serialized enums" << endl;
 
     // Deserialize enums
@@ -176,37 +176,37 @@ TEST(EnumXML, OK) {
 
     ASSERT_EQ(enumSerial2.deserialize(enum2Save), Fw::FW_SERIALIZE_OK);
     cout << "Deserialized enum2" << endl;
-    
+
     ASSERT_EQ(enum1, enum1Save);
     ASSERT_FALSE(enum1 != enum1Save);
     cout << "Successful enum1 check" << endl;
-    
+
     ASSERT_EQ(enum2, enum2Save);
     ASSERT_FALSE(enum2 != enum2Save);
     cout << "Successful enum2 check" << endl;
-    
+
     cout << "Deserialized enums" << endl;
-    
+
     // Create serializable and test that enum is saved
     serial1 = Example::Serial1(serial_arg1, serial_arg2, enum2);
     ASSERT_EQ(serial1.getMember3(), enum2);
     cout << "Created serializable with enum arg" << endl;
-    
+
     cout << "Created serializable" << endl;
-    
+
     // Invoke ports to test enum usage
     cout << "Invoking inst1..." << endl;
     inst1->get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
     inst1->doDispatch();
     inst1->get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
     inst1->doDispatch();
-    
+
     cout << "Invoking inst2..." << endl;
     inst2->get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
     inst2->doDispatch();
     inst2->get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
     inst2->doDispatch();
-    
+
     cout << "Invoked ports" << endl;
 }
 
@@ -223,6 +223,6 @@ int main(int argc, char* argv[]) {
     delete inst2;
 
     cout << "Completed..." << endl;
-    
+
     return status;
 }
