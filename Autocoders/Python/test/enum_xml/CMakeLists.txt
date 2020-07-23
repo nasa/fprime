@@ -11,11 +11,15 @@ set(SOURCE_FILES
 )
 register_fprime_module()
 
+# STest library
+set(UT_MOD_DEPS
+        STest
+        Fw/Types)
 
-## Add unit test directory
-## UT_SOURCE_FILES: Sources for unit test
-#set(UT_SOURCE_FILES
-#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
-#)
-#register_fprime_ut()
+# Add unit test directory
+# UT_SOURCE_FILES: Sources for unit test
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
+register_fprime_ut()
 
