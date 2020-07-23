@@ -1,6 +1,6 @@
 #include <Autocoders/Python/test/enum_xml/Component1ComponentAc.hpp>
+#include <Autocoders/Python/test/enum_xml/Component1Impl.hpp>
 #include <Autocoders/Python/test/enum_xml/Enum1EnumAc.hpp>
-#include <Autocoders/Python/test/enum_xml/ExampleEnumImpl.hpp>
 #include <Autocoders/Python/test/enum_xml/Port1PortAc.hpp>
 #include <Autocoders/Python/test/enum_xml/Serial1SerializableAc.hpp>
 
