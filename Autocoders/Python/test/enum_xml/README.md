@@ -7,3 +7,4 @@ the F Prime Python virtual environment.
 
 * To build the tests, run `./build`
 * To run the tests, run `./run`
+* To run the tests, run `./cov`
