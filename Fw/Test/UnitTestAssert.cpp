@@ -31,13 +31,15 @@ namespace Test {
       memset(this->m_file, 0, sizeof(this->m_file));
 #endif
 
+        // save the current hook
+        this->m_previousAssertHook = Fw::AssertHook::getAssertHook();
         // register this hook
         Fw::AssertHook::registerHook();
     }
 
     UnitTestAssert::~UnitTestAssert() {
-        // deregister hook
-        Fw::AssertHook::registerHook();
+        // restore previous hook
+        Fw::AssertHook::setAssertHook(this->m_previousAssertHook);
     }
 
     void UnitTestAssert::doAssert(void) {

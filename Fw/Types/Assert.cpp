@@ -121,6 +121,14 @@ namespace Fw {
         s_assertHook = this;
     }
 
+    AssertHook* AssertHook::getAssertHook(void) {
+        return s_assertHook;
+    }
+
+    void AssertHook::setAssertHook(AssertHook *const assertHook) {
+      s_assertHook = assertHook;
+    }
+
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
         if (NULL == s_assertHook) {
             I8 assertMsg[256];

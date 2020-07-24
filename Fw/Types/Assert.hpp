@@ -69,6 +69,10 @@ namespace Fw {
             virtual void doAssert(void);
             // register the hook
             void registerHook(void);
+            // get the current hook
+            static AssertHook* getAssertHook(void);
+            // set the hook
+            static void setAssertHook(AssertHook *const assertHook);
 
         protected:
     };

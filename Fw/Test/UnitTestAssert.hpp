@@ -65,7 +65,11 @@ namespace Test {
             AssertArg m_arg5;
             AssertArg m_arg6;
 
+            // Whether an assertion failed
             bool m_assertFailed;
+
+            // The previous assert hook
+            AssertHook *m_previousAssertHook;
 
     };
 
