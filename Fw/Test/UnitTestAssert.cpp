@@ -13,10 +13,14 @@
 
 namespace Test {
 
-    UnitTestAssert::UnitTestAssert() :
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-      m_file(0),
+    const UnitTestAssert::File UnitTestAssert::fileInit = 0;
+#else
+    const UnitTestAssert::File UnitTestAssert::fileInit = "";
 #endif
+
+    UnitTestAssert::UnitTestAssert() :
+      m_file(fileInit),
       m_lineNo(0),
       m_numArgs(0),
       m_arg1(0),

@@ -22,6 +22,8 @@ namespace Test {
 #else
             typedef String File;
 #endif
+            // initial value for File
+            static const File fileInit;
 
         public:
             UnitTestAssert();

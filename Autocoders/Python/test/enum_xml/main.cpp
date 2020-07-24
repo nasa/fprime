@@ -131,19 +131,15 @@ void checkAssertionFailure(
     const U32 expectedArg1
 ) {
   ASSERT_TRUE(uta.assertFailed());
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-  Test::UnitTestAssert::File file = 0;
-#else
-  Test::UnitTestAssert::File file;
-#endif
-  NATIVE_UINT_TYPE lineNo;
-  NATIVE_UINT_TYPE numArgs;
-  AssertArg arg1;
-  AssertArg arg2;
-  AssertArg arg3;
-  AssertArg arg4;
-  AssertArg arg5;
-  AssertArg arg6;
+  Test::UnitTestAssert::File file = Test::UnitTestAssert::fileInit;
+  NATIVE_UINT_TYPE lineNo = 0;
+  NATIVE_UINT_TYPE numArgs = 0;
+  AssertArg arg1 = 0;
+  AssertArg arg2 = 0;
+  AssertArg arg3 = 0;
+  AssertArg arg4 = 0;
+  AssertArg arg5 = 0;
+  AssertArg arg6 = 0;
   uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
   ASSERT_EQ(expectedLineNumber, lineNo);
   ASSERT_EQ(1U, numArgs);
