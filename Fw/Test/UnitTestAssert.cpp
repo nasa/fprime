@@ -14,6 +14,9 @@
 namespace Test {
 
     UnitTestAssert::UnitTestAssert() :
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+      m_file(0),
+#endif
       m_lineNo(0),
       m_numArgs(0),
       m_arg1(0),
@@ -24,13 +27,6 @@ namespace Test {
       m_arg6(0),
       m_assertFailed(false)
     {
-
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-      this->m_file = 0;
-#else
-      memset(this->m_file, 0, sizeof(this->m_file));
-#endif
-
         // save the current hook
         this->m_previousAssertHook = Fw::AssertHook::getAssertHook();
         // register this hook
@@ -47,7 +43,7 @@ namespace Test {
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         (void)fprintf(stderr,"Assert File: 0x%x, Line: %u\n", this->m_file, this->m_lineNo);
 #else
-        (void)fprintf(stderr,"Assert File: %s, Line: %u\n", this->m_file, this->m_lineNo);
+        (void)fprintf(stderr,"Assert File: %s, Line: %u\n", this->m_file.toChar(), this->m_lineNo);
 #endif
     }
 
@@ -66,11 +62,7 @@ namespace Test {
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         this->m_file = file;
 #else
-        strncpy(
-            reinterpret_cast<char*>(this->m_file),
-            reinterpret_cast<const char*>(file),
-            sizeof(this->m_file)
-        );
+        this->m_file = reinterpret_cast<const char*>(file);
 #endif
         this->m_lineNo = lineNo;
         this->m_numArgs = numArgs;
@@ -85,7 +77,7 @@ namespace Test {
     }
 
     void UnitTestAssert::retrieveAssert(
-                    FILE_NAME_ARG file,
+                    File& file,
                     NATIVE_UINT_TYPE& lineNo,
                     NATIVE_UINT_TYPE& numArgs,
                     AssertArg& arg1,
@@ -96,15 +88,7 @@ namespace Test {
                     AssertArg& arg6
                     ) const {
 
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         file = this->m_file;
-#else
-        strncpy(
-            reinterpret_cast<char*>(file),
-            reinterpret_cast<const char*>(this->m_file),
-            sizeof(this->m_file)
-        );
-#endif
         lineNo = this->m_lineNo;
         numArgs = this->m_numArgs;
         arg1 = this->m_arg1;

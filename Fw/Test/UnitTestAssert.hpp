@@ -10,11 +10,19 @@
 #ifndef TEST_UNITTESTASSERT_HPP_
 #define TEST_UNITTESTASSERT_HPP_
 
+#include <Fw/Test/String.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Test {
 
     class UnitTestAssert: public Fw::AssertHook {
+        public:
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+            typedef NATIVE_UINT_TYPE File;
+#else
+            typedef String File;
+#endif
+
         public:
             UnitTestAssert();
             virtual ~UnitTestAssert();
@@ -33,7 +41,7 @@ namespace Test {
                     );
             // retrieves assertion failure values
             void retrieveAssert(
-                FILE_NAME_ARG file,
+                File& file,
                 NATIVE_UINT_TYPE& lineNo,
                 NATIVE_UINT_TYPE& numArgs,
                 AssertArg& arg1,
@@ -51,11 +59,7 @@ namespace Test {
             void clearAssertFailure();
 
         private:
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-            FILE_NAME_ARG m_file;
-#else
-            char m_file[256];
-#endif
+            File m_file;
             NATIVE_UINT_TYPE m_lineNo;
             NATIVE_INT_TYPE m_numArgs;
             AssertArg m_arg1;

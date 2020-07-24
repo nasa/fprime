@@ -132,10 +132,9 @@ void checkAssertionFailure(
 ) {
   ASSERT_TRUE(uta.assertFailed());
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-  NATIVE_UINT_TYPE file = 0;
+  Test::UnitTestAssert::File file = 0;
 #else
-  U8 file[256];
-  memset(file, 0, sizeof(file));
+  Test::UnitTestAssert::File file;
 #endif
   NATIVE_UINT_TYPE lineNo;
   NATIVE_UINT_TYPE numArgs;
