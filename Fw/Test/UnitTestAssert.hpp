@@ -72,9 +72,6 @@ namespace Test {
             // Whether an assertion failed
             bool m_assertFailed;
 
-            // The previous assert hook
-            AssertHook *m_previousAssertHook;
-
     };
 
 } /* namespace Test */

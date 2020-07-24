@@ -27,15 +27,13 @@ namespace Test {
       m_arg6(0),
       m_assertFailed(false)
     {
-        // save the current hook
-        this->m_previousAssertHook = Fw::AssertHook::getAssertHook();
         // register this hook
         Fw::AssertHook::registerHook();
     }
 
     UnitTestAssert::~UnitTestAssert() {
-        // restore previous hook
-        Fw::AssertHook::setAssertHook(this->m_previousAssertHook);
+        // deregister the hook
+        Fw::AssertHook::deregisterHook();
     }
 
     void UnitTestAssert::doAssert(void) {
