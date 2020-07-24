@@ -12,10 +12,10 @@ set(SOURCE_FILES
 )
 register_fprime_module()
 
-# Declare dependency on STest library
+# Declare dependencies on test modules
 set(UT_MOD_DEPS
+  Fw/Test
   STest
-  Fw/Types
 )
 
 # List all .cpp files as UT_SOURCE_FILES. Only the UT build is allowed.

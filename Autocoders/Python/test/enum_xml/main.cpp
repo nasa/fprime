@@ -7,11 +7,13 @@
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#include "gtest/gtest.h"
+#include "Fw/Test/UnitTestAssert.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "STest/Random/Random.hpp"
+#include "gtest/gtest.h"
 
 #include <iostream>
+#include <string.h>
 
 using namespace std;
 
@@ -124,13 +126,56 @@ Example::Enum1 getEnumFromU32() {
 }
 
 TEST(EnumXML, InvalidNegativeConstant) {
+  ::Test::UnitTestAssert uta;
   Example::Enum1 enum1 = getEnum();
-  ASSERT_DEATH(enum1 = static_cast<U32>(getNegativeConstant()), "Assertion failed");
+  const I32 negativeConstant = getNegativeConstant();
+  enum1 = static_cast<U32>(negativeConstant);
+  ASSERT_TRUE(uta.assertFailed());
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+  NATIVE_UINT_TYPE file = 0;
+#else
+  U8 file[256];
+  memset(file, 0, sizeof(file));
+#endif
+  NATIVE_UINT_TYPE lineNo;
+  NATIVE_UINT_TYPE numArgs;
+  AssertArg arg1;
+  AssertArg arg2;
+  AssertArg arg3;
+  AssertArg arg4;
+  AssertArg arg5;
+  AssertArg arg6;
+  uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
+  ASSERT_EQ(65U, lineNo);
+  ASSERT_EQ(1U, numArgs);
+  ASSERT_EQ(arg1, static_cast<U32>(negativeConstant));
 }
 
 TEST(EnumXML, InvalidConstant) {
+  ::Test::UnitTestAssert uta;
   Example::Enum1 enum1 = getEnum();
-  ASSERT_DEATH(enum1 = 42, "Assertion failed");
+  //ASSERT_DEATH(enum1 = 42, "Assertion failed");
+  const I32 invalidConstant = 42;
+  enum1 = invalidConstant;
+  ASSERT_TRUE(uta.assertFailed());
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+  NATIVE_UINT_TYPE file = 0;
+#else
+  U8 file[256];
+  memset(file, 0, sizeof(file));
+#endif
+  NATIVE_UINT_TYPE lineNo;
+  NATIVE_UINT_TYPE numArgs;
+  AssertArg arg1;
+  AssertArg arg2;
+  AssertArg arg3;
+  AssertArg arg4;
+  AssertArg arg5;
+  AssertArg arg6;
+  uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
+  ASSERT_EQ(58U, lineNo);
+  ASSERT_EQ(1U, numArgs);
+  ASSERT_EQ(arg1, static_cast<U32>(invalidConstant));
 }
 
 TEST(EnumXML, OK) {
