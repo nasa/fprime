@@ -125,12 +125,12 @@ Example::Enum1 getEnumFromU32() {
     return e;
 }
 
-TEST(EnumXML, InvalidNegativeConstant) {
-  ::Test::UnitTestAssert uta;
-  Example::Enum1 enum1 = getEnum();
-  const I32 negativeConstant = getNegativeConstant();
-  enum1 = static_cast<U32>(negativeConstant);
-  ASSERT_TRUE(uta.assertFailed());
+void checkAssertionFailure(
+    const ::Test::UnitTestAssert& uta,
+    const U32 expectedLineNumber,
+    const U32 expectedArg1
+) {
+  //ASSERT_TRUE(uta.assertFailed());
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
   NATIVE_UINT_TYPE file = 0;
 #else
@@ -146,36 +146,33 @@ TEST(EnumXML, InvalidNegativeConstant) {
   AssertArg arg5;
   AssertArg arg6;
   uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
-  ASSERT_EQ(65U, lineNo);
+  ASSERT_EQ(expectedLineNumber, lineNo);
   ASSERT_EQ(1U, numArgs);
-  ASSERT_EQ(arg1, static_cast<U32>(negativeConstant));
+  ASSERT_EQ(expectedArg1, arg1);
+}
+
+TEST(EnumXML, InvalidNegativeConstant) {
+  ::Test::UnitTestAssert uta;
+  Example::Enum1 enum1 = getEnum();
+  // Get a valid negative constant
+  const I32 negativeConstant = getNegativeConstant();
+  const U32 expectedLineNumber = 65;
+  // Turn it into a U32
+  const U32 expectedArg1 = negativeConstant;
+  // As a U32, the constant is not valie
+  enum1 = expectedArg1;
+  checkAssertionFailure(uta, expectedLineNumber, expectedArg1);
 }
 
 TEST(EnumXML, InvalidConstant) {
   ::Test::UnitTestAssert uta;
   Example::Enum1 enum1 = getEnum();
-  //ASSERT_DEATH(enum1 = 42, "Assertion failed");
+  // Get an invalid constant
   const I32 invalidConstant = 42;
   enum1 = invalidConstant;
-  ASSERT_TRUE(uta.assertFailed());
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-  NATIVE_UINT_TYPE file = 0;
-#else
-  U8 file[256];
-  memset(file, 0, sizeof(file));
-#endif
-  NATIVE_UINT_TYPE lineNo;
-  NATIVE_UINT_TYPE numArgs;
-  AssertArg arg1;
-  AssertArg arg2;
-  AssertArg arg3;
-  AssertArg arg4;
-  AssertArg arg5;
-  AssertArg arg6;
-  uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
-  ASSERT_EQ(58U, lineNo);
-  ASSERT_EQ(1U, numArgs);
-  ASSERT_EQ(arg1, static_cast<U32>(invalidConstant));
+  const U32 expectedLineNumber = 58;
+  const U32 expectedArg1 = invalidConstant;
+  checkAssertionFailure(uta, expectedLineNumber, expectedArg1);
 }
 
 TEST(EnumXML, OK) {

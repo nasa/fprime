@@ -42,7 +42,7 @@ namespace Test {
                 AssertArg& arg4,
                 AssertArg& arg5,
                 AssertArg& arg6
-                );
+                ) const;
 
             // check whether assertion failure occurred
             bool assertFailed() const;

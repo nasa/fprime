@@ -92,7 +92,7 @@ namespace Test {
                     AssertArg& arg4,
                     AssertArg& arg5,
                     AssertArg& arg6
-                    ) {
+                    ) const {
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         file = this->m_file;
