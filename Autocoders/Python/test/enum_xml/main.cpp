@@ -130,7 +130,7 @@ void checkAssertionFailure(
     const U32 expectedLineNumber,
     const U32 expectedArg1
 ) {
-  //ASSERT_TRUE(uta.assertFailed());
+  ASSERT_TRUE(uta.assertFailed());
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
   NATIVE_UINT_TYPE file = 0;
 #else
