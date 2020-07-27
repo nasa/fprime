@@ -23,7 +23,7 @@ class SerializableType(ValueType):
                   The member descriptions can be None
     """
 
-    def __init__(self, typename, mem_list=None, val=None):
+    def __init__(self, typename, mem_list=None):
         """
         Constructor
         """
@@ -39,8 +39,6 @@ class SerializableType(ValueType):
             ]
         # Set the member list then set the value
         self.mem_list = new_mem_list
-        if val is not None:
-            self.val = val
 
     def validate(self, val=None):
         """ Validate this object including member list and values """
@@ -81,7 +79,7 @@ class SerializableType(ValueType):
         """
         self.__mem_list = mem_list
         if mem_list is None:
-            self.validate(self.val)
+            self.validate(self.mem_list)
 
     def serialize(self):
         """ Serializes the members of the serializable """
@@ -98,19 +96,27 @@ class SerializableType(ValueType):
             member_val.deserialize(data, offset)
             members.append(member_val.val)
             offset += member_val.getSize()
-        self.val = members
 
     @property
-    def val(self):
-        """ Getter for .val """
-        return ValueType.val.fget(self)
+    def val(self) -> dict:
+        """
+        The .val property typically returns the python-native type. This the python native type closes to a serializable
+        without generating full classes would be a dictionary (anonymous object). This returns such an object.
+        :return dictionary of member names to python values of member keys
+        """
+        return {member_name: member_val.val for member_name, member_val, _, _ in self.mem_list}
 
     @val.setter
-    def val(self, val):
-        """ Setter for .val calls validate internally """
-        ValueType.val.fset(self, val)
-        # When a value is set, we need to set the member properties
-        for val_member, list_entry in zip(val, self.mem_list):
+    def val(self, val: dict):
+        """
+        The .val property typically returns the python-native type. This the python native type closes to a serializable
+        without generating full classes would be a dictionary (anonymous object). This takes such an object and sets the
+        member val list from it.
+        :param val: dictionary containing python types to key names. This
+        """
+        values_list = [val[name] for name, _, _, _ in self.mem_list]
+        # Member list is the explicit store for storing these values
+        for val_member, list_entry in zip(values_list, self.mem_list):
             _, member_list_val, _, _ = list_entry
             member_list_val.val = val_member
 

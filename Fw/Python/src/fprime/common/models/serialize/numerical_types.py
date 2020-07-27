@@ -66,11 +66,9 @@ class IntegerType(NumericalType, abc.ABC):
         """ Validates the given integer. """
         if not isinstance(val, int):
             raise TypeMismatchException(int, type(val))
-        min_val = 0
-        max_val = 1 << self.get_bits()
-        if self.__class__.__name__.startswith("I"):
-            min_val -= int(max_val / 2)
-            max_val -= int(max_val / 2)
+        max_val = 1 << (self.get_bits() - (1 if self.__class__.__name__.startswith("I") else 0))
+        min_val = -max_val if self.__class__.__name__.startswith("I") else 0
+        # Compare to min and max
         if val < min_val or val >= max_val:
             raise TypeRangeException(val)
 
