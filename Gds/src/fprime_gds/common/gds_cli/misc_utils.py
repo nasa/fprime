@@ -7,16 +7,31 @@ sure where else to put. Please find a better home for them when you have time
 """
 
 import json
-from typing import Callable
+from typing import Callable, Iterable, NamedTuple
 
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 
-"""
-NOTE: Module is now lazy-loaded below for performance reasons; if possible, find
-a better way to do this
-from fprime_gds.flask.json import GDSJsonEncoder
-"""
+# NOTE: 'GDSJsonEncoder' module is now lazy-loaded below for performance
+# reasons
+
+
+# Define some tuples containing sets of arguments used by GDS CLI commands;
+# For more details on these arguments, see argument definitions at:
+#           Gds/src/fprime_gds/executables/fprime_cli.py
+ConnectionInfo = NamedTuple(
+    "ConnectionInfo", [("dictionary", str), ("ip_address", str), ("port", int)]
+)
+SearchInfo = NamedTuple(
+    "SearchInfo",
+    [
+        ("is_printing_list", bool),
+        ("ids", Iterable[int]),
+        ("components", Iterable[str]),
+        ("search", str),
+        ("json", bool),
+    ],
+)
 
 
 def repeat_until_interrupt(func: Callable, *args):
@@ -55,7 +70,6 @@ def get_item_json_string(gds_item, tab_spaces: int = 2) -> str:
     return json.dumps(gds_item, indent=tab_spaces, cls=GDSJsonEncoder)
 
 
-# TODO: Need to do user tests to find a better print format
 def get_item_string(item: SysData, as_json: bool = False) -> str:
     """
     Takes in the given SysData and prints out a human-readable string
@@ -71,22 +85,22 @@ def get_item_string(item: SysData, as_json: bool = False) -> str:
 
     if as_json:
         return get_item_json_string(item)
-    # TODO: "get_str" isn't on the base sys_data class, but is on all the query
+    # NOTE: "get_str" isn't on the base sys_data class, but is on all the query
     # items we care about so far (i.e. EventData, ChannelData, CommandData)
     return item.get_str(verbose=True)
 
 
-def get_cmd_template_string(item: CmdTemplate, json: bool = False,) -> str:
+def get_cmd_template_string(item: CmdTemplate, as_json: bool = False,) -> str:
     """
     Converts the given command template into a human-readable string.
 
     :param item: The CmdTemplate to convert to a string
-    :param json: Whether or not to return a JSON representation of "temp"
+    :param as_json: Whether or not to return a JSON representation of "temp"
     :return: A readable string version of "item"
     """
     if not item:
         return get_item_string(item)
-    if json:
+    if as_json:
         return get_item_json_string(item)
 
     cmd_string = "%s (%d) | Takes %d arguments.\n" % (
@@ -103,11 +117,10 @@ def get_cmd_template_string(item: CmdTemplate, json: bool = False,) -> str:
         arg_name, arg_description, arg_type = arg
         if not arg_description:
             arg_description = "--no description--"
-        # TODO: Compare against actual module, not just the name (but
-        # how, since EnumType is a serializable type from the dictionary?)
+        # Can't compare against actual module, since EnumType is a serializable
+        # type from the dictionary
         if type(arg_type).__name__ == "EnumType":
-            # TODO: Find good way to combine this w/ description, if one exists?
-            arg_description = str(arg_type.keys())
+            arg_description = "%s | %s " % (str(arg_type.keys()), arg_description)
 
         cmd_string += "\t%s (%s): %s\n" % (
             arg_name,
