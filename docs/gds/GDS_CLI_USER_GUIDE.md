@@ -2,7 +2,7 @@
 
 ![](img/gds_cli_user_guide_cover.png)
 
-This guide will give you a quick introduction to what the F´ GDS CLI is and how you can use it, with a more detailed reference provided further down. If you're interested in developing for this tool instead, please see the [developer's CLI guide]().
+This guide will give you a quick introduction to what the F´ GDS CLI is and how you can use it, with a more detailed reference provided further down. If you're interested in developing for this tool instead, please see the [developer's CLI guide](../../Gds/docs/GDS_CLI_DEV_GUIDE.md).
 
 -   [What is this?](#what-is-this)
 -   [Getting Started](#getting-started)
