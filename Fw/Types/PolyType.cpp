@@ -32,7 +32,8 @@ namespace Fw {
     U8 PolyType::operator=(U8 other) {
         this->m_dataType = TYPE_U8;
         this->m_val.u8Val = other;
-        return (U8)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I8 methods
@@ -59,7 +60,8 @@ namespace Fw {
     I8 PolyType::operator=(I8 other) {
         this->m_dataType = TYPE_I8;
         this->m_val.i8Val = other;
-        return (I8)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #if FW_HAS_16_BIT
@@ -88,7 +90,8 @@ namespace Fw {
     U16 PolyType::operator=(U16 other) {
         this->m_dataType = TYPE_U16;
         this->m_val.u16Val = other;
-        return (U16)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I16 methods
@@ -115,7 +118,8 @@ namespace Fw {
     I16 PolyType::operator=(I16 other) {
         this->m_dataType = TYPE_I16;
         this->m_val.i16Val = other;
-        return (I16)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif
@@ -146,7 +150,8 @@ namespace Fw {
     U32 PolyType::operator=(U32 other) {
         this->m_dataType = TYPE_U32;
         this->m_val.u32Val = other;
-        return (U32)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I32 methods
@@ -173,7 +178,8 @@ namespace Fw {
     I32 PolyType::operator=(I32 other) {
         this->m_dataType = TYPE_I32;
         this->m_val.i32Val = other;
-        return (I32)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif    
@@ -203,7 +209,8 @@ namespace Fw {
     U64 PolyType::operator=(U64 other) {
         this->m_dataType = TYPE_U64;
         this->m_val.u64Val = other;
-        return (U64)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I64 methods
@@ -230,7 +237,8 @@ namespace Fw {
     I64 PolyType::operator=(I64 other) {
         this->m_dataType = TYPE_I64;
         this->m_val.i64Val = other;
-        return (I64)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif
@@ -259,7 +267,8 @@ namespace Fw {
     F64 PolyType::operator=(F64 other) {
         this->m_dataType = TYPE_F64;
         this->m_val.f64Val = other;
-        return (F64)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif
@@ -285,7 +294,8 @@ namespace Fw {
     F32 PolyType::operator=(F32 other) {
         this->m_dataType = TYPE_F32;
         this->m_val.f32Val = other;
-        return (F32)(*this);
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     PolyType::PolyType(bool val) {
@@ -310,6 +320,7 @@ namespace Fw {
     bool PolyType::operator=(bool other) {
         this->m_dataType = TYPE_BOOL;
         this->m_val.boolVal = other;
+        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -335,6 +346,7 @@ namespace Fw {
     void* PolyType::operator=(void* other) {
         this->m_dataType = TYPE_PTR;
         this->m_val.ptrVal = other;
+        // Note: casts using the overridden () operator
         return *this;
     }
 

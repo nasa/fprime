@@ -24,7 +24,6 @@ namespace Fw {
     }
 
     StringBase::StringBase(const StringBase &original) {
-        this->copyBuff(original.toChar(), this->getCapacity());
     }
 
     StringBase::~StringBase(void) {

@@ -41,7 +41,7 @@ namespace CFDP {
       Checksum(const U32 value);
 
       //! Copy a Checksum object
-      Checksum(const Checksum &original) = default;
+      Checksum(const Checksum &original);
 
       //! Destroy a Checksum object
       ~Checksum();

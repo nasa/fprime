@@ -32,6 +32,12 @@ namespace CFDP {
   }
 
   Checksum ::
+    Checksum(const Checksum &original)
+  {
+    this->value = original.getValue();
+  }
+
+  Checksum ::
     ~Checksum()
   {
 
