@@ -878,11 +878,15 @@ TEST(TypesTest,PolyTest) {
 
     Fw::PolyType pt(in8);
 
-    printf("U8 PolyType Test\n");
     out8 = (U8) pt;
-    if (out8 != in8) {
-        printf("U8 in %d out %d mismatch!\n", in8, out8);
-    }
+    ASSERT_EQ(in8, out8);
+
+    // Test assigning to polytype and return type of assignment
+    in8 = 21;
+    out8 = (pt = in8);
+    ASSERT_EQ((U8) pt, (U8) 21);
+    ASSERT_EQ((U8) pt, in8);
+    ASSERT_EQ(out8, in8);
 
 // Should assert
 // out16 = (U16)pt;

@@ -32,7 +32,7 @@ namespace Fw {
     U8 PolyType::operator=(U8 other) {
         this->m_dataType = TYPE_U8;
         this->m_val.u8Val = other;
-        return *this;
+        return (U8)(*this);
     }
 
     // I8 methods
@@ -59,7 +59,7 @@ namespace Fw {
     I8 PolyType::operator=(I8 other) {
         this->m_dataType = TYPE_I8;
         this->m_val.i8Val = other;
-        return *this;
+        return (I8)(*this);
     }
 
 #if FW_HAS_16_BIT
@@ -88,7 +88,7 @@ namespace Fw {
     U16 PolyType::operator=(U16 other) {
         this->m_dataType = TYPE_U16;
         this->m_val.u16Val = other;
-        return *this;
+        return (U16)(*this);
     }
 
     // I16 methods
@@ -115,7 +115,7 @@ namespace Fw {
     I16 PolyType::operator=(I16 other) {
         this->m_dataType = TYPE_I16;
         this->m_val.i16Val = other;
-        return *this;
+        return (I16)(*this);
     }
 
 #endif
@@ -146,7 +146,7 @@ namespace Fw {
     U32 PolyType::operator=(U32 other) {
         this->m_dataType = TYPE_U32;
         this->m_val.u32Val = other;
-        return *this;
+        return (U32)(*this);
     }
 
     // I32 methods
@@ -173,7 +173,7 @@ namespace Fw {
     I32 PolyType::operator=(I32 other) {
         this->m_dataType = TYPE_I32;
         this->m_val.i32Val = other;
-        return *this;
+        return (I32)(*this);
     }
 
 #endif    
@@ -203,7 +203,7 @@ namespace Fw {
     U64 PolyType::operator=(U64 other) {
         this->m_dataType = TYPE_U64;
         this->m_val.u64Val = other;
-        return *this;
+        return (U64)(*this);
     }
 
     // I64 methods
@@ -230,7 +230,7 @@ namespace Fw {
     I64 PolyType::operator=(I64 other) {
         this->m_dataType = TYPE_I64;
         this->m_val.i64Val = other;
-        return *this;
+        return (I64)(*this);
     }
 
 #endif
@@ -259,7 +259,7 @@ namespace Fw {
     F64 PolyType::operator=(F64 other) {
         this->m_dataType = TYPE_F64;
         this->m_val.f64Val = other;
-        return *this;
+        return (F64)(*this);
     }
 
 #endif
@@ -285,7 +285,7 @@ namespace Fw {
     F32 PolyType::operator=(F32 other) {
         this->m_dataType = TYPE_F32;
         this->m_val.f32Val = other;
-        return *this;
+        return (F32)(*this);
     }
 
     PolyType::PolyType(bool val) {
