@@ -12,17 +12,12 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
-import os
 import sys
-
-from fprime_ac.parsers import XmlArrayParser, XmlParser
-
-try:
-    from fprime_ac.generators.templates.arrays import array_cpp
-    from fprime_ac.generators.templates.arrays import array_hpp
-except ImportError:
-    print("ERROR: generate python templates first")
-    sys.exit(-1)
+import os
+from fprime_ac.parsers import XmlParser
+from fprime_ac.parsers import XmlArrayParser
+from fprime_ac.generators.templates.arrays import array_cpp
+from fprime_ac.generators.templates.arrays import array_hpp
 
 
 def open_file(name, type):
@@ -30,7 +25,7 @@ def open_file(name, type):
     Open the file for writing
     """
     #
-    gse_serializable_install_dir = os.path.join("DefaultDict", "serializable")
+    gse_serializable_install_dir = "DefaultDict" + os.sep + "serializable"
     if type == "py":
         filename = name + ".py"
         #
@@ -43,7 +38,7 @@ def open_file(name, type):
         filename = name + "ArrayAc." + type
     #
     fp = open(filename, "w")
-    if fp is None:
+    if fp == None:
         print("Could not open file %s" % filename)
         sys.exit(-1)
     return fp
@@ -62,7 +57,7 @@ def write_template(
     type_id,
     string_size,
     include_path,
-    comments,
+    comment,
     include_headers,
     import_serializables,
     import_enums,
@@ -80,7 +75,7 @@ def write_template(
     c.default = default_values
     c.uuid = type_id  # uuid = type_id
     c.string_size = string_size
-    c.comments = comments
+    c.comment = comment
     c.include_headers = include_headers
     c.import_serializables = import_serializables
     c.import_enums = import_enums
@@ -111,7 +106,7 @@ def generate_array(xml_file):
         string_size = array_xml.get_string_size()
         if string_size:
             string_size = int(string_size)
-        comments = array_xml.get_comments()
+        comment = array_xml.get_comment()
         include_headers = array_xml.get_include_header_files()
         import_serializables = array_xml.get_includes()
         import_enums = array_xml.get_include_enum_files()
@@ -153,7 +148,7 @@ def generate_array(xml_file):
             type_id,
             string_size,
             include_path,
-            comments,
+            comment,
             headers,
             serials,
             enums,
@@ -178,7 +173,7 @@ def generate_array(xml_file):
             type_id,
             string_size,
             include_path,
-            comments,
+            comment,
             headers,
             serials,
             enums,

@@ -104,7 +104,10 @@ class SerializableType(ValueType):
         without generating full classes would be a dictionary (anonymous object). This returns such an object.
         :return dictionary of member names to python values of member keys
         """
-        return {member_name: member_val.val for member_name, member_val, _, _ in self.mem_list}
+        return {
+            member_name: member_val.val
+            for member_name, member_val, _, _ in self.mem_list
+        }
 
     @val.setter
     def val(self, val: dict):

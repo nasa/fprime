@@ -1,6 +1,7 @@
 ##
 ## Template to stamp out serializable enums .hpp file
 ##
+#import re
 // ====================================================================== 
 // \title  ${name}.hpp
 // \author Auto-generated
@@ -29,7 +30,9 @@
 #if $namespace
 namespace ${namespace} {
 #end if
-  //! $comment
+#if $comment
+  //! $re.sub("\n *", "\n  //! ", $comment)
+#end if
   class ${name} : public Fw::Serializable
   {
     public:

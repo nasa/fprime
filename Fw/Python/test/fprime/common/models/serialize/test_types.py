@@ -31,11 +31,27 @@ from fprime.common.models.serialize.type_exceptions import (
     DeserializeException,
     NotInitializedException,
     TypeMismatchException,
-    TypeRangeException
+    TypeRangeException,
 )
 
-PYTHON_TESTABLE_TYPES = [True, False, -1, 0, 300, "abc", "True", "False", 3.1412, (0, 1), (True, False), [], [0], {},
-                         {"abc": 123}, {2, 4, 3}]
+PYTHON_TESTABLE_TYPES = [
+    True,
+    False,
+    -1,
+    0,
+    300,
+    "abc",
+    "True",
+    "False",
+    3.1412,
+    (0, 1),
+    (True, False),
+    [],
+    [0],
+    {},
+    {"abc": 123},
+    {2, 4, 3},
+]
 
 
 def valid_values_test(type_input, valid_values, sizes):
@@ -71,7 +87,9 @@ def valid_values_test(type_input, valid_values, sizes):
             assert deserializer.getSize() == size
 
 
-def invalid_values_test(type_input, invalid_values, exception_class=TypeMismatchException):
+def invalid_values_test(
+    type_input, invalid_values, exception_class=TypeMismatchException
+):
     """ Check invalid values for all types """
     for item in invalid_values:
         # Constructor initialization
@@ -86,6 +104,7 @@ def invalid_values_test(type_input, invalid_values, exception_class=TypeMismatch
             with pytest.raises(DeserializeException):
                 instantiation = type_input()
                 instantiation.deserialize(b" " * offset, offset)
+
 
 def ser_deser_time_test(t_base, t_context, secs, usecs):
     """
@@ -117,6 +136,7 @@ def ser_deser_time_test(t_base, t_context, secs, usecs):
     assert val2.seconds == secs
     assert val2.useconds == usecs
 
+
 def test_boolean_nominal():
     """ Tests the nominal cases of a BoolType """
     valid_values_test(BoolType, [True, False], 1)
@@ -124,7 +144,9 @@ def test_boolean_nominal():
 
 def test_boolean_off_nominal():
     """ Tests the nominal cases of a BoolType """
-    invalid_values_test(BoolType, filter(lambda item: not isinstance(item, bool), PYTHON_TESTABLE_TYPES))
+    invalid_values_test(
+        BoolType, filter(lambda item: not isinstance(item, bool), PYTHON_TESTABLE_TYPES)
+    )
 
 
 def test_int_types_nominal():
@@ -138,8 +160,13 @@ def test_int_types_off_nominal():
     """ Tests the integer off nominal types """
     for type_input, size in [(I8Type, 1), (I16Type, 2), (I32Type, 4), (I64Type, 8)]:
         total = pow(2, (size * 8) - 1)
-        invalid_values_test(type_input, filter(lambda item: not isinstance(item, int), PYTHON_TESTABLE_TYPES))
-        invalid_values_test(type_input, [-total - 1, total, -total * 35, total * 35], TypeRangeException)
+        invalid_values_test(
+            type_input,
+            filter(lambda item: not isinstance(item, int), PYTHON_TESTABLE_TYPES),
+        )
+        invalid_values_test(
+            type_input, [-total - 1, total, -total * 35, total * 35], TypeRangeException
+        )
 
 
 def test_uint_types_nominal():
@@ -153,8 +180,15 @@ def test_uint_types_off_nominal():
     """ Tests the integer off nominal types """
     for type_input, size in [(U8Type, 1), (U16Type, 2), (U32Type, 4), (U64Type, 8)]:
         max_int = pow(2, (size * 8)) - 1
-        invalid_values_test(type_input, filter(lambda item: not isinstance(item, int), PYTHON_TESTABLE_TYPES))
-        invalid_values_test(type_input, [-1, -2, max_int + 1, max_int * 35, -max_int], TypeRangeException)
+        invalid_values_test(
+            type_input,
+            filter(lambda item: not isinstance(item, int), PYTHON_TESTABLE_TYPES),
+        )
+        invalid_values_test(
+            type_input,
+            [-1, -2, max_int + 1, max_int * 35, -max_int],
+            TypeRangeException,
+        )
 
 
 def test_float_types_nominal():
@@ -163,11 +197,14 @@ def test_float_types_nominal():
     valid_values_test(F64Type, [0.31415000557899475, 0.0, -3.141590118408203], 8)
 
 
-
 def test_float_types_off_nominal():
     """ Tests the integer off nominal types """
-    invalid_values_test(F32Type, filter(lambda item: not isinstance(item, float), PYTHON_TESTABLE_TYPES))
-    invalid_values_test(F64Type, filter(lambda item: not isinstance(item, float), PYTHON_TESTABLE_TYPES))
+    invalid_values_test(
+        F32Type, filter(lambda item: not isinstance(item, float), PYTHON_TESTABLE_TYPES)
+    )
+    invalid_values_test(
+        F64Type, filter(lambda item: not isinstance(item, float), PYTHON_TESTABLE_TYPES)
+    )
 
 
 def test_enum_type():
@@ -220,11 +257,9 @@ def test_serializable_type():
     value_dict = {"mem1": 3, "mem2": "abc 123", "mem3": "MEMB1"}
     serType1.val = value_dict
     assert serType1.val == value_dict
-    mem_list =  serType1.mem_list
-    memList = [(a,b,c,None) for a,b,c in memList]
+    mem_list = serType1.mem_list
+    memList = [(a, b, c, None) for a, b, c in memList]
     assert mem_list == memList
-
-
 
 
 def test_time_type():
@@ -258,5 +293,3 @@ def test_time_type():
     for (t_base, t_context, secs, usecs) in in_err_list:
         with pytest.raises(TypeRangeException):
             ser_deser_time_test(t_base, t_context, secs, usecs)
-
-

@@ -866,7 +866,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             y = f(x)
             if y is not None:
                 # check if list
-                if isinstance(y,  list):
+                if isinstance(y, list):
                     result += y
                 else:
                     result += [y]

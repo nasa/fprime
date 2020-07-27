@@ -164,7 +164,7 @@ class ModelParser:
             if ret_tuple is not None:
                 t = ret_tuple[0]
                 # check for enumeration
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     t = t[0][1]
                     # append namespace
                     if port.get_namespace() is not None:
@@ -213,7 +213,7 @@ class ModelParser:
                     t = n + "Buffer"
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         e = "ENUM"
@@ -349,7 +349,7 @@ class ModelParser:
             t = channel.get_type()
             #
             # Check and get enum type here...
-            if isinstance(t,  tuple):
+            if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     enum_type = t[0][1]
                     mem_list = t[1]
@@ -380,7 +380,7 @@ class ModelParser:
             n = channel.get_name()
             t = channel.get_type()
             ti = None
-            if isinstance(t,  tuple):
+            if isinstance(t, tuple):
                 # rename type to enum type
                 t = t[0][1]
                 ti = "enum"
@@ -399,7 +399,7 @@ class ModelParser:
             t = parameter.get_type()
             #
             # Check and get enum type here...
-            if isinstance(t,  tuple):
+            if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     enum_type = t[0][1]
                     mem_list = t[1]
@@ -432,7 +432,7 @@ class ModelParser:
             set_ops = parameter.get_set_opcodes()
             save_ops = parameter.get_save_opcodes()
             ti = None
-            if isinstance(t,  tuple):
+            if isinstance(t, tuple):
                 # rename type to enum type
                 t = t[0][1]
                 ti = "enum"
@@ -453,7 +453,7 @@ class ModelParser:
                 t = a.get_type()
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         enum_type = t[0][1]
                         mem_list = t[1]
@@ -492,7 +492,7 @@ class ModelParser:
                 typeinfo = None
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         typeinfo = "enum"
@@ -539,7 +539,7 @@ class ModelParser:
                 t = a.get_type()
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         enum_type = t[0][1]
                         mem_list = t[1]
@@ -578,7 +578,7 @@ class ModelParser:
                 typeinfo = None
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         typeinfo = "enum"
@@ -662,7 +662,7 @@ class ModelParser:
                 typeinfo = None
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         typeinfo = "enum"
@@ -695,7 +695,7 @@ class ModelParser:
                 t = a.get_type()
                 #
                 # Check and get enum type here...
-                if isinstance(t,  tuple):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         enum_type = t[0][1]
                         mem_list = t[1]

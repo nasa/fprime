@@ -9,7 +9,7 @@ from .type_exceptions import (
     DeserializeException,
     NotInitializedException,
     TypeMismatchException,
-    TypeRangeException
+    TypeRangeException,
 )
 
 

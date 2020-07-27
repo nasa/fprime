@@ -2,6 +2,8 @@
 <?xml-model href="../../Autocoders/Python/schema/default/array_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <array name="ArrayType" namespace="Example">
     <import_array_type>Autocoders/Python/test/array_xml/InternalTypeArrayAi.xml</import_array_type>
+    <comment>Example Array Type XML</comment>
+
 
     <type>InternalType</type>
     <size>1</size>

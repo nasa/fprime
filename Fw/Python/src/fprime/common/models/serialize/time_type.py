@@ -341,8 +341,8 @@ class TimeType(type_base.BaseType):
         self.__secs = fprime.common.models.serialize.numerical_types.U32Type(seconds)
         self.__usecs = fprime.common.models.serialize.numerical_types.U32Type(useconds)
 
-    #The following Python special methods add support for rich comparison of TimeTypes to other
-    #TimeTypes and numbers.
+    # The following Python special methods add support for rich comparison of TimeTypes to other
+    # TimeTypes and numbers.
 
     def get_float(self):
         """
@@ -393,7 +393,7 @@ class TimeType(type_base.BaseType):
         else:
             return self.get_float() >= other
 
-    #The following helper methods enable support for arithmetic operations on TimeTypes.
+    # The following helper methods enable support for arithmetic operations on TimeTypes.
 
     def set_float(self, num):
         """
@@ -416,7 +416,7 @@ class TimeType(type_base.BaseType):
         tType.set_float(num)
         return tType
 
-    #The following Python special methods add support for arithmetic operations on TimeTypes.
+    # The following Python special methods add support for arithmetic operations on TimeTypes.
 
     def __add__(self, other):
         """ Addition """
@@ -453,7 +453,7 @@ class TimeType(type_base.BaseType):
         num = self.get_float() // other
         return self.get_type_from_float(num)
 
-    #The following Python special methods add support for reflected arithmetic operations on TimeTypes.
+    # The following Python special methods add support for reflected arithmetic operations on TimeTypes.
 
     def __radd__(self, other):
         """ Reflected addition """
@@ -489,4 +489,3 @@ class TimeType(type_base.BaseType):
             other = other.get_float()
         num = other // self.get_float()
         return self.get_type_from_float(num)
-

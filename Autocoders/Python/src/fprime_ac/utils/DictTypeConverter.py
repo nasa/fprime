@@ -13,7 +13,7 @@ class DictTypeConverter:
         ser_import = None
         use_size = False if size is None else True
         # check for enums
-        if isinstance(t,  tuple):
+        if isinstance(t, tuple):
             # extract enumeration arguments
             # to match the C rules, we have to start
             # counting member values from 0 or the

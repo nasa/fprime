@@ -14,25 +14,25 @@ import xml.etree.ElementTree
 
 # Dependencies required by basic types
 BASIC_DEPENDENCIES = {
-    "component":    ["Fw_Cfg", "Fw_Types"],
-    "port":         ["Fw_Cfg", "Fw_Types", "Fw_Port"],
-    "interface":    ["Fw_Cfg", "Fw_Types", "Fw_Port"],
-    "assembly":     ["Fw_Cfg", "Fw_Types"],
+    "component": ["Fw_Cfg", "Fw_Types"],
+    "port": ["Fw_Cfg", "Fw_Types", "Fw_Port"],
+    "interface": ["Fw_Cfg", "Fw_Types", "Fw_Port"],
+    "assembly": ["Fw_Cfg", "Fw_Types"],
     "serializable": ["Fw_Cfg", "Fw_Types"],
-    "commands":     ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Cmd"],
-    "events":       ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Log"],
-    "telemetry":    ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Tlm"],
-    "parameters":   ["Fw_Cfg", "Fw_Types", "Fw_Prm"],
+    "commands": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Cmd"],
+    "events": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Log"],
+    "telemetry": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Tlm"],
+    "parameters": ["Fw_Cfg", "Fw_Types", "Fw_Prm"],
     "internal_interfaces": [],
     "enum": [],
-    "array": []
+    "array": [],
 }
 # Component type importations
 KIND_DEPENDENCIES = {
     "passive": ["Fw_Comp"],
-    "queued": ["Fw_CompQueued"], # Depends on the queued portion of Fw_Comp
+    "queued": ["Fw_CompQueued"],  # Depends on the queued portion of Fw_Comp
     "active": ["Fw_CompQueued"],
-    "guarded_input": ["Os"]
+    "guarded_input": ["Os"],
 }
 
 XML_TAG_REMAP = {
@@ -58,8 +58,8 @@ DEPENDENCY_ORDER = [
     "Fw_Prm",
     "Fw_Comp",
     "Os",
-    "Fw_CompQueued"
-    ]
+    "Fw_CompQueued",
+]
 # Oh, also dependencies need to be listed in reverse order.
 DEPENDENCY_ORDER.reverse()
 
@@ -69,16 +69,28 @@ def main():
     Read arguments and run!
     """
     if len(sys.argv) != 4:
-        print("[ERROR] Failed to run, need 4 arguments. Usage:\n\t{0} <input_Ai.xml> <library name> <import base>"
-              .format(sys.argv[0]), file=sys.stderr)
+        print(
+            "[ERROR] Failed to run, need 4 arguments. Usage:\n\t{0} <input_Ai.xml> <library name> <import base>".format(
+                sys.argv[0]
+            ),
+            file=sys.stderr,
+        )
         sys.exit(1)
     elif not os.path.exists(sys.argv[1]):
-        print("[ERROR] {0} does not exist. Usage:\n\t{1} <input_Ai.xml> <library name> <import base>"
-              .format(sys.argv[1], sys.argv[0]), file=sys.stderr)
+        print(
+            "[ERROR] {0} does not exist. Usage:\n\t{1} <input_Ai.xml> <library name> <import base>".format(
+                sys.argv[1], sys.argv[0]
+            ),
+            file=sys.stderr,
+        )
         sys.exit(2)
     elif not os.path.isdir(sys.argv[3]):
-        print("[ERROR] {0} does not exist. Usage:\n\t{1} <input_Ai.xml> <library name> <import base>"
-              .format(sys.argv[3], sys.argv[0]), file=sys.stderr)
+        print(
+            "[ERROR] {0} does not exist. Usage:\n\t{1} <input_Ai.xml> <library name> <import base>".format(
+                sys.argv[3], sys.argv[0]
+            ),
+            file=sys.stderr,
+        )
         sys.exit(3)
     # Read the xml tree
     tree = xml.etree.ElementTree.parse(sys.argv[1])
@@ -89,6 +101,7 @@ def main():
     print_file_dependencies(root, sys.argv[3])
     print("")
 
+
 def print_file_dependencies(root, import_base):
     """
     Print F prime dependencies. These should be printed w/o a newlines.
@@ -96,9 +109,12 @@ def print_file_dependencies(root, import_base):
     :param current_library: current library to strip from dependencies
     :param import_base: base of imported dictionaries, used for finding and opening them
     """
-    dicts = map(lambda x: os.path.join(import_base, x.text), root.findall("import_dictionary"))
+    dicts = map(
+        lambda x: os.path.join(import_base, x.text), root.findall("import_dictionary")
+    )
     sys.stdout.write(";".join(dicts))
     sys.stdout.flush()
+
 
 def print_fprime_dependencies(root, current_library, import_base):
     """
@@ -110,7 +126,7 @@ def print_fprime_dependencies(root, current_library, import_base):
     dependencies = read_xml_file(root, import_base)
     if current_library in dependencies:
         dependencies.remove(current_library)
-    #Rebuilding is broken by non-deterministic set behavior, so this makes it a reverse-sorted (deterministic) list
+    # Rebuilding is broken by non-deterministic set behavior, so this makes it a reverse-sorted (deterministic) list
     dependencies = list(dependencies)
     dependencies.sort()
     dependencies.reverse()
@@ -137,7 +153,7 @@ def read_fprime_import(import_type, root):
     """
     deps = set()
     for imp in root.findall(import_type):
-        imp_lib = os.path.dirname(imp.text).replace('/', '_')
+        imp_lib = os.path.dirname(imp.text).replace("/", "_")
         deps.add(imp_lib)
     return deps
 
@@ -157,7 +173,14 @@ def read_xml_file(root, import_base):
     if kind in KIND_DEPENDENCIES:
         dependencies.update(KIND_DEPENDENCIES[kind])
     # Import component/serialzable/port types
-    for import_type in ["import_port_type", "import_component_type", "import_serializable_type", "include_header", "import_enum_type", "import_array_type"]:
+    for import_type in [
+        "import_port_type",
+        "import_component_type",
+        "import_serializable_type",
+        "include_header",
+        "import_enum_type",
+        "import_array_type",
+    ]:
         dependencies.update(read_fprime_import(import_type, root))
     # Other items based on what tags are declared here specifically
     for extra in BASIC_DEPENDENCIES.keys():
@@ -168,7 +191,9 @@ def read_xml_file(root, import_base):
                 dependencies.update(KIND_DEPENDENCIES[kind])
     # Recurse imports for other importables
     for recurse_ai in root.findall("import_dictionary"):
-        tmptree = xml.etree.ElementTree.parse(os.path.join(import_base, recurse_ai.text))
+        tmptree = xml.etree.ElementTree.parse(
+            os.path.join(import_base, recurse_ai.text)
+        )
         newroot = tmptree.getroot()
         dependencies.update(read_xml_file(newroot, import_base))
     return dependencies

@@ -16,17 +16,19 @@
 #
 # Python standard modules
 #
-import hashlib
 import logging
 import os
 import sys
-
-from lxml import etree, isoschematron
-
+import time
+import hashlib
 from fprime_ac.utils import ConfigManager
+from optparse import OptionParser
+from lxml import etree
+from lxml import isoschematron
+from fprime_ac.parsers import XmlParser
 from fprime_ac.utils.exceptions import (
-    FprimeRngXmlValidationException,
     FprimeXmlException,
+    FprimeRngXmlValidationException,
 )
 
 #
@@ -42,7 +44,7 @@ PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 ROOTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
 #
-class XmlArrayParser:
+class XmlArrayParser(object):
     """
     An XML parser class that uses lxml.etree to consume an XML
     array type documents.  The class is instanced with an XML file name.
@@ -64,8 +66,8 @@ class XmlArrayParser:
         self.__include_enum_files = []
         # List of XML array type files
         self.__include_array_files = []
-        self.__comments = []
 
+        self.__comment = None
         self.__format = None
         self.__type_id = None
         self.__string_size = None
@@ -95,8 +97,8 @@ class XmlArrayParser:
 
         if os.path.isfile(xml_file) == False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
-            raise OSError(stri)
-        fd = open(xml_file)
+            raise IOError(stri)
+        fd = open(xml_file, "r")
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
@@ -104,7 +106,7 @@ class XmlArrayParser:
         element_tree = etree.parse(fd, parser=xml_parser)
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
-        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"))
+        relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"), "r")
         relax_parsed = etree.parse(relax_file_handler)
         relax_file_handler.close()
         relax_compiled = etree.RelaxNG(relax_parsed)
@@ -147,7 +149,7 @@ class XmlArrayParser:
                 for value_tag in array_tag:
                     self.__default.append(value_tag.text)
             elif array_tag.tag == "comment":
-                self.__comments.append(array_tag.text)
+                self.__comment = array_tag.text
             elif array_tag.tag == "include_header":
                 self.__include_header_files.append(array_tag.text)
             elif array_tag.tag == "import_serializable_type":
@@ -175,7 +177,10 @@ class XmlArrayParser:
 
     def validate_xml(self, dict_file, parsed_xml_tree, validator_type, validator_name):
         # Check that validator is valid
-        if not self.Config.has_option(validator_type, validator_name):
+        if (
+            not validator_type in self.Config
+            or not validator_name in self.Config[validator_type]
+        ):
             msg = (
                 "XML Validator type "
                 + validator_type
@@ -185,7 +190,7 @@ class XmlArrayParser:
 
         # Create proper xml validator tool
         validator_file_handler = open(
-            ROOTDIR + self.Config.get(validator_type, validator_name)
+            ROOTDIR + self.Config.get(validator_type, validator_name), "r"
         )
         validator_parsed = etree.parse(validator_file_handler)
         validator_file_handler.close()
@@ -235,8 +240,8 @@ class XmlArrayParser:
     def get_type_id(self):
         return self.__type_id
 
-    def get_comments(self):
-        return self.__comments
+    def get_comment(self):
+        return self.__comment
 
     def get_string_size(self):
         return self.__string_size
@@ -255,3 +260,16 @@ class XmlArrayParser:
 
     def get_include_array_files(self):
         return self.__include_array_files
+
+
+if __name__ == "__main__":
+    xmlfile = sys.argv[1]
+    xml = XmlParser.XmlParser(xmlfile)
+    print("Type of XML is: %s" % xml())
+    print("Array XML parse test (%s)" % xmlfile)
+    xml_parser = XmlArrayParser(xmlfile)
+    print(
+        "Array name: %s, namespace: %s"
+        % (xml_parser.get_name(), xml_parser.get_namespace())
+    )
+    print("Size: %s, member type: %s" % (self.get_size(), self.get_type()))

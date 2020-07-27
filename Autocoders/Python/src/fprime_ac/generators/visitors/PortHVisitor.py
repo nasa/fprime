@@ -91,7 +91,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             t = arg.get_type()
             #
             # Grab enum type here...
-            if isinstance(t,  tuple):
+            if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     t = t[0][1]
                 else:
@@ -147,7 +147,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 cl = ")"
             #
-            if isinstance(t,  tuple):
+            if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     t = "sizeof(NATIVE_INT_TYPE)"
                 else:
@@ -365,7 +365,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         # Include optional return type here...
         if r is not None:
             return_type = r[0]
-            if isinstance(return_type,  tuple):
+            if isinstance(return_type, tuple):
                 return_type = return_type[0][1]
             if r[1] == "pointer":
                 return_modifier = " *"
@@ -414,7 +414,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         # Include optional return type here...
         if r is not None:
             return_type = r[0]
-            if isinstance(return_type,  tuple):
+            if isinstance(return_type, tuple):
                 return_type = return_type[0][1]
             if r[1] == "pointer":
                 return_modifier = " *"

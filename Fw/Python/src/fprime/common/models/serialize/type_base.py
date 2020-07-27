@@ -7,9 +7,7 @@ Replaced type base class with decorators
 import abc
 import struct
 
-from .type_exceptions import (
-    AbstractMethodException
-)
+from .type_exceptions import AbstractMethodException
 
 
 class BaseType(abc.ABC):
