@@ -23,9 +23,6 @@ namespace Fw {
     StringBase::StringBase(void) {
     }
 
-    StringBase::StringBase(const StringBase &original) {
-    }
-
     StringBase::~StringBase(void) {
     }
 
