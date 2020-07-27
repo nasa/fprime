@@ -90,7 +90,7 @@ namespace Fw {
             void* operator=(void* val); //!< void* operator=
 
             PolyType(void); //!< default constructor
-            PolyType(const PolyType &original) = default; //!< copy constructor
+            PolyType(const PolyType &original); //!< copy constructor
             virtual ~PolyType(void); //!< destructor
 
 #if FW_OBJECT_TO_STRING

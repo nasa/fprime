@@ -338,6 +338,11 @@ namespace Fw {
         return *this;
     }
 
+    PolyType::PolyType(const PolyType &original) {
+        this->m_dataType = original.m_dataType;
+        this->m_val = original.m_val;
+    }
+
     PolyType::~PolyType(void) {
     }
 

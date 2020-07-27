@@ -23,6 +23,10 @@ namespace Fw {
     StringBase::StringBase(void) {
     }
 
+    StringBase::StringBase(const StringBase &original) {
+        this->copyBuff(original.toChar(), this->getCapacity());
+    }
+
     StringBase::~StringBase(void) {
     }
 

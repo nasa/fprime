@@ -47,7 +47,7 @@ namespace Fw {
 
         protected:
             StringBase(void);
-            StringBase(const StringBase &original) = default;
+            StringBase(const StringBase &original);
             virtual ~StringBase(void);
             virtual void copyBuff(const char* buff, NATIVE_UINT_TYPE size) = 0;
             virtual NATIVE_UINT_TYPE getCapacity(void) const = 0; //!< return size of buffer
