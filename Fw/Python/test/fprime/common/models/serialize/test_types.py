@@ -9,6 +9,7 @@ from collections.abc import Iterable
 
 import pytest
 
+from fprime.common.models.serialize.array_type import ArrayType
 from fprime.common.models.serialize.bool_type import BoolType
 from fprime.common.models.serialize.enum_type import EnumType
 from fprime.common.models.serialize.numerical_types import (
@@ -54,12 +55,14 @@ PYTHON_TESTABLE_TYPES = [
 ]
 
 
-def valid_values_test(type_input, valid_values, sizes):
+def valid_values_test(type_input, valid_values, sizes, extras=None):
     """ Tests to be run on all types """
     if not isinstance(sizes, Iterable):
         sizes = [sizes] * len(valid_values)
     # Should be able to instantiate a blank type, but not serialize it until a value has been supplied
-    instantiation = type_input()
+    if not extras:
+        extras = [[]] * len(valid_values)
+    instantiation = type_input(*extras[0])
     with pytest.raises(NotInitializedException):
         instantiation.serialize()
     # Should be able to get a JSONable object that is dumpable to a JSON string
@@ -67,13 +70,13 @@ def valid_values_test(type_input, valid_values, sizes):
     json.loads(json.dumps(jsonable))
 
     # Run on valid values
-    for value, size in zip(valid_values, sizes):
-        instantiation = type_input(val=value)
+    for value, size, extra in zip(valid_values, sizes, extras):
+        instantiation = type_input(*extra, val=value)
         assert instantiation.val == value
         assert instantiation.getSize() == size
 
         # Check assignment by value
-        by_value = type_input()
+        by_value = type_input(*extra)
         by_value.val = value
         assert by_value.val == instantiation.val, "Assignment by value has failed"
         assert by_value.getSize() == size
@@ -81,7 +84,7 @@ def valid_values_test(type_input, valid_values, sizes):
         # Check serialization and deserialization
         serialized = instantiation.serialize()
         for offset in [0, 10, 50]:
-            deserializer = type_input()
+            deserializer = type_input(*extra)
             deserializer.deserialize((b" " * offset) + serialized, offset)
             assert instantiation.val == deserializer.val, "Deserialization has failed"
             assert deserializer.getSize() == size
@@ -260,6 +263,18 @@ def test_serializable_type():
     mem_list = serType1.mem_list
     memList = [(a, b, c, None) for a, b, c in memList]
     assert mem_list == memList
+
+
+#def test_array_type():
+#    """
+#    Tests the ArrayType serialization and deserialization
+#    """
+#    extra_ctor_args = [("TestArray", (I32Type, 2, "I DON'T KNOW")), ("TesyArray2", (U8Type, 4, "I DON'T KNOW")),
+#               ("TesyArray3", (StringType, 1, "I DON'T KNOW"))]
+#    values = [[32, 1], [0, 1, 2, 3], ["one"]]
+#    sizes = [8, 4, 3]
+#
+#    valid_values_test(ArrayType, values, sizes, extra_ctor_args)
 
 
 def test_time_type():

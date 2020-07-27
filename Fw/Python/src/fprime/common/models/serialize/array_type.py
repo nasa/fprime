@@ -19,12 +19,12 @@ class ArrayType(ValueType):
     Configuration data for array type (the type of members, size of array, and format string for all members)
     """
 
-    def __init__(self, typename, config_info, values=None):
+    def __init__(self, typename, config_info, val=None):
         """
         Constructor of the array type.
         :param typename: name of this array type
         :param config_info: (type, size, format)
-        :param values: [ values... ]
+        :param val: [ array values... ]
         """
         super().__init__()
         if not isinstance(typename, str):
@@ -32,9 +32,9 @@ class ArrayType(ValueType):
         self.__typename = typename
         self.__arr_type, self.__arr_size, self.__arr_format = config_info
         # Set value only if it is a valid, non-empty list
-        if not values:
+        if not val:
             return
-        self.val = values
+        self.val = val
 
     def validate(self, val):
         """ Validates the values of the array """
@@ -54,7 +54,7 @@ class ArrayType(ValueType):
             "type": self.__typename,
             "size": self.__arr_size,
             "format": self.__arr_format,
-            "values": [member.to_jsonable() for member in self.val],
+            "values": None if self.val is None else [member.to_jsonable() for member in self.val],
         }
         return members
 
