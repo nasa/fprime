@@ -102,6 +102,7 @@ function integration_test {
         RET_MEMTEST=$?
         # Report memory leaks if they occured and the pytests were successful
         if [ ${RET_MEMTEST} -ne 0 ] && [ ${RET_PYTEST} -eq 0 ]; then 
+            cat "${LOG_DIR}/gds-logs/valgring.log"
             fail_and_stop "Integration tests on ${WORKDIR} contain memory leaks"
         fi
 
