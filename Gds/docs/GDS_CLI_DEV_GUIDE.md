@@ -2,6 +2,21 @@
 
 This guide is for programmers who intend to maintain and develop code for the Ground Data System's command-line interface suite. For regular users who just want to use these CLI tools, please see the [user guide](../../docs/gds/GDS_CLI_USER_GUIDE.md).
 
+- [CLI Requirements](#cli-requirements)
+    - [Primary Requirements](#primary-requirements)
+    - [Secondary Requirements](#secondary-requirements)
+- [Architecture](#architecture)
+    - [Intended](#intended)
+    - [As Implemented](#as-implemented)
+    - [Dataflow](#dataflow)
+    - [Dependencies](#dependencies)
+    - [Source Files](#source-files)
+- [Tests](#tests)
+- [Code Quirks](#code-quirks)
+- [Future Work](#future-work)
+    - [Fixing Issues](#fixing-issues)
+    - [New Features](#new-features)
+
 ## CLI Requirements
 
 ### Primary Requirements
@@ -39,19 +54,19 @@ The CLI will interact with the GDS through an appropriate API, which the CLI mod
 
 ### As Implemented
 
-In full (generated using [pydeps](https://pydeps.readthedocs.io/en/latest/)):
-
-![](overall_dependencies.svg)
-
-When cut down to not include imports used only for type hints, or dependencies for modules not part of the GDS CLI source code:
+Not including imports used only for type hints, or dependencies for modules not part of the GDS CLI source code (generated using [pydeps](https://pydeps.readthedocs.io/en/latest/):
 
 ![](overall_dependencies_edited.png)
 
-*Note that the above graphs have arrows pointing **to** the module that does the importing and away from the dependency, and do not include Python standard library imports*
+*Note that the above graph has arrows pointing **to** the module that does the importing and away from the dependency, and does not include Python standard library imports*
 
 -   All parsing is handled in `fprime_cli`, which imports the command modules and several external libraries to help with parsing.
 -   Each command is implemented separately, but shares a large portion of its code with other modules via the `Common` module files, as well as importing the appropriate GDS data type for the type of data it's working with (and, in the case of `command_send`, an appropriate exception).
 -   The `Common` module is actually made up of several distinct, independent submodules containing related groups of common code . These import a variety of other GDS modules to help provide all necessary functionality; in particular, the `testing_fw.api` Integration Test module is used to access the GDS.
+
+### Dataflow
+
+![](cli_data_flow.svg)
 
 ### Dependencies
 
