@@ -1,8 +1,10 @@
-The enum_xml, implgen, dictgen, testgen, and schematron UT's all are implemented for pytest.
+# Autocoders/Python/test/enum_xml
 
-They are not currently enabled within cmake, so to run them you must install pytest with a package installer and then run "pytest DIR_NAME" pointing to the directory that contains the pytest or pytests that you want to run.
+This directory contains unit tests for the Python enum XML code generator.
 
-Environment variables needed to run pytest UT's:
-- BUILD_ROOT (ex. "export BUILD_ROOT=$FPRIME" where $FPRIME is root of fprime working repo)
-- FPRIME_CORE_DIR (ex. "export FPRIME_CORE_DIR=$FPRIME")
-- PYTHONPATH (ex. "export PYTHONPATH=$FPRIME/Autocoders/Python/src")
+To use this directory, you must have installed F Prime, and you must be inside 
+the F Prime Python virtual environment.
+
+* To build the tests, run `./build`
+* To run the tests, run `./run`
+* To run coverage analysis, run `./cov`
