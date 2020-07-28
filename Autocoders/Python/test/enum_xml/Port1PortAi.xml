@@ -2,17 +2,16 @@
 <?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
 <interface name="Port1" namespace="Example">
     <import_enum_type>Autocoders/Python/test/enum_xml/Enum1EnumAi.xml</import_enum_type>
-    
     <import_serializable_type>Autocoders/Python/test/enum_xml/Serial1SerializableAi.xml</import_serializable_type>
     <comment>
-    Example port with arg
+    Port with example args
     </comment>
     <args>
         <arg name="Arg1" type="Example::Enum1">
             <comment>Example enum arg</comment>
         </arg>
         <arg name="Arg2" type="Example::Serial1">
-            <comment>Example serial arg w enum</comment>
+            <comment>Example serial arg with enum member</comment>
         </arg>
     </args>
 </interface>

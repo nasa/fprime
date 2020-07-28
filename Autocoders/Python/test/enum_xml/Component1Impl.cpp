@@ -1,4 +1,4 @@
-#include <Autocoders/Python/test/enum_xml/ExampleEnumImpl.hpp>
+#include <Autocoders/Python/test/enum_xml/Component1Impl.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <iostream>
 #include <stdio.h>
