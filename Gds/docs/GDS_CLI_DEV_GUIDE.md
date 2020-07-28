@@ -41,11 +41,11 @@ The CLI will interact with the GDS through an appropriate API, which the CLI mod
 
 In full (generated using [pydeps](https://pydeps.readthedocs.io/en/latest/)):
 
-![](overall_dependencies.jpg)
+![](overall_dependencies.svg)
 
 When cut down to not include imports used only for type hints, or dependencies for modules not part of the GDS CLI source code:
 
-![](overall_dependencies_edited.jpg)
+![](overall_dependencies_edited.png)
 
 *Note that the above graphs have arrows pointing **to** the module that does the importing and away from the dependency, and do not include Python standard library imports*
 
