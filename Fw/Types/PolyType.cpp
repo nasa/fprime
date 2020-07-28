@@ -31,7 +31,9 @@ namespace Fw {
 
     U8 PolyType::operator=(U8 other) {
         this->m_dataType = TYPE_U8;
-        return this->m_val.u8Val = other;
+        this->m_val.u8Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I8 methods
@@ -57,7 +59,9 @@ namespace Fw {
 
     I8 PolyType::operator=(I8 other) {
         this->m_dataType = TYPE_I8;
-        return this->m_val.i8Val = other;
+        this->m_val.i8Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #if FW_HAS_16_BIT
@@ -85,7 +89,9 @@ namespace Fw {
 
     U16 PolyType::operator=(U16 other) {
         this->m_dataType = TYPE_U16;
-        return this->m_val.u16Val = other;
+        this->m_val.u16Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I16 methods
@@ -111,7 +117,9 @@ namespace Fw {
 
     I16 PolyType::operator=(I16 other) {
         this->m_dataType = TYPE_I16;
-        return this->m_val.i16Val = other;
+        this->m_val.i16Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif
@@ -141,7 +149,9 @@ namespace Fw {
 
     U32 PolyType::operator=(U32 other) {
         this->m_dataType = TYPE_U32;
-        return this->m_val.u32Val = other;
+        this->m_val.u32Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I32 methods
@@ -167,7 +177,9 @@ namespace Fw {
 
     I32 PolyType::operator=(I32 other) {
         this->m_dataType = TYPE_I32;
-        return this->m_val.i32Val = other;
+        this->m_val.i32Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif    
@@ -196,7 +208,9 @@ namespace Fw {
 
     U64 PolyType::operator=(U64 other) {
         this->m_dataType = TYPE_U64;
-        return this->m_val.u64Val = other;
+        this->m_val.u64Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     // I64 methods
@@ -222,7 +236,9 @@ namespace Fw {
 
     I64 PolyType::operator=(I64 other) {
         this->m_dataType = TYPE_I64;
-        return this->m_val.i64Val = other;
+        this->m_val.i64Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif
@@ -250,7 +266,9 @@ namespace Fw {
 
     F64 PolyType::operator=(F64 other) {
         this->m_dataType = TYPE_F64;
-        return this->m_val.f64Val = other;
+        this->m_val.f64Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
 #endif
@@ -275,7 +293,9 @@ namespace Fw {
 
     F32 PolyType::operator=(F32 other) {
         this->m_dataType = TYPE_F32;
-        return this->m_val.f32Val = other;
+        this->m_val.f32Val = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     PolyType::PolyType(bool val) {
@@ -299,7 +319,9 @@ namespace Fw {
 
     bool PolyType::operator=(bool other) {
         this->m_dataType = TYPE_BOOL;
-        return this->m_val.boolVal = other;
+        this->m_val.boolVal = other;
+        // Note: casts using the overridden () operator
+        return *this;
     }
 
     PolyType::PolyType(void* val) {
@@ -323,7 +345,14 @@ namespace Fw {
 
     void* PolyType::operator=(void* other) {
         this->m_dataType = TYPE_PTR;
-        return this->m_val.ptrVal = other;
+        this->m_val.ptrVal = other;
+        // Note: casts using the overridden () operator
+        return *this;
+    }
+
+    PolyType::PolyType(const PolyType &original) {
+        this->m_dataType = original.m_dataType;
+        this->m_val = original.m_val;
     }
 
     PolyType::~PolyType(void) {
@@ -332,7 +361,7 @@ namespace Fw {
     const PolyType& PolyType::operator=(const PolyType &src) {
         this->m_dataType = src.m_dataType;
         this->m_val = src.m_val;
-        return src;
+        return *this;
     }
 
     bool PolyType::operator!=(const PolyType &other) const {

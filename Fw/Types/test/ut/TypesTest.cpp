@@ -604,8 +604,7 @@ class MySerializable: public Fw::Serializable {
         TestStruct m_testStruct;
 };
 
-void serPerfTest(I32 iterations) {
-
+TEST(PerformanceTest, SerPerfTest) {
     Os::IntervalTimer timer;
 
     MySerializable in;
@@ -617,6 +616,7 @@ void serPerfTest(I32 iterations) {
     intLock.lock();
     timer.start();
 
+    I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
         in.serialize(buff);
         out.deserialize(buff);
@@ -631,7 +631,7 @@ void serPerfTest(I32 iterations) {
 
 }
 
-void structCopyTest(I32 iterations) {
+TEST(PerformanceTest, StructCopyTest) {
     char buff[sizeof(TestStruct)];
     TestStruct ts;
 
@@ -641,6 +641,7 @@ void structCopyTest(I32 iterations) {
     intLock.lock();
     timer.start();
 
+    I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
 
 // simulate the incoming MSL-style call by doing member assignments
@@ -663,7 +664,7 @@ void structCopyTest(I32 iterations) {
 
 }
 
-void classCopyTest(I32 iterations) {
+TEST(PerformanceTest, ClassCopyTest) {
 
     char buff[sizeof(MySerializable)];
     MySerializable ms;
@@ -674,6 +675,7 @@ void classCopyTest(I32 iterations) {
     intLock.lock();
     timer.start();
 
+    I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
         memcpy(buff, reinterpret_cast<void*>(&ms), sizeof(ms));
         memcpy(reinterpret_cast<void*>(&ms), buff, sizeof(buff));
@@ -873,19 +875,165 @@ TEST(TypesTest, CheckAssertTest) {
 
 TEST(TypesTest,PolyTest) {
 
+    // U8 Type  ===============================================================
     U8 in8 = 13;
     U8 out8;
 
     Fw::PolyType pt(in8);
 
-    printf("U8 PolyType Test\n");
     out8 = (U8) pt;
-    if (out8 != in8) {
-        printf("U8 in %d out %d mismatch!\n", in8, out8);
-    }
+    ASSERT_EQ(in8, out8);
 
-// Should assert
-// out16 = (U16)pt;
+    // Test assigning to polytype and return type of assignment
+    in8 = 21;
+    out8 = (pt = in8);
+    ASSERT_EQ((U8) pt, (U8) 21);
+    ASSERT_EQ((U8) pt, in8);
+    ASSERT_EQ(out8, in8);
+
+    // U16 Type  ==============================================================
+    U16 inU16 = 34;
+    U16 outU16;
+    Fw::PolyType ptU16(inU16);
+
+    outU16 = (U16) ptU16;
+    ASSERT_EQ(inU16, outU16);
+
+    inU16 = 55;
+    outU16 = (ptU16 = inU16);
+    ASSERT_EQ((U16) ptU16, inU16);
+    ASSERT_EQ(outU16, inU16);
+
+    // U32 Type  ==============================================================
+    U32 inU32 = 89;
+    U32 outU32;
+    Fw::PolyType ptU32(inU32);
+
+    outU32 = (U32) ptU32;
+    ASSERT_EQ(inU32, outU32);
+
+    inU32 = 144;
+    outU32 = (ptU32 = inU32);
+    ASSERT_EQ((U32) ptU32, inU32);
+    ASSERT_EQ(outU32, inU32);
+
+    // U64 Type  ==============================================================
+    U64 inU64 = 233;
+    U64 outU64;
+    Fw::PolyType ptU64(inU64);
+
+    outU64 = (U64) ptU64;
+    ASSERT_EQ(inU64, outU64);
+
+    inU64 = 377;
+    outU64 = (ptU64 = inU64);
+    ASSERT_EQ((U64) ptU64, inU64);
+    ASSERT_EQ(outU64, inU64);
+
+    // I8 Type  ===============================================================
+    I8 inI8 = 2;
+    I8 outI8;
+    Fw::PolyType ptI8(inI8);
+
+    outI8 = (I8) ptI8;
+    ASSERT_EQ(inI8, outI8);
+
+    inI8 = 3;
+    outI8 = (ptI8 = inI8);
+    ASSERT_EQ((I8) ptI8, inI8);
+    ASSERT_EQ(outI8, inI8);
+
+    // I16 Type  ==============================================================
+    I16 inI16 = 5;
+    I16 outI16;
+    Fw::PolyType ptI16(inI16);
+
+    outI16 = (I16) ptI16;
+    ASSERT_EQ(inI16, outI16);
+
+    inI16 = 7;
+    outI16 = (ptI16 = inI16);
+    ASSERT_EQ((I16) ptI16, inI16);
+    ASSERT_EQ(outI16, inI16);
+
+    // I32 Type  ==============================================================
+    I32 inI32 = 11;
+    I32 outI32;
+    Fw::PolyType ptI32(inI32);
+
+    outI32 = (I32) ptI32;
+    ASSERT_EQ(inI32, outI32);
+
+    inI32 = 13;
+    outI32 = (ptI32 = inI32);
+    ASSERT_EQ((I32) ptI32, inI32);
+    ASSERT_EQ(outI32, inI32);
+
+    // I64 Type  ==============================================================
+    I64 inI64 = 17;
+    I64 outI64;
+    Fw::PolyType ptI64(inI64);
+
+    outI64 = (I64) ptI64;
+    ASSERT_EQ(inI64, outI64);
+
+    inI64 = 19;
+    outI64 = (ptI64 = inI64);
+    ASSERT_EQ((I64) ptI64, inI64);
+    ASSERT_EQ(outI64, inI64);
+
+    // F32 Type  ==============================================================
+    F32 inF32 = 23.32;
+    F32 outF32;
+    Fw::PolyType ptF32(inF32);
+
+    outF32 = (F32) ptF32;
+    ASSERT_EQ(inF32, outF32);
+
+    inF32 = 29.92;
+    outF32 = (ptF32 = inF32);
+    ASSERT_EQ((F32) ptF32, inF32);
+    ASSERT_EQ(outF32, inF32);
+
+    // F64 Type  ==============================================================
+    F64 inF64 = 31.13;
+    F64 outF64;
+    Fw::PolyType ptF64(inF64);
+
+    outF64 = (F64) ptF64;
+    ASSERT_EQ(inF64, outF64);
+
+    inF64 = 37.73;
+    outF64 = (ptF64 = inF64);
+    ASSERT_EQ((F64) ptF64, inF64);
+    ASSERT_EQ(outF64, inF64);
+
+    // bool Type  =============================================================
+    bool inbool = true;
+    bool outbool;
+    Fw::PolyType ptbool(inbool);
+
+    outbool = (bool) ptbool;
+    ASSERT_EQ(inbool, outbool);
+
+    inbool = false;
+    outbool = (ptbool = inbool);
+    ASSERT_EQ((bool) ptbool, inbool);
+    ASSERT_EQ(outbool, inbool);
+
+    // ptr Type  ==============================================================
+    void* inPtr = &ptbool;
+    void* outPtr;
+    Fw::PolyType ptPtr(inPtr);
+
+    outPtr = (void*) ptPtr;
+    ASSERT_EQ(inPtr, outPtr);
+
+    inPtr = &ptF64;
+    outPtr = (ptPtr = inPtr);
+    ASSERT_EQ((void*) ptPtr, inPtr);
+    ASSERT_EQ(outPtr, inPtr);
+
 }
 
 TEST(TypesTest,EightyCharTest) {
@@ -931,7 +1079,7 @@ TEST(TypesTest,EightyCharTest) {
 TEST(TypesTest,StringFormatTest) {
     Fw::EightyCharString str;
     str.format("Int %d String %s",10,"foo");
-    printf("Formatted: %s\n",str.toChar());
+    ASSERT_STREQ(str.toChar(), "Int 10 String foo");
 }
 
 TEST(PerformanceTest, F64SerPerfTest) {
@@ -946,7 +1094,7 @@ TEST(PerformanceTest, F64SerPerfTest) {
     F64 in = 10000.0;
     F64 out = 0;
 
-    NATIVE_INT_TYPE iters = 100000000;
+    NATIVE_INT_TYPE iters = 1000000;
 
     Os::IntervalTimer timer;
     timer.start();
