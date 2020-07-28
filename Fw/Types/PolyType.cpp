@@ -29,10 +29,9 @@ namespace Fw {
         return (TYPE_U8 == this->m_dataType);
     }
 
-    U8 PolyType::operator=(U8 other) {
+    PolyType& PolyType::operator=(U8 other) {
         this->m_dataType = TYPE_U8;
         this->m_val.u8Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -57,10 +56,9 @@ namespace Fw {
         return (TYPE_I8 == this->m_dataType);
     }
 
-    I8 PolyType::operator=(I8 other) {
+    PolyType& PolyType::operator=(I8 other) {
         this->m_dataType = TYPE_I8;
         this->m_val.i8Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -87,10 +85,9 @@ namespace Fw {
         return (TYPE_U16 == this->m_dataType);
     }
 
-    U16 PolyType::operator=(U16 other) {
+    PolyType& PolyType::operator=(U16 other) {
         this->m_dataType = TYPE_U16;
         this->m_val.u16Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -115,10 +112,9 @@ namespace Fw {
         return (TYPE_I16 == this->m_dataType);
     }
 
-    I16 PolyType::operator=(I16 other) {
+    PolyType& PolyType::operator=(I16 other) {
         this->m_dataType = TYPE_I16;
         this->m_val.i16Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -147,10 +143,9 @@ namespace Fw {
         return (TYPE_U32 == this->m_dataType);
     }
 
-    U32 PolyType::operator=(U32 other) {
+    PolyType& PolyType::operator=(U32 other) {
         this->m_dataType = TYPE_U32;
         this->m_val.u32Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -175,10 +170,9 @@ namespace Fw {
         return (TYPE_I32 == this->m_dataType);
     }
 
-    I32 PolyType::operator=(I32 other) {
+    PolyType& PolyType::operator=(I32 other) {
         this->m_dataType = TYPE_I32;
         this->m_val.i32Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -206,10 +200,9 @@ namespace Fw {
         return (TYPE_U64 == this->m_dataType);
     }
 
-    U64 PolyType::operator=(U64 other) {
+    PolyType& PolyType::operator=(U64 other) {
         this->m_dataType = TYPE_U64;
         this->m_val.u64Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -234,10 +227,9 @@ namespace Fw {
         return (TYPE_I64 == this->m_dataType);
     }
 
-    I64 PolyType::operator=(I64 other) {
+    PolyType& PolyType::operator=(I64 other) {
         this->m_dataType = TYPE_I64;
         this->m_val.i64Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -264,10 +256,9 @@ namespace Fw {
         return (TYPE_F64 == this->m_dataType);
     }
 
-    F64 PolyType::operator=(F64 other) {
+    PolyType& PolyType::operator=(F64 other) {
         this->m_dataType = TYPE_F64;
         this->m_val.f64Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -291,10 +282,9 @@ namespace Fw {
         return (TYPE_F32 == this->m_dataType);
     }
 
-    F32 PolyType::operator=(F32 other) {
+    PolyType& PolyType::operator=(F32 other) {
         this->m_dataType = TYPE_F32;
         this->m_val.f32Val = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -317,10 +307,9 @@ namespace Fw {
         return (TYPE_BOOL == this->m_dataType);
     }
 
-    bool PolyType::operator=(bool other) {
+    PolyType& PolyType::operator=(bool other) {
         this->m_dataType = TYPE_BOOL;
         this->m_val.boolVal = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
@@ -343,10 +332,9 @@ namespace Fw {
         return (TYPE_PTR == this->m_dataType);
     }
 
-    void* PolyType::operator=(void* other) {
+    PolyType& PolyType::operator=(void* other) {
         this->m_dataType = TYPE_PTR;
         this->m_val.ptrVal = other;
-        // Note: casts using the overridden () operator
         return *this;
     }
 
