@@ -2,7 +2,7 @@
 
 ## *There are many like it, but this one is yours*
 
-![](./dashboard_header.png)
+![](img/dashboard_header.png)
 
 The GDS Dashboard lets users create a customizable menu for interacting with the GDS, choosing their own components and modifying them to suit their needs. Currently, there are 7 components to choose from:
 
@@ -127,7 +127,7 @@ Each component type has different properties that can be used to customize it. A
 
 Saved in an XML file and given to the Dashboard, this will generate the following GUI:
 
-![](./example_dashboard.png)
+![](img/example_dashboard.png)
 
 --------------------------------------------------------------------------------
 
