@@ -10,6 +10,9 @@
 //
 // ======================================================================
 
+#ifndef OS_PTHREADS_BUFFER_QUEUE_HPP
+#define OS_PTHREADS_BUFFER_QUEUE_HPP
+
 #include <Fw/Types/BasicTypes.hpp>
 
 // This is a generic buffer queue interface. 
@@ -125,3 +128,5 @@ namespace Os {
     NATIVE_UINT_TYPE maxCount; // Maximum number of messages ever seen on the queue
   };
 }
+
+#endif // OS_PTHREADS_BUFFER_QUEUE_HPP
