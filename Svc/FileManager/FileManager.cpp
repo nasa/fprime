@@ -69,9 +69,10 @@ namespace Svc {
           logStringDirName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_CreateDirectorySucceeded(logStringDirName);
     }
     this->emitTelemetry(status);
-    this->log_ACTIVITY_HI_CreateDirectorySucceeded(logStringDirName);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
@@ -91,9 +92,10 @@ namespace Svc {
           logStringFileName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
     }
     this->emitTelemetry(status);
-    this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
@@ -117,9 +119,10 @@ namespace Svc {
       this->log_WARNING_HI_FileMoveError(
           logStringSource, logStringDest, status
       );
+    } else {
+      this->log_ACTIVITY_HI_MoveFileSucceeded(logStringSource, logStringDest);
     }
     this->emitTelemetry(status);
-    this->log_ACTIVITY_HI_MoveFileSucceeded(logStringSource, logStringDest);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
@@ -139,9 +142,10 @@ namespace Svc {
           logStringDirName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_RemoveDirectorySucceeded(logStringDirName);
     }
     this->emitTelemetry(status);
-    this->log_ACTIVITY_HI_RemoveDirectorySucceeded(logStringDirName);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
@@ -163,8 +167,7 @@ namespace Svc {
       this->log_ACTIVITY_HI_ShellCommandSucceeded(
           logStringCommand
       );
-    }
-    else {
+    } else {
       this->log_WARNING_HI_ShellCommandFailed(
           logStringCommand, status
       );
@@ -177,6 +180,40 @@ namespace Svc {
         cmdSeq, 
         status == 0 ? Os::FileSystem::OP_OK : Os::FileSystem::OTHER_ERROR
     );
+  }
+
+  void FileManager ::
+    ConcatFiles_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& fileName1,
+        const Fw::CmdStringArg& fileName2,
+        const Fw::CmdStringArg& destFileName
+    )
+  {
+    // TODO: Current bug if destFileName == fileName2, since file2 will be
+    // overwritten before it can be read
+    Os::FileSystem::Status status =
+      Os::FileSystem::appendFile(
+        fileName1.toChar(),
+        destFileName.toChar(),
+        true
+    );
+    if (status != Os::FileSystem::OP_OK) {
+      this->sendCommandResponse(opCode, cmdSeq, status);
+      return;
+    }
+
+    status = Os::FileSystem::appendFile(
+        fileName2.toChar(),
+        destFileName.toChar()
+    );
+    if (status != Os::FileSystem::OP_OK) {
+      this->sendCommandResponse(opCode, cmdSeq, status);
+      return;
+    }
+
+    this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
   void FileManager ::

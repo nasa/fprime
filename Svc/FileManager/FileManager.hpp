@@ -93,6 +93,16 @@ namespace Svc {
           const Fw::CmdStringArg& logFileName //!< The name of the log file
       );
 
+      //! Implementation for ConcatFiles command handler
+      //! Concatenate 2 files together and write the output to a destination.
+      void ConcatFiles_cmdHandler(
+          const FwOpcodeType opCode, //!< The opcode
+          const U32 cmdSeq, //!< The command sequence number
+          const Fw::CmdStringArg& fileName1, //!< The name of the 1st file
+          const Fw::CmdStringArg& fileName2, //!< The name of the 2nd file
+          const Fw::CmdStringArg& destFileName //!< The destination file name (can be one of the concatenated files)
+      );
+
       //! Handler implementation for pingIn
       //!
       void pingIn_handler(

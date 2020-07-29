@@ -62,4 +62,19 @@
     </args>
   </command>
 
+  <command kind="async" opcode="0x05" mnemonic="ConcatFiles">
+    <comment>Concatenate 2 files together and write the output to a destination.</comment>
+    <args>
+      <arg name="fileName1" type="string" size="256">
+        <comment>The name of the 1st file</comment>
+      </arg>
+      <arg name="fileName2" type="string" size="256">
+        <comment>The name of the 2nd file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The destination file name (can be one of the concatenated files)</comment>
+      </arg>
+    </args>
+  </command>
+
 </commands>
