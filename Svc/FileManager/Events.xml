@@ -83,4 +83,91 @@
     </args>
   </event>
 
+  <event id="0x06" name="CreateDirectorySucceeded" severity="ACTIVITY_HI" format_string="Created directory %s successfully">
+    <comment>The File System component created a new directory without error</comment>
+    <args>
+      <arg name="dirName" type="string" size="256">
+        <comment>The name of the directory</comment>
+      </arg>
+    </args>
+  </event>
+
+    <event id="0x07" name="RemoveDirectorySucceeded" severity="ACTIVITY_HI" format_string="Removed directory %s successfully">
+    <comment>The File System component deleted and existing directory without error</comment>
+    <args>
+      <arg name="dirName" type="string" size="256">
+        <comment>The name of the directory</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x08" name="MoveFileSucceeded" severity="ACTIVITY_HI" format_string="Moved file %s to file %s successfully">
+    <comment>The File System component moved a file to a new location without error</comment>
+    <args>
+      <arg name="sourceFileName" type="string" size="256">
+        <comment>The name of the source file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+    </args>
+  </event>
+
+    <event id="0x09" name="RemoveFileSucceeded" severity="ACTIVITY_HI" format_string="Removed file %s successfully">
+    <comment>The File System component deleted an existing file without error</comment>
+    <args>
+      <arg name="fileName" type="string" size="256">
+        <comment>The name of the file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x0A" name="ShellCommandStarted" severity="ACTIVITY_HI" format_string="Running shell command %s...">
+    <comment>The File System component began executing a shell command</comment>
+    <args>
+      <arg name="command" type="string" size="256">
+        <comment>The command string</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x0B" name="CreateDirectoryStarted" severity="ACTIVITY_HI" format_string="Creating directory %s...">
+    <comment>The File System component began creating a new directory</comment>
+    <args>
+      <arg name="dirName" type="string" size="256">
+        <comment>The name of the directory</comment>
+      </arg>
+    </args>
+  </event>
+
+    <event id="0x0C" name="RemoveDirectoryStarted" severity="ACTIVITY_HI" format_string="Removing directory %s...">
+    <comment>The File System component began deleting a directory</comment>
+    <args>
+      <arg name="dirName" type="string" size="256">
+        <comment>The name of the directory</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x0D" name="MoveFileStarted" severity="ACTIVITY_HI" format_string="Moving file %s to file %s...">
+    <comment>The File System component began moving a file to a new location</comment>
+    <args>
+      <arg name="sourceFileName" type="string" size="256">
+        <comment>The name of the source file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+    </args>
+  </event>
+
+    <event id="0x0E" name="RemoveFileStarted" severity="ACTIVITY_HI" format_string="Removing file %s...">
+    <comment>The File System component began deleting an existing file</comment>
+    <args>
+      <arg name="fileName" type="string" size="256">
+        <comment>The name of the file</comment>
+      </arg>
+    </args>
+  </event>
+
 </events>
