@@ -287,7 +287,59 @@ namespace Svc {
           status
       );
     }
+  }
 
+  void Tester ::
+    concatFilesSucceed_newFile(void) 
+  {
+    // Remove testing files, if they exist
+    this->system("rm -rf file1 file2 file3");
+
+    //================================================================
+    // Case 1: 2 normal files appended, new file created
+    this->system("echo 'file1 text' > file1");
+    this->system("echo 'file2 text' > file2");
+
+    this->concatFiles("file1", "file2", "file3");
+
+    this->assertSuccess(FileManager::OPCODE_CONCATFILES);
+
+    // check new file exists and has correct text inside
+    this->system("test -e file3");
+    this->system("grep -q 'file1 text\nfile2 text' file3");
+
+    // Clean up
+    this->system("rm -rf file1 file2 file3");
+  }
+
+  void Tester ::
+    concatFilesSucceed_existingFile(void) 
+  {
+    // Remove testing files, if they exist
+    this->system("rm -rf file1 file2 file3");
+
+    //================================================================
+    // Case 2: 2 normal files appended, stored in existing file
+    // create existing files
+    this->system("echo 'file1 text' > file1");
+    this->system("echo 'file2 text' > file2");
+    this->system("echo '' > file3");
+
+    this->concatFiles("file1", "file2", "file3");
+    this->assertSuccess(FileManager::OPCODE_CONCATFILES);
+
+    // check file still exists and has new text inside
+    this->system("test -e file3");
+    this->system("grep -q 'file1 text\nfile2 text' file3");
+
+    // Clean up
+    this->system("rm -rf file1 file2 file3");
+  }
+
+  void Tester ::
+    concatFilesFail(void) 
+  {
+    // TODO
   }
 
   // ----------------------------------------------------------------------
@@ -425,6 +477,26 @@ namespace Svc {
         CMD_SEQ,
         cmdStringCommand,
         cmdStringLogFile
+    );
+    this->component.doDispatch();
+  }
+
+  void Tester ::
+    concatFiles(
+        const char *const fileName1,
+        const char *const fileName2,
+        const char *const destFileName
+    )
+  {
+    Fw::CmdStringArg cmdFileName1(fileName1);
+    Fw::CmdStringArg cmdFileName2(fileName2);
+    Fw::CmdStringArg cmdDestFileName(destFileName);
+    this->sendCmd_ConcatFiles(
+        INSTANCE,
+        CMD_SEQ,
+        cmdFileName1,
+        cmdFileName2,
+        cmdDestFileName
     );
     this->component.doDispatch();
   }

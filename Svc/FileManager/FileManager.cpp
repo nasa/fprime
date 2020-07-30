@@ -259,6 +259,7 @@ namespace Svc {
       this->log_WARNING_HI_ConcatFilesFailed(
         logStringFile1, logStringFile2, logStringDest, status
       );
+      this->emitTelemetry(status);
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
@@ -268,6 +269,7 @@ namespace Svc {
       this->log_ACTIVITY_HI_ConcatFilesSucceeded(
         logStringFile1, logStringFile2, logStringDest
       );
+      this->emitTelemetry(status);
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
@@ -282,6 +284,7 @@ namespace Svc {
       this->log_WARNING_HI_ConcatFilesFailed(
         logStringFile1, logStringFile2, logStringDest, status
       );
+      this->emitTelemetry(status);
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
@@ -294,6 +297,7 @@ namespace Svc {
       this->log_WARNING_HI_ConcatFilesFailed(
         logStringFile1, logStringFile2, logStringDest, status
       );
+      this->emitTelemetry(status);
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
@@ -301,6 +305,7 @@ namespace Svc {
     this->log_ACTIVITY_HI_ConcatFilesSucceeded(
       logStringFile1, logStringFile2, logStringDest
     );
+    this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }
 

@@ -82,6 +82,18 @@ namespace Svc {
       //!
       void shellCommandFail(void);
 
+      //! Concatenate files (succeed, append to new file)
+      //!
+      void concatFilesSucceed_newFile(void);
+
+      //! Concatenate files (succeed, append to existing file)
+      //!
+      void concatFilesSucceed_existingFile(void);
+
+      //! Concat files (fail)
+      //!
+      void concatFilesFail(void);
+
     private:
 
       // ----------------------------------------------------------------------
@@ -125,6 +137,13 @@ namespace Svc {
       void shellCommand(
           const char *const command,
           const char *const logFileName
+      );
+
+      //! Concatenate 2 files together
+      void concatFiles(
+          const char *const fileName1,
+          const char *const fileName2,
+          const char *const destFileName
       );
 
       //! Assert successful command execution
