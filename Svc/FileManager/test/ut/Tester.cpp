@@ -52,32 +52,43 @@ namespace Svc {
     createDirectorySucceed(void) 
   {
 
+#ifdef __linux__
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
-
     // Create test_dir
     this->createDirectory("test_dir");
+
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Assert success
     this->assertSuccess(
         FileManager::OPCODE_CREATEDIRECTORY
     );
 
+#ifdef __linux__
     // Check that test_dir exists
     this->system("test -d test_dir");
 
     // Clean up
     this->system("rmdir test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
   }
 
   void Tester ::
     createDirectoryFail(void) 
   {
-
+#ifdef __linux__
     // Create test_dir
     this->system("rm -rf test_dir");
     this->system("mkdir test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to create test_dir (should fail)
     this->createDirectory("test_dir");
@@ -98,12 +109,15 @@ namespace Svc {
   void Tester ::
     moveFileSucceed(void) 
   {
-
+#ifdef __linux__
     // Remove file1 and file2, if they exist
     this->system("rm -rf file1 file2");
 
     // Create file1
     this->system("touch file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Move file1 to file2
     this->moveFile("file1", "file2");
@@ -113,21 +127,28 @@ namespace Svc {
         FileManager::OPCODE_MOVEFILE
     );
 
+#ifdef __linux__
     // Check that file name changed
     this->system("! test -e file1");
     this->system("test -f file2");
 
     // Clean up
     this->system("rm file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
   }
 
   void Tester ::
     moveFileFail(void) 
   {
-
+#ifdef __linux__
     // Remove file1, if it exists
     this->system("rm -rf file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to move file1 to file2 (should fail)
     this->moveFile("file1", "file2");
@@ -149,12 +170,15 @@ namespace Svc {
   void Tester ::
     removeDirectorySucceed(void) 
   {
-
+#ifdef __linux__
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
 
     // Create test_dir
     this->system("mkdir test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Remove test_dir
     this->removeDirectory("test_dir");
@@ -164,17 +188,23 @@ namespace Svc {
         FileManager::OPCODE_REMOVEDIRECTORY
     );
 
+#ifdef __linux__
     // Check that test_dir is not there
     this->system("! test -e test_dir");
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     removeDirectoryFail(void) 
   {
-
+#ifdef __linux__
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to remove test_dir (should fail)
     this->removeDirectory("test_dir");
@@ -195,12 +225,15 @@ namespace Svc {
   void Tester ::
     removeFileSucceed(void) 
   {
-
+#ifdef __linux__
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
     // Create test_file
     this->system("touch test_file");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Remove test_file
     this->removeFile("test_file");
@@ -210,17 +243,23 @@ namespace Svc {
         FileManager::OPCODE_REMOVEFILE
     );
 
+#ifdef __linux__
     // Check that test_file is not there
     this->system("! test -e test_file");
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     removeFileFail(void) 
   {
-
+#ifdef __linux__
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to remove test_file (should fail)
     this->removeFile("test_file");
@@ -241,36 +280,44 @@ namespace Svc {
   void Tester ::
     shellCommandSucceed(void) 
   {
-
+#ifdef __linux__
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
     // Create test_file
     this->shellCommand("touch test_file", LOG_FILE);
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Assert success
     this->assertSuccess(FileManager::OPCODE_SHELLCOMMAND);
     ASSERT_EVENTS_ShellCommandSucceeded_SIZE(1);
     ASSERT_EVENTS_ShellCommandSucceeded(0, "touch test_file");
 
+#ifdef __linux__
     // Check that test_file is there
     this->system("test -f test_file");
 
     // Clean up
     this->system("rm test_file");
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     shellCommandFail(void) 
   {
-
+#ifdef __linux__
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
     // Attempt to remove test_file (should fail)
     this->shellCommand("rm test_file", LOG_FILE);
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
     {
       // Assert failure
       this->assertFailure(
@@ -292,6 +339,7 @@ namespace Svc {
   void Tester ::
     concatFilesSucceed_newFile(void) 
   {
+#ifdef __linux__
     // Remove testing files, if they exist
     this->system("rm -rf file1 file2 file3");
 
@@ -299,22 +347,30 @@ namespace Svc {
     // Case 1: 2 normal files appended, new file created
     this->system("echo 'file1 text' > file1");
     this->system("echo 'file2 text' > file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     this->concatFiles("file1", "file2", "file3");
 
     this->assertSuccess(FileManager::OPCODE_CONCATFILES);
 
+#ifdef __linux__
     // check new file exists and has correct text inside
     this->system("test -e file3");
     this->system("grep -q 'file1 text\nfile2 text' file3");
 
     // Clean up
     this->system("rm -rf file1 file2 file3");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     concatFilesSucceed_existingFile(void) 
   {
+#ifdef __linux__
     // Remove testing files, if they exist
     this->system("rm -rf file1 file2 file3");
 
@@ -324,16 +380,23 @@ namespace Svc {
     this->system("echo 'file1 text' > file1");
     this->system("echo 'file2 text' > file2");
     this->system("echo '' > file3");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     this->concatFiles("file1", "file2", "file3");
     this->assertSuccess(FileManager::OPCODE_CONCATFILES);
 
+#ifdef __linux__
     // check file still exists and has new text inside
     this->system("test -e file3");
     this->system("grep -q 'file1 text\nfile2 text' file3");
 
     // Clean up
     this->system("rm -rf file1 file2 file3");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
