@@ -74,17 +74,14 @@
     </args>
   </event>
 
-  <event id="0x05" name="ConcatFilesFailed" severity="WARNING_HI" format_string="Concatenating file %s + file %s into %s failed with status %d">
-    <comment>The File System component returned status non-zero when trying to concatenate 2 files together</comment>
+  <event id="0x05" name="AppendFileFailed" severity="WARNING_HI" format_string="Appending %s onto %s failed with status %d">
+    <comment>The File System component returned status non-zero when trying to append 2 files together</comment>
     <args>
-      <arg name="fileName1" type="string" size="256">
-        <comment>The name of the 1st file</comment>
+      <arg name="source" type="string" size="256">
+        <comment>The name of the file being read from</comment>
       </arg>
-      <arg name="fileName2" type="string" size="256">
-        <comment>The name of the destination file</comment>
-      </arg>
-      <arg name="destFileName" type="string" size="256">
-        <comment>The name of the destination file</comment>
+      <arg name="target" type="string" size="256">
+        <comment>The name of the file to append to</comment>
       </arg>
       <arg name="status" type="U32" size="256">
         <comment>The error status</comment>
@@ -92,17 +89,14 @@
     </args>
   </event>
 
-  <event id="0x06" name="ConcatFilesSucceeded" severity="ACTIVITY_HI" format_string="Files %s and %s concatenated together in %s">
-    <comment>The File System component concatenated 2 files without error</comment>
+  <event id="0x06" name="AppendFileSucceeded" severity="ACTIVITY_HI" format_string="Appended %s to the end of %s">
+    <comment>The File System component appended 2 files without error</comment>
     <args>
-      <arg name="fileName1" type="string" size="256">
-        <comment>The name of the 1st file</comment>
+      <arg name="source" type="string" size="256">
+        <comment>The name of the file being read from</comment>
       </arg>
-      <arg name="fileName2" type="string" size="256">
-        <comment>The name of the destination file</comment>
-      </arg>
-      <arg name="destFileName" type="string" size="256">
-        <comment>The name of the destination file</comment>
+      <arg name="target" type="string" size="256">
+        <comment>The name of the file to append to</comment>
       </arg>
     </args>
   </event>
@@ -155,17 +149,14 @@
     </args>
   </event>
 
-  <event id="0x0C" name="ConcatFilesStarted" severity="ACTIVITY_HI" format_string="Concatenating files %s and %s together in %s...">
-    <comment>The File System component concatenated 2 files without error</comment>
+  <event id="0x0C" name="AppendFileStarted" severity="ACTIVITY_HI" format_string="Appending file %s to the end of %s...">
+    <comment>The File System component appended 2 files without error</comment>
     <args>
-      <arg name="fileName1" type="string" size="256">
-        <comment>The name of the 1st file</comment>
+      <arg name="source" type="string" size="256">
+        <comment>The name of the file being read from</comment>
       </arg>
-      <arg name="fileName2" type="string" size="256">
-        <comment>The name of the destination file</comment>
-      </arg>
-      <arg name="destFileName" type="string" size="256">
-        <comment>The name of the destination file</comment>
+      <arg name="target" type="string" size="256">
+        <comment>The name of the file to append to</comment>
       </arg>
     </args>
   </event>

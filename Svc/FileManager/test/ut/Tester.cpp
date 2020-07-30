@@ -341,27 +341,25 @@ namespace Svc {
   {
 #ifdef __linux__
     // Remove testing files, if they exist
-    this->system("rm -rf file1 file2 file3");
+    this->system("rm -rf file1 file2");
 
     //================================================================
-    // Case 1: 2 normal files appended, new file created
+    // Case 1: 1 normal files appended, new file created
     this->system("echo 'file1 text' > file1");
-    this->system("echo 'file2 text' > file2");
 #else
     FAIL(); // Commands not implemented for this OS
 #endif
 
-    this->concatFiles("file1", "file2", "file3");
-
-    this->assertSuccess(FileManager::OPCODE_CONCATFILES);
+    this->appendFile("file1", "file2");
+    this->assertSuccess(FileManager::OPCODE_APPENDFILE);
 
 #ifdef __linux__
     // check new file exists and has correct text inside
-    this->system("test -e file3");
-    this->system("grep -q 'file1 text\nfile2 text' file3");
+    this->system("test -e file2");
+    this->system("grep -q 'file1 text' file2");
 
     // Clean up
-    this->system("rm -rf file1 file2 file3");
+    this->system("rm -rf file1 file2");
 #else
     FAIL(); // Commands not implemented for this OS
 #endif
@@ -372,28 +370,27 @@ namespace Svc {
   {
 #ifdef __linux__
     // Remove testing files, if they exist
-    this->system("rm -rf file1 file2 file3");
+    this->system("rm -rf file1 file2");
 
     //================================================================
     // Case 2: 2 normal files appended, stored in existing file
     // create existing files
     this->system("echo 'file1 text' > file1");
     this->system("echo 'file2 text' > file2");
-    this->system("echo '' > file3");
 #else
     FAIL(); // Commands not implemented for this OS
 #endif
 
-    this->concatFiles("file1", "file2", "file3");
-    this->assertSuccess(FileManager::OPCODE_CONCATFILES);
+    this->appendFile("file1", "file2");
+    this->assertSuccess(FileManager::OPCODE_APPENDFILE);
 
 #ifdef __linux__
     // check file still exists and has new text inside
-    this->system("test -e file3");
-    this->system("grep -q 'file1 text\nfile2 text' file3");
+    this->system("test -e file2");
+    this->system("grep -q 'file1 text\nfile2 text' file2");
 
     // Clean up
-    this->system("rm -rf file1 file2 file3");
+    this->system("rm -rf file1 file2");
 #else
     FAIL(); // Commands not implemented for this OS
 #endif
@@ -545,21 +542,18 @@ namespace Svc {
   }
 
   void Tester ::
-    concatFiles(
-        const char *const fileName1,
-        const char *const fileName2,
-        const char *const destFileName
+    appendFile(
+        const char *const source,
+        const char *const target
     )
   {
-    Fw::CmdStringArg cmdFileName1(fileName1);
-    Fw::CmdStringArg cmdFileName2(fileName2);
-    Fw::CmdStringArg cmdDestFileName(destFileName);
-    this->sendCmd_ConcatFiles(
+    Fw::CmdStringArg cmdSource(source);
+    Fw::CmdStringArg cmdTarget(target);
+    this->sendCmd_AppendFile(
         INSTANCE,
         CMD_SEQ,
-        cmdFileName1,
-        cmdFileName2,
-        cmdDestFileName
+        cmdSource,
+        cmdTarget
     );
     this->component.doDispatch();
   }

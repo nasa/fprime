@@ -94,13 +94,12 @@ namespace Svc {
       );
 
       //! Implementation for ConcatFiles command handler
-      //! Concatenate 2 files together and write the output to a destination.
-      void ConcatFiles_cmdHandler(
+      //! Append 1 file's contents to the end of another.
+      void AppendFile_cmdHandler(
           const FwOpcodeType opCode, //!< The opcode
           const U32 cmdSeq, //!< The command sequence number
-          const Fw::CmdStringArg& fileName1, //!< The name of the 1st file
-          const Fw::CmdStringArg& fileName2, //!< The name of the 2nd file
-          const Fw::CmdStringArg& destFileName //!< The destination file name (can be one of the concatenated files)
+          const Fw::CmdStringArg& source, //! The name of the file to take content from
+          const Fw::CmdStringArg& target //! The name of the file to append to
       );
 
       //! Handler implementation for pingIn

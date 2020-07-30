@@ -139,11 +139,10 @@ namespace Svc {
           const char *const logFileName
       );
 
-      //! Concatenate 2 files together
-      void concatFiles(
-          const char *const fileName1,
-          const char *const fileName2,
-          const char *const destFileName
+      //! Append 2 files together
+      void appendFile(
+          const char *const source,
+          const char *const target
       );
 
       //! Assert successful command execution
