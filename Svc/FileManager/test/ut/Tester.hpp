@@ -130,7 +130,7 @@ namespace Svc {
       //! Assert successful command execution
       void assertSuccess(
           const FwOpcodeType opcode,
-          const U32 eventSize = 0
+          const U32 eventSize = 2 // Starting event + Error or Success msg
       ) const;
 
       //! Assert failed command execution

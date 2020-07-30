@@ -86,7 +86,7 @@ namespace Svc {
     this->assertFailure(
         FileManager::OPCODE_CREATEDIRECTORY
     );
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_DirectoryCreateError(
         0, 
         "test_dir", 
@@ -183,7 +183,7 @@ namespace Svc {
     this->assertFailure(
         FileManager::OPCODE_REMOVEDIRECTORY
     );
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_DirectoryRemoveError(
         0,
         "test_dir",
@@ -229,7 +229,7 @@ namespace Svc {
     this->assertFailure(
         FileManager::OPCODE_REMOVEFILE
     );
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_FileRemoveError(
         0,
         "test_file",
@@ -249,10 +249,7 @@ namespace Svc {
     this->shellCommand("touch test_file", LOG_FILE);
 
     // Assert success
-    this->assertSuccess(
-        FileManager::OPCODE_SHELLCOMMAND,
-        1
-    );
+    this->assertSuccess(FileManager::OPCODE_SHELLCOMMAND);
     ASSERT_EVENTS_ShellCommandSucceeded_SIZE(1);
     ASSERT_EVENTS_ShellCommandSucceeded(0, "touch test_file");
 
@@ -464,7 +461,7 @@ namespace Svc {
         Fw::COMMAND_EXECUTION_ERROR
     );
 
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
 
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_Errors_SIZE(1);
