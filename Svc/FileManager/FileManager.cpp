@@ -186,28 +186,43 @@ namespace Svc {
   /**
    * A helper function to determine if two files are the same; returns OP_OK
    * if no errors occur, and the boolean result via a pointer
+   * 
+   * TODO: Unsure how to check for two different paths pointing to the same
+   * nonexistent file?
    */
   Os::FileSystem::Status isPathToSameFile(
-    const char* filePath1, 
-    const char* filePath2,
+    const Fw::CmdStringArg& filePath1, 
+    const Fw::CmdStringArg& filePath2,
     bool* isSamePathResult
   ) 
   {
+    // Check for literal string path equality first
+    *isSamePathResult = filePath1 == filePath2;
+    if (*isSamePathResult) {
+      // Path literals equal, so we know they're the same
+      return Os::FileSystem::OP_OK;
+    }
+
+    // Try checking the actual files
     U32 file1ID;
     U32 file2ID;
-    
-    Os::File::Status fileStatus = Os::File::niceCRC32(file1ID, filePath1);
+
+    Os::File::Status fileStatus = Os::File::niceCRC32(file1ID, filePath1.toChar());
     if (fileStatus != Os::File::OP_OK) {
       if (fileStatus == Os::File::DOESNT_EXIST) {
-        return Os::FileSystem::INVALID_PATH;
+        // File doesn't exist, which is a valid possibility
+        *isSamePathResult = false;
+        return Os::FileSystem::OP_OK;
       }
       return Os::FileSystem::OTHER_ERROR;
     }
 
-    fileStatus = Os::File::niceCRC32(file2ID, filePath2);
+    fileStatus = Os::File::niceCRC32(file2ID, filePath2.toChar());
     if (fileStatus != Os::File::OP_OK) {
       if (fileStatus == Os::File::DOESNT_EXIST) {
-        return Os::FileSystem::INVALID_PATH;
+        // File doesn't exist, which is a valid possibility
+        *isSamePathResult = false;
+        return Os::FileSystem::OP_OK;
       }
       return Os::FileSystem::OTHER_ERROR;
     }
@@ -225,6 +240,13 @@ namespace Svc {
         const Fw::CmdStringArg& destFileName
     )
   {
+    Fw::LogStringArg logStringFile1(fileName1.toChar());
+    Fw::LogStringArg logStringFile2(fileName2.toChar());
+    Fw::LogStringArg logStringDest(destFileName.toChar());
+    this->log_ACTIVITY_HI_ConcatFilesStarted(
+      logStringFile1, logStringFile2, logStringDest
+    );
+
     // If destFile == file2, handle as a special case
     bool isFile2AlsoDest;
     Os::FileSystem::Status status =
@@ -234,12 +256,18 @@ namespace Svc {
         &isFile2AlsoDest
     );
     if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_ConcatFilesFailed(
+        logStringFile1, logStringFile2, logStringDest, status
+      );
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
 
     if (isFile2AlsoDest) {
       // TODO: Actually handle this case
+      this->log_ACTIVITY_HI_ConcatFilesSucceeded(
+        logStringFile1, logStringFile2, logStringDest
+      );
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
@@ -251,6 +279,9 @@ namespace Svc {
         true
     );
     if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_ConcatFilesFailed(
+        logStringFile1, logStringFile2, logStringDest, status
+      );
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
@@ -260,10 +291,16 @@ namespace Svc {
         destFileName.toChar()
     );
     if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_ConcatFilesFailed(
+        logStringFile1, logStringFile2, logStringDest, status
+      );
       this->sendCommandResponse(opCode, cmdSeq, status);
       return;
     }
 
+    this->log_ACTIVITY_HI_ConcatFilesSucceeded(
+      logStringFile1, logStringFile2, logStringDest
+    );
     this->sendCommandResponse(opCode, cmdSeq, status);
   }
 

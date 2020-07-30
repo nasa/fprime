@@ -74,7 +74,40 @@
     </args>
   </event>
 
-  <event id="0x05" name="ShellCommandSucceeded" severity="ACTIVITY_HI" format_string="Shell command %s succeeded">
+  <event id="0x05" name="ConcatFilesFailed" severity="WARNING_HI" format_string="Concatenating file %s + file %s into %s failed with status %d">
+    <comment>The File System component returned status non-zero when trying to concatenate 2 files together</comment>
+    <args>
+      <arg name="fileName1" type="string" size="256">
+        <comment>The name of the 1st file</comment>
+      </arg>
+      <arg name="fileName2" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+      <arg name="status" type="U32" size="256">
+        <comment>The error status</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x06" name="ConcatFilesSucceeded" severity="ACTIVITY_HI" format_string="Files %s and %s concatenated together in %s">
+    <comment>The File System component concatenated 2 files without error</comment>
+    <args>
+      <arg name="fileName1" type="string" size="256">
+        <comment>The name of the 1st file</comment>
+      </arg>
+      <arg name="fileName2" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x07" name="ShellCommandSucceeded" severity="ACTIVITY_HI" format_string="Shell command %s succeeded">
     <comment>The File System component executed a shell command that returned status zero</comment>
     <args>
       <arg name="command" type="string" size="256">
@@ -83,7 +116,7 @@
     </args>
   </event>
 
-  <event id="0x06" name="CreateDirectorySucceeded" severity="ACTIVITY_HI" format_string="Created directory %s successfully">
+  <event id="0x08" name="CreateDirectorySucceeded" severity="ACTIVITY_HI" format_string="Created directory %s successfully">
     <comment>The File System component created a new directory without error</comment>
     <args>
       <arg name="dirName" type="string" size="256">
@@ -92,7 +125,7 @@
     </args>
   </event>
 
-    <event id="0x07" name="RemoveDirectorySucceeded" severity="ACTIVITY_HI" format_string="Removed directory %s successfully">
+    <event id="0x09" name="RemoveDirectorySucceeded" severity="ACTIVITY_HI" format_string="Removed directory %s successfully">
     <comment>The File System component deleted and existing directory without error</comment>
     <args>
       <arg name="dirName" type="string" size="256">
@@ -101,7 +134,7 @@
     </args>
   </event>
 
-  <event id="0x08" name="MoveFileSucceeded" severity="ACTIVITY_HI" format_string="Moved file %s to file %s successfully">
+  <event id="0x0A" name="MoveFileSucceeded" severity="ACTIVITY_HI" format_string="Moved file %s to file %s successfully">
     <comment>The File System component moved a file to a new location without error</comment>
     <args>
       <arg name="sourceFileName" type="string" size="256">
@@ -113,7 +146,7 @@
     </args>
   </event>
 
-    <event id="0x09" name="RemoveFileSucceeded" severity="ACTIVITY_HI" format_string="Removed file %s successfully">
+  <event id="0x0B" name="RemoveFileSucceeded" severity="ACTIVITY_HI" format_string="Removed file %s successfully">
     <comment>The File System component deleted an existing file without error</comment>
     <args>
       <arg name="fileName" type="string" size="256">
@@ -122,7 +155,22 @@
     </args>
   </event>
 
-  <event id="0x0A" name="ShellCommandStarted" severity="ACTIVITY_HI" format_string="Running shell command %s...">
+  <event id="0x0C" name="ConcatFilesStarted" severity="ACTIVITY_HI" format_string="Concatenating files %s and %s together in %s...">
+    <comment>The File System component concatenated 2 files without error</comment>
+    <args>
+      <arg name="fileName1" type="string" size="256">
+        <comment>The name of the 1st file</comment>
+      </arg>
+      <arg name="fileName2" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+      <arg name="destFileName" type="string" size="256">
+        <comment>The name of the destination file</comment>
+      </arg>
+    </args>
+  </event>
+
+  <event id="0x0D" name="ShellCommandStarted" severity="ACTIVITY_HI" format_string="Running shell command %s...">
     <comment>The File System component began executing a shell command</comment>
     <args>
       <arg name="command" type="string" size="256">
@@ -131,7 +179,7 @@
     </args>
   </event>
 
-  <event id="0x0B" name="CreateDirectoryStarted" severity="ACTIVITY_HI" format_string="Creating directory %s...">
+  <event id="0x0E" name="CreateDirectoryStarted" severity="ACTIVITY_HI" format_string="Creating directory %s...">
     <comment>The File System component began creating a new directory</comment>
     <args>
       <arg name="dirName" type="string" size="256">
@@ -140,7 +188,7 @@
     </args>
   </event>
 
-    <event id="0x0C" name="RemoveDirectoryStarted" severity="ACTIVITY_HI" format_string="Removing directory %s...">
+    <event id="0x0F" name="RemoveDirectoryStarted" severity="ACTIVITY_HI" format_string="Removing directory %s...">
     <comment>The File System component began deleting a directory</comment>
     <args>
       <arg name="dirName" type="string" size="256">
@@ -149,7 +197,7 @@
     </args>
   </event>
 
-  <event id="0x0D" name="MoveFileStarted" severity="ACTIVITY_HI" format_string="Moving file %s to file %s...">
+  <event id="0x10" name="MoveFileStarted" severity="ACTIVITY_HI" format_string="Moving file %s to file %s...">
     <comment>The File System component began moving a file to a new location</comment>
     <args>
       <arg name="sourceFileName" type="string" size="256">
@@ -161,7 +209,7 @@
     </args>
   </event>
 
-    <event id="0x0E" name="RemoveFileStarted" severity="ACTIVITY_HI" format_string="Removing file %s...">
+    <event id="0x11" name="RemoveFileStarted" severity="ACTIVITY_HI" format_string="Removing file %s...">
     <comment>The File System component began deleting an existing file</comment>
     <args>
       <arg name="fileName" type="string" size="256">
