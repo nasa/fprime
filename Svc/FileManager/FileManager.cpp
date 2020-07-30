@@ -14,6 +14,7 @@
 #include <stdlib.h>
 
 #include "Svc/FileManager/FileManager.hpp"
+#include "Os/File.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
@@ -182,6 +183,39 @@ namespace Svc {
     );
   }
 
+  /**
+   * A helper function to determine if two files are the same; returns OP_OK
+   * if no errors occur, and the boolean result via a pointer
+   */
+  Os::FileSystem::Status isPathToSameFile(
+    const char* filePath1, 
+    const char* filePath2,
+    bool* isSamePathResult
+  ) 
+  {
+    U32 file1ID;
+    U32 file2ID;
+    
+    Os::File::Status fileStatus = Os::File::niceCRC32(file1ID, filePath1);
+    if (fileStatus != Os::File::OP_OK) {
+      if (fileStatus == Os::File::DOESNT_EXIST) {
+        return Os::FileSystem::INVALID_PATH;
+      }
+      return Os::FileSystem::OTHER_ERROR;
+    }
+
+    fileStatus = Os::File::niceCRC32(file2ID, filePath2);
+    if (fileStatus != Os::File::OP_OK) {
+      if (fileStatus == Os::File::DOESNT_EXIST) {
+        return Os::FileSystem::INVALID_PATH;
+      }
+      return Os::FileSystem::OTHER_ERROR;
+    }
+
+    *isSamePathResult = file1ID == file2ID;
+    return Os::FileSystem::OP_OK;
+  }
+
   void FileManager ::
     ConcatFiles_cmdHandler(
         const FwOpcodeType opCode,
@@ -191,10 +225,27 @@ namespace Svc {
         const Fw::CmdStringArg& destFileName
     )
   {
-    // TODO: Current bug if destFileName == fileName2, since file2 will be
-    // overwritten before it can be read
+    // If destFile == file2, handle as a special case
+    bool isFile2AlsoDest;
     Os::FileSystem::Status status =
-      Os::FileSystem::appendFile(
+      isPathToSameFile(
+        fileName2.toChar(),
+        destFileName.toChar(),
+        &isFile2AlsoDest
+    );
+    if (status != Os::FileSystem::OP_OK) {
+      this->sendCommandResponse(opCode, cmdSeq, status);
+      return;
+    }
+
+    if (isFile2AlsoDest) {
+      // TODO: Actually handle this case
+      this->sendCommandResponse(opCode, cmdSeq, status);
+      return;
+    }
+
+    // Otherwise, handle as normal case
+    status = Os::FileSystem::appendFile(
         fileName1.toChar(),
         destFileName.toChar(),
         true
