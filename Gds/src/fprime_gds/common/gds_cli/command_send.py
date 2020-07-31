@@ -38,7 +38,6 @@ class CommandSendCommand(QueryHistoryCommand):
         closest_matches = difflib.get_close_matches(command_name, known_commands, n=num)
         return closest_matches
 
-    # TODO: Make this a method on one of the pipeline classes instead?
     @staticmethod
     def get_command_template(
         project_dictionary: Dictionaries, command_name: str
@@ -70,16 +69,11 @@ class CommandSendCommand(QueryHistoryCommand):
         command_template = CommandSendCommand.get_command_template(
             project_dictionary, command_name
         )
-        # TODO: Refactor CommandsCommand's method into a common class, since
-        # this is technically a private method?
         return misc_utils.get_cmd_template_string(command_template)
 
     @classmethod
     def _get_item_list(
-        cls,
-        project_dictionary: Dictionaries,
-        filter_predicate: predicates.predicate,
-        json: bool = False,
+        cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
     ) -> Iterable[CmdTemplate]:
         """
         Gets a list of available commands in the system and return them in an
@@ -89,7 +83,6 @@ class CommandSendCommand(QueryHistoryCommand):
             containing the command definitions
         :param filter_predicate: Test API predicate used to filter shown
             channels
-        :param json: Whether to print out each item in JSON format or not
         """
         # NOTE: Trying to create a blank CmdData causes errors, so currently
         # just using templates (i.e. this function does nothing)
@@ -104,10 +97,10 @@ class CommandSendCommand(QueryHistoryCommand):
 
     @classmethod
     def _get_upcoming_item(
-        cls, api, filter_predicate, min_start_time="",
+        cls, api, filter_predicate, min_start_time="NOW", timeout=5.0,
     ):
         """
-        TODO: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class?
+        NOTE: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class, and should refactor when time's available
         """
 
     @classmethod
@@ -121,22 +114,13 @@ class CommandSendCommand(QueryHistoryCommand):
         """
         return misc_utils.get_cmd_template_string(item, json)
 
-    # TODO: Cut down on the number of arguments here?
     @classmethod
-    def handle_arguments(
+    def _execute_command(
         cls,
-        dictionary: str,
-        ip_address: str,
-        port: int,
+        connection_info: misc_utils.ConnectionInfo,
+        search_info: misc_utils.SearchInfo,
         command_name: str,
         arguments: List[str],
-        list: bool,
-        ids: Iterable[int],
-        components: Iterable[str],
-        search: str,
-        json: bool,
-        *args,
-        **kwargs
     ):
         """
         Handle the command-send arguments to connect to the Test API correctly,
@@ -145,13 +129,14 @@ class CommandSendCommand(QueryHistoryCommand):
         For more details on these arguments, see the command-send definition at:
             Gds/src/fprime_gds/executables/fprime_cli.py
         """
+        dictionary, ip_address, port = tuple(connection_info)
+        is_printing_list, ids, components, search, json = tuple(search_info)
+
         search_filter = cls._get_search_filter(ids, components, search, json)
-        if list:
+        if is_printing_list:
             cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
             return
 
-        # TODO: Make this api setup part of a decorator somehow, since it
-        # recurs in several places?
         # ======================================================================
         pipeline, api = test_api_utils.initialize_test_api(
             dictionary, server_ip=ip_address, server_port=port
@@ -184,3 +169,25 @@ class CommandSendCommand(QueryHistoryCommand):
         pipeline.disconnect()
         api.teardown()
         # ======================================================================
+
+    @classmethod
+    def handle_arguments(cls, *args, **kwargs):
+        """
+        Handle the given input arguments, then execute the command itself
+
+        NOTE: This is currently just a pass-through method
+        """
+        connection_info = misc_utils.ConnectionInfo(
+            kwargs["dictionary"], kwargs["ip_address"], kwargs["port"]
+        )
+        search_info = misc_utils.SearchInfo(
+            kwargs["is_printing_list"],
+            kwargs["ids"],
+            kwargs["components"],
+            kwargs["search"],
+            kwargs["json"],
+        )
+
+        cls._execute_command(
+            connection_info, search_info, kwargs["command_name"], kwargs["arguments"]
+        )

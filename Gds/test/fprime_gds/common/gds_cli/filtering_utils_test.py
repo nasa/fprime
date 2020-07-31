@@ -12,15 +12,15 @@ from fprime_gds.common.templates.event_template import EventTemplate
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
 
-
+# Pytest fixtures work by reusing outer names, so disable this warning
+# pylint: disable=redefined-outer-name
 @pytest.fixture
 def sample_template():
-    # TODO: Possibly add an argument for testing's sake?
     return EventTemplate(
         event_id=12345,
         name="Luggage_Combination",
         component="helmet",
-        args=[],
+        args=[],    # Currently, no arguments given for simplicity's sake
         severity=EventSeverity.DIAGNOSTIC,
         format_str="I've got the same combination on mine!",
     )
@@ -75,10 +75,6 @@ def test_valid_rejecting_filter(sample_event, rejecting_input_filter):
     assert not rejecting_input_filter(sample_event)
 
 
-# TODO: Write tests for passing in templates as well?
-# TODO: Also write tests for generic SysData, and for non-event objects?
-
-
 @pytest.mark.gds_cli
 def test_event_string_has_component(sample_event):
     component_filter = filtering_utils.contains_search_string("helmet")
@@ -90,7 +86,7 @@ def test_string_filter_valid_function_passing(sample_event):
     crazy_string = "tHaT'sAmAzInG..."
 
     def get_crazy_string(eventData) -> str:
-        return crazy_string
+        return crazy_string + str(eventData)
 
     default_filter = filtering_utils.contains_search_string(crazy_string)
     function_filter = filtering_utils.contains_search_string(

@@ -14,25 +14,13 @@
  *
  * @author mstarch
  */
+import {_uploader} from "../uploader.js";
+import {_datastore} from "../datastore.js";
+
 Vue.component("uplink", {
     template: "#uplink-template",
-    props: {
-        /**
-         * A list of files filled in from REST polling that represent the files being  managed by the file uplinker.
-         */
-        "upfiles": Array,
-        /**
-         * Filled in by REST polling, this is a boolean that describes if the uplinking is running
-         * (as opposed to paused).
-         */
-        "running": Boolean,
-        /**
-         * Uploader object used to interact with the file uplinks and downlinks REST endpoints.
-         */
-        "uploader": Object
-    },
-    data: function() {
-        return {"selected": [], "destination": "/", "error": null}
+     data: function() {
+        return {"upfiles": _datastore.upfiles, "running": _datastore.uploading, "selected": [], "destination": "/", "error": null}
     },
     methods: {
         /**
@@ -45,7 +33,7 @@ Vue.component("uplink", {
                 return;
             }
             let _self = this;
-            this.uploader.upload(this.selected, this.destination).catch(
+            _uploader.upload(this.selected, this.destination).catch(
                 function(error) {
                     _self.error = (error != "")? error : "Total size limited to 32MB. Please use separate uplinks";
                 });
@@ -54,13 +42,13 @@ Vue.component("uplink", {
          * Calls the uploader to pause the uplinker.
          */
         pauseUplink() {
-            this.uploader.pause();
+            _uploader.pause();
         },
         /**
          * Calls the uploader to unpause the uplinker.
          */
         unpauseUplink() {
-            this.uploader.unpause();
+            _uploader.unpause();
         },
         /**
          * Handles the files event to add input files into the list being curated. This takes each file, and creates a
@@ -115,25 +103,3 @@ Vue.component("uplink", {
         }
     }
 });
-/**
- * Mixins used to handle uplink as part of this, or any Vue.
- */
-export let UplinkMixins = {
-    /**
-     * Setup the uplink requires the "uploader" object. returns the needed top-level data to be bound down into props.
-     * @param uploader: uploader object to use to upload.
-     * @return initially needed uplink data items
-     */
-    setupUplink(uploader) {
-        return {"upfiles": [], "running": false, "uploader": uploader}
-    },
-    /**
-     * Callback used to set files and running state needed for the uplink.
-     * @param files: list of files managed by the uplinker on the server side
-     * @param running: boolean not-paused running status.
-     */
-    updateUpfiles(files, running) {
-        this.vue.upfiles = files;
-        this.vue.running = running;
-    }
-};

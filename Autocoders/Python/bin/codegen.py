@@ -27,6 +27,7 @@ from fprime_ac.parsers import (
     XmlPortsParser,
     XmlSerializeParser,
     XmlTopologyParser,
+    XmlEnumParser
 )
 from fprime_ac.utils import (
     ArrayGenerator,
@@ -479,6 +480,29 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                     "Processing {} [{}] ({})".format(comp_name, comp_type, hex(comp_id))
                 )
 
+                # check for included enum XML in referenced XML at top
+                if(parsed_xml_dict[comp_type].get_enum_type_files() != []):
+                    enum_file_list = parsed_xml_dict[comp_type].get_enum_type_files()
+                    for enum_file in enum_file_list:
+                        enum_file = search_for_file("Enum", enum_file)
+                        enum_model = XmlEnumParser.XmlEnumParser(enum_file)
+                        enum_elem = etree.Element("enum")
+                        enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
+                        enum_elem.attrib["type"] = enum_type
+                        for (member_name, member_value, member_comment) in enum_model.get_items():
+                            enum_mem = etree.Element("item")
+                            enum_mem.attrib["name"] = member_name
+                            # keep track of incrementing enum value
+                            if member_value is not None:
+                                enum_value = int(member_value)
+
+                            enum_mem.attrib["value"] = "%d"%enum_value
+                            enum_value = enum_value + 1
+                            if member_comment is not None:
+                                enum_mem.attrib["description"] = member_comment
+                            enum_elem.append(enum_mem)
+                            enum_list.append(enum_elem)
+
                 # check for included serializable XML
                 if parsed_xml_dict[comp_type].get_serializable_type_files() is not None:
                     serializable_file_list = parsed_xml_dict[
@@ -496,6 +520,30 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 "%s: Can only include one level of serializable for dictionaries"
                                 % serializable_file
                             )
+
+                        # check for included enum XML in included serializable XML
+                        if len(serializable_model.get_include_enums()) != 0:
+                            enum_file_list = serializable_model.get_include_enums()
+                            for enum_file in enum_file_list:
+                                enum_file = search_for_file("Enum", enum_file)
+                                enum_model = XmlEnumParser.XmlEnumParser(enum_file)
+                                enum_elem = etree.Element("enum")
+                                enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
+                                enum_elem.attrib["type"] = enum_type
+                                for (member_name, member_value, member_comment) in enum_model.get_items():
+                                    enum_mem = etree.Element("item")
+                                    enum_mem.attrib["name"] = member_name
+                                    # keep track of incrementing enum value
+                                    if member_value is not None:
+                                        enum_value = int(member_value)
+
+                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_value = enum_value + 1
+                                    if member_comment is not None:
+                                        enum_mem.attrib["description"] = member_comment
+                                    enum_elem.append(enum_mem)
+                                    enum_list.append(enum_elem)
+
                         serializable_elem = etree.Element("serializable")
                         serializable_type = (
                             serializable_model.get_namespace()
