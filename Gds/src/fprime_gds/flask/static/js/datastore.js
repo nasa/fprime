@@ -44,7 +44,7 @@ export class DataStore {
     }
 
     startup() {
-        let channel_dict = _loader.endpoints["channel-dict"].data
+        let channel_dict = _loader.endpoints["channel-dict"].data;
         // Setup channels object in preparation for updates
         let channels = {};
         for (let key in channel_dict) {
