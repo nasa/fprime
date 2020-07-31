@@ -54,7 +54,9 @@ class ArrayType(ValueType):
             "type": self.__typename,
             "size": self.__arr_size,
             "format": self.__arr_format,
-            "values": None if self.val is None else [member.to_jsonable() for member in self.val],
+            "values": None
+            if self.val is None
+            else [member.to_jsonable() for member in self.val],
         }
         return members
 

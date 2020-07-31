@@ -131,7 +131,7 @@ def test_repeat_with_function_returning_enclosed_string_valid():
         count += 1
         if count == 2:
             raise KeyboardInterrupt
-        return (my_string,) # this is only 1 argument, since it's in a tuple
+        return (my_string,)  # this is only 1 argument, since it's in a tuple
 
     misc_utils.repeat_until_interrupt(error_before_exit, "let's do this")
 

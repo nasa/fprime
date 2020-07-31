@@ -27,7 +27,7 @@ from fprime_ac.parsers import (
     XmlPortsParser,
     XmlSerializeParser,
     XmlTopologyParser,
-    XmlEnumParser
+    XmlEnumParser,
 )
 from fprime_ac.utils import (
     ArrayGenerator,
@@ -481,22 +481,28 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 )
 
                 # check for included enum XML in referenced XML at top
-                if(parsed_xml_dict[comp_type].get_enum_type_files() != []):
+                if parsed_xml_dict[comp_type].get_enum_type_files() != []:
                     enum_file_list = parsed_xml_dict[comp_type].get_enum_type_files()
                     for enum_file in enum_file_list:
                         enum_file = search_for_file("Enum", enum_file)
                         enum_model = XmlEnumParser.XmlEnumParser(enum_file)
                         enum_elem = etree.Element("enum")
-                        enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
+                        enum_type = (
+                            enum_model.get_namespace() + "::" + enum_model.get_name()
+                        )
                         enum_elem.attrib["type"] = enum_type
-                        for (member_name, member_value, member_comment) in enum_model.get_items():
+                        for (
+                            member_name,
+                            member_value,
+                            member_comment,
+                        ) in enum_model.get_items():
                             enum_mem = etree.Element("item")
                             enum_mem.attrib["name"] = member_name
                             # keep track of incrementing enum value
                             if member_value is not None:
                                 enum_value = int(member_value)
 
-                            enum_mem.attrib["value"] = "%d"%enum_value
+                            enum_mem.attrib["value"] = "%d" % enum_value
                             enum_value = enum_value + 1
                             if member_comment is not None:
                                 enum_mem.attrib["description"] = member_comment
@@ -528,16 +534,24 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                                 enum_file = search_for_file("Enum", enum_file)
                                 enum_model = XmlEnumParser.XmlEnumParser(enum_file)
                                 enum_elem = etree.Element("enum")
-                                enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
+                                enum_type = (
+                                    enum_model.get_namespace()
+                                    + "::"
+                                    + enum_model.get_name()
+                                )
                                 enum_elem.attrib["type"] = enum_type
-                                for (member_name, member_value, member_comment) in enum_model.get_items():
+                                for (
+                                    member_name,
+                                    member_value,
+                                    member_comment,
+                                ) in enum_model.get_items():
                                     enum_mem = etree.Element("item")
                                     enum_mem.attrib["name"] = member_name
                                     # keep track of incrementing enum value
                                     if member_value is not None:
                                         enum_value = int(member_value)
 
-                                    enum_mem.attrib["value"] = "%d"%enum_value
+                                    enum_mem.attrib["value"] = "%d" % enum_value
                                     enum_value = enum_value + 1
                                     if member_comment is not None:
                                         enum_mem.attrib["description"] = member_comment

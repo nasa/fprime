@@ -20,7 +20,7 @@ def sample_template():
         event_id=12345,
         name="Luggage_Combination",
         component="helmet",
-        args=[],    # Currently, no arguments given for simplicity's sake
+        args=[],  # Currently, no arguments given for simplicity's sake
         severity=EventSeverity.DIAGNOSTIC,
         format_str="I've got the same combination on mine!",
     )
