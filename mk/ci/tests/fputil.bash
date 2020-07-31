@@ -85,8 +85,8 @@ function integration_test {
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
         sleep ${SLEEP_TIME}
         # Check the above started successfully
-        ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to compile GDS layer headlessly"
-        ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start GDS layer with Valgrind headlessly"
+        ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to run GDS layer headlessly"
+        ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start Ref with Valgrind"
         # Run integration tests
         (
             cd "${WORKDIR}/test"
@@ -104,7 +104,7 @@ function integration_test {
         RET_MEMTEST=$?
         # Report memory leaks if they occured and the pytests were successful
         if [ ${RET_MEMTEST} -ne 0 ] && [ ${RET_PYTEST} -eq 0 ]; then 
-            cat "${LOG_DIR}/gds-logs/valgring.log"
+            cat "${LOG_DIR}/gds-logs/valgrind.log"
             fail_and_stop "Integration tests on ${WORKDIR} contain memory leaks"
         fi
 

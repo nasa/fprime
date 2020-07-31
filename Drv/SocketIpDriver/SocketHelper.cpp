@@ -126,10 +126,10 @@ namespace Drv {
         struct sockaddr_in address;
 
         // Clear existing file descriptors
-        if (isInput) {
+        if (isInput and this->m_socketInFd != -1) {
             (void) ::close(this->m_socketInFd);
             this->m_socketInFd = -1;
-        } else {
+        } else if (not isInput and this->m_socketOutFd != -1) {
             (void) ::close(this->m_socketOutFd);
             this->m_socketOutFd = -1;
         }
