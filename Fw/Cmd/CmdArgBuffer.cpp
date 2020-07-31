@@ -22,7 +22,7 @@ namespace Fw {
     const CmdArgBuffer& CmdArgBuffer::operator=(const CmdArgBuffer& other) {
         SerializeStatus stat = this->setBuff(other.m_data,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-        return other;
+        return *this;
     }
 
     NATIVE_UINT_TYPE CmdArgBuffer::getBuffCapacity(void) const {
