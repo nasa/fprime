@@ -229,7 +229,7 @@ def file_to_dict(files, uplink=True):
                 "size": item.size,
                 "current": item.seek,
                 "state": item.state,
-                "percent": int(item.seek / item.size * 100.0),
+                "percent": 100 if item.size == 0 else int(item.seek / item.size * 100.0),
                 "uplink": uplink,
                 "start": item.start,
                 "end": item.end,
