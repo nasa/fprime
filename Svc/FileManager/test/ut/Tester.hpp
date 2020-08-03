@@ -82,17 +82,17 @@ namespace Svc {
       //!
       void shellCommandFail(void);
 
-      //! Concatenate files (succeed, append to new file)
+      //! Append file (succeed, append to new file)
       //!
-      void concatFilesSucceed_newFile(void);
+      void appendFileSucceed_newFile(void);
 
-      //! Concatenate files (succeed, append to existing file)
+      //! Append file (succeed, append to existing file)
       //!
-      void concatFilesSucceed_existingFile(void);
+      void appendFileSucceed_existingFile(void);
 
-      //! Concat files (fail)
+      //! Append file (fail)
       //!
-      void concatFilesFail(void);
+      void appendFileFail(void);
 
     private:
 
@@ -149,6 +149,13 @@ namespace Svc {
       void assertSuccess(
           const FwOpcodeType opcode,
           const U32 eventSize = 2 // Starting event + Error or Success msg
+      ) const;
+
+      //! Assert file content matches the expected string (up to the given size)
+      void assertFileContent(
+          const char *const fileName,
+          const char *const expectedString,
+          const U32 length
       ) const;
 
       //! Assert failed command execution

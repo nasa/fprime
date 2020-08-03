@@ -54,19 +54,19 @@ TEST(Test, shellCommandFail) {
   tester.shellCommandFail();
 }
 
-TEST(Test, concatFilesSucceedNewFile) {
+TEST(Test, appendFileSucceedNewFile) {
   Svc::Tester tester;
-  tester.concatFilesSucceed_newFile();
+  tester.appendFileSucceed_newFile();
 }
 
-TEST(Test, concatFilesSucceedExistingFile) {
+TEST(Test, appendFileSucceedExistingFile) {
   Svc::Tester tester;
-  tester.concatFilesSucceed_existingFile();
+  tester.appendFileSucceed_existingFile();
 }
 
-TEST(Test, concatFilesFail) {
+TEST(Test, appendFileFail) {
   Svc::Tester tester;
-  tester.concatFilesFail();
+  tester.appendFileFail();
 }
 
 int main(int argc, char **argv) {

@@ -10,6 +10,8 @@
 // 
 // ====================================================================== 
 
+#include <fstream>
+
 #include "Tester.hpp"
 
 #define INSTANCE 0
@@ -337,7 +339,7 @@ namespace Svc {
   }
 
   void Tester ::
-    concatFilesSucceed_newFile(void) 
+    appendFileSucceed_newFile(void) 
   {
 #ifdef __linux__
     // Remove testing files, if they exist
@@ -356,7 +358,7 @@ namespace Svc {
 #ifdef __linux__
     // check new file exists and has correct text inside
     this->system("test -e file2");
-    this->system("grep -q 'file1 text' file2");
+    assertFileContent("file2", "file1 text\n", 12);
 
     // Clean up
     this->system("rm -rf file1 file2");
@@ -366,7 +368,7 @@ namespace Svc {
   }
 
   void Tester ::
-    concatFilesSucceed_existingFile(void) 
+    appendFileSucceed_existingFile(void) 
   {
 #ifdef __linux__
     // Remove testing files, if they exist
@@ -387,7 +389,7 @@ namespace Svc {
 #ifdef __linux__
     // check file still exists and has new text inside
     this->system("test -e file2");
-    this->system("grep -q 'file1 text\nfile2 text' file2");
+    assertFileContent("file2", "file2 text\nfile1 text\n", 23);
 
     // Clean up
     this->system("rm -rf file1 file2");
@@ -397,9 +399,29 @@ namespace Svc {
   }
 
   void Tester ::
-    concatFilesFail(void) 
+    appendFileFail(void) 
   {
-    // TODO
+#ifdef __linux__
+    // Remove testing files, if they exist
+    this->system("rm -rf file1 file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+
+    // Attempt to append from a non-existing source
+    this->appendFile("file1", "file2");
+
+    // Assert failure
+    this->assertFailure(
+        FileManager::OPCODE_APPENDFILE
+    );
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
+    ASSERT_EVENTS_AppendFileFailed(
+        0,
+        "file1",
+        "file2",
+        Os::FileSystem::INVALID_PATH
+    );
   }
 
   // ----------------------------------------------------------------------
@@ -577,6 +599,22 @@ namespace Svc {
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_CommandsExecuted_SIZE(1);
     ASSERT_TLM_CommandsExecuted(0, 1);
+  }
+
+  void Tester ::
+    assertFileContent(
+          const char *const fileName,
+          const char *const expectedString,
+          const U32 length
+      ) const {
+    char fileString[length];
+    std::ifstream file;
+    file.open(fileName);
+
+    file.read(fileString, length);
+    file.close();
+
+    ASSERT_STREQ(expectedString, fileString);
   }
 
   void Tester ::

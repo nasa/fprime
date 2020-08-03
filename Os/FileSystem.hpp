@@ -32,7 +32,7 @@ namespace Os {
 		Status removeFile(const char* path); //!< removes a file at location path
 		Status moveFile(const char* originPath, const char* destPath); //! moves a file from origin to destination
 		Status copyFile(const char* originPath, const char* destPath); //! copies a file from origin to destination
-		Status appendFile(const char* originPath, const char* destPath, bool create_new_file=false); //! append file origin to destination file. Create a brand new file is create_new_file is true.
+		Status appendFile(const char* originPath, const char* destPath); //! append file origin to destination file. Creates a brand new file if the destination doesn't exist.
 		Status getFileSize(const char* path, U64& size); //!< gets the size of the file (in bytes) at location path
 		Status getFileCount(const char* directory, U32& fileCount); //!< counts the number of files in the given directory
 		Status changeWorkingDirectory(const char* path); //!<  move current directory to path

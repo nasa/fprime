@@ -408,9 +408,7 @@ namespace Os {
 			return fs_status;
 		} // end copyFile
 
-		Status appendFile(const char* originPath,
-						const char* destPath,
-						bool create_new_file) {
+		Status appendFile(const char* originPath, const char* destPath) {
 			FileSystem::Status fs_status;
 			File::Status file_status;
 			U64 fileSize = 0;
@@ -434,10 +432,7 @@ namespace Os {
 				return handleFileError(file_status);
 			}
 
-			file_status = destination.open(
-				destPath, 
-				(create_new_file) ? File::OPEN_WRITE : File::OPEN_APPEND
-			);
+			file_status = destination.open(destPath, File::OPEN_APPEND);
 			if(file_status != File::OP_OK) {
 				return handleFileError(file_status);
 			}
