@@ -37,7 +37,7 @@ The API documentation section contains the automatically generated documentation
     - [A More Complete Introduction to F´](user/full-intro.md)
     - [Projects and Deployments](user/proj-dep.md)
     - [Core Constructs: Ports, Components, and Topologies](user/port-comp-top.md)
-    - [Data Structures: Enums, Arrays, and Serializables](user/enum-array-sserializable.md)
+    - [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](user/enum-arr-ser.md)
     - [Data Constructs: Commands, Events, Channels, and Parameters](user/cmd-evt-chn-prm.md)
 - F´ Best Practices
    - [A Quick Look At the Hub Pattern](./best/hub-pattern.md)

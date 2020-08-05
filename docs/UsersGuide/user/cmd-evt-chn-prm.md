@@ -74,8 +74,9 @@ while a successful response moves to the next command in the sequence.
 Events represent a log of activities taken by the embedded system. Events can be thought of in the same way as a program
 execution log in that they enable the ability to trace the systems execution. Events are sent out of the system via the
 `Svc::ActiveLogger` component and components defining commands should hook up the log port to it. If console logging is
-desired, the text log port can be hooked up to the `Svc::PassiveConsoleTextLogger` component. Events are defined by the
-following properties:
+desired, the text log port can be hooked up to the `Svc::PassiveConsoleTextLogger` component. Events are defined per
+component and are typically used to capture what the component is doing. Events can be sporadic; however, should all be
+captured for downlink. Events are defined by the following properties:
 
 1. id: a numeric id uniquely define this event. It is automatically offset by the component's base id to ensure global
 uniqueness.
@@ -91,7 +92,9 @@ uniqueness.
 4. arguments: like command arguments these are primitive and complex types that represent the variable data associated
 with the event. These are injected into the format string for a full text representation of the event.
 5. format string: a C-style format string used to reconstruct a text version of the event.
-   
+
+**Note:** the use of events to severity levels are based on the judgement of the system designer.
+
 Code in the component-specific generated base class provides a function to call to emit each event defined by the
 component. This function expects an argument to be supplied for each argument defined by the event. The code generator
 automatically adds ports or retrieving a time tag and sending events. There are two independent ports for sending
@@ -104,7 +107,7 @@ events:
 
 Events first acquire a time tag to represent when they occurred and then are typically sent to the `Svc::ActiveLogger`
 component on their way to be sent down to the ground. This logger component both process the event and also recognizes 
-and begins responses for FATAL severity events.
+and begins responses for FATAL severity events. 
 
 ![Active Logger](../media/data_model3.png)
 
@@ -116,7 +119,8 @@ the port queue and sends it to the ground.
 
 Channels, also known as Telemetry Channels, or just Telemetry, represent the current reading of some portion of system
 state. This state is either restricted to "send on change" or "send per update" even if the update is already the
-current value. Channels are id, time, and value triples and are defined per component with the following properties:
+current value. Channels are broken-up per component and are typically sampled at a set rate and dowlinked. Channels are
+id, time, and value triples and are defined per component with the following properties:
 
 1. id: the unique id of the channel. This is offset by the base id of the component for global uniqueness.
 2. name: the unique text name of the channel. This is prepended with the component name for global uniqueness.
@@ -153,7 +157,7 @@ generation to manage parameters defined by a component. Parameters are defined b
 
 The code generator automatically adds ports for retrieving parameters. During initialization, a public method in the
 class is called which retrieves the parameters and stores copies locally. Calls can reoccur if the parameter is updated.
- he code generated base class provides a function to call for each parameter to retrieve the stored copy; and an
+he code generated base class provides a function to call for each parameter to retrieve the stored copy; and an
 implementation class can retrieve the value whenever the parameter value is needed.
 
 ### Parameter Database
@@ -167,6 +171,7 @@ provides ports to get and set parameters, which are stored in a file to persist 
 system during initialization. The initialization subsequently calls *loadParameters()* on components with parameters.
 Components can set and retrieve parameters. The parameter manager saves the updated values to the file system via the
 command.
+
 
 ## A Note On Serialized Ports
 
