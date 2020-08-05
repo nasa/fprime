@@ -724,7 +724,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         if ho is not None:
                             channel_elem.attrib["high_orange"] = ho
                         if hr is not None:
-                            channel_elem.attrib["hight_red"] = hr
+                            channel_elem.attrib["high_red"] = hr
 
                         channel_elem.attrib["type"] = type_name
                         telemetry_list.append(channel_elem)
