@@ -5,6 +5,7 @@ a set of autocoded complex types.  The types describe here are available to both
 system unless otherwise noted. Included in this document:
 
 - [Primitive Types](#primitive-types)
+- [Poly Type](#polymorphic-type)
 - [Complex Types](#complex-types)
     - [Enums](#enums)
     - [Arrays](#arrays)
@@ -20,7 +21,7 @@ following table and are available to both the ground system, events, channels, a
 
 | F´ Type | C/C++ Type | Description             |
 |---------|------------|-------------------------|
-| BOOL    | bool       | Boolean value           |
+| BOOL    | bool       | C++ boolean             |
 | I8      | int8_t     | signed 8-bit integer    |
 | I16     | int16_t    | signed 16-bit integer   |
 | I32     | int32_t    | signed 32-bit integer   |
@@ -29,8 +30,18 @@ following table and are available to both the ground system, events, channels, a
 | U32     | uint32_t   | unsigned 32-bit integer |
 | F32     | float      | 32-bit floating point   |
 | F64     | double     | 64-bit floating point   |
+| NATIVE_INT_TYPE  | int           | architecture dependent integer |
+| NATIVE_UINT_TYPE | unsigned int  | architecture dependent unsigned integer |
+| POINTER_CAST     |               | integer of sufficient size to store a pointer for the architecture |
 
-**Note:** C/C++ types come from `stdint.h` and `stdbool.h`.
+**Note:** C/C++ types come from `stdint.h` and `stdbool.h`.  The last three types above are not of set size, but are
+architecture dependent.
+
+## Polymorphic Type
+
+F´ defines a type for use by the user that can represent any of the primitive types using the same storage space. This
+is similar to a C `union` defined with fields of each above type.
+
 
 ## Complex Types
 
