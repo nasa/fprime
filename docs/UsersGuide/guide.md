@@ -35,10 +35,13 @@ The API documentation section contains the automatically generated documentation
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
 - Users Manual
     - [A More Complete Introduction to F´](user/full-intro.md)
+    - [Projects and Deployments](user/proj-dep.md)
     - [Core Constructs: Ports, Components, and Topologies](user/port-comp-top.md)
     - [Data Structures: Enums, Arrays, and Serializables](user/enum-array-sserializable.md)
     - [Data Constructs: Commands, Events, Channels, and Parameters](user/cmd-evt-chn-prm.md)
 - F´ Best Practices
+   - [A Quick Look At the Hub Pattern](./best/hub-pattern.md)
+   - [Rate Groups and Timeliness](./best/rate-group.md)
 - Developer Documentation
     - [F´ On Baremetal and Muti-Core Systems](../dev/baremetal-multicore.md)
 - API Documentation
