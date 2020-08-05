@@ -61,7 +61,7 @@ namespace Fw {
 
     const SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase &src) {
         this->copyFrom(src);
-        return src;
+        return *this;
     }
 
     // serialization routines

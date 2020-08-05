@@ -55,7 +55,9 @@ namespace Drv {
   LinuxI2cDriverComponentImpl ::
     ~LinuxI2cDriverComponentImpl(void)
   {
-
+    if (-1 != this->m_fd) { // check if file is open
+      ::close(this->m_fd);
+    }
   }
 
   bool LinuxI2cDriverComponentImpl::open(const char* device) {

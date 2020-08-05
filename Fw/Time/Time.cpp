@@ -46,7 +46,7 @@ namespace Fw {
         this->m_useconds = other.m_useconds;
         this->m_seconds = other.m_seconds;
 
-        return other;
+        return *this;
     }
 
     bool Time::operator==(const Time& other) const {
