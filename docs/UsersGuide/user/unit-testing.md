@@ -1,33 +1,4 @@
-**Outline (content from 12\_CFW\_F\_Prime\_Unit\_Test\_Framework.pdf and
-11\_CFW\_Unit\_Testing.pdf)**
-
-4\. Concepts of F′
-
-> vii. Testing in F´
-> 
-> a. Unit Testing
-
-  - Base classes
-
-  - Write unit tests
-
-  - Send Commands
-
-  - Check the values emitted on output ports
-
-  - Provide text values for time and parameters
-
-  - Run unit tests
-
-  - Check Code coverage
-
-> b. Integration Testing
-
-  - TBD
-
-**4. Concepts of F′**
-
-**vii. Testing in F´**
+# Unit Testing in F´
 
 Testing is an important part of flight software (FSW) development.
 Testing is divided into two phases: i) unit testing, and ii) integration
@@ -37,7 +8,7 @@ classes include the auto-generated *TesterBase*, the auto-generated
 *GTestBase*, and the developer-written *Tester*. The testing phases and
 test framework classes are discussed in further detail below.
 
-**a. Unit Testing**
+## Unit Testing
 
 Thorough unit testing is critical. It provides unit-level regression
 tests, and makes integration easier since localized errors are caught
@@ -46,7 +17,7 @@ early and system-level issues only appear during integration.
 F′ provides the support for unit testing at the component level. The
 overall framework for unit testing is shown in Figure 1.
 
-![](./media/image1.emf)
+![Tesst](../media/test1.png)
 
 **Figure 1.** Unit testing framework overview.
 
@@ -120,129 +91,97 @@ and then checks events and telemetry by writing the following code.
 
 **Sending Commands:**
 
+```
 // Send command
-
-this-\>sendCOMMAND\_NAME(
-
-cmdSeq, // Command sequence number
-
-arg1, // Argument 1
-
-arg2 // Argument 2
-
+this->sendCOMMAND_NAME(
+    cmdSeq, // Command sequence number
+    arg1, // Argument 1
+    arg2 // Argument 2
 );
 
-this-\>component.doDispatch();
-
+this->component.doDispatch();
 // Assert command response
-
-ASSERT\_CMD\_RESPONSE\_SIZE(1);
-
-ASSERT\_CMD\_RESPONSE(
-
-0, // Index in the history
-
-Component::OPCODE\_COMMAND\_NAME, // Expected command opcode
-
-cmdSeq, // Expected command sequence number
-
-Fw::COMMAND\_OK // Expected command response
-
+ASSERT_CMD_RESPONSE\_SIZE(1);
+ASSERT_CMD_RESPONSE(
+    0, // Index in the history
+    Component::OPCODE\_COMMAND\_NAME, // Expected command opcode
+    cmdSeq, // Expected command sequence number
+    Fw::COMMAND_OK // Expected command response
 }
+```
 
 **Checking Events:**
 
+```
 // Send command and check response
-
 …
 
 // Assert total number of events in history
-
-ASSERT\_EVENTS\_SIZE(1);
+ASSERT_EVENTS_SIZE(1);
 
 // Assert number of a particular event
-
-ASSERT\_EVENTS\_EventName\_SIZE(1);
+ASSERT_EVENTS_EventName_SIZE(1);
 
 // Assert arguments for a particular event
-
-ASSERT\_EVENTS\_EventName(
-
-0, // Index in history
-
-arg1, // Expected value of argument 1
-
-arg2 // Expected value of argument 2
-
+ASSERT_EVENTS_EventName(
+    0, // Index in history
+    arg1, // Expected value of argument 1
+    arg2 // Expected value of argument 2
 );
+```
 
 **Checking Telemetry:**
-
+```
 // Send command and check response
-
 …
 
 // Assert total number of telemetry entries in history
-
-ASSERT\_TLM\_SIZE(1);
+ASSERT_TLM_SIZE(1);
 
 // Assert number of entries on a particular channel
-
-ASSERT\_TLM\_ChannelName\_SIZE(1);
+ASSERT_TLM_ChannelName_SIZE(1);
 
 // Assert value for a particular entry
-
-ASSERT\_TLM\_ChannelName(
-
-0, // Index in history
-
-value // Expected value
-
+ASSERT_TLM_ChannelName(
+    0, // Index in history
+    value // Expected value
 );
-
+```
 To check the user-defined output ports write the following code.
-
+```
 // Send command and check response
-
 …
 
 // Assert total number of entries on from ports
-
-ASSERT\_FROM\_PORT\_HISTORY\_SIZE(1);
+ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
 // Assert number of entries on a particular from port
-
-ASSERT\_from\_PortName\_SIZE(1);
+ASSERT_from_PortName_SIZE(1);
 
 // Assert value for a particular entry
-
-ASSERT\_from\_PortName(
-
-0, // Index in history
-
-arg1, // Expected value of argument 1
-
-arg2 // Expected value of argument 2
-
+ASSERT_from_PortName(
+    0, // Index in history
+    arg1, // Expected value of argument 1
+    arg2 // Expected value of argument 2
 );
+```
 
 To set the parameters in a test of component *C*, write the following
 code. This call stores the argument in member variables of *TesterBase*,
 so when *C* invokes the *ParamGet* port it receives the argument.
 
-this-\>paramSet\_ParamName(
-
-value, // Parameter value
-
-Fw::PARAM\_VALID // Parameter status
-
-)
+```
+this->paramSet_ParamName(
+    value, // Parameter value
+    Fw::PARAM_VALID // Parameter status
+);
+```
 
 Next, to set the time in a text of component *C*, write the following
 code. *Time* is an *Fw::Time* object, so when *C* invokes the *TimeGet*
 port it receives the value time.
 
-this-\>setTime(time)
+`this->setTime(time)`
 
 The F′ Prime build system provides targets for building and running
 component unit tests.
@@ -282,7 +221,3 @@ above, run *make cov*. The review the analysis, go to the *test/ut*
 directory (not the component director) and review the summary output
 *\_gcov.txt* files. Next, go to the component directory to review the
 coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
-
-**b. Integration Testing**
-
-TBD
