@@ -282,16 +282,16 @@ namespace Os {
 		 * If provided, will also initialize the given stat struct with file
 		 * information.
 		 */
-		Status checkFileReadability(const char* filePath,
-									struct stat* file_info=NULL) {
+		Status initAndCheckFileStats(const char* filePath,
+									struct stat* fileInfo=NULL) {
 			FileSystem::Status fs_status;
 			struct stat local_info;
-			if (!file_info) {
+			if(!fileInfo) {
 				// No external struct given, so use the local one
-				file_info = &local_info;
+				fileInfo = &local_info;
 			}
 
-			if(::stat(filePath, file_info) == -1) {
+			if(::stat(filePath, fileInfo) == -1) {
 				switch (errno) {
 					case EACCES:
 						fs_status = NO_PERMISSION;
@@ -312,7 +312,7 @@ namespace Os {
 			}
 
 			// Make sure the origin is a regular file
-			if(!S_ISREG(file_info->st_mode)) {
+			if(!S_ISREG(fileInfo->st_mode)) {
 				return INVALID_PATH;
 			}
 
@@ -339,14 +339,9 @@ namespace Os {
 			const U64 copyLoopLimit = (((U64)size/FILE_SYSTEM_CHUNK_SIZE)) + 2;
 
 			U64 loopCounter = 0;
-			U64 bytesRead = 0;
-			NATIVE_INT_TYPE bytesRemaining;
 			NATIVE_INT_TYPE chunkSize;
-			while(loopCounter < copyLoopLimit && bytesRead < size) {
-				bytesRemaining = size - bytesRead;
-				chunkSize = (bytesRemaining > FILE_SYSTEM_CHUNK_SIZE)
-					? FILE_SYSTEM_CHUNK_SIZE
-					: bytesRemaining;
+			while(loopCounter < copyLoopLimit) {
+				chunkSize = FILE_SYSTEM_CHUNK_SIZE;
 				file_status = source.read(&fileBuffer, chunkSize, false);
 				if(file_status != File::OP_OK) {
 					return handleFileError(file_status);
@@ -362,10 +357,8 @@ namespace Os {
 					return handleFileError(file_status);
 				}
 				loopCounter++;
-				bytesRead += chunkSize;
 			}
 			FW_ASSERT(loopCounter < copyLoopLimit);
-			FW_ASSERT(bytesRead <= size);
 
 			return FileSystem::OP_OK;
 		} // end copyFileData
@@ -379,7 +372,7 @@ namespace Os {
 			File source;
 			File destination;
 
-			fs_status = checkFileReadability(originPath);
+			fs_status = initAndCheckFileStats(originPath);
 			if(FileSystem::OP_OK != fs_status) {
 				return fs_status;
 			}
@@ -408,7 +401,7 @@ namespace Os {
 			return fs_status;
 		} // end copyFile
 
-		Status appendFile(const char* originPath, const char* destPath) {
+		Status appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
 			FileSystem::Status fs_status;
 			File::Status file_status;
 			U64 fileSize = 0;
@@ -416,7 +409,7 @@ namespace Os {
 			File source;
 			File destination;
 
-			fs_status = checkFileReadability(originPath);
+			fs_status = initAndCheckFileStats(originPath);
 			if(FileSystem::OP_OK != fs_status) {
 				return fs_status;
 			}
@@ -430,6 +423,14 @@ namespace Os {
 			file_status = source.open(originPath, File::OPEN_READ);
 			if(file_status != File::OP_OK) {
 				return handleFileError(file_status);
+			}
+
+			// If needed, check if destination file exists (and exit if not)
+			if(!createMissingDest) {
+				fs_status = initAndCheckFileStats(destPath);
+				if(FileSystem::OP_OK != fs_status) {
+					return fs_status;
+				}
 			}
 
 			file_status = destination.open(destPath, File::OPEN_APPEND);
@@ -450,7 +451,7 @@ namespace Os {
 			Status fileStat = OP_OK;
 			struct stat fileStatStruct;
 
-			fileStat = checkFileReadability(path, &fileStatStruct);
+			fileStat = initAndCheckFileStats(path, &fileStatStruct);
 			if(FileSystem::OP_OK == fileStat) {
 				// Only check size if struct was initialized successfully
 				size = fileStatStruct.st_size;

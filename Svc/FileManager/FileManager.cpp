@@ -196,7 +196,7 @@ namespace Svc {
     this->log_ACTIVITY_HI_AppendFileStarted(logStringSource, logStringTarget);
 
     Os::FileSystem::Status status;
-    status = Os::FileSystem::appendFile(source.toChar(), target.toChar());
+    status = Os::FileSystem::appendFile(source.toChar(), target.toChar(), true);
     if (status != Os::FileSystem::OP_OK) {
       this->log_WARNING_HI_AppendFileFailed(
         logStringSource,
