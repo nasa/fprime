@@ -338,7 +338,7 @@ namespace Fw {
         return *this;
     }
 
-    PolyType::PolyType(const PolyType &original) {
+    PolyType::PolyType(const PolyType &original) : Fw::Serializable() {
         this->m_dataType = original.m_dataType;
         this->m_val = original.m_val;
     }
