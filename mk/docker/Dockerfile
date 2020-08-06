@@ -62,8 +62,8 @@ RUN groupadd jenkins && \
     usermod -a -G fprime jenkins
 ENV HOST jenkins
 ENV USER jenkins
-# Paths and entrypoinys
-ENV PATH "/opt/fprime-venv/bin:/opt/fprime-venv/bin/python:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Paths and entrypoints
+ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
