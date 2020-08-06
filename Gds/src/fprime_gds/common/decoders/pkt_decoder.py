@@ -16,13 +16,12 @@ Example data that would be sent to a decoder that parses events or channels:
 
 @bug No known bugs
 """
-from __future__ import print_function
 
-from fprime_gds.common.decoders.ch_decoder import ChDecoder
-from fprime_gds.common.data_types.pkt_data import PktData
-from fprime_gds.common.data_types.ch_data import ChData
-from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.numerical_types import U16Type
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.pkt_data import PktData
+from fprime_gds.common.decoders.ch_decoder import ChDecoder
 
 
 class PktDecoder(ChDecoder):
@@ -41,8 +40,7 @@ class PktDecoder(ChDecoder):
         Returns:
             An initialized PktDecoder object
         """
-        # TODO: we don't actually use this channel dictionary since the ch_temp objects are from the pkt dict
-        super(PktDecoder, self).__init__(ch_dict)
+        super().__init__(ch_dict)
 
         self.__dict = pkt_name_dict
 

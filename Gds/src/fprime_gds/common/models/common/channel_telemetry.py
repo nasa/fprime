@@ -3,15 +3,17 @@ Created on Apr. 27, 2015
 
 @author: reder
 """
-from __future__ import print_function
 
-# Import the types this way so they do not need prefixing for execution.
-from fprime.common.models.serialize.type_exceptions import TypeException
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime.common.models.serialize.type_base import BaseType
 
+# Import the types this way so they do not need prefixing for execution.
+from fprime.common.models.serialize.type_exceptions import (
+    TypeException,
+    TypeMismatchException,
+)
 
-class Channel(object):
+
+class Channel:
     """
     Channel class is for deserialize channel telemetry value.
     Really this is a container since the type will have it's own deserialize
@@ -21,7 +23,7 @@ class Channel(object):
     def __init__(
         self,
         name,
-        id,
+        channel_id,
         comp_name,
         ch_description,
         ch_type,
@@ -39,22 +41,22 @@ class Channel(object):
         #
         ## Make sure correct types are passed
         #
-        if not type(name) == type(str()):
-            raise TypeMismatchException(type(str()), type(name))
+        if not isinstance(name, str):
+            raise TypeMismatchException(str, type(name))
 
-        if not type(id) == type(int()):
-            raise TypeMismatchException(type(int()), type(id))
+        if not isinstance(channel_id, int):
+            raise TypeMismatchException(int, type(channel_id))
 
-        if not type(ch_description) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_description))
+        if not isinstance(ch_description, str):
+            raise TypeMismatchException(str, type(ch_description))
 
-        if not issubclass(type(ch_type), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()), type(ch_type))
+        if not isinstance(ch_type, BaseType):
+            raise TypeMismatchException(BaseType, type(ch_type))
 
         # Initialize event internal variables
         self.__name = name
         self.__comp_name = comp_name
-        self.__id = id
+        self.__id = channel_id
         self.__ch_desc = ch_description
         self.__ch_type = ch_type
         self.__format_string = ch_format_string

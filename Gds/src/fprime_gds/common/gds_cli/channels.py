@@ -4,10 +4,9 @@ Handles executing the "channels" CLI command for the GDS
 
 from typing import Iterable
 
-from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
-
 from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.testing_fw.api import IntegrationTestAPI

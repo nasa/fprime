@@ -3,11 +3,10 @@ fprime_gds.executables.utils:
 
 Utility functions to enable the executables package to function seamlessly.
 """
-import time
 import atexit
 import signal
 import subprocess
-
+import time
 
 # Python 2.7 compatibility, adding in missing error type
 try:
@@ -23,7 +22,7 @@ class ProcessNotStableException(Exception):
 
     def __init__(self, name, code, lifespan):
         """ Constructor to help with messages"""
-        super(ProcessNotStableException, self).__init__(
+        super().__init__(
             "{} stopped with code {} sooner than {} seconds".format(
                 name, code, lifespan
             )
@@ -72,7 +71,7 @@ def register_process_assassin(process, log=None):
         try:
             if log is not None:
                 log.close()
-        except (KeyboardInterrupt, OSError, InterruptedError, IOError):
+        except (KeyboardInterrupt, OSError, InterruptedError):
             pass
 
     atexit.register(assassin)
@@ -90,14 +89,14 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
     :return: child process should it be needed.
     """
     # Write out run information for the calling user
-    print("[INFO] Running Application: {0}".format(arguments[0]))
+    print("[INFO] Running Application: {}".format(arguments[0]))
     # Attempt to open a log file
     file_handler = None
     try:
         if logfile is not None:
-            print("[INFO] Log File: {0}".format(logfile))
+            print("[INFO] Log File: {}".format(logfile))
             file_handler = open(logfile, "wb", 0)
-    except IOError as exc:
+    except OSError as exc:
         raise AppWrapperException(
             "Failed to open: {} with error {}.".format(logfile, str(exc))
         )
@@ -119,8 +118,6 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
         return child
     except Exception as exc:
         raise AppWrapperException(
-            "Failed to run application: {0}. Error: {1}".format(
-                " ".join(arguments), exc
-            )
+            "Failed to run application: {}. Error: {}".format(" ".join(arguments), exc)
         )
     return None

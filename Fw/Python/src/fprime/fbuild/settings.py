@@ -6,8 +6,8 @@ settings from the settings.default file that is part of the F prime deployment d
 
 @author mstarch
 """
-import os
 import configparser  # Written after PY2 eol
+import os
 
 
 class IniSettings:
@@ -158,10 +158,6 @@ class IniSettings:
 class FprimeLocationUnknownException(Exception):
     """ Fprime location could not be determined """
 
-    pass
-
 
 class FprimeSettingsException(Exception):
     """ An exception for handling F prime settings misconfiguration """
-
-    pass

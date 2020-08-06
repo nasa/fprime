@@ -187,7 +187,7 @@ class StringValidator(wx.Validator):
         textCtrl = self.GetWindow()
         text = textCtrl.GetValue()
 
-        if text != u"":
+        if text != "":
             textCtrl.SetBackgroundColour("white")
             return True
         else:

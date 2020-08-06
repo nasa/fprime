@@ -10,12 +10,10 @@ describe the packet with ID 5 and channels A, B, and C in that order.
 
 @bug No known bugs
 """
-from __future__ import absolute_import
-
-from . import data_template
-from . import ch_template
 
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+
+from . import ch_template, data_template
 
 
 class PktTemplate(data_template.DataTemplate):
@@ -33,15 +31,15 @@ class PktTemplate(data_template.DataTemplate):
                          order of the list is the order of the channels in the
                          packet.
         """
-        # TODO is this check necessary
-        if not type(pkt_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(pkt_id))
+        super().__init__()
+        if not isinstance(pkt_id, int):
+            raise TypeMismatchException(int, type(pkt_id))
 
-        if not type(pkt_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(pkt_name))
+        if not isinstance(pkt_name, str):
+            raise TypeMismatchException(str, type(pkt_name))
 
-        if not type(ch_temp_list) == type(list()):
-            raise TypeMismatchException(type(list()), type(ch_temp_list))
+        if not isinstance(ch_temp_list, list):
+            raise TypeMismatchException(list, type(ch_temp_list))
 
         for ch in ch_temp_list:
             if not isinstance(ch, ch_template.ChTemplate):

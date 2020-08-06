@@ -11,15 +11,15 @@ enable both file uplink and downlink to share the same structures. This includes
 
 @author mstarch, and Blake A. Harriman's work
 """
-import os
+import datetime
 import enum
+import logging
+import os
 import struct
 import threading
-import datetime
-import logging
 
 
-class Timeout(object):
+class Timeout:
     """
     Starts a timeout thread and will respond with a callback to a function when the timeout expires.
     """
@@ -76,7 +76,7 @@ class FileStates(enum.Enum):
     END_WAIT = 3  # Waiting for the handshake for CANCEL or END packet
 
 
-class CFDPChecksum(object):
+class CFDPChecksum:
     """ Class running the CFDG checksum """
 
     def __init__(self):
@@ -102,19 +102,19 @@ class CFDPChecksum(object):
         return self.__value
 
 
-class TransmitFile(object):
+class TransmitFile:
     """
     Wraps the file information needed for the uplink and downlinking processes.
     """
 
-    def __init__(self, source, destination, log_dir=None):
+    def __init__(self, source, destination, size=None, log_dir=None):
         """ Construct the uplink file """
         self.__mode = None
         self.__start = None
         self.__end = None
         self.__source = source
         self.__destination = destination
-        self.__size = os.path.getsize(source)
+        self.__size = size if size is not None else os.path.getsize(source)
         self.__seek = 0
         self.__state = "QUEUED"
         self.__fd = None

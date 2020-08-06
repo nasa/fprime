@@ -8,12 +8,15 @@ command with the user-provided arguments on the GDS
 
 import abc
 import argparse
-from copy import deepcopy
 import os
 import sys
+from copy import deepcopy
 from typing import Callable, List
 
 import argcomplete
+
+from fprime_gds.executables.cli import GdsParser
+
 
 """
 TODO: These modules are now only lazily loaded below as needed, due to slow
@@ -25,7 +28,6 @@ import fprime_gds.common.gds_cli.command_send as command_send
 import fprime_gds.common.gds_cli.events as events
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 """
-from fprime_gds.executables.cli import GdsParser
 
 
 def add_connection_arguments(parser: argparse.ArgumentParser):
@@ -145,7 +147,6 @@ class CliCommandParserBase(abc.ABC):
         Creates the parser for this command as a subparser of the given one,
         and then returns it
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -154,7 +155,6 @@ class CliCommandParserBase(abc.ABC):
         Add all the required and optional arguments for this command to the
         given parser
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -162,7 +162,6 @@ class CliCommandParserBase(abc.ABC):
         """
         Executes the appropriate function when this command is called
         """
-        pass
 
 
 class ChannelsParser(CliCommandParserBase):

@@ -13,14 +13,12 @@ are supported herein:
 
 @author mstarch
 """
-from __future__ import print_function
-import os
-import sys
 import argparse
+import os
 import shutil
+import sys
 
 import fprime.fbuild
-
 
 UT_SUFFIX = "-ut"
 ACTION_MAP = {
@@ -248,6 +246,7 @@ def parse_args(args):
     cmake_args, make_args = validate(parsed)
     return parsed, cmake_args, make_args, automatic_build_dir
 
+
 def confirm():
     """
     Confirms the removal of the file with a yes or no input.
@@ -255,18 +254,12 @@ def confirm():
     """
     # Loop "forever"
     while True:
-        # Py 2/3
-        prompter = input
-        try:
-            prompter = raw_input
-        except NameError:
-            pass
-        confirm = prompter("Purge this directory (yes/no)?")
-        if confirm.lower() in ["y", "yes"]:
+        confirm_input = input("Purge this directory (yes/no)?")
+        if confirm_input.lower() in ["y", "yes"]:
             return True
-        elif confirm.lower() in ["n", "no"]:
+        elif confirm_input.lower() in ["n", "no"]:
             return False
-        print("{} is invalid.  Please use 'yes' or 'no'".format(confirm))
+        print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
 
 
 def purge_functionality(build_dir, force=False):
@@ -323,7 +316,7 @@ def utility_entry(args=None):
                       .format("automatic" if automatic_build_dir else "specified", parsed.build_dir + UT_SUFFIX))
                 fprime.fbuild.builder().generate_build(parsed.path, parsed.build_dir + UT_SUFFIX, cmake_args)
             except Exception as exc:
-                print("[INFO] Error detected, automatically cleaning up failed-generation")
+                print("[INFO] Error detected, automatically cleaning up failed-generation. Error: {}".format(exc))
                 purge_functionality(parsed.build_dir, True)
                 raise
         else:

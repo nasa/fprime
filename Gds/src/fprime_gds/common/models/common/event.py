@@ -3,62 +3,67 @@ Created on Feb. 9, 2015
 
 @author: reder
 """
-from __future__ import print_function
+
+import traceback
+from enum import Enum
+
+from fprime.common.models.serialize.type_base import BaseType
 
 # Import the types this way so they do not need prefixing for execution.
-from fprime.common.models.serialize.type_exceptions import TypeException
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
-from fprime.common.models.serialize.type_base import BaseType
-from enum import Enum
-import traceback
+from fprime.common.models.serialize.type_exceptions import (
+    TypeException,
+    TypeMismatchException,
+)
 
 Severity = Enum(
     "Severity", "COMMAND ACTIVITY_LO ACTIVITY_HI WARNING_LO WARNING_HI DIAGNOSTIC FATAL"
 )
 
 
-class Event(object):
+class Event:
     """
     Event class is for deserializing log event messages.
     THis is essentially the equivalent of EVR's in MSL, SMAP, etc.
     """
 
-    def __init__(self, name, id, severity, format_string, event_description, arguments):
+    def __init__(
+        self, name, event_id, severity, format_string, event_description, arguments
+    ):
         """
         Constructor
         """
 
         ## Make sure correct types are passed
 
-        if not type(name) == type(str()):
-            raise TypeMismatchException(type(str()), type(name))
+        if not isinstance(name, str):
+            raise TypeMismatchException(str, type(name))
 
-        if not type(id) == type(int()):
-            raise TypeMismatchException(type(int()), type(id))
+        if not isinstance(event_id, int):
+            raise TypeMismatchException(int, type(event_id))
 
-        if not type(format_string) == type(str()):
-            raise TypeMismatchException(type(str()), type(format_string))
+        if not isinstance(format_string, str):
+            raise TypeMismatchException(str, type(format_string))
 
-        if not type(event_description) == type(str()):
-            raise TypeMismatchException(type(str()), type(event_description))
+        if not isinstance(event_description, str):
+            raise TypeMismatchException(str, type(event_description))
 
-        if not type(arguments) == type(list()):
-            raise TypeMismatchException(type(list()), type(arguments))
+        if not isinstance(arguments, list):
+            raise TypeMismatchException(list, type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(str()):
-                raise TypeMismatchException(type(str()), type(argname))
+            if not isinstance(argname, str):
+                raise TypeMismatchException(str, type(argname))
             #
-            if not type(argdesc) == type(str()):
-                raise TypeMismatchException(type(str()), type(argdesc))
+            if not isinstance(argdesc, str):
+                raise TypeMismatchException(str, type(argdesc))
             #
-            if not issubclass(type(argtype), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()), type(argtype))
+            if not isinstance(argtype, BaseType):
+                raise TypeMismatchException(BaseType, type(argtype))
 
         # Initialize event internal variables
         self.__name = name
-        self.__id = id
+        self.__id = event_id
         self.__severity = severity
         self.__format_string = format_string
         self.__event_description = event_description

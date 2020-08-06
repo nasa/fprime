@@ -14,15 +14,15 @@ Example data structure:
 
 @bug No known bugs
 """
-from __future__ import print_function
-import copy
 
-from fprime_gds.common.decoders import decoder
-from fprime_gds.common.data_types import event_data
-from fprime.common.models.serialize import u32_type
+import copy
+import traceback
+
+import fprime.common.models.serialize.numerical_types
 from fprime.common.models.serialize import time_type
 from fprime.common.models.serialize.type_exceptions import TypeException
-import traceback
+from fprime_gds.common.data_types import event_data
+from fprime_gds.common.decoders import decoder
 
 
 class EventDecoder(decoder.Decoder):
@@ -39,7 +39,7 @@ class EventDecoder(decoder.Decoder):
         Returns:
             An initialized EventDecoder object.
         """
-        super(EventDecoder, self).__init__()
+        super().__init__()
         self.__dict = event_dict
 
     def decode_api(self, data):
@@ -59,7 +59,7 @@ class EventDecoder(decoder.Decoder):
         ptr = 0
 
         # Decode event ID here...
-        id_obj = u32_type.U32Type()
+        id_obj = fprime.common.models.serialize.numerical_types.U32Type()
         id_obj.deserialize(data, ptr)
         ptr += id_obj.getSize()
         event_id = id_obj.val

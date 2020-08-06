@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-import sys
-import pexpect
-import os
-import threading
-import signal
-import time
 import Queue
-import wx
+import signal
+import sys
+import threading
+import time
+
+import pexpect
+
 import PexpectRunnerConsolImpl
+import wx
 
 
 def sighandler(signum, frame):
@@ -27,7 +28,7 @@ def process_poller():
     child = pexpect.spawn(command)
     logfd = open(sys.argv[1], "w")
     child.logfile = logfd
-    logfd.write('%s: Running command "%s"\n' % (sys.argv[0], command))
+    logfd.write('{}: Running command "{}"\n'.format(sys.argv[0], command))
     time.sleep(2)
     while True:
         try:
@@ -97,7 +98,7 @@ def main(argv=None):
     signal.signal(signal.SIGTERM, sighandler)
     signal.signal(signal.SIGCHLD, sighandler)
 
-    wx.CallLater(1L, poll_text)
+    wx.CallLater(1, poll_text)
     app.MainLoop()
 
     exitThread = True

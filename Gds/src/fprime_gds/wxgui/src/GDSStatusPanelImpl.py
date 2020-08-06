@@ -1,7 +1,6 @@
-from __future__ import absolute_import
 import wx
+
 from . import GDSStatusPanelGUI
-import binascii
 
 ###########################################################################
 ## Class StatusImpl
@@ -48,7 +47,7 @@ class StatusImpl(GDSStatusPanelGUI.Status):
             "["
             + " ".join(
                 [
-                    "{0:2x}".format(byte if type(byte) != str else ord(byte))
+                    "{:2x}".format(byte if type(byte) != str else ord(byte))
                     for byte in data
                 ]
             )
@@ -67,7 +66,7 @@ class StatusImpl(GDSStatusPanelGUI.Status):
             "["
             + " ".join(
                 [
-                    "{0:2x}".format(byte if type(byte) != str else ord(byte))
+                    "{:2x}".format(byte if type(byte) != str else ord(byte))
                     for byte in data
                 ]
             )

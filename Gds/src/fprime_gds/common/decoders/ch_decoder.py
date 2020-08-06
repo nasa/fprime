@@ -16,13 +16,13 @@ Example data that would be sent to a decoder that parses channels:
 
 @bug No known bugs
 """
-from __future__ import print_function
+
 import copy
 
-from fprime_gds.common.decoders.decoder import Decoder
-from fprime_gds.common.data_types.ch_data import ChData
-from fprime.common.models.serialize.u32_type import U32Type
 from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.numerical_types import U32Type
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.decoders.decoder import Decoder
 
 
 class ChDecoder(Decoder):
@@ -39,7 +39,7 @@ class ChDecoder(Decoder):
         Returns:
             An initialized channel decoder object.
         """
-        super(ChDecoder, self).__init__()
+        super().__init__()
         self.__dict = ch_dict
 
     def decode_api(self, data):

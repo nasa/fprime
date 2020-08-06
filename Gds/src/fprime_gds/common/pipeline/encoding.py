@@ -6,16 +6,17 @@ and decoding into a single component that the be composed into the standard pipe
 
 @mstarch
 """
-# Encoders and Decoders
-import fprime_gds.common.encoders.file_encoder
-import fprime_gds.common.encoders.cmd_encoder
+import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.event_decoder
 import fprime_gds.common.decoders.file_decoder
-import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.pkt_decoder
+import fprime_gds.common.encoders.cmd_encoder
+
+# Encoders and Decoders
+import fprime_gds.common.encoders.file_encoder
 
 
-class EncodingDecoding(object):
+class EncodingDecoding:
     """
     Sets up and runs the encoding and decoding for the standard pipeline. This include the following encoders and
     decoders for standard setups:
@@ -142,7 +143,8 @@ class EncodingDecoding(object):
         Registers a history with the standard pipeline.
         :param consumer: consumer of packets
         """
-        self.command_subscribers.append(consumer)
+        if self.packet_decoder is not None:
+            self.packet_decoder.register(consumer)
 
     def deregister_packet_consumer(self, consumer):
         """

@@ -9,7 +9,7 @@ to compose in this code.
 import fprime_gds.common.history.ram
 
 
-class Histories(object):
+class Histories:
     """
     Class to handle the individual histories. This handles the following histories:
 
