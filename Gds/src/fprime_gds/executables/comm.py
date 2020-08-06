@@ -15,24 +15,22 @@ Note: assuming the module containing the ground adapter has been imported, then 
 
 @author lestarch
 """
-from __future__ import print_function
-import sys
-import queue
+
 import argparse
-import threading
 import logging
-import fprime_gds.common.logger
+import queue
+import sys
+import threading
 
 # Required adapters built on standard tools
 import fprime_gds.common.adapters.base
 import fprime_gds.common.adapters.ground
 import fprime_gds.common.adapters.ip
-from fprime_gds.common.adapters.framing import FpFramerDeframer
-
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime_gds.common.utils.data_desc_type import DataDescType
-
+import fprime_gds.common.logger
 import fprime_gds.executables.cli
+from fprime.common.models.serialize.numerical_types import U32Type
+from fprime_gds.common.adapters.framing import FpFramerDeframer
+from fprime_gds.common.utils.data_desc_type import DataDescType
 
 # Uses non-standard PIP package pyserial, so test the waters before getting a hard-import crash
 try:
@@ -44,7 +42,7 @@ except ImportError:
 LOGGER = logging.getLogger("comm")
 
 
-class Uplinker(object):
+class Uplinker:
     """
     Pulls out the code useful for uplink into a single designated place. This will run as a thread, which essentially
     calls does the following:
@@ -121,7 +119,7 @@ class Uplinker(object):
             try:
                 self.uplink()
             except UplinkFailureException as ufe:
-                LOGGER.warning("Uplink exception occured: {}".format(ufe))
+                LOGGER.warning("Uplink exception occured: %s", (ufe))
             # Shutdown exception handling, only keep exception when running
             except OSError:
                 if self.running:
@@ -134,7 +132,7 @@ class UplinkFailureException(Exception):
     """
 
 
-class Downlinker(object):
+class Downlinker:
     """
     Handles the actions associated with downlinking. This boils down to the following steps:
 
@@ -193,53 +191,6 @@ class Downlinker(object):
         """
         while self.running:
             self.downlink()
-
-
-def parse_args(args):
-    """
-    Parse the arguments to this application, then return the constructed namespace argument.
-    :param args: list of arguments to parse
-    :return: namespace argument
-    """
-    parser = argparse.ArgumentParser(
-        description="Connects data from F prime flight software to the GDS tcp server"
-    )
-    # Setup this parser to handle MiddleWare arguments
-    fprime_gds.executables.cli.MiddleWareParser.add_args(parser)
-
-    # Add a parser for each adapter
-    subparsers = parser.add_subparsers(
-        help="Type of adapter used for processing", dest="subcommand"
-    )
-    for (
-        adapter_name
-    ) in fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys():
-        adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[
-            adapter_name
-        ]
-        # Check adapter real quick before moving on
-        if not hasattr(adapter, "get_arguments") or not callable(
-            getattr(adapter, "get_arguments", None)
-        ):
-            LOGGER.error(
-                "'{}' does not have 'get_arguments' method, skipping.".format(
-                    adapter_name
-                )
-            )
-            continue
-        subparse = subparsers.add_parser(adapter_name)
-        # Add arguments for the parser
-        for argument in adapter.get_arguments().keys():
-            subparse.add_argument(*argument, **adapter.get_arguments()[argument])
-    args = parser.parse_args(args)
-    try:
-        extras = fprime_gds.executables.cli.refine(parser, args)
-        fprime_gds.common.logger.configure_py_log(extras["logs"], "comm-adapter.log")
-    except ValueError as exc:
-        print("[ERROR] {}".format(exc), file=sys.stderr)
-        parser.print_help(sys.stderr)
-        sys.exit(-1)
-    return args
 
 
 def main():

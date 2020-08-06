@@ -12,6 +12,7 @@ from typing import Callable
 from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 
+
 """
 NOTE: Module is now lazy-loaded below for performance reasons; if possible, find
 a better way to do this
@@ -109,10 +110,8 @@ def get_cmd_template_string(item: CmdTemplate, json: bool = False,) -> str:
             # TODO: Find good way to combine this w/ description, if one exists?
             arg_description = str(arg_type.keys())
 
-        cmd_string += "\t%s (%s): %s\n" % (
-            arg_name,
-            type(arg_type).__name__,
-            arg_description,
+        cmd_string += "\t{} ({}): {}\n".format(
+            arg_name, type(arg_type).__name__, arg_description,
         )
 
     return cmd_string

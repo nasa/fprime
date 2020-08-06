@@ -103,5 +103,4 @@ class BaseAdapter(abc.ABC):
         :return: newly constructed adapter
         """
         adapter = cls.get_adapters()[adapter_name]
-        # TODO: check that the arguments for existance/validity to front-load errors
         return adapter(**cls.process_arguments(adapter, args))

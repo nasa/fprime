@@ -6,8 +6,8 @@ import os
 
 import fprime_gds.common.handlers
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.cmd_data import CmdData
+from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.pkt_data import PktData
 
 
@@ -37,8 +37,6 @@ class DataLogger(fprime_gds.common.handlers.DataHandler):
         self.f_event.close()
 
     def data_callback(self, data, sender=None):
-        # TODO Ideally, each data object would have an identifier for its type,
-        # or you would have a separate logger object for each
         if isinstance(data, ChData) or isinstance(data, PktData):
             self.f_telem.write(data.get_str(verbose=self.verbose, csv=self.csv) + "\n")
             self.f_telem.flush()

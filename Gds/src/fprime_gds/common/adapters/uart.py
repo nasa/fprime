@@ -7,13 +7,15 @@ drivers.
 
 @author lestarch
 """
-from __future__ import print_function
 
 import logging
+import sys
+
+import fprime_gds.common.adapters.base
+
 import serial
 from serial.tools import list_ports
 
-import fprime_gds.common.adapters.base
 
 LOGGER = logging.getLogger("serial_adapter")
 
@@ -100,7 +102,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             assert written == len(frame)
             return True
         except serial.serialutil.SerialException as exc:
-            LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
+            LOGGER.warning("Serial exception caught: %s. Reconnecting.", (str(exc)))
             self.close()
         return False
 
@@ -124,7 +126,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
                     self.serial.in_waiting
                 )  # Drain the incoming data queue
         except serial.serialutil.SerialException as exc:
-            LOGGER.warning("Serial exception caught: {}. Reconnecting.".format(exc))
+            LOGGER.warning("Serial exception caught: %s. Reconnecting.", (str(exc)))
             self.close()
         return data
 

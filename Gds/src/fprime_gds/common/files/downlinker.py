@@ -9,17 +9,14 @@ to the correct log files and destination filse
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 import logging
 import os
 
 import fprime.constants
 import fprime_gds.common.handlers
-from fprime_gds.common.files.helpers import FileStates
-from fprime_gds.common.files.helpers import file_to_dict
-from fprime_gds.common.files.helpers import TransmitFile
 from fprime_gds.common.data_types.file_data import FilePacketType
+from fprime_gds.common.files.helpers import FileStates, TransmitFile, file_to_dict
 
 LOGGER = logging.getLogger("downlink")
 LOGGER.setLevel(logging.INFO)
@@ -89,6 +86,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         self.active = TransmitFile(
             source_path,
             os.path.join(self.__directory, self.sanitize(dest_path)),
+            size,
             self.__log_dir,
         )
         self.active.open("wb+")
@@ -129,7 +127,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             )
         self.sequence += 1
 
-    def handle_cancel(self, data):
+    def handle_cancel(self, _):
         """
         Handle cancel packet.
         :param data: cancel packet, ignored.

@@ -9,34 +9,35 @@ an interface for creating additional GDS windows that use this pipeline
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
-from fprime_gds.common.loaders import ch_py_loader, ch_xml_loader
-from fprime_gds.common.loaders import event_py_loader, event_xml_loader
-from fprime_gds.common.loaders import pkt_xml_loader
-from fprime_gds.common.loaders import cmd_py_loader, cmd_xml_loader
-
-from fprime_gds.common.decoders import ch_decoder
-from fprime_gds.common.decoders import event_decoder
-from fprime_gds.common.decoders import pkt_decoder
-from fprime_gds.common.decoders import file_decoder
-from fprime_gds.common.encoders import cmd_encoder
-
-from fprime_gds.common.distributor import distributor
+import datetime
+import os
 
 from fprime_gds.common.client_socket import client_socket
-
+from fprime_gds.common.decoders import (
+    ch_decoder,
+    event_decoder,
+    file_decoder,
+    pkt_decoder,
+)
+from fprime_gds.common.distributor import distributor
+from fprime_gds.common.encoders import cmd_encoder
 from fprime_gds.common.files import downlinker
+from fprime_gds.common.loaders import (
+    ch_py_loader,
+    ch_xml_loader,
+    cmd_py_loader,
+    cmd_xml_loader,
+    event_py_loader,
+    event_xml_loader,
+    pkt_xml_loader,
+)
+from fprime_gds.common.logger import data_logger
 
 from . import GDSMainFrameImpl
 
-from fprime_gds.common.logger import data_logger
 
-import os
-import datetime
-
-
-class MainFrameFactory(object):
+class MainFrameFactory:
     """Factory that creates new windows for the GDS"""
 
     def __init__(self, opts, config):
@@ -125,9 +126,9 @@ class MainFrameFactory(object):
         self.client_socket = client_socket.ThreadedTCPSocketClient()
 
         # Choose the dictionary type we will use
-        if self.opts.generated_path != None:
+        if self.opts.generated_path is not None:
             use_py_dicts = True
-        elif self.opts.xml_dict_path != None:
+        elif self.opts.xml_dict_path is not None:
             use_py_dicts = False
         else:
             raise Exception("No Dictionary path passed in options")
@@ -189,7 +190,7 @@ class MainFrameFactory(object):
         # If a packet specification file is availiable, initialize and register
         # a packet decoder
         # TODO find a cleaner way to handle implementations without a packet spec
-        if self.opts.pkt_spec_path != None:
+        if self.opts.pkt_spec_path is not None:
             self.pkt_ldr = pkt_xml_loader.PktXmlLoader()
             pkt_dict = self.pkt_ldr.get_id_dict(self.opts.pkt_spec_path, ch_name_dict)
             self.pkt_dec = pkt_decoder.PktDecoder(pkt_dict, ch_dict)
@@ -209,7 +210,7 @@ class MainFrameFactory(object):
         self.logger = data_logger.DataLogger(self.log_dir, verbose=True, csv=True)
         self.event_dec.register(self.logger)
         self.ch_dec.register(self.logger)
-        if self.opts.pkt_spec_path != None:
+        if self.opts.pkt_spec_path is not None:
             self.pkt_dec.register(self.logger)
         self.client_socket.register_distributor(self.logger)
         self.cmd_enc.register(self.logger)
@@ -225,7 +226,7 @@ class MainFrameFactory(object):
         self.event_dec.register(frame.event_pnl)
         self.ch_dec.register(frame.telem_pnl)
 
-        if self.opts.pkt_spec_path != None:
+        if self.opts.pkt_spec_path is not None:
             self.pkt_dec.register(frame.telem_pnl)
 
         # Register the status panel so that it can dump ray data to the consol

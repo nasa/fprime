@@ -7,9 +7,10 @@
 @bug No known bugs
 """
 
+from fprime_gds.common.data_types import exceptions
+
 # Custom python modules
 from fprime_gds.common.loaders.xml_loader import XmlLoader
-from fprime_gds.common.data_types import exceptions
 from fprime_gds.common.templates.pkt_template import PktTemplate
 
 
@@ -23,15 +24,6 @@ class PktXmlLoader(XmlLoader):
     NAME_FIELD = "name"  # key to retrieve the packet name
     ID_FIELD = "id"  # key to retrieve the packet id
     CH_NAME_FIELD = "name"  # key to retrieve the name from each ch elem
-
-    def __init__(self):
-        """
-        Constructor
-
-        Returns:
-            An initialized loader object
-        """
-        super(PktXmlLoader, self).__init__()
 
     def get_id_dict(self, path, ch_name_dict):
         """

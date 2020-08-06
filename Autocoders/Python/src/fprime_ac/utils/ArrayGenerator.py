@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#===============================================================================
+# ===============================================================================
 # NAME: EnumGenerator.py
 #
 # DESCRIPTION: A generator to produce serializable enum's
@@ -10,7 +10,7 @@
 #
 # Copyright 2020, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 import sys
 import os
@@ -19,10 +19,11 @@ from fprime_ac.parsers import XmlArrayParser
 from fprime_ac.generators.templates.arrays import array_cpp
 from fprime_ac.generators.templates.arrays import array_hpp
 
+
 def open_file(name, type):
-    '''
+    """
     Open the file for writing
-    '''
+    """
     #
     gse_serializable_install_dir = "DefaultDict" + os.sep + "serializable"
     if type == "py":
@@ -36,16 +37,32 @@ def open_file(name, type):
     else:
         filename = name + "ArrayAc." + type
     #
-    fp = open(filename,'w')
-    if fp == None:
-        print("Could not open file %s" % filename)
-        sys.exit(-1)
+    fp = open(filename, "w")
     return fp
 
-def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comment, include_headers, import_serializables, import_enums, import_arrays):
-    '''
+
+def write_template(
+    fp,
+    c,
+    name,
+    namespace,
+    arr_type,
+    arr_typeinfo,
+    arr_size,
+    format_string,
+    default_values,
+    type_id,
+    string_size,
+    include_path,
+    comment,
+    include_headers,
+    import_serializables,
+    import_enums,
+    import_arrays,
+):
+    """
     Set up and write out templates here
-    '''
+    """
     c.name = name
     c.namespace = namespace
     c.type = arr_type
@@ -53,7 +70,7 @@ def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, for
     c.size = arr_size
     c.format = format_string
     c.default = default_values
-    c.uuid = type_id # uuid = type_id
+    c.uuid = type_id  # uuid = type_id
     c.string_size = string_size
     c.comment = comment
     c.include_headers = include_headers
@@ -62,6 +79,7 @@ def write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, for
     c.import_arrays = import_arrays
     fp.writelines(c.__str__())
 
+
 def generate_array(xml_file):
     """
     Produce a *Ac.hpp, *Ac.cpp, and *.py files for serializable arrays.
@@ -69,7 +87,7 @@ def generate_array(xml_file):
     generate nothing.
     """
     xml = XmlParser.XmlParser(xml_file)
-    if xml() == 'array':
+    if xml() == "array":
         #
         # Parse array xml here
         #
@@ -114,19 +132,56 @@ def generate_array(xml_file):
         #
         fp = open_file(name, "hpp")
         c = array_hpp.array_hpp()
-        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comment, headers, serials, enums, arrays)
+        write_template(
+            fp,
+            c,
+            name,
+            namespace,
+            arr_type,
+            arr_typeinfo,
+            arr_size,
+            format_string,
+            default_values,
+            type_id,
+            string_size,
+            include_path,
+            comment,
+            headers,
+            serials,
+            enums,
+            arrays,
+        )
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = array_cpp.array_cpp()
-        write_template(fp, c, name, namespace, arr_type, arr_typeinfo, arr_size, format_string, default_values, type_id, string_size, include_path, comment, headers, serials, enums, arrays)
+        write_template(
+            fp,
+            c,
+            name,
+            namespace,
+            arr_type,
+            arr_typeinfo,
+            arr_size,
+            format_string,
+            default_values,
+            type_id,
+            string_size,
+            include_path,
+            comment,
+            headers,
+            serials,
+            enums,
+            arrays,
+        )
         fp.close()
         return True
     else:
         return False
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     xmlfile = sys.argv[1]
     print(generate_array(xmlfile))

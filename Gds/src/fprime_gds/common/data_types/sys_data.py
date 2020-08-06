@@ -11,13 +11,12 @@ of the data as well as data such as channel value or argument value.
 @bug No known bugs
 """
 
+import fprime_gds.common.utils.jsonable
 from fprime.common.models.serialize import time_type
 from fprime_gds.common.templates import data_template
 
-import fprime_gds.common.utils.jsonable
 
-
-class SysData(object):
+class SysData:
     """
     The SysData class defines the interface for system data classes which are
     for specific data readings/events
@@ -33,11 +32,11 @@ class SysData(object):
         Returns:
             An initialized SysData object
         """
-        if not self.id:
+        if not hasattr(self, "id"):
             self.id = 0
-        if not self.template:
+        if not hasattr(self, "template"):
             self.template = data_template.DataTemplate()
-        if not self.time:
+        if not hasattr(self, "time"):
             self.time = time_type.TimeType()
 
     def get_id(self):
@@ -89,4 +88,4 @@ class SysData(object):
 
         # Compare by id second (just let multiple events at the same time with
         # the same id be counted as equal
-        return time_type.cmp(x.id, y.id)
+        return time_type.TimeType.compare(x.id, y.id)

@@ -6,18 +6,15 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
-import wx
-from . import GDSChannelTelemetryPanelGUI
-import inspect
-from . import GDSChannelFilterDialogImpl
 from copy import deepcopy
 
+import wx
 from fprime_gds.common.data_types.ch_data import *
 from fprime_gds.common.data_types.pkt_data import *
-from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime_gds.common.utils.config_manager import ConfigManager
+
+from . import GDSChannelFilterDialogImpl, GDSChannelTelemetryPanelGUI
 
 ###########################################################################
 ## Class ChannelTelemetryImpl
@@ -161,7 +158,7 @@ class ChannelTelemetryImpl(GDSChannelTelemetryPanelGUI.ChannelTelemetry):
             )
 
         menu = wx.Menu()
-        cpy = menu.Append(self.copy_context_id, "copy")
+        menu.Append(self.copy_context_id, "copy")
 
         self.PopupMenu(menu)
         menu.Destroy()
@@ -219,7 +216,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
         wx.dataview.PyDataViewModel.__init__(self)
 
-        if config == None:
+        if config is None:
             config = ConfigManager()
 
         self.config = config
@@ -377,7 +374,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         # Fetch the data object for this item.
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
-            if node.val_obj != None:
+            if node.val_obj is not None:
                 if self.parent.ChannelTelemShowHexCheckBox.Value == True:
                     mapper = {
                         0: str(node.template.get_full_name()),
@@ -396,8 +393,8 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
                 mapper = {
                     0: str(node.template.get_full_name()),
                     1: str(node.template.id),
-                    2: u"",
-                    3: u"",
+                    2: "",
+                    3: "",
                 }
 
             return mapper[col]
@@ -420,44 +417,44 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
         node = self.ItemToObject(item)
         if isinstance(node, ChData):
 
-            if node.val_obj != None:
+            if node.val_obj is not None:
                 if (
-                    node.template.low_red != None
+                    node.template.low_red is not None
                     and node.val_obj.val < node.template.low_red
                 ):
 
                     attr.SetColour(self.red)
                     attr.SetBold(True)
                 elif (
-                    node.template.high_red != None
+                    node.template.high_red is not None
                     and node.val_obj.val > node.template.high_red
                 ):
 
                     attr.SetColour(self.red)
                     attr.SetBold(True)
                 elif (
-                    node.template.low_orange != None
+                    node.template.low_orange is not None
                     and node.val_obj.val < node.template.low_orange
                 ):
 
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
                 elif (
-                    node.template.high_orange != None
+                    node.template.high_orange is not None
                     and node.val_obj.val > node.template.high_orange
                 ):
 
                     attr.SetColour(self.orange)
                     attr.SetBold(True)
                 elif (
-                    node.template.low_yellow != None
+                    node.template.low_yellow is not None
                     and node.val_obj.val < node.template.low_yellow
                 ):
 
                     attr.SetColour(self.yellow)
                     attr.SetBold(True)
                 elif (
-                    node.template.high_yellow != None
+                    node.template.high_yellow is not None
                     and node.val_obj.val > node.template.high_yellow
                 ):
 

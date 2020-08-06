@@ -7,11 +7,11 @@ communications layer.
 
 @author mstarch
 """
-import fprime_gds.common.files.uplinker
 import fprime_gds.common.files.downlinker
+import fprime_gds.common.files.uplinker
 
 
-class Filing(object):
+class Filing:
     """
     A composition object that holds references to a FileUplinker and file downlinker.
     """

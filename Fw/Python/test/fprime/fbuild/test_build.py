@@ -7,9 +7,10 @@ that they function as expected.
 @author mstarch
 """
 import os
-import pytest
 import shutil
 import tempfile
+
+import pytest
 
 import fprime.fbuild
 

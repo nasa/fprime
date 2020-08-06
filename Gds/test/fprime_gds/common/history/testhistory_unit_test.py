@@ -1,15 +1,15 @@
-import unittest
-import sys
 import os
+import sys
+import unittest
+
+from fprime_gds.common.history.test import TestHistory
+from fprime_gds.common.testing_fw import predicates
 
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, "../../../../src")
 fprimeName = os.path.join(filename, "../../../../../Fw/Python/src")
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
-
-from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.history.test import TestHistory
 
 
 class HistoryTestCases(unittest.TestCase):

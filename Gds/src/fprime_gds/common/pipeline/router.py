@@ -8,6 +8,7 @@ originating object correctly.
 @author mstarch
 """
 import struct
+
 import fprime_gds.common.handlers
 
 
@@ -23,6 +24,7 @@ class OutgoingRouter(
         """
         Construct the outgoing router with a dictioanry to map IDs
         """
+        super().__init__()
 
     def data_callback(self, data, sender=None):
         """

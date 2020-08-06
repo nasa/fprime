@@ -3,19 +3,15 @@ Created on August 16, 2019
 
 @author: tcanham
 """
-from __future__ import print_function
 
 import struct
-
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
-
 import zlib
 
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+from fprime.common.models.serialize.numerical_types import U8Type, U16Type, U32Type
 
-class SeqBinaryWriter(object):
+
+class SeqBinaryWriter:
     """
     Write out the Binary (ASTERIA) form of sequencer file.
     """
@@ -36,8 +32,8 @@ class SeqBinaryWriter(object):
     def __binaryCmdRecord(self, cmd_obj):
         """
         Return the binary command record the sequencer is expecting.
-        @todo: Currently the command descriptor is always zero for immediate commands.
-        @todo: Execution time tags needed in command objects and seq_panel.
+        @todo: Currently the command descriptor is always zero for immediate commands and execution time tags needed in
+        command objects and seq_panel.
         """
 
         def __time_tag(cmd_obj):
@@ -168,7 +164,7 @@ class SeqBinaryWriter(object):
         return zlib.crc32(buff) % (1 << 32)
 
 
-class SeqAsciiWriter(object):
+class SeqAsciiWriter:
     """
     Write out the ASCII record form of sequencer file.
     """
@@ -193,7 +189,7 @@ class SeqAsciiWriter(object):
         opcode = cmd_obj.getOpCode()
         args = cmd_obj.getArgs()
         #
-        cmd = "%s (0x%x)" % (mnemonic, int(opcode))
+        cmd = "{} (0x{:x})".format(mnemonic, int(opcode))
         for arg in args:
             cmd += ", %s" % arg[2].val
         return cmd

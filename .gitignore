@@ -66,7 +66,10 @@ py_dict
 build-fprime-automatic*
 
 /Ref/bin
+/RPI/bin
 /ci-venv/
 /ci-logs*
 TesterBase.*
 GTestBase.*
+/Fw/Python/.eggs
+/Gds/src/fprime_gds.egg-info

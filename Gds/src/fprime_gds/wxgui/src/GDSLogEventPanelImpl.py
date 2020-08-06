@@ -1,11 +1,11 @@
 # TODO Documentation
-from __future__ import absolute_import
 
 import wx
-from . import GDSLogEventPanelGUI
 from fprime_gds.common.data_types.event_data import EventData
-from fprime_gds.common.utils.event_severity import EventSeverity
 from fprime_gds.common.utils.config_manager import ConfigManager
+from fprime_gds.common.utils.event_severity import EventSeverity
+
+from . import GDSLogEventPanelGUI
 
 ###########################################################################
 ## Class LogEventsImpl
@@ -33,7 +33,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
         self.EventLogDataListCtl.AppendTextColumn("Name", 1, width=150)
         self.EventLogDataListCtl.AppendTextColumn("ID", 2)
         self.EventLogDataListCtl.AppendTextColumn("Severity", 3, width=110)
-        self.EventLogDataListCtl.AppendTextColumn(u"Message", 4)
+        self.EventLogDataListCtl.AppendTextColumn("Message", 4)
         self.EventLogSeverityComboBox.Append("")
         for i in EventSeverity:
             self.EventLogSeverityComboBox.Append(i.name)
@@ -144,7 +144,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
             )
 
         menu = wx.Menu()
-        cpy = menu.Append(self.copy_context_id, "copy")
+        menu.Append(self.copy_context_id, "copy")
 
         self.PopupMenu(menu)
         menu.Destroy()
@@ -155,7 +155,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
 
     def onEventLogApplyFilterButtonClick(self, event):
         search_term = self.EventLogSeachKeywordTextCtl.GetLineText(0)
-        if search_term == u"":
+        if search_term == "":
             search_term = None
         try:
             severity = EventSeverity[self.EventLogSeverityComboBox.GetStringSelection()]
@@ -189,7 +189,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
                    for colors. If None, defaults used
         """
 
-        if config == None:
+        if config is None:
             config = ConfigManager()
 
         self.config = config
@@ -383,7 +383,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
         st, sev = self.current_filter
 
-        if st == None and sev == None:
+        if st is None and sev is None:
             self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
             self.data_filtered = list()
         elif st is not None and st in new_data.get_str():
@@ -413,7 +413,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         else:
             self.current_filter = (search_term, severity)
 
-        if search_term == None and severity == None:
+        if search_term is None and severity is None:
             # No filter - restore all data to the control
             for o in self.data_filtered:
                 self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
