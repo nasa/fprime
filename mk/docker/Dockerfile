@@ -32,19 +32,17 @@ ENV LC_ALL C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
-## Example docker container with F prime code copied in:
-#FROM fprime-base AS fprime-docker
-#    COPY . /opt/fprime
-#    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-#        pip install wheel && \
-#        pip install /opt/fprime/Fw/Python/ && \
-#        pip install /opt/fprime/Gds/ && \
-#        rm -r ~/.cache/pip && \
-#        chown -R fprime:fprime /opt/fprime-venv && \
-#        chmod -R 775 /opt/fprime-venv
-#ENV VIRTUAL_ENV "/opt/fprime-venv"
-#ENV PYTHONHOME "/opt/fprime-venv"
-#ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+FROM fprime-base AS fprime-docker
+RUN     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
+        python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+        pip install -U wheel setuptools pip && \
+        pip install /opt/fprime/Fw/Python/ && \
+        pip install /opt/fprime/Gds/ && \
+        rm -r ~/.cache/pip && \
+        chown -R fprime:fprime /opt/fprime-venv && \
+        chmod -R 775 /opt/fprime-venv
+ENV VIRTUAL_ENV "/opt/fprime-venv"
+ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ####
 # F Prime CI Image:   **** Must Be Last Image In File ****
@@ -56,15 +54,16 @@ ENTRYPOINT ["/bin/bash"]
 # the --target argument for building the docker image.  As such, this image is the one built and
 # used for Jenkins.
 ####
-FROM fprime-base AS jenkins-ci
+FROM fprime-docker AS jenkins-ci
 RUN groupadd jenkins && \
     groupmod -g 1003 jenkins && \
     useradd -ms /bin/bash -g root -G sudo,jenkins,fprime -p jenkins jenkins && \
-    usermod -u 1003 jenkins
+    usermod -u 1003 jenkins && \
+    usermod -a -G fprime jenkins
 ENV HOST jenkins
 ENV USER jenkins
-# Paths and entrypoinys
-ENV PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Paths and entrypoints
+ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
