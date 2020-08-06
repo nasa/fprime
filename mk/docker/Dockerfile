@@ -22,6 +22,7 @@ RUN groupadd fprime && \
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv && \
     mkdir -p /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
+    git clone --quiet https://github.com/nasa/fprime.git && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Change user and group of the virtual environemnt
 # Make fprime user default user
@@ -32,18 +33,18 @@ ENV LC_ALL C.UTF-8
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
-#FROM fprime-base AS fprime-docker
-#    COPY . /opt/fprime
-#    RUN python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-#        pip install wheel && \
-#        pip install /opt/fprime/Fw/Python/ && \
-#        pip install /opt/fprime/Gds/ && \
-#        rm -r ~/.cache/pip && \
-#        chown -R fprime:fprime /opt/fprime-venv && \
-#        chmod -R 775 /opt/fprime-venv
-#ENV VIRTUAL_ENV "/opt/fprime-venv"
-#ENV PYTHONHOME "/opt/fprime-venv"
-#ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+FROM fprime-base AS fprime-docker
+RUN     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
+        python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+        pip install wheel && \
+        pip install /opt/fprime/Fw/Python/ && \
+        pip install /opt/fprime/Gds/ && \
+        rm -r ~/.cache/pip && \
+        chown -R fprime:fprime /opt/fprime-venv && \
+        chmod -R 775 /opt/fprime-venv
+ENV VIRTUAL_ENV "/opt/fprime-venv"
+ENV PYTHONHOME "/opt/fprime-venv"
+ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ####
 # F Prime CI Image:   **** Must Be Last Image In File ****
@@ -51,11 +52,12 @@ ENTRYPOINT ["/bin/bash"]
 # This sets up an image for use within a CI build system. This is currently configured for the
 # Jenkins CI system. This means a Jenkins user is created, setup and ready to run.
 ####
-FROM fprime-base AS jenkins-ci
+FROM fprime-docker AS jenkins-ci
 RUN groupadd jenkins && \
     groupmod -g 1003 jenkins && \
     useradd -ms /bin/bash -g root -G sudo,jenkins,fprime -p jenkins jenkins && \
-    usermod -u 1003 jenkins
+    usermod -u 1003 jenkins && \
+    usermod -a -G fprime jenkins
 ENV HOST jenkins
 ENV USER jenkins
 # Paths and entrypoinys
