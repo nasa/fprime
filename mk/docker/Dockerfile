@@ -35,7 +35,7 @@ ENTRYPOINT ["/bin/bash"]
 FROM fprime-base AS fprime-docker
 RUN     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
         python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-        pip install wheel && \
+        pip install -U wheel setuptools pip && \
         pip install /opt/fprime/Fw/Python/ && \
         pip install /opt/fprime/Gds/ && \
         rm -r ~/.cache/pip && \
