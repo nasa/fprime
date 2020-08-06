@@ -22,7 +22,6 @@ RUN groupadd fprime && \
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv && \
     mkdir -p /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
-    git clone --quiet https://github.com/nasa/fprime.git && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Change user and group of the virtual environemnt
 # Make fprime user default user
@@ -43,7 +42,6 @@ RUN     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
         chown -R fprime:fprime /opt/fprime-venv && \
         chmod -R 775 /opt/fprime-venv
 ENV VIRTUAL_ENV "/opt/fprime-venv"
-ENV PYTHONHOME "/opt/fprime-venv"
 ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ####
@@ -61,7 +59,7 @@ RUN groupadd jenkins && \
 ENV HOST jenkins
 ENV USER jenkins
 # Paths and entrypoinys
-ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV PATH "/opt/fprime-venv/bin:/opt/fprime-venv/bin/python:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
