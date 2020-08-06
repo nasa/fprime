@@ -67,6 +67,9 @@ namespace Os {
             case OPEN_CREATE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
                 break;
+            case OPEN_APPEND:
+                flags = O_WRONLY | O_CREAT | O_APPEND;
+                break;
             default:
                 FW_ASSERT(0,(NATIVE_INT_TYPE)mode);
                 break;

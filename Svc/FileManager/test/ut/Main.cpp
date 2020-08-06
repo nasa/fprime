@@ -54,6 +54,21 @@ TEST(Test, shellCommandFail) {
   tester.shellCommandFail();
 }
 
+TEST(Test, appendFileSucceedNewFile) {
+  Svc::Tester tester;
+  tester.appendFileSucceed_newFile();
+}
+
+TEST(Test, appendFileSucceedExistingFile) {
+  Svc::Tester tester;
+  tester.appendFileSucceed_existingFile();
+}
+
+TEST(Test, appendFileFail) {
+  Svc::Tester tester;
+  tester.appendFileFail();
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
