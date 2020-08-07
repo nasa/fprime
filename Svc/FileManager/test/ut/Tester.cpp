@@ -607,7 +607,7 @@ namespace Svc {
           const char *const expectedString,
           const U32 length
       ) const {
-    char fileString[length];
+    char fileString[length] = ""; // Initialize empty string to appease valgrind
     std::ifstream file;
     file.open(fileName);
 
