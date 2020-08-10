@@ -1,5 +1,7 @@
 # A Brief Guide to the F´ GDS
 
+![](./img/gds_gui_events.png)
+
 This guide will give you a quick introduction to what the F´ GDS is and how you can use it. If you're interested in developing for the GDS instead, check out our [GDS developer information](../../Gds/README.md). If you want to, you can also [use F´ with your own GDS]() (TODO: Add this link) instead of the built-in one (TODO: Fact check).
 
 - [What is the GDS?](#what-is-the-gds)
@@ -50,11 +52,11 @@ By default, this command needs to be run in a deployment folder so the GDS knows
 
 Starting the F´ GDS like this should bring up a new menu in your browser, like so:
 
-![]()
+![](./img/gds_gui_channels.png)
 
 What does this screen mean? Let's go through it, piece by piece.
 
-Across the top of the menu is a series of tabs: "Commands", "Events", etc. Each of those tabs represent a piece of the GDS's functionality that you can use, which opens up below when you click on it. We'll go through each tab's functions in a lot more detail soon.
+Across the top of the menu is a series of tabs: "Commanding", "Events", etc. Each of those tabs represent a piece of the GDS's functionality that you can use, which opens up below when you click on it. We'll go through each tab's functions in a lot more detail soon.
 
 To the right of those tabs is a "New Window" button; if you want to open a new GUI window that will be connected to the same GDS (say, to use 2 monitors for testing purposes), it'll do that for you.
 
@@ -64,31 +66,39 @@ There's also a NASA logo on the far left. It doesn't do anything right now, but 
 
 The tabs contain the bulk of the GDS's functionality, though; let's take a look at each one.
 
-#### Commands
+#### Commanding
 
-![]()
+![](./img/gds_gui_commanding.png)
 
-This contains the items needed to send commands to the spacecraft. All available commands are listed in the "Mnemonic" dropdown box, in `<COMPONENT>.<COMMAND>` format, where you can select or search for a command. If the selected command takes any arguments, they'll appear below, where you can type them in (TODO: How to know when an argument is invalid?). When pressed, the "Send Command" button will try to transmit the selected command with any arguments you've added to the spacecraft, while "Clear Arguments" will reset the arguments you've changed back to their default values.
+This contains the items needed to send commands to the spacecraft. All available commands are listed in the "Mnemonic" dropdown box, in `<COMPONENT>.<COMMAND>` format, where you can select or search for a command. If the selected command takes any arguments, they'll appear below, where you can type them in; invalid argument values will be outlined in red (TODO: How to know what the value should be when it's flagged as incorrect?). When pressed, the "Send Command" button will try to transmit the selected command with any arguments you've added to the spacecraft, while "Clear Arguments" will reset the arguments you've changed back to their default values.
 
 Below this, the "Command History" table will record all the commands you've *tried* sending with their associated arguments (even if the command didn't actually succeed). To search for a set of commands, you can type something into the "Filters" box and press enter to only show rows containing that text. You can sort the rows by one of the table headers (e.g. "Command Time") by clicking on that header.
 
 #### Events
 
-![]()
+![](./img/gds_gui_events.png)
 
 This will display a table of all the "Events" that have happened on the spacecraft and been received by the GDS. An event is an informational, warning, or error message the spacecraft wants to record or notify us about, such as a command being received/succeeding, an error happening during a command, or a warning that the spacecraft has detected.
 
-TODO: Explain event colors, event severities
+Each event is color-coded based on its "Event Severity;" there are 7 different kinds of severities (TODO: Fact check each description):
+
+-   COMMAND (Green): Used to signify a command has been received or completed by the spacecraft (TODO: Isn't this also what ACTIVITY_HI is used for sometimes?)
+-   ACTIVITY_LO (TODO: Color?): TODO: Difference between hi/lo activities?
+-   ACTIVITY_HI (Blue):
+-   WARNING_LO (Yellow): Used for minor, non-critical warnings
+-   WARNING_HI (Orange): Used for critical warnings, such as a command failing to execute
+-   DIAGNOSTIC (TODO: Color?): TODO: What are diagnostic events used for?
+-   FATAL (Red): Used for catastrophic failures that may signify the spacecraft has stopped working or has encountered major issues
 
 Just like the "Command History" table, these items can all be filtered or sorted by header; additionally, a "Clear" button will clear the table, opening it up for new events.
 
 #### Channels
 
-![]()
+![](./img/gds_gui_channels.png)
 
 This displays an updating table of all the "Channels", or telemetry data, the GDS has received from the spacecraft; by default, only telemetry channels that the GDS has received data for are shown, with the rest of the channels hidden (even if they're open and may receive data later). Only the most recently received value for each channel (received at "Last Sample Time") is shown.
 
-![]()
+![](./img/gds_gui_channels_edit.png)
 
 If you want to view a full list of all open channels available, you can click on the "Edit View" button to see them (channels that haven't received a value yet will have blank sample times). If you only want certain channels to be visible, you can tick the checkbox next to a channels name to show it; any unchecked channels will be hidden, and you can save these changes by clicking the "Done" button to go back to the regular channel view. If you want to save which channels you have shown/hidden, click on the "Export" button to save your list of open channel names. You can then "Import" this file later on to only show these channels.
 
@@ -96,13 +106,19 @@ Just like the other tables, you can sort or filter these channel items.
 
 #### Uplink
 
+![](./img/gds_gui_uplink.png)
+
 TODO: Not sure I understand uplinking
 
 #### Downlink
 
+![](./img/gds_gui_downlink.png)
+
 TODO: Not sure I understand downlinking
 
 #### Logs
+
+![](./img/gds_gui_logs.png)
 
 Here, you can select and view one of the plain-text log files where the GDS is writing down all its activities as it goes. There should be 5 log files to choose from (TODO: Fact check):
 
@@ -115,6 +131,8 @@ Here, you can select and view one of the plain-text log files where the GDS is w
 TODO: Unsure if there's more to logging or if that's all?
 
 #### Dashboard
+
+![](./img/dashboard_header.png)
 
 The dashboard lets users combine the tools from the other tabs on a single screen, designing their own custom interface for working with the GDS. You can learn more about how this works on the [Dashboard guide](./GUI_DASHBOARD.md).
 
