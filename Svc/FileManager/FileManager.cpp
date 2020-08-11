@@ -14,7 +14,6 @@
 #include <stdlib.h>
 
 #include "Svc/FileManager/FileManager.hpp"
-#include "Os/File.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
