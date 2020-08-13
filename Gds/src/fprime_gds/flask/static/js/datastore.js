@@ -133,5 +133,5 @@ export class DataStore {
 };
 
 
-// Exports the
+// Exports the datastore
 export let _datastore = new DataStore();
