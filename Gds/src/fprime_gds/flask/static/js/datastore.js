@@ -117,7 +117,7 @@ export class DataStore {
 
     updateDownfiles(data) {
         let files = data["files"];
-        this.downfiles.splice(0, this.upfiles.length, ...files);
+        this.downfiles.splice(0, this.downfiles.length, ...files);
     }
 
     updateActivity(new_items, index) {
