@@ -97,7 +97,9 @@ namespace Fw {
         return *this;
     }
 
-    const char* StringBase::operator=(const char* other) {
+    // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
+    // call the empty constructor and then call their own copy function
+    const char* StringBase::operator=(const char* other) { // lgtm[cpp/rule-of-two]
         this->copyBuff(other, this->getCapacity());
         return this->toChar();
     }
