@@ -140,7 +140,6 @@ namespace Fw {
         PROTECTED:
 
             SerializeBufferBase(); //!< default constructor
-            SerializeBufferBase(const SerializeBufferBase &src); //!< constructor with buffer as source
 
         PRIVATE:
             void copyFrom(const SerializeBufferBase& src); //!< copy data from source buffer
