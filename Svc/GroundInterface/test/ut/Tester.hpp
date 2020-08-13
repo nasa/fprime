@@ -134,7 +134,8 @@ namespace Svc {
       U32 m_uplink_size;
       U32 m_uplink_point;
       Fw::ComPacket::ComPacketType m_uplink_com_type;
-      U8 m_uplink_data[(sizeof(TOKEN_TYPE) * 3) + FW_COM_BUFFER_MAX_SIZE];
+      // Initialize to empty list to appease valgrind
+      U8 m_uplink_data[(sizeof(TOKEN_TYPE) * 3) + FW_COM_BUFFER_MAX_SIZE] = {};
 
   };
 
