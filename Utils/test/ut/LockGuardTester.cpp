@@ -54,11 +54,12 @@ namespace Utils {
     TaskData data;
     data.i = 0;
     Os::Task testTask;
+    Os::Task::TaskStatus stat;
     Fw::EightyCharString name("TestTask");
 
     {
       LockGuard guard(data.mutex);
-      Os::Task::TaskStatus stat = testTask.start(name,12,100,10*1024,taskMethod,(void*) &data);
+      stat = testTask.start(name,12,100,10*1024,taskMethod,(void*) &data);
       ASSERT_EQ(stat, Os::Task::TASK_OK);
       Os::Task::delay(100);
       ASSERT_EQ(data.i, 0);
@@ -68,6 +69,7 @@ namespace Utils {
       LockGuard guard(data.mutex);
       ASSERT_EQ(data.i, 1);
     }
+    stat = testTask.join(NULL);
   }
 
 
