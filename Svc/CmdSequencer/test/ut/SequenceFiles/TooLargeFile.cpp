@@ -60,7 +60,7 @@ namespace Svc {
         - sizeof(AMPCSSequence::Record::TimeFlag::Serial::t)
         - sizeof(AMPCSSequence::Record::Time::t)
         - sizeof(AMPCSSequence::Record::CmdLength::t);
-      U8 cmdFieldBuffer[cmdFieldSize];
+      U8 cmdFieldBuffer[cmdFieldSize] = {}; // Initialize to appease valgrind
       Fw::SerialBuffer cmdField(cmdFieldBuffer, sizeof(cmdFieldBuffer));
       cmdField.setBuffLen(cmdFieldSize);
       AMPCS::Records::serialize(timeFlag, time, cmdField, buffer);

@@ -62,4 +62,16 @@
     </args>
   </command>
 
+  <command kind="async" opcode="0x05" mnemonic="AppendFile">
+    <comment>Append 1 file's contents to the end of another.</comment>
+    <args>
+      <arg name="source" type="string" size="256">
+        <comment>The name of the file to take content from</comment>
+      </arg>
+      <arg name="target" type="string" size="256">
+        <comment>The name of the file to append to</comment>
+      </arg>
+    </args>
+  </command>
+
 </commands>
