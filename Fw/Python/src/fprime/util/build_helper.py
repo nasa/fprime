@@ -41,7 +41,7 @@ ACTION_MAP = {
     "impl-ut": {
         "description": "Generates test implementation templates",
         "target": "testimpl",
-        "build-suffix": ""
+        "build-suffix": UT_SUFFIX
     },
     "build-ut": {
         "description": "Build unit tests for component/deployment",

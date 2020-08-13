@@ -53,7 +53,7 @@ namespace STest {
           assert(scenarios[i] != NULL);
           delete scenarios[i];
         }
-        delete scenarios;
+        delete[] scenarios;
       }
 
   };

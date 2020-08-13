@@ -38,16 +38,6 @@ from fprime_ac.utils import (
 )
 from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
 
-# Comment back in when converters added
-# from converters import AmpcsCommandConverter
-# from converters import AmpcsTelemetryConverter
-# from converters import AmpcsEventConverter
-# from converters import InstanceAmpcsCommandConverter
-# from converters import InstanceAmpcsTelemetryConverter
-# from converters import InstanceAmpcsEventConverter
-
-# @todo: from src.parsers import assembly_parser
-
 # Generators to produce the code
 try:
     from fprime_ac.generators import GenFactory
@@ -228,24 +218,6 @@ def pinit():
     )
 
     parser.add_option(
-        "-a",
-        "--ampcs_dict",
-        dest="ampcs_dict",
-        help="Generate AMPCS GDS dictionary classes",
-        action="store_true",
-        default=False,
-    )
-
-    parser.add_option(
-        "-A",
-        "--ampcs_topology_dict",
-        dest="ampcs_topology_dict",
-        help="Generate AMPCS GDS topology dictionary classes",
-        action="store_true",
-        default=False,
-    )
-
-    parser.add_option(
         "-o",
         "--dict_dir",
         dest="dict_dir",
@@ -330,9 +302,7 @@ def pinit():
 def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     DEBUG.debug("Topology xml type description file: %s" % xml_filename)
     generator = TopoFactory.TopoFactory.getInstance()
-    if not (
-        opt.default_topology_dict or opt.ampcs_topology_dict or opt.xml_topology_dict
-    ):
+    if not (opt.default_topology_dict or opt.xml_topology_dict):
         generator.set_generate_ID(False)
     topology_model = generator.create(the_parsed_topology_xml)
 
@@ -386,7 +356,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         )
 
     # uses the topology model to process the items
-    if opt.default_topology_dict or opt.ampcs_topology_dict or opt.xml_topology_dict:
+    if opt.default_topology_dict or opt.xml_topology_dict:
         # create list of used parsed component xmls
         parsed_xml_dict = {}
         for comp in the_parsed_topology_xml.get_instances():
@@ -400,29 +370,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                     )
                 )
 
-        """
-            If creating AMPCS dictionary, this portion validates channel abbreviations.
-            A dictionary is created, where each key is an abbreviation which corresponds to a channel name.
-            While iterating through all the channels, if the dictionary already contains the current channel's abbreviaiton as the key, new abbrevs. are created.
-                This is done by checking the first n values of the current channel name, then of the current channel name without vowels.
-                This continues by bumping up the base index of the string search until a unique name is found.
-        """
-        #         if opt.ampcs_topology_dict:
-        #             abbrev_dictionary = {} #sets an abbrev to be equal to the associated channel name
-        #             max_char_amount = 3
-        #             for parsed_xml_type in parsed_xml_dict:
-        #                 if parsed_xml_dict[parsed_xml_type] is None:
-        #                     PRINT.info("XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
-        #                     raise Exception()
-        #                 for chan in parsed_xml_dict[parsed_xml_type].get_channels():
-        #                     if chan.get_abbrev() is None:
-        #                         PRINT.info("Channel {} of component type {} has no abbreviation. Please specify the abbreviation in the component XML file.".format(chan.get_name() , parsed_xml_type))
-        #                     elif chan.get_abbrev() not in abbrev_dictionary:
-        #                         abbrev_dictionary[chan.get_abbrev()] = (chan.get_name() , parsed_xml_type)
-        #                     else:
-        #                         PRINT.info("Channel {} of component type {} has the same abbreviation ({}) as channel {} of component type {}. Please make the abbreviations unique.".format(chan.get_name() , parsed_xml_type , chan.get_abbrev() , abbrev_dictionary[chan.get_abbrev()][0] , abbrev_dictionary[chan.get_abbrev()][1]))
-        #                         raise Exception()
-        #
         # Hack to set up deployment path for instanced dictionaries (if one exists remove old one)
         #
         if opt.default_topology_dict:
@@ -1366,15 +1313,6 @@ def generate_component(
             defaultStartChannel(channel_model)
             defaultChannelHeader(channel_model)
             defaultChannelBody(channel_model)
-
-    # if opt.ampcs_dict and not opt.default_topology_dict:
-    #    if opt.dict_dir is None:
-    #        PRINT.info("Dictionary output directory not specified!")
-    #        raise IOError
-    #    os.environ["AMPCS_DICT_DIR"] = opt.dict_dir
-    #    AmpcsCommandConverter.AmpcsCommandConverter(component_model).writeFile(opt.dict_dir)
-    #    AmpcsTelemetryConverter.AmpcsTelemetryConverter(component_model).writeFile(opt.dict_dir)
-    #    AmpcsEventConverter.AmpcsEventConverter(component_model).writeFile(opt.dict_dir)
 
     if opt.html_docs:
         if opt.html_doc_dir is None:
