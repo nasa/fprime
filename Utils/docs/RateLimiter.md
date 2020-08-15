@@ -4,7 +4,7 @@ Utils::RateLimiter
 ## 1 Introduction
 
 `RateLimiter` is a pure utility class used for throttling actions, such as
-components that want to throttle EVRs.
+components that want to throttle events.
 
 It is mainly used for managing counter state, and providing a simple interface
 for both updating and evaluating if the action should be performed. The two

@@ -4,7 +4,7 @@ Utils::TokenBucket
 ## 1 Introduction
 
 `TokenBucket` is a pure utility class used for throttling actions, such as
-components that want to throttle EVRs.
+components that want to throttle events.
 
 It is similar to `RateLimiter`, but supports a different throttling behavior,
 specifically time-based throughput throttling with burstiness. For instance,
@@ -19,7 +19,7 @@ TokenBucket is a class that can be included and instantiated with the initial
 replenish interval and max tokens.
 
 ```cpp
-#include <LUtils/TokenBucket.hpp>
+#include <Utils/TokenBucket.hpp>
 ...
 U32 replenishIntervalMicroSecs = 1000000;
 U32 maxTokens = 5;
