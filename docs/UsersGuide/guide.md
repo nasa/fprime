@@ -32,8 +32,9 @@ The API documentation section contains the automatically generated documentation
 - Getting Started with F´
     - [What is F´](../index.md)
     - [Installing F´](../INSTALL.md)
+    - [Installing F´ Console Autocomplete](./user/autocomplete.md)
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
-- Users Manual
+- F´ Users Manual
     - [A More Complete Introduction to F´](user/full-intro.md)
     - [Projects and Deployments](user/proj-dep.md)
     - [Core Constructs: Ports, Components, and Topologies](user/port-comp-top.md)
@@ -42,6 +43,10 @@ The API documentation section contains the automatically generated documentation
 - F´ Best Practices
    - [A Quick Look At the Hub Pattern](./best/hub-pattern.md)
    - [Rate Groups and Timeliness](./best/rate-group.md)
+- F´ Ground Data System Tools (GDS) 
+   - []()
+   - []()
 - Developer Documentation
-    - [F´ On Baremetal and Muti-Core Systems](../dev/baremetal-multicore.md)
+    - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
+    - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
 - API Documentation
