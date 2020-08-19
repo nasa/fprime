@@ -1,4 +1,4 @@
-# Dashboard Component Reference
+# GDS Dashboard Component Reference
 
 The GDS dashboard is an XML specification for designing custom views into the GDS. This guide will walk through each
 custom component that can be used in this specification. Properties are specified as XML attributes.  This specification

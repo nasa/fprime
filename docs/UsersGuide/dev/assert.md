@@ -1,20 +1,4 @@
-**Outline**
-
-Assert Path Documentation and Verification
-
-> i. Assert Path
-> 
-> ii. AssertHook
-> 
-> a. reportAssert
-> 
-> b. printAssert
-> 
-> c. doAssert
-
-**Assert Path Documentation and Verification**
-
-**i. Assert Path**
+# Asserts in F
 
 The F′ framework uses asserts to perform run-time checks for software
 errors. They are a method for verifying conditions that should be true
@@ -23,7 +7,7 @@ to declare an assertion in C++ code. CAssert.hpp defines macros to
 declare an assertion in C code.
 
 The definition for the framework assert is found in Fw/Types/Assert.hpp.
-The user calls the FW\_ASSERT macro with up to six arguments. The
+The user calls the `FW_ASSERT(cond, arg1, ...)` macro with up to six arguments. The
 arguments can consist of any basic types shown below.
 
   - I8 8-bit signed integer
@@ -53,16 +37,6 @@ available on all processor architectures. The types that are available
 is a configurable feature of the architecture and is typically set by
 compiler arguments.
 
-The arguments to the assert call are polymorphic type defined as
-Fw/Types/PolyType.hpp. This class stores the value for a variety of
-built-in types. The type stored can be changed during runtime by
-reassigning a value of a variable of different type. PolyType can be
-passed through ports and serialized.
-
-There are constructors provided for all the basic types, so the assert
-can be called with the arguments directly. An implicit temporary
-PolyType instance is created automatically by the compiler.
-
 The assert can be configured in the following ways:
 
   - FW\_ASSERT\_LEVEL Sets the level or reporting for the asserts.
@@ -81,7 +55,7 @@ The assert can be configured in the following ways:
   - FW\_ASSERT\_TEXT\_SIZE Identifies the size of the buffer used to
     store the text of the assert.
 
-**ii. AssertHook**
+## AssertHook
 
 By default, when FW\_ASSERT is called the framework prints a message
 (location of and arguments to the macro), and then calls the C assert()
@@ -92,16 +66,16 @@ called with a string representing the text of the assert. The user
 implements a derived class that implements the reportAssert() pure
 virtual method, and does whatever project specific logic is required.
 
-**a. reportAssert**
+### reportAssert
 
 When formatting an assert message use the default message line hash or
 name, and argument approach.
 
-**b. printAssert**
+### printAssert
 
 When outputting the assert message use the default Fw::Logger. Force the
 Fw::Logger default to printf for systems with print f.
 
-**c. doAssert**
+### doAssert
 
 Actually asserts (action of assert).
