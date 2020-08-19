@@ -1,364 +1,450 @@
-**Preliminary Outline**
+# Configuring F´
+
+This guide is a first attempt to describe the various configuration settings in F´.  Most users can operate with the
+default settings, but as the system design is finalized, some of these options may need to be changed such that the
+system is most efficient.
+
+This guide includes:
+- [How to Configure F´](#how-to-configure-f)
+- [AcConstants.ini](#acconstantsini)
+- [FpConfig.hpp](#fpconfighpp)
+    - [Type Settings](#type-settings)
+    - [Object Settings](#object-settings)
+    - [Asserts](#asserts)
+    - [Port Tracing](#port-tracing)
+    - [Port Serialization](#port-serialization)
+    - [Serialization Type ID](#serializable-type-id)
+    - [Buffer Sizes](#buffer-sizes)
+    - [Text Logging](#text-logging)
+    - [Misc Configuration Settings](#misc-configuration-settings)
+- [Component Configuration](#component-configuration)
+- [Conclusion](#conclusion)
+
+
+## How To Configure F´ 
 
-6\. Configuring F´
+All configurable files (top-level and component-specific) for F´ are available in the top-level `config` directory. If
+a user is using an out-of-source deployment, as recommended after release 1.5, this whole directory can be copied and
+the location of the project's copy can be specified as part of the build.
 
-> i. Configuration Handles for F´
-> 
-> a. Basic description of configuration handles
-> 
-> b. How to handle configuration in Python
+AcConstants.ini follows [python's INI](https://docs.python.org/3/library/configparser.html#supported-ini-file-structure)
+format and the `FpConfig.hpp` file is a C++ header allowing the user to define global settings. Where components allow
+specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
 
-**  
-**
+A project can clone `AcConstants.ini` or the whole set of `*.hpp` files or both.  The project must take ownership of 
+all `*.hpp` due to C++ compiler constraints. By default, the provided configuration from the framework is used.
 
-**6. Configuring F´**
+## AcConstants.ini
+
+AcConsstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
+projects to appropriately size the number of ports provided by many of the command and data handling components defined
+in the `Svc` package. **Note:** internal configurations like table sizes are set in the component specific header as
+these settings aren't autocoded.  See: [Component Configuration](#component-configuration)
+
+These settings may need to be increased for large projects with many components, or minimized for projects with a small
+number of components.
+
+| Setting                            | Description                                                                                           | Default | Valid Values     |
+|------------------------------------|-------------------------------------------------------------------------------------------------------|---------|------------------|
+| ActiveRateGroupOutputPorts         | Number of outputs from active rate group. Limits number of components attached to a single rate group | 10      | Positive integer |
+| CmdDispatcherComponentCommandPorts | Number of command and command registration ports. Limits number of components handling commands       | 30      | Positive integer |
+| CmdDispatcherSequencePorts         | Number of incoming ports to command dispatcher, e.g. uplink and command sequencer                     | 5       | Positive integer |
+| RateGroupDriverRateGroupPorts      | Number of rate group driver output ports. Limits total number of different rate groups                | 3       | Positive integer |
+| HealthPingPorts                    | Number of health ping output ports. Limits number of components attached to health component          | 25      | Positive integer |
+
+An example INI setting would look like:
+
+```ini
+setting = 123; Comment
+```
 
-**i. Configuration Handles for F´**
+## FpConfig.hpp
+
+Some configurations may be changed during compilation time. The F′ framework has a number of optional features that can
+be enabled or disabled by editing the `config/FpConfig.hpp` file.  These changes affect of the whole of the F´
+deployment. Users can change or override defined *C* macro values that activate or disable code by using complier flags
+for different deployment settings. During flight software (FSW) execution, disabling unnecessary features saves memory
+and CPU cycles.
+
+All of these settings should be set in `FpConfig.hpp` and for most projects, this whole file will be cloned and owned
+for their specific settings. These settings, typically the user will define the setting to be 0 for off and 1 for on.
+
+e.g.
+```c
+#define FW_SOME_SETTING 1
+```
+
+### Type Settings
+
+Many architectures support different sizes of types. In addition, projects may wish to change the size of the various
+custom types specified in the framework. This section will describe these settings.
+
+#### Architecture Supported Primitive Types
+
+The architecture is designed to be portable to different processor architectures. Some architectures such as small
+microcontrollers do not support the full range of types. The architecture supports a non-sized integer type named
+NATIVE_INT_TYPE. The NATIVE_INT_TYPE is recommended for code (e.g., loop variables) where a particular size is
+not needed in order to make it more portable. An additional type NATIVE_UINT_TYPE is available for unsigned variables.
+These types are defined in `Fw/Types/BasicTypes.hpp` and use compiler macros for sizing. See:
+[Primitive Types](./../user/enum-arr-ser.md)
+
+In addition to these types, F´ specifies types of a given size and allows for configuration values to turn the larger
+types on/off such that smaller architectures can disable them.  These settings are described below.
+
+**Table 32.** Macros for supported types.
+
+| Macro          | Definition                                                               | Default | Valid Values   |
+| ---------------| ------------------------------------------------------------------------ |---------|----------------|
+| FW_HAS_64_BIT  | The architecture supports 64-bit integers.                               | 1 (on)  | 0 (off) 1 (on) |
+| FW_HAS_32_BIT  | The architecture supports 32-bit integers.                               | 1 (on)  | 0 (off) 1 (on) |
+| FW_HAS_16_BIT  | The architecture supports 16-bit integers.                               | 1 (on)  | 0 (off) 1 (on) |
+| FW_HAS_F64     | The architecture supports 64-bit double-precision floating point values. | 1 (on)  | 0 (off) 1 (on) |
+
+Example:
+```
+// Turn of 64-bit integers (double)
+#define FW_HAS_F64 0
+```
+
+#### Configured Type Definitions
+
+**WARNING:** to run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
+as well as here. This is non-trivial and will be fixed in future releases. Unless the project intended to modify the
+GDS code, or use an alternate GDS for all functions, these settings should be left as their defaults.
+
+The value which represents a serialized boolean can be set using these macros. This only affects what value is written
+when the boolean is serialized
 
-Some configurations may be changed during compilation time. The F′
-framework has a number of optional features that can be enabled or
-disabled by editing a configuration file. Users can change or override
-defined *C* macro values that activate or disable code by using complier
-flags for different deployment settings. During flight software (FSW)
-execution, disabling unnecessary features saves memory and CPU cycles.
+**Table 33:** Macros for boolean serialization
 
-**a. Basic description of configuration handles**
+| Macro                    | Definition                  | Default | Valid Values |
+|--------------------------|-----------------------------|---------|--------------|
+| FW_SERIALIZE_TRUE_VALUE  | True value when serialized  | 0xFF    | 0 to 0xFF    |
+| FW_SERIALIZE_FALSE_VALUE | False value when serialized | 0x00    | 0 to 0xFF    |
+
+
+Special named types used by F´ are mapped to some form of a primitive type integer type. This is done for ease of
+reading F´ code and is a standard practice in C/C++. The framework allows projects to change the type they used for
+these types to optimize transmitted bytes. Again, any changes must match the GDS in order to decode the values
+correctly and thus changing these values should be done carefully.
+
+**Table 34:** Macros for custom types
 
-The Fw/Cfg directory contains a header file Config.hpp that is used to
-configure various properties of the architecture. The developer modifies
-the file to adjust the architecture for the requirements of a particular
-deployment environment.
+| Macro                       | Definition                             | Default | Valid Values      |
+|-----------------------------|----------------------------------------|---------|-------------------|
+| FwPacketDescriptorType      | Type storing F´ packet type descriptor | U32     | U8, U16, U32, U64 |
+| FwOpcodeType                | Type storing F´ opcodes                | U32     | U8, U16, U32, U64 |
+| FwChanIdType                | Type storing F´ channel ids            | U32     | U8, U16, U32, U64 |
+| FwEventIdType               | Type storing F´ event ids              | U32     | U8, U16, U32, U64 |
+| FwPrmIdType                 | Type storing F´ parameter ids          | U32     | U8, U16, U32, U64 |
+| FwBuffSizeType              | Type storing the size of an F´ buffer  | U16     | U8, U16, U32, U64 |
+| FwEnumStoreType             | Type storing F´ enum values            | I32     | I8, I16, I32, I64 |
+| FwTimeBaseStoreType         | Type storing F´ timebase enum          | U16     | U8, U16, U32, U64 | 
+| FwTimeContextStoreType      | Type storing F´ time context           | U8      | U8, U16, U32, U64 |
+
+**Note:** for a further understanding of timebase and time context, see the next section.
+
+#### Time Base and Time Context
+
+The F′ time tags have a field that specifies the time base of the time tag. A time base is defined as a clock in the
+system correlated with a known epoch. It is often the case that when a system is being initialized, it does not always
+have access to a clock correlated to external operations. It can transition through several time bases (processor,
+radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system tha
+can produce a time tag. It lets users of the system see which clock was used when time tagging telemetry.
 
-1.  
-2.  
-3.  
-4.  
-To enable various facilities, set the below to 0 or 1. If set in
-compiler flags, defaults are overridden. The F′ architecture supports:
-64 bit integers, 32 bit integers, 16 bit integers, and 64 bit floating
-point numbers. Not every platform supports these types, so they can be
-turned on and off to match the native types of the hardware.
+Time contexts are another value associated with the time.
 
-**Types:**
+**WARNING:** changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
+projects don't modify these settings just like the types defined above.
 
-  - FW\_HAS\_64\_BIT = 1
+```
+enum TimeBase {
+    TB_NONE, //!< No time base has been established
+    TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
+    TB_WORKSTATION_TIME, //!< Time as reported on workstation where software is running. For testing.
+    TB_DONT_CARE = 0xFFFF //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
+};
+```
 
-  - FW\_HAS\_32\_BIT = 1
+Time base and time context usage may be turned on and off using the macros shown below:
+
+| Macro                    | Definition                                  | Default | Valid Values      |
+| ------------------------ | ------------------------------------------- |---------|-------------------|
+| FW_USE_TIME_BASE         | Enables the time base Fw::time field        | 1 (on)  | 0 (off) 1 (on)    |
+| FW_USE_TIME_CONTEXT      | Enables the time context Fw::time field     | 1 (on)  | 0 (off) 1 (on)    |
+ 
+### Object Settings
 
-  - FW\_HAS\_16\_BIT = 1
+The architecture allows for various settings to control, monitor, and trace objects in the system. These settings
+typically result in a larger binary size, but make the framework and system easier to debug. This section includes
+a discussion of OS objects like Tasks and Queues as well.
+ 
+#### Object Naming
 
-  - FW\_HAS\_64\_BIT = 1
+The architecture can store names for each object created. This is useful when using object registries or tracing to see
+what objects exist and how they interact. The object naming does increase the per-object storage and code size, so in a
+resource-constrained environment, disabling this feature might be desirable. This macro should be used in developer
+implementation classes to call the correct constructor in the code-generated base classes. Table 35 provides the
+macros related to this feature.
 
-**Boolean values encoded during serialization:** **The value used to
-represent true and false may be set in order to choose what a serialized
-Boolean looks like.**
+The `Os::Queue` class stores a queue name as private data. Table 35 provides the macro for this feature. The `Os::Task`
+class stores a task name as private data. Table 35 provides the macro for this feature as well.
 
-  - FW\_SERIALIZE\_TRUE\_VALUE = (0xFF) (Value encoded for boolean
-    true.)
+**Table 35.** Macros for object naming, queue naming, and task namining
 
-  - FW\_SERIALIZE\_FALSE\_VALUE = (0x00) (Value encoded for boolean
-    false.)
+| Macro                    | Definition                                  | Default | Valid Values      |
+| ------------------------ | ------------------------------------------- |---------|-------------------|
+| FW_OBJECT_NAMES          | Enables storage and retrieval of the name   | 1 (on)  | 0 (off) 1 (on)    |
+| FW_OBJ_NAME_MAX_SIZE     | Size of the buffer storing the object name  | 80      | Positive integer  |
+| FW_QUEUE_NAME_MAX_SIZE   | Size of the buffer storing the queue names  | 80      | Positive integer  |
+| FW_TASK_NAME_MAX_SIZE    | Size of the buffer storing task names       | 80      | Positive integer  |
 
-**Typedefs for various serialization items:** **Special types used by F´
-can be set to the native type needed to represent these values. This
-allows projects to change the type they used and optimize transmitted
-bytes.** Any changes must match the GDS in order to decode the values
-correctly. Thus the user may need to update the Gds tyoes as well.
+**Note:** If the size of the string passed to the code-generated component base classes is larger than this size, the
+string will be truncated. FW_OBJECT_NAMES must be turned on for FW_OBJ_NAME_MAX_SIZ to have any effect.
 
-  - FwPacketDescriptorType U32
+**Note:** FW_QUEUE_NAME_MAX_SIZE and FW_TASK_NAME_MAX_SIZE are only used if FW_OBJECT_NAMES is **turned off**.
+Otherwise the supplied object name is used.
 
-  - FwOpcodeType U32
+#### Object to String
 
-  - FwChanIdType U32
+The framework port and object classes have an optional toString() method. This method by default returns the instance
+name of the object, but toString() is defined as a virtual method so a developer class can override this and provid
+custom information. Table 35 provides the macros to configure this feature.
 
-  - FwEventIdType U32
+**Note:** for these settings to work FW_OBJECT_NAMES must be turned on.
 
-  - FwPrmIdType U32
+**Table 36.** Macros for object to
+string.
 
-**Defines how big the size of a buffer (or string) type representation
-for storing:**
+| Macro                                 | Definition                                                  | Default | Valid Values      |
+| ------------------------------------- | ----------------------------------------------------------- |---------|-------------------|
+| FW_OBJECT_TO_STRING                   | Enables the toString() method                               | 1 (on)  | 0 (off) 1 (on)    |
+| FW_OBJ_TO_STRING_BUFFER_SIZE          | Defines buffer size used to store toString() results        | 255     | Positive integer  |
+| FW_SERIALIZABLE_TO_STRING             | Defines a toString() method for code-generated serializable | 1 (on)  | 0 (off) 1 (on)    |
+| FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE | Defines buffer size of toString() result for serializables  | 255     | Positive integer  |
+| FW_ARRAY_TO_STRING                    | Defines a toString() method for code-generated arrays       | 1 (on)  | 0 (off) 1 (on)    |
+| FW_ARRAY_TO_STRING_BUFFER_SIZE        | Defines buffer size of toString() result for arrats         | 256     | Positive integer  |
 
-  - FwBuffSizeType U16
 
-**Defines how many bits are used to store an enumeration value defined
-in XML during serialization:**
+#### Object Registry
 
-  - FwEnumStoreType I32
+An object registry is a class that holds a list of framework component and port objects. The registry can be used to
+list all the objects, or call common functions on all objects. A base class for the object registry is defined in
+`Fw/Obj/ObjBase.hpp`, and a simple implementation can be found in `Fw/Obj/SimpleObjRegistry.hpp`.
+Table 37 provides the macros to configure this feature. Message queues allow for their own registration such that the
+project may track them as well.
 
-**For object facilities:**
+**Table 37.** Macros for object
+registry.
 
-  - FW\_OBJECT\_NAMES = 1 (Indicates whether or not object names are
-    stored. More memory can be used for tracking objects.)
+| Macro                         | Definition                                                                  | Default | Valid Values      |
+| ----------------------------- | ----------------------------------------------------------------------------|---------|-------------------|
+| FW_OBJECT_REGISTRATION        | Enables object registries.                                                  | 1 (on)  | 0 (off) 1 (on)    |
+| FW_OBJ_SIMPLE_REG_ENTRIES     | The size of the array in the simple object registry used to store objects.  | 500     | Positive integer  |
+| FW_OBJ_SIMPLE_REG_BUFF_SIZE   | The size of the buffer used to store object names in the simple registry.   | 255     | Positive integer  |
+| FW_QUEUE_REGISTRATION         | Enables queue registries.                                                   | 1 (on)  | 0 (off) 1 (on)    |
+| FW_QUEUE_SIMPLE_QUEUE_ENTRIES | The size of the array in the simple object registry used to store queues.   | 100     | Positive integer  |
 
-**Methods to query an object about its name:** (This can be overridden
-by derived classes. However, for FW\_OBJECT\_TO\_STRING to work,
-FW\_OBJECT\_NAMES must be enabled.)
+**Note:** FW_OBJECT_REGISTRATION must be turned on for FW_OBJ_SIMPLE_REG_ENTRIES and
+FW_OBJ_SIMPLE_REG_BUFF_SIZE to have any effect.
 
-  - FW\_OBJECT\_TO\_STRING = 1 (Indicates whether or not generated
-    objects have toString() methods to dump internals. Requires more
-    code.)
+**Note:** See table 35 for configuring queue name sizes.
 
-  - FW\_OBJECT\_TO\_STRING = 0
 
-**Adds the ability for all component related objects to register
-centrally:**
+### Asserts
 
-  - FW\_OBJECT\_REGISTRATION = 1 (Indicates whether or not objects can
-    register themselves. More code, more object tracking.)
+The assert feature is described in [F´ Asserts](./assert.md). This configuration allows a project to turn asserts off,
+use hash IDs for the assert message, or use full filenames for the assert message. Table 38 provides ways that asserts
+can be configured.
 
-  - FW\_QUEUE\_REGISTRATION = 1 (Indicates whether or not queue
-    registration is used.)
+**Table 38.** Macros for assert.
 
-**Enable an OS-free schedule:**
+| Macro                  | Definition                       |                                                                    | Default            |
+| ---------------------- | ---------------------------------| -------------------------------------------------------------------|--------------------|
+| FW_ASSERT_LEVEL        | Sets the assert report level to: |                                                                    | FW_FILENAME_ASSERT |
+|                        | **Value**                        | **Definition**                                                     |                    |
+|                        | FW_NO_ASSERT                     | Asserts turned off, removing all assert code.                      |                    |
+|                        | FW_FILEID_ASSERT                 | Asserts turned on, hash value used in place of __FILE__ on message |                    |
+|                        | FW_FILENAME_ASSERT               | Asserts turned on, __FILE__ macro is used in the assert message    |                    |
+| FW_ASSERT_TEXT_SIZE    | The buffer size used to store the assert message  |                                                   | 120                |
 
-  - FW\_BAREMETAL\_SCHEDULER = 1 (Indicates whether or not a baremetal
-    scheduler should be used. Alternatively the 0s scheduler is used.)
+Setting assert level FW_FILEID_ASSERT  saves a lot of code space since no file name is stored. The make system
+supplies this to the compiler by hashing the file name. The original filename can be recovered by running
+`fprime-util hash-to-file <hash>`.
 
-**Port facilities that allow tracing calls through ports for
-debugging:**
+Setting assert level to FW_ASSERT_TEXT_SIZE can ease debugging asserts, but typically FW_ASSERT_TEXT_SIZE must be
+increased as most file name paths are longer than 120.
 
-  - FW\_PORT\_TRACING = 1 (Indicates whether port calls are traced. More
-    code, more visibility into execution.)
 
-**Generates code to connect to serialized ports:**
+### Port Tracing
 
-  - FW\_PORT\_SERIALIZATION = 1 Indicates whether there is code in ports
-    to serialize the call. More code, but ability to serialize calls for
-    multi-note systems.)
+When components are interconnected, it is often useful to trace the set of invocations through components and ports. The
+port base class has a `trace()` call that is invoked by the derived port classes whenever the port is invoked. The
+`trace()` calls `Os::Log::log()` with the name of the port once the port base class method `setTrace()` has been called.
+Individual ports can be have tracing turned on and off by calling the `overrideTrace()` method on the port instance.
+Table 39 provides the macro to configure this feature.
 
-  - 
-**Number of bytes to use for serialization IDs:** (More bytes equals
-more storage, but the greater number of IDs.)
+**Table 39.** Macro for port tracing.
 
-  - FW\_SERIALIZATION\_TYPE\_ID\_BYTES = 4 (Number of bytes used to
-    represent type id. More bytes, more ids.)
 
-**Turn asserts on or off:**
+| Macro             | Definition            | Default | Valid Values      |
+| ----------------- | --------------------- |---------|-------------------|
+| FW_PORT_TRACING   | Enables port tracing. | 1 (on)  | 0 (off) 1 (on)    |
 
-  - FW\_NO\_ASSERT = 1 (Asserts turned off)
+### Port Serialization
 
-  - FW\_FILEID\_ASSERT = 2 (File ID used requires
-    DASSERT\_FILE\_ID=\<somevalue\> to be set on the compile command
-    line.)
+As discussed in the user guide, a port type (Input/OutputSerializePort) exists that has no interface type, but instead
+receives (or sends) a serialized form of the port invocation for the attached port. The primary pattern for this is to
+invoke components on remote nodes. The code generator generates code in each port that will serialize or deserialize the
+invocation if it detects that it is connected to a serializing port. If development is for a single node, this feature
+can be disabled to reduce the code size. Table 40 provides the macro to configure this feature.
 
-  - FW\_FILENAME\_ASSERT = 3 (Uses the file name in the assert. Image
-    stores filenames.)
+**Table 40.** Macro for port serialization.
 
-  - FW\_ASSERT\_LEVEL (FW\_FILENAME\_ASSERT defines the type of assert
-    used.)
+| Macro                   | Definition                  | Default | Valid Values      |
+| ----------------------- | --------------------------- |---------|-------------------|
+| FW_PORT_SERIALIZATION   | Enables port serialization. | 1 (on)  | 0 (off) 1 (on)    |
 
-**Defines maximum length of assert string:**
+### Serializable Type ID
 
-  - FW\_ASSERT\_TEXT\_SIZE = 120 (Size of string used to store assert
-    description.)
+As described [in serializable tyoes](../user/enum-arr-ser.md), serializable types can be defined for use in the code.
+When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
+data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
+will lower the amount of data moved around for a given object when it is serialized. Table 41 provides
+the macros to configure this feature.
 
-NOTE: The user will need to adjust various configuration parameters in
-the architecture since some of the above enables may disable the values.
 
-**Indicates the size of the object name stored in the object base
-class:** (Larger names will be truncated.)
+**Table 41.** Macros for serializable type ID.
 
-  - FW\_OBJ\_NAME\_MAX\_SIZE = 80 (Size of object name, if object names
-    is enabled. AC limits to 80, truncation occurs above 80.)
+| Macro                          | Definition                       | Default | Valid Values      |
+| -------------------------------| ---------------------------------|---------|-------------------|
+| FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
+| FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
 
-**Specifies the size of the buffer to store the description:** (When
-querying an object as to an object-specific description.)
+**Note:** smaller values for FW_SERIALIZATION_TYPE_ID_BYTES  means that less data storage is needed, but also
+limits the number of types that can be defined. FW_SERIALIZATION_TYPE_ID is required to have type IDs in the buffer and
+thus to introspect what type is contained in the buffer.
 
-  - FW\_OBJ\_TO\_STRING\_BUFFER\_SIZE = 255 (Size of string storing
-    toString() text.)
 
-**Specifies how many objects the registry will store:** (For the simple
-object registry provided with the framework.)
+### Buffer Sizes
 
-  - FW\_OBJ\_SIMPLE\_REG\_ENTRIES = 500 (Specifies number of objects
-    stored in a simple object registry.)
+Many of the built in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
+through the ground interface, serialized and more. This section will discuss the com buffer configuration, 
+command, channel, event, parameter and other buffer size arguments.
 
-**Specifies the size of the buffer used to store object names:** (When
-dumping the contents of the registry.) Should be \>=
-FW\_OBJ\_NAME\_MAX\_SIZE.
+The com buffer must be able to store all the other types such that they can all be passed as generic communication. Thus
+FW_COM_BUFFER_MAX_SIZE must be large enough to hold each buffer size **and** the header data for each type. Thus these
+settings are typically derived and this is done by default. **WARNING:** only modify the comm buffer size to ensure that
+there will be no faults in the system.
 
-  - FW\_OBJ\_SIMPLE\_REG\_BUFF\_SIZE = 255 (Specifies size of object
-    registry dump string.)
+In all cases, these definitions are global for each types in the system. Thus the buffer **must** be large enough to
+hold the data for the largest of a given type in the system.  An assert will result if the buffer is set too-small. i.e.
+the FW_CMD_ARG_BUFFER_MAX_SIZE cannot be smaller than the serialized size of the command with the largest arguments.
 
-**Specifies how many queues the registry will store:** (For the simple
-queue registry FW\_QUEUE\_REGISTRATION provided with the framework.)
+These types also provide optional string sizes for their constituent pieces. However, the MAX_STRING_SIZE settings must
+**always** be smaller than the BUFFER_MAX_SIZE. i.e. the command string max size cannot be larger than the command
+buffer max size, as the string is serialized into the buffer.
 
-  - FW\_OBJ\_SIMPLE\_REG\_ENTRIES = 100 (Specifies number of queues
-    stored in the simple queue registry.)
+Commands serialize argument values into these buffers. Events (aka log events) also serialize just the arguments. 
+Channelized telemetry and parameters serialize the values. Other information like event strings is not serialized but
+rather reconstructed when needed from the dictionary. This is all placed in a comm buffer.
 
-**Specifies the size of the string holding the queue name for queues:**
+Table 42 provides the macros to configure these features.
 
-  - FW\_QUEUE\_NAME\_MAX\_SIZE = 80 (Maximum size of message queue
-    name.)
+**Table 42.** Macros for buffers.
 
-**Specifies the size of the string holding the task name for active
-components and tasks:**
+| Macro                           | Definition                                            | Default | Valid Values     |
+| ------------------------------- | ------------------------------------------------------|---------|------------------|
+| FW_COM_BUFFER_MAX_SIZE          | Defines the size of a com buffer                      | 128     | Positive integer |
+| FW_CMD_ARG_BUFFER_MAX_SIZE      | Defines the size of command argument buffers          | Derived |                  |
+| FW_CMD_STRING_MAX_SIZE          | Defines the maximum size of a command string argument | 40      |                  |
+| FW_LOG_BUFFER_MAX_SIZE          | Defines the size of event buffers                     | Derived |                  |
+| FW_LOG_STRING_MAX_SIZE          | Defines the maximum size of an event string argument  | 100     |                  |
+| FW_TLM_BUFFER_MAX_SIZE          | Defines the size of telemetry channel buffers         | Derived |                  |
+| FW_TLM_STRING_MAX_SIZE          | Defines the maximum size of a channel string value    | 40      |                  |
+| FW_PRM_BUFFER_MAX_SIZE          | Defines the size of parameter buffers                 | Derived |                  |
+| FW_PRM_STRING_MAX_SIZE          | Defines the maximum size of a parameter string value  | 40      |                  |
 
-  - FW\_TASK\_NAME\_MAX\_SIZE = 80 (Maximum size of task name.)
+Other Buffers are defined in the system for specific purposes. These do not need to fit inside a comm buffer, and thus
+are less restrictive in sizing.
 
-**Specifies the size of the buffer that contains a communications
-packet:**
+| Macro                      | Definition                                                 | Default | Valid Values     |
+| -------------------------- | -----------------------------------------------------------|---------|------------------|
+| FW_FILE_BUFFER_MAX_SIZE    | Defines buffer and chunk size for file uplink and downlink | 255     | Positive integer |
+| FW_INTERNAL_INTERFACE_STRING_MAX_SIZE | Maximum size for interface string               | 40      | Positive integer |
 
-  - FW\_COM\_BUFFER\_MAX\_SIZE = 128 (Maximum size of Fw::Com buffer.)
+### Text Logging
 
-**Specifies the size of the buffer that contains the serialized command
-arguments:**
+Event functions that are called are turned into two output port calls. One is a binary port that is used to store the
+event to be transported to ground software or a testing interface external to the software. The component also takes
+the format string specified in the XML and populates it with the event arguments, and calls an output port with a
+readable text version of the event. This is meant to be used for a console interface so the user can see, in text form,
+the same events being stored for transmission. A component with the text logging input port can be used to display the
+text. A very simple implementation of this can be seen in `Svc/PassiveConsoleTextLogger`. In a resource-constrained
+environment or in a flight implementation where the console is not viewable, the text formatting and extra code can
+consume an undesirable number of processor cycles. For this reason, the text logging can be turned off via a macro. This
+compiles out the code and format strings for text logging. Table 46 provides the macros to configure text logging.
 
-  - FW\_CMD\_ARG\_BUFFER\_MAX\_SIZE
-    (FW\_COM\_BUFFER\_MAX\_SIZE—sizeof(FwOpcodeType)—sizeof(FwPacketDescriptorType))
+**Table 46.** Macros for text logging.
 
-**Specifies the maximum size of a string in a command argument:**
+| Macro                       | Definition                                              | Default | Valid Values     |
+| --------------------------- | --------------------------------------------------------|---------|------------------|
+| FW_ENABLE_TEXT_LOGGING      | Enables or disables text logging                        | 1 (on)  | 0 (off) 1 (on)   |
+| FW_LOG_TEXT_BUFFER_SIZE     | Maximum size of the textual representation of the event | 256     | Positive integer | 
 
-  - FW\_CMD\_STRING\_MAX\_SIZE = 40 (Maximum character size of command
-    string arguments.)
+**Note:** the FW_LOG_TEXT_BUFFER_SIZE should be large enough to store the full event including its text format
+string after being populated with arguments.
 
-NOTE: Normally when a command is deserialized, the handler checks to see
-if there are any leftover bytes in the buffer. If there are, it assumes
-that the command was corrupted somehow since the serialized size should
-match the serialized size of the argument list. In some cases, command
-buffers are padded so the data can be larger than the serialized size of
-the command.
 
-Setting the below to zero will disable the check to the detriment of not
-detecting commands that are too large.
+### Misc Configuration Settings
 
-  - FW\_CMD\_CHECK\_RESIDUAL = 1 (Check for leftover command bytes.)
+This setting describes some of the other settings available in `FpConfig.hpp` and did not fit in other sections. These
+are described in tables below. Table 47 describes other user settings.  Table 48 describes settings defined by the
+build system that should never be hand-set.
 
-**Specifies the size of the buffer that contains the serialized log
-arguments:**
+**Table 48.** Misc macros available to user.
 
-  - FW\_LOG\_BUFFER\_MAX\_SIZE
-    (FW\_COM\_BUFFER\_MAX\_SIZE—sizeof(FwEventIdType)
-    —sizeof(FwPacketDescriptorType))
+| Macro                       | Definition                                              | Default | Valid Values     |
+| --------------------------- | --------------------------------------------------------|---------|------------------|
+| FW_CMD_CHECK_RESIDUAL       | Enables command serialization extra bytes check         | 1 (on)  | 0 (off) 1 (on)   |
+| FW_AMPCS_COMPATIBLE         | Adds argument sizes to event argument serialization     | 0 (off) | 0 (off) 1 (on)   |
 
-**Specifies the maximum size of a string in a log event:**
+**Note:** Normally when a command is deserialized, the handler checks to see if there are any leftover bytes in the
+buffer. If there are, it assumes that the command was corrupted somehow since the serialized size should match the
+serialized size of the argument list. In some cases, command buffers are padded so the data can be larger than the
+serialized size of the command. Turning FW_CMD_CHECK_RESIDUAL off can disable this check and allow leftover bytes.
 
-  - FW\_LOG\_STRING\_MAX\_SIZE = 100 (Maximum size of log string
-    parameter type.)
+**Note:** some ground systems require the size of the event argument to be serialized into the buffer instead of
+predicting the size using the dictionary. Setting FW_AMPCS_COMPATIBLE will serialize these sizes into the event buffers
+**and** break compatibility with the F´ ground system as it does not use this feature.
 
-**Specifies the size of the buffer that contains the serialized
-telemetry value:**
+**WARNING:** the following settings are defined by the build system and are in `FpConfig.hpp` to provide a default off
+value. These must be set by the build system as the setting works in unison with other modules that the build system
+includes when enabling these settings.
 
-  - FW\_TLM\_BUFFER\_MAX\_SIZE
-    (FW\_COM\_BUFFER\_MAX\_SIZE—sizeof(FwChanIdType)—sizeof(FwPacketDescriptorType))
+**Table 48.** Macros for use by build system only
 
-**Specifies the maximum size of a string in a telemetry channel:**
+| Macro                       | Definition                                              | Default | Valid Values     |
+| --------------------------- | --------------------------------------------------------|---------|------------------|
+| FW_BAREMETAL_SCHEDULER      | Enables baremetal scheduler hooks in active components  | 0 (off) | 0 (off) 1 (on)   |
 
-  - FW\_TLM\_STRING\_MAX\_SIZE = 40 (Maximum size of channelized
-    telemetry string type.)
 
-**Specifies the size of the buffer that contains the serialized
-parameter value:**
+## Component Configuration
 
-  - FW\_PARAM\_BUFFER\_MAX\_SIZE
-    (FW\_COM\_BUFFER\_MAX\_SIZE—sizeof(FwPrmIdType)—sizeof(FwPacketDescriptorType))
+Component configurations are also provided as part of the project's config directory. If the directory is not provided,
+then the default from the framework is used. **Remember:** if the project overrides any configuration, that new
+directory must contain all the component headers as well as the `FpConfig.hpp` as C++ prevents including individual
+headers.
 
-**Specifies the maximum size of a string in a parameter:**
+These component headers follow the form `<Component>Cfg.hpp` and allows a project to set the configuration for each
+component's C++ implementation. This is typically to set maximum sizes for tables, and other static memory allocations.
+Some components allow users to turn on and off features. If a component does not have a header, it has no configuration
+for the user to set. 
 
-  - FW\_PARAM\_STRING\_MAX\_SIZE = 40 (Maximum size of parameter string
-    type.)
+Users are encouraged to look through the header for the component of interest as they should be self descriptive.
 
-**Specifies the maximum size of a file upload chunk:**
+## Conclusion
 
-  - FW\_FILE\_BUFFER\_MAX\_SIZE = 255 (Maximum size of file buffer
-    (i.e., chunk of file).
-
-**Specifies the maximum size of a string in an interface call:**
-
-  - FW\_INTERNAL\_INTERFACE\_STRING\_MAX\_SIZE = 40 (Maximum size of
-    interface string parameter type.)
-
-**Enables text logging of events as well as data logging:** (Adds a
-second logging port for text output.)
-
-  - FW\_ENABLE\_TEXT\_LOGGING = 1 (Indicates whether text logging is
-    turned on.)
-
-**Defines the size of the text log string buffer:** (Should be large
-enough for format string and arguments.)
-
-  - FW\_LOG\_TEXT\_BUFFER\_SIZE = 256 (Maximum size of string for text
-    log message.)
-
-**Defines if serializables have** toString() **method:** (Turning this
-off saves code space and string constants; however, it must be enabled
-if text logging is enabled.)
-
-  - FW\_SERIALIZABLE\_TO\_STRING = 1 (Indicates if autocoded
-    serializables have toString() methods.)
-
-  - FW\_SERIALIZABLE\_TO\_STRING\_BUFFER\_SIZE = 255 (Size of string to
-    store toString() string output.)
-
-**Setting to enable AMPCS compatibility:** (This breaks regular ISF GUI
-compatibility.)
-
-  - FW\_AMPCS\_COMPATIBLE = 0 (Whether or not JPL AMPCS ground system
-    support is enabled.)
-
-**Defines enumeration for Time base types:**
-
-  - TB\_NONE (No time base has been established.)
-
-  - TB\_PROC\_TIME (Indicates time is processor cycle time. This is not
-    tied to external time.)
-
-  - TB\_WORKSTATION\_TIME (Time as reported on workstation where
-    software is running. Used for testing.)
-
-  - TB\_DONT\_CARE = 0xFFFF (Do not care value for sequences. If
-    FwTimeBaseStoreType is changed, this value should be changed.)
-
-**Specifies how many bits are used to store the time base:**
-
-  - FwTimeBaseStoreType U16 (Storage conversion for time base in
-    scripts/ground interface.)
-
-  - FwTimeContextStoreType U8 (Storage conversion for time context in
-    scripts/ground interface.)
-
-  - FW\_CONTEXT\_DONT\_CARE 0xFF (Do not care value for time contexts in
-    sequences.)
-
-**Settings configure whether or not the timebase and context values for
-the** Fw::Time **class are used:** (Some systems may not use or need
-these fields.)
-
-  - FW\_USE\_TIME\_BASE = 1 (Whether or not to use the time base.)
-
-  - FW\_USE\_TIME\_CONTEXT = 1 (Whether or not to serialize the time
-    context.)
-
-NOTE: configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to
-have the type definitions in Fw/Types/BasicTypes available.
-
-The file AcConstants.ini contains a set of values for variables used in
-the code generator. The file follows the Python ConfigParser based on
-.ini files. Using the .ini file allows component features such as
-opcodes and port numbers to be changed without modifying the XML
-component.
-
-**b. How to handle configuration in Python**
-
-The F′ ground support equipment (GSE) is implemented in Python, a
-programming language acting as a configuration file that can be easily
-customized, and depends on a few Python packages. It requires little
-effort to install. The only configuration required for Python Code is
-setting the environment variable that tells the GSE where to find the
-generated Python dictionaries for the target application.
-
-**Defines number of ports:** (Syntax in the file follows the Python
-ConfigParser .ini file specification.)
-
-  - ActiveRateGroupOutputPorts = 10 (Number of rate group member output
-    ports for ActiveRateGroup.)
-
-  - CmdDispatcherComponentCommandPorts = 30 (Used for command and
-    registration ports.)
-
-  - CmdDispatcherSequencePorts = 5 (Used for uplink/sequencer
-    buffer/response ports.)
-
-  - RateGroupDriverRateGroupPorts = 3 (Used to drive rate groups.)
-
-  - HealthPingPorts = 25 (Used to ping active components.)
+The user should now have a very detailed understanding of how to configure F´. Although there are some automatic checks
+built into F´ to check for some invalid configurations, the user should take care to understand the implication of
+changes to these settings. The F´ team sincerely hopes this bombardment of information will prove useful.

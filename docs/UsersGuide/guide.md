@@ -30,31 +30,37 @@ The API documentation section contains the automatically generated documentation
 ## Table of Contents
 
 - Getting Started with F´
-    - [What is F´](../index.md)
+    - [What is F´: a breif introduction](../index.md)
     - [Installing F´](../INSTALL.md)
     - [Installing F´ Console Autocomplete](./user/autocomplete.md)
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
-- F´ Users Manual
+- F´ Users Manual: an in-depth description of F´ concepts
     - [A More Complete Introduction to F´](user/full-intro.md)
     - [Projects and Deployments](user/proj-dep.md)
     - [Core Constructs: Ports, Components, and Topologies](user/port-comp-top.md)
     - [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](user/enum-arr-ser.md)
     - [Data Constructs: Commands, Events, Channels, and Parameters](user/cmd-evt-chn-prm.md)
-- F´ Best Practices
-   - [A Quick Look At the Hub Pattern](./best/hub-pattern.md)
-   - [Rate Groups and Timeliness](./best/rate-group.md)
-   - [A Quick Look at the Hub Pattern](./best/hub-pattern.md)
+- F´ Best Practices: helpful patterns when developing F´ software
+    - [A Quick Look At the Hub Pattern](./best/hub-pattern.md)
+    - [Rate Groups and Timeliness](./best/rate-group.md)
+    - [A Quick Look at the Hub Pattern](./best/hub-pattern.md)
 - F´ Ground Data System Tools (GDS) 
-   - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
-   - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
-   - [The GDS Dashboard](./gds/gds-custom-dashboards.md)
-- Developer Documentation
-    - [Porting F´ To a New Platform](./dev/porting-guide.md)
-    - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
+    - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
+    - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
+    - [The GDS Dashboard](./gds/gds-custom-dashboards.md)
+- Full Development Guides: technical details for full F´ implementations
+    - [A Tour of the Source Tree](./dev/source-tree.md)
+    - [F´ XML Specifications](./dev/xml-specification.md): 
+    - [F´ Implementation Classes](./dev/implementation.md)
+    - [Constructing the F´ Topology](./dev/building-topology.md)
     - [Asserts in F´](./dev/assert.md)
     - [GDS Dashboard Reference](./dev/gds-dashboard-reference.md)
-    - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
+- Advanced F´ Topics:
     - [F´ Python Guidelines](./dev/py-dev.md)
+    - [Porting F´ To a New Platform](./dev/porting-guide.md)
+    - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
+    - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
+    - [OS Layer Description](./dev/os-docs.md)
 - API Documentation
 
 

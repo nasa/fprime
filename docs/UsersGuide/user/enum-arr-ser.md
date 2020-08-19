@@ -5,7 +5,7 @@ a set of autocoded complex types.  The types describe here are available to both
 system unless otherwise noted. Included in this document:
 
 - [Primitive Types](#primitive-types)
-- [Poly Type](#polymorphic-type)
+- [Polymorphic Type](#polymorphic-type)
 - [Complex Types](#complex-types)
     - [Enums](#enums)
     - [Arrays](#arrays)
@@ -35,13 +35,51 @@ following table and are available to both the ground system, events, channels, a
 | POINTER_CAST     |               | integer of sufficient size to store a pointer for the architecture |
 
 **Note:** C/C++ types come from `stdint.h` and `stdbool.h`.  The last three types above are not of set size, but are
-architecture dependent.
+architecture dependent. Should a project's architecture not support all these types, see:
+[Configuring F´: Architecture Supported Primitive Types](../dev/configuring-fprime.md#architecture-supported-primitive-types)
 
 ## Polymorphic Type
 
 F´ defines a type for use by the user that can represent any of the primitive types using the same storage space. This
 is similar to a C `union` defined with fields of each above type.
 
+### Setting Polymorphic Values
+
+The PolyType object can have a value assigned to it via the constructor or the *equals* operator:
+
+```
+PolyType myInt(123)
+PolyType myFloat;
+myFloat = 123.03
+```
+
+### Getting Polymorphic Values
+
+The value stored in the PolyType object can be retrieved two ways:
+
+1)  Cast the object to the type of the value:
+```
+U32 val = (U32)pt;
+```
+6)  Use the get() method:
+```
+U32 val;
+pt.get(val);
+```
+
+In both cases, if the type being retrieved does not match the stored
+type, the code will assert.
+
+### Checking Polymorphic Values
+
+The PolyType instance has isXXX functions for checking what type is being stored, where XXX is the name of the type.
+
+```
+PolyType p(123);
+if (p.isU32()) {
+    ...
+}
+```
 
 ## Complex Types
 
@@ -66,7 +104,8 @@ Arrays are fixed-length containers of other types. They must be type-homogeneous
 ### Serializables
 
 Serializables are field-value compositions of other types. They can be type-heterogeneous and may contain any other type
-as a value. The autocoder will generate a class with accessor methods for the fields.
+as a value. The autocoder will generate a class with accessor methods for the fields. See the full specification for
+the serializable XML: [F´ XML Specifications: Serializables](../dev/xml-specification.md#serializable)
 
 ### C++ Classes
 
