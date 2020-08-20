@@ -14,6 +14,7 @@
     <import_dictionary>Ref/SignalGen/Commands.xml</import_dictionary>
     <import_dictionary>Ref/SignalGen/Telemetry.xml</import_dictionary>
     <import_dictionary>Ref/SignalGen/Events.xml</import_dictionary>
+    <import_array_type>Fw/ArrayFile/ArrayTypeArrayAi.xml</import_array_type>
     <ports>
     
 
