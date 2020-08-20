@@ -1,4 +1,3 @@
-<title>ActiveRateGroup Component SDD</title>
 # RateGroupDriver Component
 
 ## 1. Introduction

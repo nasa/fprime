@@ -1,4 +1,3 @@
-<title>Svc::PolyDb Component SDD</title>
 # Svc::PolyDb Component
 
 ## 1. Introduction

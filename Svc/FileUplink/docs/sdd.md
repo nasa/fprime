@@ -1,4 +1,3 @@
-<title>Svc::FileUplink</title>
 
 # Svc::FileUplink
 

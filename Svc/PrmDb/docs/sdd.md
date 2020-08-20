@@ -1,4 +1,3 @@
-<title>PrmDb Component SDD</title>
 # `Svc::PrmDb` Component
 
 ## 1. Introduction

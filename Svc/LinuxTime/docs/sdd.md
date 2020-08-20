@@ -1,4 +1,3 @@
-<title>Svc::LinuxTime</title>
 # Svc::LinuxTime Component
 
 ## 1. Introduction

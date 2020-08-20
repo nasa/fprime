@@ -1,4 +1,3 @@
-<title>Ref::PingReceiver</title>
 # Ref::PingReceiver Component
 
 ## 1. Introduction

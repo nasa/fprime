@@ -1,4 +1,3 @@
-<title>Svc::Ping Port SDD</title>
 
 # Svc::Ping Port
 

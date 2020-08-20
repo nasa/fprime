@@ -1,4 +1,3 @@
-<title>Fw::PrmGet/Fw::PrmSet Port SDD</title>
 
 # Fw::PrmGet/PrmSet Ports
 

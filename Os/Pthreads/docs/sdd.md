@@ -1,4 +1,3 @@
-<title>Os::Queue (Pthreads implementation)</title>
 
 # Os::Queue (Pthreads implemenation)
 

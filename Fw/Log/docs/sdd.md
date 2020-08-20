@@ -1,4 +1,3 @@
-<title>Fw::Log/Fw::LogText Port SDD</title>
 
 # Fw::Log/LogText Ports
 

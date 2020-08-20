@@ -1,4 +1,3 @@
-<title>Fw::Time Port SDD</title>
 # Fw::Time Port
 
 ## 1. Introduction

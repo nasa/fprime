@@ -1,4 +1,3 @@
-<title>Svc::BufferManager</title>
 
 # Svc::BufferManager
 

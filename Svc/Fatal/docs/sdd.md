@@ -1,4 +1,3 @@
-<title>Svc::Fatal Port SDD</title>
 # Svc::Fatal Port
 
 ## 1. Introduction

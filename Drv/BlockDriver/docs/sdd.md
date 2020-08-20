@@ -1,4 +1,3 @@
-<title>Drv::BlockDriver</title>
 # Drv::BlockDriver Component
 
 ## 1. Introduction

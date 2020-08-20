@@ -1,4 +1,3 @@
-<title>Fw/FilePacket</title>
 
 # Fw/FilePacket
 

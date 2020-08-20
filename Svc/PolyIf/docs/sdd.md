@@ -1,4 +1,3 @@
-<title>Svc::Poly Port SDD</title>
 # Svc::Poly Port
 
 ## 1. Introduction

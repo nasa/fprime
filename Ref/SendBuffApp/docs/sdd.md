@@ -1,4 +1,3 @@
-<title>Ref::SendBuffApp</title>
 # Ref::SendBuffApp Component
 
 ## 1. Introduction

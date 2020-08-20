@@ -1,4 +1,3 @@
-<title>Fw/Buffer</title>
 
 # Fw/Buffer
 

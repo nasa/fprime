@@ -1,4 +1,3 @@
-<title>Fw::Types SDD</title>
 # Fw::Type Descriptions
 
 ## 1. Introduction

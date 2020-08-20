@@ -55,6 +55,7 @@ The API documentation section contains the automatically generated documentation
     - [Constructing the F´ Topology](./dev/building-topology.md)
     - [Asserts in F´](./dev/assert.md)
     - [GDS Dashboard Reference](./dev/gds-dashboard-reference.md)
+    - [Integration Test API](./dev/testAPI/user_guide.md)
 - Advanced F´ Topics:
     - [F´ Python Guidelines](./dev/py-dev.md)
     - [Porting F´ To a New Platform](./dev/porting-guide.md)
@@ -62,6 +63,8 @@ The API documentation section contains the automatically generated documentation
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
 - API Documentation
+    - [GDS CLI Design](./dev/gds-cli-dev.md)
+    
 
 
 ## F´ Source Tree F´ Out of the Box Items

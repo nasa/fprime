@@ -1,4 +1,3 @@
-<title>Fw::Cmd/Fw::CmdResponse/Fw::CmdReg Port SDD</title>
 
 # Fw::Cmd/Fw::CmdResponse/Fw::CmdReg
 

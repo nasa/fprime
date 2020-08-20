@@ -22,4 +22,4 @@ contain the root `toctree` directive. -->
 
 * [Integration Test API User Guide](../user_guide.md)
 
-* [GDS Overview](../../../README.md)
+* [GDS Overview](../../../../../Gds/README.md)

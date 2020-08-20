@@ -5,7 +5,7 @@ how it can be used, and a detailed reference for interested users. `fprime-cli` 
 features without the need for a graphical environment. This enables projects easier access to F´ testing and operations
 in more environments.
 
-**Note:** Developer documentation is available in the [developer's CLI guide](../../../Gds/docs/GDS_CLI_DEV_GUIDE.md).
+**Note:** Developer documentation is available in the [developer's CLI guide](../dev/gds-cli-dev.md).
 
 - [What is `fprime-cli`?](#what-is-fprime-cli)
 - [Getting Started](#getting-started)

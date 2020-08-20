@@ -1,4 +1,3 @@
-<title>Fw::Obj SDD</title>
 # Fw::Obj Descriptions
 
 ## 1. Introduction

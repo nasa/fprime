@@ -1,4 +1,3 @@
-<title>RateGroupDriver Component SDD</title>
 # RateGroupDriver Component
 
 ## 1. Introduction

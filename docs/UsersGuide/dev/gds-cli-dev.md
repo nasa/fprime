@@ -42,7 +42,7 @@ This guide is for programmers who intend to maintain and develop code for the Gr
 
 ### Intended
 
-![](proposed_architecture.png)
+![](../media/proposed_architecture.png)
 
 The intended architecture for the CLI is:
 
@@ -56,7 +56,7 @@ The CLI will interact with the GDS through an appropriate API, which the CLI mod
 
 Not including imports used only for type hints, or dependencies for modules not part of the GDS CLI source code (generated using [pydeps](https://pydeps.readthedocs.io/en/latest/):
 
-![](overall_dependencies_edited.png)
+![](../media/overall_dependencies_edited.png)
 
 *Note that the above graph has arrows pointing **to** the module that does the importing and away from the dependency, and does not include Python standard library imports*
 
@@ -66,7 +66,7 @@ Not including imports used only for type hints, or dependencies for modules not 
 
 ### Dataflow
 
-![](cli_data_flow.svg)
+![](../media/cli_data_flow.svg)
 
 ### Dependencies
 

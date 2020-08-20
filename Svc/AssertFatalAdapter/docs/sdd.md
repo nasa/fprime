@@ -1,4 +1,3 @@
-<title>AssertFatalAdapter Component SDD</title>
 # AssertFatalAdapter Component
 
 ## 1. Introduction

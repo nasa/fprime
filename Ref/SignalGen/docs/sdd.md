@@ -1,4 +1,3 @@
-<title>Ref::SignalGen</title>
 # Ref::SignalGen Component
 
 ## 1. Introduction

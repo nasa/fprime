@@ -1,4 +1,3 @@
-<title>Svc::ActiveLogger Component SDD</title>
 # Svc::ActiveLogger Component
 
 ## 1. Introduction

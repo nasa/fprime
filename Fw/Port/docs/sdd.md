@@ -1,4 +1,3 @@
-<title>Fw::Port SDD</title>
 # Fw::Port Descriptions
 
 ## 1. Introduction

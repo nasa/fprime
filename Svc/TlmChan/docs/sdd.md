@@ -1,4 +1,3 @@
-<title>TlmChan Component SDD</title>
 # TlmChan Component
 
 ## 1. Introduction
