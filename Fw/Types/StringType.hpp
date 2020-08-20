@@ -50,6 +50,11 @@ namespace Fw {
             virtual ~StringBase(void);
             virtual void copyBuff(const char* buff, NATIVE_UINT_TYPE size) = 0;
             virtual NATIVE_UINT_TYPE getCapacity(void) const = 0; //!< return size of buffer
+
+        PRIVATE:
+            // A no-implementation copy constructor here will prevent the default copy constructor from being called
+            // accidentally, and without an implementation it will create an error for the developer instead.
+            StringBase(const StringBase &src); //!< constructor with buffer as source
     };
 
 }
