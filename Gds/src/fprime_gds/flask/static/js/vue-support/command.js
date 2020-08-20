@@ -5,7 +5,9 @@
  */
 // Setup component for select
 import "../../third-party/js/vue-select.js"
-import {timeToString,filter} from "./utils.js";
+import {listExistsAndItemNameNotInList, timeToString} from "./utils.js";
+import {_datastore} from "../datastore.js";
+import {_loader} from "../loader.js";
 
 Vue.component('v-select', VueSelect.VueSelect);
 /**
@@ -64,9 +66,14 @@ Vue.component("command-item", {
  * Input command form Vue object. This allows for sending commands from the GDS.
  */
 Vue.component("command-input", {
-    props:["commands", "loader", "cmdhist"],
     data: function() {
-        return {"matching": "", "selected": {"mnemonic":"NON_SELECTED", "args":[]}, "active": false}
+        let selected = _datastore.commands["cmdDisp.CMD_NO_OP"];
+        return {
+            "commands": _datastore.commands,
+            "loader": _loader,
+            "selected": selected,
+            "active": false
+        }
     },
     template: "#command-input-template",
     methods: {
@@ -116,34 +123,6 @@ Vue.component("command-input", {
                     }
                     _self.active = false;
                 });
-        },
-        /**
-         * Action to perform on a row when it has ben clicked by the user.
-         * @param item: item to click
-         */
-        clickAction(item) {
-            this.selected = item.template;
-            this.selected.args = [...item.args];
-        },
-        /**
-         * Converts a given item into columns.
-         * @param item: item to convert to columns
-         */
-        columnify(item) {
-            let values = [];
-            for (let i = 0; i < item.args.length; i++) {
-                values.push(item.args[i].value);
-            }
-            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, values];
-        },
-        /**
-         * Take the given item and converting it to a unique key by merging the id and time together with a prefix
-         * indicating the type of the item. Also strip spaces.
-         * @param item: item to convert
-         * @return {string} unique key
-         */
-        keyify(item) {
-            return "cmd-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
         }
     },
     computed: {
@@ -168,109 +147,92 @@ Vue.component("command-input", {
         }
     }
 });
+
 /**
- * Core functions of commanding, required by the above Vue components. This allows various Vue classes to use the
- * functions as part of a composition. This allows users and implementors to mix-and-match components, Vues, etc, while
- * still maintaining the required functions for the above Command Vueue component.
+ * command-history:
  *
- * This set of mixins must provide the following commands parts:
- *
- * 1. "setupCommands" for commands that takes a loader, and commands objects, and returns the needed vue data object.
- * 2. "initializeCommands" operates on the "this.vue" object, setting the $refs to have a selected command
- *
- * Usage: call "setupCommands(commands, loader)" to get the necessary data parts, then setup the vue object, the call
- *        "initializeCommands()" to setup the this.vue object.
- *
- * @author mstarch
+ * Displays a list of previously-sent commands to the GDS.
  */
-export let CommandMixins = {
-    /**
-     * Sets up the needed data partial-dictionary to be supplied to the Vue.js construction, should it use the above
-     * Vue "command-input" component.
-     *
-     * Note: call this function before creating this.vue and supply to this.vue the following items as part of the data
-     * input.
-     * @param commands: command dictionary object
-     * @param loader: f prime endpoint loader with the ability to connect to the f prime REST endpoint.
-     * @return {{loader: loader object  loads endpoints, commands: command dictionary object, history: empty list}}
-     */
-    setupCommands(commands, loader) {
-        // Fix enumeration inializations
-        for (let command in commands) {
-            command = commands[command];
-            for (let i = 0; i < command.args.length; i++) {
-                command.args[i].error = "";
-                if (command.args[i].type == "Enum") {
-                    command.args[i].value = command.args[i].possible[0];
-                }
-            }
-        }
-        return {"commands": commands, "loader": loader, "cmdhist":[]};
-    },
-    /**
-     * Initialize the commanding input to have an active command. This ensures that a valid command is setup once the
-     * vue object has been constructed.
-     *
-     * Note: call this function after creating this.vue.
-     */
-    initializeCommands(component) {
-        // Handle initial call
-        if (typeof(component) === "undefined") {
-            // Sanity check function
-            if (typeof(this.vue) === "undefined") {
-                throw Error(typeof(this) + " does not setup a 'vue' member. Cannot initialize commands.");
-            }
-            component = this.vue;
-        }
-        // Check if it is our component for the type we are looking for
-        if (component.$options.name === "command-input") {
-            component.selected = component.commands["cmdDisp.CMD_NO_OP"];
-            return true;
-        }
-        else if (component.$children.length > 0) {
-            for (let i = 0; i < component.$children.length; i++) {
-                if (this.initializeCommands(component.$children[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    },
-    /**
-     * Updates the command history displayed by this command object. This will store the command history as an active.
-     * @param cmdhist: command history to set
-     */
-    updateCommandHistory(cmdhist) {
-        this.vue.cmdhist.push(...cmdhist);
-    }
-};
 /**
- * CommandView:
+ * command-input:
  *
- * This is a stand-alone command view class. It will mixin the required functions to handle commands for the above
- * command-input component, and it will construct a new Vue object that wraps the supplied element.
- *
- * @author mstarch
+ * Input command form Vue object. This allows for sending commands from the GDS.
  */
-export class CommandVue {
-    /**
-     * Construct a stand-alone command-input given the element, commands dictionary, and loader.  See the above mixin
-     * for usage of commands and loader.  "elemid" is the element that will be wrapped by the Vue object.
-     * @param elemid: element to conform to the Vue.
-     * @param commands: commands dictionary to use to setup commanding list
-     * @param loader: loader used to send commands
-     */
-    constructor(elemid, commands, loader) {
-        //Mixins commands
-        Object.assign(CommandVue.prototype, CommandMixins);
-        let data = this.setupCommands(commands, loader);
-        // Setup vue component
-        this.vue = new Vue({
-            el: elemid,
-            data: data
-        });
-        // Initialize commands
-        this.initializeCommands();
+Vue.component("command-history", {
+    props: {
+        /**
+         * fields:
+         *
+         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
+         * this object's display.
+         */
+        fields: {
+            type: [Array, String],
+            default: ""
+        },
+        /**
+         * The search text to initialize the table filter with (defaults to
+         * nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
+        },
+        /**
+         * A list of item ID names saying what rows in the table should be
+         * shown; defaults to an empty list, meaning "show all items"
+         */
+        itemsShown: {
+            type: [Array, String],
+            default: ""
+        },
+        /**
+         * 'compact' allows the user to hide filters/buttons/headers/etc. to
+         * only show the table itself for a cleaner view
+         */
+        compact: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data: function() {
+        return {
+            "cmdhist": _datastore.command_history,
+            "matching": ""
+        }
+    },
+    template: "#command-history-template",
+    methods: {
+        /**
+         * Converts a given item into columns.
+         * @param item: item to convert to columns
+         */
+        columnify(item) {
+            let values = [];
+            for (let i = 0; i < item.args.length; i++) {
+                values.push(item.args[i].value);
+            }
+            return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name, values];
+        },
+        /**
+         * Take the given item and converting it to a unique key by merging the id and time together with a prefix
+         * indicating the type of the item. Also strip spaces.
+         * @param item: item to convert
+         * @return {string} unique key
+         */
+        keyify(item) {
+            return "cmd-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
+        },
+        /**
+         * Returns if the given item should be hidden in the data table; by
+         * default, shows all items. If the "itemsShown" property is set, only
+         * show items with the given names
+         *
+         * @param item: The given F' data item
+         * @return {boolean} Whether or not the item is shown
+         */
+        isItemHidden(item) {
+            return listExistsAndItemNameNotInList(this.itemsShown, item);;
+        }
     }
-}
+});

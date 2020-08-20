@@ -265,7 +265,7 @@ def test_serializable_type():
     assert mem_list == memList
 
 
-#def test_array_type():
+# def test_array_type():
 #    """
 #    Tests the ArrayType serialization and deserialization
 #    """

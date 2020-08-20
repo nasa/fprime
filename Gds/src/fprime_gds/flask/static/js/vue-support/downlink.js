@@ -1,10 +1,29 @@
 /**
  * downlink.js:
  *
+ * This is the Vue component used to display and handle the downlinks of the various files. This component has one basic
+ * parts:
+ *
+ * 1. a table view of all downloading and downloaded files
+ *
+ * Note: this component uses a custom row HTML for display in the table view, as it is sufficiently different from
+ * the other tables. This can be found in the fptable JS document.
+ *
+ * These file rows are used to fill out the uplink and the downlink tables.
+ *
+ * @author mstarch
+ */
+import {_datastore} from "../datastore.js";
+
+/**
+ * downlink.js:
+ *
  * Downlink vue support code. Provides the needed data to visualize a table list of downlinked and downlinking files.
  */
 Vue.component("downlink", {
-    props:["downfiles"],
+    data: function() {
+        return {"downfiles": _datastore.downfiles}
+    },
     template: "#downlink-template",
     methods: {
         /**
@@ -33,23 +52,3 @@ Vue.component("downlink", {
         },
     }
 });
-/**
- * Mixins for downlinking.
- * @type {number}
- */
-export let DownlinkMixins = {
-    /**
-     * Setup downlink needed data items "downfiles"
-     * @return {{downfiles: []}}
-     */
-    setupDownlink() {
-        return {"downfiles": []}
-    },
-    /**
-     * Function callback for REST API to fill in data files for downlinking.
-     * @param files: files that are managed by the downlink server.
-     */
-    updateDownfiles(files) {
-        this.vue.downfiles = files;
-    }
-};

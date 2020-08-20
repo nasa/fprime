@@ -88,7 +88,9 @@ namespace Drv {
     }
 
     void SocketHelper::close(void) {
-        (void) ::close(this->m_socketInFd);
+        if (this->m_socketInFd != -1) {
+            (void) ::close(this->m_socketInFd);
+        }
         this->m_socketInFd = -1;
         this->m_socketOutFd = -1;
     }
@@ -97,7 +99,9 @@ namespace Drv {
 
         SocketIpStatus status = SOCK_SUCCESS;
         // Only the input (TCP) socket needs closing
-        (void) ::close(this->m_socketInFd); // Close open sockets, to force a re-open
+        if (this->m_socketInFd != -1) {
+            (void) ::close(this->m_socketInFd); // Close open sockets, to force a re-open
+        }
         this->m_socketInFd = -1;
         // Open a TCP socket for incoming commands, and outgoing data if not using UDP
         status = this->openProtocol(SOCK_STREAM);
@@ -126,10 +130,10 @@ namespace Drv {
         struct sockaddr_in address;
 
         // Clear existing file descriptors
-        if (isInput) {
+        if (isInput and this->m_socketInFd != -1) {
             (void) ::close(this->m_socketInFd);
             this->m_socketInFd = -1;
-        } else {
+        } else if (not isInput and this->m_socketOutFd != -1) {
             (void) ::close(this->m_socketOutFd);
             this->m_socketOutFd = -1;
         }
