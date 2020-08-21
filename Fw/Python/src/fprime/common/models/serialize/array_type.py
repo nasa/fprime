@@ -26,7 +26,7 @@ class ArrayType(type_base.BaseType):
     @param param: value_list = [ values... ] 
     Mandatory, array type must include a default
 
-    @param param: type_data = (value_typename, format_string)
+    @param param: type_data = (value_typename, string_size (optional), format_string)
     """
 
     def __init__(self, typename, value_list, type_data):
@@ -42,7 +42,8 @@ class ArrayType(type_base.BaseType):
         setattr(self, "value_list", None)
 
         self.__value_typename = type_data[0]
-        self.__fmt_str = type_data[1]
+        self.__string_size = type_data[1]
+        self.__fmt_str = type_data[2]
 
         if value_list == None or len(value_list) == 0:
             return

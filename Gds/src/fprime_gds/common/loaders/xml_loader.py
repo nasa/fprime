@@ -42,6 +42,7 @@ from fprime.common.models.serialize.i64_type import I64Type
 
 from fprime.common.models.serialize.string_type import StringType
 from fprime.common.models.serialize.serializable_type import SerializableType
+from fprime.common.models.serialize.array_type import ArrayType
 
 
 class XmlLoader(dict_loader.DictLoader):
@@ -67,6 +68,7 @@ class XmlLoader(dict_loader.DictLoader):
     ARR_NAME_TAG = "name"
     ARR_TYPE_TAG = "type"
     ARR_SIZE_TAG = "size"
+    ARR_STRING_SIZE_TAG = "string_size"
     ARR_FORMAT_TAG = "format"
     ARR_DEFAULT_TAG = "defaults"
     ARR_DEFAULT_VALUE_TAG = "value"
@@ -311,13 +313,17 @@ class XmlLoader(dict_loader.DictLoader):
                 arr_type = arr_memb.get(self.ARR_TYPE_TAG)
                 type_obj = self.parse_type(arr_type, arr_memb, xml_obj)
                 arr_format = arr_memb.get(self.ARR_FORMAT_TAG)
+                arr_string_size = None
+                if arr_type == "string":
+                    arr_string_size = arr_memb.get(self.ARR_STRING_SIZE_TAG)
 
-                defaults = []
+                values = []
                 for memb in default_section:
-                    val = memb.get(self.ARR_DEFAULT_VALUE_TAG)
-                    defaults.append(deepcopy(type_obj))
+                    val = memb.get(self.ARR_DEFAULT_VALUE_TAG) 
+                    # ARRAY TYPE DOESNT NEED TO KEEP TRACK OF DEFAULTS, STORED IN C++ ARRAY TYPE FILE
+                    values.append(deepcopy(type_obj)) # Adds a new type object in place 
 
-                arr_obj = ArrayType(type_name, defaults, (arr_type, arr_format))
+                arr_obj = ArrayType(type_name, values, (arr_type, arr_string_size, arr_format))
 
                 self.array_types[type_name] = arr_obj
                 return arr_obj
