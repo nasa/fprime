@@ -33,6 +33,7 @@ from fprime.common.models.serialize.i64_type import I64Type
 
 from fprime.common.models.serialize.string_type import StringType
 from fprime.common.models.serialize.serializable_type import SerializableType
+from fprime.common.models.serialize.array_type import ArrayType
 
 from copy import deepcopy
 
@@ -161,7 +162,7 @@ class CmdData(sys_data.SysData):
             raise CommandArgumentException(
                 "Argument value could not be converted to type object"
             )
-        if type(arg_type) == type(BoolType()):
+        if isinstance(arg_type, BoolType):
             if arg_val == "False":
                 av = False
             else:

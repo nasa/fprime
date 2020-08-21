@@ -37,6 +37,7 @@ from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.parsers import XmlPortsParser
 from fprime_ac.parsers import XmlSerializeParser
 from fprime_ac.parsers import XmlTopologyParser
+from fprime_ac.parsers import XmlArrayParser
 from fprime_ac.utils.buildroot import get_build_roots, set_build_roots, search_for_file, BuildRootMissingException, BuildRootCollisionException
 
 from lxml import etree

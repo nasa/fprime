@@ -27,7 +27,6 @@ import six
 import fprime.fbuild
 import fprime.fbuild.settings
 
-COMMENT_REGEX = re.compile(r"\s*#.*")
 
 class CMakeBuildCache(object):
     """
@@ -395,11 +394,6 @@ class CMakeHandler(object):
         """
         Loads the default settigns for this build Could include environment settings and a default toolchain.
         """
-        # Non-generate targets can read the settings file location directly from the build-cache
-        if settings_file is None:
-            settings_file = self.get_fprime_configuration(
-                fprime.fbuild.settings.IniSettings.SET_ENV, cmake_dir
-            )
         self.settings = fprime.fbuild.settings.IniSettings.load(settings_file)
 
     @staticmethod
@@ -469,7 +463,7 @@ class CMakeHandler(object):
             environment = {}
 
         cm_environ = os.environ.copy()
-        cm_environ.update(self.environment)
+        cm_environ.update(self.settings.get("environment", {}))
         cm_environ.update(environment)
         cargs = ["cmake"]
         if not write_override:

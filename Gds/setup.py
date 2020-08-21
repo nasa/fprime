@@ -84,12 +84,8 @@ integrated configuration with ground in-the-loop.
     # standard use of utilities that ship as part of F prime.
     ####
     entry_points={
-        'gui_scripts': [
-            'fprime-gds = fprime_gds.executables.run_deployment:main'
-        ],
-        'console_scripts': [
-            'fprime-cli = fprime_gds.executables.fprime_cli:main'
-        ],
+        "gui_scripts": ["fprime-gds = fprime_gds.executables.run_deployment:main"],
+        "console_scripts": ["fprime-cli = fprime_gds.executables.fprime_cli:main"],
     },
     ####
     # Classifiers:
