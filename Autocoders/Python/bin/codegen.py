@@ -627,9 +627,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         array_size = array_model.get_size()
                         array_elem.attrib["size"] = array_size
 
-                        array_string_size = array_model.get_string_size()
-                        array_elem.attrib["string_size"] = array_string_size
-
                         array_format = array_model.get_format()
                         array_elem.attrib["format"] = array_format
 
