@@ -1,4 +1,4 @@
-# Fw::Port Descriptions
+# Fw::Port Classes
 
 ## 1. Introduction
 

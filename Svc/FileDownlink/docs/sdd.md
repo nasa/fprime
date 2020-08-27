@@ -1,5 +1,4 @@
-
-# Svc::FileDownlink
+# Svc::FileDownlink Component
 
 ## 1 Introduction
 

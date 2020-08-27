@@ -1,5 +1,4 @@
-
-# Fw/FilePacket
+# Fw::FilePacket Classes
 
 ## 1 Introduction
 

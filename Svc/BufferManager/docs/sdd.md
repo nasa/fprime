@@ -1,4 +1,3 @@
-
 # Svc::BufferManager
 
 ## 1 Introduction

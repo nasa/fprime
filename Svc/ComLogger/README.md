@@ -1,4 +1,4 @@
-# Svc/ComLogger
+# Svc::ComLogger Component
 
 This is the build directory for the ISF ComLogger component.
 

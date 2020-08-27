@@ -1,8 +1,8 @@
-# Fw::Obj Descriptions
+# Fw::Obj Classes
 
 ## 1. Introduction
 
-The `Fw::Obj` module contains the `Fw::ObjBase` base class that defines the root class for objects in the ISF architecture.
+The `Fw::Obj` module contains the `Fw::ObjBase` base class that defines the root class for objects in the F´ architecture.
 In addition, it provides a definition for a pure virtual base class `Fw::ObjRegistry` that is used to register objects
 when they are initialized.
 
@@ -10,7 +10,7 @@ when they are initialized.
 
 ### 2.1 Fw::ObjBase
 
-The `Fw::ObjBase` class is the base class in the ISF class hierarchy. It is the base class for all components 
+The `Fw::ObjBase` class is the base class in the F´ class hierarchy. It is the base class for all components 
 and ports. It stores the object name as well as performs object registration if an object registry has been
 registered with the class. 
 

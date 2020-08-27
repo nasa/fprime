@@ -1,4 +1,3 @@
-
 # Svc::Ping Port
 
 ## 1. Introduction

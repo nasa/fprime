@@ -1,5 +1,4 @@
-
-# Svc::FileUplink
+# Svc::FileUplink Component
 
 ## 1 Introduction
 

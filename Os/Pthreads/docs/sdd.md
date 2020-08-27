@@ -1,4 +1,3 @@
-
 # Os::Queue (Pthreads implemenation)
 
 ## 1 Introduction

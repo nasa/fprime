@@ -1,5 +1,4 @@
-Utils::TokenBucket
-===
+# Utils::TokenBucket
 
 ## 1 Introduction
 

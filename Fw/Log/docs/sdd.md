@@ -1,5 +1,4 @@
-
-# Fw::Log/LogText Ports
+# Fw::Log / Fw::LogText Ports
 
 ## 1. Introduction
 

@@ -1,5 +1,4 @@
-
-# Fw/Buffer
+# Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port
 
 ## 1 Introduction
 

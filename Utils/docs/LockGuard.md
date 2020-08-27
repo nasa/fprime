@@ -1,5 +1,4 @@
-Utils::LockGuard
-===
+# Utils::LockGuard
 
 ## 1 Introduction
 

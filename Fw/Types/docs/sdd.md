@@ -1,4 +1,4 @@
-# Fw::Type Descriptions
+# Fw::Type Classes and Types
 
 ## 1. Introduction
 

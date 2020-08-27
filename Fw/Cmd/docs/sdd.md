@@ -1,5 +1,4 @@
-
-# Fw::Cmd/Fw::CmdResponse/Fw::CmdReg
+# Fw::Cmd / Fw::CmdResponse /Fw::CmdReg Ports
 
 ## 1. Introduction
 

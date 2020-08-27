@@ -1,5 +1,4 @@
-Utils::RateLimiter
-===
+# Utils::RateLimiter
 
 ## 1 Introduction
 

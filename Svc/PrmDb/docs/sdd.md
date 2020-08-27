@@ -1,4 +1,4 @@
-# `Svc::PrmDb` Component
+# Svc::PrmDb Component
 
 ## 1. Introduction
 
