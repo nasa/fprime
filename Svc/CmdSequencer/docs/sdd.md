@@ -1,3 +1,4 @@
+\page SvcCmdSequencerComponent Svc::CmdSequencer Component
 # Svc::CmdSequencer Component
 
 ## 1 Introduction

@@ -1,3 +1,4 @@
+\page FwTypeClasses Fw::Type Classes and Types
 # Fw::Type Classes and Types
 
 ## 1. Introduction

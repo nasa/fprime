@@ -1,3 +1,4 @@
+\page OsQueue Os::Queue (Pthreads implemenation)
 # Os::Queue (Pthreads implemenation)
 
 ## 1 Introduction

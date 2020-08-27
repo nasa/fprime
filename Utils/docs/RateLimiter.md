@@ -1,3 +1,4 @@
+\page UtilsRateLimiterClass Utils::RateLimiter Class
 # Utils::RateLimiter
 
 ## 1 Introduction

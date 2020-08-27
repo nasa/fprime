@@ -1,3 +1,4 @@
+\page UtilsHashClass Utils::Hash Class
 # Utils::Hash
 
 This directory contains a generic interface for creating hashes 

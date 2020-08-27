@@ -1,3 +1,4 @@
+\page FwObjClasses Fw::Obj Classes
 # Fw::Obj Classes
 
 ## 1. Introduction

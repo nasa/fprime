@@ -1,3 +1,4 @@
+\page SvcPingPort Svc::Ping Port
 # Svc::Ping Port
 
 ## 1. Introduction

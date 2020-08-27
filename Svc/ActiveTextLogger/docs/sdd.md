@@ -1,3 +1,4 @@
+\page SvcActiveTextLoggerComponent Svc::ActiveTextLogger Component
 # Svc::ActiveTextLogger Component
 
 ## 1. Introduction

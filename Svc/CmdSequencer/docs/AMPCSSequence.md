@@ -1,3 +1,4 @@
+\page SvcAMPCSSequenceClass Svc::AMPCSSequence Class
 # Svc::AMPCSSequence Class
 
 `AMPCSSequence` is a derived class of `CmdSequencer::Sequence`.

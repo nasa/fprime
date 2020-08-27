@@ -1,3 +1,4 @@
+\page DrvBlockDriverComponent Drv::BlockDriver Component
 # Drv::BlockDriver Component
 
 ## 1. Introduction
