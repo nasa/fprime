@@ -141,6 +141,7 @@ class ConfigManager(configparser.ConfigParser):
     def get_file_path(self):
         """
         Return file loaded for this configuration
+
         :return: file path
         """
         return self.file_path

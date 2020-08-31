@@ -27,6 +27,7 @@ def register_test(
     """
     Registers a test to the given module using the given name. This will create a function of the
     form test_<name> registered to the module ready for autodetect.
+
     :param module: name of module for registration
     :param name: name to register test with
     """
@@ -52,6 +53,7 @@ def register_test(
 def run_cmake(build_path, options={}, capout=False):
     """
     Runs the cmake in the current directory with the given options and build_path
+
     :param build_path: path to build
     :param options: options to pass CMake
     :return: True if successful, False otherwise
@@ -83,6 +85,7 @@ def run_make(target):
     Runs the make command to ensure that the CMake system can follow through and finish the build.
     Note: this assumes that the provided application build properly. Thus, those unit tests should
     run first.
+
     :param target: target to the make command
     :return: True if successful, False otherwise
     """
@@ -98,6 +101,7 @@ def assert_exists(expected, start_time):
     """
     Goes through all of the expected files and check to ensure that each is a file. This also
     ensures that the file is new enough to have been generated at the start of this build.
+
     :param expected: list of expected files. Relative to build. <FPRIME> replaced with f prime dir.
     :param start_time: time of the start of this build
     """
@@ -119,6 +123,7 @@ def run_build(
     """
     Run the CMake command, and any number of make commands. Ensures that the calls all process as
     expected, and that the expected outputs are produced.
+
     :param build_path: target path. Usually <FPRIME>/Ref. <FPRIME> replaced with f prime dir.
     :param expected_outputs: list of files to check for. Relative to build directory.
     :param build_directory: directory in which to perform the build, default is a temporary dir.

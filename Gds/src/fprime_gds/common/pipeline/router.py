@@ -30,6 +30,7 @@ class OutgoingRouter(
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads
         from the sender parameter to creat this token, otherwise "0000" is sent out.
+
         :param data: encoded data to be prepended to
         :param sender: sender to append to.
         """
@@ -53,6 +54,7 @@ class IncomingRouter(
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads
         from the sender parameter to creat this token, otherwise "0000" is sent out.
+
         :param data: encoded data to be prepended to
         :param sender: sender id to append to.
         """

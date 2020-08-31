@@ -71,6 +71,7 @@ class FileEncoder(encoder.Encoder):
     def encode_api(self, data):
         """
         Encodes specific file packets. This will allow the data to be sent out.
+
         :param data: FilePacket type to send.
         :return: encoded bytes data
         """

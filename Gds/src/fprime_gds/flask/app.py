@@ -40,6 +40,7 @@ def construct_app():
     4. Create Restful API for registering flask items
     5. Setup flask_uploads settings
     6. Register all restful endpoints
+
     :return: setup app
     """
     app = flask.Flask(__name__, static_url_path="")
@@ -137,6 +138,7 @@ app, _ = construct_app()
 def files_serve(path):
     """
     A function used to serve the JS files needed for the GUI layers.
+
     :param path: path to the file (in terms of web browser)
     """
     return flask.send_from_directory("static/js", path)

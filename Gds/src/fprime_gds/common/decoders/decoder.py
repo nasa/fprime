@@ -42,6 +42,7 @@ class Decoder(
         """
         Data callback which calls the decode_api function exactly once. Then it passes the results to all registered
         consumer. This should only need to be overridden in extraordinary circumstances.
+
         :param data: data bytes to be decoded
         :param sender: (optional) sender id, otherwise None
         """
@@ -58,6 +59,7 @@ class Decoder(
 
         This function allows for non-registered code to call the same decoding
         code as is used to parse data passed to the data_callback function.
+
         :param data: binary data to decode
         :return: decoded data object
         """

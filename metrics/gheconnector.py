@@ -26,6 +26,7 @@ class GitHubConnector:
                  config_options=None, github_limit_wait=False, zenhub_limit_wait=False, auto_retry_wait=10000):
         """
         Initializer for the gheconnector.GitHubConnector object.
+
         :param github_url:
         :param github_key:
         :param github_issue_params:
@@ -151,6 +152,7 @@ class GitHubConnector:
         Retrieves the directory contents from a GHE repo. Will display submodule contents if traverse is true, and will
         display non-nested submodule entries if traverse is false. Should not be used to retrieve submodule entries, as
         get_submodule_object is intended for that use.
+
         :param repo_name: GHE repository name, including owner. ex: "organization/repository"
         :param ref: Branch / tag / ref of the repository to look in. Defaults to master.
         :param path: Relative path to the directory from the root of the repository. Expects Linux/URL like file
@@ -194,6 +196,7 @@ class GitHubConnector:
         """
         Retrieves a submodule org/repo and sha ref from a submodule object in a repo. Verifies that it is grabbing a
             submodule object, so it can be used to differentiate if needed.
+
         :param repo_name: field to specify a repo directly to retrieve the submodule object from
         :param ref: field to specify a ref directly to retrieve the submodule object from
         :param path: field to specify a path directly for the location of the submodule object
@@ -217,6 +220,7 @@ class GitHubConnector:
         Light wrapper around the requests library to retrieve a raw file from GHE. Doesn't call the self._github_request
             method because it doesn't receive a json response, and it doesn't need to because it doesn't count against
             api calls.
+
         :param repo_name: GHE repository name, including owner. ex: "organization/repository"
         :param ref: Branch of the repository to look in.
         :param path: Relative path to the file from the root of the repository. Requires Linux/URL like file paths.
@@ -281,6 +285,7 @@ class GitHubConnector:
         """
         Gathers multiple issues in a repository, from most current down to a specified limit. Optionally includes issue
         events.
+
         :param repo_name: GHE repository name, including owner. ex: "organization/repository"
         :param issue_number: The specific issue number to be retrieved.
         :param events: Optional boolean to indicated whether events are gathered for each issue. Events must be gathered
@@ -319,6 +324,7 @@ class GitHubConnector:
         A function to retrieve the event history of an issue.
 
         NOTE: GHE and ZHE issue urls here are slightly different in scope,
+
         :param issue_number: The specific issue number to retrieve the events for.
         :param github_issues_url: The general issues endpoint for GHE.
         :param zenhub_issues_url: The endpoint for this specific issue for ZHE
@@ -514,6 +520,7 @@ class GitHubConnector:
         """
         Makes a request to a GHE endpoint, follows "next" links if there are additional results, using parameters
             contained in self to construct the request and evaluate rate limit complications appropriately.
+
         :param endpoint: The GHE REST endpoint to request data from.
         :param headers: Optional headers to send along with the request. Defaults to self.github_auth_header.
         :param params: Optional parameters to send along with the request.
@@ -601,6 +608,7 @@ class GitHubConnector:
         Makes a request to a ZHE endpoint, using parameters contained in self to construct the request and evaluate
             rate limit complications appropriately. No capacity to follow large result sets, since ZHE doesn't seem
             to create those in our use cases.
+
         :param endpoint: The ZHE REST endpoint to request data from.
         :param headers: Optional headers to send along with the request. Defaults to self.zenhub_auth_header.
         :param params: Optional parameters to send along with the request. Defaults to self.github_issue_params.

@@ -31,6 +31,7 @@ class RamHistory(History):
     def data_callback(self, data, sender=None):
         """
         Data callback to store
+
         :param data: object to store
         """
         with self.lock:
@@ -41,6 +42,7 @@ class RamHistory(History):
         Retrieve objects from this history. 'start' is the session token for retrieving new elements. If session is not
         specified, all elements are retrieved. If session is specified, then unseen elements are returned. If the
         session itself is new, it is recorded and set to the newest data.
+
         :param start: return all objects newer than given start session key
         :return: a list of objects
         """

@@ -63,6 +63,7 @@ class Uplinker:
         """
         Uplinker requires an adapter reference to flight side (outgoing data), ground side handler(incoming data), and a
         reference to the downlinker to queue return handshake packets.
+
         :param uplink_adapter: adapter used to talk to the flight side of the system
         :param ground: ground handler for sourcing uplink packets from the other ground components
         :param downlinker: downlinker object to return handshaking requests
@@ -78,6 +79,7 @@ class Uplinker:
         Runs the data uplink to the FSW. The data will first be read from the ground handler, framed with the framing
         tokens, and then uplinked by the flight adapter's 'write' definition. This will also retry the uplink up to
         RETRY_COUNT times in case the write failed.
+
         :param data: data to be framed.
         """
         data_packets = self.ground.receive_all()
@@ -105,6 +107,7 @@ class Uplinker:
     def get_handshake(packet):
         """
         Gets a handshake raw frame. It repeats the last packet.
+
         :param packet: packet to repeat back out
         :return: handshake raw-frame
         """
@@ -146,6 +149,7 @@ class Downlinker:
     def __init__(self, downlink_adapter, ground):
         """
         Downlinker requires an adapter reference to flight side (incoming data), and ground side handler(outgoing data).
+
         :param uplink_adapter: adapter used to talk to the flight side of the system
         :param ground: ground handler for sinking downlink packets to the other ground components
         :param downlinker: downlinker object to return handshaking requests
@@ -181,6 +185,7 @@ class Downlinker:
     def queue_downlink(self, frame):
         """
         Enqueues a frame to send as part of downlink. This should not require deframing.
+
         :param frame: frame to enqueue
         """
         self.enqueued.put(frame)
@@ -196,6 +201,7 @@ class Downlinker:
 def main():
     """
     Main program, degenerates into the run loop.
+
     :return: return code
     """
     args, _ = fprime_gds.executables.cli.ParserBase.parse_args(

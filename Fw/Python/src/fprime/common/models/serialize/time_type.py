@@ -276,9 +276,10 @@ class TimeType(type_base.BaseType):
         Returns a string of the time object in a human readable format
 
         Args:
-            time_zone (tzinfo, default=None): Time zone to convert the TimeType
+            time_zone (tzinfo): Time zone to convert the TimeType
                       object to before printing. Timezone also displayed.
                       If time_zone=None, local timezone is used.
+                      Defaults to None.
 
         Returns:
             A human readable string reperesenting the time type object
@@ -301,8 +302,8 @@ class TimeType(type_base.BaseType):
         Returns the python datetime object for UTC time
 
         Args:
-            tz (tzinfo, default=None): timezone to create the datetime object
-               in. If tz=None, local time zone used.
+            tz (tzinfo): timezone to create the datetime object
+               in. If tz=None, local time zone used. Defaults to None.
         Returns:
             datetime object for the time type or None if the time couldn't
             be determined.

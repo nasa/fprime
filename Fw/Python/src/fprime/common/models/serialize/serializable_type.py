@@ -102,6 +102,7 @@ class SerializableType(ValueType):
         """
         The .val property typically returns the python-native type. This the python native type closes to a serializable
         without generating full classes would be a dictionary (anonymous object). This returns such an object.
+
         :return dictionary of member names to python values of member keys
         """
         return {
@@ -115,6 +116,7 @@ class SerializableType(ValueType):
         The .val property typically returns the python-native type. This the python native type closes to a serializable
         without generating full classes would be a dictionary (anonymous object). This takes such an object and sets the
         member val list from it.
+
         :param val: dictionary containing python types to key names. This
         """
         values_list = [val[name] for name, _, _, _ in self.mem_list]

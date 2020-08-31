@@ -39,6 +39,7 @@ def register_process_assassin(process, log=None):
     """
     Register an assassin that will kill the a given child process when an exit of the current python process has been
     reached. This will effectively clean up children and (optionally) their log files.
+
     :param process: the process to kill.
     :param log: a paired log file to kill as well.
     """
@@ -82,6 +83,7 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
     Run an application and ensure that it is logged immediately to the logfile. This will allow the application to have
     up-to-date logs. This is a wrapper for pexpect to ensure that the application runs and log effectivly. It has been
     converted to a function to remove superfluous processes.
+
     :param arguments: arguments with the first being the executable.
     :param logfile: (optional) path to logfile to log to. Will overwrite.
     :param env: (optional) environment for the subprocess

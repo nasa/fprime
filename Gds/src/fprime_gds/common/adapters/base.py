@@ -30,6 +30,7 @@ class BaseAdapter(abc.ABC):
     def read(self):
         """
         Read from the interface. Must be overridden by the child adapter. Throw no fatal errors, reconnect instead.
+
         :param size: maximum size of data to read before breaking
         :return: byte array of data, or b'' if no data was read
         """
@@ -38,6 +39,7 @@ class BaseAdapter(abc.ABC):
     def write(self, frame):
         """
         Write to the interface. Must be overridden by the child adapter. Throw no fatal errors, reconnect instead.
+
         :param frame: framed data to uplink
         :return: True if data sent through adapter, False otherwise
         """
@@ -48,6 +50,7 @@ class BaseAdapter(abc.ABC):
         """
         Returns a set of arguments consumed by this adapter. This will be consumed by the CLI layer in order to provide
         command line arguments to the user. Note: these should be globally unique args, e.g. --ip-address
+
         :return: dictionary, keys of tuple of arg flags and value of list of other arguments to argparse's add_argument
         """
 
@@ -57,6 +60,7 @@ class BaseAdapter(abc.ABC):
         """
         Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
         should be raised describing the problem with these arguments.
+
         :param args: arguments as dictionary
         """
 
@@ -66,6 +70,7 @@ class BaseAdapter(abc.ABC):
         Get all known adapters of this base class. These must be imported into the comm-layer to be available to the
         system, however; they only need to be imported. Once imported this function will find them and make them
         available to the comm-layer in the standard way.
+
         :return: list of all imported comm adapters.
         """
         adapter_map = {}
@@ -84,6 +89,7 @@ class BaseAdapter(abc.ABC):
         """
         Process arguments incoming from the command line and construct a dictionary of kwargs to supply to the chosen
         adapter at creation time. This will allow the user to choose any imported adapters at runtime.
+
         :param args: arguments to process
         :return: dictionary of constructor keyword arguments
         """
@@ -98,6 +104,7 @@ class BaseAdapter(abc.ABC):
         Constructs a new adapter, from the given adapter name and the given namespace of argument inputs. This is a
         wrapper of "get_adapters" and "process_arguments" to help build a new, fully configured, adapter. This is a
         factory method.
+
         :param adapter_name: name of the adapter to build
         :param args: namespace of arg value to help build an adapter
         :return: newly constructed adapter

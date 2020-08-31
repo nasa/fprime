@@ -52,6 +52,7 @@ class StandardPipeline:
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
+
         :param config: config object used when constructing the pipeline.
         :param dictionary: dictionary path. Used to setup loading of dictionaries.
         :param down_store: downlink storage directory
@@ -86,6 +87,7 @@ class StandardPipeline:
     def get_dated_logging_dir(cls, prefix=os.path.expanduser("~")):
         """
         Sets up the dated subdirectory based upon a given prefix
+
         :param prefix:
         :return: Path to new directory where logs will be stored for this pipeline
         """
@@ -100,6 +102,7 @@ class StandardPipeline:
     def setup_logging(self, log_dir):
         """
         Setup logging based on the logging prefix supplied
+
         :param prefix: logging prefix to use
         """
         # Setup the logging pipeline (register it to all its data sources)
@@ -116,6 +119,7 @@ class StandardPipeline:
     def connect(self, address, port):
         """
         Connects to the middleware layer
+
         :param address: address of middleware
         :param port: port of middleware
         """
@@ -134,6 +138,7 @@ class StandardPipeline:
     def send_command(self, command, args):
         """
         Sends commands to the encoder and history.
+
         :param command: command id from dictionary to get command template
         :param args: arguments to process
         """
@@ -152,6 +157,7 @@ class StandardPipeline:
     def dictionaries(self):
         """
         Get a dictionaries object
+
         :return: dictionaries composition
         """
         return self.__dictionaries
@@ -160,6 +166,7 @@ class StandardPipeline:
     def coders(self):
         """
         Get a coders object
+
         :return: coders composition
         """
         return self.__coders
@@ -168,6 +175,7 @@ class StandardPipeline:
     def histories(self):
         """
         Get a histories object
+
         :return: histories composition
         """
         return self.__histories
@@ -176,6 +184,7 @@ class StandardPipeline:
     def files(self):
         """
         Files member property
+
         :return: filing compositions
         """
         return self.__filing
