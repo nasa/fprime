@@ -69,7 +69,7 @@ rst_epilog = "\n".join(
     ]
 )
 
-nitpicky = True
+nitpicky = False
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -87,7 +87,7 @@ html_css_files = [
 todo_include_todos = True
 autosectionlabel_prefix_document = True
 autodoc_default_options = {
-    "members": None,
+    "members": True,
     "undoc-members": True,
     "inherited-members": True,
     "autodoc_typehints": "description",

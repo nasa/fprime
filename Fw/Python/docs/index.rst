@@ -16,7 +16,7 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
 
-   API <api>
+   API <api/index.rst>
 
 
 Indices
