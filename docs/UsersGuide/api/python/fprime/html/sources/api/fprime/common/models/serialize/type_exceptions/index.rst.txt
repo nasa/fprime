@@ -1,0 +1,111 @@
+:mod:`fprime.common.models.serialize.type_exceptions`
+=====================================================
+
+.. py:module:: fprime.common.models.serialize.type_exceptions
+
+.. autoapi-nested-parse::
+
+   Created on Dec 18, 2014
+
+   @author: tcanham
+
+
+
+Module Contents
+---------------
+
+.. py:exception:: TypeException(val)
+
+   Bases: :class:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+   .. method:: getMsg(self)
+
+
+
+
+.. py:exception:: AbstractMethodException(val)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: TypeRangeException(val)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: StringSizeException(size, max_size)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: TypeMismatchException(expected_type, actual_type)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ArrayLengthException(arr_type, expected_len, actual_len)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: EnumMismatchException(enum, bad_member)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: DeserializeException(val)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ArgNotFoundException(message)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: NotInitializedException(message)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: NotOverridenException(message)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ArgLengthMismatchException(arg_length_actual, arg_length_given)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: CompoundTypeLengthMismatchException(field_length_actual, field_length_given)
+
+   Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
+
+   Common base class for all non-exit exceptions.
+
+
