@@ -64,7 +64,7 @@ The API documentation section contains the automatically generated documentation
     - [OS Layer Description](./dev/os-docs.md)
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
-    - [C++ Documentation](./api/html/index.html)
+    - [C++ Documentation](./api/c++/html/index.html)
     
 
 

@@ -19,8 +19,8 @@ class SerializableType(ValueType):
     @param param: typename = "SomeTypeName" string
     To preserve member order, the member argument is a list of members and their types:
     @param param: mem_list = [ ("member",<ref to BaseType>, format string, description), ... ]
-                  OR mem_list = [ ("member",<ref to BaseType>, format string), ... ].
-                  The member descriptions can be None
+    OR mem_list = [ ("member",<ref to BaseType>, format string), ... ].
+    The member descriptions can be None
     """
 
     def __init__(self, typename, mem_list=None):
