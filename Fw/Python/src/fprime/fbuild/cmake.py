@@ -154,50 +154,7 @@ class CMakeHandler:
                 run_args + fleshed_args, write_override=True, environment=environment
             )
 
-    def find_hashed_file(self, build_dir, hash_value):
-        """
-        Find a file from a hash
-        :param build_dir: build directory to search
-        :param hash_value: hash number
-        :return: filename
-        """
-        hashes_file = os.path.join(build_dir, "hashes.txt")
-        if not os.path.exists(hashes_file):
-            raise CMakeException(
-                "Failed to find {}, was the build generated.".format(hashes_file)
-            )
-        with open(hashes_file) as file_handle:
-            lines = filter(
-                lambda line: "{:x}".format(hash_value) in line, file_handle.readlines()
-            )
-        return list(lines)
 
-    def find_nearest_standard_build(self, platform, path):
-        """
-        Recurse up the directory tree from the given path, looking for a directory that matches the standard name. This
-        will return that path, or error if one cannot be found.
-        :return: path of nearest standard build directory
-        :throws CMakeInvalidBuildException, a build was found but not setup, CMakeOrphanException, no build was found
-        """
-        path = os.path.abspath(path)
-        # Get current directory to be checked, by removing file if path is not already a directory
-        current = path if os.path.isdir(path) else os.path.dirname(path)
-        # Look for a potential build that is valid
-        potential_build = os.path.join(
-            current, CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(platform)
-        )
-        if os.path.exists(potential_build):
-            self._cmake_validate_build_dir(potential_build)
-            return potential_build
-        # Check for root, and throw error if it is already a root
-        new_dir = os.path.dirname(current)
-        if new_dir == path:
-            raise CMakeException(
-                "{} not in ancestor tree".format(
-                    CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.format(platform)
-                )
-            )
-        return self.find_nearest_standard_build(platform, new_dir)
 
     def get_include_locations(self, cmake_dir):
         """
@@ -379,20 +336,8 @@ class CMakeHandler:
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
 
-    def get_toolchain_config(self, project_path):
-        """Returns the default toolchain"""
-        project_root = self.settings.get("project_root", project_path)
-        return (
-            self.settings.get("default_toolchain", "native"),
-            [self.settings.get("framework_path"), project_root]
-            + self.settings.get("library_locations", []),
-        )
 
-    def load_settings(self, settings_file, cmake_dir):
-        """
-        Loads the default settigns for this build Could include environment settings and a default toolchain.
-        """
-        self.settings = fprime.fbuild.settings.IniSettings.load(settings_file)
+
 
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
@@ -630,3 +575,21 @@ class CMakeNoSuchTargetException(CMakeException):
     def __init__(self, build_dir, target):
         """  Better messaging for this exception """
         super().__init__("{} does not support target {}".format(build_dir, target))
+
+
+def purge_functionality(build_dir, force=False):
+    """
+    Reusable purge functionality, so the user may purge or the system may cleanup itself
+    :param build_dir: build dir specified to purge
+    :param force: do not ask the user to purge before doing so. Default: False, ask.
+    """
+    removables = []
+    for dirname in filter(os.path.exists, [build_dir, build_dir + UT_SUFFIX]):
+        print("[INFO] Purging the following build directory: {}".format(dirname))
+        # Either the directory is forced remove, or the user confirms with a y/yes input
+        remove = force or confirm()
+        if remove:
+            removables.append(dirname)
+    # Remove what was asked for
+    for dirname in removables:
+        shutil.rmtree(dirname, ignore_errors=True)
