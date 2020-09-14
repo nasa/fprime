@@ -134,7 +134,7 @@ option(GENERATE_HERITAGE_PY_DICT "Generate F prime python dictionaries instead o
 # `SKIP_TOOLS_CHECK:`
 #
 # For older clients, the check that validates the tool-suite is installed may fail. This option
-# skips the tools check enabling the system to run.
+# skips the tools check enabling the system to run. This also helps IDEs function properly.
 #
 # **Values:**
 # - ON: skip tools check
