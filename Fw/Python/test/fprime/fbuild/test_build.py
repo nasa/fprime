@@ -59,29 +59,29 @@ def test_needed_functions():
         assert hasattr(fprime.fbuild.builder(), func)
 
 
-def test_get_fprime_configuration():
-    """
-    Tests the given fprime configuration fetcher. Required for other portion of the system.
-    """
-    configs = fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS
-    test_data = {
-        "grand-unified": (
-            "/home/user11/fprime/Ref/..",
-            None,
-            "/home/user11/fprime/Ref/..",
-        ),
-        "subdir": (
-            "/home/user11/Proj",
-            "/home/user11/Proj/lib1;/home/user11/Proj/lib2",
-            "/home/user11/Proj/fprime",
-        ),
-        "external": ("/home/user11/Proj", "/opt/lib1;/opt/lib2", "/opt/fprime"),
-    }
-    for key in test_data.keys():
-        build_dir = os.path.join(get_data_dir(), key)
-        # Test all path, truth pairs
-        values = fprime.fbuild.builder().get_fprime_configuration(configs, build_dir)
-        assert values == test_data[key]
+# def test_get_fprime_configuration():
+#     """
+#     Tests the given fprime configuration fetcher. Required for other portion of the system.
+#     """
+#     configs = fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS
+#     test_data = {
+#         "grand-unified": (
+#             "/home/user11/fprime/Ref/..",
+#             None,
+#             "/home/user11/fprime/Ref/..",
+#         ),
+#         "subdir": (
+#             "/home/user11/Proj",
+#             "/home/user11/Proj/lib1;/home/user11/Proj/lib2",
+#             "/home/user11/Proj/fprime",
+#         ),
+#         "external": ("/home/user11/Proj", "/opt/lib1;/opt/lib2", "/opt/fprime"),
+#     }
+#     for key in test_data.keys():
+#         build_dir = os.path.join(get_data_dir(), key)
+#         # Test all path, truth pairs
+#         values = fprime.fbuild.builder().get_fprime_configuration(configs, build_dir)
+#         assert values == test_data[key]
 
 
 def test_get_include_locations():

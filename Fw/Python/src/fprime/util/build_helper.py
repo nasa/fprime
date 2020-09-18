@@ -15,13 +15,17 @@ are supported herein:
 """
 import argparse
 import os
-import shutil
+import re
 import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from fprime.common.error import FprimeException
+from fprime.fbuild.builder import Target, LocalTarget, Build, BuildType, NoValidBuildTypeException
 
-from fprime.fbuild.builder import Target, LocalTarget, GlobalTarget, Build, BuildType
+
+
+CMAKE_REG = re.compile(r"-D([a-zA-Z0-9_]+)=([a-zA-Z0-9_]+)")
 
 
 def get_target(parsed: argparse.Namespace) -> Target:
@@ -40,7 +44,7 @@ def get_target(parsed: argparse.Namespace) -> Target:
     return Target.get_target(mnemonic, flags)
 
 
-def get_build(parsed: argparse.Namespace, deployment: Path, build_types:List[BuildType]=None) -> Build:
+def get_build(parsed: argparse.Namespace, deployment: Path, verbose:bool, target:Target=None) -> Build:
     """ Gets the build given the namespace
 
     Takes the parsed namespace and processes it to a known build configuration. This will refine down a supplied list of
@@ -49,46 +53,39 @@ def get_build(parsed: argparse.Namespace, deployment: Path, build_types:List[Bui
     Args:
         parsed: argparse namespace to read values from
         deployment: deployment directory the build will operate against
+        verbose: have we enabled verbose output
         build_types: build types to search through
 
     Returns:
         build meeting the specifications on build type
     """
-    build_types = build_types if build_types is not None else [build_type for build_type in BuildType]
-    build_type = [build_type for build_type in build_types if build_type.get_name() == parsed.build_type]
+    build_types = target.build_types if target is not None else [build_type for build_type in BuildType]
+    build_type = [build_type for build_type in build_types if parsed.build_type is None or build_type.get_cmake_build_type() == parsed.build_type]
     # None found, explode
     if not build_type:
-        raise Exception("Waaaaaaaaaaa")
+        raise NoValidBuildTypeException("Could not execute '{}' with a build type '{}'".format(target, parsed.build_type))
     assert len(build_type) == 1, "Multiple build types with same name detected"
-    return Build(build_type[0], deployment)
+    return Build(build_type[0], deployment, verbose=verbose)
 
 
-def validate(parsed):
+def validate(parsed, unknown):
     """
     Validate rules to ensure that the args are properly consistent. This will also generate a set of validated arguments
     to pass to CMake. This allows these values to be created, defaulted, and validated in one place
     :param parsed: args to validate
+    :param unknown: unknown arguments
     :return: cmake arguments to pass to CMake
     """
     cmake_args = {}
     make_args = {}
-    # Check jobs is greater than zero
-    if parsed.jobs <= 0:
-        print("[WARNING] Parallel jobs cannot be 0 or negative, setting to minimum of 1.", file=sys.stderr)
-        parsed.jobs = 1
     # Check platforms for existing toolchain, unless the default is specified.
     if parsed.command == "generate":
-        toolchain = find_toolchain(parsed.platform, parsed.path)
-        print("[INFO] Using toolchain file {} for platform {}".format(toolchain, parsed.platform))
-        if toolchain is not None:
-            cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
-        for arg in parsed.D:
-            cmake_args.update({"-D{}"})
-
+        D_ARGS = {match.group(1): match.groups(2) for match in [CMAKE_REG.match(arg) for arg in unknown]}
+        cmake_args.update(D_ARGS)
     # Build type only for generate, jobs only for non-generate
-    if parsed.command != "generate":
+    elif parsed.command != "info" and parsed.command != "purge" and parsed.command != "hash-to-file":
         parsed.settings = None # Force to load from cache if possible
-        make_args.update({"--jobs": parsed.jobs})
+        make_args.update({"--jobs": (1 if parsed.jobs <= 0 else parsed.jobs) })
     return cmake_args, make_args
 
 
@@ -147,11 +144,13 @@ def add_target_parser(target:Target, subparsers, common: argparse.ArgumentParser
         # Common target-only items
         parser.add_argument("-j", "--jobs", default=1, type=int, help="Parallel build job count. Default: %(default)s.")
     parser, flags = existing[target.mnemonic]
-    for flag in [flag for flag in target.flags if not flag in flags]:
-        parser.add_argument(flag, action="store_true", default=False, help=target.desc)
+    new_flags = [flag for flag in target.flags if flag not in flags]
+    for flag in new_flags:
+        parser.add_argument("--{}".format(flag), action="store_true", default=False, help=target.desc)
+    flags.extend(new_flags)
 
 
-def parse_args():
+def parse_args(args):
     """
     Parse the arguments to the CLI. This will then enable the user to run the above listed commands via the commands.
     :param args: CLI arguments to process
@@ -167,8 +166,9 @@ def parse_args():
                                help="F prime deployment directory to use. May contain multiple build directories.")
     common_parser.add_argument("-p", "--path", default=os.getcwd(),
                                help="F prime directory to operate on. Default: cwd, %(default)s.")
-    common_parser.add_argument("--build-type", dest="build_type", default="Testing",
-                               choices=["Release", "Debug", "Testing"], help="CMake build type passed to CMake system.")
+    common_parser.add_argument("--build-type", dest="build_type", default=None,
+                               choices=[build_type.get_cmake_build_type() for build_type in BuildType],
+                               help="CMake build type passed to CMake system.")
     common_parser.add_argument("-v", "--verbose", default=False, action="store_true", help="Turn on verbose output.")
 
     # Main parser for the whole application
@@ -177,10 +177,12 @@ def parse_args():
     subparsers = parser.add_subparsers(description="F prime utility command line. Please run one of the commands. " +
                                        "For help, run a command with the --help flag.", dest="command")
     # Add non-target parsers
-    generate_parser = subparsers.add_parser("generate", help="Generate a build cache directory")
-    generate_parser.add_argument("-Dxxx", action="append", description="Pass -D flags through to CMakes", nargs=1,
+    generate_parser = subparsers.add_parser("generate", help="Generate a build cache directory",
+                                            parents=[common_parser], add_help=False)
+    generate_parser.add_argument("-Dxxx", action="append", help="Pass -D flags through to CMakes", nargs=1,
                                  default=[])
-    purge_parser = subparsers.add_parser("purge", help="Purge build cache directoriess")
+    purge_parser = subparsers.add_parser("purge", help="Purge build cache directoriess", add_help=False,
+                                         parents=[common_parser])
     purge_parser.add_argument("-f", "--force", default=False, action="store_true",
                               help="Purges the build directory by force. No confirmation will be requested.")
     for target in Target.get_all_targets():
@@ -189,9 +191,13 @@ def parse_args():
     hash_parser = subparsers.add_parser("hash-to-file", description="Converts F prime build hash to filename.",
                                         parents=[common_parser], add_help=False)
     hash_parser.add_argument("hash", type=lambda x: int(x, 0), help="F prime assert hash to associate with a file.")
+
+    # Add a search for hash function
+    info = subparsers.add_parser("info", description="Gets fprime-util contextual information.",
+                                         parents=[common_parser], add_help=False)
     # Parse and prepare to run
-    parsed, unknown = parser.parse_known_args()
-    bad = [bad for bad in unknown if not bad.startswith("-D")]
+    parsed, unknown = parser.parse_known_args(args)
+    bad = [bad for bad in unknown if not CMAKE_REG.match(bad)]
     if not hasattr(parsed, "command") or parsed.command is None:
         parser.print_help()
         sys.exit(1)
@@ -200,7 +206,7 @@ def parse_args():
         parser.print_help()
         sys.exit(1)
     cmake_args, make_args = validate(parsed, unknown)
-    return parsed, cmake_args, make_args
+    return parsed, cmake_args, make_args, parser
 
 
 def confirm():
@@ -215,35 +221,74 @@ def confirm():
         print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
 
 
-def utility_entry():
-    """ Main interface to F prime utility """
-    parsed, cmake_args, make_args, automatic_build_dir = parse_args()
-    deployment = Build.find_nearest_deployment(parsed.path)
+def print_info(parsed, deployment):
+    """ Builds and prints the informational output block """
+    print("[INFO] Fprime build information:")
+    build_types = [parsed.build_type] if parsed.build_type is not None else BuildType
+    for build_type in build_types:
+        build = Build(build_type, deployment, verbose=parsed.verbose)
+        build.load(parsed.platform, parsed.build_dir)
+        build_info = build.get_build_info(parsed.path)
+        # Target list
+        local_targets = ["'{}'".format(target) for target in build_info.get("local_targets", [])]
+        global_targets = ["'{}'".format(target) for target in build_info.get("global_targets", [])]
+        build_artifacts = build_info.get("auto_location") if build_info.get("auto_location") is not None else "N/A"
 
-    if parsed.command == "hash-to-file":
-        lines = get_build(parsed, deployment).find_hashed_file(parsed.hash)
-        # Print out lines when found
-        if lines:
-            print("[INFO] File(s) associated with hash 0x{:x}".format(parsed.hash))
-            for line in lines:
-                print("   ", line, end="")
-        # Report nothing
-        else:
-            print("[ERROR] No file hashes found in {} build.{}"
-                  .format("unittest" if parsed.unittest else "regular",
-                          "" if parsed.unittest else " Do you need the --unittest flag?"))
-    elif parsed.command == "generate" or parsed.command == "purge":
-        for build_type in BuildType:
-            build = Build(build_type, deployment)
-            print("[INFO] {} build directory at: {}", parsed.command.title(), build.build_dir)
-            if parsed.command == "generate":
-                build.invent(parsed.platform, parsed.build_dir)
-                build.generate(cmake_args)
+        print("    Available directory targets ({}): {}".format(build_type.get_cmake_build_type(),
+                                                                " ".join(local_targets)))
+        print("    Available deployment targets ({}): {}".format(build_type.get_cmake_build_type(),
+                                                                 " ".join(global_targets)))
+        print("  ----------------------------------------------------------")
+        print("    Build artifact directory ({}): {}".format(build_type.get_cmake_build_type(), build_artifacts))
+        print()
+
+
+def utility_entry(args):
+    """ Main interface to F prime utility """
+    parsed, cmake_args, make_args, parser = parse_args(args)
+    deployment = Build.find_nearest_deployment(Path(parsed.path))
+
+    try:
+        if parsed.command is None:
+            print("[ERROR] Must supply subcommand for fprime-util. See below.")
+            parser.print_help(parsed, deployment)
+            print_info(parsed, deployment)
+        elif parsed.command == "info":
+            print_info(parsed, deployment)
+        elif parsed.command == "hash-to-file":
+            lines = get_build(parsed, deployment, verbose=parsed.verbose).find_hashed_file(parsed.hash)
+            # Print out lines when found
+            if lines:
+                print("[INFO] File(s) associated with hash 0x{:x}".format(parsed.hash))
+                for line in lines:
+                    print("   ", line, end="")
+            # Report nothing
             else:
-                confirm()
-                build.load(parsed.platform, parsed.build_dir)
-                build.purge()
-    else:
-        target = get_target(parsed)
-        build = get_build(parsed, deployment,target. build_types)
-        build.execute_target(target, context=Path(parsed.path))
+                print("[ERROR] No file hashes found in {} build.{}"
+                      .format("unittest" if parsed.unittest else "regular",
+                              "" if parsed.unittest else " Do you need the --unittest flag?"))
+        elif parsed.command == "generate" or parsed.command == "purge":
+            for build_type in BuildType:
+                build = Build(build_type, deployment, verbose=parsed.verbose)
+                if parsed.command == "generate":
+                    build.invent(parsed.platform, parsed.build_dir)
+                    print("[INFO] {} build directory at: {}".format(parsed.command.title(), build.build_dir))
+                    toolchain = find_toolchain(parsed.platform, parsed.path, build)
+                    print("[INFO] Using toolchain file {} for platform {}".format(toolchain, parsed.platform))
+                    if toolchain is not None:
+                        cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
+                    build.generate(cmake_args)
+                else:
+                    build.load(parsed.platform, parsed.build_dir)
+                    print("[INFO] {} build directory at: {}".format(parsed.command.title(), build.build_dir))
+                    if confirm() or parsed.force:
+                        build.purge()
+        else:
+            target = get_target(parsed)
+            build = get_build(parsed, deployment, parsed.verbose, target)
+            build.load(parsed.platform, parsed.build_dir)
+            build.execute(target, context=Path(parsed.path), make_args=make_args)
+    except FprimeException as exc:
+        print("[ERROR] {}".format(exc), file=sys.stderr)
+        return 1
+    return 0

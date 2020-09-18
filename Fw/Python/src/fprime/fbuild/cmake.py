@@ -25,41 +25,42 @@ import time
 import fprime.fbuild
 import fprime.fbuild.settings
 
+from fprime.common.error import FprimeException
 
-class CMakeBuildCache:
-    """
-    Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
-    call take a long time. This cache will hold the results to prevent recalculation.
-    """
-
-    def __init__(self):
-        """ Sets up the known project to None """
-        self.project = None
-        self.tempdir = None
-
-    def get_cmake_temp_build(self, proj_dir, verbose=False):
-        """ Gets a CMake build directory for the specified proj_dir """
-        if (
-            self.project is not None
-            and proj_dir is not None
-            and self.project != proj_dir
-        ):
-            raise CMakeException("Already tracking project {}".format(self.project))
-        # No tempdir, prepare a build
-        if self.tempdir is None:
-            if proj_dir is None:
-                raise ValueError(
-                    "No build cache available, and no project_dir specified"
-                )
-            # Create a temp directory and register its deletion at the end of the program run
-            self.tempdir = tempfile.mkdtemp()
-            atexit.register(lambda: shutil.rmtree(self.tempdir, ignore_errors=True))
-            # Turn that directory into a CMake build
-            fprime.fbuild.builder().generate_build(
-                proj_dir, self.tempdir, ignore_output=not verbose
-            )
-        self.project = proj_dir
-        return self.tempdir
+# class CMakeBuildCache:
+#     """
+#     Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
+#     call take a long time. This cache will hold the results to prevent recalculation.
+#     """
+#
+#     def __init__(self):
+#         """ Sets up the known project to None """
+#         self.project = None
+#         self.tempdir = None
+#
+#     def get_cmake_temp_build(self, proj_dir, verbose=False):
+#         """ Gets a CMake build directory for the specified proj_dir """
+#         if (
+#             self.project is not None
+#             and proj_dir is not None
+#             and self.project != proj_dir
+#         ):
+#             raise CMakeException("Already tracking project {}".format(self.project))
+#         # No tempdir, prepare a build
+#         if self.tempdir is None:
+#             if proj_dir is None:
+#                 raise ValueError(
+#                     "No build cache available, and no project_dir specified"
+#                 )
+#             # Create a temp directory and register its deletion at the end of the program run
+#             self.tempdir = tempfile.mkdtemp()
+#             atexit.register(lambda: shutil.rmtree(self.tempdir, ignore_errors=True))
+#             # Turn that directory into a CMake build
+#             fprime.fbuild.builder().generate_build(
+#                 proj_dir, self.tempdir, ignore_output=not verbose
+#             )
+#         self.project = proj_dir
+#         return self.tempdir
 
 
 class CMakeHandler:
@@ -67,7 +68,7 @@ class CMakeHandler:
     CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.
     """
 
-    CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
+    #CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
     CMAKE_LOCATION_FIELDS = [
         "FPRIME_PROJECT_ROOT",
         "FPRIME_LIBRARY_LOCATIONS",
@@ -79,7 +80,7 @@ class CMakeHandler:
         Instantiate a basic CMake handler.
         """
         self.settings = {}
-        self.build_cache = CMakeBuildCache()
+        #self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
             self._run_cmake(["--help"], print_output=False)
@@ -104,6 +105,8 @@ class CMakeHandler:
         :param top_target: top-level target. Do not append path name
         :return: return code from CMake
         """
+        assert build_dir is not None, "Invalid build dir supplied"
+        build_dir = str(build_dir)
         cmake_args = {} if cmake_args is None else cmake_args
         make_args = {} if make_args is None else make_args
         fleshed_args = list(
@@ -117,11 +120,7 @@ class CMakeHandler:
         fleshed_args += ["--"] + list(
             map(lambda key: "{}={}".format(key, make_args[key]), make_args.keys())
         )
-        # Get module name from the relative path to include root
-        include_root = self.get_include_info(path, build_dir)[1]
-        module = (
-            os.path.relpath(path, include_root).replace(".", "").replace(os.sep, "_")
-        )
+        module = self.get_cmake_module(path, build_dir)
         cmake_target = (
             module
             if target == ""
@@ -247,21 +246,21 @@ class CMakeHandler:
         if isinstance(fields, str):
             fields = [fields]
         # Setup the build_dir if it can be detected. Without a cache or specified value, we can crash
-        build_dir = self._build_directory_from_cmake_dir(cmake_dir)
-        return self._read_values_from_cache(fields, build_dir=build_dir)
+        self._cmake_validate_build_dir(cmake_dir) # Validate the dir
+        return self._read_values_from_cache(fields, build_dir=cmake_dir)
 
-    def _build_directory_from_cmake_dir(self, cmake_dir):
-        """
-        If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file
-        should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then
-        generate a temporary directory to be used as a build.
-        :return: working build directory
-        """
-        try:
-            self._cmake_validate_build_dir(cmake_dir)
-            return cmake_dir
-        except (CMakeInvalidBuildException, TypeError):
-            return self.build_cache.get_cmake_temp_build(cmake_dir, self.verbose)
+    # def _build_directory_from_cmake_dir(self, cmake_dir):
+    #     """
+    #     If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file
+    #     should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then
+    #     generate a temporary directory to be used as a build.
+    #     :return: working build directory
+    #     """
+    #     try:
+    #         self._cmake_validate_build_dir(cmake_dir)
+    #         return cmake_dir
+    #     except (CMakeInvalidBuildException, TypeError):
+    #         return self.build_cache.get_cmake_temp_build(cmake_dir, self.verbose)
 
     def generate_build(self, source_dir, build_dir, args=None, ignore_output=False):
         """
@@ -307,6 +306,66 @@ class CMakeHandler:
             print_output=not ignore_output,
             write_override=True,
         )
+
+    def get_cmake_module(self, path, build_dir):
+        """ Gets the CMake module
+
+        CMake modules are constructed from a path relative to some project root (fprime, deployment, or library roots).
+        This relative path is then converted to use "_" instead of "/"
+
+        Args:
+            path: path to contextualize. May be None to use os.getcwd().
+            build_dir: build directory to use
+
+        Returns:
+            CMake module name in format x_y_z
+        """
+        project_relative_path = self.get_project_relative_path(path, build_dir)
+        module = project_relative_path.replace(".", "") # Handles case where relative path is exactly "."
+        module = module.replace(os.sep, "_")
+        return module
+
+    def get_project_relative_path(self, path, build_dir):
+        """ Gets the path relative to the cmake setup, or raises CMakeOrphanException
+
+        Args:
+            path: path to contextualize. May be None to use os.getcwd().
+            build_dir: build directory to use
+
+        Returns:
+            path string that is relative to some root of the project. i.e. used for target suffix names
+        """
+        # Get module name from the relative path to include root
+        include_root = self.get_include_info(path, build_dir)[1]
+        return os.path.relpath(path, include_root)
+
+    def get_available_targets(self, build_dir, path):
+        """ Gets a list of available CMake targets in the current directory
+
+        Args:
+            build_dir: build directory to use for detecting targets
+            path: contextual path. None for "cwd"
+
+        Note:
+            This code might not work on non-GNU makefile variants of CMake as it depends on the "help" target
+
+        Returns:
+            list of CMake make targets
+        """
+        run_args = ["--build", build_dir, "--target", "help"]
+        stdout, _ = self._run_cmake(run_args, write_override=True, print_output=False)
+        prefix = self.get_cmake_module(path, build_dir)
+
+        make_target_names = [line.replace("...", "").strip() for line in stdout if line.startswith("...")]
+        contextual_make_targets = [make.replace(prefix, "").strip("_") for make in make_target_names if make.startswith(prefix)]
+        return contextual_make_targets
+
+    def purge(self, build_dir):
+        """
+        Reusable purge functionality, so the user may purge or the system may cleanup itself
+        :param build_dir: build dir specified to purge
+        """
+        shutil.rmtree(build_dir, ignore_errors=True)
 
     def _read_values_from_cache(self, keys, build_dir):
         """
@@ -396,7 +455,7 @@ class CMakeHandler:
         path in order for this to run.
         :param arguments: arguments to supply to CMake.
         :param workdir: work directory to run in
-        :param print: print to the screen. Default: True
+        :param print_output: print_output to the screen. Default: True
         :param write_override: allows for non-read-only commands
         :param environment: environment to write into
         :return: (stdout, stderr)
@@ -499,7 +558,7 @@ class CMakeHandler:
         return proc.poll(), stdouts, stderrs
 
 
-class CMakeException(Exception):
+class CMakeException(FprimeException):
     """ Error occurred within this CMake package """
 
 
@@ -577,19 +636,3 @@ class CMakeNoSuchTargetException(CMakeException):
         super().__init__("{} does not support target {}".format(build_dir, target))
 
 
-def purge_functionality(build_dir, force=False):
-    """
-    Reusable purge functionality, so the user may purge or the system may cleanup itself
-    :param build_dir: build dir specified to purge
-    :param force: do not ask the user to purge before doing so. Default: False, ask.
-    """
-    removables = []
-    for dirname in filter(os.path.exists, [build_dir, build_dir + UT_SUFFIX]):
-        print("[INFO] Purging the following build directory: {}".format(dirname))
-        # Either the directory is forced remove, or the user confirms with a y/yes input
-        remove = force or confirm()
-        if remove:
-            removables.append(dirname)
-    # Remove what was asked for
-    for dirname in removables:
-        shutil.rmtree(dirname, ignore_errors=True)
