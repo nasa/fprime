@@ -136,10 +136,8 @@ def add_target_parser(target:Target, subparsers, common: argparse.ArgumentParser
         This functions has side effects of editing existing and the list of subparsers
     """
     if target.mnemonic not in existing:
-        context = "specified" if isinstance(target, LocalTarget) else "deployment"
         parser = subparsers.add_parser(target.mnemonic, parents=[common], add_help=False,
-                                       description="{} in the {} directory"
-                                       .format(target.desc, context))
+                                       help="{} in the specified directory".format(target.desc))
         existing[target.mnemonic] = (parser, [])
         # Common target-only items
         parser.add_argument("-j", "--jobs", default=1, type=int, help="Parallel build job count. Default: %(default)s.")
@@ -179,22 +177,21 @@ def parse_args(args):
     # Add non-target parsers
     generate_parser = subparsers.add_parser("generate", help="Generate a build cache directory",
                                             parents=[common_parser], add_help=False)
-    generate_parser.add_argument("-Dxxx", action="append", help="Pass -D flags through to CMakes", nargs=1,
+    generate_parser.add_argument("-Dxyz", action="append", help="Pass -D flags through to CMakes", nargs=1,
                                  default=[])
     purge_parser = subparsers.add_parser("purge", help="Purge build cache directoriess", add_help=False,
                                          parents=[common_parser])
     purge_parser.add_argument("-f", "--force", default=False, action="store_true",
                               help="Purges the build directory by force. No confirmation will be requested.")
-    for target in Target.get_all_targets():
-        add_target_parser(target, subparsers, common_parser, parsers)
     # Add a search for hash function
-    hash_parser = subparsers.add_parser("hash-to-file", description="Converts F prime build hash to filename.",
+    hash_parser = subparsers.add_parser("hash-to-file", help="Converts F prime build hash to filename.",
                                         parents=[common_parser], add_help=False)
     hash_parser.add_argument("hash", type=lambda x: int(x, 0), help="F prime assert hash to associate with a file.")
 
     # Add a search for hash function
-    info = subparsers.add_parser("info", description="Gets fprime-util contextual information.",
-                                         parents=[common_parser], add_help=False)
+    subparsers.add_parser("info", help="Gets fprime-util contextual information.", parents=[common_parser], add_help=False)
+    for target in Target.get_all_targets():
+        add_target_parser(target, subparsers, common_parser, parsers)
     # Parse and prepare to run
     parsed, unknown = parser.parse_known_args(args)
     bad = [bad for bad in unknown if not CMAKE_REG.match(bad)]
