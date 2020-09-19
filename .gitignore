@@ -1,5 +1,5 @@
-build
-build*
+build/
+build*/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
