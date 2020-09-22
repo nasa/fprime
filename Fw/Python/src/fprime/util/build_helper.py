@@ -64,7 +64,7 @@ def get_build(parsed: argparse.Namespace, deployment: Path, verbose:bool, target
     # None found, explode
     if not build_type:
         raise NoValidBuildTypeException("Could not execute '{}' with a build type '{}'".format(target, parsed.build_type))
-    assert len(build_type) == 1, "Multiple build types with same name detected"
+    # Grab first build when multiple are available
     return Build(build_type[0], deployment, verbose=verbose)
 
 
