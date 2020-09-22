@@ -54,7 +54,7 @@ namespace Svc {
     createDirectorySucceed(void) 
   {
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
     // Create test_dir
@@ -69,7 +69,7 @@ namespace Svc {
         FileManager::OPCODE_CREATEDIRECTORY
     );
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_dir exists
     this->system("test -d test_dir");
 
@@ -84,7 +84,7 @@ namespace Svc {
   void Tester ::
     createDirectoryFail(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Create test_dir
     this->system("rm -rf test_dir");
     this->system("mkdir test_dir");
@@ -111,7 +111,7 @@ namespace Svc {
   void Tester ::
     moveFileSucceed(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove file1 and file2, if they exist
     this->system("rm -rf file1 file2");
 
@@ -129,7 +129,7 @@ namespace Svc {
         FileManager::OPCODE_MOVEFILE
     );
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that file name changed
     this->system("! test -e file1");
     this->system("test -f file2");
@@ -145,7 +145,7 @@ namespace Svc {
   void Tester ::
     moveFileFail(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove file1, if it exists
     this->system("rm -rf file1");
 #else
@@ -172,7 +172,7 @@ namespace Svc {
   void Tester ::
     removeDirectorySucceed(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
 
@@ -190,7 +190,7 @@ namespace Svc {
         FileManager::OPCODE_REMOVEDIRECTORY
     );
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_dir is not there
     this->system("! test -e test_dir");
 #else
@@ -201,7 +201,7 @@ namespace Svc {
   void Tester ::
     removeDirectoryFail(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
 #else
@@ -227,7 +227,7 @@ namespace Svc {
   void Tester ::
     removeFileSucceed(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
@@ -245,7 +245,7 @@ namespace Svc {
         FileManager::OPCODE_REMOVEFILE
     );
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_file is not there
     this->system("! test -e test_file");
 #else
@@ -256,7 +256,7 @@ namespace Svc {
   void Tester ::
     removeFileFail(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 #else
@@ -282,7 +282,7 @@ namespace Svc {
   void Tester ::
     shellCommandSucceed(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
@@ -297,7 +297,7 @@ namespace Svc {
     ASSERT_EVENTS_ShellCommandSucceeded_SIZE(1);
     ASSERT_EVENTS_ShellCommandSucceeded(0, "touch test_file");
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_file is there
     this->system("test -f test_file");
 
@@ -311,7 +311,7 @@ namespace Svc {
   void Tester ::
     shellCommandFail(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
@@ -341,7 +341,7 @@ namespace Svc {
   void Tester ::
     appendFileSucceed_newFile(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
     this->system("rm -rf file1 file2");
 
@@ -355,7 +355,7 @@ namespace Svc {
     this->appendFile("file1", "file2");
     this->assertSuccess(FileManager::OPCODE_APPENDFILE);
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // check new file exists and has correct text inside
     this->system("test -e file2");
     assertFileContent("file2", "file1 text\n", 12);
@@ -370,7 +370,7 @@ namespace Svc {
   void Tester ::
     appendFileSucceed_existingFile(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
     this->system("rm -rf file1 file2");
 
@@ -386,7 +386,7 @@ namespace Svc {
     this->appendFile("file1", "file2");
     this->assertSuccess(FileManager::OPCODE_APPENDFILE);
 
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // check file still exists and has new text inside
     this->system("test -e file2");
     assertFileContent("file2", "file2 text\nfile1 text\n", 23);
@@ -401,7 +401,7 @@ namespace Svc {
   void Tester ::
     appendFileFail(void) 
   {
-#ifdef __linux__
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
     this->system("rm -rf file1 file2");
 #else
