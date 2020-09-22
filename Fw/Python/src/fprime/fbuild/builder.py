@@ -414,12 +414,12 @@ class NoSuchTargetExcetion(FprimeException):
 BUILD_TARGETS = [
     # Various "build" target
     LocalTarget("build", "Build components, ports, and deployments", cmake=""),
-    GlobalTarget("build", "Build the top-level delpoyment targets", flags={"deployment"}),
+    #GlobalTarget("build", "Build the top-level delpoyment targets", flags={"deployment"}, cmake=""),
     GlobalTarget("build", "Build all deployment targets", flags={"all"}, cmake="all"),
     LocalTarget("build", "Build unit tests", build_types=[BuildType.BUILD_TESTING],
                 flags={"ut"}, cmake="ut_exe"),
-    GlobalTarget("build", "Build deployment unit tests", build_types=[BuildType.BUILD_TESTING],
-                 flags={"deployment", "ut"}, cmake="ut_exe"),
+    #GlobalTarget("build", "Build deployment unit tests", build_types=[BuildType.BUILD_TESTING],
+    #             flags={"deployment", "ut"}, cmake="ut_exe"),
     # Implementation targets
     LocalTarget("impl", "Generate implementation template files"),
     LocalTarget("impl", "Generate unit test files", flags={"ut"}, cmake="testimpl"),
