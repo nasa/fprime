@@ -415,7 +415,7 @@ BUILD_TARGETS = [
     # Various "build" target
     LocalTarget("build", "Build components, ports, and deployments", cmake=""),
     GlobalTarget("build", "Build the top-level delpoyment targets", flags={"deployment"}),
-    GlobalTarget("build", "Build all deployment targets", flags={"all"}, cmake="build-all"),
+    GlobalTarget("build", "Build all deployment targets", flags={"all"}, cmake="all"),
     LocalTarget("build", "Build unit tests", build_types=[BuildType.BUILD_TESTING],
                 flags={"ut"}, cmake="ut_exe"),
     GlobalTarget("build", "Build deployment unit tests", build_types=[BuildType.BUILD_TESTING],

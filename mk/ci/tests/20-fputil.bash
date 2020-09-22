@@ -18,7 +18,7 @@ do
     fi
     echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
     export CHECK_TARGET_PLATFORM="native"
-    for target in ${FPUTIL_TARGETS[@]}
+    for target in "${FPUTIL_TARGETS[@]}"
     do
         if [[ "${TEST_TYPE}" != "QUICK" ]] || [[ "${target}" == "generate" ]]
         then

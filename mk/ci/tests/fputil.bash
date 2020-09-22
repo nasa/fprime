@@ -47,11 +47,11 @@ function fputil_action {
         if [[ "${TARGET}" != "generate" ]]
         then
 	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
-            fprime-util ${TARGET} --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
+            fprime-util ${TARGET} --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         else
 	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
-            fprime-util ${TARGET} ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
+            fprime-util ${TARGET} ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         fi
     ) || exit 1
