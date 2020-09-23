@@ -19,8 +19,8 @@ class IniSettings:
     @staticmethod
     def find_fprime():
         """
-         Finds F prime by recursing parent to parent until a matching directory is found.
-         """
+        Finds F prime by recursing parent to parent until a matching directory is found.
+        """
         needle = os.path.join(
             "cmake", "FPrime.cmake"
         )  # If the F prime cmake file exists

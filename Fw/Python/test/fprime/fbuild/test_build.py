@@ -230,9 +230,7 @@ def test_generate():
             # Create a temp directory and register its deletion at the end of the program run
             tempdir = tempfile.mkdtemp()
             rms.append(tempdir)
-            get_cmake_builder().generate_build(
-                path, tempdir, flags, ignore_output=True
-            )
+            get_cmake_builder().generate_build(path, tempdir, flags, ignore_output=True)
         # Expect errors for this step
         path = "/nopath/somesuch/nothing"
         with pytest.raises(fprime.fbuild.cmake.CMakeProjectException):

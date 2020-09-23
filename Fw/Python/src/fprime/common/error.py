@@ -3,4 +3,5 @@
 
 class FprimeException(Exception):
     """ Base F prime exception """
+
     pass

@@ -68,7 +68,7 @@ class CMakeHandler:
     CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.
     """
 
-    #CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
+    # CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{}"
     CMAKE_LOCATION_FIELDS = [
         "FPRIME_PROJECT_ROOT",
         "FPRIME_LIBRARY_LOCATIONS",
@@ -80,7 +80,7 @@ class CMakeHandler:
         Instantiate a basic CMake handler.
         """
         self.settings = {}
-        #self.build_cache = CMakeBuildCache()
+        # self.build_cache = CMakeBuildCache()
         self.verbose = False
         try:
             self._run_cmake(["--help"], print_output=False)
@@ -152,8 +152,6 @@ class CMakeHandler:
             return self._run_cmake(
                 run_args + fleshed_args, write_override=True, environment=environment
             )
-
-
 
     def get_include_locations(self, cmake_dir):
         """
@@ -246,7 +244,7 @@ class CMakeHandler:
         if isinstance(fields, str):
             fields = [fields]
         # Setup the build_dir if it can be detected. Without a cache or specified value, we can crash
-        self._cmake_validate_build_dir(cmake_dir) # Validate the dir
+        self._cmake_validate_build_dir(cmake_dir)  # Validate the dir
         return self._read_values_from_cache(fields, build_dir=cmake_dir)
 
     # def _build_directory_from_cmake_dir(self, cmake_dir):
@@ -308,7 +306,7 @@ class CMakeHandler:
         )
 
     def get_cmake_module(self, path, build_dir):
-        """ Gets the CMake module
+        """Gets the CMake module
 
         CMake modules are constructed from a path relative to some project root (fprime, deployment, or library roots).
         This relative path is then converted to use "_" instead of "/"
@@ -321,12 +319,14 @@ class CMakeHandler:
             CMake module name in format x_y_z
         """
         project_relative_path = self.get_project_relative_path(path, build_dir)
-        module = project_relative_path.replace(".", "") # Handles case where relative path is exactly "."
+        module = project_relative_path.replace(
+            ".", ""
+        )  # Handles case where relative path is exactly "."
         module = module.replace(os.sep, "_")
         return module
 
     def get_project_relative_path(self, path, build_dir):
-        """ Gets the path relative to the cmake setup, or raises CMakeOrphanException
+        """Gets the path relative to the cmake setup, or raises CMakeOrphanException
 
         Args:
             path: path to contextualize. May be None to use os.getcwd().
@@ -340,7 +340,7 @@ class CMakeHandler:
         return os.path.relpath(path, include_root)
 
     def get_available_targets(self, build_dir, path):
-        """ Gets a list of available CMake targets in the current directory
+        """Gets a list of available CMake targets in the current directory
 
         Args:
             build_dir: build directory to use for detecting targets
@@ -356,8 +356,14 @@ class CMakeHandler:
         stdout, _ = self._run_cmake(run_args, write_override=True, print_output=False)
         prefix = self.get_cmake_module(path, build_dir)
 
-        make_target_names = [line.replace("...", "").strip() for line in stdout if line.startswith("...")]
-        contextual_make_targets = [make.replace(prefix, "").strip("_") for make in make_target_names if make.startswith(prefix)]
+        make_target_names = [
+            line.replace("...", "").strip() for line in stdout if line.startswith("...")
+        ]
+        contextual_make_targets = [
+            make.replace(prefix, "").strip("_")
+            for make in make_target_names
+            if make.startswith(prefix)
+        ]
         return contextual_make_targets
 
     def purge(self, build_dir):
@@ -394,9 +400,6 @@ class CMakeHandler:
         valid_matches = filter(lambda item: item is not None, map(reg.match, stdout))
         # Return the dictionary composed from the match groups
         return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
-
-
-
 
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
@@ -493,7 +496,10 @@ class CMakeHandler:
         os.close(pty_out_w)
         os.close(pty_err_w)
         ret, stdout, stderr = self._communicate(
-            proc, open(pty_out_r, mode="rb"), open(pty_err_r, mode="rb"), print_output,
+            proc,
+            open(pty_out_r, mode="rb"),
+            open(pty_err_r, mode="rb"),
+            print_output,
         )
         # Raising an exception when the return code is non-zero allows us to handle the exception internally if it is
         # needed. Thus we do not just exit.
@@ -634,5 +640,3 @@ class CMakeNoSuchTargetException(CMakeException):
     def __init__(self, build_dir, target):
         """  Better messaging for this exception """
         super().__init__("{} does not support target {}".format(build_dir, target))
-
-
