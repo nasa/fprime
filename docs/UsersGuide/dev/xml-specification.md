@@ -83,6 +83,53 @@ determine the types for displaying and archiving the data. (See Section
 
 ### XML-Specified Enumeration
 
+As discussed in the previous section, you can define an enumeration
+when specifying the type of a member of a Serializable type,
+For example, you can write a file `SSerializableAi.xml` containing
+this specification:
+
+```xml
+<serializable name="S">
+  <members>
+    <member name="switchStatus">
+      <enum name="SwitchStatus" type ="ENUM">
+        <item name="OFF">
+        <item name="ON">
+      </enum>
+    </member>
+  </members>
+</serializable>
+```
+
+This file defines a Serializable type `S`
+with one member `switchStatus`.
+Its type is `SwitchStatus`, which is an enumeration with
+enumerated values `OFF` and `ON`.
+
+When you define an enumeration this way, the type is usable only in the context 
+of the Serializable type.
+For example, `SwitchStatus` is available in your C++ code only 
+when you include the serializable type `S`.
+`SwitchStatus` is not a generally available type that you can use,
+for example, in a telemetry channel.
+
+To define an enumeration that is more generally usable, you can specify an 
+enumeration _E_ as a separate XML type.
+Then you can do the following:
+
+1. Generate a C++ representation of _E_ that you can use in the C++
+implementation of the FSW.
+
+2. Use the XML representation of _E_ in Serializable XML types, in Array XML 
+types, in telemetry channels, and in events.
+
+For example, you can specify an XML enumeration type `SwitchStatus`
+with the enumerated values `OFF` and `ON`.
+In the C++ FSW code, the enumerated values `SwitchStatus::OFF`
+and `SwitchStatus::ON` are available.
+When a value of type `SwitchStatus` is emitted as telemetry, the GDS
+will display symbolically as (`ON` or `OFF`).
+
 TODO
 
 ### XML-Specified Array Type
