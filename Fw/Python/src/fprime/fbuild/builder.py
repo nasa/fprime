@@ -337,7 +337,10 @@ class Build:
             and isinstance(target, LocalTarget)
         ]
         global_targets = [
-            target for target in BUILD_TARGETS if isinstance(target, GlobalTarget)
+            target
+            for target in BUILD_TARGETS
+            if isinstance(target, GlobalTarget)
+            if self.build_type in target.build_types
         ]
 
         relative_path = self.cmake.get_project_relative_path(

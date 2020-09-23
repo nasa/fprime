@@ -346,42 +346,56 @@ def confirm():
 
 def print_info(parsed, deployment):
     """ Builds and prints the informational output block """
-    print("[INFO] Fprime build information:")
-    build_types = [parsed.build_type] if parsed.build_type is not None else BuildType
+    build_types = [build_type for build_type in BuildType]
+    if parsed.build_type is not None:
+        build_types = [
+            build_type
+            for build_type in BuildType
+            if build_type.get_cmake_build_type() == parsed.build_type
+        ]
+    # Roll up targets for more concise display
+    build_infos = {}
+    local_generic_targets = set()
+    global_generic_targets = set()
+    # Loop through available builds and harvest targets
     for build_type in build_types:
         build = Build(build_type, deployment, verbose=parsed.verbose)
         build.load(parsed.platform, parsed.build_dir)
         build_info = build.get_build_info(parsed.path)
         # Target list
-        local_targets = [
-            "'{}'".format(target) for target in build_info.get("local_targets", [])
-        ]
-        global_targets = [
-            "'{}'".format(target) for target in build_info.get("global_targets", [])
-        ]
+        local_targets = set(
+            ["'{}'".format(target) for target in build_info.get("local_targets", [])]
+        )
+        global_targets = set(
+            ["'{}'".format(target) for target in build_info.get("global_targets", [])]
+        )
         build_artifacts = (
             build_info.get("auto_location")
             if build_info.get("auto_location") is not None
             else "N/A"
         )
+        local_generic_targets = local_generic_targets.union(local_targets)
+        global_generic_targets = global_generic_targets.union(global_targets)
+        build_infos[build_type] = build_artifacts
 
+    # Print out directory and deployment target sections
+    print("[INFO] Fprime build information:")
+    print("    Available directory targets: {}".format(" ".join(local_generic_targets)))
+    print()
+    print(
+        "    Available deployment targets: {}".format(" ".join(global_generic_targets))
+    )
+
+    # Artifact locations come afterwards
+    print("  ----------------------------------------------------------")
+    for build_type, build_artifact_location in build_infos.items():
+        format_string = "    Build artifact directory ({}): {}"
         print(
-            "    Available directory targets ({}): {}".format(
-                build_type.get_cmake_build_type(), " ".join(local_targets)
+            format_string.format(
+                build_type.get_cmake_build_type(), build_artifact_location
             )
         )
-        print(
-            "    Available deployment targets ({}): {}".format(
-                build_type.get_cmake_build_type(), " ".join(global_targets)
-            )
-        )
-        print("  ----------------------------------------------------------")
-        print(
-            "    Build artifact directory ({}): {}".format(
-                build_type.get_cmake_build_type(), build_artifacts
-            )
-        )
-        print()
+    print()
 
 
 def utility_entry(args):
@@ -392,7 +406,7 @@ def utility_entry(args):
     try:
         if parsed.command is None:
             print("[ERROR] Must supply subcommand for fprime-util. See below.")
-            parser.print_help(parsed, deployment)
+            parser.print_help(parsed)
             print_info(parsed, deployment)
         elif parsed.command == "info":
             print_info(parsed, deployment)
