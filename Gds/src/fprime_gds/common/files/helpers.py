@@ -34,6 +34,7 @@ class Timeout:
     def setup(self, callback, timeout=5, args=()):
         """
         Sets up the timeout but does not start it.
+
         :param callback: function called when timeout expires
         :param timeout: (optional) timeout duration. Default: 5 seconds
         """
@@ -149,6 +150,7 @@ class TransmitFile:
     def write(self, chunk, offset):
         """
         Write a chunk to the file.
+
         :param chunk: data to write to the file
         :param offset: offset to write to
         """
@@ -217,6 +219,7 @@ class TransmitFile:
 def file_to_dict(files, uplink=True):
     """
     Converts files to dictionary. This creates a new list of JSONable file dictionaries.
+
     :param files: list of TransmitFiles to convert
     :return: list of dictionaries
     """

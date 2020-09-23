@@ -55,6 +55,7 @@ class CommandHistory(flask_restful.Resource):
     def __init__(self, history):
         """
         Constructor: setup the parser for incoming command runs
+
         :param history: history object holding commands
         :param dictionary: dictionary holding command list
         """

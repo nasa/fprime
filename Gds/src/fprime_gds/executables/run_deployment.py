@@ -17,6 +17,7 @@ def get_args():
     """
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
+
     :param args: arguments to supply
     """
     # Get custom handlers for all executables we are running
@@ -46,6 +47,7 @@ def get_args():
 def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
     """
     Launch a child subprocess. This subprocess will allow the child to run outside of the memory context of Python.
+
     :param cmd: list of command arguments to run by handing to subprocess.
     :param logfile: (optional) place to redirect output to for purposes of logging. Default: None, screen.
     :param name: (optional) short name for printing messages.
@@ -79,6 +81,7 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
 def launch_tts(tts_port, tts_addr, logs, **_):
     """
     Launch the Threaded TCP Server
+
     :param tts_port: port to attach to
     :param tts_addr: address to bind to
     :param logs: logs output directory
@@ -103,6 +106,7 @@ def launch_tts(tts_port, tts_addr, logs, **_):
 def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     """
     Launch the GDS gui
+
     :param port: port to connect to
     :param dictionary: dictionary to look at
     :param connect_address: address to connect to
@@ -152,6 +156,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
 def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     """
     Launch the flask server and a browser pointed at the HTML page.
+
     :param tts_port: port to connect to
     :param dictionary: dictionary to look at
     :param connect_address: address to connect to
@@ -179,6 +184,7 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
 def launch_app(app, port, address, logs, **_):
     """
     Launch the app
+
     :param app: application to launch
     :param port: port to connect to
     :param address: address to connect to
@@ -195,6 +201,7 @@ def launch_app(app, port, address, logs, **_):
 
 def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
     """
+
     :return:
     """
 

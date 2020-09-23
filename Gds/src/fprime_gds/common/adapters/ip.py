@@ -24,6 +24,7 @@ def check_port(address, port):
     """
     Checks a given address and port to ensure that it is available. If not available, a ValueError is raised. Note: this
     is done by binding to an address. It does not call "listen"
+
     :param address: address that will bind to
     :param port: port to bind to
     """
@@ -106,6 +107,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Send a given framed bit of data by sending it out the serial interface. It will attempt to reconnect if there is
         was a problem previously. This function will return true on success, or false on error.
+
         :param frame: framed data packet to send out
         :return: True, when data was sent through the UART. False otherwise.
         """
@@ -116,6 +118,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Read up to a given count in bytes from the TCP adapter. This may return less than the full requested size but
         is expected to return some data.
+
         :param _: upper bound of data requested, unused with IP connections
         :return: data successfully read
         """
@@ -140,6 +143,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     def get_arguments(cls):
         """
         Returns a dictionary of flag to argparse-argument dictionaries for use with argparse to setup arguments.
+
         :return: dictionary of flag to argparse arguments for use with argparse
         """
         return {
@@ -162,6 +166,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
         should be raised describing the problem with these arguments.
+
         :param args: arguments as dictionary
         """
         check_port(args["address"], args["port"])
@@ -193,6 +198,7 @@ class IpHandler(abc.ABC):
     ):
         """
         Initialize this handler. This will set the variables, and start up the internal receive thread.
+
         :param address: address of the handler
         :param port: port of the handler
         :param adapter_type: type of this adapter. socket.SOCK_STREAM or socket.SOCK_DGRAM
@@ -282,6 +288,7 @@ class IpHandler(abc.ABC):
         """
         Reads a single message after ensuring that the socket is fully open. On a non-timeout error, close the socket in
         preparation for a reconnect. This internally will call the child's read_impl
+
         :return: data read from TCP server or b"" when nothing is available
         """
         # This will block waiting for data
@@ -306,6 +313,7 @@ class IpHandler(abc.ABC):
         """
         Writes a single message after ensuring that the socket is fully open. On any error, close the socket in
         preparation for a reconnect. This internally will call the child's write_impl
+
         :param message: message to send
         :return: True if all data was written, False otherwise
         """
@@ -351,6 +359,7 @@ class TcpHandler(IpHandler):
     ):
         """
         Init the TCP adapter with port and address
+
         :param address: address of TCP
         :param port: port of TCP
         """
@@ -393,6 +402,7 @@ class TcpHandler(IpHandler):
     def write_impl(self, message):
         """
         Send is implemented with TCP. It will send it to the connected client.
+
         :param message: message to send out
         """
         # Block until the port is open
@@ -411,6 +421,7 @@ class UdpHandler(IpHandler):
     ):
         """
         Init UDP with address and port
+
         :param address: address of UDP
         :param port: port of UDP
         """

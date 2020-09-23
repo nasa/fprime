@@ -1,0 +1,19 @@
+:mod:`fprime_gds.common.adapters`
+=================================
+
+.. py:module:: fprime_gds.common.adapters
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   base/index.rst
+   framing/index.rst
+   ground/index.rst
+   ip/index.rst
+   uart/index.rst
+
+

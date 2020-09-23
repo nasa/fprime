@@ -32,6 +32,7 @@ class FramerDeframer(abc.ABC):
         """
         Frames outgoing data in the specified format. Expects incoming raw bytes to frame, and adds on the needed header
         and footer bytes. This new array of bytes is returned from the method.
+
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
@@ -44,6 +45,7 @@ class FramerDeframer(abc.ABC):
         returns None. Expects incoming raw bytes to deframe, and returns a deframed packet or None, and the leftover
         bytes that were unused. Will search and discard data up until a start token is found. Note: data will be
         consumed up to the first start token found.
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)
@@ -53,6 +55,7 @@ class FramerDeframer(abc.ABC):
         """
         Deframes all available packets found in a single set of bytes by calling deframe until a None packet is
         retrieved. This list of packets, and the remaining bytes are returned
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return:
@@ -124,6 +127,7 @@ class FpFramerDeframer(FramerDeframer):
         """
         Frames outgoing data in the F prime standard format. Expects incoming raw bytes to frame, and adds on the
         needed framing tokens to the front and end of the bytes.
+
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
@@ -141,6 +145,7 @@ class FpFramerDeframer(FramerDeframer):
         returns None. Expects incoming raw bytes to deframe, and returns a deframed packet or None, and the leftover
         bytes that were unused. Will search and discard data up until a start token is found. Note: data will be
         consumed up to the first start token found.
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)
@@ -206,6 +211,7 @@ class TcpServerFramerDeframer(FramerDeframer):
         """
         Frames outgoing data in the Tcp server outgoing format. Expects incoming raw bytes to frame, and adds on the
         needed framing tokens to the front and end of the bytes.
+
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
@@ -218,6 +224,7 @@ class TcpServerFramerDeframer(FramerDeframer):
         returns None. Expects incoming raw bytes to deframe, and returns a deframed packet or None, and the leftover
         bytes that were unused. Will search and discard data up until a start token is found. Note: data will be
         consumed up to the first start token found.
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)

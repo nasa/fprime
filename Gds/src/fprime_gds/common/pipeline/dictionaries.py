@@ -48,6 +48,7 @@ class Dictionaries:
         """
         Loads the dictionaries based on the dictionary path supplied. Optional packet_spec is allowed to specify the
         definitions of packets.
+
         :param dictionary: dictionary path used for loading dictionaries
         :param packet_spec: specification for packets, or None, for packetized telemetry
         """

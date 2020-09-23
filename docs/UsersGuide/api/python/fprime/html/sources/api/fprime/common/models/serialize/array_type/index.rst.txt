@@ -1,0 +1,88 @@
+:mod:`fprime.common.models.serialize.array_type`
+================================================
+
+.. py:module:: fprime.common.models.serialize.array_type
+
+.. autoapi-nested-parse::
+
+   Generic representation of autocoded array types
+
+   Created on May 29, 2020
+   @author: jishii
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   fprime.common.models.serialize.array_type.ArrayType
+
+
+
+.. py:class:: ArrayType(typename, config_info, val=None)
+
+   Bases: :class:`fprime.common.models.serialize.type_base.ValueType`
+
+   Representation of the Array type (comparable to the ANY type)
+
+   The array type is a fixed size container of a single type of members.
+
+   Configuration data for array type (the type of members, size of array, and format string for all members)
+
+   .. method:: validate(self, val)
+
+
+      Validates the values of the array
+
+
+   .. method:: to_jsonable(self)
+
+
+      JSONable type
+
+
+   .. method:: serialize(self)
+
+
+      Serialize the array by serializing the elements one by one
+
+
+   .. method:: deserialize(self, data, offset)
+
+
+      Deserialize the members of the array
+
+
+   .. method:: arr_type(self)
+      :property:
+
+
+      Property representing the size of the array
+
+
+   .. method:: arr_size(self)
+      :property:
+
+
+      Property representing the number of elements of the array
+
+
+   .. method:: arr_format(self)
+      :property:
+
+
+      Property representing the format string of an item in the array
+
+
+   .. method:: getSize(self)
+
+
+      Return the size of the array
+
+
+

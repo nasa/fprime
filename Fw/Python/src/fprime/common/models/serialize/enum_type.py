@@ -26,6 +26,7 @@ class EnumType(ValueType):
     def __init__(self, typename="", enum_dict=None, val=None):
         """
         Constructor
+
         :param typename: name of the enumeration type
         :param enum_dict: dictionary of value to integer representation
         :param val: value of the enumeration

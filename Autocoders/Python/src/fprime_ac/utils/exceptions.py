@@ -17,6 +17,7 @@ class FprimeRngXmlValidationException(FprimeException):
     def __init__(self, error_list):
         """
         Construct the exception from a user supplied message and a set of validation errors.
+
         :param error_list: error list set supplied from validator
         """
         last = str(error_list)

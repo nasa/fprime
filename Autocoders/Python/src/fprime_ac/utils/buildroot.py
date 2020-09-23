@@ -13,6 +13,7 @@ BUILD_ROOTS = set() # One global build root set, to rule them all
 def set_build_roots(build_root_arg):
     """
     Sets up the build root flag from an argument.
+
     :param build_root_arg: argument supplied as build root
     """
     global BUILD_ROOTS
@@ -25,6 +26,7 @@ def set_build_roots(build_root_arg):
 def get_build_roots():
     """
     Get the build root paths to use for handling mutliple roots for elements.
+
     :return: build roots
     """
     return BUILD_ROOTS
@@ -33,6 +35,7 @@ def get_build_roots():
 def get_nearest_build_root(path):
     """
     Gets the nearest build root to given path
+
     :param path: path to find nearest build root to
     :return: nearest build root
     """
@@ -50,6 +53,7 @@ def get_nearest_build_root(path):
 def locate_build_root(item):
     """
     Locates a file relative to some BUILD_ROOT.
+
     :param item: item to locate at some build root
     :return: build root that item was found at
     """
@@ -84,6 +88,7 @@ def search_for_file(file_type, file_path):
 def build_root_relative_path(path):
     """
     Calculate the relative path to the nearest build root.
+
     :param path: path to calculate from
     :return: closes relative path
     """

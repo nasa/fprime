@@ -1,4 +1,4 @@
-<title>Ref::SendBuffApp</title>
+\page RefSendBuffAppComponent Ref::SendBuffApp Component
 # Ref::SendBuffApp Component
 
 ## 1. Introduction

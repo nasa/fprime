@@ -81,6 +81,7 @@ class less_than(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -106,6 +107,7 @@ class greater_than(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -131,6 +133,7 @@ class equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -156,6 +159,7 @@ class not_equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -181,6 +185,7 @@ class less_than_or_equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -206,6 +211,7 @@ class greater_than_or_equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -234,6 +240,7 @@ class within_range(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to evaluate
         """
         try:
@@ -263,6 +270,7 @@ class is_a_member_of(predicate):
     def __call__(self, item):
         """
         Evaluates the predicate
+
         :param item: the object to search for then evaluate
         """
         for x in self.set:
@@ -289,6 +297,7 @@ class is_not_a_member_of(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object to search for then evaluate
         """
         for x in self.set:
@@ -333,6 +342,7 @@ class invert(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         return not self.pred(item)
@@ -358,6 +368,7 @@ class satisfies_all(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         for pred in self.p_list:
@@ -386,6 +397,7 @@ class satisfies_any(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         for pred in self.p_list:

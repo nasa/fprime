@@ -72,4 +72,5 @@ build-fprime-automatic*
 TesterBase.*
 GTestBase.*
 /Fw/Python/.eggs
+/Fw/Python/src/fprime.egg-info
 /Gds/src/fprime_gds.egg-info
