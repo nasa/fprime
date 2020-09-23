@@ -4,9 +4,7 @@ the advantages of that build system.
 
 ## Basic Usage
 ```
-usage: fprime-util [-h]
-                   {generate,purge,build,impl,impl-ut,build-ut,check,check-all,install,build-all,hash-to-file}
-                   ...
+usage: fprime-util [-h] {generate,purge,hash-to-file,info,build,impl,check,coverage,install} ...
 
 F prime helper application.
 
@@ -14,10 +12,18 @@ optional arguments:
   -h, --help            show this help message and exit
 
 subcommands:
-  F prime utility command line. Please run one of the commands. For help,
-  run a command with the --help flag.
+  F prime utility command line. Please run one of the commands. For help, run a command with the --help flag.
 
-  {generate,purge,build,impl,impl-ut,build-ut,check,check-all,install,build-all,hash-to-file}
+  {generate,purge,hash-to-file,info,build,impl,check,coverage,install}
+    generate            Generate a build cache directory
+    purge               Purge build cache directoriess
+    hash-to-file        Converts F prime build hash to filename.
+    info                Gets fprime-util contextual information.
+    build               Build components, ports, and deployments in the specified directory
+    impl                Generate implementation template files in the specified directory
+    check               Run unit tests in the specified directory
+    coverage            Generate unit test coverage reports in the specified directory
+    install             Install the current deployment build artifacts in the specified directory
 ```
 
 The `fprime-util` helper is driven by a series of subcommands listed above. Each perform one aspect of the development process

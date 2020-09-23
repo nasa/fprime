@@ -144,14 +144,14 @@ step.
 ## Creating Unit Test Implementations
 
 Once the build system cache is generated, developers will need to generate the stubbed implementations for creating
-unit tests for a Component's C++. This can be done using the `impl-ut` command of the F´ utility. These commands
+unit tests for a Component's C++. This can be done using the `impl --ut` command of the F´ utility. These commands
 assume a default build has been generated. They can be run passing in a toolchain, but this is typically not done because
 they are toolchain agnostic.
 
 **Generating Unit Test Stubs of SignalGen**
 ```
 cd fprime/Ref/SignalGen
-fprime-util impl-ut
+fprime-util impl --ut
 ```
 
 This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are 
@@ -228,14 +228,14 @@ fprime-util install raspberrypi
 
 ## Building and Running Unit Tests
 
-Unit tests can be build using the the `build-ut` command of the `fprime-util`. This will allow us to build the unit tests
+Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
 in preparation to run them.  The user can also just run "check" to build and run the unit tests.  **Note: no unit tests
 are currently supplied with the Ref application, and thus these commands may error.**
 
 **Building Unit Test of SignalGen**
 ```
 cd fprime/Ref/SignalGen
-fprime-util build-ut
+fprime-util build --ut
 ```
 
 Once built, the unit test can be run using the following command.  **Note: this will produce a message warning of no
@@ -250,7 +250,7 @@ compile by running the following commands.
 **Cross-Compile Unit Test of SignalGen**
 ```
 cd fprime/Ref/SignalGen
-fprime-util build-ut raspberrypi
+fprime-util build raspberrypi --ut
 ```
 
 ## Conclusion
