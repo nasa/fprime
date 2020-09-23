@@ -81,6 +81,7 @@ class CompFactory:
         comp_parameter_obj_list = x.get_parameters()
         comp_event_obj_list = x.get_events()
         comp_internal_interface_obj_list = x.get_internal_interfaces()
+        comp_included_enums_list = x.get_enum_type_files()
 
         #
         comp_namespace = comp_obj.get_namespace()
@@ -412,6 +413,7 @@ class CompFactory:
             internal_interface_obj_list,
             serializable_obj_list,
             comp_xml_filename,
+            comp_included_enums_list,
         )
         the_component.set_xml_port_files(comp_xml_port_files + parsed_array_list)
         the_component.set_c_header_files(comp_c_header_files)

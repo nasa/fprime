@@ -52,6 +52,7 @@ class Component:
         internal_interface_obj_list=None,
         serializable_obj_list=None,
         xml_filename=None,
+        included_enums_list=None,
         kind2=None,
         base_id=None,
         base_id_window=None,
@@ -73,6 +74,7 @@ class Component:
         self.__serializable_obj_list = serializable_obj_list
         self.__xml_filename = xml_filename
         self.__has_guarded_ports = False
+        self.__included_enums_list = included_enums_list
         # Note __kind is used as type for Topology and Kind for Component generation
         # Quick Fix for Topology generation adds kind2 to specify active or passive component instance
         self.__kind2 = kind2
@@ -166,3 +168,6 @@ class Component:
 
     def get_base_id_window(self):
         return self.__base_id_window
+
+    def get_included_enums(self):
+        return self.__included_enums_list
