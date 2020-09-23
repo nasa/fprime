@@ -36,16 +36,16 @@ class CircularBuffer {
          *
          * Note: ownership of the supplied buffer is held until the circular buffer is destructed.
          *
-         * \param buffer: supplied buffer used as a data store.
-         * \param size: size of the supplied data store.
+         * \param const U8* buffer: supplied buffer used as a data store.
+         * \param NATIVE_UINT_TYPE size: size of the supplied data store.
          */
         CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
          * Serialize a given buffer into this this circular buffer. Will not accept more data then
          * space available. This means it will not overwrite existing data.
-         * \param buffer: supplied buffer to be serialized.
-         * \param size: size of the supplied buffer.
+         * \param const U8* buffer: supplied buffer to be serialized.
+         * \param NATIVE_UINT_TYPE size: size of the supplied buffer.
          */
         Fw::SerializeStatus serialize(const U8* const buffer, const NATIVE_UINT_TYPE size);
 
