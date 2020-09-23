@@ -91,6 +91,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Send a given framed bit of data by sending it out the serial interface. It will attempt to reconnect if there is
         was a problem previously. This function will return true on success, or false on error.
+
         :param frame: framed data packet to send out
         :return: True, when data was sent through the UART. False otherwise.
         """
@@ -110,6 +111,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Read up to a given count in bytes from the UART adapter. This may return less than the full requested size but
         is expected to return some data.
+
         :param size: upper bound of data requested
         :return: data successfully read
         """
@@ -134,6 +136,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     def get_arguments(cls):
         """
         Returns a dictionary of flag to argparse-argument dictionaries for use with argparse to setup arguments.
+
         :return: dictionary of flag to argparse arguments for use with argparse
         """
         available = list(
@@ -160,6 +163,7 @@ class SerialAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
         should be raised describing the problem with these arguments.
+
         :param args: arguments as dictionary
         """
         ports = map(lambda info: info.device, list_ports.comports(include_links=True))

@@ -22,6 +22,7 @@ class id_predicate(predicates.predicate):
 
     def __call__(self, item):
         """
+
         :param item: The object or value to evaluate
         """
         return hasattr(item, "get_id") and self.id_num == item.get_id()
@@ -62,6 +63,7 @@ class component_predicate(predicates.predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         # NOTE: Always returns true if no component found
@@ -112,6 +114,7 @@ class contains_search_string(predicates.predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         return self.search_string in self.to_str(item)

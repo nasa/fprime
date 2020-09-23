@@ -5,7 +5,7 @@ File to contain basic wrappers for the CMake. This will enable basic CMake comma
 the build. This should not be imported in-person, but rather should be included by the build package. This can be the
 receiver of these delegated functions.
 
-@author mstarch
+:author: mstarch
 """
 # Get a cache directory for building CMakeList file, if need and remove at exit
 import atexit
@@ -97,6 +97,7 @@ class CMakeHandler:
     ):
         """
         Executes a known target for a given build_dir. Path will default to a known path.
+
         :param build_dir: build_dir to use to run this.
         :param target: target to execute at the path, using above build_dir
         :param path: path to run target against. (default) current working directory
@@ -157,6 +158,7 @@ class CMakeHandler:
     def find_hashed_file(self, build_dir, hash_value):
         """
         Find a file from a hash
+
         :param build_dir: build directory to search
         :param hash_value: hash number
         :return: filename
@@ -176,8 +178,9 @@ class CMakeHandler:
         """
         Recurse up the directory tree from the given path, looking for a directory that matches the standard name. This
         will return that path, or error if one cannot be found.
+
         :return: path of nearest standard build directory
-        :throws CMakeInvalidBuildException, a build was found but not setup, CMakeOrphanException, no build was found
+        :raises: CMakeInvalidBuildException, a build was found but not setup, CMakeOrphanException, no build was found
         """
         path = os.path.abspath(path)
         # Get current directory to be checked, by removing file if path is not already a directory
@@ -203,9 +206,11 @@ class CMakeHandler:
         """
         Gets the locations that can be used as the root of an include tree. Common directories are placed in these
         include locations. These include standard builds, configs, etc.
+
+        ..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.
+
         :param cmake_dir: directory of a CMake build, or directory containing a CMake project
-        :return: [] # List of include locations. Order: project, lib, lib, ..., F prime core
-        !!! Note: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time. !!!
+        :return: list of include locations. Order: project, lib, lib, ..., F prime core
         """
         # Reading config fields. If the cmake_dir is a project dir, a build cache may be setup.
         # !! Note: using a project dir will cause file-system side effects, and incur a one-time cost to setup cache !!
@@ -223,14 +228,16 @@ class CMakeHandler:
         """
         Calculates the include root of the given path. The include root is defined as the following based on the other
         two values supplied. First, the following two path values are established:
-           - Location of the project's root. This is defined in the project_dir's CMakeList.txt, or in the CMake Cache.
-           - Location of the project's F prime checkout. This is defined in the same places.
+        - Location of the project's root. This is defined in the project_dir's CMakeList.txt, or in the CMake Cache.
+        - Location of the project's F prime checkout. This is defined in the same places.
         From there, the include root of the supplied path is whichever of those two paths is your parent. In cases where
         both are parents, it will take the outer-most parent
+
+        ..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.
+
         :param path: path to calculate looking for include-root
         :param cmake_dir: directory of a CMake build, or directory containing a CMake project
         :return: (relative include path, include root for the given path)
-        !!! Note: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time. !!!
         """
         path = (
             os.path.abspath(path) if path is not None else os.path.abspath(os.getcwd())
@@ -256,6 +263,7 @@ class CMakeHandler:
             """
             Reduces a list of parents, and the given path, to a single path who is the closes parent to the existing
             path while stilling being a parent.
+
             :param accum: latest best parent, or None if no valid parent found
             :param item: current parent being evaluated
             :return: next latest best parent
@@ -283,6 +291,7 @@ class CMakeHandler:
         """
         Gets fprime configuration for the given field(s). This will return a list of fields for the set of input fields.
         The user may supply a string for a single value returned as list of one, or a list of fields for list of values.
+
         :param fields: name of field, or list of names of fields
         :param cmake_dir: a cmake directory (project or build) to used. default: None, use existing temp cached build.
         :return: list of values, or Nones
@@ -298,6 +307,7 @@ class CMakeHandler:
         If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file
         should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then
         generate a temporary directory to be used as a build.
+
         :return: working build directory
         """
         try:
@@ -309,6 +319,7 @@ class CMakeHandler:
     def generate_build(self, source_dir, build_dir, args=None, ignore_output=False):
         """
         Generate a build directory for purposes of the build.
+
         :param source_dir: source directory to generate from
         :param build_dir: build directory to generate to
         :param args: arguments to hand to CMake.
@@ -354,6 +365,7 @@ class CMakeHandler:
     def _read_values_from_cache(self, keys, build_dir):
         """
         Reads set values from cache into an output tuple.
+
         :param keys: keys to read in iterable
         :param build_dir: build directory containing cache file
         :return: a tuple of keys, None if not part of cache
@@ -367,6 +379,7 @@ class CMakeHandler:
         """
         Reads the cache from the associated build_dir. This will return a dictionary of cache variable name to
         its value. This will not update internal state.
+
         :param build_dir: build directory to harvest for cache variables
         :return: {<cmake cache variable>: <cmake cache value>}
         """
@@ -399,6 +412,7 @@ class CMakeHandler:
         """
         Raises an exception if the source dir is not a valid CMake source directory. This means a CMakeLists.txt exists
         and defines within it a project call.
+
         :param source_dir: source directory to validate
         """
         cmake_file = os.path.join(source_dir, "CMakeLists.txt")
@@ -418,6 +432,7 @@ class CMakeHandler:
     def _cmake_validate_build_dir(build_dir):
         """
         Raises an exception if the build dir is not a valid CMake build directory
+
         :param build_dir: build_dir to validate
         """
         cache_file = os.path.join(build_dir, "CMakeCache.txt")
@@ -428,6 +443,7 @@ class CMakeHandler:
         """
         Runs the cmake  target required to refresh the cmake cache. This will allow for unknown targets to be searched
         for before the utility gives up and produces.
+
         :param build_dir: directory to build in
         """
         environment = {}
@@ -449,13 +465,15 @@ class CMakeHandler:
         """
         Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
         path in order for this to run.
+
+        ..note:: this function has potential File System side-effects
+
         :param arguments: arguments to supply to CMake.
         :param workdir: work directory to run in
         :param print: print to the screen. Default: True
         :param write_override: allows for non-read-only commands
         :param environment: environment to write into
         :return: (stdout, stderr)
-        Note: !!! this function has potential File System side-effects !!!
         """
         if environment is None:
             environment = {}
@@ -508,11 +526,12 @@ class CMakeHandler:
         lines for the standard out file handle when not none, and will always buffer standard error so that it can be
         provided when needed. This effectively replaces the .communicate method of the proc itself, while still
         preventing deadlocks.  The output is returned for each stream as a list of lines.
+
         :param proc: Popen process constructed with the above pairs to the submitted file handles
         :param stdout: standard output file handle. Paired with the FH provided to the Popen stdout argument
         :param stderr: standard error file handle. Paired with the FH provided to the Popen stderr argument
         :param print_output: print output to the screen. If False, output is masked. Default: True, print to screen.
-        :return return code, stdout as list of lines, stderr as list of lines
+        :return: return code, stdout as list of lines, stderr as list of lines
         """
         stdouts = []
         stderrs = []
@@ -612,6 +631,7 @@ class CMakeExecutionException(CMakeException):
     def get_errors(self):
         """
         Returns the error stream data to the caller
+
         :return: stderr of CMake as supplied into this Exception
         """
         return self.stderr
@@ -619,6 +639,7 @@ class CMakeExecutionException(CMakeException):
     def need_print(self):
         """
         Returns if the errors need to be printed
+
         :return: need print
         """
         return self.need
@@ -628,5 +649,5 @@ class CMakeNoSuchTargetException(CMakeException):
     """ The target does not exist. """
 
     def __init__(self, build_dir, target):
-        """  Better messaging for this exception """
+        """ Better messaging for this exception """
         super().__init__("{} does not support target {}".format(build_dir, target))

@@ -94,6 +94,7 @@ def validate(parsed):
     """
     Validate rules to ensure that the args are properly consistent. This will also generate a set of validated arguments
     to pass to CMake. This allows these values to be created, defaulted, and validated in one place
+
     :param parsed: args to validate
     :return: cmake arguments to pass to CMake
     """
@@ -163,6 +164,7 @@ def find_toolchain(platform, path):
     """
     Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
     prime provided toolchains
+
     :param platform: platform supplied by user for finding toolchain automatically
     :param path: path to the CMakeLists.txt directory, which acts as a default location if project_root not set
     :return: toolchain file
@@ -191,6 +193,7 @@ def find_toolchain(platform, path):
 def parse_args(args):
     """
     Parse the arguments to the CLI. This will then enable the user to run the above listed commands via the commands.
+
     :param args: CLI arguments to process
     :return: parsed arguments in a Namespace
     """
@@ -250,6 +253,7 @@ def parse_args(args):
 def confirm():
     """
     Confirms the removal of the file with a yes or no input.
+
     :return: True to remove false otherwise
     """
     # Loop "forever"
@@ -265,6 +269,7 @@ def confirm():
 def purge_functionality(build_dir, force=False):
     """
     Reusable purge functionality, so the user may purge or the system may cleanup itself
+
     :param build_dir: build dir specified to purge
     :param force: do not ask the user to purge before doing so. Default: False, ask.
     """
@@ -283,6 +288,7 @@ def purge_functionality(build_dir, force=False):
 def utility_entry(args=None):
     """
     Main interface to F prime utility.
+
     :return: return code of the function.
     """
     if args is None:

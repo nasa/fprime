@@ -72,6 +72,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_start(self, data):
         """
         Handle a start packet data type.
+
         :param data: data packet that is a start packet
         """
         # Initialize all relevant START packet attributes into variables from file_data
@@ -103,6 +104,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_data(self, data):
         """
         Handle the data packet.
+
         :param data: data packet
         """
         # Initialize all relevant DATA packet attributes into variables from file_data
@@ -130,6 +132,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_cancel(self, _):
         """
         Handle cancel packet.
+
         :param data: cancel packet, ignored.
         :return:
         """
@@ -143,6 +146,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_end(self, data):
         """
         Handle the end packet.
+
         :param data: end packet
         """
         # Initialize all relevant END packet attributes into varibles from file_data
@@ -182,6 +186,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def sanitize(filename):
         """
         Sannitize the given filename by removing slashes that would make new directories.
+
         :param filename: filename to sanitize
         :return: sanitized filename
         """

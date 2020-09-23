@@ -65,6 +65,7 @@ class ValueType(BaseType, abc.ABC):
         """
         Checks the val for validity with respect to the current type. This will raise TypeMissmatchException when the
         validation fails of the val's type fails. It will raise TypeRangeException when val is out of range.
+
         :param val: value to validate
         :raises TypeMismatchException: value has incorrect type, TypeRangeException: val is out of range
         """

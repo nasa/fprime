@@ -42,6 +42,7 @@ class Encoder(
     def __init__(self, config=None):
         """
         Encoder class constructor
+
         :param config: (ConfigManager, default=None): Object with configuration data for the sizes of fields in the
                        binary data. If None passed, defaults are used.
         """
@@ -55,6 +56,7 @@ class Encoder(
         """
         Data callback which calls the encode_api function exactly once. Then it passes the results to all registered
         consumer. This should only need to be overridden in extraordinary circumstances.
+
         :param data: data bytes to be decoded
         :param sender: (optional) sender id, otherwise None
         :return: returns the encoded data for reference
@@ -74,6 +76,7 @@ class Encoder(
         This function allows for non-registered code to utilize the same
         serialization functionality as is used to encode data passed to the
         data_callback function.
+
         :param data: data to be encoded as rae bytes
         :return: encoded data bytes
         """

@@ -1,4 +1,5 @@
-"""
+""" Generic representation of autocoded array types
+
 Created on May 29, 2020
 @author: jishii
 """
@@ -22,6 +23,7 @@ class ArrayType(ValueType):
     def __init__(self, typename, config_info, val=None):
         """
         Constructor of the array type.
+
         :param typename: name of this array type
         :param config_info: (type, size, format)
         :param val: [ array values... ]

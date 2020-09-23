@@ -31,6 +31,7 @@ class Destination(flask_restful.Resource):
     def get(self):
         """
         Gets the current destination
+
         :return: current destination
         """
         return {"destination": self.uplinker.destination_dir}
@@ -67,6 +68,7 @@ class FileUploads(flask_restful.Resource):
     def get(self):
         """
         Gets the current set of files
+
         :return: current uplinking files
         """
         return {
@@ -125,6 +127,7 @@ class FileDownload(flask_restful.Resource):
     def get(self, source=None):
         """
         Gets the current downlinking files
+
         :return: current downlinking files
         """
         # Serve the  source if asked for, otherwise list all files

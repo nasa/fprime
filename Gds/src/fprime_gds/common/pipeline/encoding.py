@@ -47,6 +47,7 @@ class EncodingDecoding:
         dictionaries needed for the decoders to work correctly. This will register then register the decoders with a
         supplied distributor to handle known types with the known decoders. Lastly, the sender will be registered to the
         encoder to handle the encoded data going out.
+
         :param dictionaries: a dictionaries handling object holding dictionaries
         :param distributor: distributor of data to register to
         """
@@ -80,6 +81,7 @@ class EncodingDecoding:
         """
         Sends a command to the registered command encoder, and further down the stream. Note: this contains a local
         loopback to any command consumers to ensure that histories and logging are updated.
+
         :param command: command object to send
         """
         for loopback in self.command_subscribers:
@@ -89,6 +91,7 @@ class EncodingDecoding:
     def register_event_consumer(self, consumer):
         """
         Registers a history with the event decoder.
+
         :param consumer: consumer of events
         """
         self.event_decoder.register(consumer)
@@ -97,6 +100,7 @@ class EncodingDecoding:
         """
         Removes a history from the event decoder. Will raise an error if the history was not
         previously registered.
+
         :param consumer: consumer of events
         :return: a boolean indicating if the consumer was removed.
         """
@@ -105,6 +109,7 @@ class EncodingDecoding:
     def register_channel_consumer(self, consumer):
         """
         Registers a history with the telemetry decoder.
+
         :param consumer: consumer of channels
         """
         self.channel_decoder.register(consumer)
@@ -113,6 +118,7 @@ class EncodingDecoding:
         """
         Removes a history from the telemetry decoder. Will raise an error if the history was not
         previously registered.
+
         :param consumer: consumer of channels
         :return: a boolean indicating if the consumer was removed.
         """
@@ -121,6 +127,7 @@ class EncodingDecoding:
     def register_command_consumer(self, consumer):
         """
         Registers a history with the standard pipeline.
+
         :param consumer: consumer of commands
         """
         self.command_subscribers.append(consumer)
@@ -129,6 +136,7 @@ class EncodingDecoding:
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+
         :param consumer: consumer of commands
         :return: a boolean indicating if the consumer was removed.
         """
@@ -141,6 +149,7 @@ class EncodingDecoding:
     def register_packet_consumer(self, consumer):
         """
         Registers a history with the standard pipeline.
+
         :param consumer: consumer of packets
         """
         if self.packet_decoder is not None:
@@ -150,6 +159,7 @@ class EncodingDecoding:
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+
         :param consumer: consumer of packets
         :return: a boolean indicating if the consumer was removed.
         """

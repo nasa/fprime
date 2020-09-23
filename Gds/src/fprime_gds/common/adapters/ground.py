@@ -37,6 +37,7 @@ class GroundHandler(abc.ABC):
         """
         Receive all packet available from the ground layer. This will return full ground packets up to the uplinker.
         These packets should be fully-deframed and ready for reframing in the comm-layer specified format.
+
         :return: list deframed packets
         """
 
@@ -45,6 +46,7 @@ class GroundHandler(abc.ABC):
         """
         Receive all packet available from the ground layer. This will return full ground packets up to the uplinker.
         These packets should be fully-deframed and ready for reframing in the comm-layer specified format.
+
         :return: list deframed packets
         """
 
@@ -57,6 +59,7 @@ class TCPGround(GroundHandler):
     def __init__(self, address="127.0.0.1", port=50050):
         """
         Initialize this interface with the address and port needed to connect to the GDS.
+
         :param address: Address of the tcp server. Default 127.0.0.1
         :param port: port of the tcp server. Default: 50000
         """
@@ -85,6 +88,7 @@ class TCPGround(GroundHandler):
         """
         Receive all packet available from the ground layer. This will return full ground packets up to the uplinker.
         These packets should be fully-deframed and ready for reframing in the comm-layer specified format.
+
         :return: list deframed packets
         """
         self.data += self.tcp.read()
@@ -94,6 +98,7 @@ class TCPGround(GroundHandler):
     def send_all(self, frames):
         """
         Send all packets out to the tcp socket server. This adds the framing data for the TCP Server.
+
         :param packet: bytes object of data to write out to the socket server
         """
         for packet in frames:

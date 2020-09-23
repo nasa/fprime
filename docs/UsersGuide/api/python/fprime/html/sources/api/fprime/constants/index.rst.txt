@@ -1,0 +1,14 @@
+:mod:`fprime.constants`
+=======================
+
+.. py:module:: fprime.constants
+
+
+Module Contents
+---------------
+
+.. data:: DATA_ENCODING
+   :annotation: = utf-8
+
+   
+

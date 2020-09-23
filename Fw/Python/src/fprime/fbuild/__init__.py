@@ -11,7 +11,9 @@ _BUILDER = None
 
 
 def builder():
-    """ Gets the singleton builder from the module. If not created yet, one will be built and then returned. """
+    """
+    Gets the singleton builder from the module. If not created yet, one will be built and then returned.
+    """
     global _BUILDER  # For use with singleton pattern
     if _BUILDER is None:
         _BUILDER = CMakeHandler()

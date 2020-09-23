@@ -15,6 +15,7 @@ def configure_py_log(directory=None, filename=sys.argv[0], mode="w"):
     """
     Configure the python logging. If logdir is supplied, our logs will go in that directory as a log file. Otherwise,
     logs will go to the CLI.
+
     :param filename: logging filename
     :param logdir: directory to log file into
     :param mode: of file to write

@@ -37,6 +37,7 @@ class UplinkQueue:
     def __init__(self, uplinker):
         """
         Constructs the uplink queue with a reference to the object that run the uplink.
+
         :param uplinker: uplinker to callback into
         """
         self.running = True
@@ -51,6 +52,7 @@ class UplinkQueue:
     def enqueue(self, filepath, destination):
         """
         Enqueue the file and destination pair onto the queue
+
         :param filepath: filepath to upload to the given destination
         :param destination: destination path to upload the filepath to
         """
@@ -78,6 +80,7 @@ class UplinkQueue:
         """
         Remove a file by its source from the queue and the permanent uplink list. This will touch each record in the
         queue one time, as they are pulled off the queue, inspected, and the replaced.
+
         :param source: source file to remove
         """
         try:
@@ -119,6 +122,7 @@ class UplinkQueue:
     def current(self):
         """
         Gets a set of current files. This will create a copy, to prevent messing with uplink.
+
         :return: copy of current files transformed into a JSONable dictionary
         """
         return file_to_dict(self.__file_store)
@@ -163,6 +167,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """
         Enqueue files for the upload. This tunnels into the upload queue, which unblocks once files have been enqueued
         and begins to upload each file sequentially.
+
         :param filepath: filepath to upload to the system
         :param destination: (optional) destination to uplink to. Default: current destination + file's basename
         """
@@ -195,6 +200,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """
         Cancel/remove the uplink of the given file.  If uplinking, it will cancel the uplink, and if queued it will
         remove the file from the queue.  Unknown files will be ignored.
+
         :param file: file to remove from the uplinker
         """
         if self.active is not None and file == self.active.source:
@@ -205,6 +211,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     def current_files(self):
         """
         Returns the current set of files held by the uplink queue.
+
         :return: current files as a list in JSONable format
         """
         return self.queue.current()
@@ -214,6 +221,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         Starts a file uplink to a running F prime deployment. This will open of the file, save the file handle, and emit
         the start file uplink packet. It will also store the state for the file uplink progress. If already uplinking
         then a FileUplinkerBusyException will be raised.
+
         :param file_obj: file object to upload
         :raises FileUplinkerBusyException: when an upload is already running
         :raises OSError: when file is inaccessible
@@ -240,6 +248,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     def send(self, packet_data):
         """
         A function to send the packet out.  Starts timeout and then pushes the packet to the file encoder.
+
         :param packet_data: packet data to send that will be pushed to the encoder
         """
         self.__timeout.restart()
@@ -249,6 +258,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """
         Process incoming handshake data, and if it is the expected handshake, then it uplinks the next packet. In the
         file. Invalid handshakes are ignore. When finished a returning handshake puts the uplinker into idle state.
+
         :param data: data from handshake packet to be verified against that previously sent
         """
         # Ignore handshakes not for us
@@ -301,6 +311,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """
         Finishes the current file uplink by closing the file, and starting the end processs. If the uplinker should
         immediately terminate (like during a timeout) then set wait_for_handshake to False.
+
         :param wait_for_handshake: (optional) wrap up cleanly by waiting for handshake. Default: True, clean wait
         """
         self.active.close()
@@ -324,6 +335,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         """
         Check the handshake data and ensure that it is as expected. This will allow us to only handle handshakes that
         we expected. This will ensure that the handshake data is an exact match of the send data.
+
         :param data: data to check against what was transmitted
         :return: True, if proper handshake, False otherwise
         """
@@ -333,6 +345,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     def destination_dir(self):
         """
         Get the destination directory that files will be uplinked to, if not currently specified.
+
         :return: value of destination
         """
         return self.__destination_dir
@@ -341,6 +354,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
     def destination_dir(self, destination):
         """
         Set the destination directory that files will be uplinked to.
+
         :param destination: new destination
         """
         self.__destination_dir = destination

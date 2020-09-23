@@ -105,6 +105,7 @@ def main():
 def print_file_dependencies(root, import_base):
     """
     Print F prime dependencies. These should be printed w/o a newlines.
+
     :param root: input XML file to parse parsed, root of tree
     :param current_library: current library to strip from dependencies
     :param import_base: base of imported dictionaries, used for finding and opening them
@@ -119,6 +120,7 @@ def print_file_dependencies(root, import_base):
 def print_fprime_dependencies(root, current_library, import_base):
     """
     Print F prime dependencies. These should be printed w/o a newlines.
+
     :param root: input XML file to parse parsed, root of tree
     :param current_library: current library to strip from dependencies
     :param import_base: base of imported dictionaries, used for finding and opening them
@@ -147,6 +149,7 @@ def print_fprime_dependencies(root, current_library, import_base):
 def read_fprime_import(import_type, root):
     """
     Read an FPrime dependency port/type. These are typically ports, serializables, and components.
+
     :param import_type: "import_port_type", "import_component_type", "import_serializable_type", "import_enum_type"
     :param root: root XML to parse
     :return: dependency mined from this item
@@ -162,6 +165,7 @@ def read_xml_file(root, import_base):
     """
     Reads and Ai.xml file, detects the type, and then pulls in the dependencies. Recursively looks for dependencies in
     import_dictionaries by inferring dependencies for each type of dictionary.
+
     :param root: input XML file to parsed, root of tree
     :param import_base: base of imported dictionaries, used for finding and opening them
     :return: dependencies set

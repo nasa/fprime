@@ -28,6 +28,7 @@ class Histories:
         """
         Setup a set of history objects in order to store the events of the decoders. This registers itself with the
         supplied coders object.
+
         :param coders: coders object to register histories with
         """
         # Create histories, RAM histories for now

@@ -46,6 +46,7 @@ class ThreadedTCPSocketClient(DataHandler):
     def get_data_bytes(self, string_data):
         """
         Convert the data bytes from string to bytes
+
         :param string_data: data in string format
         :return: data in bytes format
         """
@@ -54,6 +55,7 @@ class ThreadedTCPSocketClient(DataHandler):
     def get_data_string(self, bytes_data):
         """
         Convert the data bytes from string to bytes
+
         :param bytes_data: data in bytes format
         :return: data in string format
         """
@@ -106,6 +108,7 @@ class ThreadedTCPSocketClient(DataHandler):
     def data_callback(self, data, sender=None):
         """
         Handles incoming data by sending it to a socket.
+
         :param data: data to send to the client socket
         :param sender: sender source of the data
         """

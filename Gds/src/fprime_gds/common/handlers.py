@@ -21,6 +21,7 @@ class DataHandler(abc.ABC):
         Callback function used to handle data being produced elsewhere in the system and processed by the given object.
         Data supplied should be of a known type for the given object, and sender is an id of the sender. If not supplied
         sender will be None.
+
         :param data: data to be handled by this class
         :param sender: (optional) id of sender, otherwise None
         """
@@ -43,6 +44,7 @@ class HandlerRegistrar(abc.ABC):
         """
         Register a registrant with this registrar. Will be stored and called back when asked to send data to all the
         handlers registered.
+
         :param registrant: handler to register
         """
         if not isinstance(registrant, DataHandler):
@@ -53,6 +55,7 @@ class HandlerRegistrar(abc.ABC):
         """
         Remove a registrant from the registrar such that it will not be called back later. Note: ignores invalid
         removals by trapping the error, as the desired effect is already satisfied.
+
         :param registrant: registrant to remove
         :return: True if found, False if not. May safely be ignored.
         """
@@ -65,6 +68,7 @@ class HandlerRegistrar(abc.ABC):
     def send_to_all(self, data, sender=None):
         """
         Sends the given data to all registrants.
+
         :param data: data to send back to registrants
         :param sender: (optional) sender to pass to data_callback
         """
