@@ -93,8 +93,8 @@ this specification:
 ```xml
 <serializable name="S">
   <members>
-    <member name="switchStatus">
-      <enum name="SwitchStatus" type="ENUM">
+    <member name="switchState">
+      <enum name="SwitchState" type="ENUM">
         <item name="OFF" value="0">
         <item name="ON" value="1">
       </enum>
@@ -104,19 +104,19 @@ this specification:
 ```
 
 This file defines a Serializable type `S`
-with one member `switchStatus`.
-Its type is `SwitchStatus`, which is an enumeration with
+with one member `switchState`.
+Its type is `SwitchState`, which is an enumeration with
 enumerated constants `OFF` and `ON`.
 
 When you define an enumeration _E_ this way, its use is limited.
 First, _E_ is available only in the context of the Serializable
 type _S_ where it is defined.
-For example, `SwitchStatus` is available in a C++ source file _F_ only if _F_ 
+For example, `SwitchState` is available in a C++ source file _F_ only if _F_ 
 includes the C++ header `SSerializableAc.hpp` for the serializable type `S`.
 Second, while you can use the Serializable type _S_ in a port argument, 
 telemetry channel, or event argument, you cannot use the enumeration _E_ 
 directly in those places.
-For example, you can't make `SwitchStatus` the type of a telemetry channel.
+For example, you can't make `SwitchState` the type of a telemetry channel.
 
 To define an enumeration that is more generally usable, you can specify an 
 enumeration *E* as a separate XML type.
@@ -128,33 +128,33 @@ files and use on its own.
 2. Use the XML representation of *E* in Serializable XML types, in Array XML 
 types, in port arguments, in telemetry channels, and in event arguments.
 
-As an example, you can create a file `SwitchStatusEnumAi.xml` that specifies an 
-XML enumeration type `SwitchStatus`
+As an example, you can create a file `SwitchStateEnumAi.xml` that specifies an 
+XML enumeration type `SwitchState`
 with enumerated constants `OFF` and `ON`, like this:
 
 ```xml
-<enum name="SwitchStatus">
+<enum name="SwitchState">
   <item name="OFF" value="0"/>
   <item name="ON" value="1"/>
 </enum>
 ```
 
 By running the code generator on this file, you can generate C++
-files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnumAc.cpp`
+files `SwitchStateEnumAc.hpp` and `SwitchStateEnumAc.cpp`
 that define the C++ representation of the type.
-Anywhere that you include `SwitchStatusEnumAc.hpp` in your C++ code, you can 
-use the enumerated constants `SwitchStatus::OFF` and `SwitchStatus::ON`.
-If you import `SwitchStatusEnumAi.xml` into the definition of a component _C_, 
-then you can use the type `SwitchStatus` in the telemetry dictionary for _C_.
-When a value of type `SwitchStatus` is emitted as telemetry, the GDS
+Anywhere that you include `SwitchStateEnumAc.hpp` in your C++ code, you can 
+use the enumerated constants `SwitchState::OFF` and `SwitchState::ON`.
+If you import `SwitchStateEnumAi.xml` into the definition of a component _C_, 
+then you can use the type `SwitchState` in the telemetry dictionary for _C_.
+When a value of type `SwitchState` is emitted as telemetry, the GDS
 will display it symbolically as `OFF` or `ON`.
 
 #### Specification
 
 **File name:** An XML enumeration type _E_ must
 be defined in a file with the name _E_ `EnumAi.xml`.
-For example, the XML enumeration type `SwitchStatus`
-must be defined in a file named `SwitchStatusEnumAi.xml`.
+For example, the XML enumeration type `SwitchState`
+must be defined in a file named `SwitchStateEnumAi.xml`.
 
 **Top-level structure:** An XML enumeration type is an XML node named `enum`
 with attributes *enum_attributes* and children *enum_children*.
@@ -183,17 +183,14 @@ Here is an XML enumeration `E` in the namespace `A::B`:
 **Enum children:** 
 *enum_children* consists of the following, in any order:
 
-* An optional *comment*
+* An optional node `comment` containing comment text
+
+  `<comment>` *comment_text* `</comment>`
+
+  The comment text becomes a comment in the generated C++ code.
+  It is attached to the whole enum definition.
 
 * One or more instances of *item_definition*
-
-**Comment:**
-_comment_ consists of comment text in an XML node named `comment`:
-
-`<comment>` *comment_text* `</comment>`
-
-The comment text becomes a comment in the generated C++ code.
-It is attached to the whole enum definition.
 
 **Item definition:**
 *item_definition* Defines an enumerated constant.
