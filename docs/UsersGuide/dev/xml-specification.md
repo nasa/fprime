@@ -215,7 +215,7 @@ _Examples:_ Here is an enumerated constant with a name only:
 
 Here is an enumerated constant with a name, value, and comment:
 
-`<item name="OFF" value="0" comment="The off state"/>
+`<item name="OFF" value="0" comment="The off state"/>`
 
 ### XML-Specified Array Type
 
