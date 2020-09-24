@@ -2,6 +2,7 @@
 Supplies high-level build functions to the greater fprime helper CLI. This maps from user command space to the specific
 build system handler underneath.
 """
+import os
 import re
 import functools
 from abc import ABC
@@ -328,7 +329,7 @@ class Build:
             context: contextual path to list various information about the build
 
         Returns:
-
+            Build information dictionary
         """
         valid_cmake_targets = self.cmake.get_available_targets(
             str(self.build_dir), context
@@ -361,6 +362,48 @@ class Build:
             "global_targets": global_targets,
             "auto_location": auto_location,
         }
+
+    def find_toolchain(self, path):
+        """ Locates a toolchain file in know locations
+
+        Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
+        prime provided toolchains, toolchains in libraries, and toolchains provided by project.
+
+        Args:
+            platform: platform supplied by user for finding toolchain automatically e.g. raspberrypi or native
+            path: path to the CMakeLists.txt directory, which acts as a default location if project_root not set
+            build: build used to get settings for finding toolchain files
+
+        Returns:
+            path to CMake toolchain file or None to use builtin
+        """
+        assert self.platform != "default", "Default toolchain should have been decided already"
+        toolchain_locations = self.get_settings(
+            ["framework_path", "project_root"], [None, self.deployment]
+        )
+        toolchain_locations += self.get_settings("library_locations", [])
+
+        # If toolchain is the native target, this is supplied by CMake and we exit here.
+        if self.platform == "native":
+            return None
+        # Otherwise, find locations of toolchain files using the specified locations from settings.
+        toolchains_paths = [
+            os.path.join(loc, "cmake", "toolchain", self.platform + ".cmake")
+            for loc in toolchain_locations
+            if loc is not None
+        ]
+        toolchains = [
+            toolchain_path
+            for toolchain_path in toolchains_paths
+            if os.path.exists(toolchain_path)
+        ]
+        if not toolchains:
+            raise NoSuchToolchainException("Could not find toolchain file for {} at any of: {}"
+                                           .format(self.platform, " ".join(toolchains_paths)))
+        elif len(toolchains) > 1:
+            raise AmbiguousToolchainException("Found conflicting toolchain files for {} at: {}"
+                                              .format(self.platform, " ".join(toolchains)))
+        return toolchains[0]
 
     def execute(self, target: Target, context: Path, make_args: dict):
         """Execute a build target
@@ -449,7 +492,7 @@ class Build:
         self.settings = IniSettings.load(self.deployment / "settings.ini")
         self.platform = (
             platform
-            if platform is not None
+            if platform is not None and platform != "default"
             else self.settings.get("default_toolchain", "native")
         )
         self.build_dir = build_dir if build_dir is not None else self.get_build_cache()
@@ -475,7 +518,15 @@ class NoValidBuildTypeException(FprimeException):
     """ An build type matching the user request could not be found """
 
 
-class NoSuchTargetExcetion(FprimeException):
+class NoSuchTargetException(FprimeException):
+    """ Could not find a matching build target """
+
+
+class NoSuchToolchainException(FprimeException):
+    """ Could not find a matching build target """
+
+
+class AmbiguousToolchainException(FprimeException):
     """ Could not find a matching build target """
 
 

@@ -595,3 +595,4 @@ class CMakeNoSuchTargetException(CMakeException):
     def __init__(self, build_dir, target):
         """  Better messaging for this exception """
         super().__init__("{} does not support target {}".format(build_dir, target))
+

@@ -115,52 +115,6 @@ def validate(parsed, unknown):
     return cmake_args, make_args
 
 
-def find_toolchain(platform, path, build: Build):
-    """
-    Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
-    prime provided toolchains
-    :param platform: platform supplied by user for finding toolchain automatically
-    :param path: path to the CMakeLists.txt directory, which acts as a default location if project_root not set
-    :return: toolchain file
-    """
-    default_toolchain = build.get_settings("default_toolchain", "native")
-    toolchain_locations = build.get_settings(
-        ["framework_path", "project_root"], [None, path]
-    )
-    toolchain_locations += build.get_settings("library_locations", [])
-
-    toolchain = default_toolchain if platform == "default" else platform
-    # If toolchain is the native target, this is supplied by CMake and we exit here.
-    if toolchain == "native":
-        return None
-    # Otherwise, find locations of toolchain files using the specified locations from settings.
-    toolchains_paths = [
-        os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake")
-        for loc in toolchain_locations
-        if loc is not None
-    ]
-    toolchains = [
-        toolchain_path
-        for toolchain_path in toolchains_paths
-        if os.path.exists(toolchain_path)
-    ]
-    if not toolchains:
-        print(
-            "[ERROR] Toolchain file {} does not exist at any of {}".format(
-                toolchain + ".cmake", ", ".join(list(toolchains_paths))
-            )
-        )
-        sys.exit(-1)
-    elif len(toolchains) > 1:
-        print(
-            "[ERROR] Toolchain file {} found multiple times. Aborting.".format(
-                toolchain + ".cmake"
-            )
-        )
-        sys.exit(-1)
-    return toolchains[0]
-
-
 def add_target_parser(
     target: Target,
     subparsers,
@@ -434,7 +388,7 @@ def utility_entry(args):
                             parsed.command.title(), build.build_dir
                         )
                     )
-                    toolchain = find_toolchain(parsed.platform, parsed.path, build)
+                    toolchain = build.find_toolchain()
                     print(
                         "[INFO] Using toolchain file {} for platform {}".format(
                             toolchain, parsed.platform
@@ -447,7 +401,7 @@ def utility_entry(args):
                     try:
                         build.load(parsed.platform, parsed.build_dir)
                     except InvalidBuildCacheException:
-                        pass
+                        continue
                     print(
                         "[INFO] {} build directory at: {}".format(
                             parsed.command.title(), build.build_dir
