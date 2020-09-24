@@ -183,7 +183,7 @@ Here is an XML enumeration `E` in the namespace `A::B`:
 **Enum children:** 
 *enum_children* consists of the following, in any order:
 
-* An optional node `comment` containing comment text
+* An optional node `comment` containing comment text.
 
   `<comment>` *comment_text* `</comment>`
 
@@ -193,7 +193,7 @@ Here is an XML enumeration `E` in the namespace `A::B`:
 * One or more instances of *item_definition*
 
 **Item definition:**
-*item_definition* Defines an enumerated constant.
+*item_definition* defines an enumerated constant.
 It is an XML node named `item` with the following attributes:
 
 * A required attribute `name` giving the name of the enumerated
@@ -201,6 +201,10 @@ constant.
 
 * An optional attribute `value` assigning an integer value
 to the enumerated constant.
+If the `value` attribute is missing, then the value is assigned
+in the ordinary way for C and C++ enumerations (i.e., zero for the first
+constant, otherwise one more than the value assigned to
+the previous constant).
 
 * An optional attribute `comment` giving comment text.
 The text becomes a comment in the generated C++ code.
