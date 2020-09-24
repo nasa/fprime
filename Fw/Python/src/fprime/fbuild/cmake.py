@@ -313,7 +313,8 @@ class CMakeHandler:
         ]
         return contextual_make_targets
 
-    def purge(self, build_dir):
+    @staticmethod
+    def purge(build_dir):
         """
         Reusable purge functionality, so the user may purge or the system may cleanup itself
 

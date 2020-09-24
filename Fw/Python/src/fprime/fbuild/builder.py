@@ -2,7 +2,6 @@
 Supplies high-level build functions to the greater fprime helper CLI. This maps from user command space to the specific
 build system handler underneath.
 """
-import os
 import re
 import functools
 from abc import ABC
@@ -30,17 +29,17 @@ class BuildType(Enum):
         """ Get the suffix of a directory supporting this build """
         if self == BuildType.BUILD_NORMAL:
             return ""
-        elif self == BuildType.BUILD_TESTING:
+        if self == BuildType.BUILD_TESTING:
             return "-ut"
-        assert False, "Invalid build type"
+        raise InvalidBuildTypeException("{} is not a supported build type".format(self.name))
 
     def get_cmake_build_type(self):
         """ Get the suffix of a directory supporting this build """
         if self == BuildType.BUILD_NORMAL:
             return "Release"
-        elif self == BuildType.BUILD_TESTING:
+        if self == BuildType.BUILD_TESTING:
             return "Testing"
-        assert False, "Invalid build type"
+        raise InvalidBuildTypeException("{} is not a supported build type".format(self.name))
 
 
 class Target(ABC):
@@ -228,7 +227,7 @@ class Build:
         Raises:
             InvalidBuildCacheException: a build cache already exists as it should not
         """
-        self.__setup_default()
+        self.__setup_default(platform, build_dir)
         if self.build_dir.exists():
             raise InvalidBuildCacheException(
                 "{} already exists.".format(self.build_dir)
@@ -379,6 +378,13 @@ class Build:
         )
 
     def generate(self, cmake_args):
+        """ Generates a build given CMake arguments
+
+        This will run a generate step of the cmake build process. This will take in any argument used/passed to CMake.
+
+        Args:
+            cmake_args: cmake arguments to pass into the generate step
+        """
         try:
             cmake_args.update(
                 {"CMAKE_BUILD_TYPE": self.build_type.get_cmake_build_type()}
@@ -388,6 +394,7 @@ class Build:
             self.purge()
 
     def purge(self):
+        """ Purge a build cache directory """
         self.cmake.purge(self.build_dir)
 
     @staticmethod
@@ -411,7 +418,7 @@ class Build:
         list_file = path / "CMakeLists.txt"
         if not path.parents:
             raise UnableToDetectDeploymentException()
-        elif list_file.exists():
+        if list_file.exists():
             with open(list_file) as file_handle:
                 text = file_handle.read()
             if Build.VALID_CMAKE_LIST.search(text):
@@ -444,35 +451,30 @@ class Build:
         self.build_dir = build_dir if build_dir is not None else self.get_build_cache()
 
 
+class InvalidBuildTypeException(FprimeException):
+    """ An exception indicating a build type do not exit """
+
+
 class InvalidBuildCacheException(FprimeException):
     """ An exception indicating a build cache """
-
-    pass
 
 
 class UnableToDetectDeploymentException(FprimeException):
     """ An exception indicating a build cache """
 
-    pass
-
 
 class NoValidBuildTypeException(FprimeException):
     """ An build type matching the user request could not be found """
-
-    pass
 
 
 class NoSuchTargetExcetion(FprimeException):
     """ Could not find a matching build target """
 
-    pass
 
-
-""" Defined set of build targets available to the system"""
+""" Defined set of build targets available to the system""" # pylint: disable=W0105
 BUILD_TARGETS = [
     # Various "build" target
     LocalTarget("build", "Build components, ports, and deployments", cmake=""),
-    # GlobalTarget("build", "Build the top-level delpoyment targets", flags={"deployment"}, cmake=""),
     GlobalTarget("build", "Build all deployment targets", flags={"all"}, cmake="all"),
     LocalTarget(
         "build",
@@ -481,8 +483,6 @@ BUILD_TARGETS = [
         flags={"ut"},
         cmake="ut_exe",
     ),
-    # GlobalTarget("build", "Build deployment unit tests", build_types=[BuildType.BUILD_TESTING],
-    #             flags={"deployment", "ut"}, cmake="ut_exe"),
     # Implementation targets
     LocalTarget("impl", "Generate implementation template files"),
     LocalTarget("impl", "Generate unit test files", flags={"ut"}, cmake="testimpl"),

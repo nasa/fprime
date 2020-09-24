@@ -23,7 +23,6 @@ from typing import Dict, List, Tuple
 from fprime.common.error import FprimeException
 from fprime.fbuild.builder import (
     Target,
-    LocalTarget,
     Build,
     BuildType,
     NoValidBuildTypeException,
@@ -71,7 +70,7 @@ def get_build(
     build_types = (
         target.build_types
         if target is not None
-        else [build_type for build_type in BuildType]
+        else BuildType
     )
     build_type = [
         build_type
@@ -102,11 +101,11 @@ def validate(parsed, unknown):
     make_args = {}
     # Check platforms for existing toolchain, unless the default is specified.
     if parsed.command == "generate":
-        D_ARGS = {
+        d_args = {
             match.group(1): match.groups(2)
             for match in [CMAKE_REG.match(arg) for arg in unknown]
         }
-        cmake_args.update(D_ARGS)
+        cmake_args.update(d_args)
     # Build type only for generate, jobs only for non-generate
     elif (
         parsed.command != "info"
@@ -137,31 +136,30 @@ def find_toolchain(platform, path, build: Build):
     if toolchain == "native":
         return None
     # Otherwise, find locations of toolchain files using the specified locations from settings.
-    else:
-        toolchains_paths = [
-            os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake")
-            for loc in toolchain_locations
-            if loc is not None
-        ]
-        toolchains = [
-            toolchain_path
-            for toolchain_path in toolchains_paths
-            if os.path.exists(toolchain_path)
-        ]
-        if not toolchains:
-            print(
-                "[ERROR] Toolchain file {} does not exist at any of {}".format(
-                    toolchain + ".cmake", ", ".join(list(toolchains_paths))
-                )
+    toolchains_paths = [
+        os.path.join(loc, "cmake", "toolchain", toolchain + ".cmake")
+        for loc in toolchain_locations
+        if loc is not None
+    ]
+    toolchains = [
+        toolchain_path
+        for toolchain_path in toolchains_paths
+        if os.path.exists(toolchain_path)
+    ]
+    if not toolchains:
+        print(
+            "[ERROR] Toolchain file {} does not exist at any of {}".format(
+                toolchain + ".cmake", ", ".join(list(toolchains_paths))
             )
-            sys.exit(-1)
-        elif len(toolchains) > 1:
-            print(
-                "[ERROR] Toolchain file {} found multiple times. Aborting.".format(
-                    toolchain + ".cmake"
-                )
+        )
+        sys.exit(-1)
+    elif len(toolchains) > 1:
+        print(
+            "[ERROR] Toolchain file {} found multiple times. Aborting.".format(
+                toolchain + ".cmake"
             )
-            sys.exit(-1)
+        )
+        sys.exit(-1)
     return toolchains[0]
 
 
@@ -339,14 +337,14 @@ def confirm():
         confirm_input = input("Purge this directory (yes/no)?")
         if confirm_input.lower() in ["y", "yes"]:
             return True
-        elif confirm_input.lower() in ["n", "no"]:
+        if confirm_input.lower() in ["n", "no"]:
             return False
         print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
 
 
 def print_info(parsed, deployment):
     """ Builds and prints the informational output block """
-    build_types = [build_type for build_type in BuildType]
+    build_types = BuildType
     if parsed.build_type is not None:
         build_types = [
             build_type
@@ -363,12 +361,8 @@ def print_info(parsed, deployment):
         build.load(parsed.platform, parsed.build_dir)
         build_info = build.get_build_info(parsed.path)
         # Target list
-        local_targets = set(
-            ["'{}'".format(target) for target in build_info.get("local_targets", [])]
-        )
-        global_targets = set(
-            ["'{}'".format(target) for target in build_info.get("global_targets", [])]
-        )
+        local_targets = {"'{}'".format(target) for target in build_info.get("local_targets", [])}
+        global_targets = {"'{}'".format(target) for target in build_info.get("global_targets", [])}
         build_artifacts = (
             build_info.get("auto_location")
             if build_info.get("auto_location") is not None
@@ -398,6 +392,17 @@ def print_info(parsed, deployment):
     print()
 
 
+def print_hash_info(lines, hash_val):
+    """ Prints out hash info from lines """
+    # Print out lines when found
+    if lines:
+        print("[INFO] File(s) associated with hash 0x{:x}".format(hash_val))
+        for line in lines:
+            print("   ", line, end="")
+        return
+    print("[ERROR] No file hashes found in {} build. Do you need '--build-type Testing' for a unittest run?")
+
+
 def utility_entry(args):
     """ Main interface to F prime utility """
     parsed, cmake_args, make_args, parser = parse_args(args)
@@ -414,19 +419,7 @@ def utility_entry(args):
             lines = get_build(
                 parsed, deployment, verbose=parsed.verbose
             ).find_hashed_file(parsed.hash)
-            # Print out lines when found
-            if lines:
-                print("[INFO] File(s) associated with hash 0x{:x}".format(parsed.hash))
-                for line in lines:
-                    print("   ", line, end="")
-            # Report nothing
-            else:
-                print(
-                    "[ERROR] No file hashes found in {} build.{}".format(
-                        "unittest" if parsed.unittest else "regular",
-                        "" if parsed.unittest else " Do you need the --unittest flag?",
-                    )
-                )
+            print_hash_info(lines, parsed.hash)
         elif parsed.command == "generate" or parsed.command == "purge":
             for build_type in BuildType:
                 build = Build(build_type, deployment, verbose=parsed.verbose)
