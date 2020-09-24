@@ -26,7 +26,8 @@ from fprime.fbuild.builder import (
     Build,
     BuildType,
     NoValidBuildTypeException,
-    GenerateException
+    GenerateException,
+    InvalidBuildCacheException,
 )
 
 
@@ -68,11 +69,7 @@ def get_build(
     Returns:
         build meeting the specifications on build type
     """
-    build_types = (
-        target.build_types
-        if target is not None
-        else BuildType
-    )
+    build_types = target.build_types if target is not None else BuildType
     build_type = [
         build_type
         for build_type in build_types
@@ -362,8 +359,12 @@ def print_info(parsed, deployment):
         build.load(parsed.platform, parsed.build_dir)
         build_info = build.get_build_info(parsed.path)
         # Target list
-        local_targets = {"'{}'".format(target) for target in build_info.get("local_targets", [])}
-        global_targets = {"'{}'".format(target) for target in build_info.get("global_targets", [])}
+        local_targets = {
+            "'{}'".format(target) for target in build_info.get("local_targets", [])
+        }
+        global_targets = {
+            "'{}'".format(target) for target in build_info.get("global_targets", [])
+        }
         build_artifacts = (
             build_info.get("auto_location")
             if build_info.get("auto_location") is not None
@@ -401,7 +402,9 @@ def print_hash_info(lines, hash_val):
         for line in lines:
             print("   ", line, end="")
         return
-    print("[ERROR] No file hashes found in {} build. Do you need '--build-type Testing' for a unittest run?")
+    print(
+        "[ERROR] No file hashes found in {} build. Do you need '--build-type Testing' for a unittest run?"
+    )
 
 
 def utility_entry(args):
@@ -441,7 +444,10 @@ def utility_entry(args):
                         cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
                     build.generate(cmake_args)
                 else:
-                    build.load(parsed.platform, parsed.build_dir)
+                    try:
+                        build.load(parsed.platform, parsed.build_dir)
+                    except InvalidBuildCacheException:
+                        pass
                     print(
                         "[INFO] {} build directory at: {}".format(
                             parsed.command.title(), build.build_dir
@@ -455,7 +461,12 @@ def utility_entry(args):
             build.load(parsed.platform, parsed.build_dir)
             build.execute(target, context=Path(parsed.path), make_args=make_args)
     except GenerateException as genex:
-        print("[ERROR] {}. Partial build cache remains. Run purge to clean-up.".format(genex), file=sys.stderr)
+        print(
+            "[ERROR] {}. Partial build cache remains. Run purge to clean-up.".format(
+                genex
+            ),
+            file=sys.stderr,
+        )
     except FprimeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         return 1

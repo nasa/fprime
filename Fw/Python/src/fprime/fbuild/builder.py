@@ -31,7 +31,9 @@ class BuildType(Enum):
             return ""
         if self == BuildType.BUILD_TESTING:
             return "-ut"
-        raise InvalidBuildTypeException("{} is not a supported build type".format(self.name))
+        raise InvalidBuildTypeException(
+            "{} is not a supported build type".format(self.name)
+        )
 
     def get_cmake_build_type(self):
         """ Get the suffix of a directory supporting this build """
@@ -39,7 +41,9 @@ class BuildType(Enum):
             return "Release"
         if self == BuildType.BUILD_TESTING:
             return "Testing"
-        raise InvalidBuildTypeException("{} is not a supported build type".format(self.name))
+        raise InvalidBuildTypeException(
+            "{} is not a supported build type".format(self.name)
+        )
 
 
 class Target(ABC):
@@ -378,7 +382,7 @@ class Build:
         )
 
     def generate(self, cmake_args):
-        """ Generates a build given CMake arguments
+        """Generates a build given CMake arguments
 
         This will run a generate step of the cmake build process. This will take in any argument used/passed to CMake.
 
@@ -475,7 +479,7 @@ class NoSuchTargetExcetion(FprimeException):
     """ Could not find a matching build target """
 
 
-""" Defined set of build targets available to the system""" # pylint: disable=W0105
+""" Defined set of build targets available to the system"""  # pylint: disable=W0105
 BUILD_TARGETS = [
     # Various "build" target
     LocalTarget("build", "Build components, ports, and deployments", cmake=""),
