@@ -247,6 +247,91 @@ Here is an enumerated constant with a name, value, and comment:
 
 ### XML-Specified Array Type
 
+#### Motivation
+
+As discussed in the section on XML-specified Serializable types, a member of a 
+Serializable type can be an array of elements
+of some other type.
+For example, you can create a file `WheelSpeedsAi.xml` containing
+this specification:
+
+```xml
+<serializable name="WheelSpeeds">
+  <members>
+    <member name="speeds" type="U32" size="3">
+    </member>
+  </members>
+</serializable>
+```
+
+This file defines a Serializable type `WheelSpeeds`
+with one member `speeds`.
+It is an array of 3 values, each of type `U32`.
+When you specify an array this way, it has to be as a member
+of a Serializable type.
+
+Alternatively, you can specify a named array type *A* in a separate
+XML file.
+Then you can do the following:
+
+1. Generate a C++ representation of *A* that you can include in C++
+files and use on its own.
+
+2. Use the XML representation of *A* in Serializable XML types, in Array XML 
+types, in port arguments, in telemetry channels, and in event arguments.
+
+As an example, you can create a file `WheelSpeedsArrayAi.xml` that specifies an 
+array of 3 `U32` values, like this:
+
+```xml
+<array name="WheelSpeeds">
+  <type>U32</type>
+  <size>3</size>
+  <format>%u</format>
+  <default>
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+  </default>
+</array>
+```
+
+By running the code generator on this file, you can generate C++
+files `WheelSpeedsAc.hpp` and `WheelSpeedsAc.cpp`
+that define a C++ class `WheelSpeeds` representing this type.
+Anywhere that you include `WheelSpeedsEnumAc.hpp` in your C++ code, you can 
+use the class `WheelSpeeds`.
+If you import `WheelSpeedsArrayAi.xml` into another XML definition,
+then you can use the type `WheelSpeeds` there.
+
+To use an XML array type *A* in another XML definition *D*,
+enclose the name of the file that defines *A* in an XML tag `import_array_type`.
+As an example, you can define a Serializable type `ACSTelemetry`
+as follows:
+
+```xml
+<serializable name="ACSTelemetry">
+  <import_array_type>WheelSpeedsArrayAi.xml</import_array_type>
+  <members>
+    <member name="attitudeError" type="F32"/>
+    <member name="wheelSpeeds" type="WheelSpeeds"/>
+  </members>
+</serializable>
+```
+
+This specification defines an XML Serializable type with two members:
+
+1. Member `attitudeError` of type `F32`.
+
+1. Member `wheelSpeeds` of type `WheelSpeeds`.
+
+As another example, if you import the definition of a component *C*, then you 
+can use the type `WheelSpeeds` in the telemetry dictionary for *C*.
+When a value of type `WheelSpeeds` is emitted as telemetry, the GDS
+will display it as an array of three values.
+
+#### Specification
+
 TODO
 
 ### Hand-coded Serializable
