@@ -152,6 +152,31 @@ be defined in a file with the name _E_ `EnumAi.xml`.
 For example, the XML enumeration type `SwitchStatus`
 must be defined in a file named `SwitchStatusEnumAi.xml`.
 
+An XML enumeration type is an XML node named `enum`
+with attributes *enum_attributes* and children *enum_children*.
+
+`<enum` *enum_attributes* `>` *enum_children* `</enum>`
+
+*enum_attributes* consists of the following:
+
+* A required attribute `name` giving the name of the enumeration type.
+
+* An optional attribute `namespace` giving the enclosing namespace
+of the enumeration type.
+The namespace consists of one or more identifiers separated by `::`.
+
+If the attribute `namespace` is missing, then the type is
+placed in the global namespace.
+
+_Examples:_ Here is an XML enumeration `E` in the global namespace:
+
+`<enum name="E"> ... </enum>`
+
+Here is an XML enumeration `E` in the namespace `A::B`:
+
+`<enum name="E" namespace="A::B"> ... </enum>`
+
+TODO
 
 ### XML-Specified Array Type
 
