@@ -9,10 +9,12 @@ that they function as expected.
 import os
 import shutil
 import tempfile
+import pathlib
 
 import pytest
 
 import fprime.fbuild.cmake
+import fprime.fbuild.builder
 
 
 def get_cmake_builder():
@@ -40,17 +42,19 @@ def get_data_dir():
     )
 
 
-# def test_hash_finder():
-#     """
-#     Tests that the hash finder works given a known builds.
-#     """
-#     build_dir = os.path.join(os.path.dirname(__file__), "cmake-data", "testbuild")
-#     assert get_cmake_builder().find_hashed_file(build_dir, 0xDEADBEEF) == [
-#         "Abc: 0xdeadbeef\n"
-#     ]
-#     assert get_cmake_builder().find_hashed_file(build_dir, 0xC0DEC0DE) == [
-#         "HJK: 0xc0dec0de\n"
-#     ]
+def test_hash_finder():
+    """
+    Tests that the hash finder works given a known builds.
+    """
+    local = pathlib.Path(os.path.dirname(__file__))
+    dep_dir = local / "cmake-data" / "testbuild"
+    builder = fprime.fbuild.builder.Build(
+        fprime.fbuild.builder.BuildType.BUILD_NORMAL, dep_dir
+    )
+    builder.load(build_dir=dep_dir / "build-fprime-automatic-native")
+
+    assert builder.find_hashed_file(0xDEADBEEF) == ["Abc: 0xdeadbeef\n"]
+    assert builder.find_hashed_file(0xC0DEC0DE) == ["HJK: 0xc0dec0de\n"]
 
 
 def test_needed_functions():
@@ -68,29 +72,29 @@ def test_needed_functions():
         assert hasattr(get_cmake_builder(), func)
 
 
-# def test_get_fprime_configuration():
-#     """
-#     Tests the given fprime configuration fetcher. Required for other portion of the system.
-#     """
-#     configs = fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS
-#     test_data = {
-#         "grand-unified": (
-#             "/home/user11/fprime/Ref/..",
-#             None,
-#             "/home/user11/fprime/Ref/..",
-#         ),
-#         "subdir": (
-#             "/home/user11/Proj",
-#             "/home/user11/Proj/lib1;/home/user11/Proj/lib2",
-#             "/home/user11/Proj/fprime",
-#         ),
-#         "external": ("/home/user11/Proj", "/opt/lib1;/opt/lib2", "/opt/fprime"),
-#     }
-#     for key in test_data.keys():
-#         build_dir = os.path.join(get_data_dir(), key)
-#         # Test all path, truth pairs
-#         values = get_cmake_builder().get_fprime_configuration(configs, build_dir)
-#         assert values == test_data[key]
+def test_get_fprime_configuration():
+    """
+    Tests the given fprime configuration fetcher. Required for other portion of the system.
+    """
+    configs = fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS
+    test_data = {
+        "grand-unified": (
+            "/home/user11/fprime/Ref/..",
+            None,
+            "/home/user11/fprime/Ref/..",
+        ),
+        "subdir": (
+            "/home/user11/Proj",
+            "/home/user11/Proj/lib1;/home/user11/Proj/lib2",
+            "/home/user11/Proj/fprime",
+        ),
+        "external": ("/home/user11/Proj", "/opt/lib1;/opt/lib2", "/opt/fprime"),
+    }
+    for key in test_data.keys():
+        build_dir = os.path.join(get_data_dir(), key)
+        # Test all path, truth pairs
+        values = get_cmake_builder().get_fprime_configuration(configs, build_dir)
+        assert values == test_data[key]
 
 
 def test_get_include_locations():
@@ -174,44 +178,27 @@ def test_get_include_info():
                 assert value == truth
 
 
-# def test_find_nearest_std_build():
-#     """
-#     Tests the nearest build detector to ensure that it functions as expected. This assumes that no standard build exist
-#     in the tree outside the erroneous paths. This should not be a problem unless standard builds exist on the root of
-#     the file system, as the rest of the path will be non-sensical.
-#     """
-#     NAME_CONST = fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME.replace(
-#         "{}", ""
-#     )
-#     test_dir = get_data_dir()
-#     test_data = [
-#         (
-#             "abcdefg",
-#             "testbuild/subdir1/subdir2/subdir3",
-#             "testbuild/subdir1/" + NAME_CONST + "abcdefg",
-#         ),
-#         (
-#             "default",
-#             "testbuild/subdir1/subdir2/subdir3",
-#             "testbuild/subdir1/subdir2/subdir3/" + NAME_CONST + "default",
-#         ),
-#         (
-#             "abcdefg",
-#             "testbuild/subdir1/subdir2",
-#             "testbuild/subdir1/" + NAME_CONST + "abcdefg",
-#         ),
-#         ("default", "testbuild/subdir1/subdir2", "testbuild/" + NAME_CONST + "default"),
-#         ("abcdefg", "/nonexistent/dirone/someotherpath", None),
-#     ]
-#     for platform, path, truth in test_data:
-#         if truth is not None:
-#             path = os.path.join(test_dir, path)
-#             truth = os.path.join(test_dir, truth)
-#             value = get_cmake_builder().find_nearest_standard_build(platform, path)
-#             assert value == truth
-#         else:
-#             with pytest.raises(fprime.fbuild.cmake.CMakeException):
-#                 get_cmake_builder().find_nearest_standard_build(platform, path)
+def test_find_nearest_deployment():
+    """
+    This will test the ability for the system to detect valid deployment directories
+    """
+
+    test_dir = pathlib.Path(get_data_dir())
+    test_data = [
+        ("testbuild/subdir1/subdir2/subdir3", "testbuild/subdir1/"),
+        ("testbuild/subdir1/subdir2", "testbuild/subdir1/"),
+        ("testbuild/", "testbuild/"),
+        ("/nonexistent/dirone/someotherpath", None),
+    ]
+    for path, truth in test_data:
+        path = test_dir / path
+        if truth is not None:
+            truth = test_dir / truth
+            value = fprime.fbuild.builder.Build.find_nearest_deployment(path)
+            assert value == truth
+        else:
+            with pytest.raises(fprime.fbuild.builder.UnableToDetectDeploymentException):
+                fprime.fbuild.builder.Build.find_nearest_deployment(path)
 
 
 def test_generate():

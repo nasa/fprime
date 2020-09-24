@@ -191,7 +191,7 @@ class Build:
         build.load()
     """
 
-    VALID_CMAKE_LIST = re.compile(r"(?sm)\sproject\(.*\)")
+    VALID_CMAKE_LIST = re.compile(r"(?sm)^\s*project\(.*\)")
     CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{platform}{suffix}"
 
     def __init__(self, build_type: BuildType, deployment: Path, verbose: bool = False):
@@ -248,7 +248,7 @@ class Build:
         Raises:
             InvalidBuildCacheException: the build cache does not exist as it must
         """
-        self.__setup_default()
+        self.__setup_default(platform, build_dir)
         if (
             not self.build_dir.exists()
             or not (self.build_dir / "CMakeCache.txt").exists()
@@ -409,7 +409,7 @@ class Build:
             UnableToDetectDeploymentException: was unable to detect a deployment directory
         """
         list_file = path / "CMakeLists.txt"
-        if path == Path.anchor:
+        if not path.parents:
             raise UnableToDetectDeploymentException()
         elif list_file.exists():
             with open(list_file) as file_handle:
