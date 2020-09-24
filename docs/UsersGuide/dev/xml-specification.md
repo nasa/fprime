@@ -109,8 +109,8 @@ enumerated values `OFF` and `ON`.
 When you define an enumeration _E_ this way, its use is limited.
 First, _E_ is available only in the context of the Serializable
 type _S_ where it is defined.
-For example, `SwitchStatus` is available in a C++ source file only if that file 
-includes the serializable type `S`.
+For example, `SwitchStatus` is available in a C++ source file _F_ only if _F_ 
+includes the C++ header `SSerializableAc.hpp` for the serializable type `S`.
 Second, while you can use the Serializable type _S_ in a port argument, 
 telemetry channel, or event argument, you cannot use the enumeration _E_ 
 directly in those places.
@@ -138,7 +138,7 @@ with enumerated values `OFF` and `ON`, like this:
 ```
 
 By running the code generator on this file, you can generate C++
-files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnum.cpp`
+files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnumAc.cpp`
 that define the C++ representation of the type.
 Anywhere that you include `SwitchStatusEnumAc.hpp` in your C++ code, you can 
 use the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
@@ -148,7 +148,11 @@ use the type `SwitchStatus`.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
 will appear symbolically (as `OFF` or `ON`).
 
-**Detailed specification:** TODO
+**Detailed specification:** An XML enumeration type _E_ must
+be defined in a file with the name _E_ `EnumAi.xml`.
+For example, the XML enumeration type `SwitchStatus`
+must be defined in a file named `SwitchStatusEnumAi.xml`.
+
 
 ### XML-Specified Array Type
 
