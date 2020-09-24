@@ -142,9 +142,8 @@ files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnumAc.cpp`
 that define the C++ representation of the type.
 Anywhere that you include `SwitchStatusEnumAc.hpp` in your C++ code, you can 
 use the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
-If you import `SwitchStatusEnumAi.xml` into a component definition,
-then in the telemetry dictionary for that component, you can
-use the type `SwitchStatus`.
+If you import `SwitchStatusEnumAi.xml` into the definition of a component _C_, 
+then you can use the type `SwitchStatus` in the telemetry dictionary for _C_.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
 will appear symbolically (as `OFF` or `ON`).
 
