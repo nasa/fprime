@@ -145,7 +145,7 @@ use the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
 If you import `SwitchStatusEnumAi.xml` into the definition of a component _C_, 
 then you can use the type `SwitchStatus` in the telemetry dictionary for _C_.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
-will appear symbolically (as `OFF` or `ON`).
+will display it symbolically as `OFF` or `ON`.
 
 **Detailed specification:** An XML enumeration type _E_ must
 be defined in a file with the name _E_ `EnumAi.xml`.
