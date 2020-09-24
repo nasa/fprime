@@ -28,6 +28,7 @@ from fprime.fbuild.builder import (
     NoValidBuildTypeException,
     GenerateException,
     InvalidBuildCacheException,
+    UnableToDetectDeploymentException
 )
 
 
@@ -364,9 +365,8 @@ def print_hash_info(lines, hash_val):
 def utility_entry(args):
     """ Main interface to F prime utility """
     parsed, cmake_args, make_args, parser = parse_args(args)
-    deployment = Build.find_nearest_deployment(Path(parsed.path))
-
     try:
+        deployment = Build.find_nearest_deployment(Path(parsed.path))
         if parsed.command is None:
             print("[ERROR] Must supply subcommand for fprime-util. See below.")
             parser.print_help(parsed)
@@ -378,37 +378,43 @@ def utility_entry(args):
                 parsed, deployment, verbose=parsed.verbose
             ).find_hashed_file(parsed.hash)
             print_hash_info(lines, parsed.hash)
-        elif parsed.command == "generate" or parsed.command == "purge":
+        elif parsed.command == "generate":
+            # First check for existing builds and error-quick if one is found. Prevents divergent generations
+            builds = []
             for build_type in BuildType:
                 build = Build(build_type, deployment, verbose=parsed.verbose)
-                if parsed.command == "generate":
-                    build.invent(parsed.platform, parsed.build_dir)
-                    toolchain = build.find_toolchain()
-                    print(
-                        "[INFO] {} build directory at: {}".format(
-                            parsed.command.title(), build.build_dir
-                        )
+                build.invent(parsed.platform, parsed.build_dir)
+                builds.append(build)
+            # Once we looked for errors, then generate
+            for build in builds:
+                toolchain = build.find_toolchain()
+                print(
+                    "[INFO] {} build directory at: {}".format(
+                        parsed.command.title(), build.build_dir
                     )
-                    print(
-                        "[INFO] Using toolchain file {} for platform {}".format(
-                            toolchain, parsed.platform
-                        )
+                )
+                print(
+                    "[INFO] Using toolchain file {} for platform {}".format(
+                        toolchain, parsed.platform
                     )
-                    if toolchain is not None:
-                        cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
-                    build.generate(cmake_args)
-                else:
-                    try:
-                        build.load(parsed.platform, parsed.build_dir)
-                    except InvalidBuildCacheException:
-                        continue
-                    print(
-                        "[INFO] {} build directory at: {}".format(
-                            parsed.command.title(), build.build_dir
-                        )
+                )
+                if toolchain is not None:
+                    cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
+                build.generate(cmake_args)
+        elif parsed.command == "purge":
+            for build_type in BuildType:
+                build = Build(build_type, deployment, verbose=parsed.verbose)
+                try:
+                    build.load(parsed.platform, parsed.build_dir)
+                except InvalidBuildCacheException:
+                    continue
+                print(
+                    "[INFO] {} build directory at: {}".format(
+                        parsed.command.title(), build.build_dir
                     )
-                    if confirm() or parsed.force:
-                        build.purge()
+                )
+                if confirm() or parsed.force:
+                    build.purge()
         else:
             target = get_target(parsed)
             build = get_build(parsed, deployment, parsed.verbose, target)
@@ -421,6 +427,8 @@ def utility_entry(args):
             ),
             file=sys.stderr,
         )
+    except UnableToDetectDeploymentException:
+        print("[ERROR] Could not detect deployment directory for: {}".format(parsed.path))
     except FprimeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         return 1

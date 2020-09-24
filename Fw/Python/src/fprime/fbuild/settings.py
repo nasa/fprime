@@ -80,7 +80,7 @@ class IniSettings:
             print("[WARNING] Failed to find settings file: {}".format(settings_file))
             fprime_location = IniSettings.find_fprime()
             return {
-                "fprime_location": fprime_location,
+                "framework_path": fprime_location,
             }
         confparse = configparser.ConfigParser()
         confparse.read(settings_file)
