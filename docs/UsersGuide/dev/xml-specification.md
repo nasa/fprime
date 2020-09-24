@@ -106,11 +106,11 @@ with one member `switchStatus`.
 Its type is `SwitchStatus`, which is an enumeration with
 enumerated values `OFF` and `ON`.
 
-When you define an enumeration this way, 
-the enumeration is usable only in the context of the Serializable
+When you define an enumeration this way, the enumeration is usable only in the 
+context of the Serializable
 type where it is defined.
-For example, `SwitchStatus` is available in the C++ code only 
-if it includes the serializable type `S`.
+For example, `SwitchStatus` is available in a C++ source file only if that file 
+includes the serializable type `S`.
 You cannot use `SwitchStatus` separately in
 a telemetry channel or event argument.
 
@@ -118,10 +118,11 @@ To define an enumeration that is more generally usable, you can specify an
 enumeration _E_ as a separate XML type.
 Then you can do the following:
 
-1. Generate a C++ representation of _E_.
+1. Generate a C++ representation of _E_ that can be included in C++
+files and used on its own.
 
 2. Use the XML representation of _E_ in Serializable XML types, in Array XML 
-types, in telemetry channels, and in events arguments.
+types, in port arguments, in telemetry channels, and in events arguments.
 
 As an example, you can create a file `SwitchStatusEnumAi.xml` that specifies an 
 XML enumeration type `SwitchStatus`
@@ -134,8 +135,14 @@ with enumerated values `OFF` and `ON`, like this:
 </enum>
 ```
 
-In the C++ FSW code, the enumerated values `SwitchStatus::OFF`
-and `SwitchStatus::ON` are available.
+By running the code generator on this file, you can generate C++
+files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnum.cpp`
+that define the C++ representation of the type.
+Anywhere that you `SwitchStatusEnumAc.hpp` in your C++ code, you can use 
+the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
+If you import `SwitchStatusEnumAi.xml` into a component definition,
+then in the telemetry dictionary for that component, you can
+use the type `SwitchStatus`.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
 will appear symbolically (as `OFF` or `ON`).
 
