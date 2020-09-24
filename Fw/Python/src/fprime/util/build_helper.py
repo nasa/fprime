@@ -383,12 +383,12 @@ def utility_entry(args):
                 build = Build(build_type, deployment, verbose=parsed.verbose)
                 if parsed.command == "generate":
                     build.invent(parsed.platform, parsed.build_dir)
+                    toolchain = build.find_toolchain()
                     print(
                         "[INFO] {} build directory at: {}".format(
                             parsed.command.title(), build.build_dir
                         )
                     )
-                    toolchain = build.find_toolchain()
                     print(
                         "[INFO] Using toolchain file {} for platform {}".format(
                             toolchain, parsed.platform
