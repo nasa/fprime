@@ -181,8 +181,41 @@ Here is an XML enumeration `E` in the namespace `A::B`:
 `<enum name="E" namespace="A::B"> ... </enum>`
 
 **Enum children:** 
+*enum_children* consists of the following, in any order:
 
-TODO
+* An optional *comment*
+
+* One or more instances of *item_definition*
+
+**Comment:**
+_comment_ consists of comment text in an XML node named `comment`:
+
+`<comment>` *comment_text* `</comment>`
+
+The comment text becomes a comment in the generated C++ code.
+It is attached to the whole enum definition.
+
+**Item definition:**
+*item_definition* Defines an enumerated constant.
+It is an XML node named `item` with the following attributes:
+
+* A required attribute `name` giving the name of the enumerated
+constant.
+
+* An optional attribute `value` assigning an integer value
+to the enumerated constant.
+
+* An optional attribute `comment` giving comment text.
+The text becomes a comment in the generated C++ code.
+It is attached to the enumerated constant definition. 
+
+_Examples:_ Here is an enumerated constant with a name only:
+
+`<item name="ON"/>`
+
+Here is an enumerated constant with a name, value, and comment:
+
+`<item name="OFF" value="0" comment="The off state"/>
 
 ### XML-Specified Array Type
 
