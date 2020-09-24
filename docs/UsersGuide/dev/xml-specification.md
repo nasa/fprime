@@ -83,7 +83,7 @@ determine the types for displaying and archiving the data. (See Section
 
 ### XML-Specified Enumeration
 
-As discussed in the previous section, you can specify an enumeration as the type
+**Motivation:** As discussed in the previous section, you can specify an enumeration as the type
 of a member of a Serializable type.
 For example, you can write a file `SSerializableAi.xml` containing
 this specification:
@@ -111,17 +111,17 @@ context of the Serializable
 type where it is defined.
 For example, `SwitchStatus` is available in a C++ source file only if that file 
 includes the serializable type `S`.
-You cannot use `SwitchStatus` separately in
+You cannot use `SwitchStatus` directly in
 a telemetry channel or event argument.
 
 To define an enumeration that is more generally usable, you can specify an 
-enumeration _E_ as a separate XML type.
+enumeration *E* as a separate XML type.
 Then you can do the following:
 
-1. Generate a C++ representation of _E_ that can be included in C++
+1. Generate a C++ representation of *E* that can be included in C++
 files and used on its own.
 
-2. Use the XML representation of _E_ in Serializable XML types, in Array XML 
+2. Use the XML representation of *E* in Serializable XML types, in Array XML 
 types, in port arguments, in telemetry channels, and in events arguments.
 
 As an example, you can create a file `SwitchStatusEnumAi.xml` that specifies an 
@@ -138,16 +138,15 @@ with enumerated values `OFF` and `ON`, like this:
 By running the code generator on this file, you can generate C++
 files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnum.cpp`
 that define the C++ representation of the type.
-Anywhere that you `SwitchStatusEnumAc.hpp` in your C++ code, you can use 
-the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
+Anywhere that you include `SwitchStatusEnumAc.hpp` in your C++ code, you can 
+use the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
 If you import `SwitchStatusEnumAi.xml` into a component definition,
 then in the telemetry dictionary for that component, you can
 use the type `SwitchStatus`.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
 will appear symbolically (as `OFF` or `ON`).
 
-
-TODO
+*Detailed specification:* TODO
 
 ### XML-Specified Array Type
 
