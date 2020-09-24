@@ -85,15 +85,15 @@ determine the types for displaying and archiving the data. (See Section
 
 #### Motivation
 
-As discussed in the previous section, you can specify an 
-enumeration as the type of a member of a Serializable type.
-For example, you can create a file `SSerializableAi.xml` containing
+As discussed in the previous section, you can define an enumeration
+when specifying the type of a member of a Serializable type.
+For example, you can create a file `SwitchSerializableAi.xml` containing
 this specification:
 
 ```xml
-<serializable name="S">
+<serializable name="Switch">
   <members>
-    <member name="switchState">
+    <member name="state">
       <enum name="SwitchState" type="ENUM">
         <item name="OFF" value="0">
         <item name="ON" value="1">
@@ -103,18 +103,20 @@ this specification:
 </serializable>
 ```
 
-This file defines a Serializable type `S`
-with one member `switchState`.
+This file defines a Serializable type `Switch`
+with one member `state`.
 Its type is `SwitchState`, which is an enumeration with
 enumerated constants `OFF` and `ON`.
 
-When you define an enumeration _E_ this way, its use is limited.
-First, _E_ is available only in the context of the Serializable
-type _S_ where it is defined.
-For example, `SwitchState` is available in a C++ source file _F_ only if _F_ 
-includes the C++ header `SSerializableAc.hpp` for the serializable type `S`.
-Second, while you can use the Serializable type _S_ in a port argument, 
-telemetry channel, or event argument, you cannot use the enumeration _E_ 
+When you define an enumeration *E* this way, its use is limited.
+First, *E* is available only in the context of the Serializable
+type *S* where it is defined.
+For example, `SwitchState` is available in a C++ source file *F* only if *F* 
+includes the C++ header `SwitchSerializableAc.hpp` for the serializable type 
+`Switch`.
+There is no separate header you can include just to use the enumeration type.
+Second, while you can use the Serializable type *S* in a port argument, 
+telemetry channel, or event argument, you cannot use the enumeration *E* 
 directly in those places.
 For example, you can't make `SwitchState` the type of a telemetry channel.
 
@@ -144,15 +146,38 @@ files `SwitchStateEnumAc.hpp` and `SwitchStateEnumAc.cpp`
 that define the C++ representation of the type.
 Anywhere that you include `SwitchStateEnumAc.hpp` in your C++ code, you can 
 use the enumerated constants `SwitchState::OFF` and `SwitchState::ON`.
-If you import `SwitchStateEnumAi.xml` into the definition of a component _C_, 
-then you can use the type `SwitchState` in the telemetry dictionary for _C_.
+If you import `SwitchStateEnumAi.xml` into another XML definition,
+then you can use the type `SwitchState` there.
+
+To use an XML enumeration type *E* in another XML definition *D*,
+enclose the name of the file that defines *E* in an XML tag `import_enum_type`.
+As an example, you can revise the `Switch` Serializable
+definition shown above.
+Instead of defining `SwitchState` as an inline enumeration, you can use the 
+`SwitchState` XML enumeration type as follows:
+
+```xml
+<serializable name="Switch">
+  <import_enum_type>SwitchStateEnumAi.xml</import_enum_type>
+  <members>
+    <member name="state" type="SwitchState"/>
+  </members>
+</serializable>
+```
+
+Notice that the revised version (1) imports the enum type definition
+from the file `SwitchStateEnumAi.xml` and (2) uses the named
+type `SwitchState` as the type of member `state`.
+
+As another example, if you import the definition of a component *C*, then you 
+can use the type `SwitchState` in the telemetry dictionary for *C*.
 When a value of type `SwitchState` is emitted as telemetry, the GDS
 will display it symbolically as `OFF` or `ON`.
 
 #### Specification
 
-**File name:** An XML enumeration type _E_ must
-be defined in a file with the name _E_ `EnumAi.xml`.
+**File name:** An XML enumeration type *E* must
+be defined in a file with the name *E* `EnumAi.xml`.
 For example, the XML enumeration type `SwitchState`
 must be defined in a file named `SwitchStateEnumAi.xml`.
 
