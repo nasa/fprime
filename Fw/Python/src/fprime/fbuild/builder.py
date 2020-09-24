@@ -147,7 +147,7 @@ class Target(ABC):
             if target.mnemonic == mnemonic and flags == target.flags:
                 matching.append(target)
         if not matching:
-            raise NoSuchTargetExcetion(
+            raise NoSuchTargetException(
                 "Could not find target '{}'".format(cls.config_string(mnemonic, flags))
             )
         assert len(matching) == 1, "Conflicting targets specified in code"
@@ -364,7 +364,7 @@ class Build:
         }
 
     def find_toolchain(self):
-        """ Locates a toolchain file in know locations
+        """Locates a toolchain file in know locations
 
         Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
         prime provided toolchains, toolchains in libraries, and toolchains provided by project.
@@ -372,7 +372,9 @@ class Build:
         Returns:
             path to CMake toolchain file or None to use builtin
         """
-        assert self.platform != "default", "Default toolchain should have been decided already"
+        assert (
+            self.platform != "default"
+        ), "Default toolchain should have been decided already"
         toolchain_locations = self.get_settings(
             ["framework_path", "project_root"], [None, self.deployment]
         )
@@ -393,11 +395,17 @@ class Build:
             if os.path.exists(toolchain_path)
         ]
         if not toolchains:
-            raise NoSuchToolchainException("Could not find toolchain file for {} at any of: {}"
-                                           .format(self.platform, " ".join(toolchains_paths)))
-        elif len(toolchains) > 1:
-            raise AmbiguousToolchainException("Found conflicting toolchain files for {} at: {}"
-                                              .format(self.platform, " ".join(toolchains)))
+            raise NoSuchToolchainException(
+                "Could not find toolchain file for {} at any of: {}".format(
+                    self.platform, " ".join(toolchains_paths)
+                )
+            )
+        if len(toolchains) > 1:
+            raise AmbiguousToolchainException(
+                "Found conflicting toolchain files for {} at: {}".format(
+                    self.platform, " ".join(toolchains)
+                )
+            )
         return toolchains[0]
 
     def execute(self, target: Target, context: Path, make_args: dict):

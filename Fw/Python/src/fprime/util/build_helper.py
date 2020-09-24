@@ -28,7 +28,7 @@ from fprime.fbuild.builder import (
     NoValidBuildTypeException,
     GenerateException,
     InvalidBuildCacheException,
-    UnableToDetectDeploymentException
+    UnableToDetectDeploymentException,
 )
 
 
@@ -428,7 +428,9 @@ def utility_entry(args):
             file=sys.stderr,
         )
     except UnableToDetectDeploymentException:
-        print("[ERROR] Could not detect deployment directory for: {}".format(parsed.path))
+        print(
+            "[ERROR] Could not detect deployment directory for: {}".format(parsed.path)
+        )
     except FprimeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         return 1

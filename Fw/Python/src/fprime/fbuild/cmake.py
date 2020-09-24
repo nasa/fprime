@@ -44,7 +44,7 @@ class CMakeHandler:
         except Exception as exc:
             raise CMakeExecutionException(
                 "CMake executable 'cmake' not found", str(exc), printed=False
-            )
+            ) from exc
 
     def set_verbose(self, verbose):
         """ Sets verbosity """
@@ -510,7 +510,7 @@ class CMakeHandler:
                     continue
                 # Forwards output to screen.  Assuming a PTY is used, then coloring highlights should be automatically
                 # included for output. Raw streams are used to avoid print quirks
-                elif print_output:
+                if print_output:
                     stream.write(line)
                     stream.flush()
         # Spin waiting for the .poll() method to return a non-None result ensuring that the process has finished.
@@ -595,4 +595,3 @@ class CMakeNoSuchTargetException(CMakeException):
     def __init__(self, build_dir, target):
         """  Better messaging for this exception """
         super().__init__("{} does not support target {}".format(build_dir, target))
-
