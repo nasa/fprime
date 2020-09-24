@@ -83,9 +83,9 @@ determine the types for displaying and archiving the data. (See Section
 
 ### XML-Specified Enumeration
 
-**Motivation:** As discussed in the previous section, you can specify an enumeration as the type
-of a member of a Serializable type.
-For example, you can write a file `SSerializableAi.xml` containing
+**Motivation:** As discussed in the previous section, you can specify an 
+enumeration as the type of a member of a Serializable type.
+For example, you can create a file `SSerializableAi.xml` containing
 this specification:
 
 ```xml
@@ -111,18 +111,19 @@ context of the Serializable
 type where it is defined.
 For example, `SwitchStatus` is available in a C++ source file only if that file 
 includes the serializable type `S`.
-You cannot use `SwitchStatus` directly in
-a telemetry channel or event argument.
+While you can use `S` in a port argument, telemetry channel, or event argument, 
+you cannot use `SwitchStatus` directly in
+those places.
 
 To define an enumeration that is more generally usable, you can specify an 
 enumeration *E* as a separate XML type.
 Then you can do the following:
 
-1. Generate a C++ representation of *E* that can be included in C++
-files and used on its own.
+1. Generate a C++ representation of *E* that you can include in C++
+files and use on its own.
 
 2. Use the XML representation of *E* in Serializable XML types, in Array XML 
-types, in port arguments, in telemetry channels, and in events arguments.
+types, in port arguments, in telemetry channels, and in event arguments.
 
 As an example, you can create a file `SwitchStatusEnumAi.xml` that specifies an 
 XML enumeration type `SwitchStatus`
@@ -146,7 +147,7 @@ use the type `SwitchStatus`.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
 will appear symbolically (as `OFF` or `ON`).
 
-*Detailed specification:* TODO
+**Detailed specification:** TODO
 
 ### XML-Specified Array Type
 
