@@ -83,7 +83,9 @@ determine the types for displaying and archiving the data. (See Section
 
 ### XML-Specified Enumeration
 
-**Motivation:** As discussed in the previous section, you can specify an 
+#### Motivation
+
+As discussed in the previous section, you can specify an 
 enumeration as the type of a member of a Serializable type.
 For example, you can create a file `SSerializableAi.xml` containing
 this specification:
@@ -147,17 +149,19 @@ then you can use the type `SwitchStatus` in the telemetry dictionary for _C_.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
 will display it symbolically as `OFF` or `ON`.
 
-**Detailed specification:** An XML enumeration type _E_ must
+#### Specification
+
+**File name:** An XML enumeration type _E_ must
 be defined in a file with the name _E_ `EnumAi.xml`.
 For example, the XML enumeration type `SwitchStatus`
 must be defined in a file named `SwitchStatusEnumAi.xml`.
 
-An XML enumeration type is an XML node named `enum`
+**Top-level structure:** An XML enumeration type is an XML node named `enum`
 with attributes *enum_attributes* and children *enum_children*.
 
 `<enum` *enum_attributes* `>` *enum_children* `</enum>`
 
-*enum_attributes* consists of the following:
+**Enum attributes:** *enum_attributes* consists of the following:
 
 * A required attribute `name` giving the name of the enumeration type.
 
@@ -175,6 +179,8 @@ _Examples:_ Here is an XML enumeration `E` in the global namespace:
 Here is an XML enumeration `E` in the namespace `A::B`:
 
 `<enum name="E" namespace="A::B"> ... </enum>`
+
+**Enum children:** 
 
 TODO
 
