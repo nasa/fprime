@@ -26,6 +26,7 @@ from fprime.fbuild.builder import (
     Build,
     BuildType,
     NoValidBuildTypeException,
+    GenerateException
 )
 
 
@@ -453,6 +454,8 @@ def utility_entry(args):
             build = get_build(parsed, deployment, parsed.verbose, target)
             build.load(parsed.platform, parsed.build_dir)
             build.execute(target, context=Path(parsed.path), make_args=make_args)
+    except GenerateException as genex:
+        print("[ERROR] {}. Partial build cache remains. Run purge to clean-up.".format(genex), file=sys.stderr)
     except FprimeException as exc:
         print("[ERROR] {}".format(exc), file=sys.stderr)
         return 1

@@ -390,8 +390,8 @@ class Build:
                 {"CMAKE_BUILD_TYPE": self.build_type.get_cmake_build_type()}
             )
             self.cmake.generate_build(self.deployment, self.build_dir, cmake_args)
-        except CMakeException:
-            self.purge()
+        except CMakeException as cexc:
+            raise GenerateException(str(cexc)) from cexc
 
     def purge(self):
         """ Purge a build cache directory """
@@ -449,6 +449,10 @@ class Build:
             else self.settings.get("default_toolchain", "native")
         )
         self.build_dir = build_dir if build_dir is not None else self.get_build_cache()
+
+
+class GenerateException(FprimeException):
+    """ An exception indicating generate has failed and the user may need to respond """
 
 
 class InvalidBuildTypeException(FprimeException):
