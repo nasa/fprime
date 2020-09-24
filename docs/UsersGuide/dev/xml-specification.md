@@ -106,14 +106,14 @@ with one member `switchStatus`.
 Its type is `SwitchStatus`, which is an enumeration with
 enumerated values `OFF` and `ON`.
 
-When you define an enumeration this way, the enumeration is usable only in the 
-context of the Serializable
-type where it is defined.
+When you define an enumeration _E_ this way, its use is limited.
+First, the _E_ is usable only in the context of the Serializable
+type _S_ where it is defined.
 For example, `SwitchStatus` is available in a C++ source file only if that file 
 includes the serializable type `S`.
-While you can use `S` in a port argument, telemetry channel, or event argument, 
-you cannot use `SwitchStatus` directly in
-those places.
+Second, while you can use _S_ in a port argument, telemetry channel, or event 
+argument, you cannot use _E_ directly in those places.
+For example, you can't make `SwitchStatus` the type of a telemetry channel.
 
 To define an enumeration that is more generally usable, you can specify an 
 enumeration *E* as a separate XML type.
