@@ -104,7 +104,7 @@ this specification:
 This file defines a Serializable type `S`
 with one member `switchStatus`.
 Its type is `SwitchStatus`, which is an enumeration with
-enumerated values `OFF` and `ON`.
+enumerated constants `OFF` and `ON`.
 
 When you define an enumeration _E_ this way, its use is limited.
 First, _E_ is available only in the context of the Serializable
@@ -128,7 +128,7 @@ types, in port arguments, in telemetry channels, and in event arguments.
 
 As an example, you can create a file `SwitchStatusEnumAi.xml` that specifies an 
 XML enumeration type `SwitchStatus`
-with enumerated values `OFF` and `ON`, like this:
+with enumerated constants `OFF` and `ON`, like this:
 
 ```xml
 <enum name="SwitchStatus">
@@ -141,7 +141,7 @@ By running the code generator on this file, you can generate C++
 files `SwitchStatusEnumAc.hpp` and `SwitchStatusEnumAc.cpp`
 that define the C++ representation of the type.
 Anywhere that you include `SwitchStatusEnumAc.hpp` in your C++ code, you can 
-use the enumerated values `SwitchStatus::OFF` and `SwitchStatus::ON`.
+use the enumerated constants `SwitchStatus::OFF` and `SwitchStatus::ON`.
 If you import `SwitchStatusEnumAi.xml` into the definition of a component _C_, 
 then you can use the type `SwitchStatus` in the telemetry dictionary for _C_.
 When a value of type `SwitchStatus` is emitted as telemetry, the GDS
