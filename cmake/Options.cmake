@@ -1,52 +1,139 @@
 ####
 # Command Line Options:
 #
-# Options used to configure F prime's CMake system. These options control various actions available
-# in the CMake system to help users achieve specific results. Each options has a sensible default
-# such that the user need not worry about specifing each correctly.
+# Command line options are used to change how the F prime CMake setup builds an F prime deployment. These options
+# typically have sensible defaults that configure the build in the most common way.  Most users do not need to use these
+# options directly, but may choose to do so.
 #
-# Typically a user need not specified any of the options to build F prime, however; when
-# non-standard build behavior is desired, then these options can be used. These options are
-# specified with the -D<OPTION>=<VALUE> flag. Usually the value is "ON" or "OFF". Other values are
-# noted if the option differs.
-
-# **Non-standard behavior:**
+# Note: some deployments may specify their own `-D` cmake flags and these deployments should take care to ensure there
+# is no collision with the arguments described here.
 #
-# - Build with build system debigging messages
-# - Generate autocoding files in-source
-# - Build and link with shared libraries
-# - Generate heritage python dictionaries
-# - Manually specify the build platform
+# Users need not specified any of the options to build F prime, however; when non-standard build behavior is desired,
+# then these options can be used. These options are specified with the -D<OPTION>=<VALUE> flag. Usually the value is
+# "ON" or "OFF". Other values are documented along side the option.
 #
-# Note: this file also sets up the following "build type" for use by the user. These build types
-#       are in addition to the standard cmake build types.
+# Note: `fprime-util` will specify some settings for users. Additional settings can be passed through fprime-util with
+# the `-D` option there.
 #
-#       TESTING: build the unit tests and setup the "make check" target
-# 
-# @author mstarch
 ####
+
+####
+# `CMAKE_DEBUG_OUTPUT:`
+#
+# Turns on the reporting of debug output of the CMake build. Can help refine the CMake system, and repair errors. For
+# normal usage, this is not necessary.
+#
+# **Values:**
+# - ON: generate debugging output
+# - OFF: (default) do *not* generate debugging output
+#
+# e.g. `-DCMAKE_DEBUG_OUTPUT=ON`
+####
+option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
+
+
+####
+# `SKIP_TOOLS_CHECK:`
+#
+# For older clients, some IDEs, and other unique builds, the check that ensures tools are available can fail causing
+# build instability. This option overrides the tools check enabling the system to run.
+#
+# **Values:**
+# - ON: skip tools check
+# - OFF: (default) run tools check
+#
+# e.g. `-DSKIP_TOOLS_CHECK=ON`
+####
+option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
+
+# Set build type, when it hasn't been set
+if(NOT CMAKE_BUILD_TYPE) 
+    set(CMAKE_BUILD_TYPE RELEASE)
+else()
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+endif()
+
+####
+# `CMAKE_BUILD_TYPE:`
+#
+# Allows for setting the CMake build type. Release is a normal build, Testing is used for unit testing and debug
+# options.
+#
+# **Values:**
+# - Release: (default) standard flight build
+# - Testing: allow for unit tests and debug enabled build
+# - Debug: supplied by CMake and typlically unused for F prime
+#
+# e.g. `-DCMAKE_BUILD_TYPE=TESTING`
+####
+SET(CMAKE_CXX_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Testing C++ flags." FORCE)
+SET(CMAKE_C_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Testing C flags." FORCE)
+SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
+SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
+MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_TESTING
+    CMAKE_C_FLAGS_TESTING
+    CMAKE_EXE_LINKER_FLAGS_TESTING
+    CMAKE_SHARED_LINKER_FLAGS_TESTING )
+# Testing setup for UT and coverage builds
+if (CMAKE_BUILD_TYPE STREQUAL "TESTING" )
+    # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
+    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
+    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+endif()
+
+####
+# `CMAKE_TOOLCHAIN_FILE:`
+#
+# CMake option to specify toolchain file. For F prime, toolchains are kept in the framework and library cmake/toolchain
+# folder, although theoretically any CMake toolchain can be used. Default: none, which will use the native system build.
+#
+# e.g. `-DCMAKE_TOOLCHAIN_FILE=/path/to/cmake/toolchain`
+####
+
+####
+# `PLATFORM:`
+#
+# Specifies the platform used when building the F prime using the CMake system. See:
+# [platform.md](platform.md) for more information. Default: automatically detect platform file.
+#
+# e.g. `-DPLATFORM=/path/to/platform/cmake`
+####
+
 
 ####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
 # `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
 #
-# These locations specify the locations of the needed F prime items. These are described below
-# and each has a default if not set.
-# 
-# FPRIME_FRAMEWORK_PATH: location of F prime, always the directory above this file, however; 
-#                        since it is supplied by the project, it is asserted to be correct.
+# Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
+# any way bypassing that utility (e.g. inside your beloved IDE).
 #
-# FPRIME_PROJECT_ROOT: root of the project directory to detect partial paths and include pathes
-#                      from.  If not supplied, it is assumed to be FPRIME_FRAMEWORK_PATH if
-#                      PROJECT_SOURCE_DIR is a child of FPRIME_FRAMEWORK_PATH otherwise 
-#                      PROJECT_SOURCE_DIR is used as the project root.
+# These locations specify the locations of the needed F prime paths. These are described below. Defaults are set to
+# support the historical in-source deployments where F prime is merged with deployment code. Specifiy these settings if
+# using the newer deployment structure. `fprime-util` does this for you.
 #
-# FPRIME_LIBRARY_LOCATIONS: locations of libraries included in the build. ; separated to be
-#                           a cmake list. If not supplied: "" is used.
+# FPRIME_FRAMEWORK_PATH: location of F prime framework installation, always the directory above this file, however;
+# since it is supplied by the project, it is validated to ensure that it points to a valid F prime framework install.
+# Default: the folder above this file.
+#
+# e.g. `-DFPRIME_FRAMEWORK_PATH=/path/to/fprime/framework`
+#
+# FPRIME_PROJECT_ROOT: root path of an F prime project. This is used for relative paths for c++ includes, component
+# includes, etc. Default is FPRIME_FRAMEWORK_PATH if the PROJECT_SOURCE_DIR is a child of FPRIME_FRAMEWORK_PATH
+# otherwise PROJECT_SOURCE_DIR is used as the project root.
+#
+# e.g. `-DFPRIME_FRAMEWORK_PATH=/path/to/fprime/project`
+#
+# FPRIME_LIBRARY_LOCATIONS: locations of libraries included in the build. CMake list supplied in ; separated format like
+# other CMake lists. Default: "", no libraries available.
+#
+# e.g. `-DFPRIME_LIBRARY_LOCATIONS=/path/to/fprime/library1;/path/to/fprime/library2`
 #
 # Additional locations FPRIME_SETTINGS_FILE and FPRIME_ENVIRONMENT_FILE:
 #
-# These files are used for settings in fprime-util. If suppled (typically only by fprime-util) then
+# These files are used for settings in fprime-util. If supplied (typically only by fprime-util) then
 # they will be added as dependencies into the build system.
 ####
 get_filename_component(DETECTED_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
@@ -101,85 +188,3 @@ if (NOT DEFINED FPRIME_CONFIG_DIR)
     set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
 endif()
 
-####
-# `CMAKE_DEBUG_OUTPUT:`
-#
-# Turns on the reporting of debug output of the CMake build. Can help refine the CMake system,
-# and repair errors. For normal usage, this is not necessary.
-#
-# **Values:**
-# - ON: generate debugging output
-# - OFF: (default) do *not* generate debugging output
-#
-# e.g. `-DCMAKE_DEBUG_OUTPUT=ON`
-####
-option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
-
-####
-# `GENERATE_HERITAGE_PY_DICT:`
-#
-# This option switches from generating XML dictionaries to generating the heritage python
-# dictionatries. This enables backward compatible use with the older Tk GUI and other tools that
-# use python fragment dictionaries.
-#
-# **Values:**
-# - ON: generate python dictionaries.
-# - OFF: (default) generate XML dictionaries.
-#
-# e.g. `-DGENERATE_HERITAGE_PY_DICT=ON`
-####
-option(GENERATE_HERITAGE_PY_DICT "Generate F prime python dictionaries instead of XML based dictionaries." OFF)
-
-####
-# `SKIP_TOOLS_CHECK:`
-#
-# For older clients, the check that validates the tool-suite is installed may fail. This option
-# skips the tools check enabling the system to run.
-#
-# **Values:**
-# - ON: skip tools check
-# - OFF: (default) run tools check
-#
-# e.g. `-DSKIP_TOOLS_CHECK=ON`
-####
-option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
-
-
-# Set build type, if unser
-if(NOT CMAKE_BUILD_TYPE) 
-    set(CMAKE_BUILD_TYPE DEBUG)
-else()
-    string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
-endif()
-
-####
-# `TESTING:`
-#
-# Testing build type used to build UTs and setting up the `make check` target. If the unit testing
-# is desired run with this build type.
-#
-# e.g. `-DCMAKE_BUILD_TYPE=TESTING`
-####
-SET(CMAKE_CXX_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
-    CACHE STRING "Testing C++ flags." FORCE)
-SET(CMAKE_C_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
-    CACHE STRING "Testing C flags." FORCE)
-SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
-SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
-MARK_AS_ADVANCED(
-    CMAKE_CXX_FLAGS_TESTING
-    CMAKE_C_FLAGS_TESTING
-    CMAKE_EXE_LINKER_FLAGS_TESTING
-    CMAKE_SHARED_LINKER_FLAGS_TESTING )
-# Testing setup for UT and coverage builds
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING" )
-    # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
-    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-endif()
-####
-# `PLATFORM:`
-#
-# Specifies the platform used when building the F prime using the CMake system. See:
-# [platform.md](platform.md) for more information.
-####
