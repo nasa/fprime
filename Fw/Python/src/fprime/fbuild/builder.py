@@ -363,16 +363,11 @@ class Build:
             "auto_location": auto_location,
         }
 
-    def find_toolchain(self, path):
+    def find_toolchain(self):
         """ Locates a toolchain file in know locations
 
         Finds a toolchain for the given platform.  Searches in known locations for the toolchain, and compares against F
         prime provided toolchains, toolchains in libraries, and toolchains provided by project.
-
-        Args:
-            platform: platform supplied by user for finding toolchain automatically e.g. raspberrypi or native
-            path: path to the CMakeLists.txt directory, which acts as a default location if project_root not set
-            build: build used to get settings for finding toolchain files
 
         Returns:
             path to CMake toolchain file or None to use builtin
