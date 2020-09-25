@@ -257,7 +257,7 @@ with the following members:
 
 * A member `attitudeError` of type `F32`.
 
-* A member `wheelSpeeds` whose type is an array of 3 values, each of type 
+* A member `wheelSpeeds` whose type is an array of three values, each of type 
   `U32`.
 
 Alternatively, you can specify a named array type *A* in a separate
@@ -271,7 +271,7 @@ files and use on its own.
 XML types, in port arguments, in telemetry channels, and in event arguments.
 
 As an example, you can create a file `WheelSpeedsArrayAi.xml` that specifies an 
-array of 3 `U32` values, like this:
+array of three `U32` values, like this:
 
 ```xml
 <array name="WheelSpeeds">
