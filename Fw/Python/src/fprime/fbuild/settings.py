@@ -19,8 +19,8 @@ class IniSettings:
     @staticmethod
     def find_fprime():
         """
-         Finds F prime by recursing parent to parent until a matching directory is found.
-         """
+        Finds F prime by recursing parent to parent until a matching directory is found.
+        """
         needle = os.path.join(
             "cmake", "FPrime.cmake"
         )  # If the F prime cmake file exists
@@ -80,7 +80,7 @@ class IniSettings:
             print("[WARNING] Failed to find settings file: {}".format(settings_file))
             fprime_location = IniSettings.find_fprime()
             return {
-                "fprime_location": fprime_location,
+                "framework_path": fprime_location,
             }
         confparse = configparser.ConfigParser()
         confparse.read(settings_file)
