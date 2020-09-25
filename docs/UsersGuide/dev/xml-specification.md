@@ -237,8 +237,8 @@ Here is an enumerated constant with a name, value, and comment:
 
 #### Motivation
 
-As discussed in the section on XML-specified Serializable types, a member of a 
-Serializable type can be an array of elements of some other type.
+As discussed above, a member of a Serializable type can be an array of elements 
+of some other type.
 For example, you can create a file `ACSTelemetry.xml` containing
 this specification:
 
@@ -267,8 +267,8 @@ Then you can do the following:
 1. Generate a C++ representation of *A* that you can include in C++
 files and use on its own.
 
-2. Use the XML representation of *A* in Serializable XML types, in Array XML 
-types, in port arguments, in telemetry channels, and in event arguments.
+2. Use the XML representation of *A* in Serializable XML types, in other Array 
+XML types, in port arguments, in telemetry channels, and in event arguments.
 
 As an example, you can create a file `WheelSpeedsArrayAi.xml` that specifies an 
 array of 3 `U32` values, like this:
