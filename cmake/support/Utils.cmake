@@ -5,7 +5,14 @@
 # be made. Those files should go in *AC_Utils.cmake*.
 ####
 
-
+####
+# Function `get_nearest_build_root`:
+#
+# Finds the nearest build root from ${FPRIME_BUILD_LOCATIONS} that is a parent of DIRECTORY_PATH.
+#
+# - **DIRECTORY_PATH:** path to detect nearest build root
+# Return: nearest parent from ${FPRIME_BUILD_LOCATIONS}
+####
 function(get_nearest_build_root DIRECTORY_PATH)
     set(FOUND_BUILD_ROOT "${DIRECTORY_PATH}")
     set(LAST_REL "${DIRECTORY_PATH}")

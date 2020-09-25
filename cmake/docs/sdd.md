@@ -9,7 +9,7 @@ This build system is intended to replace the legacy F´ build system which is di
 and maintain.  The legacy F´ build system had was inherited from the JPL Mars Science Laboratory
 mission and created over 10 years ago.
 
-**Note:** for usage instructions and user documentation see: ![README.md](../README.md "README.md").
+**Note:** for usage instructions and user documentation see: ![README.md](cmake-intro.md "README.md").
 
 ## 1.1 Definitions
 

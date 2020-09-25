@@ -101,7 +101,7 @@ F prime cross-compile configurations for a given toolchain.
 the standard build call like `make`. Unlink the old system, if something changes in the build 
 configuration, CMake will automatically be rerun. There should be no need to call `make gen_make`.
 
-A guide to full usage documentation is found here: [README](../README.md)
+A guide to full usage documentation is found here: [README](cmake-intro.md)
 
 Consider three build variants: Linux, Embedded, and Unit Tests.
 

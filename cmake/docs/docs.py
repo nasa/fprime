@@ -47,7 +47,7 @@ def main():
     out_fn = os.path.basename(sys.argv[1])
     if out_fn == "CMakeLists.txt":
         out_fn = os.path.basename(os.path.dirname(sys.argv[1]))
-    out_fn = out_fn.replace(".cmake", "") + ".md"
+    out_fn = out_fn.replace(".cmake", "") + "-template.md" if out_fn.endswith("template") else ".md"
 
     # Open both files, and loop over all the lines reading and writing each
     with open(sys.argv[1], "r") as in_file_handle:
