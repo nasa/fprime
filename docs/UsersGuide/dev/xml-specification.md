@@ -110,20 +110,7 @@ with one member `state`.
 Its type is `SwitchState`, which is an enumeration with
 enumerated constants `OFF` and `ON`.
 
-When you define an enumeration *E* this way, its use is limited.
-First, *E* is available only in the context of the Serializable
-type *S* where it is defined.
-For example, `SwitchState` is available in a C++ source file *F* only if *F* 
-includes the C++ header `SwitchSerializableAc.hpp` for the serializable type 
-`Switch`.
-There is no separate header you can include just to use the enumeration type.
-Second, while you can use the Serializable type *S* in a port argument, 
-telemetry channel, or event argument, you cannot use the enumeration *E* 
-directly in those places.
-For example, you can't make `SwitchState` the type of a telemetry channel.
-
-To define an enumeration that is more generally usable, you can specify an 
-enumeration *E* as a separate XML type.
+Alternatively, you can specify an enumeration *E* as a separate XML type.
 Then you can do the following:
 
 1. Generate a C++ representation of *E* that you can include in C++
@@ -171,8 +158,9 @@ Notice that the revised version (1) imports the enum type definition
 from the file `SwitchStateEnumAi.xml` and (2) uses the named
 type `SwitchState` as the type of member `state`.
 
-As another example, if you import the definition of a component *C*, then you 
-can use the type `SwitchState` in the telemetry dictionary for *C*.
+As another example, if you import the file `SwitchStateEnumAi.xml` into the 
+definition of a component *C*, then you can use the type `SwitchState` in the 
+telemetry dictionary for *C*.
 When a value of type `SwitchState` is emitted as telemetry, the GDS
 will display it symbolically as `OFF` or `ON`.
 
@@ -250,25 +238,27 @@ Here is an enumerated constant with a name, value, and comment:
 #### Motivation
 
 As discussed in the section on XML-specified Serializable types, a member of a 
-Serializable type can be an array of elements
-of some other type.
-For example, you can create a file `WheelSpeedsAi.xml` containing
+Serializable type can be an array of elements of some other type.
+For example, you can create a file `ACSTelemetry.xml` containing
 this specification:
 
 ```xml
-<serializable name="WheelSpeeds">
+<serializable name="ACSTelemetry">
   <members>
-    <member name="speeds" type="U32" size="3">
+    <member name="attitudeError" type="F32">
+    <member name="wheelSpeeds" type="U32" size="3">
     </member>
   </members>
 </serializable>
 ```
 
-This file defines a Serializable type `WheelSpeeds`
-with one member `speeds`.
-It is an array of 3 values, each of type `U32`.
-When you specify an array this way, it has to be as a member
-of a Serializable type.
+This file defines a Serializable type `ACSTelemetry`
+with the following members:
+
+* A member `attitudeError` of type `F32`.
+
+* A member `wheelSpeeds` whose type is an array of 3 values, each of type 
+  `U32`.
 
 Alternatively, you can specify a named array type *A* in a separate
 XML file.
@@ -305,9 +295,10 @@ If you import `WheelSpeedsArrayAi.xml` into another XML definition,
 then you can use the type `WheelSpeeds` there.
 
 To use an XML array type *A* in another XML definition *D*,
-enclose the name of the file that defines *A* in an XML tag `import_array_type`.
-As an example, you can define a Serializable type `ACSTelemetry`
-as follows:
+enclose the name of the file that defines *A* in an XML tag 
+`import_array_type`.
+As an example, you can revise the definition of the Serializable type 
+`ACSTelemetry` as follows:
 
 ```xml
 <serializable name="ACSTelemetry">
@@ -325,8 +316,14 @@ This specification defines an XML Serializable type with two members:
 
 1. Member `wheelSpeeds` of type `WheelSpeeds`.
 
-As another example, if you import the definition of a component *C*, then you 
-can use the type `WheelSpeeds` in the telemetry dictionary for *C*.
+Notice that whereas before `wheelSpeeds` was directly declared as
+an array of three `U32` values, here it is given type `WheelSpeeds`,
+which is defined in a separate XML specification as an array
+of three `U32` values.
+
+As another example, if you import file `WheelSpeedsArrayAi.xml` into the 
+definition of a component *C*, then you can use the type `WheelSpeeds` in the 
+telemetry dictionary for *C*.
 When a value of type `WheelSpeeds` is emitted as telemetry, the GDS
 will display it as an array of three values.
 
