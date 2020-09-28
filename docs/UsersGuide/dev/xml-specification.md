@@ -178,7 +178,7 @@ with attributes *enum_attributes* and children *enum_children*.
 
 **Enum attributes:** *enum_attributes* consists of the following:
 
-* A required attribute `name` giving the name of the enumeration type.
+* An attribute `name` giving the name of the enumeration type.
 
 * An optional attribute `namespace` giving the enclosing namespace
 of the enumeration type.
@@ -205,13 +205,13 @@ Here is an XML enumeration `E` in the namespace `A::B`:
   The comment text becomes a comment in the generated C++ code.
   It is attached to the whole enum definition.
 
-* One or more instances of *item_definition*
+* One or more instances of *item_definition*, described below.
 
 **Item definition:**
 *item_definition* defines an enumerated constant.
 It is an XML node named `item` with the following attributes:
 
-* A required attribute `name` giving the name of the enumerated
+* An attribute `name` giving the name of the enumerated
 constant.
 
 * An optional attribute `value` assigning an integer value
@@ -329,7 +329,78 @@ will display it as an array of three values.
 
 #### Specification
 
-TODO
+**File name:** An XML array type *A* must
+be defined in a file with the name *A* `ArrayAi.xml`.
+For example, the XML array type `WheelSpeeds`
+must be defined in a file named `WheelSpeedsArrayAi.xml`.
+
+**Top-level structure:** An XML array type is an XML node named `array`
+with attributes *array_attributes* and children *array_children*.
+
+**Array attributes:** *array_attributes* consists of the following:
+
+* An attribute `name` giving the name of the array type.
+
+* An optional attribute `namespace` giving the enclosing namespace
+of the enumeration type.
+The namespace consists of one or more identifiers separated by `::`.
+
+If the attribute `namespace` is missing, then the type is
+placed in the global namespace.
+
+_Examples:_ Here is an XML array `A` in the global namespace:
+
+`<array name="A"> ... </array>`
+
+Here is an XML array `A` in the namespace `B::C`:
+
+`<array name="A" namespace="B::C"> ... </array>`
+
+**Array children:**
+*array_children* consists of the following, in any order:
+
+* An optional node `comment` containing comment text.
+
+  `<comment>` *comment_text* `</comment>`
+
+  The comment text becomes a comment in the generated C++ code.
+  It is attached to the whole enum definition.
+
+* Zero or more nodes `include_header` for including C++ header files.
+
+  `<include_header>` *header_file* `</include_header>`
+
+* Zero or more nodes `import_serializable_type` for importing
+  XML serializable types.
+
+  `<import_serializable_type>` *serializable_xml_file* `</import_serializable_type>`
+
+* Zero or more nodes `import_enum_type` for importing XML enum types.
+
+  `<import_enum_type>` *enum_xml_file* `</import_enum_type>`
+
+* Zero or more nodes `import_array_type` for importing XML array types.
+
+  `<import_array_type>` *array_xml_file* `</import_array_type>`
+
+* A node `format` providing a single format string to be applied to each array element.
+
+  `<format>` *format_string* `</format>`
+
+  *format_string* must contain a single conversion specifier starting with `%`.
+  The conversion specifier must be legal both for C/C++ `printf` and for Python.
+
+* A node `type`, described below.
+
+* A node `size` specifying the size of the array as a decimal integer.
+
+  `<size>` *integer* `</size>`
+
+* A node `default`, described below.
+
+*Type:* TODO
+
+*Size:* TODO
 
 ### Hand-coded Serializable
 
