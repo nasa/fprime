@@ -524,9 +524,6 @@ convention \<SomeName\>PortAi.xml. An example of this can be found in
 Autocoders/templates/ExamplePortAi.xml. Table 17 describes the XML tags
 and attributes.
 
-**  
-**
-
 **Table 17.** Port XML
 specification.
 
