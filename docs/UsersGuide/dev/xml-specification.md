@@ -394,36 +394,48 @@ Here is an XML array `A` in the namespace `B::C`:
 
 * A node `type` consisting of attributes *type_attributes* and text *type*.
 
-  `<type` *type_attributes* `>` *type* `</type>`
+  `<type` *size_attribute_opt* `>` *type* `</type>`
 
-  The type attributes are described below.
+  *size_attribute_opt* is an optional attribute `size` specifying a decimal 
+  integer size.
+  The `size` attribute is valid only if the element type is `string`,
+  and it is required in this case.
+  It specifies the size of the string representation.
+
   *type* is text specifying the type of each array element.
   It must be an F Prime built-in type such as `U32` or a named type.
   A named type is (1) the name of an XML-specified type (Serializable, Enum, or Array)
   or (2) the name of a C++ class included with `include_header`.
 
+  *Examples:*
+
+    * `<type>U32</type>` specifies the built-in type `U32`
+
+    * `<type>T</type>` specifies the named type `T`.
+      `T` must be (1) included via `include_header` or (2) imported
+      via `import_serializable_type`, `import_enum_type`, or
+      `import_array_type`.
+
+    * `<type size="40">string</type>` specifies a string
+      type of size 40.
+
 * A node `size` specifying the size of the array as a decimal integer.
 
   `<size>` *integer* `</size>`
 
-* A node `default` with one or more child nodes `value`, described below.
+* A node `default` with one or more child nodes `value`.
 
   `<default>` _value_ ... `</default>`
 
+  The format of _value_ is described below.
   There must be one value for each element of the array.
-
-**Type attributes:** *type_attributes* consists of the following:
-
-* An optional attribute `size` ...
-
-* An optional attribute `typeid` ... [ Seems to be in the wrong place ]
 
 **Value:** The node `value` specifies a default value for an array
 element.
 The value must be text that, when inserted into the generated C++ code,
 represents a default value of the correct type.
 
-_Examples:_
+*Examples:*
 
 * If the array element type is `U32`, then `0` is a correct default value.
 
