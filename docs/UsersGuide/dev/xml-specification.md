@@ -368,22 +368,19 @@ Here is an XML array `A` in the namespace `B::C`:
   The comment text becomes a comment in the generated C++ code.
   It is attached to the C++ class that defines the array.
 
-* Zero or more nodes `include_header` for including C++ header files.
+* Zero or more of any of the following nodes:
 
-  `<include_header>` *header_file* `</include_header>`
+   * `<include_header>` *header_file* `</include_header>` for including C++ header files
+     into the generated C++.
 
-* Zero or more nodes `import_serializable_type` for importing
-  XML serializable types.
+   * `<import_serializable_type>` *serializable_xml_file* `</import_serializable_type>`
+      for importing XML-specified serializable types.
 
-  `<import_serializable_type>` *serializable_xml_file* `</import_serializable_type>`
+   * `<import_enum_type>` *enum_xml_file* `</import_enum_type>` for importing 
+     XML-specified enum types.
 
-* Zero or more nodes `import_enum_type` for importing XML enum types.
-
-  `<import_enum_type>` *enum_xml_file* `</import_enum_type>`
-
-* Zero or more nodes `import_array_type` for importing XML array types.
-
-  `<import_array_type>` *array_xml_file* `</import_array_type>`
+   * `<import_array_type>` *array_xml_file* `</import_array_type>` for 
+     importing XML-specified array types.
 
 * A node `format` providing a single format string to be applied to each array element.
 
