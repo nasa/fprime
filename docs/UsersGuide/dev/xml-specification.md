@@ -390,7 +390,14 @@ Here is an XML array `A` in the namespace `B::C`:
   `<format>` *format_string* `</format>`
 
   *format_string* must contain a single conversion specifier starting with `%`.
-  The conversion specifier must be legal both for C and C++ `printf` and for Python.
+  The conversion specifier must be legal both for C and C++ `printf` and for 
+  Python, considering the array element type.
+  For example, if the array element type is `U32`, then `<format>%u</format>` 
+  is a valid
+  format specifier. So is `<format>%u seconds</time>`.
+  `<format>%s</format>` is not a legal format specifier in this case, because 
+  the string format `%s`
+  is not valid for type `U32`.
 
 * A node `type` consisting of attributes *type_attributes* and text *type*.
 
