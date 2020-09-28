@@ -203,7 +203,7 @@ Here is an XML enumeration `E` in the namespace `A::B`:
   `<comment>` *comment_text* `</comment>`
 
   The comment text becomes a comment in the generated C++ code.
-  It is attached to the whole enum definition.
+  It is attached to the C++ class that defines the enumeration.
 
 * One or more instances of *item_definition*, described below.
 
@@ -366,7 +366,7 @@ Here is an XML array `A` in the namespace `B::C`:
   `<comment>` *comment_text* `</comment>`
 
   The comment text becomes a comment in the generated C++ code.
-  It is attached to the whole enum definition.
+  It is attached to the C++ class that defines the array.
 
 * Zero or more nodes `include_header` for including C++ header files.
 
@@ -390,7 +390,7 @@ Here is an XML array `A` in the namespace `B::C`:
   `<format>` *format_string* `</format>`
 
   *format_string* must contain a single conversion specifier starting with `%`.
-  The conversion specifier must be legal both for C/C++ `printf` and for Python.
+  The conversion specifier must be legal both for C and C++ `printf` and for Python.
 
 * A node `type`, described below.
 
@@ -398,11 +398,32 @@ Here is an XML array `A` in the namespace `B::C`:
 
   `<size>` *integer* `</size>`
 
-* A node `default`, described below.
+* A node `default` with one or more child nodes `value`, described below.
 
-*Type:* TODO
+  `<default>` _value_ ... `</default>`
 
-*Size:* TODO
+  There must be one value for each element of the array.
+
+**Type:** The node `type` has the following elements:
+
+* An optional attribute `size` ...
+
+* An optional attribute `typeid` ... [ Seems to be in the wrong place ]
+
+**Value:** The node `value` specifies a default value for an array
+element.
+The value must be text that, when inserted into the generated C++ code,
+represents a default value of the correct type.
+
+_Examples:_
+
+* If the array element type is `U32`, then `0` is a correct default value.
+
+* Suppose the array element type is an array `A` of three U32 values.
+In the generated C++ code, `A` is a class with a three-argument constructor,
+and each argument initializes an array element.
+Therefore `A(1, 2, 3)` is a correct default value.
+
 
 ### Hand-coded Serializable
 
