@@ -58,7 +58,7 @@ specification.
 | comment                    |           | Used for a comment describing the type. Is placed as a Doxygen-compatible tag in the class declaration.                                              |
 | members                    |           | Starts the region of the declaration where type members are specified.                                                                               |
 | member                     |           | Defines a member of the type.                                                                                                                        |
-| member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified serializable, or a user-written serializable. |
+| member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. |
 | member                     | name      | Defines the member name.                                                                                                                             |
 | member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
@@ -392,7 +392,15 @@ Here is an XML array `A` in the namespace `B::C`:
   *format_string* must contain a single conversion specifier starting with `%`.
   The conversion specifier must be legal both for C and C++ `printf` and for Python.
 
-* A node `type`, described below.
+* A node `type` consisting of attributes *type_attributes* and text *type*.
+
+  `<type` *type_attributes* `>` *type* `</type>`
+
+  The type attributes are described below.
+  *type* is text specifying the type of each array element.
+  It must be an F Prime built-in type such as `U32` or a named type.
+  A named type is (1) the name of an XML-specified type (Serializable, Enum, or Array)
+  or (2) the name of a C++ class included with `include_header`.
 
 * A node `size` specifying the size of the array as a decimal integer.
 
@@ -404,7 +412,7 @@ Here is an XML array `A` in the namespace `B::C`:
 
   There must be one value for each element of the array.
 
-**Type:** The node `type` has the following elements:
+**Type attributes:** *type_attributes* consists of the following:
 
 * An optional attribute `size` ...
 
@@ -511,7 +519,7 @@ specification.
 | comment                    |           | Used for a comment describing the port. Is placed as a Doxygen-compatible tag in the class declaration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | args                       |           | Optional. Starts the region of the declaration where port arguments are specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | arg                        |           | Defines an argument to the port method.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| arg                        | type      | The type of the argument. Should be a built-in type, ENUM, string, an XML-specified serializable, or a user-written serializable. A string type should be used if a text string is the argument. If the type is serial, the port is an untyped serial port that can be connected to any typed port for the purpose of serializing the call. See the Hub pattern in the architectural description document for a usage.                                                                                                                                                                                                                                                                             |
+| arg                        | type      | The type of the argument. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. A string type should be used if a text string is the argument. If the type is serial, the port is an untyped serial port that can be connected to any typed port for the purpose of serializing the call. See the Hub pattern in the architectural description document for a usage.                                                                                                                                                                                                                                                                             |
 | arg                        | name      | Defines the argument name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | arg                        | size      | Specifies the size of the argument if it is of type string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | arg                        | pass\_by  | Optional. Specifies if the argument should be passed by reference or pointer. Default is to pass by value. Values can be VALUE, POINTER, or REFERENCE. This is provided as an optimization to avoid unnecessary copies. When arguments to ports with references are detected by components, the argument is serialized in the same way as an argument that is passed by value. If it is passed by pointer, the pointer value is copied and not the contents of the type instance pointed to by the pointer. This carries the usual responsibility for understanding the scope and lifetime of the memory behind the pointer, as the pointer value may be held by another component past the duration of the port call. |
