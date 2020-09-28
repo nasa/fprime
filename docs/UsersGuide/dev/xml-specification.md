@@ -1,7 +1,7 @@
 # F´ XML Specifications
 
 **Note:** for a hands-on walk through of build topologies, please see: [Tutorials](../../Tutorials/README.md). This is
-an advance specification and the hands-on tutorial is likely better for new users.
+an advanced specification and the hands-on tutorial is likely better for new users.
 
 Serializable types, arrays, ports, and components are defined in XML files.
 Those files are parsed by the code generator, and files containing C++
@@ -58,7 +58,7 @@ specification.
 | comment                    |           | Used for a comment describing the type. Is placed as a Doxygen-compatible tag in the class declaration.                                              |
 | members                    |           | Starts the region of the declaration where type members are specified.                                                                               |
 | member                     |           | Defines a member of the type.                                                                                                                        |
-| member                     | type      | The type of the member. Should be one of the types defined in Table 14, ENUM, string, an XML-specified serializable, or a user-written serializable. |
+| member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. |
 | member                     | name      | Defines the member name.                                                                                                                             |
 | member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
@@ -69,6 +69,8 @@ specification.
 | item                       | value     | Assigns a value to the enumeration member. Member values in the enumeration follow C enumeration rules if not specified.                             |
 | item                       | comment   | A comment about the member. Becomes a Doxygen tag.                                                                                                   |
 | import\_serializable\_type |           | Imports an XML definition of another serializable type for use in the definition.                                                                    |
+| import\_enum\_type         |           | Imports an XML definition of an enumeration type.|
+| import\_array\_type        |           | Imports an XML definition of an array type.|
 | include\_header            |           | Includes a C/C++ user-written header for member types.                                                                                               |
 
 #### Constraints
@@ -81,6 +83,372 @@ cannot be hand-coded types since the ground system analyzes the XML to
 determine the types for displaying and archiving the data. (See Section
 6.6.3 for component ground interface specifications.)
 
+### XML-Specified Enumeration
+
+#### Motivation
+
+As discussed in the previous section, you can define an enumeration
+when specifying the type of a member of a Serializable type.
+For example, you can create a file `SwitchSerializableAi.xml` containing
+this specification:
+
+```xml
+<serializable name="Switch">
+  <members>
+    <member name="state">
+      <enum name="SwitchState" type="ENUM">
+        <item name="OFF" value="0">
+        <item name="ON" value="1">
+      </enum>
+    </member>
+  </members>
+</serializable>
+```
+
+This file defines a Serializable type `Switch`
+with one member `state`.
+Its type is `SwitchState`, which is an enumeration with
+enumerated constants `OFF` and `ON`.
+
+Alternatively, you can specify an enumeration *E* as a separate XML type.
+Then you can do the following:
+
+1. Generate a C++ representation of *E* that you can include in C++
+files and use on its own.
+
+2. Use the XML representation of *E* in Serializable XML types, in Array XML 
+types, in port arguments, in telemetry channels, and in event arguments.
+
+As an example, you can create a file `SwitchStateEnumAi.xml` that specifies an 
+XML enumeration type `SwitchState`
+with enumerated constants `OFF` and `ON`, like this:
+
+```xml
+<enum name="SwitchState">
+  <item name="OFF" value="0"/>
+  <item name="ON" value="1"/>
+</enum>
+```
+
+By running the code generator on this file, you can generate C++
+files `SwitchStateEnumAc.hpp` and `SwitchStateEnumAc.cpp`
+that define the C++ representation of the type.
+Anywhere that you include `SwitchStateEnumAc.hpp` in your C++ code, you can 
+use the enumerated constants `SwitchState::OFF` and `SwitchState::ON`.
+If you import `SwitchStateEnumAi.xml` into another XML definition,
+then you can use the type `SwitchState` there.
+
+To use an XML enumeration type *E* in another XML definition *D*,
+enclose the name of the file that defines *E* in an XML tag `import_enum_type`.
+As an example, you can revise the `Switch` Serializable
+definition shown above.
+Instead of defining `SwitchState` as an inline enumeration, you can use the 
+`SwitchState` XML enumeration type as follows:
+
+```xml
+<serializable name="Switch">
+  <import_enum_type>SwitchStateEnumAi.xml</import_enum_type>
+  <members>
+    <member name="state" type="SwitchState"/>
+  </members>
+</serializable>
+```
+
+Notice that the revised version (1) imports the enum type definition
+from the file `SwitchStateEnumAi.xml` and (2) uses the named
+type `SwitchState` as the type of member `state`.
+
+As another example, if you import the file `SwitchStateEnumAi.xml` into the 
+definition of a component *C*, then you can use the type `SwitchState` in the 
+telemetry dictionary for *C*.
+When a value of type `SwitchState` is emitted as telemetry, the GDS
+will display it symbolically as `OFF` or `ON`.
+
+#### Specification
+
+**File name:** An XML enumeration type *E* must
+be defined in a file with the name *E* `EnumAi.xml`.
+For example, the XML enumeration type `SwitchState`
+must be defined in a file named `SwitchStateEnumAi.xml`.
+
+**Top-level structure:** An XML enumeration type is an XML node named `enum`
+with attributes *enum_attributes* and children *enum_children*.
+
+`<enum` *enum_attributes* `>` *enum_children* `</enum>`
+
+**Enum attributes:** *enum_attributes* consists of the following:
+
+* An attribute `name` giving the name of the enumeration type.
+
+* An optional attribute `namespace` giving the enclosing namespace
+of the enumeration type.
+The namespace consists of one or more identifiers separated by `::`.
+
+If the attribute `namespace` is missing, then the type is
+placed in the global namespace.
+
+_Examples:_ Here is an XML enumeration `E` in the global namespace:
+
+`<enum name="E">` ... `</enum>`
+
+Here is an XML enumeration `E` in the namespace `A::B`:
+
+`<enum name="E" namespace="A::B">` ... `</enum>`
+
+**Enum children:** 
+*enum_children* consists of the following, in any order:
+
+* An optional node `comment` containing comment text.
+
+  `<comment>` *comment_text* `</comment>`
+
+  The comment text becomes a comment in the generated C++ code.
+  It is attached to the C++ class that defines the enumeration.
+
+* One or more instances of *item_definition*, described below.
+
+**Item definition:**
+*item_definition* defines an enumerated constant.
+It is an XML node named `item` with the following attributes:
+
+* An attribute `name` giving the name of the enumerated
+constant.
+
+* An optional attribute `value` assigning an integer value
+to the enumerated constant.
+If the `value` attribute is missing, then the value is assigned
+in the ordinary way for C and C++ enumerations (i.e., zero for the first
+constant, otherwise one more than the value assigned to
+the previous constant).
+
+* An optional attribute `comment` giving comment text.
+The text becomes a comment in the generated C++ code.
+It is attached to the enumerated constant definition. 
+
+_Examples:_ Here is an enumerated constant with a name only:
+
+`<item name="ON"/>`
+
+Here is an enumerated constant with a name, value, and comment:
+
+`<item name="OFF" value="0" comment="The off state"/>`
+
+### XML-Specified Array Type
+
+#### Motivation
+
+As discussed above, a member of a Serializable type can be an array of elements 
+of some other type.
+For example, you can create a file `ACSTelemetrySerializable.xml` containing
+this specification:
+
+```xml
+<serializable name="ACSTelemetry">
+  <members>
+    <member name="attitudeError" type="F32">
+    <member name="wheelSpeeds" type="U32" size="3">
+    </member>
+  </members>
+</serializable>
+```
+
+This file defines a Serializable type `ACSTelemetry`
+with the following members:
+
+* A member `attitudeError` of type `F32`.
+
+* A member `wheelSpeeds` whose type is an array of three values, each of type 
+  `U32`.
+
+Alternatively, you can specify a named array type *A* in a separate
+XML file.
+Then you can do the following:
+
+1. Generate a C++ representation of *A* that you can include in C++
+files and use on its own.
+
+2. Use the XML representation of *A* in Serializable XML types, in other Array 
+XML types, in port arguments, in telemetry channels, and in event arguments.
+
+As an example, you can create a file `WheelSpeedsArrayAi.xml` that specifies an 
+array of three `U32` values, like this:
+
+```xml
+<array name="WheelSpeeds">
+  <type>U32</type>
+  <size>3</size>
+  <format>%u</format>
+  <default>
+    <value>0</value>
+    <value>0</value>
+    <value>0</value>
+  </default>
+</array>
+```
+
+By running the code generator on this file, you can generate C++
+files `WheelSpeedsAc.hpp` and `WheelSpeedsAc.cpp`
+that define a C++ class `WheelSpeeds` representing this type.
+Anywhere that you include `WheelSpeedsEnumAc.hpp` in your C++ code, you can 
+use the class `WheelSpeeds`.
+If you import `WheelSpeedsArrayAi.xml` into another XML definition,
+then you can use the type `WheelSpeeds` there.
+
+To use an XML array type *A* in another XML definition *D*,
+enclose the name of the file that defines *A* in an XML tag 
+`import_array_type`.
+As an example, you can revise the definition of the Serializable type 
+`ACSTelemetry` as follows:
+
+```xml
+<serializable name="ACSTelemetry">
+  <import_array_type>WheelSpeedsArrayAi.xml</import_array_type>
+  <members>
+    <member name="attitudeError" type="F32"/>
+    <member name="wheelSpeeds" type="WheelSpeeds"/>
+  </members>
+</serializable>
+```
+
+This specification defines an XML Serializable type with two members:
+
+1. Member `attitudeError` of type `F32`.
+
+1. Member `wheelSpeeds` of type `WheelSpeeds`.
+
+Notice that whereas before `wheelSpeeds` was directly declared as
+an array of three `U32` values, here it is given type `WheelSpeeds`,
+which is defined in a separate XML specification as an array
+of three `U32` values.
+
+As another example, if you import file `WheelSpeedsArrayAi.xml` into the 
+definition of a component *C*, then you can use the type `WheelSpeeds` in the 
+telemetry dictionary for *C*.
+When a value of type `WheelSpeeds` is emitted as telemetry, the GDS
+will display it as an array of three values.
+
+#### Specification
+
+**File name:** An XML array type *A* must
+be defined in a file with the name *A* `ArrayAi.xml`.
+For example, the XML array type `WheelSpeeds`
+must be defined in a file named `WheelSpeedsArrayAi.xml`.
+
+**Top-level structure:** An XML array type is an XML node named `array`
+with attributes *array_attributes* and children *array_children*.
+
+`<array` *array_attributes* `>` *array_children* `</array>`
+
+**Array attributes:** *array_attributes* consists of the following:
+
+* An attribute `name` giving the name of the array type.
+
+* An optional attribute `namespace` giving the enclosing namespace
+of the array type.
+The namespace consists of one or more identifiers separated by `::`.
+
+If the attribute `namespace` is missing, then the type is
+placed in the global namespace.
+
+_Examples:_ Here is an XML array `A` in the global namespace:
+
+`<array name="A">` ... `</array>`
+
+Here is an XML array `A` in the namespace `B::C`:
+
+`<array name="A" namespace="B::C">` ... `</array>`
+
+**Array children:**
+*array_children* consists of the following, in any order:
+
+* An optional node `comment` containing comment text.
+
+  `<comment>` *comment_text* `</comment>`
+
+  The comment text becomes a comment in the generated C++ code.
+  It is attached to the C++ class that defines the array.
+
+* Zero or more of any of the following nodes:
+
+   * `<include_header>` *header_file* `</include_header>` for including C++ header files
+     into the generated C++.
+
+   * `<import_serializable_type>` *serializable_xml_file* `</import_serializable_type>`
+      for importing XML-specified serializable types.
+
+   * `<import_enum_type>` *enum_xml_file* `</import_enum_type>` for importing 
+     XML-specified enum types.
+
+   * `<import_array_type>` *array_xml_file* `</import_array_type>` for 
+     importing XML-specified array types.
+
+* A node `format` providing a single format string to be applied to each array element.
+
+  `<format>` *format_string* `</format>`
+
+  *format_string* must contain a single conversion specifier starting with `%`.
+  The conversion specifier must be legal both for C and C++ `printf` and for 
+  Python, considering the array element type.
+  For example, if the array element type is `U32`, then `<format>%u</format>` 
+  is a valid
+  format specifier. So is `<format>%u seconds</time>`.
+  `<format>%s</format>` is not a legal format specifier in this case, because 
+  the string format `%s`
+  is not valid for type `U32`.
+
+* A node `type` consisting of attributes *type_attributes* and text *type*.
+
+  `<type` *size_attribute_opt* `>` *type* `</type>`
+
+  *size_attribute_opt* is an optional attribute `size` specifying a decimal 
+  integer size.
+  The `size` attribute is valid only if the element type is `string`,
+  and it is required in this case.
+  It specifies the size of the string representation.
+
+  *type* is text specifying the type of each array element.
+  It must be an F Prime built-in type such as `U32` or a named type.
+  A named type is (1) the name of an XML-specified type (Serializable, Enum, or Array)
+  or (2) the name of a C++ class included with `include_header`.
+
+  *Examples:*
+
+    * `<type>U32</type>` specifies the built-in type `U32`
+
+    * `<type>T</type>` specifies the named type `T`.
+      `T` must be (1) included via `include_header` or (2) imported
+      via `import_serializable_type`, `import_enum_type`, or
+      `import_array_type`.
+
+    * `<type size="40">string</type>` specifies a string
+      type of size 40.
+
+* A node `size` specifying the size of the array as a decimal integer.
+
+  `<size>` *integer* `</size>`
+
+* A node `default` with one or more child nodes `value`.
+
+  `<default>` _value_ ... `</default>`
+
+  The format of _value_ is described below.
+  There must be one value for each element of the array.
+
+**Value:** The node `value` specifies a default value for an array
+element.
+The value must be text that, when inserted into the generated C++ code,
+represents a default value of the correct type.
+
+*Examples:*
+
+* If the array element type is `U32`, then `0` is a correct default value.
+
+* Suppose the array element type is an array `A` of three U32 values.
+In the generated C++ code, `A` is a class with a three-argument constructor,
+and each argument initializes an array element.
+Therefore `A(1, 2, 3)` is a correct default value.
+
+
 ### Hand-coded Serializable
 
 A hand-coded serializable is useful in the case where the type is not
@@ -92,38 +460,36 @@ derived from the framework base class Fw::Serializable. That type can be
 found in Fw/Types/Serializable.hpp. An example can be found in
 Autocoders/templates/ExampleType.hpp. The method is as follows:
 
-1)  Define the class. It should be derived from Fw::Serializable.
+1. Define the class. It should be derived from Fw::Serializable.
 
-<!-- end list -->
+1. Declare the two base class pure virtual functions: serialize() and
+   deserialize(). These functions provide a buffer as a destination for
+   the serialized form of the data in the type.
 
-7)  Declare the two base class pure virtual functions: serialize() and
-    deserialize(). These functions provide a buffer as a destination for
-    the serialized form of the data in the type.
+1. Implement the functions. The buffer base class that is the argument
+   to those functions provides a number of helper functions for
+   serializing and deserializing the basic types in the table above.
+   Those functions are specified in the SerializeBufferBase class type
+   in the same header file. For each member that the developer wishes
+   to save, call the serialization functions. The members can be
+   serialized in any order. In the worst case, a raw buffer version is
+   provided for just doing a bulk copy of the data if serializing
+   individual members is not feasible. The deserialization function
+   should deserialize the data in the order it was serialized.
 
-8)  Implement the functions. The buffer base class that is the argument
-    to those functions provides a number of helper functions for
-    serializing and deserializing the basic types in the table above.
-    Those functions are specified in the SerializeBufferBase class type
-    in the same header file. For each member that the developer wishes
-    to save, call the serialization functions. The members can be
-    serialized in any order. In the worst case, a raw buffer version is
-    provided for just doing a bulk copy of the data if serializing
-    individual members is not feasible. The deserialization function
-    should deserialize the data in the order it was serialized.
+1. Add an enumeration with a single member named SERIALIZED\_SIZE. The
+   value of that member should be the sum of the sizes of all the
+   members. It can be done with the sizeof() function that is available
+   to all C/C++ compilers. Optionally, a type identifier can be added
+   so that a sanity check can be done when the data are deserialized.
+   That type should be serialized, and then checked against the
+   enumeration when it is deserialized.
 
-9)  Add an enumeration with a single member named SERIALIZED\_SIZE. The
-    value of that member should be the sum of the sizes of all the
-    members. It can be done with the sizeof() function that is available
-    to all C/C++ compilers. Optionally, a type identifier can be added
-    so that a sanity check can be done when the data are deserialized.
-    That type should be serialized, and then checked against the
-    enumeration when it is deserialized.
+1. Implement copy constructors and equal operators. If the type is
+   passed by value, the developer should write these functions if the
+   default is not sufficient.
 
-10) Implement copy constructors and equal operators. If the type is
-    passed by value, the developer should write these functions if the
-    default is not sufficient.
-
-11) Implement any custom features.
+1. Implement any custom features.
 
 Once the class is completed, it can be included in port definitions.
 
@@ -155,9 +521,6 @@ convention \<SomeName\>PortAi.xml. An example of this can be found in
 Autocoders/templates/ExamplePortAi.xml. Table 17 describes the XML tags
 and attributes.
 
-**  
-**
-
 **Table 17.** Port XML
 specification.
 
@@ -169,7 +532,7 @@ specification.
 | comment                    |           | Used for a comment describing the port. Is placed as a Doxygen-compatible tag in the class declaration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | args                       |           | Optional. Starts the region of the declaration where port arguments are specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | arg                        |           | Defines an argument to the port method.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| arg                        | type      | The type of the argument. Should be one of the types defined in Table 2, ENUM, string, an XML-specified serializable, or a user-written serializable. A string type should be used if a text string is the argument. If the type is serial, the port is an untyped serial port that can be connected to any typed port for the purpose of serializing the call. See the Hub pattern in the architectural description document for a usage.                                                                                                                                                                                                                                                                             |
+| arg                        | type      | The type of the argument. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. A string type should be used if a text string is the argument. If the type is serial, the port is an untyped serial port that can be connected to any typed port for the purpose of serializing the call. See the Hub pattern in the architectural description document for a usage.                                                                                                                                                                                                                                                                             |
 | arg                        | name      | Defines the argument name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | arg                        | size      | Specifies the size of the argument if it is of type string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | arg                        | pass\_by  | Optional. Specifies if the argument should be passed by reference or pointer. Default is to pass by value. Values can be VALUE, POINTER, or REFERENCE. This is provided as an optimization to avoid unnecessary copies. When arguments to ports with references are detected by components, the argument is serialized in the same way as an argument that is passed by value. If it is passed by pointer, the pointer value is copied and not the contents of the type instance pointed to by the pointer. This carries the usual responsibility for understanding the scope and lifetime of the memory behind the pointer, as the pointer value may be held by another component past the duration of the port call. |
@@ -180,9 +543,11 @@ specification.
 | item                       | value     | Assigns a value to the enumeration member. Member values in the enumeration follow C enumeration rules if not specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | item                       | comment   | A comment about the member. Becomes a Doxygen tag.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | return                     |           | Optional. Specifies that the method will return a value.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| return                     | type      | Specifies the type of the return. Can be the types defined in Table 2.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| return                     | type      | Specifies the type of the return. Can be a built-in type.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | return                     | pass\_by  | Specifies whether the argument should be passed by value or by reference or pointer.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | import\_serializable\_type |           | Imports an XML definition of another serializable type for use in the definition.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| import\_enum\_type         |           | Imports an XML definition of an enumeration type.|
+| import\_array\_type        |           | Imports an XML definition of an array type.|
 | include\_header            |           | Includes a C/C++ user-written header for argument types.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 ### Constraints
@@ -227,6 +592,8 @@ specification.
 | import\_dictionary         |                 | Imports a ground dictionary defined outside the component XML that conforms to the command, telemetry, event, and parameter entries below. This allows external tools written by projects to generate dictionaries.                                                                                                                                                                                                                                                                                                                                                             |                                                                                                                                                                        |
 | import\_port\_type         |                 | Imports an XML definition of a port type used by the component.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                                                                        |
 | import\_serializable\_type |                 | Imports an XML definition of a serializable type for use in the component interfaces.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                        |
+| import\_enum\_type         |           | Imports an XML definition of an enumeration type.|
+| import\_array\_type        |           | Imports an XML definition of an array type.|
 | comment                    |                 | Used for a comment describing the component. Is placed as a Doxygen-compatible tag in the class declaration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                        |
 | ports                      |                 | Defines the section of the component definition where ports are defined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                        |
 | port                       |                 | Starts the description of a port.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
@@ -239,11 +606,11 @@ specification.
 |                            |                 | async\_input                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Creates a message with the serialized arguments of the port call. When the message is dequeued, the arguments are deserialized and the derived class method is called. |
 |                            |                 | output                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Port is an output port that is invoked from the logic in the derived class.                                                                                            |
 | port                       | priority        | The priority of the invocation. Only used for asynchronous ports, and specifies the priority of the message in the underlying message queue if priorities are supported by the target OS. Range is OS dependent.                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
-| port                       | max\_number     | Specifies the number of ports of this type. This allows multiple callers to the same type of port if knowing the source is necessary. Can be specified as an Fw/Cfg/AcContstants.ini file $VARIABLE value.                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
+| port                       | max\_number     | Specifies the number of ports of this type. This allows multiple callers to the same type of port if knowing the source is necessary. Can be specified as an Fw/Cfg/AcConstants.ini file $VARIABLE value.                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | port                       | full            | Specifies the behavior for async ports when the message queue is full. One of *drop*, *block*, or *assert*, where *assert* is the default.                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | port                       | role            | Specifies the role of the port when the modeler=true.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                        |
 | commands                   |                 | Optional. Starts the section where software commands are defined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
-| commands                   | opcode\_base    | Defines the base value for the opcodes in the commands. If this is specified, all opcodes will be added to this value. If it is missing, opcodes will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcContstants.ini.                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
+| commands                   | opcode\_base    | Defines the base value for the opcodes in the commands. If this is specified, all opcodes will be added to this value. If it is missing, opcodes will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcConstants.ini.                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | command                    |                 | Starts the definition for a particular command.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                                                                        |
 | command                    | mnemonic        | Defines a text label for the command. Can be alphanumeric with “\_” separators, but no spaces.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                        |
 | command                    | opcode          | Defines an integer that represents the opcode used to decode the command. Should be a C-compilable constant.                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                        |
@@ -256,7 +623,7 @@ specification.
 | command                    | full            | Specifies the behavior for async commands when the message queue is full. One of *drop*, *block*, or *assert*, where *assert* is the default.                                                                                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                        |
 | args                       |                 | Optional. Starts the region of the declaration where command arguments are specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                        |
 | arg                        |                 | Defines an argument in the command.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                                                                                                                                                                        |
-| arg                        | type            | The type of the argument. Should be one of the types defined in Table 1, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
+| arg                        | type            | The type of the argument. Should be a built-in type. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
 | arg                        | name            | Defines the argument name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | arg                        | size            | Specifies the size of the argument if it is of type string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                        |
 | enum                       |                 | Specifies an enumeration when the argument type=ENUM.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                        |
@@ -266,11 +633,11 @@ specification.
 | item                       | value           | Assigns a value to the enumeration member. Member values in the enumeration follow C enumeration rules if not specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                        |
 | item                       | comment         | A comment about the member. Becomes a Doxygen tag.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                        |
 | telemetry                  |                 | Optional. Specifies the section that defines the channelized telemetry.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
-| telemetry                  | telemetry\_base | Defines the base value for the channel IDs. If this is specified, all channel IDs will be added to this value. If it is missing, channel IDs will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcContstants.ini.                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                        |
+| telemetry                  | telemetry\_base | Defines the base value for the channel IDs. If this is specified, all channel IDs will be added to this value. If it is missing, channel IDs will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcConstants.ini.                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                        |
 | channel                    |                 | Starts the definition for a telemetry channel.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                        |
 | channel                    | id              | Specifies a numerical value identifying the channel.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                        |
 | channel                    | name            | A text string with the channel name. Cannot contain spaces.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                        |
-| channel                    | data\_type      | Specifies the type of the channel. Should be one of the types defined in Table 1, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
+| channel                    | data\_type      | Specifies the type of the channel. Should be a built-in type, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
 | channel                    | size            | If the channel type is string, specifies the size of the string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
 | channel                    | abbrev          | An abbreviation for the channel. Needed for the AMMOS Mission Data Processing and Control System (AMPCS), a ground data system to display telemetry and events from spacecraft.                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                                                                        |
 | channel                    | update          | If the channel should be always updated, or only on change. Values are ALWAYS or ON\_CHANGE.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                        |
@@ -283,12 +650,12 @@ specification.
 | item                       | value           | Assigns a value to the enumeration member. Member values in the enumeration follow C enumeration rules if not specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                        |
 | item                       | comment         | A comment about the member. Becomes a Doxygen tag.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                        |
 | parameters                 |                 | Optional. Specifies the section that defines parameters for the component.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
-| parameters                 | parameter\_base | Defines the base value for the parameter IDs. If this is specified, all parameter IDs will be added to this value. If it is missing, parameter IDs will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcContstants.ini.                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                        |
-| parameters                 | opcode\_base    | Defines the base value for the opcodes in the parameter set and save commands. If this is specified, all opcodes will be added to this value. If it is missing, opcodes will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcContstants.ini.                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
+| parameters                 | parameter\_base | Defines the base value for the parameter IDs. If this is specified, all parameter IDs will be added to this value. If it is missing, parameter IDs will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcConstants.ini.                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                        |
+| parameters                 | opcode\_base    | Defines the base value for the opcodes in the parameter set and save commands. If this is specified, all opcodes will be added to this value. If it is missing, opcodes will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcConstants.ini.                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
 | parameter                  |                 | Starts the definition for a parameter.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                        |
 | parameter                  | id              | Specifies a numeric value that represents the parameter.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                        |
 | parameter                  | name            | Specifies the name of the parameter.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                        |
-| parameter                  | data\_type      | Specifies the type of the parameter. Should be one of the types defined in Table 1, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                        |
+| parameter                  | data\_type      | Specifies the type of the parameter. Should be a built-in type, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                        |
 | parameter                  | size            | Specifies the size of the parameter if it is of type string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                        |
 | parameter                  | default         | Specifies a default value for the parameter if the parameter is unable to be retrieved from non-volatile storage. Only for built-in types.                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | parameter                  | comment         | A comment describing the parameter.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                                                                                                                                                                        |
@@ -301,7 +668,7 @@ specification.
 | item                       | value           | Assigns a value to the enumeration member. Member values in the enumeration follow C enumeration rules if not specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                        |
 | item                       | comment         | A comment about the member. Becomes a Doxygen tag.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                        |
 | events                     |                 | Optional. Specifies the section that defines events for the component.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                        |
-| events                     | event\_base     | Defines the base value for the event IDs. If this is specified, all event IDs will be added to this value. If it is missing, event IDs will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcContstants.ini.                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
+| events                     | event\_base     | Defines the base value for the event IDs. If this is specified, all event IDs will be added to this value. If it is missing, event IDs will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcConstants.ini.                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
 | event                      |                 | Starts the definition for an event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                                                                                                                                                                        |
 | event                      | id              | Specifies a numeric value that represents the event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                        |
 | event                      | name            | Specifies the name of the event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                        |
@@ -318,7 +685,7 @@ specification.
 | comment                    |                 | A comment describing the event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                                                                        |
 | args                       |                 | Starts the region of the declaration where event arguments are specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                        |
 | arg                        |                 | Defines an argument in the event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
-| arg                        | type            | The type of the argument. Should be one of the types defined in Table 1, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
+| arg                        | type            | The type of the argument. Should be a built-in type, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
 | arg                        | name            | Defines the argument name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | arg                        | size            | Specifies the size of the argument if it is of type string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                        |
 | internal\_interfaces       |                 | Optional. Specifies an internal interface for the component. Internal interfaces are functions that can be called internally from implementation code. These functions will dispatch a message in the same fashion that asynchronous ports and commands do. The developer implements a handler in the same way, and that handler is called on the thread of an active or queued component. Internal interfaces cannot be specified for a passive component since there is not message queue. A typical use for an internal interface would be for an interrupt service routine. |                                                                                                                                                                        |
@@ -328,7 +695,7 @@ specification.
 | comment                    |                 | A comment describing the interface.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                                                                                                                                                                        |
 | args                       |                 | Starts the region of the declaration where interface arguments are specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                        |
 | arg                        |                 | Defines an argument in the interface.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                        |
-| arg                        | type            | The type of the argument. Should be one of the types defined in Table 1, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
+| arg                        | type            | The type of the argument. Should be a built-in type, ENUM, string, or an XML-specified serializable. A string type should be used if a text string is the argument.                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
 | arg                        | name            | Defines the argument name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | arg                        | size            | Specifies the size of the argument if it is of type string.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                        |
 
@@ -367,7 +734,7 @@ the component active or have a message queue.
 
 The component XML is parsed by the command and telemetry system in order
 to construct the data storage and display application. For this reason,
-only the built-in types in Table 2 or types represented in XML can be
+only the built-in types or types represented in XML can be
 used.
 
 ## Command/Telemetry Ports
