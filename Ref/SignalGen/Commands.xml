@@ -25,6 +25,10 @@
         type="U32"
         name="Phase">
       </arg>
+      <arg
+        type="Ref::SignalType"
+        name="SigType">
+      </arg>
     </args>
   </command>
   <command kind="async" opcode="1" mnemonic="SignalGen_Toggle">

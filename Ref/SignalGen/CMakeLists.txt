@@ -6,6 +6,7 @@
 #
 ####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/SignalTypeEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/SignalGenComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/SignalGen.cpp"
 )
