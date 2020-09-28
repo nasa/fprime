@@ -189,7 +189,7 @@ placed in the global namespace.
 
 _Examples:_ Here is an XML enumeration `E` in the global namespace:
 
-`<enum name="E"> ... </enum>`
+`<enum name="E">` ... `</enum>`
 
 Here is an XML enumeration `E` in the namespace `A::B`:
 
@@ -239,7 +239,7 @@ Here is an enumerated constant with a name, value, and comment:
 
 As discussed above, a member of a Serializable type can be an array of elements 
 of some other type.
-For example, you can create a file `ACSTelemetry.xml` containing
+For example, you can create a file `ACSTelemetrySerializable.xml` containing
 this specification:
 
 ```xml
@@ -352,7 +352,7 @@ placed in the global namespace.
 
 _Examples:_ Here is an XML array `A` in the global namespace:
 
-`<array name="A"> ... </array>`
+`<array name="A">` ... `</array>`
 
 Here is an XML array `A` in the namespace `B::C`:
 
