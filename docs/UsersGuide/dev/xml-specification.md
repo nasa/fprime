@@ -193,7 +193,7 @@ _Examples:_ Here is an XML enumeration `E` in the global namespace:
 
 Here is an XML enumeration `E` in the namespace `A::B`:
 
-`<enum name="E" namespace="A::B"> ... </enum>`
+`<enum name="E" namespace="A::B">` ... `</enum>`
 
 **Enum children:** 
 *enum_children* consists of the following, in any order:
@@ -356,7 +356,7 @@ _Examples:_ Here is an XML array `A` in the global namespace:
 
 Here is an XML array `A` in the namespace `B::C`:
 
-`<array name="A" namespace="B::C"> ... </array>`
+`<array name="A" namespace="B::C">` ... `</array>`
 
 **Array children:**
 *array_children* consists of the following, in any order:
