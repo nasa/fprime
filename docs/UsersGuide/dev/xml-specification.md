@@ -344,7 +344,7 @@ with attributes *array_attributes* and children *array_children*.
 * An attribute `name` giving the name of the array type.
 
 * An optional attribute `namespace` giving the enclosing namespace
-of the enumeration type.
+of the array type.
 The namespace consists of one or more identifiers separated by `::`.
 
 If the attribute `namespace` is missing, then the type is
