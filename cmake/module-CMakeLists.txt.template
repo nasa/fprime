@@ -1,7 +1,7 @@
 ####
 # Module 'CMakeLists.txt':
 #
-# F prime modules setup source files, non-standard module dependencies, unit test source files, unit test module
+# fprime modules setup source files, non-standard module dependencies, unit test source files, unit test module
 # dependencies, and call one of the following functions from the F prime API:
 #
 # First define needed variables:
@@ -20,7 +20,7 @@
 # - `register_fprime_ut`: register a unit test
 #
 #
-# See: [API.md](API.md)
+# See: [API](./API.md)
 #
 # **Example:**
 # ```

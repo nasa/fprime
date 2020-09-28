@@ -12,5 +12,5 @@ In order to create a new platform from scratch, the use can copy "platform.cmake
 out in order to generate the new platform file. It will guide the user through the setup of this
 piece.
 
-To understand the platform template: [Platform Template File](./platform-template.md)
+To understand the platform template: [Platform Template File](../api/cmake/platform/platform-template.md)
 To use the template: [fprime Platform Template](https://github.com/nasa/fprime/cmake/platform/platform.cmake.template)

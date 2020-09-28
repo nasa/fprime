@@ -1,7 +1,7 @@
 # CMake Build System Unit Tests
 
 These tests seek to ensure that the CMake system functions as expected. These will test that the
-CMake system meets all the requirements specified in the [SDD](../docs/sdd.md). The goal is to ensure
+CMake system meets all the requirements specified in the CMake SDD. The goal is to ensure
 that the CMake system can be maintainable by ensuring core functions of the CMake process work as
 expected in an automated system.
 

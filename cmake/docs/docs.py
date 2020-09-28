@@ -50,7 +50,7 @@ def main():
     os.chdir(sys.argv[1])
     for dirpath, dirnames, filenames in os.walk("."):
         for filename in filenames:
-            if ".cmake" in filename or filename == "CMakeLists.txt":
+            if ".cmake" in filename or filename == "CMakeLists.txt" or filename.endswith("CMakeLists.txt.template"):
                 process_file(os.path.join(dirpath, filename), outdir)
 
 
@@ -58,9 +58,9 @@ def process_file(file_name, outdir):
     """ Process a file """
     # Read a line, and output it
     out_fn = file_name
-    if out_fn == "CMakeLists.txt":
+    if os.path.basename(out_fn) == "CMakeLists.txt":
         out_fn = os.path.dirname(file_name)
-    out_fn = out_fn.replace(".cmake", "") + ("-template.md" if out_fn.endswith("template") else ".md")
+    out_fn = out_fn.replace(".cmake", "").replace(".template", "") + ("-template.md" if out_fn.endswith(".template") else ".md")
     assert out_fn != file_name, "File collision immenent"
     relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
