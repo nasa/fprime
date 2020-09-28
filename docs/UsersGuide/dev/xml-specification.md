@@ -337,6 +337,8 @@ must be defined in a file named `WheelSpeedsArrayAi.xml`.
 **Top-level structure:** An XML array type is an XML node named `array`
 with attributes *array_attributes* and children *array_children*.
 
+`<array` *array_attributes* `>` *array_children* `</array>`
+
 **Array attributes:** *array_attributes* consists of the following:
 
 * An attribute `name` giving the name of the array type.
