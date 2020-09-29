@@ -44,7 +44,7 @@ def main():
         )
         sys.exit(1)
     if not os.path.isdir(sys.argv[1]) or not os.path.isdir(sys.argv[2]):
-        print("[ERROR] No a directory!")
+        print("[ERROR] Not a directory!")
         sys.exit(2)
     outdir = os.path.abspath(sys.argv[2])
     os.chdir(sys.argv[1])
