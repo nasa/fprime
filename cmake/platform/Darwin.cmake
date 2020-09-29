@@ -1,8 +1,8 @@
 ####
 # Darwin.cmake:
 #
-# Darwin based platform file used for Darwin (Mac OS X) targets. Note: this uses Linux type targets but specifies Mac OS
-# specific flags.
+# Darwin based platform file used for Darwin (Mac OS X) targets. Note: this sets some OS X flags before calling into the common
+# Linux implementations to use the posix types defined there.
 ####
 add_definitions(-DTGT_OS_TYPE_DARWIN)
 
