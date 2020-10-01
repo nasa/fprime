@@ -19,6 +19,7 @@ Note: JSON types must use only the following data types
 def fprime_to_jsonable(obj):
     """
     Takes an F prime object and converts it to a jsonable type.
+
     :param obj: object to convert
     :return: object in jsonable format (can call json.dump(obj))
     """

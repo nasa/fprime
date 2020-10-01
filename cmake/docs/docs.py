@@ -22,10 +22,12 @@ import enum
 
 LINE_RE = re.compile(r"^#{1,4} ?")
 
+
 class DocState(enum.IntEnum):
     """
     Holds the documentation generation states.
     """
+
     SEARCH = 0
     HEADER = 1
     CLOSING = 2
@@ -36,8 +38,10 @@ def main():
     Main function used to run this program.
     """
     if len(sys.argv) < 2:
-        print("[ERROR] Please supply a *.cmake file to generate documentation.",
-              file=sys.stderr)
+        print(
+            "[ERROR] Please supply a *.cmake file to generate documentation.",
+            file=sys.stderr,
+        )
         sys.exit(1)
     # Read a line, and output it
     out_fn = os.path.basename(sys.argv[1])
@@ -50,8 +54,9 @@ def main():
         with open(out_fn, "w") as out_file_handle:
             state = DocState.SEARCH
             next_state = DocState.SEARCH
-            out_file_handle.write("**Note:** auto-generated from comments in: {0}\n\n"
-                                  .format(sys.argv[1]))
+            out_file_handle.write(
+                "**Note:** auto-generated from comments in: {0}\n\n".format(sys.argv[1])
+            )
             for line in in_file_handle.readlines():
                 state = next_state
                 next_state = state
@@ -61,8 +66,8 @@ def main():
                 elif line.startswith("####"):
                     next_state = DocState.SEARCH
                 line = LINE_RE.sub("", line).rstrip()
-                #print("State: ", state, "Next State:", next_state)
-                #print(line)
+                # print("State: ", state, "Next State:", next_state)
+                # print(line)
                 # Now output, if not searching, and not blank and not searching
                 if next_state == DocState.SEARCH:
                     if state == DocState.CLOSING:
@@ -70,10 +75,11 @@ def main():
                     continue
                 if next_state == DocState.HEADER:
                     out_file_handle.write("## ")
-                    next_state = DocState.CLOSING # Header printed
+                    next_state = DocState.CLOSING  # Header printed
                     continue
                 out_file_handle.write(line)
-                out_file_handle.write("\n") 
+                out_file_handle.write("\n")
+
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -21,7 +19,7 @@ class PexpectRunnerGUI(wx.Frame):
             self,
             parent,
             id=wx.ID_ANY,
-            title=u"Pexpect Output",
+            title="Pexpect Output",
             pos=wx.DefaultPosition,
             size=wx.Size(500, 300),
             style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL,

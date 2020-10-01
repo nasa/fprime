@@ -78,6 +78,8 @@ Svc::FileUplink fileUplink ("fileUplink");
 
 Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
 
+Svc::FileManager fileManager ("fileManager");
+
 Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
 
 Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
@@ -143,6 +145,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
+    fileManager.init(30, 0);
     fileUplinkBufferManager.init(0);
     fileDownlinkBufferManager.init(1);
     SG1.init(10,0);
@@ -173,6 +176,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     eventLogger.regCommands();
     prmDb.regCommands();
     fileDownlink.regCommands();
+    fileManager.regCommands();
     SG1.regCommands();
     SG2.regCommands();
     SG3.regCommands();
@@ -201,6 +205,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,fileDownlink.getObjName()}, // 9
         {3,5,pingRcvr.getObjName()}, // 10
         {3,5,blockDrv.getObjName()}, // 11
+        {3,5,fileManager.getObjName()}, // 12
     };
 
     // register ping table
@@ -224,6 +229,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     fileDownlink.start(0, 100, 10*1024);
     fileUplink.start(0, 100, 10*1024);
+    fileManager.start(0, 100, 10*1024);
 
     pingRcvr.start(0, 100, 10*1024);
 
@@ -245,6 +251,7 @@ void exitTasks(void) {
     prmDb.exit();
     fileUplink.exit();
     fileDownlink.exit();
+    fileManager.exit();
     cmdSeq.exit();
     pingRcvr.exit();
     // join the component threads with NULL pointers to free them
@@ -258,6 +265,7 @@ void exitTasks(void) {
     (void) prmDb.ActiveComponentBase::join(NULL);
     (void) fileUplink.ActiveComponentBase::join(NULL);
     (void) fileDownlink.ActiveComponentBase::join(NULL);
+    (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();

@@ -1,32 +1,25 @@
-from __future__ import absolute_import
-import wx
-from . import GDSCommandPanelGUI
-from . import GDSArgItemTextCtl
-from . import GDSArgItemComboBox
+from itertools import cycle
 
+from fprime.common.models.serialize.array_type import *
 from fprime.common.models.serialize.bool_type import *
 from fprime.common.models.serialize.enum_type import *
-from fprime.common.models.serialize.f32_type import *
-from fprime.common.models.serialize.f64_type import *
-
-from fprime.common.models.serialize.u8_type import *
-from fprime.common.models.serialize.u16_type import *
-from fprime.common.models.serialize.u32_type import *
-from fprime.common.models.serialize.u64_type import *
-
-from fprime.common.models.serialize.i8_type import *
-from fprime.common.models.serialize.i16_type import *
-from fprime.common.models.serialize.i32_type import *
-from fprime.common.models.serialize.i64_type import *
-
-from fprime.common.models.serialize.string_type import *
+from fprime.common.models.serialize.numerical_types import (
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    F32Type,
+    F64Type,
+)
 from fprime.common.models.serialize.serializable_type import *
-from fprime.common.models.serialize.array_type import *
-
+from fprime.common.models.serialize.string_type import *
 from fprime_gds.common.data_types import cmd_data
 
-
-from itertools import cycle
+from . import GDSArgItemComboBox, GDSArgItemTextCtl, GDSCommandPanelGUI
 
 ###########################################################################
 ## Class CommandsImpl
@@ -97,89 +90,89 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
         width_total = 0
 
         for (arg_name, _, arg_type) in temp.arguments:
-            if type(arg_type) == BoolType:
+            if isinstance(arg_type, BoolType):
                 k = GDSArgItemComboBox.ArgItemComboBox(
                     self.CmdArgsScrolledWindow,
                     ["True", "False"],
                     arg_name,
                     validator=GDSArgItemComboBox.ComboEnumValidator(),
                 )
-            elif type(arg_type) == EnumType:
+            elif isinstance(arg_type, EnumType):
                 k = GDSArgItemComboBox.ArgItemComboBox(
                     self.CmdArgsScrolledWindow,
                     arg_type.keys(),
                     arg_name,
                     validator=GDSArgItemComboBox.ComboEnumValidator(),
                 )
-            elif type(arg_type) == type(F64Type()):
+            elif isinstance(arg_type, F64Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.RealValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(F32Type()):
+            elif isinstance(arg_type, F32Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.RealValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(I64Type()):
+            elif isinstance(arg_type, I64Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(I32Type()):
+            elif isinstance(arg_type, I32Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(I16Type()):
+            elif isinstance(arg_type, I16Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(I8Type()):
+            elif isinstance(arg_type, I8Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(U64Type()):
+            elif isinstance(arg_type, U64Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(U32Type()):
+            elif isinstance(arg_type, U32Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(U16Type()):
+            elif isinstance(arg_type, U16Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(U8Type()):
+            elif isinstance(arg_type, U8Type):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.HexIntegerValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(StringType()):
+            elif isinstance(arg_type, StringType):
                 k = GDSArgItemTextCtl.ArgItemTextCtl(
                     self.CmdArgsScrolledWindow,
                     GDSArgItemTextCtl.StringValidator(),
                     arg_name,
                 )
-            elif type(arg_type) == type(SerializableType()):
+            elif isinstance(arg_type, SerializableType):
                 pass
-            elif type(arg_type) == type(ArrayType()):
+            elif isinstance(arg_type, ArrayType):
                 pass
 
             self.arginputs.append(k)
@@ -204,13 +197,13 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
         for i in self.arginputs:
             if i.Validate() == False:
                 return False
-            if type(i) == GDSArgItemTextCtl.ArgItemTextCtl:
+            if isinstance(i, GDSArgItemTextCtl.ArgItemTextCtl):
                 arglist.append(str(i.getText()))
-            elif type(i) == GDSArgItemComboBox.ArgItemComboBox:
+            elif isinstance(i, GDSArgItemComboBox.ArgItemComboBox):
                 arglist.append(i.getSelection())
 
         s = self.CmdsComboBox.GetStringSelection()
-        if s != u"":
+        if s != "":
             temp = self.cname_dict[s]
             data_obj = cmd_data.CmdData(tuple(arglist), temp)
 
@@ -225,7 +218,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
 
     def onCmdHistSearchButtonClick(self, event):
 
-        if self.CmdHistSearchTextCtl.GetLineText(0) != u"":
+        if self.CmdHistSearchTextCtl.GetLineText(0) != "":
             if self.CmdHistSearchTextCtl.GetLineText(0) != self._previous_search_term:
                 self._previous_search_term = self.CmdHistSearchTextCtl.GetLineText(0)
                 self.updateCmdSearchPool()
@@ -249,7 +242,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
         )
 
         for k, v in zip(self.arginputs, itm_obj.get_args()):
-            if type(k) == GDSArgItemTextCtl.ArgItemTextCtl:
+            if isinstance(k, GDSArgItemTextCtl.ArgItemTextCtl):
                 k.setText(v.val)
             else:
                 k.setSelection(v.val)

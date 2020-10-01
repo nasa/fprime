@@ -1,0 +1,20 @@
+:mod:`fprime_gds.common.pipeline`
+=================================
+
+.. py:module:: fprime_gds.common.pipeline
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   dictionaries/index.rst
+   encoding/index.rst
+   files/index.rst
+   histories/index.rst
+   router/index.rst
+   standard/index.rst
+
+

@@ -22,7 +22,7 @@ namespace Utils {
     const HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-        return other;
+        return *this;
     }
 
     bool HashBuffer::operator==(const HashBuffer& other) const {

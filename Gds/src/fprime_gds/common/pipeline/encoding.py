@@ -6,16 +6,17 @@ and decoding into a single component that the be composed into the standard pipe
 
 @mstarch
 """
-# Encoders and Decoders
-import fprime_gds.common.encoders.file_encoder
-import fprime_gds.common.encoders.cmd_encoder
+import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.event_decoder
 import fprime_gds.common.decoders.file_decoder
-import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.pkt_decoder
+import fprime_gds.common.encoders.cmd_encoder
+
+# Encoders and Decoders
+import fprime_gds.common.encoders.file_encoder
 
 
-class EncodingDecoding(object):
+class EncodingDecoding:
     """
     Sets up and runs the encoding and decoding for the standard pipeline. This include the following encoders and
     decoders for standard setups:
@@ -46,6 +47,7 @@ class EncodingDecoding(object):
         dictionaries needed for the decoders to work correctly. This will register then register the decoders with a
         supplied distributor to handle known types with the known decoders. Lastly, the sender will be registered to the
         encoder to handle the encoded data going out.
+
         :param dictionaries: a dictionaries handling object holding dictionaries
         :param distributor: distributor of data to register to
         """
@@ -79,6 +81,7 @@ class EncodingDecoding(object):
         """
         Sends a command to the registered command encoder, and further down the stream. Note: this contains a local
         loopback to any command consumers to ensure that histories and logging are updated.
+
         :param command: command object to send
         """
         for loopback in self.command_subscribers:
@@ -88,6 +91,7 @@ class EncodingDecoding(object):
     def register_event_consumer(self, consumer):
         """
         Registers a history with the event decoder.
+
         :param consumer: consumer of events
         """
         self.event_decoder.register(consumer)
@@ -96,6 +100,7 @@ class EncodingDecoding(object):
         """
         Removes a history from the event decoder. Will raise an error if the history was not
         previously registered.
+
         :param consumer: consumer of events
         :return: a boolean indicating if the consumer was removed.
         """
@@ -104,6 +109,7 @@ class EncodingDecoding(object):
     def register_channel_consumer(self, consumer):
         """
         Registers a history with the telemetry decoder.
+
         :param consumer: consumer of channels
         """
         self.channel_decoder.register(consumer)
@@ -112,6 +118,7 @@ class EncodingDecoding(object):
         """
         Removes a history from the telemetry decoder. Will raise an error if the history was not
         previously registered.
+
         :param consumer: consumer of channels
         :return: a boolean indicating if the consumer was removed.
         """
@@ -120,6 +127,7 @@ class EncodingDecoding(object):
     def register_command_consumer(self, consumer):
         """
         Registers a history with the standard pipeline.
+
         :param consumer: consumer of commands
         """
         self.command_subscribers.append(consumer)
@@ -128,6 +136,7 @@ class EncodingDecoding(object):
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+
         :param consumer: consumer of commands
         :return: a boolean indicating if the consumer was removed.
         """
@@ -140,14 +149,17 @@ class EncodingDecoding(object):
     def register_packet_consumer(self, consumer):
         """
         Registers a history with the standard pipeline.
+
         :param consumer: consumer of packets
         """
-        self.command_subscribers.append(consumer)
+        if self.packet_decoder is not None:
+            self.packet_decoder.register(consumer)
 
     def deregister_packet_consumer(self, consumer):
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+
         :param consumer: consumer of packets
         :return: a boolean indicating if the consumer was removed.
         """

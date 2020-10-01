@@ -14,6 +14,14 @@ namespace Os {
         return NOT_OPENED;
     }
 
+    File::Status File::open(const char* fileName, File::Mode mode, bool include_excl) {
+        return NOT_OPENED;
+    }
+
+    bool File::isOpen(void) {
+      return false;
+    }
+
     File::Status File::seek(NATIVE_INT_TYPE offset, bool absolute) {
         return NOT_OPENED;
     }

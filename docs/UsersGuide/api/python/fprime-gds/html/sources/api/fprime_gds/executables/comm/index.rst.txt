@@ -1,0 +1,155 @@
+:mod:`fprime_gds.executables.comm`
+==================================
+
+.. py:module:: fprime_gds.executables.comm
+
+.. autoapi-nested-parse::
+
+   comm.py:
+
+   This is the F prime communications adapter. This allows the F prime ground tool suite to interact with running F prime
+   deployments that exist on the other end of a "wire" (some communication bus). This is done with the following mechanics:
+
+   1. An adapter is instantiated to handle "read" and "write" functions against the wire
+   2. A framer/deframer is instantiated in order to frame/deframe those packets as transported across the wire.
+   3. "Uplink" and "Downlink" threads are created to loop on data from flight (F prime) and ground (F prime ground)
+      interfaces ensuring that ground data is framed and written to the wire, and flight data is deframed and sent to the
+      ground side.
+
+   Note: assuming the module containing the ground adapter has been imported, then this code should provide it as a CLI
+         argument, removing the need to rewrite most of this class to use something different.
+
+   @author lestarch
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   fprime_gds.executables.comm.Uplinker
+   fprime_gds.executables.comm.Downlinker
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   fprime_gds.executables.comm.main
+
+
+.. data:: LOGGER
+   
+
+   
+
+.. py:class:: Uplinker(uplink_adapter, ground, downlinker)
+
+   Pulls out the code useful for uplink into a single designated place. This will run as a thread, which essentially
+   calls does the following:
+
+   1. Read packets of incoming ground system data
+   2. Frame packet
+   3. Uplink packet
+   4. Repeat 2-3 until queue of packets is drained
+   5. Repeat 1-4
+
+   Note: this class also implements an uplink handshake to the other side of the ground system, to ensure that uplinked
+   items do not roll this process over via the thundering herd.
+
+   .. attribute:: RETRY_COUNT
+      :annotation: = 3
+
+      
+
+   .. method:: uplink(self)
+
+
+      Runs the data uplink to the FSW. The data will first be read from the ground handler, framed with the framing
+      tokens, and then uplinked by the flight adapter's 'write' definition. This will also retry the uplink up to
+      RETRY_COUNT times in case the write failed.
+
+      :param data: data to be framed.
+
+
+   .. method:: stop(self)
+
+
+      Stop the thread depends will close the ground resource which may be blocking
+
+
+   .. method:: get_handshake(packet)
+      :staticmethod:
+
+
+      Gets a handshake raw frame. It repeats the last packet.
+
+      :param packet: packet to repeat back out
+      :return: handshake raw-frame
+
+
+   .. method:: run(self)
+
+
+      Method that run the uplinker thread. This should loop-forever. Will log any uplink errors that occur, but will
+      not stop upon uplink error.
+
+
+
+.. py:exception:: UplinkFailureException
+
+   Bases: :class:`Exception`
+
+   After all retries were complete, uplink has still failed
+
+
+.. py:class:: Downlinker(downlink_adapter, ground)
+
+   Handles the actions associated with downlinking. This boils down to the following steps:
+
+   1. Reading raw data from the raw data adapter facing the flight-side of the system
+   2. Appending any new data to pool of available data
+   3. Deframing all packets available from pool of available data
+   4. Sending all deframed packets out to ground system
+   5. Repeat steps 1-4
+
+   .. method:: downlink(self)
+
+
+      Runs the actual downlink of data.
+
+
+   .. method:: stop(self)
+
+
+      Stop the thread depends will close the ground resource which may be blocking
+
+
+   .. method:: queue_downlink(self, frame)
+
+
+      Enqueues a frame to send as part of downlink. This should not require deframing.
+
+      :param frame: frame to enqueue
+
+
+   .. method:: run(self)
+
+
+      Method that run the downlinker thread. This should loop-forever.
+
+
+
+.. function:: main()
+
+   Main program, degenerates into the run loop.
+
+   :return: return code
+
+

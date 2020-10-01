@@ -14,10 +14,10 @@ https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode
 
 :author: koran
 """
-import os
-import time
 import datetime
+import os
 import threading
+import time
 
 # If openpyxl isn't installed, ignore all functionality in this module
 try:
@@ -36,6 +36,7 @@ class TestLogger:
     User-accessible colors. Can be used for the color arguments
     """
 
+    __test__ = False
     BROWN = "E6CCB3"
     RED = "FF9999"
     ORANGE = "FFCC99"
@@ -180,13 +181,16 @@ class TestLogger:
 
         cell = WriteOnlyCell(self.worksheet, value=string)
         if color is not None:
+            # pylint: disable=E0237
             cell.fill = PatternFill("solid", fgColor=color)
+        # pylint: disable=E0237
         cell.font = Font(
             name=self.font_name,
             bold=(style == self.BOLD),
             italic=(style == self.ITALICS),
             underline=("single" if style == self.UNDERLINED else "none"),
         )
+        # pylint: disable=E0237
         cell.alignment = self.__align
         return cell
 

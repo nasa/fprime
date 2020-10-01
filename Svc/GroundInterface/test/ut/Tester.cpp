@@ -36,7 +36,8 @@ namespace Svc {
       m_uplink_used(30),
       m_uplink_size(sizeof(TOKEN_TYPE) * 3 + m_uplink_used),
       m_uplink_point(0),
-      m_uplink_com_type(Fw::ComPacket::FW_PACKET_COMMAND)
+      m_uplink_com_type(Fw::ComPacket::FW_PACKET_COMMAND),
+      m_buffer(NULL)
   {
     this->initComponents();
     this->connectPorts();

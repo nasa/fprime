@@ -4,8 +4,8 @@ CLI commands
 """
 
 import abc
-from typing import Iterable
 import sys
+from typing import Iterable
 
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
@@ -33,14 +33,12 @@ class BaseCommand(abc.ABC):
             print(log_text)
             sys.stdout.flush()
 
-
     @classmethod
     @abc.abstractmethod
     def handle_arguments(cls, *args, **kwargs):
         """
         Do something to handle the input arguments given
         """
-        pass
 
 
 class QueryHistoryCommand(BaseCommand):
@@ -48,9 +46,6 @@ class QueryHistoryCommand(BaseCommand):
     The base class for a set of related GDS CLI commands that need to query and
     display received data from telemetry channels, F' events, command histories,
     or similar functionalities with closely-related interfaces.
-
-    TODO: Should separate frontend printing code from backend data-getting
-    (this is basically frontend code right now, which isn't necessarily bad)
     """
 
     @classmethod
@@ -67,7 +62,6 @@ class QueryHistoryCommand(BaseCommand):
         :param filter_predicate: Test API predicate used to filter shown items
         :return: An iterable collection of items that passed the filter
         """
-        pass
 
     @classmethod
     def _get_item_list_string(cls, items: Iterable, json: bool = False,) -> str:
@@ -94,9 +88,7 @@ class QueryHistoryCommand(BaseCommand):
         Retrieves an F' item that's occurred since the given time and returns
         its data.
         """
-        pass
 
-    # TODO: Need to do user tests to find a better print format
     @classmethod
     def _get_item_string(cls, item, json: bool = False,) -> str:
         """
@@ -120,9 +112,9 @@ class QueryHistoryCommand(BaseCommand):
         Returns a predicate that can be used to filter any received messages.
         This is done to link printing code to filtering, so that filtering ALWAYS filters the same strings as are printed.
 
-        TODO: Possibly make separate filters for item/item_list strings, since
-        there's currently no guarantee they'll be the same if this base class
-        is overridden?
+        NOTE: Currently assumes that item list strings will contain the
+        individual strings of each items to work with both, which there's no
+        guarantee of if _get_item_list_string is overridden
 
         :param item: The F' item to convert to a string
         :param json: Whether to convert each item to a JSON representation
@@ -154,22 +146,12 @@ class QueryHistoryCommand(BaseCommand):
         items = cls._get_item_list(project_dictionary, search_filter)
         return cls._get_item_list_string(items, json)
 
-    # TODO: Just use args/kwargs instead of this massive argument list? But I
-    # kind of do want some coupling with the frontend code to keep these in sync
     @classmethod
-    def handle_arguments(
+    def _execute_query(
         cls,
-        dictionary: str,
-        ip_address: str,
-        port: int,
-        list: bool,
+        connection_info: misc_utils.ConnectionInfo,
+        search_info: misc_utils.SearchInfo,
         timeout: float,
-        ids: Iterable[int],
-        components: Iterable[str],
-        search: str,
-        json: bool,
-        *args,
-        **kwargs
     ):
         """
         Takes in the given arguments and uses them to print out a formatted
@@ -179,11 +161,11 @@ class QueryHistoryCommand(BaseCommand):
         For descriptions of these arguments, and more function details, see:
             Gds/src/fprime_gds/executables/fprime_cli.py
         """
-        search_filter = cls._get_search_filter(ids, components, search, json)
+        dictionary, ip_address, port = tuple(connection_info)
+        is_printing_list, ids, components, search, json = tuple(search_info)
 
-        # TODO: If combinatorial explosion w/ options becomes an issue,
-        # refactor this to avoid if/else structure?
-        if list:
+        search_filter = cls._get_search_filter(ids, components, search, json)
+        if is_printing_list:
             cls._log(cls._list_all_possible_items(dictionary, search_filter, json))
             return
 
@@ -217,3 +199,23 @@ class QueryHistoryCommand(BaseCommand):
         pipeline.disconnect()
         api.teardown()
         # ======================================================================
+
+    @classmethod
+    def handle_arguments(cls, *args, **kwargs):
+        """
+        Handle the given input arguments, then execute the command itself
+
+        NOTE: This is currently just a pass-through method
+        """
+        connection_info = misc_utils.ConnectionInfo(
+            kwargs["dictionary"], kwargs["ip_address"], kwargs["port"]
+        )
+        search_info = misc_utils.SearchInfo(
+            kwargs["is_printing_list"],
+            kwargs["ids"],
+            kwargs["components"],
+            kwargs["search"],
+            kwargs["json"],
+        )
+
+        cls._execute_query(connection_info, search_info, kwargs["timeout"])

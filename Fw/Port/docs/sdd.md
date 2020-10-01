@@ -1,5 +1,5 @@
-<title>Fw::Port SDD</title>
-# Fw::Port Descriptions
+\page FwPortClasses Fw::Port Classes
+# Fw::Port Classes
 
 ## 1. Introduction
 

@@ -18,6 +18,7 @@ namespace Os {
                 OPEN_SYNC_WRITE, //!<  Open file for writing; writes don't return until data is on disk
                 OPEN_SYNC_DIRECT_WRITE, //!<  Open file for writing, bypassing all caching. Requires data alignment
                 OPEN_CREATE, //!< Open file for writing and truncates file if it exists, ie same flags as creat()
+                OPEN_APPEND, //!<  Open file for appending
             } Mode;
 
             typedef enum {
@@ -34,6 +35,8 @@ namespace Os {
             virtual ~File(); //!<  Destructor. Will close file if still open
             Status prealloc(NATIVE_INT_TYPE offset, NATIVE_INT_TYPE len);
             Status open(const char* fileName, Mode mode); //!<  open file. Writing creates file if it doesn't exist
+            Status open(const char* fileName, Mode mode, bool include_excl); //!<  open file. Writing creates file if it doesn't exist
+            bool isOpen(void); //!< check if file descriptor is open or not.
             Status seek(NATIVE_INT_TYPE offset, bool absolute = true); //!<  seek to location. If absolute = true, absolute from beginning of file
             Status flush(); //!< flush data to disk. No-op on systems that do not support.
             Status read(void * buffer, NATIVE_INT_TYPE &size, bool waitForFull = true); //!<  read data from file; returns amount read or errno.

@@ -16,9 +16,9 @@ do
         warn_and_cont "RPI tools not installed, refusing to test."
         continue
     fi
-    echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS}${NOCOLOR}"
+    echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
     export CHECK_TARGET_PLATFORM="native"
-    for target in ${FPUTIL_TARGETS}
+    for target in "${FPUTIL_TARGETS[@]}"
     do
         if [[ "${TEST_TYPE}" != "QUICK" ]] || [[ "${target}" == "generate" ]]
         then

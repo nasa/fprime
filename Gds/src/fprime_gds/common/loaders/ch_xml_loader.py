@@ -6,12 +6,12 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
+
+from fprime_gds.common.data_types import exceptions
+from fprime_gds.common.templates.ch_template import ChTemplate
 
 # Custom Python Modules
 from .xml_loader import XmlLoader
-from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.data_types import exceptions
 
 
 class ChXmlLoader(XmlLoader):
@@ -52,7 +52,7 @@ class ChXmlLoader(XmlLoader):
 
         # Check if xml dict has channels section
         ch_section = self.get_xml_section(self.CH_SECT, xml_tree)
-        if ch_section == None:
+        if ch_section is None:
             raise exceptions.GseControllerParsingException(
                 "Xml dict did not have a %s section" % self.CH_SECT
             )

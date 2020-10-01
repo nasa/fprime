@@ -6,26 +6,24 @@ Checks that the testgen tool is properly generating its test cpp/hpp.
 @author jishii
 """
 
+import filecmp
 import os
-import sys
-
-import subprocess
-from subprocess import CalledProcessError
-import pexpect
-from pexpect import TIMEOUT, EOF
-from optparse import OptionParser
-
 import shutil
 import tempfile
-import filecmp
-import logging
 import time
+
+import pexpect
+from pexpect import EOF, TIMEOUT
+
 
 # Version label for now
 class Version:
-    id      = "0.1"
+    id = "0.1"
     comment = "Initial prototype"
+
+
 VERSION = Version()
+
 
 def add_tester_section(filename, section_flag, section_type):
     """
@@ -34,48 +32,51 @@ def add_tester_section(filename, section_flag, section_type):
     """
     with open(filename, "r+") as fileopen:
         lines = fileopen.readlines()
-        
+
         # Don't duplicate the test cases
         if "testAddCommand(void)" in str(lines):
             return
-        
+
         # Starting at line 0, rewrite Tester.cpp/hpp with test cases
         fileopen.seek(0)
         skip_lines = 0
         for line in lines:
             if not line:
                 break
-            
+
             # Skip_lines allows user to print out test cases at an
             # offset from method argument "section_flag"
             if skip_lines <= 0:
                 if section_flag in line:
                     if section_type == "TESTER_METHODS":
-                        skip_lines = 2 # Skip to todo method init
+                        skip_lines = 2  # Skip to todo method init
                     if section_type == "TESTER_HEADERS":
-                        skip_lines = 2 # Skip to todo method def
+                        skip_lines = 2  # Skip to todo method def
                     fileopen.write(line)
                 else:
                     fileopen.write(line)
             else:
                 skip_lines = skip_lines - 1
-                
+
                 if skip_lines == 0:
                     write_tester_lines(fileopen, section_type)
-                
+
                 fileopen.write(line)
 
         fileopen.truncate()
+
 
 def write_tester_lines(fileopen, section_type):
     """
     Write test cases inside "fileopen" at whatever location
     "fileopen" is currently pointing to
     """
-    testgen_dir = "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
+    testdir = os.path.join("Autocoders", "Python", "test", "testgen")
     if section_type == "TESTER_METHODS":
         # Test case method initializations found in local file
-        with open(testdir + "__tester_handcoded_methods.txt", "r") as methodstub:
+        with open(
+            os.path.join(testdir, "__tester_handcoded_methods.txt")
+        ) as methodstub:
             for line in methodstub:
                 fileopen.write(line)
     if section_type == "TESTER_HEADERS":
@@ -86,16 +87,17 @@ def write_tester_lines(fileopen, section_type):
         fileopen.write("\t\tvoid testMultCommand(void);\n")
         fileopen.write("\t\tvoid testDivCommand(void);\n")
 
+
 def file_diff(file1, file2):
     """
     Returns set of line numbers from file1 which differ from file2
     """
     diff_lines = set()
-    with open(file1, "r") as file1open:
-        with open(file2, "r") as file2open:
+    with open(file1) as file1open:
+        with open(file2) as file2open:
             count = 0
             # Compare line by line until a file hits EOF
-            while(1):
+            while 1:
                 line1 = file1open.readline()
                 line2 = file2open.readline()
                 if not line1 or not line2:
@@ -112,6 +114,7 @@ def file_diff(file1, file2):
 
     return diff_lines
 
+
 def file_len(fname):
     """
     Helper method to get number of lines in file
@@ -120,6 +123,7 @@ def file_len(fname):
         for i, l in enumerate(f):
             pass
     return i + 1
+
 
 def remove_headers(filename):
     """
@@ -134,16 +138,20 @@ def remove_headers(filename):
         skip_docstring = False
         for line in lines:
             if not skip_docstring:
-                if not (num == 0 and ('*' in line or '//' in line or "'''" in line or '"""' in line)):
+                if not (
+                    num == 0
+                    and ("*" in line or "//" in line or "'''" in line or '"""' in line)
+                ):
                     # Don't want to print empty first line
                     if num != 0 or line.strip():
                         f.write(line)
                         num += 1
-                            
+
             if "'''" in line or '"""' in line:
                 skip_docstring = not skip_docstring
-        
+
         f.truncate()
+
 
 def compare_genfile(filename):
     """
@@ -151,15 +159,42 @@ def compare_genfile(filename):
     """
     if ".py" in filename:
         filename = "DefaultDict/serializable/{}".format(filename)
-    
+
     remove_headers(filename)
 
-    if not (filecmp.cmp(filename, testdir + "templates" + os.sep + "{}".format(filename).replace(".", "_") + ".txt")):
-        print("WARNING: {} generated incorrectly according to Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "enum_xml" + os.sep + "templates" + os.sep + "{}".format(filename, filename.replace(".", "_") + ".txt"))
-        diff_lines = file_diff(filename, testdir + "templates" + os.sep + "{}".format(filename).replace(".", "_") + ".txt")
-        print("WARNING: the following lines from " + filename + " differ from the template: " + str(diff_lines))
+    if not (
+        filecmp.cmp(
+            filename,
+            os.path.join(
+                testdir, "templates", "{}.txt".format(filename).replace(".", "_")
+            ),
+        )
+    ):
+        print(
+            "WARNING: {} generated incorrectly according to Autocoders".format(
+                os.path.join(
+                    "Python",
+                    "test",
+                    "enum_xml",
+                    "templates",
+                    "{}.txt".format(filename.replace(".", "_")),
+                )
+            )
+        )
+        diff_lines = file_diff(
+            filename,
+            os.path.join(
+                testdir, "templates", "{}.txt".format(filename).replace(".", "_")
+            ),
+        )
+        print(
+            "WARNING: the following lines from {} differ from the template: {}".format(
+                filename, str(diff_lines)
+            )
+        )
     else:
         print("{} is consistent with expected template".format(filename))
+
 
 def test_testgen():
     """
@@ -170,44 +205,82 @@ def test_testgen():
     try:
         # cd into test directory to find test files (code/test/dictgen can only find files this way)
         curdir = os.getcwd()
-        testdir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep
-        testutdir = testdir + "test" + os.sep + "ut"
+        testdir = os.path.join(
+            os.environ["BUILD_ROOT"], "Autocoders", "Python", "test", "testgen"
+        )
+        testutdir = os.path.join(testdir, "test", "ut")
         os.chdir(testdir)
-        
-        bindir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
-        
-        # Autocode component and port
-        pport1 = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathOpPortAi.xml")
-        pport1.expect("(?=.*Generating code filename: MathOpPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathOpPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*")
-        pport2 = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathResultPortAi.xml")
-        pport2.expect("(?=.*Generating code filename: MathResultPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathResultPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*")
-        pcomp = pexpect.spawn("python " + bindir + "codegen.py -v " + testdir + "MathSenderComponentAi.xml")
-        pcomp.expect("(?=.*MathSender)(?=.*MathOp)(?=.*MathResult)(?!.*ERROR).*")
-        
-        os.chdir(testutdir)
-        
-        print(os.getcwd())
-        
-        # Autocode tests
-        p = pexpect.spawn("python " + bindir + "testgen.py -v -f " + testdir + "MathSenderComponentAi.xml")
 
-        p.expect("(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.cpp)(?=.*Generated Tester.hpp)(?!.*ERROR).*", timeout=5)
+        bindir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin")
+
+        # Autocode component and port
+        pport1 = pexpect.spawn(
+            "python "
+            + os.path.join(bindir, "codegen.py")
+            + " -v "
+            + testdir
+            + "MathOpPortAi.xml"
+        )
+        pport1.expect(
+            "(?=.*Generating code filename: MathOpPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathOpPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*"
+        )
+        pport2 = pexpect.spawn(
+            "python "
+            + os.path.join(bindir, "codegen.py")
+            + " -v "
+            + testdir
+            + "MathResultPortAi.xml"
+        )
+        pport2.expect(
+            "(?=.*Generating code filename: MathResultPortAc.cpp, using default XML filename prefix...)(?=.*Generating code filename: MathResultPortAc.hpp, using default XML filename prefix...)(?!.*ERROR).*"
+        )
+        pcomp = pexpect.spawn(
+            "python "
+            + os.path.join(bindir, "codegen.py")
+            + " -v "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
+        )
+        pcomp.expect("(?=.*MathSender)(?=.*MathOp)(?=.*MathResult)(?!.*ERROR).*")
+
+        os.chdir(testutdir)
+
+        print(os.getcwd())
+
+        # Autocode tests
+        p = pexpect.spawn(
+            "python"
+            + os.path.join(bindir, "testgen.py")
+            + " -v -f "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
+        )
+
+        p.expect(
+            "(?=.*Generated test files)(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated Tester.cpp)(?=.*Generated Tester.hpp)(?!.*ERROR).*",
+            timeout=5,
+        )
 
         print("Autocoded TestComponent")
-        
+
         time.sleep(1)
 
         add_tester_section("Tester.cpp", "// Tests", "TESTER_METHODS")
         add_tester_section("Tester.hpp", "//! To do", "TESTER_HEADERS")
-        
+
         time.sleep(1)
-        
+
         # Run testgen again to generate main with test cases
-        p2 = pexpect.spawn("python " + bindir + "testgen.py -v -m " + testdir + "MathSenderComponentAi.xml")
-        
-        p2.expect("(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated TestMain.cpp)(?!.*ERROR).*", timeout=5)
-        
+        p2 = pexpect.spawn(
+            "python"
+            + os.path.join(bindir, "testgen.py")
+            + " -v -m "
+            + os.path.join(testdir, "MathSenderComponentAi.xml")
+        )
+
+        p2.expect(
+            "(?=.*MathSenderComponentAi.xml)(?=.*Generated TesterBase.hpp)(?=.*Generated TesterBase.cpp)(?=.*Generated GTestBase.hpp)(?=.*Generated GTestBase.cpp)(?=.*Generated TestMain.cpp)(?!.*ERROR).*",
+            timeout=5,
+        )
+
         # Test whether all generated files match expected
         compare_genfile("Tester.cpp")
         compare_genfile("Tester.hpp")
@@ -216,42 +289,59 @@ def test_testgen():
         compare_genfile("GTestBase.cpp")
         compare_genfile("GTestBase.hpp")
         compare_genfile("TestMain.cpp")
-            
-        
+
         try:
-            rootdir = tempfile.mkdtemp() + os.sep
+            rootdir = tempfile.mkdtemp()
             os.chdir(rootdir)
-            
+
             # Create build dir for unit tests if it doesn't exist
             if not os.path.exists(rootdir):
                 os.mkdir(rootdir)
 
             builddir = rootdir
             os.chdir(builddir)
-            
+
             # Run cmake to configure testgen test
-            if not os.path.exists(builddir + "F-Prime" + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "test" + os.sep + "testgen" + os.sep + "Makefile"):
-                pcmake = pexpect.spawn("cmake {} -DCMAKE_BUILD_TYPE=TESTING".format(os.environ["BUILD_ROOT"]))
-                pcmake.expect("(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)")
+            if not os.path.exists(
+                os.path.join(
+                    builddir,
+                    "F-Prime",
+                    "Autocoders",
+                    "Python",
+                    "test",
+                    "testgen",
+                    "Makefile",
+                )
+            ):
+                pcmake = pexpect.spawn(
+                    "cmake {} -DCMAKE_BUILD_TYPE=TESTING".format(
+                        os.environ["BUILD_ROOT"]
+                    )
+                )
+                pcmake.expect(
+                    "(?=.*Configuring done)(?=.*Generating done)(?=.*Build files have been written)"
+                )
                 print("Successfully ran cmake for testgen test")
-            
+
             # Build testgen ut
             pbuild = pexpect.spawn("make Autocoders_Python_test_testgen_ut_exe -j32")
             pbuild.expect("(?=.*Built target Autocoders_Python_test_testgen_ut_exe)")
-            
+
             print("Built testgen unit test")
 
-            utdir = builddir + "bin" + os.sep + os.uname()[0] + os.sep + "Autocoders_Python_test_testgen_ut_exe"
-            
+            utdir = os.path.join(
+                builddir, "bin", os.uname()[0], "Autocoders_Python_test_testgen_ut_exe"
+            )
+
             # Run ut
             ptestrun = pexpect.spawn(utdir)
-            
+
             print(ptestrun.read().decode("ascii"))
-            
-            ptestrun.expect("(?!.*FAILED)(?!.*ASSERT).*");
-            
+
+            ptestrun.expect("(?!.*FAILED)(?!.*ASSERT).*")
+
             print("Successfully ran testgen unit test")
-            
+
             # Remove generated files
             os.chdir(testdir)
             if os.path.exists("MathOpPortAc.cpp"):
@@ -266,27 +356,27 @@ def test_testgen():
                 os.remove("MathSenderComponentAc.cpp")
             if os.path.exists("MathSenderComponentAc.hpp"):
                 os.remove("MathSenderComponentAc.hpp")
-            
+
             ## If there was no timeout the pexpect test passed
             assert True
         finally:
             shutil.rmtree(rootdir)
-                
+
             os.chdir(curdir)
-        
+
     ## A timeout occurs when pexpect cannot match the executable
     ## output with the designated expectation. In this case the
     ## key expectation is p.expect(expect_string, timeout=3)
     ## which tests what the method name describes
     except TIMEOUT as e:
         print("Timeout Error. Expected Value not returned.")
-#        print ("-------Program Output-------")
-#        print (ptestrun.before)
-        print ("-------Expected Output-------")
-        print (e.get_trace())
+        #        print ("-------Program Output-------")
+        #        print (ptestrun.before)
+        print("-------Expected Output-------")
+        print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         print("EOF Error. Pexpect did not find expected output in program output.")
-#        print ("-------Program Output-------")
-#        print (ptestrun.before)
+        #        print ("-------Program Output-------")
+        #        print (ptestrun.before)
         assert False

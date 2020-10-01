@@ -5,27 +5,29 @@
 # this framework.
 #
 ####
-import os
 import logging
+import os
+
 import flask
 import flask_restful
 import flask_uploads
 
+import fprime_gds.flask.channels
+
 # Import the Flask API implementations
 import fprime_gds.flask.commands
 import fprime_gds.flask.events
-import fprime_gds.flask.channels
-import fprime_gds.flask.logs
 import fprime_gds.flask.json
+import fprime_gds.flask.logs
 import fprime_gds.flask.updown
 
 from . import components
 
 # Update logging to avoid redundant messages
-log = logging.getLogger("werkzeug")
-log.setLevel(logging.WARN)
-log = logging.getLogger("downlink")
-log.setLevel(logging.INFO)
+logger = logging.getLogger("werkzeug")
+logger.setLevel(logging.WARN)
+logger = logging.getLogger("downlink")
+logger.setLevel(logging.INFO)
 
 
 def construct_app():
@@ -38,6 +40,7 @@ def construct_app():
     4. Create Restful API for registering flask items
     5. Setup flask_uploads settings
     6. Register all restful endpoints
+
     :return: setup app
     """
     app = flask.Flask(__name__, static_url_path="")
@@ -135,6 +138,7 @@ app, _ = construct_app()
 def files_serve(path):
     """
     A function used to serve the JS files needed for the GUI layers.
+
     :param path: path to the file (in terms of web browser)
     """
     return flask.send_from_directory("static/js", path)

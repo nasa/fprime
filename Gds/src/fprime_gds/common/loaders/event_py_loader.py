@@ -6,14 +6,13 @@
 
 @bug No known bugs
 """
-from __future__ import print_function
-from __future__ import absolute_import
+
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+from fprime_gds.common.templates import event_template
+from fprime_gds.common.utils.event_severity import EventSeverity
 
 # Custom Python Modules
 from . import python_loader
-from fprime_gds.common.templates import event_template
-from fprime_gds.common.utils.event_severity import EventSeverity
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
 
 class EventPyLoader(python_loader.PythonLoader):
@@ -28,18 +27,6 @@ class EventPyLoader(python_loader.PythonLoader):
     DESC_FIELD = "EVENT_DESCRIPTION"
     ARGS_FIELD = "ARGUMENTS"
 
-    def __init__(self):
-        """
-        Constructor
-
-        Returns:
-            An initialized loader object
-        """
-        super(EventPyLoader, self).__init__()
-
-    # TODO does this strange interface where you actually only call functions
-    # defined in the python loader and not this very convinient looking function
-    # make things more confusing than they need to be?
     def construct_dicts(self, path):
         """
         Constructs and returns python dictionaries keyed on id and name
@@ -60,7 +47,6 @@ class EventPyLoader(python_loader.PythonLoader):
             fields respectively and the values should be EventTemplate
             objects.
         """
-        # TODO currently we are always using the superpkg, is that OK?
         module_dicts = self.read_dict(path, use_superpkg=True)
 
         id_dict = dict()

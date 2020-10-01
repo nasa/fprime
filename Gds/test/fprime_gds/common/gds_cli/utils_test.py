@@ -3,13 +3,14 @@ A suite of unit tests for testing utilities the GDS CLI uses
 """
 
 from copy import deepcopy
+
 import pytest
 
-from fprime_gds.common.data_types.pkt_data import PktData
-from fprime_gds.common.data_types.sys_data import SysData
 import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 import fprime_gds.common.gds_cli.misc_utils as misc_utils
 import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
+from fprime_gds.common.data_types.pkt_data import PktData
+from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.templates.data_template import DataTemplate
 from fprime_gds.common.templates.pkt_template import PktTemplate
 from fprime_gds.common.testing_fw import predicates
@@ -130,7 +131,7 @@ def test_repeat_with_function_returning_enclosed_string_valid():
         count += 1
         if count == 2:
             raise KeyboardInterrupt
-        return ("this is only 1 argument, since it's in a tuple",)
+        return (my_string,)  # this is only 1 argument, since it's in a tuple
 
     misc_utils.repeat_until_interrupt(error_before_exit, "let's do this")
 
@@ -139,10 +140,11 @@ def test_repeat_with_function_returning_enclosed_string_valid():
 # Test test_api_utils.get_item_list
 # ==============================================================================
 
-
+# Pytest fixtures work by reusing outer names, so disable this warning
+# pylint: disable=redefined-outer-name
 @pytest.fixture
 def item_template_dictionary():
-    # TODO: Can't instantiate raw data template, so instead instantiating Pkt
+    # Can't instantiate raw data template, so instead instantiating PktTemp
     template_12 = PktTemplate(pkt_id=12, pkt_name="OneTwo", ch_temp_list=[])
     template_34 = PktTemplate(pkt_id=34, pkt_name="ThreeFour", ch_temp_list=[])
     template_56 = PktTemplate(pkt_id=56, pkt_name="FiveSix", ch_temp_list=[])
@@ -162,8 +164,7 @@ def t2d(template: DataTemplate) -> SysData:
     """
     Convers a DataTemplate object to a SysData object
     """
-    # TODO: Currently unable to actually instantiate SysData (bug in its init?),
-    # so instantiating ChData instead
+    # Currently unable to instantiate SysData, so instantiating PktData instead
     return PktData([], None, template)
 
 

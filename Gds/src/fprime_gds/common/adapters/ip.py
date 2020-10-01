@@ -7,11 +7,13 @@ across a Tcp and/or UDP network interface.
 
 @author lestarch
 """
-import time
+import abc
 import logging
-import socket
 import queue
+import socket
 import threading
+import time
+
 import fprime_gds.common.adapters.base
 import fprime_gds.common.logger
 
@@ -22,13 +24,14 @@ def check_port(address, port):
     """
     Checks a given address and port to ensure that it is available. If not available, a ValueError is raised. Note: this
     is done by binding to an address. It does not call "listen"
+
     :param address: address that will bind to
     :param port: port to bind to
     """
     try:
         socket_trial = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_trial.bind((address, port))
-    except socket.error as err:
+    except OSError as err:
         raise ValueError(
             "Error with address/port of '{}:{}' : {}".format(address, port, err)
         )
@@ -79,12 +82,12 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
             if IpAdapter.KEEPALIVE_INTERVAL is not None:
                 self.keepalive = threading.Thread(
                     target=self.th_alive, args=[float(self.KEEPALIVE_INTERVAL)]
-                ).start()
+                )
+                self.keepalive.start()
         except (ValueError, TypeError) as exc:
             LOGGER.error(
-                "Failed to start keep-alive thread. {}: {}".format(
-                    type(exc).__name__, str(exc)
-                )
+                "Failed to start keep-alive thread. %s: %s"
+                % (type(exc).__name__, str(exc))
             )
 
     def close(self):
@@ -104,6 +107,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Send a given framed bit of data by sending it out the serial interface. It will attempt to reconnect if there is
         was a problem previously. This function will return true on success, or false on error.
+
         :param frame: framed data packet to send out
         :return: True, when data was sent through the UART. False otherwise.
         """
@@ -114,6 +118,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Read up to a given count in bytes from the TCP adapter. This may return less than the full requested size but
         is expected to return some data.
+
         :param _: upper bound of data requested, unused with IP connections
         :return: data successfully read
         """
@@ -138,6 +143,7 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
     def get_arguments(cls):
         """
         Returns a dictionary of flag to argparse-argument dictionaries for use with argparse to setup arguments.
+
         :return: dictionary of flag to argparse arguments for use with argparse
         """
         return {
@@ -160,12 +166,13 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         """
         Code that should check arguments of this adapter. If there is a problem with this code, then a "ValueError"
         should be raised describing the problem with these arguments.
+
         :param args: arguments as dictionary
         """
         check_port(args["address"], args["port"])
 
 
-class IpHandler(object):
+class IpHandler(abc.ABC):
     """
     Base handler for IP types. This will provide the basic methods, and synchronization for reading/writing to multiple
     child implementations, namely: UDP and TCP. These child objects can then be instantiated individually.
@@ -184,19 +191,20 @@ class IpHandler(object):
         self,
         address,
         port,
-        type,
+        adapter_type,
         server=True,
         logger=logging.getLogger("ip_handler"),
         post_connect=None,
     ):
         """
         Initialize this handler. This will set the variables, and start up the internal receive thread.
+
         :param address: address of the handler
         :param port: port of the handler
-        :param type: type of this adapter. socket.SOCK_STREAM or socket.SOCK_DGRAM
+        :param adapter_type: type of this adapter. socket.SOCK_STREAM or socket.SOCK_DGRAM
         """
         self.running = True
-        self.type = type
+        self.type = adapter_type
         self.address = address
         self.next_connect = 0
         self.port = port
@@ -229,11 +237,10 @@ class IpHandler(object):
                     self.open_impl()
                     self.connected = IpHandler.CONNECTED
                     self.logger.info(
-                        "{} connected to {}:{}".format(
-                            "Server" if self.server else "Client",
-                            self.address,
-                            self.port,
-                        )
+                        "%s connected to %s:%d",
+                        "Server" if self.server else "Client",
+                        self.address,
+                        self.port,
                     )
                     # Post connect handshake
                     if self.post_connect is not None:
@@ -241,15 +248,21 @@ class IpHandler(object):
             # All errors (timeout included) we should close down the socket, which sets self.connected
             except ConnectionAbortedError:
                 return False
-            except socket.error as exc:
+            except OSError as exc:
                 self.logger.warning(
-                    "Failed to open socket at {}:{}, retrying: {}: {}".format(
-                        self.address, self.port, type(exc).__name__, str(exc)
-                    )
+                    "Failed to open socket at %s:%d, retrying: %s: %s",
+                    self.address,
+                    self.port,
+                    type(exc).__name__,
+                    str(exc),
                 )
                 self.next_connect = time.time() + IpHandler.ERROR_RETRY_INTERVAL
                 self.close()
         return self.connected == self.CONNECTED
+
+    @abc.abstractmethod
+    def open_impl(self):
+        """ Implementation of the handler's open call"""
 
     def close(self):
         """
@@ -262,6 +275,10 @@ class IpHandler(object):
             self.socket = None
             self.connected = IpHandler.CLOSED
 
+    @abc.abstractmethod
+    def close_impl(self):
+        """ Implementation of the handler's close call"""
+
     def stop(self):
         """ Stop the handler from reconnecting and close"""
         self.running = False
@@ -271,38 +288,48 @@ class IpHandler(object):
         """
         Reads a single message after ensuring that the socket is fully open. On a non-timeout error, close the socket in
         preparation for a reconnect. This internally will call the child's read_impl
+
         :return: data read from TCP server or b"" when nothing is available
         """
         # This will block waiting for data
         try:
             return self.read_impl()
-        except socket.error as exc:
+        except OSError as exc:
             if self.running:
                 self.close()
                 self.logger.warning(
-                    "Read failure attempting reconnection. {}: {}".format(
-                        type(exc).__name__, str(exc)
-                    )
+                    "Read failure attempting reconnection. %s: %s",
+                    type(exc).__name__,
+                    str(exc),
                 )
                 self.open()
         return b""
+
+    @abc.abstractmethod
+    def read_impl(self):
+        """ Implementation of the handler's read call"""
 
     def write(self, message):
         """
         Writes a single message after ensuring that the socket is fully open. On any error, close the socket in
         preparation for a reconnect. This internally will call the child's write_impl
+
         :param message: message to send
         :return: True if all data was written, False otherwise
         """
         try:
             self.write_impl(message)
             return True
-        except socket.error as exc:
+        except OSError as exc:
             if self.running:
                 self.logger.warning(
-                    "Write failure: {}: {}".format(type(exc).__name__, str(exc))
+                    "Write failure: %s: %s", type(exc).__name__, str(exc)
                 )
         return False
+
+    @abc.abstractmethod
+    def write_impl(self, message):
+        """ Implementation of the handler's write call"""
 
     @staticmethod
     def kill_socket(sock):
@@ -332,10 +359,11 @@ class TcpHandler(IpHandler):
     ):
         """
         Init the TCP adapter with port and address
+
         :param address: address of TCP
         :param port: port of TCP
         """
-        super(TcpHandler, self).__init__(
+        super().__init__(
             address, port, socket.SOCK_STREAM, server, logger, post_connect
         )
         self.client = None
@@ -374,6 +402,7 @@ class TcpHandler(IpHandler):
     def write_impl(self, message):
         """
         Send is implemented with TCP. It will send it to the connected client.
+
         :param message: message to send out
         """
         # Block until the port is open
@@ -392,12 +421,11 @@ class UdpHandler(IpHandler):
     ):
         """
         Init UDP with address and port
+
         :param address: address of UDP
         :param port: port of UDP
         """
-        super(UdpHandler, self).__init__(
-            address, port, socket.SOCK_DGRAM, server, logger
-        )
+        super().__init__(address, port, socket.SOCK_DGRAM, server, logger)
 
     def open_impl(self):
         """No extra steps required"""

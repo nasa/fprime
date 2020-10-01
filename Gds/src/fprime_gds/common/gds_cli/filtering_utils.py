@@ -11,26 +11,27 @@ from fprime_gds.common.testing_fw import predicates
 
 
 class id_predicate(predicates.predicate):
-    def __init__(self, id: int):
+    def __init__(self, id_num: int):
         """
         A predicate that tests if the SysData or DataTemplate argument given to
         it is of a given ID type.
 
-        :param id: The ID to compare the item against
+        :param id_num: The ID to compare the item against
         """
-        self.id = id
+        self.id_num = id_num
 
     def __call__(self, item):
         """
+
         :param item: The object or value to evaluate
         """
-        return hasattr(item, "get_id") and self.id == item.get_id()
+        return hasattr(item, "get_id") and self.id_num == item.get_id()
 
     def __str__(self):
         """
         Returns a string outlining the evaluation done by the predicate.
         """
-        return "x.id == {}".format(self.id)
+        return "x.id == {}".format(self.id_num)
 
 
 def get_id_predicate(ids: Iterable[int]) -> predicates.predicate:
@@ -44,7 +45,7 @@ def get_id_predicate(ids: Iterable[int]) -> predicates.predicate:
         IDs
     """
     if ids:
-        id_preds = [id_predicate(id) for id in ids]
+        id_preds = [id_predicate(id_num) for id_num in ids]
         return predicates.satisfies_any(id_preds)
     return predicates.always_true()
 
@@ -62,14 +63,15 @@ class component_predicate(predicates.predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
-        # TODO: Always returns true if no component found, currently
+        # NOTE: Always returns true if no component found
         item_component = self.comp
         if hasattr(item, "get_comp_name"):
             item_component = item.get_comp_name()
         elif hasattr(item.get_template(), "get_comp_name"):
-            # TODO: Technically law of Minerva violation (acceptable?)
+            # Technically law of Minerva violation (acceptable?)
             item_component = item.get_template().get_comp_name()
         return self.comp == item_component
 
@@ -112,6 +114,7 @@ class contains_search_string(predicates.predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         return self.search_string in self.to_str(item)
@@ -178,7 +181,6 @@ class cmd_predicate(predicates.predicate):
         A predicate for specifying a CmdData object from data_types.cmd_data.
         This predicate can be used to search a history.
         """
-        pass
 
     def __call__(self, cmd):
         """

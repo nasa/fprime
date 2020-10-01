@@ -18,6 +18,7 @@ class GDSJsonEncoder(flask.json.JSONEncoder):
         """
         Override the default JSON encoder to pull out a dictionary for our handled types for encoding with the default
         encoder built into flask
+
         :param obj: obj to encode
         :return: JSON
         """

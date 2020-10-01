@@ -1,10 +1,10 @@
-LfNeasc::TokenBucket
-===
+\page UtilsTokenBucketClass Utils::TokenBucket Class
+# Utils::TokenBucket
 
 ## 1 Introduction
 
 `TokenBucket` is a pure utility class used for throttling actions, such as
-components that want to throttle EVRs.
+components that want to throttle events.
 
 It is similar to `RateLimiter`, but supports a different throttling behavior,
 specifically time-based throughput throttling with burstiness. For instance,
@@ -19,7 +19,7 @@ TokenBucket is a class that can be included and instantiated with the initial
 replenish interval and max tokens.
 
 ```cpp
-#include <LfNeasc/Common/Util/TokenBucket.hpp>
+#include <Utils/TokenBucket.hpp>
 ...
 U32 replenishIntervalMicroSecs = 1000000;
 U32 maxTokens = 5;
@@ -62,12 +62,3 @@ TokenBucket bucket(replenishIntervalMicroSecs, maxTokens, replenishRate, startTo
 
 - Replenish rate is the number of tokens to increment by per interval. By default, this is 1.
 - Start tokens is the number of tokens to start with. Note that the first trigger will nonetheless attempt to replenish tokens from the start time until the given time, so it is best used with the start time parameter. By default, start tokens is max tokens, and start time is 0.
-
-
-## 3 Unit Test Results
-
-| File |
-|------|
-|[`Unit Tests`](../test/ut/output/test.txt)|
-|[`Code Coverage`](../test/ut/output/TokenBucket.cpp.gcov)|
-|[`Code Coverage Summary`](../test/ut/output/LfNeascCommonUtil_gcov.txt)|

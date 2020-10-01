@@ -16,7 +16,7 @@ import copy
 import struct
 
 
-def CHECKSUM_CALC(data):
+def CHECKSUM_CALC(_):
     """ Initial checksum implementation for FpFramerDeframer. """
     return 0xCAFECAFE
 
@@ -32,6 +32,7 @@ class FramerDeframer(abc.ABC):
         """
         Frames outgoing data in the specified format. Expects incoming raw bytes to frame, and adds on the needed header
         and footer bytes. This new array of bytes is returned from the method.
+
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
@@ -44,6 +45,7 @@ class FramerDeframer(abc.ABC):
         returns None. Expects incoming raw bytes to deframe, and returns a deframed packet or None, and the leftover
         bytes that were unused. Will search and discard data up until a start token is found. Note: data will be
         consumed up to the first start token found.
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)
@@ -53,6 +55,7 @@ class FramerDeframer(abc.ABC):
         """
         Deframes all available packets found in a single set of bytes by calling deframe until a None packet is
         retrieved. This list of packets, and the remaining bytes are returned
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return:
@@ -116,7 +119,7 @@ class FpFramerDeframer(FramerDeframer):
             FpFramerDeframer.START_TOKEN = 0xEF
         else:
             raise ValueError(
-                "Invalid TOKEN_SIZE of {0}".format(FpFramerDeframer.TOKEN_SIZE)
+                "Invalid TOKEN_SIZE of {}".format(FpFramerDeframer.TOKEN_SIZE)
             )
         FpFramerDeframer.HEADER_FORMAT = ">" + (FpFramerDeframer.TOKEN_TYPE * 2)
 
@@ -124,6 +127,7 @@ class FpFramerDeframer(FramerDeframer):
         """
         Frames outgoing data in the F prime standard format. Expects incoming raw bytes to frame, and adds on the
         needed framing tokens to the front and end of the bytes.
+
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
@@ -141,6 +145,7 @@ class FpFramerDeframer(FramerDeframer):
         returns None. Expects incoming raw bytes to deframe, and returns a deframed packet or None, and the leftover
         bytes that were unused. Will search and discard data up until a start token is found. Note: data will be
         consumed up to the first start token found.
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)
@@ -166,7 +171,7 @@ class FpFramerDeframer(FramerDeframer):
             # If the pool is large enough to read the whole frame, then read it
             elif len(data) >= total_size:
                 deframed, check = struct.unpack_from(
-                    ">{0}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE
+                    ">{}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE
                 )
                 # If the checksum is valid, return the packet. Otherwise continue to rotate
                 if check == CHECKSUM_CALC(
@@ -206,6 +211,7 @@ class TcpServerFramerDeframer(FramerDeframer):
         """
         Frames outgoing data in the Tcp server outgoing format. Expects incoming raw bytes to frame, and adds on the
         needed framing tokens to the front and end of the bytes.
+
         :param data: bytes to frame
         :return: array of raw bytes representing a framed packet. Should be ready for uplink.
         """
@@ -218,6 +224,7 @@ class TcpServerFramerDeframer(FramerDeframer):
         returns None. Expects incoming raw bytes to deframe, and returns a deframed packet or None, and the leftover
         bytes that were unused. Will search and discard data up until a start token is found. Note: data will be
         consumed up to the first start token found.
+
         :param data: framed data bytes
         :param no_copy: (optional) will prevent extra copy if True, but "data" input will be destroyed.
         :return: (packet as array of bytes or None, leftover bytes)

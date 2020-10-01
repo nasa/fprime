@@ -6,8 +6,8 @@ settings from the settings.default file that is part of the F prime deployment d
 
 @author mstarch
 """
-import os
 import configparser  # Written after PY2 eol
+import os
 
 
 class IniSettings:
@@ -19,8 +19,8 @@ class IniSettings:
     @staticmethod
     def find_fprime():
         """
-         Finds F prime by recursing parent to parent until a matching directory is found.
-         """
+        Finds F prime by recursing parent to parent until a matching directory is found.
+        """
         needle = os.path.join(
             "cmake", "FPrime.cmake"
         )  # If the F prime cmake file exists
@@ -38,10 +38,11 @@ class IniSettings:
         """
         Reads path(s), safely, from the config parser.  Validates the path(s) exists or raises an exception. Paths are
         separated by ':'.  This will also expand relative paths relative to the settings file.
+
         :param parser: parser to read from
         :param key: key to read from
         :param ini_file: ini_file path for clean errors
-        :return path, validated
+        :return: path, validated
         """
         base_dir = os.path.dirname(ini_file)
         all_paths = parser.get(section, key, fallback="").split(":")
@@ -64,6 +65,7 @@ class IniSettings:
         """
         Load settings from specified file or from specified build directory. Either a specific file or the build
         directory must be not None.
+
         :param settings_file: (optional) file to load settings from (in INI format). Must be specified if build_dir is not.
         :param build_dir: (optional) directory to search for settings.ini. Must be specified if file is not.
         :return: a dictionary of needed settings
@@ -78,7 +80,7 @@ class IniSettings:
             print("[WARNING] Failed to find settings file: {}".format(settings_file))
             fprime_location = IniSettings.find_fprime()
             return {
-                "fprime_location": fprime_location,
+                "framework_path": fprime_location,
             }
         confparse = configparser.ConfigParser()
         confparse.read(settings_file)
@@ -140,6 +142,7 @@ class IniSettings:
     def load_environment(env_file):
         """
         Load the environment from the given parser.
+
         :param env_file: load environment from this file
         :return: environment dictionary
         """
@@ -158,10 +161,6 @@ class IniSettings:
 class FprimeLocationUnknownException(Exception):
     """ Fprime location could not be determined """
 
-    pass
-
 
 class FprimeSettingsException(Exception):
     """ An exception for handling F prime settings misconfiguration """
-
-    pass

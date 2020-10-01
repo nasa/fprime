@@ -4,7 +4,7 @@
 #
 # Helpers to test via FP util
 ####
-export FPUTIL_TARGETS="generate build build-all check-all install"
+export FPUTIL_TARGETS=("generate" "build" "build --all" "check --all" "install")
 export FPUTIL_DEPLOYS="${FPRIME_DIR} ${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
 
 export INT_DEPLOYS="${FPRIME_DIR}/Ref"
@@ -31,7 +31,7 @@ function fputil_action {
                 if [[ "${TEST_TYPE}" == "QUICK" ]]
                 then
                     echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-                    fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+                    fprime-util "generate" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
                         || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
                 fi
         fi
@@ -40,13 +40,20 @@ function fputil_action {
         if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
         then
             echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-            fprime-util "generate" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+            fprime-util "generate" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
                 || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
         fi
         cd "${WORKDIR}"
-        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
-        fprime-util "${TARGET}" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET}.err.log" \
-            || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
+        if [[ "${TARGET}" != "generate" ]]
+        then
+	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
+            fprime-util ${TARGET} --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+                || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
+        else
+	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
+            fprime-util ${TARGET} ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+                || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
+        fi
     ) || exit 1
 }
 export -f fputil_action
@@ -85,8 +92,8 @@ function integration_test {
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
         sleep ${SLEEP_TIME}
         # Check the above started successfully
-        ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to compile GDS layer headlessly"
-        ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start GDS layer with Valgrind headlessly"
+        ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to run GDS layer headlessly"
+        ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start Ref with Valgrind"
         # Run integration tests
         (
             cd "${WORKDIR}/test"
@@ -104,6 +111,7 @@ function integration_test {
         RET_MEMTEST=$?
         # Report memory leaks if they occured and the pytests were successful
         if [ ${RET_MEMTEST} -ne 0 ] && [ ${RET_PYTEST} -eq 0 ]; then 
+            cat "${LOG_DIR}/gds-logs/valgrind.log"
             fail_and_stop "Integration tests on ${WORKDIR} contain memory leaks"
         fi
 

@@ -55,13 +55,11 @@ namespace Fw {
         (void) memcpy(this->getBuffAddr(),src.getBuffAddr(),this->m_serLoc+1);
     }
 
-    SerializeBufferBase::SerializeBufferBase(const SerializeBufferBase &src) {
+    // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
+    // call the empty constructor and then call their own copy function
+    const SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase &src) { // lgtm[cpp/rule-of-two]
         this->copyFrom(src);
-    }
-
-    const SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase &src) {
-        this->copyFrom(src);
-        return src;
+        return *this;
     }
 
     // serialization routines

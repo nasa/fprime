@@ -21,7 +21,7 @@ namespace Fw {
     class QueuedComponentBase : public PassiveComponentBase {
         public:
 
-    		// FIXME: Had to make MsgDispatchStatus public for LLVM. Think LLVM is wrong.
+    		// Note: Had to make MsgDispatchStatus public for LLVM.
     		typedef enum {
 				MSG_DISPATCH_OK, //!< Dispatch was normal
 				MSG_DISPATCH_EMPTY, //!< No more messages in the queue
