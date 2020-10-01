@@ -1282,7 +1282,7 @@ $emit_cpp_params([ $param_val, $param_valid ])
 
 #end for
 #if $namespace_list != None
- #for $namespace in $namespace_list
+ #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
  #end for
 #end if

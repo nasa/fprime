@@ -64,7 +64,7 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
 } // end Output${name}Port::invoke(...)
 
 #if $namespace_list != None
- #for $namespace in $namespace_list:
+ #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
  #end for
 #end if
