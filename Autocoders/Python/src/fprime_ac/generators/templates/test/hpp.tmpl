@@ -715,7 +715,7 @@ $emit_hpp_port_params([ $param_callComp, $param_portNum] + $params)
   };
 
 #if $namespace_list != None
-  #for $namespace in $namespace_list
+  #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
   #end for
 #end if

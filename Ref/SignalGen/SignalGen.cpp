@@ -41,7 +41,7 @@ namespace Ref {
       signalAmplitude(0),
       signalPhase(0),
       sample(0),
-      SignalType(SINE)
+      sigType(SignalType::SINE)
 
   {
 
@@ -74,84 +74,76 @@ namespace Ref {
       this->tlmWrite_SignalGen_Output(0);
       return;
     }
-    
 
-    if(this->RUNNING){
+    if(!this->RUNNING) {
+      return;
+    }
 
-      switch(this->SignalType){
-        /*
+    this->tlmWrite_SignalGen_Type(this->sigType);
 
-          Signals courtesy of the open source Aquila DSP Library
+    /* Signals courtesy of the open source Aquila DSP Library */
+    switch(this->sigType.e) {
+    case SignalType::TRIANGLE:
+      {
+        double samplesPerPeriod = this->sampleFrequency / this->signalFrequency;
+        double risingLength = samplesPerPeriod / 2;
+        double m = this->signalAmplitude / risingLength;
 
-        */
-
-        case TRIANGLE:
-        {
-
-          double samplesPerPeriod = this->sampleFrequency / this->signalFrequency;
-          double risingLength = samplesPerPeriod / 2;
-          double m = this->signalAmplitude / risingLength;
-
-          if(this->sample < risingLength){
-            this->tlmWrite_SignalGen_Output(m * this->sample);
-          }else{
-            this->tlmWrite_SignalGen_Output(0);
-            this->sample = 0;
-          }
-          this->sample++;
-
-          break;
+        if(this->sample < risingLength){
+          this->tlmWrite_SignalGen_Output(m * this->sample);
+        }else{
+          this->tlmWrite_SignalGen_Output(0);
+          this->sample = 0;
         }
+        this->sample++;
+        break;
+      }
+    case SignalType::SINE:
+      {
+        double normalizedFrequency = this->signalFrequency / static_cast<double>(this->sampleFrequency);
+        F32 val = static_cast<F32>(this->signalAmplitude) * std::sin( (2.0 * M_PI * normalizedFrequency * this->sample) + (this->signalPhase * 2.0 * M_PI) );
+        this->tlmWrite_SignalGen_Output(val);
 
-        case SINE:
-        {
-          double normalizedFrequency = this->signalFrequency / static_cast<double>(this->sampleFrequency);
-          F32 val = static_cast<F32>(this->signalAmplitude) * std::sin( (2.0 * M_PI * normalizedFrequency * this->sample) + (this->signalPhase * 2.0 * M_PI) );
-          this->tlmWrite_SignalGen_Output(val);
-
-          U32 samplesPerPeriod = static_cast<int>(1/normalizedFrequency);
-          if(++this->sample >= samplesPerPeriod){this->sample = 0;}
-          break;
-        }
-
-        case SQUARE:
-        {
-          double duty_cycle = 0.5;
-          U32 samplesPerPeriod = this->sampleFrequency / this->signalFrequency;
-          double positiveLength = static_cast<std::size_t>(duty_cycle * samplesPerPeriod);
-          F32 val = this->signalAmplitude * (this->sample < positiveLength ? 1 : -1);
-          if(++this->sample > samplesPerPeriod){this->sample = 0;}
-          this->tlmWrite_SignalGen_Output(val);
-          break;
-        }
-
-        case NOISE:
-        {
-          F32 val = this->signalAmplitude * (std::rand() / static_cast<double>(RAND_MAX));
-          this->tlmWrite_SignalGen_Output(val);
-        }
-
+        U32 samplesPerPeriod = static_cast<int>(1/normalizedFrequency);
+        if(++this->sample >= samplesPerPeriod){this->sample = 0;}
+        break;
+      }
+    case SignalType::SQUARE:
+      {
+        double duty_cycle = 0.5;
+        U32 samplesPerPeriod = this->sampleFrequency / this->signalFrequency;
+        double positiveLength = static_cast<std::size_t>(duty_cycle * samplesPerPeriod);
+        F32 val = static_cast<F32>(this->signalAmplitude) * (this->sample < positiveLength ? 1.0 : -1.0);
+        if(++this->sample > samplesPerPeriod){this->sample = 0;}
+        this->tlmWrite_SignalGen_Output(val);
+        break;
+      }
+    case SignalType::NOISE:
+      {
+        F32 val = this->signalAmplitude * (std::rand() / static_cast<double>(RAND_MAX));
+        this->tlmWrite_SignalGen_Output(val);
+        break;
       }
     }
-
-
-    }
-  
+  }
 
   void SignalGen :: SignalGen_Settings_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq, /*!< The command sequence number*/
         U32 Frequency,
         U32 Amplitude,
-        U32 Phase
+        U32 Phase,
+        Ref::SignalType SigType
     )
   {
     this->signalFrequency = Frequency;
     this->signalAmplitude = Amplitude;
     this->signalPhase     = Phase;
+    this->sigType = SigType;
 
+    this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase, this->sigType);
+    this->tlmWrite_SignalGen_Type(SigType);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
-    this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase);
   }
 
   void SignalGen :: SignalGen_Toggle_cmdHandler(
@@ -165,26 +157,24 @@ namespace Ref {
 
 
 
-    void SignalGen :: SignalGen_Skip_cmdHandler(
-        FwOpcodeType opCode, /*!< The opcode*/
-        U32 cmdSeq /*!< The command sequence number*/
+  void SignalGen :: SignalGen_Skip_cmdHandler(
+      FwOpcodeType opCode, /*!< The opcode*/
+      U32 cmdSeq /*!< The command sequence number*/
     )
-    {
-      this->SKIP_NEXT = true;
-    }
+  {
+    this->SKIP_NEXT = true;
+  }
 
-    void SignalGen::SignalGen_GenerateArray_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-      Fw::EightyCharString s;
-      U32 num1 = (U32) 12U;
-      U32 num2 = (U32) 1234U;
-      Fw::ArrayType arg1 = Fw::ArrayType(num1, num2);
+  void SignalGen::SignalGen_GenerateArray_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    Fw::EightyCharString s;
+    U32 num1 = (U32) 12U;
+    U32 num2 = (U32) 1234U;
+    Fw::ArrayType arg1 = Fw::ArrayType(num1, num2);
+    arg1.toString(s);
 
-      // Echo the GenerateArray args here.
-      this->log_ACTIVITY_HI_SignalGen_GenerateArray_Received(arg1);
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-    }
-
-
-
-
+    Fw::LogStringArg msg(s.toChar());
+    // Echo the GenerateArray args here.
+    this->log_ACTIVITY_HI_SignalGen_GenerateArray_Received(msg);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
 };

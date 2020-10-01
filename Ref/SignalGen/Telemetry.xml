@@ -13,4 +13,7 @@
   <channel id="0" name="SignalGen_Output" data_type="F32" format_string = "%2.4f" abbrev="T001-300">
     <comment>SignalGen Output</comment>
   </channel>
+  <channel id="1" name="SignalGen_Type" data_type="Ref::SignalType" abbrev="T001-301">
+    <comment>SignalGen Type</comment>
+  </channel>
 </telemetry>

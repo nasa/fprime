@@ -11,6 +11,7 @@
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
     <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <import_enum_type>Ref/SignalGen/SignalTypeEnumAi.xml</import_enum_type>
     <import_dictionary>Ref/SignalGen/Commands.xml</import_dictionary>
     <import_dictionary>Ref/SignalGen/Telemetry.xml</import_dictionary>
     <import_dictionary>Ref/SignalGen/Events.xml</import_dictionary>

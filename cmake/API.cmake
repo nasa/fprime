@@ -1,16 +1,15 @@
 ####
 # API.cmake:
 #
-# API of the F prime CMake system. These functions represent the external interface to all of
-# CMake system. Users and developers should understand these functions in order to perform the
-# following actions in CMake:
+# API of the fprime CMake system. These functions represent the external interface to all of the fprime CMake system.
+# Users and developers should understand these functions in order to perform basic CMake setup while building as part
+# of an fprime project.
 #
-#  - Add an F prime subdirectory to the system.
-#  - Register an F prime module (library).
-#  - Register an F prime executable (deployment, other executable).
-#  - Register an F prime unit-test (executable with special dependencies).
+# The standard patterns include:
+# - Add a directory to the fprime system. Use this in place of add_subdirectory to get cleanly organized builds.
+# - Register an fprime module/executable/ut to receive the benefits of autocoding.
+# - Register an fprime build target/build stage to allow custom build steps. (Experimental)
 #
-# @author mstarch
 ####
 
 ####
@@ -18,24 +17,26 @@
 #
 # Adds a subdirectory to the build system. This allows the system to find new available modules,
 # executables, and unit tests. Every module, used or not, by the deployment/root CMAKE file should
-# be added as a subdirectory. CMake's dependency system will prevent superfluous building, and thus
-# it is inconsequential to add a subdirectory that will not be used.
+# be added as a subdirectory somewhere in the tree. CMake's dependency system will prevent superfluous building, and
+# `add_fprime_subdirectory` calls construct the super-graph from which the build graph is realized. Thus
+# it is inconsequential to add a subdirectory that will not be used, but all code should be found within this
+# super-graph to be available to the build.
 #
 # Every subdirectory added should declare a `CMakeLists.txt`. These in-turn may add their own sub-
-# directories. This creates a directed acyclic graph of modules, one subtree of which will be built
-# for each executable in the system.
+# directories. This creates a directed acyclic graph of modules, one subgraph of which will be built
+# for each executable/module/library defined in the system.  The subgraph should also be a DAG.
 #
-# This directory is computed based off the closes path in `FPRIME_BUILD_LOCATIONS`. It must be set to
-# be used. Otherwise, an error will occure.
+# This directory is computed based off the closest path in `FPRIME_BUILD_LOCATIONS`. It must be set to
+# be used. Otherwise, an error will occur.
 #
 # A user can specify an optional argument to set the build-space, creating a sub-directory under
 # the `CMAKE_BINARY_DIR` to place the outputs of the builds of this directory. This is typically
-# **not needed**. `EXCLUDE-FROM-ALL` can also be supplied.
+# **not needed**. `EXCLUDE_FROM_ALL` can also be supplied.
 # See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 #
 # **Note:** Replaces CMake `add_subdirectory` call in order to automate the [binary_dir] argument.
-#           F prime subdirectories have specific binary roots to avoid collisions, and provide for
-#           the standard F prime #include paths rooted at the root of the repo.
+#           fprime subdirectories have specific binary roots to avoid collisions, and provide for
+#           the standard fprime #include paths rooted at the root of the repo.
 #
 # **Arguments:**
 #  - **FP_SOURCE_DIR:** directory to add (same as add_directory)
@@ -63,15 +64,14 @@ endfunction(add_fprime_subdirectory)
 ####
 # Function `register_fprime_module`:
 #
-# Registers a module using the F prime build system. This comes with dependency management and F
-# Prime autocoding capabilities. This requires two variables to define the autocoding and source
-# inputs, and (optionally) any non-standard link dependencies.
+# Registers a module using the fprime build system. This comes with dependency management and fprime
+# autocoding capabilities. The caller should first set two variables before calling this function to define the
+# autocoding and source inputs, and (optionally) any non-standard link dependencies.
 #
 # Required variables (defined in calling scope):
 #
-#
-# - **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
-#   etc files here. This list will be split into autocoder inputs or sources.
+# - **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.c", "*.cpp"
+#   etc files here. This list will be split into autocoder inputs, and hand-coded sources based on the name/type.
 #
 # **i.e.:**
 # ```
@@ -81,22 +81,24 @@ endfunction(add_fprime_subdirectory)
 #     MyComponentImpl.cpp)
 # ```
 # - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
-#   needed if non-standard link dependencies are used. If not set or supplied, only F prime
-#   detectable dependencies will be available. Link flags like "-lpthread" can be here.
+#   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
+#   the autocoder inputs to the module. If not set or supplied, only fprime
+#   inferable dependencies will be available. Link flags like "-lpthread" can be here.
 #
 # **i.e.:**
 # ```
 # set(LINK_DEPS
+#     Os
 #     Module1
 #     Module2
 #     -lpthread)
 # ```
 #
 # **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-#           these as positional arguments overrides any specified in the parent scope.
+#           these as positional arguments overrides any specified in the parent scope.  This is typically not done.
 #
 #
-# ### Standard Module Example ###
+# ### Standard `add_fprime_module` Example ###
 #
 # Standard modules don't require extra modules, and define both autocoder inputs and standard source
 # files. Thus, only the SOURCE_FILE variable needs to be set and then the register call can be made.
@@ -113,8 +115,8 @@ endfunction(add_fprime_subdirectory)
 #
 # ### Non-Autocoded and Autocode-Only Modules Example ###
 #
-# Modules that do not require autocoding need not specify *.xml and *.txt files as source. Thus,
-# code-only modules just define *.cpp.
+# Modules that do not require autocoding need not specify *.xml files as source. Thus, code-only modules just define
+# *.cpp. **Note:** no dependency inference is done without autocoder inputs.
 #
 # ```
 # set(SOURCE_FILE
@@ -123,7 +125,7 @@ endfunction(add_fprime_subdirectory)
 #
 # register_fprime_module()
 # ```
-# Modules requiring only autocoding can just specify *.xml and *.txt files.
+# Modules requiring only autocoding can just specify *.xml files.
 #
 # ```
 # set(SOURCE_FILE
@@ -134,9 +136,9 @@ endfunction(add_fprime_subdirectory)
 #
 # ### Specific Dependencies and Linking in Modules Example ###
 #
-# Some modules need to pick a specific set of dependencies and ling flags. This can be done
+# Some modules need to pick a specific set of dependencies and link flags. This can be done
 # with the `MOD_DEPS` variable. This feature can be used to pick specific implementations
-# for some F prime modules.
+# for some fprime modules that implement to a generic interface like the console logger implementation.
 # 
 # ```
 # set(SOURCE_FILE
@@ -183,18 +185,18 @@ endfunction(register_fprime_module)
 ####
 # Function `register_fprime_executable`:
 #
-# Registers an executable using the F prime build system. This comes with dependency management and
-# F Prime autocoding capabilities. This requires three variables to define the executable name,
+# Registers an executable using the fprime build system. This comes with dependency management and
+# fprime autocoding capabilities. This requires three variables to define the executable name,
 # autocoding and source inputs, and (optionally) any non-standard link dependencies.
 #
 # Required variables (defined in calling scope):
 #
 #
-# - **EXECUTABLE_NAME:** (optional) executable name supplied. If not supplied, or passed in, then
+# - **EXECUTABLE_NAME:** (optional) executable name supplied. If not set, nor passed in, then
 #                     PROJECT_NAME from the CMake definitions is used.
 #
-# - **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
-#                  etc. files here. This list will be split into autocoder inputs or sources.
+# - **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.c", "*.cpp"
+#                  etc. files here. This list will be split into autocoder inputs and sources.
 # **i.e.:**
 # ```
 # set(SOURCE_FILES
@@ -203,9 +205,10 @@ endfunction(register_fprime_module)
 #     MyComponentImpl.cpp)
 # ```
 #
-# - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only needed
-#   if non-standard link dependencies are used. If not set or supplied, only F prime
-#   detectable dependencies will be available. Link flags like "-lpthread" can be here.
+# - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
+#   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
+#   the autocoder inputs to the module. If not set or supplied, only fprime
+#   inferable dependencies will be available. Link flags like "-lpthread" can be here.
 #
 # **i.e.:**
 # ```
@@ -215,14 +218,17 @@ endfunction(register_fprime_module)
 #     -lpthread)
 # ```
 #
-# Note: if desired, these fields may be supplied in-order as arguments to the function. Passing
-#       these as positional arguments overrides any specified in the parent scope.
+# **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
+#           these as positional arguments overrides any specified in the parent scope.
 #
-# ### Standard F Prime Deployment Example ###
+# **Note:** this operates almost identically to `register_fprime_module` with respect to the variable definitions. The
+#           difference is this call will yield an optionally named linked binary file.
 #
-# To create a standard F prime deployment, an executable needs to be created. This executable
+# ### Standard fprime Deployment Example ###
+#
+# To create a standard fprime deployment, an executable needs to be created. This executable
 # uses the CMake PROJECT_NAME as the executable name. Thus, it can be created with the following
-# source lists. In most F prime deployments, some modules must be specified as they don't tie
+# source lists. In most fprime deployments, some modules must be specified as they don't tie
 # directly to an Ai.xml.
 #
 # ```
@@ -240,10 +246,10 @@ endfunction(register_fprime_module)
 # )
 # register_fprime_executable()
 # ```
-# ### F Prime Executable With Autocoding/Dependencies ###
+# ### fprime Executable With Autocoding/Dependencies ###
 #
-# Developers can make executables or other utilites that take advantage of F prime autocoding
-# and F prime dependencies. These can be registered using the same executable registrar function
+# Developers can make executables or other utilites that take advantage of fprime autocoding
+# and fprime dependencies. These can be registered using the same executable registrar function
 # but should specify a specific executable name.
 #
 # ```
@@ -297,26 +303,27 @@ endfunction(register_fprime_executable)
 ####
 # Function `register_fprime_ut`:
 #
-# Registers an executable unit-test using the F prime build system. This comes with dependency
-# management and F Prime autocoding capabilities. This requires three variables defining the
+# Registers an executable unit-test using the fprime build system. This comes with dependency
+# management and fprime autocoding capabilities. This requires three variables defining the
 # unit test name, autocoding and source inputs for the unit test, and (optionally) any
 # non-standard link dependencies.
 #
-# **Note:** This is ONLY run when the build type is  TESTING
+# **Note:** This is ONLY run when the build type is TESTING. Unit testing is restricted to this build type as fprime
+#           sets additional flags when building for unit tests.
 #
 # Required variables (defined in calling scope):
 #
 # 
 # - **UT_NAME:** (optional) executable name supplied. If not supplied, or passed in, then
-#   the module name _exe will be used.
+#   the <MODULE_NAME>_ut_exe will be used.
 #
-# - **UT_SOURCE_FILES:** cmake list of UT source files. Place any "*Ai.xml", "*.txt, "*.c", "*.cpp"
-#   etc. files here. This list will be split into autocoder inputs or sources.
-#   It is only used when building this specific unit test target.
+# - **UT_SOURCE_FILES:** cmake list of UT source files. Place any "*Ai.xml", "*.c", "*.cpp"
+#   etc. files here. This list will be split into autocoder inputs or sources. These sources only apply to the unit
+#   test.
 #
 #  **i.e.:**
 # ```
-# set(SOURCE_FILES
+# set(UT_SOURCE_FILES
 #     MyComponentAi.xml
 #     SomeFile.cpp
 #     MyComponentImpl.cpp)
@@ -324,12 +331,12 @@ endfunction(register_fprime_executable)
 #
 # - **UT_MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
 #   needed if non-standard link dependencies are used. If not set or supplied, only
-#   F prime detectable dependencies will be available. Link flags like "-lpthread"
-#   can be here.
+#   fprime detectable dependencies will be available. Link flags like "-lpthread"
+#   can be supplied here.
 #
 # **i.e.:**
 # ```
-# set(LINK_DEPS
+# set(UT_MOD_DEPS
 #     Module1
 #     Module2
 #     -lpthread)
@@ -341,7 +348,9 @@ endfunction(register_fprime_executable)
 #   **Note:** UTs automaitcally depend on the module. In order to prevent this, explicitly pass in args
 #             to this module, excluding the module.
 #
-#         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependenices.
+#         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
+#
+#  **Note:** this is typically called after any other register calls in the module.
 #
 # ### Unit-Test Example ###
 #
@@ -444,7 +453,7 @@ function(register_fprime_target TARGET_FILE_PATH)
     set(TMP "${FPRIME_TARGET_LIST}")
     list(APPEND TMP "${TARGET_FILE_PATH}")
     list(REMOVE_DUPLICATES TMP)
-    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom F prime targtes" FORCE)
+    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targtes" FORCE)
     #Setup global target. Note: module targets found during module processing
     setup_global_target("${TARGET_FILE_PATH}")
 endfunction(register_fprime_target)
@@ -452,8 +461,8 @@ endfunction(register_fprime_target)
 #### Documentation links
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
-#  - Adding Deployment: [Deployments](deployment.md) create F prime builds.
-#  - Adding Module: [Modules](module.md) register F prime Ports, Compontents, etc.
+#  - Adding Deployment: [Deployments](deployment.md) create fprime builds.
+#  - Adding Module: [Modules](module.md) register fprime Ports, Compontents, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
-#  - Adding Platforms: [Platforms](platform.md) help F prime set Cross-Compiling specific items.
+#  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
 ####

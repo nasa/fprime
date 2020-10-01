@@ -817,7 +817,11 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.param_val = ("val", "Fw::TlmBuffer&", "The channel value")
 
     def initTypeIncludes(self, obj, c):
-        type_includes = []
+        type_includes = [
+            e.replace("Ai.xml", "Ac.hpp")
+            for e in obj.get_included_enums()
+        ]
+
         for p in obj.get_ports():
             type_includes = type_includes + p.get_includes()
         c.types_includes = self.__model_parser.uniqueList(type_includes)
