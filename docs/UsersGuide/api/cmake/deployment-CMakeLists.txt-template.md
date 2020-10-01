@@ -1,10 +1,10 @@
-**Note:** auto-generated from comments in: ../deployment-CMakeLists.txt.template
+**Note:** auto-generated from comments in: ./deployment-CMakeLists.txt.template
 
 ## Deployment 'CMakeLists.txt':
 
-F prime deployments setup the most basic CMake settings, include the F prime build system, and
+fprime deployments setup the most basic CMake settings, include the F prime build system, and
 list deployment specific modules. In one or more of these deployment modules, executables should
-be registered using `register_fprime_executable`. This is usally done in a `Top` module, but not
+be registered using `register_fprime_executable`. This is usually done in a `Top` module, but not
 strictly required.
 
 To create a deployment, create a `CMakeLists.txt` file following this template structure in a
@@ -38,23 +38,17 @@ See: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
 **Example:**
 ```
 project(Ref C CXX)
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
 ```
 
 ### Section 2: Include F prime Core Build System
 
-This section includes the `cmake/FPrime.cmake` file from the root of the F prime library. If this
-deployment is treating F prime as a subdirectory or external library, then the
-FPRIME_CURRENT_BUILD_ROOT must be set **after** the call to include FPrime-Code.cmake. This allows
-the deployment to be treated independently from the F prime core code.
+This section includes the `cmake/FPrime.cmake` file from the root of the F prime library.
 
 **Example:**
 ```
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
-# Only if external to the core F prime code
-set(FPRIME_CURRENT_BUILD_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "F´ BUILD_ROOT currently set to: ${FPRIME_CURRENT_BUILD_ROOT}")
 ```
 **Note:** if custom targets are desired, then they should be registered between the two includes.
 

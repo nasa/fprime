@@ -1,9 +1,17 @@
-**Note:** auto-generated from comments in: ../../support/Utils.cmake
+**Note:** auto-generated from comments in: ./support/Utils.cmake
 
 ## Utils.cmake:
 
 Defines needed utility functions that are (or should be) independent of any autocoding calls to
 be made. Those files should go in *AC_Utils.cmake*.
+
+
+## Function `get_nearest_build_root`:
+
+Finds the nearest build root from ${FPRIME_BUILD_LOCATIONS} that is a parent of DIRECTORY_PATH.
+
+- **DIRECTORY_PATH:** path to detect nearest build root
+Return: nearest parent from ${FPRIME_BUILD_LOCATIONS}
 
 
 ## Function `get_module_name`:
@@ -32,15 +40,15 @@ they will be known as generated
 - **MODULE_NAME:** (inherited from parent) name of the module to add generated sources too
 
 
-## Function `fprime_dependencies`:
+## Function `fprime_ai_info`:
 
-A function used to detect the dependencies of a given module from the XML file that
-defines this module. This is used to reduce code in the Serializable, Port, Component,
-and Topology functions that all use the same procedure.
+A function used to detect all the needed information for an Ai.xml file. This looks for the following items:
+ 1. Type of object defined inside: Component, Port, Enum, Serializable, TopologyApp
+ 2. All fprime module dependencies that may be auto-detected
+ 3. All file dependencies
 
 - **XML_PATH:** full path to the XML used for sources.
 - **MODULE_NAME:** name of the module soliciting new dependencies
-- **PARSER_TYPE:** type of parser to use. Must be one of the prefixes *_xml in cmake/parser/
 
 
 ## Function `split_source_files`:
@@ -59,6 +67,12 @@ Split DEPS_INPUT into the module and link variants, supplied to the calling func
 - **DEPS_INPUT**: dependencies list to be split up.
 - **Return: LINK_DEPS** (set in parent scope)
 - **Return: MOD_DEPS** (set in parent scope)
+
+
+## Function `set_hash_flag`:
+
+Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
+hashes.txt. This allows for asserts on file ID not string.
 
 
 ## Function `print_dependencies`:

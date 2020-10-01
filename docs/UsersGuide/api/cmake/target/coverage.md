@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ../../target/coverage.cmake
+**Note:** auto-generated from comments in: ./target/coverage.cmake
 
 ## coverage.cmake:
 

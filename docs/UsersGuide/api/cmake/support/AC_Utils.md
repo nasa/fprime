@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ../../support/AC_Utils.cmake
+**Note:** auto-generated from comments in: ./support/AC_Utils.cmake
 
 ## AC_Utils.cmake:
 
@@ -27,6 +27,7 @@ Note: as the autocoder is rewritten, this will likely need to change.
 - **AC_FINAL_SOURCE:** final position of the CPP file
 - **AC_FINAL_HEADER:** final position of the HPP file
 - **AI_XML:** AI xml input to autocoder
+- **XML_FILE_DEPS:** xml file dependencies
 - **Return: AC_OUTPUTS** (set in outer scope)
 
 

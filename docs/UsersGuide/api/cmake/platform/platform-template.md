@@ -15,7 +15,7 @@ to remove the platform-failsafe (step 1) and fill in all <SOMETHING> tags.
 ### Platform File Loading ###
 
 The user rarely needs to specify a platform file directly. It will be specified based on the data
-in the chosen Toolchain file, or by the CMake system itself. However, if the user want to control
+in the chosen Toolchain file, or by the CMake system itself. However, if the user wants to control
 which platform file is used, the load is specified by the following rules:
 
 If the user specifies the platform from the command line using the command line option

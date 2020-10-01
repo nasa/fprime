@@ -100,7 +100,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 #### Release 1.2
 
 * Better MagicDraw Plugin
-* Prototype CMake build system. See: [CMake Readme](cmake/README.md)
+* Prototype CMake build system. See: [CMake Documentation](./docs/UsersGuide/cmake/cmake-intro.md)
 * Mars Helicopter Project fixes migrated in
 * Python 3 support added
 * Gse refactored and renamed to Gds

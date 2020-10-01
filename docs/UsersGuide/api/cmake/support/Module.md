@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ../../support/Module.cmake
+**Note:** auto-generated from comments in: ./support/Module.cmake
 
 ## Module.cmake:
 
@@ -6,19 +6,17 @@ This cmake file contains the functions needed to compile a module for F prime. T
 includes code for generating Enums, Serializables, Ports, Components, and Topologies.
 
 These are used as the building blocks of F prime items. This includes deployments,
-tools, and indiviual components.
+tools, and individual components.
 
 
 ## Function `generic_autocoder`:
 
 This function controls the the generation of the auto-coded files, generically, for serializables, ports,
-and components. It then mines the XML files for dependencies and then adds them as dependencies to the
-module being built.
+and components. It then mines the XML file for type and  dependencies and then adds them as dependencies to
+the module being built.
 
 - **MODULE_NAME:** name of the module which is being auto-coded.
 - **AUTOCODER_INPUT_FILES:** list of input files sent to the autocoder
-- **AC_TYPE:** type of the auto-coder being invoked,
-
 
 
 ## Function `generate_module`:
@@ -34,13 +32,12 @@ generated into a library.
 - **MOD_DEPS:** CMake module dependencies
 
 
-
 ## Function `generate_library`:
 
 Generates a library as part of F prime. This runs the AC and all the other items for the build.
 It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
 and library deps.
-
+- *MODULE_NAME:* module name of library to build
 - *SOURCE_FILES_INPUT:* source files that will be split into AC and normal sources.
 - *DEPS_INPUT:* dependencies bound for link and cmake dependencies
 

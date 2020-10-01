@@ -1,18 +1,9 @@
 ####
 # FPrime.cmake:
 #
-# This file is the entry point for building F prime. It does not setup F prime as
-# a project, but rather allows the user to build F prime as a library, or as
-# part of an external project.  This file includes the cmake build system and 
-# sets up the following environment variables used within the build of the
-# F prime common components.
-#
-#  Environment and CMake Variables:
-#   1. $ENV{FPRIME_LOCATION}: root directory of F prime's core code
-#          reset when building custom code outside of source tree.
-#   2. $ENV{FPRIME_
-#
-#
+# This file is the entry point for building fprime projects, libraries. It does not setup F prime as a project, but
+# rather allows the userss to build against fprime, fprime libraries while taking advantage of fprime's autocoding
+# support. This file includes the cmake build system setup for building like fprime.
 ####
 file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 # Include the Options, and platform files. These are files that change the build

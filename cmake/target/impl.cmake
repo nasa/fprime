@@ -1,18 +1,17 @@
 ####
 # impl.cmake:
 #
-# Dictionary target definition file. Used to define `<MODULE>_impl` target. Defined as
-# a standard target pattern. This means that the following functions are defined:
+# This target invokes the code template generation available as part of the fprime autocoder. It implements
+# the target interface described here: [Targets](Targets.md).
 #
-# - `add_global_target`: does nothing
 # - `add_module_target`: adds sub-targets for '<MODULE_NAME>_impl'
 ####
 
 ####
 # Impl function `add_module_target`:
 #
-# Adds a module-by-module target for procducing implementations. Take in the Ai.xml file and produces a
-#
+# Adds a module-by-module target for producing implementations. Take in the Ai.xml file and produces a set template
+# files.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce

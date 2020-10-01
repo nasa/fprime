@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ../../support/Executable.cmake
+**Note:** auto-generated from comments in: ./support/Executable.cmake
 
 ## Executable.cmake:
 
