@@ -465,15 +465,16 @@ class Build:
         Raises;
             UnableToDetectDeploymentException: was unable to detect a deployment directory
         """
-        list_file = path / "CMakeLists.txt"
-        if not path.parents:
+        full_path = path.resolve()
+        list_file = full_path / "CMakeLists.txt"
+        if not full_path.parents:
             raise UnableToDetectDeploymentException()
         if list_file.exists():
             with open(list_file) as file_handle:
                 text = file_handle.read()
             if Build.VALID_CMAKE_LIST.search(text):
-                return path
-        return Build.find_nearest_deployment(path.parent)
+                return full_path
+        return Build.find_nearest_deployment(full_path.parent)
 
     def __setup_default(self, platform: str = None, build_dir: Path = None):
         """Sets up default build
