@@ -3,6 +3,8 @@
 Created on May 29, 2020
 @author: jishii
 """
+import copy
+
 from .type_base import ValueType
 from .type_exceptions import (
     ArrayLengthException,
@@ -41,8 +43,8 @@ class ArrayType(ValueType):
         if len(val) != size:
             raise ArrayLengthException(self.__arr_type, size, len(val))
         for i in range(self.__arr_size):
-            if not isinstance(val[i], self.__arr_type):
-                raise TypeMismatchException(self.__arr_type, type(val[i]))
+            if not isinstance(val[i], type(self.__arr_type)):
+                raise TypeMismatchException(type(self.__arr_type), type(val[i]))
 
     def to_jsonable(self):
         """
@@ -69,7 +71,7 @@ class ArrayType(ValueType):
         """ Deserialize the members of the array """
         values = []
         for i in range(self.__arr_size):
-            item = self.arr_type()
+            item = copy.copy(self.arr_type)
             item.deserialize(data, offset + i * item.getSize())
             values.append(item)
         self.val = values

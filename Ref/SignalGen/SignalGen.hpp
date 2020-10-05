@@ -18,7 +18,6 @@
 #include <Os/File.hpp>
 #include <Os/ValidateFile.hpp>
 #include <Ref/SignalGen/SignalGenComponentAc.hpp>
-#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <cmath>
 
 namespace Ref {
@@ -72,16 +71,24 @@ namespace Ref {
     
         //! Destroy a SignalGen
         ~SignalGen(void);
-    
+
     private:
-        bool RUNNING;
-        bool SKIP_NEXT;
+        // Generate the next sample intetnal helper
+        F32 generateSample(U32 ticks);
+
+        // Memeber variables
         U32 sampleFrequency;
         U32 signalFrequency;
         U32 signalAmplitude;
         U32 signalPhase;
         U32 sample;
+        U32 signalIndex = 0;
         SignalType sigType;
+        SignalSet sigHistory;
+        SignalPairSet sigPairHistory;
+        bool running;
+        bool skipOne;
+
   };
 };
 #endif
