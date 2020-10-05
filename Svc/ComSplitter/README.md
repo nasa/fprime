@@ -1,10 +1,7 @@
-# ASTERIA/Components/ComSplitter
+\page SvcComSplitterComponent Svc::ComSplitter Component
+# Svc::ComSplitter
 
-This is the build directory for the ComSplitter component of the ASTERIA flight software.
-
-## Design
-
-For the design of this component, see `ASTERIA/Design/Components/ComSplitter`.
+This is the build directory for the ComSplitter component.
 
 ## Redo Targets
 
@@ -14,7 +11,7 @@ For the design of this component, see `ASTERIA/Design/Components/ComSplitter`.
 
 * `Docs`: Create a directory `Docs` containing ISF-style component documentation.
 
-* `Interface`: Create a directory `Interface` containing an ASTERIA-style component interface.
+* `Interface`: Create a directory `Interface` containing a component interface.
 
 * `NCSL`: Create a directory `NCSL` containing counts of non-commented source lines of code.
 
@@ -32,7 +29,7 @@ For the design of this component, see `ASTERIA/Design/Components/ComSplitter`.
   You should not have to invoke these targets directly,
   except when developing or debugging the build system.
 
-* `Table`: Create a directory `Table` containing the part of the table interface from `ASTERIA/Design/Components/ComSplitter` that is not represented in the ISF XML.
+* `Table`: Create a directory `Table` containing the part of the table interface that is not represented in the ISF XML.
 
 * `default.a`: Build a component library target `Build/`*target*`/`*mode*`/lib.a`.
 

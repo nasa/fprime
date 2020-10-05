@@ -6,10 +6,6 @@
 
 #include <Svc/ComSplitter/ComSplitter.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <iostream>
-#include <stdio.h>
-
-using namespace std;
 
 namespace Svc {
 
