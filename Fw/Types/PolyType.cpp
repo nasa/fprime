@@ -29,9 +29,10 @@ namespace Fw {
         return (TYPE_U8 == this->m_dataType);
     }
 
-    U8 PolyType::operator=(U8 other) {
+    PolyType& PolyType::operator=(U8 other) {
         this->m_dataType = TYPE_U8;
-        return this->m_val.u8Val = other;
+        this->m_val.u8Val = other;
+        return *this;
     }
 
     // I8 methods
@@ -55,9 +56,10 @@ namespace Fw {
         return (TYPE_I8 == this->m_dataType);
     }
 
-    I8 PolyType::operator=(I8 other) {
+    PolyType& PolyType::operator=(I8 other) {
         this->m_dataType = TYPE_I8;
-        return this->m_val.i8Val = other;
+        this->m_val.i8Val = other;
+        return *this;
     }
 
 #if FW_HAS_16_BIT
@@ -83,9 +85,10 @@ namespace Fw {
         return (TYPE_U16 == this->m_dataType);
     }
 
-    U16 PolyType::operator=(U16 other) {
+    PolyType& PolyType::operator=(U16 other) {
         this->m_dataType = TYPE_U16;
-        return this->m_val.u16Val = other;
+        this->m_val.u16Val = other;
+        return *this;
     }
 
     // I16 methods
@@ -109,9 +112,10 @@ namespace Fw {
         return (TYPE_I16 == this->m_dataType);
     }
 
-    I16 PolyType::operator=(I16 other) {
+    PolyType& PolyType::operator=(I16 other) {
         this->m_dataType = TYPE_I16;
-        return this->m_val.i16Val = other;
+        this->m_val.i16Val = other;
+        return *this;
     }
 
 #endif
@@ -139,9 +143,10 @@ namespace Fw {
         return (TYPE_U32 == this->m_dataType);
     }
 
-    U32 PolyType::operator=(U32 other) {
+    PolyType& PolyType::operator=(U32 other) {
         this->m_dataType = TYPE_U32;
-        return this->m_val.u32Val = other;
+        this->m_val.u32Val = other;
+        return *this;
     }
 
     // I32 methods
@@ -165,9 +170,10 @@ namespace Fw {
         return (TYPE_I32 == this->m_dataType);
     }
 
-    I32 PolyType::operator=(I32 other) {
+    PolyType& PolyType::operator=(I32 other) {
         this->m_dataType = TYPE_I32;
-        return this->m_val.i32Val = other;
+        this->m_val.i32Val = other;
+        return *this;
     }
 
 #endif    
@@ -194,9 +200,10 @@ namespace Fw {
         return (TYPE_U64 == this->m_dataType);
     }
 
-    U64 PolyType::operator=(U64 other) {
+    PolyType& PolyType::operator=(U64 other) {
         this->m_dataType = TYPE_U64;
-        return this->m_val.u64Val = other;
+        this->m_val.u64Val = other;
+        return *this;
     }
 
     // I64 methods
@@ -220,9 +227,10 @@ namespace Fw {
         return (TYPE_I64 == this->m_dataType);
     }
 
-    I64 PolyType::operator=(I64 other) {
+    PolyType& PolyType::operator=(I64 other) {
         this->m_dataType = TYPE_I64;
-        return this->m_val.i64Val = other;
+        this->m_val.i64Val = other;
+        return *this;
     }
 
 #endif
@@ -248,9 +256,10 @@ namespace Fw {
         return (TYPE_F64 == this->m_dataType);
     }
 
-    F64 PolyType::operator=(F64 other) {
+    PolyType& PolyType::operator=(F64 other) {
         this->m_dataType = TYPE_F64;
-        return this->m_val.f64Val = other;
+        this->m_val.f64Val = other;
+        return *this;
     }
 
 #endif
@@ -273,9 +282,10 @@ namespace Fw {
         return (TYPE_F32 == this->m_dataType);
     }
 
-    F32 PolyType::operator=(F32 other) {
+    PolyType& PolyType::operator=(F32 other) {
         this->m_dataType = TYPE_F32;
-        return this->m_val.f32Val = other;
+        this->m_val.f32Val = other;
+        return *this;
     }
 
     PolyType::PolyType(bool val) {
@@ -297,9 +307,10 @@ namespace Fw {
         return (TYPE_BOOL == this->m_dataType);
     }
 
-    bool PolyType::operator=(bool other) {
+    PolyType& PolyType::operator=(bool other) {
         this->m_dataType = TYPE_BOOL;
-        return this->m_val.boolVal = other;
+        this->m_val.boolVal = other;
+        return *this;
     }
 
     PolyType::PolyType(void* val) {
@@ -321,9 +332,15 @@ namespace Fw {
         return (TYPE_PTR == this->m_dataType);
     }
 
-    void* PolyType::operator=(void* other) {
+    PolyType& PolyType::operator=(void* other) {
         this->m_dataType = TYPE_PTR;
-        return this->m_val.ptrVal = other;
+        this->m_val.ptrVal = other;
+        return *this;
+    }
+
+    PolyType::PolyType(const PolyType &original) : Fw::Serializable() {
+        this->m_dataType = original.m_dataType;
+        this->m_val = original.m_val;
     }
 
     PolyType::~PolyType(void) {
@@ -332,7 +349,7 @@ namespace Fw {
     const PolyType& PolyType::operator=(const PolyType &src) {
         this->m_dataType = src.m_dataType;
         this->m_val = src.m_val;
-        return src;
+        return *this;
     }
 
     bool PolyType::operator!=(const PolyType &other) const {
@@ -399,6 +416,82 @@ namespace Fw {
         }
 
     }
+
+    bool PolyType::operator<(const PolyType &other) const {
+
+        // if type doesn't match, not equal
+        if (this->m_dataType != other.m_dataType) {
+            return false;
+        } else {
+            // check based on type
+            bool result = false;
+            switch (this->m_dataType) {
+                case TYPE_U8:
+                    result = (this->m_val.u8Val < other.m_val.u8Val);
+                    break;
+                case TYPE_I8:
+                    result = (this->m_val.i8Val < other.m_val.i8Val);
+                    break;
+#if FW_HAS_16_BIT
+                case TYPE_U16:
+                    result = (this->m_val.u16Val < other.m_val.u16Val);
+                    break;
+                case TYPE_I16:
+                    result = (this->m_val.i16Val < other.m_val.i16Val);
+                    break;
+#endif
+#if FW_HAS_32_BIT
+                case TYPE_U32:
+                    result = (this->m_val.u32Val < other.m_val.u32Val);
+                    break;
+                case TYPE_I32:
+                    result = (this->m_val.i32Val < other.m_val.i32Val);
+                    break;
+#endif
+#if FW_HAS_64_BIT
+                case TYPE_U64:
+                    result = (this->m_val.u64Val < other.m_val.u64Val);
+                    break;
+                case TYPE_I64:
+                    result = (this->m_val.i64Val < other.m_val.i64Val);
+                    break;
+#endif
+#if FW_HAS_F64
+                case TYPE_F64:
+                    result = (this->m_val.f64Val < other.m_val.f64Val);
+                    break;
+#endif
+                case TYPE_F32:
+                    result = (this->m_val.f32Val < other.m_val.f32Val);
+                    break;
+                case TYPE_PTR:
+                    result = (this->m_val.ptrVal < other.m_val.ptrVal);
+                    break;
+                case TYPE_BOOL: // fall through, shouldn't test bool
+                case TYPE_NOTYPE:
+                    result = false;
+                    break;
+                default:
+                    FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(this->m_dataType));
+                    return false; // for compiler
+            }
+            return result;
+        }
+
+    }
+
+    bool PolyType::operator>(const PolyType &other) const {
+        return other.operator<(*this);
+    }
+
+    bool PolyType::operator>=(const PolyType &other) const {
+        return (this->operator>(other)) || (this->operator==(other));
+    }
+
+    bool PolyType::operator<=(const PolyType &other) const {
+        return (this->operator<(other)) || (this->operator==(other));
+    }
+
 
     SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
 

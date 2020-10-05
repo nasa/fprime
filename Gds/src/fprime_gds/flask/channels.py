@@ -10,6 +10,7 @@
 #                  }
 ####
 import types
+
 import flask_restful
 import flask_restful.reqparse
 
@@ -40,6 +41,7 @@ class ChannelHistory(flask_restful.Resource):
     def __init__(self, history):
         """
         Constructor used to setup time argument to this history.
+
         :param history: history object holding channel
         :param dictionary: dictionary holding channel list
         """
@@ -54,13 +56,15 @@ class ChannelHistory(flask_restful.Resource):
         Return the telemetry history object
         """
         args = self.parser.parse_args()
-        new_chans = self.history.retrieve(session=args.get("session"))
+        new_chans = self.history.retrieve(start=args.get("session"))
         self.history.clear()
         for chan in new_chans:
             # Add the 'display_text' to the event, along with a getter
-            if chan.template.fmt_str is not None:
+            if chan.template.get_format_str() is not None:
                 setattr(
-                    chan, "display_text", chan.template.fmt_str % (chan.val_obj.val)
+                    chan,
+                    "display_text",
+                    chan.template.get_format_str() % (chan.val_obj.val),
                 )
                 func = lambda this: this.display_text
                 setattr(chan, "get_display_text", types.MethodType(func, chan))
@@ -71,4 +75,4 @@ class ChannelHistory(flask_restful.Resource):
         Delete the event history for a given session. This keeps the data all clear like.
         """
         args = self.parser.parse_args()
-        self.history.clear(session=args.get("session"))
+        self.history.clear(start=args.get("session"))

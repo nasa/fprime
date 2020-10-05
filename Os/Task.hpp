@@ -1,7 +1,7 @@
 #ifndef _Task_hpp_
 #define _Task_hpp_
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/TaskString.hpp>

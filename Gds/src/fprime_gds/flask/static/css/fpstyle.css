@@ -80,6 +80,7 @@ body, .fp-full-height {
     overflow: hidden;
     flex-grow: 1;
     position: relative;
+    min-height: 10em;
 }
 .fp-scrollable {
     position: absolute;
@@ -146,4 +147,21 @@ table {
 }
 table td:last-child {
     width: 100%;
+}
+
+
+/**
+ * Dashboard CSS Styles for styling components specific to the Dashboard page
+ */
+.fp-dashboard-box {
+    margin: 2px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.fp-dashboard-box-title {
+    width: initial;
+    color: white;
+    background: black;
+    border-radius: 5px;
 }

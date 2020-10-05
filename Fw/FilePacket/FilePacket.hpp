@@ -189,7 +189,7 @@ namespace Fw {
           void initialize(
               const U32 sequenceIndex, //!< The sequence index
               const U32 byteOffset, //!< The byte offset
-              const U32 dataSize, //!< The data size
+              const U16 dataSize, //!< The data size
               const U8 *const data //!< The file data
           );
 

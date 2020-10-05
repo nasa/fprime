@@ -6,7 +6,6 @@
 
 @bug No known bugs
 """
-import abc
 from enum import Enum
 
 from fprime_gds.common.data_types import sys_data
@@ -46,7 +45,7 @@ class StartPacketData(sys_data.SysData):
         Returns:
             An initialized StartPacketData object
         """
-
+        super().__init__()
         self.packetType = FilePacketType.START
         self.seqID = seqID
         self.size = size
@@ -77,7 +76,7 @@ class DataPacketData(sys_data.SysData):
         Returns:
             An initialized DataPacketData object
         """
-
+        super().__init__()
         self.packetType = FilePacketType.DATA
         self.seqID = seqID
         self.offset = offset
@@ -104,7 +103,7 @@ class EndPacketData(sys_data.SysData):
         Returns:
             An initialized EndPacketData object
         """
-
+        super().__init__()
         self.packetType = FilePacketType.END
         self.seqID = seqID
         self.hashValue = hashValue
@@ -128,5 +127,6 @@ class CancelPacketData(sys_data.SysData):
         Returns:
             An initialized StartPacketData object
         """
+        super().__init__()
         self.packetType = FilePacketType.CANCEL
         self.seqID = seqID

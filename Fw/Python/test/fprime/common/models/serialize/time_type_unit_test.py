@@ -2,12 +2,11 @@ import os
 import sys
 import unittest
 
+from fprime.common.models.serialize.time_type import TimeType
+
 filename = os.path.dirname(__file__)
 fprime_path = os.path.join(filename, "../../../../../src")
 sys.path.insert(0, fprime_path)
-
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.time_type import TimeBase
 
 
 class TimeTypeTestCases(unittest.TestCase):

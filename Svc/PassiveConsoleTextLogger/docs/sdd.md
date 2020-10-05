@@ -1,4 +1,4 @@
-<title>Svc::PassiveConsoleTextLogger</title>
+\page SvcPassiveConsoleTextLoggerComponent Svc::PassiveConsoleTextLogger Component
 # Svc::PassiveConsoleTextLogger Component
 
 ## 1. Introduction

@@ -6,20 +6,29 @@ by the test API to log events, asserts, test cases and user messages. The docume
 can be found here:
 https://openpyxl.readthedocs.io/en/stable/index.html
 
+If the openpyxl library isn't installed, this class does nothing.
+
 This class uses a write-only optimization that should allow for creating large log files without
 hogging too much memory. Write-only optimization can be found here:
 https://openpyxl.readthedocs.io/en/stable/optimized.html#write-only-mode
 
 :author: koran
 """
-import os
-import time
 import datetime
+import os
 import threading
-from openpyxl import Workbook
-from openpyxl.styles import PatternFill, Font, Alignment
-from openpyxl.cell import WriteOnlyCell
-from openpyxl.utils.exceptions import WorkbookAlreadySaved
+import time
+
+# If openpyxl isn't installed, ignore all functionality in this module
+try:
+    from openpyxl import Workbook
+    from openpyxl.styles import PatternFill, Font, Alignment
+    from openpyxl.cell import WriteOnlyCell
+    from openpyxl.utils.exceptions import WorkbookAlreadySaved
+
+    MODULE_INSTALLED = True
+except ImportError:
+    MODULE_INSTALLED = False
 
 
 class TestLogger:
@@ -27,6 +36,7 @@ class TestLogger:
     User-accessible colors. Can be used for the color arguments
     """
 
+    __test__ = False
     BROWN = "E6CCB3"
     RED = "FF9999"
     ORANGE = "FFCC99"
@@ -44,19 +54,23 @@ class TestLogger:
     ITALICS = "ITALICS"
     UNDERLINED = "UNDERLINED"
 
-    __align = Alignment(vertical="top", wrap_text=True)
-    __font_name = "calibri"
-    __time_fmt = "%H:%M:%S.%f"
+    if MODULE_INSTALLED:
+        __align = Alignment(vertical="top", wrap_text=True)
+        __font_name = "calibri"
+        __time_fmt = "%H:%M:%S.%f"
 
     def __init__(self, output_path, time_format=None, font_name=None):
         """
         Constructs a TestLogger
 
         Args:
-            output_path: a path where log files will 
+            output_path: a path where log files will
             time_format: an optional string to specify the timestamp format. See datetime.strftime
             font_name: an optional string to specify the font
         """
+        if not MODULE_INSTALLED:
+            return
+
         if not isinstance(output_path, str):
             raise TypeError(
                 "Test Logger requires a filename where the output can be saved."
@@ -114,6 +128,9 @@ class TestLogger:
             style: a string choosing 1 of 3 formatting options (ITALICS, BOLD, UNDERLINED)
             case_id: a short identifier to denote which test case the log message belongs to
         """
+        if not MODULE_INSTALLED:
+            return
+
         ts = time.time()
         timestring = datetime.datetime.fromtimestamp(ts).strftime(self.time_format)
 
@@ -143,6 +160,9 @@ class TestLogger:
         """
         Saves the write-only workbook. Should be called only once when the log is completed.
         """
+        if not MODULE_INSTALLED:
+            return
+
         self.workbook.save(filename=self.filename)
         self.ws_saved = True
 
@@ -156,15 +176,21 @@ class TestLogger:
             color: a string object containing a color hex code "######"
             style: a string choosing 1 of 3 formatting options (ITALICS, BOLD, UNDERLINED)
         """
+        if not MODULE_INSTALLED:
+            return
+
         cell = WriteOnlyCell(self.worksheet, value=string)
         if color is not None:
+            # pylint: disable=E0237
             cell.fill = PatternFill("solid", fgColor=color)
+        # pylint: disable=E0237
         cell.font = Font(
             name=self.font_name,
             bold=(style == self.BOLD),
             italic=(style == self.ITALICS),
             underline=("single" if style == self.UNDERLINED else "none"),
         )
+        # pylint: disable=E0237
         cell.alignment = self.__align
         return cell
 

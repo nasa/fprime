@@ -10,6 +10,7 @@ Note: this RAM history treats "start times" as session tokens to remember where 
 :author: lestarch
 """
 import threading
+
 from fprime_gds.common.history.history import History
 
 
@@ -27,29 +28,31 @@ class RamHistory(History):
         self.objects = []
         self.retrieved_cursors = {}
 
-    def data_callback(self, data_object, sender=None):
+    def data_callback(self, data, sender=None):
         """
         Data callback to store
-        :param data_object: object to store
+
+        :param data: object to store
         """
         with self.lock:
-            self.objects.append(data_object)
+            self.objects.append(data)
 
-    def retrieve(self, session=None):
+    def retrieve(self, start=None):
         """
-        Retrieve objects from this history. Session is the session token for retrieving new elements. If session is not
+        Retrieve objects from this history. 'start' is the session token for retrieving new elements. If session is not
         specified, all elements are retrieved. If session is specified, then unseen elements are returned. If the
         session itself is new, it is recorded and set to the newest data.
-        :param session: return all objects newer than given start session key
+
+        :param start: return all objects newer than given start session key
         :return: a list of objects
         """
         index = 0
         size = self.size()
-        if session is not None:
-            index = self.retrieved_cursors.get(session, size)
+        if start is not None:
+            index = self.retrieved_cursors.get(start, size)
         with self.lock:
             objs = self.objects[index:size]
-            self.retrieved_cursors[session] = size
+            self.retrieved_cursors[start] = size
         return objs
 
     def retrieve_new(self):
@@ -66,7 +69,7 @@ class RamHistory(History):
         with self.lock:
             return self.objects[index:]
 
-    def clear(self, session=None):
+    def clear(self, start=None):
         """
         Clears objects from RamHistory. It clears upto the earliest session. If session is supplied, the session id will
         be deleted as well.
@@ -76,8 +79,8 @@ class RamHistory(History):
         """
         with self.lock:
             try:
-                if session is not None:
-                    del self.retrieved_cursors[session]
+                if start is not None:
+                    del self.retrieved_cursors[start]
             except KeyError:
                 pass
             earliest = 0

@@ -1,8 +1,8 @@
 ####
 # Linux-common.cmake:
 #
-# Platform setup for all Linux based targets. This can be used for
-# Linux, raspberry pi, and other hosts.
+# Platform setup for all Linux based targets. This can be used for Linux, raspberry pi, and other linux-like hosts. This
+# file represents all common linux functions.
 ####
 
 # Set linux target
@@ -13,4 +13,4 @@ message(STATUS "Requiring thread library")
 FIND_PACKAGE ( Threads REQUIRED )
 
 # Add Linux specific headers into the system
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")

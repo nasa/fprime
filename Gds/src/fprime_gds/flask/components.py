@@ -5,8 +5,8 @@ This sets up the primary data components that allow Flask to connect into the sy
 pipeline and other components are created to interact with Flask.
 """
 import os
-import fprime_gds.common.pipeline.standard
 
+import fprime_gds.common.pipeline.standard
 
 # Module variables, should remain hidden. These are singleton top-level objects used by Flask, and its various
 # blueprints needed to run the system.
@@ -19,6 +19,7 @@ def setup_pipelined_components(
     """
     Setup the standard pipeline and related components. This is done once, and then the resulting singletons are
     returned so that one object is used throughout the system.
+
     :param logger: logger to use for output
     :param config: GDS configuration
     :param dictionary: path to F prime dictionary
@@ -48,6 +49,7 @@ def setup_pipelined_components(
 def get_pipelined_components():
     """
     Returns the setup pipelined components, or raises exception if not setup yet.
+
     :return: F prime pipeline
     """
     assert __PIPELINE is not None, "Pipeline must be setup before use"

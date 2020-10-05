@@ -13,7 +13,7 @@
 #ifndef FW_BASIC_TYPES_HPP
 #define FW_BASIC_TYPES_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <StandardTypes.hpp> // This header will be found be include paths by target. This hides different header files for each target.
 #ifdef __cplusplus
 extern "C" {

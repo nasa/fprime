@@ -25,6 +25,10 @@
         type="U32"
         name="Phase">
       </arg>
+      <arg
+        type="Ref::SignalType"
+        name="SigType">
+      </arg>
     </args>
   </command>
   <command kind="async" opcode="1" mnemonic="SignalGen_Toggle">
@@ -32,5 +36,10 @@
   </command>
   <command kind="async" opcode="2" mnemonic="SignalGen_Skip">
     <comment>Skip next sample</comment>
+  </command>
+  <command kind="async" opcode="3" mnemonic="SignalGen_GenerateArray">
+    <comment>
+    No-op array command
+    </comment>
   </command>
 </commands>

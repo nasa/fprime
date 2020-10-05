@@ -7,9 +7,8 @@
 @bug No known bugs
 """
 
-from fprime_gds.common.data_types.sys_data import SysData
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime.common.models.serialize.time_type import TimeType
+from fprime_gds.common.data_types.sys_data import SysData
 
 
 class PktData(SysData):
@@ -30,6 +29,7 @@ class PktData(SysData):
         Returns:
             An initialized PktData object
         """
+        super().__init__()
         self.id = pkt_temp.get_id()
         self.chs = pkt_chs
         self.time = pkt_time
@@ -88,9 +88,8 @@ class PktData(SysData):
                 str(self.time),
             )
         elif not csv and not verbose:
-            pkt_str += "%s: %s {\n" % (
-                self.time.to_readable(time_zone),
-                self.template.get_name(),
+            pkt_str += "{}: {} {{\n".format(
+                self.time.to_readable(time_zone), self.template.get_name(),
             )
 
         for i in range(len(self.chs)):

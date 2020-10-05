@@ -11,6 +11,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Tlm/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Prm/")
 
 # Framework subdirectories
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ArrayFile/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cfg/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFile/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Comp/")
@@ -19,3 +20,4 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Port/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FilePacket/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SerializableFile/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Test/")

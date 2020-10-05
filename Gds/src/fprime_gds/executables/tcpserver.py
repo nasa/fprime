@@ -1,28 +1,22 @@
 #!/usr/bin/env python3
-from __future__ import print_function
-import socket
-import threading
 
-try:
-    import queue
-    import socketserver
-except ImportError:
-    import Queue as queue
-    import SocketServer as socketserver
-import time
+import errno
 import os
 import signal
-import sys
+import socket
 import struct
-import select
-import multiprocessing
-import errno
+import sys
+import threading
 import time
-import logging
+from optparse import OptionParser
 
 from fprime.constants import DATA_ENCODING
-from fprime.common.models.serialize.type_base import *
-from optparse import OptionParser
+
+try:
+    import socketserver
+except ImportError:
+    import SocketServer as socketserver
+
 
 __version__ = 0.1
 __date__ = "2015-04-03"
@@ -39,7 +33,7 @@ FSW_ids = []
 GUI_ids = []
 
 
-def signal_handler(signal, frame):
+def signal_handler(*_):
     print("Ctrl-C received, server shutting down.")
     shutdown_event.set()
 
@@ -140,32 +134,32 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
     def processRegistration(self, cmd):
 
         params = cmd.split()
-        id = 0
+        process_id = 0
 
         if params[0] == b"Register":
             LOCK.acquire()
             name = params[1]
             if b"FSW" in name:
                 if FSW_clients:
-                    id = sorted(FSW_ids)[-1] + 1
+                    process_id = sorted(FSW_ids)[-1] + 1
 
-                name = params[1] + b"_" + bytes(id)
+                name = params[1] + b"_" + bytes(process_id)
                 FSW_clients.append(name)
-                FSW_ids.append(id)
+                FSW_ids.append(process_id)
             elif b"GUI" in name:
                 if GUI_clients:
-                    id = sorted(GUI_ids)[-1] + 1
+                    process_id = sorted(GUI_ids)[-1] + 1
 
-                name = params[1] + b"_" + bytes(id)
+                name = params[1] + b"_" + bytes(process_id)
                 GUI_clients.append(name)
-                GUI_ids.append(id)
+                GUI_ids.append(process_id)
 
             SERVER.dest_obj[name] = DestObj(name, self.request)
             LOCK.release()
 
             self.registered = True
             self.name = name
-            self.id = id
+            self.id = process_id
             print("Registered client " + self.name.decode(DATA_ENCODING))
 
     #################################################
@@ -224,7 +218,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
                     print("socket timed out and shutdown is requested")
                     return b"Quit\n"
                 continue
-            except socket.error as err:
+            except OSError as err:
                 if err.errno == errno.ECONNRESET:
                     print(
                         "Socket error "
@@ -398,7 +392,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         FSW receives commands of various lengths.
         """
         data = ""
-        dst = header.split(b" ")[1].strip(b" ")
+        header.split(b" ")[1].strip(b" ")
         # Read telemetry data here...
         tlm_packet_size = packet[:4]
         size = struct.unpack(">I", tlm_packet_size)[0]
@@ -475,7 +469,7 @@ class DestObj:
         try:
             # print "about to send data to " + self.name
             self.socket.send(msg)
-        except socket.error as err:
+        except OSError as err:
             print("Socket error " + str(err.errno) + " occurred on send().")
 
     def fileno(self):
@@ -492,7 +486,7 @@ def main(argv=None):
                 ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
     program_version = "v0.1"
     program_build_date = "%s" % __updated__
-    program_version_string = "%%prog %s (%s)" % (program_version, program_build_date)
+    program_version_string = "%prog {} ({})".format(program_version, program_build_date)
     program_longdesc = (
         """"""  # optional - give further explanation about what the program does
     )
@@ -538,7 +532,7 @@ def main(argv=None):
         LOCK = server.lock_obj
         ip, port = server.server_address
 
-        print("TCP Socket Server listening on host addr %s, port %s" % (HOST, PORT))
+        print("TCP Socket Server listening on host addr {}, port {}".format(HOST, PORT))
         # Start a thread with the server -- that thread will then start one
         # more thread for each request
         server_thread = threading.Thread(target=server.serve_forever)
@@ -548,8 +542,6 @@ def main(argv=None):
         server_thread.start()
         udp_server_thread.daemon = False
         udp_server_thread.start()
-        p = os.getpid()
-        # print "Process ID: %s" % p
 
         while not shutdown_event.is_set():
             server_thread.join(timeout=5.0)

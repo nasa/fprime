@@ -8,6 +8,7 @@ originating object correctly.
 @author mstarch
 """
 import struct
+
 import fprime_gds.common.handlers
 
 
@@ -23,11 +24,13 @@ class OutgoingRouter(
         """
         Construct the outgoing router with a dictioanry to map IDs
         """
+        super().__init__()
 
     def data_callback(self, data, sender=None):
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads
         from the sender parameter to creat this token, otherwise "0000" is sent out.
+
         :param data: encoded data to be prepended to
         :param sender: sender to append to.
         """
@@ -39,7 +42,9 @@ class OutgoingRouter(
         self.send_to_all(bytes_data)
 
 
-class IncomingRouter(fprime_gds.common.handlers.DataHandler):
+class IncomingRouter(
+    fprime_gds.common.handlers.DataHandler, fprime_gds.common.handlers.HandlerRegistrar
+):
     """
     Handshake router that inspects the returning handshake packet, and routes back to the originating object found in
     the outgoing router.
@@ -49,6 +54,7 @@ class IncomingRouter(fprime_gds.common.handlers.DataHandler):
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads
         from the sender parameter to creat this token, otherwise "0000" is sent out.
+
         :param data: encoded data to be prepended to
         :param sender: sender id to append to.
         """

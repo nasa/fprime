@@ -6,35 +6,32 @@ Checks that the dictgen tools are properly generating python/xml dicts.
 @author jishii
 """
 
+import filecmp
 import os
-import sys
 import shutil
+import sys
+import time
 
-sys.path.append(os.environ['BUILD_ROOT'] + os.sep + "Fw" + os.sep + "Python" + os.sep +"src")
-sys.path.append(os.environ['BUILD_ROOT'] + os.sep + "Gds" + os.sep + "src") # Add GDS modules
-from fprime_gds.common.loaders.xml_loader import XmlLoader
+import pexpect
+from pexpect import EOF, TIMEOUT
 
 from fprime_ac.parsers import XmlTopologyParser
+from fprime_gds.common.loaders.xml_loader import XmlLoader
 
-import subprocess
-from subprocess import CalledProcessError
-import pexpect
-from pexpect import TIMEOUT, EOF
+sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Fw", "Python", "src"))
+sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Gds", "src"))  # Add GDS modules
 
-import filecmp
-import logging
-import time
 
 def file_diff(file1, file2):
     """
     Returns set of line numbers from file1 which differ from file2
     """
     diff_lines = set()
-    with open(file1, "r") as file1open:
-        with open(file2, "r") as file2open:
+    with open(file1) as file1open:
+        with open(file2) as file2open:
             count = 0
             # Compare line by line until a file hits EOF
-            while(1):
+            while 1:
                 line1 = file1open.readline()
                 line2 = file2open.readline()
                 if not line1 or not line2:
@@ -50,6 +47,7 @@ def file_diff(file1, file2):
 
     return diff_lines
 
+
 def file_len(fname):
     """
     Helper method to get number of lines in file
@@ -58,6 +56,7 @@ def file_len(fname):
         for i, l in enumerate(f):
             pass
     return i + 1
+
 
 def remove_headers(filename):
     """
@@ -72,29 +71,43 @@ def remove_headers(filename):
         skip_docstring = False
         for line in lines:
             if not skip_docstring:
-                if not (num == 0 and ('*' in line or '//' in line or "'''" in line or '"""' in line)):
+                if not (
+                    num == 0
+                    and ("*" in line or "//" in line or "'''" in line or '"""' in line)
+                ):
                     # Don't want to print empty first line
                     if num != 0 or line.strip():
                         f.write(line)
                         num += 1
-                            
+
             if "'''" in line or '"""' in line:
                 skip_docstring = not skip_docstring
-        
+
         f.truncate()
+
 
 def compare_genfile(filename):
     """
     Compares genfile with expected genfile
     """
     remove_headers(filename)
-    
-    if not (filecmp.cmp(filename,"templates/{}".format(filename + ".txt"))):
-        print("WARNING: {} generated incorrectly according to Autocoders/Python/test/dictgen/templates/{}".format(filename, filename + ".txt"))
+
+    if not (filecmp.cmp(filename, "templates/{}".format(filename + ".txt"))):
+        print(
+            "WARNING: {} generated incorrectly according to Autocoders/Python/test/dictgen/templates/{}".format(
+                filename, filename + ".txt"
+            )
+        )
         diff_lines = file_diff(filename, "templates/{}".format(filename) + ".txt")
-        print("WARNING: the following lines from " + filename + " differ from the template: " + str(diff_lines))
+        print(
+            "WARNING: the following lines from "
+            + filename
+            + " differ from the template: "
+            + str(diff_lines)
+        )
     else:
         print("{} is consistent with expected template".format(filename))
+
 
 def filter_non_src_files(files):
     """
@@ -108,6 +121,7 @@ def filter_non_src_files(files):
 
     return src_files
 
+
 def get_serializables_from_comp_xml(comp_xml):
     """
     Returns list containing all serialized types found from
@@ -115,16 +129,14 @@ def get_serializables_from_comp_xml(comp_xml):
     check for serial types found outside imported serial files
     """
     serial_imports = comp_xml.get_serializable_type_files()
-    
+
     # Imports = lxml serials from imported serializable types
-    serial_list = {
-        "imports": []
-    }
+    serial_list = {"imports": []}
 
     loader = XmlLoader()
     # Find serializables in imported file
     for serial_file in serial_imports:
-        serial_path = os.environ['BUILD_ROOT'] + os.sep + serial_file
+        serial_path = os.path.join(os.environ["BUILD_ROOT"], serial_file)
         if os.path.exists(serial_path):
             opened_serial = loader.get_xml_tree(serial_path)
             find_serial_from_serial(opened_serial, serial_list, "imports")
@@ -133,6 +145,7 @@ def get_serializables_from_comp_xml(comp_xml):
             assert False
 
     return serial_list
+
 
 def get_enums_from_comp_xml(comp_xml):
     """
@@ -143,18 +156,15 @@ def get_enums_from_comp_xml(comp_xml):
     checked and ports are ignored
     """
     dict_imports = comp_xml.get_imported_dictionary_files()
-    
+
     # Imports = lxml enums from imported dicts
     # Compxml = FPrime enums from XMLComponentParser
-    enum_list = {
-        "imports": [],
-        "compxml": []
-    }
+    enum_list = {"imports": [], "compxml": []}
 
     loader = XmlLoader()
     # Find enums in imported dictionary
     for dict_file in dict_imports:
-        dict_path = os.environ['BUILD_ROOT'] + os.sep + dict_file
+        dict_path = os.path.join(os.environ["BUILD_ROOT"], dict_file)
         if os.path.exists(dict_path):
             opened_dict = loader.get_xml_tree(dict_path)
             find_enum_from_dict(opened_dict, enum_list, "imports")
@@ -170,23 +180,24 @@ def get_enums_from_comp_xml(comp_xml):
 
     for cmd in comp_cmds:
         for arg in cmd.get_args():
-            if type(arg.get_type()) is tuple:
+            if isinstance(arg.get_type(), tuple):
                 enum_list["compxml"].append(arg.get_type())
 
     for evr in comp_evrs:
         for arg in evr.get_args():
-            if type(arg.get_type()) is tuple:
+            if isinstance(arg.get_type(), tuple):
                 enum_list["compxml"].append(arg.get_type())
 
     for chan in comp_chans:
-        if type(chan.get_type()) is tuple:
+        if isinstance(chan.get_type(), tuple):
             enum_list["compxml"].append(chan.get_type())
 
     for param in comp_params:
-        if type(param.get_type()) is tuple:
+        if isinstance(param.get_type(), tuple):
             enum_list["compxml"].append(param.get_type())
 
     return enum_list
+
 
 def find_serial_from_serial(opened_serial, serial_list, type):
     """
@@ -196,6 +207,7 @@ def find_serial_from_serial(opened_serial, serial_list, type):
     if opened_serial.tag == "enums":
         for serial in opened_serial.getchildren():
             serial_list[type].append(serial)
+
 
 def find_enum_from_dict(opened_dict, enum_list, type):
     """
@@ -229,17 +241,20 @@ def find_enum_from_dict(opened_dict, enum_list, type):
                 if param.attrib["data_type"] == "ENUM":
                     enum_list[type].append(param.get_children()[0])
 
+
 def check_generated_files(testdir):
     """
     Compares generated dictionary and pymods with original topology xml
     """
     # Check that everything from parsed topology was generated
-    topology = XmlTopologyParser.XmlTopologyParser("TestTopologyAppAi.xml").get_instances()
-    
+    topology = XmlTopologyParser.XmlTopologyParser(
+        "TestTopologyAppAi.xml"
+    ).get_instances()
+
     # Original TopologyAi.xml file
     inst1 = topology[0]
     inst2 = topology[1]
-    
+
     # Dict objects
     inst1_events = [o for o in inst1.get_comp_xml().get_events()]
     inst2_events = [o for o in inst2.get_comp_xml().get_events()]
@@ -259,7 +274,7 @@ def check_generated_files(testdir):
     inst2_channel_names = [o.get_name() for o in inst2_channels]
     inst1_parameter_names = [o.get_name() for o in inst1_parameters]
     inst2_parameter_names = [o.get_name() for o in inst2_parameters]
-    
+
     # Parse out all arguments for commands and events
     inst1_command_args = []
     for cmd in inst1_commands:
@@ -277,7 +292,7 @@ def check_generated_files(testdir):
     for evr in inst2_events:
         for arg in evr.get_args():
             inst2_event_args.append(arg)
-    
+
     # Command / Event names
     inst1_command_arg_names = [arg.get_name() for arg in inst1_command_args]
     inst2_command_arg_names = [arg.get_name() for arg in inst2_command_args]
@@ -293,7 +308,7 @@ def check_generated_files(testdir):
     inst2_event_arg_types = [arg.get_type() for arg in inst2_event_args]
     inst1_parameter_types = [param.get_type() for param in inst1_parameters]
     inst2_parameter_types = [param.get_type() for param in inst2_parameters]
-    
+
     # Enums
     inst1_enums = get_enums_from_comp_xml(inst1.get_comp_xml())
     inst2_enums = get_enums_from_comp_xml(inst2.get_comp_xml())
@@ -306,7 +321,7 @@ def check_generated_files(testdir):
     inst2_serials = get_serializables_from_comp_xml(inst2.get_comp_xml())
     inst_serials = {}
     inst_serials["imports"] = inst1_serials["imports"] + inst2_serials["imports"]
-    
+
     # GDS XML Dictionary
     dict_parser = XmlLoader()
     parsed_dict = dict_parser.get_xml_tree("TestTopologyAppDictionary.xml")
@@ -347,15 +362,15 @@ def check_generated_files(testdir):
     if not len(inst1_parameters) + len(inst2_parameters) == len(parsed_parameters):
         print("ERROR: Not all parameters in topology were found in generated dict")
         assert False
-    
+
     ###################################################################
     # Check that all items are the same from the topology and the generated dict
-    
+
     # Check events
     for event in parsed_events:
         evr_comp = event.attrib["component"]
         evr_name = event.attrib["name"]
-        
+
         if evr_comp == "Inst1":
             if not evr_name in inst1_event_names:
                 print("ERROR: Event in Inst1 not found: {}".format(evr_name))
@@ -367,26 +382,40 @@ def check_generated_files(testdir):
         else:
             print("ERROR: Invalid component name {}".format(evr_comp))
             assert False
-                
+
         # Arg check
         for args in event:
             if len(args) > 0:
                 for arg in args:
                     arg_name = arg.attrib["name"]
                     arg_type = arg.attrib["type"]
-                    if not (arg_name in inst1_event_arg_names or arg_name in inst2_event_arg_names):
-                        print("ERROR: event arg name {} for arg {} not found ".format(arg_name, evr_name) +
-                                  "in topologyAi.xml")
+                    if not (
+                        arg_name in inst1_event_arg_names
+                        or arg_name in inst2_event_arg_names
+                    ):
+                        print(
+                            "ERROR: event arg name {} for arg {} not found ".format(
+                                arg_name, evr_name
+                            )
+                            + "in topologyAi.xml"
+                        )
                         assert False
-                    if not (arg_type in inst1_event_arg_types or arg_type in inst2_event_arg_types):
-                        print("ERROR: event arg type {} for arg {} not found ".format(arg_type, evr_name))
+                    if not (
+                        arg_type in inst1_event_arg_types
+                        or arg_type in inst2_event_arg_types
+                    ):
+                        print(
+                            "ERROR: event arg type {} for arg {} not found ".format(
+                                arg_type, evr_name
+                            )
+                        )
                         assert False
-       
+
     # Check commands
     for command in parsed_commands:
         cmd_comp = command.attrib["component"]
         cmd_name = command.attrib["mnemonic"]
-        
+
         if cmd_comp == "Inst1":
             if not cmd_name in inst1_command_names:
                 print("ERROR: Command in Inst1 not found: {}".format(cmd_name))
@@ -405,21 +434,35 @@ def check_generated_files(testdir):
                 for arg in args:
                     arg_name = arg.attrib["name"]
                     arg_type = arg.attrib["type"]
-                    if not (arg_name in inst1_command_arg_names or arg_name in inst2_command_arg_names):
-                        print("ERROR: event arg name {} for arg {} not found ".format(arg_name, cmd_name) +
-                              "in topologyAi.xml")
+                    if not (
+                        arg_name in inst1_command_arg_names
+                        or arg_name in inst2_command_arg_names
+                    ):
+                        print(
+                            "ERROR: event arg name {} for arg {} not found ".format(
+                                arg_name, cmd_name
+                            )
+                            + "in topologyAi.xml"
+                        )
                         assert False
-                            
-                    if not (arg_type in inst1_command_arg_types or arg_type in inst2_command_arg_types):
-                        print("ERROR: event arg type {} for arg {} not found ".format(arg_type, evr_name) +
-                              "in topologyAi.xml")
+
+                    if not (
+                        arg_type in inst1_command_arg_types
+                        or arg_type in inst2_command_arg_types
+                    ):
+                        print(
+                            "ERROR: event arg type {} for arg {} not found ".format(
+                                arg_type, evr_name
+                            )
+                            + "in topologyAi.xml"
+                        )
                         assert False
 
     # Check channels
     for channel in parsed_channels:
         chan_comp = channel.attrib["component"]
         chan_name = channel.attrib["name"]
-        
+
         if chan_comp == "Inst1":
             if not chan_name in inst1_channel_names:
                 print("ERROR: Channel in Inst1 not found: {}".format(chan_name))
@@ -434,14 +477,18 @@ def check_generated_files(testdir):
         # Type check
         chan_type = channel.attrib["type"]
         if not (chan_type in inst1_channel_types or chan_type in inst2_channel_types):
-            print("ERROR: Channel type {} in channel {} not found in topologyAi.xml".format(chan_type, chan_name))
+            print(
+                "ERROR: Channel type {} in channel {} not found in topologyAi.xml".format(
+                    chan_type, chan_name
+                )
+            )
             assert False
-                
+
     # Check parameters
     for parameter in parsed_parameters:
         param_comp = parameter.attrib["component"]
         param_name = parameter.attrib["name"]
-        
+
         if param_comp == "Inst1":
             if not param_name in inst1_parameter_names:
                 print("ERROR: Parameter in Inst1 not found: {}".format(param_name))
@@ -455,8 +502,14 @@ def check_generated_files(testdir):
             assert False
         # Type check
         param_type = parameter.attrib["type"]
-        if not (param_type in inst1_parameter_types or param_type in inst2_parameter_types):
-            print("ERROR: Parameter type {} in param {} not found in topologyAi.xml".format(param_type, param_name))
+        if not (
+            param_type in inst1_parameter_types or param_type in inst2_parameter_types
+        ):
+            print(
+                "ERROR: Parameter type {} in param {} not found in topologyAi.xml".format(
+                    param_type, param_name
+                )
+            )
             assert False
 
     print("Checked dictionary item names, types and arguments")
@@ -465,17 +518,21 @@ def check_generated_files(testdir):
 
     ##################################################
     # Check Pymodule consistency
-    
+
     # Check commands
-    expected_cmd_modules = ["Inst1_" + o + ".py" for o in inst1_command_names] + ["Inst2_" + o + ".py" for o in inst2_command_names]
-    if os.path.exists(testdir + os.sep + "commands"):
-        files = os.listdir(testdir + os.sep + "commands")
+    expected_cmd_modules = ["Inst1_" + o + ".py" for o in inst1_command_names] + [
+        "Inst2_" + o + ".py" for o in inst2_command_names
+    ]
+    if os.path.exists(os.path.join(testdir, "commands")):
+        files = os.listdir(os.path.join(testdir, "commands"))
         files = filter_non_src_files(files)
         for mod in expected_cmd_modules:
             if not mod in files:
-                print("ERROR: python module {} not found in dictgen/commands".format(mod))
+                print(
+                    "ERROR: python module {} not found in dictgen/commands".format(mod)
+                )
                 assert False
-            
+
         if not len(expected_cmd_modules) == len(files):
             print("ERROR: Not all command python modules were generated")
             assert False
@@ -485,15 +542,19 @@ def check_generated_files(testdir):
             assert False
 
     # Check channels
-    expected_chan_modules = ["Inst1_" + o + ".py" for o in inst1_channel_names] + ["Inst2_" + o + ".py" for o in inst2_channel_names]
-    if os.path.exists(testdir + os.sep + "channels"):
-        files = os.listdir(testdir + os.sep + "channels")
+    expected_chan_modules = ["Inst1_" + o + ".py" for o in inst1_channel_names] + [
+        "Inst2_" + o + ".py" for o in inst2_channel_names
+    ]
+    if os.path.exists(os.path.join(testdir, "channels")):
+        files = os.listdir(os.path.join(testdir, "channels"))
         files = filter_non_src_files(files)
         for mod in expected_chan_modules:
             if not mod in files:
-                print("ERROR: python module {} not found in dictgen/channels".format(mod))
+                print(
+                    "ERROR: python module {} not found in dictgen/channels".format(mod)
+                )
                 assert False
-        
+
         if not len(expected_chan_modules) == len(files):
             print("ERROR: Not all channel python modules were generated")
             assert False
@@ -501,17 +562,19 @@ def check_generated_files(testdir):
         if not len(expected_chan_modules) == 0:
             print("ERROR: Channel python modules were not generated")
             assert False
-        
+
     # Check events
-    expected_evr_modules = ["Inst1_" + o + ".py" for o in inst1_event_names] + ["Inst2_" + o + ".py" for o in inst2_event_names]
-    if os.path.exists(testdir + os.sep + "events"):
-        files = os.listdir(testdir + os.sep + "events")
+    expected_evr_modules = ["Inst1_" + o + ".py" for o in inst1_event_names] + [
+        "Inst2_" + o + ".py" for o in inst2_event_names
+    ]
+    if os.path.exists(os.path.join(testdir, "events")):
+        files = os.listdir(os.path.join(testdir, "events"))
         files = filter_non_src_files(files)
         for mod in expected_evr_modules:
             if not mod in files:
                 print("ERROR: python module {} not found in dictgen/events".format(mod))
                 assert False
-        
+
         if not len(expected_evr_modules) == len(files):
             print("ERROR: Not all event python modules were generated")
             assert False
@@ -519,18 +582,22 @@ def check_generated_files(testdir):
         if not len(expected_evr_modules) == 0:
             print("ERROR: Event python modules were not generated")
             assert False
-        
+
     # Check parameters
-    expected_param_modules = ["Inst1_" + o + ".py" for o in inst1_parameter_names] + ["Inst2_" + o + ".py" for o in inst2_parameter_names]
-    if os.path.exists(testdir + os.sep + "parameters"):
-        files = os.listdir(testdir + os.sep + "parameters")
+    expected_param_modules = ["Inst1_" + o + ".py" for o in inst1_parameter_names] + [
+        "Inst2_" + o + ".py" for o in inst2_parameter_names
+    ]
+    if os.path.exists(os.path.join(testdir, "parameters")):
+        files = os.listdir(os.path.join(testdir, "parameters"))
         files = filter_non_src_files(files)
         for mod in expected_param_modules:
             if not mod in files:
-                print("ERROR: python module {} not found in dictgen/parameters".format(mod))
+                print(
+                    "ERROR: python module {} not found in dictgen/parameters".format(
+                        mod
+                    )
+                )
                 assert False
-
-
 
         if not len(expected_param_modules) == len(files):
             print("ERROR: Not all parameter python modules were generated")
@@ -539,6 +606,7 @@ def check_generated_files(testdir):
         if not len(expected_param_modules) == 0:
             print("ERROR: Parameter python modules were not generated")
             assert False
+
 
 def compare_serials_ai_gds(topology_serials, gds_serials):
     """
@@ -568,21 +636,34 @@ def compare_serials_ai_gds(topology_serials, gds_serials):
         # Check that top_serial's type attribute is found in gds serial types list
         top_serial_type = top_serial.attrib["type"]
         if not top_serial_type in types:
-            print("ERROR: Serial type {} from topology ai not found in gds dict".format(top_serial_type))
+            print(
+                "ERROR: Serial type {} from topology ai not found in gds dict".format(
+                    top_serial_type
+                )
+            )
             assert False
         # Check members
         for child in top_serial:
             if "type" in child.keys():
                 if not child.attrib["type"] in member_types[top_serial_type]:
-                    print("ERROR: Serial member type {} from ".format(child.attrib["type"]) +
-                          "topology ai imported dict not found in gds dict")
+                    print(
+                        "ERROR: Serial member type {} from ".format(
+                            child.attrib["type"]
+                        )
+                        + "topology ai imported dict not found in gds dict"
+                    )
                     assert False
             if "name" in child.keys():
                 if not child.attrib["name"] in member_types[top_serial_type]:
-                    print("ERROR: Serial member name {} from ".format(child.attrib["name"]) +
-                          "topology ai imported dict not found in gds dict")
-    
+                    print(
+                        "ERROR: Serial member name {} from ".format(
+                            child.attrib["name"]
+                        )
+                        + "topology ai imported dict not found in gds dict"
+                    )
+
     print("Serializable check run successfully")
+
 
 def compare_enums_ai_gds(topology_enums, gds_enums):
     """
@@ -606,60 +687,85 @@ def compare_enums_ai_gds(topology_enums, gds_enums):
         # Check that top_enum's name attribute is found in gds enum names list
         top_enum_name = top_enum[0][1]
         if not top_enum_name in names:
-            print("ERROR: Enum name {} from topology ai not found in gds dict".format(top_enum_name))
+            print(
+                "ERROR: Enum name {} from topology ai not found in gds dict".format(
+                    top_enum_name
+                )
+            )
             assert False
         # Check item names
         for item in top_enum[1]:
             if not item[0] in items[top_enum_name]:
-                print("ERROR: Enum {} item name {} not found in gds dict".format(top_enum_name, item[0]))
+                print(
+                    "ERROR: Enum {} item name {} not found in gds dict".format(
+                        top_enum_name, item[0]
+                    )
+                )
                 assert False
 
     for top_enum in topology_enums["imports"]:
         # Check that top_enum's name attribute is found in gds enum names list
         top_enum_name = top_enum.attrib["name"]
         if not top_enum_name in names:
-            print("ERROR: Enum name {} from topology ".format(top_enum_name) +
-                  "ai imported dict not found in gds dict")
+            print(
+                "ERROR: Enum name {} from topology ".format(top_enum_name)
+                + "ai imported dict not found in gds dict"
+            )
             assert False
         # Check item names
         for child in top_enum:
             if "name" in child.keys():
                 if not child.attrib["name"] in items[top_enum_name]:
-                    print("ERROR: Enum item name {} from ".format(child.attrib["name"]) +
-                          "topology ai imported dict not found in gds dict")
+                    print(
+                        "ERROR: Enum item name {} from ".format(child.attrib["name"])
+                        + "topology ai imported dict not found in gds dict"
+                    )
                     assert False
 
     print("Enum check run successfully")
+
 
 def test_dictgen():
     """
     Tests that tests are being generated correctly
     """
     try:
-        
-        # cd into test directory to find test files (code/test/dictgen can only find files this way)
-        curdir = os.getcwd()
-        testdir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep
-        testdir = testdir + "Python" + os.sep + "test" + os.sep + "dictgen"
-        os.chdir(testdir)
-        
-        bindir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python" + os.sep + "bin" + os.sep
-        
-        ## Spawn executable
-        p_pymod = pexpect.spawn("python " + bindir + "pymod_dictgen.py -v TestTopologyAppAi.xml")
 
-        p_pymod.expect("(?=.*Generated component dicts for DictGen::TestComponent)(?=.*Generated pymods for topology TestTopology)(?!.*ERROR).*", timeout=5)
-        
+        # cd into test directory to find test files (code/test/dictgen can only find files this way)
+        testdir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders")
+        testdir = os.path.join(testdir + "Python", "test", "dictgen")
+        os.chdir(testdir)
+
+        bindir = (
+            os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin")
+            + os.sep
+        )
+
+        ## Spawn executable
+        p_pymod = pexpect.spawn(
+            "python " + bindir + "pymod_dictgen.py -v TestTopologyAppAi.xml"
+        )
+
+        p_pymod.expect(
+            "(?=.*Generated component dicts for DictGen::TestComponent)(?=.*Generated pymods for topology TestTopology)(?!.*ERROR).*",
+            timeout=5,
+        )
+
         print("Autocoded TestTopology using pymod_dictgen dictgen tool")
-        
-        p_gds = pexpect.spawn("python " + bindir + "gds_dictgen.py -v TestTopologyAppAi.xml")
-        
-        p_gds.expect("(?=.*Generated XML dictionary TestTopologyAppDictionary.xml)(?!.*ERROR).*", timeout=5)
-        
+
+        p_gds = pexpect.spawn(
+            "python " + bindir + "gds_dictgen.py -v TestTopologyAppAi.xml"
+        )
+
+        p_gds.expect(
+            "(?=.*Generated XML dictionary TestTopologyAppDictionary.xml)(?!.*ERROR).*",
+            timeout=5,
+        )
+
         print("Autocoded TestTopology using gds_dictgen dictgen tool")
-        
+
         time.sleep(3)
-        
+
         gen_pymods = []
         gen_pymods.append("channels/Inst1_Test_Tlm0.py")
         gen_pymods.append("channels/Inst2_Test_Tlm0.py")
@@ -677,24 +783,25 @@ def test_dictgen():
         gen_pymods.append("events/Inst2_Test_Evr0.py")
         gen_pymods.append("events/Inst2_Test_Evr1.py")
         gen_pymods.append("events/Inst2_Test_Evr2.py")
-        
+
         # Test whether all generated files match expected
         compare_genfile("TestTopologyAppDictionary.xml")
         for pymod in gen_pymods:
             compare_genfile(pymod)
-        
+
         # Evaluate imports on each of the pymods to show they work properly
-        dictgen_dir = os.environ['BUILD_ROOT'] + os.sep + "Autocoders" + os.sep + "Python"
-        dictgen_dir += os.sep + "test" + os.sep + "dictgen" + os.sep
+        dictgen_dir = os.path.join(
+            os.environ["BUILD_ROOT"], "Autocoders", "Python", "test", "dictgen"
+        )
         sys.path.append(dictgen_dir)
-        
+
         # TODO: FIGURE OUT HOW TO MAKE SERIALIZED TYPE IMPORTS WORK
-#        for pymod in gen_pymods:
-#            exec("import {}".format(pymod.replace("/",".").replace(".py","")))
-#        print("Executed all pymod imports successfully")
+        #        for pymod in gen_pymods:
+        #            exec("import {}".format(pymod.replace("/",".").replace(".py","")))
+        #        print("Executed all pymod imports successfully")
 
         check_generated_files(testdir)
-        
+
         # Remove all generated files
         if os.path.exists("TestTopologyAppDictionary.xml"):
             os.remove("TestTopologyAppDictionary.xml")
@@ -709,20 +816,20 @@ def test_dictgen():
 
         ## If there was no timeout the pexpect test passed
         assert True
-        
+
     ## A timeout occurs when pexpect cannot match the executable
     ## output with the designated expectation. In this case the
     ## key expectation is p.expect(expect_string, timeout=3)
     ## which tests what the method name describes
     except TIMEOUT as e:
         print("Timeout Error. Expected Value not returned.")
-#        print ("-------Program Output-------")
-#        print (ptestrun.before)
-        print ("-------Expected Output-------")
-        print (e.get_trace())
+        #        print ("-------Program Output-------")
+        #        print (ptestrun.before)
+        print("-------Expected Output-------")
+        print(e.get_trace())
         assert False
-    except EOF as e:
+    except EOF:
         print("EOF Error. Pexpect did not find expected output in program output.")
-#        print ("-------Program Output-------")
-#        print (ptestrun.before)
+        #        print ("-------Program Output-------")
+        #        print (ptestrun.before)
         assert False

@@ -7,22 +7,22 @@ code that they are importing.
 
 @author mstarch
 """
-import os
-import re
 import abc
-import sys
-import copy
-import errno
 import argparse
+import copy
 import datetime
-import platform
+import errno
 import importlib
+import os
+import platform
+import re
+import sys
 
-import fprime_gds.common.utils.config_manager
 import fprime_gds.common.adapters.base
 
 # Include basic adapters
 import fprime_gds.common.adapters.ip
+import fprime_gds.common.utils.config_manager
 
 try:
     import fprime_gds.common.adapters.uart
@@ -35,7 +35,7 @@ try:
     import fprime_gds.wxgui.tools.gds
 
     GUIS.append("wx")
-except ImportError as exc:
+except ImportError:
     pass
 
 
@@ -54,7 +54,6 @@ class ParserBase(abc.ABC):
         Produce a parser that will handle the given arguments. These parsers can be combined for a CLI for a tool by
         assembling them as parent processors to a parser for the given tool.
         """
-        pass
 
     @classmethod
     @abc.abstractmethod
@@ -63,10 +62,10 @@ class ParserBase(abc.ABC):
         Handle arguments from the given parser. The expectation is that the "args" namespace is taken in, processed, and
         a new namespace object is returned with the processed variants of the arguments. Copy the namespace object when
         modifying existing arguments.
+
         :param args: arguments namespace of processed arguments
         :return: namespace with processed results of arguments.
         """
-        pass
 
     @staticmethod
     def parse_args(
@@ -76,6 +75,7 @@ class ParserBase(abc.ABC):
         Create a parser for the given application using the description provided. This will then add all specified
         ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handel
         arguments methods will be called, and the final namespace will be returned.
+
         :param parser_classes: a list of ParserBase subclasses that will be used to
         :return: namespace with all parsed arguments from all provided ParserBase subclasses
         """
@@ -91,7 +91,7 @@ class ParserBase(abc.ABC):
             for parser_base in parser_classes:
                 args = parser_base.handle_arguments(args, **kwargs)
         except ValueError as ver:
-            print("[ERROR] Failed to pars arguments: {}".format(ver), file=sys.stderr)
+            print("[ERROR] Failed to parse arguments: {}".format(ver), file=sys.stderr)
             sys.exit(-1)
         return args, parser
 
@@ -100,6 +100,7 @@ class ParserBase(abc.ABC):
         """
         Find token in deploy directory by walking the directory looking for reg-ex. This effectively finds a file in a
         subtree and provides the path to it. Returns None when not found
+
         :param token: token to search for in the directory structure
         :param deploy: directory to start with
         :param is_file: true if looking for file, otherwise false
@@ -122,6 +123,7 @@ class ImportParser(ParserBase):
     def get_parser():
         """
         Creates a parser that reads '--import' arguments to import new modules.  Multiple '--import' are supported.
+
         :return: parser that can handle imports
         """
         parser = argparse.ArgumentParser(
@@ -141,6 +143,7 @@ class ImportParser(ParserBase):
         """
         Handle the import arguments by looping through them and importing each. Errors are printed to the console if an
         import failed, but no other effect is realized.
+
         :param args: parsed arguments namespace
         :return: args as input, has side effect of new imported modules
         """
@@ -222,6 +225,7 @@ class CommParser(ParserBase):
     def handle_arguments(cls, args, **kwargs):
         """
         Handle the input arguments for the the parser. This will help setup the adapter with its expected arguments.
+
         :param args: parsed arguments in namespace format
         :return: namespace with "comm_adapter" value added
         """
@@ -248,6 +252,7 @@ class LogDeployParser(ParserBase):
         """
         Creates a new parser that can process "--deployment" and "--logs" arguments for use with any CLI producing log
         files. Can be used to construct parent arguments
+
         :return: parser with logging and deploy arguments
         """
         parser = argparse.ArgumentParser(
@@ -285,6 +290,7 @@ class LogDeployParser(ParserBase):
     def handle_arguments(cls, args, **kwargs):
         """
         Read the arguments specified in this parser and validate the expected inputs.
+
         :param arg: parsed arguments as namespace
         :return: args namespace
         """
@@ -336,6 +342,7 @@ class MiddleWareParser(ParserBase):
         Sets up and parses the arguments required to run the data middleware layer. At this time, the data middleware is
         the threaded TCP server and thus the arguments are the ip address and port to listen to. May also be used in
         clients connecting to the middleware layer.
+
         :return: parser after arguments added
         """
         parser = argparse.ArgumentParser(
@@ -365,6 +372,7 @@ class MiddleWareParser(ParserBase):
         """
         Checks to ensure that the specified port and address is available before connecting. This prevents user from
         attempting to run on a port that is unavailable.
+
         :param args: parsed argument namespace
         :return: args namespace
         """
@@ -389,6 +397,7 @@ class GdsParser(ParserBase):
         """
         Creates a parser to handle the arguments required to run the GDS layer. This allows the system to start up the
         GDS and connect into the middleware layer.
+
         :return: parser for arguments
         """
         parser = argparse.ArgumentParser(
@@ -428,6 +437,7 @@ class GdsParser(ParserBase):
         """
         Takes the arguments from the parser, and processes them into the needed map of key to dictionaries for the
         program. This will throw if there is an error.
+
         :param args: parsed args into a namespace
         :return: args namespace
         """
@@ -439,7 +449,7 @@ class GdsParser(ParserBase):
                     args.dictionary
                 )
             )
-        elif args.deploy is not None:
+        elif args.deploy is not None and not args.dictionary:
             xml_dict = ParserBase.find_in(".*Dictionary.xml", args.deploy, True)
             py_dict = ParserBase.find_in("py_dict", args.deploy, False)
             if xml_dict is None and py_dict is None:
@@ -449,7 +459,7 @@ class GdsParser(ParserBase):
                     )
                 )
             args.dictionary = py_dict if xml_dict is None else xml_dict
-        else:
+        elif not args.deploy and not args.dictionary:
             raise ValueError(
                 "User must supply either the '--dictionary' or '--deployment' argument"
             )
@@ -474,6 +484,7 @@ class BinaryDeployment(ParserBase):
         """
         Creates a parser to handle the arguments required to run the binary application. This allows the system to
         start up the F prime binary deployment, or ignore it.
+
         :return: parser for arguments
         """
         parser = argparse.ArgumentParser(
@@ -503,6 +514,7 @@ class BinaryDeployment(ParserBase):
         """
         Takes the arguments from the parser, and processes them into the needed map of key to dictionaries for the
         program. This will throw if there is an error.
+
         :param args: parsed arguments in namespace
         :return: args namespaces
         """

@@ -21,6 +21,8 @@ namespace MockTypes {
         public:
             // Constructor
             CircularState();
+            // Destructor
+            ~CircularState();
             /**
              * Generates a random buffer for input to various calls to the CircularBuffer.
              * @return size of this buffer

@@ -1,9 +1,8 @@
-import wx
-import GDSMainFrameGUI
 import GDSChannelTelemetryPanelImpl
-import GDSStatusPanelImpl
 import GDSCommandPanelImpl
 import GDSLogEventPanelImpl
+import GDSMainFrameGUI
+import GDSStatusPanelImpl
 
 ###########################################################################
 ## Class MainFrameImpl
@@ -21,10 +20,10 @@ class MainFrameImpl(GDSMainFrameGUI.MainFrame):
             self.TabNotebook
         )
 
-        self.TabNotebook.AddPage(self.cmd_pnl, u"Commands", False)
-        self.TabNotebook.AddPage(self.status_pnl, u"Status", False)
-        self.TabNotebook.AddPage(self.event_pnl, u"Log Events", False)
-        self.TabNotebook.AddPage(self.telem_pnl, u"Channel Telemetry", False)
+        self.TabNotebook.AddPage(self.cmd_pnl, "Commands", False)
+        self.TabNotebook.AddPage(self.status_pnl, "Status", False)
+        self.TabNotebook.AddPage(self.event_pnl, "Log Events", False)
+        self.TabNotebook.AddPage(self.telem_pnl, "Channel Telemetry", False)
 
         self.child_main_instances = []
 

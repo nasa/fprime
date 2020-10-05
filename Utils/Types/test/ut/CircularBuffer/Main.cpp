@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define STEP_COUNT 100000
+#define STEP_COUNT 1000
 
 /**
  * A random hopper for rules. Apply STEP_COUNT times.
@@ -100,7 +100,7 @@ TEST(CircularBufferTests, BasicPeekTest) {
     char peek_char = 0x85;
     U8 peek_u8 = 0x95;
     U32 peek_u32 = 0xdeadc0de;
-    U8 buffer[1024];
+    U8 buffer[1024] = {};   // Clear out memory to appease valgrind
     // Setup all circular state
     MockTypes::CircularState state;
     state.addInfinite(reinterpret_cast<U8*>(&peek_char), sizeof(peek_char));

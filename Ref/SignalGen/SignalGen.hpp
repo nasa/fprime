@@ -18,6 +18,7 @@
 #include <Os/File.hpp>
 #include <Os/ValidateFile.hpp>
 #include <Ref/SignalGen/SignalGenComponentAc.hpp>
+#include <Fw/ArrayFile/ArrayTypeArrayAc.hpp>
 #include <cmath>
 
 namespace Ref {
@@ -25,8 +26,6 @@ namespace Ref {
   class SignalGen :
     public SignalGenComponentBase
   {
-
-    typedef enum { TRIANGLE, SQUARE, SINE, NOISE } Signal;
 
     private:
     
@@ -40,7 +39,8 @@ namespace Ref {
         U32 cmdSeq, /*!< The command sequence number*/
         U32 Frequency, 
         U32 Amplitude, 
-        U32 Phase
+        U32 Phase, 
+        Ref::SignalType SigType 
         );
 
         void SignalGen_Toggle_cmdHandler(
@@ -48,6 +48,10 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         );
         void SignalGen_Skip_cmdHandler(
+        FwOpcodeType opCode, /*!< The opcode*/
+        U32 cmdSeq /*!< The command sequence number*/
+        );
+        void SignalGen_GenerateArray_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq /*!< The command sequence number*/
         );
@@ -77,8 +81,7 @@ namespace Ref {
         U32 signalAmplitude;
         U32 signalPhase;
         U32 sample;
-        Signal SignalType;      
-
+        SignalType sigType;
   };
 };
 #endif

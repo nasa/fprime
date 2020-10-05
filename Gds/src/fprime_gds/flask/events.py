@@ -10,6 +10,7 @@
 #                  }
 ####
 import types
+
 import flask_restful
 import flask_restful.reqparse
 
@@ -40,6 +41,7 @@ class EventHistory(flask_restful.Resource):
     def __init__(self, history):
         """
         Constructor used to setup time argument to this history.
+
         :param history: history object holding events
         :param dictionary: dictionary holding events list
         """
@@ -72,4 +74,4 @@ class EventHistory(flask_restful.Resource):
         Delete the event history for a given session. This keeps the data all clear like.
         """
         args = self.parser.parse_args()
-        self.history.clear(session=args.get("session"))
+        self.history.clear(start=args.get("session"))

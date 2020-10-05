@@ -15,7 +15,7 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include "Drv/SocketIpDriver/SocketIpDriverComponentAc.hpp"
-#include <Drv/SocketIpDriver/SocketIpDriverCfg.hpp>
+#include <SocketIpDriverCfg.hpp>
 #include <Drv/SocketIpDriver/SocketHelper.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverTypes.hpp>
 

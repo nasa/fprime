@@ -1,7 +1,7 @@
 ####
 # Validation.cmake:
 #
-# Allows for validation hooks in the F prime cmake system.
+# Allows for validation hooks in the F prime cmake system. Experimental.
 ####
 
 ####

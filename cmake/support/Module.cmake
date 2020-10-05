@@ -5,7 +5,7 @@
 # includes code for generating Enums, Serializables, Ports, Components, and Topologies.
 #
 # These are used as the building blocks of F prime items. This includes deployments,
-# tools, and indiviual components.
+# tools, and individual components.
 ####
 # Include some helper libraries
 include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")

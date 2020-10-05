@@ -6,11 +6,11 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
+
+from fprime_gds.common.templates import cmd_template
 
 # Custom Python Modules
 from . import python_loader
-from fprime_gds.common.templates import cmd_template
 
 
 class CmdPyLoader(python_loader.PythonLoader):
@@ -22,15 +22,6 @@ class CmdPyLoader(python_loader.PythonLoader):
     OP_CODE_FIELD = "OP_CODE"
     DESC_FIELD = "CMD_DESCRIPTION"
     ARGS_FIELD = "ARGUMENTS"
-
-    def __init__(self):
-        """
-        Constructor
-
-        Returns:
-            An initialized loader object
-        """
-        super(CmdPyLoader, self).__init__()
 
     def construct_dicts(self, path):
         """
@@ -48,14 +39,12 @@ class CmdPyLoader(python_loader.PythonLoader):
                   generated folder:
                   ${GENERATED_FOLDER_LOCATION}/generated/${DEPLOYMENT}/events
 
-        TODO: this description doesn't make sense
         Returns:
             A tuple with two event dictionaries (python type dict):
             (id_dict, name_dict). They should have keys of the id and name
             fields respectively and the values for both should be event_template
             objects.
         """
-        # TODO we are always using the superpkg, is that OK?
         module_dicts = self.read_dict(path, use_superpkg=True)
 
         id_dict = dict()

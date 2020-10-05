@@ -9,7 +9,7 @@ import platform
 import cmake
 
 # Test a normal build, with the ref executable and static libraries
-BUILD_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "custom-make-targets" )
+BUILD_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "custom-make-targets")
 EXPECTED = [
     os.path.join("awesome", "everything_is_awesome"),
     os.path.join("awesome", "Drv_BlockDriver_is_awesome"),

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 ####
 # fprime Python Package:
 #
@@ -17,12 +16,8 @@
 # pip install -e ./Fw/Python
 # ```
 ###
-from __future__ import absolute_import
-from __future__ import print_function
 
-from setuptools import find_packages
-from setuptools import setup
-
+from setuptools import find_packages, setup
 
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
 # then distutils.
@@ -44,7 +39,7 @@ to interact with the data coming from the FSW.
     """,
     url="https://github.com/nasa/fprime",
     keywords=["fprime", "embedded", "nasa"],
-    project_urls={"Issue Tracker": "https://github.com/nasa/fprime/issues",},
+    project_urls={"Issue Tracker": "https://github.com/nasa/fprime/issues"},
     # Author of Python package, not F prime.
     author="Michael Starch",
     author_email="Michael.D.Starch@jpl.nasa.gov",
@@ -88,6 +83,7 @@ to interact with the data coming from the FSW.
         'Cheetah3;python_version >= "3.0"',
         'Cheetah;python_version < "3.0"',
     ],
+    extras_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
     # Setup and test requirments, not needed by normal install
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],

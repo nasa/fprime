@@ -1,7 +1,7 @@
 ####
 # Target.cmake:
 #
-# Functions supporting the F prime target additions. These targets allow building agains modules
+# Functions supporting the F prime target additions. These targets allow building against modules
 # and top-level targets. This allows for multi-part builds like `sloc` or `dict` where some part
 # applies to the module and is rolled up into some global command. Target files must define two
 # functions `add_module_target` and `add_global_target`.

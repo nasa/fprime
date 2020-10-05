@@ -1,6 +1,6 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <stdio.h>
 

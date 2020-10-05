@@ -8,18 +8,19 @@ class called "Dictionaries".
 """
 import os
 
+import fprime_gds.common.loaders.ch_py_loader
+import fprime_gds.common.loaders.ch_xml_loader
+
 # Py Loaders
 import fprime_gds.common.loaders.cmd_py_loader
-import fprime_gds.common.loaders.event_py_loader
-import fprime_gds.common.loaders.ch_py_loader
 
 # XML Loaders
 import fprime_gds.common.loaders.cmd_xml_loader
+import fprime_gds.common.loaders.event_py_loader
 import fprime_gds.common.loaders.event_xml_loader
-import fprime_gds.common.loaders.ch_xml_loader
 
 
-class Dictionaries(object):
+class Dictionaries:
     """
     Dictionaries class to encapsulate the many different dictionaries used in the system. This includes the following
     dictionary types:
@@ -47,6 +48,7 @@ class Dictionaries(object):
         """
         Loads the dictionaries based on the dictionary path supplied. Optional packet_spec is allowed to specify the
         definitions of packets.
+
         :param dictionary: dictionary path used for loading dictionaries
         :param packet_spec: specification for packets, or None, for packetized telemetry
         """

@@ -19,7 +19,7 @@ The base class will return empty dictionaries for any path.
 """
 
 
-class DictLoader(object):
+class DictLoader:
     """
     Base class for all loader classes. Defines the loader interface
 

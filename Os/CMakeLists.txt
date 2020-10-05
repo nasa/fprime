@@ -50,6 +50,7 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/TaskId.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Linux/Directory.cpp"
     )
 endif()
 # Darwin IPC queue implementation

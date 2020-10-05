@@ -14,7 +14,7 @@
 #define PRMDBIMPL_HPP_
 
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
-#include <Svc/PrmDb/PrmDbImplCfg.hpp>
+#include <PrmDbImplCfg.hpp>
 #include <Fw/Types/EightyCharString.hpp>
 #include <Os/Mutex.hpp>
 

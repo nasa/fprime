@@ -89,17 +89,19 @@ namespace Svc {
         if (timeTag.getTimeBase() == TB_WORKSTATION_TIME) {
 
             time_t t = timeTag.getSeconds();
-            tm *tm = localtime(&t);
-
-            if (tm == NULL) {
+            // Using localtime_r prevents any other calls to localtime (from another thread for example) from
+            // interfering with our time object before we use it. However, the null pointer check is still needed
+            // to ensure a successful call
+            tm tm;
+            if (localtime_r(&t, &tm) == NULL) {
                 return;
             }
 
             stat = snprintf(textStr,
                             FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
                             "EVENT: (%d) (%04d-%02d-%02dT%02d:%02d:%02d.%03u) %s: %s\n",
-                            id, tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
-                            tm->tm_min,tm->tm_sec,timeTag.getUSeconds(),
+                            id, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
+                            tm.tm_min,tm.tm_sec,timeTag.getUSeconds(),
                             severityString,text.toChar());
         }
         else {

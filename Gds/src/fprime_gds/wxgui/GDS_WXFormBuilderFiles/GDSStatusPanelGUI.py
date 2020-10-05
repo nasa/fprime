@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -31,7 +29,7 @@ class Status(wx.Panel):
         bSizer3 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_staticText1 = wx.StaticText(
-            self, wx.ID_ANY, u"Data Recieved", wx.DefaultPosition, wx.DefaultSize, 0
+            self, wx.ID_ANY, "Data Recieved", wx.DefaultPosition, wx.DefaultSize, 0
         )
         self.m_staticText1.Wrap(-1)
         bSizer3.Add(self.m_staticText1, 1, wx.ALL, 5)
@@ -39,7 +37,7 @@ class Status(wx.Panel):
         self.m_staticText2 = wx.StaticText(
             self,
             wx.ID_ANY,
-            u"Data Sent",
+            "Data Sent",
             wx.DefaultPosition,
             wx.DefaultSize,
             wx.ALIGN_RIGHT,

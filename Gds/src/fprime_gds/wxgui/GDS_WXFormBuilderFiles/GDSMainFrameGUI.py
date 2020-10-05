@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -21,7 +19,7 @@ class MainFrame(wx.Frame):
             self,
             parent,
             id=wx.ID_ANY,
-            title=u"FPrime Ground Station",
+            title="FPrime Ground Station",
             pos=wx.DefaultPosition,
             size=wx.Size(800, 600),
             style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL,
@@ -47,45 +45,45 @@ class MainFrame(wx.Frame):
         self.m_menubar1 = wx.MenuBar(0)
         self.FileMenu = wx.Menu()
         self.NewMenuItem = wx.MenuItem(
-            self.FileMenu, wx.ID_ANY, u"New...", wx.EmptyString, wx.ITEM_NORMAL
+            self.FileMenu, wx.ID_ANY, "New...", wx.EmptyString, wx.ITEM_NORMAL
         )
         self.FileMenu.Append(self.NewMenuItem)
 
         self.SaveMenuItem = wx.MenuItem(
-            self.FileMenu, wx.ID_ANY, u"Save...", wx.EmptyString, wx.ITEM_NORMAL
+            self.FileMenu, wx.ID_ANY, "Save...", wx.EmptyString, wx.ITEM_NORMAL
         )
         self.FileMenu.Append(self.SaveMenuItem)
 
         self.LoadMenuItem = wx.MenuItem(
-            self.FileMenu, wx.ID_ANY, u"Load...", wx.EmptyString, wx.ITEM_NORMAL
+            self.FileMenu, wx.ID_ANY, "Load...", wx.EmptyString, wx.ITEM_NORMAL
         )
         self.FileMenu.Append(self.LoadMenuItem)
 
         self.AboutMenuItem = wx.MenuItem(
-            self.FileMenu, wx.ID_ANY, u"About...", wx.EmptyString, wx.ITEM_NORMAL
+            self.FileMenu, wx.ID_ANY, "About...", wx.EmptyString, wx.ITEM_NORMAL
         )
         self.FileMenu.Append(self.AboutMenuItem)
 
         self.SaveWinCfgMenuItem = wx.MenuItem(
             self.FileMenu,
             wx.ID_ANY,
-            u"Save Window Configuration",
+            "Save Window Configuration",
             wx.EmptyString,
             wx.ITEM_NORMAL,
         )
         self.FileMenu.Append(self.SaveWinCfgMenuItem)
 
         self.RestoreWinMenuItem = wx.MenuItem(
-            self.FileMenu, wx.ID_ANY, u"Restore Windows", wx.EmptyString, wx.ITEM_NORMAL
+            self.FileMenu, wx.ID_ANY, "Restore Windows", wx.EmptyString, wx.ITEM_NORMAL
         )
         self.FileMenu.Append(self.RestoreWinMenuItem)
 
         self.ExitMenuItem = wx.MenuItem(
-            self.FileMenu, wx.ID_ANY, u"Exit", wx.EmptyString, wx.ITEM_NORMAL
+            self.FileMenu, wx.ID_ANY, "Exit", wx.EmptyString, wx.ITEM_NORMAL
         )
         self.FileMenu.Append(self.ExitMenuItem)
 
-        self.m_menubar1.Append(self.FileMenu, u"File")
+        self.m_menubar1.Append(self.FileMenu, "File")
 
         self.SetMenuBar(self.m_menubar1)
 
