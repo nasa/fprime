@@ -29,7 +29,7 @@ from fprime_ac.parsers import (
     XmlPortsParser,
     XmlSerializeParser,
 )
-from fprime_ac.utils import ConfigManager
+from fprime_ac.utils import ConfigManager, Logger
 from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
 from utils.pathmaker import setup_fprime_autocoder_path
 
@@ -200,6 +200,9 @@ def main():
     global VERBOSE
     global BUILD_ROOT
     global DEPLOYMENT
+
+    # Enable printing model error output to STDOUT
+    Logger.connectOutputLogger(None)
 
     Parser = pinit()
     (opt, args) = Parser.parse_args()
