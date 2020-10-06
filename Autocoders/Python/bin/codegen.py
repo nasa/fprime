@@ -834,11 +834,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                     for array_file in array_file_list:
                         array_file = search_for_file("Array", array_file)
                         array_model = XmlArrayParser.XmlArrayParser(array_file)
-                        if len(array_model.get_includes()) != 0:
-                            raise Exception(
-                                "%s: Can only include one level of serializable for dictionaries"
-                                % serializable_file
-                            )
                         array_elem = etree.Element("array")
 
                         array_name = (

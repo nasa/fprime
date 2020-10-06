@@ -30,6 +30,7 @@ class ArrayType(ValueType):
         super().__init__()
         if not isinstance(typename, str):
             raise TypeMismatchException(str, type(typename))
+        self.__val = None
         self.__typename = typename
         self.__arr_type, self.__arr_size, self.__arr_format = config_info
         # Set value only if it is a valid, non-empty list
@@ -46,6 +47,34 @@ class ArrayType(ValueType):
             if not isinstance(val[i], type(self.__arr_type)):
                 raise TypeMismatchException(type(self.__arr_type), type(val[i]))
 
+
+    @property
+    def val(self) -> list:
+        """
+        The .val property typically returns the python-native type. This the python native type closes to a serializable
+        without generating full classes would be a dictionary (anonymous object). This returns such an object.
+
+        :return dictionary of member names to python values of member keys
+        """
+        return [item.val for item in self.__val]
+
+    @val.setter
+    def val(self, val: list):
+        """
+        The .val property typically returns the python-native type. This the python native type closes to a serializable
+        without generating full classes would be a dictionary (anonymous object). This takes such an object and sets the
+        member val list from it.
+
+        :param val: dictionary containing python types to key names. This
+        """
+        items = []
+        for item in val:
+            cloned = copy.copy(self.arr_type)
+            cloned.val = item
+            items.append(cloned)
+        self.__val = items
+
+
     def to_jsonable(self):
         """
         JSONable type
@@ -56,8 +85,8 @@ class ArrayType(ValueType):
             "size": self.__arr_size,
             "format": self.__arr_format,
             "values": None
-            if self.val is None
-            else [member.to_jsonable() for member in self.val],
+            if self.__val is None
+            else [member.to_jsonable() for member in self.__val],
         }
         return members
 
@@ -73,7 +102,7 @@ class ArrayType(ValueType):
         for i in range(self.__arr_size):
             item = copy.copy(self.arr_type)
             item.deserialize(data, offset + i * item.getSize())
-            values.append(item)
+            values.append(item.val)
         self.val = values
 
     @property
@@ -93,4 +122,4 @@ class ArrayType(ValueType):
 
     def getSize(self):
         """ Return the size of the array """
-        return sum([item.getSize() for item in self.val])
+        return self.arr_type.getSize() * self.arr_size

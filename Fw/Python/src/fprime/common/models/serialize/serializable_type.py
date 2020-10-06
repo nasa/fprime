@@ -127,7 +127,7 @@ class SerializableType(ValueType):
 
     def getSize(self):
         """ The size of a struct is the size of all the members """
-        return sum([member.getSize() for member in self.mem_list])
+        return sum([mem_type.getSize() for _, mem_type, _, _ in self.mem_list])
 
     def to_jsonable(self):
         """

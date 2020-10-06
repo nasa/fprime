@@ -136,6 +136,7 @@ namespace Ref {
       this->tlmWrite_History(this->sigHistory);
       this->tlmWrite_PairHistory(this->sigPairHistory);
       this->tlmWrite_Info(sigInfo);
+      this->sample += 1;
   }
 
   void SignalGen :: SignalGen_Settings_cmdHandler(

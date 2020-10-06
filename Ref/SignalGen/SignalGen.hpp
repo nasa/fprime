@@ -73,7 +73,7 @@ namespace Ref {
         ~SignalGen(void);
 
     private:
-        // Generate the next sample intetnal helper
+        // Generate the next sample internal helper
         F32 generateSample(U32 ticks);
 
         // Memeber variables
@@ -82,7 +82,6 @@ namespace Ref {
         U32 signalAmplitude;
         U32 signalPhase;
         U32 sample;
-        U32 signalIndex = 0;
         SignalType sigType;
         SignalSet sigHistory;
         SignalPairSet sigPairHistory;
