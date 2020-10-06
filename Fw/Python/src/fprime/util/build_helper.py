@@ -295,7 +295,7 @@ def confirm():
         print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
 
 
-def print_info(parsed, deployment):
+def print_info(parsed, deployment, build_dir):
     """ Builds and prints the informational output block """
     build_types = BuildType
     if parsed.build_type is not None:
@@ -311,7 +311,7 @@ def print_info(parsed, deployment):
     # Loop through available builds and harvest targets
     for build_type in build_types:
         build = Build(build_type, deployment, verbose=parsed.verbose)
-        build.load(parsed.platform, parsed.build_dir)
+        build.load(parsed.platform, build_dir)
         build_info = build.get_build_info(parsed.path)
         # Target list
         local_targets = {
@@ -365,14 +365,15 @@ def print_hash_info(lines, hash_val):
 def utility_entry(args):
     """ Main interface to F prime utility """
     parsed, cmake_args, make_args, parser = parse_args(args)
+    build_dir_as_path = None if parsed.build_dir is None else Path(parsed.build_dir)
     try:
         deployment = Build.find_nearest_deployment(Path(parsed.path))
         if parsed.command is None:
             print("[ERROR] Must supply subcommand for fprime-util. See below.")
-            parser.print_help(parsed)
-            print_info(parsed, deployment)
+            parser.print_help()
+            print_info(parsed, deployment, build_dir_as_path)
         elif parsed.command == "info":
-            print_info(parsed, deployment)
+            print_info(parsed, deployment, build_dir_as_path)
         elif parsed.command == "hash-to-file":
             lines = get_build(
                 parsed, deployment, verbose=parsed.verbose
@@ -383,7 +384,7 @@ def utility_entry(args):
             builds = []
             for build_type in BuildType:
                 build = Build(build_type, deployment, verbose=parsed.verbose)
-                build.invent(parsed.platform, parsed.build_dir)
+                build.invent(parsed.platform, build_dir_as_path)
                 builds.append(build)
             # Once we looked for errors, then generate
             for build in builds:
@@ -405,7 +406,7 @@ def utility_entry(args):
             for build_type in BuildType:
                 build = Build(build_type, deployment, verbose=parsed.verbose)
                 try:
-                    build.load(parsed.platform, parsed.build_dir)
+                    build.load(parsed.platform, build_dir_as_path)
                 except InvalidBuildCacheException:
                     continue
                 print(
@@ -418,7 +419,7 @@ def utility_entry(args):
         else:
             target = get_target(parsed)
             build = get_build(parsed, deployment, parsed.verbose, target)
-            build.load(parsed.platform, parsed.build_dir)
+            build.load(parsed.platform, build_dir_as_path)
             build.execute(target, context=Path(parsed.path), make_args=make_args)
     except GenerateException as genex:
         print(
