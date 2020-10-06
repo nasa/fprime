@@ -3,7 +3,7 @@
 <!--
 SignalArray:
 
-An example signal array that downlinks the last 10 samples generated, as an array type.
+An example signal array that downlinks the last 4 samples generated, as an array type.
 -->
 <array name="SignalSet" namespace="Ref">
     <type>F32</type>

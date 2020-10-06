@@ -14,7 +14,7 @@ from .type_exceptions import (
 
 
 class ArrayType(ValueType):
-    """ Generic fix-sized array type representation.
+    """ Generic fixed-size array type representation.
 
     Represents a custom named type of a fixed number of like members, each of which are other types in the system.
     """
