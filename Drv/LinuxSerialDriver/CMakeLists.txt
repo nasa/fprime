@@ -37,6 +37,9 @@ else()
 		"${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImplCommon.cpp"
 	)
 endif()
+set(MOD_DEPS
+    Os
+)
 
 register_fprime_module()
 
