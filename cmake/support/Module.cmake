@@ -20,8 +20,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
 #
 # - **MODULE_NAME:** name of the module which is being auto-coded.
 # - **AUTOCODER_INPUT_FILES:** list of input files sent to the autocoder
+# - **MOD_DEPS:** list of specified module dependencies
 ####
-function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
+function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES MOD_DEPS)
   # Go through every auto-coder file and then run the autocoder detected by cracking open the XML file.
   foreach(INPUT_FILE ${AUTOCODER_INPUT_FILES})
       # Convert the input file into a real path to ensure the system knows what to work with
@@ -38,7 +39,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES)
       string(CONCAT AC_FULL_SOURCE ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.cpp")
 
       # Run the specific autocoder herlper
-      acwrap("${XML_LOWER_TYPE}" "${AC_FULL_SOURCE}" "${AC_FULL_HEADER}"  "${INPUT_FILE}" "${FILE_DEPENDENCIES}")
+      acwrap("${XML_LOWER_TYPE}" "${AC_FULL_SOURCE}" "${AC_FULL_HEADER}"  "${INPUT_FILE}" "${FILE_DEPENDENCIES}" "${MOD_DEPS};${MODULE_DEPENDENCIES}")
 
       add_generated_sources("${AC_FULL_SOURCE}" "${AC_FULL_HEADER}" "${MODULE_NAME}")
       # For every detected dependency, add them to the supplied module. This enforces build order.
@@ -75,17 +76,23 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
   # Add dependencies on autocoder
   add_dependencies(${OBJ_NAME} ${CODEGEN_TARGET})
 
+  # Resolve all dependencies
+  set(RESOLVED_DEPS)
+  foreach(MOD_DEP ${MOD_DEPS})
+      get_module_name(${MOD_DEP})
+      list(APPEND RESOLVED_DEPS "${MODULE_NAME}")
+  endforeach()
+
   # Run autocoders for the set of identified Ai inputs
-  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}")
+  generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${RESOLVED_DEPS}")
 
   # Add in all non-module link (-l) dependencies
   target_link_libraries(${OBJ_NAME} ${LINK_DEPS})
 
   # Add in specified (non-detected) mod dependencies, and Dict dependencies therein.
-  foreach(MOD_DEP ${MOD_DEPS})
-      get_module_name(${MOD_DEP})
-      add_dependencies(${OBJ_NAME} ${MODULE_NAME})
-      target_link_libraries(${OBJ_NAME} ${MODULE_NAME})
+  foreach(MOD_DEP ${RESOLVED_DEPS})
+      add_dependencies(${OBJ_NAME} ${MOD_DEP})
+      target_link_libraries(${OBJ_NAME} ${MOD_DEP})
   endforeach()
   
   # Remove empty source from target

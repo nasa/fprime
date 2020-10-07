@@ -70,9 +70,10 @@ endfunction(serialns)
 # - **AC_FINAL_HEADER:** final position of the HPP file
 # - **AI_XML:** AI xml input to autocoder
 # - **XML_FILE_DEPS:** xml file dependencies
+# - **MOD_DEPS:** xml and hand specidied module dependencies
 # - **Return: AC_OUTPUTS** (set in outer scope)
 ####
-function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS XML_MOD_DEPS)
+function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD_DEPS)
   # Setup the list such that new outputs can be appended to them
   set(OUTPUT_PRODUCTS "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}")
 
@@ -103,7 +104,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS XML
       #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${HPP_NAME} ${AC_FINAL_HEADER}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME} ${HPP_NAME}
       #COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${HPP_NAME}
-      DEPENDS ${AI_XML} ${XML_FILE_DEPS} ${FPRIME_AC_CONSTANTS_FILE} ${XML_MOD_DEPS}
+      DEPENDS ${AI_XML} ${XML_FILE_DEPS} ${FPRIME_AC_CONSTANTS_FILE} ${MOD_DEPS}
   )
   set(AC_OUTPUTS ${OUTPUT_PRODUCTS} PARENT_SCOPE)
 endfunction(acwrap)
