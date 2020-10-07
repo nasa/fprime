@@ -7,6 +7,9 @@ set(SOURCE_FILES
         )
 
 set(MOD_DEPS
+    Fw/Types
+    Fw/Time
+    Os
     Utils/Hash
    )
 

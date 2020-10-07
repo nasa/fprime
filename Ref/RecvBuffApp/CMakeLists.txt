@@ -10,5 +10,5 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PacketStatSerializableAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
 )
-set(MOD_DEPS "Fw/Cmd")
+set(MOD_DEPS "Os" "Fw/Cmd")
 register_fprime_module()
