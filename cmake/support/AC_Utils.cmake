@@ -78,7 +78,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD
   set(OUTPUT_PRODUCTS "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}")
 
   if(${AC_TYPE} STREQUAL "topologyapp")
-    set(GEN_ARGS "--build_root" "--connect_only")
+    set(GEN_ARGS "--build_root" "--connect_only" "--xml_topology_dict")
   else()
     set(GEN_ARGS "--build_root")
   endif()
