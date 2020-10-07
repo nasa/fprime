@@ -54,8 +54,9 @@ endfunction(add_global_target)
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
+# - **MOD_DEPS:** hand specified dependencies of target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS)
+function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
     # UTs don't supply directories, non modules don't get coverage
     if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" OR NOT "${FPRIME_OBJECT_TYPE}" STREQUAL "Library")
         return()

@@ -6,28 +6,6 @@
 #
 ####
 include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
-####
-# Function `add_dict_target`:
-#
-# This target is the target for generating the dictionaries. This will have the output dictionaries registered to
-# it and make it possible to generate the dictionaries out-of-band from the compile/build.
-#
-####
-function(add_dict_target)
-    # If we are generating python dictionaries, then we need to copy the outputs
-    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
-        return()
-    elseif (GENERATE_HERITAGE_PY_DICT)
-        add_custom_target(
-            dict
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/dict/serializable ${CMAKE_SOURCE_DIR}/py_dict/serializable
-            COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/py_dict/serializable/__init__.py
-        )
-    # Otherwise just add an empty target
-    else()
-        add_custom_target(dict)   
-    endif()
-endfunction(add_dict_target)
 
 ####
 # Function `generate_executable:`

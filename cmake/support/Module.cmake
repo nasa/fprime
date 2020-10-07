@@ -109,7 +109,7 @@ function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS M
 
 
   # Register extra targets at the very end, once all of the core functions are properly setup.
-  setup_all_module_targets(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}")
+  setup_all_module_targets(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${RESOLVED_DEPS}")
 endfunction(generate_module)
 ####
 # Function `generate_library`:
