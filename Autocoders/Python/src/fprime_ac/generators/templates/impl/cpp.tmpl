@@ -25,14 +25,9 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   ${name}ComponentImpl ::
-\#if FW_OBJECT_NAMES == 1
     ${name}ComponentImpl(
 $emit_non_port_params([ $param_compName ])
-    ) :
-      ${component_base}(compName)
-\#else
-    ${name}ComponentImpl(void)
-\#endif
+    ) : ${component_base}(compName)
   {
 
   }

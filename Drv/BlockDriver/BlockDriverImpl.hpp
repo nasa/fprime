@@ -5,24 +5,21 @@
 
 namespace Drv {
 
-	class BlockDriverImpl : public BlockDriverComponentBase  {
-		
-	public:
+    class BlockDriverImpl : public BlockDriverComponentBase  {
 
-		// Only called by derived class
-#if FW_OBJECT_NAMES == 1	    
-	    BlockDriverImpl(const char* compName);
-#else
-        BlockDriverImpl();
-#endif
-	    void init(NATIVE_INT_TYPE queueDepth);
-		~BlockDriverImpl(void);
-		// a little hack to get the reference running
-		void callIsr(void);
-		
-	private:
+    public:
 
-		// downcalls for input ports
+        // Only called by derived class
+        BlockDriverImpl(const char* compName);
+
+        void init(NATIVE_INT_TYPE queueDepth);
+        ~BlockDriverImpl(void);
+        // a little hack to get the reference running
+        void callIsr(void);
+
+    private:
+
+        // downcalls for input ports
         void InterruptReport_internalInterfaceHandler(U32 ip);
         void BufferIn_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer& buffer);
         void Sched_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
@@ -39,8 +36,7 @@ namespace Drv {
         // cycle count
         U32 m_cycles;
 
-	};
-	
+    };
 }
 
 #endif

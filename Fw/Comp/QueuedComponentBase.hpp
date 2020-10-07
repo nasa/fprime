@@ -30,12 +30,7 @@ namespace Fw {
 			} MsgDispatchStatus;
 
         PROTECTED:
-
-#if FW_OBJECT_NAMES == 1
             QueuedComponentBase(const char* name); //!< Constructor
-#else
-            QueuedComponentBase(); //!< Constructor
-#endif
             virtual ~QueuedComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization function
             Os::Queue m_queue; //!< queue object for active component

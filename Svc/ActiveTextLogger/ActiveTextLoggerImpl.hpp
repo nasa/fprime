@@ -33,11 +33,7 @@ namespace Svc {
             //!  type conversion.
             //!
             //!  \param compName the component instance name
-    #if FW_OBJECT_NAMES == 1
             explicit ActiveTextLoggerComponentImpl(const char* compName);
-    #else
-            ActiveTextLoggerComponentImpl();
-    #endif
 
             //!  \brief Component destructor
             //!

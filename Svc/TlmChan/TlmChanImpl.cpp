@@ -19,11 +19,7 @@
 
 namespace Svc {
 
-#if FW_OBJECT_NAMES == 1
     TlmChanImpl::TlmChanImpl(const char* name) : TlmChanComponentBase(name)
-#else
-    TlmChanImpl::TlmChanImpl()
-#endif
     {
         // clear data
         this->m_activeBuffer = 0;

@@ -30,15 +30,10 @@ namespace Fw {
 
     };
 
-#if FW_OBJECT_NAMES == 1
     ActiveComponentBase::ActiveComponentBase(const char* name) : QueuedComponentBase(name) {
 
     }
-#else
-    ActiveComponentBase::ActiveComponentBase() : QueuedComponentBase() {
 
-    }
-#endif
     ActiveComponentBase::~ActiveComponentBase() {
         DEBUG_PRINT("ActiveComponent %s destructor.\n",this->getObjName());
     }

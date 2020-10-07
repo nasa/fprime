@@ -31,15 +31,10 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   LinuxI2cDriverComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     LinuxI2cDriverComponentImpl(
         const char *const compName
-    ) :
-      LinuxI2cDriverComponentBase(compName)
-#else
-    LinuxI2cDriverComponentImpl(void)
-#endif
-    ,m_fd(-1)
+    ) : LinuxI2cDriverComponentBase(compName),
+        m_fd(-1)
   {
 
   }

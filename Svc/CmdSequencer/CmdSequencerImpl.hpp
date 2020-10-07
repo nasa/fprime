@@ -539,11 +539,7 @@ namespace Svc {
 
       //! Construct a CmdSequencer
       CmdSequencerComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char* compName //!< The component name
-#else
-          void
-#endif
       );
 
       //! Initialize a CmdSequencer

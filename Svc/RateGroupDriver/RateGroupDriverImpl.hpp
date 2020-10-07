@@ -44,11 +44,7 @@ namespace Svc {
             //!  \param numDividers size of dividers array
             //!
             //!  \return return value description
-#if FW_OBJECT_NAMES == 1        
             RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
-#else
-            RateGroupDriverImpl(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
-#endif
 
             //!  \brief RateGroupDriverImpl initialization function
             //!

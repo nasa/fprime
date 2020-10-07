@@ -16,11 +16,7 @@ namespace Svc {
 
     class ActiveLoggerImpl: public ActiveLoggerComponentBase {
         public:
-    #if FW_OBJECT_NAMES == 1
             ActiveLoggerImpl(const char* compName); //!< constructor
-    #else
-            ActiveLoggerImpl(); //!< constructor
-    #endif
             virtual ~ActiveLoggerImpl(); //!< destructor
             void init(
                     NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/

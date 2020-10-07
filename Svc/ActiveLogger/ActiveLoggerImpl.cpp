@@ -11,19 +11,15 @@
 
 namespace Svc {
 
-#if FW_OBJECT_NAMES == 1
-    ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : ActiveLoggerComponentBase(name)
-#else
-    ActiveLoggerImpl::ActiveLoggerImpl() :
-        ActiveLoggerComponentBase()
-#endif
-    ,m_fatalHead(0)
-    ,m_warningHiHead(0)
-    ,m_warningLoHead(0)
-    ,m_commandHead(0)
-    ,m_activityHiHead(0)
-    ,m_activityLoHead(0)
-    ,m_diagnosticHead(0)
+    ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
+        ActiveLoggerComponentBase(name),
+        m_fatalHead(0),
+        m_warningHiHead(0),
+        m_warningLoHead(0),
+        m_commandHead(0),
+        m_activityHiHead(0),
+        m_activityLoHead(0),
+        m_diagnosticHead(0)
     {
         // set input filter defaults
         this->m_inFilterState[INPUT_WARNING_HI].enabled =

@@ -370,36 +370,15 @@ namespace ${namespace} {
   // Component construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  ${class_name} ::
 #if $kind == "passive":
-\#if FW_OBJECT_NAMES == 1
-    ${class_name}(const char* compName) :
-      Fw::PassiveComponentBase(compName)
-\#else
-    ${class_name}() :
-      Fw::PassiveComponentBase()
-\#endif
-  {
-
+    ${class_name} :: ${class_name}(const char* compName) :
+        Fw::PassiveComponentBase(compName) {
 #else if $kind == "queued":
-\#if FW_OBJECT_NAMES == 1
-    ${class_name}(const char* compName) :
-      Fw::QueuedComponentBase(compName)
-\#else
-    ${class_name}() :
-      Fw::QueuedComponentBase()
-\#endif
-  {
-
+    ${class_name} :: ${class_name}(const char* compName) :
+        Fw::QueuedComponentBase(compName) {
 #else:
-\#if FW_OBJECT_NAMES == 1
-    ${class_name}(const char* compName) :
-      Fw::ActiveComponentBase(compName)
-\#else
-    ${class_name}() :
-      Fw::ActiveComponentBase()
-\#endif
-  {
+    ${class_name} :: ${class_name}(const char* compName) :
+        Fw::ActiveComponentBase(compName) {
 #end if
 
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:

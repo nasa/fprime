@@ -32,7 +32,6 @@ namespace Fw {
 
     class ObjBase {
         public:
-
 #if FW_OBJECT_NAMES == 1
 
             //!  \brief Returns the object's name
@@ -63,6 +62,7 @@ namespace Fw {
             virtual void toString(char* str, NATIVE_INT_TYPE size); //!< virtual method to get description of object
 #endif // FW_OBJECT_TO_STRING           
 #endif // FW_OBJECT_NAMES
+
 #if FW_OBJECT_REGISTRATION == 1
 
             //!  \brief static function to set object registry.
@@ -81,7 +81,8 @@ namespace Fw {
             
 #if FW_OBJECT_NAMES == 1
             char m_objName[FW_OBJ_NAME_MAX_SIZE]; //!< stores object name
-		
+#endif
+
             //!  \brief ObjBase constructor
             //!
             //!  The constructor for the base class. Protected so it will only be called
@@ -89,9 +90,6 @@ namespace Fw {
             //!
             //!  \param name Object name
             ObjBase(const char* name);
-#else
-            ObjBase(); // !< Constructor with no name
-#endif            
 
             //!  \brief Destructor
             //!

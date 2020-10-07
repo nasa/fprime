@@ -15,16 +15,12 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
     LinuxSerialDriverComponentImpl ::
-  #if FW_OBJECT_NAMES == 1
       LinuxSerialDriverComponentImpl(
           const char *const compName
-      ) :
-        LinuxSerialDriverComponentBase(compName)
-  #else
-      LinuxSerialDriverImpl(void) :
-          LinuxSerialDriverComponentBase()
-  #endif
-      ,m_fd(-1),m_device("NOT_EXIST"),m_quitReadThread(false)
+      ) : LinuxSerialDriverComponentBase(compName),
+          m_fd(-1),
+          m_device("NOT_EXIST"),
+          m_quitReadThread(false)
     {
         // initialize buffer set
         for (NATIVE_INT_TYPE entry = 0; entry < DR_MAX_NUM_BUFFERS; entry++) {

@@ -28,11 +28,7 @@ namespace Fw {
             };
 
         PROTECTED:
-#if FW_OBJECT_NAMES == 1
             ActiveComponentBase(const char* name); //!< Constructor
-#else
-            ActiveComponentBase(); //!< Constructor
-#endif
             virtual ~ActiveComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization code
             virtual void preamble(void); //!< A function that will be called before the event loop is entered

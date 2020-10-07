@@ -28,18 +28,10 @@ namespace Drv {
 
   SocketIpDriverComponentImpl ::
     SocketIpDriverComponentImpl(
-#if FW_OBJECT_NAMES == 1
         const char *const compName
-#endif
-    ) :
-#if FW_OBJECT_NAMES == 1
-      SocketIpDriverComponentBase(compName)
-#else
-      SocketIpDriverComponentBase(void)
-#endif
-    ,
-    m_buffer(0xbeef, 0xbeef, reinterpret_cast<U64>(m_backing_data), sizeof(m_buffer)),
-    m_stop(false)
+    ) : SocketIpDriverComponentBase(compName),
+        m_buffer(0xbeef, 0xbeef, reinterpret_cast<U64>(m_backing_data), sizeof(m_buffer)),
+        m_stop(false)
   { }
 
   void SocketIpDriverComponentImpl ::
