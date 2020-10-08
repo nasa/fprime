@@ -219,7 +219,7 @@ class TopoFactory:
                 sys.exit(-1)
             command_id_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
         parameter_id_list = []
@@ -235,7 +235,7 @@ class TopoFactory:
                 sys.exit(-1)
             parameter_id_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
             #check set/save op and make sure they don't collide with command IDs
@@ -251,7 +251,7 @@ class TopoFactory:
                 sys.exit(-1)
             parameter_opcode_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
             #Save opcodes
@@ -266,7 +266,7 @@ class TopoFactory:
                 sys.exit(-1)
             parameter_opcode_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
         if highest_ID != None:
