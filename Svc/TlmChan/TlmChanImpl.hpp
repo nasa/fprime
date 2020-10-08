@@ -23,11 +23,7 @@ namespace Svc {
     class TlmChanImpl: public TlmChanComponentBase {
         public:
             friend class TlmChanImplTester;
-    #if FW_OBJECT_NAMES == 1
             TlmChanImpl(const char* compName);
-    #else
-            TlmChanImpl();
-    #endif
             virtual ~TlmChanImpl();
             void init(
                     NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/

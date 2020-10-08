@@ -30,75 +30,83 @@ static Fw::SimpleObjRegistry simpleReg;
 
 // Component instance pointers
 static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
-Svc::RateGroupDriverImpl rateGroupDriverComp("RGDvr",rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+Svc::RateGroupDriverImpl rateGroupDriverComp(FW_OPTIONAL_NAME("RGDvr"),rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
 static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup1Comp("RG1",rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
+Svc::ActiveRateGroupImpl rateGroup1Comp(FW_OPTIONAL_NAME("RG1"),rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
 
 static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup2Comp("RG2",rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
+Svc::ActiveRateGroupImpl rateGroup2Comp(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
 
 static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup3Comp("RG3",rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
+Svc::ActiveRateGroupImpl rateGroup3Comp(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
 
 // Command Components
-Svc::GroundInterfaceComponentImpl groundIf("GNDIF");
+Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
 
 // Driver Component
-Drv::BlockDriverImpl blockDrv("BDRV");
+Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
 
 // Reference Implementation Components
 
-Ref::RecvBuffImpl recvBuffComp("RBC");
+Ref::RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("RBC"));
 
-Ref::SendBuffImpl sendBuffComp("SBC");
+Ref::SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("SBC"));
 
 #if FW_ENABLE_TEXT_LOGGING
-Svc::ConsoleTextLoggerImpl textLogger("TLOG");
+Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
 #endif
 
-Svc::ActiveLoggerImpl eventLogger("ELOG");
+Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
 
-Svc::LinuxTimeImpl linuxTime("LTIME");
+Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
 
-Svc::TlmChanImpl chanTlm("TLM");
+Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
 
-Svc::CommandDispatcherImpl cmdDisp("CMDDISP");
+Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
 
 Fw::MallocAllocator seqMallocator;
-Svc::CmdSequencerComponentImpl cmdSeq("CMDSEQ");
+Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
 
-Svc::PrmDbImpl prmDb("PRM","PrmDb.dat");
+Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
 
-Ref::PingReceiverComponentImpl pingRcvr("PngRecv");
+Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 
-Drv::SocketIpDriverComponentImpl socketIpDriver("SocketIpDriver");
+Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
 
-Svc::FileUplink fileUplink ("fileUplink");
+Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
-Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
+Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"), DOWNLINK_PACKET_SIZE);
 
-Svc::FileManager fileManager ("fileManager");
+Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
 
-Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
+Svc::BufferManager fileDownlinkBufferManager(FW_OPTIONAL_NAME("fileDownlinkBufferManager"), DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
 
-Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
+Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
 
-Svc::HealthImpl health("health");
+Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
 
-Ref::SignalGen SG1("signalGen1");
+Ref::SignalGen SG1(FW_OPTIONAL_NAME("signalGen1"));
 
-Ref::SignalGen SG2("signalGen2");
+Ref::SignalGen SG2(FW_OPTIONAL_NAME("signalGen2"));
 
-Ref::SignalGen SG3("signalGen3");
+Ref::SignalGen SG3(FW_OPTIONAL_NAME("signalGen3"));
 
-Ref::SignalGen SG4("signalGen4");
+Ref::SignalGen SG4(FW_OPTIONAL_NAME("signalGen4"));
 
-Ref::SignalGen SG5("signalGen5");
+Ref::SignalGen SG5(FW_OPTIONAL_NAME("signalGen5"));
 
-Svc::AssertFatalAdapterComponentImpl fatalAdapter("fatalAdapter");
+Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
 
-Svc::FatalHandlerComponentImpl fatalHandler("fatalHandler");
+Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+
+const char* getHealthName(Fw::ObjBase& comp) {
+   #if FW_OBJECT_NAMES == 1
+       return comp.getObjName();
+   #else
+      return "[no object name]"
+   #endif
+}
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
 
@@ -149,14 +157,14 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fileUplinkBufferManager.init(0);
     fileDownlinkBufferManager.init(1);
     SG1.init(10,0);
-	SG2.init(10,1);
-	SG3.init(10,2);
-	SG4.init(10,3);
-	SG5.init(10,4);
-	fatalAdapter.init(0);
-	fatalHandler.init(0);
-	health.init(25,0);
-	pingRcvr.init(10);
+    SG2.init(10,1);
+    SG3.init(10,2);
+    SG4.init(10,3);
+    SG5.init(10,4);
+    fatalAdapter.init(0);
+    fatalHandler.init(0);
+    health.init(25,0);
+    pingRcvr.init(10);
     // Connect rate groups to rate group driver
     constructRefArchitecture();
 
@@ -193,19 +201,19 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // set health ping entries
 
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,rateGroup1Comp.getObjName()}, // 0
-        {3,5,rateGroup2Comp.getObjName()}, // 1
-        {3,5,rateGroup3Comp.getObjName()}, // 2
-        {3,5,cmdDisp.getObjName()}, // 3
-        {3,5,eventLogger.getObjName()}, // 4
-        {3,5,cmdSeq.getObjName()}, // 5
-        {3,5,chanTlm.getObjName()}, // 6
-        {3,5,prmDb.getObjName()}, // 7
-        {3,5,fileUplink.getObjName()}, // 8
-        {3,5,fileDownlink.getObjName()}, // 9
-        {3,5,pingRcvr.getObjName()}, // 10
-        {3,5,blockDrv.getObjName()}, // 11
-        {3,5,fileManager.getObjName()}, // 12
+        {3,5,getHealthName(rateGroup1Comp)}, // 0
+        {3,5,getHealthName(rateGroup2Comp)}, // 1
+        {3,5,getHealthName(rateGroup3Comp)}, // 2
+        {3,5,getHealthName(cmdDisp)}, // 3
+        {3,5,getHealthName(eventLogger)}, // 4
+        {3,5,getHealthName(cmdSeq)}, // 5
+        {3,5,getHealthName(chanTlm)}, // 6
+        {3,5,getHealthName(prmDb)}, // 7
+        {3,5,getHealthName(fileUplink)}, // 8
+        {3,5,getHealthName(fileDownlink)}, // 9
+        {3,5,getHealthName(pingRcvr)}, // 10
+        {3,5,getHealthName(blockDrv)}, // 11
+        {3,5,getHealthName(fileManager)}, // 12
     };
 
     // register ping table

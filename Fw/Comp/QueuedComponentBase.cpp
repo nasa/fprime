@@ -7,15 +7,10 @@
 
 namespace Fw {
 
-#if FW_OBJECT_NAMES
     QueuedComponentBase::QueuedComponentBase(const char* name) : PassiveComponentBase(name),m_msgsDropped(0) {
 
     }
-#else    
-    QueuedComponentBase::QueuedComponentBase() : PassiveComponentBase(),m_msgsDropped(0) {
 
-    }
-#endif
     QueuedComponentBase::~QueuedComponentBase() {
 
     }

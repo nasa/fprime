@@ -24,13 +24,8 @@ namespace Ref {
 
   Tester ::
     Tester(void) : 
-#if FW_OBJECT_NAMES == 1
       SignalGenGTestBase("Tester", MAX_HISTORY_SIZE),
       component("SignalGen")
-#else
-      SignalGenGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

@@ -241,17 +241,11 @@ namespace ${namespace} {
     // Component construction, initialization, and destruction
     // ----------------------------------------------------------------------
 
-\#if FW_OBJECT_NAMES == 1
     //! Construct a ${name}ComponentBase object
     //!
     ${name}ComponentBase(
-        const char* compName $doxygen_post_comment("Component name")
+        const char* compName = "" $doxygen_post_comment("Component name")
     );
-\#else
-    //! Construct a ${name}ComponentBase object
-    //!
-    ${name}ComponentBase(void);
-\#endif
 
     //! Initialize a ${name}ComponentBase object
     //!
@@ -1012,6 +1006,7 @@ $emit_non_port_params(8, $params)
 
   #end for
 #end if
+
 #if $needs_msg_size:
 
   PRIVATE:

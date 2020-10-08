@@ -19,14 +19,10 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferLogger ::
-#if FW_OBJECT_NAMES == 1
       BufferLogger(const char *const compName) :
-          BufferLoggerComponentBase(compName), //!< The component name
-#else
-      BufferLogger() : BufferLoggerComponentBase(),
-#endif
-      m_state(LOGGING_ON),
-      m_file(*this)
+          BufferLoggerComponentBase(compName),
+          m_state(LOGGING_ON),
+          m_file(*this)
   {
 
   }

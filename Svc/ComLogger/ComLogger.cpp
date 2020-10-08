@@ -17,18 +17,14 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   ComLogger ::
-#if FW_OBJECT_NAMES == 1
     ComLogger(const char* compName, const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength) :
-    ComLoggerComponentBase(compName), 
-#else
-    ComLogger(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength) :
-#endif
-    maxFileSize(maxFileSize),
-    fileMode(CLOSED), 
-    byteCount(0),
-    writeErrorOccured(false),
-    openErrorOccured(false),
-    storeBufferLength(storeBufferLength)
+      ComLoggerComponentBase(compName), 
+      maxFileSize(maxFileSize),
+      fileMode(CLOSED), 
+      byteCount(0),
+      writeErrorOccured(false),
+      openErrorOccured(false),
+      storeBufferLength(storeBufferLength)
   {
     if( this->storeBufferLength ) {
       FW_ASSERT(maxFileSize > sizeof(U16), maxFileSize); // must be a positive integer greater than buffer length size

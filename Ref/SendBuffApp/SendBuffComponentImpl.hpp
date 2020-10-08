@@ -11,11 +11,7 @@ namespace Ref {
         public:
 
             // Only called by derived class
-#if FW_OBJECT_NAMES == 1    
             SendBuffImpl(const char* compName); //!< constructor
-#else
-            SendBuffImpl(); //!< constructor
-#endif
             void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0); //!< initialization function
             ~SendBuffImpl(void); //!< destructor
 

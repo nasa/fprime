@@ -28,11 +28,7 @@ namespace Svc {
 
     public:
 
-#if FW_OBJECT_NAMES == 1
       ComSplitter(const char* compName);
-#else
-      ComSplitter(void);
-#endif
 
       ~ComSplitter(void);
 

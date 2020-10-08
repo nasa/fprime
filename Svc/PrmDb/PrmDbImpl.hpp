@@ -40,11 +40,8 @@ namespace Svc {
             //!
             //!  \param name component instance name
             //!  \param file file where parameters are stored.
-#if FW_OBJECT_NAMES == 1
             PrmDbImpl(const char* name, const char* file);
-#else
-            PrmDbImpl(const char* file);
-#endif
+
             //!  \brief PrmDb initialization function
             //!
             //!  The initialization function for the component creates the message

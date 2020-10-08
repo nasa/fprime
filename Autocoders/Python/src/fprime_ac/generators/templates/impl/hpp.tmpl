@@ -34,11 +34,7 @@ namespace ${namespace} {
       //! Construct object $name
       //!
       ${name}ComponentImpl(
-\#if FW_OBJECT_NAMES == 1
 $emit_non_port_params([ $param_compName ])
-\#else
-          void
-\#endif
       );
 
       //! Initialize object $name

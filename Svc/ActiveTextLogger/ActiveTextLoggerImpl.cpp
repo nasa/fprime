@@ -13,13 +13,8 @@ namespace Svc {
     // Initialization/Exiting
     // ----------------------------------------------------------------------
 
-#if FW_OBJECT_NAMES == 1
     ActiveTextLoggerComponentImpl::ActiveTextLoggerComponentImpl(const char* name) :
-       ActiveTextLoggerComponentBase(name),
-#else
-    ActiveTextLoggerComponentImpl::ActiveTextLoggerComponentImpl() :
-        ActiveTextLoggerComponentBase(),
-#endif
+        ActiveTextLoggerComponentBase(name),
         m_log_file()
     {
 

@@ -14,12 +14,8 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   ComSplitter ::
-#if FW_OBJECT_NAMES == 1
     ComSplitter(const char* compName) :
       ComSplitterComponentBase(compName)
-#else
-    ComSplitter(void)
-#endif
   {
 
   }
