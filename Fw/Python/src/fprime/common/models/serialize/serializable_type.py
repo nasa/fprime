@@ -4,6 +4,7 @@ Created on Dec 18, 2014
 @author: tcanham
 
 """
+import copy
 
 from .type_base import BaseType, ValueType
 from .type_exceptions import NotInitializedException, TypeMismatchException
@@ -91,11 +92,14 @@ class SerializableType(ValueType):
 
     def deserialize(self, data, offset):
         """ Deserialize the values of each of the members """
-        members = []
-        for _, member_val, _, _ in self.mem_list:
-            member_val.deserialize(data, offset)
-            members.append(member_val.val)
+        new_member_list = []
+        for i, entry in enumerate(self.mem_list):
+            entry1, member_val, entry3, entry4 = entry
+            cloned = copy.copy(member_val)
+            cloned.deserialize(data, offset)
+            new_member_list.append((entry1, cloned, entry3, entry4))
             offset += member_val.getSize()
+        self.mem_list = new_member_list
 
     @property
     def val(self) -> dict:

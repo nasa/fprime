@@ -69,7 +69,7 @@ class ArrayType(ValueType):
         """
         items = []
         for item in val:
-            cloned = copy.copy(self.arr_type)
+            cloned = copy.deepcopy(self.arr_type)
             cloned.val = item
             items.append(cloned)
         self.__val = items
@@ -100,7 +100,7 @@ class ArrayType(ValueType):
         """ Deserialize the members of the array """
         values = []
         for i in range(self.__arr_size):
-            item = copy.copy(self.arr_type)
+            item = copy.deepcopy(self.arr_type)
             item.deserialize(data, offset + i * item.getSize())
             values.append(item.val)
         self.val = values
