@@ -587,7 +587,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_set.attrib["component"] = comp_name
                         command_elem_set.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SET"
                         command_elem_set.attrib["opcode"] = "%s"%(hex(int(parameter.get_set_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in list(command_elem.attrib.keys())):
+                        if ("comment" in list(command_elem_set.attrib.keys())):
                             command_elem_set.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_set.attrib["description"] = parameter.get_name() + " parameter set"
@@ -634,7 +634,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         command_elem_save.attrib["component"] = comp_name
                         command_elem_save.attrib["mnemonic"] = parameter.get_name()+ "_PRM_SAVE"
                         command_elem_save.attrib["opcode"] = "%s"%(hex(int(parameter.get_save_opcodes()[0],base=0) + comp_id))
-                        if ("comment" in list(command_elem.attrib.keys())):
+                        if ("comment" in list(command_elem_set.attrib.keys())):
                             command_elem_save.attrib["description"] = command_elem_set.attrib["comment"] + " parameter set"
                         else:
                             command_elem_save.attrib["description"] = parameter.get_name() +  " parameter save"
