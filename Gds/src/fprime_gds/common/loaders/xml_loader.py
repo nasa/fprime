@@ -309,16 +309,12 @@ class XmlLoader(dict_loader.DictLoader):
 
                 # Make config
                 arr_type = arr_memb.get(self.ARR_TYPE_TAG)
-                arr_size = arr_memb.get(self.ARR_SIZE_TAG)
+                type_obj = self.parse_type(arr_type, arr_memb, xml_obj)
                 arr_format = arr_memb.get(self.ARR_FORMAT_TAG)
-                config = (arr_type, arr_size, arr_format)
+                arr_size = arr_memb.get(self.ARR_SIZE_TAG)
 
-                defaults = []
-                for memb in default_section:
-                    val = memb.get(self.ARR_DEFAULT_VALUE_TAG)
-                    defaults.append(val)
 
-                arr_obj = ArrayType(type_name, config, defaults)
+                arr_obj = ArrayType(type_name, (type_obj, int(arr_size), arr_format))
 
                 self.array_types[type_name] = arr_obj
                 return arr_obj

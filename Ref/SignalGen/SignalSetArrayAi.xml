@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/default/array_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+SignalArray:
+
+An example signal array that downlinks the last 4 samples generated, as an array type.
+-->
+<array name="SignalSet" namespace="Ref">
+    <type>F32</type>
+    <size>4</size>
+    <format>%f</format>
+
+    <!-- In XML defaults are required -->
+    <default>
+        <value>0.0f</value>
+        <value>0.0f</value>
+        <value>0.0f</value>
+        <value>0.0f</value>
+    </default>
+</array>

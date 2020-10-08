@@ -175,9 +175,8 @@ class CmdData(sys_data.SysData):
             arg_type.val = int(arg_val, 0)
         elif isinstance(arg_type, StringType):
             arg_type.val = arg_val
-        elif isinstance(arg_type, SerializableType):
-            pass
-        elif isinstance(arg_type, ArrayType):
+        # Cannot handle serializable or array argument inputs
+        elif isinstance(arg_type, (SerializableType, ArrayType)):
             pass
         else:
             raise CommandArgumentException(
