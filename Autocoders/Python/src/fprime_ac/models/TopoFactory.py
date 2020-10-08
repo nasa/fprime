@@ -330,7 +330,7 @@ class TopoFactory:
                 sys.exit(-1)
             parameter_opcode_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
             # Save opcodes
@@ -353,7 +353,7 @@ class TopoFactory:
                 sys.exit(-1)
             parameter_opcode_list.append(id)
 
-            if id > highest_ID:
+            if highest_ID is None or id > highest_ID:
                 highest_ID = id
 
         if highest_ID is not None:
