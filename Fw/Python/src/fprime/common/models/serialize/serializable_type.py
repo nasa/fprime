@@ -93,8 +93,7 @@ class SerializableType(ValueType):
     def deserialize(self, data, offset):
         """ Deserialize the values of each of the members """
         new_member_list = []
-        for i, entry in enumerate(self.mem_list):
-            entry1, member_val, entry3, entry4 = entry
+        for entry1, member_val, entry3, entry4 in self.mem_list:
             cloned = copy.copy(member_val)
             cloned.deserialize(data, offset)
             new_member_list.append((entry1, cloned, entry3, entry4))

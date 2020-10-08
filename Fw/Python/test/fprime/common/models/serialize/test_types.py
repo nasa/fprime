@@ -222,6 +222,15 @@ def test_enum_type():
     assert val1.val == val2.val
 
 
+def check_cloned_member_list(members1, members2):
+    """ Check member list knowing direct compares don't work"""
+    for tuple1, tuple2 in zip(members1, members2):
+        assert tuple1[0] == tuple2[0], "Names do not match"
+        assert tuple1[2] == tuple2[2], "Format strings do not match"
+        assert tuple1[3] == tuple2[3], "Descriptions do not match"
+        assert tuple1[1].val == tuple2[1].val, "Values don't match"
+
+
 def test_serializable_type():
     """
     Tests the SerializableType serialization and deserialization
@@ -239,7 +248,8 @@ def test_serializable_type():
     buff = serType1.serialize()
     serType2 = SerializableType("ASerType", memList)
     serType2.deserialize(buff, 0)
-    assert serType1.mem_list == serType2.mem_list
+    check_cloned_member_list(serType1.mem_list, serType2.mem_list)
+
     assert serType1.val == serType2.val
 
     i32Mem = I32Type(-1000000)
@@ -255,14 +265,14 @@ def test_serializable_type():
     buff = serType1.serialize()
     serType2 = SerializableType("ASerType", memList)
     serType2.deserialize(buff, 0)
-    assert serType1.mem_list == serType2.mem_list
+    check_cloned_member_list(serType1.mem_list, serType2.mem_list)
 
     value_dict = {"mem1": 3, "mem2": "abc 123", "mem3": "MEMB1"}
     serType1.val = value_dict
     assert serType1.val == value_dict
     mem_list = serType1.mem_list
     memList = [(a, b, c, None) for a, b, c in memList]
-    assert mem_list == memList
+    check_cloned_member_list(mem_list, memList)
 
 
 # def test_array_type():
