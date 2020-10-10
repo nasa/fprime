@@ -220,20 +220,6 @@ class CMakeHandler:
         # We will CD for build, so this path must become absolute
         source_dir = os.path.abspath(source_dir)
         args = {} if args is None else args
-        # Pass in needed F prime settings
-        needed = [
-            ("FPRIME_FRAMEWORK_PATH", "framework_path"),
-            ("FPRIME_LIBRARY_LOCATIONS", "library_locations"),
-            ("FPRIME_PROJECT_ROOT", "project_root"),
-            ("FPRIME_SETTINGS_FILE", "settings_file"),
-            ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
-            ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
-            ("FPRIME_CONFIG_DIR", "config_dir"),
-        ]
-        # Update args from settings file
-        for cache, setting in needed:
-            if setting in self.settings:
-                args[cache] = self.settings[setting]
         if "FPRIME_LIBRARY_LOCATIONS" in args:
             args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(
                 args["FPRIME_LIBRARY_LOCATIONS"]
