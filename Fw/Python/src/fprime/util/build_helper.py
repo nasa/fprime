@@ -101,9 +101,10 @@ def validate(parsed, unknown):
     # Check platforms for existing toolchain, unless the default is specified.
     if parsed.command == "generate":
         d_args = {
-            match.group(1): match.groups(2)
+            match.group(1): match.group(2)
             for match in [CMAKE_REG.match(arg) for arg in unknown]
         }
+        print(d_args)
         cmake_args.update(d_args)
     # Build type only for generate, jobs only for non-generate
     elif (
