@@ -104,7 +104,6 @@ def validate(parsed, unknown):
             match.group(1): match.group(2)
             for match in [CMAKE_REG.match(arg) for arg in unknown]
         }
-        print(d_args)
         cmake_args.update(d_args)
     # Build type only for generate, jobs only for non-generate
     elif (
