@@ -7,7 +7,7 @@ import functools
 import os
 import sys
 
-BUILD_ROOTS = set() # One global build root set, to rule them all
+BUILD_ROOTS = set()  # One global build root set, to rule them all
 
 
 def set_build_roots(build_root_arg):
@@ -17,7 +17,9 @@ def set_build_roots(build_root_arg):
     :param build_root_arg: argument supplied as build root
     """
     global BUILD_ROOTS
-    normalized = map(lambda path: os.path.normpath(os.path.realpath(path)), build_root_arg.split(":"))
+    normalized = map(
+        lambda path: os.path.normpath(os.path.realpath(path)), build_root_arg.split(":")
+    )
     build_root_elements = set(normalized)
     # Update global store
     BUILD_ROOTS = build_root_elements
@@ -39,7 +41,9 @@ def get_nearest_build_root(path):
     :param path: path to find nearest build root to
     :return: nearest build root
     """
-    parents = filter(lambda build: os.path.commonpath([build, path]) == build, get_build_roots())
+    parents = filter(
+        lambda build: os.path.commonpath([build, path]) == build, get_build_roots()
+    )
 
     def path_reducer(agg, item):
         """ Reduces to the longest path """
@@ -47,6 +51,7 @@ def get_nearest_build_root(path):
         if agg is None or len(common) > len(agg):
             return common
         return agg
+
     return functools.reduce(path_reducer, parents, None)
 
 
@@ -68,20 +73,30 @@ def locate_build_root(item):
 
 
 def search_for_file(file_type, file_path):
-    '''
+    """
     Searches for a given included port or serializable by looking in all specified build roots, then the exact path.
     @param file_type: type of file searched for
     @param file_path: path to look for based on offset
     @return: full path of file
-    '''
+    """
     try:
         checker = locate_build_root(file_path)
         return checker
     except BuildRootMissingException:
-        print("ERROR: {} xml specification file {} does not exist!".format(file_type, file_path), file=sys.stderr)
+        print(
+            "ERROR: {} xml specification file {} does not exist!".format(
+                file_type, file_path
+            ),
+            file=sys.stderr,
+        )
         sys.exit(-1)
     except BuildRootCollisionException as brc:
-        print("ERROR: {} xml specification file exists multiple times {}".format(file_type, str(brc)), file=sys.stderr)
+        print(
+            "ERROR: {} xml specification file exists multiple times {}".format(
+                file_type, str(brc)
+            ),
+            file=sys.stderr,
+        )
         sys.exit(-1)
 
 
@@ -103,15 +118,23 @@ class BuildRootMissingException(Exception):
     """
     Determined that an element exists at multiple BUILD_ROOT locations
     """
+
     def __init__(self, item):
         """Initialize super exception """
-        super().__init__("{} not found under any location: {}".format(item, ",".join(get_build_roots())))
+        super().__init__(
+            "{} not found under any location: {}".format(
+                item, ",".join(get_build_roots())
+            )
+        )
 
 
 class BuildRootCollisionException(Exception):
     """
     Determined that an element exists at multiple BUILD_ROOT locations
     """
+
     def __init__(self, occurrences):
         """ Initialize super exception """
-        super().__init__("Item found at multiple locations: {}".format(",".join(occurrences)))
+        super().__init__(
+            "Item found at multiple locations: {}".format(",".join(occurrences))
+        )

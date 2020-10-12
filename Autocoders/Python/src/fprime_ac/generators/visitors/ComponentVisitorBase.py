@@ -358,8 +358,8 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             obj
         )
         c.internal_interfaces = self.__model_parser.getInternalInterfacesList(obj)
-        c.internal_interface_param_strs = self.__model_parser.getInternalInterfaceArgsPrototypeStringDict(
-            obj
+        c.internal_interface_param_strs = (
+            self.__model_parser.getInternalInterfaceArgsPrototypeStringDict(obj)
         )
         c.internal_interface_args_str_dict = c.internal_interface_param_strs
         c.internal_interface_args = self.__model_parser.getInternalInterfaceArgsDict(
@@ -811,8 +811,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
 
     def initTypeIncludes(self, obj, c):
         type_includes = [
-            e.replace("Ai.xml", "Ac.hpp")
-            for e in obj.get_included_enums()
+            e.replace("Ai.xml", "Ac.hpp") for e in obj.get_included_enums()
         ]
 
         for p in obj.get_ports():

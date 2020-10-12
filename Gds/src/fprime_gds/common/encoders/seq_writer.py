@@ -38,9 +38,9 @@ class SeqBinaryWriter:
 
         def __time_tag(cmd_obj):
             """
-          TODO: support a timebase in the cmd obj? This is mission specific, so it is tough to handle. For now
-          I am hardcoding this to 2 which is TB_NONE
-          """
+            TODO: support a timebase in the cmd obj? This is mission specific, so it is tough to handle. For now
+            I am hardcoding this to 2 which is TB_NONE
+            """
             # return TimeType(timeBase=2, seconds=cmd_obj.getSeconds(), useconds=cmd_obj.getUseconds()).serialize()
             # TKC - new command time format
             return (
@@ -117,7 +117,7 @@ class SeqBinaryWriter:
 
     def write(self, seq_cmds_list):
         """
-        Write out each command record 
+        Write out each command record
         """
         num_records = len(seq_cmds_list)
         sequence = b""

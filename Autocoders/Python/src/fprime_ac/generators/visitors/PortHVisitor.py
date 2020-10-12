@@ -295,8 +295,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         self._writeTmpl(c, "includes2Visit")
 
     def _get_enum_string_list(self, enum_list):
-        """
-        """
+        """"""
         enum_tuple = enum_list[0]
         enum_list = enum_list[1]
         enum_str_list = []

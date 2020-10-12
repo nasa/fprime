@@ -69,8 +69,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
         self._encoders.append(enc)
 
     def updateCmdSearchPool(self):
-        """Updates the list of commands we are searching for in the command history
-        """
+        """Updates the list of commands we are searching for in the command history"""
 
         if self._previous_search_term is not None:
             itms = self.CmdHistListBox.Items
@@ -79,7 +78,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
 
     def setupCommandArguments(self, temp):
         """Render the command argument gui elements to the screen based on selected command
-        
+
         Arguments:
             temp {CmdTemplate} -- template object for the given command
         """
@@ -288,7 +287,7 @@ class CommandsImpl(GDSCommandPanelGUI.Commands):
         event.Skip()
 
     def onTextCmdComboBox(self, event):
-        """ This the start of the autocomplete for the cmd combo box - finish if you want that feature and reach out to me if you want explanation (jxb@mit.edu)
+        """This the start of the autocomplete for the cmd combo box - finish if you want that feature and reach out to me if you want explanation (jxb@mit.edu)
         # Get current text in cbox
         text = self.CmdsComboBox.Value
         print text

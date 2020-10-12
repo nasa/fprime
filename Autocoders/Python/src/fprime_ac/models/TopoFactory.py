@@ -126,7 +126,8 @@ class TopoFactory:
                 file_path = locate_build_root(comp_xml_path)
             except (BuildRootMissingException, BuildRootCollisionException) as bre:
                 stri = "ERROR: Could not find XML file {}. {}".format(
-                    comp_xml_path, str(bre),
+                    comp_xml_path,
+                    str(bre),
                 )
                 raise OSError(stri)
             processedXML = XmlComponentParser.XmlComponentParser(file_path)

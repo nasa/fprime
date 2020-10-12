@@ -14,8 +14,7 @@ def printDict(di, format="%-25s %s", log=None, loglvl=logging.DEBUG):
 
 
 def dumpAttrs(obj, log=None, loglvl=logging.DEBUG):
-    """
-    """
+    """"""
     dumpObj(
         obj,
         maxlen=77,

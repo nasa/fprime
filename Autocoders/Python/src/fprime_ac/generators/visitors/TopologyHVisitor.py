@@ -320,8 +320,8 @@ class TopologyHVisitor(AbstractVisitor.AbstractVisitor):
             #
 
             if obj.is_ptr:
-                declaration_template = """{name}_ptr = new {ns}::{ns}Impl("{name}");""".format(
-                    **component
+                declaration_template = (
+                    """{name}_ptr = new {ns}::{ns}Impl("{name}");""".format(**component)
                 )
                 c.component_declarations.append(declaration_template)
             else:
@@ -390,8 +390,8 @@ class TopologyHVisitor(AbstractVisitor.AbstractVisitor):
             startup_template = ""
             if component["kind"] == "active":
                 if obj.is_ptr:
-                    startup_template = """{name}_ptr->start(0, 100, 10 * 1024);""".format(
-                        **component
+                    startup_template = (
+                        """{name}_ptr->start(0, 100, 10 * 1024);""".format(**component)
                     )
                 else:
                     startup_template = """{name}.start(0, 100, 10 * 1024);""".format(

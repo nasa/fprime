@@ -24,7 +24,9 @@ class EventsCommand(QueryHistoryCommand):
 
     @classmethod
     def _get_item_list(
-        cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
+        cls,
+        project_dictionary: Dictionaries,
+        filter_predicate: predicates.predicate,
     ) -> Iterable[EventData]:
         """
         Gets a list of possible events that can occur in the system and returns

@@ -216,7 +216,10 @@ def test_get_item_list_with_id_filter(item_template_dictionary):
 
     assert_equal_data_lists(
         item_list,
-        [t2d(item_template_dictionary["12"]), t2d(item_template_dictionary["34"]),],
+        [
+            t2d(item_template_dictionary["12"]),
+            t2d(item_template_dictionary["34"]),
+        ],
     )
     # Check nothing changed in the original dictionary
     assert_equal_template_dictionaries(item_template_dictionary, original_dict)

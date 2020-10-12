@@ -127,8 +127,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         return arg_list
 
     def _get_enum_string_list(self, enum_list):
-        """
-        """
+        """"""
         enum_tuple = enum_list[0]
         enum_list = enum_list[1]
         enum_str_list = []

@@ -15,9 +15,9 @@
 
 class AbstractDictWriter:
     """
-        This abstract class defines the commonality between all autocoded
-        dictgen files.
-        """
+    This abstract class defines the commonality between all autocoded
+    dictgen files.
+    """
 
     def __init__(self, model):
         """

@@ -183,7 +183,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     if isinstance(member_type, tuple):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
-                            serializable_type, member_name, member_type[0][1],
+                            serializable_type,
+                            member_name,
+                            member_type[0][1],
                         )
                         # Add enum entry
                         enum_elem = etree.Element("enum")
@@ -238,7 +240,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     if isinstance(arg_type, tuple):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
-                            comp_type, arg.get_name(), arg_type[0][1],
+                            comp_type,
+                            arg.get_name(),
+                            arg_type[0][1],
                         )
                         # Add enum entry
                         enum_elem = etree.Element("enum")
@@ -291,7 +295,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 if isinstance(channel_type, tuple):
                     enum_value = 0
                     type_name = "{}::{}::{}".format(
-                        comp_type, chan.get_name(), channel_type[0][1],
+                        comp_type,
+                        chan.get_name(),
+                        channel_type[0][1],
                     )
                     # Add enum entry
                     enum_elem = etree.Element("enum")
@@ -355,7 +361,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                     if isinstance(arg_type, tuple):
                         enum_value = 0
                         type_name = "{}::{}::{}".format(
-                            comp_type, arg.get_name(), arg_type[0][1],
+                            comp_type,
+                            arg.get_name(),
+                            arg_type[0][1],
                         )
                         # Add enum entry
                         enum_elem = etree.Element("enum")
@@ -375,8 +383,10 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                             enum_elem.append(enum_mem)
                         enum_list.append(enum_elem)
                         # replace enum format string %d with %s for ground system
-                        format_string = DictTypeConverter.DictTypeConverter().format_replace(
-                            format_string, arg_num, "d", "s"
+                        format_string = (
+                            DictTypeConverter.DictTypeConverter().format_replace(
+                                format_string, arg_num, "d", "s"
+                            )
                         )
                     else:
                         type_name = arg_type
@@ -417,7 +427,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
                 if isinstance(arg_type, tuple):
                     enum_value = 0
                     type_name = "{}::{}::{}".format(
-                        comp_type, arg.get_name(), arg_type[0][1],
+                        comp_type,
+                        arg.get_name(),
+                        arg_type[0][1],
                     )
                     # Add enum entry
                     enum_elem = etree.Element("enum")

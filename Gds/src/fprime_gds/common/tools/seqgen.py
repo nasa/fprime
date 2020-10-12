@@ -48,10 +48,10 @@ class SeqGenException(gseExceptions.GseControllerException):
 
 def generateSequence(inputFile, outputFile, dictionary, timebase):
     """
-  Write a binary sequence file from a text sequence file
-  @param inputFile: A text input sequence file name (usually a .seq extension)
-  @param outputFile: An output binary sequence file name (usually a .bin extension)
-  """
+    Write a binary sequence file from a text sequence file
+    @param inputFile: A text input sequence file name (usually a .seq extension)
+    @param outputFile: An output binary sequence file name (usually a .bin extension)
+    """
 
     # Check for files
     if not os.path.isfile(inputFile):
@@ -139,9 +139,9 @@ help_text = "seqgen.py -d"
 
 def main():
     """
-  The main program if run from the command line. Note that this file can also be used
-  as a module by calling the generateSequence() function
-  """
+    The main program if run from the command line. Note that this file can also be used
+    as a module by calling the generateSequence() function
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

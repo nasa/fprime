@@ -51,7 +51,9 @@ class QueryHistoryCommand(BaseCommand):
     @classmethod
     @abc.abstractmethod
     def _get_item_list(
-        cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
+        cls,
+        project_dictionary: Dictionaries,
+        filter_predicate: predicates.predicate,
     ) -> Iterable:
         """
         Gets a sorted list of items from the dictionary, filtered by the given
@@ -64,7 +66,11 @@ class QueryHistoryCommand(BaseCommand):
         """
 
     @classmethod
-    def _get_item_list_string(cls, items: Iterable, json: bool = False,) -> str:
+    def _get_item_list_string(
+        cls,
+        items: Iterable,
+        json: bool = False,
+    ) -> str:
         """
         Takes a list of items from the dictionary and returns a human-readable
         string containing their details.
@@ -90,7 +96,11 @@ class QueryHistoryCommand(BaseCommand):
         """
 
     @classmethod
-    def _get_item_string(cls, item, json: bool = False,) -> str:
+    def _get_item_string(
+        cls,
+        item,
+        json: bool = False,
+    ) -> str:
         """
         Takes an F' item and returns a human-readable string of its data.
 

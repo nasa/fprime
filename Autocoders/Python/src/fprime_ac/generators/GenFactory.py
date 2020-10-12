@@ -113,25 +113,21 @@ class GenFactory:
             self.setGenerateCode(generate_code)
 
         def getEnabled(self):
-            """
-            """
+            """"""
             return self.__enabled
 
         def getGenerateCode(self):
-            """
-            """
+            """"""
             return self.__generate_code
 
         def setEnabled(self, enabled):
-            """
-            """
+            """"""
             if enabled not in (True, False):
                 raise AttributeError("GenFactory: bad is enabled option")
             self.__enabled = enabled
 
         def setGenerateCode(self, generate_code):
-            """
-            """
+            """"""
             if generate_code not in (True, False):
                 raise AttributeError("GenFactory: bad generate code option")
             self.__generate_code = generate_code

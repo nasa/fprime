@@ -164,10 +164,10 @@ class Command:
 
     def setArgs(self, values):
         """
-      Given a list of values for the arguments, set the command arguments in order.
-      @param values: raw python values (floats, ints, and strings) that will be converted
-      into arg_types and stored as the command arg
-      """
+        Given a list of values for the arguments, set the command arguments in order.
+        @param values: raw python values (floats, ints, and strings) that will be converted
+        into arg_types and stored as the command arg
+        """
 
         # Make sure that the correct number of arguments is given
         if len(values) != len(self.__arguments):
