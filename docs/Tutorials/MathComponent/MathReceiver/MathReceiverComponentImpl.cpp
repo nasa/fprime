@@ -21,16 +21,11 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   MathReceiverComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     MathReceiverComponentImpl(
         const char *const compName
-    ) :
-      MathReceiverComponentBase(compName)
-#else
-    MathReceiverImpl(void)
-#endif
-    ,m_factor1(0.0)
-    ,m_factor1s(0)
+    ) : MathReceiverComponentBase(compName),
+        m_factor1(0.0),
+        m_factor1s(0)
   {
 
   }

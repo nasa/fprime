@@ -705,6 +705,7 @@ Create a `CMakeLists.txt` file in `Ref/MathSender` and add `MathSenderComponentA
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
 )
+
 register_fprime_module()
 ```
 
@@ -833,6 +834,7 @@ The `CMakeLists.txt` file for this component is as follows:
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentAi.xml"
 )
+
 register_fprime_module()
 ```
 
@@ -1791,17 +1793,8 @@ Put these declarations after the declarations for the other `Ref` components:
 `Ref/Top/Topology.cpp`, line 187:
 
 ```c++
-Ref::MathSenderComponentImpl mathSender
-#if FW_OBJECT_NAMES == 1
-    ("mathSender")
-#endif
-;
-
-Ref::MathReceiverComponentImpl mathReceiver
-#if FW_OBJECT_NAMES == 1
-    ("mathReceiver")
-#endif
-;
+Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
+Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 ```
 
 Where the other components are initialzed, add `MathSender` and `MathReceiver`:
