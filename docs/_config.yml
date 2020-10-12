@@ -1,3 +1,3 @@
 title: "F´"
 description: " A Flight Software and Embedded Systems Framework"
-theme: FPRIME/jekyll-theme-fprime
+remote_theme: fprime-community/fprime-theme
