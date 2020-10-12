@@ -390,11 +390,13 @@ class Build:
             if loc is not None
         ]
         # Create a deduplicated set of toolchains
-        toolchains = list({
-            toolchain_path
-            for toolchain_path in toolchains_paths
-            if os.path.exists(toolchain_path)
-        })
+        toolchains = list(
+            {
+                toolchain_path
+                for toolchain_path in toolchains_paths
+                if os.path.exists(toolchain_path)
+            }
+        )
         if not toolchains:
             raise NoSuchToolchainException(
                 "Could not find toolchain file for {} at any of: {}".format(
@@ -447,7 +449,13 @@ class Build:
                 ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
                 ("FPRIME_CONFIG_DIR", "config_dir"),
             ]
-            cmake_args.update({cache: self.get_settings(setting, None) for cache, setting in needed if self.get_settings(setting, None) is not None})
+            cmake_args.update(
+                {
+                    cache: self.get_settings(setting, None)
+                    for cache, setting in needed
+                    if self.get_settings(setting, None) is not None
+                }
+            )
             cmake_args.update(
                 {"CMAKE_BUILD_TYPE": self.build_type.get_cmake_build_type()}
             )

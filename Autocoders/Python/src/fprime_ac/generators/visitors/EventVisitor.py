@@ -170,8 +170,10 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                     c.ser_import_list.append(ser_import)
                 # convert format specifier if necessary
                 if type_name == "enum":
-                    format_string = DictTypeConverter.DictTypeConverter().format_replace(
-                        c.format_string, arg_num, "d", "s"
+                    format_string = (
+                        DictTypeConverter.DictTypeConverter().format_replace(
+                            c.format_string, arg_num, "d", "s"
+                        )
                     )
                     # check for an error
                     if format_string is None:

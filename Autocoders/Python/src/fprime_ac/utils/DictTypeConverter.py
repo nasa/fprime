@@ -63,7 +63,7 @@ class DictTypeConverter:
     def format_replace(self, format_string, spec_num, old, new):
         """
         Search the format specifier string and replace tokens
-        Mainly a special case to handle enumerations. Software 
+        Mainly a special case to handle enumerations. Software
         needs "%d", while Gse needs "%s"
         spec_num = instance of token (0..n)
         """

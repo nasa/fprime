@@ -14,13 +14,13 @@ from .type_exceptions import (
 
 
 class ArrayType(ValueType):
-    """ Generic fixed-size array type representation.
+    """Generic fixed-size array type representation.
 
     Represents a custom named type of a fixed number of like members, each of which are other types in the system.
     """
 
     def __init__(self, typename, config_info, val=None):
-        """ Constructs a new array type.
+        """Constructs a new array type.
 
         Args:
             typename: name of this array type
@@ -47,7 +47,6 @@ class ArrayType(ValueType):
             if not isinstance(val[i], type(self.__arr_type)):
                 raise TypeMismatchException(type(self.__arr_type), type(val[i]))
 
-
     @property
     def val(self) -> list:
         """
@@ -73,7 +72,6 @@ class ArrayType(ValueType):
             cloned.val = item
             items.append(cloned)
         self.__val = items
-
 
     def to_jsonable(self):
         """

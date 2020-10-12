@@ -58,8 +58,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
             wx.CallAfter(self.dv_model.UpdateModel, data)
 
     def scrollEventLogToBottom(self):
-        """Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
-        """
+        """Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked" """
 
         l = self.dv_model.getDataLen()
         if self.EventLogScrollCheckBox.GetValue() == True and l > 0:
@@ -92,8 +91,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
             self.dv_model.UpdateModel(r)
 
     def onCopyKeyPressed(self, event):
-        """Callback for key pressed within the data view control
-        """
+        """Callback for key pressed within the data view control"""
 
         # Ctrl-C pressed
         if event.ControlDown() and event.GetKeyCode() == 67:
@@ -114,7 +112,7 @@ class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
 
     def onCopyKeyPressedContext(self, event):
         """Called when the copy option is selected from the context menu within the data view ctrl
-        
+
         Arguments:
             event {wx.Event} -- std event arg
         """
@@ -439,8 +437,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
                     self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
 
     def DeleteAllItems(self):
-        """Perminently delets all data currently stored in this model
-        """
+        """Perminently delets all data currently stored in this model"""
 
         for d in self.data:
             self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))

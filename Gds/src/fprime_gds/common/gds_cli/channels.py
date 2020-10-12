@@ -24,7 +24,9 @@ class ChannelsCommand(QueryHistoryCommand):
 
     @classmethod
     def _get_item_list(
-        cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
+        cls,
+        project_dictionary: Dictionaries,
+        filter_predicate: predicates.predicate,
     ) -> Iterable[ChData]:
         """
         Gets a list of open telemetry channels in the system and prints their

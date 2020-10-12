@@ -159,9 +159,9 @@ class CmdTemplate(data_template.DataTemplate):
         return self.opcode
 
     def getDescriptor(self):
-        """ 
+        """
         Returns the time descriptor, relative or absolute
-        
+
         Returns:
             A integer that indicates whether the command is relative or absolute
         """

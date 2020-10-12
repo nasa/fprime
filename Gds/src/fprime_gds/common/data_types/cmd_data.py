@@ -94,7 +94,7 @@ class CmdData(sys_data.SysData):
         return self.id
 
     def get_arg_vals(self):
-        """ Get the values for each argument in a command.
+        """Get the values for each argument in a command.
 
         Returns:
             list -- a list of value objects that were used in this data object.

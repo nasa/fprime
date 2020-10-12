@@ -186,8 +186,8 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
                     c.event_args = self.__model_parser.getEventArgsDict(eobj)
                     c.event_params = c.event_args
                     c.event_args_str = self.eventArgsStr()
-                    c.event_param_strs = self.__model_parser.getEventArgsPrototypeStringDict(
-                        eobj
+                    c.event_param_strs = (
+                        self.__model_parser.getEventArgsPrototypeStringDict(eobj)
                     )
                     self._writeTmpl(t[0], c, "InstanceTopologyEventsHTML_Visitor")
 

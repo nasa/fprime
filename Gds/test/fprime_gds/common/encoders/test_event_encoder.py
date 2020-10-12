@@ -50,16 +50,20 @@ def test_event_encoder():
 
     reg_output = enc.encode_api(event_obj)
 
-    assert reg_output == reg_expected, (
-        "FAIL: expected regular output to be %s, but found %s"
-        % (list(reg_expected), list(reg_output))
+    assert (
+        reg_output == reg_expected
+    ), "FAIL: expected regular output to be %s, but found %s" % (
+        list(reg_expected),
+        list(reg_output),
     )
 
     config_output = enc_config.encode_api(event_obj)
 
-    assert config_output == config_expected, (
-        "FAIL: expected configured output to be %s, but found %s"
-        % (list(config_expected), list(config_output))
+    assert (
+        config_output == config_expected
+    ), "FAIL: expected configured output to be %s, but found %s" % (
+        list(config_expected),
+        list(config_output),
     )
 
     temp = EventTemplate(
@@ -87,14 +91,18 @@ def test_event_encoder():
 
     reg_output = enc.encode_api(event_obj)
 
-    assert reg_output == reg_expected, (
-        "FAIL: expected regular output to be %s, but found %s"
-        % (list(reg_expected), list(reg_output))
+    assert (
+        reg_output == reg_expected
+    ), "FAIL: expected regular output to be %s, but found %s" % (
+        list(reg_expected),
+        list(reg_output),
     )
 
     config_output = enc_config.encode_api(event_obj)
 
-    assert config_output == config_expected, (
-        "FAIL: expected configured output to be %s, but found %s"
-        % (list(config_expected), list(config_output))
+    assert (
+        config_output == config_expected
+    ), "FAIL: expected configured output to be %s, but found %s" % (
+        list(config_expected),
+        list(config_output),
     )

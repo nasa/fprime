@@ -90,7 +90,10 @@ def get_item_string(item: SysData, as_json: bool = False) -> str:
     return item.get_str(verbose=True)
 
 
-def get_cmd_template_string(item: CmdTemplate, as_json: bool = False,) -> str:
+def get_cmd_template_string(
+    item: CmdTemplate,
+    as_json: bool = False,
+) -> str:
     """
     Converts the given command template into a human-readable string.
 
@@ -123,7 +126,9 @@ def get_cmd_template_string(item: CmdTemplate, as_json: bool = False,) -> str:
             arg_description = "%s | %s " % (str(arg_type.keys()), arg_description)
 
         cmd_string += "\t{} ({}): {}\n".format(
-            arg_name, type(arg_type).__name__, arg_description,
+            arg_name,
+            type(arg_type).__name__,
+            arg_description,
         )
 
     return cmd_string

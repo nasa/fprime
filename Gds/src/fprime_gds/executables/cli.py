@@ -230,8 +230,10 @@ class CommParser(ParserBase):
         :return: namespace with "comm_adapter" value added
         """
         args = copy.copy(args)
-        args.comm_adapter = fprime_gds.common.adapters.base.BaseAdapter.construct_adapter(
-            args.adapter, args
+        args.comm_adapter = (
+            fprime_gds.common.adapters.base.BaseAdapter.construct_adapter(
+                args.adapter, args
+            )
         )
         return args
 
