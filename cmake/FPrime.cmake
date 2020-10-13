@@ -59,7 +59,7 @@ include_directories("${FPRIME_PROJECT_ROOT}")
 foreach (LIBRARY_DIR ${FPRIME_LIBRARY_LOCATIONS})
     include_directories("${LIBRARY_DIR}")
 endforeach()
-include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}")
+include_directories("${FPRIME_FRAMEWORK_PATH}")
 
 # Ignore GTest for non-test builds
 if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")

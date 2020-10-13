@@ -212,13 +212,11 @@ class Port:
         return self.__incl_list
 
     def get_serial_includes(self):
-        """
-        """
+        """"""
         return self.__incl_serial_list
 
     def get_enum_includes(self):
-        """
-        """
+        """"""
         return self.__incl_enum_list
 
     def get_target_comp(self):

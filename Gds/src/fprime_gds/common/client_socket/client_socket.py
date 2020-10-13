@@ -99,8 +99,7 @@ class ThreadedTCPSocketClient(DataHandler):
             exit(-1)
 
     def disconnect(self):
-        """Disconnect the socket client from the server and stop the internal thread.
-        """
+        """Disconnect the socket client from the server and stop the internal thread."""
         self.stop_event.set()
         self.__data_recv_thread.join()
         self.sock.close()

@@ -27,7 +27,8 @@ def main(argv=None):
                 ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
 
         program_version_string = "%prog {} ({})".format(
-            program_version, program_build_date,
+            program_version,
+            program_build_date,
         )
         if argv is None:
             argv = sys.argv[1:]

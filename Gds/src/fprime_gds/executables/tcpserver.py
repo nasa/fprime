@@ -473,8 +473,7 @@ class DestObj:
             print("Socket error " + str(err.errno) + " occurred on send().")
 
     def fileno(self):
-        """
-        """
+        """"""
         return self.socket
 
 

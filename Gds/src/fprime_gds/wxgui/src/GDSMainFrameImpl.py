@@ -14,8 +14,7 @@ from . import (
 
 
 class MainFrameImpl(GDSMainFrameGUI.MainFrame):
-    """Implementation of the main frame of the GDS which holds all of the different tabs
-	"""
+    """Implementation of the main frame of the GDS which holds all of the different tabs"""
 
     def __init__(
         self,
@@ -69,8 +68,7 @@ class MainFrameImpl(GDSMainFrameGUI.MainFrame):
         pass
 
     def updateStatusBar(self):
-        """Called every second to update teh values shown on the status bar at the bottom of the window
-		"""
+        """Called every second to update teh values shown on the status bar at the bottom of the window"""
 
         self.status_bar.SetStatusText(
             "Bytes Sent %d | Bytes Recv %d"
@@ -90,38 +88,38 @@ class MainFrameImpl(GDSMainFrameGUI.MainFrame):
 
     def updateBytesRecv(self, num):
         """Add to the number of bytes recieved
-		
-		Arguments:
-			num {int} -- number of bytes to add to the count
-		"""
+
+        Arguments:
+                num {int} -- number of bytes to add to the count
+        """
 
         self.status_bar.bytes_recv += num
 
     def updateBytesSent(self, num):
         """Add to the number of bytes sent
-		
-		Arguments:
-			num {int} -- number of bytes to add to the count
-		"""
+
+        Arguments:
+                num {int} -- number of bytes to add to the count
+        """
 
         self.status_bar.bytes_sent += num
 
     def on_recv(self, data):
         """Called when data is recieved over the TCP server. This callback is only here to get the length of the recvd data.
-		
-		Arguments:
-			data {bin} -- binary data list recieved
-		"""
+
+        Arguments:
+                data {bin} -- binary data list recieved
+        """
 
         self.updateBytesRecv(len(data))
 
     def send(self, data, dest):
         """Called when data is sent from the command encoder to the TCP client. Only here so we can get the length of what is sent.
-		
-		Arguments:
-			data {bin} -- binary data list recieved
-			dest {string} -- destination string needed to creat the full binary string sent
-		"""
+
+        Arguments:
+                data {bin} -- binary data list recieved
+                dest {string} -- destination string needed to creat the full binary string sent
+        """
 
         self.updateBytesSent(len("A5A5 {} {}".format(dest, data)))
 
@@ -153,8 +151,7 @@ class MainFrameImpl(GDSMainFrameGUI.MainFrame):
 
 
 class GDSStatusBar(wx.StatusBar):
-    """Custom wxStatusBar implementation that allows us to draw the status light/circle on the bar
-	"""
+    """Custom wxStatusBar implementation that allows us to draw the status light/circle on the bar"""
 
     def __init__(self, parent):
         wx.StatusBar.__init__(self, parent, -1)
@@ -175,8 +172,7 @@ class GDSStatusBar(wx.StatusBar):
         self.light_panel.Bind(wx.EVT_PAINT, self.onPaint)
 
     def onPaint(self, event):
-        """Called when the status bar is redrawn (Refresh() is called on it)
-		"""
+        """Called when the status bar is redrawn (Refresh() is called on it)"""
 
         dc = wx.PaintDC(self.light_panel)
         dc.Clear()
@@ -185,19 +181,19 @@ class GDSStatusBar(wx.StatusBar):
 
     def get_state(self):
         """Get the current state of the status bar
-		
-		Returns:
-			tuple -- (number of bytes recved, number of bytes sent)
-		"""
+
+        Returns:
+                tuple -- (number of bytes recved, number of bytes sent)
+        """
 
         return self.bytes_recv, self.bytes_sent
 
     def set_state(self, state):
         """Set the state of the status bar
-		
-		Arguments:
-			state {tuple} -- (number of bytes recved, number of bytes sent)
-		"""
+
+        Arguments:
+                state {tuple} -- (number of bytes recved, number of bytes sent)
+        """
 
         self.bytes_recv = state[0]
         self.bytes_sent = state[1]

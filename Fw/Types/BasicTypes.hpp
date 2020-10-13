@@ -24,8 +24,11 @@ extern "C" {
 typedef int32_t NATIVE_INT_TYPE;
 typedef uint32_t NATIVE_UINT_TYPE;
 #else
+// Allow overriding of native types for systems whose stdint.h is malformed
+#ifndef FPRIME_OVERRIDE_NATIVE_TYPES
 typedef int NATIVE_INT_TYPE; //!< native integer type declaration
 typedef unsigned int NATIVE_UINT_TYPE; //!< native unsigned integer type declaration
+#endif
 #endif
 
 #if defined __GNUC__ || __llvm__

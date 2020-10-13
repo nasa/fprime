@@ -111,7 +111,8 @@ class XmlSerializeParser:
             rng_file = locate_build_root(rng_file)
         except (BuildRootMissingException, BuildRootCollisionException) as bre:
             stri = "ERROR: Could not find specified RNG file {}. {}".format(
-                rng_file, str(bre),
+                rng_file,
+                str(bre),
             )
             raise OSError(stri)
         file_handler = open(rng_file)

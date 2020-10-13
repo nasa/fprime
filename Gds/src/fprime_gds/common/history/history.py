@@ -51,7 +51,7 @@ class History(fprime_gds.common.handlers.DataHandler):
         """
         Clears objects from history. A clear that specifies a starting point will clear the history
         such that start becomes the earliest (with respect to the history's order) element in the
-        history after objects are removed. 
+        history after objects are removed.
 
         Args:
             start: a position in the history's order. Start should always be able to be specified

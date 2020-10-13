@@ -48,6 +48,5 @@ class XmlParser:
         fd.close()
 
     def __call__(self):
-        """
-        """
+        """"""
         return self.__root

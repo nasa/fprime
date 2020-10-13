@@ -89,7 +89,8 @@ class PktData(SysData):
             )
         elif not csv and not verbose:
             pkt_str += "{}: {} {{\n".format(
-                self.time.to_readable(time_zone), self.template.get_name(),
+                self.time.to_readable(time_zone),
+                self.template.get_name(),
             )
 
         for i in range(len(self.chs)):

@@ -20,9 +20,10 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
 <!doctype html>
 <html>
     <head>
-        <link rel="stylesheet" href="third-party/css/bootstrap.min.css">
+        <!--link rel="stylesheet" href="third-party/css/bootstrap.min.css"-->
         <link rel="stylesheet" href="third-party/css/vue-select.css">
         <link rel="stylesheet" href="css/fpstyle.css">
+        <link rel="stylesheet" href="css/fprime.css">
         <!-- Development mode -Vue- should it be needed for debug purposes -->
         <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script-->
 
@@ -39,7 +40,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
         The primary vue of the GDS is a tabbed view that is composed of separate components for each view. This is
         where Vue JS is allowed to display its items.
         -->
-        <div id="tabetc" class="container-fluid fp-flex-repeater fp-full-height">
+        <div id="tabetc" class="fp-flex-repeater fp-full-height">
             <tabbed-etc></tabbed-etc>
         </div>
         <!--
@@ -60,10 +61,11 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <template id="tabetc-template">
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">
-                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
                             <span class="navbar-brand">
                                 <img v-bind:src="config.logo" width="50" height="50"
-                                     v-bind:alt="config.projectName" v-bind:title="config.projectName">
+                                     v-bind:alt="config.projectName"
+                                     v-bind:title="config.projectName">
                             </span>
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                                 <li v-for="tab in tabs"
@@ -71,7 +73,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                      :key="tab"
                                      v-on:click="route(tab)">{{ tab }}</li>
                                 <form class="form-inline my-2 my-lg-0">
-                                    <div class="btn btn-success" v-on:click="spawn">New Window</div>
+                                    <div class="btn btn-primary" v-on:click="spawn">New Window</div>
                                 </form>
                             </ul>
                             <span class="navbar-brand">
@@ -79,17 +81,18 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                                          width="30" height="30">
                                 </span>
                         </nav>
-                        <h1>{{ config.projectName }}: {{ currentTab }}</h1>
                     </div>
-                    <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
-                    <command-input v-show="currentTab == 'Commanding'"></command-input>
-                    <command-history v-show="currentTab == 'Commanding'"></command-history>
-                    <channel-table v-show="currentTab == 'Channels'"></channel-table>
-                    <event-list    v-show="currentTab == 'Events'"></event-list>
-                    <uplink        v-show="currentTab == 'Uplink'"></uplink>
-                    <downlink      v-show="currentTab == 'Downlink'"></downlink>
-                    <logging       v-show="currentTab == 'Logs'"></logging>
-                    <dashboard     v-show="currentTab == 'Dashboard'"></dashboard>
+                    <div class="container-fluid fp-flex-repeater">
+                        <!-- NOTE: *must* use v-show, as v-if will perish the component losing state -->
+                        <command-input v-show="currentTab == 'Commanding'"></command-input>
+                        <command-history v-show="currentTab == 'Commanding'"></command-history>
+                        <channel-table v-show="currentTab == 'Channels'"></channel-table>
+                        <event-list    v-show="currentTab == 'Events'"></event-list>
+                        <uplink        v-show="currentTab == 'Uplink'"></uplink>
+                        <downlink      v-show="currentTab == 'Downlink'"></downlink>
+                        <logging       v-show="currentTab == 'Logs'"></logging>
+                        <dashboard     v-show="currentTab == 'Dashboard'"></dashboard>
+                    </div>
                 </div>
             </template>
             <!--
@@ -164,7 +167,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             <template id="command-input-template">
                 <div class="fp-flex-repeater">
                     <div class="fp-flex-header">
-                        <h2>Command Sending: {{ selected.full_name }}</h2>
+                        <h2>Sending Command: {{ selected.full_name }}</h2>
                         <div class="form-row">
                             <div class="form-group col-4">
                                 <label for="mnemonic">Mnemonic</label>
@@ -180,8 +183,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             </div>
                         </div>
                         <div class="row no-gutters">
-                            <button type="button" class="col-2 btn btn-danger" v-on:click="clearArguments">Clear Arguments</button>
-                            <button type="button" :disabled="active" class="col-2 btn btn-success" v-on:click="sendCommand">
+                            <button type="button" class="col-2 btn btn-outline-secondary" v-on:click="clearArguments">Clear Arguments</button>
+                            <button type="button" :disabled="active" class="col-2 btn btn-primary" v-on:click="sendCommand">
                                 Send Command
                             </button>
                         </div>
@@ -229,18 +232,23 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             of events for display.
             -->
             <template id="event-list-template">
-                <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity', 'Event Description']"
-                          :items="componentEvents"
-                          :item-to-columns="columnify"
-                          :row-style="style"
-                          :item-to-unique="keyify"
-                          :item-hide="isItemHidden"
-                          :clear-rows="clearEvents"
-                          :initial-fields="fields"
-                          :filter-text="filterText"
-                          :initial-views="itemsShown"
-                          :compact="compact"
-                ></fp-table>
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <h2>Events</h2>
+                    </div>
+                    <fp-table :header-columns="['Event Time', 'Event Id', 'Event Name', 'Event Severity', 'Event Description']"
+                        :items="componentEvents"
+                        :item-to-columns="columnify"
+                        :row-style="style"
+                        :item-to-unique="keyify"
+                        :item-hide="isItemHidden"
+                        :clear-rows="clearEvents"
+                        :initial-fields="fields"
+                        :filter-text="filterText"
+                        :initial-views="itemsShown"
+                        :compact="compact"
+                    ></fp-table>
+                </div>
             </template>
             <!--
             Channel Templates:
@@ -249,7 +257,11 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             each channel. If this list contains duplicates, then the display will contain duplicates. This can be fixed
             -->
             <template id="channel-table-template">
-               <fp-table :header-columns="['Last Sample Time', 'Channel Id', 'Channel Name', 'Channel Value']"
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <h2>Channels</h2>
+                    </div>
+                    <fp-table :header-columns="['Last Sample Time', 'Channel Id', 'Channel Name', 'Channel Value']"
                          :items="conform"
                          :item-to-columns="columnify"
                          :item-to-unique="keyify"
@@ -260,7 +272,8 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                          :filter-text="filterText"
                          :initial-views="itemsShown"
                          :compact="compact"
-               ></fp-table>
+                    ></fp-table>
+                </div>
             </template>
             <!-- Uplink;
 
@@ -271,26 +284,30 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             -->
             <template id="uplink-template">
                 <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <h2>File Uplink</h2>
+                    </div>
                     <div class="form-row">
-                        <label class="col-2">Destination Folder:</label>
-                        <input class="col-2" type="text" v-model="destination" pattern="/.*" />
-                        <div class="col-4">
-                            <label>Add Files to Uplink:</label>
-                            <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
+                            <label class="col-2">Destination Folder:</label>
+                            <input class="col-2" type="text" v-model="destination" pattern="/.*" />
+                            <div class="col-4">
+                                <label>Add Files to Uplink:</label>
+                                <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
+                            </div>
+                            <button v-if="running" type="button" class="col-2 btn btn-outline-secondary" v-on:click="pauseUplink">Pause Uplink Queue</button>
+                            <button v-if="!running" type="button" class="col-2 btn btn-outline-secondary" v-on:click="unpauseUplink">Unpause Uplink Queue</button>
+                            <button type="button" class="col-2 btn btn-primary" v-on:click="uplinkFiles">Submit Uplink</button>
                         </div>
-                        <button v-if="running" type="button" class="col-2 btn btn-danger" v-on:click="pauseUplink">Pause Uplink Queue</button>
-                        <button v-if="!running" type="button" class="col-2 btn btn-danger" v-on:click="unpauseUplink">Unpause Uplink Queue</button>
-                        <button type="button" class="col-2 btn btn-success" v-on:click="uplinkFiles">Submit Uplink</button>
+                        <div v-if="error != null" class="alert alert-danger" role="alert">
+                            {{ this.error }}
+                        </div>
+                        <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
+                                  :items="elements"
+                                  :item-to-unique="keyify"
+                                  :display-template="'file-row'"
+                                  :item-to-columns="columnify"
+                        ></fp-table>
                     </div>
-                    <div v-if="error != null" class="alert alert-danger" role="alert">
-                        {{ this.error }}
-                    </div>
-                    <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
-                              :items="elements"
-                              :item-to-unique="keyify"
-                              :display-template="'file-row'"
-                              :item-to-columns="columnify"
-                    ></fp-table>
                 </div>
             </template>
             <!-- Downlink;
@@ -299,12 +316,17 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
             the rows, as it is customized for use with downlink.
             -->
             <template id="downlink-template">
+                <div class="fp-flex-repeater">
+                    <div class="fp-flex-header">
+                        <h2>File Downlink</h2>
+                    </div>
                     <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
                               :items="elements"
                               :item-to-unique="keyify"
                               :display-template="'file-row'"
                               :item-to-columns="columnify"
                     ></fp-table>
+                </div>
             </template>
 
             <!-- FP Table Templates:
@@ -339,19 +361,19 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <td>{{ item.destination }}</td>
                     <td>{{ item.state }}</td>
                     <td v-if="item.uplink">
-                        <button v-if="item.state != 'FINISHED' && item.state != 'CANCELED'" class="btn btn-danger" v-on:click="fileAction">
+                        <button v-if="item.state != 'FINISHED' && item.state != 'CANCELED'" class="btn btn-secondary" v-on:click="fileAction">
                             {{ (item.state == "TRANSMITTING" ) ? "Cancel" : "Remove" }}
                         </button>
                     </td>
                     <td v-if="!item.uplink">
-                        <a v-if="item.state == 'FINISHED'" class="btn btn-danger"
+                        <a v-if="item.state == 'FINISHED'" class="btn btn-secondary"
                            :href="'/download/files/' + basename" :download="basename">
                             Download
                         </a>
                     </td>
                     <td>
                         <div class="progress">
-                            <div class="progress-bar bg-success" role="progressbar" :aria-valuenow="item.percent"
+                            <div class="progress-bar bg-primary" role="progressbar" :aria-valuenow="item.percent"
                                  aria-valuemin="0" aria-valuemax="100" :style="{width: item.percent + '%'}">
                                 {{ item.percent }}%
                             </div>
@@ -377,13 +399,12 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                 <div class="fp-flex-repeater">
                     <div class="row fp-flex-header no-gutters justify-content-end" v-if="!compact">
                         <div class="mx-1">Filters:</div>
-                        <div class="ml-1" v-bind:class="clearRows != null ? 'col-3' : 'col-4'">
+                        <div class="ml-1 col-4">
                             <v-select id="fp-table-filter" :clearable="true" :searchable="true" :taggable="true"
                                       :no-drop="true" :options="[]" :multiple="true"
                                       v-model="matching">
                             </v-select>
                         </div>
-                        <button class="col-2 ml-2 btn btn-danger" v-if="clearRows != null" v-on:click="clearRows">Clear</button>
                     </div>
                     <div class="fp-scroll-container">
                         <div class="fp-scrollable">
@@ -418,17 +439,20 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <div class="row fp-flex-header" v-if="editing && !compact">
                         <div class="col-4"></div>
                         <div class="btn-group col-8">
-                            <div type="button" class="btn btn-danger" v-on:click="clearView">Clear</div>
-                            <a :href="viewHref" download="current-view.txt" class="btn btn-primary">Export</a>
-                            <label class="btn btn-primary btn-file">
+                            <div type="button" class="btn btn-secondary" v-on:click="clearView">Clear</div>
+                            <a :href="viewHref" download="current-view.txt" class="btn btn-info">Export</a>
+                            <label class="btn btn-info btn-file">
                                 Import<input type="file" v-on:input="readFile" style="display: none;">
                             </label>
-                            <div type="button" class="btn btn-success" v-on:click="saveView">Done</div>
+                            <div type="button" class="btn btn-primary" v-on:click="saveView">Done</div>
                         </div>
                     </div>
                     <div class="row fp-flex-header no-gutters justify-content-end" v-if="!editing && !compact">
                         <button type="button" class="col-3 btn btn-primary" v-if="supportViews && !editing"
                                 v-on:click="editViews">Edit View</button>
+                    </div>
+                    <div class="row fp-flex-header no-gutters justify-content-end" v-if="!editing && !compact">
+                        <button class="col-3 btn btn-secondary" v-if="clearRows != null" v-on:click="clearRows">Clear</button>
                     </div>
                 </div>
             </template>

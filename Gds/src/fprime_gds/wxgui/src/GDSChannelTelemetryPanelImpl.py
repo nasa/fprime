@@ -106,8 +106,7 @@ class ChannelTelemetryImpl(GDSChannelTelemetryPanelGUI.ChannelTelemetry):
         self.dv_model.SetData(data)
 
     def onCopyKeyPressed(self, event):
-        """Callback for key pressed within the data view control
-        """
+        """Callback for key pressed within the data view control"""
 
         # Ctrl-C pressed
         if event.ControlDown() and event.GetKeyCode() == 67:
@@ -128,7 +127,7 @@ class ChannelTelemetryImpl(GDSChannelTelemetryPanelGUI.ChannelTelemetry):
 
     def onCopyKeyPressedContext(self, event):
         """Callback for pressing the copy option in the context menu of the data view ctrl
-        
+
         Arguments:
             event {wx.Event} -- standard event arg from WX
         """
@@ -509,7 +508,7 @@ class ChannelTelemDataViewModel(wx.dataview.PyDataViewModel):
 
     def ChangeFilter(self, filt):
         """Change the filter on this model
-        
+
         Arguments:
             filt {list} -- list of channel full names that we want to display
         """
