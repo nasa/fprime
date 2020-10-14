@@ -102,26 +102,27 @@ Inheritance diagram for Fw::Serializable:</div>
  <div class="center">
   <img src="class_fw_1_1_serializable.png" usemap="#Fw::Serializable_map" alt=""/>
   <map id="Fw::Serializable_map" name="Fw::Serializable_map">
-<area href="class_fw_1_1_com_packet.html" alt="Fw::ComPacket" shape="rect" coords="0,56,165,80"/>
-<area href="class_fw_1_1_poly_type.html" alt="Fw::PolyType" shape="rect" coords="175,56,340,80"/>
-<area href="class_fw_1_1_string_base.html" alt="Fw::StringBase" shape="rect" coords="350,56,515,80"/>
-<area href="class_fw_1_1_struct_serializable.html" alt="Fw::StructSerializable&lt; T &gt;" shape="rect" coords="525,56,690,80"/>
-<area href="class_fw_1_1_time.html" alt="Fw::Time" shape="rect" coords="700,56,865,80"/>
-<area href="class_svc_1_1_timer_val.html" title="Serializable class for carrying timer values." alt="Svc::TimerVal" shape="rect" coords="875,56,1040,80"/>
-<area href="class_fw_1_1_ampcs_evr_log_packet.html" alt="Fw::AmpcsEvrLogPacket" shape="rect" coords="175,112,340,136"/>
-<area href="class_fw_1_1_cmd_packet.html" alt="Fw::CmdPacket" shape="rect" coords="175,168,340,192"/>
-<area href="class_fw_1_1_file_chunk_packet.html" alt="Fw::FileChunkPacket" shape="rect" coords="175,224,340,248"/>
-<area href="class_fw_1_1_log_packet.html" alt="Fw::LogPacket" shape="rect" coords="175,280,340,304"/>
-<area href="class_fw_1_1_tlm_packet.html" alt="Fw::TlmPacket" shape="rect" coords="175,336,340,360"/>
-<area href="class_fw_1_1_cmd_string_arg.html" alt="Fw::CmdStringArg" shape="rect" coords="525,112,690,136"/>
-<area href="class_fw_1_1_eighty_char_string.html" alt="Fw::EightyCharString" shape="rect" coords="525,168,690,192"/>
-<area href="class_fw_1_1_internal_interface_string.html" alt="Fw::InternalInterfaceString" shape="rect" coords="525,224,690,248"/>
-<area href="class_fw_1_1_log_string_arg.html" alt="Fw::LogStringArg" shape="rect" coords="525,280,690,304"/>
-<area href="class_fw_1_1_param_string.html" alt="Fw::ParamString" shape="rect" coords="525,336,690,360"/>
-<area href="class_fw_1_1_text_log_string.html" alt="Fw::TextLogString" shape="rect" coords="525,392,690,416"/>
-<area href="class_fw_1_1_tlm_string.html" alt="Fw::TlmString" shape="rect" coords="525,448,690,472"/>
-<area href="class_os_1_1_queue_string.html" alt="Os::QueueString" shape="rect" coords="525,504,690,528"/>
-<area href="class_os_1_1_task_string.html" alt="Os::TaskString" shape="rect" coords="525,560,690,584"/>
+<area href="class_fw_1_1_buffer.html" alt="Fw::Buffer" shape="rect" coords="0,56,165,80"/>
+<area href="class_fw_1_1_com_packet.html" alt="Fw::ComPacket" shape="rect" coords="175,56,340,80"/>
+<area href="class_fw_1_1_poly_type.html" alt="Fw::PolyType" shape="rect" coords="350,56,515,80"/>
+<area href="class_fw_1_1_string_base.html" alt="Fw::StringBase" shape="rect" coords="525,56,690,80"/>
+<area href="class_fw_1_1_struct_serializable.html" alt="Fw::StructSerializable&lt; T &gt;" shape="rect" coords="700,56,865,80"/>
+<area href="class_fw_1_1_time.html" alt="Fw::Time" shape="rect" coords="875,56,1040,80"/>
+<area href="class_svc_1_1_timer_val.html" title="Serializable class for carrying timer values." alt="Svc::TimerVal" shape="rect" coords="1050,56,1215,80"/>
+<area href="class_fw_1_1_ampcs_evr_log_packet.html" alt="Fw::AmpcsEvrLogPacket" shape="rect" coords="350,112,515,136"/>
+<area href="class_fw_1_1_cmd_packet.html" alt="Fw::CmdPacket" shape="rect" coords="350,168,515,192"/>
+<area href="class_fw_1_1_file_chunk_packet.html" alt="Fw::FileChunkPacket" shape="rect" coords="350,224,515,248"/>
+<area href="class_fw_1_1_log_packet.html" alt="Fw::LogPacket" shape="rect" coords="350,280,515,304"/>
+<area href="class_fw_1_1_tlm_packet.html" alt="Fw::TlmPacket" shape="rect" coords="350,336,515,360"/>
+<area href="class_fw_1_1_cmd_string_arg.html" alt="Fw::CmdStringArg" shape="rect" coords="700,112,865,136"/>
+<area href="class_fw_1_1_eighty_char_string.html" alt="Fw::EightyCharString" shape="rect" coords="700,168,865,192"/>
+<area href="class_fw_1_1_internal_interface_string.html" alt="Fw::InternalInterfaceString" shape="rect" coords="700,224,865,248"/>
+<area href="class_fw_1_1_log_string_arg.html" alt="Fw::LogStringArg" shape="rect" coords="700,280,865,304"/>
+<area href="class_fw_1_1_param_string.html" alt="Fw::ParamString" shape="rect" coords="700,336,865,360"/>
+<area href="class_fw_1_1_text_log_string.html" alt="Fw::TextLogString" shape="rect" coords="700,392,865,416"/>
+<area href="class_fw_1_1_tlm_string.html" alt="Fw::TlmString" shape="rect" coords="700,448,865,472"/>
+<area href="class_os_1_1_queue_string.html" alt="Os::QueueString" shape="rect" coords="700,504,865,528"/>
+<area href="class_os_1_1_task_string.html" alt="Os::TaskString" shape="rect" coords="700,560,865,584"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -233,7 +234,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>deserialize to contents </p>
 
-<p>Implemented in <a class="el" href="class_fw_1_1_poly_type.html#a76196545dd58b76a55b67bff1b46af2e">Fw::PolyType</a>, <a class="el" href="class_fw_1_1_internal_interface_string.html#a1d34431394369cf5606a9d704dc25a1f">Fw::InternalInterfaceString</a>, <a class="el" href="class_fw_1_1_eighty_char_string.html#a0561c13f420313d609c4fcc51b765d83">Fw::EightyCharString</a>, <a class="el" href="class_fw_1_1_tlm_string.html#aa24842cbb43733ae6758cdc8bff44c0a">Fw::TlmString</a>, <a class="el" href="class_fw_1_1_tlm_packet.html#a3f5ca1518a4f4dbba2cc0e7fd73c491e">Fw::TlmPacket</a>, <a class="el" href="class_fw_1_1_time.html#a0827cdbe73286ef0f85d43a8b731b660">Fw::Time</a>, <a class="el" href="class_fw_1_1_param_string.html#ad7af0a6714b0f5900c70689c1c626802">Fw::ParamString</a>, <a class="el" href="class_fw_1_1_text_log_string.html#ad27c40589cb637d620705ea2c6ca27d2">Fw::TextLogString</a>, <a class="el" href="class_fw_1_1_log_string_arg.html#a1a246488ee63911db959b0083147d583">Fw::LogStringArg</a>, <a class="el" href="class_fw_1_1_log_packet.html#a134ff472cc94cc6bd1ca01c4a88c6b24">Fw::LogPacket</a>, <a class="el" href="class_fw_1_1_ampcs_evr_log_packet.html#a3436250257647bf4f79c99fa8e7a247e">Fw::AmpcsEvrLogPacket</a>, <a class="el" href="class_fw_1_1_cmd_string_arg.html#ad8bf1996bb8ecce5270bd2229280445b">Fw::CmdStringArg</a>, <a class="el" href="class_fw_1_1_cmd_packet.html#a84894bbe4069107de8fc28d3a7d222f4">Fw::CmdPacket</a>, <a class="el" href="class_svc_1_1_timer_val.html#afa078df23c3662b0691689215c4cf463">Svc::TimerVal</a>, <a class="el" href="class_os_1_1_task_string.html#a1c657758426837fd2887f792d076b78f">Os::TaskString</a>, and <a class="el" href="class_fw_1_1_struct_serializable.html#a1631466be9fe0116966df624e03e399d">Fw::StructSerializable&lt; T &gt;</a>.</p>
+<p>Implemented in <a class="el" href="class_fw_1_1_poly_type.html#a76196545dd58b76a55b67bff1b46af2e">Fw::PolyType</a>, <a class="el" href="class_fw_1_1_internal_interface_string.html#a1d34431394369cf5606a9d704dc25a1f">Fw::InternalInterfaceString</a>, <a class="el" href="class_fw_1_1_eighty_char_string.html#a0561c13f420313d609c4fcc51b765d83">Fw::EightyCharString</a>, <a class="el" href="class_fw_1_1_tlm_string.html#aa24842cbb43733ae6758cdc8bff44c0a">Fw::TlmString</a>, <a class="el" href="class_fw_1_1_tlm_packet.html#a3f5ca1518a4f4dbba2cc0e7fd73c491e">Fw::TlmPacket</a>, <a class="el" href="class_fw_1_1_time.html#a0827cdbe73286ef0f85d43a8b731b660">Fw::Time</a>, <a class="el" href="class_fw_1_1_param_string.html#ad7af0a6714b0f5900c70689c1c626802">Fw::ParamString</a>, <a class="el" href="class_fw_1_1_text_log_string.html#ad27c40589cb637d620705ea2c6ca27d2">Fw::TextLogString</a>, <a class="el" href="class_fw_1_1_log_string_arg.html#a1a246488ee63911db959b0083147d583">Fw::LogStringArg</a>, <a class="el" href="class_fw_1_1_log_packet.html#a134ff472cc94cc6bd1ca01c4a88c6b24">Fw::LogPacket</a>, <a class="el" href="class_fw_1_1_ampcs_evr_log_packet.html#a3436250257647bf4f79c99fa8e7a247e">Fw::AmpcsEvrLogPacket</a>, <a class="el" href="class_fw_1_1_cmd_string_arg.html#ad8bf1996bb8ecce5270bd2229280445b">Fw::CmdStringArg</a>, <a class="el" href="class_fw_1_1_cmd_packet.html#a84894bbe4069107de8fc28d3a7d222f4">Fw::CmdPacket</a>, <a class="el" href="class_svc_1_1_timer_val.html#afa078df23c3662b0691689215c4cf463">Svc::TimerVal</a>, <a class="el" href="class_os_1_1_task_string.html#a1c657758426837fd2887f792d076b78f">Os::TaskString</a>, <a class="el" href="class_fw_1_1_struct_serializable.html#a1631466be9fe0116966df624e03e399d">Fw::StructSerializable&lt; T &gt;</a>, and <a class="el" href="class_fw_1_1_buffer.html#a426f129fb964255fc2bbeec6d6f4958e">Fw::Buffer</a>.</p>
 
 </div>
 </div>
@@ -263,7 +264,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>serialize contents </p>
 
-<p>Implemented in <a class="el" href="class_fw_1_1_poly_type.html#a7df7b37fcf44cdf6466ecdbac10585e2">Fw::PolyType</a>, <a class="el" href="class_fw_1_1_internal_interface_string.html#a8b654bbbbe76d929ec68c74e88d62aea">Fw::InternalInterfaceString</a>, <a class="el" href="class_fw_1_1_eighty_char_string.html#a5ed269eaf3d93c2e3ed386630a160faa">Fw::EightyCharString</a>, <a class="el" href="class_fw_1_1_tlm_string.html#ac78292cc2a699d7ed74d9b81e67613d7">Fw::TlmString</a>, <a class="el" href="class_fw_1_1_tlm_packet.html#ae2b6cb8e1d7edff16f77ace266080804">Fw::TlmPacket</a>, <a class="el" href="class_fw_1_1_time.html#ae16ca40a2f32e9b7573d7f0c0c963574">Fw::Time</a>, <a class="el" href="class_fw_1_1_param_string.html#ae9949b738cf0c91c88eb95db5751cd62">Fw::ParamString</a>, <a class="el" href="class_fw_1_1_text_log_string.html#a5433ff59d0c6764b3dec6c8676c63473">Fw::TextLogString</a>, <a class="el" href="class_fw_1_1_log_string_arg.html#af70a567d03cf43f488c4920f56724639">Fw::LogStringArg</a>, <a class="el" href="class_fw_1_1_log_packet.html#a1159eee6d98156c09462b6c3848d3073">Fw::LogPacket</a>, <a class="el" href="class_fw_1_1_ampcs_evr_log_packet.html#a47fc83dba4c2d3a490218f77c9d346cf">Fw::AmpcsEvrLogPacket</a>, <a class="el" href="class_fw_1_1_cmd_string_arg.html#a4cc10cb0f230b8253868aa8071bd4c15">Fw::CmdStringArg</a>, <a class="el" href="class_fw_1_1_cmd_packet.html#a8cac5b7344135250a59923e8a7f711c9">Fw::CmdPacket</a>, <a class="el" href="class_svc_1_1_timer_val.html#a57b985026d559a6c877d8b094205c8c7">Svc::TimerVal</a>, <a class="el" href="class_os_1_1_task_string.html#ac5d7ab664c090537117faf90087c8905">Os::TaskString</a>, and <a class="el" href="class_fw_1_1_struct_serializable.html#a6e0f1f37e732300f5946c1a0b91cfe5e">Fw::StructSerializable&lt; T &gt;</a>.</p>
+<p>Implemented in <a class="el" href="class_fw_1_1_poly_type.html#a7df7b37fcf44cdf6466ecdbac10585e2">Fw::PolyType</a>, <a class="el" href="class_fw_1_1_internal_interface_string.html#a8b654bbbbe76d929ec68c74e88d62aea">Fw::InternalInterfaceString</a>, <a class="el" href="class_fw_1_1_eighty_char_string.html#a5ed269eaf3d93c2e3ed386630a160faa">Fw::EightyCharString</a>, <a class="el" href="class_fw_1_1_tlm_string.html#ac78292cc2a699d7ed74d9b81e67613d7">Fw::TlmString</a>, <a class="el" href="class_fw_1_1_tlm_packet.html#ae2b6cb8e1d7edff16f77ace266080804">Fw::TlmPacket</a>, <a class="el" href="class_fw_1_1_time.html#ae16ca40a2f32e9b7573d7f0c0c963574">Fw::Time</a>, <a class="el" href="class_fw_1_1_param_string.html#ae9949b738cf0c91c88eb95db5751cd62">Fw::ParamString</a>, <a class="el" href="class_fw_1_1_text_log_string.html#a5433ff59d0c6764b3dec6c8676c63473">Fw::TextLogString</a>, <a class="el" href="class_fw_1_1_log_string_arg.html#af70a567d03cf43f488c4920f56724639">Fw::LogStringArg</a>, <a class="el" href="class_fw_1_1_log_packet.html#a1159eee6d98156c09462b6c3848d3073">Fw::LogPacket</a>, <a class="el" href="class_fw_1_1_ampcs_evr_log_packet.html#a47fc83dba4c2d3a490218f77c9d346cf">Fw::AmpcsEvrLogPacket</a>, <a class="el" href="class_fw_1_1_cmd_string_arg.html#a4cc10cb0f230b8253868aa8071bd4c15">Fw::CmdStringArg</a>, <a class="el" href="class_fw_1_1_cmd_packet.html#a8cac5b7344135250a59923e8a7f711c9">Fw::CmdPacket</a>, <a class="el" href="class_svc_1_1_timer_val.html#a57b985026d559a6c877d8b094205c8c7">Svc::TimerVal</a>, <a class="el" href="class_os_1_1_task_string.html#ac5d7ab664c090537117faf90087c8905">Os::TaskString</a>, <a class="el" href="class_fw_1_1_struct_serializable.html#a6e0f1f37e732300f5946c1a0b91cfe5e">Fw::StructSerializable&lt; T &gt;</a>, and <a class="el" href="class_fw_1_1_buffer.html#a70be90f1e2a55cc8ff0c4e994abff93c">Fw::Buffer</a>.</p>
 
 </div>
 </div>

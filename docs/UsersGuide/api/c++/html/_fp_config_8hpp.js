@@ -33,6 +33,7 @@ var _fp_config_8hpp =
     [ "FW_OBJECT_NAMES", "_fp_config_8hpp.html#afea3a9ff2b434835add02a2188a3f358", null ],
     [ "FW_OBJECT_REGISTRATION", "_fp_config_8hpp.html#adc856189c83335b51b673c0352f28b8a", null ],
     [ "FW_OBJECT_TO_STRING", "_fp_config_8hpp.html#ae08e229050e11dc17b431a8820ec3000", null ],
+    [ "FW_OPTIONAL_NAME", "_fp_config_8hpp.html#a6fa9a0e7d54350f5ca328890c0848391", null ],
     [ "FW_PARAM_BUFFER_MAX_SIZE", "_fp_config_8hpp.html#a646de284e93e26fa69fe8ec637f92bfc", null ],
     [ "FW_PARAM_STRING_MAX_SIZE", "_fp_config_8hpp.html#abcf41ba3380be978cc5a29567684f03e", null ],
     [ "FW_PORT_SERIALIZATION", "_fp_config_8hpp.html#a7f85dd2c445fd4851f638c0e2360bba6", null ],

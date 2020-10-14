@@ -1,7 +1,7 @@
 var class_svc_1_1_buffer_logger =
 [
     [ "~File", "class_svc_1_1_buffer_logger.html#a86822eb66be9ae93d9b59bc41a3d24b1", null ],
-    [ "BufferLogger", "class_svc_1_1_buffer_logger.html#ae1d69befa55c98b21c0c7295587df5cd", null ],
+    [ "BufferLogger", "class_svc_1_1_buffer_logger.html#ad320521af9d42b38379b1c85fdb4b165", null ],
     [ "BL_CloseFile_cmdHandler", "class_svc_1_1_buffer_logger.html#a1e21649d49b329d7d2d5cce3a1c93c2e", null ],
     [ "BL_FlushFile_cmdHandler", "class_svc_1_1_buffer_logger.html#a9f963b613aa9cdf795a26063a9a6f87c", null ],
     [ "BL_SetLogging_cmdHandler", "class_svc_1_1_buffer_logger.html#a13b94ef6b474d2cfab3bb37930a0861e", null ],

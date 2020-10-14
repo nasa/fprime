@@ -112,78 +112,76 @@ $(document).ready(function(){initNavTree('_linux_i2c_driver_component_impl_stub_
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="comment">// Construction, initialization, and destruction</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  LinuxI2cDriverComponentImpl ::</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#if FW_OBJECT_NAMES == 1</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    LinuxI2cDriverComponentImpl(</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    ) :</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      LinuxI2cDriverComponentBase(compName)</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    LinuxI2cDriverComponentImpl(<span class="keywordtype">void</span>)</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    ,<a class="code" href="namespace_drv.html#a02f8d1e969b72ddce0ecbf6465c2ad31">m_fd</a>(-1)</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a1c778b102106e260fc3cf9fce8456c5e">LinuxI2cDriverComponentImpl ::</a></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a1c778b102106e260fc3cf9fce8456c5e">    init</a>(</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instance</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    )</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    LinuxI2cDriverComponentBase::init(instance);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a80f1fa277d7936183cdf799d8bd676aa">LinuxI2cDriverComponentImpl ::</a></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a80f1fa277d7936183cdf799d8bd676aa">    ~LinuxI2cDriverComponentImpl</a>(<span class="keywordtype">void</span>)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  }</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a888a6ea079f757e76b19b483fb23fedf">LinuxI2cDriverComponentImpl ::</a></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a888a6ea079f757e76b19b483fb23fedf">    LinuxI2cDriverComponentImpl</a>(</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    ) : LinuxI2cDriverComponentBase(compName),</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        m_fd(-1)</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">LinuxI2cDriverComponentImpl ::</a></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<a class="code" href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">    init</a>(</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instance</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    )</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">LinuxI2cDriverComponentBase::init</a>(instance);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a80f1fa277d7936183cdf799d8bd676aa">LinuxI2cDriverComponentImpl ::</a></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a80f1fa277d7936183cdf799d8bd676aa">    ~LinuxI2cDriverComponentImpl</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a8d3750d7c7897fb696bb920f46a32879">LinuxI2cDriverComponentImpl::open</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* device) {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#a8d3750d7c7897fb696bb920f46a32879">LinuxI2cDriverComponentImpl::open</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* device) {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="comment">// Note this this port handler is guarded, so we can make the ioctl call</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  I2cStatus LinuxI2cDriverComponentImpl ::</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    write_handler(</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        U32 addr,</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        Fw::Buffer &amp;serBuffer</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    )</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">return</span> I2C_OK;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  Drv::I2cStatus <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#afe9b4fb0ad2ca5c4fa3cc3f093bfc172">LinuxI2cDriverComponentImpl ::</a></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#afe9b4fb0ad2ca5c4fa3cc3f093bfc172">    read_handler</a>(</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        U32 addr,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        Fw::Buffer &amp;serBuffer</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    )</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> I2C_OK;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;} <span class="comment">// end namespace Drv</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="comment">// Note this this port handler is guarded, so we can make the ioctl call</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <a class="code" href="namespace_drv.html#a07f474dfe6fef7905eae82f850d06078">I2cStatus</a> LinuxI2cDriverComponentImpl ::</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    write_handler(</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        U32 addr,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    )</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespace_drv.html#a07f474dfe6fef7905eae82f850d06078acb91fa7b865b52934bc48c37cda80c5d">I2C_OK</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <a class="code" href="namespace_drv.html#a07f474dfe6fef7905eae82f850d06078">Drv::I2cStatus</a> <a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#afe9b4fb0ad2ca5c4fa3cc3f093bfc172">LinuxI2cDriverComponentImpl ::</a></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<a class="code" href="class_drv_1_1_linux_i2c_driver_component_impl.html#afe9b4fb0ad2ca5c4fa3cc3f093bfc172">    read_handler</a>(</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        U32 addr,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> &amp;serBuffer</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    )</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  {</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespace_drv.html#a07f474dfe6fef7905eae82f850d06078acb91fa7b865b52934bc48c37cda80c5d">I2C_OK</a>;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  }</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;} <span class="comment">// end namespace Drv</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="_block_driver_impl_8cpp_source.html#l00005">BlockDriverImpl.cpp:5</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_a888a6ea079f757e76b19b483fb23fedf"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#a888a6ea079f757e76b19b483fb23fedf">Drv::LinuxI2cDriverComponentImpl::LinuxI2cDriverComponentImpl</a></div><div class="ttdeci">LinuxI2cDriverComponentImpl(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00033">LinuxI2cDriverComponentImpl.cpp:34</a></div></div>
+<div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="_block_driver_component_ac_8cpp_source.html#l00022">BlockDriverComponentAc.cpp:22</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="_buffer_serializable_ac_8hpp_source.html#l00024">BufferSerializableAc.hpp:24</a></div></div>
+<div class="ttc" id="anamespace_drv_html_a07f474dfe6fef7905eae82f850d06078"><div class="ttname"><a href="namespace_drv.html#a07f474dfe6fef7905eae82f850d06078">Drv::I2cStatus</a></div><div class="ttdeci">I2cStatus</div><div class="ttdef"><b>Definition:</b> <a href="_i2c_port_ac_8hpp_source.html#l00025">I2cPortAc.hpp:25</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="_assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_linux_i2c_driver_component_impl_8hpp_html"><div class="ttname"><a href="_linux_i2c_driver_component_impl_8hpp.html">LinuxI2cDriverComponentImpl.hpp</a></div></div>
-<div class="ttc" id="anamespace_drv_html_a02f8d1e969b72ddce0ecbf6465c2ad31"><div class="ttname"><a href="namespace_drv.html#a02f8d1e969b72ddce0ecbf6465c2ad31">Drv::m_fd</a></div><div class="ttdeci">m_fd(-1)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00042">LinuxI2cDriverComponentImpl.cpp:42</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_a1c778b102106e260fc3cf9fce8456c5e"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#a1c778b102106e260fc3cf9fce8456c5e">Drv::LinuxI2cDriverComponentImpl::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE instance=0)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00047">LinuxI2cDriverComponentImpl.cpp:48</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_afe9b4fb0ad2ca5c4fa3cc3f093bfc172"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#afe9b4fb0ad2ca5c4fa3cc3f093bfc172">Drv::LinuxI2cDriverComponentImpl::read_handler</a></div><div class="ttdeci">I2cStatus read_handler(const NATIVE_INT_TYPE portNum, U32 addr, Fw::Buffer &amp;serBuffer)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00115">LinuxI2cDriverComponentImpl.cpp:116</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_a80f1fa277d7936183cdf799d8bd676aa"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#a80f1fa277d7936183cdf799d8bd676aa">Drv::LinuxI2cDriverComponentImpl::~LinuxI2cDriverComponentImpl</a></div><div class="ttdeci">~LinuxI2cDriverComponentImpl(void)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00055">LinuxI2cDriverComponentImpl.cpp:56</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_a8d3750d7c7897fb696bb920f46a32879"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#a8d3750d7c7897fb696bb920f46a32879">Drv::LinuxI2cDriverComponentImpl::open</a></div><div class="ttdeci">bool open(const char *device)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00063">LinuxI2cDriverComponentImpl.cpp:63</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_obj_base_html_ac321ed11fbcb6d9ed453879edf01e622"><div class="ttname"><a href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">Fw::ObjBase::init</a></div><div class="ttdeci">void init(void)</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="_obj_base_8cpp_source.html#l00026">ObjBase.cpp:26</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_afe9b4fb0ad2ca5c4fa3cc3f093bfc172"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#afe9b4fb0ad2ca5c4fa3cc3f093bfc172">Drv::LinuxI2cDriverComponentImpl::read_handler</a></div><div class="ttdeci">I2cStatus read_handler(const NATIVE_INT_TYPE portNum, U32 addr, Fw::Buffer &amp;serBuffer)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00110">LinuxI2cDriverComponentImpl.cpp:111</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_a80f1fa277d7936183cdf799d8bd676aa"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#a80f1fa277d7936183cdf799d8bd676aa">Drv::LinuxI2cDriverComponentImpl::~LinuxI2cDriverComponentImpl</a></div><div class="ttdeci">~LinuxI2cDriverComponentImpl(void)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00050">LinuxI2cDriverComponentImpl.cpp:51</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_i2c_driver_component_impl_html_a8d3750d7c7897fb696bb920f46a32879"><div class="ttname"><a href="class_drv_1_1_linux_i2c_driver_component_impl.html#a8d3750d7c7897fb696bb920f46a32879">Drv::LinuxI2cDriverComponentImpl::open</a></div><div class="ttdeci">bool open(const char *device)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00058">LinuxI2cDriverComponentImpl.cpp:58</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="_basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">Declares ISF basic types.</div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="_basic_types_8hpp_source.html#l00027">BasicTypes.hpp:27</a></div></div>
+<div class="ttc" id="anamespace_drv_html_a07f474dfe6fef7905eae82f850d06078acb91fa7b865b52934bc48c37cda80c5d"><div class="ttname"><a href="namespace_drv.html#a07f474dfe6fef7905eae82f850d06078acb91fa7b865b52934bc48c37cda80c5d">Drv::I2C_OK</a></div><div class="ttdeci">@ I2C_OK</div><div class="ttdef"><b>Definition:</b> <a href="_i2c_port_ac_8hpp_source.html#l00026">I2cPortAc.hpp:26</a></div></div>
+<div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="_basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

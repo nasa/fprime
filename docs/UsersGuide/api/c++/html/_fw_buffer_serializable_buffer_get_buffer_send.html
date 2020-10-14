@@ -84,7 +84,7 @@ $(document).ready(function(){initNavTree('_fw_buffer_serializable_buffer_get_buf
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port </div>  </div>
+<div class="title"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> Serializable / Fw::BufferGet Port / Fw::BufferSend Port </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md10"></a>
@@ -93,16 +93,16 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 1 Introduction</h2>
 <p>This module provides the following elements:</p>
 <ul>
-<li>A type <code>Fw::Buffer</code> representing a variable-size buffer allocated from a fixed-size store.</li>
-<li>A port <code>Fw::BufferGet</code> for requesting a buffer of type <code>Fw::Buffer</code> from a <a href="../../../Svc/BufferManager/docs/sdd.html"><code>BufferManager</code></a> component.</li>
-<li>A port <code>Fw::BufferSend</code> for sending a buffer of type <code>Fw::Buffer</code> from one component to another.</li>
+<li>A type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> representing a variable-size buffer allocated from a fixed-size store.</li>
+<li>A port <code>Fw::BufferGet</code> for requesting a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from a <a href="../../../Svc/BufferManager/docs/sdd.html"><code>BufferManager</code></a> component.</li>
+<li>A port <code>Fw::BufferSend</code> for sending a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from one component to another.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md12"></a>
 2 Design</h2>
 <p><a class="anchor" id="FwBuffer"></a> </p>
 <h3><a class="anchor" id="autotoc_md13"></a>
 2.1 The Type Fw::Buffer</h3>
-<p><code>Fw::Buffer</code> is a serializable class. It contains the following members:</p>
+<p><code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is a serializable class. It contains the following members:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Name  </th><th class="markdownTableHeadNone">Type  </th><th class="markdownTableHeadNone">Purpose   </th></tr>
@@ -115,14 +115,14 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>size</code>  </td><td class="markdownTableBodyNone"><code>U32</code>  </td><td class="markdownTableBodyNone">The size of the buffer in bytes.   </td></tr>
 </table>
-<p>A value of type <code>Fw::Buffer</code> is <em>valid</em> if its <code>data</code> member is non-zero; otherwise it is <em>invalid</em>.</p>
+<p>A value of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is <em>valid</em> if its <code>data</code> member is non-zero; otherwise it is <em>invalid</em>.</p>
 <h3><a class="anchor" id="autotoc_md14"></a>
 2.2 The Port Fw::BufferGet</h3>
 <p>As shown in the following diagram, <code>Fw::BufferGet</code> has one argument <code>size</code> of type <code>U32</code>. It returns a value of type <a href="#FwBuffer"><code>Fw::Buffer</code></a>.</p>
 <p><img src="img/BufferGetBDD.jpg" alt="`Fw::BufferGet` Diagram" title="Fw::BufferGet Port" class="inline"/></p>
 <h3><a class="anchor" id="autotoc_md15"></a>
 2.3 The Port Fw::BufferSend</h3>
-<p>As shown in the following diagram, <code>Fw::BufferSend</code> has one argument <code>fwBuffer</code> of type <code>Fw::Buffer</code>.</p>
+<p>As shown in the following diagram, <code>Fw::BufferSend</code> has one argument <code>fwBuffer</code> of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>.</p>
 <p><img src="img/BufferSendBDD.jpg" alt="`Fw::BufferSend` Diagram" title="Fw::BufferSend Port" class="inline"/> </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

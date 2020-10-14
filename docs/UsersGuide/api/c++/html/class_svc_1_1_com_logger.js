@@ -6,7 +6,7 @@ var class_svc_1_1_com_logger =
       [ "CLOSED", "class_svc_1_1_com_logger.html#aa5d3874f259b7ffe60bb150b23978c7daf2919d6b93defdd1fc0ae7db8d0a0896", null ],
       [ "OPEN", "class_svc_1_1_com_logger.html#aa5d3874f259b7ffe60bb150b23978c7da76bab99b30ac93c435c9299df7bfddd3", null ]
     ] ],
-    [ "ComLogger", "class_svc_1_1_com_logger.html#afabc12f3e3278feddff3e38ad07419dc", null ],
+    [ "ComLogger", "class_svc_1_1_com_logger.html#ac910722c541ab8bef18aec1c215176c0", null ],
     [ "~ComLogger", "class_svc_1_1_com_logger.html#a80c370ef1cecfc33a4cec2f932f91fe5", null ],
     [ "closeFile", "class_svc_1_1_com_logger.html#a5c39d36b398281b0870152fcdaf6bcfa", null ],
     [ "CloseFile_cmdHandler", "class_svc_1_1_com_logger.html#a55ff3bbe841ee2e9c54bb1e29e8dd443", null ],
