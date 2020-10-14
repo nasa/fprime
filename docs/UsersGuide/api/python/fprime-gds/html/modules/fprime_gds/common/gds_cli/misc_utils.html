@@ -246,7 +246,10 @@
     <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">get_str</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_cmd_template_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/misc_utils/index.html#fprime_gds.common.gds_cli.misc_utils.get_cmd_template_string">[docs]</a><span class="k">def</span> <span class="nf">get_cmd_template_string</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">CmdTemplate</span><span class="p">,</span> <span class="n">as_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_cmd_template_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/misc_utils/index.html#fprime_gds.common.gds_cli.misc_utils.get_cmd_template_string">[docs]</a><span class="k">def</span> <span class="nf">get_cmd_template_string</span><span class="p">(</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">CmdTemplate</span><span class="p">,</span>
+    <span class="n">as_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts the given command template into a human-readable string.</span>
 
@@ -279,7 +282,9 @@
             <span class="n">arg_description</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">arg_type</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">arg_description</span><span class="p">)</span>
 
         <span class="n">cmd_string</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">arg_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">arg_type</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">arg_description</span><span class="p">,</span>
+            <span class="n">arg_name</span><span class="p">,</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">arg_type</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">arg_description</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cmd_string</span></div>

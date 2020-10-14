@@ -262,8 +262,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dv_model</span><span class="o">.</span><span class="n">SetData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ChannelTelemetryImpl.onCopyKeyPressed"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSChannelTelemetryPanelImpl/index.html#fprime_gds.wxgui.src.GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl.onCopyKeyPressed">[docs]</a>    <span class="k">def</span> <span class="nf">onCopyKeyPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Callback for key pressed within the data view control</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Callback for key pressed within the data view control&quot;&quot;&quot;</span>
 
         <span class="c1"># Ctrl-C pressed</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">ControlDown</span><span class="p">()</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">GetKeyCode</span><span class="p">()</span> <span class="o">==</span> <span class="mi">67</span><span class="p">:</span>
@@ -284,7 +283,7 @@
 
 <div class="viewcode-block" id="ChannelTelemetryImpl.onCopyKeyPressedContext"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSChannelTelemetryPanelImpl/index.html#fprime_gds.wxgui.src.GDSChannelTelemetryPanelImpl.ChannelTelemetryImpl.onCopyKeyPressedContext">[docs]</a>    <span class="k">def</span> <span class="nf">onCopyKeyPressedContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Callback for pressing the copy option in the context menu of the data view ctrl</span>
-<span class="sd">        </span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            event {wx.Event} -- standard event arg from WX</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -665,7 +664,7 @@
 
 <div class="viewcode-block" id="ChannelTelemDataViewModel.ChangeFilter"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSChannelTelemetryPanelImpl/index.html#fprime_gds.wxgui.src.GDSChannelTelemetryPanelImpl.ChannelTelemDataViewModel.ChangeFilter">[docs]</a>    <span class="k">def</span> <span class="nf">ChangeFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filt</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Change the filter on this model</span>
-<span class="sd">        </span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            filt {list} -- list of channel full names that we want to display</span>
 <span class="sd">        &quot;&quot;&quot;</span>

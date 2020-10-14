@@ -13,3 +13,12 @@ Subpackages
    models/index.rst
 
 
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   error/index.rst
+
+

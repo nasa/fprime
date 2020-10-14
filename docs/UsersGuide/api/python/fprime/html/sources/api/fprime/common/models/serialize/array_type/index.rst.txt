@@ -28,16 +28,24 @@ Classes
 
    Bases: :class:`fprime.common.models.serialize.type_base.ValueType`
 
-   Representation of the Array type (comparable to the ANY type)
+   Generic fixed-size array type representation.
 
-   The array type is a fixed size container of a single type of members.
-
-   Configuration data for array type (the type of members, size of array, and format string for all members)
+   Represents a custom named type of a fixed number of like members, each of which are other types in the system.
 
    .. method:: validate(self, val)
 
 
       Validates the values of the array
+
+
+   .. method:: val(self)
+      :property:
+
+
+      The .val property typically returns the python-native type. This the python native type closes to a serializable
+      without generating full classes would be a dictionary (anonymous object). This returns such an object.
+
+      :return dictionary of member names to python values of member keys
 
 
    .. method:: to_jsonable(self)

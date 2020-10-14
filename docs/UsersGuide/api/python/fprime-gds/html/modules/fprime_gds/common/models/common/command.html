@@ -320,10 +320,10 @@
 
 <div class="viewcode-block" id="Command.setArgs"><a class="viewcode-back" href="../../../../../api/fprime_gds/common/models/common/command/index.html#fprime_gds.common.models.common.command.Command.setArgs">[docs]</a>    <span class="k">def</span> <span class="nf">setArgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">      Given a list of values for the arguments, set the command arguments in order.</span>
-<span class="sd">      @param values: raw python values (floats, ints, and strings) that will be converted</span>
-<span class="sd">      into arg_types and stored as the command arg</span>
-<span class="sd">      &quot;&quot;&quot;</span>
+<span class="sd">        Given a list of values for the arguments, set the command arguments in order.</span>
+<span class="sd">        @param values: raw python values (floats, ints, and strings) that will be converted</span>
+<span class="sd">        into arg_types and stored as the command arg</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Make sure that the correct number of arguments is given</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__arguments</span><span class="p">):</span>

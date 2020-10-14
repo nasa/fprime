@@ -152,16 +152,18 @@
            <div itemprop="articleBody">
             
   <h1>Source code for fprime.constants</h1><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1"># DATA_ENCODING:</span>
-<span class="c1">#</span>
-<span class="c1"># In order to transmit data in a serialized format, string objects need to be encoded. Otherwise,</span>
-<span class="c1"># it is unclear how the characters are translated into raw bytes on the wire. This value should be</span>
-<span class="c1"># consistent with the encoding used on the flight software that is being communicated with.</span>
-<span class="c1">#</span>
-<span class="c1"># Traditional C/C++ strings typically use &quot;ascii&quot; encoding. Hence being used here.  However, should</span>
-<span class="c1"># F prime be updated to use some other encoding, this value may be changed.</span>
-<span class="c1">#</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provided constants for use within the fprime system.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=W0105</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In order to transmit data in a serialized format, string objects need to be encoded. Otherwise,</span>
+<span class="sd">it is unclear how the characters are translated into raw bytes on the wire. This value should be</span>
+<span class="sd">consistent with the encoding used on the flight software that is being communicated with.</span>
+
+<span class="sd">Traditional C/C++ strings typically use &quot;ascii&quot; encoding. Hence being used here.  However, should</span>
+<span class="sd">F prime be updated to use some other encoding, this value may be changed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="DATA_ENCODING"><a class="viewcode-back" href="../../api/fprime/constants/index.html#fprime.constants.DATA_ENCODING">[docs]</a><span class="n">DATA_ENCODING</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span></div>
 </pre></div>
 

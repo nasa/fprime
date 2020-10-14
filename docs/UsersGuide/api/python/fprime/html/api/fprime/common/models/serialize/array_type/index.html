@@ -194,7 +194,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fprime.common.models.serialize.array_type.ArrayType" title="fprime.common.models.serialize.array_type.ArrayType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArrayType</span></code></a>(typename, config_info, val=None)</p></td>
-<td><p>Representation of the Array type (comparable to the ANY type)</p></td>
+<td><p>Generic fixed-size array type representation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -202,13 +202,20 @@
 <dt id="fprime.common.models.serialize.array_type.ArrayType">
 <em class="property">class </em><code class="sig-prename descclassname">fprime.common.models.serialize.array_type.</code><code class="sig-name descname">ArrayType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">typename</span></em>, <em class="sig-param"><span class="n">config_info</span></em>, <em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../modules/fprime/common/models/serialize/array_type.html#ArrayType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.common.models.serialize.array_type.ArrayType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../type_base/index.html#fprime.common.models.serialize.type_base.ValueType" title="fprime.common.models.serialize.type_base.ValueType"><code class="xref py py-class docutils literal notranslate"><span class="pre">fprime.common.models.serialize.type_base.ValueType</span></code></a></p>
-<p>Representation of the Array type (comparable to the ANY type)</p>
-<p>The array type is a fixed size container of a single type of members.</p>
-<p>Configuration data for array type (the type of members, size of array, and format string for all members)</p>
+<p>Generic fixed-size array type representation.</p>
+<p>Represents a custom named type of a fixed number of like members, each of which are other types in the system.</p>
 <dl class="py method">
 <dt id="fprime.common.models.serialize.array_type.ArrayType.validate">
 <code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">val</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../modules/fprime/common/models/serialize/array_type.html#ArrayType.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.common.models.serialize.array_type.ArrayType.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validates the values of the array</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fprime.common.models.serialize.array_type.ArrayType.val">
+<em class="property">property </em><code class="sig-name descname">val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../modules/fprime/common/models/serialize/array_type.html#ArrayType.val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.common.models.serialize.array_type.ArrayType.val" title="Permalink to this definition">¶</a></dt>
+<dd><p>The .val property typically returns the python-native type. This the python native type closes to a serializable
+without generating full classes would be a dictionary (anonymous object). This returns such an object.</p>
+<p>:return dictionary of member names to python values of member keys</p>
 </dd></dl>
 
 <dl class="py method">

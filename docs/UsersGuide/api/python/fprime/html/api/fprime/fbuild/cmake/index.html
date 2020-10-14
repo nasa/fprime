@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="fprime.fbuild.settings" href="../settings/index.html" />
-    <link rel="prev" title="fprime.fbuild" href="../index.html" /> 
+    <link rel="prev" title="fprime.fbuild.builder" href="../builder/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -179,11 +179,7 @@
 <p>File to contain basic wrappers for the CMake. This will enable basic CMake commands in order to detect the properties of
 the build. This should not be imported in-person, but rather should be included by the build package. This can be the
 receiver of these delegated functions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">author</dt>
-<dd class="field-odd"><p>mstarch</p>
-</dd>
-</dl>
+<p>&#64;author mstarch</p>
 </p>
 <div class="section" id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
@@ -195,36 +191,15 @@ receiver of these delegated functions.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fprime.fbuild.cmake.CMakeBuildCache" title="fprime.fbuild.cmake.CMakeBuildCache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CMakeBuildCache</span></code></a>()</p></td>
-<td><p>Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fprime.fbuild.cmake.CMakeHandler" title="fprime.fbuild.cmake.CMakeHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CMakeHandler</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fprime.fbuild.cmake.CMakeHandler" title="fprime.fbuild.cmake.CMakeHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CMakeHandler</span></code></a>()</p></td>
 <td><p>CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
-<dt id="fprime.fbuild.cmake.CMakeBuildCache">
-<em class="property">class </em><code class="sig-prename descclassname">fprime.fbuild.cmake.</code><code class="sig-name descname">CMakeBuildCache</code><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeBuildCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeBuildCache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
-call take a long time. This cache will hold the results to prevent recalculation.</p>
-<dl class="py method">
-<dt id="fprime.fbuild.cmake.CMakeBuildCache.get_cmake_temp_build">
-<code class="sig-name descname">get_cmake_temp_build</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">proj_dir</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeBuildCache.get_cmake_temp_build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeBuildCache.get_cmake_temp_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets a CMake build directory for the specified proj_dir</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="fprime.fbuild.cmake.CMakeHandler">
 <em class="property">class </em><code class="sig-prename descclassname">fprime.fbuild.cmake.</code><code class="sig-name descname">CMakeHandler</code><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.</p>
-<dl class="py attribute">
-<dt id="fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME">
-<code class="sig-name descname">CMAKE_DEFAULT_BUILD_NAME</code><em class="property"> = build-fprime-automatic-{}</em><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.CMAKE_DEFAULT_BUILD_NAME"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt id="fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS">
 <code class="sig-name descname">CMAKE_LOCATION_FIELDS</code><em class="property"> = ['FPRIME_PROJECT_ROOT', 'FPRIME_LIBRARY_LOCATIONS', 'FPRIME_FRAMEWORK_PATH']</em><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.CMAKE_LOCATION_FIELDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS" title="Permalink to this definition">¶</a></dt>
@@ -257,49 +232,16 @@ call take a long time. This cache will hold the results to prevent recalculation
 </dd></dl>
 
 <dl class="py method">
-<dt id="fprime.fbuild.cmake.CMakeHandler.find_hashed_file">
-<code class="sig-name descname">find_hashed_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">build_dir</span></em>, <em class="sig-param"><span class="n">hash_value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.find_hashed_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.find_hashed_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find a file from a hash</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>build_dir</strong> – build directory to search</p></li>
-<li><p><strong>hash_value</strong> – hash number</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>filename</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fprime.fbuild.cmake.CMakeHandler.find_nearest_standard_build">
-<code class="sig-name descname">find_nearest_standard_build</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">platform</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.find_nearest_standard_build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.find_nearest_standard_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recurse up the directory tree from the given path, looking for a directory that matches the standard name. This
-will return that path, or error if one cannot be found.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>path of nearest standard build directory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p>CMakeInvalidBuildException, a build was found but not setup, CMakeOrphanException, no build was found</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="fprime.fbuild.cmake.CMakeHandler.get_include_locations">
 <code class="sig-name descname">get_include_locations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cmake_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.get_include_locations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.get_include_locations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the locations that can be used as the root of an include tree. Common directories are placed in these
 include locations. These include standard builds, configs, etc.</p>
-<p>..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>cmake_dir</strong> – directory of a CMake build, or directory containing a CMake project</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of include locations. Order: project, lib, lib, …, F prime core</p>
+<dd class="field-even"><p>[]  List of include locations. Order: project, lib, lib, …, F prime core</p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,7 +255,6 @@ two values supplied. First, the following two path values are established:
 - Location of the project’s F prime checkout. This is defined in the same places.
 From there, the include root of the supplied path is whichever of those two paths is your parent. In cases where
 both are parents, it will take the outer-most parent</p>
-<p>..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -346,19 +287,6 @@ The user may supply a string for a single value returned as list of one, or a li
 </dd></dl>
 
 <dl class="py method">
-<dt id="fprime.fbuild.cmake.CMakeHandler._build_directory_from_cmake_dir">
-<code class="sig-name descname">_build_directory_from_cmake_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cmake_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler._build_directory_from_cmake_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler._build_directory_from_cmake_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file
-should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then
-generate a temporary directory to be used as a build.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>working build directory</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="fprime.fbuild.cmake.CMakeHandler.generate_build">
 <code class="sig-name descname">generate_build</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">source_dir</span></em>, <em class="sig-param"><span class="n">build_dir</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ignore_output</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.generate_build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.generate_build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a build directory for purposes of the build.</p>
@@ -370,6 +298,76 @@ generate a temporary directory to be used as a build.</p>
 <li><p><strong>args</strong> – arguments to hand to CMake.</p></li>
 <li><p><strong>ignore_output</strong> – do not print the output where the user can see it</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fprime.fbuild.cmake.CMakeHandler.get_cmake_module">
+<code class="sig-name descname">get_cmake_module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">build_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.get_cmake_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.get_cmake_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the CMake module</p>
+<p>CMake modules are constructed from a path relative to some project root (fprime, deployment, or library roots).
+This relative path is then converted to use “_” instead of “/”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – path to contextualize. May be None to use os.getcwd().</p></li>
+<li><p><strong>build_dir</strong> – build directory to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CMake module name in format x_y_z</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fprime.fbuild.cmake.CMakeHandler.get_project_relative_path">
+<code class="sig-name descname">get_project_relative_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">build_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.get_project_relative_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.get_project_relative_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the path relative to the cmake setup, or raises CMakeOrphanException</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – path to contextualize. May be None to use os.getcwd().</p></li>
+<li><p><strong>build_dir</strong> – build directory to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>path string that is relative to some root of the project. i.e. used for target suffix names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fprime.fbuild.cmake.CMakeHandler.get_available_targets">
+<code class="sig-name descname">get_available_targets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">build_dir</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.get_available_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.get_available_targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of available CMake targets in the current directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>build_dir</strong> – build directory to use for detecting targets</p></li>
+<li><p><strong>path</strong> – contextual path. None for “cwd”</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This code might not work on non-GNU makefile variants of CMake as it depends on the “help” target</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of CMake make targets</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fprime.fbuild.cmake.CMakeHandler.purge">
+<em class="property">static </em><code class="sig-name descname">purge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">build_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.purge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.purge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reusable purge functionality, so the user may purge or the system may cleanup itself</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>build_dir</strong> – build dir specified to purge</p>
 </dd>
 </dl>
 </dd></dl>
@@ -404,18 +402,6 @@ its value. This will not update internal state.</p>
 <dd class="field-even"><p>{&lt;cmake cache variable&gt;: &lt;cmake cache value&gt;}</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fprime.fbuild.cmake.CMakeHandler.get_toolchain_config">
-<code class="sig-name descname">get_toolchain_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">project_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.get_toolchain_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.get_toolchain_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the default toolchain</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fprime.fbuild.cmake.CMakeHandler.load_settings">
-<code class="sig-name descname">load_settings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">settings_file</span></em>, <em class="sig-param"><span class="n">cmake_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler.load_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler.load_settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads the default settigns for this build Could include environment settings and a default toolchain.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -458,13 +444,12 @@ for before the utility gives up and produces.</p>
 <code class="sig-name descname">_run_cmake</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">arguments</span></em>, <em class="sig-param"><span class="n">workdir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">print_output</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">write_override</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">environment</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeHandler._run_cmake"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeHandler._run_cmake" title="Permalink to this definition">¶</a></dt>
 <dd><p>Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
 path in order for this to run.</p>
-<p>..note:: this function has potential File System side-effects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arguments</strong> – arguments to supply to CMake.</p></li>
 <li><p><strong>workdir</strong> – work directory to run in</p></li>
-<li><p><strong>print</strong> – print to the screen. Default: True</p></li>
+<li><p><strong>print_output</strong> – print_output to the screen. Default: True</p></li>
 <li><p><strong>write_override</strong> – allows for non-read-only commands</p></li>
 <li><p><strong>environment</strong> – environment to write into</p></li>
 </ul>
@@ -491,10 +476,8 @@ preventing deadlocks.  The output is returned for each stream as a list of lines
 <li><p><strong>print_output</strong> – print output to the screen. If False, output is masked. Default: True, print to screen.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>return code, stdout as list of lines, stderr as list of lines</p>
-</dd>
 </dl>
+<p>:return return code, stdout as list of lines, stderr as list of lines</p>
 </dd></dl>
 
 </dd></dl>
@@ -502,7 +485,7 @@ preventing deadlocks.  The output is returned for each stream as a list of lines
 <dl class="py exception">
 <dt id="fprime.fbuild.cmake.CMakeException">
 <em class="property">exception </em><code class="sig-prename descclassname">fprime.fbuild.cmake.</code><code class="sig-name descname">CMakeException</code><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="../../common/error/index.html#fprime.common.error.FprimeException" title="fprime.common.error.FprimeException"><code class="xref py py-class docutils literal notranslate"><span class="pre">fprime.common.error.FprimeException</span></code></a></p>
 <p>Error occurred within this CMake package</p>
 </dd></dl>
 
@@ -542,23 +525,15 @@ preventing deadlocks.  The output is returned for each stream as a list of lines
 <dl class="py method">
 <dt id="fprime.fbuild.cmake.CMakeExecutionException.get_errors">
 <code class="sig-name descname">get_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeExecutionException.get_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeExecutionException.get_errors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the error stream data to the caller</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>stderr of CMake as supplied into this Exception</p>
-</dd>
-</dl>
+<dd><p>Returns the error stream data to the caller
+:return: stderr of CMake as supplied into this Exception</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="fprime.fbuild.cmake.CMakeExecutionException.need_print">
 <code class="sig-name descname">need_print</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../modules/fprime/fbuild/cmake.html#CMakeExecutionException.need_print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.fbuild.cmake.CMakeExecutionException.need_print" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns if the errors need to be printed</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>need print</p>
-</dd>
-</dl>
+<dd><p>Returns if the errors need to be printed
+:return: need print</p>
 </dd></dl>
 
 </dd></dl>
@@ -586,7 +561,7 @@ preventing deadlocks.  The output is returned for each stream as a list of lines
         <a href="../settings/index.html" class="btn btn-neutral float-right" title="fprime.fbuild.settings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../index.html" class="btn btn-neutral float-left" title="fprime.fbuild" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../builder/index.html" class="btn btn-neutral float-left" title="fprime.fbuild.builder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -229,7 +229,9 @@
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="CommandSendCommand._get_item_list"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/command_send/index.html#fprime_gds.common.gds_cli.command_send.CommandSendCommand._get_item_list">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_list</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">project_dictionary</span><span class="p">:</span> <span class="n">Dictionaries</span><span class="p">,</span> <span class="n">filter_predicate</span><span class="p">:</span> <span class="n">predicates</span><span class="o">.</span><span class="n">predicate</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">project_dictionary</span><span class="p">:</span> <span class="n">Dictionaries</span><span class="p">,</span>
+        <span class="n">filter_predicate</span><span class="p">:</span> <span class="n">predicates</span><span class="o">.</span><span class="n">predicate</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">CmdTemplate</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets a list of available commands in the system and return them in an</span>
@@ -253,14 +255,22 @@
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="CommandSendCommand._get_upcoming_item"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/command_send/index.html#fprime_gds.common.gds_cli.command_send.CommandSendCommand._get_upcoming_item">[docs]</a>    <span class="k">def</span> <span class="nf">_get_upcoming_item</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">filter_predicate</span><span class="p">,</span> <span class="n">min_start_time</span><span class="o">=</span><span class="s2">&quot;NOW&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span></div>
+        <span class="bp">cls</span><span class="p">,</span></div>
+        <span class="n">api</span><span class="p">,</span>
+        <span class="n">filter_predicate</span><span class="p">,</span>
+        <span class="n">min_start_time</span><span class="o">=</span><span class="s2">&quot;NOW&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        NOTE: Doesn&#39;t use _get_upcoming_item; sign that this should not use QueryHistory as a base class, and should refactor when time&#39;s available</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="CommandSendCommand._get_item_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/command_send/index.html#fprime_gds.common.gds_cli.command_send.CommandSendCommand._get_item_string">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">CmdTemplate</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="CommandSendCommand._get_item_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/command_send/index.html#fprime_gds.common.gds_cli.command_send.CommandSendCommand._get_item_string">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_string</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">item</span><span class="p">:</span> <span class="n">CmdTemplate</span><span class="p">,</span>
+        <span class="n">json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts the given command template into a human-readable string.</span>
 

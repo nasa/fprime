@@ -279,7 +279,6 @@ Functions
    .. method:: fileno(self)
 
 
-      
 
 
 .. function:: main(argv=None)

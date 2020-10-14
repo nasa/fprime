@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>fprime.constants &mdash; fprime 1.4.1 documentation</title>
+  <title>fprime.common.error &mdash; fprime 1.4.1 documentation</title>
   
 
   
@@ -37,8 +37,7 @@
 
     
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="prev" title="fprime.util.build_helper" href="../util/build_helper/index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,18 +86,8 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fprime</span></code></a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fprime.constants</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API</a></li>
 </ul>
 
             
@@ -145,18 +134,12 @@
     
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fprime</span></code></a> &raquo;</li>
-        
-      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">fprime.constants</span></code></li>
+      <li>fprime.common.error</li>
     
     
       <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="../../../sources/api/fprime/constants/index.rst.txt" rel="nofollow"> View page source</a>
-          
         
       </li>
     
@@ -168,33 +151,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-fprime.constants">
-<span id="fprime-constants"></span><h1><a class="reference internal" href="#module-fprime.constants" title="fprime.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fprime.constants</span></code></a><a class="headerlink" href="#module-fprime.constants" title="Permalink to this headline">¶</a></h1>
-<p><p>Provided constants for use within the fprime system.</p>
-</p>
-<div class="section" id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-<dl class="py data">
-<dt id="fprime.constants.DATA_ENCODING">
-<code class="sig-prename descclassname">fprime.constants.</code><code class="sig-name descname">DATA_ENCODING</code><em class="property"> = utf-8</em><a class="reference internal" href="../../../modules/fprime/constants.html#DATA_ENCODING"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fprime.constants.DATA_ENCODING" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+  <h1>Source code for fprime.common.error</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Error and exception definitions for fprime &quot;&quot;&quot;</span>
 
-<p>Build: 1.4.1</p>
-</div>
-</div>
 
+<div class="viewcode-block" id="FprimeException"><a class="viewcode-back" href="../../../api/fprime/common/error/index.html#fprime.common.error.FprimeException">[docs]</a><span class="k">class</span> <span class="nc">FprimeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span></div>
+    <span class="sd">&quot;&quot;&quot; Base F prime exception &quot;&quot;&quot;</span>
+</pre></div>
 
            </div>
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="../util/build_helper/index.html" class="btn btn-neutral float-left" title="fprime.util.build_helper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

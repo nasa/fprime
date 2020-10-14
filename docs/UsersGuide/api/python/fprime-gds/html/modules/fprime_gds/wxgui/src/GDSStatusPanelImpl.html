@@ -164,8 +164,7 @@
 
 
 <div class="viewcode-block" id="StatusImpl"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSStatusPanelImpl/index.html#fprime_gds.wxgui.src.GDSStatusPanelImpl.StatusImpl">[docs]</a><span class="k">class</span> <span class="nc">StatusImpl</span><span class="p">(</span><span class="n">GDSStatusPanelGUI</span><span class="o">.</span><span class="n">Status</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implementation of the status panel tab</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Implementation of the status panel tab&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">GDSStatusPanelGUI</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
@@ -179,8 +178,7 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="StatusImpl.update_text_ctrl"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSStatusPanelImpl/index.html#fprime_gds.wxgui.src.GDSStatusPanelImpl.StatusImpl.update_text_ctrl">[docs]</a>    <span class="k">def</span> <span class="nf">update_text_ctrl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called to update the status panel with new raw output. Called every 500ms on the GUI thread.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called to update the status panel with new raw output. Called every 500ms on the GUI thread.&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recv_msg_buffer</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">StatusTabRecvTextCtl</span><span class="o">.</span><span class="n">AppendText</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
@@ -194,7 +192,7 @@
     <span class="c1"># Some data was sent</span>
 <div class="viewcode-block" id="StatusImpl.send"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSStatusPanelImpl/index.html#fprime_gds.wxgui.src.GDSStatusPanelImpl.StatusImpl.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send callback for the encoder</span>
-<span class="sd">        </span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            data {bin} -- binary data packet</span>
 <span class="sd">            dest {string} -- where the data will be sent by the server</span>
@@ -214,7 +212,7 @@
     <span class="c1"># Some data was recvd</span>
 <div class="viewcode-block" id="StatusImpl.on_recv"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSStatusPanelImpl/index.html#fprime_gds.wxgui.src.GDSStatusPanelImpl.StatusImpl.on_recv">[docs]</a>    <span class="k">def</span> <span class="nf">on_recv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Data was recved on the socket server</span>
-<span class="sd">        </span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            data {bin} --binnary data string that was recved</span>
 <span class="sd">        &quot;&quot;&quot;</span>

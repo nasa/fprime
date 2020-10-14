@@ -207,7 +207,9 @@
     <span class="nd">@classmethod</span>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <div class="viewcode-block" id="QueryHistoryCommand._get_item_list"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/base_commands/index.html#fprime_gds.common.gds_cli.base_commands.QueryHistoryCommand._get_item_list">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_list</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">project_dictionary</span><span class="p">:</span> <span class="n">Dictionaries</span><span class="p">,</span> <span class="n">filter_predicate</span><span class="p">:</span> <span class="n">predicates</span><span class="o">.</span><span class="n">predicate</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">project_dictionary</span><span class="p">:</span> <span class="n">Dictionaries</span><span class="p">,</span>
+        <span class="n">filter_predicate</span><span class="p">:</span> <span class="n">predicates</span><span class="o">.</span><span class="n">predicate</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span></div>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets a sorted list of items from the dictionary, filtered by the given</span>
@@ -220,7 +222,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="QueryHistoryCommand._get_item_list_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/base_commands/index.html#fprime_gds.common.gds_cli.base_commands.QueryHistoryCommand._get_item_list_string">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_list_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryHistoryCommand._get_item_list_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/base_commands/index.html#fprime_gds.common.gds_cli.base_commands.QueryHistoryCommand._get_item_list_string">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_list_string</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span>
+        <span class="n">json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes a list of items from the dictionary and returns a human-readable</span>
 <span class="sd">        string containing their details.</span>
@@ -246,7 +252,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="QueryHistoryCommand._get_item_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/base_commands/index.html#fprime_gds.common.gds_cli.base_commands.QueryHistoryCommand._get_item_string">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryHistoryCommand._get_item_string"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/base_commands/index.html#fprime_gds.common.gds_cli.base_commands.QueryHistoryCommand._get_item_string">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_string</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">item</span><span class="p">,</span>
+        <span class="n">json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes an F&#39; item and returns a human-readable string of its data.</span>
 

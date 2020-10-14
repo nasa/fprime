@@ -136,8 +136,6 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-          <li><a href="../fbuild.html">fprime.fbuild</a> &raquo;</li>
-        
       <li>fprime.fbuild.settings</li>
     
     
@@ -175,8 +173,8 @@
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="IniSettings.find_fprime"><a class="viewcode-back" href="../../../api/fprime/fbuild/settings/index.html#fprime.fbuild.settings.IniSettings.find_fprime">[docs]</a>    <span class="k">def</span> <span class="nf">find_fprime</span><span class="p">():</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">         Finds F prime by recursing parent to parent until a matching directory is found.</span>
-<span class="sd">         &quot;&quot;&quot;</span>
+<span class="sd">        Finds F prime by recursing parent to parent until a matching directory is found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">needle</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="s2">&quot;cmake&quot;</span><span class="p">,</span> <span class="s2">&quot;FPrime.cmake&quot;</span>
         <span class="p">)</span>  <span class="c1"># If the F prime cmake file exists</span>
@@ -236,7 +234,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[WARNING] Failed to find settings file: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">settings_file</span><span class="p">))</span>
             <span class="n">fprime_location</span> <span class="o">=</span> <span class="n">IniSettings</span><span class="o">.</span><span class="n">find_fprime</span><span class="p">()</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;fprime_location&quot;</span><span class="p">:</span> <span class="n">fprime_location</span><span class="p">,</span>
+                <span class="s2">&quot;framework_path&quot;</span><span class="p">:</span> <span class="n">fprime_location</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="n">confparse</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
         <span class="n">confparse</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">settings_file</span><span class="p">)</span>

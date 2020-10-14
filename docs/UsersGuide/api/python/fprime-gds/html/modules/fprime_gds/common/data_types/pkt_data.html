@@ -245,7 +245,8 @@
             <span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">csv</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">pkt_str</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2"> {{</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">to_readable</span><span class="p">(</span><span class="n">time_zone</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">to_readable</span><span class="p">(</span><span class="n">time_zone</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
             <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs</span><span class="p">)):</span>

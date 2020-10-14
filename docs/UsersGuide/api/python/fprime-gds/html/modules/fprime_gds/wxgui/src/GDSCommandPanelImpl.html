@@ -225,8 +225,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CommandsImpl.updateCmdSearchPool"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSCommandPanelImpl/index.html#fprime_gds.wxgui.src.GDSCommandPanelImpl.CommandsImpl.updateCmdSearchPool">[docs]</a>    <span class="k">def</span> <span class="nf">updateCmdSearchPool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Updates the list of commands we are searching for in the command history</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Updates the list of commands we are searching for in the command history&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_search_term</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">itms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CmdHistListBox</span><span class="o">.</span><span class="n">Items</span>
@@ -235,7 +234,7 @@
 
 <div class="viewcode-block" id="CommandsImpl.setupCommandArguments"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSCommandPanelImpl/index.html#fprime_gds.wxgui.src.GDSCommandPanelImpl.CommandsImpl.setupCommandArguments">[docs]</a>    <span class="k">def</span> <span class="nf">setupCommandArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Render the command argument gui elements to the screen based on selected command</span>
-<span class="sd">        </span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            temp {CmdTemplate} -- template object for the given command</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -444,7 +443,7 @@
         <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="CommandsImpl.onTextCmdComboBox"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSCommandPanelImpl/index.html#fprime_gds.wxgui.src.GDSCommandPanelImpl.CommandsImpl.onTextCmdComboBox">[docs]</a>    <span class="k">def</span> <span class="nf">onTextCmdComboBox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; This the start of the autocomplete for the cmd combo box - finish if you want that feature and reach out to me if you want explanation (jxb@mit.edu)</span>
+        <span class="sd">&quot;&quot;&quot;This the start of the autocomplete for the cmd combo box - finish if you want that feature and reach out to me if you want explanation (jxb@mit.edu)</span>
 <span class="sd">        # Get current text in cbox</span>
 <span class="sd">        text = self.CmdsComboBox.Value</span>
 <span class="sd">        print text</span>

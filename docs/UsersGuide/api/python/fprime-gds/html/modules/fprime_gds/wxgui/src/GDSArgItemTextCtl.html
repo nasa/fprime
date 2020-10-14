@@ -162,12 +162,12 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">validator</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ArgItemTextCtl constructor</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			parent {wx.Window} -- The parent window for this UI element</span>
-<span class="sd">			validator {wx.Validator} -- Validator object that will check if the TextCtrl entry is formated correctly</span>
-<span class="sd">			label {string} -- Label for this GUI element. Usually the name of the argument.</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                parent {wx.Window} -- The parent window for this UI element</span>
+<span class="sd">                validator {wx.Validator} -- Validator object that will check if the TextCtrl entry is formated correctly</span>
+<span class="sd">                label {string} -- Label for this GUI element. Usually the name of the argument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
 
@@ -204,28 +204,28 @@
 
 <div class="viewcode-block" id="ArgItemTextCtl.setText"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemTextCtl/index.html#fprime_gds.wxgui.src.GDSArgItemTextCtl.ArgItemTextCtl.setText">[docs]</a>    <span class="k">def</span> <span class="nf">setText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the contents of this gui&#39;s text entry value</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			text {string} -- the string to set</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                text {string} -- the string to set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">m_argWindow</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="ArgItemTextCtl.getText"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemTextCtl/index.html#fprime_gds.wxgui.src.GDSArgItemTextCtl.ArgItemTextCtl.getText">[docs]</a>    <span class="k">def</span> <span class="nf">getText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the contents of this gui&#39;s text entry value</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			string --the contents of the text control in this gui element</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                string --the contents of the text control in this gui element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_argWindow</span><span class="o">.</span><span class="n">GetLineText</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArgItemTextCtl.onLeaveTextCtlInput"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemTextCtl/index.html#fprime_gds.wxgui.src.GDSArgItemTextCtl.ArgItemTextCtl.onLeaveTextCtlInput">[docs]</a>    <span class="k">def</span> <span class="nf">onLeaveTextCtlInput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span></div></div>
         <span class="sd">&quot;&quot;&quot;Called when the user leaves the TextCtrl. Calls Validator to check input.</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			event {wx.Event} -- wx object passed by callback</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                event {wx.Event} -- wx object passed by callback</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># NOTE This might be annoying - add it back if you want</span>
         <span class="c1"># self.Validate()</span>
 
@@ -241,13 +241,13 @@
 
 <div class="viewcode-block" id="HexIntegerValidator.Validate"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemTextCtl/index.html#fprime_gds.wxgui.src.GDSArgItemTextCtl.HexIntegerValidator.Validate">[docs]</a>    <span class="k">def</span> <span class="nf">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Validates the text control contents as a hex or integer number</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			win {wx.Window} -- Parent window. Passed in automoatically</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			bool -- True if correct format, False otherwise</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                win {wx.Window} -- Parent window. Passed in automoatically</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                bool -- True if correct format, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">textCtrl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetWindow</span><span class="p">()</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">textCtrl</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
@@ -288,13 +288,13 @@
 
 <div class="viewcode-block" id="RealValidator.Validate"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemTextCtl/index.html#fprime_gds.wxgui.src.GDSArgItemTextCtl.RealValidator.Validate">[docs]</a>    <span class="k">def</span> <span class="nf">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Validates the text control contents as a real number</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			win {wx.Window} -- Parent window. Passed in automoatically</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			bool -- True if correct format, False otherwise</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                win {wx.Window} -- Parent window. Passed in automoatically</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                bool -- True if correct format, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">textCtrl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetWindow</span><span class="p">()</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">textCtrl</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
@@ -332,13 +332,13 @@
 
 <div class="viewcode-block" id="StringValidator.Validate"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemTextCtl/index.html#fprime_gds.wxgui.src.GDSArgItemTextCtl.StringValidator.Validate">[docs]</a>    <span class="k">def</span> <span class="nf">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Validates the text control contents as a string</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			win {wx.Window} -- Parent window. Passed in automoatically</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			bool -- True if correct format, False otherwise</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                win {wx.Window} -- Parent window. Passed in automoatically</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                bool -- True if correct format, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">textCtrl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetWindow</span><span class="p">()</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">textCtrl</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>

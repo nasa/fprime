@@ -250,7 +250,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
 
 <div class="viewcode-block" id="CmdData.get_arg_vals"><a class="viewcode-back" href="../../../../api/fprime_gds/common/data_types/cmd_data/index.html#fprime_gds.common.data_types.cmd_data.CmdData.get_arg_vals">[docs]</a>    <span class="k">def</span> <span class="nf">get_arg_vals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get the values for each argument in a command.</span>
+        <span class="sd">&quot;&quot;&quot;Get the values for each argument in a command.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list -- a list of value objects that were used in this data object.</span>
@@ -331,9 +331,8 @@
             <span class="n">arg_type</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg_val</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_type</span><span class="p">,</span> <span class="n">StringType</span><span class="p">):</span>
             <span class="n">arg_type</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">arg_val</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_type</span><span class="p">,</span> <span class="n">SerializableType</span><span class="p">):</span>
-            <span class="k">pass</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_type</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">):</span>
+        <span class="c1"># Cannot handle serializable or array argument inputs</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_type</span><span class="p">,</span> <span class="p">(</span><span class="n">SerializableType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">)):</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CommandArgumentException</span><span class="p">(</span>
