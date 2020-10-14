@@ -44,7 +44,7 @@ setup(
     # information should match the F prime decription information.
     ####
     name="fprime_gds",
-    version="1.4.1",
+    version="1.5.0",
     license="Apache 2.0 License",
     description="F Prime Flight Software Ground Data System layer.",
     long_description="""

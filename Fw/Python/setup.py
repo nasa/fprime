@@ -29,7 +29,7 @@ setup(
     # information should match the F prime decription information.
     ####
     name="fprime",
-    version="1.4.1",
+    version="1.5.0",
     license="Apache 2.0 License",
     description="F Prime Flight Software core data types",
     long_description="""

@@ -144,12 +144,12 @@ The typed port connections provide strong compile-time guarantees of correctness
   * Auto-generated API documentation
   * Rewrites, edits, improvements across the board
 * F´ Project restructuing
-  * Projects may now link to F´ and F´ library packges, without owning the code
+  * Projects may now link to F´ and F´ library packges, without needing to keep the framework code in the same source tree
   * Usage of framework can be out-of-source
   * `settings.ini` Introduced
   * Example: [https://github.com/fprime-community/fprime-arduino](https://github.com/fprime-community/fprime-arduino)
 * Refactored `fprim-util`
-  * Replaced redundant targets with flags e.g. build --ut
+  * Replaced redundant targets with flags e.g. build-ut is now build --ut
   * Added `info` command
   * Bug and usability fixes
 * GDS Improvments
