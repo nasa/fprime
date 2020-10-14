@@ -18,5 +18,6 @@ templates.
 - **AC_INPUTS:** list of autocoder inputs
 - **SOURCE_FILES:** list of source file inputs
 - **AC_OUTPUTS:** list of autocoder outputs
+- **MOD_DEPS:** hand specified dependencies of target
 
 

@@ -9,14 +9,9 @@ a standard target pattern. This means that the following functions are defined:
 - `add_module_target`: adds sub-targets for '<MODULE_NAME>_dict'
 
 
-## Function `setup_module_dicts`:
+## Function `dict`:
 
-Creates a dictionary target for the module, that is then added to the "dict" and "module"
-targets.
-
-- **MOD_NAME:** name of module being processed
-- **AI_XML:** AI_XML that is generating dictionaries
-- **DICT_INPUTS:** inputs from auto-coder, used to trigger dictionary generation
+Generate a dictionary from any *AppAi.xml file that we see
 
 
 ## Dict function `add_global_target`:
@@ -40,5 +35,6 @@ part of the global `dict` target above.
 - **AC_INPUTS:** list of autocoder inputs
 - **SOURCE_FILES:** list of source file inputs
 - **AC_OUTPUTS:** list of autocoder outputs
+- **MOD_DEPS:** module dependencies of the target
 
 

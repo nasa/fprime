@@ -38,7 +38,7 @@ See: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
 **Example:**
 ```
 project(Ref C CXX)
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.5)
 ```
 
 ### Section 2: Include F prime Core Build System

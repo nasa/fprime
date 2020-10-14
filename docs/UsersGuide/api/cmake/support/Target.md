@@ -30,6 +30,7 @@ the autocoding step.
  - **AC_INPUTS:** list of autocoder inputs. These are Ai.xml files
  - **SOURCE_FILES:** list of source file inputs. These are handwritten *.cpp and *.hpp.
  - **AC_OUTPUTS:** list of autocoder outputs. These are Ac.cpp and Ac.hpp files.
+ - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 
 
 ## Function `get_target_name`:
@@ -60,6 +61,7 @@ function must be singular, as scoping rules allow inclusion without collision.
 - **AC_INPUTS:** list of autocoder inputs
 - **SOURCE_FILES:** list of source file inputs
 - **AC_OUTPUTS:** list of autocoder outputs
+- **MOD_DEPS:** module dependencies of the target
 
 
 ## Function `setup_all_module_targets`:
@@ -71,6 +73,7 @@ is read from the CACHE variable FPRIME_TARGET_LIST.
 - **AC_INPUTS:** list of autocoder inputs
 - **SOURCE_FILES:** list of source file inputs
 - **AC_OUTPUTS:** list of autocoder outputs
+- **MOD_DEPS:** module dependencies of the target
 
 
 ## See Also:
