@@ -386,8 +386,10 @@
 <span class="sd">        :return: namespace with &quot;comm_adapter&quot; value added</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">comm_adapter</span> <span class="o">=</span> <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">construct_adapter</span><span class="p">(</span>
-            <span class="n">args</span><span class="o">.</span><span class="n">adapter</span><span class="p">,</span> <span class="n">args</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">comm_adapter</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">construct_adapter</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">adapter</span><span class="p">,</span> <span class="n">args</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">args</span></div></div>
 

@@ -1,6 +1,6 @@
 var class_svc_1_1_buffer_accumulator =
 [
-    [ "BufferAccumulator", "class_svc_1_1_buffer_accumulator.html#a55a00c76895ba78c8becc0d6947f4ccb", null ],
+    [ "BufferAccumulator", "class_svc_1_1_buffer_accumulator.html#afb6555f4eba7aa8248fe2e0143fde9ac", null ],
     [ "~BufferAccumulator", "class_svc_1_1_buffer_accumulator.html#adcde2aeef355a6ed926fe6516a2d89d4", null ],
     [ "allocateQueue", "class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74", null ],
     [ "bufferSendInReturn_handler", "class_svc_1_1_buffer_accumulator.html#a0daee8b4606b52267d1df821f354fd45", null ],

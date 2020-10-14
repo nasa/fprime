@@ -145,8 +145,8 @@ Public Member Functions</h2></td></tr>
 <p>Note: ownership of the supplied buffer is held until the circular buffer is destructed.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">buffer</td><td>supplied buffer used as a data store. </td></tr>
-    <tr><td class="paramname">size</td><td>size of the supplied data store. </td></tr>
+    <tr><td class="paramname">const</td><td>U8* buffer: supplied buffer used as a data store. </td></tr>
+    <tr><td class="paramname">NATIVE_UINT_TYPE</td><td>size: size of the supplied data store. </td></tr>
   </table>
   </dd>
 </dl>
@@ -385,8 +385,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Serialize a given buffer into this this circular buffer. Will not accept more data then space available. This means it will not overwrite existing data. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">buffer</td><td>supplied buffer to be serialized. </td></tr>
-    <tr><td class="paramname">size</td><td>size of the supplied buffer. </td></tr>
+    <tr><td class="paramname">const</td><td>U8* buffer: supplied buffer to be serialized. </td></tr>
+    <tr><td class="paramname">NATIVE_UINT_TYPE</td><td>size: size of the supplied buffer. </td></tr>
   </table>
   </dd>
 </dl>

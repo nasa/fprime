@@ -163,12 +163,12 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">combo_options</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ArgItemComboBox constructor</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			parent {wx.Window} -- The parent to this GUI element.</span>
-<span class="sd">			combo_options {list} -- The options that the combobox will display</span>
-<span class="sd">			label {string} -- The label to be displayed in the GUI element. Usually the name of the command argument.</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                parent {wx.Window} -- The parent to this GUI element.</span>
+<span class="sd">                combo_options {list} -- The options that the combobox will display</span>
+<span class="sd">                label {string} -- The label to be displayed in the GUI element. Usually the name of the command argument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
 
@@ -199,10 +199,10 @@
 
 <div class="viewcode-block" id="ArgItemComboBox.setSelection"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemComboBox/index.html#fprime_gds.wxgui.src.GDSArgItemComboBox.ArgItemComboBox.setSelection">[docs]</a>    <span class="k">def</span> <span class="nf">setSelection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the current selection for the combobox of this gui element</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			selection {string} -- the string to be selected</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                selection {string} -- the string to be selected</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m_argWindow</span><span class="o">.</span><span class="n">Count</span><span class="p">):</span>
             <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_argWindow</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -212,10 +212,10 @@
 
 <div class="viewcode-block" id="ArgItemComboBox.getSelection"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemComboBox/index.html#fprime_gds.wxgui.src.GDSArgItemComboBox.ArgItemComboBox.getSelection">[docs]</a>    <span class="k">def</span> <span class="nf">getSelection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the current selection of the combobox in this gui element</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			string -- the current selection</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                string -- the current selection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_argWindow</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">()</span></div></div>
 
@@ -231,13 +231,13 @@
 
 <div class="viewcode-block" id="ComboEnumValidator.Validate"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSArgItemComboBox/index.html#fprime_gds.wxgui.src.GDSArgItemComboBox.ComboEnumValidator.Validate">[docs]</a>    <span class="k">def</span> <span class="nf">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Validate the combobox for a valid string input</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			win {wx.Window} -- The window that owns the combobox</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			bool -- True if valid, False otherwise</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                win {wx.Window} -- The window that owns the combobox</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                bool -- True if valid, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">comboBox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetWindow</span><span class="p">()</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">comboBox</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">()</span>

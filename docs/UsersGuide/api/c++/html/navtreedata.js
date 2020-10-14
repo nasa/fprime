@@ -31,10 +31,18 @@ var NAVTREE =
     [ "Svc Compontents Ports and Classes", "_svc.html", "_svc" ],
     [ "Drv Components and Classes", "_drv.html", "_drv" ],
     [ "Utils Classes", "_utils.html", "_utils" ],
+    [ "ComSplitter", "md__svc__com_splitter_docs__com_splitter.html", [
+      [ "ComSplitter Component Dictionary", "md__svc__com_splitter_docs__com_splitter.html#autotoc_md261", null ]
+    ] ],
+    [ "Svc::ComSplitter Component", "_svc_com_splitter_component.html", [
+      [ "Svc::ComSplitter", "_svc_com_splitter_component.html#autotoc_md262", [
+        [ "Redo Targets", "_svc_com_splitter_component.html#autotoc_md263", null ]
+      ] ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
+        [ "All", "namespacemembers.html", "namespacemembers_dup" ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ],
@@ -52,7 +60,7 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", "functions_vars" ],
         [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
-        [ "Enumerator", "functions_eval.html", null ],
+        [ "Enumerator", "functions_eval.html", "functions_eval" ],
         [ "Related Functions", "functions_rela.html", null ]
       ] ]
     ] ],
@@ -74,21 +82,32 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_a_m_p_c_s_sequence_8cpp.html",
-"_command_dispatcher_impl_cfg_8hpp.html",
-"_fw_file_packet_classes.html",
-"_log_packet_8cpp_source.html",
-"_socket_ip_driver_types_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da8bb0480dd170c321b762e3aa828a15a9",
-"_svc_health_component.html#autotoc_md356",
-"_tlm_string_8hpp.html",
-"class_fw_1_1_active_component_base.html#a698c47cd8fa08aac242655120eaec776",
-"class_fw_1_1_log_string_arg.html#a1a246488ee63911db959b0083147d583",
-"class_fw_1_1_text_log_string.html#a4cff29cf90a13487f4e9006ccaf7900e",
-"class_os_1_1_queue.html#a0c0ecc2d5d5be2f2f3f0ed94672f778ba4fe7580ade5df51257de6e8fb01bd558",
-"class_svc_1_1_buffer_logger.html#a13b94ef6b474d2cfab3bb37930a0861e",
-"class_svc_1_1_command_dispatcher_impl.html#acf31fec86c396b381db3bbd5fcfb993a",
-"class_utils_1_1_hash.html#a58080c3a134af3d2dbe88956edf3945b",
-"globals_c.html",
-"struct_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events_1_1_file_read_stage.html#a8980a74abaf131b7d495182695ea888faf5887937c4b5465c047a6b3fa67cd731"
+"_c_make_c_x_x_compiler_id_8cpp.html#a2321403dee54ee23f0c2fa849c60f7d4",
+"_file_buffer_8cpp_source.html",
+"_fw_tlm_port.html#autotoc_md82",
+"_log_port_ac_8hpp.html#aff8bb5257f7b9c092148d00e693b93faa921434cb71e633b7ffe9ab6be3fbfee5",
+"_ser_ids_8hpp.html#a12339f952f3cfd903f274abd14c3c6dfa865934c5de7707017faf4cdf1df14751",
+"_svc_fatal_handler_component.html#autotoc_md271",
+"_svc_sched_port.html#autotoc_md452",
+"class_drv_1_1_block_driver_component_base.html#a423394f860bc1abecd23ab876013ee26",
+"class_drv_1_1_linux_serial_driver_component_base.html#a42800b1827167383fb627daa0ae243a0",
+"class_fw_1_1_active_component_base.html",
+"class_fw_1_1_input_cmd_response_port.html",
+"class_fw_1_1_poly_type.html#a0089a1fd73c6f1980082771cdce71922",
+"class_fw_1_1_tlm_string.html#a216c606a7d5d7dced5fb6ffefeb5683d",
+"class_os_1_1_task.html#add469cf112b3755e4c6094cdc3f9371a",
+"class_svc_1_1_active_logger_component_base.html#aeddb0eaacbaadbabf9e07837712440bdacec5b31587eb88cac8259fba0f0eb798",
+"class_svc_1_1_buffer_logger.html#ab3dbedce97eb653a8339951711978cba",
+"class_svc_1_1_cmd_sequencer_component_base.html#a16662b9683a3e65f542e90a4236baaf5",
+"class_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence.html#add3466a27378881e7c46820cf541073e",
+"class_svc_1_1_command_dispatcher_component_base.html#a6680ad65a46dcc2f695d2fad6ddef944",
+"class_svc_1_1_file_downlink_component_base.html#ad561bfe5480e85dee7410503990e0e91",
+"class_svc_1_1_file_uplink_component_base.html#abd1b59575a8427af75fb23a52ff94063",
+"class_svc_1_1_health_component_base.html#affb87dd58c69fa503de909fd67703a74afb45831f40c14e6e6de79059bfbd5a8a",
+"class_svc_1_1_prm_db_component_base.html#a6e6cb15430f96a9a61a1960dc82a5622",
+"class_types_1_1_circular_buffer.html#a07af71f7a73b783f9e968b1939f68780",
+"functions.html",
+"sha_8h.html#ac78bbebdfe84597fd75ad0b1629393f6"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

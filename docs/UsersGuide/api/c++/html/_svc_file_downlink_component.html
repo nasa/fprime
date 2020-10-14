@@ -87,12 +87,12 @@ $(document).ready(function(){initNavTree('_svc_file_downlink_component.html','')
 <div class="title"><a class="el" href="class_svc_1_1_file_downlink.html">Svc::FileDownlink</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md284"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md287"></a>
 Svc::FileDownlink Component</h1>
-<h2><a class="anchor" id="autotoc_md285"></a>
+<h2><a class="anchor" id="autotoc_md288"></a>
 1 Introduction</h2>
 <p><code>FileDownlink</code> is an active ISF component. It manages downlink of files from the spacecraft.</p>
-<h2><a class="anchor" id="autotoc_md286"></a>
+<h2><a class="anchor" id="autotoc_md289"></a>
 2 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -100,21 +100,21 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">FD-001  </td><td class="markdownTableBodyNone">Upon command, <code>FileDownlink</code> shall read a file from non-volatile storage, partition the file into packets, and send out the packets.  </td><td class="markdownTableBodyNone">This requirement provides the capability to downlink files from the spacecraft.  </td><td class="markdownTableBodyNone">Test   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md287"></a>
+<h2><a class="anchor" id="autotoc_md290"></a>
 3 Design</h2>
-<h3><a class="anchor" id="autotoc_md288"></a>
+<h3><a class="anchor" id="autotoc_md291"></a>
 3.1 Assumptions</h3>
 <p>The design of <code>FileDownlink</code> assumes the following:</p>
 <ol type="1">
 <li>File downlink occurs by dividing files into packets of type <a href="../../../Fw/FilePacket/docs/sdd.html"><code>Fw::FilePacket</code></a>.</li>
 <li>One file downlink happens at a time.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md289"></a>
+<h3><a class="anchor" id="autotoc_md292"></a>
 3.2 Block Description Diagram (BDD)</h3>
 <p><img src="img/FileDownlinkBDD.jpg" alt="`FileDownlink` BDD" title="FileDownlink" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md290"></a>
+<h3><a class="anchor" id="autotoc_md293"></a>
 3.3 Ports</h3>
-<h4><a class="anchor" id="autotoc_md291"></a>
+<h4><a class="anchor" id="autotoc_md294"></a>
 3.3.1 Role Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -132,7 +132,7 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>eventOut</code>  </td><td class="markdownTableBodyNone"><a href="../../../Fw/Log/docs/sdd.html"><code>Fw::LogEvent</code></a>  </td><td class="markdownTableBodyNone">LogEvent   </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md292"></a>
+<h4><a class="anchor" id="autotoc_md295"></a>
 3.3.2 Component-Specific Ports</h4>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -142,13 +142,13 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="anchor" id="bufferSendOut"></a><code>bufferSendOut</code>  </td><td class="markdownTableBodyNone"><a href="../../../Fw/Buffer/docs/sdd.html"><code>Fw::BufferSend</code></a>  </td><td class="markdownTableBodyNone">output  </td><td class="markdownTableBodyNone">Sends buffers containing file packets.   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md293"></a>
+<h3><a class="anchor" id="autotoc_md296"></a>
 3.4 Constants</h3>
 <p><code>FileDownlink</code> has the following constants, initialized at component instantiation time:</p>
 <ul>
 <li><em>downlinkPacketSize</em>: The size of the packets to use on downlink.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md294"></a>
+<h3><a class="anchor" id="autotoc_md297"></a>
 3.5 State</h3>
 <p><code>FileDownlink</code> maintains a <em>mode</em> equal to one of the following values:</p>
 <ul>
@@ -157,10 +157,10 @@ Svc::FileDownlink Component</h1>
 <li>CANCEL (2): <code>FileDownlink</code> is canceling a file downlink.</li>
 </ul>
 <p>The initial value is IDLE.</p>
-<h3><a class="anchor" id="autotoc_md295"></a>
+<h3><a class="anchor" id="autotoc_md298"></a>
 3.6 Commands</h3>
 <p><code>FileDownlink</code> recognizes the commands described in the following sections.</p>
-<h4><a class="anchor" id="autotoc_md296"></a>
+<h4><a class="anchor" id="autotoc_md299"></a>
 3.6.1 SendFile</h4>
 <p>SendFile is an asynchronous command. It has two arguments:</p>
 <ol type="1">
@@ -190,13 +190,13 @@ Svc::FileDownlink Component</h1>
 <li>Otherwise invoke <em>bufferGetCaller</em> to request a buffer whose size is the size of an END packet. Fill the buffer and send it out on <em>bufferSendOut</em>.</li>
 <li>Set <em>mode = IDLE</em>.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md297"></a>
+<h4><a class="anchor" id="autotoc_md300"></a>
 3.6.2 Cancel</h4>
 <p>Cancel is a synchronous command. If <em>mode</em> = DOWNLINK, it sets <em>mode</em> to CANCEL. Otherwise it does nothing.</p>
-<h2><a class="anchor" id="autotoc_md298"></a>
+<h2><a class="anchor" id="autotoc_md301"></a>
 4 Dictionary</h2>
 <p>Dictionaries: <a href="FileDownlink.html">HTML</a> MD</p>
-<h2><a class="anchor" id="autotoc_md299"></a>
+<h2><a class="anchor" id="autotoc_md302"></a>
 5 Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -208,7 +208,7 @@ Svc::FileDownlink Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test  </td><td class="markdownTableBodyNone"><a href="Checklist/unit_test.xls">Link</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md300"></a>
+<h2><a class="anchor" id="autotoc_md303"></a>
 6 Unit Testing</h2>
 <p>TODO </p>
 </div></div><!-- contents -->

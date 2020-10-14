@@ -170,8 +170,7 @@
 
 
 <div class="viewcode-block" id="MainFrameImpl"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.MainFrameImpl">[docs]</a><span class="k">class</span> <span class="nc">MainFrameImpl</span><span class="p">(</span><span class="n">GDSMainFrameGUI</span><span class="o">.</span><span class="n">MainFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implementation of the main frame of the GDS which holds all of the different tabs</span>
-<span class="sd">	&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Implementation of the main frame of the GDS which holds all of the different tabs&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -225,8 +224,7 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="MainFrameImpl.updateStatusBar"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.MainFrameImpl.updateStatusBar">[docs]</a>    <span class="k">def</span> <span class="nf">updateStatusBar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called every second to update teh values shown on the status bar at the bottom of the window</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called every second to update teh values shown on the status bar at the bottom of the window&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">status_bar</span><span class="o">.</span><span class="n">SetStatusText</span><span class="p">(</span>
             <span class="s2">&quot;Bytes Sent </span><span class="si">%d</span><span class="s2"> | Bytes Recv </span><span class="si">%d</span><span class="s2">&quot;</span>
@@ -246,38 +244,38 @@
 
 <div class="viewcode-block" id="MainFrameImpl.updateBytesRecv"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.MainFrameImpl.updateBytesRecv">[docs]</a>    <span class="k">def</span> <span class="nf">updateBytesRecv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add to the number of bytes recieved</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			num {int} -- number of bytes to add to the count</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                num {int} -- number of bytes to add to the count</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">status_bar</span><span class="o">.</span><span class="n">bytes_recv</span> <span class="o">+=</span> <span class="n">num</span></div>
 
 <div class="viewcode-block" id="MainFrameImpl.updateBytesSent"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.MainFrameImpl.updateBytesSent">[docs]</a>    <span class="k">def</span> <span class="nf">updateBytesSent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add to the number of bytes sent</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			num {int} -- number of bytes to add to the count</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                num {int} -- number of bytes to add to the count</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">status_bar</span><span class="o">.</span><span class="n">bytes_sent</span> <span class="o">+=</span> <span class="n">num</span></div>
 
 <div class="viewcode-block" id="MainFrameImpl.on_recv"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.MainFrameImpl.on_recv">[docs]</a>    <span class="k">def</span> <span class="nf">on_recv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called when data is recieved over the TCP server. This callback is only here to get the length of the recvd data.</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			data {bin} -- binary data list recieved</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                data {bin} -- binary data list recieved</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">updateBytesRecv</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="MainFrameImpl.send"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.MainFrameImpl.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called when data is sent from the command encoder to the TCP client. Only here so we can get the length of what is sent.</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			data {bin} -- binary data list recieved</span>
-<span class="sd">			dest {string} -- destination string needed to creat the full binary string sent</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                data {bin} -- binary data list recieved</span>
+<span class="sd">                dest {string} -- destination string needed to creat the full binary string sent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">updateBytesSent</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;A5A5 </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">data</span><span class="p">)))</span></div>
 
@@ -309,8 +307,7 @@
 
 
 <div class="viewcode-block" id="GDSStatusBar"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.GDSStatusBar">[docs]</a><span class="k">class</span> <span class="nc">GDSStatusBar</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">StatusBar</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom wxStatusBar implementation that allows us to draw the status light/circle on the bar</span>
-<span class="sd">	&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Custom wxStatusBar implementation that allows us to draw the status light/circle on the bar&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="n">wx</span><span class="o">.</span><span class="n">StatusBar</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -331,8 +328,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">light_panel</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_PAINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">onPaint</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GDSStatusBar.onPaint"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.GDSStatusBar.onPaint">[docs]</a>    <span class="k">def</span> <span class="nf">onPaint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called when the status bar is redrawn (Refresh() is called on it)</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the status bar is redrawn (Refresh() is called on it)&quot;&quot;&quot;</span>
 
         <span class="n">dc</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">PaintDC</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">light_panel</span><span class="p">)</span>
         <span class="n">dc</span><span class="o">.</span><span class="n">Clear</span><span class="p">()</span>
@@ -341,19 +337,19 @@
 
 <div class="viewcode-block" id="GDSStatusBar.get_state"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.GDSStatusBar.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the current state of the status bar</span>
-<span class="sd">		</span>
-<span class="sd">		Returns:</span>
-<span class="sd">			tuple -- (number of bytes recved, number of bytes sent)</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                tuple -- (number of bytes recved, number of bytes sent)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytes_recv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytes_sent</span></div>
 
 <div class="viewcode-block" id="GDSStatusBar.set_state"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSMainFrameImpl/index.html#fprime_gds.wxgui.src.GDSMainFrameImpl.GDSStatusBar.set_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the state of the status bar</span>
-<span class="sd">		</span>
-<span class="sd">		Arguments:</span>
-<span class="sd">			state {tuple} -- (number of bytes recved, number of bytes sent)</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">                state {tuple} -- (number of bytes recved, number of bytes sent)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">bytes_recv</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bytes_sent</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div></div>

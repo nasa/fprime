@@ -7,13 +7,6 @@ for any binary that will be built with the F prime CMake system.
 
 
 
-## Function `add_dict_target`:
-
-This target is the target for generating the dictionaries. This will have the output dictionaries registered to
-it and make it possible to generate the dictionaries out-of-band from the compile/build.
-
-
-
 ## Function `generate_executable:`
 
 Top-level executable generation. Core allows for generarion of UT specifics without affecting API.

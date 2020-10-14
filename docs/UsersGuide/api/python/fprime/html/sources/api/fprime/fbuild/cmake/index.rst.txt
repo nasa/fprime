@@ -11,7 +11,7 @@
    the build. This should not be imported in-person, but rather should be included by the build package. This can be the
    receiver of these delegated functions.
 
-   :author: mstarch
+   @author mstarch
 
 
 
@@ -23,31 +23,13 @@ Classes
 
 .. autoapisummary::
 
-   fprime.fbuild.cmake.CMakeBuildCache
    fprime.fbuild.cmake.CMakeHandler
-
-
-
-.. py:class:: CMakeBuildCache
-
-   Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every
-   call take a long time. This cache will hold the results to prevent recalculation.
-
-   .. method:: get_cmake_temp_build(self, proj_dir, verbose=False)
-
-
-      Gets a CMake build directory for the specified proj_dir
 
 
 
 .. py:class:: CMakeHandler
 
    CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.
-
-   .. attribute:: CMAKE_DEFAULT_BUILD_NAME
-      :annotation: = build-fprime-automatic-{}
-
-      
 
    .. attribute:: CMAKE_LOCATION_FIELDS
       :annotation: = ['FPRIME_PROJECT_ROOT', 'FPRIME_LIBRARY_LOCATIONS', 'FPRIME_FRAMEWORK_PATH']
@@ -73,36 +55,14 @@ Classes
       :return: return code from CMake
 
 
-   .. method:: find_hashed_file(self, build_dir, hash_value)
-
-
-      Find a file from a hash
-
-      :param build_dir: build directory to search
-      :param hash_value: hash number
-      :return: filename
-
-
-   .. method:: find_nearest_standard_build(self, platform, path)
-
-
-      Recurse up the directory tree from the given path, looking for a directory that matches the standard name. This
-      will return that path, or error if one cannot be found.
-
-      :return: path of nearest standard build directory
-      :raises: CMakeInvalidBuildException, a build was found but not setup, CMakeOrphanException, no build was found
-
-
    .. method:: get_include_locations(self, cmake_dir)
 
 
       Gets the locations that can be used as the root of an include tree. Common directories are placed in these
       include locations. These include standard builds, configs, etc.
 
-      ..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.
-
       :param cmake_dir: directory of a CMake build, or directory containing a CMake project
-      :return: list of include locations. Order: project, lib, lib, ..., F prime core
+      :return: []  List of include locations. Order: project, lib, lib, ..., F prime core
 
 
    .. method:: get_include_info(self, path, cmake_dir)
@@ -114,8 +74,6 @@ Classes
       - Location of the project's F prime checkout. This is defined in the same places.
       From there, the include root of the supplied path is whichever of those two paths is your parent. In cases where
       both are parents, it will take the outer-most parent
-
-      ..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.
 
       :param path: path to calculate looking for include-root
       :param cmake_dir: directory of a CMake build, or directory containing a CMake project
@@ -133,16 +91,6 @@ Classes
       :return: list of values, or Nones
 
 
-   .. method:: _build_directory_from_cmake_dir(self, cmake_dir)
-
-
-      If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file
-      should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then
-      generate a temporary directory to be used as a build.
-
-      :return: working build directory
-
-
    .. method:: generate_build(self, source_dir, build_dir, args=None, ignore_output=False)
 
 
@@ -152,6 +100,53 @@ Classes
       :param build_dir: build directory to generate to
       :param args: arguments to hand to CMake.
       :param ignore_output: do not print the output where the user can see it
+
+
+   .. method:: get_cmake_module(self, path, build_dir)
+
+
+      Gets the CMake module
+
+      CMake modules are constructed from a path relative to some project root (fprime, deployment, or library roots).
+      This relative path is then converted to use "_" instead of "/"
+
+      :param path: path to contextualize. May be None to use os.getcwd().
+      :param build_dir: build directory to use
+
+      :returns: CMake module name in format x_y_z
+
+
+   .. method:: get_project_relative_path(self, path, build_dir)
+
+
+      Gets the path relative to the cmake setup, or raises CMakeOrphanException
+
+      :param path: path to contextualize. May be None to use os.getcwd().
+      :param build_dir: build directory to use
+
+      :returns: path string that is relative to some root of the project. i.e. used for target suffix names
+
+
+   .. method:: get_available_targets(self, build_dir, path)
+
+
+      Gets a list of available CMake targets in the current directory
+
+      :param build_dir: build directory to use for detecting targets
+      :param path: contextual path. None for "cwd"
+
+      .. note:: This code might not work on non-GNU makefile variants of CMake as it depends on the "help" target
+
+      :returns: list of CMake make targets
+
+
+   .. method:: purge(build_dir)
+      :staticmethod:
+
+
+      Reusable purge functionality, so the user may purge or the system may cleanup itself
+
+      :param build_dir: build dir specified to purge
 
 
    .. method:: _read_values_from_cache(self, keys, build_dir)
@@ -172,18 +167,6 @@ Classes
 
       :param build_dir: build directory to harvest for cache variables
       :return: {<cmake cache variable>: <cmake cache value>}
-
-
-   .. method:: get_toolchain_config(self, project_path)
-
-
-      Returns the default toolchain
-
-
-   .. method:: load_settings(self, settings_file, cmake_dir)
-
-
-      Loads the default settigns for this build Could include environment settings and a default toolchain.
 
 
    .. method:: _cmake_validate_source_dir(source_dir)
@@ -220,11 +203,9 @@ Classes
       Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the
       path in order for this to run.
 
-      ..note:: this function has potential File System side-effects
-
       :param arguments: arguments to supply to CMake.
       :param workdir: work directory to run in
-      :param print: print to the screen. Default: True
+      :param print_output: print_output to the screen. Default: True
       :param write_override: allows for non-read-only commands
       :param environment: environment to write into
       :return: (stdout, stderr)
@@ -243,13 +224,13 @@ Classes
       :param stdout: standard output file handle. Paired with the FH provided to the Popen stdout argument
       :param stderr: standard error file handle. Paired with the FH provided to the Popen stderr argument
       :param print_output: print output to the screen. If False, output is masked. Default: True, print to screen.
-      :return: return code, stdout as list of lines, stderr as list of lines
+      :return return code, stdout as list of lines, stderr as list of lines
 
 
 
 .. py:exception:: CMakeException
 
-   Bases: :class:`Exception`
+   Bases: :class:`fprime.common.error.FprimeException`
 
    Error occurred within this CMake package
 
@@ -292,7 +273,6 @@ Classes
 
 
       Returns the error stream data to the caller
-
       :return: stderr of CMake as supplied into this Exception
 
 
@@ -300,7 +280,6 @@ Classes
 
 
       Returns if the errors need to be printed
-
       :return: need print
 
 

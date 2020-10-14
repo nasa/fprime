@@ -17,6 +17,7 @@ the module being built.
 
 - **MODULE_NAME:** name of the module which is being auto-coded.
 - **AUTOCODER_INPUT_FILES:** list of input files sent to the autocoder
+- **MOD_DEPS:** list of specified module dependencies
 
 
 ## Function `generate_module`:

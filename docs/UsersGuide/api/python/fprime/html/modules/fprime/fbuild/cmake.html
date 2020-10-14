@@ -136,8 +136,6 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-          <li><a href="../fbuild.html">fprime.fbuild</a> &raquo;</li>
-        
       <li>fprime.fbuild.cmake</li>
     
     
@@ -161,10 +159,9 @@
 <span class="sd">the build. This should not be imported in-person, but rather should be included by the build package. This can be the</span>
 <span class="sd">receiver of these delegated functions.</span>
 
-<span class="sd">:author: mstarch</span>
+<span class="sd">@author mstarch</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># Get a cache directory for building CMakeList file, if need and remove at exit</span>
-<span class="kn">import</span> <span class="nn">atexit</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
@@ -175,55 +172,16 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">fprime.fbuild</span>
-<span class="kn">import</span> <span class="nn">fprime.fbuild.settings</span>
+<span class="kn">from</span> <span class="nn">fprime.common.error</span> <span class="kn">import</span> <span class="n">FprimeException</span>
 
 
-<div class="viewcode-block" id="CMakeBuildCache"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeBuildCache">[docs]</a><span class="k">class</span> <span class="nc">CMakeBuildCache</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Builds CMake deployment for the purposes of inspecting that build. This exists because generating a build on every</span>
-<span class="sd">    call take a long time. This cache will hold the results to prevent recalculation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets up the known project to None &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span> <span class="o">=</span> <span class="kc">None</span>
-
-<div class="viewcode-block" id="CMakeBuildCache.get_cmake_temp_build"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeBuildCache.get_cmake_temp_build">[docs]</a>    <span class="k">def</span> <span class="nf">get_cmake_temp_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proj_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Gets a CMake build directory for the specified proj_dir &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="n">proj_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">!=</span> <span class="n">proj_dir</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CMakeException</span><span class="p">(</span><span class="s2">&quot;Already tracking project </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">))</span>
-        <span class="c1"># No tempdir, prepare a build</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">proj_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;No build cache available, and no project_dir specified&quot;</span>
-                <span class="p">)</span>
-            <span class="c1"># Create a temp directory and register its deletion at the end of the program run</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-            <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-            <span class="c1"># Turn that directory into a CMake build</span>
-            <span class="n">fprime</span><span class="o">.</span><span class="n">fbuild</span><span class="o">.</span><span class="n">builder</span><span class="p">()</span><span class="o">.</span><span class="n">generate_build</span><span class="p">(</span>
-                <span class="n">proj_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="p">,</span> <span class="n">ignore_output</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">proj_dir</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span></div></div>
-
-
-<div class="viewcode-block" id="CMakeHandler"><a class="viewcode-back" href="../../../api/fprime/fbuild/index.html#fprime.fbuild.cmake.CMakeHandler">[docs]</a><span class="k">class</span> <span class="nc">CMakeHandler</span><span class="p">:</span>
+<div class="viewcode-block" id="CMakeHandler"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler">[docs]</a><span class="k">class</span> <span class="nc">CMakeHandler</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CMake handler interacts with an F prime CMake-based system. This will help us interact with CMake in refined ways.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CMakeHandler.CMAKE_DEFAULT_BUILD_NAME"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.CMAKE_DEFAULT_BUILD_NAME">[docs]</a>    <span class="n">CMAKE_DEFAULT_BUILD_NAME</span> <span class="o">=</span> <span class="s2">&quot;build-fprime-automatic-</span><span class="si">{}</span><span class="s2">&quot;</span></div>
 <div class="viewcode-block" id="CMakeHandler.CMAKE_LOCATION_FIELDS"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.CMAKE_LOCATION_FIELDS">[docs]</a>    <span class="n">CMAKE_LOCATION_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;FPRIME_PROJECT_ROOT&quot;</span><span class="p">,</span>
         <span class="s2">&quot;FPRIME_LIBRARY_LOCATIONS&quot;</span><span class="p">,</span>
@@ -231,18 +189,16 @@
     <span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Instantiate a basic CMake handler.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Instantiate a basic CMake handler &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">build_cache</span> <span class="o">=</span> <span class="n">CMakeBuildCache</span><span class="p">()</span>
+        <span class="c1"># self.build_cache = CMakeBuildCache()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_cmake</span><span class="p">([</span><span class="s2">&quot;--help&quot;</span><span class="p">],</span> <span class="n">print_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CMakeExecutionException</span><span class="p">(</span>
                 <span class="s2">&quot;CMake executable &#39;cmake&#39; not found&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="n">printed</span><span class="o">=</span><span class="kc">False</span>
-            <span class="p">)</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
 
 <div class="viewcode-block" id="CMakeHandler.set_verbose"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.set_verbose">[docs]</a>    <span class="k">def</span> <span class="nf">set_verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets verbosity &quot;&quot;&quot;</span>
@@ -261,6 +217,8 @@
 <span class="sd">        :param top_target: top-level target. Do not append path name</span>
 <span class="sd">        :return: return code from CMake</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">build_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Invalid build dir supplied&quot;</span>
+        <span class="n">build_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">build_dir</span><span class="p">)</span>
         <span class="n">cmake_args</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">cmake_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cmake_args</span>
         <span class="n">make_args</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">make_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">make_args</span>
         <span class="n">fleshed_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
@@ -274,11 +232,7 @@
         <span class="n">fleshed_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">make_args</span><span class="p">[</span><span class="n">key</span><span class="p">]),</span> <span class="n">make_args</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="p">)</span>
-        <span class="c1"># Get module name from the relative path to include root</span>
-        <span class="n">include_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_include_info</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_root</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cmake_module</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">)</span>
         <span class="n">cmake_target</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">module</span>
             <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
@@ -311,62 +265,13 @@
                 <span class="n">run_args</span> <span class="o">+</span> <span class="n">fleshed_args</span><span class="p">,</span> <span class="n">write_override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="n">environment</span></div>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="CMakeHandler.find_hashed_file"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.find_hashed_file">[docs]</a>    <span class="k">def</span> <span class="nf">find_hashed_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">,</span> <span class="n">hash_value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Find a file from a hash</span>
-
-<span class="sd">        :param build_dir: build directory to search</span>
-<span class="sd">        :param hash_value: hash number</span>
-<span class="sd">        :return: filename</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">hashes_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">build_dir</span><span class="p">,</span> <span class="s2">&quot;hashes.txt&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">hashes_file</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CMakeException</span><span class="p">(</span>
-                <span class="s2">&quot;Failed to find </span><span class="si">{}</span><span class="s2">, was the build generated.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hashes_file</span><span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">hashes_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
-            <span class="n">lines</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:x}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hash_value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">line</span><span class="p">,</span> <span class="n">file_handle</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="CMakeHandler.find_nearest_standard_build"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.find_nearest_standard_build">[docs]</a>    <span class="k">def</span> <span class="nf">find_nearest_standard_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Recurse up the directory tree from the given path, looking for a directory that matches the standard name. This</span>
-<span class="sd">        will return that path, or error if one cannot be found.</span>
-
-<span class="sd">        :return: path of nearest standard build directory</span>
-<span class="sd">        :raises: CMakeInvalidBuildException, a build was found but not setup, CMakeOrphanException, no build was found</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="c1"># Get current directory to be checked, by removing file if path is not already a directory</span>
-        <span class="n">current</span> <span class="o">=</span> <span class="n">path</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="c1"># Look for a potential build that is valid</span>
-        <span class="n">potential_build</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">current</span><span class="p">,</span> <span class="n">CMakeHandler</span><span class="o">.</span><span class="n">CMAKE_DEFAULT_BUILD_NAME</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">potential_build</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cmake_validate_build_dir</span><span class="p">(</span><span class="n">potential_build</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">potential_build</span>
-        <span class="c1"># Check for root, and throw error if it is already a root</span>
-        <span class="n">new_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_dir</span> <span class="o">==</span> <span class="n">path</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">CMakeException</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not in ancestor tree&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">CMakeHandler</span><span class="o">.</span><span class="n">CMAKE_DEFAULT_BUILD_NAME</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_nearest_standard_build</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span> <span class="n">new_dir</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="CMakeHandler.get_include_locations"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.get_include_locations">[docs]</a>    <span class="k">def</span> <span class="nf">get_include_locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmake_dir</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the locations that can be used as the root of an include tree. Common directories are placed in these</span>
 <span class="sd">        include locations. These include standard builds, configs, etc.</span>
 
-<span class="sd">        ..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.</span>
-
 <span class="sd">        :param cmake_dir: directory of a CMake build, or directory containing a CMake project</span>
-<span class="sd">        :return: list of include locations. Order: project, lib, lib, ..., F prime core</span>
+<span class="sd">        :return: []  List of include locations. Order: project, lib, lib, ..., F prime core</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Reading config fields. If the cmake_dir is a project dir, a build cache may be setup.</span>
         <span class="c1"># !! Note: using a project dir will cause file-system side effects, and incur a one-time cost to setup cache !!</span>
@@ -388,8 +293,6 @@
 <span class="sd">        - Location of the project&#39;s F prime checkout. This is defined in the same places.</span>
 <span class="sd">        From there, the include root of the supplied path is whichever of those two paths is your parent. In cases where</span>
 <span class="sd">        both are parents, it will take the outer-most parent</span>
-
-<span class="sd">        ..note:: supplying a project dir as cmake_dir will setup a build-cache, and thus take much time.</span>
 
 <span class="sd">        :param path: path to calculate looking for include-root</span>
 <span class="sd">        :param cmake_dir: directory of a CMake build, or directory containing a CMake project</span>
@@ -455,26 +358,11 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">fields</span><span class="p">]</span>
         <span class="c1"># Setup the build_dir if it can be detected. Without a cache or specified value, we can crash</span>
-        <span class="n">build_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_directory_from_cmake_dir</span><span class="p">(</span><span class="n">cmake_dir</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_values_from_cache</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">build_dir</span><span class="o">=</span><span class="n">build_dir</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="CMakeHandler._build_directory_from_cmake_dir"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler._build_directory_from_cmake_dir">[docs]</a>    <span class="k">def</span> <span class="nf">_build_directory_from_cmake_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmake_dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        If the supplied directory is a valid CMake build directory, then this will be returned. Otherwise, the file</span>
-<span class="sd">        should be a valid CMake project directory containing a CMakeLists.txt with a project call. This will then</span>
-<span class="sd">        generate a temporary directory to be used as a build.</span>
-
-<span class="sd">        :return: working build directory</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cmake_validate_build_dir</span><span class="p">(</span><span class="n">cmake_dir</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">cmake_dir</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">CMakeInvalidBuildException</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_cache</span><span class="o">.</span><span class="n">get_cmake_temp_build</span><span class="p">(</span><span class="n">cmake_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmake_validate_build_dir</span><span class="p">(</span><span class="n">cmake_dir</span><span class="p">)</span>  <span class="c1"># Validate the dir</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_values_from_cache</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">build_dir</span><span class="o">=</span><span class="n">cmake_dir</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CMakeHandler.generate_build"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.generate_build">[docs]</a>    <span class="k">def</span> <span class="nf">generate_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_dir</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignore_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate a build directory for purposes of the build.</span>
+        <span class="sd">&quot;&quot;&quot;Generate a build directory for purposes of the build.</span>
 
 <span class="sd">        :param source_dir: source directory to generate from</span>
 <span class="sd">        :param build_dir: build directory to generate to</span>
@@ -486,20 +374,6 @@
         <span class="c1"># We will CD for build, so this path must become absolute</span>
         <span class="n">source_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">source_dir</span><span class="p">)</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">args</span>
-        <span class="c1"># Pass in needed F prime settings</span>
-        <span class="n">needed</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_FRAMEWORK_PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;framework_path&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_LIBRARY_LOCATIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;library_locations&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_PROJECT_ROOT&quot;</span><span class="p">,</span> <span class="s2">&quot;project_root&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_SETTINGS_FILE&quot;</span><span class="p">,</span> <span class="s2">&quot;settings_file&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_ENVIRONMENT_FILE&quot;</span><span class="p">,</span> <span class="s2">&quot;environment_file&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_AC_CONSTANTS_FILE&quot;</span><span class="p">,</span> <span class="s2">&quot;ac_constants&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;FPRIME_CONFIG_DIR&quot;</span><span class="p">,</span> <span class="s2">&quot;config_dir&quot;</span><span class="p">),</span>
-        <span class="p">]</span>
-        <span class="c1"># Update args from settings file</span>
-        <span class="k">for</span> <span class="n">cache</span><span class="p">,</span> <span class="n">setting</span> <span class="ow">in</span> <span class="n">needed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">setting</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">:</span>
-                <span class="n">args</span><span class="p">[</span><span class="n">cache</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="n">setting</span><span class="p">]</span>
         <span class="k">if</span> <span class="s2">&quot;FPRIME_LIBRARY_LOCATIONS&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="n">args</span><span class="p">[</span><span class="s2">&quot;FPRIME_LIBRARY_LOCATIONS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="n">args</span><span class="p">[</span><span class="s2">&quot;FPRIME_LIBRARY_LOCATIONS&quot;</span><span class="p">]</span>
@@ -517,6 +391,76 @@
             <span class="n">print_output</span><span class="o">=</span><span class="ow">not</span> <span class="n">ignore_output</span><span class="p">,</span>
             <span class="n">write_override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span></div>
         <span class="p">)</span>
+
+<div class="viewcode-block" id="CMakeHandler.get_cmake_module"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.get_cmake_module">[docs]</a>    <span class="k">def</span> <span class="nf">get_cmake_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the CMake module</span>
+
+<span class="sd">        CMake modules are constructed from a path relative to some project root (fprime, deployment, or library roots).</span>
+<span class="sd">        This relative path is then converted to use &quot;_&quot; instead of &quot;/&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: path to contextualize. May be None to use os.getcwd().</span>
+<span class="sd">            build_dir: build directory to use</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CMake module name in format x_y_z</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">project_relative_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_project_relative_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">project_relative_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>  <span class="c1"># Handles case where relative path is exactly &quot;.&quot;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">module</span></div>
+
+<div class="viewcode-block" id="CMakeHandler.get_project_relative_path"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.get_project_relative_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_project_relative_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the path relative to the cmake setup, or raises CMakeOrphanException</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: path to contextualize. May be None to use os.getcwd().</span>
+<span class="sd">            build_dir: build directory to use</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            path string that is relative to some root of the project. i.e. used for target suffix names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get module name from the relative path to include root</span>
+        <span class="n">include_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_include_info</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CMakeHandler.get_available_targets"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.get_available_targets">[docs]</a>    <span class="k">def</span> <span class="nf">get_available_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets a list of available CMake targets in the current directory</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            build_dir: build directory to use for detecting targets</span>
+<span class="sd">            path: contextual path. None for &quot;cwd&quot;</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            This code might not work on non-GNU makefile variants of CMake as it depends on the &quot;help&quot; target</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of CMake make targets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">run_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;--build&quot;</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">,</span> <span class="s2">&quot;--target&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">]</span>
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_cmake</span><span class="p">(</span><span class="n">run_args</span><span class="p">,</span> <span class="n">write_override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">print_output</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cmake_module</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">)</span>
+
+        <span class="n">make_target_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">contextual_make_targets</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">make</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">make</span> <span class="ow">in</span> <span class="n">make_target_names</span>
+            <span class="k">if</span> <span class="n">make</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">contextual_make_targets</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="CMakeHandler.purge"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.purge">[docs]</a>    <span class="k">def</span> <span class="nf">purge</span><span class="p">(</span><span class="n">build_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reusable purge functionality, so the user may purge or the system may cleanup itself</span>
+
+<span class="sd">        :param build_dir: build dir specified to purge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">build_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CMakeHandler._read_values_from_cache"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler._read_values_from_cache">[docs]</a>    <span class="k">def</span> <span class="nf">_read_values_from_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -547,21 +491,6 @@
         <span class="n">valid_matches</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">match</span><span class="p">,</span> <span class="n">stdout</span><span class="p">))</span>
         <span class="c1"># Return the dictionary composed from the match groups</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">valid_matches</span><span class="p">))</span></div>
-
-<div class="viewcode-block" id="CMakeHandler.get_toolchain_config"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.get_toolchain_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_toolchain_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the default toolchain&quot;&quot;&quot;</span>
-        <span class="n">project_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;project_root&quot;</span><span class="p">,</span> <span class="n">project_path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default_toolchain&quot;</span><span class="p">,</span> <span class="s2">&quot;native&quot;</span><span class="p">),</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;framework_path&quot;</span><span class="p">),</span> <span class="n">project_root</span><span class="p">]</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;library_locations&quot;</span><span class="p">,</span> <span class="p">[]),</span></div>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="CMakeHandler.load_settings"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler.load_settings">[docs]</a>    <span class="k">def</span> <span class="nf">load_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings_file</span><span class="p">,</span> <span class="n">cmake_dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads the default settigns for this build Could include environment settings and a default toolchain.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">fprime</span><span class="o">.</span><span class="n">fbuild</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">IniSettings</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">settings_file</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="CMakeHandler._cmake_validate_source_dir"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeHandler._cmake_validate_source_dir">[docs]</a>    <span class="k">def</span> <span class="nf">_cmake_validate_source_dir</span><span class="p">(</span><span class="n">source_dir</span><span class="p">):</span>
@@ -622,11 +551,9 @@
 <span class="sd">        Will run the cmake system supplying the given arguments. Assumes that the CMake executable is somewhere on the</span>
 <span class="sd">        path in order for this to run.</span>
 
-<span class="sd">        ..note:: this function has potential File System side-effects</span>
-
 <span class="sd">        :param arguments: arguments to supply to CMake.</span>
 <span class="sd">        :param workdir: work directory to run in</span>
-<span class="sd">        :param print: print to the screen. Default: True</span>
+<span class="sd">        :param print_output: print_output to the screen. Default: True</span>
 <span class="sd">        :param write_override: allows for non-read-only commands</span>
 <span class="sd">        :param environment: environment to write into</span>
 <span class="sd">        :return: (stdout, stderr)</span>
@@ -663,7 +590,10 @@
         <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">pty_out_w</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">pty_err_w</span><span class="p">)</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_communicate</span><span class="p">(</span>
-            <span class="n">proc</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">pty_out_r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">),</span> <span class="nb">open</span><span class="p">(</span><span class="n">pty_err_r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">),</span> <span class="n">print_output</span><span class="p">,</span>
+            <span class="n">proc</span><span class="p">,</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">pty_out_r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">),</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">pty_err_r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">),</span>
+            <span class="n">print_output</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># Raising an exception when the return code is non-zero allows us to handle the exception internally if it is</span>
         <span class="c1"># needed. Thus we do not just exit.</span>
@@ -687,7 +617,7 @@
 <span class="sd">        :param stdout: standard output file handle. Paired with the FH provided to the Popen stdout argument</span>
 <span class="sd">        :param stderr: standard error file handle. Paired with the FH provided to the Popen stderr argument</span>
 <span class="sd">        :param print_output: print output to the screen. If False, output is masked. Default: True, print to screen.</span>
-<span class="sd">        :return: return code, stdout as list of lines, stderr as list of lines</span>
+<span class="sd">        :return return code, stdout as list of lines, stderr as list of lines</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">stdouts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">stderrs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -720,7 +650,7 @@
                     <span class="k">continue</span>
                 <span class="c1"># Forwards output to screen.  Assuming a PTY is used, then coloring highlights should be automatically</span>
                 <span class="c1"># included for output. Raw streams are used to avoid print quirks</span>
-                <span class="k">elif</span> <span class="n">print_output</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">print_output</span><span class="p">:</span>
                     <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                     <span class="n">stream</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="c1"># Spin waiting for the .poll() method to return a non-None result ensuring that the process has finished.</span>
@@ -729,7 +659,7 @@
         <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">poll</span><span class="p">(),</span> <span class="n">stdouts</span><span class="p">,</span> <span class="n">stderrs</span></div></div>
 
 
-<div class="viewcode-block" id="CMakeException"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeException">[docs]</a><span class="k">class</span> <span class="nc">CMakeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span></div>
+<div class="viewcode-block" id="CMakeException"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeException">[docs]</a><span class="k">class</span> <span class="nc">CMakeException</span><span class="p">(</span><span class="n">FprimeException</span><span class="p">):</span></div>
     <span class="sd">&quot;&quot;&quot; Error occurred within this CMake package &quot;&quot;&quot;</span>
 
 
@@ -787,7 +717,6 @@
 <div class="viewcode-block" id="CMakeExecutionException.get_errors"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeExecutionException.get_errors">[docs]</a>    <span class="k">def</span> <span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the error stream data to the caller</span>
-
 <span class="sd">        :return: stderr of CMake as supplied into this Exception</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span></div>
@@ -795,7 +724,6 @@
 <div class="viewcode-block" id="CMakeExecutionException.need_print"><a class="viewcode-back" href="../../../api/fprime/fbuild/cmake/index.html#fprime.fbuild.cmake.CMakeExecutionException.need_print">[docs]</a>    <span class="k">def</span> <span class="nf">need_print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns if the errors need to be printed</span>
-
 <span class="sd">        :return: need print</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">need</span></div></div>
@@ -805,7 +733,7 @@
     <span class="sd">&quot;&quot;&quot; The target does not exist. &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">build_dir</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Better messaging for this exception &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;  Better messaging for this exception &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> does not support target </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">build_dir</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span></div>
 </pre></div>
 

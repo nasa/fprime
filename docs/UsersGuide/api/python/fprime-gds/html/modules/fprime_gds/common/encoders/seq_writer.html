@@ -194,9 +194,9 @@
 
         <span class="k">def</span> <span class="nf">__time_tag</span><span class="p">(</span><span class="n">cmd_obj</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">          TODO: support a timebase in the cmd obj? This is mission specific, so it is tough to handle. For now</span>
-<span class="sd">          I am hardcoding this to 2 which is TB_NONE</span>
-<span class="sd">          &quot;&quot;&quot;</span>
+<span class="sd">            TODO: support a timebase in the cmd obj? This is mission specific, so it is tough to handle. For now</span>
+<span class="sd">            I am hardcoding this to 2 which is TB_NONE</span>
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="c1"># return TimeType(timeBase=2, seconds=cmd_obj.getSeconds(), useconds=cmd_obj.getUseconds()).serialize()</span>
             <span class="c1"># TKC - new command time format</span>
             <span class="k">return</span> <span class="p">(</span>
@@ -273,7 +273,7 @@
 
 <div class="viewcode-block" id="SeqBinaryWriter.write"><a class="viewcode-back" href="../../../../api/fprime_gds/common/encoders/seq_writer/index.html#fprime_gds.common.encoders.seq_writer.SeqBinaryWriter.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_cmds_list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write out each command record </span>
+<span class="sd">        Write out each command record</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">num_records</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_cmds_list</span><span class="p">)</span>
         <span class="n">sequence</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>

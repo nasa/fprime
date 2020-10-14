@@ -16,12 +16,14 @@ Module Contents
 
 .. py:exception:: TypeException(val)
 
-   Bases: :class:`Exception`
+   Bases: :class:`fprime.common.error.FprimeException`
 
-   Common base class for all non-exit exceptions.
+   An exception in our python types
 
    .. method:: getMsg(self)
 
+
+      Gets the exception message
 
 
 
@@ -29,83 +31,83 @@ Module Contents
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Not implemented exception under another name
 
 
 .. py:exception:: TypeRangeException(val)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Value is out of range
 
 
 .. py:exception:: StringSizeException(size, max_size)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   String size is to large for defined type
 
 
 .. py:exception:: TypeMismatchException(expected_type, actual_type)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Wrong type found exception
 
 
 .. py:exception:: ArrayLengthException(arr_type, expected_len, actual_len)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Array length mismatched
 
 
 .. py:exception:: EnumMismatchException(enum, bad_member)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Enum member not defined
 
 
 .. py:exception:: DeserializeException(val)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Exception during deserialization
 
 
 .. py:exception:: ArgNotFoundException(message)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Argument not found exception
 
 
 .. py:exception:: NotInitializedException(message)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Did not intialize types
 
 
 .. py:exception:: NotOverridenException(message)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Not implemented exception by another name
 
 
 .. py:exception:: ArgLengthMismatchException(arg_length_actual, arg_length_given)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Mismatch in args lengths vs definition of args
 
 
 .. py:exception:: CompoundTypeLengthMismatchException(field_length_actual, field_length_given)
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Common base class for all non-exit exceptions.
+   Compound type fields mismatch
 
 

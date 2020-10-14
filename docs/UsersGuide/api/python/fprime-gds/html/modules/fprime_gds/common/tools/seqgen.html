@@ -204,10 +204,10 @@
 
 <div class="viewcode-block" id="generateSequence"><a class="viewcode-back" href="../../../../api/fprime_gds/common/tools/seqgen/index.html#fprime_gds.common.tools.seqgen.generateSequence">[docs]</a><span class="k">def</span> <span class="nf">generateSequence</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">timebase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">  Write a binary sequence file from a text sequence file</span>
-<span class="sd">  @param inputFile: A text input sequence file name (usually a .seq extension)</span>
-<span class="sd">  @param outputFile: An output binary sequence file name (usually a .bin extension)</span>
-<span class="sd">  &quot;&quot;&quot;</span>
+<span class="sd">    Write a binary sequence file from a text sequence file</span>
+<span class="sd">    @param inputFile: A text input sequence file name (usually a .seq extension)</span>
+<span class="sd">    @param outputFile: An output binary sequence file name (usually a .bin extension)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Check for files</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
@@ -295,9 +295,9 @@
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../../api/fprime_gds/common/tools/seqgen/index.html#fprime_gds.common.tools.seqgen.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">  The main program if run from the command line. Note that this file can also be used</span>
-<span class="sd">  as a module by calling the generateSequence() function</span>
-<span class="sd">  &quot;&quot;&quot;</span>
+<span class="sd">    The main program if run from the command line. Note that this file can also be used</span>
+<span class="sd">    as a module by calling the generateSequence() function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>

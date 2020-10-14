@@ -3,6 +3,11 @@
 
 .. py:module:: fprime.constants
 
+.. autoapi-nested-parse::
+
+   Provided constants for use within the fprime system.
+
+
 
 Module Contents
 ---------------

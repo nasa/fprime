@@ -180,7 +180,9 @@
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="EventsCommand._get_item_list"><a class="viewcode-back" href="../../../../api/fprime_gds/common/gds_cli/events/index.html#fprime_gds.common.gds_cli.events.EventsCommand._get_item_list">[docs]</a>    <span class="k">def</span> <span class="nf">_get_item_list</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">project_dictionary</span><span class="p">:</span> <span class="n">Dictionaries</span><span class="p">,</span> <span class="n">filter_predicate</span><span class="p">:</span> <span class="n">predicates</span><span class="o">.</span><span class="n">predicate</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">project_dictionary</span><span class="p">:</span> <span class="n">Dictionaries</span><span class="p">,</span>
+        <span class="n">filter_predicate</span><span class="p">:</span> <span class="n">predicates</span><span class="o">.</span><span class="n">predicate</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">EventData</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets a list of possible events that can occur in the system and returns</span>

@@ -109,43 +109,36 @@ $(document).ready(function(){initNavTree('_linux_gpio_driver_component_impl_comm
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="comment">// Construction, initialization, and destruction</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  LinuxGpioDriverComponentImpl ::</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#if FW_OBJECT_NAMES == 1</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    LinuxGpioDriverComponentImpl(</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    ) :</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      LinuxGpioDriverComponentBase(compName)</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;#else</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    LinuxGpioDriverImpl(void)</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;#endif</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="namespace_drv.html#ac1f93f855030be360cb88394ef6c8644">   32</a></span>&#160;    ,<a class="code" href="namespace_drv.html#ac1f93f855030be360cb88394ef6c8644">m_gpio</a>(-1)</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="namespace_drv.html#a6e1191b3236f8960df0911061e51b53b">   33</a></span>&#160;    ,<a class="code" href="namespace_drv.html#a6e1191b3236f8960df0911061e51b53b">m_direction</a>(GPIO_IN)</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    ,<a class="code" href="namespace_drv.html#a02f8d1e969b72ddce0ecbf6465c2ad31">m_fd</a>(-1)</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="namespace_drv.html#a8e5c8319f50c780cb70c6194c20d1b6e">   35</a></span>&#160;    ,<a class="code" href="namespace_drv.html#a8e5c8319f50c780cb70c6194c20d1b6e">m_quitThread</a>(false)</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a9b993263bedfb350e77253973ebd02a2">   40</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a9b993263bedfb350e77253973ebd02a2">LinuxGpioDriverComponentImpl ::</a></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<a class="code" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a9b993263bedfb350e77253973ebd02a2">    init</a>(</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instance</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    )</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    LinuxGpioDriverComponentBase::init(instance);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;} <span class="comment">// end namespace Drv</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03">   23</a></span>&#160;  <a class="code" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03">LinuxGpioDriverComponentImpl ::</a></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<a class="code" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03">    LinuxGpioDriverComponentImpl</a>(</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    ) : <a class="code" href="class_drv_1_1_linux_gpio_driver_component_base.html">LinuxGpioDriverComponentBase</a>(compName),</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      m_gpio(-1),</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      m_direction(GPIO_IN),</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;      m_fd(-1),</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;      m_quitThread(false)</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="class_drv_1_1_linux_gpio_driver_component_impl.html#a9b993263bedfb350e77253973ebd02a2">   35</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">LinuxGpioDriverComponentImpl ::</a></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<a class="code" href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">    init</a>(</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">const</span> <a class="code" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instance</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    )</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">LinuxGpioDriverComponentBase::init</a>(instance);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;} <span class="comment">// end namespace Drv</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespace_drv_html_ac1f93f855030be360cb88394ef6c8644"><div class="ttname"><a href="namespace_drv.html#ac1f93f855030be360cb88394ef6c8644">Drv::m_gpio</a></div><div class="ttdeci">m_gpio(-1)</div></div>
-<div class="ttc" id="anamespace_drv_html_a6e1191b3236f8960df0911061e51b53b"><div class="ttname"><a href="namespace_drv.html#a6e1191b3236f8960df0911061e51b53b">Drv::m_direction</a></div><div class="ttdeci">m_direction(GPIO_IN)</div></div>
-<div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="_block_driver_impl_8cpp_source.html#l00005">BlockDriverImpl.cpp:5</a></div></div>
-<div class="ttc" id="anamespace_drv_html_a02f8d1e969b72ddce0ecbf6465c2ad31"><div class="ttname"><a href="namespace_drv.html#a02f8d1e969b72ddce0ecbf6465c2ad31">Drv::m_fd</a></div><div class="ttdeci">m_fd(-1)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_i2c_driver_component_impl_8cpp_source.html#l00042">LinuxI2cDriverComponentImpl.cpp:42</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_linux_gpio_driver_component_impl_html_a9b993263bedfb350e77253973ebd02a2"><div class="ttname"><a href="class_drv_1_1_linux_gpio_driver_component_impl.html#a9b993263bedfb350e77253973ebd02a2">Drv::LinuxGpioDriverComponentImpl::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE instance=0)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_gpio_driver_component_impl_common_8cpp_source.html#l00040">LinuxGpioDriverComponentImplCommon.cpp:41</a></div></div>
+<div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="_block_driver_component_ac_8cpp_source.html#l00022">BlockDriverComponentAc.cpp:22</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_obj_base_html_ac321ed11fbcb6d9ed453879edf01e622"><div class="ttname"><a href="class_fw_1_1_obj_base.html#ac321ed11fbcb6d9ed453879edf01e622">Fw::ObjBase::init</a></div><div class="ttdeci">void init(void)</div><div class="ttdoc">Object initializer.</div><div class="ttdef"><b>Definition:</b> <a href="_obj_base_8cpp_source.html#l00026">ObjBase.cpp:26</a></div></div>
 <div class="ttc" id="a_linux_gpio_driver_component_impl_8hpp_html"><div class="ttname"><a href="_linux_gpio_driver_component_impl_8hpp.html">LinuxGpioDriverComponentImpl.hpp</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_gpio_driver_component_base_html"><div class="ttname"><a href="class_drv_1_1_linux_gpio_driver_component_base.html">Drv::LinuxGpioDriverComponentBase</a></div><div class="ttdoc">Auto-generated base for LinuxGpioDriver component.</div><div class="ttdef"><b>Definition:</b> <a href="_linux_gpio_driver_component_ac_8hpp_source.html#l00040">LinuxGpioDriverComponentAc.hpp:42</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="_basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">Declares ISF basic types.</div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="_basic_types_8hpp_source.html#l00027">BasicTypes.hpp:27</a></div></div>
-<div class="ttc" id="anamespace_drv_html_a8e5c8319f50c780cb70c6194c20d1b6e"><div class="ttname"><a href="namespace_drv.html#a8e5c8319f50c780cb70c6194c20d1b6e">Drv::m_quitThread</a></div><div class="ttdeci">m_quitThread(false)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_gpio_driver_component_impl_common_8cpp_source.html#l00035">LinuxGpioDriverComponentImplCommon.cpp:35</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_gpio_driver_component_impl_html_a67ea492696ac53f47637a04015394d03"><div class="ttname"><a href="class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03">Drv::LinuxGpioDriverComponentImpl::LinuxGpioDriverComponentImpl</a></div><div class="ttdeci">LinuxGpioDriverComponentImpl(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="_linux_gpio_driver_component_impl_common_8cpp_source.html#l00023">LinuxGpioDriverComponentImplCommon.cpp:24</a></div></div>
+<div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="_basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

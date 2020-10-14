@@ -214,8 +214,7 @@
             <span class="n">wx</span><span class="o">.</span><span class="n">CallAfter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dv_model</span><span class="o">.</span><span class="n">UpdateModel</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LogEventsImpl.scrollEventLogToBottom"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSLogEventPanelImpl/index.html#fprime_gds.wxgui.src.GDSLogEventPanelImpl.LogEventsImpl.scrollEventLogToBottom">[docs]</a>    <span class="k">def</span> <span class="nf">scrollEventLogToBottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Move the event log scroll bar so that the last entry is visible. Called repeatedly when the &quot;scroll&quot; box is checked&quot;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Move the event log scroll bar so that the last entry is visible. Called repeatedly when the &quot;scroll&quot; box is checked&quot; &quot;&quot;&quot;</span>
 
         <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dv_model</span><span class="o">.</span><span class="n">getDataLen</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">EventLogScrollCheckBox</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -248,8 +247,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dv_model</span><span class="o">.</span><span class="n">UpdateModel</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LogEventsImpl.onCopyKeyPressed"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSLogEventPanelImpl/index.html#fprime_gds.wxgui.src.GDSLogEventPanelImpl.LogEventsImpl.onCopyKeyPressed">[docs]</a>    <span class="k">def</span> <span class="nf">onCopyKeyPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Callback for key pressed within the data view control</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Callback for key pressed within the data view control&quot;&quot;&quot;</span>
 
         <span class="c1"># Ctrl-C pressed</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">ControlDown</span><span class="p">()</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">GetKeyCode</span><span class="p">()</span> <span class="o">==</span> <span class="mi">67</span><span class="p">:</span>
@@ -270,7 +268,7 @@
 
 <div class="viewcode-block" id="LogEventsImpl.onCopyKeyPressedContext"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSLogEventPanelImpl/index.html#fprime_gds.wxgui.src.GDSLogEventPanelImpl.LogEventsImpl.onCopyKeyPressedContext">[docs]</a>    <span class="k">def</span> <span class="nf">onCopyKeyPressedContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called when the copy option is selected from the context menu within the data view ctrl</span>
-<span class="sd">        </span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            event {wx.Event} -- std event arg</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -595,8 +593,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">ItemAdded</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">dataview</span><span class="o">.</span><span class="n">NullDataViewItem</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ObjectToItem</span><span class="p">(</span><span class="n">o</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="EventLogDataViewModel.DeleteAllItems"><a class="viewcode-back" href="../../../../api/fprime_gds/wxgui/src/GDSLogEventPanelImpl/index.html#fprime_gds.wxgui.src.GDSLogEventPanelImpl.EventLogDataViewModel.DeleteAllItems">[docs]</a>    <span class="k">def</span> <span class="nf">DeleteAllItems</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perminently delets all data currently stored in this model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Perminently delets all data currently stored in this model&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ItemDeleted</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">dataview</span><span class="o">.</span><span class="n">NullDataViewItem</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ObjectToItem</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
