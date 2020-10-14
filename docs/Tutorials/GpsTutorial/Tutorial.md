@@ -16,8 +16,8 @@ and defining commands, telemetry, and log events. We will create a GpsApp deploy
 be wired to a standard UART driver in order to receive messages. Then we can cross compile it for the Raspberry PI and
 run the application against the F´ ground system.
 
-**Note:** all the sample files are available in this Tutorial's directory in the F´checkout, and a working full-checkout
- is available at [https://github.com/LeStarch/fprime/tree/gps-application](https://github.com/LeStarch/fprime/tree/gps-application).
+**Note:** A completed version of this tutorial app is available [here](https://github.com/fprime-community/gps-tutorial)
+for use as a demo or to help debug issues that come up when going through the tutorial.
 
 ## Prerequisites
 
