@@ -137,3 +137,24 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Updated CmdSequencer
   * Uses new MemAllocator interface  
 
+#### Release 1.5
+
+* Documentation improvements
+  * New user's guide containing considerable content: [https://nasa.github.io/fprime/UsersGuide/guide.html](https://nasa.github.io/fprime/UsersGuide/guide.html)
+  * Auto-generated API documentation
+  * Rewrites, edits, improvements across the board
+* F´ Project restructuing
+  * Projects may now link to F´ and F´ library packges, without needing to keep the framework code in the same source tree
+  * Usage of framework can be out-of-source
+  * `settings.ini` Introduced
+  * Example: [https://github.com/fprime-community/fprime-arduino](https://github.com/fprime-community/fprime-arduino)
+* Refactored `fprim-util`
+  * Replaced redundant targets with flags e.g. build-ut is now build --ut
+  * Added `info` command
+  * Bug and usability fixes
+* GDS Improvments
+  * Prototype GDS CLI tool
+  * Project custom dashboard support
+* Array, Enum type support and examples
+* Code linting and bug fixes
+
