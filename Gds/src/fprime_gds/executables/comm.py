@@ -34,7 +34,7 @@ from fprime_gds.common.communication.updown import Downlinker, Uplinker
 
 # Uses non-standard PIP package pyserial, so test the waters before getting a hard-import crash
 try:
-    import fprime_gds.common.adapters.adapters.uart
+    import fprime_gds.common.communication.adapters.uart
 except ImportError:
     pass
 

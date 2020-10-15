@@ -25,7 +25,7 @@ import fprime_gds.common.communication.adapters.ip
 import fprime_gds.common.utils.config_manager
 
 try:
-    import fprime_gds.common.adapters.adapters.uart
+    import fprime_gds.common.communication.adapters.uart
 except ImportError:
     pass
 # Try to import each GUI type, and if it can be imported
