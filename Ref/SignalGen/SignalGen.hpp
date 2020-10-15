@@ -36,9 +36,9 @@ namespace Ref {
         void SignalGen_Settings_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq, /*!< The command sequence number*/
-        U32 Frequency, 
-        U32 Amplitude, 
-        U32 Phase, 
+        U32 Frequency,
+        F32 Amplitude,
+        F32 Phase,
         Ref::SignalType SigType 
         );
 
@@ -79,9 +79,9 @@ namespace Ref {
         // Memeber variables
         U32 sampleFrequency;
         U32 signalFrequency;
-        U32 signalAmplitude;
-        U32 signalPhase;
-        U32 sample;
+        F32 signalAmplitude;
+        F32 signalPhase;
+        U32 ticks;
         SignalType sigType;
         SignalSet sigHistory;
         SignalPairSet sigPairHistory;

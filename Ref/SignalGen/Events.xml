@@ -14,7 +14,7 @@
     id="0"
     name="SignalGen_SettingsChanged"
     severity="ACTIVITY_LO"
-    format_string="Set Frequency(Hz) %d, Amplitude %d, Phase %d, Signal Type %s">
+    format_string="Set Frequency(Hz) %d, Amplitude %f, Phase %f, Signal Type %s">
       <comment>Signal Generator Settings Changed</comment>
       <args>
         <arg 
@@ -22,11 +22,11 @@
           name="Frequency">
         </arg>
         <arg
-          type="U32"
+          type="F32"
           name="Amplitude">
         </arg>
         <arg
-          type="U32"
+          type="F32"
           name="Phase">
         </arg>
         <arg
