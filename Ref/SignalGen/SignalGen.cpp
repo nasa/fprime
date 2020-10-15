@@ -31,9 +31,9 @@ namespace Ref {
         SignalGenComponentBase(name),
         sampleFrequency(25),
         signalFrequency(1),
-        signalAmplitude(0),
-        signalPhase(0),
-        sample(0),
+        signalAmplitude(0.0f),
+        signalPhase(0.0f),
+        ticks(0),
         sigType(SignalType::SINE),
         sigHistory(),
         sigPairHistory(),
@@ -75,13 +75,13 @@ namespace Ref {
           case SignalType::SINE:
           {
               F32 normalizedFrequency = 1.0f / samplesPerPeriod;
-              val = static_cast<F32>(this->signalAmplitude) * std::sin((2.0 * M_PI * normalizedFrequency *
+              val = this->signalAmplitude * std::sin((2.0 * M_PI * normalizedFrequency *
                       static_cast<F32>(ticks)) + (this->signalPhase * 2.0 * M_PI));
               break;
           }
           case SignalType::SQUARE:
           {
-              val = static_cast<F32>(this->signalAmplitude) * ((ticks % static_cast<U32>(samplesPerPeriod) < halfSamplesPerPeriod) ? 1.0f : -1.0f);
+              val = this->signalAmplitude * ((ticks % static_cast<U32>(samplesPerPeriod) < halfSamplesPerPeriod) ? 1.0f : -1.0f);
               break;
           }
           case SignalType::NOISE:
@@ -111,12 +111,12 @@ namespace Ref {
       }
       // Allows for skipping a single reading of the signal
       if (not this->skipOne) {
-          value = this->generateSample(this->sample);
+          value = this->generateSample(this->ticks);
       }
       this->skipOne = false;
 
       // Build our new types
-      SignalPair pair = SignalPair(this->sample, value);
+      SignalPair pair = SignalPair(this->ticks, value);
 
       // Shift and assign our array types
       for (U32 i = 1; i < this->sigHistory.SIZE; i++) {
@@ -136,15 +136,15 @@ namespace Ref {
       this->tlmWrite_History(this->sigHistory);
       this->tlmWrite_PairHistory(this->sigPairHistory);
       this->tlmWrite_Info(sigInfo);
-      this->sample += 1;
+      this->ticks += 1;
   }
 
   void SignalGen :: SignalGen_Settings_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq, /*!< The command sequence number*/
         U32 Frequency,
-        U32 Amplitude,
-        U32 Phase,
+        F32 Amplitude,
+        F32 Phase,
         Ref::SignalType SigType
     )
   {
