@@ -18,14 +18,14 @@ import platform
 import re
 import sys
 
-import fprime_gds.common.adapters.base
+import fprime_gds.common.communication.adapters.base
 
 # Include basic adapters
-import fprime_gds.common.adapters.ip
+import fprime_gds.common.communication.adapters.ip
 import fprime_gds.common.utils.config_manager
 
 try:
-    import fprime_gds.common.adapters.uart
+    import fprime_gds.common.adapters.adapters.uart
 except ImportError:
     pass
 # Try to import each GUI type, and if it can be imported
@@ -181,10 +181,12 @@ class CommParser(ParserBase):
         assembling them as parent processors to a parser for the given tool.
         """
         ImportParser.run_first()
-        adapters = fprime_gds.common.adapters.base.BaseAdapter.get_adapters().keys()
+        adapters = (
+            fprime_gds.common.communication.adapters.base.BaseAdapter.get_adapters().keys()
+        )
         adapter_parents = []
         for adapter_name in adapters:
-            adapter = fprime_gds.common.adapters.base.BaseAdapter.get_adapters()[
+            adapter = fprime_gds.common.communication.adapters.base.BaseAdapter.get_adapters()[
                 adapter_name
             ]
             # Check adapter real quick before moving on
@@ -231,7 +233,7 @@ class CommParser(ParserBase):
         """
         args = copy.copy(args)
         args.comm_adapter = (
-            fprime_gds.common.adapters.base.BaseAdapter.construct_adapter(
+            fprime_gds.common.communication.adapters.base.BaseAdapter.construct_adapter(
                 args.adapter, args
             )
         )
@@ -379,7 +381,9 @@ class MiddleWareParser(ParserBase):
         :return: args namespace
         """
         if "client" not in kwargs or not kwargs["client"]:
-            fprime_gds.common.adapters.ip.check_port(args.tts_addr, args.tts_port)
+            fprime_gds.common.communication.adapters.ip.check_port(
+                args.tts_addr, args.tts_port
+            )
         return args
 
 

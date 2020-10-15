@@ -14,7 +14,7 @@ import socket
 import threading
 import time
 
-import fprime_gds.common.adapters.base
+import fprime_gds.common.communication.adapters.base
 import fprime_gds.common.logger
 
 LOGGER = logging.getLogger("ip_adapter")
@@ -28,6 +28,7 @@ def check_port(address, port):
     :param address: address that will bind to
     :param port: port to bind to
     """
+    socket_trial = None
     try:
         socket_trial = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_trial.bind((address, port))
@@ -36,10 +37,11 @@ def check_port(address, port):
             "Error with address/port of '{}:{}' : {}".format(address, port, err)
         )
     finally:
-        socket_trial.close()
+        if socket_trial is not None:
+            socket_trial.close()
 
 
-class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
+class IpAdapter(fprime_gds.common.communication.adapters.base.BaseAdapter):
     """
     Adapts IP traffic for use with the GDS ground system. This serves two different "servers" both on the same address
     and port, but one uses TCP and the other uses UDP. Writes go to the TCP connection, and reads request data from
@@ -75,8 +77,10 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         try:
             # Setup the tcp and udp adapter and run a thread to service them
             self.thtcp = threading.Thread(target=self.th_handler, args=(self.tcp,))
+            self.thtcp.daemon = True
             self.thtcp.start()
             self.thudp = threading.Thread(target=self.th_handler, args=(self.udp,))
+            self.thudp.daemon = True
             self.thudp.start()
             # Start up a keep-alive ping if desired. This will hit the TCP uplink, and die if the connection is down
             if IpAdapter.KEEPALIVE_INTERVAL is not None:
@@ -114,16 +118,19 @@ class IpAdapter(fprime_gds.common.adapters.base.BaseAdapter):
         if self.tcp.connected == IpHandler.CONNECTED:
             return self.tcp.write(frame)
 
-    def read(self):
+    def read(self, timeout=0.500):
         """
         Read up to a given count in bytes from the TCP adapter. This may return less than the full requested size but
         is expected to return some data.
 
-        :param _: upper bound of data requested, unused with IP connections
-        :return: data successfully read
+        :param timeout: timeout to wait for data. Needed as the get call below may not interrupt if it waits forever
+        :return: data successfully read or "" when no data available within timeout
         """
         data = b""
+        # The read function should block until data is available, but for efficiency, it should read all data available
+        # thus the data is read, blocking for 0.5 seconds, and then reads as long as it is not empty.
         try:
+            data += self.data_chunks.get(timeout=timeout)
             while not self.data_chunks.empty():
                 data += self.data_chunks.get_nowait()
         except queue.Empty:
