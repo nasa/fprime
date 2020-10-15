@@ -174,14 +174,14 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">fprime_gds.common.adapters.base</span>
+<span class="kn">import</span> <span class="nn">fprime_gds.common.communication.adapters.base</span>
 
 <span class="c1"># Include basic adapters</span>
-<span class="kn">import</span> <span class="nn">fprime_gds.common.adapters.ip</span>
+<span class="kn">import</span> <span class="nn">fprime_gds.common.communication.adapters.ip</span>
 <span class="kn">import</span> <span class="nn">fprime_gds.common.utils.config_manager</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">fprime_gds.common.adapters.uart</span>
+    <span class="kn">import</span> <span class="nn">fprime_gds.common.communication.adapters.uart</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="c1"># Try to import each GUI type, and if it can be imported</span>
@@ -337,10 +337,12 @@
 <span class="sd">        assembling them as parent processors to a parser for the given tool.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ImportParser</span><span class="o">.</span><span class="n">run_first</span><span class="p">()</span>
-        <span class="n">adapters</span> <span class="o">=</span> <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">get_adapters</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">adapters</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">communication</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">get_adapters</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">)</span>
         <span class="n">adapter_parents</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">adapter_name</span> <span class="ow">in</span> <span class="n">adapters</span><span class="p">:</span>
-            <span class="n">adapter</span> <span class="o">=</span> <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">get_adapters</span><span class="p">()[</span>
+            <span class="n">adapter</span> <span class="o">=</span> <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">communication</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">get_adapters</span><span class="p">()[</span>
                 <span class="n">adapter_name</span>
             <span class="p">]</span>
             <span class="c1"># Check adapter real quick before moving on</span>
@@ -387,7 +389,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="n">args</span><span class="o">.</span><span class="n">comm_adapter</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">construct_adapter</span><span class="p">(</span>
+            <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">communication</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseAdapter</span><span class="o">.</span><span class="n">construct_adapter</span><span class="p">(</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">adapter</span><span class="p">,</span> <span class="n">args</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -535,7 +537,9 @@
 <span class="sd">        :return: args namespace</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;client&quot;</span><span class="p">]:</span>
-            <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">ip</span><span class="o">.</span><span class="n">check_port</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">tts_addr</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">tts_port</span><span class="p">)</span>
+            <span class="n">fprime_gds</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">communication</span><span class="o">.</span><span class="n">adapters</span><span class="o">.</span><span class="n">ip</span><span class="o">.</span><span class="n">check_port</span><span class="p">(</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">tts_addr</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">tts_port</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">args</span></div></div>
 
 

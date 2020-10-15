@@ -10,8 +10,8 @@ Subpackages
    :titlesonly:
    :maxdepth: 3
 
-   adapters/index.rst
    client_socket/index.rst
+   communication/index.rst
    controllers/index.rst
    data_types/index.rst
    decoders/index.rst
