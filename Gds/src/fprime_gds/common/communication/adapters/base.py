@@ -27,11 +27,13 @@ class BaseAdapter(abc.ABC):
         """Null default implementation """
 
     @abc.abstractmethod
-    def read(self):
+    def read(self, timeout=0.500):
         """
-        Read from the interface. Must be overridden by the child adapter. Throw no fatal errors, reconnect instead.
+        Read from the interface. Must be overridden by the child adapter. Throw no fatal errors, reconnect instead. This
+        call is expected to block waiting on incoming data.
 
         :param size: maximum size of data to read before breaking
+        :param timeout: timeout for the block, default: 0.500 (500ms) as blocking w/o timeout may be uninterruptable
         :return: byte array of data, or b'' if no data was read
         """
 

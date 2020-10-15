@@ -12,7 +12,7 @@ import abc
 import logging
 
 from .framing import TcpServerFramerDeframer
-from .ip import TcpHandler
+from fprime_gds.common.communication.adapters.ip import TcpHandler
 
 LOGGER = logging.getLogger("gds_sender")
 
