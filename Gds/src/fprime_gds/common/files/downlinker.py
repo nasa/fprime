@@ -9,16 +9,14 @@ to the correct log files and destination filse
 
 @bug No known bugs
 """
-from __future__ import print_function
 
 import logging
+import os
 
 import fprime.constants
-from fprime_gds.common.decoders import decoder
 import fprime_gds.common.handlers
-from fprime_gds.common.files.helpers import *
-from fprime_gds.common.data_types.file_data import *
-
+from fprime_gds.common.data_types.file_data import FilePacketType
+from fprime_gds.common.files.helpers import FileStates, TransmitFile, file_to_dict
 
 LOGGER = logging.getLogger("downlink")
 LOGGER.setLevel(logging.INFO)
@@ -26,7 +24,8 @@ LOGGER.setLevel(logging.INFO)
 
 class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     """File writer class for decoded packets"""
-    def __init__(self, directory, timeout = 20.0, log_dir=None):
+
+    def __init__(self, directory, timeout=20.0, log_dir=None):
         """
         FileWriter class constructor
 
@@ -44,7 +43,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         self.active = None
         self.files = []
         self.state = FileStates.IDLE
-        self.sequence = 0 #Keeps track of what the current sequence ID should be
+        self.sequence = 0  # Keeps track of what the current sequence ID should be
         self.timer = fprime_gds.common.files.helpers.Timeout()
         self.timer.setup(self.timeout, timeout)
         os.makedirs(self.__directory, exist_ok=True)
@@ -56,7 +55,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         Args:
             data: Binary data that has been decoded and passed to the correct consumer
         """
-        self.timer.restart() # Start or restart the timer
+        self.timer.restart()  # Start or restart the timer
         packet_type = data.packetType
         # Check the packet type, and route to the appropriate sub-function
         if packet_type == FilePacketType.START:
@@ -73,6 +72,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_start(self, data):
         """
         Handle a start packet data type.
+
         :param data: data packet that is a start packet
         """
         # Initialize all relevant START packet attributes into variables from file_data
@@ -84,7 +84,12 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             self.finish()
         # Create the destination file where the DATA packet data will be stored
         assert self.active is None, "File is already open, something went wrong"
-        self.active = TransmitFile(source_path, os.path.join(self.__directory, self.sanitize(dest_path)), self.__log_dir)
+        self.active = TransmitFile(
+            source_path,
+            os.path.join(self.__directory, self.sanitize(dest_path)),
+            size,
+            self.__log_dir,
+        )
         self.active.open("wb+")
         LOGGER.addHandler(self.active.log_handler)
         message = "Received START packet with metadata:\n"
@@ -99,6 +104,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_data(self, data):
         """
         Handle the data packet.
+
         :param data: data packet
         """
         # Initialize all relevant DATA packet attributes into variables from file_data
@@ -108,16 +114,25 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             LOGGER.warning("Received unexpected data packet for offset: %d", offset)
         else:
             if data.seqID != self.sequence:
-                LOGGER.warning("Data packet has unexpected sequence id. Expected: %d got %d", self.sequence, data.seqID)
+                LOGGER.warning(
+                    "Data packet has unexpected sequence id. Expected: %d got %d",
+                    self.sequence,
+                    data.seqID,
+                )
             # Write the data information to the file
             self.active.write(data_bytes, offset)
             self.active.seek = offset + len(data_bytes)
-            LOGGER.info("Received DATA packet writing %d bytes to offset %s", len(data_bytes), offset)
+            LOGGER.info(
+                "Received DATA packet writing %d bytes to offset %s",
+                len(data_bytes),
+                offset,
+            )
         self.sequence += 1
 
-    def handle_cancel(self, data):
+    def handle_cancel(self, _):
         """
         Handle cancel packet.
+
         :param data: cancel packet, ignored.
         :return:
         """
@@ -131,6 +146,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def handle_end(self, data):
         """
         Handle the end packet.
+
         :param data: end packet
         """
         # Initialize all relevant END packet attributes into varibles from file_data
@@ -139,7 +155,11 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
             LOGGER.warning("Received unexpected END packet")
         else:
             if data.seqID != self.sequence:
-                LOGGER.warning("End packet has unexpected sequence id. Expected: %d got %d", self.sequence, data.seqID)
+                LOGGER.warning(
+                    "End packet has unexpected sequence id. Expected: %d got %d",
+                    self.sequence,
+                    data.seqID,
+                )
             LOGGER.info("Received END packet, finishing downlink")
             self.finish()
 
@@ -166,6 +186,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     def sanitize(filename):
         """
         Sannitize the given filename by removing slashes that would make new directories.
+
         :param filename: filename to sanitize
         :return: sanitized filename
         """
@@ -174,7 +195,3 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     @property
     def directory(self):
         return self.__directory
-
-
-if __name__ == "__main__":
-    pass

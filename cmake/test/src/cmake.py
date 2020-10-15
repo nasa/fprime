@@ -20,29 +20,40 @@ CMAKE = "cmake"
 MAKE_CALL = "make"
 MAKE_ARGS = ["-j128"]
 
-def register_test(module, name, build_dir=None, options=None, expected=None, targets=None):
-    '''
+
+def register_test(
+    module, name, build_dir=None, options=None, expected=None, targets=None
+):
+    """
     Registers a test to the given module using the given name. This will create a function of the
     form test_<name> registered to the module ready for autodetect.
+
     :param module: name of module for registration
     :param name: name to register test with
-    '''
+    """
     module = sys.modules[module]
     if options is None:
         options = getattr(module, "OPTIONS", {})
     if expected is None:
         expected = getattr(module, "EXPECTED", [])
     if build_dir is None:
-        build_dir = getattr(module, "BUILD_DIR") 
+        build_dir = getattr(module, "BUILD_DIR")
     if targets is None:
         targets = getattr(module, "TARGETS", [""])
     name = "test_{0}".format(name.replace("/", "_").replace("-", "_").replace(" ", "_"))
-    setattr(module, name, functools.partial(run_build, build_dir, expected, make_targets=targets, options=options))
- 
+    setattr(
+        module,
+        name,
+        functools.partial(
+            run_build, build_dir, expected, make_targets=targets, options=options
+        ),
+    )
+
 
 def run_cmake(build_path, options={}, capout=False):
     """
     Runs the cmake in the current directory with the given options and build_path
+
     :param build_path: path to build
     :param options: options to pass CMake
     :return: True if successful, False otherwise
@@ -74,6 +85,7 @@ def run_make(target):
     Runs the make command to ensure that the CMake system can follow through and finish the build.
     Note: this assumes that the provided application build properly. Thus, those unit tests should
     run first.
+
     :param target: target to the make command
     :return: True if successful, False otherwise
     """
@@ -84,24 +96,34 @@ def run_make(target):
     proc = subprocess.Popen(args)
     return proc.wait() == 0
 
+
 def assert_exists(expected, start_time):
     """
     Goes through all of the expected files and check to ensure that each is a file. This also
     ensures that the file is new enough to have been generated at the start of this build.
+
     :param expected: list of expected files. Relative to build. <FPRIME> replaced with f prime dir.
     :param start_time: time of the start of this build
     """
     for expect in expected:
-        expect = expect.replace("<FPRIME>",
-                                os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-        assert os.path.exists(expect), "CMake build failed to generate '{0}'".format(expect)
-        assert os.path.getmtime(expect) >= start_time, "CMake did not recreate/update '{0}'".format(expect)  
+        expect = expect.replace(
+            "<FPRIME>", os.path.join(os.path.dirname(__file__), "..", "..", "..")
+        )
+        assert os.path.exists(expect), "CMake build failed to generate '{0}'".format(
+            expect
+        )
+        assert (
+            os.path.getmtime(expect) >= start_time
+        ), "CMake did not recreate/update '{0}'".format(expect)
 
 
-def run_build(build_path, expected_outputs, build_directory=None, make_targets=[""], options={}):
+def run_build(
+    build_path, expected_outputs, build_directory=None, make_targets=[""], options={}
+):
     """
     Run the CMake command, and any number of make commands. Ensures that the calls all process as
     expected, and that the expected outputs are produced.
+
     :param build_path: target path. Usually <FPRIME>/Ref. <FPRIME> replaced with f prime dir.
     :param expected_outputs: list of files to check for. Relative to build directory.
     :param build_directory: directory in which to perform the build, default is a temporary dir.
@@ -116,11 +138,18 @@ def run_build(build_path, expected_outputs, build_directory=None, make_targets=[
     tmpd = tempfile.mkdtemp()
     try:
         os.chdir(tmpd)
-        build_path = build_path.replace("<FPRIME>",
-                                        os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-        assert run_cmake(build_path, options=options), "CMake failed for path '{0}' and options '{1}'".format(build_path, options)
+        build_path = build_path.replace(
+            "<FPRIME>", os.path.join(os.path.dirname(__file__), "..", "..", "..")
+        )
+        assert run_cmake(
+            build_path, options=options
+        ), "CMake failed for path '{0}' and options '{1}'".format(build_path, options)
         for target in make_targets:
-            assert run_make(target), "Failed to build '{0}' target for '{1}' and options '{2}'".format(target, build_path, options)
+            assert run_make(
+                target
+            ), "Failed to build '{0}' target for '{1}' and options '{2}'".format(
+                target, build_path, options
+            )
         assert_exists(expected_outputs, start_time)
     finally:
         os.chdir(owd)

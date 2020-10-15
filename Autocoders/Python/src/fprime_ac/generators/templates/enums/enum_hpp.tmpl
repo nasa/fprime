@@ -1,6 +1,7 @@
 ##
 ## Template to stamp out serializable enums .hpp file
 ##
+#import re
 // ====================================================================== 
 // \title  ${name}.hpp
 // \author Auto-generated
@@ -25,9 +26,13 @@
 
 \#include "Fw/Types/BasicTypes.hpp"
 \#include "Fw/Types/Serializable.hpp"
-// To add include directives here, put them in a file called Include/${name}EnumAc.hpp
 
+#if $namespace
 namespace ${namespace} {
+#end if
+#if $comment
+  //! $re.sub("\n *", "\n  //! ", $comment)
+#end if
   class ${name} : public Fw::Serializable
   {
     public:
@@ -146,5 +151,7 @@ namespace ${namespace} {
     //! The enumeration value
     t e;
   };
+#if $namespace
 }
+#end if
 #endif

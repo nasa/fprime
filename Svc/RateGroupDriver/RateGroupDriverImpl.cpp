@@ -6,12 +6,8 @@
 
 namespace Svc {
 
-#if FW_OBJECT_NAMES == 1    
     RateGroupDriverImpl::RateGroupDriverImpl(const char* compName, I32 dividers[], I32 numDividers) :
         RateGroupDriverComponentBase(compName),
-#else
-    RateGroupDriverImpl::RateGroupDriverImpl(I32 dividers[], I32 numDividers) :
-#endif
     m_ticks(0),m_rollover(1)
     {
 

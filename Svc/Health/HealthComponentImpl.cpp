@@ -20,20 +20,14 @@ namespace Svc {
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
 
-    HealthImpl::HealthImpl(
-#if FW_OBJECT_NAMES == 1
-            const char * const compName
-#endif
-            ) :
-#if FW_OBJECT_NAMES == 1
-                    HealthComponentBase(compName),
-#endif
-                    m_numPingEntries(0),
-                    m_key(0),
-                    m_watchDogCode(0),
-                    m_warnings(0),
-                    m_enabled(HLTH_CHK_ENABLED),
-                    queue_depth(0) {
+    HealthImpl::HealthImpl(const char * const compName) :
+            HealthComponentBase(compName),
+            m_numPingEntries(0),
+            m_key(0),
+            m_watchDogCode(0),
+            m_warnings(0),
+            m_enabled(HLTH_CHK_ENABLED),
+            queue_depth(0) {
         // clear tracker by disabling pings
         for (NATIVE_UINT_TYPE entry = 0;
                 entry < FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries);

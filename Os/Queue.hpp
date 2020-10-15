@@ -59,7 +59,7 @@ namespace Os {
             NATIVE_INT_TYPE getQueueSize(void) const; //!< get the queue depth (maximum number of messages queue can hold)
             NATIVE_INT_TYPE getMsgSize(void) const; //!< get the message size (maximum message size queue can hold)
             const QueueString& getName(void); //!< get the queue name
-            NATIVE_INT_TYPE getNumQueues(void); //!< get the number of queues in the system
+            static NATIVE_INT_TYPE getNumQueues(void); //!< get the number of queues in the system
 #if FW_QUEUE_REGISTRATION
             static void setQueueRegistry(QueueRegistry* reg); // !< set the queue registry
 #endif

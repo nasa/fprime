@@ -14,7 +14,7 @@
 #define UdpReceiver_HPP
 
 #include "Svc/UdpReceiver/UdpReceiverComponentAc.hpp"
-#include "Svc/UdpReceiver/UdpReceiverComponentImplCfg.hpp"
+#include "UdpReceiverComponentImplCfg.hpp"
 
 namespace Svc {
 
@@ -31,11 +31,7 @@ namespace Svc {
       //! Construct object UdpReceiver
       //!
       UdpReceiverComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
-#else
-          void
-#endif
       );
 
       //! Initialize object UdpReceiver

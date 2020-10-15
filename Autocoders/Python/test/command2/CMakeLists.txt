@@ -23,14 +23,14 @@ set_target_properties(
   EXCLUDE_FROM_ALL TRUE
 )
 set(UT_MOD_DEPS
-  Fw_Comp
+  Fw_CompQueued
   Os
 )
 
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Autocoders/Python/test/command2/TestComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/test/command2/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )

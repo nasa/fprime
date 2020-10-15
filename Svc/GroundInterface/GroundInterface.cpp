@@ -20,17 +20,12 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   GroundInterfaceComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     GroundInterfaceComponentImpl(
         const char *const compName
-    ) :
-      GroundInterfaceComponentBase(compName),
-#else
-  GroundInterfaceComponentBase(void),
-#endif
-    m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
-    m_data_size(0),
-    m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
+    ) : GroundInterfaceComponentBase(compName),
+        m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
+        m_data_size(0),
+        m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
   {
 
   }
@@ -104,7 +99,9 @@ namespace Svc {
       Fw::Buffer buffer = m_ext_buffer;
       Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(m_ext_buffer.getdata()),
                                                  m_ext_buffer.getsize());
-      // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied. 
+      // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied.
+      // This is because if not UNKOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
+      // already the first token in the UNKNOWN typed buffer.
       U32 true_size = (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? size + sizeof(TOKEN_TYPE) : size;
       U32 total_size = sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE) + true_size + sizeof(U32);
       // Serialize data

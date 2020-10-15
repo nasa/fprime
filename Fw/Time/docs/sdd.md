@@ -1,4 +1,4 @@
-<title>Fw::Time Port SDD</title>
+\page FwTimePort Fw::Time Port
 # Fw::Time Port
 
 ## 1. Introduction

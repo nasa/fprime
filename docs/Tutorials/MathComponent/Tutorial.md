@@ -705,6 +705,7 @@ Create a `CMakeLists.txt` file in `Ref/MathSender` and add `MathSenderComponentA
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
 )
+
 register_fprime_module()
 ```
 
@@ -833,6 +834,7 @@ The `CMakeLists.txt` file for this component is as follows:
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentAi.xml"
 )
+
 register_fprime_module()
 ```
 
@@ -1075,7 +1077,7 @@ Unit Tests are used to exercise the component's functions by invoking input port
 The code generator will generate test components that can be connected to the component to enable a set of unit tests to check functionality and to get coverage of all the code. To generate a set of files for testing, from the module directory type:
 
 ```shell
-fprime-util impl-ut
+fprime-util impl --ut
 ```
 
 The files that are generated are:
@@ -1429,7 +1431,7 @@ The other test cases are similarly implemented for the other operations. See the
 To build the unit test, type:
 
 ```
-fprime-utli build-ut
+fprime-util build --ut
 ```
 
 The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
@@ -1791,17 +1793,8 @@ Put these declarations after the declarations for the other `Ref` components:
 `Ref/Top/Topology.cpp`, line 187:
 
 ```c++
-Ref::MathSenderComponentImpl mathSender
-#if FW_OBJECT_NAMES == 1
-    ("mathSender")
-#endif
-;
-
-Ref::MathReceiverComponentImpl mathReceiver
-#if FW_OBJECT_NAMES == 1
-    ("mathReceiver")
-#endif
-;
+Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
+Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 ```
 
 Where the other components are initialzed, add `MathSender` and `MathReceiver`:
@@ -1958,7 +1951,7 @@ The following XML shows the command connection for the tutorial components.
 The port number used for the registration and dispatch ports is selected as 20,
 a unique number that hasn't been used yet in the `Ref` example.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 817:
+`Ref/Top/RefTopologyAppAi.xml`, line 817:
 
 ```xml
    <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
@@ -1999,7 +1992,7 @@ a unique number that hasn't been used yet in the `Ref` example.
 
 The output connections for log ports are connected to the `eventLogger` component.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 845:
+`Ref/Top/RefTopologyAppAi.xml`, line 845:
 
 ```xml
    <!-- Event Logger Binary Connections -->
@@ -2031,7 +2024,7 @@ There are two kinds of connections for logging: One for a binary form that will 
 
 The telemetry output ports are connected to the `chanTlm` component.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 872:
+`Ref/Top/RefTopologyAppAi.xml`, line 872:
 
 ```xml
    <!-- Telemetry Connections -->
@@ -2051,7 +2044,7 @@ The telemetry output ports are connected to the `chanTlm` component.
 
 There are two parameter connections, a `PrmGet` connection for reading parameters during software initialization and a `PrmSet` for updating parameters in the component that manages parameter values. F' has a basic parameter storage component `prmDb` that stores parameters in files. Upon bootup, they are read from a file specified in the constructor and stored in memory. Subsequent to this, components request their parameters via the `PrmGet` connection. If they are updated by command, they can be saved to storage by issuing a command to call the `PrmSet` with the new value and issuing the `PRM_SAVE_FILE` command.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 883:
+`Ref/Top/RefTopologyAppAi.xml`, line 883:
 
 ```xml
    <!-- Parameter Connections -->
@@ -2070,7 +2063,7 @@ There are two parameter connections, a `PrmGet` connection for reading parameter
 
 Components that have telemetry or events need to be able to time stamp the events. The time connections connect the components to a time source to provide the time stamps.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 894:
+`Ref/Top/RefTopologyAppAi.xml`, line 894:
 
 ```xml
    <!-- Time Connections -->
@@ -2089,7 +2082,7 @@ Components that have telemetry or events need to be able to time stamp the event
 
 The `MathReceiver` component does not have a thread of its own, but relies on the thread of another component to drive it via the `SchedIn` port. The `SchedIn` port is connected to the 1Hz rate group component that is part of the `Ref` example. This means that every second the component gets a call and can unload messages from its message queue and dispatch them to handlers.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 894:
+`Ref/Top/RefTopologyAppAi.xml`, line 894:
 
 ```xml
    <!-- Scheduler Connection -->
@@ -2103,7 +2096,7 @@ The `MathReceiver` component does not have a thread of its own, but relies on th
 
 The final connection is the connection that performs the math operation. It goes from `MathSender` to `MathReceiver`.
 
-`Ref/MathSender/MathSenderComponentAi.xml`, line 911:
+`Ref/Top/RefTopologyAppAi.xml`, line 911:
 
 ```xml
 

@@ -29,7 +29,7 @@ set_target_properties(
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Autocoders/Python/test/param_multi_inst/TestComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/test/param_multi_inst/TestComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()

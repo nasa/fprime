@@ -20,6 +20,7 @@ F´ has the following features:
 | Projects  | [Projects](./projects.md) |
 | Installation | [INSTALL.md](./INSTALL.md) | 
 | Tutorials | [Tutorials](./Tutorials/README.md) |
+| User Guide | [User Guide](./UsersGuide/guide.md) |
 | Repository | [https://github.com/nasa/fprime](https://github.com/nasa/fprime) |
 | Community Forum and Mailing List | [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) |
 | Community GitHub Organization | [https://github.com/fprime-community](https://github.com/fprime-community) |
@@ -48,6 +49,7 @@ virtual environment), and building on of our reference applications. For full in
 ```
 git clone https://github.com/nasa/fprime.git
 cd fprime
+pip install --upgrade wheel setuptools pip
 pip install Fw/Python Gds/
 ```
 **Build the Ref Application**

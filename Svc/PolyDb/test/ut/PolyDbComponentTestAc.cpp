@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 // The following header will need to be modified when test code is moved
 // If the component tester is regenerated, this will need to be modified again.
 // Make the compile fail to make sure it is changed

@@ -1,40 +1,40 @@
 # TODO Documentation
-from __future__ import absolute_import
 
 import wx
-from . import GDSLogEventPanelGUI
 from fprime_gds.common.data_types.event_data import EventData
-from fprime_gds.common.utils.event_severity import EventSeverity
 from fprime_gds.common.utils.config_manager import ConfigManager
+from fprime_gds.common.utils.event_severity import EventSeverity
+
+from . import GDSLogEventPanelGUI
 
 ###########################################################################
 ## Class LogEventsImpl
 ###########################################################################
 
-class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
-    '''Implementation class for LogEvents panel. Defines funcitonality.'''
 
+class LogEventsImpl(GDSLogEventPanelGUI.LogEvents):
+    """Implementation class for LogEvents panel. Defines funcitonality."""
 
-    def __init__( self, parent, config=None ):
+    def __init__(self, parent, config=None):
         """LogEventsImple constructor
 
         Arguments:
             parent {wx.Window} -- The parrent for this GUI element
         """
 
-        GDSLogEventPanelGUI.LogEvents.__init__ ( self, parent)
+        GDSLogEventPanelGUI.LogEvents.__init__(self, parent)
         self.parent = parent
 
         self.dv_model = EventLogDataViewModel([])
 
         self.EventLogDataListCtl.AssociateModel(self.dv_model)
 
-        self.EventLogDataListCtl.AppendTextColumn( "Time" , 0, width=150)
-        self.EventLogDataListCtl.AppendTextColumn( "Name",1,  width=150 )
-        self.EventLogDataListCtl.AppendTextColumn( "ID" ,2)
-        self.EventLogDataListCtl.AppendTextColumn( "Severity", 3, width=110)
-        self.EventLogDataListCtl.AppendTextColumn( u"Message" ,4)
-        self.EventLogSeverityComboBox.Append('')
+        self.EventLogDataListCtl.AppendTextColumn("Time", 0, width=150)
+        self.EventLogDataListCtl.AppendTextColumn("Name", 1, width=150)
+        self.EventLogDataListCtl.AppendTextColumn("ID", 2)
+        self.EventLogDataListCtl.AppendTextColumn("Severity", 3, width=110)
+        self.EventLogDataListCtl.AppendTextColumn("Message", 4)
+        self.EventLogSeverityComboBox.Append("")
         for i in EventSeverity:
             self.EventLogSeverityComboBox.Append(i.name)
 
@@ -43,8 +43,8 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         self.EventLogDataListCtl.Bind(wx.EVT_KEY_DOWN, self.onCopyKeyPressed)
 
         self.scrollEventLogToBottom()
-    
-    def __del__( self ):
+
+    def __del__(self):
         self.dv_model.DecRef()
 
     def data_callback(self, data, sender=None):
@@ -55,11 +55,10 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         """
         if self.dv_model.RefCount > 1:
             # Use CallAfter to avoid race condition
-            wx.CallAfter(self.dv_model.UpdateModel,data)
+            wx.CallAfter(self.dv_model.UpdateModel, data)
 
     def scrollEventLogToBottom(self):
-        """Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked"
-        """
+        """Move the event log scroll bar so that the last entry is visible. Called repeatedly when the "scroll" box is checked" """
 
         l = self.dv_model.getDataLen()
         if self.EventLogScrollCheckBox.GetValue() == True and l > 0:
@@ -92,8 +91,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
             self.dv_model.UpdateModel(r)
 
     def onCopyKeyPressed(self, event):
-        """Callback for key pressed within the data view control
-        """
+        """Callback for key pressed within the data view control"""
 
         # Ctrl-C pressed
         if event.ControlDown() and event.GetKeyCode() == 67:
@@ -101,7 +99,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
             cpy_out = ""
             for r in rows:
                 o = self.dv_model.ItemToObject(r)
-                cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+                cpy_out += o.get_str(verbose=True, csv=True) + "\n"
 
             clipboard = wx.TextDataObject()
             # Set data object value
@@ -114,7 +112,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
     def onCopyKeyPressedContext(self, event):
         """Called when the copy option is selected from the context menu within the data view ctrl
-        
+
         Arguments:
             event {wx.Event} -- std event arg
         """
@@ -123,7 +121,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         cpy_out = ""
         for r in rows:
             o = self.dv_model.ItemToObject(r)
-            cpy_out += o.get_str(verbose=True, csv=True) + '\n'
+            cpy_out += o.get_str(verbose=True, csv=True) + "\n"
 
         clipboard = wx.TextDataObject()
         # Set data object value
@@ -132,28 +130,30 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(clipboard)
             wx.TheClipboard.Close()
-            
+
     # Override these handlers to implement functionality for GUI elements
-    def onLogEventDataViewContextMenu( self, event ):
+    def onLogEventDataViewContextMenu(self, event):
 
         # Allows copying of data form the data view through right click context menu
-        if not hasattr(self, 'copy_context_id'):
+        if not hasattr(self, "copy_context_id"):
             self.copy_context_id = wx.NewId()
-            self.Bind(wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id)
+            self.Bind(
+                wx.EVT_MENU, self.onCopyKeyPressedContext, id=self.copy_context_id
+            )
 
         menu = wx.Menu()
-        cpy = menu.Append(self.copy_context_id, "copy")
+        menu.Append(self.copy_context_id, "copy")
 
         self.PopupMenu(menu)
         menu.Destroy()
         event.Skip()
 
-    def onEventLogClearButtonClick( self, event ):
+    def onEventLogClearButtonClick(self, event):
         self.dv_model.DeleteAllItems()
 
-    def onEventLogApplyFilterButtonClick( self, event ):
+    def onEventLogApplyFilterButtonClick(self, event):
         search_term = self.EventLogSeachKeywordTextCtl.GetLineText(0)
-        if search_term == u'':
+        if search_term == "":
             search_term = None
         try:
             severity = EventSeverity[self.EventLogSeverityComboBox.GetStringSelection()]
@@ -162,7 +162,7 @@ class LogEventsImpl (GDSLogEventPanelGUI.LogEvents):
 
         self.dv_model.ApplyFilter(search_term, severity)
 
-    def onEventLogResetFilterButtonClick( self, event ):
+    def onEventLogResetFilterButtonClick(self, event):
         self.dv_model.ApplyFilter(None, None)
 
     def onEventLogDataListCtrlScroll(self, event):
@@ -178,32 +178,31 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
     """
 
     def __init__(self, data, config=None):
-        '''
+        """
         Constructor
 
         Args:
             data: TODO
             config (ConfigManager, default=None): object with all config info
                    for colors. If None, defaults used
-        '''
+        """
 
-        if config==None:
+        if config is None:
             config = ConfigManager()
 
         self.config = config
 
         # Colors in config object are Hex codes stored as strings.
         #  Convert the string to an int, and then convert to a wxPython Colour
-        warn_lo_color_val = int(self.config.get('colors', 'warning_lo'), 16)
-        warn_hi_color_val = int(self.config.get('colors', 'warning_hi'), 16)
-        fatal_color_val = int(self.config.get('colors', 'fatal'), 16)
-        command_color_val = int(self.config.get('colors', 'command'), 16)
+        warn_lo_color_val = int(self.config.get("colors", "warning_lo"), 16)
+        warn_hi_color_val = int(self.config.get("colors", "warning_hi"), 16)
+        fatal_color_val = int(self.config.get("colors", "fatal"), 16)
+        command_color_val = int(self.config.get("colors", "command"), 16)
 
         self.warn_lo_color = wx.Colour(warn_lo_color_val)
         self.warn_hi_color = wx.Colour(warn_hi_color_val)
         self.fatal_color = wx.Colour(fatal_color_val)
         self.command_color = wx.Colour(command_color_val)
-
 
         wx.dataview.PyDataViewModel.__init__(self)
         self.data = data
@@ -241,12 +240,13 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             dict -- mapping from column index to type
         """
 
-        mapper = { 0 : 'string',
-                   1 : 'string',
-                   2 : 'string',
-                   3 : 'string',
-                   3 : 'string',
-                   }
+        mapper = {
+            0: "string",
+            1: "string",
+            2: "string",
+            3: "string",
+            3: "string",
+        }
         return mapper[col]
 
     def GetChildren(self, parent, children):
@@ -259,7 +259,6 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         Returns:
             int -- length of children
         """
-
 
         # The view calls this method to find the children of any node in the
         # control. There is an implicit hidden root node, and the top level
@@ -330,12 +329,13 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         arg_vals = tuple([arg.val for arg in node.args])
 
         if isinstance(node, EventData):
-            mapper = { 0 : str(node.time.to_readable()),
-                       1 : str(node.template.get_full_name()),
-                       2 : str(node.template.id),
-                       3 : str(node.template.severity.name),
-                       4 : str(node.template.format_str%arg_vals)
-                       }
+            mapper = {
+                0: str(node.time.to_readable()),
+                1: str(node.template.get_full_name()),
+                2: str(node.template.id),
+                3: str(node.template.severity.name),
+                4: str(node.template.format_str % arg_vals),
+            }
             return mapper[col]
 
         else:
@@ -381,7 +381,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
 
         st, sev = self.current_filter
 
-        if st == None and sev == None:
+        if st is None and sev is None:
             self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(new_data))
             self.data_filtered = list()
         elif st is not None and st in new_data.get_str():
@@ -411,7 +411,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
         else:
             self.current_filter = (search_term, severity)
 
-        if search_term == None and severity == None:
+        if search_term is None and severity is None:
             # No filter - restore all data to the control
             for o in self.data_filtered:
                 self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
@@ -437,8 +437,7 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
                     self.ItemAdded(wx.dataview.NullDataViewItem, self.ObjectToItem(o))
 
     def DeleteAllItems(self):
-        """Perminently delets all data currently stored in this model
-        """
+        """Perminently delets all data currently stored in this model"""
 
         for d in self.data:
             self.ItemDeleted(wx.dataview.NullDataViewItem, self.ObjectToItem(d))
@@ -455,5 +454,3 @@ class EventLogDataViewModel(wx.dataview.PyDataViewModel):
             return len(self.data)
         else:
             return len(self.data_filtered)
-
-

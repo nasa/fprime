@@ -31,6 +31,12 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
 		"${CMAKE_CURRENT_LIST_DIR}/LinuxTimerComponentImplTimerFd.cpp"
 		"${CMAKE_CURRENT_LIST_DIR}/LinuxTimerComponentImplCommon.cpp"
 	)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "RTEMS5")
+	set(SOURCE_FILES
+		"${CMAKE_CURRENT_LIST_DIR}/LinuxTimerComponentAi.xml"
+		"${CMAKE_CURRENT_LIST_DIR}/LinuxTimerComponentImplTaskDelay.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/LinuxTimerComponentImplCommon.cpp"
+		)
 else()
 	set(SOURCE_FILES
 		"${CMAKE_CURRENT_LIST_DIR}/LinuxTimerComponentAi.xml"

@@ -12,7 +12,7 @@
         -:   10:
         -:   11:#include <Svc/PolyDb/PolyDbComponentAc.hpp>
         -:   12:#include <Fw/Types/PolyType.hpp>
-        -:   13:#include <Svc/PolyDb/PolyDbImplCfg.hpp>
+        -:   13:#include <PolyDbImplCfg.hpp>
         -:   14:
         -:   15:namespace Svc {
         -:   16:    class PolyDbImpl : public PolyDbComponentBase {

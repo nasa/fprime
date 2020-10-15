@@ -12,20 +12,16 @@ import datetime
 import os.path
 
 import fprime.common.models.serialize.time_type
-
-import fprime_gds.common.logger.data_logger
-import fprime_gds.common.distributor.distributor
 import fprime_gds.common.client_socket.client_socket
 import fprime_gds.common.data_types.cmd_data
+import fprime_gds.common.distributor.distributor
+import fprime_gds.common.logger.data_logger
 
 # Local imports for the sake of composition
-from . import dictionaries
-from . import encoding
-from . import histories
-from . import files
+from . import dictionaries, encoding, files, histories
 
 
-class StandardPipeline(object):
+class StandardPipeline:
     """
     Class used to encapsulate all of the components of a standard pipeline. The life-cycle of this class follows the
     basic steps:
@@ -36,6 +32,7 @@ class StandardPipeline(object):
     This class provides for basic log files as a fallback for storing events as well. These logs are stored in a given
     directory, which is created on the initialization of this class.
     """
+
     def __init__(self):
         """
         Set core variables to None or their composition handlers.
@@ -49,38 +46,50 @@ class StandardPipeline(object):
         self.__histories = histories.Histories()
         self.__filing = files.Filing()
 
-    def setup(self, config, dictionary, down_store, logging_prefix=None, packet_spec=None):
+    def setup(
+        self, config, dictionary, down_store, logging_prefix=None, packet_spec=None
+    ):
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
+
         :param config: config object used when constructing the pipeline.
         :param dictionary: dictionary path. Used to setup loading of dictionaries.
         :param down_store: downlink storage directory
-        :param logging_prefix: logging prefix. Logs will be placed in a dated directory under this prefix
+        :param logging_prefix: logging prefix. Defaults to not logging at all.
         :param packet_spec: location of packetized telemetry XML specification.
         """
-        if logging_prefix is None:
-            logging_prefix = StandardPipeline.get_dated_logging_dir()
         # Loads the distributor and client socket
         self.distributor = fprime_gds.common.distributor.distributor.Distributor(config)
-        self.client_socket = fprime_gds.common.client_socket.client_socket.ThreadedTCPSocketClient()
+        self.client_socket = (
+            fprime_gds.common.client_socket.client_socket.ThreadedTCPSocketClient()
+        )
         # Setup dictionaries encoders and decoders
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
-        self.coders.setup_coders(self.dictionaries, self.distributor, self.client_socket)
+        self.coders.setup_coders(
+            self.dictionaries, self.distributor, self.client_socket
+        )
         self.histories.setup_histories(self.coders)
-        self.files.setup_file_handling(down_store, self.coders.file_encoder, self.coders.file_decoder, self.distributor,
-                                       logging_prefix)
+        self.files.setup_file_handling(
+            down_store,
+            self.coders.file_encoder,
+            self.coders.file_decoder,
+            self.distributor,
+            logging_prefix,
+        )
         # Register distributor to client socket
         self.client_socket.register_distributor(self.distributor)
         # Final setup step is to make a logging directory, and register in the logger
-        self.setup_logging(logging_prefix)
+        if logging_prefix:
+            self.setup_logging(logging_prefix)
 
     @classmethod
     def get_dated_logging_dir(cls, prefix=os.path.expanduser("~")):
         """
         Sets up the dated subdirectory based upon a given prefix
+
         :param prefix:
-        :return:
+        :return: Path to new directory where logs will be stored for this pipeline
         """
         # Setup log file location
         dts = datetime.datetime.now()
@@ -93,10 +102,13 @@ class StandardPipeline(object):
     def setup_logging(self, log_dir):
         """
         Setup logging based on the logging prefix supplied
+
         :param prefix: logging prefix to use
         """
         # Setup the logging pipeline (register it to all its data sources)
-        logger = fprime_gds.common.logger.data_logger.DataLogger(log_dir, verbose=True, csv=True)
+        logger = fprime_gds.common.logger.data_logger.DataLogger(
+            log_dir, verbose=True, csv=True
+        )
         self.logger = logger
         self.coders.register_channel_consumer(self.logger)
         self.coders.register_event_consumer(self.logger)
@@ -107,11 +119,14 @@ class StandardPipeline(object):
     def connect(self, address, port):
         """
         Connects to the middleware layer
+
         :param address: address of middleware
         :param port: port of middleware
         """
         self.client_socket.connect(address, port)
-        self.client_socket.register_to_server(fprime_gds.common.client_socket.client_socket.GUI_TAG)
+        self.client_socket.register_to_server(
+            fprime_gds.common.client_socket.client_socket.GUI_TAG
+        )
 
     def disconnect(self):
         """
@@ -123,6 +138,7 @@ class StandardPipeline(object):
     def send_command(self, command, args):
         """
         Sends commands to the encoder and history.
+
         :param command: command id from dictionary to get command template
         :param args: arguments to process
         """
@@ -130,7 +146,9 @@ class StandardPipeline(object):
             command_template = self.dictionaries.command_name[command]
         else:
             command_template = self.dictionaries.command_id[command]
-        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(tuple(args), command_template)
+        cmd_data = fprime_gds.common.data_types.cmd_data.CmdData(
+            tuple(args), command_template
+        )
         cmd_data.time = fprime.common.models.serialize.time_type.TimeType()
         cmd_data.time.set_datetime(datetime.datetime.now(), 2)
         self.coders.send_command(cmd_data)
@@ -139,6 +157,7 @@ class StandardPipeline(object):
     def dictionaries(self):
         """
         Get a dictionaries object
+
         :return: dictionaries composition
         """
         return self.__dictionaries
@@ -147,6 +166,7 @@ class StandardPipeline(object):
     def coders(self):
         """
         Get a coders object
+
         :return: coders composition
         """
         return self.__coders
@@ -155,6 +175,7 @@ class StandardPipeline(object):
     def histories(self):
         """
         Get a histories object
+
         :return: histories composition
         """
         return self.__histories
@@ -163,6 +184,7 @@ class StandardPipeline(object):
     def files(self):
         """
         Files member property
+
         :return: filing compositions
         """
         return self.__filing

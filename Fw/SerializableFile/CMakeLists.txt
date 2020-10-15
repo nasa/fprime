@@ -25,10 +25,10 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Test.cpp"
 )
 set(UT_MOD_DEPS
-  "${FPRIME_CORE_DIR}/Fw/SerializableFile"
-  "${FPRIME_CORE_DIR}/Fw/SerializableFile/test/TestSerializable"
-  "${FPRIME_CORE_DIR}/Fw/Types"
-  "${FPRIME_CORE_DIR}/Utils/Hash"
-  "${FPRIME_CORE_DIR}/Os"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/SerializableFile"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/SerializableFile/test/TestSerializable"
+  "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
+  "${FPRIME_FRAMEWORK_PATH}/Utils/Hash"
+  "${FPRIME_FRAMEWORK_PATH}/Os"
 )
 register_fprime_ut()

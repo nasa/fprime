@@ -2,12 +2,11 @@ import os
 import sys
 import unittest
 
+from fprime.common.models.serialize.time_type import TimeType
+
 filename = os.path.dirname(__file__)
 fprime_path = os.path.join(filename, "../../../../../src")
 sys.path.insert(0, fprime_path)
-
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.time_type import TimeBase
 
 
 class TimeTypeTestCases(unittest.TestCase):
@@ -87,7 +86,7 @@ class TimeTypeTestCases(unittest.TestCase):
         t3 = self.t0 + 3
         t15_1 = t3 - 1.5
         assert self.t15 == t15_1, "subtracting 1.5 from three gives 1.5"
-        t27 = t3 - .3
+        t27 = t3 - 0.3
         assert t27 == 2.7, "subtracting .3 from 3 equals 2.7"
         t15_1 = 3 - self.t15
         assert self.t15 == t15_1, "subtracting 1.5 from three gives 1.5"

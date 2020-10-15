@@ -1,5 +1,5 @@
-build
-build*
+build/
+build*/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
@@ -64,3 +64,14 @@ core
 py_dict
 .settings
 build-fprime-automatic*
+
+/Ref/bin
+/RPI/bin
+/ci-venv/
+/ci-logs*
+TesterBase.*
+GTestBase.*
+/Fw/Python/.eggs
+/Fw/Python/src/fprime.egg-info
+/Gds/src/fprime_gds.egg-info
+**/DefaultDict/serializable/*

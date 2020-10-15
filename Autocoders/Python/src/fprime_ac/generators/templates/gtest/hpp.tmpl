@@ -247,7 +247,7 @@ $emit_hpp_params($params_assert_size)
   };
 
 #if $namespace_list != None
-  #for $namespace in $namespace_list
+  #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
 
   #end for

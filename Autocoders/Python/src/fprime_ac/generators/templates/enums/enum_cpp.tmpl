@@ -25,12 +25,14 @@
 \#include "Fw/Types/Assert.hpp"
 \#include "${name}EnumAc.hpp"
 
+#if $namespace
 namespace ${namespace} {
+#end if
 
   // ----------------------------------------------------------------------
   // Constructors
   // ----------------------------------------------------------------------
-  
+
   ${name} :: ${name}(void):Serializable()
   {
     this->e = (t)0;
@@ -108,7 +110,7 @@ a == $item_value#slurp
 #end for
 , static_cast<t>(a));
 #else
-    FW_ASSERT(a >= 0 && a <= $max_value, static_cast<t>(a));
+    FW_ASSERT(a <= $max_value, static_cast<t>(a));
 #end if
     this->e = static_cast<t>(a);
     return *this;
@@ -159,4 +161,6 @@ a == $item_value#slurp
       this->e = static_cast<t>(es);
     return status;
   }
+#if $namespace
 }
+#end if

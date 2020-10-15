@@ -21,14 +21,9 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   MathSenderComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     MathSenderComponentImpl(
         const char *const compName
-    ) :
-      MathSenderComponentBase(compName)
-#else
-    MathSenderImpl(void)
-#endif
+    ) : MathSenderComponentBase(compName)
   {
 
   }

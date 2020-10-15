@@ -1,10 +1,12 @@
 #ifndef _Task_hpp_
 #define _Task_hpp_
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/TaskString.hpp>
+
+#include <Os/TaskId.hpp>
 
 namespace Os {
 
@@ -30,6 +32,7 @@ namespace Os {
             // Priority is based on Posix priorities - 0 lowest, 255 highest
             TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = -1); //!< start the task
             I32 getIdentifier(void); //!< get the identifier for the task
+            static TaskId getOsIdentifier(void); //Gets the Os Task ID. Useful for passive components.
 
             static TaskStatus delay(NATIVE_UINT_TYPE msecs); //!< delay the task
             static NATIVE_INT_TYPE getNumTasks(void);

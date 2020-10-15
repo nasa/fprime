@@ -112,7 +112,7 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
   };
 
 #if $namespace_list != None
-  #for $namespace in $namespace_list
+  #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
   #end for
 

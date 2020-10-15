@@ -41,13 +41,8 @@ namespace Svc {
             //!         to each member component. The index of the array corresponds to the
             //!         output port number.
             //!  \param numContexts The number of elements in the context array.
-
-#if FW_OBJECT_NAMES == 1        
             ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
-#else
-            ActiveRateGroupImpl(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
-#endif
-      
+
             //!  \brief ActiveRateGroupImpl initialization function
             //!
             //!  The initialization function of the class initializes the member

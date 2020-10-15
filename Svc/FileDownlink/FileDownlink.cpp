@@ -142,9 +142,9 @@ namespace Svc {
 
     const U32 fileSize = this->file.size;
     FW_ASSERT(byteOffset < fileSize, byteOffset);
-    const U16 maxDataSize = this->downlinkPacketSize;
-    const U16 dataSize = (byteOffset + maxDataSize > fileSize) ?
-      fileSize - byteOffset : maxDataSize;
+    const U16 maxDataSize = static_cast<U16>(this->downlinkPacketSize);
+    const U16 dataSize = static_cast<U16>((byteOffset + maxDataSize > fileSize) ?
+      fileSize - byteOffset : maxDataSize);
     U8 buffer[dataSize];
 
     const Os::File::Status status = 

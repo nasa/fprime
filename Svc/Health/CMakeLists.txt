@@ -16,7 +16,7 @@ register_fprime_module()
 # ### UTs ###
 ## **BROKEN UT**
 ##set(UT_SOURCE_FILES
-##  "${FPRIME_CORE_DIR}/Svc/Health/HealthComponentAi.xml"
+##  "${FPRIME_FRAMEWORK_PATH}/Svc/Health/HealthComponentAi.xml"
 ##  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 ##  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 ##)

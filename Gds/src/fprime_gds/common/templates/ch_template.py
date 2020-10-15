@@ -1,4 +1,4 @@
-'''
+"""
 @brief Channel Template class
 
 Instances of this class describe a specific telemetry channel (but not a channel
@@ -8,21 +8,33 @@ reading)
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
-from __future__ import absolute_import
+"""
+
+from fprime.common.models.serialize.type_base import BaseType
+from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 
 from . import data_template
 
-from fprime.common.models.serialize.type_base import *
-from fprime.common.models.serialize.type_exceptions import *
 
 class ChTemplate(data_template.DataTemplate):
-    '''Class for channel templates that describe specific telemetry channels'''
+    """Class for channel templates that describe specific telemetry channels"""
 
-    def __init__(self, ch_id, ch_name, comp_name, ch_type_obj, ch_fmt_str=None,
-                 ch_desc=None, low_red=None, low_orange=None, low_yellow=None,
-                 high_yellow=None, high_orange=None, high_red=None):
-        '''
+    def __init__(
+        self,
+        ch_id,
+        ch_name,
+        comp_name,
+        ch_type_obj,
+        ch_fmt_str=None,
+        ch_desc=None,
+        low_red=None,
+        low_orange=None,
+        low_yellow=None,
+        high_yellow=None,
+        high_orange=None,
+        high_red=None,
+    ):
+        """
         Constructor
 
         Args:
@@ -39,50 +51,49 @@ class ChTemplate(data_template.DataTemplate):
             high_yellow: (Optional) Above this the value will be in yellow alert
             high_orange: (Optional) Above this the value will be in orange alert
             high_red: (Optional) Above this the value will be in red alert
-        '''
+        """
+        super().__init__()
         # Make sure correct types are passed
-        # TODO do we need to do this check
-        if not type(ch_id) == type(int()):
-            raise TypeMismatchException(type(int()),type(ch_id))
+        if not isinstance(ch_id, int):
+            raise TypeMismatchException(int, type(ch_id))
 
-        if not type(ch_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_name))
+        if not isinstance(ch_name, str):
+            raise TypeMismatchException(str, type(ch_name))
 
-        if not type(comp_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(comp_name))
+        if not isinstance(comp_name, str):
+            raise TypeMismatchException(str, type(comp_name))
 
-        if not issubclass(type(ch_type_obj), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()),type(ch_type_obj))
+        if not isinstance(ch_type_obj, BaseType):
+            raise TypeMismatchException(BaseType, type(ch_type_obj))
 
-        if ch_fmt_str != None and not type(ch_fmt_str) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_fmt_str))
+        if ch_fmt_str is not None and not isinstance(ch_fmt_str, str):
+            raise TypeMismatchException(str, type(ch_fmt_str))
 
-        if ch_desc != None and not type(ch_desc) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_desc))
-
+        if ch_desc is not None and not isinstance(ch_desc, str):
+            raise TypeMismatchException(str, type(ch_desc))
 
         # Initialize event internal variables
-        self.id          = ch_id
-        self.name        = ch_name
-        self.comp_name   = comp_name
-        self.ch_desc     = ch_desc
+        self.id = ch_id
+        self.name = ch_name
+        self.comp_name = comp_name
+        self.ch_desc = ch_desc
         self.ch_type_obj = ch_type_obj
-        self.fmt_str     = ch_fmt_str
-        self.low_red     = low_red
-        self.low_orange  = low_orange
-        self.low_yellow  = low_yellow
+        self.fmt_str = ch_fmt_str
+        self.low_red = low_red
+        self.low_orange = low_orange
+        self.low_yellow = low_yellow
         self.high_yellow = high_yellow
         self.high_orange = high_orange
-        self.high_red    = high_red
+        self.high_red = high_red
 
     def get_full_name(self):
-        '''
+        """
         Get the full name of this channel
 
         Returns:
             The full name (component.channel) for this channel
-        '''
-        return ("%s.%s"%(self.comp_name, self.name))
+        """
+        return "{}.{}".format(self.comp_name, self.name)
 
     def get_id(self):
         return self.id
@@ -119,8 +130,3 @@ class ChTemplate(data_template.DataTemplate):
 
     def get_high_red(self):
         return self.high_red
-
-
-if __name__ == '__main__':
-    pass
-

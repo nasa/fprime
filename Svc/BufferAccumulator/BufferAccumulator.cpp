@@ -20,18 +20,14 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   BufferAccumulator ::
-#if FW_OBJECT_NAMES == 1
       BufferAccumulator(const char *const compName) :
-          BufferAccumulatorComponentBase(compName), //!< The component name
-#else
-      BufferAccumulator() : BufferAccumulatorComponentBase(),
-#endif
-      mode(DRAIN),
-      bufferMemory(NULL),
-      bufferQueue(),
-      send(true),
-      numWarnings(0),
-      allocatorId(0)
+        BufferAccumulatorComponentBase(compName),
+        mode(DRAIN),
+        bufferMemory(NULL),
+        bufferQueue(),
+        send(true),
+        numWarnings(0),
+        allocatorId(0)
   {
 
   }
