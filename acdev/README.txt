@@ -1,1 +1,0 @@
-This directory is here simply to create a "deployment" to compile the Autocoder tests.
