@@ -107,11 +107,12 @@ endfunction(setup_module_target)
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** module dependencies of the target
 ####
-function(setup_all_module_targets MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
-    foreach(ITEM ${FPRIME_TARGET_LIST})
+function(setup_all_module_targets TARGET_LIST MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+    foreach(ITEM ${${TARGET_LIST}})
         setup_module_target(${MODULE_NAME} ${ITEM} "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
-    endforeach(ITEM ${FPRIME_TARGET_LIST})
+    endforeach(ITEM ${${TARGET_LIST}})
 endfunction(setup_all_module_targets)
+
 #### Documentation links
 # See Also:
 #  - API: [API](../API.md) describes the `register_fprime_target` function
