@@ -23,7 +23,7 @@ then
 fi
 
 #### NEEDED ENVIRONMENT ####
-export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
+export FPRIME_DIR="$(cd ${SCRIPT_DIR}/..; pwd)"
 export LOG_DIR="${FPRIME_DIR}/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
