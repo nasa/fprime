@@ -41,7 +41,8 @@ The API documentation section contains the automatically generated documentation
     - [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](user/enum-arr-ser.md)
     - [Data Constructs: Commands, Events, Channels, and Parameters](user/cmd-evt-chn-prm.md)
 - F´ Best Practices: helpful patterns when developing F´ software
-    - [A Quick Look At the Hub Pattern](./best/hub-pattern.md)
+    - [F´ Development Process](./best/development-practice.md)
+    - [Application, Manager, Driver Pattern](./best/app-man-drv.md)
     - [Rate Groups and Timeliness](./best/rate-group.md)
     - [A Quick Look at the Hub Pattern](./best/hub-pattern.md)
 - F´ Ground Data System Tools (GDS) 
