@@ -1,9 +1,0 @@
-PTF - Python Test Framework
-
-*NOTE* - This is in the process of being updated, so many features are still nonworking
-
-Here is what can be used:
-
-Unit Testing:
-
-Look at suites/fw_unit_tests.suite for an example of how to write a unit test suite.
