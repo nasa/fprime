@@ -1,6 +1,0 @@
-
-# Comment only if first character
-"ENV1 Test script" $(MSL_ROOT)/ptf/tests/framework_tests/EnvDumper.py $(MSL_ROOT)/ptf/tests/framework_tests/env1.env # A comment
-"ENV2 Test script" $(MSL_ROOT)/ptf/tests/framework_tests/EnvDumper.py $(MSL_ROOT)/ptf/tests/framework_tests/env2.env $(MSL_ROOT)/ptf/tests/framework_tests/env2a.env # A comment
-$(MSL_ROOT)/ptf/tests/framework_tests/EnvDumper.py $(MSL_ROOT)/ptf/tests/framework_tests/env3.env # A comment
-"Bad description" $(MSL_ROOT)/ptf/tests/framework_tests/EnvDumper.py $(MSL_ROOT)/ptf/tests/framework_tests/env3.env # A comment
