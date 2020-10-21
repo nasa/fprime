@@ -33,7 +33,7 @@ namespace Fw {
         queueName = this->m_objName;
 #else
         char queueNameChar[FW_QUEUE_NAME_MAX_SIZE];
-        (void)snprintf(queueNameChar,sizeof(queueNameChar),"CompQ_%d",Os::Queue::getNumQueues());
+        (void)snprintf(queueNameChar,sizeof(queueNameChar),"CompQ_%d",this->m_queue.getNumQueues());
         queueName = queueNameChar;
 #endif
     	return this->m_queue.create(queueName, depth, msgSize);
