@@ -53,6 +53,8 @@ register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/package_gen.cmake")
+
 # Must always include the F prime core directory, as its headers are relative to
 # that directory. Same with the project directory for separated projects.
 include_directories("${FPRIME_PROJECT_ROOT}")

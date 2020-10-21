@@ -19,7 +19,6 @@ EXPECTED = [
     ),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_Time.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libSvc_FileManager.a"),
-    os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libSvc_PolyDb.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libRef_SendBuffApp.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_FilePacket.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libSvc_Ping.a"),
@@ -46,10 +45,6 @@ EXPECTED = [
     ),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_Com.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libDrv_DataTypes.a"),
-    os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libSvc_ComLogger.a"),
-    os.path.join(
-        BUILD_DIR, "lib", "static", platform.system(), "libFw_SerializableFile.a"
-    ),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_Buffer.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_Comp.a"),
     os.path.join(
@@ -65,11 +60,9 @@ EXPECTED = [
     os.path.join(
         BUILD_DIR, "lib", "static", platform.system(), "libSvc_AssertFatalAdapter.a"
     ),
-    os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libSvc_PolyIf.a"),
     os.path.join(
         BUILD_DIR, "lib", "static", platform.system(), "libSvc_FileDownlink.a"
     ),
-    os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_ComFile.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libRef_RecvBuffApp.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libSvc_Time.a"),
     os.path.join(BUILD_DIR, "lib", "static", platform.system(), "libFw_Cfg.a"),
@@ -91,5 +84,5 @@ EXPECTED = [
         "libSvc_PassiveConsoleTextLogger.a",
     ),
 ]
-TARGETS = ["install"]
+TARGETS = ["package_gen"]
 cmake.register_test(__name__, "install-test")

@@ -601,5 +601,6 @@ BUILD_TARGETS = [
         "install",
         "Install the current deployment build artifacts",
         build_types=[BuildType.BUILD_NORMAL],
+        cmake="package_gen",
     ),
 ]
