@@ -26,7 +26,7 @@ do
         cmake --build . --target all -- -j31 || fail_and_stop "Failed to do basic CMake build"
         ctest ${CTEST_ARGS} || fail_and_stop "Failed to run unit-tests"
     )
-    rm -r "${BUILD_DIR}"
+    rm -rf "${BUILD_DIR}"
 done
 
 
