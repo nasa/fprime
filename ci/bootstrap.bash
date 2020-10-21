@@ -10,7 +10,7 @@
 export USABLE_VENV="${FPRIME_DIR}/ci-venv"
 echo -e "${BLUE}Preparing VENV at: ${USABLE_VENV}${NOCOLOR}"
 deactivate
-rm -r "${USABLE_VENV}"
+rm -rf "${USABLE_VENV}"
 python3 -m venv "${USABLE_VENV}" || fail_and_stop "Failed to create VENV"
 . "${USABLE_VENV}/bin/activate" || fail_and_stop "Failed to source VENV"
 echo -e "Installing PIP Packages"

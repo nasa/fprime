@@ -12,6 +12,6 @@
 #ifndef STEST_TESTING_HPP
 #define STEST_TESTING_HPP
 
-#include "gtest/include/gtest/gtest.h"
+#include "include/gtest/gtest.h"
 
 #endif

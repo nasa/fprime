@@ -119,7 +119,7 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Link modules
     target_link_libraries(
         "${UT_EXE_NAME}"
-        "${GTEST_TARGET}"
+        "gtest_main"
         "-lpthread" #TODO: fix this
     )
     # Add test and dependencies to the "check" target
