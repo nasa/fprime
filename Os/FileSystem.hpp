@@ -1,7 +1,7 @@
 #ifndef _FileSystem_hpp_
 #define _FileSystem_hpp_
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/EightyCharString.hpp>
 
@@ -28,10 +28,11 @@ namespace Os {
 
 		Status createDirectory(const char* path); //!<  create a new directory at location path
 		Status removeDirectory(const char* path); //!<  remove a directory at location path
-		Status readDirectory(const char* path,  const U32 maxNum, Fw::EightyCharString fileArray[], U32& numFiles);	//!< read the contents of a directory.  Size of fileArray should be maxNum.
+		Status readDirectory(const char* path,  const U32 maxNum, Fw::EightyCharString fileArray[], U32& numFiles);	//!< read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implentation found in Directory.hpp
 		Status removeFile(const char* path); //!< removes a file at location path
 		Status moveFile(const char* originPath, const char* destPath); //! moves a file from origin to destination
 		Status copyFile(const char* originPath, const char* destPath); //! copies a file from origin to destination
+		Status appendFile(const char* originPath, const char* destPath, bool createMissingDest=false); //! append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.
 		Status getFileSize(const char* path, U64& size); //!< gets the size of the file (in bytes) at location path
 		Status getFileCount(const char* directory, U32& fileCount); //!< counts the number of files in the given directory
 		Status changeWorkingDirectory(const char* path); //!<  move current directory to path

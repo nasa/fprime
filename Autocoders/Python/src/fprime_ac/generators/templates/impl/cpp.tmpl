@@ -25,14 +25,9 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   ${name}ComponentImpl ::
-\#if FW_OBJECT_NAMES == 1
     ${name}ComponentImpl(
 $emit_non_port_params([ $param_compName ])
-    ) :
-      ${component_base}(compName)
-\#else
-    ${name}ComponentImpl(void)
-\#endif
+    ) : ${component_base}(compName)
   {
 
   }
@@ -109,7 +104,7 @@ $emit_non_port_params([ $param_opCode, $param_cmdSeq ] + $params)
   #end for
 #end if
 #if $namespace_list != None
-  #for $namespace in $namespace_list
+  #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
   #end for
 #end if

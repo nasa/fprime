@@ -15,7 +15,7 @@ register_fprime_module()
 # UTs ###
 ## **BROKEN UT**
 ##set(UT_SOURCE_FILES
-##  "${FPRIME_CORE_DIR}/Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml"
+##  "${FPRIME_FRAMEWORK_PATH}/Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml"
 ##  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 ##  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 ##)

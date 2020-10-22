@@ -1,7 +1,7 @@
 ####
 # Target.cmake:
 #
-# Functions supporting the F prime target additions. These targets allow building agains modules
+# Functions supporting the F prime target additions. These targets allow building against modules
 # and top-level targets. This allows for multi-part builds like `sloc` or `dict` where some part
 # applies to the module and is rolled up into some global command. Target files must define two
 # functions `add_module_target` and `add_global_target`.
@@ -29,6 +29,7 @@
 #  - **AC_INPUTS:** list of autocoder inputs. These are Ai.xml files
 #  - **SOURCE_FILES:** list of source file inputs. These are handwritten *.cpp and *.hpp.
 #  - **AC_OUTPUTS:** list of autocoder outputs. These are Ac.cpp and Ac.hpp files.
+#  - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 ####
 
 ####
@@ -85,12 +86,13 @@ endfunction(setup_global_target)
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
+# - **MOD_DEPS:** module dependencies of the target
 ####
 function(setup_module_target MODULE_NAME TARGET_FILE_PATH AC_INPUTS SOURCE_FILES AC_OUTPUTS)
 	# Include the file and look for definitions
     include("${TARGET_FILE_PATH}")
     get_target_name("${TARGET_FILE_PATH}")
-    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}")
+    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
 endfunction(setup_module_target)
 
 ####
@@ -103,10 +105,11 @@ endfunction(setup_module_target)
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
+# - **MOD_DEPS:** module dependencies of the target
 ####
-function(setup_all_module_targets MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS)
+function(setup_all_module_targets MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
     foreach(ITEM ${FPRIME_TARGET_LIST})
-        setup_module_target(${MODULE_NAME} ${ITEM} "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}")
+        setup_module_target(${MODULE_NAME} ${ITEM} "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
         get_target_name("${ITEM}")
         if (TARGET "${MODULE_NAME}_${TARGET_NAME}" AND TARGET "${TARGET_NAME}")
             add_dependencies("${TARGET_NAME}" "${MODULE_NAME}_${TARGET_NAME}")

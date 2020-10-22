@@ -1,6 +1,5 @@
-<title>Fw::Cmd/Fw::CmdResponse/Fw::CmdReg Port SDD</title>
-
-# Fw::Cmd/Fw::CmdResponse/Fw::CmdReg
+\page FwCmdFwCmdResponseCmdReg Fw::Cmd / Fw::CmdResponse /Fw::CmdReg Ports
+# Fw::Cmd / Fw::CmdResponse /Fw::CmdReg Ports
 
 ## 1. Introduction
 

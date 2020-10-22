@@ -14,7 +14,7 @@
 #define TELEMCHANIMPL_HPP_
 
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
-#include <Svc/TlmChan/TlmChanImplCfg.hpp>
+#include <TlmChanImplCfg.hpp>
 #include <Os/Mutex.hpp>
 #include <Fw/Tlm/TlmPacket.hpp>
 
@@ -23,11 +23,7 @@ namespace Svc {
     class TlmChanImpl: public TlmChanComponentBase {
         public:
             friend class TlmChanImplTester;
-    #if FW_OBJECT_NAMES == 1
             TlmChanImpl(const char* compName);
-    #else
-            TlmChanImpl();
-    #endif
             virtual ~TlmChanImpl();
             void init(
                     NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/

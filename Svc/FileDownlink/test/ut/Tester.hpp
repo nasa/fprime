@@ -254,6 +254,10 @@ namespace Svc {
       //!
       U32 sequenceIndex;
 
+      //! A list of data buffers used by the tests (so we can free them)
+      //!
+      std::vector<U8*> downlinkDataBuffers;
+
   };
 
 } // end namespace Svc

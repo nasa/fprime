@@ -9,8 +9,6 @@ This build system is intended to replace the legacy F´ build system which is di
 and maintain.  The legacy F´ build system had was inherited from the JPL Mars Science Laboratory
 mission and created over 10 years ago.
 
-**Note:** for usage instructions and user documentation see: ![README.md](../README.md "README.md").
-
 ## 1.1 Definitions
 
 These terms have specific meaning in this SDD. This table gives a quick reference for the reader.
@@ -370,21 +368,6 @@ generation and the other which wraps it. `register_*` functions are the API wrap
 
 **Note:** colors are inherited from above diagrams. Red items are output products, and purple items
 represent execution steps.
-
-A complete list of documentation pages can be found at:
-
-1. [API](API.md): standard user-level functions.
-2. [Options](Options.md): options to affect the build setup.
-3. [Targets](targets/Targets.md) describes built in support targets like `dict`
-4. [platform](platform.md): F´ platform setup documentation and how and creation.
-5. [toolchain](toolchain.md): CMake toolchain setup documentation and creation.
-6. [module](module.md): adding modules to the CMake sytem.
-7. [deployment](deployment.md): adding deployment to the CMake system.
-8. [Support/Module](support/Module.md): detailed inner documentation on module functions
-9. [Support/Executable](support/Executable.md): detailed inner documentation on executable functions.
-10. [Support/Unit-Test](support/Unit_Test.md): detailed inner documentation on unit test functions.
-11. [Support/Utils](support/Utils.md): detailed inner documentation on utility functions.
-12. [Support/AC-Utils](support/AC_Utils.md): detailed innner documentation on AC utility functions.
 
 ### 5.1 Module Functions: register_fprime_module and generate_module
 

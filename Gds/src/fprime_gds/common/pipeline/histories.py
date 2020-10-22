@@ -9,7 +9,7 @@ to compose in this code.
 import fprime_gds.common.history.ram
 
 
-class Histories(object):
+class Histories:
     """
     Class to handle the individual histories. This handles the following histories:
 
@@ -17,6 +17,7 @@ class Histories(object):
     2. Event history
     3. Command history (short-circuited feedback from encoder)
     """
+
     def __init__(self):
         """ Constructor of histories composer """
         self._command_hist = None
@@ -27,6 +28,7 @@ class Histories(object):
         """
         Setup a set of history objects in order to store the events of the decoders. This registers itself with the
         supplied coders object.
+
         :param coders: coders object to register histories with
         """
         # Create histories, RAM histories for now

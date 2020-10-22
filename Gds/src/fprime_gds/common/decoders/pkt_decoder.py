@@ -1,4 +1,4 @@
-'''
+"""
 @brief Packet Decoder class used to parse binary packetized telemetry data
 
 Decoders are responsible for taking in serialized data and parsing it into
@@ -15,20 +15,20 @@ Example data that would be sent to a decoder that parses events or channels:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
-from __future__ import print_function
+"""
 
-from fprime_gds.common.decoders.ch_decoder import ChDecoder
-from fprime_gds.common.data_types.pkt_data import PktData
-from fprime_gds.common.data_types.ch_data import ChData
-from fprime.common.models.serialize.u16_type import U16Type
 from fprime.common.models.serialize.time_type import TimeType
+from fprime.common.models.serialize.numerical_types import U16Type
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.data_types.pkt_data import PktData
+from fprime_gds.common.decoders.ch_decoder import ChDecoder
+
 
 class PktDecoder(ChDecoder):
-    '''Decoder class for Packetized Telemetry data'''
+    """Decoder class for Packetized Telemetry data"""
 
     def __init__(self, pkt_name_dict, ch_dict):
-        '''
+        """
         Constructor
 
         Args:
@@ -39,14 +39,13 @@ class PktDecoder(ChDecoder):
 
         Returns:
             An initialized PktDecoder object
-        '''
-        # TODO: we don't actually use this channel dictionary since the ch_temp objects are from the pkt dict
-        super(PktDecoder, self).__init__(ch_dict)
+        """
+        super().__init__(ch_dict)
 
         self.__dict = pkt_name_dict
 
     def decode_api(self, data):
-        '''
+        """
         Decodes the given data and returns the result.
 
         This function allows for non-registered code to call the same decoding
@@ -58,7 +57,7 @@ class PktDecoder(ChDecoder):
         Returns:
             Parsed version of the input data in the form of a PktData object
             or None if the data is not decodable
-        '''
+        """
         ptr = 0
 
         # Decode Pkt ID here...
@@ -74,10 +73,13 @@ class PktDecoder(ChDecoder):
 
         if pkt_id not in self.__dict:
             # Don't crash if can't find pkt. Just notify and keep going
-            print("Packet decode error: id %d not in dictionary. Time=%s"%(pkt_id, pkt_time.to_readable()))
+            print(
+                "Packet decode error: id %d not in dictionary. Time=%s"
+                % (pkt_id, pkt_time.to_readable())
+            )
             print("Full pkt = \n")
             for i in data:
-                print("0x%02x"%ord(i))
+                print("0x%02x" % ord(i))
 
             return None
 

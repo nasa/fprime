@@ -7,23 +7,24 @@ telemetry and dictionaries.
 
 :author: koran
 """
-import time
 import signal
-
-from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.history.test import TestHistory
-from fprime_gds.common.logger.test_logger import TestLogger
-from fprime_gds.common.utils.event_severity import EventSeverity
-from fprime_gds.common.history.chrono import ChronologicalHistory
+import time
 
 from fprime.common.models.serialize.time_type import TimeType
 from fprime_gds.common.handlers import DataHandler
+from fprime_gds.common.history.chrono import ChronologicalHistory
+from fprime_gds.common.history.test import TestHistory
+from fprime_gds.common.logger.test_logger import TestLogger
+from fprime_gds.common.testing_fw import predicates
+from fprime_gds.common.utils.event_severity import EventSeverity
+
 
 class IntegrationTestAPI(DataHandler):
     """
     A value used to begin searches after the current contents in a history and only search future
     items
     """
+
     NOW = "NOW"
 
     def __init__(self, pipeline, logpath=None, fsw_order=True):
@@ -213,7 +214,6 @@ class IntegrationTestAPI(DataHandler):
         """
         self.event_log_filter = self.get_event_pred(event, args, severity, time_pred)
 
-
     ######################################################################################
     #   History Functions
     ######################################################################################
@@ -337,19 +337,22 @@ class IntegrationTestAPI(DataHandler):
                 msg = "The command id, {}, wasn't in the dictionary".format(command)
                 raise KeyError(msg)
 
-    def send_command(self, command, args=[]):
+    def send_command(self, command, args=None):
         """
         Sends the specified command.
         Args:
             command: the mnemonic (str) or ID (int) of the command to send
             args: a list of command arguments.
         """
+        if args is None:
+            args = []
+
         msg = "Sending Command: {} {}".format(command, args)
         self.__log(msg, TestLogger.PURPLE)
         command = self.translate_command_name(command)
         self.pipeline.send_command(command, args)
 
-    def send_and_await_telemetry(self, command, args=[], channels=[], timeout=5):
+    def send_and_await_telemetry(self, command, args=None, channels=None, timeout=5):
         """
         Sends the specified command and awaits the specified channel update or sequence of
         updates. See await_telemetry and await_telemetry_sequence for full details.
@@ -365,6 +368,11 @@ class IntegrationTestAPI(DataHandler):
         Returns:
             The channel update or updates found by the search
         """
+        if args is None:
+            args = []
+        if channels is None:
+            channels = []
+
         start = self.telemetry_history.size()
         self.send_command(command, args)
         if isinstance(channels, list):
@@ -372,7 +380,7 @@ class IntegrationTestAPI(DataHandler):
         else:
             return self.await_telemetry(channels, start=start, timeout=timeout)
 
-    def send_and_await_event(self, command, args=[], events=[], timeout=5):
+    def send_and_await_event(self, command, args=None, events=None, timeout=5):
         """
         Sends the specified command and awaits the specified event message or sequence of
         messages. See await_event and await event sequence for full details.
@@ -388,6 +396,11 @@ class IntegrationTestAPI(DataHandler):
         Returns:
             The event or events found by the search
         """
+        if args is None:
+            args = []
+        if events is None:
+            events = []
+
         start = self.event_history.size()
         self.send_command(command, args)
         if isinstance(events, list):
@@ -398,7 +411,7 @@ class IntegrationTestAPI(DataHandler):
     ######################################################################################
     #   Command Asserts
     ######################################################################################
-    def send_and_assert_telemetry(self, command, args=[], channels=[], timeout=5):
+    def send_and_assert_telemetry(self, command, args=None, channels=None, timeout=5):
         """
         Sends the specified command and asserts on the specified channel update or sequence of
         updates. See await_telemetry and await_telemetry_sequence for full details.
@@ -414,14 +427,21 @@ class IntegrationTestAPI(DataHandler):
         Returns:
             The channel update or updates found by the search
         """
+        if args is None:
+            args = []
+        if channels is None:
+            channels = []
+
         start = self.telemetry_history.size()
         self.send_command(command, args)
         if isinstance(channels, list):
-            return self.assert_telemetry_sequence(channels, start=start, timeout=timeout)
+            return self.assert_telemetry_sequence(
+                channels, start=start, timeout=timeout
+            )
         else:
             return self.assert_telemetry(channels, start=start, timeout=timeout)
 
-    def send_and_assert_event(self, command, args=[], events=[], timeout=5):
+    def send_and_assert_event(self, command, args=None, events=None, timeout=5):
         """
         Sends the specified command and asserts on the specified event message or sequence of
         messages. See assert_event and assert event sequence for full details.
@@ -436,6 +456,11 @@ class IntegrationTestAPI(DataHandler):
         Returns:
             The event or events found by the search
         """
+        if args is None:
+            args = []
+        if events is None:
+            events = []
+
         start = self.event_history.size()
         self.send_command(command, args)
         if isinstance(events, list):
@@ -615,7 +640,9 @@ class IntegrationTestAPI(DataHandler):
             the ChData object found during the search
         """
         pred = self.get_telemetry_pred(channel, value, time_pred)
-        result = self.await_telemetry(channel, value, time_pred, history, start, timeout)
+        result = self.await_telemetry(
+            channel, value, time_pred, history, start, timeout
+        )
         msg = "checks if item search found a correct update"
         self.__assert_pred("Telemetry received", pred, result, msg)
         return result
@@ -736,7 +763,14 @@ class IntegrationTestAPI(DataHandler):
         return predicates.event_predicate(event, args, severity, time_pred)
 
     def await_event(
-        self, event, args=None, severity=None, time_pred=None, history=None, start="NOW", timeout=5
+        self,
+        event,
+        args=None,
+        severity=None,
+        time_pred=None,
+        history=None,
+        start="NOW",
+        timeout=5,
     ):
         """
         A search for a single event message received. By default, the call will only await until a
@@ -827,7 +861,14 @@ class IntegrationTestAPI(DataHandler):
     #   Event Asserts
     ######################################################################################
     def assert_event(
-        self, event, args=None, severity=None, time_pred=None, history=None, start=None, timeout=0
+        self,
+        event,
+        args=None,
+        severity=None,
+        time_pred=None,
+        history=None,
+        start=None,
+        timeout=0,
     ):
         """
         An assert on a single event message received. If the history doesn't have the
@@ -911,7 +952,6 @@ class IntegrationTestAPI(DataHandler):
         def __init__(self):
             self.ret_val = None
             self.repeats = False
-            raise NotImplementedError()
 
         def search_current_history(self, items):
             """
@@ -945,7 +985,6 @@ class IntegrationTestAPI(DataHandler):
         """
         This exception is used by the history searches to signal the end of the timeout.
         """
-        pass
 
     def __timeout_sig_handler(self, signum, frame):
         raise self.TimeoutException()
@@ -1037,6 +1076,7 @@ class IntegrationTestAPI(DataHandler):
 
         class __ItemSearcher(self.__HistorySearcher):
             def __init__(self, log, search_pred):
+                super().__init__()
                 self.log = log
                 self.search_pred = search_pred
                 self.repeats = False
@@ -1085,6 +1125,7 @@ class IntegrationTestAPI(DataHandler):
 
         class __SequenceSearcher(self.__HistorySearcher):
             def __init__(self, log, seq_preds):
+                super().__init__()
                 self.log = log
                 self.ret_val = []
                 self.seq_preds = seq_preds.copy()
@@ -1145,11 +1186,12 @@ class IntegrationTestAPI(DataHandler):
 
         class __CountSearcher(self.__HistorySearcher):
             def __init__(self, log, count, search_pred):
+                super().__init__()
                 self.log = log
                 self.ret_val = []
                 if predicates.is_predicate(count):
                     self.count_pred = count
-                else: 
+                else:
                     self.count_pred = predicates.equal_to(count)
                 self.search_pred = search_pred
                 self.repeats = False
@@ -1212,10 +1254,9 @@ class IntegrationTestAPI(DataHandler):
         """
         if not isinstance(message, str):
             message = str(message)
-        if self.logger is None:
-            print("[{}] {}".format(sender, message))
-        else:
+        if self.logger:
             self.logger.log_message(message, sender, color, style, case_id)
+        # TODO: Re-add way of printing to console?
 
     def __assert_pred(self, name, predicate, value, msg="", expect=False):
         """
@@ -1247,23 +1288,20 @@ class IntegrationTestAPI(DataHandler):
                 self.__log(ast_msg, TestLogger.ORANGE)
             return False
 
-    def data_callback(self, data_object, sender=None):
+    def data_callback(self, data, sender=None):
         """
         Data callback used by the api to log events and detect when they are received out of order.
         Args:
-            data_object: object to store
+            data: object to store
         """
-        if self.event_log_filter(data_object):
-            msg = "Received EVR: {}".format(data_object.get_str(verbose=True))
+        if self.event_log_filter(data):
+            msg = "Received EVR: {}".format(data.get_str(verbose=True))
             self.__log(msg, TestLogger.BLUE, sender="GDS")
-        if (
-            self.last_evr is not None
-            and data_object.get_time() < self.last_evr.get_time()
-        ):
+        if self.last_evr is not None and data.get_time() < self.last_evr.get_time():
             msg = "API detected out of order evrs!"
             msg = msg + "\nReceived First:{}".format(
                 self.last_evr.get_str(verbose=True)
             )
-            msg = msg + "\nReceived Second:{}".format(data_object.get_str(verbose=True))
+            msg = msg + "\nReceived Second:{}".format(data.get_str(verbose=True))
             self.__log(msg, TestLogger.ORANGE)
-        self.last_evr = data_object
+        self.last_evr = data

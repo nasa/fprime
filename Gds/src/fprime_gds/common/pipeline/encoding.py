@@ -6,16 +6,17 @@ and decoding into a single component that the be composed into the standard pipe
 
 @mstarch
 """
-# Encoders and Decoders
-import fprime_gds.common.encoders.file_encoder
-import fprime_gds.common.encoders.cmd_encoder
+import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.event_decoder
 import fprime_gds.common.decoders.file_decoder
-import fprime_gds.common.decoders.ch_decoder
 import fprime_gds.common.decoders.pkt_decoder
+import fprime_gds.common.encoders.cmd_encoder
+
+# Encoders and Decoders
+import fprime_gds.common.encoders.file_encoder
 
 
-class EncodingDecoding(object):
+class EncodingDecoding:
     """
     Sets up and runs the encoding and decoding for the standard pipeline. This include the following encoders and
     decoders for standard setups:
@@ -26,6 +27,7 @@ class EncodingDecoding(object):
     4. Command encoding
     5. File encoding
     """
+
     def __init__(self):
         """
         Setup the encoders and decoder member variables.
@@ -45,19 +47,25 @@ class EncodingDecoding(object):
         dictionaries needed for the decoders to work correctly. This will register then register the decoders with a
         supplied distributor to handle known types with the known decoders. Lastly, the sender will be registered to the
         encoder to handle the encoded data going out.
+
         :param dictionaries: a dictionaries handling object holding dictionaries
         :param distributor: distributor of data to register to
         """
         # Create encoders and decoders using dictionaries
         self.file_encoder = fprime_gds.common.encoders.file_encoder.FileEncoder()
         self.command_encoder = fprime_gds.common.encoders.cmd_encoder.CmdEncoder()
-        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(dictionaries.event_id)
-        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(dictionaries.channel_id)
+        self.event_decoder = fprime_gds.common.decoders.event_decoder.EventDecoder(
+            dictionaries.event_id
+        )
+        self.channel_decoder = fprime_gds.common.decoders.ch_decoder.ChDecoder(
+            dictionaries.channel_id
+        )
         self.file_decoder = fprime_gds.common.decoders.file_decoder.FileDecoder()
         self.packet_decoder = None
         if dictionaries.packet is not None:
-            self.packet_decoder = fprime_gds.common.loaders.pkt_decoder.PktDecoder(dictionaries.packet,
-                                                                                   dictionaries.channel_id)
+            self.packet_decoder = fprime_gds.common.decoders.pkt_decoder.PktDecoder(
+                dictionaries.packet, dictionaries.channel_id
+            )
         # Register client socket to encoder
         self.command_encoder.register(sender)
         self.file_encoder.register(sender)
@@ -73,6 +81,7 @@ class EncodingDecoding(object):
         """
         Sends a command to the registered command encoder, and further down the stream. Note: this contains a local
         loopback to any command consumers to ensure that histories and logging are updated.
+
         :param command: command object to send
         """
         for loopback in self.command_subscribers:
@@ -82,6 +91,7 @@ class EncodingDecoding(object):
     def register_event_consumer(self, consumer):
         """
         Registers a history with the event decoder.
+
         :param consumer: consumer of events
         """
         self.event_decoder.register(consumer)
@@ -90,6 +100,7 @@ class EncodingDecoding(object):
         """
         Removes a history from the event decoder. Will raise an error if the history was not
         previously registered.
+
         :param consumer: consumer of events
         :return: a boolean indicating if the consumer was removed.
         """
@@ -98,6 +109,7 @@ class EncodingDecoding(object):
     def register_channel_consumer(self, consumer):
         """
         Registers a history with the telemetry decoder.
+
         :param consumer: consumer of channels
         """
         self.channel_decoder.register(consumer)
@@ -106,6 +118,7 @@ class EncodingDecoding(object):
         """
         Removes a history from the telemetry decoder. Will raise an error if the history was not
         previously registered.
+
         :param consumer: consumer of channels
         :return: a boolean indicating if the consumer was removed.
         """
@@ -114,6 +127,7 @@ class EncodingDecoding(object):
     def register_command_consumer(self, consumer):
         """
         Registers a history with the standard pipeline.
+
         :param consumer: consumer of commands
         """
         self.command_subscribers.append(consumer)
@@ -122,6 +136,7 @@ class EncodingDecoding(object):
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+
         :param consumer: consumer of commands
         :return: a boolean indicating if the consumer was removed.
         """
@@ -134,14 +149,17 @@ class EncodingDecoding(object):
     def register_packet_consumer(self, consumer):
         """
         Registers a history with the standard pipeline.
+
         :param consumer: consumer of packets
         """
-        self.command_subscribers.append(consumer)
+        if self.packet_decoder is not None:
+            self.packet_decoder.register(consumer)
 
-    def register_packet_consumer(self, consumer):
+    def deregister_packet_consumer(self, consumer):
         """
         Removes a history that is subscribed to command data. Will raise an error if the history
         was not previously registered.
+
         :param consumer: consumer of packets
         :return: a boolean indicating if the consumer was removed.
         """

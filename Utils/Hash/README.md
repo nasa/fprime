@@ -1,5 +1,5 @@
-Utils/Hash
-==========
+\page UtilsHashClass Utils::Hash Class
+# Utils::Hash
 
 This directory contains a generic interface for creating hashes 
 of data. It provides a mechanism for selecting different implementations
@@ -18,8 +18,7 @@ hash using the openssl library. Another implementation is also provided which ca
 
 A specific implementation can be selecting by modifying the `HashConfig.hpp` file.
 
-Using `hash`
------------
+## Using `hash`
 
 The generic hash interface includes only 4 methods besides the constructor/destructor. A 
 description of each method is included below:
@@ -39,8 +38,7 @@ the last `init` was run. It returns the hash in `buffer`, which is a `HashBuffer
 collected all the data that you want to hash into a buffer `data` with length `len`, you can use this static function
 to calculate the hash all at once. The computed hash is returned in `buffer`, which is a `HashBuffer` object.
 
-Configuring `hash`
-------------------
+## Configuring `hash`
 
 To configure the `hash` utility to use a specific hashing implementation, modify `HashConfig.hpp` to include 
 the header file of the implementation you wish to use. For example, to use SHA256 hashing, your `HashConfig.hpp` 
@@ -55,8 +53,7 @@ should look something like:
 #endif
 ```
 
-Building your own `hash` implementation
----------------------------------------
+## Building your own `hash` implementation
 
 The generic interface to `hash` can be implemented using many different hashing algorithms. To construct your own 
 please look at the SHA256 implementation as an example, found in the `openssl` subdirectory. Your implementation

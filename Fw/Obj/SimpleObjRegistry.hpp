@@ -16,8 +16,10 @@
  * acknowledged.
  *
  */
+#ifndef FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
+#define FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
@@ -44,3 +46,4 @@ namespace Fw {
 
 #endif // FW_OBJECT_REGISTRATION
 
+#endif // FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP

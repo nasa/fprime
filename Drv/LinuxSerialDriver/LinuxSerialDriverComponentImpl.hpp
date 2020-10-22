@@ -14,7 +14,7 @@
 #define LinuxSerialDriver_HPP
 
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentAc.hpp>
-#include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImplCfg.hpp>
+#include <LinuxSerialDriverComponentImplCfg.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Drv {
@@ -32,11 +32,7 @@ namespace Drv {
       //! Construct object LinuxSerialDriver
       //!
       LinuxSerialDriverComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
-#else
-          void
-#endif
       );
 
       //! Initialize object LinuxSerialDriver

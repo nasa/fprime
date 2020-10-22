@@ -12,6 +12,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp"
 )
 set(MOD_DEPS
+  Os
   Fw/Logger
 )
 register_fprime_module()

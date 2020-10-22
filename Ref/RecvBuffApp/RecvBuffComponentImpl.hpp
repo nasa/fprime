@@ -9,11 +9,7 @@ namespace Ref {
         public:
 
             // Only called by derived class
-#if FW_OBJECT_NAMES == 1    
             RecvBuffImpl(const char* compName);
-#else
-            RecvBuffImpl();
-#endif
          
             void init(void);
             ~RecvBuffImpl(void);

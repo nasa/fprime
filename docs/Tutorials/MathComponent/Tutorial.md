@@ -705,6 +705,7 @@ Create a `CMakeLists.txt` file in `Ref/MathSender` and add `MathSenderComponentA
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSenderComponentAi.xml"
 )
+
 register_fprime_module()
 ```
 
@@ -833,6 +834,7 @@ The `CMakeLists.txt` file for this component is as follows:
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentAi.xml"
 )
+
 register_fprime_module()
 ```
 
@@ -1075,7 +1077,7 @@ Unit Tests are used to exercise the component's functions by invoking input port
 The code generator will generate test components that can be connected to the component to enable a set of unit tests to check functionality and to get coverage of all the code. To generate a set of files for testing, from the module directory type:
 
 ```shell
-fprime-util impl-ut
+fprime-util impl --ut
 ```
 
 The files that are generated are:
@@ -1429,7 +1431,7 @@ The other test cases are similarly implemented for the other operations. See the
 To build the unit test, type:
 
 ```
-fprime-utli build-ut
+fprime-util build --ut
 ```
 
 The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
@@ -1791,17 +1793,8 @@ Put these declarations after the declarations for the other `Ref` components:
 `Ref/Top/Topology.cpp`, line 187:
 
 ```c++
-Ref::MathSenderComponentImpl mathSender
-#if FW_OBJECT_NAMES == 1
-    ("mathSender")
-#endif
-;
-
-Ref::MathReceiverComponentImpl mathReceiver
-#if FW_OBJECT_NAMES == 1
-    ("mathReceiver")
-#endif
-;
+Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
+Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 ```
 
 Where the other components are initialzed, add `MathSender` and `MathReceiver`:

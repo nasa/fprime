@@ -1,4 +1,4 @@
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>
@@ -275,20 +275,23 @@ namespace Os {
 			return fileSystemStatus;
 		} // end handleFileError
 
-		Status copyFile(const char* originPath, const char* destPath) {
-			U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
-
+		/**
+		 * A helper function that returns an "OP_OK" status if the given file
+		 * exists and can be read from, otherwise returns an error status.
+		 * 
+		 * If provided, will also initialize the given stat struct with file
+		 * information.
+		 */
+		Status initAndCheckFileStats(const char* filePath,
+									struct stat* fileInfo=NULL) {
 			FileSystem::Status fs_status;
-			struct stat file_info;
-			File::Status file_status;
+			struct stat local_info;
+			if(!fileInfo) {
+				// No external struct given, so use the local one
+				fileInfo = &local_info;
+			}
 
-			U64 fileSize = 0;
-			NATIVE_INT_TYPE chunkSize;
-
-			File source;
-			File destination;
-
-			if(::stat(originPath, &file_info) == -1) {
+			if(::stat(filePath, fileInfo) == -1) {
 				switch (errno) {
 					case EACCES:
 						fs_status = NO_PERMISSION;
@@ -309,30 +312,34 @@ namespace Os {
 			}
 
 			// Make sure the origin is a regular file
-			if(!S_ISREG(file_info.st_mode)) {
+			if(!S_ISREG(fileInfo->st_mode)) {
 				return INVALID_PATH;
 			}
 
-			// Get the file size:
-			fs_status = FileSystem::getFileSize(originPath, fileSize); //!< gets the size of the file (in bytes) at location path
-			if(FileSystem::OP_OK != fs_status) {
-				return fs_status;
-			}
+			return OP_OK;
+		}
 
-			file_status = source.open(originPath, File::OPEN_READ);
-			if(file_status != File::OP_OK) {
-				return handleFileError(file_status);
-			}
-
-			file_status = destination.open(destPath, File::OPEN_WRITE);
-			if(file_status != File::OP_OK) {
-				return handleFileError(file_status);
-			}
+		/**
+		 * A helper function that writes all the file information in the source
+		 * file to the destination file (replaces/appends to end/etc. depending
+		 * on destination file mode).
+		 * 
+		 * Files must already be open and will remain open after this function
+		 * completes.
+		 * 
+		 * @param source File to copy data from
+		 * @param destination File to copy data to
+		 * @param size The number of bytes to copy
+		 */
+		Status copyFileData(File source, File destination, U64 size) {
+			U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
+			File::Status file_status;
 
 			// Set loop limit
-			const U64 copyLoopLimit = (((U64)fileSize/FILE_SYSTEM_CHUNK_SIZE)) + 2;
+			const U64 copyLoopLimit = (((U64)size/FILE_SYSTEM_CHUNK_SIZE)) + 2;
 
 			U64 loopCounter = 0;
+			NATIVE_INT_TYPE chunkSize;
 			while(loopCounter < copyLoopLimit) {
 				chunkSize = FILE_SYSTEM_CHUNK_SIZE;
 				file_status = source.read(&fileBuffer, chunkSize, false);
@@ -353,38 +360,102 @@ namespace Os {
 			}
 			FW_ASSERT(loopCounter < copyLoopLimit);
 
+			return FileSystem::OP_OK;
+		} // end copyFileData
+
+		Status copyFile(const char* originPath, const char* destPath) {
+			FileSystem::Status fs_status;
+			File::Status file_status;
+
+			U64 fileSize = 0;
+
+			File source;
+			File destination;
+
+			fs_status = initAndCheckFileStats(originPath);
+			if(FileSystem::OP_OK != fs_status) {
+				return fs_status;
+			}
+
+			// Get the file size:
+			fs_status = FileSystem::getFileSize(originPath, fileSize); //!< gets the size of the file (in bytes) at location path
+			if(FileSystem::OP_OK != fs_status) {
+				return fs_status;
+			}
+
+			file_status = source.open(originPath, File::OPEN_READ);
+			if(file_status != File::OP_OK) {
+				return handleFileError(file_status);
+			}
+
+			file_status = destination.open(destPath, File::OPEN_WRITE);
+			if(file_status != File::OP_OK) {
+				return handleFileError(file_status);
+			}
+
+			fs_status = copyFileData(source, destination, fileSize);
+
 			(void) source.close();
 			(void) destination.close();
 
-			return FileSystem::OP_OK;
+			return fs_status;
 		} // end copyFile
+
+		Status appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
+			FileSystem::Status fs_status;
+			File::Status file_status;
+			U64 fileSize = 0;
+
+			File source;
+			File destination;
+
+			fs_status = initAndCheckFileStats(originPath);
+			if(FileSystem::OP_OK != fs_status) {
+				return fs_status;
+			}
+
+			// Get the file size:
+			fs_status = FileSystem::getFileSize(originPath, fileSize); //!< gets the size of the file (in bytes) at location path
+			if(FileSystem::OP_OK != fs_status) {
+				return fs_status;
+			}
+
+			file_status = source.open(originPath, File::OPEN_READ);
+			if(file_status != File::OP_OK) {
+				return handleFileError(file_status);
+			}
+
+			// If needed, check if destination file exists (and exit if not)
+			if(!createMissingDest) {
+				fs_status = initAndCheckFileStats(destPath);
+				if(FileSystem::OP_OK != fs_status) {
+					return fs_status;
+				}
+			}
+
+			file_status = destination.open(destPath, File::OPEN_APPEND);
+			if(file_status != File::OP_OK) {
+				return handleFileError(file_status);
+			}
+
+			fs_status = copyFileData(source, destination, fileSize);
+
+			(void) source.close();
+			(void) destination.close();
+
+			return fs_status;
+		} // end appendFile
 
 		Status getFileSize(const char* path, U64& size) {
 
 			Status fileStat = OP_OK;
 			struct stat fileStatStruct;
 
-			if(::stat(path, &fileStatStruct) == -1) {
-				switch (errno) {
-					case EACCES:
-						fileStat = NO_PERMISSION;
-						break;
-					case ELOOP:
-					case ENOENT:
-					case ENAMETOOLONG:
-						fileStat = INVALID_PATH;
-						break;
-					case ENOTDIR:
-						fileStat = NOT_DIR;
-						break;
-					default:
-						fileStat = OTHER_ERROR;
-						break;
-				}
-				return fileStat;
+			fileStat = initAndCheckFileStats(path, &fileStatStruct);
+			if(FileSystem::OP_OK == fileStat) {
+				// Only check size if struct was initialized successfully
+				size = fileStatStruct.st_size;
 			}
-
-			size = fileStatStruct.st_size;
 
 			return fileStat;
 		} // end getFileSize

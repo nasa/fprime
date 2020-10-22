@@ -36,11 +36,7 @@ namespace Svc {
       //                    where you can ensure that all buffers given to the ComLogger are the same size
       //                    in which case you do not need the overhead. Or you store an id which you can
       //                    match to an expected size on the ground during post processing.
-#if FW_OBJECT_NAMES == 1
       ComLogger(const char* compName, const char* filePrefix, U32 maxFileSize, bool storeBufferLength=true);
-#else
-      ComLogger(const char* filePrefix, U32 maxFileSize, bool storeBufferLength=true);
-#endif
 
       void init(
           NATIVE_INT_TYPE queueDepth, //!< The queue depth

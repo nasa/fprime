@@ -1,6 +1,5 @@
-<title>Fw::PrmGet/Fw::PrmSet Port SDD</title>
-
-# Fw::PrmGet/PrmSet Ports
+\page FwPrmGetPrmSet Fw::PrmGet / PrmSet Ports
+# Fw::PrmGet / PrmSet Ports
 
 ## 1. Introduction
 

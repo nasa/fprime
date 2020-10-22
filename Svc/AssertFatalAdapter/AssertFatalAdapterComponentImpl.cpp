@@ -43,14 +43,9 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   AssertFatalAdapterComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     AssertFatalAdapterComponentImpl(
         const char *const compName
-    ) :
-      AssertFatalAdapterComponentBase(compName)
-#else
-    AssertFatalAdapterImpl(void)
-#endif
+    ) : AssertFatalAdapterComponentBase(compName)
   {
       // register component with adapter
       this->m_adapter.regAssertReporter(this);

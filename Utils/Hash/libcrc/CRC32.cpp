@@ -70,4 +70,21 @@ namespace Utils {
         buffer = bufferOut;
     }
 
+    void Hash ::
+      final(U32 &hashvalue)
+    {
+      FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
+      // For CRC32 we need to return the one's compliment of the result:
+      hashvalue = ~(this->hash_handle);
+    }
+
+    void Hash ::
+      setHashValue(HashBuffer &value)
+    {
+      Fw::SerializeStatus status = value.deserialize(this->hash_handle);
+      FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
+      // Expecting `value` to already be one's complement; so doing one's complement
+      // here for correct hash updates
+      this->hash_handle = ~this->hash_handle;
+    }
 }

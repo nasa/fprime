@@ -12,6 +12,12 @@ environment, and learn F´.
 The full development process is covered in the [Math Component Tutorial](../MathComponent/Tutorial.md), which will build
 on the knowledge learned here.
 
+## Tutorial Goals
+
+The goal of this tutorial is to demonstrate the F´ tool suite as it applies to the F´ development process.  Users will
+first gain some understanding of F´ terminology followed by the F´ development process. Then they will use the tools to
+walk the F´ development process steps against existing reference goals.
+
 ## F´ Terminology
 
 This section will cover basic terminology used in this and other tutorial with respect to F´.  It may be used as a
@@ -34,7 +40,7 @@ history of the system. Events are defined per-*component*.
 **Channel:** a channel, also known as a telemetry item, is a single value read and downlinked. Channels are consist of
 a type, a format specifier, and a value. Channels represent current system state. Channels are defined per-*component*.
 
-**Commands:** commands are uplinked data items that instruct the system to perform an action. *Commands* consist of an
+**Command:** a command is uplinked data items that instructs the system to perform an action. *Commands* consist of an
 opcode, a mnemonic, and a list of arguments to the command. Commands are defined per-*component*.
 
 **Deployment:** a deployment is a single instance of F´. Although a single F´ project can use/define multiple
@@ -49,51 +55,123 @@ ground system supplied with F´ for development purposes.
 **Toolchain:** a set of build tools to build for a specific architecture. i.e. the "raspberrypi" toolchain will build F´
 deployments for the arm/Linux architecture of the raspberry pi.
 
-## F´ Utility
+## F´ Development Process
+
+F´ development typically starts with creating new Ports and Components as these can be built and tested as units and
+then the full F´ system deployment topology can be assembled for integrated systems testing and release/operations. This
+can be done iteratively by creating a few Components then integrating them into the system topology and then repeating
+with the next most critical components.
+
+F´ development is a design-first approach. To start, a developer should design any unique ports that the Component will
+need. If desired, the port can be built and compiled to ensure that the design is correct. Since the port will be
+entirely auto-generated, developers usually refrain from unit testing the port and defer unit testing to the Component.
+
+Next, developers design components. Components are designed by specifying the ports that represent the Component's
+interface and the Commands, Events amd Channels that the Component handles. This tutorial focuses on the tool suite, so
+the design is already in-place.  Users can see the design by inspecting Components in the `Ref` directory. Creation of
+new components from design through test is demonstrated in the Math Component Tutorial](../MathComponent/Tutorial.md).
+
+The next step for developing a Component is to implement the code. To do this, one can generate template stubs to fill
+with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs.  Then implements, builds,
+and tests from there.  Unit tests template stubs are generated in the same way, and should test-driven development be
+preferred, these tests stubs could be generated and implemented before the Component's code. 
+
+Finally, the Component is integrated into the deployment and the entire deployment may be built and installed.
+
+This tutorial will walk developers through generating the templates, building example Components, and
+building/installing the full deployment.  It will use the `Ref` application as an example for this.
+
+## Working the F´ Development Process with `fprime-util`
 
 In order to ease in development, the F´ team has created a small wrapper for the CMake build system. This will recover the
-advantages of the previous development pattern, while allowing the power and configurability of CMake as an underlying
-build architecture.
+advantages of previous F´ development patterns, while allowing for the power and configurability of CMake as an underlying
+build tool.
 
 ### Build Cache Generation
 
-The first step to building and developing an F´ application is to generate a working build cache. This can easily be done
-using the F´ utility with the "generate" command. This command takes a single argument of the F´ toolchain the user wishes
-to build using. The default is read from ty deployment `CMakeLists.txt` and is typically "native".
+In order to run CMake, a build cache needs to be generated.  This is typically done once for each platform the user wishes
+to compile against. It is usually done right after F´ is checked-out and repeated for each platform as they are added. It
+is a setup step and isn't formally part of the F´ development process.
 
-**Generate the Ref Application**
+To run this tool, the developer will use the `generate` subcommand.  It take one optional argument: the toolchain file
+used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
+setup to run on the current platform (typically Mac OS, or Linux depending on the developer's choosen OS).
+
+**Generate the Ref Application for Native Compilation**
+
+To generate a native build, follow the commands shown below. It is assumed that the user has checked out the fprime repository
+and is performing commands relative to the location of that checkout.
+
 ```
 cd fprime/Ref
 fprime-util generate
 ```
 
 Here the utility will create two standard builds: one for the standard build, and one for the unit test build. This will enable
-the user to take advantage of all parts of F´ without generating their own CMake build caches.
+the user to take advantage of all parts of F´ without generating their own CMake build caches. **Note:** should a developer
+be developing or improving F´ provided infrastructure components, then the `generate` command should be run in the F´
+root directory. However, most developers do not need this functionality.
 
-If the user wishes to edit or test individual F´ built-in components, the user should also generate builds at the F´ library's
-root. This is shown below.
+**Generate Cross-Compile of the Ref Application for Raspberry PI Platformn**
 
-**Generate the F´ Framework**
-```
-cd fprime
-fprime-util generate
-```
+Most developers wish to run F´ on embedded hardware. This is done by generating a cross-compile using a different CMake
+toolchain by providing the toolchain argument. The above invocations assume the default "native" toolchain.
 
-Finally, the user can cross-compile using a different toolchain by using the toolchain argument. The above invocations
-assume the default toolchain, which if not configured is "native".
-
-**Generate a Raspberry PI Cross-Compile of the Ref Application**
+Here, the "raspberrypi" toolchain supplied by F´ is used. This will generate a cross-compile for the raspberry pi
+architecture.  The user should ensure to follow the Raspberry PI setup steps found at: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 ```
 cd fprime/Ref
 fprime-util generate raspberrypi
 ```
 
+## Creating Implementation Stubs
+
+Once the build system cache is generated, developers will need to generate the stubbed implementations of a Component's C++
+files. This can be done using the `impl` command of the F´ utility. These commands assume a default build has been generated.
+Typically passing in a toolchain is unnecessary as these templates are platform agnostic.
+
+**Generating Implementation Stubs of SignalGen**
+```
+cd fprime/Ref/SignalGen
+fprime-util impl
+```
+
+This creates two files for the component. These are `<Component>Impl.cpp-template` and `<Component>Impl.hpp-template`.
+The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating 
+`-template` files, we won't accidentally overwrite any existing implementation should the developer need to repeat this
+step.
+
+## Creating Unit Test Implementations
+
+Once the build system cache is generated, developers will need to generate the stubbed implementations for creating
+unit tests for a Component's C++. This can be done using the `impl --ut` command of the F´ utility. These commands
+assume a default build has been generated. They can be run passing in a toolchain, but this is typically not done because
+they are toolchain agnostic.
+
+**Generating Unit Test Stubs of SignalGen**
+```
+cd fprime/Ref/SignalGen
+fprime-util impl --ut
+```
+
+This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are 
+placed in the current directory and named:
+```
+Tester.cpp
+Tester.hpp
+GTestBase.cpp
+GTestBase.hpp
+TesterBase.cpp
+TesterBase.hpp
+TestMain.cpp
+```
+
 ### Building Components and Deployments
 
-In order to build a component or deployment with F´, a user may run the "build" command as part of the fprime-utility. This
-will build the "current directory". That means that should the user change into a deployment directory then the build command
-will build the full deployment. Should the user desire to build a component, navigate into the directory and run the build
-command.
+Once a developer has implemented a component, it is time to build that component and test that component. In order to build
+a component the `build` subcommand needs to be run. This will build the "current directory" that the developer is in.
+That means that should the user change into a deployment directory then the build command will build the full deployment.
+Should the user desire to build a component, navigate into the Component's directory and run the build command.
 
 **Build SignalGen Component**
 ```
@@ -116,7 +194,8 @@ This process also built the Dictionaries for the project and places the dictiona
 This happens any time the "install" or "build" command are run on a deployment.
 
 The user can also build a component or deployment for a cross-compile by specifying the toolchain.  A previous generate
-for that toolchain should have been run. Again for deployments, the user typically should run "install", see below.
+for that toolchain should have been run. Again for deployments, the user typically should run "install", see below. These
+steps require the setup describe here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 
 ```
 cd fprime/Ref/SignalGen
@@ -147,73 +226,31 @@ cd fprime/Ref
 fprime-util install raspberrypi
 ```
 
-## Creating Implementation Stubs
-
-Once the build system is up and running, developers will desire to generate the stubbed implementations of the Component's C++
-files. This can be done using the "impl" command of the F´ utility. These commands assume a default build has been generated.
-They can be run passing in a toolchain, but this is typically not done because they are toolchain independent.
-
-**Generating Implementation Stubs of SignalGen**
-```
-cd fprime/Ref/SignalGen
-fprime-util impl
-```
-
-This creates two files for the component. These are `<Component>Impl.cpp-template` and `<Component>Impl.hpp-template`.
-The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating 
-`-template` files, we won't accidentally overwrite any existing implementation.
-
-## Creating Unit Test Implementations
-
-Once the build system is up and running, developers will desire to generate the stubbed implementations and other files
-needed for building UTs for a Component's C++. This can be done using the "impl" command of the F´ utility. These commands
-assume a default build has been generated. They can be run passing in a toolchain, but this is typically not done because
-they are toolchain independent.
-
-**Generating Unit Test Stubs of SignalGen**
-```
-cd fprime/Ref/SignalGen
-fprime-util impl-ut
-```
-
-This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are 
-placed in the current directory and named:
-```
-Tester.cpp
-Tester.hpp
-GTestBase.cpp
-GTestBase.hpp
-TesterBase.cpp
-TesterBase.hpp
-TestMain.cpp
-```
-
 ## Building and Running Unit Tests
 
-Unit tests can be build using the the `build-ut` command of the `fprime-util`. This will allow us to build the unit tests
-in preparation to run them.  The user can also just run "check" to build and run the unit tests.
+Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
+in preparation to run them.  The user can also just run "check" to build and run the unit tests.  **Note: no unit tests
+are currently supplied with the Ref application, and thus these commands may error.**
 
 **Building Unit Test of SignalGen**
 ```
 cd fprime/Ref/SignalGen
-fprime-util build-ut
+fprime-util build --ut
 ```
 
-Once built, the unit test can be run using the following command.
+Once built, the unit test can be run using the following command.  **Note: this will produce a message warning of no
+tests run because SigGen has no unit tests defined.**
 ```
 cd fprime/Ref/SignalGen
 fprime-util check
 ```
-
-The output of the unit test should be displayed in the console.
-
 The user can also build the unit test, but must copy it to the hardware and run it here. This can be done with a cross-
 compile by running the following commands.
 
 **Cross-Compile Unit Test of SignalGen**
 ```
 cd fprime/Ref/SignalGen
-fprime-util build-ut raspberrypi
+fprime-util build raspberrypi --ut
 ```
 
 ## Conclusion

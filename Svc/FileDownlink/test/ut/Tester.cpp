@@ -41,7 +41,9 @@ namespace Svc {
   Tester ::
     ~Tester(void) 
   {
-    
+    for (int i = 0; i < downlinkDataBuffers.size(); i++) {
+      delete[] downlinkDataBuffers[i];
+    }
   }
 
   // ----------------------------------------------------------------------
@@ -188,6 +190,7 @@ namespace Svc {
     )
   {
     U8 *const data = new U8[size];
+    downlinkDataBuffers.push_back(data);
     Fw::Buffer buffer(
         MANAGER_ID,
         BUFFER_ID,

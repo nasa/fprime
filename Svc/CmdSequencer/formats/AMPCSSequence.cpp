@@ -88,7 +88,7 @@ namespace Svc {
         fileStatus == Os::FileSystem::OP_OK and 
         fileSize >= sizeof(this->m_sequenceHeader)
     ) {
-      this->m_header.m_fileSize = fileSize - sizeof(this->m_sequenceHeader);
+      this->m_header.m_fileSize = static_cast<U32>(fileSize - sizeof(this->m_sequenceHeader));
     }
     else {
       this->m_events.fileInvalid(

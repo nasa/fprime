@@ -1,7 +1,8 @@
 add_definitions(-DTGT_OS_TYPE_RTEMS)
 
 # Add Linux specific headers into the system
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
+set(FPRIME_USE_POSIX ON)
 
 include_directories(SYSTEM
   ${RTEMS_INCLUDE_DIRS}

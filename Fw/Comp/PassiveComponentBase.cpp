@@ -1,18 +1,13 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <stdio.h>
 
 namespace Fw {
 
-#if FW_OBJECT_NAMES == 1    
     PassiveComponentBase::PassiveComponentBase(const char* name) : Fw::ObjBase(name), m_idBase(0), m_instance(0) {
     }
-#else
-    PassiveComponentBase::PassiveComponentBase() : Fw::ObjBase(), m_idBase(0), m_instance(0) {
-    }
-#endif    
     
 #if FW_OBJECT_TO_STRING == 1 && FW_OBJECT_NAMES == 1
     void PassiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {

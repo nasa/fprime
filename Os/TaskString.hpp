@@ -3,7 +3,7 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringType.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
 

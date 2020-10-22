@@ -11,7 +11,7 @@
  *  Created on: Apr 4, 2019
  *      Author: lestarch
  */
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 

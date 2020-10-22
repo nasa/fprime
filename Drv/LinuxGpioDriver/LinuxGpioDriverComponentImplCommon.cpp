@@ -21,18 +21,13 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   LinuxGpioDriverComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     LinuxGpioDriverComponentImpl(
         const char *const compName
-    ) :
-      LinuxGpioDriverComponentBase(compName)
-#else
-    LinuxGpioDriverImpl(void)
-#endif
-    ,m_gpio(-1)
-    ,m_direction(GPIO_IN)
-    ,m_fd(-1)
-    ,m_quitThread(false)
+    ) : LinuxGpioDriverComponentBase(compName),
+      m_gpio(-1),
+      m_direction(GPIO_IN),
+      m_fd(-1),
+      m_quitThread(false)
   {
 
   }

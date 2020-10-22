@@ -10,6 +10,7 @@
 #                  }
 ####
 import types
+
 import flask_restful
 import flask_restful.reqparse
 
@@ -18,6 +19,7 @@ class EventDictionary(flask_restful.Resource):
     """
     Event dictionary endpoint. Will return dictionary when hit with a GET.
     """
+
     def __init__(self, dictionary):
         """
         Constructor used to setup for dictionary.
@@ -31,19 +33,22 @@ class EventDictionary(flask_restful.Resource):
         return self.dictionary
 
 
-
 class EventHistory(flask_restful.Resource):
     """
     Endpoint to return event history data with optional time argument.
     """
+
     def __init__(self, history):
         """
         Constructor used to setup time argument to this history.
+
         :param history: history object holding events
         :param dictionary: dictionary holding events list
         """
         self.parser = flask_restful.reqparse.RequestParser()
-        self.parser.add_argument("session", required=True, help="Session key for fetching data.")
+        self.parser.add_argument(
+            "session", required=True, help="Session key for fetching data."
+        )
         self.history = history
 
     def get(self):
@@ -55,7 +60,11 @@ class EventHistory(flask_restful.Resource):
         self.history.clear()
         for event in new_events:
             # Add the 'display_text' to the event, along with a getter
-            setattr(event, "display_text", event.template.format_str % tuple([arg.val for arg in event.args]))
+            setattr(
+                event,
+                "display_text",
+                event.template.format_str % tuple([arg.val for arg in event.args]),
+            )
             func = lambda this: this.display_text
             setattr(event, "get_display_text", types.MethodType(func, event))
         return {"history": new_events}
@@ -65,4 +74,4 @@ class EventHistory(flask_restful.Resource):
         Delete the event history for a given session. This keeps the data all clear like.
         """
         args = self.parser.parse_args()
-        self.history.clear(session=args.get("session"))
+        self.history.clear(start=args.get("session"))

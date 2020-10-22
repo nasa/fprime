@@ -1,5 +1,5 @@
 #
-#===============================================================================
+# ===============================================================================
 # NAME: ModelParser.py
 #
 # DESCRIPTION: This is a simple meta-model parsing class.  It contains
@@ -15,38 +15,34 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
-import os
+# ===============================================================================
 import sys
 
 from fprime_ac.utils import TypesList
 
-# Global used for environment BUILD_ROOT
-BUILD_ROOT = None
 
-class ModelParser(object):
+class ModelParser:
     """
     This class provides a single entry point returning items from
     the meta-model configuration used for component code generation.
     """
+
     __instance = None
 
     def __init__(self):
         """
-	    Constructor.
-	    """
-        pass
-
+        Constructor.
+        """
 
     def getInstance():
         """
         Return instance of singleton.
         """
-        if(ModelParser.__instance is None):
+        if ModelParser.__instance is None:
             ModelParser.__instance = ModelParser()
         return ModelParser.__instance
 
-    #define static method
+    # define static method
     getInstance = staticmethod(getInstance)
 
     def uniqueList(self, seq):
@@ -56,7 +52,6 @@ class ModelParser(object):
         seen = set()
         seen_add = seen.add
         return [x for x in seq if x not in seen and not seen_add(x)]
-
 
     def getPortsList(self, obj):
         """
@@ -69,7 +64,7 @@ class ModelParser(object):
             d = port.get_direction()
             d = d[0].upper() + d[1:].lower()
             r = port.get_role()
-            port_instance_name_list.append((i,t,d,r))
+            port_instance_name_list.append((i, t, d, r))
         return port_instance_name_list
 
     def getPortsListMaxNum(self, obj):
@@ -84,7 +79,7 @@ class ModelParser(object):
             d = d[0].upper() + d[1:].lower()
             m = port.get_max_number()
             r = port.get_role()
-            port_instance_name_list.append((i,t,d,m,r))
+            port_instance_name_list.append((i, t, d, m, r))
         return port_instance_name_list
 
     def getPortsListSync(self, obj):
@@ -100,7 +95,7 @@ class ModelParser(object):
             s = port.get_sync()
             p = port.get_priority()
             r = port.get_role()
-            port_instance_name_list.append((i,t,d,s,p,r))
+            port_instance_name_list.append((i, t, d, s, p, r))
         return port_instance_name_list
 
     def getPortsListAll(self, obj):
@@ -118,7 +113,7 @@ class ModelParser(object):
             f = port.get_full()
             r = port.get_role()
             m = port.get_max_number()
-            result.append((i,t,d,s,p,f,r,m))
+            result.append((i, t, d, s, p, f, r, m))
         return result
 
     def getCommandsListSync(self, obj):
@@ -131,9 +126,8 @@ class ModelParser(object):
             s = command.get_sync()
             p = command.get_priority()
             f = command.get_full()
-            command_instance_name_list.append((m,s,p,f))
+            command_instance_name_list.append((m, s, p, f))
         return command_instance_name_list
-
 
     def _getPortArgsNamespacePrefix(self, comp_namespace, port_namespace, arg_type):
         """
@@ -142,9 +136,9 @@ class ModelParser(object):
         if comp_namespace == port_namespace:
             return arg_type
         # U8 * or char * pointer types
-#        elif arg_type.split(" ")[0] in ['U8','char']:
-#            if arg_type.split(" ")[1] =='*':
-#                return arg_type
+        #        elif arg_type.split(" ")[0] in ['U8','char']:
+        #            if arg_type.split(" ")[1] =='*':
+        #                return arg_type
         # Basic types
         elif arg_type in (TypesList.types_list + TypesList.port_types_list):
             return arg_type
@@ -166,14 +160,14 @@ class ModelParser(object):
             name = port.get_name()
             ret_tuple = port.get_return()
             ret_dict[name] = "void "
-            #print "Port: %s" % name
-            if ret_tuple != None:
+            # print "Port: %s" % name
+            if ret_tuple is not None:
                 t = ret_tuple[0]
                 # check for enumeration
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     t = t[0][1]
                     # append namespace
-                    if port.get_namespace() != None:
+                    if port.get_namespace() is not None:
                         t = port.get_namespace() + "::" + t
                 m = ret_tuple[1]
                 if m == "pointer":
@@ -181,7 +175,7 @@ class ModelParser(object):
                 elif m == "reference":
                     m = "&"
                 else:
-                    m =""
+                    m = ""
                 ret_dict[name] = t + " " + m
         return ret_dict
 
@@ -194,9 +188,9 @@ class ModelParser(object):
         comp_namespace = obj.get_namespace()
         for port in obj.get_ports():
             name = port.get_name()
-            port_namespace   = port.get_namespace()
+            port_namespace = port.get_namespace()
             args_dict[name] = list()
-            #print "Port: %s" % name
+            # print "Port: %s" % name
             args = port.get_args()
             for a in args:
                 n = a.get_name()
@@ -205,9 +199,12 @@ class ModelParser(object):
                 e = None
                 #
                 # Store modifier as language symblol
-                if m == 'pointer': m = '*'
-                elif m == 'reference': m='&'
-                else: m = ""
+                if m == "pointer":
+                    m = "*"
+                elif m == "reference":
+                    m = "&"
+                else:
+                    m = ""
 
                 if t == "string":
                     t = n + "String"
@@ -216,7 +213,7 @@ class ModelParser(object):
                     t = n + "Buffer"
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         e = "ENUM"
@@ -227,15 +224,14 @@ class ModelParser(object):
                 # Add namespace to type here...
                 t = self._getPortArgsNamespacePrefix(comp_namespace, port_namespace, t)
                 # If serialize type set it here...
-                #if t == "Serial":
+                # if t == "Serial":
                 #    n = "Buffer"
                 #    t = "Fw::SerializeBufferBase"
                 #    c = ""
                 #    m = "&"
-                #print "Name %s : Type %s" % (n,t)
-                args_dict[name].append((n,t,c,m,e))
+                # print "Name %s : Type %s" % (n,t)
+                args_dict[name].append((n, t, c, m, e))
         return args_dict
-
 
     def getPortArgsPrototypeStringDict(self, obj):
         """
@@ -246,11 +242,10 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s%s" % (x[1], x[3], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}{}".format(x[1], x[3], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
-
 
     def getPortArgsCallStringDict(self, obj):
         """
@@ -266,22 +261,20 @@ class ModelParser(object):
                 d2[l] = ""
         return d2
 
-
     def getMsgTypeArgsDict(self, obj, msg_types_list):
         """
         Return a dict of list of args, keyed by port type name (in all CAPS)
         (e.g. msg_type_arg_dict['Msg type name'] => [(name,type,comment),(name,type,comment),...]
         """
         msg_type_arg_dict = dict()
-        port_instance_name_list = self._get_ports_list(obj)
-        args_dict = self._get_port_args_dict(obj)
+        port_instance_name_list = self.getPortsList(obj)
+        args_dict = self.getPortArgsDict(obj)
         #
         for msg_type in msg_types_list:
             for port in port_instance_name_list:
                 if msg_type == port[1].upper():
                     msg_type_arg_dict[msg_type] = args_dict[port[0]]
         return msg_type_arg_dict
-
 
     def getPortNamespaceTypeDict(self, obj):
         """
@@ -299,26 +292,24 @@ class ModelParser(object):
                 if p == p2.get_type():
                     port_namespace_dict[p] = p2.get_namespace()
         # Now for any Serial port types make sure namespace is 'Fw'...
-        if 'Serial' in list(port_namespace_dict.keys()):
-            port_namespace_dict['Serial'] = 'Fw'
+        if "Serial" in list(port_namespace_dict.keys()):
+            port_namespace_dict["Serial"] = "Fw"
         #
         return port_namespace_dict
-
 
     def hasSerializablePort(self, obj):
         """
         Tests the list of ports in the model and if any one is a Serializable returns true
         else returns false.
         """
-        return 'Serial' in [p.get_type() for p in obj.get_ports()]
-
+        return "Serial" in [p.get_type() for p in obj.get_ports()]
 
     def hasSyncPort(self, obj):
         """
         Tests the list of ports in the model and if any one is a sync returns true
         else returns false.
         """
-        return 'sync' in [p.get_sync() for p in obj.get_ports()]
+        return "sync" in [p.get_sync() for p in obj.get_ports()]
 
     def getCommandsList(self, obj):
         """
@@ -333,7 +324,7 @@ class ModelParser(object):
             f = command.get_full()
             c = command.get_comment()
 
-            command_instance_name_list.append((m,o,s,p,f,c))
+            command_instance_name_list.append((m, o, s, p, f, c))
         return command_instance_name_list
 
     def getEventsList(self, obj):
@@ -349,32 +340,31 @@ class ModelParser(object):
             t = event.get_throttle()
             c = event.get_comment()
 
-            event_instance_name_list.append((i,n,s,f,t,c))
+            event_instance_name_list.append((i, n, s, f, t, c))
         return event_instance_name_list
 
     def getTelemEnumList(self, obj):
         enum_list = []
         for channel in obj.get_channels():
-            n = channel.get_name()
             t = channel.get_type()
             #
             # Check and get enum type here...
-            if type(t) == type(tuple()):
+            if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     enum_type = t[0][1]
                     mem_list = t[1]
                     member_lines = []
                     for member in mem_list:
-                        if member[1] != None:
-                            mem_init = " = %s"%member[1]
+                        if member[1] is not None:
+                            mem_init = " = %s" % member[1]
                         else:
                             mem_init = ""
-                        if member[2] != None:
-                            mem_comment = " //<! %s"%member[2]
+                        if member[2] is not None:
+                            mem_comment = " //<! %s" % member[2]
                         else:
                             mem_comment = ""
-                        member_lines.append((member[0],mem_init,mem_comment))
-                    enum_list.append((enum_type,member_lines))
+                        member_lines.append((member[0], mem_init, mem_comment))
+                    enum_list.append((enum_type, member_lines))
                 else:
                     print("ERROR: Expected ENUM type in telemetry args list...")
                     sys.exit(-1)
@@ -386,71 +376,73 @@ class ModelParser(object):
         """
         channel_instance_name_list = []
         for channel in obj.get_channels():
-            i=channel.get_ids()
-            n=channel.get_name()
-            t=channel.get_type()
-            ti=None
-            if type(t) == type(tuple()):
+            i = channel.get_ids()
+            n = channel.get_name()
+            t = channel.get_type()
+            ti = None
+            if isinstance(t, tuple):
                 # rename type to enum type
                 t = t[0][1]
                 ti = "enum"
             elif t not in TypesList.types_list:
                 ti = "user"
-            s=channel.get_size()
-            u=channel.get_update()
-            c=channel.get_comment()
+            s = channel.get_size()
+            u = channel.get_update()
+            c = channel.get_comment()
 
-            channel_instance_name_list.append((i,n,t,s,u,c,ti))
+            channel_instance_name_list.append((i, n, t, s, u, c, ti))
         return channel_instance_name_list
 
     def getParamEnumList(self, obj):
         enum_list = []
         for parameter in obj.get_parameters():
-            n = parameter.get_name()
             t = parameter.get_type()
             #
             # Check and get enum type here...
-            if type(t) == type(tuple()):
+            if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     enum_type = t[0][1]
                     mem_list = t[1]
                     member_lines = []
                     for member in mem_list:
-                        if member[1] != None:
-                            mem_init = " = %s"%member[1]
+                        if member[1] is not None:
+                            mem_init = " = %s" % member[1]
                         else:
                             mem_init = ""
-                        if member[2] != None:
-                            mem_comment = " //<! %s"%member[2]
+                        if member[2] is not None:
+                            mem_comment = " //<! %s" % member[2]
                         else:
                             mem_comment = ""
-                        member_lines.append((member[0],mem_init,mem_comment))
-                    enum_list.append((enum_type,member_lines))
+                        member_lines.append((member[0], mem_init, mem_comment))
+                    enum_list.append((enum_type, member_lines))
                 else:
                     print("ERROR: Expected ENUM type in telemetry args list...")
                     sys.exit(-1)
         return enum_list
+
     def getParametersList(self, obj):
         """
         Return list of parameters
         """
         parameter_instance_name_list = []
         for parameter in obj.get_parameters():
-            i=parameter.get_ids()
-            n=parameter.get_name()
-            t=parameter.get_type()
+            i = parameter.get_ids()
+            n = parameter.get_name()
+            t = parameter.get_type()
             set_ops = parameter.get_set_opcodes()
             save_ops = parameter.get_save_opcodes()
-            ti=None
-            if type(t) == type(tuple()):
+            ti = None
+            if isinstance(t, tuple):
                 # rename type to enum type
                 t = t[0][1]
                 ti = "enum"
-            s=parameter.get_size()
-            d=parameter.get_default()
-            c=parameter.get_comment()
+            s = parameter.get_size()
+            d = parameter.get_default()
+            c = parameter.get_comment()
 
-            parameter_instance_name_list.append((i,n,t,set_ops,save_ops,s,d,c,ti))
+            parameter_instance_name_list.append(
+                (i, n, t, set_ops, save_ops, s, d, c, ti)
+            )
         return parameter_instance_name_list
 
     def getEnumList(self, obj):
@@ -458,33 +450,31 @@ class ModelParser(object):
         for command in obj.get_commands():
             args = command.get_args()
             for a in args:
-                n = a.get_name()
                 t = a.get_type()
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         enum_type = t[0][1]
                         mem_list = t[1]
                         member_lines = []
                         for member in mem_list:
-                            if member[1] != None:
-                                mem_init = " = %s"%member[1]
+                            if member[1] is not None:
+                                mem_init = " = %s" % member[1]
                             else:
                                 mem_init = ""
-                            if member[2] != None:
-                                mem_comment = " //<! %s"%member[2]
+                            if member[2] is not None:
+                                mem_comment = " //<! %s" % member[2]
                             else:
                                 mem_comment = ""
-                            member_lines.append((member[0],mem_init,mem_comment))
-                        enum_list.append((enum_type,member_lines))
+                            member_lines.append((member[0], mem_init, mem_comment))
+                        enum_list.append((enum_type, member_lines))
                     else:
                         print("ERROR: Expected ENUM type in component args list...")
                         sys.exit(-1)
         return enum_list
 
-
-    def getCommandArgsDict(self, obj, from_proto = False):
+    def getCommandArgsDict(self, obj, from_proto=False):
         """
         Return a dict of list of args, keyed by command mnemonic
         (e.g. arg_dict['mnemonic'] => [(name,type,comment), (name,type,comment), ...]
@@ -493,7 +483,7 @@ class ModelParser(object):
         for command in obj.get_commands():
             mnemonic = command.get_mnemonic()
             args_dict[mnemonic] = list()
-            #print "Command: %s" % name
+            # print "Command: %s" % name
             args = command.get_args()
 
             for a in args:
@@ -502,7 +492,7 @@ class ModelParser(object):
                 typeinfo = None
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         typeinfo = "enum"
@@ -518,13 +508,13 @@ class ModelParser(object):
                 c = a.get_comment()
                 # Add namespace to type here...
                 # If serialize type set it here...
-                #if t == "Serial":
+                # if t == "Serial":
                 #    n = "Buffer"
                 #    t = "Fw::SerializeBufferBase"
                 #    c = ""
                 #    m = "&"
-                #print "Name %s : Type %s" % (n,t)
-                args_dict[mnemonic].append((n,t,c,typeinfo))
+                # print "Name %s : Type %s" % (n,t)
+                args_dict[mnemonic].append((n, t, c, typeinfo))
         return args_dict
 
     def getCommandArgsPrototypeStringDict(self, obj):
@@ -532,11 +522,11 @@ class ModelParser(object):
         Return a dict of prototype string args signature, keyed by command mnemonic
         (.e.g. arg_dict['mnemonic'] => "type1 name1, type2, name2 ..."
         """
-        d = self.getCommandArgsDict(obj,True)
+        d = self.getCommandArgsDict(obj, True)
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -546,26 +536,25 @@ class ModelParser(object):
         for event in obj.get_events():
             args = event.get_args()
             for a in args:
-                n = a.get_name()
                 t = a.get_type()
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         enum_type = t[0][1]
                         mem_list = t[1]
                         member_lines = []
                         for member in mem_list:
-                            if member[1] != None:
-                                mem_init = " = %s"%member[1]
+                            if member[1] is not None:
+                                mem_init = " = %s" % member[1]
                             else:
                                 mem_init = ""
-                            if member[2] != None:
-                                mem_comment = " //<! %s"%member[2]
+                            if member[2] is not None:
+                                mem_comment = " //<! %s" % member[2]
                             else:
                                 mem_comment = ""
-                            member_lines.append((member[0],mem_init,mem_comment))
-                        enum_list.append((enum_type,member_lines))
+                            member_lines.append((member[0], mem_init, mem_comment))
+                        enum_list.append((enum_type, member_lines))
                     else:
                         print("ERROR: Expected ENUM type in component args list...")
                         sys.exit(-1)
@@ -580,7 +569,7 @@ class ModelParser(object):
         for event in obj.get_events():
             name = event.get_name()
             args_dict[name] = list()
-            #print "Command: %s" % name
+            # print "Command: %s" % name
             args = event.get_args()
 
             for a in args:
@@ -589,7 +578,7 @@ class ModelParser(object):
                 typeinfo = None
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         typeinfo = "enum"
@@ -606,13 +595,13 @@ class ModelParser(object):
                 s = a.get_size()
                 # Add namespace to type here...
                 # If serialize type set it here...
-                #if t == "Serial":
+                # if t == "Serial":
                 #    n = "Buffer"
                 #    t = "Fw::SerializeBufferBase"
                 #    c = ""
                 #    m = "&"
-                #print "Name %s : Type %s" % (n,t)
-                args_dict[name].append((n,t,c,s,typeinfo))
+                # print "Name %s : Type %s" % (n,t)
+                args_dict[name].append((n, t, c, s, typeinfo))
         return args_dict
 
     def getEventArgsPrototypeStringDict(self, obj):
@@ -624,7 +613,7 @@ class ModelParser(object):
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
@@ -638,7 +627,7 @@ class ModelParser(object):
             n = internal_interface.get_name()
             p = internal_interface.get_priority()
             f = internal_interface.get_full()
-            internal_interface_instance_name_list.append((n,p,f))
+            internal_interface_instance_name_list.append((n, p, f))
         return internal_interface_instance_name_list
 
     def getInternalInterfaceArgsPrototypeStringDict(self, obj):
@@ -646,16 +635,16 @@ class ModelParser(object):
         Return a dict of prototype string args signature, keyed by interface name
         (.e.g. arg_dict['name'] => "type1 name1, type2, name2 ..."
         """
-        d = self.getInternalInterfaceArgsDict(obj,True)
+        d = self.getInternalInterfaceArgsDict(obj, True)
         d2 = dict()
         for l in d:
             if len(d[l]) > 0:
-                d2[l] = ", ".join(["%s %s" % (x[1], x[0]) for x in d[l]])
+                d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
                 d2[l] = "void"
         return d2
 
-    def getInternalInterfaceArgsDict(self, obj, from_proto = False):
+    def getInternalInterfaceArgsDict(self, obj, from_proto=False):
         """
         Return a dict of list of args, keyed by internal interface name
         (e.g. arg_dict['name'] => [(name,type,comment), (name,type,comment), ...]
@@ -664,7 +653,7 @@ class ModelParser(object):
         for internal_interface in obj.get_internal_interfaces():
             name = internal_interface.get_name()
             args_dict[name] = list()
-            #print "Interface: %s" % name
+            # print "Interface: %s" % name
             args = internal_interface.get_args()
 
             for a in args:
@@ -673,12 +662,14 @@ class ModelParser(object):
                 typeinfo = None
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
                         typeinfo = "enum"
                     else:
-                        print("ERROR: Expected ENUM type in internal_interface args list...")
+                        print(
+                            "ERROR: Expected ENUM type in internal_interface args list..."
+                        )
                         sys.exit(-1)
                 elif t == "string":
                     if from_proto:
@@ -687,48 +678,46 @@ class ModelParser(object):
                         t = "Fw::InternalInterfaceString"
                     typeinfo = "string"
                 elif t in TypesList.types_list + TypesList.port_types_list:
-                    pass;
+                    pass
                 else:
                     if from_proto:
-                        t = "%s&"%t
+                        t = "%s&" % t
                     typeinfo = "user"
                 c = a.get_comment()
-                args_dict[name].append((n,t,c,typeinfo))
+                args_dict[name].append((n, t, c, typeinfo))
         return args_dict
-
 
     def getInternalInterfaceEnumList(self, obj):
         enum_list = []
         for internal_interface in obj.get_internal_interfaces():
             args = internal_interface.get_args()
             for a in args:
-                n = a.get_name()
                 t = a.get_type()
                 #
                 # Check and get enum type here...
-                if type(t) == type(tuple()):
+                if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         enum_type = t[0][1]
                         mem_list = t[1]
                         member_lines = []
                         for member in mem_list:
-                            if member[1] != None:
-                                mem_init = " = %s"%member[1]
+                            if member[1] is not None:
+                                mem_init = " = %s" % member[1]
                             else:
                                 mem_init = ""
-                            if member[2] != None:
-                                mem_comment = " //<! %s"%member[2]
+                            if member[2] is not None:
+                                mem_comment = " //<! %s" % member[2]
                             else:
                                 mem_comment = ""
-                            member_lines.append((member[0],mem_init,mem_comment))
-                        enum_list.append((enum_type,member_lines))
+                            member_lines.append((member[0], mem_init, mem_comment))
+                        enum_list.append((enum_type, member_lines))
                     else:
                         print("ERROR: Expected ENUM type in interface args list...")
                         sys.exit(-1)
         return enum_list
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
     # Quick tests.
     #

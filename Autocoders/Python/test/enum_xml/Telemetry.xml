@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<telemetry>
+
+  <channel id="0x00" name="Enum" data_type="Example::Enum2" update="always">
+    <comment>Example telemetry channel with an enum type</comment>
+  </channel>
+
+</telemetry>

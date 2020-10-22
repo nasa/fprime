@@ -1,13 +1,15 @@
 ####
 # Darwin.cmake:
 #
-# Darwin based platfrom file used for Darwin (Mac OS X) targets.
+# Darwin based platform file used for Darwin (Mac OS X) targets. Note: this sets some OS X flags before calling into the common
+# Linux implementations to use the posix types defined there.
 ####
 add_definitions(-DTGT_OS_TYPE_DARWIN)
 
 # Find an appropriate thread library
 message(STATUS "Requiring thread library")
 FIND_PACKAGE ( Threads REQUIRED )
+set(FPRIME_USE_POSIX ON)
 
 # Darwin specific flags: shared, C, and C++ settings
 set(DARWIN_COMMON
@@ -20,4 +22,4 @@ set(CMAKE_CXX_FLAGS
   "${CMAKE_CXX_FLAGS} ${DARWIN_COMMON} -std=c++11"
 )
 # Add linux include path which is compatable with Darwin for StandardTypes.hpp
-include_directories(SYSTEM "${FPRIME_CORE_DIR}/Fw/Types/Linux")
+include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
