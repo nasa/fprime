@@ -90,6 +90,7 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     uplinker.join()
     downlinker.join()
+    return 0
 
 
 if __name__ == "__main__":

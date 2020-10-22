@@ -20,7 +20,7 @@ RUN groupadd fprime && \
 # Installing system components
     apt-get update && apt-get install -y --no-install-recommends \
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind && \
-    mkdir -p /opt/ && \
+    mkdir -p /opt/ && chown fprime:fprime /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Change user and group of the virtual environemnt
@@ -29,6 +29,7 @@ ENV HOST fprime
 ENV USER fprime
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
+USER fprime
 ENTRYPOINT ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
@@ -55,11 +56,13 @@ ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 # used for Jenkins.
 ####
 FROM fprime-docker AS jenkins-ci
+USER root
 RUN groupadd jenkins && \
     groupmod -g 1003 jenkins && \
     useradd -ms /bin/bash -g root -G sudo,jenkins,fprime -p jenkins jenkins && \
     usermod -u 1003 jenkins && \
     usermod -a -G fprime jenkins
+USER jenkins
 ENV HOST jenkins
 ENV USER jenkins
 # Paths and entrypoints
