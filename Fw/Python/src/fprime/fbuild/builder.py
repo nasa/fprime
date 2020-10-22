@@ -449,6 +449,7 @@ class Build:
                 ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
                 ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
                 ("FPRIME_CONFIG_DIR", "config_dir"),
+                ("FPRIME_INSTALL_DEST", "install_dest"),
             ]
             cmake_args.update(
                 {
@@ -472,6 +473,17 @@ class Build:
     def purge(self):
         """ Purge a build cache directory """
         self.cmake.purge(self.build_dir)
+
+    def purge_install(self):
+        """ Purge the install directory """
+        assert "install_dest" in self.settings, "install_dest not present in settings"
+        self.cmake.purge(self.settings["install_dest"])
+
+    def install_dest_exists(self) -> Path:
+        """ Check if the install destination exists and returns the path if it does """
+        assert "install_dest" in self.settings, "install_dest not present in settings"
+        path = Path(self.settings["install_dest"])
+        return path if path.exists() else None
 
     @staticmethod
     def find_nearest_deployment(path: Path) -> Path:
@@ -615,12 +627,5 @@ BUILD_TARGETS = [
         "coverage",
         "Generate unit test coverage reports",
         build_types=[BuildType.BUILD_TESTING],
-    ),
-    # Installation target
-    GlobalTarget(
-        "install",
-        "Install the current deployment build artifacts",
-        build_types=[BuildType.BUILD_NORMAL],
-        cmake="package_gen",
     ),
 ]

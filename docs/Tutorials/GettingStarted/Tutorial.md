@@ -214,7 +214,7 @@ of build for deployments.
 **Installing the Ref Deployment and Running the Binary Assuming Linux**
 ```
 cd fprime/Ref
-fprime-util install
+fprime-util build
 ./bin/Linux/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
@@ -223,7 +223,7 @@ Running the application as part of the development ground data system is shown b
 The user can also install a cross-compile.
 ```
 cd fprime/Ref
-fprime-util install raspberrypi
+fprime-util build raspberrypi
 ```
 
 ## Building and Running Unit Tests
