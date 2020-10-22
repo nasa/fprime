@@ -24,10 +24,7 @@ from enum import Enum
 # Custom Python Modules
 import fprime.common.models.serialize.numerical_types
 from fprime.common.models.serialize import type_base
-from fprime.common.models.serialize.type_exceptions import (
-    TypeException,
-    TypeRangeException,
-)
+from fprime.common.models.serialize.type_exceptions import TypeRangeException
 
 TimeBase = Enum(
     "TimeBase",

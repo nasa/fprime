@@ -377,6 +377,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 if not os.path.exists(os.path.join(build_root, DEPLOYMENT)):
                     continue
                 os.environ["DICT_DIR"] = os.path.join(build_root, DEPLOYMENT, "py_dict")
+                break
             else:
                 raise FileNotFoundError(
                     "{} not found in any of: {}".format(DEPLOYMENT, get_build_roots())
