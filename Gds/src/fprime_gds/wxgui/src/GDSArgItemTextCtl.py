@@ -6,12 +6,12 @@ class ArgItemTextCtl(wx.Panel):
 
     def __init__(self, parent, validator, label):
         """ArgItemTextCtl constructor
-		
-		Arguments:
-			parent {wx.Window} -- The parent window for this UI element
-			validator {wx.Validator} -- Validator object that will check if the TextCtrl entry is formated correctly
-			label {string} -- Label for this GUI element. Usually the name of the argument.
-		"""
+
+        Arguments:
+                parent {wx.Window} -- The parent window for this UI element
+                validator {wx.Validator} -- Validator object that will check if the TextCtrl entry is formated correctly
+                label {string} -- Label for this GUI element. Usually the name of the argument.
+        """
 
         wx.Panel.__init__(self, parent, id=wx.ID_ANY)
 
@@ -48,28 +48,28 @@ class ArgItemTextCtl(wx.Panel):
 
     def setText(self, text):
         """Set the contents of this gui's text entry value
-		
-		Arguments:
-			text {string} -- the string to set
-		"""
+
+        Arguments:
+                text {string} -- the string to set
+        """
 
         self.m_argWindow.SetValue(str(text))
 
     def getText(self):
         """Get the contents of this gui's text entry value
-		
-		Returns:
-			string --the contents of the text control in this gui element
-		"""
+
+        Returns:
+                string --the contents of the text control in this gui element
+        """
 
         return self.m_argWindow.GetLineText(0)
 
     def onLeaveTextCtlInput(self, event):
         """Called when the user leaves the TextCtrl. Calls Validator to check input.
-		
-		Arguments:
-			event {wx.Event} -- wx object passed by callback
-		"""
+
+        Arguments:
+                event {wx.Event} -- wx object passed by callback
+        """
         # NOTE This might be annoying - add it back if you want
         # self.Validate()
 
@@ -85,13 +85,13 @@ class HexIntegerValidator(wx.Validator):
 
     def Validate(self, win):
         """Validates the text control contents as a hex or integer number
-		
-		Arguments:
-			win {wx.Window} -- Parent window. Passed in automoatically
-		
-		Returns:
-			bool -- True if correct format, False otherwise
-		"""
+
+        Arguments:
+                win {wx.Window} -- Parent window. Passed in automoatically
+
+        Returns:
+                bool -- True if correct format, False otherwise
+        """
         textCtrl = self.GetWindow()
         text = textCtrl.GetValue()
 
@@ -132,13 +132,13 @@ class RealValidator(wx.Validator):
 
     def Validate(self, win):
         """Validates the text control contents as a real number
-		
-		Arguments:
-			win {wx.Window} -- Parent window. Passed in automoatically
-		
-		Returns:
-			bool -- True if correct format, False otherwise
-		"""
+
+        Arguments:
+                win {wx.Window} -- Parent window. Passed in automoatically
+
+        Returns:
+                bool -- True if correct format, False otherwise
+        """
 
         textCtrl = self.GetWindow()
         text = textCtrl.GetValue()
@@ -176,18 +176,18 @@ class StringValidator(wx.Validator):
 
     def Validate(self, win):
         """Validates the text control contents as a string
-		
-		Arguments:
-			win {wx.Window} -- Parent window. Passed in automoatically
-		
-		Returns:
-			bool -- True if correct format, False otherwise
-		"""
+
+        Arguments:
+                win {wx.Window} -- Parent window. Passed in automoatically
+
+        Returns:
+                bool -- True if correct format, False otherwise
+        """
 
         textCtrl = self.GetWindow()
         text = textCtrl.GetValue()
 
-        if text != u"":
+        if text != "":
             textCtrl.SetBackgroundColour("white")
             return True
         else:

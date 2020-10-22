@@ -20,13 +20,12 @@ namespace Drv {
     // ----------------------------------------------------------------------
 
     LinuxSpiDriverComponentImpl::
-#if FW_OBJECT_NAMES == 1
     LinuxSpiDriverComponentImpl(const char * const compName) :
-            LinuxSpiDriverComponentBase(compName)
-#else
-    LinuxSpiDriverImpl(void)
-#endif
-    ,m_fd(-1),m_device(-1),m_select(-1),m_bytes(0)
+        LinuxSpiDriverComponentBase(compName),
+        m_fd(-1),
+        m_device(-1),
+        m_select(-1),
+        m_bytes(0)
     {
 
     }

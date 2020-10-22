@@ -20,17 +20,12 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   GroundInterfaceComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     GroundInterfaceComponentImpl(
         const char *const compName
-    ) :
-      GroundInterfaceComponentBase(compName),
-#else
-  GroundInterfaceComponentBase(void),
-#endif
-    m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
-    m_data_size(0),
-    m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
+    ) : GroundInterfaceComponentBase(compName),
+        m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
+        m_data_size(0),
+        m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
   {
 
   }

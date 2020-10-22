@@ -73,7 +73,7 @@ namespace Fw {
   TEST(FilePacket, DataPacket) {
     FilePacket::DataPacket expected;
     const U32 dataSize = 10;
-    U8 data[dataSize];
+    U8 data[dataSize] = {}; // Initialize to appease valgrind
     expected.initialize(
         3, // Sequence index
         42, // Byte offset

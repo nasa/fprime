@@ -3,27 +3,26 @@ Created on Jan 5, 2015
 
 @author: tcanham
 """
-from __future__ import print_function
-
-# Import the types this way so they do not need prefixing for execution.
-from fprime.common.models.serialize.type_exceptions import TypeException
-from fprime.common.models.serialize.type_exceptions import ArgLengthMismatchException
-from fprime.common.models.serialize.type_exceptions import ArgNotFoundException
-from fprime.common.models.serialize.type_exceptions import TypeMismatchException
-from fprime.common.models.serialize import type_base
-from fprime.common.models.serialize.type_base import BaseType
-from fprime.common.models.serialize.f32_type import F32Type
-from fprime.common.models.serialize.u32_type import U32Type
-
-
-from enum import Enum
 
 import copy
+from enum import Enum
+
+from fprime.common.models.serialize import type_base
+from fprime.common.models.serialize.type_base import BaseType
+
+# Import the types this way so they do not need prefixing for execution.
+from fprime.common.models.serialize.type_exceptions import (
+    ArgLengthMismatchException,
+    ArgNotFoundException,
+    TypeException,
+    TypeMismatchException,
+)
+from fprime.common.models.serialize.numerical_types import U32Type, F32Type
 
 Descriptor = Enum(value="Descriptor", names="ABSOLUTE RELATIVE")
 
 
-class Command(object):
+class Command:
     """
     classdocs
     """
@@ -45,31 +44,31 @@ class Command(object):
 
         ## Make sure correct types are passed
 
-        if not type(component) == type(str()):
-            raise TypeMismatchException(type(str()), type(component))
+        if not isinstance(component, str):
+            raise TypeMismatchException(str, type(component))
 
-        if not type(mnemonic) == type(str()):
-            raise TypeMismatchException(type(str()), type(mnemonic))
+        if not isinstance(mnemonic, str):
+            raise TypeMismatchException(str, type(mnemonic))
 
-        if not type(opcode) == type(int()):
-            raise TypeMismatchException(type(int()), type(opcode))
+        if not isinstance(opcode, int):
+            raise TypeMismatchException(int, type(opcode))
 
-        if not type(description) == type(str()):
-            raise TypeMismatchException(type(str()), type(description))
+        if not isinstance(description, str):
+            raise TypeMismatchException(str, type(description))
 
-        if not type(arguments) == type(list()):
-            raise TypeMismatchException(type(list()), type(arguments))
+        if not isinstance(arguments, list):
+            raise TypeMismatchException(list, type(arguments))
 
         for (argname, argdesc, argtype) in arguments:
             #
-            if not type(argname) == type(str()):
-                raise TypeMismatchException(type(int()), type(argname))
+            if not isinstance(argname, str):
+                raise TypeMismatchException(str, type(argname))
             #
-            if not type(argdesc) == type(str()):
-                raise TypeMismatchException(type(int()), type(argdesc))
+            if not isinstance(argdesc, str):
+                raise TypeMismatchException(str, type(argdesc))
             #
-            if not issubclass(type(argtype), type(BaseType())):
-                raise TypeMismatchException(type(BaseType()), type(argtype))
+            if not isinstance(argtype, BaseType):
+                raise TypeMismatchException(BaseType, type(argtype))
 
         # Initialize command internal variables
         self.__component = component
@@ -79,7 +78,6 @@ class Command(object):
         self.__arguments = arguments
 
         # If part of a sequence we need to set these as well
-        # @todo: Need setter and getters
         self.setSeconds(seconds)
         self.setUseconds(useconds)
         self.setDescriptor(descriptor)
@@ -122,17 +120,17 @@ class Command(object):
         return self.__arguments
 
     def setSeconds(self, seconds):
-        if not type(seconds) == type(int()):
-            raise TypeMismatchException(type(int()), type(seconds))
+        if not isinstance(seconds, int):
+            raise TypeMismatchException(int, type(seconds))
         self.__secs = seconds
 
     def setUseconds(self, useconds):
-        if not type(useconds) == type(int()):
-            raise TypeMismatchException(type(int()), type(useconds))
+        if not isinstance(useconds, int):
+            raise TypeMismatchException(int, type(useconds))
         self.__usecs = useconds
 
     def setDescriptor(self, descriptor):
-        if not type(descriptor) == type(Descriptor.ABSOLUTE):
+        if not isinstance(descriptor, type(Descriptor.ABSOLUTE)):
             raise TypeMismatchException(type(Descriptor.ABSOLUTE), type(descriptor))
         self.__desc = descriptor
 
@@ -145,11 +143,11 @@ class Command(object):
         @param arg_type: object type to store arugment value in.
         """
         ### double check argument types
-        if not type(arg_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(arg_name))
+        if not isinstance(arg_name, str):
+            raise TypeMismatchException(str, type(arg_name))
 
-        if not issubclass(type(arg_type), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()), type(arg_type))
+        if not isinstance(arg_type, BaseType):
+            raise TypeMismatchException(BaseType, type(arg_type))
 
         new_arg_list = list()
         found = False
@@ -166,10 +164,10 @@ class Command(object):
 
     def setArgs(self, values):
         """
-      Given a list of values for the arguments, set the command arguments in order.
-      @param values: raw python values (floats, ints, and strings) that will be converted
-      into arg_types and stored as the command arg
-      """
+        Given a list of values for the arguments, set the command arguments in order.
+        @param values: raw python values (floats, ints, and strings) that will be converted
+        into arg_types and stored as the command arg
+        """
 
         # Make sure that the correct number of arguments is given
         if len(values) != len(self.__arguments):

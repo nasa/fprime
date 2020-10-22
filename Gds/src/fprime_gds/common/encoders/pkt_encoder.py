@@ -36,9 +36,9 @@ Serialized Packet format:
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from .encoder import Encoder
+from fprime_gds.common.data_types.pkt_data import PktData
 from fprime_gds.common.utils.data_desc_type import DataDescType
 
 
@@ -57,7 +57,7 @@ class PktEncoder(Encoder):
         Returns:
             An initialized PktEncoder object
         """
-        super(PktEncoder, self).__init__(config)
+        super().__init__(config)
 
         self.len_obj = self.config.get_type("msg_len")
         self.desc_obj = self.config.get_type("msg_desc")
@@ -73,8 +73,7 @@ class PktEncoder(Encoder):
         Returns:
             Encoded version of the data argument as binary data
         """
-        # TODO Should we verify that it is a PktData object? Or is that too much
-        #      overhead.
+        assert isinstance(data, PktData), "Encoder handling incorrect type"
         pkt_temp = data.get_template()
 
         self.desc_obj.val = DataDescType["FW_PACKET_PACKETIZED_TLM"].value

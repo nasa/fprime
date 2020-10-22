@@ -9,13 +9,12 @@ in file_data objects.
 
 @bug No known bugs
 """
-from __future__ import print_function
+
 import struct
 
+from fprime_gds.common.data_types import file_data
 from fprime_gds.common.data_types.file_data import FilePacketType
 from fprime_gds.common.decoders import decoder
-from fprime_gds.common.data_types import file_data
-
 
 # More info about File packets can be found at fprime-sw/Fw/FilePacket/docs/sdd.md
 # Enum class for Packet Types
@@ -23,18 +22,6 @@ from fprime_gds.common.data_types import file_data
 # Main FileDecoder class
 class FileDecoder(decoder.Decoder):
     """Decoder class for file data"""
-
-    def __init__(self):
-        """
-        FileDecoder class constructor
-
-        Args:
-            None
-        Returns:
-            An initialized FileDecoder object.
-        """
-
-        super(FileDecoder, self).__init__()
 
     def decode_api(self, data):
         """

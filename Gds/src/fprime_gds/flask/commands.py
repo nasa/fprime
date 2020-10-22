@@ -23,6 +23,7 @@
 ####
 import flask_restful
 import flask_restful.reqparse
+
 import fprime.common.models.serialize.type_exceptions
 import fprime_gds.common.data_types.cmd_data
 
@@ -54,6 +55,7 @@ class CommandHistory(flask_restful.Resource):
     def __init__(self, history):
         """
         Constructor: setup the parser for incoming command runs
+
         :param history: history object holding commands
         :param dictionary: dictionary holding command list
         """

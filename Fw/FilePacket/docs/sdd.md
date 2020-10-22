@@ -1,6 +1,5 @@
-<title>Fw/FilePacket</title>
-
-# Fw/FilePacket
+\page FwFilePacketClasses Fw::FilePacket Classes
+# Fw::FilePacket Classes
 
 ## 1 Introduction
 

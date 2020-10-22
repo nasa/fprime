@@ -38,7 +38,7 @@ namespace Svc {
       Os::FileSystem::getFileSize(sourceFileName, size);
     if (status != Os::FileSystem::OP_OK)
       return Os::File::BAD_SIZE;
-    this->size = size;
+    this->size = static_cast<U32>(size);
 
     // Initialize checksum
     CFDP::Checksum checksum;

@@ -13,35 +13,35 @@ helper functions
 
 @bug No known bugs
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 from copy import deepcopy
+
 from lxml import etree
 
-# Custom Python Modules
-from . import dict_loader
-from fprime_gds.common.data_types import exceptions
+from fprime.common.models.serialize.array_type import ArrayType
 
 # Custom type modules
 from fprime.common.models.serialize.bool_type import BoolType
 from fprime.common.models.serialize.enum_type import EnumType
-from fprime.common.models.serialize.f32_type import F32Type
-from fprime.common.models.serialize.f64_type import F64Type
-
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime.common.models.serialize.u64_type import U64Type
-
-from fprime.common.models.serialize.i8_type import I8Type
-from fprime.common.models.serialize.i16_type import I16Type
-from fprime.common.models.serialize.i32_type import I32Type
-from fprime.common.models.serialize.i64_type import I64Type
-
-from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.numerical_types import (
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    F32Type,
+    F64Type,
+)
 from fprime.common.models.serialize.serializable_type import SerializableType
+from fprime.common.models.serialize.string_type import StringType
+from fprime_gds.common.data_types import exceptions
+
+# Custom Python Modules
+from . import dict_loader
 
 
 class XmlLoader(dict_loader.DictLoader):
@@ -62,6 +62,15 @@ class XmlLoader(dict_loader.DictLoader):
     SER_MEMB_DESC_TAG = "description"
     SER_MEMB_TYPE_TAG = "type"
 
+    # Xml section names and tags for array types
+    ARR_SECT = "arrays"
+    ARR_NAME_TAG = "name"
+    ARR_TYPE_TAG = "type"
+    ARR_SIZE_TAG = "size"
+    ARR_FORMAT_TAG = "format"
+    ARR_DEFAULT_TAG = "defaults"
+    ARR_DEFAULT_VALUE_TAG = "value"
+
     # Xml sction names and tags for argument sections
     ARGS_SECT = "args"
     ARG_NAME_TAG = "name"
@@ -77,12 +86,13 @@ class XmlLoader(dict_loader.DictLoader):
         Returns:
             An initialized loader object
         """
-        super(XmlLoader, self).__init__()
+        super().__init__()
 
         # These dicts hold already parsed enum objects so things don't need
         # to be parsed multiple times
         self.enums = dict()
         self.serializable_types = dict()
+        self.array_types = dict()
 
     def get_xml_tree(self, path):
         """
@@ -102,7 +112,7 @@ class XmlLoader(dict_loader.DictLoader):
         # Create xml parser
         xml_parser = etree.XMLParser(remove_comments=True)
 
-        fd = open(path, "r")
+        fd = open(path)
 
         # Parse xml and get element tree object we can retrieve data from
         element_tree = etree.parse(fd, parser=xml_parser)
@@ -148,7 +158,7 @@ class XmlLoader(dict_loader.DictLoader):
         args = []
         args_section = self.get_xml_section(self.ARGS_SECT, xml_obj)
 
-        if args_section != None:
+        if args_section is not None:
             for arg in args_section:
                 arg_dict = arg.attrib
 
@@ -187,7 +197,7 @@ class XmlLoader(dict_loader.DictLoader):
 
         # Check if the dictionary has an enum section
         enum_section = self.get_xml_section(self.ENUM_SECT, xml_obj)
-        if enum_section == None:
+        if enum_section is None:
             return None
 
         for enum in enum_section:
@@ -230,7 +240,7 @@ class XmlLoader(dict_loader.DictLoader):
 
         # Check if the dictionary has an enum section
         ser_section = self.get_xml_section(self.SER_SECT, xml_obj)
-        if ser_section == None:
+        if ser_section is None:
             return None
 
         for ser_type in ser_section:
@@ -240,7 +250,7 @@ class XmlLoader(dict_loader.DictLoader):
                 memb_section = self.get_xml_section(self.SER_MEMB_SECT, ser_type)
 
                 # If there is no member section, this type is invalid
-                if memb_section == None:
+                if memb_section is None:
                     return None
 
                 members = []
@@ -257,6 +267,56 @@ class XmlLoader(dict_loader.DictLoader):
 
                 self.serializable_types[type_name] = ser_obj
                 return ser_obj
+
+        return None
+
+    def get_array_type(self, type_name, xml_obj):
+        """
+        Parses and retuns an array type object for the given type name.
+
+        Looks in the arrays section of the xml dict.
+
+        Args:
+            type_name (string): Name of the type to parse
+            xml_obj (lxml etree root): Parsed Xml object to find type in
+
+        Returns:
+            If the type name could be found in the xml_obj, a corresponding
+            object of a type derived from ArrayType is returned.
+            Otherwise, None is returned. The caller will hold the only reference
+            to the object.
+        """
+
+        # Check if there is already a parsed version of this array
+        if type_name in self.array_types:
+            # Return a copy, so that the objects are not shared
+            return deepcopy(self.array_types[type_name])
+
+        # Check if the dictionary has an array section
+        arr_section = self.get_xml_section(self.ARR_SECT, xml_obj)
+        if arr_section is None:
+            return None
+
+        for arr_memb in arr_section:
+            # Check if this array matches the name name
+            if arr_memb.get(self.ARR_NAME_TAG) == type_name:
+                # Go through default members
+                default_section = self.get_xml_section(self.ARR_DEFAULT_TAG, arr_memb)
+
+                # If there is no default member section, this type is invalid
+                if default_section is None:
+                    return None
+
+                # Make config
+                arr_type = arr_memb.get(self.ARR_TYPE_TAG)
+                type_obj = self.parse_type(arr_type, arr_memb, xml_obj)
+                arr_format = arr_memb.get(self.ARR_FORMAT_TAG)
+                arr_size = arr_memb.get(self.ARR_SIZE_TAG)
+
+                arr_obj = ArrayType(type_name, (type_obj, int(arr_size), arr_format))
+
+                self.array_types[type_name] = arr_obj
+                return arr_obj
 
         return None
 
@@ -310,12 +370,17 @@ class XmlLoader(dict_loader.DictLoader):
         else:
             # First try Serialized types:
             result = self.get_serializable_type(type_name, xml_tree)
-            if result != None:
+            if result is not None:
                 return result
 
             # Now try enums:
             result = self.get_enum_type(type_name, xml_tree)
-            if result != None:
+            if result is not None:
+                return result
+
+            # Now try arrays:
+            result = self.get_array_type(type_name, xml_tree)
+            if result is not None:
                 return result
 
             # Abandon all hope

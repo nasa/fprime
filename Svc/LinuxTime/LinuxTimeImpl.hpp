@@ -14,11 +14,7 @@ namespace Svc {
 
 class LinuxTimeImpl: public TimeComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         LinuxTimeImpl(const char* compName);
-#else
-        LinuxTimeImpl();
-#endif
         virtual ~LinuxTimeImpl();
         void init(NATIVE_INT_TYPE instance);
     protected:

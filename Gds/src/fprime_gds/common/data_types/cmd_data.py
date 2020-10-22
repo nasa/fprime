@@ -9,32 +9,28 @@ argument values.
 
 @bug No known bugs
 """
-from __future__ import print_function
-
-from fprime_gds.common.data_types import sys_data
-
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.time_type import TimeBase
-
-from fprime.common.models.serialize.bool_type import BoolType
-from fprime.common.models.serialize.enum_type import EnumType
-from fprime.common.models.serialize.f32_type import F32Type
-from fprime.common.models.serialize.f64_type import F64Type
-
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
-from fprime.common.models.serialize.u64_type import U64Type
-
-from fprime.common.models.serialize.i8_type import I8Type
-from fprime.common.models.serialize.i16_type import I16Type
-from fprime.common.models.serialize.i32_type import I32Type
-from fprime.common.models.serialize.i64_type import I64Type
-
-from fprime.common.models.serialize.string_type import StringType
-from fprime.common.models.serialize.serializable_type import SerializableType
 
 from copy import deepcopy
+
+from fprime.common.models.serialize.array_type import ArrayType
+from fprime.common.models.serialize.bool_type import BoolType
+from fprime.common.models.serialize.enum_type import EnumType
+from fprime.common.models.serialize.numerical_types import (
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    F32Type,
+    F64Type,
+)
+from fprime.common.models.serialize.serializable_type import SerializableType
+from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.time_type import TimeBase, TimeType
+from fprime_gds.common.data_types import sys_data
 
 
 class CmdData(sys_data.SysData):
@@ -55,6 +51,7 @@ class CmdData(sys_data.SysData):
         Returns:
             An initialized CmdData object
         """
+        super().__init__()
         self.id = cmd_temp.get_id()
         self.template = cmd_temp
         self.arg_vals = cmd_args
@@ -97,7 +94,7 @@ class CmdData(sys_data.SysData):
         return self.id
 
     def get_arg_vals(self):
-        """ Get the values for each argument in a command.
+        """Get the values for each argument in a command.
 
         Returns:
             list -- a list of value objects that were used in this data object.
@@ -132,7 +129,7 @@ class CmdData(sys_data.SysData):
         raw_time_str = str(self.time)
         name = self.template.get_full_name()
 
-        if self.args == None:
+        if self.args is None:
             arg_str = "EMPTY COMMAND OBJ"
         else:
             # The arguments are currently serializable objects which cannot be
@@ -152,9 +149,9 @@ class CmdData(sys_data.SysData):
                 arg_str,
             )
         elif not verbose and csv:
-            return "%s,%s,%s" % (time_str, name, arg_str)
+            return "{},{},{}".format(time_str, name, arg_str)
         else:
-            return "%s: %s : %s" % (time_str, name, arg_str)
+            return "{}: {} : {}".format(time_str, name, arg_str)
 
     def convert_arg_value(self, arg_val, arg_type):
         if arg_val is None:
@@ -178,7 +175,8 @@ class CmdData(sys_data.SysData):
             arg_type.val = int(arg_val, 0)
         elif isinstance(arg_type, StringType):
             arg_type.val = arg_val
-        elif isinstance(arg_type, SerializableType):
+        # Cannot handle serializable or array argument inputs
+        elif isinstance(arg_type, (SerializableType, ArrayType)):
             pass
         else:
             raise CommandArgumentException(
@@ -208,5 +206,5 @@ class CommandArgumentsException(Exception):
         """
         Handle a list of errors as an exception.
         """
-        super(CommandArgumentsException, self).__init__(" ".join(errors))
+        super().__init__(" ".join(errors))
         self.errors = errors

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    
+    <include href="common_elements.rng"/>
+    <include href="common_types.rng"/>
+    
+    <start>
+        <ref name = "array_root_define"></ref>
+    </start>
+    
+    <define name="array_root_define">
+        <element name = "array">
+            <a:documentation>Component root tag.</a:documentation>
+            
+            <!-- Required Attributes -->
+            <attribute name = "name">
+                <a:documentation>Name of the array.</a:documentation>
+                <text/>
+            </attribute>
+            
+            <!-- Optional attributes -->            
+            <optional>
+                <attribute name = "namespace">
+                    <a:documentation>Namespace of the serializable object.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+
+            
+            <!-- Elements -->
+            <interleave>
+                <optional>
+                    <!-- Optional Comments -->
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+                <zeroOrMore>
+                    <element name = "include_header">
+                        <a:documentation>Defines the header file of the interface.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_serializable_type">
+                        <a:documentation>Imports serializable types.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_enum_type">
+                        <a:documentation>Imports enum types.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_array_type">
+                        <a:documentation>Import array XML files.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <element name = "format">
+                    <a:documentation>Used to format data into readable content on the ground system software.</a:documentation>
+                    <text/>
+                </element>
+
+                <element name = "type">
+                    <optional>
+                        <attribute name = "size">
+                            <a:documentation>Optional string size in addition to required array size.</a:documentation>
+                            <data type = "integer"></data>
+                        </attribute>
+                    </optional>
+
+                    <optional>
+                        <attribute name = "typeid">
+                            <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all array files.</a:documentation>
+                            <ref name = "id_define"></ref>
+                        </attribute>
+                    </optional>
+
+                    <a:documentation>Type of the array.</a:documentation>
+                    <text/>
+                </element>
+
+                <element name = "size">
+                    <a:documentation>Size of the array.</a:documentation>
+                    <data type = "integer"></data>
+                </element>
+
+                <element name = "default">
+                    <oneOrMore>
+                        <element name = "value">
+                            <text/>
+                        </element>
+                    </oneOrMore>
+                </element>
+            </interleave>
+        </element>
+    </define>
+</grammar>

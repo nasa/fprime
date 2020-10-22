@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -7,7 +5,6 @@
 ## PLEASE DO *NOT* EDIT THIS FILE!
 ###########################################################################
 
-import wx
 import GDSLogEventPanelGUI
 
 ###########################################################################

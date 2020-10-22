@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-from __future__ import print_function
+
 import os
 import sys
 import time
-from fprime_gds.tkgui.utils.gse_api import GseApi
 from optparse import OptionParser
+
+from fprime_gds.tkgui.utils.gse_api import GseApi
 
 __version__ = 0.1
 __date__ = "2015-08-01"
@@ -25,7 +26,7 @@ def main(argv=None):
         program_license = "Copyright 2015 user_name (California Institute of Technology)                                            \
                 ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
 
-        program_version_string = "%%prog %s (%s)" % (
+        program_version_string = "%prog {} ({})".format(
             program_version,
             program_build_date,
         )
@@ -122,7 +123,7 @@ def main(argv=None):
 
 
 def process_command_file(file):
-    lines = open(file, "rU").readlines()
+    lines = open(file).readlines()
     command_list = list()
     for line in lines:
         # first, strip whitespace

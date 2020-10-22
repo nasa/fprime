@@ -9,12 +9,11 @@ reading)
 
 @bug No known bugs
 """
-from __future__ import absolute_import
-
-from . import data_template
 
 from fprime.common.models.serialize.type_base import BaseType
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
+
+from . import data_template
 
 
 class ChTemplate(data_template.DataTemplate):
@@ -53,25 +52,25 @@ class ChTemplate(data_template.DataTemplate):
             high_orange: (Optional) Above this the value will be in orange alert
             high_red: (Optional) Above this the value will be in red alert
         """
+        super().__init__()
         # Make sure correct types are passed
-        # TODO do we need to do this check
-        if not type(ch_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(ch_id))
+        if not isinstance(ch_id, int):
+            raise TypeMismatchException(int, type(ch_id))
 
-        if not type(ch_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_name))
+        if not isinstance(ch_name, str):
+            raise TypeMismatchException(str, type(ch_name))
 
-        if not type(comp_name) == type(str()):
-            raise TypeMismatchException(type(str()), type(comp_name))
+        if not isinstance(comp_name, str):
+            raise TypeMismatchException(str, type(comp_name))
 
-        if not issubclass(type(ch_type_obj), type(BaseType())):
-            raise TypeMismatchException(type(BaseType()), type(ch_type_obj))
+        if not isinstance(ch_type_obj, BaseType):
+            raise TypeMismatchException(BaseType, type(ch_type_obj))
 
-        if ch_fmt_str != None and not type(ch_fmt_str) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_fmt_str))
+        if ch_fmt_str is not None and not isinstance(ch_fmt_str, str):
+            raise TypeMismatchException(str, type(ch_fmt_str))
 
-        if ch_desc != None and not type(ch_desc) == type(str()):
-            raise TypeMismatchException(type(str()), type(ch_desc))
+        if ch_desc is not None and not isinstance(ch_desc, str):
+            raise TypeMismatchException(str, type(ch_desc))
 
         # Initialize event internal variables
         self.id = ch_id
@@ -94,7 +93,7 @@ class ChTemplate(data_template.DataTemplate):
         Returns:
             The full name (component.channel) for this channel
         """
-        return "%s.%s" % (self.comp_name, self.name)
+        return "{}.{}".format(self.comp_name, self.name)
 
     def get_id(self):
         return self.id

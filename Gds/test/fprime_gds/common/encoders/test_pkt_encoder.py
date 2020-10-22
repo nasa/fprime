@@ -5,8 +5,6 @@ Created on Jul 10, 2020
 @author: Joseph Paetz, hpaulson
 """
 
-from __future__ import absolute_import
-
 
 from fprime_gds.common.encoders.pkt_encoder import PktEncoder
 from fprime_gds.common.data_types.pkt_data import PktData
@@ -15,9 +13,7 @@ from fprime_gds.common.templates.ch_template import ChTemplate
 from fprime_gds.common.templates.pkt_template import PktTemplate
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.u8_type import U8Type
-from fprime.common.models.serialize.u16_type import U16Type
-from fprime.common.models.serialize.u32_type import U32Type
+from fprime.common.models.serialize.numerical_types import U8Type, U16Type, U32Type
 
 
 def test_pkt_encoder():
@@ -56,14 +52,18 @@ def test_pkt_encoder():
 
     reg_output = enc.encode_api(pkt_obj)
 
-    assert reg_output == reg_expected, (
-        "FAIL: expected regular output to be %s, but found %s"
-        % (list(reg_expected), list(reg_output))
+    assert (
+        reg_output == reg_expected
+    ), "FAIL: expected regular output to be %s, but found %s" % (
+        list(reg_expected),
+        list(reg_output),
     )
 
     config_output = enc_config.encode_api(pkt_obj)
 
-    assert config_output == config_expected, (
-        "FAIL: expected configured output to be %s, but found %s"
-        % (list(config_expected), list(config_output))
+    assert (
+        config_output == config_expected
+    ), "FAIL: expected configured output to be %s, but found %s" % (
+        list(config_expected),
+        list(config_output),
     )

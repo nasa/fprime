@@ -1,5 +1,5 @@
-LfNeasc::LockGuard
-===
+\page UtilsLockGuardClass Utils::LockGuard Class
+# Utils::LockGuard
 
 ## 1 Introduction
 
@@ -17,7 +17,7 @@ LockGuard is a class that can be included and instantiated with an associated
 Os::Mutex reference.
 
 ```cpp
-#include <LfNeasc/Common/Util/LockGuard.hpp>
+#include <Utils/LockGuard.hpp>
 ...
 Os::Mutex mutex;
 LockGuard lock(mutex);
@@ -50,12 +50,3 @@ if (xyz) {
   LockGuard _lock(mutex);
   ...
 } // will unlock mutex
-
-
-## 3 Unit Test Results
-
-| File |
-|------|
-|[`Unit Tests`](../test/ut/output/test.txt)|
-|[`Code Coverage`](../test/ut/output/LockGuard.cpp.gcov)|
-|[`Code Coverage Summary`](../test/ut/output/LfNeascCommonUtil_gcov.txt)|

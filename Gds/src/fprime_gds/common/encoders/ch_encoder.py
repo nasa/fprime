@@ -31,9 +31,9 @@ Serialized Ch format:
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 from .encoder import Encoder
+from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.utils.data_desc_type import DataDescType
 
 
@@ -53,7 +53,7 @@ class ChEncoder(Encoder):
             An initialized ChEncoder object
         """
         # sets up config
-        super(ChEncoder, self).__init__(config)
+        super().__init__(config)
 
         self.len_obj = self.config.get_type("msg_len")
         self.desc_obj = self.config.get_type("msg_desc")
@@ -69,9 +69,7 @@ class ChEncoder(Encoder):
         Returns:
             Encoded version of the data argument as binary data
         """
-        # TODO Should we verify that it is a ChData object? Or is that too much
-        #      overhead. Also, should we verify the object is non-empty (aka
-        #      its value object is non-None)
+        assert isinstance(data, ChData), "Encoder handling incorrect type"
         ch_temp = data.get_template()
 
         self.desc_obj.val = DataDescType["FW_PACKET_TELEM"].value

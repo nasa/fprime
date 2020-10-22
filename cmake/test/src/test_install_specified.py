@@ -29,12 +29,16 @@ EXPECTED = [
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Types.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libUtils_Hash.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Port.a"),
-    os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_RateGroupDriver.a"),
+    os.path.join(
+        tmp_dir, "lib", "static", platform.system(), "libSvc_RateGroupDriver.a"
+    ),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_FatalHandler.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_TlmChan.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Obj.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Prm.a"),
-    os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_ActiveRateGroup.a"),
+    os.path.join(
+        tmp_dir, "lib", "static", platform.system(), "libSvc_ActiveRateGroup.a"
+    ),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_Cycle.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_Health.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_LinuxTime.a"),
@@ -42,7 +46,9 @@ EXPECTED = [
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Com.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libDrv_DataTypes.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_ComLogger.a"),
-    os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_SerializableFile.a"),
+    os.path.join(
+        tmp_dir, "lib", "static", platform.system(), "libFw_SerializableFile.a"
+    ),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Buffer.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Comp.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_CmdDispatcher.a"),
@@ -53,7 +59,9 @@ EXPECTED = [
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_Sched.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_Seq.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_WatchDog.a"),
-    os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_AssertFatalAdapter.a"),
+    os.path.join(
+        tmp_dir, "lib", "static", platform.system(), "libSvc_AssertFatalAdapter.a"
+    ),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_PolyIf.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_FileDownlink.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_ComFile.a"),
@@ -66,7 +74,9 @@ EXPECTED = [
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libFw_Cmd.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libCFDP_Checksum.a"),
     os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_PrmDb.a"),
-    os.path.join(tmp_dir, "lib", "static", platform.system(), "libSvc_PassiveConsoleTextLogger.a"),
+    os.path.join(
+        tmp_dir, "lib", "static", platform.system(), "libSvc_PassiveConsoleTextLogger.a"
+    ),
 ]
 TARGETS = ["install"]
 cmake.register_test(__name__, "install-specified-test")

@@ -5,11 +5,11 @@ The implementation code for the command-send GDS CLI commands
 import difflib
 from typing import Iterable, List
 
+import fprime_gds.common.gds_cli.misc_utils as misc_utils
+import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime.common.models.serialize.type_exceptions import NotInitializedException
 from fprime_gds.common.data_types.cmd_data import CommandArgumentsException
 from fprime_gds.common.gds_cli.base_commands import QueryHistoryCommand
-import fprime_gds.common.gds_cli.misc_utils as misc_utils
-import fprime_gds.common.gds_cli.test_api_utils as test_api_utils
 from fprime_gds.common.pipeline.dictionaries import Dictionaries
 from fprime_gds.common.templates.cmd_template import CmdTemplate
 from fprime_gds.common.testing_fw import predicates
@@ -73,7 +73,9 @@ class CommandSendCommand(QueryHistoryCommand):
 
     @classmethod
     def _get_item_list(
-        cls, project_dictionary: Dictionaries, filter_predicate: predicates.predicate,
+        cls,
+        project_dictionary: Dictionaries,
+        filter_predicate: predicates.predicate,
     ) -> Iterable[CmdTemplate]:
         """
         Gets a list of available commands in the system and return them in an
@@ -97,14 +99,22 @@ class CommandSendCommand(QueryHistoryCommand):
 
     @classmethod
     def _get_upcoming_item(
-        cls, api, filter_predicate, min_start_time="NOW", timeout=5.0,
+        cls,
+        api,
+        filter_predicate,
+        min_start_time="NOW",
+        timeout=5.0,
     ):
         """
         NOTE: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class, and should refactor when time's available
         """
 
     @classmethod
-    def _get_item_string(cls, item: CmdTemplate, json: bool = False,) -> str:
+    def _get_item_string(
+        cls,
+        item: CmdTemplate,
+        json: bool = False,
+    ) -> str:
         """
         Converts the given command template into a human-readable string.
 

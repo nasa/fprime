@@ -7,11 +7,14 @@
 import os
 import sys
 
+
 def setup_fprime_autocoder_path():
     """
     Sets up the system path to include F prime autocoder directories. This is useful for all AC scripts.
     """
-    FW_PACKAGE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "Fw", "Python", "src")
+    FW_PACKAGE = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "Fw", "Python", "src"
+    )
     AC_PACKAGE = os.path.join(os.path.dirname(__file__), "..", "..", "src")
     sys.path.append(FW_PACKAGE)
     sys.path.append(AC_PACKAGE)

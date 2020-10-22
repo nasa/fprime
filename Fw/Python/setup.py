@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 ####
 # fprime Python Package:
 #
@@ -17,12 +16,8 @@
 # pip install -e ./Fw/Python
 # ```
 ###
-from __future__ import absolute_import
-from __future__ import print_function
 
-from setuptools import find_packages
-from setuptools import setup
-
+from setuptools import find_packages, setup
 
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
 # then distutils.
@@ -34,7 +29,7 @@ setup(
     # information should match the F prime decription information.
     ####
     name="fprime",
-    version="1.4.1",
+    version="1.5.0",
     license="Apache 2.0 License",
     description="F Prime Flight Software core data types",
     long_description="""
@@ -88,7 +83,7 @@ to interact with the data coming from the FSW.
         'Cheetah3;python_version >= "3.0"',
         'Cheetah;python_version < "3.0"',
     ],
-    extra_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
+    extras_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
     # Setup and test requirments, not needed by normal install
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],

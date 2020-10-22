@@ -29,13 +29,7 @@ namespace Drv {
 
       //! Construct object LinuxI2cDriver
       //!
-      LinuxI2cDriverComponentImpl(
-#if FW_OBJECT_NAMES == 1
-          const char *const compName /*!< The component name*/
-#else
-          void
-#endif
-      );
+      LinuxI2cDriverComponentImpl(const char *const compName);
 
       //! Initialize object LinuxI2cDriver
       //!

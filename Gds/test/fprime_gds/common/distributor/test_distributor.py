@@ -5,8 +5,6 @@ Created on Jul 10, 2020
 @author: Josef Biberstein, Joseph Paetz, hpaulson
 """
 
-from __future__ import absolute_import
-
 
 from fprime_gds.common.distributor.distributor import Distributor
 from fprime_gds.common.utils import config_manager
@@ -37,17 +35,23 @@ def test_distributor():
 
     (test_leftover, raw_msgs) = dist.parse_into_raw_msgs_api(data)
 
-    assert test_leftover == leftover_data, (
-        "expected leftover data to be %s, but found %s"
-        % (list(leftover_data), list(test_leftover))
+    assert (
+        test_leftover == leftover_data
+    ), "expected leftover data to be %s, but found %s" % (
+        list(leftover_data),
+        list(test_leftover),
     )
-    assert raw_msgs[0] == (header_1 + data_1), (
-        "expected first raw_msg to be %s, but found %s"
-        % (list(header_1 + data_1), list(raw_msgs[0]))
+    assert raw_msgs[0] == (
+        header_1 + data_1
+    ), "expected first raw_msg to be %s, but found %s" % (
+        list(header_1 + data_1),
+        list(raw_msgs[0]),
     )
-    assert raw_msgs[1] == (header_2 + data_2), (
-        "expected second raw_msg to be %s, but found %s"
-        % (list(header_2 + data_2), list(raw_msgs[1]))
+    assert raw_msgs[1] == (
+        header_2 + data_2
+    ), "expected second raw_msg to be %s, but found %s" % (
+        list(header_2 + data_2),
+        list(raw_msgs[1]),
     )
 
     (test_len_1, test_desc_1, test_msg_1) = dist.parse_raw_msg_api(raw_msgs[0])
@@ -69,11 +73,11 @@ def test_distributor():
         desc_2,
         test_desc_2,
     )
-    assert test_msg_1 == data_1, "expected 1st msg to be %s but found %s" % (
+    assert test_msg_1 == data_1, "expected 1st msg to be {} but found {}".format(
         list(data_1),
         list(test_msg_1),
     )
-    assert test_msg_2 == data_2, "expected 2nd msg to be %s but found %s" % (
+    assert test_msg_2 == data_2, "expected 2nd msg to be {} but found {}".format(
         list(data_2),
         list(test_msg_2),
     )

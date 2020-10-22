@@ -4,91 +4,88 @@ Created on Dec 18, 2014
 @author: reder
 Replaced type base class with decorators
 """
-from __future__ import print_function
-from __future__ import absolute_import
+import abc
 import struct
+
 from .type_exceptions import AbstractMethodException
-from .type_exceptions import DeserializeException
-from .type_exceptions import NotInitializedException
 
-#
-#
-class BaseType(object):
+
+class BaseType(abc.ABC):
     """
-    An abstract base class to define all type classes.
+    An abstract base defining the methods supported by all base classes.
     """
 
-    def __init__(self):
+    @abc.abstractmethod
+    def serialize(self):
         """
-        Constructor.
+        Serializes the current object type.
         """
 
-    def serialize(self, *args):
-        """
-        AbstractSerialize interface
-        """
-        raise AbstractMethodException("serialize")
-
-    def deserialize(self, *args):
+    @abc.abstractmethod
+    def deserialize(self, data, offset):
         """
         AbstractDeserialize interface
         """
         raise AbstractMethodException("deserialize")
 
+    @abc.abstractmethod
     def getSize(self):
         """
         Abstract getSize interface
         """
         raise AbstractMethodException("getSize")
 
+    def __repr__(self):
+        """ Produces a string representation of a given type """
+        return self.__class__.__name__.replace("Type", "")
+
+    @abc.abstractmethod
     def to_jsonable(self):
         """
         Converts this type to a JSON serializable object
         """
-        if hasattr(self, "val"):
-            return {"value": self.val, "type": str(self)}
         raise AbstractMethodException("to_jsonable")
 
 
-#
-#
-def deserialize(Class):
+class ValueType(BaseType, abc.ABC):
     """
-    Decorator adds common deserialize method
+    An abstract base type used to represent a single value. This defines the value property, allowing for setting and
+    reading from the .val member.
     """
-    setattr(Class, "__val", None)
 
-    def _deserialize(self, tformat, data, offset):
-        if offset > (len(data) - len(data[offset:])):
-            raise DeserializeException(
-                "Not enough data to deserialize! Needed: %d Left: %d"
-                % (self.getSize(), offset)
-            )
-        self.val = struct.unpack_from(tformat, bytes(data), offset)[0]
+    def __init__(self, val=None):
+        """ Defines the single value """
+        self.__val = None
+        # Run full setter
+        if val is not None:
+            self.val = val
 
-    setattr(Class, "_deserialize", _deserialize)
+    @abc.abstractmethod
+    def validate(self, val):
+        """
+        Checks the val for validity with respect to the current type. This will raise TypeMissmatchException when the
+        validation fails of the val's type fails. It will raise TypeRangeException when val is out of range.
 
-    return Class
+        :param val: value to validate
+        :raises TypeMismatchException: value has incorrect type, TypeRangeException: val is out of range
+        """
 
+    @property
+    def val(self):
+        """ Getter for .val """
+        return self.__val
 
-#
-#
-def serialize(Class):
-    """
-    Decorator adds common serialize method
-    """
-    setattr(Class, "__val", None)
+    @val.setter
+    def val(self, val):
+        """ Setter for .val calls validate internally """
+        self.validate(val)
+        self.__val = val
 
-    def _serialize(self, tformat, arg=None):
-        if self.val == None:
-            raise NotInitializedException(type(self))
-        if arg == None:
-            return struct.pack(tformat, self.val)
-        else:
-            return struct.pack(tformat, arg)
-
-    setattr(Class, "_serialize", _serialize)
-    return Class
+    def to_jsonable(self):
+        """
+        Converts this type to a JSON serializable object
+        """
+        return {"value": self.val, "type": str(self)}
 
 
 #

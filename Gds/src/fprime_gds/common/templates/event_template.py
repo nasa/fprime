@@ -9,13 +9,12 @@ or cmdSeq_CS_CmdStarted
 
 @bug No known bugs
 """
-from __future__ import absolute_import
-
-from . import data_template
 
 from fprime.common.models.serialize import type_base
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime_gds.common.utils.event_severity import EventSeverity
+
+from . import data_template
 
 
 class EventTemplate(data_template.DataTemplate):
@@ -39,35 +38,35 @@ class EventTemplate(data_template.DataTemplate):
             format_str: Format string for the event's arguments
             description: (Optional) Event Description
         """
-
+        super().__init__()
         # Make sure correct types are passed
-        if not type(event_id) == type(int()):
-            raise TypeMismatchException(type(int()), type(event_id))
+        if not isinstance(event_id, int):
+            raise TypeMismatchException(int, type(event_id))
 
-        if not type(name) == type(str()):
-            raise TypeMismatchException(type(str()), type(name))
+        if not isinstance(name, str):
+            raise TypeMismatchException(str, type(name))
 
-        if not type(component) == type(str()):
-            raise TypeMismatchException(type(str()), type(component))
+        if not isinstance(component, str):
+            raise TypeMismatchException(str, type(component))
 
-        if not type(format_str) == type(str()):
-            raise TypeMismatchException(type(str()), type(format_str))
+        if not isinstance(format_str, str):
+            raise TypeMismatchException(str, type(format_str))
 
-        if not type(args) == type(list()):
-            raise TypeMismatchException(type(list()), type(args))
+        if not isinstance(args, list):
+            raise TypeMismatchException(list, type(args))
 
         for (arg_name, arg_desc, arg_type) in args:
-            if not type(arg_name) == type(str()):
-                raise TypeMismatchException(type(str()), type(arg_name))
+            if not isinstance(arg_name, str):
+                raise TypeMismatchException(str, type(arg_name))
 
-            if arg_desc != None and not type(arg_desc) == type(str()):
-                raise TypeMismatchException(type(str()), type(arg_desc))
+            if arg_desc is not None and not isinstance(arg_desc, str):
+                raise TypeMismatchException(str, type(arg_desc))
 
-            if not issubclass(type(arg_type), type(type_base.BaseType())):
-                raise TypeMismatchException(type(type_base.BaseType()), type(arg_type))
+            if not isinstance(arg_type, type_base.BaseType):
+                raise TypeMismatchException(type_base.BaseType, type(arg_type))
 
-        if description != None and not type(description) == type(str()):
-            raise TypeMismatchException(type(str()), type(description))
+        if description is not None and not isinstance(description, str):
+            raise TypeMismatchException(str, type(description))
 
         if not isinstance(severity, EventSeverity):
             raise TypeMismatchException("EventSeverity", type(severity))
@@ -88,7 +87,7 @@ class EventTemplate(data_template.DataTemplate):
         Returns:
             The full name (component.channel) for this event
         """
-        return "%s.%s" % (self.comp_name, self.name)
+        return "{}.{}".format(self.comp_name, self.name)
 
     def get_id(self):
         return self.id

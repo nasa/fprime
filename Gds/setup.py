@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 ####
 # fprime_gds Python Package:
 #
@@ -24,13 +23,9 @@
 # pip install -e ./Gds
 # ```
 ###
-from __future__ import absolute_import
-from __future__ import print_function
 
-from setuptools import find_packages
-from setuptools import setup
+from setuptools import find_packages, setup
 
-import src.fastentrypoints
 
 ####
 # GDS Packages:
@@ -49,7 +44,7 @@ setup(
     # information should match the F prime decription information.
     ####
     name="fprime_gds",
-    version="1.4.1",
+    version="1.5.0",
     license="Apache 2.0 License",
     description="F Prime Flight Software Ground Data System layer.",
     long_description="""

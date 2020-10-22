@@ -13,30 +13,33 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
-import sys
-import os
-import copy
 import argparse
+import copy
+import os
+import sys
+
+from fprime.common.models.serialize.type_exceptions import (
+    ArgLengthMismatchException,
+    TypeException,
+)
+from fprime_gds.common.data_types import exceptions as gseExceptions
+
+# try:
+from fprime_gds.common.encoders.seq_writer import SeqBinaryWriter
+from fprime_gds.common.loaders.cmd_xml_loader import CmdXmlLoader
+from fprime_gds.common.parsers.seq_file_parser import SeqFileParser
 
 # from optparse import OptionParser
 
-from fprime.common.models.serialize.type_exceptions import TypeException
-from fprime.common.models.serialize.type_exceptions import ArgLengthMismatchException
 
 __author__ = "Tim Canham"
 __version__ = "1.0"
 __email__ = "timothy.canham@jpl.nasa.gov"
 
-# try:
-from fprime_gds.common.encoders.seq_writer import SeqBinaryWriter
-from fprime_gds.common.loaders.cmd_xml_loader import CmdXmlLoader
-from fprime_gds.common.data_types import exceptions as gseExceptions
-from fprime_gds.common.parsers.seq_file_parser import SeqFileParser
-
 
 class SeqGenException(gseExceptions.GseControllerException):
     def __init__(self, val):
-        super(SeqGenException, self).__init__(str(val))
+        super().__init__(str(val))
 
 
 # except:
@@ -45,10 +48,10 @@ class SeqGenException(gseExceptions.GseControllerException):
 
 def generateSequence(inputFile, outputFile, dictionary, timebase):
     """
-  Write a binary sequence file from a text sequence file
-  @param inputFile: A text input sequence file name (usually a .seq extension)
-  @param outputFile: An output binary sequence file name (usually a .bin extension)
-  """
+    Write a binary sequence file from a text sequence file
+    @param inputFile: A text input sequence file name (usually a .seq extension)
+    @param outputFile: An output binary sequence file name (usually a .bin extension)
+    """
 
     # Check for files
     if not os.path.isfile(inputFile):
@@ -136,9 +139,9 @@ help_text = "seqgen.py -d"
 
 def main():
     """
-  The main program if run from the command line. Note that this file can also be used
-  as a module by calling the generateSequence() function
-  """
+    The main program if run from the command line. Note that this file can also be used
+    as a module by calling the generateSequence() function
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -174,7 +177,7 @@ def main():
 
     opts = parser.parse_args()
 
-    if opts.timebase == None:
+    if opts.timebase is None:
         timebase = 0xFFFF
     else:
         try:

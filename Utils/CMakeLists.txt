@@ -3,7 +3,16 @@ set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/LockGuard.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.cpp"
         )
+
+set(MOD_DEPS
+    Fw/Types
+    Fw/Time
+    Os
+    Utils/Hash
+   )
+
 register_fprime_module()
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"

@@ -12,20 +12,16 @@ import datetime
 import os.path
 
 import fprime.common.models.serialize.time_type
-
-import fprime_gds.common.logger.data_logger
-import fprime_gds.common.distributor.distributor
 import fprime_gds.common.client_socket.client_socket
 import fprime_gds.common.data_types.cmd_data
+import fprime_gds.common.distributor.distributor
+import fprime_gds.common.logger.data_logger
 
 # Local imports for the sake of composition
-from . import dictionaries
-from . import encoding
-from . import histories
-from . import files
+from . import dictionaries, encoding, files, histories
 
 
-class StandardPipeline(object):
+class StandardPipeline:
     """
     Class used to encapsulate all of the components of a standard pipeline. The life-cycle of this class follows the
     basic steps:
@@ -56,6 +52,7 @@ class StandardPipeline(object):
         """
         Setup the standard pipeline for moving data from the middleware layer through the GDS layers using the standard
         patterns. This allows just registering the consumers, and invoking 'setup' all other of the GDS support layer.
+
         :param config: config object used when constructing the pipeline.
         :param dictionary: dictionary path. Used to setup loading of dictionaries.
         :param down_store: downlink storage directory
@@ -90,6 +87,7 @@ class StandardPipeline(object):
     def get_dated_logging_dir(cls, prefix=os.path.expanduser("~")):
         """
         Sets up the dated subdirectory based upon a given prefix
+
         :param prefix:
         :return: Path to new directory where logs will be stored for this pipeline
         """
@@ -104,6 +102,7 @@ class StandardPipeline(object):
     def setup_logging(self, log_dir):
         """
         Setup logging based on the logging prefix supplied
+
         :param prefix: logging prefix to use
         """
         # Setup the logging pipeline (register it to all its data sources)
@@ -120,6 +119,7 @@ class StandardPipeline(object):
     def connect(self, address, port):
         """
         Connects to the middleware layer
+
         :param address: address of middleware
         :param port: port of middleware
         """
@@ -138,6 +138,7 @@ class StandardPipeline(object):
     def send_command(self, command, args):
         """
         Sends commands to the encoder and history.
+
         :param command: command id from dictionary to get command template
         :param args: arguments to process
         """
@@ -156,6 +157,7 @@ class StandardPipeline(object):
     def dictionaries(self):
         """
         Get a dictionaries object
+
         :return: dictionaries composition
         """
         return self.__dictionaries
@@ -164,6 +166,7 @@ class StandardPipeline(object):
     def coders(self):
         """
         Get a coders object
+
         :return: coders composition
         """
         return self.__coders
@@ -172,6 +175,7 @@ class StandardPipeline(object):
     def histories(self):
         """
         Get a histories object
+
         :return: histories composition
         """
         return self.__histories
@@ -180,6 +184,7 @@ class StandardPipeline(object):
     def files(self):
         """
         Files member property
+
         :return: filing compositions
         """
         return self.__filing

@@ -44,7 +44,7 @@ export class DataStore {
     }
 
     startup() {
-        let channel_dict = _loader.endpoints["channel-dict"].data
+        let channel_dict = _loader.endpoints["channel-dict"].data;
         // Setup channels object in preparation for updates
         let channels = {};
         for (let key in channel_dict) {
@@ -117,7 +117,7 @@ export class DataStore {
 
     updateDownfiles(data) {
         let files = data["files"];
-        this.downfiles.splice(0, this.upfiles.length, ...files);
+        this.downfiles.splice(0, this.downfiles.length, ...files);
     }
 
     updateActivity(new_items, index) {
@@ -133,5 +133,5 @@ export class DataStore {
 };
 
 
-// Exports the
+// Exports the datastore
 export let _datastore = new DataStore();

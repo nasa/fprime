@@ -74,7 +74,7 @@ Vue.component("event-list", {
             let display_text = item.display_text;
             // Remap command EVRs to expand opcode for visualization pruposes
             let groups = null
-            if (item.template.severity.value == "Severity.COMMAND" && (groups = display_text.match(OPREG)) != null) {
+            if (item.template.severity.value == "EventSeverity.COMMAND" && (groups = display_text.match(OPREG)) != null) {
                 let mnemonic = "UNKNOWN";
                 let id = parseInt(groups[1]);
                 for (let command in this.commands) {
@@ -86,7 +86,7 @@ Vue.component("event-list", {
                 display_text = display_text.replace(OPREG, '<span title="' + groups[0] + '">' + mnemonic + '</span>');
             }
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
-                item.template.severity.value.replace("Severity.", ""), display_text];
+                item.template.severity.value.replace("EventSeverity.", ""), display_text];
         },
         /**
          * Use the row's values and bounds to colorize the row. This function will color red and yellow items using
@@ -96,13 +96,13 @@ Vue.component("event-list", {
          */
         style(item) {
             let severity = {
-                "Severity.FATAL":      "fp-color-fatal",
-                "Severity.WARNING_HI": "fp-color-warn-hi",
-                "Severity.WARNING_LO": "fp-color-warn-lo",
-                "Severity.ACTIVITY_HI": "fp-color-act-hi",
-                "Severity.ACTIVITY_LO": "fp-color-act-lo",
-                "Severity.COMMAND":     "fp-color-command",
-                "Severity.DIAGNOSTIC":  ""
+                "EventSeverity.FATAL":      "fp-color-fatal",
+                "EventSeverity.WARNING_HI": "fp-color-warn-hi",
+                "EventSeverity.WARNING_LO": "fp-color-warn-lo",
+                "EventSeverity.ACTIVITY_HI": "fp-color-act-hi",
+                "EventSeverity.ACTIVITY_LO": "fp-color-act-lo",
+                "EventSeverity.COMMAND":     "fp-color-command",
+                "EventSeverity.DIAGNOSTIC":  ""
             }
             return severity[item.template.severity.value];
         },

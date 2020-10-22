@@ -18,12 +18,20 @@ namespace MockTypes {
     CircularState::CircularState() :
         m_remaining_size(static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY)) - 1), // One Byte overhead
         m_random_size(MAX_BUFFER_SIZE),
+        m_peek_offset(0),
+        m_peek_type(0),
         m_infinite_store(NULL),
         m_infinite_read(0),
         m_infinite_write(0),
         m_infinite_size(0),
         m_test_buffer(CIRCULAR_BUFFER_MEMORY, static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY)))
     { }
+
+    CircularState::~CircularState() {
+        if (m_infinite_size != 0) {
+            std::free(m_infinite_store);
+        }
+    }
 
     // Generates a random buffer
     NATIVE_UINT_TYPE CircularState::generateRandomBuffer() {
@@ -59,6 +67,7 @@ namespace MockTypes {
                 return false;
             }
             m_infinite_store = static_cast<U8*>(new_pointer);
+            m_infinite_size += 1048576;
         }
         std::memcpy(m_infinite_store + m_infinite_write, buffer, size);
         m_infinite_write += size;

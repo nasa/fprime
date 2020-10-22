@@ -5,9 +5,9 @@ GDS CLI uses
 
 import pytest
 
+import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 from fprime.common.models.serialize import time_type
 from fprime_gds.common.data_types.event_data import EventData
-import fprime_gds.common.gds_cli.filtering_utils as filtering_utils
 from fprime_gds.common.templates.event_template import EventTemplate
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
@@ -20,7 +20,7 @@ def sample_template():
         event_id=12345,
         name="Luggage_Combination",
         component="helmet",
-        args=[],    # Currently, no arguments given for simplicity's sake
+        args=[],  # Currently, no arguments given for simplicity's sake
         severity=EventSeverity.DIAGNOSTIC,
         format_str="I've got the same combination on mine!",
     )

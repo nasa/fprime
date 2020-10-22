@@ -6,12 +6,12 @@
 
 @bug No known bugs
 """
-from __future__ import absolute_import
+
+from fprime_gds.common.data_types import exceptions
+from fprime_gds.common.templates.cmd_template import CmdTemplate
 
 # Custom Python Modules
 from .xml_loader import XmlLoader
-from fprime_gds.common.templates.cmd_template import CmdTemplate
-from fprime_gds.common.data_types import exceptions
 
 
 class CmdXmlLoader(XmlLoader):
@@ -44,8 +44,7 @@ class CmdXmlLoader(XmlLoader):
 
         # Check if xml dict has commands section
         cmd_section = self.get_xml_section(self.CMD_SECT, xml_tree)
-        if cmd_section == None:
-            # TODO make this its own error (XML section err or something)
+        if cmd_section is None:
             raise exceptions.GseControllerParsingException(
                 "Xml dict did not have a %s section" % self.EVENT_SECT
             )

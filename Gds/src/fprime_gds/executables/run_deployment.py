@@ -3,11 +3,12 @@
 #
 # Runs a deployment. Starts a GUI, a TCPServer, and the deployment application.
 ####
-from __future__ import print_function
 import os
 import sys
 import platform
+import sys
 import webbrowser
+
 import fprime_gds.executables.cli
 import fprime_gds.executables.utils
 
@@ -16,6 +17,7 @@ def get_args():
     """
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
+
     :param args: arguments to supply
     """
     # Get custom handlers for all executables we are running
@@ -45,6 +47,7 @@ def get_args():
 def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
     """
     Launch a child subprocess. This subprocess will allow the child to run outside of the memory context of Python.
+
     :param cmd: list of command arguments to run by handing to subprocess.
     :param logfile: (optional) place to redirect output to for purposes of logging. Default: None, screen.
     :param name: (optional) short name for printing messages.
@@ -65,7 +68,7 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
         print("[ERROR] {}.".format(str(awe)), file=sys.stderr)
         try:
             if logfile is not None:
-                with open(logfile, "r") as file_handle:
+                with open(logfile) as file_handle:
                     for line in file_handle.readlines():
                         print("    [LOG] {}".format(line.strip()), file=sys.stderr)
         except Exception:
@@ -78,6 +81,7 @@ def launch_process(cmd, logfile=None, name=None, env=None, launch_time=5):
 def launch_tts(tts_port, tts_addr, logs, **_):
     """
     Launch the Threaded TCP Server
+
     :param tts_port: port to attach to
     :param tts_addr: address to bind to
     :param logs: logs output directory
@@ -102,6 +106,7 @@ def launch_tts(tts_port, tts_addr, logs, **_):
 def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     """
     Launch the GDS gui
+
     :param port: port to connect to
     :param dictionary: dictionary to look at
     :param connect_address: address to connect to
@@ -123,7 +128,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
         gse_args.extend(["--dictionary", dictionary])
     else:
         print(
-            "[ERROR] Dictionary invalid, must be XML or PY dicts: {0}".format(
+            "[ERROR] Dictionary invalid, must be XML or PY dicts: {}".format(
                 dictionary
             ),
             file=sys.stderr,
@@ -151,6 +156,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
 def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     """
     Launch the flask server and a browser pointed at the HTML page.
+
     :param tts_port: port to connect to
     :param dictionary: dictionary to look at
     :param connect_address: address to connect to
@@ -178,6 +184,7 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
 def launch_app(app, port, address, logs, **_):
     """
     Launch the app
+
     :param app: application to launch
     :param port: port to connect to
     :param address: address to connect to
@@ -185,15 +192,16 @@ def launch_app(app, port, address, logs, **_):
     :return: process
     """
     app_name = os.path.basename(app)
-    logfile = os.path.join(logs, "{0}.log".format(app_name))
+    logfile = os.path.join(logs, "{}.log".format(app_name))
     app_cmd = [os.path.abspath(app), "-p", str(port), "-a", address]
     return launch_process(
-        app_cmd, name="{0} Application".format(app_name), logfile=logfile, launch_time=1
+        app_cmd, name="{} Application".format(app_name), logfile=logfile, launch_time=1
     )
 
 
 def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
     """
+
     :return:
     """
 
@@ -220,7 +228,7 @@ def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
         app_cmd.append(str(all_args[destination]))
     return launch_process(
         app_cmd,
-        name="{0} Application".format("comm[{}]".format(all_args["adapter"])),
+        name="{} Application".format("comm[{}]".format(all_args["adapter"])),
         launch_time=1,
     )
 
@@ -251,7 +259,7 @@ def main():
     # elif gui == "none":
     #    print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
-        raise Exception("Invalid GUI specified: {0}".format(args["gui"]))
+        raise Exception("Invalid GUI specified: {}".format(args["gui"]))
     # Launch launchers and wait for the last app to finish
     try:
         procs = []

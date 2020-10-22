@@ -11,10 +11,13 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WatchDog/")
 
 # Components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveLogger/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapter/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferManager/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLogger/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComSplitter/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdSequencer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FatalHandler/")

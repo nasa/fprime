@@ -39,12 +39,7 @@ namespace Svc {
         };
     }
 
-
-#if FW_OBJECT_NAMES == 1
     PrmDbImpl::PrmDbImpl(const char* name, const char* file) : PrmDbComponentBase(name) {
-#else
-    PrmDbImpl::PrmDbImpl(const char* file) {
-#endif
         this->clearDb();
         this->m_fileName = file;
     }

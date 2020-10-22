@@ -31,15 +31,10 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   LinuxI2cDriverComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     LinuxI2cDriverComponentImpl(
         const char *const compName
-    ) :
-      LinuxI2cDriverComponentBase(compName)
-#else
-    LinuxI2cDriverComponentImpl(void)
-#endif
-    ,m_fd(-1)
+    ) : LinuxI2cDriverComponentBase(compName),
+        m_fd(-1)
   {
 
   }
@@ -55,7 +50,9 @@ namespace Drv {
   LinuxI2cDriverComponentImpl ::
     ~LinuxI2cDriverComponentImpl(void)
   {
-
+    if (-1 != this->m_fd) { // check if file is open
+      ::close(this->m_fd);
+    }
   }
 
   bool LinuxI2cDriverComponentImpl::open(const char* device) {

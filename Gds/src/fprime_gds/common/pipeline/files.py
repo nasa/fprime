@@ -7,11 +7,11 @@ communications layer.
 
 @author mstarch
 """
-import fprime_gds.common.files.uplinker
 import fprime_gds.common.files.downlinker
+import fprime_gds.common.files.uplinker
 
 
-class Filing(object):
+class Filing:
     """
     A composition object that holds references to a FileUplinker and file downlinker.
     """
@@ -28,6 +28,7 @@ class Filing(object):
     ):
         """
         Sets up the file handling (uplink and downlink) from a pair of encoders and decoders
+
         :param down_store: downlink storafe directory
         :param file_encoder: file encoder for uplink
         :param file_decoder: file decoder for downlink
@@ -43,6 +44,7 @@ class Filing(object):
     def uplinker(self):
         """
         Property to return the uplinker
+
         :return: uplinker object
         """
         return self.__uplinker
@@ -51,6 +53,7 @@ class Filing(object):
     def downlinker(self):
         """
         Property to return the downlinker
+
         :return: downlinker object
         """
         return self.__downlinker

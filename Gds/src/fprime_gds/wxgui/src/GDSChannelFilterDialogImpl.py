@@ -1,7 +1,8 @@
-from __future__ import absolute_import
-import wx
-from . import GDSChannelFilterDialogGUI
 import csv
+
+import wx
+
+from . import GDSChannelFilterDialogGUI
 
 ###########################################################################
 ## Class ChannelFilterDialogImpl
@@ -9,8 +10,7 @@ import csv
 
 
 class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
-    """Implements the dialog for selecting filters for the 
-    """
+    """Implements the dialog for selecting filters for the"""
 
     def __init__(self, parent, ch_dict, config=None):
 
@@ -24,11 +24,11 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
 
     def Swap(self, dest, src, all_itms=False):
         """Swap an item from the src list box to the dest list box
-        
+
         Arguments:
             dest {wx.ListBox} -- destination list box
             src {wx.ListBox} -- src list box
-        
+
         Keyword Arguments:
             all_itms {bool} -- True to swap all items, False to only swap selected items (default: {False})
         """
@@ -46,7 +46,7 @@ class ChannelFilterDialogImpl(GDSChannelFilterDialogGUI.ChannelFilterDialog):
 
     def GetFilter(self):
         """Get the current filter that is defined by this dialog
-        
+
         Returns:
             list -- list of full channel names in the filter
         """

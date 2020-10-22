@@ -3,7 +3,7 @@
 
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 namespace Fw {
 
@@ -18,11 +18,7 @@ namespace Fw {
             U32 getIdBase(void) const;
             
         PROTECTED:
-#if FW_OBJECT_NAMES == 1        
             PassiveComponentBase(const char* name); //!< Named constructor
-#else
-            PassiveComponentBase(); //!< Unnamed constructor
-#endif
             virtual ~PassiveComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< Initialization function
             NATIVE_INT_TYPE getInstance(void) const;

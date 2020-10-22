@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/default/array_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+SignalArray:
+
+An example signal array that downlinks the last 10 samples generated, as an array type.
+-->
+<serializable name="SignalInfo" namespace="Ref">
+    <import_enum_type>Ref/SignalGen/SignalTypeEnumAi.xml</import_enum_type>
+    <import_array_type>Ref/SignalGen/SignalSetArrayAi.xml</import_array_type>
+    <import_array_type>Ref/SignalGen/SignalPairSetArrayAi.xml</import_array_type>
+    <members>
+        <member type="Ref::SignalType" name="type" />
+        <member type="Ref::SignalSet" name="history" />
+        <member type="Ref::SignalPairSet" name="pairHistory" />
+    </members>
+</serializable>

@@ -26,13 +26,8 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     CmdSequencerComponentImpl::
-#if FW_OBJECT_NAMES == 1
       CmdSequencerComponentImpl(const char* name) :
         CmdSequencerComponentBase(name),
-#else
-      CmdSequencerComponentImpl(void) :
-        CmdSequencerComponentBase(),
-#endif
         m_FPrimeSequence(*this),
         m_sequence(&this->m_FPrimeSequence),
         m_loadCmdCount(0),

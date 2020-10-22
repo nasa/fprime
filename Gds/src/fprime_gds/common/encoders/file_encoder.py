@@ -40,16 +40,15 @@ Serialized command format:
 
 @bug No known bugs
 """
-from __future__ import absolute_import
 
 import struct
 
-from . import encoder
+from fprime.common.models.serialize.numerical_types import U32Type
+from fprime.constants import DATA_ENCODING
 from fprime_gds.common.data_types.file_data import FilePacketType
-from fprime.common.models.serialize.u32_type import U32Type
 from fprime_gds.common.utils.data_desc_type import DataDescType
 
-from fprime.constants import DATA_ENCODING
+from . import encoder
 
 
 class FileEncoder(encoder.Encoder):
@@ -66,12 +65,13 @@ class FileEncoder(encoder.Encoder):
                     for the sizes of fields in the binary data. If None passed,
                     defaults are used.
         """
-        super(FileEncoder, self).__init__(config)
+        super().__init__(config)
         self.len_obj = self.config.get_type("msg_len")
 
     def encode_api(self, data):
         """
         Encodes specific file packets. This will allow the data to be sent out.
+
         :param data: FilePacket type to send.
         :return: encoded bytes data
         """

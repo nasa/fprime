@@ -128,14 +128,14 @@ namespace Svc {
 
               //! Time base mismatch
               void timeBaseMismatch(
-                  const U32 currTimeBase, //!< The current time base
-                  const U32 seqTimeBase //!< The sequence file time base
+                  const FwTimeBaseStoreType currTimeBase, //!< The current time base
+                  const FwTimeBaseStoreType seqTimeBase //!< The sequence file time base
               );
 
               //! Time context mismatch
               void timeContextMismatch(
-                  const U32 currTimeContext, //!< The current time context
-                  const U32 seqTimeContext //!< The sequence file time context
+                  const FwTimeContextStoreType currTimeContext, //!< The current time context
+                  const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
               );
 
             PRIVATE:
@@ -539,11 +539,7 @@ namespace Svc {
 
       //! Construct a CmdSequencer
       CmdSequencerComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char* compName //!< The component name
-#else
-          void
-#endif
       );
 
       //! Initialize a CmdSequencer

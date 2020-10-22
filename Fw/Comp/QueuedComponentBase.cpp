@@ -1,21 +1,16 @@
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/EightyCharString.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <stdio.h>
 
 namespace Fw {
 
-#if FW_OBJECT_NAMES
     QueuedComponentBase::QueuedComponentBase(const char* name) : PassiveComponentBase(name),m_msgsDropped(0) {
 
     }
-#else    
-    QueuedComponentBase::QueuedComponentBase() : PassiveComponentBase(),m_msgsDropped(0) {
 
-    }
-#endif
     QueuedComponentBase::~QueuedComponentBase() {
 
     }

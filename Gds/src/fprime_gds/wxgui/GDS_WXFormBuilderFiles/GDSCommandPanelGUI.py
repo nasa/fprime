@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 ## Python code generated with wxFormBuilder (version May 29 2018)
 ## http://www.wxformbuilder.org/
@@ -33,7 +31,7 @@ class Commands(wx.Panel):
         )
         sbSizer1 = wx.StaticBoxSizer(
             wx.StaticBox(
-                self.ImmediateCommandEntries, wx.ID_ANY, u"Immediate Command Entries"
+                self.ImmediateCommandEntries, wx.ID_ANY, "Immediate Command Entries"
             ),
             wx.HORIZONTAL,
         )
@@ -41,7 +39,7 @@ class Commands(wx.Panel):
         self.m_staticText1 = wx.StaticText(
             sbSizer1.GetStaticBox(),
             wx.ID_ANY,
-            u"Cmds",
+            "Cmds",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -63,7 +61,7 @@ class Commands(wx.Panel):
         sbSizer1.Add(self.CmdsComboBox, 4, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
         CmdArgsBoxSizer = wx.StaticBoxSizer(
-            wx.StaticBox(sbSizer1.GetStaticBox(), wx.ID_ANY, u"Command Args"),
+            wx.StaticBox(sbSizer1.GetStaticBox(), wx.ID_ANY, "Command Args"),
             wx.HORIZONTAL,
         )
 
@@ -91,7 +89,7 @@ class Commands(wx.Panel):
         self.CmdSendButton = wx.Button(
             sbSizer1.GetStaticBox(),
             wx.ID_ANY,
-            u"Send",
+            "Send",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -107,7 +105,7 @@ class Commands(wx.Panel):
             self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL
         )
         sbSizer2 = wx.StaticBoxSizer(
-            wx.StaticBox(self.CmdHistPanel, wx.ID_ANY, u"Command History"),
+            wx.StaticBox(self.CmdHistPanel, wx.ID_ANY, "Command History"),
             wx.HORIZONTAL,
         )
 
@@ -132,7 +130,7 @@ class Commands(wx.Panel):
         )
         sbSizer3 = wx.StaticBoxSizer(
             wx.StaticBox(
-                self.CmdHistControlsPanel, wx.ID_ANY, u"Command History Controls"
+                self.CmdHistControlsPanel, wx.ID_ANY, "Command History Controls"
             ),
             wx.HORIZONTAL,
         )
@@ -140,7 +138,7 @@ class Commands(wx.Panel):
         self.CmdHistSearchButton = wx.Button(
             sbSizer3.GetStaticBox(),
             wx.ID_ANY,
-            u"Search",
+            "Search",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -165,7 +163,7 @@ class Commands(wx.Panel):
         self.CmdHistClearButton = wx.Button(
             sbSizer3.GetStaticBox(),
             wx.ID_ANY,
-            u"Clear History",
+            "Clear History",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -181,7 +179,7 @@ class Commands(wx.Panel):
             self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL
         )
         sbSizer4 = wx.StaticBoxSizer(
-            wx.StaticBox(self.QuickCmdPanel, wx.ID_ANY, u"Quick Command"), wx.HORIZONTAL
+            wx.StaticBox(self.QuickCmdPanel, wx.ID_ANY, "Quick Command"), wx.HORIZONTAL
         )
 
         self.QuickCmdTextCtl = wx.TextCtrl(
@@ -197,7 +195,7 @@ class Commands(wx.Panel):
         self.QuickCmdClearButton = wx.Button(
             sbSizer4.GetStaticBox(),
             wx.ID_ANY,
-            u"Clear",
+            "Clear",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,
@@ -207,7 +205,7 @@ class Commands(wx.Panel):
         self.QuickCmdSendButton = wx.Button(
             sbSizer4.GetStaticBox(),
             wx.ID_ANY,
-            u"Send",
+            "Send",
             wx.DefaultPosition,
             wx.DefaultSize,
             0,

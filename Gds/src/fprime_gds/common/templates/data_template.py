@@ -13,7 +13,7 @@ event or the channel FR_CycleTime.
 import fprime_gds.common.utils.jsonable
 
 
-class DataTemplate(object):
+class DataTemplate:
     """Base class for all data template classes"""
 
     def __init__(self):
