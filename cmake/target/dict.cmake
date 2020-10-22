@@ -44,6 +44,7 @@ endfunction(dictgen)
 function(add_global_target TARGET_NAME)
     add_custom_target(${TARGET_NAME} ALL)
 endfunction(add_global_target)
+
 ####
 # Dict function `add_module_target`:
 #
@@ -54,20 +55,22 @@ endfunction(add_global_target)
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
+# - **GLOBAL_TARGET_NAME:** name of produced global target
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** module dependencies of the target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
     # Try to generate dictionaries for every AC input file
     foreach (AC_IN ${AC_INPUTS})
         # Only generate dictionaries on serializables or topologies
         if (AC_IN MATCHES ".*Topology.*\.xml$")
             fprime_ai_info("${AC_IN}" "${MODULE_NAME}")
-    	    dictgen("${MODULE_NAME}" "${AC_IN}" "${MODULE_DEPENDENCIES};${MOD_DEPS};${FILE_DEPENDENCIES}")
+            dictgen("${MODULE_NAME}" "${AC_IN}" "${MODULE_DEPENDENCIES};${MOD_DEPS};${FILE_DEPENDENCIES}")
             add_custom_target("${TARGET_NAME}" DEPENDS "${AC_IN}" "${DICTIONARY_OUTPUT_FILE}")
             add_dependencies("${MODULE_NAME}" "${TARGET_NAME}")
+            add_dependencies("${GLOBAL_TARGET_NAME}" "${TARGET_NAME}")
         endif()
     endforeach()
 endfunction(add_module_target)

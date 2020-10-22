@@ -1,2 +1,0 @@
-"Ref Build" $(BUILD_ROOT)/ptf/std/BuildDeployment.py ENV(DEPLOYMENT=Ref)
-

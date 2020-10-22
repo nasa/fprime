@@ -52,6 +52,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES MOD_DEPS)
 
       # Pass list of autocoder outputs out of the module
       set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)
+      set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
   endforeach()
 endfunction(generic_autocoder)
 
@@ -144,16 +145,6 @@ function(generate_library MODULE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
       set(FPRIME_OBJECT_TYPE "Library")
   endif()
   generate_module(${MODULE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
-  # Install the executable, if not excluded and not testing
-  get_target_property(IS_EXCLUDE_FROM_ALL "${MODULE_NAME}" "EXCLUDE_FROM_ALL")
-  if ("${IS_EXCLUDE_FROM_ALL}" STREQUAL "IS_EXCLUDE_FROM_ALL-NOTFOUND" AND
-      NOT CMAKE_BUILD_TYPE STREQUAL "TESTING") 
-      install(TARGETS "${MODULE_NAME}"
-          RUNTIME DESTINATION "bin/${PLATFORM}"
-          LIBRARY DESTINATION "lib/${PLATFORM}"
-          ARCHIVE DESTINATION "lib/static/${PLATFORM}"
-      )
-  endif()
   # Link library list output on per-module basis
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${MODULE_NAME})
