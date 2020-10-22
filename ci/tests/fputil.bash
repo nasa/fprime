@@ -4,7 +4,7 @@
 #
 # Helpers to test via FP util
 ####
-export FPUTIL_TARGETS=("generate" "build" "build --all" "check --all" "install")
+export FPUTIL_TARGETS=("generate" "build" "build --all" "check --all")
 export FPUTIL_DEPLOYS="${FPRIME_DIR} ${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
 
 export INT_DEPLOYS="${FPRIME_DIR}/Ref"
@@ -66,16 +66,16 @@ export -f fputil_action
 function integration_test {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
+    export ROOTDIR="${WORKDIR}/build-artifacts"
     if [[ "${TEST_TYPE}" != "QUICK" ]]
     then
-        fputil_action "${WORKDIR}" "install" || fail_and_stop "Failed to install before integration test"
+        fputil_action "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
     fi
     (
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        # compile the ${WORKDIR} app binary so it can be run with valgrind
-        fprime-gds -n -d "${WORKDIR}" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n -r "${ROOTDIR}" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         valgrind  \
@@ -86,7 +86,7 @@ function integration_test {
             --show-leak-kinds=all \
             --track-origins=yes \
             --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${WORKDIR}/bin/*/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
+            ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
         VALGRIND_PID=$!
 
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"

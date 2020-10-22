@@ -873,12 +873,12 @@ by changing directory to the deployment directory, issuing our build commands an
 We'll start by removing the old build generation. By adding the top folder, this will remove any issues with the build.
 Then we can build, and run right on the local machine. If the user has a USB based GPS receiver, the code should work.
 
-In the `GpsApp` directory, build and install the code. Install will automatically build if the code has not been built.
+In the `GpsApp` directory, build the code.
 ```shell
 cd GpsApp
 fprime-util purge
 fprime-util generate
-fprime-util install
+fprime-util build
 ```
 
 Now run the ground system in one terminal and the Gps app in the other. Here we inform the ground system that we will
@@ -956,7 +956,7 @@ the following commands in the `GpsApp` directory:
 
 ```shell
 fprime-util generate raspberrypi
-fprime-util install raspberrypi
+fprime-util build raspberrypi
 ```
 
 This will generate the binary at `GpsApp/bin/arm-linux-gnueabihf/GpsApp`. The user then may run the ground system as
@@ -971,7 +971,7 @@ separate terminal run the following:
 
 ```shell
 cd fprime/GpsApp
-scp bin/arm-linux-gnueabihf/GpsApp pi@<raspberry pi IP>
+scp build-artifacts/arm-linux-gnueabihf/bin/GpsApp pi@<raspberry pi IP>
 ssh pi@<raspberry pi IP>
 ./GpsApp -a <ground system IP> -p 50000 -d <serial port, /dev/ttyACM0 for USB>
 ```
@@ -983,33 +983,28 @@ issue. Again make sure port 50000 is exposed to the PI, and that the pi can ping
 ### Setting the Cross Compile Build as Default
 
 As we saw above, cross compile builds can be done explicitly by setting the toolchain. However, some users may wish to
-make this the default, and not need to specify it. This can be done by adding the following line to the deployment
-*CMakeLists.txt* file at `GpsApp/CMakeList.txt`. This is typically done in the first few lines after the `project()`
-call.
+make this the default, and not need to specify it.
 
-```
-set(FPRIME_DEFAULT_TOOLCHAIN_NAME "raspberrypi"  CACHE STRING "Default toolchain, used in generation" FORCE)
-```
+Adding the following line the deployment's [settings.ini file](../../UsersGuide/user/settings.md) will cause F´
+to use the raspberry pi toolchain by default:
 
-Now that this is done, we need to purge the old build files in order to ensure that we start again clean. This can be
-done with the following commands. Notice we are purging all previous build directories we made.
-
-```
-fprime-util purge
-fprime-util purge raspberrypi
+```ini
+[fprime]
+... other options in file ...
+default_toolchain: raspberrypi
 ```
 
 Now the "raspberrypi" build can be created with a call to `fprime-util generate` and the original native build can be
 made by explicitly setting the native toolchain: `fprime-util generate native`.
 
 ```
-# Raspberry PI by defaule
+# Raspberry PI by default
 fprime-util generate
-fprime-util install
+fprime-util build
 
 # Native builds now explicit
 fprime-util generate native
-fprime-util install native
+fprime-util build native
 ```
 
 ## Conclusion
