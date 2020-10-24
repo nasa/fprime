@@ -32,7 +32,7 @@ from fprime.fbuild.builder import (
 )
 
 
-CMAKE_REG = re.compile(r"-D([a-zA-Z0-9_]+)=([a-zA-Z0-9_]+)")
+CMAKE_REG = re.compile(r"-D([a-zA-Z0-9_]+)=(.*)")
 
 
 def get_target(parsed: argparse.Namespace) -> Target:
