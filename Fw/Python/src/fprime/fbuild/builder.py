@@ -578,6 +578,13 @@ BUILD_TARGETS = [
         flags={"leak"},
         cmake="check_leak",
     ),
+    LocalTarget(
+        "check",
+        "Run unit tests with code coverage",
+        build_types=[BuildType.BUILD_TESTING],
+        flags={"coverage"},
+        cmake="coverage",
+    ),
     GlobalTarget(
         "check",
         "Run all deployment unit tests",
@@ -590,6 +597,13 @@ BUILD_TARGETS = [
         build_types=[BuildType.BUILD_TESTING],
         flags={"all", "leak"},
         cmake="check_leak",
+    ),
+    GlobalTarget(
+        "check",
+        "Run all deployment unit tests with code coverage",
+        build_types=[BuildType.BUILD_TESTING],
+        flags={"all", "coverage"},
+        cmake="coverage",
     ),
     LocalTarget(
         "coverage",
